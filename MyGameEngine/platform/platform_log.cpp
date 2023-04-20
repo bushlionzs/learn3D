@@ -147,9 +147,8 @@ public:
 			create_init_directory();
             if (_log_cb && msg && msg_size > 0)
 			{
-                //__android_log_print(ANDROID_LOG_ERROR, "DYP2P", "%s\n", msg);
 #if defined(__ANDROID__)
-                _log_cb(_log_ctx, ANDROID_LOG_ERROR, msg, msg_size);  //heshuixia 20190625, for android log callback.
+                _log_cb(_log_ctx, ANDROID_LOG_ERROR, msg, msg_size); 
                 return;
 #else
                 _log_cb(_log_ctx, 1, msg, msg_size);

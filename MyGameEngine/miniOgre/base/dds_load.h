@@ -27,7 +27,7 @@ public:
     DDSImage();
     ~DDSImage();
 
-    bool load(const std::string& name);
+    bool load(std::shared_ptr<DataStream>& stream);
 
     unsigned char* data()
     {

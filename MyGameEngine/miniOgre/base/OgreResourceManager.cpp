@@ -1,7 +1,6 @@
 #include "OgreHeader.h"
 #include "OgreResourceManager.h"
 #include "myutils.h"
-#include "file_stream.h"
 #include "OgreMemoryStream.h"
 #include "OgreMesh.h"
 #include "m3d_loader.h"
@@ -169,7 +168,11 @@ namespace Ogre {
     {
         ResourceInfo* res = ResourceManager::getSingletonPtr()->getResource(name);
 
-        assert(res != nullptr);
+        if (res == nullptr)
+        {
+            WARNING_LOG("fail to load file:%s", name.c_str());
+            return std::shared_ptr<DataStream>();
+        }
 
         return std::shared_ptr<DataStream>(new MemoryDataStream(res));
     }

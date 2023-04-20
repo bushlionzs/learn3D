@@ -29,7 +29,7 @@ namespace Ogre {
         void addAnimTexture(const std::vector<String>& namelist, float duration);
         void addTexture(const Ogre::TexturePtr& tex);
         void load();
-
+        bool isLoaded();
 
         std::shared_ptr<Material> clone(const String& name);
         std::shared_ptr<TextureUnit>& getTextureUnit(uint32_t index);

@@ -35,6 +35,5 @@ namespace Ogre {
     protected:
         std::string mStreamName;
         int64_t mSize;
-        int64_t mCurrentPos;
     };
 }

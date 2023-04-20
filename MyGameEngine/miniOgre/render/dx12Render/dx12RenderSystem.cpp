@@ -71,6 +71,7 @@ void Dx12RenderSystem::frameStart()
 	DX12Helper::getSingleton()._submitCommandList(true);
 	mTriangleCount = 0;
 	mBatchCount = 0;
+	mLoadResCount = 0;
 	mCurrentFrame = mFrameList[mCurrFrameResourceIndex++];
 
 	mCurrFrameResourceIndex = mCurrFrameResourceIndex % FRAME_RESOURCE_COUNT;
@@ -120,7 +121,19 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	{
 		return;
 	}
-	mat->load();
+	if (!mat->isLoaded())
+	{
+		if (mLoadResCount < 10)
+		{
+			mat->load();
+			mLoadResCount++;
+		}
+		else
+		{
+			return;
+		}
+	}
+	
 	const std::shared_ptr<Shader>& shader = mat->getShader();
 	mCurrentPass.mRenderListType = t;
 	mCurrentPass.mMaterial = mat.get();

@@ -54,6 +54,7 @@ void Dx11RenderSystem::frameStart()
 {
 	mTriangleCount = 0;
 	mBatchCount = 0;
+	mLoadResCount = 0;
 }
 
 void Dx11RenderSystem::frameEnd()
@@ -118,7 +119,20 @@ void Dx11RenderSystem::render(Renderable* r, RenderListType t)
 {
 	mDx11Pass._render = r;
 	mDx11Pass._mat = r->getMaterial().get();
-	mDx11Pass._mat->load();
+
+	if (!mDx11Pass._mat->isLoaded())
+	{
+		if (mLoadResCount < 10)
+		{
+			mDx11Pass._mat->load();
+			mLoadResCount++;
+		}
+		else
+		{
+			return;
+		}
+	}
+	
 	mDx11Pass._shader = (Dx11Shader*)mDx11Pass._mat->getShader().get();
 	mDx11Pass._renderData = (Dx11RenderableData*)r->getRenderableData();
 	

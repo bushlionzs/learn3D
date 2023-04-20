@@ -15,4 +15,5 @@ private:
     void _init();
 private:
     FILE* mFile;
+    uint64_t mCurrentPos;
 };

@@ -15,7 +15,7 @@ public:
 		const String& name, const String& group);
 
 private:
-	std::shared_ptr<DataStream> mSourceFile;
+	std::vector<std::shared_ptr<DataStream>> mPackList;
 
 	std::unordered_map<String, Ogre::StreamContent> mPackMap;
 };

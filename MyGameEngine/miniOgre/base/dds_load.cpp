@@ -1,8 +1,8 @@
 #include "OgreHeader.h"
 #include "dds_load.h"
-#include "file_stream.h"
 #include "OgrePixelFormat.h"
 #include "OgreColourValue.h"
+#include "OgreDataStream.h"
 
 using namespace Ogre;
 
@@ -486,11 +486,8 @@ DDSImage::~DDSImage()
     }
 }
 
-bool DDSImage::load(const std::string& name)
+bool DDSImage::load(std::shared_ptr<DataStream>& stream)
 {
-    FileDataStream ds(name.c_str());
-
-    DataStream* stream = &ds;
     uint32_t fileType;
     stream->read(&fileType, sizeof(uint32_t));
     flipEndian(&fileType, sizeof(uint32_t));

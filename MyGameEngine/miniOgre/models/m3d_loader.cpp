@@ -10,9 +10,9 @@
 #include "OgreMaterialManager.h"
 #include "vertex_declaration.h"
 #include "vertex_data.h"
-#include "file_stream.h"
 #include "OgreMatrix4.h"
 #include "OgreHardwareBufferManager.h"
+#include "OgreDataStream.h"
 
 class AnimationClip;
 

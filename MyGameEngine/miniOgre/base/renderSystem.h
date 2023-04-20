@@ -91,7 +91,7 @@ protected:
 	
     uint32_t mBatchCount = 0;
     uint32_t mTriangleCount = 0;
-
+    uint32_t mLoadResCount = 0;
     uint64_t mNextFrame = 0;
     Ogre::Viewport* mViewport = nullptr;
 

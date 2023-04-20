@@ -34,10 +34,6 @@ namespace Ogre {
             mEnd = mFirst + mSize;
             mCurrent = mFirst;
         }
-        
-
-        
-        mCurrentPos = 0;
     }
 
 
@@ -63,7 +59,7 @@ namespace Ogre {
 
     size_t MemoryDataStream::read(void* buf, int64_t count)
     {
-        int64_t left = mSize - mCurrentPos;
+        int64_t left = mEnd - mCurrent;
 
         int64_t r = std::min(left, count);
 
@@ -120,7 +116,7 @@ namespace Ogre {
 
         if (trimAfter)
         {
-            //StringUtil::trim(retString);
+            StringUtil::trim(retString);
         }
 
         return retString;

@@ -41,13 +41,18 @@ namespace Ogre {
 
         std::shared_ptr<DataStream> stream 
             = ResourceManager::getSingleton().openResource(name);
+
+        if (!stream)
+        {
+            return false;
+        }
         uint32_t nrComponents = 0;
 
         unsigned char* data = nullptr;
         if (dds)
         {
             DDSImage ddsload;
-            if (ddsload.load(name))
+            if (ddsload.load(stream))
             {
                 data = ddsload.data();
                 nrComponents = 4;
@@ -65,9 +70,9 @@ namespace Ogre {
         else
         {
             mFace = 1;
-            const stbi_uc* data = (const stbi_uc*)stream->getStreamData();
+            const stbi_uc* stream_data = (const stbi_uc*)stream->getStreamData();
             uint32_t size = stream->getStreamLength();
-            data = stbi_load_from_memory(data, size,
+            data = stbi_load_from_memory(stream_data, size,
                 (int*)&mWidth, (int*)&mHeight, (int*)&nrComponents, 0);
 
             mPixelSize = nrComponents;

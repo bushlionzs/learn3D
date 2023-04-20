@@ -70,6 +70,11 @@ void Material::load()
     mLoad = true;
 }
 
+bool Material::isLoaded()
+{
+    return mLoad;
+}
+
 std::shared_ptr<Material> Material::clone(const String& name)
 {
     Material* mat = new Material(name);

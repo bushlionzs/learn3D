@@ -38,10 +38,12 @@ void PackfileParser::parseScript(
 	DataStreamPtr& stream, const String& groupName)
 {
 
-	mSourceFile = stream;
-	const char* data = mSourceFile->getStreamData();
+	mPackList.push_back(stream);
 
-	uint32_t size = mSourceFile->getStreamLength();
+
+	const char* data = mPackList.back()->getStreamData();
+
+	uint32_t size = mPackList.back()->getStreamLength();
 
 	//todo: Endian issues should be taken into consideration
 	PackHeader* header = (PackHeader*)data;
@@ -61,6 +63,11 @@ void PackfileParser::parseScript(
 		res->_base = this;
 
 		mPackMap[res->_fullname] = dummy;
+
+		if (res->_fullname == "char_race.tab")
+		{
+			int kk = 0;
+		}
 		
 		ResourceManager::getSingleton()._addResource(res->_fullname, res);
 	}
