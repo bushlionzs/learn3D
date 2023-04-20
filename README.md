@@ -5,7 +5,7 @@ git clone https://github.com/bushlionzs/learn3D.git
 
 enter into bin_release directory
 
-Extract the "dll.7z" file to the current directory
+Extract the DLL file from "dll.7z" and place it in the same directory as "fulldemo.exe"
 
 run fulldemo.exe
 
