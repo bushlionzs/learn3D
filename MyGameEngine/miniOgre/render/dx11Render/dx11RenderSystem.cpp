@@ -17,6 +17,7 @@
 #include "OgreTextureUnit.h"
 #include "OgreViewport.h"
 #include "dx11RenderTarget.h"
+#include "OgreRoot.h"
 
 Dx11RenderSystem::Dx11RenderSystem(HWND hWnd)
 {
@@ -120,19 +121,9 @@ void Dx11RenderSystem::render(Renderable* r, RenderListType t)
 	mDx11Pass._render = r;
 	mDx11Pass._mat = r->getMaterial().get();
 
-	if (!mDx11Pass._mat->isLoaded())
-	{
-		if (mLoadResCount < 10)
-		{
-			mDx11Pass._mat->load();
-			mLoadResCount++;
-		}
-		else
-		{
-			return;
-		}
-	}
+	mDx11Pass._mat->load();
 	
+
 	mDx11Pass._shader = (Dx11Shader*)mDx11Pass._mat->getShader().get();
 	mDx11Pass._renderData = (Dx11RenderableData*)r->getRenderableData();
 	
@@ -207,8 +198,8 @@ void Dx11RenderSystem::updateFrame()
 	mFrameConstantBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
 	mFrameConstantBuffer.NearZ = 0.1f;
 	mFrameConstantBuffer.FarZ = 10000.0f;
-	mFrameConstantBuffer.TotalTime += 0.1;
-	mFrameConstantBuffer.DeltaTime = 0;
+	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
+	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
 	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
 	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };

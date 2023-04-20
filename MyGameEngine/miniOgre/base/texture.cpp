@@ -42,7 +42,6 @@ namespace Ogre {
 	{
 		if (mInternalResourcesCreated)
 			return;
-		mNumMipmaps = std::min(mNumMipmaps, getMaxMipmaps());
 		createInternalResourcesImpl();
 		mInternalResourcesCreated = true;
 	}
@@ -189,7 +188,11 @@ namespace Ogre {
 
 		mFormat = PixelUtil::getFormatForBitDepths(mSrcFormat, 
 			0, 0);
-
+		mFace = 1;
+		if (isCubeTexture())
+		{
+			mFace = 6;
+		}
 		createInternalResources();
 
 
@@ -206,7 +209,7 @@ namespace Ogre {
 			multiImage = false;
 		}
 
-		mFace = std::max(faces, uint32(images.size()));
+		
 		int32_t mip = 0;
 		int32_t depth = 1;
 		for (uint32 mip = 0; mip <= imageMips; ++mip)

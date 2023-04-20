@@ -56,6 +56,11 @@ void Dx11Texture::_create2DTex()
 {
     UINT numMips = mNumMipmaps + 1;
 
+    if (mNumMipmaps == 0)
+    {
+        mNumMipmaps = getMaxMipmaps();
+        numMips = mNumMipmaps + 1;
+    }
     UINT retVal = 0;
     retVal |= D3D11_BIND_SHADER_RESOURCE;
     retVal |= D3D11_BIND_RENDER_TARGET;
@@ -72,7 +77,12 @@ void Dx11Texture::_create2DTex()
     desc.BindFlags = retVal;
     desc.CPUAccessFlags = 0;
 
-    desc.MiscFlags = 1;
+    desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+
+    if (isCubeTexture())
+    {
+        desc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE;
+    }
 
     auto device = DX11Helper::getSingleton().getDevice();
     HRESULT hr = device->CreateTexture2D(
@@ -82,12 +92,22 @@ void Dx11Texture::_create2DTex()
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "CreateTexture2D failed!");
     }
     
-    D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-    SRVDesc.Format = mD3DFormat;
-
-
-    SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    SRVDesc.Texture2D.MipLevels = desc.MipLevels;
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+   
+    mTex->GetDesc(&desc);
+    srvDesc.Format = desc.Format;
+    if (isCubeTexture())
+    {
+        srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+        srvDesc.TextureCube.MostDetailedMip = 0;
+        srvDesc.TextureCube.MipLevels = desc.MipLevels;
+    }
+    else
+    {
+        srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Texture2D.MostDetailedMip = 0;
+        srvDesc.Texture2D.MipLevels = desc.MipLevels;
+    }
 
     if (mTextureProperty._numMipmaps == 0)
     {
@@ -96,7 +116,7 @@ void Dx11Texture::_create2DTex()
     
 
     hr = device->CreateShaderResourceView(mTex,
-        &SRVDesc,
+        &srvDesc,
         &mTextureView
     );
 

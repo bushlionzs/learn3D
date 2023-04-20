@@ -18,6 +18,7 @@
 #include "dx12Helper.h"
 #include "OgreViewport.h"
 #include "dx12Frame.h"
+#include "OgreRoot.h"
 
 Dx12RenderSystem::Dx12RenderSystem(HWND wnd)
 {
@@ -121,18 +122,9 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	{
 		return;
 	}
-	if (!mat->isLoaded())
-	{
-		if (mLoadResCount < 10)
-		{
-			mat->load();
-			mLoadResCount++;
-		}
-		else
-		{
-			return;
-		}
-	}
+
+	mat->load();
+
 	
 	const std::shared_ptr<Shader>& shader = mat->getShader();
 	mCurrentPass.mRenderListType = t;
@@ -643,8 +635,8 @@ void Dx12RenderSystem::UpdateMainPassCB(Camera* camera)
 	mFrameConstantBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
 	mFrameConstantBuffer.NearZ = 0.1f;
 	mFrameConstantBuffer.FarZ = 10000.0f;
-	mFrameConstantBuffer.TotalTime += 0.1f;
-	mFrameConstantBuffer.DeltaTime = 0;
+	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
+	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
 	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
 	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };

@@ -3,6 +3,7 @@
 #include "OgreSingleton.h"
 #include "OgreTimer.h"
 #include "engine_struct.h"
+#include "OgreFrameListener.h"
 class RenderSystem;
 
 namespace Ogre {
@@ -43,6 +44,11 @@ namespace Ogre {
 		}
 
 		bool renderOneFrame(void);
+
+		Ogre::FrameEvent& getFrameEvent()
+		{
+			return mEvt;
+		}
 	private:
 		uint32_t _allocateNextMovableObjectTypeFlag(void);
 	private:
@@ -69,5 +75,7 @@ namespace Ogre {
 		uint64_t mFrameCurrent, mFrameLast;
 
 		RenderWindow* mAutoWindow = nullptr;
+
+		Ogre::FrameEvent mEvt;
 	};
 }

@@ -50,6 +50,9 @@ namespace Ogre {
 
         mFrameCurrent = 0;
         mFrameLast = mTimer.getMicrosecondsCPU();
+
+        mEvt.timeSinceLastEvent = 0;
+        mEvt.timeSinceLastFrame = 0;
 	}
 
 	Root::~Root()
@@ -216,16 +219,16 @@ namespace Ogre {
             mLast = mAccumulation;
         }
 
-        Ogre::FrameEvent evt;
-        evt.timeSinceLastEvent = 0.0f;
-        evt.timeSinceLastFrame = delta;
+        
+        mEvt.timeSinceLastEvent = 0.0f;
+        mEvt.timeSinceLastFrame = delta;
 
         for (std::set<FrameListener*>::iterator i = mFrameListeners.begin(); i != mFrameListeners.end(); ++i)
         {
             if (mRemovedFrameListeners.find(*i) != mRemovedFrameListeners.end())
                 continue;
 
-            if (!(*i)->frameStarted(evt))
+            if (!(*i)->frameStarted(mEvt))
                 return false;
         }
 
