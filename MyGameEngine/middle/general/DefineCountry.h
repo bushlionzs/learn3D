@@ -1,0 +1,197 @@
+#ifndef __GAMEDEFINE_COUNTRY_H__
+#define __GAMEDEFINE_COUNTRY_H__
+
+#define COUNTRY_DELATE_SCRIPT			300316
+#define ON_COUNTRY_DELATE_RET			"OnCountryDelateRet"
+#define MAX_COUNTRY_VOTER			1024
+#define NEED_GUILD_CHIEFTAIN_VOTER_COUNT	4
+enum COUNTRY_AUTHORITY
+{
+	COUNTRY_AUTHORITY_INVALID		= -1,
+	COUNTRY_AUTHORITY_APPOINT_GENERAL	= 0,
+	COUNTRY_AUTHORITY_APPOINT_LMINISTER	= 1,
+	COUNTRY_AUTHORITY_APPOINT_RMINISTER	= 2,
+	COUNTRY_AUTHORITY_APPOINT_LGUARD	= 3,
+	COUNTRY_AUTHORITY_APPOINT_RGUARD	= 4,
+	COUNTRY_AUTHORITY_FORTUNE_YULONG	= 5,
+	COUNTRY_AUTHORITY_FORTUNE_HUWEI		= 6,
+	COUNTRY_AUTHORITY_FORTUNE_TIANGE1	= 7,
+	COUNTRY_AUTHORITY_FORTUNE_TIANGE2	= 8,
+	COUNTRY_AUTHORITY_FORTUNE_TIANGE3	= 9,
+	COUNTRY_AUTHORITY_FORTUNE_TIANXING	= 10,
+	COUNTRY_AUTHORITY_MODIFY_NOTICE		= 11,
+	COUNTRY_AUTHORITY_COLLECT		= 12,
+	COUNTRY_AUTHORITY_FORBIDCHAT		= 13,
+	COUNTRY_AUTHORITY_ENJAIL		= 14,
+	COUNTRY_AUTHORITY_ASSOIL		= 15,
+	COUNTRY_AUTHORITY_TOPLIST		= 16,
+	COUNTRY_AUTHORITY_RESOURCE		= 17,
+    COUNTRY_AUTHORITY_GUOYUN        = 18,       // 国运预约
+    COUNTRY_AUTHORITY_CHUGUO        = 19,       // 出国预约
+    COUNTRY_AUTHORITY_MUJI          = 20,       // 国家募集预约
+	COUNTRY_AUTHORITY_NUMBER,
+};
+
+enum COUNTRY_POSITION
+{
+	COUNTRY_POSITION_INVALID		= -1,
+	COUNTRY_POSITION_MEMBER			= 0,
+	COUNTRY_POSITION_GUARDS			= 1,
+	COUNTRY_POSITION_LGUARD			= 2,
+	COUNTRY_POSITION_RGUARD			= 3,
+	COUNTRY_POSITION_LMINISTER		= 4,
+	COUNTRY_POSITION_RMINISTER		= 5,
+	COUNTRY_POSITION_GENERAL		= 6,
+	COUNTRY_POSITION_QUEEN			= 7,
+	COUNTRY_POSITION_KING			= 8,
+	COUNTRY_POSITION_SIZE,
+};
+
+static const char *g_szPosition[] = {
+    "国民", 
+    "王者卫队", 
+    "御前左护卫", 
+    "御前右护卫", 
+    "左丞", 
+    "右相", 
+    "大将军", 
+    "王后", 
+    "国王", 
+};
+
+enum COUNTRY_SPECIAL_POSITION
+{
+	COUNTRY_SPECIAL_POSITION_INVALID		= -1,
+	//--青龙，朱雀
+	COUNTRY_SPECIAL_POSITION_QINGLONG_LEADER = 0,
+	COUNTRY_SPECIAL_POSITION_QINGLONG_MEMBER = 1,
+	COUNTRY_SPECIAL_POSITION_ZHUQUE_LEADER = 2,
+	COUNTRY_SPECIAL_POSITION_ZHUQUE_MEMBER = 3,
+	//--青龙，朱雀end
+	COUNTRY_SPECIAL_POSITION_SIZE,
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//********************************************************************************
+//注意:
+//国家变量参数添加,请同步ScriptGlobal.lua中去,并仔细检查是否冲突
+//2009-10-26 陈治国
+//********************************************************************************
+//////////////////////////////////////////////////////////////////////////////////
+enum COUNTRY_PARAM
+{
+	CD_INDEX_DESTROY_ISSUE_TIME         		= 0,       	//敌国破坏上次拉人的时间
+	CD_INDEX_DESTROY_ISSUE_COUNT        		= 1,      	//敌国破坏拉人次数
+	CD_INDEX_DESTROY_ISSUE_SCENE	    		= 2,		//国王拉人所在场景	
+	CD_INDEX_MISSION_CAOBAOTU           		= 4,        //藏宝图信息
+	CD_INDEX_QUEST_GUOYUN_COUNT					= 5,		//国运令期间，国运完成次数
+	CD_INDEX_QUEST_CHUGUO_COUNT					= 6,		//出国令期间，出国完成次数
+	CD_INDEX_COUNTRYBATTLELITE_DATE				= 7,		//屠城战日期
+	CD_INDEX_COUNTRYBATTLELITE_CAMP				= 8,		//屠城战阵营
+	CD_INDEX_COUNTRYBATTLELITE_KILLCOUNT		= 9,		//屠城战击杀大将军或是保护大将军数量
+	CD_INDEX_COUNTRYBATTLELITE_KING_ISSUE		= 10,		//屠城战国王拉人
+	CD_INDEX_COUNTRYBATTLELITE_MATCH_COUNTRY	= 11,		//屠城战配对国家
+	CD_INDEX_COUNTRYBATTLELITE_FINISHED			= 12,		//屠城战是否已经结束
+	CD_INDEX_POLUOZHOU_RANDOM_DAY               = 14,        //保存婆罗洲任务双倍经验随机日期（每周一天）
+	CD_INDEX_GUOYUN_DAY							= 15,		//发国运令的时间
+	CD_INDEX_CHUGUO_DAY							= 16,		//发出国令的时间
+	CD_INDEX_GUILDWORLDCUP_TURNNUMBER			= 20,
+	CD_INDEX_GUOYUN_KING						= 21,
+	CD_INDEX_GUOYUN_QUEEN						= 22,
+	CD_INDEX_GUOYUN_GENERAL						= 23,
+	CD_INDEX_GUOYUN_RMINISTER					= 24,
+	CD_INDEX_GUOYUN_LMINISTER					= 25,
+	CD_INDEX_GUOYUN_RGUARD						= 26,
+	CD_INDEX_GUOYUN_LGUARD						= 27,
+	CD_INDEX_CHUGUO_KING						= 28,
+	CD_INDEX_CHUGUO_QUEEN						= 29,
+	CD_INDEX_CHUGUO_GENERAL						= 30,
+	CD_INDEX_CHUGUO_RMINISTER					= 31,
+	CD_INDEX_CHUGUO_LMINISTER					= 32,
+	CD_INDEX_CHUGUO_RGUARD						= 33,
+	CD_INDEX_CHUGUO_LGUARD						= 34,
+	CD_INDEX_STRENGTH							= 35,       //commented by jiangchao,[每天的国家实力]，每天会重置清0
+	CD_INDEX_STRENGTH_Y							= 36,		//commented by jiangchao,[按照天更新的国家实力], 每天以及【每周一】会累加[每天的国家实力]
+	CD_INDEX_STRENGTH_DAY						= 37,		//commented by jiangchao,[每天的国家实力]的时间,每天重置
+	CD_INDEX_CHINAJOY_TIMES						= 38,		//ChinaJoy 次数
+	CD_INDEX_CHINAJOY_DATE						= 39,		//ChinaJoy 日期
+	CD_INDEX_RUOGUO_SHOUJI_DATE					= 40,		//弱国任务上次收集日期
+	CD_INDEX_RUOGUO_SHOUJI_FLAG					= 41,		//弱国任务收集Index
+	CD_INDEX_MOJUN_KILL_COUNT1					= 42,
+	CD_INDEX_MOJUN_KILL_COUNT2					= 43,
+	CD_INDEX_MOJUN_KILL_COUNT3					= 44,
+	CD_INDEX_MOJUN_KILL_COUNT4					= 45,
+	CD_INDEX_RUOGUO_START_FLAG					= 46,
+	CD_INDEX_STRENGTH_WEEKTOTAL					= 48,		//commented by jiangchao,literally"周国家实力???",类似CD_INDEX_STRENGTH_Y,[按照天更新的国家实力]
+	CD_INDEX_STRENGTH_WEEKTOTAL_Y				= 49,		//commented by jiangchao,"每周一"累加CD_INDEX_STRENGTH_WEEKTOTAL
+	CD_INDEX_STRENGTH_WEEKTOTAL_DAY				= 50,		//commented by jiangchao,"每周一"重置
+	CD_INDEX_MINSTER_KILLDATE					= 51,		//国家大臣刺杀
+	CD_INDEX_CREATE_KING_DATE					= 52,		//国王上任日期
+
+	CD_INDEX_CREATE_QINGLONG_DATE				= 53,		//青龙上任日期
+	CD_INDEX_CREATE_ZHUQUE_DATE					= 54,		//朱雀上任日期
+	
+	CD_INDEX_BE_DELATED_KING_GUID				= 55,		//被弹劾国王GUID
+    CD_PIONEER_FUNS                             = 56,       // 粉丝先锋团活动
+	CD_INDEX_KING_DEMISE_COUNT					= 57,
+	CD_INDEX_QINGLONG_DEMISE_DATE				= 58,
+	CD_INDEX_QINGLONG_DEMISE_COUNT				= 59,
+	CD_INDEX_ZHUQUE_DEMISE_DATE					= 60,
+	CD_INDEX_ZHUQUE_DEMISE_COUNT				= 61,
+	CD_INDEX_ZHAOJILIN_DATE						= 62,
+	CD_INDEX_ZHAOJILIN_DAYCOUNT					= 63,
+	CD_INDEX_ZHAOJILIN_TIME						= 64,
+	CD_ZHAOJILIN_SCENE							= 65,
+	CD_ZHAOJILIN_POS_X							= 66,
+	CD_ZHAOJILIN_POS_Z							= 67,
+    CD_PRECONTRACT_GUOYUN                       = 68,       // 国运预约
+    CD_PRECONTRACT_CHUGUO                       = 69,       // 出国预约
+    CD_PRECONTRACT_MUJI                         = 70,       // 国家募集预约
+	CD_RICHANG_QUESTID                          = 71,       // 日常玩法ID
+	CD_YOULECHANG_CAIPIAO1						= 72,       // 无敌幸运星
+	CD_YOULECHANG_CAIPIAO2						= 73,       // 无敌幸运星
+    CD_DAGUANYUAN_CAIPIAO1                      = 74,       // 大观园双星报喜
+    CD_DAGUANYUAN_CAIPIAO2                      = 75,       // 大观园双星报喜
+    CD_INDEX_KING_DEMISE_DATE					= 76,
+    
+	CD_LASTWEEK_PINGFEN_DATE					= 77,		// 国家上周的金钱消费记录时间
+	CD_LASTWEEK_PINGFEN_MONEY					= 78,		// 国家上周的金钱消费的数额
+	CD_CURWEEK_PINGFEN_DATE						= 79,		// 国家本周的金钱消费记录时间
+	CD_CURWEEK_PINGFEN_MONEY					= 80,		// 国家本周的金钱消费记录时间
+
+	CD_LASTWEEK_STRONG_WEAK_JIFEN				= 81,		//国家上周强弱积分
+	CD_LASTWEEK_STRONG_WEAK_JIFEN_DATE			= 82,		//国家上周强弱积分时间
+	CD_CURWEEK_STRONG_WEAK_JIFEN				= 83,		//国家本周强弱积分
+	CD_CURWEEK_STRONG_WEAK_JIFEN_DATE			= 84,		//国家本周强弱积分时间
+	CD_STRONG_WEAK_LEVEL						= 85,		//国家强弱等级
+
+	CD_STRONG_WEAK_GUILD_JIFEN					= 86,		//缓存帮会榜的国家强弱积分,周一刷新到国家强弱榜积分，然后重置		
+	CD_STRONG_WEAK_GUILD_JIFEN_DATE			    = 87,		//缓存帮会榜的国家强弱积分的时间,周一重置
+
+
+	CD_HUODONG_XINNIAN							= 88,		//新年玩法
+	CD_LEAGUE_COUNTRY_ID						= 89,		//联盟国家ID 注意初始话的时候要为-1，否则默认的结盟国家为楼兰!!!
+
+	CD_DISMISS_COLLEAGUE_DATE					= 90,		//解盟的日期
+	CD_DISMISS_COLLEAGUE_COUNT					= 91,		//解盟的次数
+	
+	CD_INDEX_DEFINE_COUNT,
+
+};
+
+enum E_COUNTRY_DELATE_RET
+{
+	CDR_SUCCESS				= 0,
+	CDR_CANNOT_DELATE_YOURSELF,
+	CDR_ALREADY_DELATING,
+	CDR_NOT_HAVE_ENOUGH_CHIEFTAIN_ONLINE,
+	CDR_NOT_HAVE_KING,
+	CDR_NEED_HIGH_ORDER,
+	CDR_UNKNOW
+};
+
+enum E_COUNTRY_DELATE_CHIEFTAIN_VOTE_RET { CDCVR_SUCCESS = 0, CDCVR_DELATING_OVER, CDCVR_CANNOT_DELATE_OTHER_PERSON, CDCVR_UNKNOW };
+
+enum E_COUNTRY_DELATE_MEMBER_VOTE_RET { CDMVR_SUCCESS = 0, CDMVR_DELATING_OVER, CDMVR_CANNOT_DELATE_OTHER_PERSON, CDMVR_UNKNOW };
+#endif
