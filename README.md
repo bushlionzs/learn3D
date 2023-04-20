@@ -13,7 +13,7 @@ If everything goes smoothly, you will see the following picture.
 
 ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/fulldemo.png)
 
-# how to compile in windows
+# how to compile in windows(only 64bit supported)
 
 git clone https://github.com/bushlionzs/learn3D.git
 
