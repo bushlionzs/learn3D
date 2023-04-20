@@ -1,0 +1,8463 @@
+material 楼兰帐篷01
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_楼兰帐篷01.dds
+			}
+		}
+
+	}
+}
+
+material 楼兰帐篷03
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_楼兰帐篷03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰帐篷031
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_楼兰帐篷01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰帐篷041
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_楼兰帐篷041.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰帐篷042
+{
+	technique
+	{
+		pass
+		{
+		    scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_楼兰帐篷042.dds
+			}
+		}
+
+	}
+}
+
+material 盘腾树1_01
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_盘腾树1.dds
+			}
+		}
+
+	}
+
+}
+
+material 盘腾树1_02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_盘腾树3.dds
+			}
+		}
+
+	}
+
+}
+
+material 盘腾树1_03
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_盘腾树2.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 盘腾树2_01
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_盘腾树2.dds
+			}
+		}
+
+	}
+
+}
+
+material 盘腾树2_02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_盘腾树3.dds
+			}
+		}
+
+	}
+
+}
+
+material 盘腾树2_03
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_盘腾树1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 盘腾树32
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_盘腾树4.dds
+			}
+		}
+
+	}
+
+}
+
+material 盘腾树3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_盘腾树5.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 盘腾树4
+{
+	technique
+	{
+		pass
+		{
+
+
+			texture_unit
+			{
+				texture jpg_盘腾树5.dds
+			}
+		}
+
+	}
+
+}
+
+material 盘腾树42
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_盘腾树4.dds
+			}
+		}
+
+	}
+
+}
+
+material 盘腾树43
+{
+	technique
+	{
+		pass
+		{
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+
+            depth_write off
+            emissive 0.3 0.3 0.3 1
+
+			texture_unit
+			{
+				texture tga_盘腾树1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 盘腾树5
+{
+	technique
+	{
+		pass
+		{
+
+
+			texture_unit
+			{
+				texture jpg_盘腾树5.dds
+			}
+		}
+
+	}
+
+}
+
+material 盘腾树52
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_盘腾树4.dds
+			}
+		}
+
+	}
+
+}
+
+material 盘腾树53
+{
+	technique
+	{
+		pass
+		{
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+
+           depth_write off
+           emissive 0.3 0.3 0.3 1
+
+			texture_unit
+			{
+				texture tga_盘腾树1.dds
+			}
+		}
+
+	}
+}
+
+material 槐树1
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_槐树2.dds
+			}
+		}
+
+	}
+
+}
+
+material 槐树12
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_槐树1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 槐树2
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_槐树2.dds
+			}
+		}
+
+	}
+
+}
+
+material 槐树22
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_槐树1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 槐树3
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_槐树2.dds
+			}
+		}
+
+	}
+
+}
+
+material 槐树32
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_槐树1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 槐树41
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_槐树2.dds
+			}
+		}
+
+	}
+
+}
+
+material 槐树42
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_槐树1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 槐树51
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_槐树2.dds
+			}
+		}
+
+	}
+
+}
+
+material 槐树52
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_槐树1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 槐树6
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_槐树5.dds
+			}
+		}
+
+	}
+
+}
+
+material 槐树62
+{
+	technique
+	{
+		pass
+		{
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+
+depth_write off
+emissive 0.3 0.3 0.3 1
+			texture_unit
+			{
+				texture tga_槐树4.dds
+			}
+		}
+
+	}
+
+}
+
+material 槐树63
+{
+	technique
+	{
+		pass
+		{
+emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_槐树3.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 槐树7
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_槐树5.dds
+			}
+		}
+
+	}
+
+}
+
+material 槐树72
+{
+	technique
+	{
+		pass
+		{
+            emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_槐树3.dds
+			}
+		}
+
+	}
+}
+
+
+
+material 皇城花丛011
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛021
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛031
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛09.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛041
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛09.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花丛042
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛08.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛051
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛05.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花丛052
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛09.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛061
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛08.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛072
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛06.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花丛071
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛081
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛06.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花丛082
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛091
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛05.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花丛092
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛09.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛11
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草5.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛101
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛03.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛111
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛03.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花丛112
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+
+			texture_unit
+			{
+				texture tga_皇城花丛05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛121
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+
+			texture_unit
+			{
+				texture tga_皇城花丛05.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花丛122
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛03.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛131
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛09.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛141
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛10.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛151
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛10.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛161
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛10.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛171
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛10.dds
+			}
+		}
+
+	}
+
+}
+
+
+material Material_#61
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛04.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛191
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+
+			texture_unit
+			{
+				texture jpg_皇城花丛07.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花丛192
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花丛10.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛21
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草5.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛31
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草5.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛41
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草6.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛51
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛61
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草5.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花丛71
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草6.dds
+			}
+		}
+
+	}
+
+}
+
+material 大型灌木011
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木021
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木031
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木041
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木04.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木051
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木03.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木061
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木03.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木071
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木081
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木06.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木091
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木07.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木101
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木08.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 大型灌木111
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_大型灌木09.dds
+			}
+		}
+
+	}
+}
+
+material 栅栏1
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_木箱子.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 栅栏2
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_木箱子.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 栅栏3
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_军帐附件.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 栅栏4
+{
+	technique
+	{
+		pass
+		{
+			
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_军帐附件.dds
+			}
+		}
+
+	}
+
+}
+
+
+material zhalan5
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_栅栏5.dds
+			}
+		}
+
+	}
+
+}
+
+
+material zhalan6
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_栅栏5.dds
+			}
+		}
+
+	}
+
+}
+
+
+material zhalan7
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_栅栏5.dds
+			}
+		}
+
+	}
+
+}
+
+
+material zhalan8
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_栅栏6.dds
+			}
+		}
+
+	}
+
+}
+
+
+material zhalan9
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_栅栏6.dds
+			}
+		}
+
+	}
+}
+
+material 栅栏石头1
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_栅栏石头.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 栅栏石头2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_栅栏石头.dds
+			}
+		}
+
+	}
+}
+
+material 子叶树1_02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_子叶树2.dds
+			}
+		}
+
+	}
+
+}
+
+material 子叶树1_01
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_子叶树1.dds
+			}
+		}
+
+	}
+
+}
+
+material 子叶树1_03
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_子叶树3.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 子叶树2_01
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_子叶树1.dds
+			}
+		}
+
+	}
+
+}
+
+material 子叶树2_02
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_子叶树3.dds
+			}
+		}
+
+	}
+
+}
+
+material 子叶树2_03
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_子叶树2.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 子叶树3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_子叶树5.dds
+			}
+		}
+
+	}
+
+}
+
+material 子叶树32
+{
+	technique
+	{
+		pass
+		{
+emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_子叶树4.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 子叶树42
+{
+	technique
+	{
+		pass
+		{
+            emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_子叶树4.dds
+			}
+		}
+
+	}
+
+}
+
+material 子叶树4
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_子叶树5.dds
+			}
+		}
+
+	}
+}
+
+material 皇城花盆11
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草2.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花盆1
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城花盆.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花盆22
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草3.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花盆2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城花盆.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花盆3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城花盆.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花盆33
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花盆44
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草1.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花盆4
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城花盆.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花盆55
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草2.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花盆5
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城花盆.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花盆66
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草3.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花盆6
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城花盆.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花盆77
+{
+	technique
+	{
+		pass
+		{
+		
+			texture_unit
+			{
+				texture jpg_皇城花盆.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花盆7
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花盆88
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城花盆.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花盆8
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草2.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城花盆9
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城花盆.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城花盆99
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城花草4.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 石头01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石头.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 石头02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石头.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 石头03
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石头.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 石头04
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石头.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 石头05
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石头.dds
+			}
+		}
+
+	}
+
+}
+
+material 灌木01
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灌木01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 灌木02
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灌木02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 灌木03
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灌木03.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 灌木04
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灌木04.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 灌木05
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灌木05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 灌木052
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灌木05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 灌木053
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灌木05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 灌木08
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灌木08.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 灌木09
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灌木09.dds
+			}
+		}
+
+	}
+
+}
+
+material 新月灌木1
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_棕榈灌木.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 新月灌木2
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_棕榈灌木.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地毯
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_楼兰地毯.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰地毯2
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_楼兰地毯.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰地砖
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰广场02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地砖3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰广场04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地砖2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰广场03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地砖4
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰广场05.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城植物02
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_爬墙虎.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城植物
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.4 0.4 0.4 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城植物.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城植物03
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.4 0.4 0.4 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_迎春花.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 乃蛮马厩11
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_乃蛮大帐.dds
+			}
+		}
+
+	}
+
+}
+
+material 乃蛮马厩1
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_乃蛮部旗.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 乃蛮马厩2
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_乃蛮部旗.dds
+			}
+		}
+
+	}
+
+}
+
+material 乃蛮马厩22
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_乃蛮大帐.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 乃蛮马厩3
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_乃蛮部旗.dds
+			}
+		}
+
+	}
+}
+
+material 陶罐1
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_木箱子.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 陶罐2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_木箱子.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 陶罐3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_箭靶.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 陶罐4
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_箭靶.dds
+			}
+		}
+
+	}
+}
+
+material 石桥01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石桥01.dds
+			}
+		}
+
+	}
+
+}
+
+material 石桥03
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石桥03.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 石桥012
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石桥01.dds
+			}
+		}
+
+	}
+
+}
+
+material 石桥02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石桥02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城杂货摊01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城杂货摊01.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城杂货摊02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城杂货摊02.dds
+			}
+		}
+
+	}
+
+}
+
+material 皇城杂货摊03
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城杂货摊03.dds
+			}
+		}
+
+	}
+
+}
+
+material 酒缸01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城杂货摊01.dds
+			}
+		}
+
+	}
+
+}
+
+material 酒缸02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_皇城杂货摊03.dds
+			}
+		}
+
+	}
+
+}
+
+material 瓶子
+{
+	technique
+	{
+		pass
+		{
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+
+emissive 0.1 0.1 0.1 1
+
+depth_write off
+
+			texture_unit
+			{
+				texture tga_瓶子.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 瓶子2
+{
+	technique
+	{
+		pass
+		{
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+
+emissive 0.1 0.1 0.1 1
+
+depth_write off
+			texture_unit
+			{
+				texture tga_瓶子.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 瓶子3
+{
+	technique
+	{
+		pass
+		{
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+
+emissive 0.1 0.1 0.1 1
+
+depth_write off
+			texture_unit
+			{
+				texture tga_瓶子.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 瓶子4
+{
+	technique
+	{
+		pass
+		{
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+
+emissive 0.1 0.1 0.1 1
+
+depth_write off
+			texture_unit
+			{
+				texture tga_瓶子.dds
+			}
+		}
+
+	}
+
+}
+
+material 马鞍1
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马鞍01.dds
+			}
+		}
+
+	}
+
+}
+
+material 马厩摊1
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马厩.dds
+			}
+		}
+
+	}
+
+}
+
+material 马厩摊31
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马厩.dds
+			}
+		}
+
+	}
+
+}
+
+material 马鞍31
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马鞍01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 马厩摊14
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马厩.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 马厩摊05
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_水果摊1.dds
+			}
+		}
+
+	}
+
+}
+
+material 马厩摊052
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马厩.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 马厩摊16
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马厩.dds
+			}
+		}
+
+	}
+
+}
+
+material 马鞍02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_马鞍02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 马厩摊71
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马厩.dds
+			}
+		}
+
+	}
+
+}
+
+material 马鞍72
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_马鞍02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 马厩摊81
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马厩.dds
+			}
+		}
+
+	}
+
+}
+
+material 马鞍03
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture TGA_马鞍03.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 马厩摊91
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马厩.dds
+			}
+		}
+
+	}
+
+}
+
+material 马鞍93
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture TGA_马鞍03.dds
+			}
+		}
+
+	}
+
+}
+
+material 水缸
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_箭靶.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城假山石1
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城假山石.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城假山石2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城假山石.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城假山石3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城假山石.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城假山石4
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城假山石.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皇城水桶
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城井.dds
+			}
+		}
+
+	}
+
+}
+
+material 木桌子
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_木箱子.dds
+			}
+		}
+
+	}
+
+}
+
+material 武器架
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_武器架.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 武器架2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_武器架.dds
+			}
+		}
+
+	}
+
+}
+
+material 黄仙草
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_黄仙草.dds
+			}
+		}
+
+	}
+
+}
+
+material 山东圆石01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石桥01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 山东圆石02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石桥01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 山东圆石03
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_石桥01.dds
+			}
+		}
+
+	}
+
+}
+
+material 马车02
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马车02.dds
+			}
+		}
+
+	}
+
+}
+
+material 马车01
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_马车01.dds
+			}
+		}
+
+	}
+}
+
+
+material 草堆
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_草堆.dds
+			}
+		}
+
+	}
+
+}
+
+material 长布杆12
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城灯笼.dds
+			}
+		}
+
+	}
+
+}
+
+material 长布杆11
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灯笼排.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 长布杆22
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城灯笼.dds
+			}
+		}
+
+	}
+
+}
+
+material 长布杆21
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_灯笼排.dds
+			}
+		}
+
+	}
+
+}
+
+material 新月汗国物件
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_新月汗国物件.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 新月汗国物件2
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_新月汗国物件.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 新月汗国连接
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_新月汗国屋顶01.dds
+			}
+		}
+
+	}
+
+}
+
+material 风车竹2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_竹桥.dds
+			}
+		}
+
+	}
+
+}
+
+material 风车摊
+{
+	technique
+	{
+		pass
+		{
+			emissive 0.1 0.1 0.1 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_风车摊.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 风车竹22
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_竹桥.dds
+			}
+		}
+
+	}
+
+}
+
+material 风车摊22
+{
+	technique
+	{
+		pass
+		{
+			emissive 0.1 0.1 0.1 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_风车摊.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 风车竹23
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_竹桥.dds
+			}
+		}
+
+	}
+
+}
+
+material 风车摊3
+{
+	technique
+	{
+		pass
+		{
+			emissive 0.1 0.1 0.1 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_风车摊.dds
+			}
+		}
+
+	}
+
+}
+
+material 风车摊2
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_糖葫芦.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 风车竹2z
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_竹桥.dds
+			}
+		}
+
+	}
+
+}
+
+material 风车竹1
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_竹棚.dds
+			}
+		}
+
+	}
+
+}
+
+material 运输车12
+{
+	technique
+	{
+		pass
+		{
+		shader_macro SKINNED
+			texture_unit
+			{
+				texture jpg_运输车3.dds
+			}
+		}
+
+	}
+
+}
+
+material 运输车11
+{
+	technique
+	{
+		pass
+		{
+		shader_macro SKINNED
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_运输车1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 运输车21
+{
+	technique
+	{
+		pass
+		{
+		shader_macro SKINNED
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_运输车1.dds
+			}
+		}
+
+	}
+
+}
+
+material 运输车23
+{
+	technique
+	{
+		pass
+		{
+		shader_macro SKINNED
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_运输车2.dds
+			}
+		}
+
+	}
+
+}
+
+material 玉米植物01
+{
+	technique
+	{
+		pass
+		{
+			
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_玉米植物01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 玉米植物01q
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_玉米植物01.dds
+			}
+		}
+
+	}
+
+}
+
+material 玉米植物02
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_玉米植物02.dds
+			}
+		}
+
+	}
+
+}
+
+material 镖车旗01
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+            shader_macro SKINNED
+			texture_unit
+			{
+				texture tga_镖车旗01.dds
+			}
+		}
+
+	}
+
+}
+
+material 铁木桶
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_新月铁木车.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 铁木桶堆
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_新月铁木车.dds
+			}
+		}
+
+	}
+}
+
+material 牌匾兵器01
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_牌匾1.dds
+			}
+		}
+
+	}
+
+}
+
+material 牌匾兵器02
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皇城兵器摊1.dds
+			}
+		}
+
+	}
+
+}
+
+material 皮架子1
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_架子锅.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皮架子2
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_架子锅.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 皮架子3
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_皮架子3.dds
+			}
+		}
+
+	}
+
+}
+
+material 堆放物
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_堆放物.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 堆放物2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_堆放物.dds
+			}
+		}
+
+	}
+
+}
+
+material 餐桌01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_烤肉架.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 餐桌21
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_皇城杂货摊01.dds
+			}
+		}
+
+	}
+
+}
+
+material 餐桌22
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_皇城杂货摊03.dds
+			}
+		}
+
+	}
+
+}
+
+material 餐桌23
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_烤肉架.dds
+			}
+		}
+
+	}
+
+}
+
+material 簸箕干货32
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_农具1.dds
+			}
+		}
+
+	}
+}
+
+material 小棚子
+{
+	technique
+	{
+		pass
+		{
+	
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_小棚子.dds
+			}
+		}
+
+	}
+
+}
+
+material 植物1
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_植物1.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 植物10
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_植物10.dds
+			}
+		}
+
+	}
+
+}
+
+material 杂草01
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_杂草01.dds
+			}
+		}
+
+	}
+
+}
+
+material 书柜3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_魔法摊.dds
+			}
+		}
+
+	}
+
+}
+
+material 书柜1
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_书柜.dds
+			}
+		}
+
+	}
+
+}
+
+material 书柜2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_书.dds
+			}
+		}
+
+	}
+
+}
+
+material 书柜4
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_书柜2.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 书柜12
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_书柜.dds
+			}
+		}
+
+	}
+
+}
+
+material 书柜22
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_书.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 书柜33
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_魔法摊.dds
+			}
+		}
+
+	}
+
+}
+
+material 书柜13
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_书柜.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 书柜34
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_魔法摊.dds
+			}
+		}
+
+	}
+
+}
+
+material 蒙古图腾021
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_蒙古图腾021.dds
+			}
+		}
+
+	}
+
+}
+
+material 蒲葵灌木21
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_蒲葵2.dds
+			}
+		}
+
+	}
+
+}
+
+material 地面天空盒_01
+{
+	technique
+	{
+		pass
+		{
+emissive 1 1 1 1
+
+			texture_unit
+			{
+				texture jpg_地面天空盒.dds
+			}
+		}
+
+	}
+
+}
+
+material 地面天空盒_02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_雪山01.dds
+			}
+		}
+
+	}
+
+}
+
+material 镖车水果01
+{
+	technique
+	{
+		pass
+		{
+            shader_macro SKINNED
+			texture_unit
+			{
+				texture jpg_镖车水果01.dds
+			}
+		}
+
+	}
+
+}
+
+material 永夜灌木11
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+			shader addblend
+            texture_unit
+			{
+				texture jpg_永夜树5w.dds
+				colour_op 	add
+			}
+			texture_unit
+			{
+				texture tga_永夜树5.dds
+			}
+		}
+
+	}
+
+}
+
+material 书
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_书.dds
+			}
+		}
+
+	}
+
+}
+
+material 皮箱
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_木箱子.dds
+			}
+		}
+
+	}
+
+}
+
+material 花灌
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_花灌.dds
+			}
+		}
+
+	}
+
+}
+
+material 树灌
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_树灌.dds
+			}
+		}
+
+	}
+
+}
+
+material 魔法摊
+{
+	technique
+	{
+		pass
+		{
+		    shader add
+			
+			texture_unit
+			{
+				texture jpg_魔法摊黑白图.dds
+			}
+			
+			texture_unit
+			{
+				texture jpg_魔法摊.dds
+			}
+			
+		}
+
+	}
+
+}
+
+material 蒲葵灌木11
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_蒲葵1.dds
+			}
+		}
+
+	}
+
+}
+
+material 木墩
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_木墩.dds
+			}
+		}
+
+	}
+
+}
+
+material 平板桥01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_普通平板车01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 平板桥02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_普通平板车01.dds
+			}
+		}
+
+	}
+
+}
+
+material 水果摊地毯1
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_水果摊2.dds
+			}
+		}
+
+	}
+
+}
+
+material 首饰摊1
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_水果摊1.dds
+			}
+		}
+
+	}
+
+}
+
+material 皮椅子
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_木箱子.dds
+			}
+		}
+
+	}
+
+}
+
+material 普通平板车01
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_普通平板车01.dds
+			}
+		}
+
+	}
+
+}
+
+material 木柱
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_木柱.dds
+			}
+		}
+
+	}
+
+}
+
+material 木箱子
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_木箱子.dds
+			}
+		}
+
+	}
+
+}
+
+material 麻袋堆
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_箭靶.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 整齐麻袋堆
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture tga_箭靶.dds
+			}
+		}
+
+	}
+
+}
+
+material 牌匾杂货01
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_牌匾3.dds
+			}
+		}
+
+	}
+
+}
+
+material 牌匾杂货02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_牌匾4.dds
+			}
+		}
+
+	}
+
+}
+
+material 架子锅
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_架子锅.dds
+			}
+		}
+
+	}
+
+}
+
+material 门牌
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_门牌.dds
+			}
+		}
+
+	}
+
+}
+
+material 浪花2
+{
+	technique
+	{
+		pass
+		{
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+            emissive 0.8 0.8 0.8 1
+
+            depth_write off
+			texture_unit
+			{
+				texture tga_浪花2.dds
+			    scroll_anim 0 -0.7
+			}
+		}
+
+	}
+
+}
+
+material 木桥2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_木桥2.dds
+			}
+		}
+
+	}
+
+}
+
+material 瀑布1
+{
+	technique 
+	{
+		pass
+		{
+		
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+
+            emissive 0.8 0.8 0.8 1
+
+            depth_write off
+
+			texture_unit
+			{
+				texture tga_瀑布1.dds
+	            scroll_anim 0 -0.9
+	   
+			}
+		}
+
+	}
+
+}
+
+material 瀑布2
+{
+	technique 
+	{
+		pass
+		{
+		
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+            emissive 0.8 0.8 0.8 1
+
+            depth_write off
+
+			texture_unit
+			{
+				texture tga_瀑布2.dds
+	            scroll_anim 0 -0.9
+			}
+		}
+
+	}
+
+}
+
+material 柴火01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_柴火01.dds
+			}
+		}
+
+	}
+
+}
+
+material 小兰花叶子
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_小兰花叶子.dds
+			}
+		}
+
+	}
+
+}
+
+material 小兰花
+{
+	technique
+	{
+		pass
+		{
+emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_兰花01b.dds
+			}
+		}
+
+	}
+
+}
+
+material 鲤鱼动画
+{
+	technique
+	{
+		pass
+		{
+			emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+			shader_macro SKINNED
+			texture_unit
+			{
+				texture tga_鲤鱼动画.dds
+			}
+		}
+
+	}
+
+}
+
+material 苍蝇动画
+{
+	technique
+	{
+		pass
+		{
+			diffuse vertexcolour
+			
+			scene_blend alpha_blend
+			shader_macro SKINNED
+            depth_write off
+			texture_unit
+			{
+				texture tga_苍蝇动画.dds
+			}
+		}
+
+	}
+
+}
+
+material 蝴蝶动画1
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+			shader_macro SKINNED
+			texture_unit
+			{
+				texture tga_蝴蝶动画1.dds
+			}
+		}
+
+	}
+
+}
+
+material 蝴蝶动画2
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+			shader_macro SKINNED
+			texture_unit
+			{
+				texture tga_蝴蝶动画2.dds
+			}
+		}
+
+	}
+
+}
+
+material 镖车粮01
+{
+	technique
+	{
+		pass
+		{
+            shader_macro SKINNED
+			texture_unit
+			{
+				texture jpg_镖车粮01.dds
+			}
+		}
+
+	}
+
+}
+
+material 樟树01_02
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_樟树01.dds
+			}
+		}
+
+	}
+
+}
+
+material 樟树01_01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_樟树干.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 樟树02_01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_樟树干.dds
+			}
+		}
+
+	}
+
+}
+
+material 樟树02_02
+{
+	technique
+	{
+		pass
+		{
+	emissive 0.2 0.2 0.2 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_樟树01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫门
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫门02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫门04
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫门05
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫门03
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫门07
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙06.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫门06
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙08.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋013
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋015
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋012
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋014
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰房屋022
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋025
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋024
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋026
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_09.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋023
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰房屋03
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋033
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋035
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋032
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋034
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_07.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰房屋042
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋043
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋044
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋045
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋046
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_07.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋04
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰房屋052
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋053
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋054
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋055
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_06.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋056
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_07.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋05
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰房屋06
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋064
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋066
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋062
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋063
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋065
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_06.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋067
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_09.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰房屋076
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋072
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋074
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋077
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋07
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋073
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_08.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋075
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_06.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰房屋085
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋082
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋083
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋08
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋084
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰房屋09
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋092
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_09.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰房屋104
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋102
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋107
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋1011
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋105
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_06.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋103
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_08.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰房屋106
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡10
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰花柱.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡9
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰围墙门2.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_06.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡4
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡5
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡6
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_09.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡7
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰关卡8
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_08.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城墙3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城墙
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城墙2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔4
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔5
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_06.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰城塔012
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔013
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔014
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔015
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_06.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔016
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_09.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰城塔01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙2
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙3
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙4
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙5
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_05.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙6
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_06.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙7
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_08.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙8
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_07.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙9
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_09.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙10
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_11.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰寺庙
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰王城_01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙012
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙013
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙014
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙04.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰地宫墙02
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙022
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰地宫墙033
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙032
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙03
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙03.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙034
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙04.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰地宫墙04
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙042
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰地宫墙052
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙05
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙053
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙03.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰地宫墙062
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙06
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙02.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙063
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙03.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰地宫墙07
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙01.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫墙072
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 楼兰地宫墙饰01
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture jpg_楼兰地宫墙04.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫火把
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_楼兰地宫物件.dds
+			}
+		}
+
+	}
+
+}
+
+material 楼兰地宫火把2
+{
+	technique
+	{
+		pass
+		{
+			emissive 1 1 1 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_楼兰地宫物件.dds
+			}
+		}
+
+	}
+
+}
+
+material 旗帜01
+{
+	technique
+	{
+		pass
+		{
+		    shader_macro SKINNED
+			texture_unit
+			{
+				texture jpg_旗帜01.dds
+			}
+		}
+
+	}
+
+}
+
+material 冕雀03
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+            emissive 0.1 0.1 0.1 1
+            shader_macro SKINNED
+			texture_unit
+			{
+				texture tga_冕雀03.dds
+			}
+		}
+
+	}
+
+}
+
+material 太阳鸟01
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+            emissive 0.1 0.1 0.1 1
+			shader_macro SKINNED
+			texture_unit
+			{
+				texture tga_太阳鸟01.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 太阳鸟02
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+emissive 0.1 0.1 0.1 1
+
+shader_macro SKINNED
+			texture_unit
+			{
+				texture tga_太阳鸟02.dds
+			}
+		}
+
+	}
+
+}
+
+
+material 太阳鸟03
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+emissive 0.1 0.1 0.1 1
+shader_macro SKINNED
+			texture_unit
+			{
+				texture tga_太阳鸟03.dds
+			}
+		}
+
+	}
+
+}
+
+material 植物草绿
+{
+	technique
+	{
+		pass
+		{
+			emissive 0.5 0.5 0.5 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_植物绿.dds
+			}
+		}
+
+	}
+
+}
+
+material 花草01
+{
+	technique
+	{
+		pass
+		{
+            emissive 0.3 0.3 0.3 1
+			scene_blend alpha_blend
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture tga_植物11.dds
+			}
+		}
+
+	}
+}
+
+
+material chuansongmen_01_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_5670.dds
+			}
+		}
+
+	}
+
+}
+
+
+material chuansongmen_01_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_4547.dds -1
+				colour_op_ex modulate_x4 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material chuansongmen_01_04
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_4588.dds -1
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material chuansongmen_01_05
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_5500.dds -1
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material chuansongmen_01_06
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_5466.dds -1
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material chuansongdian_01_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3184.dds
+			}
+		}
+
+	}
+
+}
+
+
+material chuansongdian_01_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3194.dds
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material chuansongdian_01_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend alpha_blend
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3020.dds
+			}
+		}
+
+	}
+
+}
+
+
+material chuansongdian_01_09
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3202.dds
+				tex_address_mode clamp
+			}
+		}
+
+	}
+
+}
+
+material Examples/Smoke
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend alpha_blend
+			depth_write off
+			diffuse vertexcolour
+			
+			shader ogreparticle
+			texture_unit
+			{
+				texture Smoke15Frames.png
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material cj_hcplz_01
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0 0 0 1
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3299.dds -1
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material cj_shuimianwuqi_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_4847.dds
+			}
+		}
+
+	}
+
+}
+
+material cj_shachen_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3144.dds
+			}
+		}
+
+	}
+
+}
+
+material cj_csjj_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3258.dds
+				tex_address_mode clamp
+			}
+		}
+
+	}
+
+}
+
+material cj_csjj_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture bmp_kl_2053.dds
+				tex_address_mode clamp
+				//colour_op_ex modulate_x2 src_texture src_current
+				//colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material cj_csjj_04
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3302.dds
+				tex_address_mode clamp
+				//colour_op_ex modulate_x2 src_texture src_current
+				//colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material cj_csjj_05
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3307.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material cj_csjj_06
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture jpg_kl_7263.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material cj_csjj_07
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3226.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material cj_gouhuo_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			//fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3234.dds
+				tex_address_mode clamp
+				//colour_op_ex modulate_x2 src_texture src_current
+				//colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material cj_gouhuo_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3177.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x4 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material cj_fengsha_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			//fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3144.dds
+				tex_address_mode clamp
+				//colour_op_ex modulate_x2 src_texture src_current
+				//colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material Terrain/OneLayer
+{
+    technique
+    {
+        pass
+        {
+		    shader ogreterrain_onelayer
+		    texture_unit
+			{
+			    texture white1x1.dds
+			}
+		}
+	}
+}
+
+material Terrain/OneLayerLightmap
+{
+    technique
+    {
+        pass
+        {
+		    shader ogreterrain_onelayer_lightmap
+		    texture_unit
+			{
+			    texture white1x1.dds
+			}
+			texture_unit
+			{
+			    texture white1x1.dds
+			}
+		}
+	}
+}
+
+material Terrain/TwoLayer
+{
+    technique
+    {
+        pass
+        {
+		    shader ogreterrain_twolayer
+		    texture_unit
+			{
+			    texture white1x1.dds
+			}
+			texture_unit
+			{
+			    texture white1x1.dds
+			}
+		}
+	}
+}
+
+
+material Terrain/TwoLayerLightmap
+{
+    technique
+    {
+        pass
+        {
+		    shader ogreterrain_twolayer_lightmap
+		    texture_unit
+			{
+			    texture white1x1.dds
+			}
+			texture_unit
+			{
+			    texture white1x1.dds
+			}
+			
+			texture_unit
+			{
+			    texture white1x1.dds
+			}
+		}
+	}
+}
+
+
+
+material premierBaseTemplate
+{    
+    technique
+    {
+        pass
+        {
+            fog_override true
+            lighting off
+            emissive 0.300000 0.300000 0.300000
+            alpha_rejection greater 128
+			shader_macro SKINNED
+            texture_unit
+            {
+                texture $tex_template               
+                filtering  anisotropic
+                max_anisotropy 8                
+            }
+        }
+    }
+}
+
+material 女主角发型_01_白
+{
+	  material_parent premierBaseTemplate
+      set $tex_template tga_女主角发型_01_白.dds 
+}
+
+material 新女主角脸_01
+{
+      material_parent premierBaseTemplate
+      set $tex_template  tga_新女主角脸_01.dds 
+}
+
+material 突厥武士女身体_01
+{
+      material_parent premierBaseTemplate
+      set $tex_template  tga_突厥武士女身体_01.dds 
+}
+
+material 突厥武士女双手_01
+{
+      material_parent premierBaseTemplate
+      set $tex_template  tga_突厥武士女双手_01.dds 
+}
+
+material 突厥武士女双脚_01
+{
+      material_parent premierBaseTemplate
+      set $tex_template  TGA_突厥武士女双脚_01.dds 
+}
+
+
+material WeaponTemplate
+{
+	technique
+    {
+        pass
+        {
+            diffuse 1.0 1.0 1.0
+            fog_override true
+            //lighting off
+            ambient 1.0 1.0 1.0            
+            emissive 0.7 0.7 0.7
+            texture_unit
+            {	
+                texture $basetexture				
+				filtering  trilinear
+            }
+            
+            texture_unit
+			{
+			  tex_address_mode mirror
+				texture tga_reflect.dds
+				colour_op_ex add_smooth src_texture src_current				
+				env_map spherical
+				colour_op_multipass_fallback one one
+			}
+        }
+    }
+}
+
+material 突厥武士男刀_01
+{
+    material_parent WeaponTemplate
+    set $basetexture TGA_突厥武士男刀_01.dds
+}

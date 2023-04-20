@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<model>
+    <frame name="蝴蝶动画.frame" />
+    <entity mesh="蝴蝶动画1.mesh" />
+    <entity mesh="蝴蝶动画2.mesh" />
+</model>

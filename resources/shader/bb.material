@@ -1,0 +1,238 @@
+material __default__
+{
+    technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			shader basic
+			texture_unit
+			{
+				texture white1x1.dds
+			}
+		}
+	}
+}
+
+material Examples/EveningSkyBox
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+			shader ogresky
+			texture_unit
+			{
+				texture evening.jpg cubic
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material mybox
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			shader basic
+			texture_unit
+			{
+				texture container.jpg
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material myrect
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			texture_unit
+			{
+				texture awesomeface.png
+				scroll_anim 0 -0.9
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material BaseWhite
+{
+    technique
+	{
+		pass
+		{
+			lighting off
+			shader basic
+			texture_unit
+			{
+				texture bricks2.dds
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material mysphere
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			shader basic
+			texture_unit
+			{
+				texture floor.dds
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+
+material myCylinder
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			shader basic
+			texture_unit
+			{
+				texture bricks2.dds
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material SkyLan
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+            shader ogresky
+			texture_unit
+			{
+				texture desertcube1024.dds cubic
+				tex_address_mode clamp
+			}
+			
+			texture_unit
+			{
+			    texture nskingr.jpg
+			}
+		}
+	}
+}
+
+material Examples/Ninja
+{
+	technique
+	{
+		pass
+		{
+		    shader_macro SKINNED
+			texture_unit
+			{
+				texture nskingr.jpg
+			}
+		}
+	}
+}
+
+material myvideo
+{
+    technique
+	{
+		pass
+		{
+		    shader ogresimple
+			texture_unit
+			{
+				texture out.mp4 video
+			}
+		}
+	}
+}
+
+material AnimTexture
+{
+    technique
+	{
+		pass
+		{
+		    shader ogresimple
+			texture_unit
+			{
+				anim_texture checkboard.dds bricks.dds 2
+			}
+		}
+	}
+}
+
+material floor
+{
+    technique
+	{
+		pass
+		{
+		    shader basic
+			texture_unit
+			{
+				texture checkboard.dds
+			}
+		}
+	}
+}
+
+material wall
+{
+    technique
+	{
+		pass
+		{
+		    shader basic
+			texture_unit
+			{
+				texture bricks3.dds
+			}
+		}
+	}
+}
+
+material mirror
+{
+    technique
+	{
+		pass
+		{
+		    shader ogreblend
+			texture_unit
+			{
+				texture ice.dds
+			}
+			
+			texture_unit
+			{
+				texture mirror
+			}
+		}
+	}
+}

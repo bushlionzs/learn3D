@@ -1,0 +1,129 @@
+material water_low.material
+{
+	technique Middle
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			depth_check on
+			depth_write off
+			lighting off
+			shader water
+			texture_unit animation
+			{
+				tex_coord_set 0
+				texture waves2.dds
+				filtering linear linear linear
+			}
+			
+			texture_unit reflect
+			{
+				tex_coord_set 1
+				texture cubemap-evul.dds cubic
+				tex_address_mode clamp
+				filtering linear linear linear
+			}
+		}		
+	}			
+}
+
+material water_yanjiang1
+{
+	technique Low
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			depth_check on
+			depth_write off
+			lighting off
+						
+			texture_unit animation
+			{
+				anim_texture jpg_ÑÒ½¬.dds 14 2
+			}
+		}
+			
+	}
+}
+
+material water_yanjiang2
+{
+	technique Low
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			depth_check on
+			depth_write off
+			lighting off
+						
+			texture_unit animation
+			{
+				anim_texture jpg_ÑÒ½¬2.dds 14 2
+			}
+		}
+			
+	}
+}
+
+material water_bowen
+{
+	technique Low
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			depth_check on
+			depth_write off
+			lighting off
+						
+			texture_unit animation
+			{
+				anim_texture jpg_bowen.dds 28 2
+			}
+		}
+			
+	}
+}
+
+
+material water_dahai
+{
+	technique Low
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			depth_check on
+			depth_write off
+			lighting off
+						
+			texture_unit animation
+			{
+				anim_texture jpg_water.dds 28 2
+			}
+		}
+			
+	}
+}
+
+material water_normal
+{
+	technique Low
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			depth_check on
+			depth_write off
+			lighting off
+						
+			texture_unit animation
+			{
+				anim_texture jpg_µÍµµË®.dds 28 2
+			}
+		}
+			
+	}
+}
