@@ -12,3 +12,13 @@ run fulldemo.exe
 If everything goes smoothly, you will see the following picture.
 
 ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/fulldemo.png)
+
+# how to compile in windows
+
+git clone https://github.com/bushlionzs/learn3D.git
+
+enter into 3rd directory
+
+Extract the "lib.7z" file to the current directory
+
+open learn3d.sln using vs2019, then start to compile
