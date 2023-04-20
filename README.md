@@ -10,3 +10,5 @@ Extract the "dll.7z" file to the current directory
 run fulldemo.exe
 
 If everything goes smoothly, you will see the following picture.
+
+![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/fulldemo.png)
