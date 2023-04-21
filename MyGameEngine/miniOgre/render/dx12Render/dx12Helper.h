@@ -45,7 +45,6 @@ public:
 	{
 		return mDx12RenderSystem;
 	}
-
 	ID3D12GraphicsCommandList* getCurrentCommandList();
 	ID3D12GraphicsCommandList* getMipmapCommandList();
 	Dx12HardwareBuffer* getMipmapVetexBuffer();

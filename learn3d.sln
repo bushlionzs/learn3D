@@ -17,6 +17,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fulldemo", "Application\ful
 		{0EC3F45D-D5F4-45DC-972C-96E56977CA68} = {0EC3F45D-D5F4-45DC-972C-96E56977CA68}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RenderToTexture", "Application\RenderToTexture\RenderToTexture.vcxproj", "{B1AFB49B-5512-4DD9-B83E-39137EAE77FD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0EC3F45D-D5F4-45DC-972C-96E56977CA68} = {0EC3F45D-D5F4-45DC-972C-96E56977CA68}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -49,6 +54,14 @@ Global
 		{FA8D2286-E93F-411C-87CE-F80460A01817}.Release|x64.Build.0 = Release|x64
 		{FA8D2286-E93F-411C-87CE-F80460A01817}.Release|x86.ActiveCfg = Release|Win32
 		{FA8D2286-E93F-411C-87CE-F80460A01817}.Release|x86.Build.0 = Release|Win32
+		{B1AFB49B-5512-4DD9-B83E-39137EAE77FD}.Debug|x64.ActiveCfg = Debug|x64
+		{B1AFB49B-5512-4DD9-B83E-39137EAE77FD}.Debug|x64.Build.0 = Debug|x64
+		{B1AFB49B-5512-4DD9-B83E-39137EAE77FD}.Debug|x86.ActiveCfg = Debug|Win32
+		{B1AFB49B-5512-4DD9-B83E-39137EAE77FD}.Debug|x86.Build.0 = Debug|Win32
+		{B1AFB49B-5512-4DD9-B83E-39137EAE77FD}.Release|x64.ActiveCfg = Release|x64
+		{B1AFB49B-5512-4DD9-B83E-39137EAE77FD}.Release|x64.Build.0 = Release|x64
+		{B1AFB49B-5512-4DD9-B83E-39137EAE77FD}.Release|x86.ActiveCfg = Release|Win32
+		{B1AFB49B-5512-4DD9-B83E-39137EAE77FD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +69,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{375978D0-36D9-4B21-ABDD-64FB9E826D33} = {F3A85C92-6EC0-435F-8D43-CB2E701EE72C}
 		{FA8D2286-E93F-411C-87CE-F80460A01817} = {F3A85C92-6EC0-435F-8D43-CB2E701EE72C}
+		{B1AFB49B-5512-4DD9-B83E-39137EAE77FD} = {F3A85C92-6EC0-435F-8D43-CB2E701EE72C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7F7D72E6-A16D-4A1E-9D22-24081F922F43}

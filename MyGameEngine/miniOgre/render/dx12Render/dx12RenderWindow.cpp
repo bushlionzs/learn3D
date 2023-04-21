@@ -4,11 +4,13 @@
 #include "dx12Helper.h"
 #include "dx12RenderSystem.h"
 #include "dx12Frame.h"
+#include "OgreStringConverter.h"
 
 Dx12RenderWindow::Dx12RenderWindow(Dx12RenderSystem* rs)
 {
 	mWnd = 0;
 	mRenderSystem = rs;
+	mBackgroundColor = ColourValue::Black;
 }
 
 Dx12RenderWindow::~Dx12RenderWindow()
@@ -26,6 +28,18 @@ void Dx12RenderWindow::create(const String& name, unsigned int width, unsigned i
 	}
 
 	mWnd = (HWND)StringConverter::parseSizeT(itor->second);
+
+	itor = miscParams->find("backGroundColor");
+	if (itor != miscParams->end())
+	{
+		ColourValue value;
+		if (StringConverter::parse(itor->second, value))
+		{
+			mBackgroundColor = value;
+		}
+	}
+
+	
 
 	auto device = DX12Helper::getSingleton().getDevice();
 
@@ -162,7 +176,8 @@ void Dx12RenderWindow::resize(unsigned int width, unsigned int height)
 	mScreenViewport.MaxDepth = 1.0f;
 
 	mScissorRect = { 0, 0, (LONG)mWidth, (LONG)mHeight };
-	mRenderSystem->buildMassResource();
+
+	mMsaaRenderTarget.createResource(mWidth, mHeight, mBackgroundColor, true);
 }
 
 ID3D12Resource* Dx12RenderWindow::getCurrentBackBuffer()const
@@ -190,9 +205,26 @@ void Dx12RenderWindow::preRender(ID3D12GraphicsCommandList* cl)
 	cl->RSSetScissorRects(1, &mScissorRect);
 }
 
-bool Dx12RenderWindow::useMsaa()
+void Dx12RenderWindow::clearFrameBuffer(uint32_t buffers,
+	const Ogre::ColourValue& colour,
+	float depth, uint16_t stencil)
 {
-	return DX12Helper::getSingleton().hasMsaa();
+	auto cl = mRenderSystem->getCommandList();
+	ID3D12Resource* renderTarget = mMsaaRenderTarget.getRenderTarget();
+	ID3D12Resource* depthStencil = mMsaaRenderTarget.getDepthStencil();
+	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		renderTarget,
+		D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
+		D3D12_RESOURCE_STATE_RENDER_TARGET);
+	cl->ResourceBarrier(1, &barrier);
+
+	auto rtvDescriptor = mMsaaRenderTarget.getRtvCpuHandle();
+	auto dsvDescriptor = mMsaaRenderTarget.getDsvCpuHandle();
+
+	cl->OMSetRenderTargets(1, &rtvDescriptor, FALSE, &dsvDescriptor);
+
+	cl->ClearRenderTargetView(rtvDescriptor, colour.ptr(), 0, nullptr);
+	cl->ClearDepthStencilView(dsvDescriptor, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 void Dx12RenderWindow::present()
@@ -202,9 +234,36 @@ void Dx12RenderWindow::present()
 	mCurrBackBufferIndex = (mCurrBackBufferIndex + 1) % mSwapChainBufferCount;
 }
 
+
 void Dx12RenderWindow::swapBuffers()
 {
-	
+	ID3D12Resource* renderTarget = mMsaaRenderTarget.getRenderTarget();
+	ID3D12Resource* depthStencil = mMsaaRenderTarget.getDepthStencil();
+	auto backBuffer = getCurrentBackBuffer();
+	auto cl = mRenderSystem->getCommandList();
+	D3D12_RESOURCE_BARRIER barriers[2] =
+	{
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			renderTarget,
+			D3D12_RESOURCE_STATE_RENDER_TARGET,
+			D3D12_RESOURCE_STATE_RESOLVE_SOURCE),
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			backBuffer,
+			D3D12_RESOURCE_STATE_PRESENT,
+			D3D12_RESOURCE_STATE_RESOLVE_DEST)
+	};
+
+	cl->ResourceBarrier(2, barriers);
+
+	cl->ResolveSubresource(
+		backBuffer,
+		0, renderTarget, 0,
+		DX12Helper::getSingleton().getBackBufferFormat());
+	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		backBuffer,
+		D3D12_RESOURCE_STATE_RESOLVE_DEST,
+		D3D12_RESOURCE_STATE_PRESENT);
+	cl->ResourceBarrier(1, &barrier);
 }
 
 void Dx12RenderWindow::copyContentsToMemory(const Box& src, const PixelBox& dst, FrameBuffer buffer)

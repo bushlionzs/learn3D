@@ -98,10 +98,7 @@ void Dx12RenderSystem::frameStart()
 
 void Dx12RenderSystem::frameEnd()
 {
-	postRender();
 	auto commandList = DX12Helper::getSingleton().getCurrentCommandList();
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mRenderWindow->getCurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 	// Done recording commands.
 	ThrowIfFailed(commandList->Close());
@@ -157,44 +154,13 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 
 void Dx12RenderSystem::postRender()
 {
-	auto commandlist = mCurrentFrame->getCommandList();
-	auto backBuffer = mActiveDx12RenderTarget->getCurrentBackBuffer();
-	if (mActiveDx12RenderTarget->useMsaa())
-	{
-		{
-			D3D12_RESOURCE_STATES states = mActiveDx12RenderTarget->getResourceStates();
-			D3D12_RESOURCE_BARRIER barriers[2] =
-			{
-				CD3DX12_RESOURCE_BARRIER::Transition(
-					m_msaaRenderTarget.Get(),
-					D3D12_RESOURCE_STATE_RENDER_TARGET,
-					D3D12_RESOURCE_STATE_RESOLVE_SOURCE),
-				CD3DX12_RESOURCE_BARRIER::Transition(
-					backBuffer,
-					states,
-					D3D12_RESOURCE_STATE_RESOLVE_DEST)
-			};
-
-			commandlist->ResourceBarrier(2, barriers);
-		}
-		//mCommandList->CopyResource(backBuffer, m_msaaRenderTarget.Get());
-		commandlist->ResolveSubresource(backBuffer, 0, m_msaaRenderTarget.Get(), 0, mBackBufferFormat);
-
-		{
-			D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-				backBuffer,
-				D3D12_RESOURCE_STATE_RESOLVE_DEST,
-				D3D12_RESOURCE_STATE_RENDER_TARGET);
-			commandlist->ResourceBarrier(1, &barrier);
-		}
-	}
+	
 }
 
 Camera* Dx12RenderSystem::getCurrentCamera()
 {
 	return mCamera;
 }
-
 
 ITexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
 {
@@ -208,80 +174,6 @@ ITexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, Textu
 
 	return tex;
 }
-
-void Dx12RenderSystem::buildMassResource()
-{
-	bool msaa = DX12Helper::getSingleton().hasMsaa();
-	D3D12_RESOURCE_DESC msaaRTDesc = CD3DX12_RESOURCE_DESC::Tex2D(
-		DX12Helper::getSingleton().getBackBufferFormat(),
-		mRenderWindow->getWidth(),
-		mRenderWindow->getHeight(),
-		1, // This render target view has only one texture.
-		1, // Use a single mipmap level
-		msaa ? 4 : 1
-	);
-	msaaRTDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
-
-	D3D12_CLEAR_VALUE msaaOptimizedClearValue = {};
-	msaaOptimizedClearValue.Format = mBackBufferFormat;
-	memcpy(msaaOptimizedClearValue.Color, mClearColor, sizeof(float) * 4);
-
-	CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
-
-	auto device = DX12Helper::getSingleton().getDevice();
-	ThrowIfFailed(device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&msaaRTDesc,
-		D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
-		&msaaOptimizedClearValue,
-		IID_PPV_ARGS(m_msaaRenderTarget.ReleaseAndGetAddressOf())
-	));
-
-	m_msaaRenderTarget->SetName(L"MSAA Render Target");
-
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-	rtvDesc.Format = mBackBufferFormat;
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DMS;
-
-	device->CreateRenderTargetView(
-		m_msaaRenderTarget.Get(), &rtvDesc,
-		m_msaaRTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-
-	// Create an MSAA depth stencil view.
-	D3D12_RESOURCE_DESC depthStencilDesc = CD3DX12_RESOURCE_DESC::Tex2D(
-		mDepthStencilFormat,
-		mRenderWindow->getWidth(),
-		mRenderWindow->getHeight(),
-		1, // This depth stencil view has only one texture.
-		1, // Use a single mipmap level.
-		4
-	);
-	depthStencilDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-
-	D3D12_CLEAR_VALUE depthOptimizedClearValue = {};
-	depthOptimizedClearValue.Format = mDepthStencilFormat;
-	depthOptimizedClearValue.DepthStencil.Depth = 1.0f;
-	depthOptimizedClearValue.DepthStencil.Stencil = 0;
-
-	ThrowIfFailed(device->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&depthStencilDesc,
-		D3D12_RESOURCE_STATE_DEPTH_WRITE,
-		&depthOptimizedClearValue,
-		IID_PPV_ARGS(m_msaaDepthStencil.ReleaseAndGetAddressOf())
-	));
-
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-	dsvDesc.Format = mDepthStencilFormat;
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2DMS;
-
-	device->CreateDepthStencilView(
-		m_msaaDepthStencil.Get(), &dsvDesc,
-		m_msaaDSVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-}
-
 
 void Dx12RenderSystem::createFrameResource()
 {
@@ -340,37 +232,7 @@ void Dx12RenderSystem::clearFrameBuffer(uint32 buffers,
 	const ColourValue& colour,
 	float depth, uint16 stencil)
 {
-
-	if (mActiveDx12RenderTarget->useMsaa())
-	{
-		D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-			m_msaaRenderTarget.Get(),
-			D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
-			D3D12_RESOURCE_STATE_RENDER_TARGET);
-		mCurrentFrame->getCommandList()->ResourceBarrier(1, &barrier);
-
-		auto rtvDescriptor = m_msaaRTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		auto dsvDescriptor = m_msaaDSVDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-
-		mCurrentFrame->getCommandList()->OMSetRenderTargets(1, &rtvDescriptor, FALSE, &dsvDescriptor);
-
-		mCurrentFrame->getCommandList()->ClearRenderTargetView(rtvDescriptor, mClearColor, 0, nullptr);
-		mCurrentFrame->getCommandList()->ClearDepthStencilView(dsvDescriptor, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	}
-	else
-	{
-		auto backBuffer = mActiveDx12RenderTarget->getCurrentBackBuffer();
-
-
-		auto backBufferView = mActiveDx12RenderTarget->CurrentBackBufferView();
-		auto depthStencilView = mActiveDx12RenderTarget->DepthStencilView();
-		// Clear the back buffer and depth buffer.
-		mCurrentFrame->getCommandList()->ClearRenderTargetView(backBufferView, mClearColor, 0, nullptr);
-		mCurrentFrame->getCommandList()->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-
-		// Specify the buffers we are going to render to.
-		mCurrentFrame->getCommandList()->OMSetRenderTargets(1, &backBufferView, true, &depthStencilView);
-	}
+	mActiveDx12RenderTarget->clearFrameBuffer(buffers, colour, depth, stencil);
 }
 
 Ogre::RenderWindow* Dx12RenderSystem::createRenderWindow(
@@ -521,16 +383,6 @@ void Dx12RenderSystem::CreateRtvAndDsvDescriptorHeaps()
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc = {};
 	rtvDescriptorHeapDesc.NumDescriptors = 1;
 	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-
-	ThrowIfFailed(device->CreateDescriptorHeap(&rtvDescriptorHeapDesc,
-		IID_PPV_ARGS(m_msaaRTVDescriptorHeap.ReleaseAndGetAddressOf())));
-
-	D3D12_DESCRIPTOR_HEAP_DESC dsvDescriptorHeapDesc = {};
-	dsvDescriptorHeapDesc.NumDescriptors = 1;
-	dsvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-
-	ThrowIfFailed(device->CreateDescriptorHeap(&dsvDescriptorHeapDesc,
-		IID_PPV_ARGS(m_msaaDSVDescriptorHeap.ReleaseAndGetAddressOf())));
 }
 
 void Dx12RenderSystem::renderImpl(Dx12Pass* pass)

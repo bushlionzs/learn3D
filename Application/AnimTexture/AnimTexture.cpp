@@ -56,5 +56,5 @@ void AnimTexture::appUpdate(float delta)
 
 EngineType AnimTexture::getEngineType()
 {
-	return EngineType_Dx11;
+	return EngineType_Dx12;
 }

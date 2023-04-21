@@ -460,6 +460,7 @@
     <ClInclude Include="miniOgre\render\dx11Render\dx11Renderable.h" />
     <ClInclude Include="miniOgre\render\dx11Render\dx11RenderSystem.h" />
     <ClInclude Include="miniOgre\render\dx11Render\dx11RenderTarget.h" />
+    <ClInclude Include="miniOgre\render\dx11Render\dx11RenderTexture.h" />
     <ClInclude Include="miniOgre\render\dx11Render\dx11RenderWindow.h" />
     <ClInclude Include="miniOgre\render\dx11Render\dx11Shader.h" />
     <ClInclude Include="miniOgre\render\dx11Render\dx11Texture.h" />
@@ -473,6 +474,7 @@
     <ClInclude Include="miniOgre\render\dx12Render\dx12HardwareBufferManager.h" />
     <ClInclude Include="miniOgre\render\dx12Render\dx12HardwarePixelBuffer.h" />
     <ClInclude Include="miniOgre\render\dx12Render\dx12Helper.h" />
+    <ClInclude Include="miniOgre\render\dx12Render\dx12RenderTargetHelper.h" />
     <ClInclude Include="miniOgre\render\dx12Render\dx12Renderable.h" />
     <ClInclude Include="miniOgre\render\dx12Render\dx12RenderSystem.h" />
     <ClInclude Include="miniOgre\render\dx12Render\dx12RenderTarget.h" />
@@ -1052,6 +1054,7 @@
     <ClCompile Include="miniOgre\render\dx11Render\dx11Renderable.cpp" />
     <ClCompile Include="miniOgre\render\dx11Render\dx11RenderSystem.cpp" />
     <ClCompile Include="miniOgre\render\dx11Render\dx11RenderTarget.cpp" />
+    <ClCompile Include="miniOgre\render\dx11Render\dx11RenderTexture.cpp" />
     <ClCompile Include="miniOgre\render\dx11Render\dx11RenderWindow.cpp" />
     <ClCompile Include="miniOgre\render\dx11Render\dx11Shader.cpp" />
     <ClCompile Include="miniOgre\render\dx11Render\dx11Texture.cpp" />
@@ -1062,6 +1065,7 @@
     <ClCompile Include="miniOgre\render\dx12Render\dx12HardwareBufferManager.cpp" />
     <ClCompile Include="miniOgre\render\dx12Render\dx12HardwarePixelBuffer.cpp" />
     <ClCompile Include="miniOgre\render\dx12Render\dx12Helper.cpp" />
+    <ClCompile Include="miniOgre\render\dx12Render\dx12RenderTargetHelper.cpp" />
     <ClCompile Include="miniOgre\render\dx12Render\dx12Renderable.cpp" />
     <ClCompile Include="miniOgre\render\dx12Render\dx12RenderSystem.cpp" />
     <ClCompile Include="miniOgre\render\dx12Render\dx12RenderTarget.cpp" />
@@ -1243,7 +1247,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{0ec3f45d-d5f4-45dc-972c-96e56977ca68}</ProjectGuid>
     <RootNamespace>MyGameEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

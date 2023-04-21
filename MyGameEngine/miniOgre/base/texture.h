@@ -77,6 +77,7 @@ namespace Ogre {
         float _gamma = 1.0f;
         uint32_t _fsaa = 0;
         TextureUsage _tex_usage = TU_DEFAULT;
+        ColourValue _backgroudColor = ColourValue::Black;
     };
 
     class ITexture

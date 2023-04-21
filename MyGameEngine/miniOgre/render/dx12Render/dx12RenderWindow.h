@@ -3,6 +3,7 @@
 #include "OgreRenderWindow.h"
 #include "d3dutil.h"
 #include "dx12RenderTarget.h"
+#include "dx12RenderTargetHelper.h"
 class Dx12RenderSystem;
 
 class Dx12RenderWindow : public Ogre::RenderWindow, public Dx12RenderTarget
@@ -30,9 +31,9 @@ public:
 	virtual D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
 
 	virtual void preRender(ID3D12GraphicsCommandList* cl);
-
-	virtual bool useMsaa();
-
+	virtual void clearFrameBuffer(uint32_t buffers,
+		const Ogre::ColourValue& colour,
+		float depth, uint16_t stencil);
 	void present();
 private:
 	HWND mWnd;
@@ -49,4 +50,8 @@ private:
 	D3D12_RECT mScissorRect;
 
 	uint32_t mCurrBackBufferIndex = 0;
+
+	//for msaa
+	Dx12RenderTargetHelper mMsaaRenderTarget;
+	ColourValue mBackgroundColor;
 };

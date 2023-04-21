@@ -5,6 +5,8 @@
 #include "dx11RenderTarget.h"
 class Dx11RenderSystem;
 
+#define DX11_BACKBUFFER_COUNT 2
+
 class Dx11RenderWindow : public Ogre::RenderWindow, public Dx11RenderTarget
 {
 public:
@@ -27,23 +29,25 @@ public:
 
 	virtual void preRender();
 
-	virtual bool useMsaa();
-
 	void present();
+
+	virtual void clearFrameBuffer(uint32_t buffers,
+		const Ogre::ColourValue& colour,
+		float depth, uint16_t stencil);
 private:
 	void createSwapChain();
 	void createDepthStencil();
 private:
 	HWND mWnd;
 	Dx11RenderSystem* mRenderSystem;
-	static const uint32_t mSwapChainBufferCount = 2;
-	IDXGISwapChain* mSwapChain = nullptr;
-	ID3D11Texture2D* mBackBuffer = nullptr;
-	ID3D11Texture2D* mDepthStencilBuffer = nullptr;
-	ID3D11RenderTargetView* mRenderTargetView = nullptr;
-	ID3D11DepthStencilView* mDepthStencilView = nullptr;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;
+	
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRenderTargetViews[DX11_BACKBUFFER_COUNT];
+
+	Microsoft::WRL::ComPtr <ID3D11Texture2D> mDepthStencilBuffer = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  mDepthStencilView = nullptr;
 
 	D3D11_VIEWPORT mViewport;
 
-	uint32_t mCurrBackBufferIndex = 0;
+	uint32_t mCurrFrameIndex = 0;
 };

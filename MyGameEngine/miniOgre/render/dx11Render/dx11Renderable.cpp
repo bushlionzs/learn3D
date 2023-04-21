@@ -83,7 +83,6 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, Camera* cam)
 	for (int i = 0; i < texs.size(); i++)
 	{
 		Dx11Texture* current = (Dx11Texture*)texs[i]->getRaw();
-
 		ID3D11ShaderResourceView* texView = current->getResourceView();
 
 		if (current->isCubeTexture())
@@ -94,6 +93,11 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, Camera* cam)
 		{
 			res.push_back(texView);
 		}
+	}
+
+	if (texs.size() == 0)
+	{
+		int kk = 0;
 	}
 	if (!rescube.empty())
 	{

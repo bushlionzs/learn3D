@@ -43,7 +43,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> mTexUpload;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mSrvDescriptorHeap;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
-    Dx12RenderSystem* mEngine = nullptr;
+    Dx12RenderSystem* mRenderSystem = nullptr;
     CD3DX12_CPU_DESCRIPTOR_HANDLE mDescriptorHandle;
     bool mCreate = false;
     DXGI_FORMAT mD3DFormat;

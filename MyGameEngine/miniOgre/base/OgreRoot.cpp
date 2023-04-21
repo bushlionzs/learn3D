@@ -280,8 +280,8 @@ namespace Ogre {
             
 
         
-        mRenderSystem->_updateAllRenderTargets(false);
-        mRenderSystem->_swapAllRenderTargetBuffers();
+        mRenderSystem->_updateAllRenderTargets(true);
+        //mRenderSystem->_swapAllRenderTargetBuffers();
         mRenderSystem->frameEnd();
 
         return _fireFrameEnded();

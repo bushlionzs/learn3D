@@ -43,8 +43,6 @@ public:
         return mDx12TextureHandleManager;
     }
 
-    void buildMassResource();
-
     Dx12Frame* getCurrentFrame()
     {
         return mCurrentFrame;
@@ -74,15 +72,6 @@ private:
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
 
-    Microsoft::WRL::ComPtr<ID3D12Resource>          m_msaaRenderTarget;
-    Microsoft::WRL::ComPtr<ID3D12Resource>          m_msaaDepthStencil;
-
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>    m_msaaRTVDescriptorHeap;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>    m_msaaDSVDescriptorHeap;
-
-
-    DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-    DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D32_FLOAT;
     Ogre::Camera* mCamera = nullptr;
 
     Dx12Pass mCurrentPass;

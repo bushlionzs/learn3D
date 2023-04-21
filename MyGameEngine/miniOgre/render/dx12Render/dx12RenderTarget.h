@@ -1,5 +1,6 @@
 #pragma once
-#include "d3dutil.h"
+#include "dx12Common.h"
+#include "OgreColourValue.h"
 class Dx12RenderTarget
 {
 public:
@@ -19,5 +20,9 @@ public:
 	{
 		return false;
 	}
+
+	virtual void clearFrameBuffer(uint32_t buffers,
+		const Ogre::ColourValue& colour,
+		float depth, uint16_t stencil) = 0;
 private:
 };

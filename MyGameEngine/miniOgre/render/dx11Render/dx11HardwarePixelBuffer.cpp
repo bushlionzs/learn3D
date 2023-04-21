@@ -5,6 +5,7 @@
 #include "dx11Texture.h"
 #include "dx11RenderSystem.h"
 #include "dx11Helper.h"
+#include "dx11RenderTexture.h"
 
 Dx11HardwarePixelBuffer::Dx11HardwarePixelBuffer(
 	Dx11Texture* parentTexture,
@@ -22,20 +23,20 @@ Dx11HardwarePixelBuffer::Dx11HardwarePixelBuffer(
 {
 	mUsage = usage;
 
-	//if (mUsage & Ogre::TU_RENDERTARGET)
-	//{
-	//	// Create render target for each slice
-	//	mSliceTRT.reserve(mDepth);
-	//	for (size_t zoffset = 0; zoffset < mDepth; ++zoffset)
-	//	{
-	//		String name;
-	//		name = "rtt/" + StringConverter::toString((size_t)this) + "/" + parentTexture->getName();
+	if (mUsage & Ogre::TU_RENDERTARGET)
+	{
+		// Create render target for each slice
+		mSliceTRT.reserve(mDepth);
+		for (size_t zoffset = 0; zoffset < mDepth; ++zoffset)
+		{
+			String name;
+			name = "rtt/" + StringConverter::toString((size_t)this) + "/" + parentTexture->getName();
 
-	//		RenderTexture* trt = new Dx12RenderTexture(name, this, zoffset);
-	//		mSliceTRT.push_back(trt);
-	//		DX12Helper::getSingleton().getDx12RenderSystem()->attachRenderTarget(*trt);
-	//	}
-	//}
+			RenderTexture* trt = new Dx11RenderTexture(name, this, zoffset);
+			mSliceTRT.push_back(trt);
+			DX11Helper::getSingleton().getRenderSystem()->attachRenderTarget(*trt);
+		}
+	}
 }
 
 Dx11HardwarePixelBuffer::~Dx11HardwarePixelBuffer()

@@ -54,12 +54,18 @@ void Dx11Texture::freeInternalResourcesImpl(void)
 
 void Dx11Texture::_create2DTex()
 {
-    UINT numMips = mNumMipmaps + 1;
+    UINT numMips = mTextureProperty._numMipmaps + 1;
 
-    if (mNumMipmaps == 0)
+    if (mTextureProperty._numMipmaps == 0)
     {
         mNumMipmaps = getMaxMipmaps();
         numMips = mNumMipmaps + 1;
+    }
+
+    if (mUsage & TU_RENDERTARGET)
+    {
+        mNumMipmaps = 0;
+        numMips = 1;
     }
     UINT retVal = 0;
     retVal |= D3D11_BIND_SHADER_RESOURCE;
@@ -93,6 +99,11 @@ void Dx11Texture::_create2DTex()
     }
     
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+
+    if (mUsage & TU_RENDERTARGET)
+    {
+        int kk = 0;
+    }
    
     mTex->GetDesc(&desc);
     srvDesc.Format = desc.Format;
@@ -137,7 +148,7 @@ void Dx11Texture::_createSurfaceList(void)
     {
         size_t width = mTextureProperty._width;
         size_t height = mTextureProperty._height;
-        for (size_t mip = 0; mip <= mNumMipmaps; ++mip)
+        for (size_t mip = 0; mip <= mTextureProperty._numMipmaps; ++mip)
         {
 
             Dx11HardwarePixelBuffer* buffer;
@@ -156,7 +167,6 @@ void Dx11Texture::_createSurfaceList(void)
 
             if (width > 1) width /= 2;
             if (height > 1) height /= 2;
-            if (depth > 1 && mTextureProperty._texType != TEX_TYPE_2D_ARRAY) depth /= 2;
         }
     }
 }

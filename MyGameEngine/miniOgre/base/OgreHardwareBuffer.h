@@ -1,5 +1,4 @@
 #pragma once
-class GraphicsCommandList;
 
 namespace Ogre {
     enum HardwareBufferUsage : uint8_t

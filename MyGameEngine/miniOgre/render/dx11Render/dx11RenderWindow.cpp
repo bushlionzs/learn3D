@@ -49,7 +49,7 @@ void Dx11RenderWindow::createSwapChain()
 	sd.SampleDesc.Quality = 0;
 
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.BufferCount = 1;
+	sd.BufferCount = DX11_BACKBUFFER_COUNT;
 	sd.OutputWindow = mWnd;
 	sd.Windowed = true;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
@@ -66,7 +66,7 @@ void Dx11RenderWindow::createSwapChain()
 	IDXGIFactory* dxgiFactory = 0;
 	dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 
-	auto hr = dxgiFactory->CreateSwapChain(device, &sd, &mSwapChain);
+	auto hr = dxgiFactory->CreateSwapChain(device, &sd, mSwapChain.ReleaseAndGetAddressOf());
 
 	ReleaseCOM(dxgiDevice);
 	ReleaseCOM(dxgiAdapter);
@@ -92,21 +92,20 @@ void Dx11RenderWindow::resize(unsigned int width, unsigned int height)
 	
 	mWidth = width;
 	mHeight = height;
-	ReleaseCOM(mSwapChain);
-	ReleaseCOM(mRenderTargetView);
-	ReleaseCOM(mDepthStencilView);
-	ReleaseCOM(mDepthStencilBuffer);
-
 
 	createSwapChain();
 
 	auto device = DX11Helper::getSingleton().getDevice();
 	auto deviceContext = DX11Helper::getSingleton().getDeviceContext();
 	
-	mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&mBackBuffer));
-	device->CreateRenderTargetView(mBackBuffer, 0, &mRenderTargetView);
+	for (uint32_t i = 0; i < DX11_BACKBUFFER_COUNT; i++)
+	{
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer;
+		mSwapChain->GetBuffer(0, IID_PPV_ARGS(pBackBuffer.GetAddressOf()));
+		CD3D11_RENDER_TARGET_VIEW_DESC rtvDesc(D3D11_RTV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R8G8B8A8_UNORM);
+		device->CreateRenderTargetView(pBackBuffer.Get(), 0, m_pRenderTargetViews[i].ReleaseAndGetAddressOf());
+	}
 	
-	ReleaseCOM(mBackBuffer);
 	// Create the depth/stencil buffer and view.
 
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -123,16 +122,9 @@ void Dx11RenderWindow::resize(unsigned int width, unsigned int height)
 	depthStencilDesc.CPUAccessFlags = 0;
 	depthStencilDesc.MiscFlags = 0;
 
-	device->CreateTexture2D(&depthStencilDesc, 0, &mDepthStencilBuffer);
-	device->CreateDepthStencilView(mDepthStencilBuffer, nullptr, &mDepthStencilView);
+	device->CreateTexture2D(&depthStencilDesc, 0, mDepthStencilBuffer.ReleaseAndGetAddressOf());
+	device->CreateDepthStencilView(mDepthStencilBuffer.Get(), nullptr, mDepthStencilView.ReleaseAndGetAddressOf());
 
-
-	// Bind the render target view and depth/stencil view to the pipeline.
-
-	deviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
-
-
-	// Set the viewport transform.
 
 	mViewport.TopLeftX = 0;
 	mViewport.TopLeftY = 0;
@@ -141,17 +133,16 @@ void Dx11RenderWindow::resize(unsigned int width, unsigned int height)
 	mViewport.MinDepth = 0.0f;
 	mViewport.MaxDepth = 1.0f;
 
-	deviceContext->RSSetViewports(1, &mViewport);
 }
 
 ID3D11RenderTargetView* Dx11RenderWindow::getRenderTargetView()const
 {
-	return mRenderTargetView;
+	return m_pRenderTargetViews[mCurrFrameIndex].Get();
 }
 
 ID3D11DepthStencilView* Dx11RenderWindow::getDepthStencilView()const
 {
-	return mDepthStencilView;
+	return mDepthStencilView.Get();
 }
 
 
@@ -159,22 +150,40 @@ void Dx11RenderWindow::preRender()
 {
 	auto deviceContext = DX11Helper::getSingleton().getDeviceContext();
 	deviceContext->RSSetViewports(1, &mViewport);
-	deviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
+
+	auto renderTarget = getRenderTargetView();
+	deviceContext->OMSetRenderTargets(1, &renderTarget, mDepthStencilView.Get());
 }
 
-bool Dx11RenderWindow::useMsaa()
-{
-	return true;
-}
 
 void Dx11RenderWindow::present()
 {
 	mSwapChain->Present(0, 0);
+	mCurrFrameIndex++;
+	mCurrFrameIndex = (mCurrFrameIndex % DX11_BACKBUFFER_COUNT);
+}
+
+
+void Dx11RenderWindow::clearFrameBuffer(uint32_t buffers,
+	const Ogre::ColourValue& colour,
+	float depth, uint16_t stencil)
+{
+	auto context = DX11Helper::getSingleton().getDeviceContext();
+	auto renderTargetView = getRenderTargetView();
+	auto depthStencilView = getDepthStencilView();
+	context->ClearRenderTargetView(renderTargetView, reinterpret_cast<const float*>(&colour));
+
+	context->ClearDepthStencilView(depthStencilView,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 void Dx11RenderWindow::swapBuffers()
 {
-	
+	auto context = DX11Helper::getSingleton().getDeviceContext();
+	ID3D11RenderTargetView* output = nullptr;
+	ID3D11ShaderResourceView* input = nullptr;
+	context->OMSetRenderTargets(0, &output, nullptr);
+	context->PSSetShaderResources(2, 1, &input);
 }
 
 void Dx11RenderWindow::copyContentsToMemory(const Box& src, const PixelBox& dst, FrameBuffer buffer)

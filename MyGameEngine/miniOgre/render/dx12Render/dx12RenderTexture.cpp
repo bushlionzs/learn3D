@@ -34,7 +34,7 @@ void Dx12RenderTexture::rebind(Dx12HardwarePixelBuffer* buffer)
 
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 	rtvDesc.Format = mParentTexture->getDxFormat();
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DMS;
 	rtvDesc.Texture2D.MipSlice = 0;
 	rtvDesc.Texture2D.PlaneSlice = 0;
 
@@ -57,7 +57,7 @@ void Dx12RenderTexture::rebind(Dx12HardwarePixelBuffer* buffer)
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Format = mParentTexture->getDxFormat();
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DMS;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
 
@@ -85,7 +85,7 @@ void Dx12RenderTexture::rebind(Dx12HardwarePixelBuffer* buffer)
 		mHeight,
 		1, // This depth stencil view has only one texture.
 		1, // Use a single mipmap level.
-		4
+		1
 	);
 	depthStencilDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
@@ -112,8 +112,6 @@ void Dx12RenderTexture::rebind(Dx12HardwarePixelBuffer* buffer)
 	device->CreateDepthStencilView(
 		mDepthStencil.Get(), &dsvDesc,
 		mCpuHandleOfDepth);
-
-	mCommandList = DX12Helper::getSingleton().getCurrentCommandList();
 }
 
 void Dx12RenderTexture::copyContentsToMemory(
@@ -140,12 +138,10 @@ void Dx12RenderTexture::preRender(ID3D12GraphicsCommandList* cl)
 
 void Dx12RenderTexture::swapBuffers()
 {
-	mRenderSystem->postRender();
-	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mParentTexture->getTextureResource(),
+	auto cl = mRenderSystem->getCommandList();
+	cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mParentTexture->getTextureResource(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ));
 
-	/*ThrowIfFailed(mCommandList->Close());
-	DX12Helper::getSingleton().executeCommand(mCommandList);*/
 }
 
 D3D12_RESOURCE_STATES Dx12RenderTexture::getResourceStates()
@@ -166,4 +162,23 @@ D3D12_CPU_DESCRIPTOR_HANDLE Dx12RenderTexture::CurrentBackBufferView() const
 D3D12_CPU_DESCRIPTOR_HANDLE Dx12RenderTexture::DepthStencilView() const
 {
 	return mCpuHandleOfDepth;
+}
+
+void Dx12RenderTexture::clearFrameBuffer(uint32_t buffers,
+	const Ogre::ColourValue& colour,
+	float depth, uint16_t stencil)
+{
+	auto cl = mRenderSystem->getCommandList();
+	auto backBuffer = getCurrentBackBuffer();
+
+
+	auto backBufferView = CurrentBackBufferView();
+	auto depthStencilView = DepthStencilView();
+
+	// Specify the buffers we are going to render to.
+	cl->OMSetRenderTargets(1, &backBufferView, true, &depthStencilView);
+
+	// Clear the back buffer and depth buffer.
+	cl->ClearRenderTargetView(backBufferView, colour.ptr(), 0, nullptr);
+	cl->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 }

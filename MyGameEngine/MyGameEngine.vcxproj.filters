@@ -2274,6 +2274,12 @@
     <ClInclude Include="parser\packFileParser.h">
       <Filter>parser</Filter>
     </ClInclude>
+    <ClInclude Include="miniOgre\render\dx11Render\dx11RenderTexture.h">
+      <Filter>miniOgre\render\directx11</Filter>
+    </ClInclude>
+    <ClInclude Include="miniOgre\render\dx12Render\dx12RenderTargetHelper.h">
+      <Filter>miniOgre\render\directx12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="miniOgre\base\OgreAlignedAllocator.cpp">
@@ -3742,6 +3748,12 @@
     </ClCompile>
     <ClCompile Include="parser\packFileParser.cpp">
       <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="miniOgre\render\dx11Render\dx11RenderTexture.cpp">
+      <Filter>miniOgre\render\directx11</Filter>
+    </ClCompile>
+    <ClCompile Include="miniOgre\render\dx12Render\dx12RenderTargetHelper.cpp">
+      <Filter>miniOgre\render\directx12</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

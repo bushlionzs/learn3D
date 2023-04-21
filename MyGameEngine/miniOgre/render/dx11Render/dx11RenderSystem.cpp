@@ -56,11 +56,14 @@ void Dx11RenderSystem::frameStart()
 	mTriangleCount = 0;
 	mBatchCount = 0;
 	mLoadResCount = 0;
+	
+	//mDx11Context->RSSetState(nullptr);
 }
 
 void Dx11RenderSystem::frameEnd()
 {
 	mRenderWindow->present();
+
 }
 
 void Dx11RenderSystem::_setViewport(Ogre::Viewport* vp)
@@ -82,15 +85,8 @@ void Dx11RenderSystem::clearFrameBuffer(uint32 buffers,
 	const Ogre::ColourValue& colour,
 	float depth, uint16 stencil)
 {
-	float color[4] = { 0.2f, 0.3f, 0.3f, 1.0f };
-
-	auto context = DX11Helper::getSingleton().getDeviceContext();
-	auto renderTargetView = mActiveRenderTarget->getRenderTargetView();
-	auto depthStencilView = mActiveRenderTarget->getDepthStencilView();
-	context->ClearRenderTargetView(renderTargetView, reinterpret_cast<const float*>(&color[0]));
-
-	context->ClearDepthStencilView(depthStencilView,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	mActiveRenderTarget->clearFrameBuffer(
+		buffers, colour, depth, stencil);
 }
 
 Ogre::RenderWindow* Dx11RenderSystem::createRenderWindow(

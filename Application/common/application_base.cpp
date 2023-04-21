@@ -55,9 +55,11 @@ bool ApplicationBase::appInit()
 		return false;
 	}
 
+	Ogre::ColourValue color = ColourValue::Black;
+
 	Ogre::NameValuePairList params;
 	params["externalWindowHandle"] = Ogre::StringConverter::toString((uint64_t)wnd);
-
+	params["backGroundColor"] = Ogre::StringConverter::toString(color);
 	mRenderWindow = mRenderSystem->createRenderWindow("", 1024, 768, &params);
 
 	
@@ -71,6 +73,7 @@ bool ApplicationBase::appInit()
 
 	camera->setNearClipDistance(1.0f);
 	mViewport = mRenderWindow->addViewport(camera);
+	mViewport->setBackgroundColour(color);
 	mViewport->setClearEveryFrame(true);
 	EngineManager::getSingleton().setViewPort(mViewport);
 	mGameCamera = new GameCamera(camera, mSceneManager, mApplicationWindow->getWnd());

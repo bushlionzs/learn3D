@@ -22,6 +22,11 @@ public:
 
 	void _setColourBlendState(const ColourBlendState& state);
 	void _setDepthBufferWriteEnabled(bool enabled);
+
+	Dx11RenderSystem* getRenderSystem()
+	{
+		return mRenderSystem;
+	}
 private:
 	void buildStaticSample();
 private:

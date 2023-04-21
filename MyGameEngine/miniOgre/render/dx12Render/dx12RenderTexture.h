@@ -31,10 +31,9 @@ public:
 	virtual D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
 	virtual D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
 
-	virtual bool useMsaa()
-	{
-		return true;
-	}
+	virtual void clearFrameBuffer(uint32_t buffers,
+		const Ogre::ColourValue& colour,
+		float depth, uint16_t stencil);
 private:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
 	Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencil;
@@ -54,8 +53,6 @@ private:
 	D3D12_RECT mScissorRect;
 
 	Dx12RenderSystem* mRenderSystem;
-
-	ID3D12GraphicsCommandList* mCommandList;
 
 	Dx12Texture* mParentTexture;
 };

@@ -29,6 +29,16 @@ public:
         return mAutoMipMapGeneration;
     }
 
+    DXGI_FORMAT getD3dFormat()
+    {
+        return mD3DFormat;
+    }
+
+    ID3D11Texture2D* getTexture()
+    {
+        return mTex;
+    }
+
 private:
     virtual void createInternalResourcesImpl(void);
     virtual void freeInternalResourcesImpl(void);

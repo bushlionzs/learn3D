@@ -1,5 +1,6 @@
 #pragma once
 #include "dx11Common.h"
+#include "OgreColourValue.h"
 class Dx11RenderTarget
 {
 public:
@@ -12,9 +13,8 @@ public:
 	virtual ID3D11RenderTargetView* getRenderTargetView() const = 0;
 	virtual ID3D11DepthStencilView* getDepthStencilView() const = 0;
 
-	virtual bool useMsaa() 
-	{
-		return false;
-	}
+	virtual void clearFrameBuffer(uint32_t buffers,
+		const Ogre::ColourValue& colour,
+		float depth, uint16_t stencil) = 0;
 private:
 };

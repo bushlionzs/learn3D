@@ -9,14 +9,15 @@
 #include "dx12HardwarePixelBuffer.h"
 #include "D3D12Mappings.h"
 #include "dx12HardwareBuffer.h"
+#include "OgreViewport.h"
 
 
 Dx12Texture::Dx12Texture(
     const std::string& name, 
     Ogre::TextureProperty* texProperty, 
-    Dx12RenderSystem* engine):ITexture(name, texProperty)
+    Dx12RenderSystem* rs):ITexture(name, texProperty)
 {
-    mEngine = engine;
+    mRenderSystem = rs;
 }
 
 Dx12Texture::~Dx12Texture()
@@ -34,13 +35,11 @@ void Dx12Texture::_createSurfaceList(void)
     mSurfaceList.clear();
     size_t depth = mTextureProperty._depth;
 
-    
-
     for (size_t face = 0; face < mFace; ++face)
     {
         size_t width = mTextureProperty._width;
         size_t height = mTextureProperty._height;
-        for (size_t mip = 0; mip <= mNumMipmaps; ++mip)
+        for (size_t mip = 0; mip <= mTextureProperty._numMipmaps; ++mip)
         {
 
             Dx12HardwarePixelBuffer* buffer;
@@ -114,18 +113,17 @@ void Dx12Texture::_create2DTex()
 
     D3D12_RESOURCE_STATES states = D3D12_RESOURCE_STATE_COMMON;
 
-    DirectX::XMVECTORF32 mClearColor = DirectX::Colors::Gold;
-
-    D3D12_CLEAR_VALUE ClearValue = {};
-    ClearValue.Format = getDxFormat();
-    memcpy(ClearValue.Color, mClearColor, sizeof(float) * 4);
-
     D3D12_CLEAR_VALUE* pvalue = nullptr;
     if (mUsage & TU_RENDERTARGET)
     {
+        auto backColor = ColourValue::Red;
+        D3D12_CLEAR_VALUE ClearValue = {};
+        ClearValue.Format = getDxFormat();
+        memcpy(ClearValue.Color, &backColor, sizeof(float) * 4);
+        pvalue = &ClearValue;
         texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
         states = D3D12_RESOURCE_STATE_GENERIC_READ;
-        pvalue = &ClearValue;
+        texDesc.SampleDesc.Count = 1;
     }
     else
     {
@@ -339,7 +337,15 @@ void Dx12Texture::buildDescriptorHeaps(int32_t handleIndex)
         else
         {
             srvDesc.Format = mTex->GetDesc().Format;
-            srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+            if (mUsage & TU_RENDERTARGET)
+            {
+                srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DMS;
+            }
+            else
+            {
+                srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+            }
+            
             srvDesc.Texture2D.MostDetailedMip = 0;
             srvDesc.Texture2D.MipLevels = mTex->GetDesc().MipLevels;
         }
@@ -349,7 +355,7 @@ void Dx12Texture::buildDescriptorHeaps(int32_t handleIndex)
 
         mCreate = true;
     }
-    Dx12TextureHandleManager* mgr = mEngine->getTextureHandleManager();
+    Dx12TextureHandleManager* mgr = mRenderSystem->getTextureHandleManager();
     auto dstHandle = mgr->getCpuHandleByIndex(handleIndex);
     device->CopyDescriptorsSimple(1, dstHandle, mDescriptorHandle,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
