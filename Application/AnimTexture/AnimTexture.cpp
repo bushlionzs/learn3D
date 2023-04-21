@@ -35,12 +35,19 @@ bool AnimTexture::appInit()
 	auto mesh = MeshManager::getSingletonPtr()->createRect(
 		"myrect",
 		leftop, leftbottom, righttop, rightbottom, normal);
+	Entity* bomb = mSceneManager->createEntity("rect", mesh);
+	SceneNode* bombnode = root->createChildSceneNode("rect");
+	bombnode->attachObject(bomb);
+	bombnode->setPosition(Ogre::Vector3(2.0f, 0.0f, 0.0f));
+	auto mat = MaterialManager::getSingleton().getByName("bomb");
+	bomb->setMaterial(0, mat);
+
 	Entity* rect = mSceneManager->createEntity("rect", mesh);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
+	rectnode->setPosition(Ogre::Vector3(-2.0f, 0.0f, 0.0f));
 
-	auto mat = MaterialManager::getSingleton().getByName("myrect");
-	rect->setMaterial(0, mat);
+
 	mGameCamera->setDistance(10);
 	auto cam = mGameCamera->getCamera();
 

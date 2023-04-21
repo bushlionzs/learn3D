@@ -356,7 +356,26 @@ void OgreMaterialParam::setAnimTexture(const String& val)
     {
         float duration = Ogre::StringConverter::parseReal(aa.back(), 1.0f);
         aa.pop_back();
-        mMaterial->addAnimTexture(aa, duration);
+
+        if (Ogre::StringConverter::isNumber(aa[1]))
+        {
+            uint32_t num = Ogre::StringConverter::parseUnsignedInt(aa[1], 0);
+            std::vector<std::string> tmp;
+            tmp.reserve(num);
+
+            std::string suffix = getSuffix(aa[0]);
+            std::string head = removeSuffix(aa[0]);
+            for (uint32_t i = 0; i < num; i++)
+            {
+                tmp.push_back(head +  std::to_string(i + 1) + suffix);
+            }
+
+            mMaterial->addAnimTexture(tmp, duration);
+        }
+        else
+        {
+            mMaterial->addAnimTexture(aa, duration);
+        } 
     }
     else
     {

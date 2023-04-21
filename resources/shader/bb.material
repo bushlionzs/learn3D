@@ -40,7 +40,7 @@ material mybox
 		pass
 		{
 			lighting off
-			shader basic
+			shader ogresimple
 			texture_unit
 			{
 				texture container.jpg
@@ -61,6 +61,23 @@ material myrect
 			{
 				texture awesomeface.png
 				scroll_anim 0 -0.9
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material bomb
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend alpha_blend
+			texture_unit
+			{
+				anim_texture bomb.png 9 3
 				tex_address_mode clamp
 			}
 		}
