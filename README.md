@@ -22,3 +22,17 @@ enter into 3rd directory
 Extract the "lib.7z" file to the current directory
 
 open learn3d.sln using vs2019, then start to compile
+
+# Example Illustration
+## VideoTexture   
+   You can use video texture objects in the same way as image textures.
+   
+   In this example, you can watch 2 minutes of Avatar.
+  ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/video_texture.jpg)
+  
+## RendertoTexture   
+  ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/rendertotexture.jpg)
+  
+## AnimTexture   
+  ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/animTexture.jpg)
+  
