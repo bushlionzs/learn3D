@@ -33,7 +33,7 @@ namespace Ogre {
 
 	const HardwarePixelBufferPtr& ITexture::getBuffer(size_t face, size_t mipmap)
 	{
-		size_t idx = face * (mNumMipmaps + 1) + mipmap;
+		size_t idx = face * (mTextureProperty._numMipmaps + 1) + mipmap;
 		assert(idx < mSurfaceList.size());
 		return mSurfaceList[idx];
 	}
