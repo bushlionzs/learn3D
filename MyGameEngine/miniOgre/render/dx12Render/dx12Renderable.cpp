@@ -108,9 +108,13 @@ void Dx12RenderableData::updateData(Dx12Pass* pass, Camera* cam)
 	}
 	else
 	{
-		auto unit = pass->mMaterial->getTextureUnit(0);
-		mCurrentFrameData->mMaterialConstantBuffer.TexTransform = 
-			unit->getTextureTransform().transpose();
+		if (pass->mMaterial->getTextureUnitCount())
+		{
+			auto unit = pass->mMaterial->getTextureUnit(0);
+			mCurrentFrameData->mMaterialConstantBuffer.TexTransform =
+				unit->getTextureTransform().transpose();
+		}
+		
 	}
 	
 

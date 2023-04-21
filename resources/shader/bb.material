@@ -183,7 +183,7 @@ material myvideo
 		    shader ogresimple
 			texture_unit
 			{
-				texture out.mp4 video
+				texture avatar.mp4 video
 			}
 		}
 	}

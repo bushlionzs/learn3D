@@ -44,11 +44,15 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, Camera* cam)
 	mObjectCB->CopyData(0, mObjectConstantBuffer);
 
 	const MaterialConstantBuffer& mcb = pass._mat->getMatInfo();
-	auto unit = pass._mat->getTextureUnit(0);
-	mMaterialConstantBuffer.TexTransform =
-		unit->getTextureTransform().transpose();
+	if (pass._mat->getTextureUnitCount())
+	{
+		auto unit = pass._mat->getTextureUnit(0);
+		mMaterialConstantBuffer.TexTransform =
+			unit->getTextureTransform().transpose();
 
-	mMaterialCB->CopyData(0, mMaterialConstantBuffer);
+		mMaterialCB->CopyData(0, mMaterialConstantBuffer);
+	}
+	
 	
 	ID3D11VertexShader* vertexShader = pass._shader->getVertexShader();
 	ID3D11PixelShader* pixelShader = pass._shader->getPixelShader();

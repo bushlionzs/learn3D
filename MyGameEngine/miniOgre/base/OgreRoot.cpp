@@ -20,6 +20,7 @@
 #include "dx11RenderSystem.h"
 #include "dx12RenderSystem.h"
 #include "VulkanRenderSystem.h"
+#include "VideoManager.h"
 
 namespace Ogre {
 
@@ -33,7 +34,8 @@ namespace Ogre {
         new MeshManager;
         new MaterialManager;
         new SkeletonManager;
-        
+        new VideoManager;
+
         new Ogre::ParticleSystemManager;
         new Ogre::ControllerManager;
         new Orphigine::ActorFactoryManager;
