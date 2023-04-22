@@ -16,14 +16,13 @@ VertexOut VS(VertexIn vIn)
 	VertexOut vOut;
 	
 	vOut.PosH = mul(gWorldViewProj, float4(vIn.PosL, 1.0f));
-	vOut.oTexcoord_0.x = 1 - vIn.iTexcoord_0.x;
-	vOut.oTexcoord_0.y = vIn.iTexcoord_0.y;
 	vOut.oTexcoord_0 = vIn.iTexcoord_0;
 	return vOut;
 }
 
 float4 PS(VertexOut pin) : SV_Target
 {
-	float4 texel_0	=	gTextureArray[0].Sample(gsamLinearWrap, pin.oTexcoord_0);
+	float4 texel_0	=	gTextureArray[0].Sample(gsamPointClamp, pin.oTexcoord_0);
+	clip(texel_0.a - 0.5f);
 	return texel_0;
 }

@@ -95,7 +95,7 @@ material 盘腾树1_01
 	{
 		pass
 		{
-	emissive 0.2 0.2 0.2 1
+	        emissive 0.2 0.2 0.2 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
 
@@ -1338,7 +1338,7 @@ material 皇城花丛71
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
 
@@ -1358,10 +1358,10 @@ material 大型灌木011
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木01.dds
@@ -1379,10 +1379,10 @@ material 大型灌木021
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木02.dds
@@ -1400,10 +1400,10 @@ material 大型灌木031
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木05.dds
@@ -1421,10 +1421,11 @@ material 大型灌木041
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木04.dds
@@ -1442,10 +1443,10 @@ material 大型灌木051
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木03.dds
@@ -1463,10 +1464,10 @@ material 大型灌木061
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木03.dds
@@ -1484,10 +1485,10 @@ material 大型灌木071
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木05.dds
@@ -1505,10 +1506,10 @@ material 大型灌木081
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木06.dds
@@ -1526,10 +1527,10 @@ material 大型灌木091
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木07.dds
@@ -1547,10 +1548,10 @@ material 大型灌木101
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木08.dds
@@ -1568,10 +1569,10 @@ material 大型灌木111
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
-
+			shader ogresimple
 			texture_unit
 			{
 				texture tga_大型灌木09.dds
