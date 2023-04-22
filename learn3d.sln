@@ -33,6 +33,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameUI", "Application\GameU
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkeletonAnimation", "Application\SkeletonAnimation\SkeletonAnimation.vcxproj", "{A5AB6531-48D4-4CC4-8906-4734A1D33F7B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0EC3F45D-D5F4-45DC-972C-96E56977CA68} = {0EC3F45D-D5F4-45DC-972C-96E56977CA68}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

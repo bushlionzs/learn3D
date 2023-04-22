@@ -56,7 +56,7 @@ bool ApplicationBase::appInit()
 		return false;
 	}
 
-	Ogre::ColourValue color = ColourValue::Green;
+	Ogre::ColourValue color(0.678431392f, 0.847058892f, 0.901960850f, 1.000000000f);
 	Ogre::NameValuePairList params;
 	params["externalWindowHandle"] = Ogre::StringConverter::toString((uint64_t)wnd);
 	params["backGroundColor"] = Ogre::StringConverter::toString(color);
@@ -81,15 +81,20 @@ bool ApplicationBase::appInit()
 	InputManager::getSingletonPtr()->addListener(mGameCamera);
 
 	Ogre::Root::getSingleton().addFrameListener(this);
-	if (!CGameTableManager::getSingletonPtr())
-	{
-		new CGameTableManager;
 
-		CGameTableManager::getSingleton().Initialize();
+	if (isUseMyGUI())
+	{
+		if (!CGameTableManager::getSingletonPtr())
+		{
+			new CGameTableManager;
+
+			CGameTableManager::getSingleton().Initialize();
+		}
+
+		new MyGUIManager;
+		MyGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
 	
-	new MyGUIManager;
-	MyGUIManager::getSingleton()._initialise(mRenderWindow);
 
 	
 	return true;

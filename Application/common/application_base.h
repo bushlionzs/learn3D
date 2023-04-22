@@ -19,6 +19,10 @@ public:
 	virtual void appUpdate(float delta);
 	void run();
 	virtual EngineType getEngineType();
+	virtual bool isUseMyGUI()
+	{
+		return true;
+	}
 private:
 	virtual bool frameStarted(const FrameEvent& evt);
 	void ShowFrameFrequency();

@@ -53,7 +53,7 @@ bool GameUI::appInit()
 	auto vp = MyGUIManager::getSingleton().getViewport();
 
 	vp->setClearEveryFrame(true);
-	Ogre::ColourValue color = ColourValue::Blue;
+	Ogre::ColourValue color(0.678431392f, 0.847058892f, 0.901960850f, 1.000000000f);
 	vp->setBackgroundColour(color);
 
 	TextureProperty texProperty;
@@ -61,7 +61,7 @@ bool GameUI::appInit()
 	texProperty._width = 512;
 	texProperty._height = 512;
 
-	texProperty._backgroudColor = ColourValue::Blue;
+	texProperty._backgroudColor = color;
 	texProperty._backgroudColor.a = 0.0f;
 	TexturePtr renderTexture =
 		TextureManager::getSingleton().createManual("RenderToTexture", texProperty);

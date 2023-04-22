@@ -203,6 +203,17 @@ void TerrainSerializer::readImageNames(std::shared_ptr<DataStream>& stream, Terr
 			WARNING_LOG("fail to load terrain texture:%s", item.texName.c_str())
 		}
 	}
+
+	//change imagename from tga to dds
+	uint32_t size = pTerrain->mImages.size();
+	for (uint32_t i = 0; i < size; i++)
+	{
+
+		auto& item = pTerrain->mImages.at(i);
+		item.texName = Ogre::StringUtil::replaceAll(item.texName, ".tga", ".dds");
+		int kk = 0;
+	}
+
 }
 
 void TerrainSerializer::readPixmap(std::shared_ptr<DataStream>& stream, TerrainInfo* pTerrain)

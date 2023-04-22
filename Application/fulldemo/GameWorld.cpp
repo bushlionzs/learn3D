@@ -56,9 +56,6 @@ bool GameWorld::gameWorldInit()
 	mPosition.y = 0;
 	mPosition.z = 224;
 
-	mPosition.x = 206;
-	mPosition.y = 0;
-	mPosition.z = 101;
 
 	mPlayer->setGamePosition(mPosition);
 

@@ -56,22 +56,25 @@ void Dx11Texture::_create2DTex()
 {
     UINT numMips = mTextureProperty._numMipmaps + 1;
 
+    D3D11_TEXTURE2D_DESC desc;
+    UINT retVal = D3D11_BIND_SHADER_RESOURCE;
     if (mTextureProperty._numMipmaps == 0)
     {
         mNumMipmaps = getMaxMipmaps();
         numMips = mNumMipmaps + 1;
+        retVal |= D3D11_BIND_RENDER_TARGET;
     }
 
     if (mUsage & TU_RENDERTARGET)
     {
         mNumMipmaps = 0;
         numMips = 1;
+        retVal |= D3D11_BIND_RENDER_TARGET;
     }
-    UINT retVal = 0;
-    retVal |= D3D11_BIND_SHADER_RESOURCE;
-    retVal |= D3D11_BIND_RENDER_TARGET;
+    
 
-    D3D11_TEXTURE2D_DESC desc;
+    
+    
     desc.Width = static_cast<UINT>(getWidth());
     desc.Height = static_cast<UINT>(getHeight());
     desc.MipLevels = static_cast<UINT>(numMips);
@@ -82,8 +85,12 @@ void Dx11Texture::_create2DTex()
     desc.Usage = D3D11_USAGE_DEFAULT;
     desc.BindFlags = retVal;
     desc.CPUAccessFlags = 0;
-
-    desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+    desc.MiscFlags = 0;
+    if (retVal & D3D11_BIND_RENDER_TARGET)
+    {
+        desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+    }
+    
 
     if (isCubeTexture())
     {
