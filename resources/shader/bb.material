@@ -145,9 +145,10 @@ material SkyLan
 			lighting off
 			depth_write off
             shader ogresky
+			cull_hardware none
 			texture_unit
 			{
-				texture desertcube1024.dds cubic
+				texture evening.jpg cubic
 				tex_address_mode clamp
 			}
 			

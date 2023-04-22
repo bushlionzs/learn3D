@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Layout" version="3.2.0">
+    <Widget type="Widget" skin="PanelSkin" position="0 0 285 280" layer="Main" name="_Main">
+        <Widget type="TextBox" skin="TextBox" position="80 10 110 30" name="itemname"/>
+        <Widget type="ImageBox" skin="ImageBox" position="20 70 95 90" name="show"/>
+        <Widget type="TextBox" skin="TextBox" position="145 95 110 35" name="level"/>
+    </Widget>
+    <CodeGeneratorSettings/>
+</MyGUI>

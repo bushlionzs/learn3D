@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Layout" version="3.2.0">
+    <Widget type="Widget" skin="PanelEmpty" position="0 0 375 680" layer="Main" name="_Main">
+        <Widget type="ImageBox" skin="ImageBox" position="0 80 370 547" align="Stretch" name="equip">
+            <Widget type="ImageBox" skin="ImageBox" position="39 189 32 32" name="clothes"/>
+            <Widget type="ImageBox" skin="ImageBox" position="85 80 190 330" name="model"/>
+        </Widget>
+        <Widget type="ImageBox" skin="ImageBox" position="339 109 29 28" name="close"/>
+        <Widget type="ImageBox" skin="ImageBox" position="17 110 28 26" name="help"/>
+    </Widget>
+    <CodeGeneratorSettings/>
+</MyGUI>

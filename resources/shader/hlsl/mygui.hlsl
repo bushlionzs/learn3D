@@ -26,5 +26,8 @@ VertexOut VS(VertexIn vIn)
 float4 PS(VertexOut pin) : SV_Target
 {
 	float4 color	=	gTextureArray[0].Sample(gsamLinearWrap, pin.oTexcoord_0) * pin.oColor;
+	
+	clip(color.a - 0.5f);
+	
 	return color;
 }
