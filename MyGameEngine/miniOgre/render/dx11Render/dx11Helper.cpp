@@ -52,7 +52,7 @@ void DX11Helper::_initialise()
 
 	ZeroMemory(&mRasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
 	mRasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	mRasterizerDesc.CullMode = D3D11_CULL_NONE;
+	mRasterizerDesc.CullMode = D3D11_CULL_BACK;
 	mRasterizerDesc.FrontCounterClockwise = true;
 	mRasterizerDesc.DepthClipEnable = true;
 	mRasterizerDescChanged = true;
@@ -269,4 +269,15 @@ void DX11Helper::_setDepthBufferWriteEnabled(bool enabled)
 		mDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	}
 	mDepthStencilDescChanged = true;
+}
+
+void DX11Helper::_setCullingMode(Ogre::CullingMode mode)
+{
+	D3D11_CULL_MODE d3dmode = D3D11Mappings::get(mode);
+
+	if (d3dmode != mRasterizerDesc.CullMode)
+	{
+		mRasterizerDesc.CullMode = d3dmode;
+		mRasterizerDescChanged = true;
+	}
 }

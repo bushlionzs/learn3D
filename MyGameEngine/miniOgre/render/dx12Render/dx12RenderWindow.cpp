@@ -254,7 +254,7 @@ void Dx12RenderWindow::swapBuffers()
 	};
 
 	cl->ResourceBarrier(2, barriers);
-
+	//cl->CopyResource(backBuffer, renderTarget);
 	cl->ResolveSubresource(
 		backBuffer,
 		0, renderTarget, 0,

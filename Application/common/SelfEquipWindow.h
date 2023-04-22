@@ -1,8 +1,3 @@
-/*!
-	@file
-	@author		Albert Semenov
-	@date		10/2008
-*/
 #ifndef EDITOR_WINDOW_H_
 #define EDITOR_WINDOW_H_
 
@@ -10,28 +5,47 @@
 #include "BaseLayout/BaseLayout.h"
 #include "ToolTip.h"
 
-namespace demo
+
+class SelfEquipWindow :
+	public wraps::BaseLayout
 {
+public:
+	SelfEquipWindow();
 
-	class SelfEquipWindow :
-		public wraps::BaseLayout
-	{
-	public:
-		SelfEquipWindow();
+	void clearView();
 
-		void clearView();
+	MyGUI::Widget* getView();
 
-		MyGUI::Widget* getView();
+	void notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo& _info);
 
-		void notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo& _info);
-	private:
-		MyGUI::ImageBox* mImageEquip;
-		MyGUI::ImageBox* mImageClothes;
-		MyGUI::ImageBox* mImageClose;
-		MyGUI::ImageBox* mImageHelp;
-		ToolTip* mToolTip;
-	};
+	void onWindowMouseButtonPressed(
+		MyGUI::Widget* _sender,
+		int _left,
+		int _top,
+		MyGUI::MouseButton _id);
+	void onWindowMouseDrag(
+		MyGUI::Widget* _sender,
+		int _left,
+		int _top,
+		MyGUI::MouseButton _id);
+	void onWindowMouseButtonReleased(
+		MyGUI::Widget* _sender,
+		int _left,
+		int _top,
+		MyGUI::MouseButton _id);
+	void setModelTexture(const String& name);
+private:
+	MyGUI::ImageBox* mImageEquip;
+	MyGUI::ImageBox* mImageClothes;
+	MyGUI::ImageBox* mImageClose;
+	MyGUI::ImageBox* mImageHelp;
+	MyGUI::ImageBox* mImageModel;
+	ToolTip* mToolTip;
 
-} // namespace demo
+	bool mDragging = false;
+	MyGUI::IntPoint mDragOffset;
+};
+
+
 
 #endif // EDITOR_WINDOW_H_

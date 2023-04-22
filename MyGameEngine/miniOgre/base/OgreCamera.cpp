@@ -138,7 +138,7 @@ namespace Ogre {
 
 	void Camera::setAspectRatio(float aa)
 	{
-		
+		mCameraImpl->setAspectRatio(aa);
 	}
 
 	void Camera::needUpdate()

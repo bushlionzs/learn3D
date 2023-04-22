@@ -284,7 +284,7 @@ public:
 		bool isValidGridJoint(int gridXIndex, int gridZIndex) const;
 		void resetDeriveValues(void);
 
-		const GridInfoStr& TerrainInfo::getGridInfo(int gridIndex) const;
+		const GridInfoStr& getGridInfo(int gridIndex) const;
 		int getGridIndex(int gridXIndex, int gridZIndex) const;
 		int	getXGridSize() const;
 		int	getZGridSize() const;

@@ -225,7 +225,7 @@ namespace Ogre {
 				if (multiImage)
 				{
 					// Load from multiple images
-					src = images[i]->getPixelBox(i, mip);
+					src = images[i]->getPixelBox(0, mip);
 					// set dst layer
 					if (depth > 1)
 					{

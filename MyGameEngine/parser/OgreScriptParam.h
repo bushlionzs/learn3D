@@ -29,6 +29,7 @@ public:
 	void setTexture(const std::string& val);
 	void setAnimTexture(const String& val);
 	void setScrollTexture(const String& val);
+	void setCullMode(const String& val);
 	void setShaderMacro(const std::string& val);
 	void addParam(const std::string& key, const std::string& value);
 	void addUnitParam(const std::string& key, const std::string& value, uint32_t index);

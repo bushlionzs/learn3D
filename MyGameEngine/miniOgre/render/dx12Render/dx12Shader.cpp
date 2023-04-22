@@ -232,9 +232,12 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
             psblob->GetBufferSize()
         };
         psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-        //psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-        
-        psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+
+        if (pass->mMaterial->getCullMode() == Ogre::CULL_NONE)
+        {
+            psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+        }
+
         psoDesc.RasterizerState.FrontCounterClockwise = true;
         psoDesc.RasterizerState.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_ON;
         psoDesc.RasterizerState.MultisampleEnable = true;
@@ -257,7 +260,6 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
             depthDSS.StencilEnable = false;
             psoDesc.DepthStencilState = depthDSS;
         }
-
         auto blendState = pass->mMaterial->getBlendState();
         if (blendState.blendingEnabled())
         {

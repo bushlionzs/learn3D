@@ -182,6 +182,16 @@ Ogre::Vector2 Material::getTexAnimationOffset()
     return Ogre::Vector2(mUOffset, mVOffset);
 }
 
+void Material::setCullMode(Ogre::CullingMode mode)
+{
+    mCullingMode = mode;
+}
+
+Ogre::CullingMode Material::getCullMode()
+{
+    return mCullingMode;
+}
+
 Material& Material::operator=(const Material& rhs)
 {
     mAmbient = rhs.mAmbient;

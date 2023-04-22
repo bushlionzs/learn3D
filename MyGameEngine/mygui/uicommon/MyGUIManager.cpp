@@ -8,12 +8,13 @@
 #include "MyGUI_Gui.h"
 #include "OgreRenderWindow.h"
 #include "OgreViewport.h"
+#include "CEGUIResourceManager.h"
 
 template<> MyGUIManager* Ogre::Singleton<MyGUIManager>::msSingleton = 0;
 
 MyGUIManager::MyGUIManager()
 {
-
+	new CEGUIResourceManager;
 }
 
 MyGUIManager::~MyGUIManager()
@@ -39,13 +40,13 @@ bool MyGUIManager::_initialise(Ogre::RenderWindow* window)
 	mPlatform = new MyGUI::OgrePlatform();
 	mPlatform->initialise(mRenderWindow, mSceneManager, "");
 
-	Ogre::Viewport* vp = mRenderWindow->addViewport(mCamera, 1);
-	vp->setClearEveryFrame(false);
+	mViewPort = mRenderWindow->addViewport(mCamera, 1);
+	mViewPort->setClearEveryFrame(false);
 	mResourceFileName = "MyGUI_Core.xml";
 	mGUI = new MyGUI::Gui();
 	mGUI->initialise(mResourceFileName);
 
-	
+	CEGUIResourceManager::getSingleton().load("Resources.xml");
 
 	InputManager::getSingleton().addListener(this);
 

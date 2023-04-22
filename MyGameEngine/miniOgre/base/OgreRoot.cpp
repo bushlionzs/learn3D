@@ -35,7 +35,6 @@ namespace Ogre {
         new MaterialManager;
         new SkeletonManager;
         new VideoManager;
-
         new Ogre::ParticleSystemManager;
         new Ogre::ControllerManager;
         new Orphigine::ActorFactoryManager;

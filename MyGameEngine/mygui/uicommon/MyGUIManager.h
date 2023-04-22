@@ -27,7 +27,10 @@ public:
 	{
 		return mCamera;
 	}
-
+	Ogre::Viewport* getViewport()
+	{
+		return mViewPort;
+	}
 	virtual bool frameStarted(const FrameEvent& evt);
 private:
 	void createGuiPlatform();
@@ -35,6 +38,7 @@ private:
 	MyGUI::Gui* mGUI = nullptr;
 
 	Ogre::Camera* mCamera;
+	Ogre::Viewport* mViewPort;
 	Ogre::SceneNode* mCameraNode;
 	Ogre::SceneManager* mSceneManager;
 	Ogre::RenderWindow* mRenderWindow;

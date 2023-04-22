@@ -122,6 +122,8 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, Camera* cam)
 	auto blendState = pass._mat->getBlendState();
 	DX11Helper::getSingleton()._setColourBlendState(blendState);
 
+	auto cullingmode = pass._mat->getCullMode();
+	DX11Helper::getSingleton()._setCullingMode(cullingmode);
 	
 }
 

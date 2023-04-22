@@ -3,31 +3,48 @@
 #include "BaseLayout/BaseLayout.h"
 #include "ToolTip.h"
 
-namespace demo
+struct PackageItemInfo
 {
-	struct PackageItemInfo
-	{
-		int32_t _item_pos;
-		uint32_t _item_id;
-		MyGUI::ImageBox* _item_image;
-	};
-	class PackageWindow :
-		public wraps::BaseLayout
-	{
-	public:
-		PackageWindow();
+	int32_t _item_pos;
+	uint32_t _item_id;
+	MyGUI::ImageBox* _item_image;
+};
+class PackageWindow :
+	public wraps::BaseLayout
+{
+public:
+	PackageWindow();
 
-		void clearView();
+	void clearView();
 
-		MyGUI::Widget* getView();
+	MyGUI::Widget* getView();
 
-		void notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo& _info);
-	private:
-		MyGUI::ImageBox* mImageBackgroud;
-		MyGUI::ImageBox* mImageBackgroudCover;
-		std::vector<PackageItemInfo> mItemList;
-		ToolTip* mToolTip;
-	};
+	void notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo& _info);
 
-} // namespace demo
+	void onWindowMouseButtonPressed(
+		MyGUI::Widget* _sender, 
+		int _left, 
+		int _top, 
+		MyGUI::MouseButton _id);
+	void onWindowMouseDrag(
+		MyGUI::Widget* _sender, 
+		int _left, 
+		int _top, 
+		MyGUI::MouseButton _id);
+	void onWindowMouseButtonReleased(
+		MyGUI::Widget* _sender, 
+		int _left, 
+		int _top, 
+		MyGUI::MouseButton _id);
+
+	
+private:
+	MyGUI::ImageBox* mImageBackgroud;
+	MyGUI::ImageBox* mImageBackgroudCover;
+	std::vector<PackageItemInfo> mItemList;
+	ToolTip* mToolTip;
+	bool mDragging = false;
+	MyGUI::IntPoint mDragOffset;
+};
+
 

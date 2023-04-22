@@ -254,12 +254,22 @@ void Dx12RenderableData::buildCommonMaterial(Material* mat)
 		for (auto& tex : texs)
 		{
 			Dx12Texture* current = (Dx12Texture*)tex->getRaw();
+			bool has = false;
 			if (!current->isCubeTexture())
 			{
 				current->buildDescriptorHeaps(mTexStartIndex + offset);
 				offset++;
+				has = true;
+			}
+			if (!has)
+			{
+				int kk = 0;
 			}
 		}
+	}
+	else
+	{
+		int kk = 0;
 	}
 }
 

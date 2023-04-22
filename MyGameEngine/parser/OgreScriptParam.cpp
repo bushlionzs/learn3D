@@ -152,7 +152,18 @@ public:
     }
 };
 
-
+class CmdCullMode : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setCullMode(val);
+    }
+};
 
 
 OgreMaterialParam::OgreMaterialParam(Material* mat, MaterialScriptParser* parser)
@@ -252,6 +263,13 @@ void OgreMaterialParam::initParameters()
             "scroll texture",
             PT_STRING),
             &mScrollTexture);
+
+        static CmdCullMode mCullMode;
+
+        dict->addParameter(ParameterDef("cull_hardware",
+            "cull_hardware",
+            PT_STRING),
+            &mCullMode);
 	}
 }
 
@@ -401,6 +419,22 @@ void OgreMaterialParam::setScrollTexture(const String& val)
         auto unit = mMaterial->getTextureUnit(0);
 
         unit->setTextureScroll(u, v);
+    }
+}
+
+void OgreMaterialParam::setCullMode(const String& val)
+{
+    if (val == "none")
+    {
+        mMaterial->setCullMode(Ogre::CULL_NONE);
+    }
+    else if (val == "clockwise")
+    {
+        mMaterial->setCullMode(Ogre::CULL_CLOCKWISE);
+    }
+    else if (val == "anticlockwise")
+    {
+        mMaterial->setCullMode(Ogre::CULL_ANTICLOCKWISE);
     }
 }
 

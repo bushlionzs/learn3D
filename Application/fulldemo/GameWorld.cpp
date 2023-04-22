@@ -22,14 +22,19 @@ GameWorld::~GameWorld()
 bool GameWorld::gameWorldInit()
 {
 	NOTICE_LOG("begin to load world.")
-	new CGameTableManager;
+	
 	new CDBActionSet;
 
-	if (KRR_SUCCEED != GAME_TABLE_MANAGER_PTR->Initialize())
+	if (!GAME_TABLE_MANAGER_PTR)
 	{
-		OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to load game table");
-		return false;
+		new CGameTableManager;
+		if (KRR_SUCCEED != GAME_TABLE_MANAGER_PTR->Initialize())
+		{
+			OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to load game table");
+			return false;
+		}
 	}
+	
 
 	if (KRR_SUCCEED != GetActionSetData()->Initialize("ActionSet/"))
 	{
@@ -50,6 +55,10 @@ bool GameWorld::gameWorldInit()
 	mPosition.x = 193;
 	mPosition.y = 0;
 	mPosition.z = 224;
+
+	mPosition.x = 206;
+	mPosition.y = 0;
+	mPosition.z = 101;
 
 	mPlayer->setGamePosition(mPosition);
 

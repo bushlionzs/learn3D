@@ -3,6 +3,7 @@
 #include "OgreSingleton.h"
 #include "dx11Common.h"
 #include "OgreBlendMode.h"
+#include "OgreCommon.h"
 
 
 class Dx11RenderSystem;
@@ -22,6 +23,7 @@ public:
 
 	void _setColourBlendState(const ColourBlendState& state);
 	void _setDepthBufferWriteEnabled(bool enabled);
+	void _setCullingMode(Ogre::CullingMode mode);
 
 	Dx11RenderSystem* getRenderSystem()
 	{

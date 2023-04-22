@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="common">
+      <UniqueIdentifier>{e6103a97-074d-4f92-96dc-4aaeaf2c601a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\application_base.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\application_util.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\application_window.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\game_camera.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\PackageWindow.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\SelfEquipWindow.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\ToolTip.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="GameUI.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\common\role.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\application_base.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\application_util.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\application_window.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\game_camera.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\PackageWindow.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\SelfEquipWindow.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\ToolTip.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="GameUI.h" />
+    <ClInclude Include="..\common\role.h">
+      <Filter>common</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

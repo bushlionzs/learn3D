@@ -116,7 +116,7 @@ void Dx12Texture::_create2DTex()
     D3D12_CLEAR_VALUE* pvalue = nullptr;
     if (mUsage & TU_RENDERTARGET)
     {
-        auto backColor = ColourValue::Red;
+        auto& backColor = mTextureProperty._backgroudColor;
         D3D12_CLEAR_VALUE ClearValue = {};
         ClearValue.Format = getDxFormat();
         memcpy(ClearValue.Color, &backColor, sizeof(float) * 4);

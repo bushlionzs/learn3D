@@ -12,6 +12,7 @@
 #include "OgreRenderWindow.h"
 #include "MyGUIManager.h"
 #include "OgreViewport.h"
+#include "GameTableManager.h"
 
 ApplicationBase::ApplicationBase()
 {
@@ -30,7 +31,7 @@ bool ApplicationBase::frameStarted(const FrameEvent& evt)
 
 EngineType ApplicationBase::getEngineType()
 {
-	return EngineType_Dx11;
+	return EngineType_Dx12;
 }
 
 bool ApplicationBase::appInit()
@@ -55,8 +56,7 @@ bool ApplicationBase::appInit()
 		return false;
 	}
 
-	Ogre::ColourValue color = ColourValue::Black;
-
+	Ogre::ColourValue color = ColourValue::Green;
 	Ogre::NameValuePairList params;
 	params["externalWindowHandle"] = Ogre::StringConverter::toString((uint64_t)wnd);
 	params["backGroundColor"] = Ogre::StringConverter::toString(color);
@@ -81,9 +81,17 @@ bool ApplicationBase::appInit()
 	InputManager::getSingletonPtr()->addListener(mGameCamera);
 
 	Ogre::Root::getSingleton().addFrameListener(this);
+	if (!CGameTableManager::getSingletonPtr())
+	{
+		new CGameTableManager;
 
-	/*new MyGUIManager;
-	MyGUIManager::getSingleton()._initialise(mRenderWindow);*/
+		CGameTableManager::getSingleton().Initialize();
+	}
+	
+	new MyGUIManager;
+	MyGUIManager::getSingleton()._initialise(mRenderWindow);
+
+	
 	return true;
 }
 

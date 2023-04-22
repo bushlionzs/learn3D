@@ -24,13 +24,11 @@
     <ClCompile Include="..\common\application_window.cpp" />
     <ClCompile Include="..\common\game_camera.cpp" />
     <ClCompile Include="..\common\PackageWindow.cpp" />
+    <ClCompile Include="..\common\role.cpp" />
     <ClCompile Include="..\common\SelfEquipWindow.cpp" />
     <ClCompile Include="..\common\ToolTip.cpp" />
-    <ClCompile Include="fulldemo.cpp" />
-    <ClCompile Include="GameWorld.cpp" />
+    <ClCompile Include="GameUI.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PathComponent.cpp" />
-    <ClCompile Include="player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\application_base.h" />
@@ -38,19 +36,16 @@
     <ClInclude Include="..\common\application_window.h" />
     <ClInclude Include="..\common\game_camera.h" />
     <ClInclude Include="..\common\PackageWindow.h" />
+    <ClInclude Include="..\common\role.h" />
     <ClInclude Include="..\common\SelfEquipWindow.h" />
     <ClInclude Include="..\common\ToolTip.h" />
-    <ClInclude Include="demoHeader.h" />
-    <ClInclude Include="fulldemo.h" />
-    <ClInclude Include="GameWorld.h" />
-    <ClInclude Include="PathComponent.h" />
-    <ClInclude Include="player.h" />
+    <ClInclude Include="GameUI.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{fa8d2286-e93f-411c-87ce-f80460a01817}</ProjectGuid>
-    <RootNamespace>fulldemo</RootNamespace>
+    <ProjectGuid>{69CF81AD-6A9C-4515-B8A6-8DA2DBD648E3}</ProjectGuid>
+    <RootNamespace>AnimTexture</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -147,10 +142,9 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>Default</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\MyGameEngine\miniOgre\base;$(ProjectDir)..\..\MyGameEngine\miniOgre\parser;$(ProjectDir)..\..\MyGameEngine\miniOgre\models;$(ProjectDir)..\..\MyGameEngine\miniOgre\animation;$(ProjectDir)..\..\MyGameEngine\miniOgre\particle;$(ProjectDir)..\..\MyGameEngine\miniOgre\particle\ParticleFX;$(ProjectDir)..\..\MyGameEngine\middle\AdvancedAnimation;$(ProjectDir)..\..\MyGameEngine\middle\component;$(ProjectDir)..\..\MyGameEngine\middle\effect;$(ProjectDir)..\..\MyGameEngine\middle\general;$(ProjectDir)..\..\MyGameEngine\middle\scene\scene_actor;$(ProjectDir)..\..\MyGameEngine\middle\Navigate;$(ProjectDir)..\..\MyGameEngine\middle\scene;$(ProjectDir)..\..\MyGameEngine\multimedia;$(ProjectDir)..\..\MyGameEngine\platform;$(ProjectDir)..\..\MyGameEngine\mygui\uirender;$(ProjectDir)..\..\MyGameEngine\mygui\uiengine;$(ProjectDir)..\..\MyGameEngine\mygui\uicommon;$(ProjectDir)..\common;$(ProjectDir)..\..\3rd\OIS\include;$(ProjectDir)..\..\3rd\tinyxml;$(ProjectDir)..\..\3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,10 +160,9 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>Default</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\MyGameEngine\miniOgre\base;$(ProjectDir)..\..\MyGameEngine\miniOgre\parser;$(ProjectDir)..\..\MyGameEngine\miniOgre\models;$(ProjectDir)..\..\MyGameEngine\miniOgre\animation;$(ProjectDir)..\..\MyGameEngine\miniOgre\particle;$(ProjectDir)..\..\MyGameEngine\miniOgre\particle\ParticleFX;$(ProjectDir)..\..\MyGameEngine\middle\AdvancedAnimation;$(ProjectDir)..\..\MyGameEngine\middle\component;$(ProjectDir)..\..\MyGameEngine\middle\effect;$(ProjectDir)..\..\MyGameEngine\middle\general;$(ProjectDir)..\..\MyGameEngine\middle\scene\scene_actor;$(ProjectDir)..\..\MyGameEngine\middle\Navigate;$(ProjectDir)..\..\MyGameEngine\middle\scene;$(ProjectDir)..\..\MyGameEngine\multimedia;$(ProjectDir)..\..\MyGameEngine\platform;$(ProjectDir)..\..\MyGameEngine\mygui\uirender;$(ProjectDir)..\..\MyGameEngine\mygui\uiengine;$(ProjectDir)..\..\MyGameEngine\mygui\uicommon;$(ProjectDir)..\common;$(ProjectDir)..\..\3rd\OIS\include;$(ProjectDir)..\..\3rd\tinyxml;$(ProjectDir)..\..\3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <DisableSpecificWarnings>4099;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

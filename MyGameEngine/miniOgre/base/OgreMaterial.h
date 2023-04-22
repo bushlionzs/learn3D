@@ -63,6 +63,9 @@ namespace Ogre {
             mBlendState = state;
         }
 
+        void setCullMode(Ogre::CullingMode mode);
+        Ogre::CullingMode getCullMode();
+
         const Ogre::Matrix4& getTransform() const
         {
             return mTransform;
@@ -151,5 +154,7 @@ namespace Ogre {
 
         String mVideoName;
         Ogre::ColourBlendState mBlendState;
+
+        Ogre::CullingMode mCullingMode = CULL_CLOCKWISE;
     };
 }
