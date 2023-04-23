@@ -28,7 +28,7 @@ run fulldemo.exe
 
 If everything goes smoothly, you will see the following picture.
 
-![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/fulldemo.png)
+![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/fulldemo.jpg)
 
 # how to compile in windows(only 64bit supported)
 
@@ -59,3 +59,7 @@ open learn3d.sln using vs2019, then start to compile
   This example implements two texture animations. The rectangle on the left moves the texture coordinates to form an animation, while the rectangle on the right    switches images to achieve animation.
   ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/animTexture.jpg)
   
+# Next Steps:
+    Add PBR materials.
+    Add specular reflection IBL.
+    Implement deferred rendering.
