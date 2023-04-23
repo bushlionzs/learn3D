@@ -27,6 +27,7 @@ Extract the DLL file from "dll.7z" and place it in the same directory as "fullde
 run fulldemo.exe
 
 If everything goes smoothly, you will see the following picture.
+If there is a prompt indicating that vulkan-1.dll is missing, please download the Windows 64-bit version from https://vulkan.lunarg.com/sdk/home and install it.
 
 ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/fulldemo.jpg)
 
