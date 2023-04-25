@@ -10,6 +10,8 @@
 #include "renderSystem.h"
 #include "OgreRoot.h"
 #include "OgreRenderTexture.h"
+#include "OgreViewport.h"
+#include "OgreCamera.h"
 
 
 namespace MyGUI
@@ -50,7 +52,7 @@ namespace MyGUI
 
 		RenderSystem* system = Ogre::Root::getSingleton().getRenderSystem();
 		mSaveViewport = system->_getViewport();
-		system->_setViewport(mViewport);
+		system->_setViewport(mViewport->getCamera(), mViewport);
 		system->clearFrameBuffer(Ogre::FBT_COLOUR, Ogre::ColourValue::ZERO);
 
 		OgreRenderManager::getInstance().beginRttRender(mTexture->getBuffer()->getRenderTarget()->requiresTextureFlipping());
@@ -59,7 +61,7 @@ namespace MyGUI
 	void OgreRTTexture::end()
 	{
 		RenderSystem* system = Ogre::Root::getSingleton().getRenderSystem();
-		system->_setViewport(mSaveViewport);
+		system->_setViewport(mSaveViewport->getCamera(), mSaveViewport);
 
 		OgreRenderManager::getInstance().endRttRender();
 	}

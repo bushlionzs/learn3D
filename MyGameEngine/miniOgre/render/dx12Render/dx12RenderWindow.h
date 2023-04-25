@@ -5,7 +5,7 @@
 #include "dx12RenderTarget.h"
 #include "dx12RenderTargetHelper.h"
 class Dx12RenderSystem;
-
+class Dx12ShadowMap;
 class Dx12RenderWindow : public Ogre::RenderWindow, public Dx12RenderTarget
 {
 public:
@@ -54,4 +54,10 @@ private:
 	//for msaa
 	Dx12RenderTargetHelper mMsaaRenderTarget;
 	ColourValue mBackgroundColor;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE mCurrentRtv;
+	D3D12_CPU_DESCRIPTOR_HANDLE mCurrentDst;
+
+	bool mUseShadow = false;
+	Dx12ShadowMap* mDx12ShadowMap;
 };

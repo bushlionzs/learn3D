@@ -5,8 +5,6 @@ class Dx12ShadowMap
 {
 public:
 	Dx12ShadowMap(
-		ID3D12Device* device,
-		Dx12TextureHandleManager* mgr,
 		uint32_t width,
 		uint32_t height);
 	~Dx12ShadowMap();
@@ -20,13 +18,8 @@ public:
 	D3D12_VIEWPORT viewport()const;
 	D3D12_RECT scissorRect()const;
 
-	void buildDescriptors(
-		CD3DX12_CPU_DESCRIPTOR_HANDLE hCpuDrv);
-
-	void onResize(uint32_t newWidth, uint32_t newHeight);
-
-private:
 	void buildDescriptors();
+private:
 	void buildResource();
 private:
 	ID3D12Device* md3dDevice = nullptr;
@@ -43,4 +36,6 @@ private:
 	CD3DX12_GPU_DESCRIPTOR_HANDLE mGpuSrvHandle;
 	CD3DX12_CPU_DESCRIPTOR_HANDLE mCpuDsvHandle;
 	Microsoft::WRL::ComPtr<ID3D12Resource> mShadowMap = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
 };

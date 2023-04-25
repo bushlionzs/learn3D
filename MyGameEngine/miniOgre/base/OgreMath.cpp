@@ -1143,32 +1143,32 @@ namespace Ogre
         return m;
     }
 
-    Matrix4 Math::makeLookAtLH(
-        const Ogre::Vector3& position,
-        const Ogre::Vector3& target,
-        const Ogre::Vector3& up)
+    Matrix4 Math::makeLookAtRH(
+        const Ogre::Vector3& camera_pos,
+        const Ogre::Vector3& target_pos,
+        const Ogre::Vector3& up_dir)
     {
-        Ogre::Vector3 r0, r1, r2;
 
-        r2 =  target - position;
-        r2.normalise();
+        Ogre::Vector3 forward = (target_pos - camera_pos);
+        forward.normalise();
+        Ogre::Vector3 right = up_dir.crossProduct(forward);
+        right.normalise();
+        Ogre::Vector3 up = forward.crossProduct(right);
 
-        r0 = up.crossProduct(r2);
-        r0.normalise();
-        
-        r1 = r2.crossProduct(r0);
-
-        Matrix4 m;
-
-        m[0][0] = r0[0]; m[0][1] = r0[1]; m[0][2] = r0[2]; m[0][3] = r0.dotProduct(-position);
-        m[1][0] = r1[0]; m[1][1] = r1[1]; m[1][2] = r1[2]; m[1][3] = r1.dotProduct(-position);
-        m[2][0] = r2[0]; m[2][1] = r2[1]; m[2][2] = r2[2]; m[2][3] = r2.dotProduct(-position);
-        m[3][0] = 0.0f; m[3][1] = 0.0f; m[3][2] = 0.0f; m[3][3] = 1.0f;
-
-        //m = m.transpose();
-
-
-        return m;
+        Ogre::Matrix4 view_matrix = Ogre::Matrix4::IDENTITY;
+        view_matrix[0][0] = right.x;
+        view_matrix[1][0] = right.y;
+        view_matrix[2][0] = right.z;
+        view_matrix[0][1] = up.x;
+        view_matrix[1][1] = up.y;
+        view_matrix[2][1] = up.z;
+        view_matrix[0][2] = forward.x;
+        view_matrix[1][2] = forward.y;
+        view_matrix[2][2] = forward.z;
+        view_matrix[3][0] = -right.dotProduct(camera_pos);
+        view_matrix[3][1] = -up.dotProduct(camera_pos); 
+        view_matrix[3][2] = -forward.dotProduct(camera_pos);
+        return view_matrix.transpose();
     }
 
     //---------------------------------------------------------------------

@@ -1,8 +1,5 @@
 #include "OgreHeader.h"
 #include "renderSystem.h"
-#include "VulkanRenderSystem.h"
-#include "dx12RenderSystem.h"
-#include "dx11RenderSystem.h"
 #include "OgreRoot.h"
 #include "OgreSceneManager.h"
 #include "OgreRenderTarget.h"
@@ -43,14 +40,8 @@ Viewport* RenderSystem::_getViewport()
     return mViewport;
 }
 
-void RenderSystem::_setViewport(Viewport* vp)
+void RenderSystem::_setViewport(ICamera* cam, Viewport* vp)
 {
-    mViewport = vp;
-    RenderTarget* target;
-    target = vp->getTarget();
-
-    mActiveRenderTarget = target;
-
 
 }
 

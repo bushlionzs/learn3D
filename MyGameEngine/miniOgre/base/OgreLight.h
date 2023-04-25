@@ -1,9 +1,10 @@
 #pragma once
 #include "OgreMoveObject.h"
 #include "OgreColourValue.h"
+#include "OgreBase.h"
 namespace Ogre {
 
-    class Light: public MoveObject
+    class Light: public MoveObject, public ICamera
     {
     public:
         void setDiffuseColour(float red, float green, float blue);
@@ -14,7 +15,18 @@ namespace Ogre {
         void setSpecularColour(float red, float green, float blue);
         void setSpecularColour(const ColourValue& colour);
 
-        void setAttenuation(float range, float constant, float linear, float quadratic);
+        void setAttenuation(
+            float range, 
+            float constant, 
+            float linear, 
+            float quadratic);
+
+        virtual const Ogre::Matrix4& getViewMatrix() const;
+        virtual const Ogre::Matrix4& getProjectMatrix() const;
+        virtual const Ogre::Vector3& getDerivedPosition() const;
+        virtual bool isVisible(const AxisAlignedBox& bound) const;
+        const AxisAlignedBox& getBoundingBox(void) const;
+        virtual const CameraType getCameraType();
     public:
         Ogre::Vector3 Strength = { 0.5f, 0.5f, 0.5f };
         float FalloffStart = 1.0f;                          // point/spot light only
@@ -22,5 +34,9 @@ namespace Ogre {
         float FalloffEnd = 10.0f;                           // point/spot light only
         Ogre::Vector3 Position = { 0.0f, 0.0f, 0.0f };  // point/spot light only
         float SpotPower = 64.0f;                            // spot light only
+
+        //for shadow only
+        mutable Ogre::Matrix4 mViewMatrix;
+        mutable Ogre::Matrix4 mProjMatrix;
     };
 }

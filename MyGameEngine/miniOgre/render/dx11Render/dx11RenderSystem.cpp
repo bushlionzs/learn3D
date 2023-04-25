@@ -66,11 +66,9 @@ void Dx11RenderSystem::frameEnd()
 
 }
 
-void Dx11RenderSystem::_setViewport(Ogre::Viewport* vp)
+void Dx11RenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
 {
 	mViewport = vp;
-	auto cam = vp->getCamera();
-
 	mCamera = cam;
 	updateFrame();
 
@@ -87,6 +85,7 @@ void Dx11RenderSystem::clearFrameBuffer(uint32 buffers,
 {
 	mActiveRenderTarget->clearFrameBuffer(
 		buffers, colour, depth, stencil);
+	updateFrame();
 }
 
 Ogre::RenderWindow* Dx11RenderSystem::createRenderWindow(
@@ -131,11 +130,6 @@ void Dx11RenderSystem::postRender()
 	
 }
 
-Camera* Dx11RenderSystem::getCurrentCamera()
-{
-	return mCamera;
-}
-
 ITexture* Dx11RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
 {
 	Dx11Texture* tex = new Dx11Texture(name, texProperty, this);
@@ -167,7 +161,7 @@ EngineType Dx11RenderSystem::getRenderType()
 
 void Dx11RenderSystem::updateFrame()
 {
-	Camera* camera = mCamera;
+	ICamera* camera = mCamera;
 
 	const Ogre::Matrix4& view = camera->getViewMatrix();
 	const Ogre::Matrix4& proj = camera->getProjectMatrix();
@@ -179,6 +173,23 @@ void Dx11RenderSystem::updateFrame()
 	Ogre::Matrix4 invViewProj = viewProj.inverse();
 
 	mFrameConstantBuffer.Shadow = 0;
+
+	if (camera->getCameraType() == CameraType_Light)
+	{
+		mFrameConstantBuffer.Shadow = 1;
+
+		mFrameConstantBuffer.ShadowTransform =
+			(proj * view).transpose();
+
+		Ogre::Matrix4 m = mFrameConstantBuffer.ShadowTransform.transpose();
+
+		auto aa = m* Ogre::Vector4(0.0, 0.0, 20.0f, 1.0f);
+		aa = aa;
+	}
+	else
+	{
+		int kk = 0;
+	}
 
 	int width = mRenderWindow->getWidth();
 	int height = mRenderWindow->getHeight();
@@ -212,6 +223,7 @@ void Dx11RenderSystem::updateFrame()
 
 	ID3D11Buffer* buf = cb->Resource();
 	context->VSSetConstantBuffers(1, 1, &buf);
+	context->PSSetConstantBuffers(1, 1, &buf);
 }
 
 void Dx11RenderSystem::renderImpl(Dx11Pass& pass)

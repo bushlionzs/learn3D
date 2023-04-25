@@ -3,9 +3,9 @@
 #include "OgreMoveObject.h"
 #include "OgreCommon.h"
 #include "OgreFrustum.h"
-
+#include "OgreBase.h"
 namespace Ogre {
-    class Camera: public MoveObject
+    class Camera: public MoveObject, public ICamera
     {
     public:
         // constructor with vectors
@@ -24,10 +24,6 @@ namespace Ogre {
         bool isVisible(const Ogre::Sphere& bound) const;
         bool isVisible(const AxisAlignedBox& bound) const;
         bool isVisible(const Ogre::Vector3& position) const;
-        const std::vector<Renderable*>& getRenderableList()
-        {
-            return mRenderableList;
-        }
 
         Ogre::SortMode getSortMode() const { return mSortMode; }
 

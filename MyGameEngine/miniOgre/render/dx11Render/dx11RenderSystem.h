@@ -15,7 +15,7 @@ public:
     virtual void update(float delta);
     virtual void frameStart();
     virtual void frameEnd();
-    virtual void _setViewport(Ogre::Viewport* vp);
+    virtual void _setViewport(ICamera* cam, Ogre::Viewport* vp);
     virtual void clearFrameBuffer(uint32 buffers,
         const Ogre::ColourValue& colour,
         float depth, uint16 stencil);
@@ -26,16 +26,19 @@ public:
     virtual void preRender();
     virtual void render(Renderable* r, RenderListType t);
     virtual void postRender();
-    virtual Camera* getCurrentCamera();
     virtual ITexture* createTextureFromFile(const std::string& name, TextureProperty* texProperty);
     virtual Shader* createShader(ShaderInfo& sinfo);
     virtual void* createRenderableData();
     EngineType getRenderType();
+    ICamera* getCamera()
+    {
+        return mCamera;
+    }
 private:
     void updateFrame();
     void renderImpl(Dx11Pass& pass);
 private:
-    Camera* mCamera = nullptr;
+    ICamera* mCamera = nullptr;
     Dx11RenderWindow* mRenderWindow;
     Dx11RenderTarget* mActiveRenderTarget;
     Dx11Pass mDx11Pass;

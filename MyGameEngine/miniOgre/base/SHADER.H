@@ -47,7 +47,7 @@ struct FrameConstantBuffer
     float TotalTime = 0.0f;
     float DeltaTime = 0.0f;
 
-    Ogre::Vector4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
+    Ogre::Vector4 AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
     LightInfo Lights[MaxLights];
 };
 

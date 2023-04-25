@@ -73,13 +73,13 @@ void VulkanRenderSystem::frameStart()
 
     if (vkResetCommandBuffer(pCommandBuffer, 0) != VK_SUCCESS)
     {
-        OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "failed to vkResetCommandBuffer!");
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkResetCommandBuffer!");
     }
 
     VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
     if (vkBeginCommandBuffer(pCommandBuffer, &cmdBufInfo) != VK_SUCCESS)
     {
-        OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "failed to vkBeginCommandBuffer!");
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkBeginCommandBuffer!");
     }
 }
 

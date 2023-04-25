@@ -3,11 +3,16 @@
 #include "OgreStringConverter.h"
 #include "dx11RenderSystem.h"
 #include "dx11Helper.h"
+#include "dx11ShadowMap.h"
 
 Dx11RenderWindow::Dx11RenderWindow(Dx11RenderSystem* rs)
 {
 	mWnd = 0;
 	mRenderSystem = rs;
+	mContext = DX11Helper::getSingleton().getDeviceContext();
+
+	mShadowMap = new Dx11ShadowMap(1024, 1024);
+	mShadowMap->buildResource();
 }
 
 Dx11RenderWindow::~Dx11RenderWindow()
@@ -148,13 +153,48 @@ ID3D11DepthStencilView* Dx11RenderWindow::getDepthStencilView()const
 
 void Dx11RenderWindow::preRender()
 {
-	auto deviceContext = DX11Helper::getSingleton().getDeviceContext();
-	deviceContext->RSSetViewports(1, &mViewport);
+	mContext->RSSetViewports(1, &mViewport);
 
-	auto renderTarget = getRenderTargetView();
-	deviceContext->OMSetRenderTargets(1, &renderTarget, mDepthStencilView.Get());
+	auto cam = mRenderSystem->getCamera();
+	mUseShadow = cam->getCameraType() == CameraType_Light;
+
+	if (mUseShadow)
+	{
+		mCurrentTargetView = nullptr;
+		mCurrentDepthStencilView = mShadowMap->getDepthStencilView();
+		mContext->OMSetRenderTargets(0, nullptr, mCurrentDepthStencilView);
+		
+	}
+	else
+	{
+		mCurrentTargetView = getRenderTargetView();
+		mCurrentDepthStencilView = mDepthStencilView.Get();
+		mContext->OMSetRenderTargets(1, &mCurrentTargetView, mCurrentDepthStencilView);
+		
+	}
 }
 
+void Dx11RenderWindow::clearFrameBuffer(uint32_t buffers,
+	const Ogre::ColourValue& colour,
+	float depth, uint16_t stencil)
+{
+	if (mCurrentTargetView)
+	{
+		mContext->ClearRenderTargetView(
+			mCurrentTargetView, reinterpret_cast<const float*>(&colour));
+	}
+	
+
+	mContext->ClearDepthStencilView(mCurrentDepthStencilView,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	if (mCurrentTargetView)
+	{
+		mShadowMap->checkTextureData();
+		ID3D11ShaderResourceView* shadowView = mShadowMap->getResource();
+		mContext->PSSetShaderResources(1, 1, &shadowView);
+	}
+}
 
 void Dx11RenderWindow::present()
 {
@@ -163,26 +203,13 @@ void Dx11RenderWindow::present()
 	mCurrFrameIndex = (mCurrFrameIndex % DX11_BACKBUFFER_COUNT);
 }
 
-
-void Dx11RenderWindow::clearFrameBuffer(uint32_t buffers,
-	const Ogre::ColourValue& colour,
-	float depth, uint16_t stencil)
-{
-	auto context = DX11Helper::getSingleton().getDeviceContext();
-	auto renderTargetView = getRenderTargetView();
-	auto depthStencilView = getDepthStencilView();
-	context->ClearRenderTargetView(renderTargetView, reinterpret_cast<const float*>(&colour));
-
-	context->ClearDepthStencilView(depthStencilView,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-}
-
 void Dx11RenderWindow::swapBuffers()
 {
 	auto context = DX11Helper::getSingleton().getDeviceContext();
 	ID3D11RenderTargetView* output = nullptr;
 	ID3D11ShaderResourceView* input = nullptr;
 	context->OMSetRenderTargets(0, &output, nullptr);
+	context->PSSetShaderResources(1, 1, &input);
 	context->PSSetShaderResources(2, 1, &input);
 }
 

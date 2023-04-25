@@ -28,7 +28,7 @@ namespace Ogre {
         mParent = parent;
     }
 
-    void MoveObject::_notifyCurrentCamera(Camera* cam)
+    void MoveObject::_notifyCurrentCamera(ICamera* cam)
     {
 
     }
@@ -66,8 +66,9 @@ namespace Ogre {
 
     void MoveObject::setCastShadows(bool cast)
     {
-
+        mCastShadows = cast;
     }
+
     void MoveObject::setVisible(bool visible)
     {
         mVisible = visible;

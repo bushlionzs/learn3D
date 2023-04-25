@@ -256,6 +256,7 @@
     <ClInclude Include="miniOgre\base\engine_struct.h" />
     <ClInclude Include="miniOgre\base\file_stream.h" />
     <ClInclude Include="miniOgre\base\glslUtil.h" />
+    <ClInclude Include="miniOgre\base\OgreBase.h" />
     <ClInclude Include="miniOgre\base\OgreHardwareIndexBuffer.h" />
     <ClInclude Include="miniOgre\base\OgreException.h" />
     <ClInclude Include="miniOgre\base\OgreHardwarePixelBuffer.h" />
@@ -463,6 +464,7 @@
     <ClInclude Include="miniOgre\render\dx11Render\dx11RenderTexture.h" />
     <ClInclude Include="miniOgre\render\dx11Render\dx11RenderWindow.h" />
     <ClInclude Include="miniOgre\render\dx11Render\dx11Shader.h" />
+    <ClInclude Include="miniOgre\render\dx11Render\dx11ShadowMap.h" />
     <ClInclude Include="miniOgre\render\dx11Render\dx11Texture.h" />
     <ClInclude Include="miniOgre\render\dx11Render\dx11UploadBuffer.h" />
     <ClInclude Include="miniOgre\render\dx11Render\LightHelper.h" />
@@ -916,6 +918,7 @@
     <ClCompile Include="miniOgre\base\engine_manager.cpp" />
     <ClCompile Include="miniOgre\base\file_stream.cpp" />
     <ClCompile Include="miniOgre\base\glslUtil.cpp" />
+    <ClCompile Include="miniOgre\base\OgreBase.cpp" />
     <ClCompile Include="miniOgre\base\OgreHardwareIndexBuffer.cpp" />
     <ClCompile Include="miniOgre\base\OgreException.cpp" />
     <ClCompile Include="miniOgre\base\OgreHardwarePixelBuffer.cpp" />
@@ -1057,6 +1060,7 @@
     <ClCompile Include="miniOgre\render\dx11Render\dx11RenderTexture.cpp" />
     <ClCompile Include="miniOgre\render\dx11Render\dx11RenderWindow.cpp" />
     <ClCompile Include="miniOgre\render\dx11Render\dx11Shader.cpp" />
+    <ClCompile Include="miniOgre\render\dx11Render\dx11ShadowMap.cpp" />
     <ClCompile Include="miniOgre\render\dx11Render\dx11Texture.cpp" />
     <ClCompile Include="miniOgre\render\dx11Render\OgreD3D11Mappings.cpp" />
     <ClCompile Include="miniOgre\render\dx12Render\d3dutil.cpp" />

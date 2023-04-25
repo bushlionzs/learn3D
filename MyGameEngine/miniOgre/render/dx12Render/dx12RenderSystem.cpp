@@ -22,8 +22,6 @@
 
 Dx12RenderSystem::Dx12RenderSystem(HWND wnd)
 {
-	mClearColor = DirectX::Colors::LightBlue;
-
 	mRenderSystemName = "Directx12";
 }
 
@@ -38,11 +36,12 @@ bool Dx12RenderSystem::engineInit()
 	RenderSystem::engineInit();
 	new Dx12HardwareBufferManager(this);
 
-	if (!initDirect3D())
-	{
-		return false;
-	}
+	auto helper = new DX12Helper(this);
+	helper->createBaseInfo();
 
+	auto device = helper->getDevice();
+	mDx12TextureHandleManager = new Dx12TextureHandleManager(device);
+	createFrameResource();
 	buildRootSignature();
 	return true;
 }
@@ -57,14 +56,7 @@ void Dx12RenderSystem::ready()
 
 void Dx12RenderSystem::_resourceLoaded()
 {
-	//DX12Helper::getSingleton()._createMipmapPrepare();
-}
 
-void Dx12RenderSystem::update(float delta)
-{
-
-	UpdateShadowTransform(delta);
-	
 }
 
 void Dx12RenderSystem::frameStart()
@@ -152,16 +144,6 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	renderImpl(&mCurrentPass);
 }
 
-void Dx12RenderSystem::postRender()
-{
-	
-}
-
-Camera* Dx12RenderSystem::getCurrentCamera()
-{
-	return mCamera;
-}
-
 ITexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
 {
 	Dx12Texture* tex = new Dx12Texture(name, texProperty, this);
@@ -206,14 +188,12 @@ ID3D12GraphicsCommandList* Dx12RenderSystem::getCommandList()
 	return mCurrentFrame->getCommandList();
 }
 
-void Dx12RenderSystem::_setViewport(Viewport* vp)
+void Dx12RenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
 {
 	mViewport = vp;
-	auto cam = vp->getCamera();
-
 	
 	mCamera = cam;
-	UpdateMainPassCB(cam);
+	updateMainPassCB(cam);
 	
 	
 	RenderTarget* target;
@@ -246,24 +226,6 @@ Ogre::RenderWindow* Dx12RenderSystem::createRenderWindow(
 	attachRenderTarget(*mRenderWindow);
 
 	return mRenderWindow;
-}
-
-bool Dx12RenderSystem::initDirect3D()
-{
-	auto helper = new DX12Helper(this);
-	helper->createBaseInfo();
-
-	auto device = helper->getDevice();
-	mDx12TextureHandleManager = new Dx12TextureHandleManager(device);
-	mDx12ShadowMap = new Dx12ShadowMap(
-		device,
-		mDx12TextureHandleManager, 
-		mShadowSize, 
-		mShadowSize);
-	createFrameResource();
-	CreateRtvAndDsvDescriptorHeaps();
-
-	return true;
 }
 
 void Dx12RenderSystem::buildRootSignature()
@@ -318,76 +280,9 @@ void Dx12RenderSystem::buildRootSignature()
 		IID_PPV_ARGS(&mRootSignature)));
 }
 
-void Dx12RenderSystem::CreateRtvAndDsvDescriptorHeaps()
-{
-	auto device = DX12Helper::getSingleton().getDevice();
-	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
-	rtvHeapDesc.NumDescriptors = 6;
-	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	rtvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(device->CreateDescriptorHeap(
-		&rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));
-
-
-	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
-	dsvHeapDesc.NumDescriptors = 3;
-	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	dsvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(device->CreateDescriptorHeap(
-		&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
-
-	auto rtvCpuStart = mRtvHeap->GetCPUDescriptorHandleForHeapStart();
-
-	int rtvOffset = 0;
-
-	CD3DX12_CPU_DESCRIPTOR_HANDLE cubeRtvHandles[6];
-	for (int i = 0; i < 6; ++i)
-		cubeRtvHandles[i] = CD3DX12_CPU_DESCRIPTOR_HANDLE(
-			rtvCpuStart, 
-			rtvOffset + i, 
-			DX12Helper::getSingleton().getRtvDescriptorSize());
-
-
-	//shadow map
-	
-
-	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvhandle(mDsvHeap->GetCPUDescriptorHandleForHeapStart(),
-		2,
-		DX12Helper::getSingleton().getDsvDescriptorSize());
-
-	mDx12ShadowMap->buildDescriptors(dsvhandle);
-
-	auto index = mDx12TextureHandleManager->allocStartIndex();
-	auto nullSrv = mDx12TextureHandleManager->getCpuHandleByIndex(index);
-	mNullSrv = mDx12TextureHandleManager->getGpuHandleByIndex(index);
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-	srvDesc.TextureCube.MipLevels = 1;
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	device->CreateShaderResourceView(nullptr, &srvDesc, nullSrv);
-
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
-	
-	index = mDx12TextureHandleManager->allocStartIndex();
-	nullSrv = mDx12TextureHandleManager->getCpuHandleByIndex(index);
-	mNullCubeSrv = mDx12TextureHandleManager->getGpuHandleByIndex(index);
-	device->CreateShaderResourceView(nullptr, &srvDesc, nullSrv);
-
-	// Create descriptor heaps for MSAA render target views and depth stencil views.
-	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc = {};
-	rtvDescriptorHeapDesc.NumDescriptors = 1;
-	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-}
-
 void Dx12RenderSystem::renderImpl(Dx12Pass* pass)
 {
-	Camera* camera = mCamera;
+	ICamera* camera = mCamera;
 	VertexData* vertexData = pass->mRenderable->getVertexData();
 	IndexData* indexData = pass->mRenderable->getIndexData();
 	auto vd = vertexData->vertexDeclaration;
@@ -395,26 +290,15 @@ void Dx12RenderSystem::renderImpl(Dx12Pass* pass)
 	
 	auto commandlist = mCurrentFrame->getCommandList();
 
-	
 
 	//bind texture
-
-	if (pass->mPassState == PassState_Shadow)
+	int32_t cubeIndex = pass->mDx12RenderableData->getCubeTexStartIndex();
+	if (cubeIndex >= 0)
 	{
-		commandlist->SetGraphicsRootDescriptorTable(mCubeMapIndex, mNullCubeSrv);
-		commandlist->SetGraphicsRootDescriptorTable(mShadowMapIndex, mNullSrv);
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = mDx12TextureHandleManager->getGpuHandleByIndex(cubeIndex);
+		commandlist->SetGraphicsRootDescriptorTable(mCubeMapIndex, gpuHandle);
 	}
-	else
-	{
-		commandlist->SetGraphicsRootDescriptorTable(mShadowMapIndex, mDx12ShadowMap->gpuSrvHandle());
 
-		int32_t cubeIndex = pass->mDx12RenderableData->getCubeTexStartIndex();
-		if (cubeIndex >= 0)
-		{
-			CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = mDx12TextureHandleManager->getGpuHandleByIndex(cubeIndex);
-			commandlist->SetGraphicsRootDescriptorTable(mCubeMapIndex, gpuHandle);
-		}
-	}
 
 	int32_t startIndex = pass->mDx12RenderableData->getTexStartIndex();
 	if (startIndex >= 0)
@@ -459,7 +343,7 @@ void Dx12RenderSystem::renderImpl(Dx12Pass* pass)
 }
 
 
-void Dx12RenderSystem::UpdateMainPassCB(Camera* camera)
+void Dx12RenderSystem::updateMainPassCB(ICamera* camera)
 {
 	const Ogre::Matrix4& view = camera->getViewMatrix();
 	const Ogre::Matrix4& proj = camera->getProjectMatrix();
@@ -471,6 +355,18 @@ void Dx12RenderSystem::UpdateMainPassCB(Camera* camera)
 	Ogre::Matrix4 invViewProj = viewProj.inverse();
 
 	mFrameConstantBuffer.Shadow = 0;
+
+	if (camera->getCameraType() == CameraType_Light)
+	{
+		mFrameConstantBuffer.Shadow = 1;
+
+		mFrameConstantBuffer.ShadowTransform = 
+			proj * view;
+
+		mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+		mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+		mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+	}
 	
 	int width = mRenderWindow->getWidth();
 	int height = mRenderWindow->getHeight();
@@ -481,7 +377,7 @@ void Dx12RenderSystem::UpdateMainPassCB(Camera* camera)
 	mFrameConstantBuffer.InvProj = invProj.transpose();
 	mFrameConstantBuffer.ViewProj = viewProj.transpose();
 	mFrameConstantBuffer.InvViewProj = invViewProj.transpose();
-	mFrameConstantBuffer.ShadowTransform = mShadowTransform;
+	
 	mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z};
 	mFrameConstantBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
 	mFrameConstantBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
@@ -489,15 +385,7 @@ void Dx12RenderSystem::UpdateMainPassCB(Camera* camera)
 	mFrameConstantBuffer.FarZ = 10000.0f;
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-	mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
-	mFrameConstantBuffer.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-	mFrameConstantBuffer.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
-	mFrameConstantBuffer.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-	mFrameConstantBuffer.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
 	
-
 	UploadBuffer<FrameConstantBuffer>* cb = mCurrentFrame->getCameraFrameData(camera);
 	cb->CopyData(0, mFrameConstantBuffer);
 
@@ -506,69 +394,5 @@ void Dx12RenderSystem::UpdateMainPassCB(Camera* camera)
 		mMainConstantIndex, frameAddress);
 }
 
-
-void Dx12RenderSystem::UpdateShadowTransform(float delta)
-{
-	mLightRotationAngle += 0.02f * delta;
-
-	Ogre::Quaternion rotate(Ogre::Radian(mLightRotationAngle), Ogre::Vector3(0.0f, 1.0f, 0.0f));
-
-	Ogre::Matrix4 R = Ogre::Matrix4::IDENTITY;
-
-	R.makeTransform(Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Vector3(1.0f, 1.0f, 1.0f), rotate);
-
-	for (int i = 0; i < 3; ++i)
-	{
-		Ogre::Vector3 lightDir = mBaseLightDirections[i];
-		lightDir = R * lightDir;
-		mRotatedLightDirections[i] = lightDir;
-	}
-
-	// Only the first "main" light casts a shadow.
-	Ogre::Vector3 lightDir = mRotatedLightDirections[0];
-	Ogre::Vector3 tmp = mRotatedLightDirections[0];
-	tmp.x *= -2.0f * mSceneBounds.getRadius();
-	tmp.y *= -2.0f * mSceneBounds.getRadius();
-	tmp.z *= -2.0f * mSceneBounds.getRadius();
-	Ogre::Vector3 lightPos = tmp;
-	Ogre::Vector3 targetPos = mSceneBounds.getCenter();
-	Ogre::Vector3 lightUp = Ogre::Vector3(0.0f, 1.0f, 0.0f);
-
-	Ogre::Matrix4 lightView = Ogre::Math::makeLookAtLH(lightPos, targetPos, lightUp);
-
-	mLightPosW = lightPos;
-
-	// Transform bounding sphere to light space.
-	Ogre::Vector3 sphereCenterLS = lightView * targetPos;
-
-	// Ortho frustum in light space encloses scene.
-	float l = sphereCenterLS.x - mSceneBounds.getRadius();
-	float b = sphereCenterLS.y - mSceneBounds.getRadius();
-	float n = sphereCenterLS.z - mSceneBounds.getRadius();
-	float r = sphereCenterLS.x + mSceneBounds.getRadius();
-	float t = sphereCenterLS.y + mSceneBounds.getRadius();
-	float f = sphereCenterLS.z + mSceneBounds.getRadius();
-
-	mLightNearZ = n;
-	mLightFarZ = f;
-	Ogre::Matrix4 lightProj = Ogre::Math::makeOrthographicOffCenterLH(l, r, b, t, n, f);
-
-	// Transform NDC space [-1,+1]^2 to texture space [0,1]^2
-	Ogre::Matrix4 T(
-		0.5f, 0.0f, 0.0f, 0.0f,
-		0.0f, -0.5f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.5f, 0.5f, 0.0f, 1.0f);
-
-	Ogre::Matrix4 S = lightView * lightProj * T;
-	mLightView =  lightView.transpose();
-	mLightProj = lightProj.transpose();
-	mShadowTransform = S.transpose();
-}
-
-void Dx12RenderSystem::updateShadowPassCB()
-{
-	
-}
 
 

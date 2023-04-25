@@ -4,7 +4,7 @@
 #include "dx11Common.h"
 #include "dx11RenderTarget.h"
 class Dx11RenderSystem;
-
+class Dx11ShadowMap;
 #define DX11_BACKBUFFER_COUNT 2
 
 class Dx11RenderWindow : public Ogre::RenderWindow, public Dx11RenderTarget
@@ -40,6 +40,7 @@ private:
 private:
 	HWND mWnd;
 	Dx11RenderSystem* mRenderSystem;
+	ID3D11DeviceContext* mContext;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;
 	
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRenderTargetViews[DX11_BACKBUFFER_COUNT];
@@ -50,4 +51,10 @@ private:
 	D3D11_VIEWPORT mViewport;
 
 	uint32_t mCurrFrameIndex = 0;
+
+	ID3D11RenderTargetView* mCurrentTargetView;
+	ID3D11DepthStencilView* mCurrentDepthStencilView;
+
+	bool mUseShadow = false;
+	Dx11ShadowMap* mShadowMap;
 };

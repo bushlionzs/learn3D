@@ -725,7 +725,7 @@ namespace Ogre
             float ViewTop,
             float NearZ,
             float FarZ);
-        static Matrix4 makeLookAtLH(
+        static Matrix4 makeLookAtRH(
             const Ogre::Vector3& position,
             const Ogre::Vector3& target,
             const Ogre::Vector3& up);

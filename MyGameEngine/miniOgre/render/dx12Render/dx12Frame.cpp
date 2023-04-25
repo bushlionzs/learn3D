@@ -30,7 +30,8 @@ void Dx12Frame::_initialise(uint32_t index)
 		IID_PPV_ARGS(mCommandList.GetAddressOf())));
 }
 
-UploadBuffer<FrameConstantBuffer>* Dx12Frame::getCameraFrameData(Ogre::Camera* cam)
+UploadBuffer<FrameConstantBuffer>* Dx12Frame::getCameraFrameData(
+	Ogre::ICamera* cam)
 {
 	auto itor = mCamaraDataMap.find(cam);
 	if(itor != mCamaraDataMap.end())

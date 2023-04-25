@@ -152,6 +152,22 @@ void DX11Helper::buildStaticSample()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	mDx11Device->CreateSamplerState(&sampDesc, &samplerStateAnisotropicClamp);
 
+	ID3D11SamplerState* samplerStateShadow;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+	sampDesc.MaxAnisotropy = 1;
+	sampDesc.MinLOD = 0.0f;
+	sampDesc.MaxLOD = 0.0f;
+	sampDesc.BorderColor[0] = 0.0f;
+	sampDesc.BorderColor[1] = 0.0f;
+	sampDesc.BorderColor[2] = 0.0f;
+	sampDesc.BorderColor[3] = 1.0f;
+	mDx11Device->CreateSamplerState(&sampDesc, &samplerStateShadow);
+
 	mSamplerStates =
 	{
 		samplerStatePointWrap,
@@ -159,7 +175,8 @@ void DX11Helper::buildStaticSample()
 		samplerStateLinearWrap,
 		samplerStateLinearClamp,
 		samplerStateAnisotropicWrap,
-		samplerStateAnisotropicClamp
+		samplerStateAnisotropicClamp,
+		samplerStateShadow
 	};
 
 	mDx11Context->PSSetSamplers(0, mSamplerStates.size(), mSamplerStates.data());

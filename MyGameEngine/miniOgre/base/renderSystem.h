@@ -72,7 +72,7 @@ public:
 
 
     Ogre::Viewport* _getViewport();
-    virtual void _setViewport(Ogre::Viewport* vp);
+    virtual void _setViewport(ICamera* cam, Ogre::Viewport* vp);
 
     virtual void clearFrameBuffer(uint32 buffers, const Ogre::ColourValue& colour = Ogre::ColourValue::Black,
         float depth = 1.0f, uint16 stencil = 0);

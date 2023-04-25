@@ -35,8 +35,9 @@ namespace Ogre {
         ~SceneManager();
 
         Camera* createCamera(const std::string& name);
-
+        Camera* addShadowCamera(const std::string& name);
         void _renderScene(Camera* camera, Ogre::Viewport* vp);
+        void _renderScene2(ICamera* camera, Ogre::Viewport* vp);
         void update(float timeSinceLastFrame);
 
         Entity* createEntity(const std::string& name, const std::string& meshName);
@@ -140,8 +141,8 @@ namespace Ogre {
         EngineRenderList mEngineRenderList;
         std::shared_ptr<SkyBoxRenderer> mSkyBox;
 
-        /// Camera in progress
-        Camera* mCameraInProgress = nullptr;
+        //light
+        std::unordered_map<String, Light*> mLightMap;
         /// Current Viewport
         Viewport* mCurrentViewport = nullptr;
     };

@@ -26,12 +26,18 @@ namespace Ogre {
         return node;
     }
 
-    void SceneNode::traverse(EngineRenderList& containter, Camera* cam)
+    void SceneNode::traverse(EngineRenderList& containter, ICamera* cam)
     {
         if (!mVisible)
             return;
+
+        bool useShadow = cam->getCameraType() == CameraType_Light;
         for (auto it : mMoveObjects)
         {
+            if (useShadow && !it->getCastShadows())
+            {
+                continue;
+            }
             it->_notifyCurrentCamera(cam);
             const AxisAlignedBox& box = it->getWorldBoundingBox(true);
             if (!cam->isVisible(box))

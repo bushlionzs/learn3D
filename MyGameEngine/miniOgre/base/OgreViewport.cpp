@@ -79,7 +79,7 @@ namespace Ogre {
         RenderSystem* rs = Root::getSingleton().getRenderSystem();
         if ((rs) && (rs->_getViewport() == this))
         {
-            rs->_setViewport(NULL);
+            rs->_setViewport(nullptr, nullptr);
         }
     }
     //---------------------------------------------------------------------
@@ -185,19 +185,7 @@ namespace Ogre {
     //---------------------------------------------------------------------
     void Viewport::clear(uint32 buffers, const ColourValue& col, float depth, uint16 stencil)
     {
-        RenderSystem* rs = Root::getSingleton().getRenderSystem();
-        if (rs)
-        {
-            Viewport* currentvp = rs->_getViewport();
-            if (currentvp && currentvp == this)
-                rs->clearFrameBuffer(buffers, col, depth, stencil);
-            else
-            {
-                rs->_setViewport(this);
-                rs->clearFrameBuffer(buffers, col, depth, stencil);
-                rs->_setViewport(currentvp);
-            }
-        }
+       
     }
 
     //---------------------------------------------------------------------

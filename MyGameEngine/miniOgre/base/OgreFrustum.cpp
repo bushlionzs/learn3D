@@ -33,6 +33,7 @@ THE SOFTWARE.
 #include "OgreNode.h"
 #include "OgreSceneManager.h"
 #include "renderSystem.h"
+#include "OgreCamera.h"
 
 namespace Ogre {
 

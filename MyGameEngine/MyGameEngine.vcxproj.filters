@@ -2280,6 +2280,12 @@
     <ClInclude Include="miniOgre\render\dx12Render\dx12RenderTargetHelper.h">
       <Filter>miniOgre\render\directx12</Filter>
     </ClInclude>
+    <ClInclude Include="miniOgre\base\OgreBase.h">
+      <Filter>miniOgre\base</Filter>
+    </ClInclude>
+    <ClInclude Include="miniOgre\render\dx11Render\dx11ShadowMap.h">
+      <Filter>miniOgre\render\directx11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="miniOgre\base\OgreAlignedAllocator.cpp">
@@ -3754,6 +3760,12 @@
     </ClCompile>
     <ClCompile Include="miniOgre\render\dx12Render\dx12RenderTargetHelper.cpp">
       <Filter>miniOgre\render\directx12</Filter>
+    </ClCompile>
+    <ClCompile Include="miniOgre\base\OgreBase.cpp">
+      <Filter>miniOgre\base</Filter>
+    </ClCompile>
+    <ClCompile Include="miniOgre\render\dx11Render\dx11ShadowMap.cpp">
+      <Filter>miniOgre\render\directx11</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "OgreSimpleRenderable.h"
 #include "OgreMaterialManager.h"
 #include "OgreNode.h"
-
+#include "OgreCamera.h"
 namespace Ogre {
 
     uint SimpleRenderable::msGenNameCount = 0;

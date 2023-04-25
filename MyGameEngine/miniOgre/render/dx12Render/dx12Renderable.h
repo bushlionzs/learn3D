@@ -32,7 +32,7 @@ public:
 
     void buildMaterial(Ogre::Material* mat);
     void updateCurrentFrame(int32_t index);
-    void updateData(Dx12Pass* pass, Ogre::Camera* cam);
+    void updateData(Dx12Pass* pass, Ogre::ICamera* cam);
     int32_t getTexStartIndex();
     int32_t getCubeTexStartIndex();
 

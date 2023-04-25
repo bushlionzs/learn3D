@@ -65,6 +65,7 @@ namespace Ogre
     class Node;
     class SceneNode;
     class SceneManager;
+    class ICamera;
     class Camera;
     class MoveObject;
     class Light;

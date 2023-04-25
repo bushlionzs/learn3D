@@ -274,13 +274,13 @@ std::shared_ptr<Mesh> MeshManager::createGround(
 		int32_t zindex = i / (m-1);
 		float x = - xindex * dx + lefttop.x;
 		float z = zindex * dz + lefttop.z;
-		element.mPosition = Ogre::Vector3(x, 0.0f, z);
+		element.mPosition = Ogre::Vector3(x, lefttop.y, z);
 		vertices.push_back(element);
-		element.mPosition = Ogre::Vector3(x - dx, 0.0f, z);
+		element.mPosition = Ogre::Vector3(x - dx, lefttop.y, z);
 		vertices.push_back(element);
-		element.mPosition = Ogre::Vector3(x, 0.0f, z + dz);
+		element.mPosition = Ogre::Vector3(x, lefttop.y, z + dz);
 		vertices.push_back(element);
-		element.mPosition = Ogre::Vector3(x - dx, 0.0f, z + dz);
+		element.mPosition = Ogre::Vector3(x - dx, lefttop.y, z + dz);
 		vertices.push_back(element);
 		
 	}
@@ -317,20 +317,9 @@ std::shared_ptr<Mesh> MeshManager::createGround(
 
 	Mesh* pMesh = BuildHardBuffer(vertices, indices);
 
-	MaterialInfo matInfo;
-	matInfo.mTexname = "floor.dds";
-	matInfo.mTexScale = 10.0f;
-	matInfo.mMatInfo.DiffuseAlbedo = Ogre::Vector4(0.9f, 0.9f, 0.9f, 1.0f);
-	matInfo.mMatInfo.FresnelR0 = Ogre::Vector3(0.2f, 0.2f, 0.2f);
-	matInfo.mMatInfo.Roughness = 0.1f;
-	applyMesh(pMesh, matInfo);
-
-	std::shared_ptr<Mesh> p(pMesh);
-
-	auto mat = MaterialManager::getSingletonPtr()->getByName(std::string("Terrain/OneLayer"));
-
+	auto mat = MaterialManager::getSingleton().getByName("myground");
 	pMesh->getSubMesh(0)->setMaterial(mat);
-
+	std::shared_ptr<Mesh> p(pMesh);
 	mMeshMap[name] = p;
 	return p;
 }

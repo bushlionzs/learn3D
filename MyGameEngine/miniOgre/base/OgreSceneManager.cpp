@@ -14,6 +14,7 @@
 #include "OgreSky.h"
 #include "myutils.h"
 #include "OgreViewport.h"
+#include "OgreLight.h"
 
 namespace Ogre {
     SceneManager::SceneManager()
@@ -41,15 +42,34 @@ namespace Ogre {
         return camera;
     }
 
+    Camera* SceneManager::addShadowCamera(const std::string& name)
+    {
+        return nullptr;
+    }
+
     void SceneManager::_renderScene(Camera* camera, Ogre::Viewport* vp)
     {
-        
         mCurrentViewport = vp;
-        mCameraInProgress = camera;
+
+        if (vp->getShadowsEnabled())
+        {
+            //
+            if (!mLightMap.empty())
+            {
+                Light* light = mLightMap.begin()->second;
+                _renderScene2(light, vp);
+            }
+        }
+
+        _renderScene2(camera, vp);
+    }
+
+    void SceneManager::_renderScene2(ICamera* camera, Ogre::Viewport* vp)
+    {
         mEngineRenderList.mOpaqueList.clear();
         mEngineRenderList.mTransparentList.clear();
 
-        mRenderSystem->_setViewport(vp);
+        mRenderSystem->_setViewport(camera, vp);
 
         mRoot->traverse(mEngineRenderList, camera);
 
@@ -60,13 +80,13 @@ namespace Ogre {
                 mCurrentViewport->getBackgroundColour(),
                 mCurrentViewport->getDepthClear());
         }
-        
+
         {
             std::sort(mEngineRenderList.mOpaqueList.begin(), mEngineRenderList.mOpaqueList.end(),
                 [](Ogre::Renderable* a, Ogre::Renderable* b)
-                {
+            {
                 return a->getSortValue() < b->getSortValue();
-                }
+            }
             );
             for (auto r : mEngineRenderList.mOpaqueList)
             {
@@ -78,7 +98,6 @@ namespace Ogre {
                 mRenderSystem->render(r, RenderListType_Transparent);
             }
         }
-        
     }
 
     void SceneManager::update(float timeSinceLastFrame)
@@ -217,7 +236,16 @@ namespace Ogre {
 
     Light* SceneManager::createLight(const String& name)
     {
-        return nullptr;
+        auto itor = mLightMap.find(name);
+        if (itor != mLightMap.end())
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "light alreay exist");
+            WARNING_LOG("light %s alreay exist", name.c_str());
+        }
+
+        Light* l = new Light;
+        mLightMap[name] = l;
+        return l;
     }
 
     void SceneManager::destroyLight(const String& name)

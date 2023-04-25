@@ -12,7 +12,7 @@ namespace Ogre {
 
         virtual void _notifyAttached(Node* parent, bool isTagPoint = false);
 
-        virtual void _notifyCurrentCamera(Camera* cam);
+        virtual void _notifyCurrentCamera(ICamera* cam);
 
         virtual const std::vector<Renderable*>& getRenderableList()
         {
@@ -33,6 +33,10 @@ namespace Ogre {
         void setPosition(Ogre::Vector3& pos);
 
         void setCastShadows(bool cast);
+        bool getCastShadows()
+        {
+            return mCastShadows;
+        }
         void setVisible(bool visible);
 
         bool isVisible() const
@@ -76,6 +80,8 @@ namespace Ogre {
         String mObjectType;
 
         mutable AxisAlignedBox mWorldAABB;
+
+        bool mCastShadows = false;
     };
 
 

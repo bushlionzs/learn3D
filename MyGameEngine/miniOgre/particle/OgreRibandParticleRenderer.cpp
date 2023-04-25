@@ -8,6 +8,7 @@
 #include "OgreSerializer.h"
 #include "platform_log.h"
 #include "OgreMaterial.h"
+#include "OgreCamera.h"
 
 namespace Ogre
 {

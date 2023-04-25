@@ -28,9 +28,8 @@ Dx11RenderableData::~Dx11RenderableData()
 }
 
 
-void Dx11RenderableData::updateData(Dx11Pass& pass, Camera* cam)
+void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 {
-
 	auto dx11Context = DX11Helper::getSingleton().getDeviceContext();
 	const Ogre::Matrix4& model = pass._render->getModelMatrix();
 	mObjectConstantBuffer.world = model.transpose();

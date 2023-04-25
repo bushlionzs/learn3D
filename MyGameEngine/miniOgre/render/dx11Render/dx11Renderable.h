@@ -13,7 +13,7 @@ public:
     Dx11RenderableData();
     ~Dx11RenderableData();
 
-    void updateData(Dx11Pass& pass, Camera* cam);
+    void updateData(Dx11Pass& pass, ICamera* cam);
 private:
     void _initialise();
 private:

@@ -87,7 +87,7 @@ void Dx12RenderableData::updateCurrentFrame(int32_t index)
 	mCurrentFrameData = &mFrameRenderableDatas[index];
 }
 
-void Dx12RenderableData::updateData(Dx12Pass* pass, Camera* cam)
+void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 {
 	const Ogre::Matrix4& model = pass->mRenderable->getModelMatrix();
 	mCurrentFrameData->mObjectConstantBuffer.world = model.transpose();

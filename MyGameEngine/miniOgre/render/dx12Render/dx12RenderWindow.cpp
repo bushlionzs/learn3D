@@ -5,6 +5,7 @@
 #include "dx12RenderSystem.h"
 #include "dx12Frame.h"
 #include "OgreStringConverter.h"
+#include "dx12ShadowMap.h"
 
 Dx12RenderWindow::Dx12RenderWindow(Dx12RenderSystem* rs)
 {
@@ -60,6 +61,10 @@ void Dx12RenderWindow::create(const String& name, unsigned int width, unsigned i
 		&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
 
 	resize(width, height);
+
+	mDx12ShadowMap = new Dx12ShadowMap(1024, 1024);
+
+	mDx12ShadowMap->buildDescriptors();
 }
 
 
@@ -203,6 +208,30 @@ void Dx12RenderWindow::preRender(ID3D12GraphicsCommandList* cl)
 {
 	cl->RSSetViewports(1, &mScreenViewport);
 	cl->RSSetScissorRects(1, &mScissorRect);
+	
+
+	auto cam = mRenderSystem->getCamera();
+
+	mUseShadow = cam->getCameraType() == CameraType_Light;
+
+	if (mUseShadow)
+	{
+		cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
+			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+
+		mCurrentDst = mDx12ShadowMap->dsvHandle();
+		cl->OMSetRenderTargets(0, nullptr, false, &mCurrentDst);
+	}
+	else
+	{
+		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = mDx12ShadowMap->gpuSrvHandle();
+		cl->SetGraphicsRootDescriptorTable(1, gpuHandle);
+
+		mCurrentRtv = mMsaaRenderTarget.getRtvCpuHandle();
+		mCurrentDst = mMsaaRenderTarget.getDsvCpuHandle();
+
+		cl->OMSetRenderTargets(1, &mCurrentRtv, FALSE, &mCurrentDst);
+	}
 }
 
 void Dx12RenderWindow::clearFrameBuffer(uint32_t buffers,
@@ -210,21 +239,23 @@ void Dx12RenderWindow::clearFrameBuffer(uint32_t buffers,
 	float depth, uint16_t stencil)
 {
 	auto cl = mRenderSystem->getCommandList();
-	ID3D12Resource* renderTarget = mMsaaRenderTarget.getRenderTarget();
-	ID3D12Resource* depthStencil = mMsaaRenderTarget.getDepthStencil();
-	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		renderTarget,
-		D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
-		D3D12_RESOURCE_STATE_RENDER_TARGET);
-	cl->ResourceBarrier(1, &barrier);
+	auto cam = mRenderSystem->getCamera();
+	
+	if (!mUseShadow)
+	{
+		cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
+			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
 
-	auto rtvDescriptor = mMsaaRenderTarget.getRtvCpuHandle();
-	auto dsvDescriptor = mMsaaRenderTarget.getDsvCpuHandle();
-
-	cl->OMSetRenderTargets(1, &rtvDescriptor, FALSE, &dsvDescriptor);
-
-	cl->ClearRenderTargetView(rtvDescriptor, colour.ptr(), 0, nullptr);
-	cl->ClearDepthStencilView(dsvDescriptor, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+		ID3D12Resource* renderTarget = mMsaaRenderTarget.getRenderTarget();
+		D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+			renderTarget,
+			D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
+			D3D12_RESOURCE_STATE_RENDER_TARGET);
+		cl->ResourceBarrier(1, &barrier);
+		cl->ClearRenderTargetView(mCurrentRtv, colour.ptr(), 0, nullptr);
+	}
+	
+	cl->ClearDepthStencilView(mCurrentDst, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 void Dx12RenderWindow::present()
@@ -232,6 +263,7 @@ void Dx12RenderWindow::present()
 	// Swap the back and front buffers
 	ThrowIfFailed(mSwapChain->Present(0, 0));
 	mCurrBackBufferIndex = (mCurrBackBufferIndex + 1) % mSwapChainBufferCount;
+	auto cl = mRenderSystem->getCommandList();
 }
 
 

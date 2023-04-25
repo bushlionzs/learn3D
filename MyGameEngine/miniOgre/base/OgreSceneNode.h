@@ -23,7 +23,7 @@ namespace Ogre {
         ~SceneNode();
 
         SceneNode* createChildSceneNode(const String& name);
-        void traverse(EngineRenderList& containter, Camera* cam);
+        void traverse(EngineRenderList& containter, ICamera* cam);
         void render(RenderSystem* engine);
         void update(float timeSinceLastFrame);
 

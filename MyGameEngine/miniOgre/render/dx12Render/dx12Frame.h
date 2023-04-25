@@ -7,7 +7,7 @@ public:
 	Dx12Frame();
 	~Dx12Frame();
 	void _initialise(uint32_t index);
-	UploadBuffer<FrameConstantBuffer>* getCameraFrameData(Ogre::Camera* cam);
+	UploadBuffer<FrameConstantBuffer>* getCameraFrameData(Ogre::ICamera* cam);
 	uint64_t getFrameIndex();
 	uint64_t getFence();
 	void setFence(uint64_t fence);
@@ -16,7 +16,7 @@ public:
 	void resetCommandList();
 	void submitCommandList();
 private:
-	std::unordered_map<Ogre::Camera*, std::shared_ptr<UploadBuffer<FrameConstantBuffer>>> mCamaraDataMap;
+	std::unordered_map<Ogre::ICamera*, std::shared_ptr<UploadBuffer<FrameConstantBuffer>>> mCamaraDataMap;
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mDirectCmdListAlloc;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
 	uint64_t mFence;

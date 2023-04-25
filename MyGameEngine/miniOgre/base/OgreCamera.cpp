@@ -102,7 +102,7 @@ namespace Ogre {
 	/** Notifies this camera that a viewport is using it.*/
 	void Camera::_notifyViewport(Viewport* viewport)
 	{
-
+		mViewport = viewport;
 	}
 
 	bool Camera::getAutoAspectRatio(void) const
