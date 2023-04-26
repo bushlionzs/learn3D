@@ -10,15 +10,23 @@ class Dx12Pass;
 
 class FrameRenderableData
 {
-public:
-    std::unique_ptr<UploadBuffer<ObjectConstantBuffer>> mObjectCB;
+private:
+    std::unordered_map<Ogre::ICamera*, std::shared_ptr<UploadBuffer<ObjectConstantBuffer>>> mCamaraDataMap;
     std::unique_ptr<UploadBuffer<MaterialConstantBuffer>> mMaterialCB;
     std::unique_ptr<UploadBuffer<PbrMaterialConstanceBuffer>> mPBrMaterialCB;
     std::unique_ptr<UploadBuffer<SkinnedConstantBuffer>> mSkinnedCB;
-    ObjectConstantBuffer mObjectConstantBuffer;
-    MaterialConstantBuffer mMaterialConstantBuffer;
-    PbrMaterialConstanceBuffer mPbrMaterialConstanceBuffer;
+    
+public:
+    void _initialise();
+    void updateObjectCB(ICamera* cam, ObjectConstantBuffer& cb);
+    void updateMaterialCB(MaterialConstantBuffer& cb);
+    void updateSkinnedCB(RawData* rd);
+
+    D3D12_GPU_VIRTUAL_ADDRESS getObjectAddress(ICamera* cam);
+    D3D12_GPU_VIRTUAL_ADDRESS getMaterialAddress();
+    D3D12_GPU_VIRTUAL_ADDRESS getSkinnedAddress();
 };
+
 class Dx12RenderableData
 {
 public:
@@ -38,11 +46,11 @@ public:
 
     void updateSkinedConstanctBuffer(RawData* rd);
 private:
-    void updateObjectConstantBuffer();
+    void updateObjectConstantBuffer(Ogre::ICamera* cam);
 
-    void updateMaterialConstantBuffer();
+    void updateMaterialConstantBuffer(Ogre::ICamera* cam);
 
-    void updatePbrMaterialConstantBuffer();
+    void updatePbrMaterialConstantBuffer(Ogre::ICamera* cam);
 
     
     void buildPbrMaterial(Ogre::Material* mat);
@@ -56,4 +64,10 @@ private:
     int32_t mTexStartIndex = -1;
     int32_t mCubeTexCount = 0;
     int32_t mCubeTexStartIndex = -1;
+
+    ObjectConstantBuffer mObjectConstantBuffer;
+    MaterialConstantBuffer mMaterialConstantBuffer;
+    PbrMaterialConstanceBuffer mPbrMaterialConstanceBuffer;
+
+    ICamera* mCurrentCamera;
 };

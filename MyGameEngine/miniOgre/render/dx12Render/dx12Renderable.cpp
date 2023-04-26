@@ -13,6 +13,54 @@
 #include "OgreRenderable.h"
 #include "dx12Helper.h"
 
+void FrameRenderableData::_initialise()
+{
+	auto device = DX12Helper::getSingleton().getDevice();
+	mMaterialCB = std::make_unique< UploadBuffer<MaterialConstantBuffer>>(device, 1, true);
+	mSkinnedCB = std::make_unique< UploadBuffer<SkinnedConstantBuffer>>(device, 1, true);
+}
+
+void FrameRenderableData::updateObjectCB(ICamera* cam, ObjectConstantBuffer& cb)
+{
+	auto itor = mCamaraDataMap.find(cam);
+	if (itor != mCamaraDataMap.end())
+	{
+		itor->second->CopyData(0, cb);
+	}
+	else
+	{
+		auto device = DX12Helper::getSingleton().getDevice();
+		auto tmp = std::make_shared<UploadBuffer<ObjectConstantBuffer>> (device, 1, true);
+		mCamaraDataMap.emplace(cam, tmp);
+		tmp->CopyData(0, cb);
+	}
+}
+
+void FrameRenderableData::updateMaterialCB(MaterialConstantBuffer& cb)
+{
+	mMaterialCB->CopyData(0, cb);
+}
+
+void FrameRenderableData::updateSkinnedCB(RawData* rd)
+{
+	mSkinnedCB->CopyData(rd->mData, rd->mDataSize);
+}
+
+D3D12_GPU_VIRTUAL_ADDRESS FrameRenderableData::getObjectAddress(ICamera* cam)
+{
+	auto itor = mCamaraDataMap.find(cam);
+	return itor->second->Resource()->GetGPUVirtualAddress();
+}
+
+D3D12_GPU_VIRTUAL_ADDRESS FrameRenderableData::getMaterialAddress()
+{
+	return mMaterialCB->Resource()->GetGPUVirtualAddress();
+}
+
+D3D12_GPU_VIRTUAL_ADDRESS FrameRenderableData::getSkinnedAddress()
+{
+	return mSkinnedCB->Resource()->GetGPUVirtualAddress();
+}
 
 Dx12RenderableData::Dx12RenderableData(Dx12RenderSystem* engine)
 {
@@ -20,54 +68,45 @@ Dx12RenderableData::Dx12RenderableData(Dx12RenderSystem* engine)
 	ID3D12Device* device = DX12Helper::getSingleton().getDevice();
 	mFrameRenderableDatas.resize(FRAME_RESOURCE_COUNT);
 
-	for (int32_t i = 0; i < FRAME_RESOURCE_COUNT; i++)
+	for (auto& frame : mFrameRenderableDatas)
 	{
-		mFrameRenderableDatas[i].mObjectCB = 
-			std::make_unique<UploadBuffer<ObjectConstantBuffer>>(device, 1, true);
-		mFrameRenderableDatas[i].mMaterialCB = 
-			std::make_unique<UploadBuffer<MaterialConstantBuffer>>(device, 1, true);
-		mFrameRenderableDatas[i].mPBrMaterialCB = 
-			std::make_unique<UploadBuffer<PbrMaterialConstanceBuffer>>(device, 1, true);
-		mFrameRenderableDatas[i].mSkinnedCB = 
-			std::make_unique<UploadBuffer<SkinnedConstantBuffer>>(device, 1, true);
+		frame._initialise();
 	}
-    
-	
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS Dx12RenderableData::getObjectAddress()
 {
-    return mCurrentFrameData->mObjectCB->Resource()->GetGPUVirtualAddress();
+	return mCurrentFrameData->getObjectAddress(mCurrentCamera);
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS Dx12RenderableData::getMaterialAddress()
 {
-    return mCurrentFrameData->mMaterialCB->Resource()->GetGPUVirtualAddress();
+	return mCurrentFrameData->getMaterialAddress();
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS Dx12RenderableData::getSkinedAddress()
 {
-	return mCurrentFrameData->mSkinnedCB->Resource()->GetGPUVirtualAddress();
+	return mCurrentFrameData->getSkinnedAddress();
 }
 
-void Dx12RenderableData::updateObjectConstantBuffer()
+void Dx12RenderableData::updateObjectConstantBuffer(Ogre::ICamera* cam)
 {
-	mCurrentFrameData->mObjectCB->CopyData(0, mCurrentFrameData->mObjectConstantBuffer);
+	mCurrentFrameData->updateObjectCB(cam, mObjectConstantBuffer);
 }
 
-void Dx12RenderableData::updateMaterialConstantBuffer()
+void Dx12RenderableData::updateMaterialConstantBuffer(Ogre::ICamera* cam)
 {
-	mCurrentFrameData->mMaterialCB->CopyData(0, mCurrentFrameData->mMaterialConstantBuffer);
+	mCurrentFrameData->updateMaterialCB(mMaterialConstantBuffer);
 }
 
-void Dx12RenderableData::updatePbrMaterialConstantBuffer()
+void Dx12RenderableData::updatePbrMaterialConstantBuffer(Ogre::ICamera* cam)
 {
-	mCurrentFrameData->mPBrMaterialCB->CopyData(0, mCurrentFrameData->mPbrMaterialConstanceBuffer);
+	
 }
 
 void Dx12RenderableData::updateSkinedConstanctBuffer(RawData* rd)
 {
-	mCurrentFrameData->mSkinnedCB->CopyData(rd->mData, rd->mDataSize);
+	mCurrentFrameData->updateSkinnedCB(rd);
 }
 
 void Dx12RenderableData::buildMaterial(Material* mat)
@@ -89,49 +128,40 @@ void Dx12RenderableData::updateCurrentFrame(int32_t index)
 
 void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 {
+	mCurrentCamera = cam;
 	const Ogre::Matrix4& model = pass->mRenderable->getModelMatrix();
-	mCurrentFrameData->mObjectConstantBuffer.world = model.transpose();
+	mObjectConstantBuffer.world = model.transpose();
 	
 	{
 		const Ogre::Matrix4& view = cam->getViewMatrix();
 		const Ogre::Matrix4& proj = cam->getProjectMatrix();
-		//mCurrentFrameData->mObjectConstantBuffer.worldViewProj = (model * view * proj);
-		mCurrentFrameData->mObjectConstantBuffer.invWorld = (proj * view).transpose();
-		mCurrentFrameData->mObjectConstantBuffer.worldViewProj = (proj * view * model).transpose();
+
+		mObjectConstantBuffer.invWorld = (proj * view).transpose();
+		mObjectConstantBuffer.worldViewProj = (proj * view * model).transpose();
 	}
 
 	const MaterialConstantBuffer& mcb = pass->mMaterial->getMatInfo();
 
 	if (pass->mMaterial->isPbr())
 	{
-		mCurrentFrameData->mPbrMaterialConstanceBuffer.TexScale = mcb.TexScale;
-		mCurrentFrameData->mPbrMaterialConstanceBuffer.TexTransform = mcb.TexTransform;
+		mPbrMaterialConstanceBuffer.TexScale = mcb.TexScale;
+		mPbrMaterialConstanceBuffer.TexTransform = mcb.TexTransform;
 	}
 	else
 	{
 		if (pass->mMaterial->getTextureUnitCount())
 		{
 			auto unit = pass->mMaterial->getTextureUnit(0);
-			mCurrentFrameData->mMaterialConstantBuffer.TexTransform =
+			mMaterialConstantBuffer.TexTransform =
 				unit->getTextureTransform().transpose();
 		}
 		
 	}
 	
 
-	updateObjectConstantBuffer();
-	updateMaterialConstantBuffer();
+	updateObjectConstantBuffer(cam);
+	updateMaterialConstantBuffer(cam);
 
-	/*if (pass->mRenderListType == RenderListType_Transparent)
-	{
-		materialConstantBuffer.DiffuseAlbedo = Ogre::Vector4(1.0f, 1.0f, 1.0f, 0.5f);
-	}
-	else
-	{
-		materialConstantBuffer.DiffuseAlbedo = Ogre::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	}*/
-
-	
 }
 
 void Dx12RenderableData::buildPbrMaterial(Material* mat)
@@ -285,25 +315,25 @@ void Dx12RenderableData::updatePbrTextureIndex(Ogre::TextureProperty* texPropert
 	switch (texProperty->_pbrType)
 	{
 	case TextureTypePbr_Albedo:
-		mCurrentFrameData->mPbrMaterialConstanceBuffer.mAlbedoIndex = index;
+		mPbrMaterialConstanceBuffer.mAlbedoIndex = index;
 		break;
 	case TextureTypePbr_NormalMap:
-		mCurrentFrameData->mPbrMaterialConstanceBuffer.mNormalMapIndex = index;
+		mPbrMaterialConstanceBuffer.mNormalMapIndex = index;
 		break;
 	case TextureTypePbr_Emissive:
-		mCurrentFrameData->mPbrMaterialConstanceBuffer.mEmissiveIndex = index;
+		mPbrMaterialConstanceBuffer.mEmissiveIndex = index;
 		break;
 	case TextureTypePbr_MetalRoughness:
-		mCurrentFrameData->mPbrMaterialConstanceBuffer.mMetalRoughnessIndex = index;
+		mPbrMaterialConstanceBuffer.mMetalRoughnessIndex = index;
 		break;
 	case TextureTypePbr_BRDF_LUT:
-		mCurrentFrameData->mPbrMaterialConstanceBuffer.mBrdfLutIndex = index;
+		mPbrMaterialConstanceBuffer.mBrdfLutIndex = index;
 		break;
 	case TextureTypePbr_IBL_Diffuse:
-		mCurrentFrameData->mPbrMaterialConstanceBuffer.mIBLDiffuseIndex = index;
+		mPbrMaterialConstanceBuffer.mIBLDiffuseIndex = index;
 		break;
 	case TextureTypePbr_IBL_Specular:
-		mCurrentFrameData->mPbrMaterialConstanceBuffer.mIBLSpecularIndex = index;
+		mPbrMaterialConstanceBuffer.mIBLSpecularIndex = index;
 		break;
 	default:
 		assert(false);
