@@ -18,7 +18,7 @@ class Dx12Shader:public Shader
 public:
     typedef std::vector<D3D12_SIGNATURE_PARAMETER_DESC> D3d12ShaderParameters;
 public:
-    Dx12Shader(ShaderInfo& info);
+    Dx12Shader(ShaderInfo& info, bool shadow = false);
     // activate the shader
 
     ~Dx12Shader();
@@ -68,4 +68,6 @@ private:
     ShaderInfo mShaderInfo;
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
+
+    bool mShadow;
 };

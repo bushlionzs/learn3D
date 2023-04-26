@@ -188,9 +188,9 @@ std::array<const CD3DX12_STATIC_SAMPLER_DESC, 7> GetStaticSamplers()
         D3D12_TEXTURE_ADDRESS_MODE_BORDER,  // addressV
         D3D12_TEXTURE_ADDRESS_MODE_BORDER,  // addressW
         0.0f,                               // mipLODBias
-        8,                                 // maxAnisotropy
+        16,                                 // maxAnisotropy
         D3D12_COMPARISON_FUNC_LESS_EQUAL,
-        D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK);
+        D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE);
     return {
         pointWrap, pointClamp,
         linearWrap, linearClamp,

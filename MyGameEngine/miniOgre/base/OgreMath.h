@@ -718,7 +718,14 @@ namespace Ogre
         static Matrix4 makePerspectiveMatrix(Real FovAngleY, Real AspectRatio, Real zNear, Real zFar);
         static Matrix4 makePerspectiveMatrix(Real left, Real right, Real bottom, Real top, 
             Real zNear, Real zFar);
-        static Matrix4 makeOrthographicOffCenterLH(
+        static Matrix4 makeOrthoRH(
+            float ViewLeft,
+            float ViewRight,
+            float ViewBottom,
+            float ViewTop,
+            float NearZ,
+            float FarZ);
+        static Matrix4 makeOrthoLH(
             float ViewLeft,
             float ViewRight,
             float ViewBottom,
@@ -726,6 +733,10 @@ namespace Ogre
             float NearZ,
             float FarZ);
         static Matrix4 makeLookAtRH(
+            const Ogre::Vector3& position,
+            const Ogre::Vector3& target,
+            const Ogre::Vector3& up);
+        static Matrix4 makeLookAtLH(
             const Ogre::Vector3& position,
             const Ogre::Vector3& target,
             const Ogre::Vector3& up);

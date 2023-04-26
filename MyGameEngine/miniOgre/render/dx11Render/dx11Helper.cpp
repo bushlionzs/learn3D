@@ -158,8 +158,8 @@ void DX11Helper::buildStaticSample()
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
-	sampDesc.MaxAnisotropy = 1;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	sampDesc.MaxAnisotropy = 16;
 	sampDesc.MinLOD = 0.0f;
 	sampDesc.MaxLOD = 0.0f;
 	sampDesc.BorderColor[0] = 0.0f;

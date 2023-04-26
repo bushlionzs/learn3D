@@ -67,7 +67,7 @@ private:
     uint32_t mMatConstantIndex = 5;
     uint32_t mSkinedConstantIndex = 6;
 
-
+    Dx12Shader* mShadowShader;
     Ogre::ICamera* mCamera = nullptr;
 
     Dx12Pass mCurrentPass;

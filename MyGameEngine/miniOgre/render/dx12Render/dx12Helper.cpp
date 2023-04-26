@@ -374,7 +374,7 @@ void DX12Helper::_createMipmapPrepare()
 	ObjectConstantBuffer dummy;
 
 	Ogre::Matrix4 proj;
-	proj = Ogre::Math::makeOrthographicOffCenterLH(-1, 1, -1, 1, 1, 1000);
+	proj = Ogre::Math::makeOrthoRH(-1, 1, -1, 1, 1, 1000);
 
 	Ogre::Matrix4 view = Ogre::Math::makeViewMatrix(
 		Ogre::Vector3(0, 0, 15), Ogre::Quaternion::IDENTITY);

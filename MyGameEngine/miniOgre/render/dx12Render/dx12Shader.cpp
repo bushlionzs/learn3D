@@ -14,9 +14,10 @@
 #include "dx12Helper.h"
 
 
-Dx12Shader::Dx12Shader(ShaderInfo& info)
+Dx12Shader::Dx12Shader(ShaderInfo& info, bool shadow)
 {
     mShaderInfo = info;
+    mShadow = shadow;
 }
 
 Dx12Shader::~Dx12Shader()
@@ -55,7 +56,7 @@ bool Dx12Shader::load()
         *vertexContent, 
         macro, 
         privateInfo->vertexShaderEntryPoint.c_str(), 
-        "vs_5_0",
+        "vs_5_1",
         res->_fullname);
 
     String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
@@ -65,7 +66,7 @@ bool Dx12Shader::load()
         *fragContent, 
         macro, 
         privateInfo->fragShaderEntryPoint.c_str(), 
-        "ps_5_0",
+        "ps_5_1",
         res->_fullname);
 
     ID3D12ShaderReflection* shaderReflection = nullptr;
@@ -243,6 +244,7 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
         psoDesc.RasterizerState.MultisampleEnable = true;
         psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
         psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+        psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
         psoDesc.SampleMask = UINT_MAX;
         psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
         psoDesc.NumRenderTargets = 1;
@@ -251,12 +253,16 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
         psoDesc.SampleDesc.Quality = 0;
         psoDesc.DSVFormat = DX12Helper::getSingleton().getDepthStencilFormat();
 
+        if (mShadow)
+        {
+            psoDesc.NumRenderTargets = 0;
+            psoDesc.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+        }
         if (!pass->mMaterial->isWriteDepth())
         {
             D3D12_DEPTH_STENCIL_DESC depthDSS;
             depthDSS.DepthEnable = true;
             depthDSS.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-            depthDSS.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
             depthDSS.StencilEnable = false;
             psoDesc.DepthStencilState = depthDSS;
         }

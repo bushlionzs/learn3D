@@ -207,7 +207,7 @@ const Ogre::Matrix4& CameraImpl::getProjectMatrix()
             Real top = mOrthoHeight / 2.0f;
             Real bottom = -mOrthoHeight/2.0f;
             mProjectMatrix =
-                Ogre::Math::makeOrthographicOffCenterLH(left, right, bottom, top, mNear, mFar);
+                Ogre::Math::makeOrthoLH(left, right, bottom, top, mNear, mFar);
         }
         else
         {

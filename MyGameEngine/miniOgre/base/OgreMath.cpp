@@ -1085,62 +1085,45 @@ namespace Ogre
         return ret;
     }
 
-#include <DirectXMath.h>
-    Matrix4 Math::makeOrthographicOffCenterLH(
+    Matrix4 Math::makeOrthoRH(
         float left,
         float right,
         float bottom,
         float top,
-        float nearZ,
-        float farZ)
+        float zNear,
+        float zFar)
     {
-        /*DirectX::XMMATRIX aa = DirectX::XMMatrixOrthographicOffCenterLH(
-            ViewLeft,
-            ViewRight,
-            ViewBottom,
-            ViewTop,
-            NearZ,
-            FarZ);
-        Matrix4 m;
-        memcpy(&m, &aa, sizeof(aa));*/
+        Matrix4 m = Matrix4::IDENTITY;
+        m[0][0] = 2.0f / (right - left);
+        m[1][1] = 2.0f / (top - bottom);
+        m[3][0] = -(right + left) / (right - left);
+        m[3][1] = -(top + bottom) / (top - bottom);
 
-        Real inv_w = 1 / (right - left);
-        Real inv_h = 1 / (top - bottom);
-        Real inv_d = 1 / (farZ - nearZ);
+        m[2][2] = 1.0f / (zFar - zNear);
+        m[3][2] = -zNear / (zFar - zNear);
 
-        Real A = 2 * inv_w;
-        Real B = 2 * inv_h;
-        Real C = -(right + left) * inv_w;
-        Real D = -(top + bottom) * inv_h;
-        Real q, qn;
-        if (farZ == 0)
-        {
-            // Can not do infinite far plane here, avoid divided zero only
-            q = -0.00001 / nearZ;
-            qn = -0.00001 - 1;
-        }
-        else
-        {
-            q = -2 * inv_d;
-            qn = -(farZ + nearZ) * inv_d;
-        }
 
-        Matrix4 m;
-        m = Matrix4::ZERO;
-        m[0][0] = A;
-        m[0][3] = C;
-        m[1][1] = B;
-        m[1][3] = D;
-        m[2][2] = q;
-        m[2][3] = qn;
-        m[3][3] = 1;
+        return m.transpose();
+    }
+
+    Matrix4 Math::makeOrthoLH(
+        float left,
+        float right,
+        float bottom,
+        float top,
+        float zNear,
+        float zFar)
+    {
+        Matrix4 m = Matrix4::IDENTITY;
+        m[0][0] = 2.0f / (right - left);
+        m[1][1] = 2.0f / (top - bottom);
+        m[3][0] = -(right + left) / (right - left);
+        m[3][1] = -(top + bottom) / (top - bottom);
 
         // Convert depth range from [-1,+1] to [0,1]
-        m[2][0] = (m[2][0] + m[3][0]) / 2;
-        m[2][1] = (m[2][1] + m[3][1]) / 2;
-        m[2][2] = (m[2][2] + m[3][2]) / 2;
-        m[2][3] = (m[2][3] + m[3][3]) / 2;
-        return m;
+        m[2][2] = -1.0f / (zFar - zNear);
+        m[3][2] = -zNear / (zFar - zNear);
+        return m.transpose();
     }
 
     Matrix4 Math::makeLookAtRH(
@@ -1149,6 +1132,33 @@ namespace Ogre
         const Ogre::Vector3& up_dir)
     {
 
+        Ogre::Vector3 forward = (target_pos - camera_pos);
+        forward.normalise();
+        Ogre::Vector3 right = forward.crossProduct(up_dir);
+        right.normalise();
+        Ogre::Vector3 up = right.crossProduct(forward);
+
+        Ogre::Matrix4 view_matrix = Ogre::Matrix4::IDENTITY;
+        view_matrix[0][0] = right.x;
+        view_matrix[1][0] = right.y;
+        view_matrix[2][0] = right.z;
+        view_matrix[0][1] = up.x;
+        view_matrix[1][1] = up.y;
+        view_matrix[2][1] = up.z;
+        view_matrix[0][2] = -forward.x;
+        view_matrix[1][2] = -forward.y;
+        view_matrix[2][2] = -forward.z;
+        view_matrix[3][0] = -right.dotProduct(camera_pos);
+        view_matrix[3][1] = -up.dotProduct(camera_pos); 
+        view_matrix[3][2] = forward.dotProduct(camera_pos);
+        return view_matrix;
+    }
+
+    Matrix4 Math::makeLookAtLH(
+        const Ogre::Vector3& camera_pos,
+        const Ogre::Vector3& target_pos,
+        const Ogre::Vector3& up_dir)
+    {
         Ogre::Vector3 forward = (target_pos - camera_pos);
         forward.normalise();
         Ogre::Vector3 right = up_dir.crossProduct(forward);
@@ -1166,11 +1176,10 @@ namespace Ogre
         view_matrix[1][2] = forward.y;
         view_matrix[2][2] = forward.z;
         view_matrix[3][0] = -right.dotProduct(camera_pos);
-        view_matrix[3][1] = -up.dotProduct(camera_pos); 
+        view_matrix[3][1] = -up.dotProduct(camera_pos);
         view_matrix[3][2] = -forward.dotProduct(camera_pos);
-        return view_matrix.transpose();
+        return view_matrix;
     }
-
     //---------------------------------------------------------------------
     Real Math::boundingRadiusFromAABB(const AxisAlignedBox& aabb)
     {

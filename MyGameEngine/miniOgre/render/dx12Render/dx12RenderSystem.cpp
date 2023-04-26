@@ -43,6 +43,8 @@ bool Dx12RenderSystem::engineInit()
 	mDx12TextureHandleManager = new Dx12TextureHandleManager(device);
 	createFrameResource();
 	buildRootSignature();
+
+	
 	return true;
 }
 
@@ -52,6 +54,11 @@ void Dx12RenderSystem::ready()
 	cl->Close();
 	DX12Helper::getSingleton().executeCommand(cl);
 	DX12Helper::getSingleton().FlushCommandQueue();
+
+	ShaderInfo info;
+	info.shaderName = "basic";
+	mShadowShader = new Dx12Shader(info, true);
+	mShadowShader->load();
 }
 
 void Dx12RenderSystem::_resourceLoaded()
@@ -124,10 +131,21 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	mCurrentPass.mDx12RenderableData->updateCurrentFrame(mCurrentFrame->getFrameIndex());
 	VertexData* vertexData = r->getVertexData();
 	auto vd = vertexData->vertexDeclaration;
-	mCurrentPass.mShader->updateInputDesc(vd);
+	
 
-	ID3D12PipelineState* pso = mCurrentPass.mShader->BuildPSO(&mCurrentPass);
-	mCurrentFrame->getCommandList()->SetPipelineState(pso);
+	if (mCamera->getCameraType() == CameraType_Light)
+	{
+		mShadowShader->updateInputDesc(vd);
+		ID3D12PipelineState* pso = mShadowShader->BuildPSO(&mCurrentPass);
+		mCurrentFrame->getCommandList()->SetPipelineState(pso);
+	}
+	else
+	{
+		mCurrentPass.mShader->updateInputDesc(vd);
+		ID3D12PipelineState* pso = mCurrentPass.mShader->BuildPSO(&mCurrentPass);
+		mCurrentFrame->getCommandList()->SetPipelineState(pso);
+	}
+	
 
 	RawData* rd = r->getShaderConstantData(2);
 	if (rd)
@@ -351,6 +369,8 @@ void Dx12RenderSystem::updateMainPassCB(ICamera* camera)
 
 	Ogre::Matrix4 invView = view.inverse();
 	Ogre::Matrix4 viewProj = proj * view;
+	Ogre::Matrix4 aa = viewProj.transpose();
+	Ogre::Matrix4 bb = view.transpose() * proj.transpose();
 	Ogre::Matrix4 invProj = proj.inverse();
 	Ogre::Matrix4 invViewProj = viewProj.inverse();
 
@@ -361,11 +381,8 @@ void Dx12RenderSystem::updateMainPassCB(ICamera* camera)
 		mFrameConstantBuffer.Shadow = 1;
 
 		mFrameConstantBuffer.ShadowTransform = 
-			proj * view;
+			(proj * view).transpose();
 
-		mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-		mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-		mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
 	}
 	
 	int width = mRenderWindow->getWidth();
@@ -385,7 +402,11 @@ void Dx12RenderSystem::updateMainPassCB(ICamera* camera)
 	mFrameConstantBuffer.FarZ = 10000.0f;
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-	
+	mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+
+
 	UploadBuffer<FrameConstantBuffer>* cb = mCurrentFrame->getCameraFrameData(camera);
 	cb->CopyData(0, mFrameConstantBuffer);
 
