@@ -40,7 +40,7 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 		mObjectConstantBuffer.worldViewProj = (proj * view * model).transpose();
 	}
 
-	mObjectCB->CopyData(0, mObjectConstantBuffer);
+	updateObject(cam);
 
 	const MaterialConstantBuffer& mcb = pass._mat->getMatInfo();
 	if (pass._mat->getTextureUnitCount())
@@ -60,7 +60,7 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 	dx11Context->PSSetShader(pixelShader, nullptr, 0);
 
 	// VS常量缓冲区对应HLSL寄存于b0的常量缓冲区
-	ID3D11Buffer* buf = mObjectCB->Resource();
+	ID3D11Buffer* buf = getObjectBuffer(cam);
 	dx11Context->VSSetConstantBuffers(0, 1, &buf);
 
 	ID3D11Buffer* matbuf = mMaterialCB->Resource();
@@ -128,10 +128,33 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 
 void Dx11RenderableData::_initialise()
 {
-	mObjectCB =
-		std::make_unique<Dx11UploadBuffer<ObjectConstantBuffer>>(1, true);
 	mMaterialCB =
 		std::make_unique<Dx11UploadBuffer<MaterialConstantBuffer>>(1, true);
 	mSkinnedCB = 
 		std::make_unique<Dx11UploadBuffer<SkinnedConstantBuffer>>(1, true);
+}
+
+void Dx11RenderableData::updateObject(ICamera* cam)
+{
+	auto itor = mCamaraDataMap.find(cam);
+	if (itor != mCamaraDataMap.end())
+	{
+		itor->second->CopyData(0, mObjectConstantBuffer);
+	}
+	else
+	{
+		auto tmp = std::make_shared< Dx11UploadBuffer<ObjectConstantBuffer>>(1, true);
+		mCamaraDataMap[cam] = tmp;
+		tmp->CopyData(0, mObjectConstantBuffer);
+	}
+}
+
+ID3D11Buffer* Dx11RenderableData::getObjectBuffer(ICamera* cam)
+{
+	auto itor = mCamaraDataMap.find(cam);
+	if (itor != mCamaraDataMap.end())
+	{
+		return itor->second->Resource();
+	}
+	return nullptr;
 }

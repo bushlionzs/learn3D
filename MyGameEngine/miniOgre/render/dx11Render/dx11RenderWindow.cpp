@@ -153,7 +153,7 @@ ID3D11DepthStencilView* Dx11RenderWindow::getDepthStencilView()const
 
 void Dx11RenderWindow::preRender()
 {
-	mContext->RSSetViewports(1, &mViewport);
+	
 
 	auto cam = mRenderSystem->getCamera();
 	mUseShadow = cam->getCameraType() == CameraType_Light;
@@ -163,10 +163,18 @@ void Dx11RenderWindow::preRender()
 		mCurrentTargetView = nullptr;
 		mCurrentDepthStencilView = mShadowMap->getDepthStencilView();
 		mContext->OMSetRenderTargets(0, nullptr, mCurrentDepthStencilView);
-		
+		D3D11_VIEWPORT shadowViewport;
+		shadowViewport.TopLeftX = 0;
+		shadowViewport.TopLeftY = 0;
+		shadowViewport.Width = static_cast<float>(mShadowMap->getWidth());
+		shadowViewport.Height = static_cast<float>(mShadowMap->getHeight());
+		shadowViewport.MinDepth = 0.0f;
+		shadowViewport.MaxDepth = 1.0f;
+		mContext->RSSetViewports(1, &shadowViewport);
 	}
 	else
 	{
+		mContext->RSSetViewports(1, &mViewport);
 		mCurrentTargetView = getRenderTargetView();
 		mCurrentDepthStencilView = mDepthStencilView.Get();
 		mContext->OMSetRenderTargets(1, &mCurrentTargetView, mCurrentDepthStencilView);

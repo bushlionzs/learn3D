@@ -257,6 +257,7 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
         {
             psoDesc.NumRenderTargets = 0;
             psoDesc.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+            psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
         }
         if (!pass->mMaterial->isWriteDepth())
         {

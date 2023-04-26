@@ -22,6 +22,16 @@ public:
 	}
 
 	void checkTextureData();
+
+	uint32_t getWidth()
+	{
+		return mWidth;
+	}
+
+	uint32_t getHeight()
+	{
+		return mHeight;
+	}
 private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> mDepthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> mDepthTexture;

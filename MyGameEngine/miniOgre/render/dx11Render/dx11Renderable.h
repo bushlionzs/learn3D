@@ -16,12 +16,13 @@ public:
     void updateData(Dx11Pass& pass, ICamera* cam);
 private:
     void _initialise();
+    void updateObject(ICamera* cam);
+    ID3D11Buffer* getObjectBuffer(ICamera* cam);
 private:
     
     ObjectConstantBuffer mObjectConstantBuffer;
 
-    std::unique_ptr<Dx11UploadBuffer<ObjectConstantBuffer>> mObjectCB;
-    
+    std::unordered_map<Ogre::ICamera*, std::shared_ptr<Dx11UploadBuffer<ObjectConstantBuffer>>> mCamaraDataMap;
 
     MaterialConstantBuffer mMaterialConstantBuffer;
     std::unique_ptr<Dx11UploadBuffer<MaterialConstantBuffer>> mMaterialCB;

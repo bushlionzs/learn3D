@@ -424,6 +424,10 @@ void OgreMaterialParam::setScrollTexture(const String& val)
 
 void OgreMaterialParam::setCullMode(const String& val)
 {
+    if (mMaterial->getName() == "myground")
+    {
+        int kk = 0;
+    }
     if (val == "none")
     {
         mMaterial->setCullMode(Ogre::CULL_NONE);

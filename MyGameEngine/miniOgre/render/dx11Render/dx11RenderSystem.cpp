@@ -181,10 +181,6 @@ void Dx11RenderSystem::updateFrame()
 		mFrameConstantBuffer.ShadowTransform =
 			(proj * view).transpose();
 
-		Ogre::Matrix4 m = mFrameConstantBuffer.ShadowTransform.transpose();
-
-		auto aa = m* Ogre::Vector4(0.0, 0.0, 20.0f, 1.0f);
-		aa = aa;
 	}
 	else
 	{

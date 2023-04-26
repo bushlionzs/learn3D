@@ -162,9 +162,9 @@ void DX11Helper::buildStaticSample()
 	sampDesc.MaxAnisotropy = 16;
 	sampDesc.MinLOD = 0.0f;
 	sampDesc.MaxLOD = 0.0f;
-	sampDesc.BorderColor[0] = 0.0f;
-	sampDesc.BorderColor[1] = 0.0f;
-	sampDesc.BorderColor[2] = 0.0f;
+	sampDesc.BorderColor[0] = 1.0f;
+	sampDesc.BorderColor[1] = 1.0f;
+	sampDesc.BorderColor[2] = 1.0f;
 	sampDesc.BorderColor[3] = 1.0f;
 	mDx11Device->CreateSamplerState(&sampDesc, &samplerStateShadow);
 
