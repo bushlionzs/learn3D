@@ -57,11 +57,28 @@ material myrect
 		pass
 		{
 			lighting off
+			cull_hardware none;
 			texture_unit
 			{
 				texture awesomeface.png
 				scroll_anim 0 -0.9
 				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material shadow
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			shader shadow
+			texture_unit
+			{
+				texture awesomeface.png
 			}
 		}
 	}
@@ -127,10 +144,9 @@ material mysphere
 		pass
 		{
 			lighting off
-			shader basic
 			texture_unit
 			{
-				texture floor.dds
+				texture bricks3.dds
 				tex_address_mode clamp
 			}
 		}
@@ -145,10 +161,26 @@ material myCylinder
 		pass
 		{
 			lighting off
-			shader basic
 			texture_unit
 			{
-				texture bricks2.dds
+				texture bricks3.dds
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material myground
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			cull_hardware none;
+			texture_unit
+			{
+				texture awesomeface.png
 				tex_address_mode clamp
 			}
 		}
@@ -230,11 +262,13 @@ material floor
 	{
 		pass
 		{
-		    shader basic
+		    cull_hardware none
 			texture_unit
 			{
-				texture checkboard.dds
+				texture output.dds
 			}
+			
+			
 		}
 	}
 }
@@ -245,7 +279,7 @@ material wall
 	{
 		pass
 		{
-		    shader basic
+			cull_hardware none
 			texture_unit
 			{
 				texture bricks3.dds
@@ -260,15 +294,10 @@ material mirror
 	{
 		pass
 		{
-		    shader ogreblend
+		    cull_hardware none
 			texture_unit
 			{
 				texture ice.dds
-			}
-			
-			texture_unit
-			{
-				texture mirror
 			}
 		}
 	}

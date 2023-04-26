@@ -236,3 +236,20 @@ shader mipmap
 		frag_shader mipmap.glsl ps
 	 }
 }
+
+shader shadow
+{
+    shader_unit
+	 {
+		shader_type directx
+		vertex_shader shadow.hlsl vs
+		frag_shader shadow.hlsl ps
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader shadow.glsl vs
+		frag_shader shadow.glsl ps
+	 }
+}

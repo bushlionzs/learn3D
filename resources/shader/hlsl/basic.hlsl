@@ -62,13 +62,15 @@ VertexOut VS(VertexIn vIn)
 #endif
     float4 posW = mul(gWorld, float4(vIn.PosL, 1.0f));
     vOut.PosH = mul(gWorldViewProj, float4(vIn.PosL, 1.0f));
+	vOut.PosH = mul(gWorldInvTranspose, posW);
     vOut.PosW = posW.xyz;
     vOut.NormalW = mul((float3x3) gWorld, vIn.NormalL);
 #ifdef USETANGENT
 	vOut.TangentW = mul((float3x3)gWorld, vIn.TangentL);
 #endif
     vOut.TexC = mul(gTexTransform, float4(vIn.TexC, 0.0f, 1.0f)).xy;
-	//vOut.TexC = vIn.TexC;
+	
+	vOut.ShadowPosH = mul(gShadowTransform, posW);
     return vOut;
 }
 
@@ -76,9 +78,10 @@ float4 PS(VertexOut pin) : SV_Target
 {
 	//return float4(0.0f, 1.0f, 0.0f, 1.0f);
     float4 diffuseAlbedo = gTextureArray[0].Sample(gsamLinearWrap, pin.TexC) * gDiffuseAlbedo;
-	clip(diffuseAlbedo.a - 0.5f);
-	return diffuseAlbedo;
-	
+	float4 aa = gShadowMap.Sample(gsamLinearWrap, float2(0.1,0.6));
+	//clip(diffuseAlbedo.a - 0.5f);
+	//return diffuseAlbedo;
+	//return aa;
 	pin.NormalW = normalize(pin.NormalW);
 
     // Vector from point being lit to eye. 
@@ -86,23 +89,18 @@ float4 PS(VertexOut pin) : SV_Target
 
     // Light terms.
     float4 ambient = gAmbientLight*diffuseAlbedo;
-
     const float shininess = 1.0f - gRoughness;
 	float3 fresnel = float3(0.01f, 0.01f, 0.01f); 
     Material mat = { diffuseAlbedo, gFresnelR0, shininess };
-    float3 shadowFactor = float3(1.0f, 1.0f, 1.0f);
-	//shadowFactor[0] = CalcShadowFactor(pin.ShadowPosH);
-
+    float3 shadowFactor = float3(0.0f, 1.0f, 1.0f);
+	shadowFactor[0] = CalcShadowFactor(pin.ShadowPosH);
+	if(shadowFactor[0] < 0.2)
+	{
+		return float4(1.0, 0.0, 0.0, 1.0f);
+	}
     float4 directLight = ComputeLighting(gLights, mat, pin.PosW,
         pin.NormalW, toEyeW, shadowFactor);
-
     float4 litColor = ambient + directLight;
-	
-	// Add in specular reflections.
-	float3 r = reflect(-toEyeW, pin.NormalW);
-	float4 reflectionColor = gCubeMap.Sample(gsamLinearWrap, r);
-	float3 fresnelFactor = SchlickFresnel(gFresnelR0, pin.NormalW, r);
-	litColor.rgb += shininess * fresnelFactor * reflectionColor.rgb;
 
     // Common convention to take alpha from diffuse material.
     litColor.a = diffuseAlbedo.a;
