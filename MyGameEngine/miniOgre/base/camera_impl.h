@@ -31,8 +31,13 @@ public:
 public:
 	CameraImpl(Ogre::SceneManager* sceneMgr);
 	~CameraImpl();
-    void updateView(const Ogre::Vector3& position, const Ogre::Quaternion& orientation);
-
+    void updateView(
+        const Ogre::Vector3& position, 
+        const Ogre::Quaternion& orientation);
+    void updateView(
+        const Ogre::Vector3& eyePos,
+        const Ogre::Vector3& targetPos,
+        const Ogre::Vector3& up);
     bool isVisible(const Ogre::Sphere& bound) const;
     bool isVisible(const Ogre::AxisAlignedBox& bound) const;
     bool isVisible(const Ogre::Vector3& position) const;

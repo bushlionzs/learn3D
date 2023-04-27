@@ -131,7 +131,7 @@ void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 	mCurrentCamera = cam;
 	const Ogre::Matrix4& model = pass->mRenderable->getModelMatrix();
 
-	mObjectConstantBuffer.world = model;
+	mObjectConstantBuffer.world = model.transpose();
 
 	
 	{
@@ -139,7 +139,7 @@ void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 		const Ogre::Matrix4& proj = cam->getProjectMatrix();
 
 		mObjectConstantBuffer.invWorld = (proj * view).transpose();
-		mObjectConstantBuffer.worldViewProj = (proj * view * model).transpose();
+		mObjectConstantBuffer.worldViewProj = model.transpose() * view * proj;
 	}
 
 	const MaterialConstantBuffer& mcb = pass->mMaterial->getMatInfo();

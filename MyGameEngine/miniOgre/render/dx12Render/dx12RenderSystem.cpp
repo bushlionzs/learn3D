@@ -362,14 +362,14 @@ void Dx12RenderSystem::renderImpl(Dx12Pass* pass)
 
 void Dx12RenderSystem::updateMainPassCB(Ogre::ICamera* camera)
 {
-	updateMainPassCBForTest(camera);
-	return;
+	/*updateMainPassCBForTest(camera);
+	return;*/
 	const Ogre::Matrix4& view = camera->getViewMatrix();
 	const Ogre::Matrix4& proj = camera->getProjectMatrix();
 	const Ogre::Vector3& camepos = camera->getDerivedPosition();
 
 	Ogre::Matrix4 invView = view.inverse();
-	Ogre::Matrix4 viewProj = proj * view;
+	Ogre::Matrix4 viewProj = view * proj;
 	Ogre::Matrix4 invProj = proj.inverse();
 	Ogre::Matrix4 invViewProj = viewProj.inverse();
 
@@ -377,19 +377,26 @@ void Dx12RenderSystem::updateMainPassCB(Ogre::ICamera* camera)
 
 	if (camera->getCameraType() == CameraType_Light)
 	{
-		mFrameConstantBuffer.ShadowTransform = viewProj.transpose();
+		Ogre::Matrix4 T(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f);
+		Ogre::Matrix4 S = view * proj * T;
+
+		mFrameConstantBuffer.ShadowTransform = S;
 		mFrameConstantBuffer.Shadow = 1;
 	}
 
 	int width = mRenderWindow->getWidth();
 	int height = mRenderWindow->getHeight();
 
-	mFrameConstantBuffer.View = view.transpose();
-	mFrameConstantBuffer.InvView = invView.transpose();
-	mFrameConstantBuffer.Proj = proj.transpose();
-	mFrameConstantBuffer.InvProj = invProj.transpose();
-	mFrameConstantBuffer.ViewProj = viewProj.transpose();
-	mFrameConstantBuffer.InvViewProj = invViewProj.transpose();
+	mFrameConstantBuffer.View = view;
+	mFrameConstantBuffer.InvView = invView;
+	mFrameConstantBuffer.Proj = proj;
+	mFrameConstantBuffer.InvProj = invProj;
+	mFrameConstantBuffer.ViewProj = viewProj;
+	mFrameConstantBuffer.InvViewProj = invViewProj;
 	
 	mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z };
 	mFrameConstantBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
@@ -398,7 +405,7 @@ void Dx12RenderSystem::updateMainPassCB(Ogre::ICamera* camera)
 	mFrameConstantBuffer.FarZ = 10000.0f;
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-	mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	mFrameConstantBuffer.AmbientLight = { 0.45f, 0.45f, 0.45f, 1.0f };
 	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
 	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
 	mFrameConstantBuffer.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
@@ -428,7 +435,7 @@ void Dx12RenderSystem::updateMainPassCBForTest(ICamera* camera)
 
 	Ogre::Vector3 camepos = Ogre::Vector3(0, 0, 20);
 
-	XMVECTOR lightPos = XMVectorSet(-2, 2, 10, 0.0f);
+	XMVECTOR lightPos = XMVectorSet(-2, 2, -10, 0.0f);
 	XMVECTOR targetPos = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR lightUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX view = XMMatrixLookAtLH(lightPos, targetPos, lightUp);
@@ -441,12 +448,12 @@ void Dx12RenderSystem::updateMainPassCBForTest(ICamera* camera)
 
 	mFrameConstantBuffer.Shadow = 0;
 
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.View, XMMatrixTranspose(view));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvView, XMMatrixTranspose(invView));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.Proj, XMMatrixTranspose(proj));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvProj, XMMatrixTranspose(invProj));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.ViewProj, XMMatrixTranspose(viewProj));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvViewProj, XMMatrixTranspose(invViewProj));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.View, view);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvView, invView);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.Proj, proj);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvProj, invProj);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.ViewProj, viewProj);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvViewProj, invViewProj);
 
 	int width = mRenderWindow->getWidth();
 	int height = mRenderWindow->getHeight();
@@ -494,13 +501,13 @@ void Dx12RenderSystem::UpdateShadowPassCBForTest(Ogre::ICamera* camera)
 		0.5f, 0.5f, 0.0f, 1.0f);
 
 	XMMATRIX S = view * proj * T;
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.ShadowTransform, XMMatrixTranspose(S));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.View, XMMatrixTranspose(view));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvView, XMMatrixTranspose(invView));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.Proj, XMMatrixTranspose(proj));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvProj, XMMatrixTranspose(invProj));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.ViewProj, XMMatrixTranspose(viewProj));
-	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvViewProj, XMMatrixTranspose(invViewProj));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.ShadowTransform, S);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.View, view);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvView, invView);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.Proj, proj);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvProj, invProj);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.ViewProj, viewProj);
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvViewProj, invViewProj);
 
 	int width = 1024;
 	int height = 1024;

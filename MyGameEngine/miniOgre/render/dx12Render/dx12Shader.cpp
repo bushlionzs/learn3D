@@ -238,7 +238,7 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
         {
             psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
         }
-
+        psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
         psoDesc.RasterizerState.FrontCounterClockwise = true;
         psoDesc.RasterizerState.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_ON;
         psoDesc.RasterizerState.MultisampleEnable = true;

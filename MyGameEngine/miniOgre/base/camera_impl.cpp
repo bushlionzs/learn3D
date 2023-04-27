@@ -60,6 +60,52 @@ void CameraImpl::updateView(const Ogre::Vector3& position, const Ogre::Quaternio
     }
 }
 
+void CameraImpl::updateView(
+    const Ogre::Vector3& eyePos,
+    const Ogre::Vector3& targetPos,
+    const Ogre::Vector3& up)
+{
+    mViewMatrix = Ogre::Math::makeLookAtRH(eyePos, targetPos, up);
+
+    Ogre::Matrix4 combo = mProjectMatrix * mViewMatrix;
+
+    mFrustumPlanes[FRUSTUM_PLANE_LEFT].normal.x = combo[3][0] + combo[0][0];
+    mFrustumPlanes[FRUSTUM_PLANE_LEFT].normal.y = combo[3][1] + combo[0][1];
+    mFrustumPlanes[FRUSTUM_PLANE_LEFT].normal.z = combo[3][2] + combo[0][2];
+    mFrustumPlanes[FRUSTUM_PLANE_LEFT].d = combo[3][3] + combo[0][3];
+
+    mFrustumPlanes[FRUSTUM_PLANE_RIGHT].normal.x = combo[3][0] - combo[0][0];
+    mFrustumPlanes[FRUSTUM_PLANE_RIGHT].normal.y = combo[3][1] - combo[0][1];
+    mFrustumPlanes[FRUSTUM_PLANE_RIGHT].normal.z = combo[3][2] - combo[0][2];
+    mFrustumPlanes[FRUSTUM_PLANE_RIGHT].d = combo[3][3] - combo[0][3];
+
+    mFrustumPlanes[FRUSTUM_PLANE_TOP].normal.x = combo[3][0] - combo[1][0];
+    mFrustumPlanes[FRUSTUM_PLANE_TOP].normal.y = combo[3][1] - combo[1][1];
+    mFrustumPlanes[FRUSTUM_PLANE_TOP].normal.z = combo[3][2] - combo[1][2];
+    mFrustumPlanes[FRUSTUM_PLANE_TOP].d = combo[3][3] - combo[1][3];
+
+    mFrustumPlanes[FRUSTUM_PLANE_BOTTOM].normal.x = combo[3][0] + combo[1][0];
+    mFrustumPlanes[FRUSTUM_PLANE_BOTTOM].normal.y = combo[3][1] + combo[1][1];
+    mFrustumPlanes[FRUSTUM_PLANE_BOTTOM].normal.z = combo[3][2] + combo[1][2];
+    mFrustumPlanes[FRUSTUM_PLANE_BOTTOM].d = combo[3][3] + combo[1][3];
+
+    mFrustumPlanes[FRUSTUM_PLANE_NEAR].normal.x = combo[3][0] + combo[2][0];
+    mFrustumPlanes[FRUSTUM_PLANE_NEAR].normal.y = combo[3][1] + combo[2][1];
+    mFrustumPlanes[FRUSTUM_PLANE_NEAR].normal.z = combo[3][2] + combo[2][2];
+    mFrustumPlanes[FRUSTUM_PLANE_NEAR].d = combo[3][3] + combo[2][3];
+
+    mFrustumPlanes[FRUSTUM_PLANE_FAR].normal.x = combo[3][0] - combo[2][0];
+    mFrustumPlanes[FRUSTUM_PLANE_FAR].normal.y = combo[3][1] - combo[2][1];
+    mFrustumPlanes[FRUSTUM_PLANE_FAR].normal.z = combo[3][2] - combo[2][2];
+    mFrustumPlanes[FRUSTUM_PLANE_FAR].d = combo[3][3] - combo[2][3];
+
+    for (int i = 0; i < 6; i++)
+    {
+        Real length = mFrustumPlanes[i].normal.normalise();
+        mFrustumPlanes[i].d /= length;
+    }
+}
+
 bool CameraImpl::isVisible(const Ogre::Sphere& bound) const
 {
     return true;
@@ -207,12 +253,12 @@ const Ogre::Matrix4& CameraImpl::getProjectMatrix()
             Real top = mOrthoHeight / 2.0f;
             Real bottom = -mOrthoHeight/2.0f;
             mProjectMatrix =
-                Ogre::Math::makeOrthoLH(left, right, bottom, top, mNear, mFar);
+                Ogre::Math::makeOrthoRH(left, right, bottom, top, mNear, mFar);
         }
         else
         {
             mProjectMatrix = 
-                Ogre::Math::makePerspectiveMatrixLH(mFovy, mAspectRation, mNear, mFar);
+                Ogre::Math::makePerspectiveMatrixRH(mFovy, mAspectRation, mNear, mFar);
         }
         
         mUpdate = false;

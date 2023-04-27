@@ -37,9 +37,13 @@ void Light::setAttenuation(float range, float constant, float linear, float quad
 using namespace DirectX;
 const Ogre::Matrix4& Light::getViewMatrix() const
 {
-	auto& position = mParent->getPosition();
-	auto& orientation = mParent->getOrientation();
-	mViewMatrix = Ogre::Math::makeViewMatrix(position, orientation);
+	/*auto& position = mParent->getPosition();
+	auto& orientation = mParent->getOrientation();*/
+
+	Ogre::Vector3 position(-20.8166504, 20.8166504, -20.8166504);
+	Ogre::Vector3 target = Ogre::Vector3::ZERO;
+	Ogre::Vector3 up = Ogre::Vector3::UNIT_Y;
+	mViewMatrix = Ogre::Math::makeLookAtLH(position, target, up);
 	return mViewMatrix;
 }
 

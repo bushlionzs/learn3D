@@ -1014,73 +1014,44 @@ namespace Ogre
     }
 
     Matrix4 Math::makePerspectiveMatrixRH(
-        Real FovAngleY, 
-        Real AspectRatio, 
+        Real fovy,
+        Real aspect,
         Real zNear, 
         Real zFar,
         bool convertDepth)
     {
-        Radian thetaY(FovAngleY * 0.5f);
-        Real tanThetaY = Math::Tan(thetaY);
-        Real tanThetaX = tanThetaY * AspectRatio;
+        float const tanHalfFovy = tan(fovy / 2.0f);
 
-        Real nearFocal = zNear / 1.0f;
-        Real nearOffsetX = 0.0f;
-        Real nearOffsetY = 0.0f;
-        Real half_w = tanThetaX * zNear;
-        Real half_h = tanThetaY * zNear;
+        Matrix4 m = Matrix4::IDENTITY;
+        m[0][0] = 1.0f / (aspect * tanHalfFovy);
+        m[1][1] = 1.0f / (tanHalfFovy);
+        m[2][3] = -1.0f;
 
-        Real left = -half_w + nearOffsetX;
-        Real right = half_w + nearOffsetX;
-        Real top = half_h + nearOffsetY;
-        Real bottom = -half_h + nearOffsetY;
-        Matrix4 dest = makePerspectiveMatrix(left, right, bottom, top, zNear, zFar);
+        m[2][2] = zFar / (zNear - zFar);
+        m[3][2] = -(zFar * zNear) / (zFar - zNear);
 
-        if (convertDepth)
-        {
-            // Convert depth range from [-1,+1] to [0,1]
-            dest[2][0] = (dest[2][0] + dest[3][0]) / 2;
-            dest[2][1] = (dest[2][1] + dest[3][1]) / 2;
-            dest[2][2] = (dest[2][2] + dest[3][2]) / 2;
-            dest[2][3] = (dest[2][3] + dest[3][3]) / 2;
-        }
-        
 
-        return dest;
+        return m;
     }
 
     Matrix4 Math::makePerspectiveMatrixLH(
-        Real FovAngleY, 
-        Real AspectRatio, 
-        Real zNear, 
+        Real fovy,
+        Real aspect,
+        Real zNear,
         Real zFar,
         bool convertDepth)
     {
-        Radian thetaY(FovAngleY * 0.5f);
-        Real tanThetaY = Math::Tan(thetaY);
-        Real tanThetaX = tanThetaY * AspectRatio;
+        float const tanHalfFovy = tan(fovy / 2.0f);
 
-        Real nearFocal = zNear / 1.0f;
-        Real nearOffsetX = 0.0f;
-        Real nearOffsetY = 0.0f;
-        Real half_w = tanThetaX * zNear;
-        Real half_h = tanThetaY * zNear;
+        Matrix4 m = Matrix4::IDENTITY;
+        m[0][0] = 1.0f / (aspect * tanHalfFovy);
+        m[1][1] = 1.0f / (tanHalfFovy);
+        m[2][3] = 1.0f;
 
-        Real left = -half_w + nearOffsetX;
-        Real right = half_w + nearOffsetX;
-        Real top = half_h + nearOffsetY;
-        Real bottom = -half_h + nearOffsetY;
-        Matrix4 dest = makePerspectiveMatrix(left, right, bottom, top, zNear, zFar);
+        m[2][2] = zFar / (zFar - zNear);
+        m[3][2] = -(zFar * zNear) / (zFar - zNear);
 
-        if (convertDepth)
-        {
-            // Convert depth range from [-1,+1] to [0,1]
-            dest[2][0] = (dest[2][0] + dest[3][0]) / 2;
-            dest[2][1] = (dest[2][1] + dest[3][1]) / 2;
-            dest[2][2] = (dest[2][2] + dest[3][2]) / 2;
-            dest[2][3] = (dest[2][3] + dest[3][3]) / 2;
-        }
-        return dest;
+        return m;
 
     }
 
@@ -1145,53 +1116,6 @@ namespace Ogre
         m[3][2] = -zNear / (zFar - zNear);
 
 
-        return m.transpose();
-    }
-
-    Matrix4 makeOrthographicOffCenterLH(
-        float left,
-        float right,
-        float bottom,
-        float top,
-        float nearZ,
-        float farZ)
-    {
-        Real inv_w = 1 / (right - left);
-        Real inv_h = 1 / (top - bottom);
-        Real inv_d = 1 / (farZ - nearZ);
-
-        Real A = 2 * inv_w;
-        Real B = 2 * inv_h;
-        Real C = -(right + left) * inv_w;
-        Real D = -(top + bottom) * inv_h;
-        Real q, qn;
-        if (farZ == 0)
-        {
-            // Can not do infinite far plane here, avoid divided zero only
-            q = -0.00001 / nearZ;
-            qn = -0.00001 - 1;
-        }
-        else
-        {
-            q = -2 * inv_d;
-            qn = -(farZ + nearZ) * inv_d;
-        }
-
-        Matrix4 m;
-        m = Matrix4::ZERO;
-        m[0][0] = A;
-        m[0][3] = C;
-        m[1][1] = B;
-        m[1][3] = D;
-        m[2][2] = q;
-        m[2][3] = qn;
-        m[3][3] = 1;
-
-        // Convert depth range from [-1,+1] to [0,1]
-        m[2][0] = (m[2][0] + m[3][0]) / 2;
-        m[2][1] = (m[2][1] + m[3][1]) / 2;
-        m[2][2] = (m[2][2] + m[3][2]) / 2;
-        m[2][3] = (m[2][3] + m[3][3]) / 2;
         return m;
     }
 
@@ -1203,8 +1127,6 @@ namespace Ogre
         float zNear,
         float zFar)
     {
-        auto aa = makeOrthographicOffCenterLH(left, right, bottom, top, zNear, zFar);
-        return aa;
         Matrix4 m = Matrix4::IDENTITY;
         m[0][0] = 2.0f / (right - left);
         m[1][1] = 2.0f / (top - bottom);
@@ -1212,11 +1134,11 @@ namespace Ogre
         m[3][1] = -(top + bottom) / (top - bottom);
 
         // Convert depth range from [-1,+1] to [0,1]
-        m[2][2] = -1.0f / (zFar - zNear);
+        m[2][2] = 1.0f / (zFar - zNear);
         m[3][2] = -zNear / (zFar - zNear);
 
 
-        return m.transpose();
+        return m;
     }
 
     Matrix4 Math::makeLookAtRH(

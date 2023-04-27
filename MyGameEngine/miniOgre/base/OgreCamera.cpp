@@ -19,16 +19,6 @@ namespace Ogre {
 
 	const Ogre::Matrix4& Camera::getViewMatrix() const
 	{
-		if (mNeedUpdate)
-		{
-			auto pos = mParent->_getDerivedPosition();
-			auto orientation = mParent->_getDerivedOrientation();
-
-			mCameraImpl->updateView(pos, orientation);
-
-			mNeedUpdate = false;
-		}
-		
 		return mCameraImpl->getViewMatrix();
 	}
 
@@ -81,11 +71,13 @@ namespace Ogre {
 
 	bool Camera::isVisible(const Ogre::Sphere& bound) const
 	{
+		return true;
 		return mCameraImpl->isVisible(bound);
 	}
 
 	bool Camera::isVisible(const AxisAlignedBox& bound) const
 	{
+		return true;
 		return mCameraImpl->isVisible(bound);
 	}
 
@@ -144,6 +136,14 @@ namespace Ogre {
 	void Camera::needUpdate()
 	{
 		mNeedUpdate = true;
+	}
+
+	void Camera::updateCamera(
+		const Ogre::Vector3& eyePos,
+		const Ogre::Vector3& targetPos,
+		const Ogre::Vector3& up)
+	{
+		mCameraImpl->updateView(eyePos, targetPos, up);
 	}
 
 	Ray Camera::getCameraToViewportRay(Real screenX, Real screenY) const
