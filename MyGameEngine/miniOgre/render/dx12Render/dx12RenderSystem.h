@@ -53,6 +53,9 @@ private:
     void buildRootSignature();
     void renderImpl(Dx12Pass* pass);
     void updateMainPassCB(Ogre::ICamera* camera);
+
+    void updateMainPassCBForTest(Ogre::ICamera* camera);
+    void UpdateShadowPassCBForTest(Ogre::ICamera* camera);
     void createFrameResource();
 private:
     Dx12RenderWindow* mRenderWindow = nullptr;    

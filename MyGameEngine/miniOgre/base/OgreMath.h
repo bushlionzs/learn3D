@@ -715,7 +715,19 @@ namespace Ogre
         static Matrix4 makeScaleMatrix(const Vector3& scale);
         static Matrix4 makeViewMatrix(const Vector3& position, const Quaternion& orientation, 
             const Matrix4* reflectMatrix = 0);
-        static Matrix4 makePerspectiveMatrix(Real FovAngleY, Real AspectRatio, Real zNear, Real zFar);
+        static Matrix4 makePerspectiveMatrixRH(
+            Real FovAngleY, 
+            Real AspectRatio, 
+            Real zNear, 
+            Real zFar,
+            bool convertDepth = true);
+        static Matrix4 makePerspectiveMatrixLH(
+            Real FovAngleY, 
+            Real AspectRatio, 
+            Real zNear, 
+            Real zFar,
+            bool convertDepth = true);
+
         static Matrix4 makePerspectiveMatrix(Real left, Real right, Real bottom, Real top, 
             Real zNear, Real zFar);
         static Matrix4 makeOrthoRH(

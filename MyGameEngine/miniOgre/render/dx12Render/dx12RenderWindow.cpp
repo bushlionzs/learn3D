@@ -182,7 +182,7 @@ void Dx12RenderWindow::resize(unsigned int width, unsigned int height)
 
 	mScissorRect = { 0, 0, (LONG)mWidth, (LONG)mHeight };
 
-	mMsaaRenderTarget.createResource(mWidth, mHeight, mBackgroundColor, true);
+	mMsaaRenderTarget.createResource(mWidth, mHeight, mBackgroundColor, false);
 }
 
 ID3D12Resource* Dx12RenderWindow::getCurrentBackBuffer()const
@@ -206,16 +206,16 @@ D3D12_CPU_DESCRIPTOR_HANDLE Dx12RenderWindow::DepthStencilView()const
 
 void Dx12RenderWindow::preRender(ID3D12GraphicsCommandList* cl)
 {
-	cl->RSSetViewports(1, &mScreenViewport);
-	cl->RSSetScissorRects(1, &mScissorRect);
-	
-
 	auto cam = mRenderSystem->getCamera();
 
 	mUseShadow = cam->getCameraType() == CameraType_Light;
 
 	if (mUseShadow)
 	{
+		auto viewport = mDx12ShadowMap->viewport();
+		auto scissorRect = mDx12ShadowMap->scissorRect();
+		cl->RSSetViewports(1, &viewport);
+		cl->RSSetScissorRects(1, &scissorRect);
 		cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
 			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
 
@@ -224,6 +224,8 @@ void Dx12RenderWindow::preRender(ID3D12GraphicsCommandList* cl)
 	}
 	else
 	{
+		cl->RSSetViewports(1, &mScreenViewport);
+		cl->RSSetScissorRects(1, &mScissorRect);
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = mDx12ShadowMap->gpuSrvHandle();
 		cl->SetGraphicsRootDescriptorTable(1, gpuHandle);
 
@@ -286,11 +288,11 @@ void Dx12RenderWindow::swapBuffers()
 	};
 
 	cl->ResourceBarrier(2, barriers);
-	//cl->CopyResource(backBuffer, renderTarget);
-	cl->ResolveSubresource(
+	cl->CopyResource(backBuffer, renderTarget);
+	/*cl->ResolveSubresource(
 		backBuffer,
 		0, renderTarget, 0,
-		DX12Helper::getSingleton().getBackBufferFormat());
+		DX12Helper::getSingleton().getBackBufferFormat());*/
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 		backBuffer,
 		D3D12_RESOURCE_STATE_RESOLVE_DEST,

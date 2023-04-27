@@ -8,7 +8,7 @@ template<> DX12Helper* Ogre::Singleton<DX12Helper>::msSingleton = 0;
 
 DX12Helper::DX12Helper(Dx12RenderSystem* rs)
 {
-	m4xMsaaState = true;
+	m4xMsaaState = false;
 	mDx12RenderSystem = rs;
 }
 

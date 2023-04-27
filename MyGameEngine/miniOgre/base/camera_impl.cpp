@@ -212,7 +212,7 @@ const Ogre::Matrix4& CameraImpl::getProjectMatrix()
         else
         {
             mProjectMatrix = 
-                Ogre::Math::makePerspectiveMatrix(mFovy, mAspectRation, mNear, mFar);
+                Ogre::Math::makePerspectiveMatrixLH(mFovy, mAspectRation, mNear, mFar);
         }
         
         mUpdate = false;

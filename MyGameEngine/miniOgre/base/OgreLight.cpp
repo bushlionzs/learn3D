@@ -33,26 +33,28 @@ void Light::setAttenuation(float range, float constant, float linear, float quad
 {
 
 }
-
+#include <DirectXMath.h>
+using namespace DirectX;
 const Ogre::Matrix4& Light::getViewMatrix() const
 {
 	auto& position = mParent->getPosition();
 	auto& orientation = mParent->getOrientation();
 	mViewMatrix = Ogre::Math::makeViewMatrix(position, orientation);
-
 	return mViewMatrix;
 }
 
+
+
 const Ogre::Matrix4& Light::getProjectMatrix() const
 {
-	float width = 20.0f;
-	float height = 20.0f;
+	float width = 40.0f;
+	float height = 40.0f;
 	Real left = -width / 2.0f;
 	Real right = width / 2.0f;
 	Real top = height / 2.0f;
 	Real bottom = -height / 2.0f;
 	mProjMatrix =
-		Ogre::Math::makeOrthoLH(left, right, bottom, top, 5.0f, 50);
+		Ogre::Math::makeOrthoLH(left, right, bottom, top, 2, 100);
 	return mProjMatrix;
 }
 

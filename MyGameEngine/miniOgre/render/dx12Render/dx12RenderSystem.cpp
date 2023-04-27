@@ -56,7 +56,7 @@ void Dx12RenderSystem::ready()
 	DX12Helper::getSingleton().FlushCommandQueue();
 
 	ShaderInfo info;
-	info.shaderName = "basic";
+	info.shaderName = "shadows";
 	mShadowShader = new Dx12Shader(info, true);
 	mShadowShader->load();
 }
@@ -133,13 +133,13 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	auto vd = vertexData->vertexDeclaration;
 	
 
-	if (mCamera->getCameraType() == CameraType_Light)
+	/*if (mCamera->getCameraType() == CameraType_Light)
 	{
 		mShadowShader->updateInputDesc(vd);
 		ID3D12PipelineState* pso = mShadowShader->BuildPSO(&mCurrentPass);
 		mCurrentFrame->getCommandList()->SetPipelineState(pso);
 	}
-	else
+	else*/
 	{
 		mCurrentPass.mShader->updateInputDesc(vd);
 		ID3D12PipelineState* pso = mCurrentPass.mShader->BuildPSO(&mCurrentPass);
@@ -360,17 +360,16 @@ void Dx12RenderSystem::renderImpl(Dx12Pass* pass)
 	mBatchCount++;
 }
 
-
-void Dx12RenderSystem::updateMainPassCB(ICamera* camera)
+void Dx12RenderSystem::updateMainPassCB(Ogre::ICamera* camera)
 {
+	updateMainPassCBForTest(camera);
+	return;
 	const Ogre::Matrix4& view = camera->getViewMatrix();
 	const Ogre::Matrix4& proj = camera->getProjectMatrix();
 	const Ogre::Vector3& camepos = camera->getDerivedPosition();
 
 	Ogre::Matrix4 invView = view.inverse();
 	Ogre::Matrix4 viewProj = proj * view;
-	Ogre::Matrix4 aa = viewProj.transpose();
-	Ogre::Matrix4 bb = view.transpose() * proj.transpose();
 	Ogre::Matrix4 invProj = proj.inverse();
 	Ogre::Matrix4 invViewProj = viewProj.inverse();
 
@@ -378,13 +377,10 @@ void Dx12RenderSystem::updateMainPassCB(ICamera* camera)
 
 	if (camera->getCameraType() == CameraType_Light)
 	{
+		mFrameConstantBuffer.ShadowTransform = viewProj.transpose();
 		mFrameConstantBuffer.Shadow = 1;
-
-		mFrameConstantBuffer.ShadowTransform = 
-			(proj * view).transpose();
-
 	}
-	
+
 	int width = mRenderWindow->getWidth();
 	int height = mRenderWindow->getHeight();
 
@@ -395,11 +391,125 @@ void Dx12RenderSystem::updateMainPassCB(ICamera* camera)
 	mFrameConstantBuffer.ViewProj = viewProj.transpose();
 	mFrameConstantBuffer.InvViewProj = invViewProj.transpose();
 	
-	mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z};
+	mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z };
 	mFrameConstantBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
 	mFrameConstantBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
 	mFrameConstantBuffer.NearZ = 0.1f;
 	mFrameConstantBuffer.FarZ = 10000.0f;
+	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
+	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
+	mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+	mFrameConstantBuffer.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
+	mFrameConstantBuffer.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
+	mFrameConstantBuffer.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
+	mFrameConstantBuffer.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
+
+
+	UploadBuffer<FrameConstantBuffer>* cb = mCurrentFrame->getCameraFrameData(camera);
+	cb->CopyData(0, mFrameConstantBuffer);
+
+	D3D12_GPU_VIRTUAL_ADDRESS frameAddress = cb->Resource()->GetGPUVirtualAddress();
+	mCurrentFrame->getCommandList()->SetGraphicsRootConstantBufferView(
+		mMainConstantIndex, frameAddress);
+}
+
+#include <DirectXMath.h>
+using namespace DirectX;
+void Dx12RenderSystem::updateMainPassCBForTest(ICamera* camera)
+{
+	if (camera->getCameraType() == CameraType_Light)
+	{
+		
+		UpdateShadowPassCBForTest(camera);
+		return;
+	}
+
+	Ogre::Vector3 camepos = Ogre::Vector3(0, 0, 20);
+
+	XMVECTOR lightPos = XMVectorSet(-2, 2, 10, 0.0f);
+	XMVECTOR targetPos = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR lightUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMMATRIX view = XMMatrixLookAtLH(lightPos, targetPos, lightUp);
+	XMMATRIX proj = XMMatrixPerspectiveFovLH(0.785, 1.33, 1, 200);
+
+	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
+	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
+	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
+
+	mFrameConstantBuffer.Shadow = 0;
+
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.View, XMMatrixTranspose(view));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvView, XMMatrixTranspose(invView));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.Proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvProj, XMMatrixTranspose(invProj));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.ViewProj, XMMatrixTranspose(viewProj));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvViewProj, XMMatrixTranspose(invViewProj));
+
+	int width = mRenderWindow->getWidth();
+	int height = mRenderWindow->getHeight();
+	
+	mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z};
+	mFrameConstantBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
+	mFrameConstantBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
+	mFrameConstantBuffer.NearZ = 1.0f;
+	mFrameConstantBuffer.FarZ = 1000.0f;
+	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
+	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
+	mFrameConstantBuffer.AmbientLight = { 0.45f, 0.45f, 0.45f, 1.0f };
+	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+
+
+	UploadBuffer<FrameConstantBuffer>* cb = mCurrentFrame->getCameraFrameData(camera);
+	cb->CopyData(0, mFrameConstantBuffer);
+
+	D3D12_GPU_VIRTUAL_ADDRESS frameAddress = cb->Resource()->GetGPUVirtualAddress();
+	mCurrentFrame->getCommandList()->SetGraphicsRootConstantBufferView(
+		mMainConstantIndex, frameAddress);
+}
+
+void Dx12RenderSystem::UpdateShadowPassCBForTest(Ogre::ICamera* camera)
+{
+	Ogre::Vector3 camepos = Ogre::Vector3(-20.8166504, 20.8166504, -20.8166504);
+	XMVECTOR lightPos = XMVectorSet(-20.8166504, 20.8166504, -20.8166504, 0.0f);
+	XMVECTOR targetPos = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR lightUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMMATRIX view = XMMatrixLookAtLH(lightPos, targetPos, lightUp);
+	XMMATRIX proj = XMMatrixOrthographicOffCenterLH(-20, 20, -20, 20, 2, 60);
+
+	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
+	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
+	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
+
+	mFrameConstantBuffer.Shadow = 1;
+
+	XMMATRIX T(
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, -0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.0f, 1.0f);
+
+	XMMATRIX S = view * proj * T;
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.ShadowTransform, XMMatrixTranspose(S));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.View, XMMatrixTranspose(view));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvView, XMMatrixTranspose(invView));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.Proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvProj, XMMatrixTranspose(invProj));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.ViewProj, XMMatrixTranspose(viewProj));
+	XMStoreFloat4x4((XMFLOAT4X4*)&mFrameConstantBuffer.InvViewProj, XMMatrixTranspose(invViewProj));
+
+	int width = 1024;
+	int height = 1024;
+
+	mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z };
+	mFrameConstantBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
+	mFrameConstantBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
+	mFrameConstantBuffer.NearZ = 1.0f;
+	mFrameConstantBuffer.FarZ = 1000.0f;
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };

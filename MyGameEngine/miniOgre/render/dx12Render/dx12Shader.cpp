@@ -255,6 +255,7 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
 
         if (mShadow)
         {
+            psoDesc.SampleDesc.Count = 1;
             psoDesc.NumRenderTargets = 0;
             psoDesc.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
             psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;

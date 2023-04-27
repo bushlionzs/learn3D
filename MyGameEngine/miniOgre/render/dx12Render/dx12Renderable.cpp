@@ -130,7 +130,9 @@ void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 {
 	mCurrentCamera = cam;
 	const Ogre::Matrix4& model = pass->mRenderable->getModelMatrix();
-	mObjectConstantBuffer.world = model.transpose();
+
+	mObjectConstantBuffer.world = model;
+
 	
 	{
 		const Ogre::Matrix4& view = cam->getViewMatrix();
