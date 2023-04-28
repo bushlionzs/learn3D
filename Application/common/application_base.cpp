@@ -74,7 +74,6 @@ bool ApplicationBase::appInit()
 	camera->setNearClipDistance(1.0f);
 	mViewport = mRenderWindow->addViewport(camera);
 	mViewport->setBackgroundColour(color);
-	mViewport->setShadowsEnabled(true);
 	mViewport->setClearEveryFrame(true);
 	EngineManager::getSingleton().setViewPort(mViewport);
 	mGameCamera = new GameCamera(camera, mSceneManager, mApplicationWindow->getWnd());

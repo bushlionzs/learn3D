@@ -10,6 +10,7 @@
 #include "OgreAnimationState.h"
 #include "OgreLight.h"
 #include "OgreMaterialManager.h"
+#include "OgreViewport.h"
 
 ShadowMap::ShadowMap()
 {
@@ -25,6 +26,7 @@ ShadowMap::~ShadowMap()
 bool ShadowMap::appInit()
 {
 	ApplicationBase::appInit();
+	mViewport->setShadowsEnabled(true);
 	auto root = mSceneManager->getRoot();
 
 	MeshManager::getSingletonPtr()->CreateSphere("sphere.mesh", 0.5f, 20, 20);

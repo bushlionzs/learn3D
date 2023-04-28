@@ -12,4 +12,6 @@ public:
 	{
 		return false;
 	}
+private:
+	AnimationState* mAnimationState = nullptr;
 };
