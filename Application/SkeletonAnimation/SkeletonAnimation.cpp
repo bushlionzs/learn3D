@@ -3,6 +3,7 @@
 #include "engine_manager.h"
 #include "myutils.h"
 #include "OgreResourceManager.h"
+#include "OgreViewport.h"
 
 SkeletonAnimation::SkeletonAnimation()
 {
@@ -20,19 +21,22 @@ bool SkeletonAnimation::appInit()
 
 	
 
-	auto mesh = MeshManager::getSingletonPtr()->load(std::string("Â¥À¼ÕÊÅñ04.mesh"));
+	auto mesh = 
+		MeshManager::getSingletonPtr()->load(std::string("´óÐÍ¹àÄ¾04.mesh"));
 
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
 	Entity* sphere = mSceneManager->createEntity("sphere", mesh);
 	SceneNode* spherenode = root->createChildSceneNode("sphere");
 
-	//spherenode->attachObject(sphere);
+	spherenode->attachObject(sphere);
 
 	mGameCamera->setDistance(1000.0f);
 
-	mSceneManager->setSkyBox(true, "SkyLan", 50000);
+	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
 
+
+	
 	return true;
 }
 
@@ -43,5 +47,5 @@ void SkeletonAnimation::appUpdate(float delta)
 
 EngineType SkeletonAnimation::getEngineType()
 {
-	return EngineType_Dx12;
+	return EngineType_Dx11;
 }

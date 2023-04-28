@@ -7,6 +7,7 @@ namespace Ogre
 		CameraType_Common = 0,
 		CameraType_Light  = 1
 	};
+	class SceneManager;
 class ICamera
 {
 public:
@@ -15,5 +16,6 @@ public:
 	virtual const Ogre::Vector3& getDerivedPosition() const = 0;
 	virtual bool isVisible(const AxisAlignedBox& bound) const = 0;
 	virtual const CameraType getCameraType();
+	virtual SceneManager* getCreator() { return nullptr; }
 };
 }

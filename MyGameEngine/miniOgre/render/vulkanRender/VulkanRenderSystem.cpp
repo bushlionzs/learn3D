@@ -18,6 +18,7 @@
 #include "VulkanWindow.h"
 #include "OgreViewport.h"
 #include "VulkanRenderTarget.h"
+#include "OgreSceneManager.h"
 
 
 static const std::vector<const char*> validationLayers = {
@@ -288,13 +289,23 @@ void VulkanRenderSystem::updateMainPassCB(Camera* camera)
     mFrameConstantBuffer.FarZ = 10000.0f;
     mFrameConstantBuffer.TotalTime = 0;
     mFrameConstantBuffer.DeltaTime = 0;
-    mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-    mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-    mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
-    mFrameConstantBuffer.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-    mFrameConstantBuffer.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
-    mFrameConstantBuffer.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-    mFrameConstantBuffer.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
+    if (camera->getCameraType() == CameraType_Light)
+    {
+        auto sceneMgr = camera->getCreator();
+        mFrameConstantBuffer.AmbientLight = sceneMgr->getAmbientLight();
+
+        const std::vector<Light*>& lights = sceneMgr->getLightList();
+
+        uint32_t directionIndex = 0;
+        for (auto l : lights)
+        {
+            if (l->getLightType() == LightType_Direction)
+            {
+                mFrameConstantBuffer.directionLights[directionIndex].Direction = l->getLightDirection();
+                directionIndex++;
+            }
+        }
+    }
 
 
     mCurrentVulkanFrame->updateFrameConstantBuffer(mFrameConstantBuffer, 0);

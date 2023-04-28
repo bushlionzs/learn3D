@@ -7,6 +7,7 @@
 #include "myutils.h"
 #include "OgreResourceManager.h"
 #include "OgreMaterialManager.h"
+#include "OgreCamera.h"
 
 AnimTexture::AnimTexture()
 {
@@ -35,22 +36,23 @@ bool AnimTexture::appInit()
 	auto mesh = MeshManager::getSingletonPtr()->createRect(
 		"myrect",
 		leftop, leftbottom, righttop, rightbottom, normal);
-	Entity* bomb = mSceneManager->createEntity("rect", mesh);
-	SceneNode* bombnode = root->createChildSceneNode("rect");
-	bombnode->attachObject(bomb);
-	bombnode->setPosition(Ogre::Vector3(2.0f, 0.0f, 0.0f));
-	auto mat = MaterialManager::getSingleton().getByName("bomb");
-	bomb->setMaterial(0, mat);
-
 	Entity* rect = mSceneManager->createEntity("rect", mesh);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 	rectnode->setPosition(Ogre::Vector3(-2.0f, 0.0f, 0.0f));
 
 
+	Entity* rect2 = mSceneManager->createEntity("rect2", mesh);
+	SceneNode* rectnode2 = root->createChildSceneNode("rect2");
+	rectnode2->attachObject(rect2);
+	rectnode2->setPosition(Ogre::Vector3(2.0f, 0.0f, 0.0f));
+	auto mat = MaterialManager::getSingleton().getByName("bomb");
+	rect2->setMaterial(0, mat);
+
 	mGameCamera->setDistance(10);
 	auto cam = mGameCamera->getCamera();
-
+	cam->setProjectionType(PT_ORTHOGRAPHIC);
+	cam->setOrthoWindow(10.24, 7.68);
 	mGameCamera->setMoveSpeed(20.0f);
 
 	return true;
@@ -63,5 +65,10 @@ void AnimTexture::appUpdate(float delta)
 
 EngineType AnimTexture::getEngineType()
 {
-	return EngineType_Dx12;
+	return EngineType_Dx11;
+}
+
+bool AnimTexture::isUseMyGUI()
+{
+	return false;
 }

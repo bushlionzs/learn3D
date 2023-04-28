@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OgreLight.h"
+#include "OgreColourValue.h"
 
 struct ObjectConstantBuffer
 {
@@ -9,7 +10,7 @@ struct ObjectConstantBuffer
     Ogre::Matrix4 worldViewProj;
 };
 
-#define MaxLights 16
+#define MaxLightsEachType 4
 
 
 
@@ -47,8 +48,10 @@ struct FrameConstantBuffer
     float TotalTime = 0.0f;
     float DeltaTime = 0.0f;
 
-    Ogre::Vector4 AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-    LightInfo Lights[MaxLights];
+    Ogre::ColourValue AmbientLight = ColourValue(0.45f, 0.45f, 0.45f, 1.0f);
+    LightInfo directionLights[MaxLightsEachType];
+    LightInfo pointLights[MaxLightsEachType];
+    LightInfo spotLights[MaxLightsEachType];
 };
 
 struct MaterialConstantBuffer

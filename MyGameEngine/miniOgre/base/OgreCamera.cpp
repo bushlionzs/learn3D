@@ -224,4 +224,9 @@ namespace Ogre {
 	{
 		mCameraImpl->disableCustomNearClipPlane();
 	}
+
+	SceneManager* Camera::getCreator()
+	{
+		return mCreator;
+	}
 }

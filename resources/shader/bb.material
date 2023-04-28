@@ -177,10 +177,10 @@ material myground
 		pass
 		{
 			lighting off
-			cull_hardware none;
+			cull_hardware none
 			texture_unit
 			{
-				texture awesomeface.png
+				texture checkboard.dds
 				tex_address_mode clamp
 			}
 		}

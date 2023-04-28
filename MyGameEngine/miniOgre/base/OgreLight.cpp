@@ -37,14 +37,20 @@ void Light::setAttenuation(float range, float constant, float linear, float quad
 using namespace DirectX;
 const Ogre::Matrix4& Light::getViewMatrix() const
 {
-	/*auto& position = mParent->getPosition();
-	auto& orientation = mParent->getOrientation();*/
+	auto& q = mParent->_getDerivedOrientation();
+	Matrix3 rot;
+	q.ToRotationMatrix(rot);
 
-	Ogre::Vector3 position(-20.8166504, 20.8166504, -20.8166504);
-	Ogre::Vector3 target = Ogre::Vector3::ZERO;
-	Ogre::Vector3 up = Ogre::Vector3::UNIT_Y;
-	mViewMatrix = Ogre::Math::makeLookAtLH(position, target, up);
-	return mViewMatrix;
+	auto dir = rot.GetColumn(2);
+
+	{
+		Ogre::Vector3 target = Ogre::Vector3::ZERO;
+		Ogre::Vector3 position = target + (dir) * 40;
+		mParent->setPosition(position);
+		mViewMatrix = Ogre::Math::makeLookAtLH(position, target, Ogre::Vector3::UNIT_Y);
+		return mViewMatrix;
+	}
+	
 }
 
 
@@ -83,4 +89,29 @@ const CameraType Light::getCameraType()
 {
 	return CameraType_Light;
 }
+
+void Light::setLightType(LightType type, uint32_t lightNumber)
+{
+	mLightType = type;
+	mLightNumber = lightNumber;
+}
+
+LightType Light::getLightType()
+{
+	return mLightType;
+}
+
+uint32_t Light::getLightNumber()
+{
+	return mLightNumber;
+}
+
+Ogre::Vector3 Light::getLightDirection()
+{
+	const Ogre::Quaternion& q = mParent->_getDerivedOrientation();
+	Matrix3 rot;
+	q.ToRotationMatrix(rot);
+	return rot.GetColumn(2);
+}
+
 }

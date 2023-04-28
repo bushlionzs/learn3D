@@ -168,7 +168,7 @@ void Dx11RenderSystem::updateFrame()
 	const Ogre::Vector3& camepos = camera->getDerivedPosition();
 
 	Ogre::Matrix4 invView = view.inverse();
-	Ogre::Matrix4 viewProj = proj * view;
+	Ogre::Matrix4 viewProj = view * proj;
 	Ogre::Matrix4 invProj = proj.inverse();
 	Ogre::Matrix4 invViewProj = viewProj.inverse();
 
@@ -176,26 +176,27 @@ void Dx11RenderSystem::updateFrame()
 
 	if (camera->getCameraType() == CameraType_Light)
 	{
+		Ogre::Matrix4 T(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f);
+		Ogre::Matrix4 S = view * proj * T;
+
+		mFrameConstantBuffer.ShadowTransform = S;
 		mFrameConstantBuffer.Shadow = 1;
-
-		mFrameConstantBuffer.ShadowTransform =
-			(proj * view).transpose();
-
 	}
-	else
-	{
-		int kk = 0;
-	}
+
 
 	int width = mRenderWindow->getWidth();
 	int height = mRenderWindow->getHeight();
 
-	mFrameConstantBuffer.View = view.transpose();
-	mFrameConstantBuffer.InvView = invView.transpose();
-	mFrameConstantBuffer.Proj = proj.transpose();
-	mFrameConstantBuffer.InvProj = invProj.transpose();
-	mFrameConstantBuffer.ViewProj = viewProj.transpose();
-	mFrameConstantBuffer.InvViewProj = invViewProj.transpose();
+	mFrameConstantBuffer.View = view;
+	mFrameConstantBuffer.InvView = invView;
+	mFrameConstantBuffer.Proj = proj;
+	mFrameConstantBuffer.InvProj = invProj;
+	mFrameConstantBuffer.ViewProj = viewProj;
+	mFrameConstantBuffer.InvViewProj = invViewProj;
 	mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z };
 	mFrameConstantBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
 	mFrameConstantBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
@@ -203,13 +204,24 @@ void Dx11RenderSystem::updateFrame()
 	mFrameConstantBuffer.FarZ = 10000.0f;
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-	mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
-	mFrameConstantBuffer.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-	mFrameConstantBuffer.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
-	mFrameConstantBuffer.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-	mFrameConstantBuffer.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
+	
+	if (camera->getCameraType() == CameraType_Common)
+	{
+		auto sceneMgr = camera->getCreator();
+		mFrameConstantBuffer.AmbientLight = sceneMgr->getAmbientLight();
+
+		const std::vector<Light*>& lights = sceneMgr->getLightList();
+
+		uint32_t directionIndex = 0;
+		for (auto l : lights)
+		{
+			if (l->getLightType() == LightType_Direction)
+			{
+				mFrameConstantBuffer.directionLights[directionIndex].Direction = l->getLightDirection();
+				directionIndex++;
+			}
+		}
+	}
 
 
 	Dx11UploadBuffer<FrameConstantBuffer>* cb = mFrameCB.get();

@@ -253,3 +253,20 @@ shader shadow
 		frag_shader shadow.glsl ps
 	 }
 }
+
+shader shadows
+{
+    shader_unit
+	 {
+		shader_type directx
+		vertex_shader shadows.hlsl vs
+		frag_shader shadows.hlsl ps
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader shadow.glsl vs
+		frag_shader shadow.glsl ps
+	 }
+}

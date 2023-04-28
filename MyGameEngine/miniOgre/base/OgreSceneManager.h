@@ -69,7 +69,8 @@ namespace Ogre {
 
         Light* createLight(const String& name);
         void destroyLight(const String& name);
-
+        const std::vector<Light*>& getLightList();
+        const ColourValue& getAmbientLight();
         void setAmbientLight(const ColourValue& colour);
 
         void destroyBillboardSet(MoveObject* set);
@@ -143,6 +144,8 @@ namespace Ogre {
 
         //light
         std::unordered_map<String, Light*> mLightMap;
+        std::vector<Light*> mLightList;
+        ColourValue mAmbientLight;
         /// Current Viewport
         Viewport* mCurrentViewport = nullptr;
     };

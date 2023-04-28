@@ -66,6 +66,7 @@ namespace Ogre {
         virtual void disableReflection(void);
         virtual void enableCustomNearClipPlane(const Plane& plane);
         virtual void disableCustomNearClipPlane(void);
+        virtual SceneManager* getCreator();
     private:
         CameraImpl* mCameraImpl;
         std::vector<Renderable*> mRenderableList;

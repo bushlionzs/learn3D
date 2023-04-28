@@ -61,44 +61,46 @@ VertexOut VS(VertexIn vIn)
 #endif
 #endif
     float4 posW = mul(gWorld, float4(vIn.PosL, 1.0f));
-    vOut.PosH = mul(gWorldViewProj, float4(vIn.PosL, 1.0f));
-	vOut.PosH = mul(gWorldInvTranspose, posW);
+    //vOut.PosH = mul(gWorldViewProj, float4(vIn.PosL, 1.0f));
+	vOut.PosH = mul(gViewProj, posW);
     vOut.PosW = posW.xyz;
     vOut.NormalW = mul((float3x3) gWorld, vIn.NormalL);
 #ifdef USETANGENT
 	vOut.TangentW = mul((float3x3)gWorld, vIn.TangentL);
 #endif
     vOut.TexC = mul(gTexTransform, float4(vIn.TexC, 0.0f, 1.0f)).xy;
-	
 	vOut.ShadowPosH = mul(gShadowTransform, posW);
     return vOut;
 }
 
 float4 PS(VertexOut pin) : SV_Target
 {
+	if(gShadow==1)
+	{
+		return float4(0.0f, 1.0f, 0.0f, 1.0f);
+	}
 	//return float4(0.0f, 1.0f, 0.0f, 1.0f);
     float4 diffuseAlbedo = gTextureArray[0].Sample(gsamLinearWrap, pin.TexC) * gDiffuseAlbedo;
-	float4 aa = gShadowMap.Sample(gsamLinearWrap, float2(0.1,0.6));
 	//clip(diffuseAlbedo.a - 0.5f);
 	//return diffuseAlbedo;
-	//return aa;
 	pin.NormalW = normalize(pin.NormalW);
 
     // Vector from point being lit to eye. 
     float3 toEyeW = normalize(gEyePosW - pin.PosW);
 
     // Light terms.
+	//float4 gAmbientLight = float4(1.0f, 1.0f, 1.0f, 1.0f);
     float4 ambient = gAmbientLight*diffuseAlbedo;
     const float shininess = 1.0f - gRoughness;
 	float3 fresnel = float3(0.01f, 0.01f, 0.01f); 
     Material mat = { diffuseAlbedo, gFresnelR0, shininess };
     float3 shadowFactor = float3(0.0f, 1.0f, 1.0f);
 	shadowFactor[0] = CalcShadowFactor(pin.ShadowPosH);
-	if(shadowFactor[0] < 0.2)
+	if(shadowFactor[0] < 0.1)
 	{
-		return float4(1.0, 0.0, 0.0, 1.0f);
+		//return float4(0.0f, 1.0f, 0.0f, 1.0f);
 	}
-    float4 directLight = ComputeLighting(gLights, mat, pin.PosW,
+    float4 directLight = ComputeLighting(mat, pin.PosW,
         pin.NormalW, toEyeW, shadowFactor);
     float4 litColor = ambient + directLight;
 

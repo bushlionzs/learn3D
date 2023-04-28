@@ -62,11 +62,11 @@ cbuffer cbPass : register(b1)
     float gDeltaTime;
     float4 gAmbientLight;
 
-    // Indices [0, NUM_DIR_LIGHTS) are directional lights;
-    // indices [NUM_DIR_LIGHTS, NUM_DIR_LIGHTS+NUM_POINT_LIGHTS) are point lights;
-    // indices [NUM_DIR_LIGHTS+NUM_POINT_LIGHTS, NUM_DIR_LIGHTS+NUM_POINT_LIGHT+NUM_SPOT_LIGHTS)
-    // are spot lights for a maximum of MaxLights per object.
-    Light gLights[MaxLights];
+
+    Light gDirectionLights[MaxLightsEach];
+	Light gPointLights[MaxLightsEach];
+	Light gSpotLights[MaxLightsEach];
+	
 };
 
 #ifdef PBR
@@ -113,6 +113,38 @@ cbuffer cbSkinned : register(b3)
 };
 #endif
 
+float4 ComputeLighting(Material mat,
+                       float3 pos, float3 normal, float3 toEye,
+                       float3 shadowFactor)
+{
+    float3 result = 0.0f;
+
+    int i = 0;
+
+#if (NUM_DIR_LIGHTS > 0)
+    for(i = 0; i < NUM_DIR_LIGHTS; ++i)
+    {
+        result += shadowFactor[i] * ComputeDirectionalLight(gDirectionLights[i], mat, normal, toEye);
+    }
+#endif
+
+#if (NUM_POINT_LIGHTS > 0)
+    for(i = 0; i < NUM_POINT_LIGHTS; ++i)
+    {
+        result += ComputePointLight(gPointLights[i], mat, pos, normal, toEye);
+    }
+#endif
+
+#if (NUM_SPOT_LIGHTS > 0)
+    for(i = 0; i < 0NUM_SPOT_LIGHTS; ++i)
+    {
+        result += ComputeSpotLight(gSpotLights[i], mat, pos, normal, toEye);
+    }
+#endif 
+
+    return float4(result, 0.0f);
+}
+
 float CalcShadowFactor(float4 shadowPosH)
 {
     // Complete projection by doing division by w.
@@ -121,11 +153,13 @@ float CalcShadowFactor(float4 shadowPosH)
     // Depth in NDC space.
     float depth = shadowPosH.z;
 	
+
     uint width, height, numMips;
     gShadowMap.GetDimensions(0, width, height, numMips);
 
     // Texel size.
     float dx = 1.0f / (float)width;
+	
 
     float percentLit = 0.0f;
     const float2 offsets[9] =
@@ -135,6 +169,7 @@ float CalcShadowFactor(float4 shadowPosH)
         float2(-dx,  +dx), float2(0.0f,  +dx), float2(dx,  +dx)
     };
 	
+
     [unroll]
     for(int i = 0; i < 9; ++i)
     {

@@ -19,6 +19,7 @@
 #include "OgreViewport.h"
 #include "dx12Frame.h"
 #include "OgreRoot.h"
+#include "OgreSceneManager.h"
 
 Dx12RenderSystem::Dx12RenderSystem(HWND wnd)
 {
@@ -368,11 +369,6 @@ void Dx12RenderSystem::updateMainPassCB(Ogre::ICamera* camera)
 	const Ogre::Matrix4& proj = camera->getProjectMatrix();
 	const Ogre::Vector3& camepos = camera->getDerivedPosition();
 
-	Ogre::Matrix4 invView = view.inverse();
-	Ogre::Matrix4 viewProj = view * proj;
-	Ogre::Matrix4 invProj = proj.inverse();
-	Ogre::Matrix4 invViewProj = viewProj.inverse();
-
 	mFrameConstantBuffer.Shadow = 0;
 
 	if (camera->getCameraType() == CameraType_Light)
@@ -392,26 +388,39 @@ void Dx12RenderSystem::updateMainPassCB(Ogre::ICamera* camera)
 	int height = mRenderWindow->getHeight();
 
 	mFrameConstantBuffer.View = view;
-	mFrameConstantBuffer.InvView = invView;
+	mFrameConstantBuffer.InvView = view.inverse();
 	mFrameConstantBuffer.Proj = proj;
-	mFrameConstantBuffer.InvProj = invProj;
-	mFrameConstantBuffer.ViewProj = viewProj;
-	mFrameConstantBuffer.InvViewProj = invViewProj;
+	mFrameConstantBuffer.InvProj = proj.inverse();
+	mFrameConstantBuffer.ViewProj = view * proj;
+	mFrameConstantBuffer.InvViewProj = mFrameConstantBuffer.ViewProj.inverse();
 	
 	mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z };
 	mFrameConstantBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
 	mFrameConstantBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
-	mFrameConstantBuffer.NearZ = 0.1f;
-	mFrameConstantBuffer.FarZ = 10000.0f;
+	mFrameConstantBuffer.NearZ = 1.0f;
+	mFrameConstantBuffer.FarZ = 1000.0f;
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-	mFrameConstantBuffer.AmbientLight = { 0.45f, 0.45f, 0.45f, 1.0f };
-	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
-	mFrameConstantBuffer.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
-	mFrameConstantBuffer.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
-	mFrameConstantBuffer.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
-	mFrameConstantBuffer.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
+
+	if (camera->getCameraType() == CameraType_Common)
+	{
+		auto sceneMgr = camera->getCreator();
+		mFrameConstantBuffer.AmbientLight = sceneMgr->getAmbientLight();
+
+		const std::vector<Light*>& lights = sceneMgr->getLightList();
+
+		uint32_t directionIndex = 0;
+		for (auto l : lights)
+		{
+			if (l->getLightType() == LightType_Direction)
+			{
+				mFrameConstantBuffer.directionLights[directionIndex].Direction = l->getLightDirection();
+				mFrameConstantBuffer.directionLights[directionIndex].Strength = Ogre::Vector3(0.6, 0.6, 0.6);
+				directionIndex++;
+			}
+		}
+	}
+	
 
 
 	UploadBuffer<FrameConstantBuffer>* cb = mCurrentFrame->getCameraFrameData(camera);
@@ -465,9 +474,9 @@ void Dx12RenderSystem::updateMainPassCBForTest(ICamera* camera)
 	mFrameConstantBuffer.FarZ = 1000.0f;
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-	mFrameConstantBuffer.AmbientLight = { 0.45f, 0.45f, 0.45f, 1.0f };
-	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+	mFrameConstantBuffer.AmbientLight = ColourValue(0.45f, 0.45f, 0.45f, 1.0f);
+	mFrameConstantBuffer.directionLights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	mFrameConstantBuffer.directionLights[0].Strength = { 0.6f, 0.6f, 0.6f };
 
 
 	UploadBuffer<FrameConstantBuffer>* cb = mCurrentFrame->getCameraFrameData(camera);
@@ -519,9 +528,7 @@ void Dx12RenderSystem::UpdateShadowPassCBForTest(Ogre::ICamera* camera)
 	mFrameConstantBuffer.FarZ = 1000.0f;
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-	mFrameConstantBuffer.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
-	mFrameConstantBuffer.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
-	mFrameConstantBuffer.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+
 
 
 	UploadBuffer<FrameConstantBuffer>* cb = mCurrentFrame->getCameraFrameData(camera);

@@ -55,8 +55,6 @@ void GameCamera::injectMouseWheel(int _absz)
     {
         mDistance = 1200.0f;
     }
-
-    return;
 }
 void GameCamera::injectMouseMove(int _absx, int _absy, int _absz)
 {
@@ -231,6 +229,9 @@ bool GameCamera::update(float delta)
 
             mCameraNode->pitch(Ogre::Degree(mPitch));
 
+            const Ogre::Vector3& realPos = mCameraSubNode->_getDerivedPosition();
+
+            mCamera->updateCamera(realPos, playerPos, Ogre::Vector3::UNIT_Y);
         }
     }
 

@@ -33,11 +33,12 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 	auto dx11Context = DX11Helper::getSingleton().getDeviceContext();
 	const Ogre::Matrix4& model = pass._render->getModelMatrix();
 	mObjectConstantBuffer.world = model.transpose();
-	mObjectConstantBuffer.invWorld = model.inverse().transpose();
+
 	{
 		const Ogre::Matrix4& view = cam->getViewMatrix();
 		const Ogre::Matrix4& proj = cam->getProjectMatrix();
-		mObjectConstantBuffer.worldViewProj = (proj * view * model).transpose();
+		mObjectConstantBuffer.invWorld = mObjectConstantBuffer.world.inverse();
+		mObjectConstantBuffer.worldViewProj = model.transpose() * view * proj;
 	}
 
 	updateObject(cam);

@@ -22,6 +22,8 @@ namespace Ogre {
         mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
 
         mRoot = new SceneNode(this, std::string("__root"));
+
+        mAmbientLight = ColourValue(0.45f, 0.45f, 0.45f, 1.0f);
     }
 
     SceneManager::~SceneManager()
@@ -245,6 +247,19 @@ namespace Ogre {
 
         Light* l = new Light;
         mLightMap[name] = l;
+
+        mLightList.clear();
+
+        for (auto& pair : mLightMap)
+        {
+            mLightList.push_back(pair.second);
+        }
+
+        std::sort(mLightList.begin(), mLightList.end(),
+            [](Light* a, Light* b)
+        {
+            return a->getLightNumber() < b->getLightNumber();
+        });
         return l;
     }
 
@@ -255,7 +270,17 @@ namespace Ogre {
 
     void SceneManager::setAmbientLight(const ColourValue& colour)
     {
+        mAmbientLight = colour;
+    }
 
+    const std::vector<Light*>& SceneManager::getLightList()
+    {
+        return mLightList;
+    }
+
+    const ColourValue& SceneManager::getAmbientLight()
+    {
+        return mAmbientLight;
     }
 
     void SceneManager::destroyBillboardSet(MoveObject* set)
