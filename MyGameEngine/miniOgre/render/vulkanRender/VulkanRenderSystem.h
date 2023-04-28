@@ -33,7 +33,7 @@ public:
     
     virtual void* createRenderableData();
 
-    void _setViewport(Viewport* vp);
+    void _setViewport(ICamera* cam, Ogre::Viewport* vp);
     EngineType getRenderType();
 
     virtual void clearFrameBuffer(uint32 buffers,
@@ -43,16 +43,16 @@ public:
         const String& name, unsigned int width, unsigned int height,
         const NameValuePairList* miscParams);
     VulkanFrame* _getCurrentFrame();
-    Ogre::Camera* _getCamera();
+    ICamera* _getCamera();
 private:
     void renderImpl(VulkanPass* pass);
-    void updateMainPassCB(Camera* camera);
+    void updateMainPassCB(ICamera* camera);
 private:
     bool mEnableValidationLayers;
   
     VulkanPass  mCurrentPass;
 
-    Camera* mCamera = nullptr;
+    ICamera* mCamera = nullptr;
 
     FrameConstantBuffer mFrameConstantBuffer;
     

@@ -19,7 +19,7 @@
 #include "OgreViewport.h"
 #include "VulkanRenderTarget.h"
 #include "OgreSceneManager.h"
-
+#include "OgreRoot.h"
 
 static const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
@@ -154,13 +154,13 @@ void* VulkanRenderSystem::createRenderableData()
     return new VulkanRenderableData(this);
 }
 
-void VulkanRenderSystem::_setViewport(Viewport* vp)
+void VulkanRenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
 {
     mViewport = vp;
-    mCamera = vp->getCamera();
+    mCamera = cam;
     RenderTarget* target;
     target = vp->getTarget();
-
+    updateMainPassCB(cam);
     mActiveVulkanRenderTarget = dynamic_cast<VulkanRenderTarget*>(target);
     mActiveVulkanRenderTarget->preRender(
         mCurrentVulkanFrame->getVkCommandBuffer());
@@ -255,26 +255,26 @@ void VulkanRenderSystem::renderImpl(VulkanPass* pass)
    
 }
 
-void VulkanRenderSystem::updateMainPassCB(Camera* camera)
+void VulkanRenderSystem::updateMainPassCB(ICamera* camera)
 {
     const Ogre::Matrix4& view = camera->getViewMatrix();
     const Ogre::Matrix4& proj = camera->getProjectMatrix();
     const Ogre::Vector3& camepos = camera->getDerivedPosition();
 
     Ogre::Matrix4 invView = view.inverse();
-    Ogre::Matrix4 viewProj = proj * view;
+    Ogre::Matrix4 viewProj = view * proj;
     Ogre::Matrix4 invProj = proj.inverse();
     Ogre::Matrix4 invViewProj = viewProj.inverse();
 
     mFrameConstantBuffer.Shadow = 0;
 
     
-    mFrameConstantBuffer.View = view.transpose();
-    mFrameConstantBuffer.InvView = invView.transpose();
-    mFrameConstantBuffer.Proj = proj.transpose();
-    mFrameConstantBuffer.InvProj = invProj.transpose();
-    mFrameConstantBuffer.ViewProj = viewProj.transpose();
-    mFrameConstantBuffer.InvViewProj = invViewProj.transpose();
+    mFrameConstantBuffer.View = view;
+    mFrameConstantBuffer.InvView = invView;
+    mFrameConstantBuffer.Proj = proj;
+    mFrameConstantBuffer.InvProj = invProj;
+    mFrameConstantBuffer.ViewProj = viewProj;
+    mFrameConstantBuffer.InvViewProj = invViewProj;
     //mFrameConstantBuffer.ShadowTransform = mShadowTransform;
     mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z };
 
@@ -287,8 +287,8 @@ void VulkanRenderSystem::updateMainPassCB(Camera* camera)
         Ogre::Vector2(1.0f / width, 1.0f / height);
     mFrameConstantBuffer.NearZ = 0.1f;
     mFrameConstantBuffer.FarZ = 10000.0f;
-    mFrameConstantBuffer.TotalTime = 0;
-    mFrameConstantBuffer.DeltaTime = 0;
+    mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
+    mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
     if (camera->getCameraType() == CameraType_Light)
     {
         auto sceneMgr = camera->getCreator();
@@ -317,7 +317,7 @@ VulkanFrame* VulkanRenderSystem::_getCurrentFrame()
     return mCurrentVulkanFrame;
 }
 
-Ogre::Camera* VulkanRenderSystem::_getCamera()
+ICamera* VulkanRenderSystem::_getCamera()
 {
     return mCamera;
 }

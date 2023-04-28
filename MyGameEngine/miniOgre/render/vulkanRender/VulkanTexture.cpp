@@ -33,18 +33,12 @@ void VulkanTexture::_createSurfaceList(void)
     mSurfaceList.clear();
     size_t depth = mTextureProperty._depth;
 
-    int faceNum = 1;
-    if (isCubeTexture())
-    {
-        faceNum = 6;
-    }
-
     uint64_t bufferSizeAll = 0;
-    for (size_t face = 0; face < faceNum; ++face)
+    for (size_t face = 0; face < mFace; ++face)
     {
         size_t width = mTextureProperty._width;
         size_t height = mTextureProperty._height;
-        for (size_t mip = 0; mip <= mNumMipmaps; ++mip)
+        for (size_t mip = 0; mip <= mTextureProperty._numMipmaps; ++mip)
         {
 
             VulkanHardwarePixelBuffer* buffer;
@@ -138,21 +132,16 @@ void VulkanTexture::createImage(
     VkImage& image,
     VkDeviceMemory& imageMemory)
 {
+    uint32_t numMips = mTextureProperty._numMipmaps + 1;
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     imageInfo.imageType = VK_IMAGE_TYPE_2D;
-    int face = 1;
-    if (isCubeTexture())
-    {
-        face = 6;
-    }
-
     
     imageInfo.extent.width = width;
     imageInfo.extent.height = height;
     imageInfo.extent.depth = 1;
-    imageInfo.mipLevels = 1;
-    imageInfo.arrayLayers = face;
+    imageInfo.mipLevels = numMips;
+    imageInfo.arrayLayers = mFace;
     imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;

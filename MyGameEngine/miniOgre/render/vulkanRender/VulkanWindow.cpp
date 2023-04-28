@@ -182,7 +182,8 @@ void VulkanWindow::swapBuffers()
 
     auto queue = VulkanHelper::getSingleton()._getCommandQueue();
 
-    if (vkQueueSubmit(queue, 1, &submitInfo, mFlightFence) != VK_SUCCESS)
+    auto result = vkQueueSubmit(queue, 1, &submitInfo, mFlightFence);
+    if(result!= VK_SUCCESS)
     {
         OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "failed to submit draw command buffer!");
     }
@@ -204,7 +205,7 @@ void VulkanWindow::swapBuffers()
 
     presentInfo.pImageIndices = &currentFrame->getFrameIndex();
 
-    VkResult result = vkQueuePresentKHR(queue, &presentInfo);
+    result = vkQueuePresentKHR(queue, &presentInfo);
 
     if (result != VK_SUCCESS)
     {

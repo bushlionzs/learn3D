@@ -24,9 +24,11 @@ private:
 	VkDevice mDevice;
 
 	VulkanObjectDesc mObjectDesc;
+	VulkanObjectDesc mMaterialDesc;
 	VulkanObjectDesc mSkinnedDesc;
 
 	ObjectConstantBuffer mObjectConstantBuffer;
+	MaterialConstantBuffer mMaterialConstantBuffer;
 	VkDescriptorSet mDescriptorSet;
 
 	bool mUpdate = false;

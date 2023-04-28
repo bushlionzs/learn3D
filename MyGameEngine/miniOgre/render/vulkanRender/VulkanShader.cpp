@@ -38,6 +38,7 @@ bool VulkanShader::load()
         vertexSpv, 
         res->_fullname,
         *vertexContent, 
+        privateInfo->vertexShaderEntryPoint,
         mShaderInfo.shaderMacros,
         shaderc_glsl_vertex_shader);
     mVertexShader = createShaderModule(vertexSpv);
@@ -54,6 +55,7 @@ bool VulkanShader::load()
         fragSpv,
         res->_fullname,
         *fragContent,
+        privateInfo->fragShaderEntryPoint,
         mShaderInfo.shaderMacros,
         shaderc_glsl_fragment_shader);
 

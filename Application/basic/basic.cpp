@@ -1,5 +1,5 @@
 #include "OgreHeader.h"
-#include "AnimTexture.h"
+#include "basic.h"
 #include "engine_manager.h"
 #include "OgreParticleSystem.h"
 #include "OGImpact.h"
@@ -7,23 +7,20 @@
 #include "myutils.h"
 #include "OgreResourceManager.h"
 #include "OgreMaterialManager.h"
-#include "OgreCamera.h"
 
-AnimTexture::AnimTexture()
+Basic::Basic()
 {
 
 }
 
-AnimTexture::~AnimTexture()
+Basic::~Basic()
 {
 
 }
 
-bool AnimTexture::appInit()
+bool Basic::appInit()
 {
 	ApplicationBase::appInit();
-
-	mGameCamera->getCamera()->setFarClipDistance(100.0f);
 
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
@@ -39,36 +36,20 @@ bool AnimTexture::appInit()
 	Entity* rect = mSceneManager->createEntity("rect", mesh);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
-	rectnode->setPosition(Ogre::Vector3(-2.0f, 0.0f, 0.0f));
+	auto mat = MaterialManager::getSingleton().getByName("myrect2");
+	rect->setMaterial(0, mat);
 
-
-	Entity* rect2 = mSceneManager->createEntity("rect2", mesh);
-	SceneNode* rectnode2 = root->createChildSceneNode("rect2");
-	rectnode2->attachObject(rect2);
-	rectnode2->setPosition(Ogre::Vector3(2.0f, 0.0f, 0.0f));
-	auto mat = MaterialManager::getSingleton().getByName("bomb");
-	rect2->setMaterial(0, mat);
-
-	mGameCamera->setDistance(10);
-	auto cam = mGameCamera->getCamera();
-	cam->setProjectionType(PT_ORTHOGRAPHIC);
-	cam->setOrthoWindow(10.24, 7.68);
-	mGameCamera->setMoveSpeed(20.0f);
-
+	mGameCamera->setDistance(5.0f);
+	mGameCamera->setMoveSpeed(25.0f);
 	return true;
 }
 
-void AnimTexture::appUpdate(float delta)
+void Basic::appUpdate(float delta)
 {
 	ApplicationBase::appUpdate(delta);
 }
 
-EngineType AnimTexture::getEngineType()
+EngineType Basic::getEngineType()
 {
 	return EngineType_Vulkan;
-}
-
-bool AnimTexture::isUseMyGUI()
-{
-	return false;
 }

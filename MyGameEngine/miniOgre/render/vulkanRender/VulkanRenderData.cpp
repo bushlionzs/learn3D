@@ -37,8 +37,8 @@ void VulkanRenderableData::updateData(VulkanPass* pass)
     const Ogre::Matrix4& proj = cam->getProjectMatrix();
     const Ogre::Matrix4& model = pass->mRenderable->getModelMatrix();
     mObjectConstantBuffer.world = model.transpose();
-    mObjectConstantBuffer.invWorld = model.inverse();
-    mObjectConstantBuffer.worldViewProj = (proj * view * model).transpose();
+    mObjectConstantBuffer.invWorld = mObjectConstantBuffer.world.inverse();
+    mObjectConstantBuffer.worldViewProj = mObjectConstantBuffer.world * view * proj;
 
     VulkanObjectPool::getSingleton().updateObject(
         mObjectDesc, (const char*)&mObjectConstantBuffer, sizeof(mObjectConstantBuffer));
@@ -52,19 +52,22 @@ void VulkanRenderableData::updateData(VulkanPass* pass)
         }
         VulkanObjectPool::getSingleton().updateObject(mSkinnedDesc, rd->mData, rd->mDataSize);
     }
+
+    if (pass->mMaterial->getTextureUnitCount())
+    {
+        auto unit = pass->mMaterial->getTextureUnit(0);
+        mMaterialConstantBuffer.TexTransform =
+            unit->getTextureTransform().transpose();
+    }
+
+    VulkanObjectPool::getSingleton().updateObject(
+        mMaterialDesc, (const char*)&mMaterialConstantBuffer, sizeof(mMaterialConstantBuffer));
 }
 
 
 void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
 {
     updateData(pass);
-
-    if (mUpdate)
-    {
-        return;
-    }
-
-    mUpdate = true;
 
     auto texs = pass->mMaterial->getAllTexureUnit();
 
@@ -103,7 +106,7 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
 
     if (texs.size() > VULKAN_TEXTURE_COUNT || texs.empty())
     {
-        OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "texture size exception");
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "texture size exception");
     }
     int32_t start = textureDescriptors.size();
     if (start< VULKAN_TEXTURE_COUNT)
@@ -127,6 +130,12 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
     bufferDescriptor.buffer = objectCBInfo._vulkanBuffer;
     bufferDescriptor.offset = objectCBInfo._offset;
     bufferDescriptor.range = sizeof(ObjectConstantBuffer);
+
+    VkDescriptorBufferInfo materialDescriptor = {};
+    auto materialInfo = VulkanObjectPool::getSingleton().getObjectInfo(mMaterialDesc);
+    materialDescriptor.buffer = materialInfo._vulkanBuffer;
+    materialDescriptor.offset = materialInfo._offset;
+    materialDescriptor.range = sizeof(MaterialConstantBuffer);
 
     auto& frameCB = mEngine->_getCurrentFrame()->getFrameCB();
 
@@ -152,7 +161,12 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             1,
             &frameDescriptor),
-        
+        //Bind 2:
+        vks::initializers::writeDescriptorSet(
+            mDescriptorSet,
+            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            2,
+            &materialDescriptor),
         // Binding 4 : Fragment shader texture sampler
         vks::initializers::writeDescriptorSet(
             mDescriptorSet,
@@ -208,6 +222,7 @@ VkPipelineLayout  VulkanRenderableData::getPipelineLayout()
 void VulkanRenderableData::buildInitData()
 {
     mObjectDesc = VulkanObjectPool::getSingleton().allocObject(VulkanObject_ObjectCB);
+    mMaterialDesc = VulkanObjectPool::getSingleton().allocObject(VulkanObject_MaterialCB);
     mSkinnedDesc._vkObjectType = VulkanObject_SkinnedCB;
 
     auto descriptorPool = VulkanHelper::getSingleton()._getDescriptorPool();

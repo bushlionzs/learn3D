@@ -4,6 +4,7 @@ bool glslCompileShader(
 	String& result,
 	String& shaderName,
 	String& shaderContent,
+	String& entryPoint,
 	std::vector<std::pair<std::string, std::string>>& shaderMacros,
 	shaderc_shader_kind kind
 );

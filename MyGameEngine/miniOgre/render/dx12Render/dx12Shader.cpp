@@ -265,6 +265,7 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
             D3D12_DEPTH_STENCIL_DESC depthDSS;
             depthDSS.DepthEnable = true;
             depthDSS.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+            depthDSS.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
             depthDSS.StencilEnable = false;
             psoDesc.DepthStencilState = depthDSS;
         }
@@ -285,11 +286,6 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
             transparencyBlendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
             psoDesc.BlendState.RenderTarget[0] = transparencyBlendDesc;
-        }
-
-        if (psoDesc.RasterizerState.FillMode == D3D12_FILL_MODE_WIREFRAME)
-        {
-            int kk = 0;
         }
         ThrowIfFailed(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
     }

@@ -32,7 +32,10 @@ private:
     shaderc_include_result mIncludeResult;
 };
 
-String getGlslKey(String& shaderName, std::vector<std::pair<std::string, std::string>>& shaderMacros)
+String getGlslKey(
+    String& shaderName, 
+    std::vector<std::pair<std::string, std::string>>& shaderMacros,
+    shaderc_shader_kind kind)
 {
     uint64_t macro_bit = 0;
     for (auto& pair : shaderMacros)
@@ -41,7 +44,7 @@ String getGlslKey(String& shaderName, std::vector<std::pair<std::string, std::st
 
         macro_bit |= index;
     }
-    return Ogre::StringUtil::format("%s%lld", shaderName, macro_bit);
+    return Ogre::StringUtil::format("%s%lld%d", shaderName, macro_bit, kind);
 }
 
 static std::unordered_map<String, String> gGlslCacheMap;
@@ -50,12 +53,13 @@ bool glslCompileShader(
 	String& result,
 	String& shaderName,
     String& shaderContent,
+    String& entryPoint,
 	std::vector<std::pair<std::string, std::string>>& shaderMacros,
     shaderc_shader_kind kind
 )
 {
 
-    String key = getGlslKey(shaderName, shaderMacros);
+    String key = getGlslKey(shaderName, shaderMacros, kind);
 
     auto itor = gGlslCacheMap.find(key);
 
@@ -73,12 +77,26 @@ bool glslCompileShader(
         options.AddMacroDefinition(pair.first, pair.second);
     }
 
+    if (kind == shaderc_glsl_vertex_shader)
+    {
+        options.AddMacroDefinition("VERTEX_SHADER", "1");
+    }
+    else if (kind == shaderc_glsl_fragment_shader)
+    {
+        options.AddMacroDefinition("FRAGMENT_SHADER", "1");
+    }
+
     shaderc::SpvCompilationResult module =
-        compiler.CompileGlslToSpv(shaderContent, kind, shaderName.c_str(), options);
+        compiler.CompileGlslToSpv(
+            shaderContent, 
+            kind, 
+            shaderName.c_str(), 
+            entryPoint.c_str(),
+            options);
 
     if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
         std::string aa  = module.GetErrorMessage();
-        OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "glsl compile error");
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "glsl compile error");
         return false;
     }
 
