@@ -56,7 +56,12 @@ open learn3d.sln using vs2019, then start to compile
 ## GameUI
   This example demonstrates using MyGUI to develop a simple game interface, and using the technique of rendering to texture to render 3D models onto a 2D interface.
   ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/gameui.jpg)
-  
+## ShadowMap
+  This example uses shadow mapping to generate shadows, but many parameters are hard-coded and can only be used for demonstration. This example is only available in the developers branch and has not been merged into the master branch
+  ![screenshot](https://github.com/bushlionzs/learn3D/blob/develop/resources/screenshot/shadowmap.png)
+## SkeletonAnimation
+  This example demonstrates how to load a skeletal animation from a glTF file. However, there are still some texture coordinate issues that need to be addressed. This example is only available in the developers branch.
+  ![screenshot](https://github.com/bushlionzs/learn3D/blob/develop/resources/screenshot/gltf.png)
 ## AnimTexture   
   This example implements two texture animations. The rectangle on the left moves the texture coordinates to form an animation, while the rectangle on the right    switches images to achieve animation.
   ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/animTexture.jpg)
