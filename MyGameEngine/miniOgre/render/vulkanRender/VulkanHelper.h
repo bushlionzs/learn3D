@@ -17,7 +17,6 @@ struct SwapChainBuffer
 class VulkanRenderSystem;
 class VulkanFrame;
 
-
 class VulkanHelper : public Ogre::Singleton<VulkanHelper>
 {
 public:
@@ -50,9 +49,7 @@ public:
     void copyBufferToImage(
         VkBuffer buffer,
         VkImage image,
-        uint32_t width,
-        uint32_t height,
-        uint32_t face);
+        ITexture* tex);
 
     VulkanDepthStencil createDepthStencil(uint32_t width, uint32_t height);
 

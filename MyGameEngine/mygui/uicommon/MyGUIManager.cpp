@@ -31,10 +31,9 @@ bool MyGUIManager::_initialise(Ogre::RenderWindow* window)
 
 	mCamera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
 	mCamera->setOrthoWindow(2, 2);
+	Ogre::Vector3 eyePos = Ogre::Vector3(0, 0, 10);
+	mCamera->updateCamera(eyePos, Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_Y);
 
-	mCameraNode = mSceneManager->getRoot()->createChildSceneNode(BLANKSTRING);
-	mCameraNode->attachObject(mCamera);
-	mCameraNode->setPosition(0, 0, 10);
 
 
 	mPlatform = new MyGUI::OgrePlatform();

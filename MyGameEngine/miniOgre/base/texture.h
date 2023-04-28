@@ -125,6 +125,10 @@ namespace Ogre {
             return mTextureProperty._tex_format;
         }
 
+        uint32_t getSourceMipmaps()
+        {
+            return mTextureProperty._numMipmaps;
+        }
         uint32_t getNumMipmaps()
         {
             return mNumMipmaps;

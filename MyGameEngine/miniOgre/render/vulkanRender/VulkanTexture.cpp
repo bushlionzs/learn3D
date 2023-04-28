@@ -59,7 +59,6 @@ void VulkanTexture::_createSurfaceList(void)
 
             if (width > 1) width /= 2;
             if (height > 1) height /= 2;
-            if (depth > 1 && mTextureProperty._texType != TEX_TYPE_2D_ARRAY) depth /= 2;
         }
     }
 
@@ -112,9 +111,7 @@ void VulkanTexture::postLoad()
     VulkanHelper::getSingleton().copyBufferToImage(
         mStagingBuffer,
         mTextureImage,
-        static_cast<uint32_t>(getWidth()),
-        static_cast<uint32_t>(getHeight()),
-            mSurfaceList.size()
+        this
     );
 
 
