@@ -78,9 +78,7 @@ bool RenderToTexture::appInit()
 	//box->setMaterial(0, renderMaterial);
 	Ogre::Camera* cam = sceneMgr->createCamera("aaaa");
 
-	SceneNode* camNode = sceneMgr->getRoot()->createChildSceneNode("aaaa");
-	camNode->attachObject(cam);
-	camNode->setPosition(Ogre::Vector3(0, 0, 15));
+	cam->updateCamera(Ogre::Vector3(0, 0, 15), Ogre::Vector3(0, 0, 0), Ogre::Vector3::UNIT_Y);
 
 	auto vp = mRenderWindow->addViewport(cam, 2);
 	vp->setClearEveryFrame(false);

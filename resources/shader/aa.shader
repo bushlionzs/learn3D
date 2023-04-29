@@ -78,8 +78,8 @@ shader ogresimple
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader ogresimple.vert.glsl main
-		frag_shader ogresimple.frag.glsl main
+		vertex_shader ogresimple.glsl main
+		frag_shader ogresimple.glsl main
 	 }
 }
 

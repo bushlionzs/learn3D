@@ -9,6 +9,10 @@ public:
 	virtual bool appInit();
 	virtual void appUpdate(float delta);
 	EngineType getEngineType();
+	virtual bool isUseMyGUI()
+	{
+		return false;
+	}
 private:
 	void createActor();
 private:

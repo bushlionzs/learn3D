@@ -178,7 +178,7 @@ void VulkanRenderSystem::clearFrameBuffer(uint32 buffers,
     VkCommandBuffer pCommandBuffer =
         mCurrentVulkanFrame->getVkCommandBuffer();
     VkClearValue clearValues[2];
-    clearValues[0].color = { { 0.3f, 0.3f, 0.3f, 1.0f } };
+    memcpy(clearValues[0].color.float32, colour.ptr(), sizeof(ColourValue));
     clearValues[1].depthStencil = { 1.0f, 0 };
 
     auto renderPass = VulkanHelper::getSingleton()._getRenderPass();

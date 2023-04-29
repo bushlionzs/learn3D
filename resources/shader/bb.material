@@ -57,7 +57,8 @@ material myrect
 		pass
 		{
 			lighting off
-			cull_hardware none;
+			cull_hardware none
+			shader ogresimple
 			texture_unit
 			{
 				texture awesomeface.png
@@ -94,8 +95,7 @@ material myrect2
 			shader ogresimple
 			texture_unit
 			{
-				texture tga_鲤鱼动画.dds
-				//scroll_anim 0 -0.9
+				texture awesomeface.png
 				tex_address_mode clamp
 			}
 		}

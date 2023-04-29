@@ -13,9 +13,4 @@ layout(location = 0) out vec4 outColor;
 
 void main() {
     outColor = texture(gTextureArray[0], outTexC);
-	
-	if(outColor.a < 0.5f)
-	{
-	    discard;
-	}
 }

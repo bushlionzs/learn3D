@@ -13,5 +13,6 @@ layout (location = 1) out vec2 outTexC;
 void main() {
     gl_Position = cbPerObject.gWorldViewProj * vec4(position, 1.0);
 	gl_Position.y = -gl_Position.y;
+	outColor = color_diffuse;
 	outTexC = texcoord;
 }
