@@ -104,10 +104,6 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
         textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     }
 
-    if (texs.size() > VULKAN_TEXTURE_COUNT || texs.empty())
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "texture size exception");
-    }
     int32_t start = textureDescriptors.size();
     if (start< VULKAN_TEXTURE_COUNT)
     {
@@ -173,7 +169,7 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,		 
             4,												
             textureDescriptors.data(),
-            textureDescriptors.size())
+            std::min((uint32_t)VULKAN_TEXTURE_COUNT, (uint32_t)textureDescriptors.size()))
     };
 
     if (mSkinnedDesc._vkObjectIndex > 0)

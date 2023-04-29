@@ -113,6 +113,97 @@ public:
     }
 };
 
+class BaseColorTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setPbrTexture(TextureTypePbr_Albedo, val);
+    }
+};
+
+class OcclusionTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setPbrTexture(TextureTypePbr_AmbientOcclusion, val);
+    }
+};
+
+class EmissiveTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setPbrTexture(TextureTypePbr_Emissive, val);
+    }
+};
+
+class MetallicRoughnessTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setPbrTexture(TextureTypePbr_MetalRoughness, val);
+    }
+};
+
+class DiffuseTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setPbrTexture(TextureTypePbr_IBL_Diffuse, val);
+    }
+};
+
+class SpecularTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setPbrTexture(TextureTypePbr_IBL_Specular, val);
+    }
+};
+
+class BrdflutTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setPbrTexture(TextureTypePbr_BRDF_LUT, val);
+    }
+};
+
 class CmdShaderMacro : public ParamCommand
 {
 public:
@@ -270,6 +361,48 @@ void OgreMaterialParam::initParameters()
             "cull_hardware",
             PT_STRING),
             &mCullMode);
+
+        static BaseColorTexture mBaseColorTexture;
+        dict->addParameter(ParameterDef("basecolor_texture",
+            "basecolor_texture",
+            PT_STRING),
+            &mBaseColorTexture);
+
+        static OcclusionTexture mOcclusionTexture;
+        dict->addParameter(ParameterDef("occlusion_texture",
+            "occlusion_texture",
+            PT_STRING),
+            &mOcclusionTexture);
+
+        static EmissiveTexture mEmissiveTexture;
+        dict->addParameter(ParameterDef("emissive_texture",
+            "emissive_texture",
+            PT_STRING),
+            &mEmissiveTexture);
+
+        static MetallicRoughnessTexture mMetallicRoughnessTexture;
+        dict->addParameter(ParameterDef("metallic_roughness_texture",
+            "metallic_roughness_texture",
+            PT_STRING),
+            &mMetallicRoughnessTexture);
+
+        static DiffuseTexture mDiffuseTexture;
+        dict->addParameter(ParameterDef("diffuse_texture",
+            "diffuse_texture",
+            PT_STRING),
+            &mDiffuseTexture);
+
+        static SpecularTexture mSpecularTexture;
+        dict->addParameter(ParameterDef("specular_texture",
+            "specular_texture",
+            PT_STRING),
+            &mSpecularTexture);
+
+        static BrdflutTexture mBrdflutTexture;
+        dict->addParameter(ParameterDef("brdflut_texture",
+            "brdflut_texture",
+            PT_STRING),
+            &mBrdflutTexture);
 	}
 }
 
@@ -363,7 +496,19 @@ void OgreMaterialParam::setTexture(const std::string& val)
     {
         mMaterial->addTexture(aa[0], &tp);
     }
-    
+}
+
+void OgreMaterialParam::setPbrTexture(TextureTypePbr pbrtype, const std::string& val)
+{
+    TextureProperty tp;
+    std::vector<std::string> aa = Ogre::StringUtil::split(val);
+    if (aa.size() > 1)
+    {
+        if (aa[1] == "cubic")
+            tp._texType = TEX_TYPE_CUBE_MAP;
+    }
+    tp._pbrType = pbrtype;
+    mMaterial->addTexture(aa[0], &tp);
 }
 
 void OgreMaterialParam::setAnimTexture(const String& val)

@@ -28,7 +28,6 @@ private:
 		std::stringstream& ss, 
 		Material* mat,
 		OgreMaterialParam* param);
-
 	
 	void addMaterialParam(const std::string& name, OgreMaterialParam* param);
 private:

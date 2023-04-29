@@ -297,7 +297,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             const tinygltf::Image& tinyImage = model.images[model.textures[texIndex].source];
             ShaderInfo sinfo;
             sinfo.shaderName = "basic";
-            sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
+            //sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
             auto mat = Ogre::MaterialManager::getSingletonPtr()->create(mesh.name);
             mat->addTexture(tinyImage.uri);
             mat->addShader(sinfo);

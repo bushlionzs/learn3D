@@ -1,6 +1,7 @@
 #pragma once
 #include "OgreStringInterface.h"
 #include "shader.h"
+#include "texture.h"
 #include "OgreBlendMode.h"
 
 class MaterialScriptParser;
@@ -27,6 +28,7 @@ public:
 	void setShader(const std::string& val);
 	void setInherit(const std::string& val);
 	void setTexture(const std::string& val);
+	void setPbrTexture(TextureTypePbr pbrtype, const std::string& val);
 	void setAnimTexture(const String& val);
 	void setScrollTexture(const String& val);
 	void setCullMode(const String& val);

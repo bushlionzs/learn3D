@@ -101,17 +101,19 @@ namespace Ogre {
 			{
 				std::string basename = removeSuffix(mName);
 				std::string currname;
-				const char* suffixs[] = { "_rt", "_lf", "_up", "_dn", "_fr", "_bk" };
+				const char* CUBEMAP_SUFFIXES[] = { "_rt", "_lf", "_up", "_dn", "_fr", "_bk" };
+				const char* CUBEMAP_SUFFIXES_ALT[] = { "_px", "_nx", "_py", "_ny", "_pz", "_nz" };
 				for (int32_t i = 0; i < 6; i++)
 				{
-					currname = basename + suffixs[i] + suffix;
+					currname = basename + CUBEMAP_SUFFIXES[i] + suffix;
 					if (ResourceManager::getSingletonPtr()->hasResource(currname, BLANKSTRING))
 					{
 						names.push_back(currname);
 					}
 					else
 					{
-						names.push_back(mName);
+						currname = basename + CUBEMAP_SUFFIXES_ALT[i] + suffix;
+						names.push_back(currname);
 					}
 				}
 			}

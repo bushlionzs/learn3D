@@ -22,6 +22,7 @@ void MaterialScriptParser::parseMaterialImpl(const std::string& content)
     ss << content;
 
     const std::string partMaterial = "material";
+    const std::string partPbrMaterial = "pbrmaterial";
     const std::string partTechnique = "technique";
 
     std::string linePart;
@@ -35,9 +36,17 @@ void MaterialScriptParser::parseMaterialImpl(const std::string& content)
             NextAfterNewLine(ss, linePart);
             continue;
         }
-        if (linePart != partMaterial) {
+        if (linePart != partMaterial &&
+            linePart != partPbrMaterial) {
             ss >> linePart;
             continue;
+        }
+
+        bool pbr = false;
+
+        if (linePart == partPbrMaterial)
+        {
+            pbr = true;
         }
 
         ss >> materialname;
@@ -56,32 +65,48 @@ void MaterialScriptParser::parseMaterialImpl(const std::string& content)
             OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "material error");
             return;
         }
-
         ss >> linePart;
-        while (linePart != partBlockEnd) {
-            // Proceed to the first technique
-            if (linePart == partTechnique) {
-                std::string techniqueName = SkipLine(ss);
-                readTechnique(techniqueName, ss, mat.get(), param);
-                while (linePart != partBlockEnd)
-                {
-                    ss >> linePart;
-                }
-                
-                break;
-            }
-            else
+        if (pbr)
+        {
+            while (linePart != partBlockEnd)
             {
-                if (linePart == "set")
-                {
-                    int kk = 0;
+                if (linePart == partComment) {
+                    NextAfterNewLine(ss, linePart);
+                    continue;
                 }
+
                 std::string val = SkipLine(ss);
                 Ogre::StringUtil::trim(val);
                 param->addParam(linePart, val);
+                ss >> linePart;
             }
-            ss >> linePart;
+            int kk = 0;
         }
+        else
+        {
+            while (linePart != partBlockEnd) {
+                // Proceed to the first technique
+                if (linePart == partTechnique) {
+                    std::string techniqueName = SkipLine(ss);
+                    readTechnique(techniqueName, ss, mat.get(), param);
+                    while (linePart != partBlockEnd)
+                    {
+                        ss >> linePart;
+                    }
+
+                    break;
+                }
+                else
+                {
+                    std::string val = SkipLine(ss);
+                    Ogre::StringUtil::trim(val);
+                    param->addParam(linePart, val);
+                }
+                ss >> linePart;
+            }
+        }
+
+        
 
         param->compile();
         ss >> linePart;
