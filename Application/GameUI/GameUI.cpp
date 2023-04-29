@@ -94,5 +94,5 @@ void GameUI::appUpdate(float delta)
 
 EngineType GameUI::getEngineType()
 {
-	return EngineType_Dx12;
+	return EngineType_Vulkan;
 }

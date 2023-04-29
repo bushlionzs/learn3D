@@ -54,5 +54,6 @@ void VideoTexture::appUpdate(float delta)
 
 EngineType VideoTexture::getEngineType()
 {
-	return EngineType_Dx12;
+	return EngineType_Vulkan;
+
 }

@@ -20,6 +20,7 @@ VulkanTexture::VulkanTexture(
 
     mName = name;
     mVKDevice = VulkanHelper::getSingleton()._getVkDevice();
+    mTextureImage = nullptr;
 }
 
 VulkanTexture::~VulkanTexture()
@@ -98,6 +99,9 @@ void VulkanTexture::createInternalResourcesImpl(void)
         mTextureImage,
         mTextureImageMemory);
 
+    mTextureImageView = createImageView(mTextureImage, mVulkanFormat);
+    createTextureSampler();
+
     _createSurfaceList();
 }
 
@@ -108,15 +112,15 @@ void VulkanTexture::freeInternalResourcesImpl(void)
 
 void VulkanTexture::postLoad()
 {
-    VulkanHelper::getSingleton().copyBufferToImage(
-        mStagingBuffer,
-        mTextureImage,
-        this
-    );
+    if (!mSurfaceList.empty())
+    {
+        VulkanHelper::getSingleton().copyBufferToImage(
+            mStagingBuffer,
+            mTextureImage,
+            this
+        );
+    }
 
-
-    mTextureImageView = createImageView(mTextureImage, mVulkanFormat);
-    createTextureSampler();
 }
 
 void VulkanTexture::createImage(
@@ -191,11 +195,9 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     VkImageViewCreateInfo viewInfo = {};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = image;
-    int face = 1;
     if (isCubeTexture())
     {
         viewInfo.viewType = VK_IMAGE_VIEW_TYPE_CUBE;
-        face = 6;
     }
     else
     {
@@ -207,7 +209,7 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     viewInfo.subresourceRange.baseMipLevel = 0;
     viewInfo.subresourceRange.levelCount = 1;
     viewInfo.subresourceRange.baseArrayLayer = 0;
-    viewInfo.subresourceRange.layerCount = face;
+    viewInfo.subresourceRange.layerCount = mFace;
 
     VkImageView imageView;
     if (vkCreateImageView(mVKDevice, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
@@ -251,25 +253,9 @@ void* VulkanTexture::getVulkanBuffer(size_t face, size_t mipmap)
 
 void VulkanTexture::updateTextureData()
 {
-    if (mSurfaceList.empty())
-    {
-        return;
-    }
-
-    int faceNum = 1;
-    if (isCubeTexture())
-    {
-        faceNum = 6;
-    }
-
-    /*VulkanHelper::getSingleton().copyBufferToImage(
+    VulkanHelper::getSingleton().copyBufferToImage(
         mStagingBuffer,
         mTextureImage,
-        static_cast<uint32_t>(mImages[0].getWidth()),
-        static_cast<uint32_t>(mImages[0].getHeight()),
-        faceNum
-    );*/
-    
-
-    
+        this
+    );
 }

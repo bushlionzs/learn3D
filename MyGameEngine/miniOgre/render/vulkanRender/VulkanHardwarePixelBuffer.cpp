@@ -82,4 +82,5 @@ void VulkanHardwarePixelBuffer::unlock()
 
 void VulkanHardwarePixelBuffer::uploadData()
 {
+	mParentTexture->updateTextureData();
 }

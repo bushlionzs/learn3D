@@ -75,7 +75,7 @@ namespace Ogre {
 			return;
 		}
 
-		std::string suffix = getSuffix(mName);
+		
 
 
 		bool cube = isCubeTexture();
@@ -91,6 +91,7 @@ namespace Ogre {
 
 		if (cube)
 		{
+			std::string suffix = getSuffix(mName);
 			if (ResourceManager::getSingletonPtr()->hasResource(mName, BLANKSTRING))
 			{
 				names.push_back(mName);

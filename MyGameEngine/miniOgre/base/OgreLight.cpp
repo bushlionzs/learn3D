@@ -64,7 +64,7 @@ const Ogre::Matrix4& Light::getProjectMatrix() const
 	Real top = height / 2.0f;
 	Real bottom = -height / 2.0f;
 	mProjMatrix =
-		Ogre::Math::makeOrthoLH(left, right, bottom, top, 2, 100);
+		Ogre::Math::makeOrthoRH(left, right, bottom, top, 2, 100);
 	return mProjMatrix;
 }
 

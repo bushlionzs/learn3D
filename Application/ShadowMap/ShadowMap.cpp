@@ -87,7 +87,7 @@ bool ShadowMap::appInit()
 		leftop, leftbottom, righttop, rightbottom, normal);
 	Entity* rect = mSceneManager->createEntity("rect", mesh);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
-	//rectnode->attachObject(rect);
+	rectnode->attachObject(rect);
 	rectnode->setPosition(1.5, 0.0f, 3.0f);
 
 	mat = MaterialManager::getSingleton().getByName("shadow");

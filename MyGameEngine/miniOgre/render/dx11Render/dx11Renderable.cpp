@@ -38,6 +38,11 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 		const Ogre::Matrix4& view = cam->getViewMatrix();
 		const Ogre::Matrix4& proj = cam->getProjectMatrix();
 		mObjectConstantBuffer.invWorld = mObjectConstantBuffer.world.inverse();
+		Ogre::Matrix4 T(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f);
 		mObjectConstantBuffer.worldViewProj = model.transpose() * view * proj;
 	}
 
