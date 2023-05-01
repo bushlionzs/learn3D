@@ -255,7 +255,6 @@
     <ClInclude Include="miniOgre\base\engine_manager.h" />
     <ClInclude Include="miniOgre\base\engine_struct.h" />
     <ClInclude Include="miniOgre\base\file_stream.h" />
-    <ClInclude Include="miniOgre\base\glslUtil.h" />
     <ClInclude Include="miniOgre\base\OgreBase.h" />
     <ClInclude Include="miniOgre\base\OgreHardwareIndexBuffer.h" />
     <ClInclude Include="miniOgre\base\OgreException.h" />
@@ -917,7 +916,6 @@
     <ClCompile Include="miniOgre\base\dds_load.cpp" />
     <ClCompile Include="miniOgre\base\engine_manager.cpp" />
     <ClCompile Include="miniOgre\base\file_stream.cpp" />
-    <ClCompile Include="miniOgre\base\glslUtil.cpp" />
     <ClCompile Include="miniOgre\base\OgreBase.cpp" />
     <ClCompile Include="miniOgre\base\OgreHardwareIndexBuffer.cpp" />
     <ClCompile Include="miniOgre\base\OgreException.cpp" />
@@ -1351,7 +1349,7 @@
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4819;4099;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -1360,8 +1358,8 @@
     <Lib>
       <AdditionalOptions />
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>OIS_d.lib;tinyxmld.lib;vulkan-1.lib;shaderc_combined_debug.lib;SpirvToolsd.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;dxgi.lib;dxguid.lib;d3d12.lib;d3d11.lib;D3DCompiler.lib;Shlwapi.lib;winmm.lib;LibBulletCollisiond.lib;LibBulletDynamicsd.lib;LibBulletSoftBodyd.lib;LibLinearMathd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\3rd\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OIS_d.lib;tinyxmld.lib;vulkan-1.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;dxgi.lib;dxguid.lib;d3d12.lib;d3d11.lib;D3DCompiler.lib;Shlwapi.lib;winmm.lib;LibBulletCollisiond.lib;LibBulletDynamicsd.lib;LibBulletSoftBodyd.lib;LibLinearMathd.lib;GlslUtil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\3rd\lib;$(ProjectDir)..\bin</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>

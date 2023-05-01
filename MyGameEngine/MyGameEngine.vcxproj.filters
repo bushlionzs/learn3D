@@ -606,9 +606,6 @@
     <ClInclude Include="miniOgre\render\vulkanRender\VulkanTools.h">
       <Filter>miniOgre\render\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="miniOgre\base\glslUtil.h">
-      <Filter>miniOgre\base</Filter>
-    </ClInclude>
     <ClInclude Include="middle\effect\OGBullet.h">
       <Filter>middle\effect</Filter>
     </ClInclude>
@@ -2668,9 +2665,6 @@
     </ClCompile>
     <ClCompile Include="miniOgre\render\vulkanRender\VulkanTools.cpp">
       <Filter>miniOgre\render\vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="miniOgre\base\glslUtil.cpp">
-      <Filter>miniOgre\base</Filter>
     </ClCompile>
     <ClCompile Include="middle\effect\OGBullet.cpp">
       <Filter>middle\effect</Filter>

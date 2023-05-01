@@ -1,9 +1,22 @@
-#include "OgreHeader.h"
 #include "glslUtil.h"
 #include <libshaderc_util/file_finder.h>
-#include "shaderManager.h"
 #include <SPIRV_Cross/spirv_glsl.hpp>
-#include "OgreString.h"
+
+static std::string getContentFromFile(const char* name)
+{
+    FILE* fp = fopen(name, "rb");
+    fseek(fp, 0, SEEK_END);
+
+    int32_t size = ftell(fp);
+
+    fseek(fp, 0, SEEK_SET);
+
+    std::string content;
+    content.resize(size);
+    fread((void*)content.data(), 1, size, fp);
+    fclose(fp);
+    return content;
+}
 
 class MyIncluderInterface : public shaderc::CompileOptions::IncluderInterface
 {
@@ -13,13 +26,13 @@ public:
         const char* requesting_source,
         size_t include_depth)
     {
-        String name(requested_source);
+        std::string name(requested_source);
         mIncludeResult.source_name = requested_source;
         mIncludeResult.source_name_length = name.size();
 
-        String* content = ShaderManager::getSingleton().getShaderContent(name);
-        mIncludeResult.content = content->c_str();
-        mIncludeResult.content_length = content->length();
+        std::string content = getContentFromFile(name.c_str());
+        mIncludeResult.content = content.c_str();
+        mIncludeResult.content_length = content.length();
         return &mIncludeResult;
     }
 
@@ -32,34 +45,43 @@ private:
     shaderc_include_result mIncludeResult;
 };
 
-String getGlslKey(
-    String& shaderName, 
+std::string getGlslKey(
+    std::string& shaderName,
     std::vector<std::pair<std::string, std::string>>& shaderMacros,
     shaderc_shader_kind kind)
 {
     uint64_t macro_bit = 0;
+    std::vector<std::string> keys;
     for (auto& pair : shaderMacros)
     {
-        auto index = ShaderManager::getSingleton().getMacroIndex(pair.first);
-
-        macro_bit |= index;
+        keys.push_back(pair.first);
+        keys.push_back(pair.second);
     }
-    return Ogre::StringUtil::format("%s%lld%d", shaderName, macro_bit, kind);
+    keys.push_back(std::to_string(kind));
+
+    std::sort(keys.begin(), keys.end());
+
+    std::string result;
+    for (auto& key : keys)
+    {
+        result += key;
+    }
+    return result;
 }
 
-static std::unordered_map<String, String> gGlslCacheMap;
+static std::unordered_map<std::string, std::string> gGlslCacheMap;
 
 bool glslCompileShader(
-	String& result,
-	String& shaderName,
-    String& shaderContent,
-    String& entryPoint,
+    std::string& result,
+    std::string& shaderName,
+    std::string& shaderContent,
+    std::string& entryPoint,
 	std::vector<std::pair<std::string, std::string>>& shaderMacros,
     shaderc_shader_kind kind
 )
 {
 
-    String key = getGlslKey(shaderName, shaderMacros, kind);
+    std::string key = getGlslKey(shaderName, shaderMacros, kind);
 
     auto itor = gGlslCacheMap.find(key);
 
@@ -96,7 +118,6 @@ bool glslCompileShader(
 
     if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
         std::string aa  = module.GetErrorMessage();
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "glsl compile error");
         return false;
     }
 
@@ -104,7 +125,7 @@ bool glslCompileShader(
     std::vector<uint32_t> aa = { module.cbegin(), module.cend() };
 
     result.resize(aa.size() * sizeof(uint32_t));
-    memcpy(result.data(), aa.data(), aa.size() * sizeof(uint32_t));
+    memcpy((void*)result.data(), aa.data(), aa.size() * sizeof(uint32_t));
 
     gGlslCacheMap[key] = result;
 
@@ -112,7 +133,7 @@ bool glslCompileShader(
 }
 
 void parserGlslInputDesc(
-    const String& code,
+    const std::string& code,
     std::vector<GlslInputDesc>& inputDesc)
 {
     spirv_cross::CompilerGLSL  glsl((const uint32_t*)code.data(), code.size()/4);
