@@ -2283,6 +2283,18 @@
     <ClInclude Include="miniOgre\render\dx11Render\dx11ShadowMap.h">
       <Filter>miniOgre\render\directx11</Filter>
     </ClInclude>
+    <ClInclude Include="miniOgre\models\M2Header.h">
+      <Filter>miniOgre\model</Filter>
+    </ClInclude>
+    <ClInclude Include="miniOgre\models\M2Loader.h">
+      <Filter>miniOgre\model</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\MPQFile.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="miniOgre\base\OgreBlp.h">
+      <Filter>miniOgre\base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="miniOgre\base\OgreAlignedAllocator.cpp">
@@ -3760,6 +3772,15 @@
     </ClCompile>
     <ClCompile Include="miniOgre\render\dx11Render\dx11ShadowMap.cpp">
       <Filter>miniOgre\render\directx11</Filter>
+    </ClCompile>
+    <ClCompile Include="miniOgre\models\M2Loader.cpp">
+      <Filter>miniOgre\model</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\MPQFile.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="miniOgre\base\OgreBlp.cpp">
+      <Filter>miniOgre\base</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

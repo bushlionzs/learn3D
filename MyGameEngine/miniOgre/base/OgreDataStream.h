@@ -5,8 +5,9 @@ namespace Ogre {
     class StreamContent
     {
     public:
-        const char* _data;
-        uint64_t _size;
+        const char* _data = nullptr;
+        uint64_t _size = 0;
+        bool _needDel = false;
     };
     class DataStream
     {

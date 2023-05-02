@@ -256,6 +256,7 @@
     <ClInclude Include="miniOgre\base\engine_struct.h" />
     <ClInclude Include="miniOgre\base\file_stream.h" />
     <ClInclude Include="miniOgre\base\OgreBase.h" />
+    <ClInclude Include="miniOgre\base\OgreBlp.h" />
     <ClInclude Include="miniOgre\base\OgreHardwareIndexBuffer.h" />
     <ClInclude Include="miniOgre\base\OgreException.h" />
     <ClInclude Include="miniOgre\base\OgreHardwarePixelBuffer.h" />
@@ -356,6 +357,8 @@
     <ClInclude Include="miniOgre\base\vertex_declaration.h" />
     <ClInclude Include="miniOgre\models\gltf_helper.h" />
     <ClInclude Include="miniOgre\models\gltf_loader.h" />
+    <ClInclude Include="miniOgre\models\M2Header.h" />
+    <ClInclude Include="miniOgre\models\M2Loader.h" />
     <ClInclude Include="miniOgre\models\m3d_loader.h" />
     <ClInclude Include="miniOgre\models\model_loader.h" />
     <ClInclude Include="miniOgre\models\OgreMeshFileFormat.h" />
@@ -722,6 +725,7 @@
     <ClInclude Include="mygui\uirender\MyGUI_OgreTexture.h" />
     <ClInclude Include="mygui\uirender\MyGUI_OgreVertexBuffer.h" />
     <ClInclude Include="parser\MaterialScriptParser.h" />
+    <ClInclude Include="parser\MPQFile.h" />
     <ClInclude Include="parser\OgreScriptParam.h" />
     <ClInclude Include="parser\packFileParser.h" />
     <ClInclude Include="parser\ParticleScriptParser.h" />
@@ -917,6 +921,7 @@
     <ClCompile Include="miniOgre\base\engine_manager.cpp" />
     <ClCompile Include="miniOgre\base\file_stream.cpp" />
     <ClCompile Include="miniOgre\base\OgreBase.cpp" />
+    <ClCompile Include="miniOgre\base\OgreBlp.cpp" />
     <ClCompile Include="miniOgre\base\OgreHardwareIndexBuffer.cpp" />
     <ClCompile Include="miniOgre\base\OgreException.cpp" />
     <ClCompile Include="miniOgre\base\OgreHardwarePixelBuffer.cpp" />
@@ -993,6 +998,7 @@
     <ClCompile Include="miniOgre\base\vertex_declaration.cpp" />
     <ClCompile Include="miniOgre\models\gltf_helper.cpp" />
     <ClCompile Include="miniOgre\models\gltf_loader.cpp" />
+    <ClCompile Include="miniOgre\models\M2Loader.cpp" />
     <ClCompile Include="miniOgre\models\m3d_loader.cpp" />
     <ClCompile Include="miniOgre\models\model_loader.cpp" />
     <ClCompile Include="miniOgre\models\ogre_loader.cpp" />
@@ -1221,6 +1227,7 @@
     <ClCompile Include="mygui\uirender\MyGUI_OgreTexture.cpp" />
     <ClCompile Include="mygui\uirender\MyGUI_OgreVertexBuffer.cpp" />
     <ClCompile Include="parser\MaterialScriptParser.cpp" />
+    <ClCompile Include="parser\MPQFile.cpp" />
     <ClCompile Include="parser\OgreScriptParam.cpp" />
     <ClCompile Include="parser\packFileParser.cpp" />
     <ClCompile Include="parser\ParticleScriptParser.cpp" />
@@ -1349,7 +1356,7 @@
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4819;4099;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -1358,7 +1365,7 @@
     <Lib>
       <AdditionalOptions />
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>OIS_d.lib;tinyxmld.lib;vulkan-1.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;dxgi.lib;dxguid.lib;d3d12.lib;d3d11.lib;D3DCompiler.lib;Shlwapi.lib;winmm.lib;LibBulletCollisiond.lib;LibBulletDynamicsd.lib;LibBulletSoftBodyd.lib;LibLinearMathd.lib;GlslUtil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OIS_d.lib;tinyxmld.lib;vulkan-1.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;dxgi.lib;dxguid.lib;d3d12.lib;d3d11.lib;D3DCompiler.lib;Shlwapi.lib;winmm.lib;LibBulletCollisiond.lib;LibBulletDynamicsd.lib;LibBulletSoftBodyd.lib;LibLinearMathd.lib;GlslUtil.lib;StormLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\3rd\lib;$(ProjectDir)..\bin</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>

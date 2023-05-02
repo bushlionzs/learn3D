@@ -11,7 +11,7 @@ public:
 	virtual void parseScript(DataStreamPtr& stream, const String& groupName);
 	virtual Real getLoadingOrder(void) const;
 
-	Ogre::StreamContent* getPackfile(
+	virtual Ogre::StreamContent* getPackfile(
 		const String& name, const String& group);
 
 private:
