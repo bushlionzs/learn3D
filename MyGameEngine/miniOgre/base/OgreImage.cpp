@@ -8,6 +8,7 @@
 #include "stb_image.h"
 #include "dds_load.h"
 #include "OgreResourceManager.h"
+#include "OgreBlp.h"
 
 namespace Ogre {
 
@@ -34,9 +35,15 @@ namespace Ogre {
 
         bool dds = false;
 
+        bool blp = false;
+
         if (strcmp(suffix, ".dds") == 0)
         {
             dds = true;
+        }
+        else if (strcmp(suffix, ".blp") == 0)
+        {
+            blp = true;
         }
 
         std::shared_ptr<DataStream> stream 
@@ -66,6 +73,20 @@ namespace Ogre {
                 mNumMipmaps = imageData->num_mipmaps;
                 mFormat = imageData->format;
             }
+        }
+        else if (blp)
+        {
+            OgreBlpImage blpImage;
+            blpImage.load(stream);
+            data = blpImage.data();
+            ImageData* imageData = blpImage.getImageInfo();
+
+            mWidth = imageData->width;
+            mHeight = imageData->height;
+            mDepth = imageData->depth;
+            mFace = imageData->face;
+            mNumMipmaps = imageData->num_mipmaps;
+            mFormat = imageData->format;
         }
         else
         {

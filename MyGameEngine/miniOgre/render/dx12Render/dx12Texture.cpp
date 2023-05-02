@@ -290,14 +290,18 @@ void Dx12Texture::updateTextureData()
     std::vector<D3D12_SUBRESOURCE_DATA> subResourceData;
     subResourceData.resize(mSurfaceList.size());
 
-    int32_t bytes = 4;
     for (auto i = 0; i < mSurfaceList.size(); i++)
     {
         HardwareBufferLockGuard lock(mSurfaceList[i].get());
         subResourceData[i].pData = lock.data();
-        subResourceData[i].RowPitch = bytes * mSurfaceList[i]->getWidth();
+        subResourceData[i].RowPitch = PixelUtil::getMemorySize(
+            mSurfaceList[i]->getWidth(), 1, 1, mSurfaceList[i]->getFormat());
         subResourceData[i].SlicePitch =
-            mSurfaceList[i]->getWidth() * mSurfaceList[i]->getHeight() * bytes;
+            PixelUtil::getMemorySize(
+                mSurfaceList[i]->getWidth(),
+                mSurfaceList[i]->getHeight(), 
+                1, 
+                mSurfaceList[i]->getFormat());
     }
 
     ID3D12GraphicsCommandList* cmdList = DX12Helper::getSingleton().getCurrentCommandList();

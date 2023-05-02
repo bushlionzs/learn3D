@@ -15,7 +15,7 @@ public:
     uint32_t face;
     size_t size;
 
-    uint32_t num_mipmaps;
+    int32_t num_mipmaps;
     uint32_t flags;
 
     PixelFormat format;
