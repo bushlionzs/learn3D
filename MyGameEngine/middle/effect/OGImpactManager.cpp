@@ -14,8 +14,7 @@
 #include "OGSpellModelModule.h"
 #include "OGImpactParticleModule.h"
 #include "OGFlags.h"
-// ogre header
-
+#include "OgreMemoryStream.h"
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
 #include <OgreString.h>
@@ -169,8 +168,9 @@ namespace Orphigine
 		return ".efb";
 	}
 	//---------------------------------------------------------------------
-	void ImpactManager::parseScript(Ogre::DataStreamPtr& stream, const String& groupName)
+	void ImpactManager::parseScript(ResourceInfo* res, const String& groupName)
 	{
+		std::shared_ptr<DataStream> stream = std::make_shared<MemoryDataStream>(res);
 		//当前解析的文件名称
 		const String& parsingFileName = stream->getName();
 		if(Ogre::StringUtil::endsWith(parsingFileName,".skb",false))

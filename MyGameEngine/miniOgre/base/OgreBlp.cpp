@@ -96,8 +96,6 @@ void OgreBlpImage::loadFromCompressedData(BLPHeader const* lHeader, std::shared_
 void OgreBlpImage::loadFromUncompressedData(
 	BLPHeader const* lHeader, std::shared_ptr<DataStream>& stream)
 {
-	
-
 	int alphabits = lHeader->attr_1_alphadepth;
 	bool hasalpha = alphabits != 0;
 	

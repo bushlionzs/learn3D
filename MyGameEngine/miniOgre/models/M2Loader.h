@@ -27,4 +27,10 @@ private:
 	M2ModelVertex* mOrigVertices;
 
 	ModelType mModelType = MT_NORMAL;
+
+	uint32_t nIndices = 0;
+
+	uint16_t* indices = nullptr;
+
+	std::vector<bool> showGeosets;
 };

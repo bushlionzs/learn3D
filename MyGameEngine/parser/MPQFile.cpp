@@ -14,139 +14,6 @@ static std::mutex gMPQFileMutex;
 static std::mutex gListfileLoadingMutex;
 
 
-bool existsInMPQ(std::string const& filename)
-{
-    return std::any_of(_openArchives.begin(), _openArchives.end()
-        , [&](ArchiveEntry const& archive)
-    {
-        return archive.second->hasFile(filename);
-    }
-    );
-}
-
-MPQFile::MPQFile(std::string const& filename)
-    : eof(true)
-    , pointer(0)
-    , External(false)
-{
-    if (filename.empty())
-        throw std::runtime_error("MPQFile: filename empty");
-
-    std::unique_lock<std::mutex> lock(gMPQFileMutex);
-
-    std::ifstream input(_disk_path, std::ios_base::binary | std::ios_base::in);
-    if (input.is_open())
-    {
-        External = true;
-        eof = false;
-
-        input.seekg(0, std::ios::end);
-        buffer.resize(input.tellg());
-        input.seekg(0, std::ios::beg);
-
-        input.read(buffer.data(), buffer.size());
-
-        input.close();
-        return;
-    }
-
-    for (ArchivesMap::reverse_iterator i = _openArchives.rbegin(); i != _openArchives.rend(); ++i)
-    {
-        HANDLE fileHandle;
-
-        if (!i->second->openFile(filename, &fileHandle))
-            continue;
-
-        eof = false;
-        buffer.resize(SFileGetFileSize(fileHandle, nullptr));
-        SFileReadFile(fileHandle, buffer.data(), buffer.size(), nullptr, nullptr); //last nullptrs for newer version of StormLib
-        SFileCloseFile(fileHandle);
-
-        return;
-    }
-
-    throw std::invalid_argument("File '" + filename + "' does not exist.");
-}
-
-MPQFile::~MPQFile()
-{
-    close();
-}
-
-bool MPQFile::exists(std::string const& filename)
-{
-    return existsOnDisk(filename) || existsInMPQ(filename);
-}
-bool MPQFile::existsOnDisk(std::string const& filename)
-{
-    return std::filesystem::exists(filename);
-}
-
-size_t MPQFile::read(void* dest, size_t bytes)
-{
-    if (eof || !bytes)
-        return 0;
-
-    size_t rpos = pointer + bytes;
-    if (rpos > buffer.size()) {
-        bytes = buffer.size() - pointer;
-        eof = true;
-    }
-
-    memcpy(dest, &(buffer[pointer]), bytes);
-
-    pointer = rpos;
-
-    return bytes;
-}
-
-bool MPQFile::isEof() const
-{
-    return eof;
-}
-
-void MPQFile::seek(size_t offset)
-{
-    pointer = offset;
-    eof = (pointer >= buffer.size());
-}
-
-void MPQFile::seekRelative(size_t offset)
-{
-    pointer += offset;
-    eof = (pointer >= buffer.size());
-}
-
-void MPQFile::close()
-{
-    eof = true;
-}
-
-size_t MPQFile::getSize() const
-{
-    return buffer.size();
-}
-
-size_t MPQFile::getPos() const
-{
-    return pointer;
-}
-
-char const* MPQFile::getBuffer() const
-{
-    return buffer.data();
-}
-
-char const* MPQFile::getPointer() const
-{
-    return buffer.data() + pointer;
-}
-
-void MPQFile::SaveFile()
-{
-}
-
-
 MPQArchive::MPQArchive(const std::string& name, bool doListfile)
 {
  
@@ -169,7 +36,6 @@ void MPQArchive::loadMPQ(const std::string& filename, bool doListfile)
     _openArchives.emplace_back(filename, std::make_unique<MPQArchive>(filename, doListfile));
 
     MPQArchive* archive = _openArchives.back().second.get();
-    archive->finishLoading();
 }
 
 String MPQArchive::getSuffix()
@@ -177,9 +43,9 @@ String MPQArchive::getSuffix()
     return ".MPQ";
 }
 
-void MPQArchive::parseScript(DataStreamPtr& stream, const String& groupName)
+void MPQArchive::parseScript(ResourceInfo* res, const String& groupName)
 {
-    _mpqName = stream->getName();
+    _mpqName = res->_fullname;
     if (!SFileOpenArchive(_mpqName.c_str(), 0, 
         MPQ_OPEN_NO_LISTFILE | STREAM_FLAG_READ_ONLY, &_archiveHandle))
     {
@@ -227,6 +93,8 @@ void MPQArchive::parseScript(DataStreamPtr& stream, const String& groupName)
             ResourceManager::getSingleton()._addResource(current, res);
             current.clear();
         }
+
+        SFileCloseFile(fh);
     }
 
     finished = true;

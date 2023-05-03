@@ -5,13 +5,15 @@
 #include "OgreScriptParam.h"
 #include "OgreString.h"
 #include "myutils.h"
+#include "OgreMemoryStream.h"
 
 String MaterialScriptParser::getSuffix()
 {
 	return ".material";
 }
-void MaterialScriptParser::parseScript(DataStreamPtr& stream, const String& groupName)
+void MaterialScriptParser::parseScript(ResourceInfo* res, const String& groupName)
 {
+    std::shared_ptr<DataStream> stream = std::make_shared<MemoryDataStream>(res);
 	std::string content = stream->getAsString();
 	parseMaterialImpl(content);
 }

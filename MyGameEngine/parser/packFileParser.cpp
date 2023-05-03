@@ -35,9 +35,9 @@ String PackfileParser::getSuffix()
 }
 
 void PackfileParser::parseScript(
-	DataStreamPtr& stream, const String& groupName)
+	ResourceInfo* res, const String& groupName)
 {
-
+	std::shared_ptr<MemoryDataStream> stream = std::make_shared<MemoryDataStream>(res);
 	mPackList.push_back(stream);
 
 

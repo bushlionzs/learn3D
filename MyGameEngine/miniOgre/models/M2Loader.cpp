@@ -60,6 +60,11 @@ bool M2Loader::loadModel()
 
 void M2Loader::initStatic(Ogre::DataStream* stream)
 {
+	initCommon(stream);
+}
+
+void M2Loader::initCommon(Ogre::DataStream* stream)
+{
 	mOrigVertices = (M2ModelVertex*)(stream->getStreamData() + mHeader.ofsVertices);
 
 	for (size_t i = 0; i < mHeader.nVertices; i++)
@@ -77,10 +82,10 @@ void M2Loader::initStatic(Ogre::DataStream* stream)
 
 			// Error check
 			if (i > TEXTURE_MAX - 1) {
-				
+
 				break;
 			}
-			
+
 
 			if (texdef[i].type == TEXTURE_FILENAME)
 			{
@@ -89,6 +94,7 @@ void M2Loader::initStatic(Ogre::DataStream* stream)
 			}
 			else
 			{
+				assert(false);
 				std::vector<uint32_t> specialTextures(mHeader.nTextures);
 				// special texture - only on characters and such...
 				textures[i] = 0;
@@ -108,17 +114,13 @@ void M2Loader::initStatic(Ogre::DataStream* stream)
 						texname = "Fur.blp";
 				}
 
-
-
-
-
 				texnames.push_back(texname);
 
 				if (texdef[i].type < TEXTURE_MAX)
 				{
 					assert(false);
 				}
-					
+
 
 				if (texdef[i].type == TEXTURE_ARMORREFLECT)
 				{
@@ -156,11 +158,6 @@ void M2Loader::initStatic(Ogre::DataStream* stream)
 	}
 }
 
-void M2Loader::initCommon(Ogre::DataStream* stream)
-{
-
-}
-
 bool M2Loader::isAnimated(Ogre::DataStream* stream)
 {
 	return false;
@@ -168,128 +165,112 @@ bool M2Loader::isAnimated(Ogre::DataStream* stream)
 
 void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 {
-	//// Texture definitions
-	//ModelTextureDef* texdef = (ModelTextureDef*)(stream->getStreamData() + mHeader.ofsTextures);
+	// Texture definitions
+	ModelTextureDef* texdef = (ModelTextureDef*)(stream->getStreamData() + mHeader.ofsTextures);
 
-	//// Transparency
-	//int16* transLookup = (int16*)(stream->getStreamData() + mHeader.ofsTransparencyLookup);
+	// Transparency
+	int16* transLookup = (int16*)(stream->getStreamData() + mHeader.ofsTransparencyLookup);
 
-	//// I thought the view controlled the Level of detail,  but that doesn't seem to be the case.
-	//// Seems to only control the render order.  Which makes this function useless and not needed :(
+	// I thought the view controlled the Level of detail,  but that doesn't seem to be the case.
+	// Seems to only control the render order.  Which makes this function useless and not needed :(
 
-	//// remove suffix .M2
-	//lodname = modelname.BeforeLast(wxT('.')) + wxString::Format(wxT("%02d.skin"), index); // Lods: 00, 01, 02, 03
-	//MPQFile g(lodname);
-	//g_modelViewer->modelOpened->Add(lodname);
-	//if (g.isEof()) {
-	//	wxLogMessage(wxT("Error: Unable to load Lods: [%s]"), lodname.c_str());
-	//	g.close();
-	//	return;
-	//}
+	// remove suffix .M2
+	std::string lodname = mName.substr(0, mName.length() - 3);
+	lodname.append("00.skin");
 
-	//ModelView* view = (ModelView*)(g.getBuffer());
+	std::shared_ptr<DataStream> lodstream = ResourceManager::getSingleton().openResource(lodname);
+	ModelView* view = (ModelView*)(lodstream->getStreamData());
 
-	//if (view->id[0] != 'S' || view->id[1] != 'K' || view->id[2] != 'I' || view->id[3] != 'N') {
-	//	wxLogMessage(wxT("Error: Unable to load Lods: [%s]"), lodname.c_str());
-	//	g.close();
-	//	return;
-	//}
+	if (view->id[0] != 'S' || view->id[1] != 'K' || view->id[2] != 'I' || view->id[3] != 'N') {
+		OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "load lod-view failed");
+	}
 
-	//// Indices,  Triangles
-	//uint16* indexLookup = (uint16*)(g.getBuffer() + view->ofsIndex);
-	//uint16* triangles = (uint16*)(g.getBuffer() + view->ofsTris);
-	//nIndices = view->nTris;
-	//wxDELETEA(indices);
-	//indices = new uint16[nIndices];
-	//for (size_t i = 0; i < nIndices; i++) {
-	//	indices[i] = indexLookup[triangles[i]];
-	//}
+	// Indices,  Triangles
+	uint16_t* indexLookup = (uint16_t*)(lodstream->getStreamData() + view->ofs_index);
+	uint16_t* triangles = (uint16_t*)(lodstream->getStreamData() + view->ofs_triangle);
+	nIndices = view->n_triangle;
+	if (indices)
+	{
+		delete indices;
+	}
+	indices = new uint16_t[nIndices];
+	for (size_t i = 0; i < nIndices; i++) {
+		indices[i] = indexLookup[triangles[i]];
+	}
 
-	//// render ops
-	//ModelGeoset* ops = (ModelGeoset*)(g.getBuffer() + view->ofsSub);
-	//ModelTexUnit* tex = (ModelTexUnit*)(g.getBuffer() + view->ofsTex);
-	//ModelRenderFlags* renderFlags = (ModelRenderFlags*)(f.getBuffer() + header.ofsTexFlags);
-	//uint16* texlookup = (uint16*)(f.getBuffer() + header.ofsTexLookup);
-	//uint16* texanimlookup = (uint16*)(f.getBuffer() + header.ofsTexAnimLookup);
-	//int16* texunitlookup = (int16*)(f.getBuffer() + header.ofsTexUnitLookup);
+	// render ops
+	ModelGeoset* ops = (ModelGeoset*)(lodstream->getStreamData() + view->ofs_submesh);
+	ModelTexUnit* tex = (ModelTexUnit*)(lodstream->getStreamData() + view->ofs_texture_unit);
+	ModelRenderFlags* renderFlags = (ModelRenderFlags*)(lodstream->getStreamData() + mHeader.ofsTexFlags);
+	uint16* texlookup = (uint16*)(lodstream->getStreamData()+ mHeader.ofsTexLookup);
+	uint16* texanimlookup = (uint16*)(lodstream->getStreamData()+ mHeader.ofsTexAnimLookup);
+	int16* texunitlookup = (int16*)(lodstream->getStreamData()+ mHeader.ofsTexUnitLookup);
 
-	//wxDELETEA(showGeosets);
-	//showGeosets = new bool[view->nSub];
+	showGeosets.resize(view->n_submesh);
+
+	for (size_t i = 0; i < view->n_submesh; i++) {
+		showGeosets[i] = true;
+	}
+
+	for (size_t j = 0; j < view->n_texture_unit; j++) {
+		ModelRenderPass pass;
+
+		pass.useTex2 = false;
+		pass.useEnvMap = false;
+		pass.cull = false;
+		pass.trans = false;
+		pass.unlit = false;
+		pass.noZWrite = false;
+		pass.billboard = false;
+		pass.texanim = -1; // no texture animation
+
+		//pass.texture2 = 0;
+		size_t geoset = tex[j].op;
+
+		pass.geoset = (int)geoset;
+
+		pass.indexStart = ops[geoset].istart;
+		pass.indexCount = ops[geoset].icount;
+		pass.vertexStart = ops[geoset].vstart;
+		pass.vertexEnd = pass.vertexStart + ops[geoset].vcount;
+
+		//TextureID texid = textures[texlookup[tex[j].textureid]];
+		//pass.texture = texid;
+		pass.tex = texlookup[tex[j].textureid];
+
+		// TODO: figure out these flags properly -_-
+		ModelRenderFlags& rf = renderFlags[tex[j].flagsIndex];
+
+		pass.blendmode = rf.blend;
+		//if (rf.blend == 0) // Test to disable/hide different blend types
+		//	continue;
+
+		pass.color = tex[j].colorIndex;
+		pass.opacity = transLookup[tex[j].transid];
+
+		pass.unlit = (rf.flags & RENDERFLAGS_UNLIT) != 0;
+
+		pass.cull = (rf.flags & RENDERFLAGS_TWOSIDED) == 0;
+
+		pass.billboard = (rf.flags & RENDERFLAGS_BILLBOARD) != 0;
+
+		// Use environmental reflection effects?
+		pass.useEnvMap = (texunitlookup[tex[j].texunit] == -1) && pass.billboard && rf.blend > 2; //&& rf.blend<5;
+
+		//todo
 
 
-	//for (size_t i = 0; i < view->nSub; i++) {
-	//	geosets.push_back(ops[i]);
-	//	showGeosets[i] = true;
-	//}
+		pass.noZWrite = (rf.flags & RENDERFLAGS_ZBUFFERED) != 0;
 
-	//passes.clear();
-	//for (size_t j = 0; j < view->nTex; j++) {
-	//	ModelRenderPass pass;
+		// ToDo: Work out the correct way to get the true/false of transparency
+		pass.trans = (pass.blendmode > 0) && (pass.opacity > 0);	// Transparency - not the correct way to get transparency
 
-	//	pass.useTex2 = false;
-	//	pass.useEnvMap = false;
-	//	pass.cull = false;
-	//	pass.trans = false;
-	//	pass.unlit = false;
-	//	pass.noZWrite = false;
-	//	pass.billboard = false;
-	//	pass.texanim = -1; // no texture animation
+		pass.p = ops[geoset].BoundingBox[0].z;
 
-	//	//pass.texture2 = 0;
-	//	size_t geoset = tex[j].op;
+		// Texture flags
+		pass.swrap = (texdef[pass.tex].flags & TEXTURE_WRAPX) != 0; // Texture wrap X
+		pass.twrap = (texdef[pass.tex].flags & TEXTURE_WRAPY) != 0; // Texture wrap Y
 
-	//	pass.geoset = (int)geoset;
+	}
 
-	//	pass.indexStart = ops[geoset].istart;
-	//	pass.indexCount = ops[geoset].icount;
-	//	pass.vertexStart = ops[geoset].vstart;
-	//	pass.vertexEnd = pass.vertexStart + ops[geoset].vcount;
-
-	//	//TextureID texid = textures[texlookup[tex[j].textureid]];
-	//	//pass.texture = texid;
-	//	pass.tex = texlookup[tex[j].textureid];
-
-	//	// TODO: figure out these flags properly -_-
-	//	ModelRenderFlags& rf = renderFlags[tex[j].flagsIndex];
-
-	//	pass.blendmode = rf.blend;
-	//	//if (rf.blend == 0) // Test to disable/hide different blend types
-	//	//	continue;
-
-	//	pass.color = tex[j].colorIndex;
-	//	pass.opacity = transLookup[tex[j].transid];
-
-	//	pass.unlit = (rf.flags & RENDERFLAGS_UNLIT) != 0;
-
-	//	pass.cull = (rf.flags & RENDERFLAGS_TWOSIDED) == 0;
-
-	//	pass.billboard = (rf.flags & RENDERFLAGS_BILLBOARD) != 0;
-
-	//	// Use environmental reflection effects?
-	//	pass.useEnvMap = (texunitlookup[tex[j].texunit] == -1) && pass.billboard && rf.blend > 2; //&& rf.blend<5;
-
-	//	// Disable environmental mapping if its been unchecked.
-	//	if (pass.useEnvMap && !video.useEnvMapping)
-	//		pass.useEnvMap = false;
-
-	//	pass.noZWrite = (rf.flags & RENDERFLAGS_ZBUFFERED) != 0;
-
-	//	// ToDo: Work out the correct way to get the true/false of transparency
-	//	pass.trans = (pass.blendmode > 0) && (pass.opacity > 0);	// Transparency - not the correct way to get transparency
-
-	//	pass.p = ops[geoset].BoundingBox[0].z;
-
-	//	// Texture flags
-	//	pass.swrap = (texdef[pass.tex].flags & TEXTURE_WRAPX) != 0; // Texture wrap X
-	//	pass.twrap = (texdef[pass.tex].flags & TEXTURE_WRAPY) != 0; // Texture wrap Y
-
-	//	// tex[j].flags: Usually 16 for static textures, and 0 for animated textures.	
-	//	if (animTextures && (tex[j].flags & TEXTUREUNIT_STATIC) == 0) {
-	//		pass.texanim = texanimlookup[tex[j].texanimid];
-	//	}
-
-	//	passes.push_back(pass);
-	//}
-
-	//g.close();
 }

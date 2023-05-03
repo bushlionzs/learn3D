@@ -27,7 +27,7 @@
 #include "OGAdvancedAnimationSystem.h"
 #include "OGSkeletonMeshComponentManager.h"
 #include "OGSkeletonMeshComponent.h"
-
+#include "OgreMemoryStream.h"
 #include "platform_log.h"
 #include "myutils.h"
 
@@ -113,8 +113,9 @@ namespace Orphigine
 	{
 		return ".aas";
 	}
-	void AdvancedAnimationSystemManager::parseScript(DataStreamPtr& stream, const String& groupName)
+	void AdvancedAnimationSystemManager::parseScript(ResourceInfo* res, const String& groupName)
 	{
+		std::shared_ptr<DataStream> stream = std::make_shared<MemoryDataStream>(res);
 		AdvancedAnimationSystemSerializer tmpSerializer;
 		auto name = stream->getName();
 

@@ -35,7 +35,7 @@ namespace Ogre {
 
         virtual String getSuffix();
 
-        virtual void parseScript(DataStreamPtr& stream, const String& groupName);
+        virtual void parseScript(ResourceInfo* res, const String& groupName);
 
         virtual Real getLoadingOrder(void) const;
 

@@ -7,7 +7,7 @@ class MaterialScriptParser : public ScriptLoader
 {
 public:
 	virtual String getSuffix();
-	virtual void parseScript(DataStreamPtr& stream, const String& groupName);
+	virtual void parseScript(ResourceInfo* res, const String& groupName);
 	virtual Real getLoadingOrder(void) const;
 
 	OgreMaterialParam* getMaterialParam(const std::string& name);

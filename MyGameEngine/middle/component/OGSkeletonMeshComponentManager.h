@@ -93,7 +93,7 @@ namespace Orphigine	{
 		/// @copydoc ScriptLoader::getScriptPatterns
 		virtual String getSuffix();
 		/// @copydoc ScriptLoader::parseScript
-		void parseScript(Ogre::DataStreamPtr& stream, const Ogre::String& groupName);
+		void parseScript(ResourceInfo* res, const Ogre::String& groupName);
 		/// @copydoc ScriptLoader::getLoadingOrder
 		Ogre::Real getLoadingOrder(void) const;
 

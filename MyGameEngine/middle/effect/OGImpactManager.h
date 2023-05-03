@@ -143,7 +143,7 @@ namespace Orphigine
 
 		//Ogre::ScriptLoader∫Ø ˝÷ÿ‘ÿ
 		virtual String	getSuffix(void);
-		virtual void						parseScript(Ogre::DataStreamPtr& stream, const String& groupName);
+		virtual void						parseScript(ResourceInfo* res, const String& groupName);
 		virtual Real						getLoadingOrder(void) const;
 	
 		static ImpactManager&				getSingleton(void);       

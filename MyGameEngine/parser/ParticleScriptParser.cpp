@@ -8,13 +8,14 @@
 #include "myutils.h"
 #include "OgreString.h"
 #include "shaderManager.h"
-
+#include "OgreMemoryStream.h"
 String ParticleScriptParser::getSuffix()
 {
 	return ".particle";
 }
-void ParticleScriptParser::parseScript(DataStreamPtr& stream, const String& groupName)
+void ParticleScriptParser::parseScript(ResourceInfo* res, const String& groupName)
 {
+    std::shared_ptr<MemoryDataStream> stream = std::make_shared<MemoryDataStream>(res);
     std::string content = stream->getAsString();
     parseParticleImpl(content);
 }

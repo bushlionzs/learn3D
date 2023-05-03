@@ -1,12 +1,9 @@
 #include "OgreHeader.h"
 #include "OGSkeletonMeshComponentManager.h"
 #include "OGSkeletonMeshComponent.h"  
-
 #include "OGUtils.h"
-
 #include "OGSkeletonMeshActor.h"
 #include "OGImpactManager.h"
-
 #include <OgreSceneManager.h>
 #include <platform_log.h>
 #include <OgreStringConverter.h>
@@ -26,6 +23,7 @@
 #include "myutils.h"
 #include "engine_manager.h"
 #include "OgrePredefinedControllers.h"
+#include "OgreMemoryStream.h"
 
 template<> Orphigine::SkeletonMeshComponentManager * Ogre::Singleton<Orphigine::SkeletonMeshComponentManager>::msSingleton = 0;
 
@@ -172,8 +170,9 @@ namespace Orphigine
 
 	}
 	//---------------------------------------------------------------------	
-	void SkeletonMeshComponentManager::parseScript(Ogre::DataStreamPtr& stream, const Ogre::String& groupName)
+	void SkeletonMeshComponentManager::parseScript(ResourceInfo* res, const Ogre::String& groupName)
 	{		
+		std::shared_ptr<DataStream> stream = std::make_shared<MemoryDataStream>(res);
 		const Ogre::String& myname = stream->getName();
 
 

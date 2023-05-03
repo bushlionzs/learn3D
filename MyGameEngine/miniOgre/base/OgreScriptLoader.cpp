@@ -23,8 +23,7 @@ namespace Ogre {
 	{
 		for (int32_t i = 0; i < mResourceList.size(); i++)
 		{
-			auto stream = std::shared_ptr<DataStream>(new MemoryDataStream(mResourceList[i]));
-			parseScript(stream, BLANKSTRING);
+			parseScript(mResourceList[i], BLANKSTRING);
 		}
 	}
 }

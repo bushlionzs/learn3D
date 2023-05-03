@@ -4,7 +4,7 @@
 #include "myutils.h"
 #include "OgreString.h"
 #include "OgreResourceManager.h"
-
+#include "OgreMemoryStream.h"
 namespace Ogre {
 
 	template<> ShaderManager* Ogre::Singleton<ShaderManager>::msSingleton = 0;
@@ -24,8 +24,9 @@ namespace Ogre {
 		return ".shader";
 	}
 
-	void ShaderManager::parseScript(DataStreamPtr& stream, const String& groupName)
+	void ShaderManager::parseScript(ResourceInfo* res, const String& groupName)
 	{
+		std::shared_ptr<MemoryDataStream> stream = std::make_shared<MemoryDataStream>(res);
 		std::string content = stream->getAsString();
 		parseShaderImpl(content);
 	}

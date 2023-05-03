@@ -80,7 +80,7 @@ namespace Ogre {
             are created during the parse of this script.
         */
 
-        virtual void parseScript(DataStreamPtr& stream, const String& groupName) = 0;
+        virtual void parseScript(ResourceInfo* res, const String& groupName) = 0;
 
         /** Gets the loading order for scripts of this type.
 

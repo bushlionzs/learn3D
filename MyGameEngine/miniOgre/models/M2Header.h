@@ -132,6 +132,8 @@ enum TextureFlags {
 	TEXTURE_WRAPY
 };
 
+#define	TEXTUREUNIT_STATIC	16
+
 enum GRAPHIC_EFFECTS {
 	FRAGMENT_SHADER,
 	VERTEX_SHADER,
@@ -157,4 +159,76 @@ enum ModelType {
 	MT_CHAR,
 	MT_WMO,
 	MT_NPC
+};
+
+struct ModelView {
+	char id[4]; // Signature
+	uint32_t n_index, ofs_index; // Vertices in this model (index into vertices[])
+	uint32_t n_triangle, ofs_triangle; // indices
+	uint32_t n_vertex_property, ofs_vertex_property; // additional vtx properties
+	uint32_t n_submesh, ofs_submesh; // materials/renderops/submeshes
+	uint32_t n_texture_unit, ofs_texture_unit; // material properties/textures
+	int32_t lod; // LOD bones
+};
+
+struct ModelGeoset {
+	uint32_t id; // mesh part id?
+	uint16_t vstart; // first vertex
+	uint16_t vcount; // num vertices
+	uint16_t istart; // first index
+	uint16_t icount; // num indices
+	uint16_t d3; // number of bone indices
+	uint16_t d4; // ? always 1 to 4
+	uint16_t d5; // ?
+	uint16_t d6; // root bone?
+	Ogre::Vector3 BoundingBox[2];
+	float radius;
+};
+
+struct ModelTexUnit {
+	// probably the texture units
+	// size always >=number of materials it seems
+	uint16_t flags;		// Usually 16 for static textures, and 0 for animated textures.
+	uint16_t shading;		// If set to 0x8000: shaders. Used in skyboxes to ditch the need for depth buffering. See below.
+	uint16_t op;			// Material this texture is part of (index into mat)
+	uint16_t op2;			// Always same as above?
+	int16_t colorIndex;	// A Color out of the Colors-Block or -1 if none.
+	uint16_t flagsIndex;	// RenderFlags (index into render flags, TexFlags)
+	uint16_t texunit;		// Index into the texture unit lookup table.
+	uint16_t mode;		// See below.
+	uint16_t textureid;	// Index into Texture lookup table
+	uint16_t texunit2;	// copy of texture unit value?
+	uint16_t transid;		// Index into transparency lookup table.
+	uint16_t texanimid;	// Index into uvanimation lookup table. 
+};
+
+#define	RENDERFLAGS_UNLIT	1
+#define	RENDERFLAGS_UNFOGGED	2
+#define	RENDERFLAGS_TWOSIDED	4
+#define	RENDERFLAGS_BILLBOARD	8
+#define	RENDERFLAGS_ZBUFFERED	16
+struct ModelRenderFlags {
+	uint16_t flags;
+	//unsigned char f1;
+	//unsigned char f2;
+	uint16_t blend; // see enums.h, enum BlendModes
+};
+
+struct ModelRenderPass {
+	uint32 indexStart, indexCount, vertexStart, vertexEnd;
+	//TextureID texture, texture2;
+	int tex;
+	bool useTex2, useEnvMap, cull, trans, unlit, noZWrite, billboard;
+	float p;
+
+	int16 texanim, color, opacity, blendmode;
+
+	// Geoset ID
+	int geoset;
+
+	// texture wrapping
+	bool swrap, twrap;
+
+	// colours
+	Ogre::Vector4 ocol, ecol;
 };
