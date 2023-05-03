@@ -4,9 +4,8 @@
 #include "OgreResourceManager.h"
 
 
-M2Loader::M2Loader(const std::string& name)
+M2Loader::M2Loader()
 {
-	mName = name;
 }
 
 M2Loader::~M2Loader()
@@ -14,29 +13,28 @@ M2Loader::~M2Loader()
 
 }
 
-bool M2Loader::loadModel()
+std::shared_ptr<Ogre::Mesh> M2Loader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream)
 {
-	//ResourceInfo* res = ResourceManager::getSingleton().getResource(mName);
-	ResourceInfo res;
-	res._fullname = mName;
-	Ogre::MemoryDataStream stream(&res);
+	mName = stream->getName();
+	std::shared_ptr<Ogre::Mesh> mesh;
 
-	uint32_t streamLength = stream.getStreamLength();
+
+	uint32_t streamLength = stream->getStreamLength();
 	
 
-	stream.read(&mHeader, sizeof(M2Header));
+	stream->read(&mHeader, sizeof(M2Header));
 
 	if (mHeader.id[0] != 'M' &&
 		mHeader.id[1] != 'D' &&
 		mHeader.id[2] != '2' &&
 		mHeader.id[3] != '0')
 	{
-		return false;
+		return mesh;
 	}
 
 	if (mHeader.nameOfs != 304 && mHeader.nameOfs != 320)
 	{
-		return false;
+		return mesh;
 	}
 
 	if (mHeader.version[0] != 4 && 
@@ -45,17 +43,17 @@ bool M2Loader::loadModel()
 		mHeader.version[3] != 0)
 	{
 	
-		return false;
+		return mesh;
 	}
 
 	if (streamLength < mHeader.ofsParticleEmitters)
 	{
-		return false;
+		return mesh;
 	}
 
-	initStatic(&stream);
+	initStatic(stream.get());
 
-	return true;
+	return mesh;
 }
 
 void M2Loader::initStatic(Ogre::DataStream* stream)
@@ -154,7 +152,7 @@ void M2Loader::initCommon(Ogre::DataStream* stream)
 
 	if (mHeader.nViews)
 	{
-		int kk = 0;
+		setLOD(stream, 0);
 	}
 }
 

@@ -2295,6 +2295,9 @@
     <ClInclude Include="miniOgre\base\OgreBlp.h">
       <Filter>miniOgre\base</Filter>
     </ClInclude>
+    <ClInclude Include="parser\WowResourceParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="miniOgre\base\OgreAlignedAllocator.cpp">
@@ -3781,6 +3784,9 @@
     </ClCompile>
     <ClCompile Include="miniOgre\base\OgreBlp.cpp">
       <Filter>miniOgre\base</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\WowResourceParser.cpp">
+      <Filter>parser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -732,6 +732,7 @@
     <ClInclude Include="parser\ResourceParserManager.h" />
     <ClInclude Include="parser\ScriptParserUtil.h" />
     <ClInclude Include="parser\shaderManager.h" />
+    <ClInclude Include="parser\WowResourceParser.h" />
     <ClInclude Include="platform\double_list.h" />
     <ClInclude Include="platform\json.hpp" />
     <ClInclude Include="platform\message_queue.h" />
@@ -1234,6 +1235,7 @@
     <ClCompile Include="parser\ResourceParserManager.cpp" />
     <ClCompile Include="parser\ScriptParserUtil.cpp" />
     <ClCompile Include="parser\shaderManager.cpp" />
+    <ClCompile Include="parser\WowResourceParser.cpp" />
     <ClCompile Include="platform\double_list.cpp" />
     <ClCompile Include="platform\message_queue.cpp" />
     <ClCompile Include="platform\myutils.cpp" />

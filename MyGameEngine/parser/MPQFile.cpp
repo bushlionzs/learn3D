@@ -6,46 +6,17 @@
 #include "myutils.h"
 #include "OgreResourceManager.h"
 
-typedef std::pair<std::string, std::unique_ptr<MPQArchive>> ArchiveEntry;
-typedef std::list<ArchiveEntry> ArchivesMap;
-std::unordered_set<std::string> gListfile;
-ArchivesMap _openArchives;
-static std::mutex gMPQFileMutex;
-static std::mutex gListfileLoadingMutex;
 
-
-MPQArchive::MPQArchive(const std::string& name, bool doListfile)
+MPQArchive::MPQArchive(const String& name)
 {
- 
+    _mpqName = name;
 }
 
-bool MPQArchive::hasFile(const std::string& filename) const
-{
-    return SFileHasFile(_archiveHandle,
-        filename.c_str());
-}
 
-bool MPQArchive::openFile(const std::string& filename, HANDLE* fileHandle) const
-{
-    return SFileOpenFileEx(_archiveHandle,
-        filename.c_str(), 0, fileHandle);
-}
 
-void MPQArchive::loadMPQ(const std::string& filename, bool doListfile)
+void MPQArchive::load()
 {
-    _openArchives.emplace_back(filename, std::make_unique<MPQArchive>(filename, doListfile));
 
-    MPQArchive* archive = _openArchives.back().second.get();
-}
-
-String MPQArchive::getSuffix()
-{
-    return ".MPQ";
-}
-
-void MPQArchive::parseScript(ResourceInfo* res, const String& groupName)
-{
-    _mpqName = res->_fullname;
     if (!SFileOpenArchive(_mpqName.c_str(), 0, 
         MPQ_OPEN_NO_LISTFILE | STREAM_FLAG_READ_ONLY, &_archiveHandle))
     {
@@ -74,9 +45,17 @@ void MPQArchive::parseScript(ResourceInfo* res, const String& groupName)
             {
                 stringToUpper(current);
                 ResourceInfo* res = new ResourceInfo();
+                if (current == "CREATURE\\AKAMA\\AKAMA.M2")
+                {
+                    int kk = 0;
+                }
                 res->_fullname = current;
                 res->_base = this;
-                ResourceManager::getSingleton()._addResource(current, res);
+                bool add = ResourceManager::getSingleton()._addResource(current, res);
+                if (!add)
+                {
+                    delete res;
+                }
                 current.clear();
             }
             else
@@ -87,9 +66,14 @@ void MPQArchive::parseScript(ResourceInfo* res, const String& groupName)
 
         if (!current.empty())
         {
+            stringToUpper(current);
             ResourceInfo* res = new ResourceInfo();
             res->_fullname = current;
             res->_base = this;
+            if (current == "CREATURE\\AKAMA\\AKAMA.M2")
+            {
+                int kk = 0;
+            }
             ResourceManager::getSingleton()._addResource(current, res);
             current.clear();
         }
@@ -98,11 +82,6 @@ void MPQArchive::parseScript(ResourceInfo* res, const String& groupName)
     }
 
     finished = true;
-}
-
-Real MPQArchive::getLoadingOrder(void) const
-{
-    return 20.0f;
 }
 
 Ogre::StreamContent* MPQArchive::getPackfile(

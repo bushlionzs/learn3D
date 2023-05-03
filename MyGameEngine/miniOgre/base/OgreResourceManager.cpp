@@ -6,6 +6,7 @@
 #include "m3d_loader.h"
 #include "ogre_loader.h"
 #include "gltf_loader.h"
+#include "M2Loader.h"
 #include "ResourceParserManager.h"
 #include "OgreScriptLoader.h"
 #include "renderSystem.h"
@@ -161,6 +162,7 @@ namespace Ogre {
         mMeshMap[".mesh"] = new OgreMeshLoader;
         mMeshMap[".gltf"] = new GltfLoader;
         mMeshMap[".glb"] = new GltfLoader;
+        mMeshMap[".M2"] = new M2Loader;
     }
 
     std::shared_ptr<DataStream> ResourceManager::openResource(
@@ -192,7 +194,7 @@ namespace Ogre {
         auto itor = mResourceMap.find(name);
         if (itor != mResourceMap.end())
         {
-            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "resource already exist!");
+            //OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "resource already exist!");
             return false;
         }
 

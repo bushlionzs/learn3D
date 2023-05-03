@@ -1,16 +1,17 @@
 #pragma once
 #include "M2Header.h"
+#include "model_loader.h"
 namespace Ogre 
 {
 	class DataStream;
 }
 
-class M2Loader
+class M2Loader: public ModelLoader
 {
 public:
-	M2Loader(const std::string& name);
+	M2Loader();
 	~M2Loader();
-	bool loadModel();
+	virtual std::shared_ptr<Ogre::Mesh> loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream);
 private:
 	void initStatic(Ogre::DataStream* stream);
 	void initCommon(Ogre::DataStream* stream);

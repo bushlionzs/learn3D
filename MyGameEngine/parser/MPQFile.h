@@ -2,17 +2,12 @@
 
 #include "OgreScriptLoader.h"
 
-class MPQArchive : public Ogre::ScriptLoader, public PackFileBase
+class MPQArchive : public PackFileBase
 {
 public:
-    MPQArchive(const std::string& name, bool doListfile);
-    bool hasFile(const std::string& filename) const;
-    bool openFile(const std::string& filename, HANDLE* fileHandle) const;
-    static void loadMPQ(const std::string& filename, bool doListfile = false);
+    MPQArchive(const String& name);
 
-    virtual String getSuffix();
-    virtual void parseScript(ResourceInfo* res, const String& groupName);
-    virtual Real getLoadingOrder(void) const;
+    void load();
 
     Ogre::StreamContent* getPackfile(
         const String& name, const String& group);

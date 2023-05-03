@@ -9,6 +9,7 @@
 #include "OGAdvancedAnimationSystemManager.h"
 #include "shaderManager.h"
 #include "packFileParser.h"
+#include "WowResourceParser.h"
 #include "platform_file_system.h"
 
 namespace Ogre {
@@ -36,6 +37,7 @@ namespace Ogre {
 		registerParser(Orphigine::AdvancedAnimationSystemManager::getSingletonPtr());
 		registerParser(ShaderManager::getSingletonPtr());
 		registerParser(new PackfileParser);
+		registerParser(new WowResourceParser);
 		return true;
 	}
 
