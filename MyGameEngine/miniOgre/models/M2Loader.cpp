@@ -196,13 +196,14 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 		indices[i] = indexLookup[triangles[i]];
 	}
 
+	auto indice_data = indices.data();
 	// render ops
 	ModelGeoset* ops = (ModelGeoset*)(lodstream->getStreamData() + view->ofs_submesh);
 	ModelTexUnit* texunit = (ModelTexUnit*)(lodstream->getStreamData() + view->ofs_texture_unit);
-	ModelRenderFlags* renderFlags = (ModelRenderFlags*)(lodstream->getStreamData() + mHeader.ofsTexFlags);
-	uint16* texlookup = (uint16*)(lodstream->getStreamData()+ mHeader.ofsTexLookup);
-	uint16* texanimlookup = (uint16*)(lodstream->getStreamData()+ mHeader.ofsTexAnimLookup);
-	int16* texunitlookup = (int16*)(lodstream->getStreamData()+ mHeader.ofsTexUnitLookup);
+	ModelRenderFlags* renderFlags = (ModelRenderFlags*)(stream->getStreamData() + mHeader.ofsTexFlags);
+	uint16* texlookup = (uint16*)(stream->getStreamData()+ mHeader.ofsTexLookup);
+	uint16* texanimlookup = (uint16*)(stream->getStreamData()+ mHeader.ofsTexAnimLookup);
+	int16* texunitlookup = (int16*)(stream->getStreamData()+ mHeader.ofsTexUnitLookup);
 
 	showGeosets.resize(view->n_submesh);
 
@@ -215,6 +216,73 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 	AxisAlignedBox bounds;
 	bounds.setInfinite();
 	pMesh->_setBounds(bounds);
+	Ogre::ColourBlendState blendState;
+	for (size_t j = 0; j < view->n_texture_unit; j++) {
+		
+		size_t geoset = texunit[j].op;
+
+		pass.indexStart = ops[geoset].istart;
+		pass.indexCount = ops[geoset].icount;
+		
+		pass.tex = texlookup[texunit[j].textureid];
+
+		ModelRenderFlags& rf = renderFlags[texunit[j].flagsIndex];
+		pass.blendmode = rf.blend;
+		pass.noZWrite = (rf.flags & RENDERFLAGS_ZBUFFERED) != 0;
+		const std::string& texname = texnames[pass.tex];
+
+		if (texname == "CREATURE\\AKAMA\\AKAMABRACERSKIRTBELT.BLP")
+		{
+			//continue;
+		}
+		std::string name = Ogre::StringUtil::format("%s%d", mName.c_str(), j);
+		std::shared_ptr<Material> mat = MaterialManager::getSingleton().create(name);
+		
+		mat->addTexture(texname);
+		ShaderInfo info;
+		info.shaderName = "ogresimple";
+		
+		mat->addShader(info);
+		mat->setCullMode(CULL_NONE);
+		if (pass.noZWrite)
+		{
+			mat->setWriteDepth(false);
+		}
+
+		if (pass.blendmode == BM_OPAQUE)
+		{
+			blendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
+			blendState.destFactor = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
+			blendState.sourceFactorAlpha = Ogre::SBF_SOURCE_ALPHA;
+			blendState.destFactorAlpha = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
+			mat->setBlendState(blendState);
+		}
+		else if (pass.blendmode == BM_TRANSPARENT)
+		{
+			
+		}
+		else if (pass.blendmode == BM_ADDITIVE_ALPHA)
+		{
+			blendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
+			blendState.destFactor = Ogre::SBF_ONE;
+			blendState.sourceFactorAlpha = SBF_SOURCE_ALPHA;
+			blendState.destFactorAlpha = SBF_ONE;
+			mat->setBlendState(blendState);
+		}
+		else
+		{
+			blendState.sourceFactor = Ogre::SBF_DEST_COLOUR;
+			blendState.destFactor = Ogre::SBF_SOURCE_COLOUR;
+			blendState.sourceFactorAlpha = SBF_DEST_ALPHA;
+			blendState.destFactorAlpha = SBF_SOURCE_ALPHA;
+			mat->setBlendState(blendState);
+		}
+
+		SubMesh* sub = pMesh->addSubMesh(true, true);
+		sub->setMaterial(mat);
+		sub->addIndexs(pass.indexCount, pass.indexStart, 0);
+	}
+
 	VertexData* vd = pMesh->getVertexData();
 
 	vd->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
@@ -231,30 +299,4 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 
 	indexdata->createBuffer(2, nIndices);
 	indexdata->writeData((const char*)indices.data(), 2 * nIndices);
-	for (size_t j = 0; j < view->n_texture_unit; j++) {
-		
-		size_t geoset = texunit[j].op;
-
-		pass.geoset = (int)geoset;
-
-		pass.indexStart = ops[geoset].istart;
-		pass.indexCount = ops[geoset].icount;
-		pass.vertexStart = ops[geoset].vstart;
-		pass.vertexEnd = pass.vertexStart + ops[geoset].vcount;
-		pass.tex = texlookup[texunit[j].textureid];
-
-		SubMesh* sub = pMesh->addSubMesh(true, true);
-
-		std::string name = Ogre::StringUtil::format("%s%d", mName, j);
-		std::shared_ptr<Material> mat = MaterialManager::getSingleton().create(name);
-		const std::string& texname = texnames[pass.tex];
-		mat->addTexture(texname);
-		ShaderInfo info;
-		info.shaderName = "ogresimple";
-		mat->addShader(info);
-		mat->setCullMode(CULL_NONE);
-		sub->setMaterial(mat);
-
-		sub->addIndexs(pass.indexCount, pass.indexStart, pass.vertexStart);
-	}
 }

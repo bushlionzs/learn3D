@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-
+#pragma pack(1) 
 struct M2Sphere
 {
 	float min[3];
@@ -108,29 +108,7 @@ struct ModelTextureDef {
 	uint32_t nameOfs;
 };
 
-enum TextureTypes {
-	TEXTURE_FILENAME = 0,			// Texture given in filename
-	TEXTURE_BODY,				// Body + clothes
-	TEXTURE_CAPE,				// Item, Capes ("Item\ObjectComponents\Cape\*.blp")
-	TEXTURE_ITEM = TEXTURE_CAPE,
-	TEXTURE_ARMORREFLECT,		// 
-	TEXTURE_HAIR = 6,				// Hair, bear
-	TEXTURE_FUR = 8,				// Tauren fur
-	TEXTURE_INVENTORY_ART1,		// Used on inventory art M2s (1): inventoryartgeometry.m2 and inventoryartgeometryold.m2
-	TEXTURE_QUILL,				// Only used in quillboarpinata.m2. I can't even find something referencing that file. Oo Is it used?
-	TEXTURE_GAMEOBJECT1,		// Skin for creatures or gameobjects #1
-	TEXTURE_GAMEOBJECT2,		// Skin for creatures or gameobjects #2
-	TEXTURE_GAMEOBJECT3,		// Skin for creatures or gameobjects #3
-	TEXTURE_INVENTORY_ART2,		// Used on inventory art M2s (2): ui-buffon.m2 and forcedbackpackitem.m2 (LUA::Model:ReplaceIconTexture("texture"))
-	TEXTURE_15,					// Patch 12857, Unknown
-	TEXTURE_16,					//
-	TEXTURE_17,					//
-};
 
-enum TextureFlags {
-	TEXTURE_WRAPX = 1,
-	TEXTURE_WRAPY
-};
 
 #define	TEXTUREUNIT_STATIC	16
 
@@ -154,12 +132,7 @@ enum GRAPHIC_EFFECTS {
 	NUM_EFFECTS
 };
 
-enum ModelType {
-	MT_NORMAL,
-	MT_CHAR,
-	MT_WMO,
-	MT_NPC
-};
+
 
 struct ModelView {
 	char id[4]; // Signature
@@ -231,4 +204,46 @@ struct ModelRenderPass {
 
 	// colours
 	Ogre::Vector4 ocol, ecol;
+};
+#pragma pack() 
+
+enum TextureTypes {
+	TEXTURE_FILENAME = 0,			// Texture given in filename
+	TEXTURE_BODY,				// Body + clothes
+	TEXTURE_CAPE,				// Item, Capes ("Item\ObjectComponents\Cape\*.blp")
+	TEXTURE_ITEM = TEXTURE_CAPE,
+	TEXTURE_ARMORREFLECT,		// 
+	TEXTURE_HAIR = 6,				// Hair, bear
+	TEXTURE_FUR = 8,				// Tauren fur
+	TEXTURE_INVENTORY_ART1,		// Used on inventory art M2s (1): inventoryartgeometry.m2 and inventoryartgeometryold.m2
+	TEXTURE_QUILL,				// Only used in quillboarpinata.m2. I can't even find something referencing that file. Oo Is it used?
+	TEXTURE_GAMEOBJECT1,		// Skin for creatures or gameobjects #1
+	TEXTURE_GAMEOBJECT2,		// Skin for creatures or gameobjects #2
+	TEXTURE_GAMEOBJECT3,		// Skin for creatures or gameobjects #3
+	TEXTURE_INVENTORY_ART2,		// Used on inventory art M2s (2): ui-buffon.m2 and forcedbackpackitem.m2 (LUA::Model:ReplaceIconTexture("texture"))
+	TEXTURE_15,					// Patch 12857, Unknown
+	TEXTURE_16,					//
+	TEXTURE_17,					//
+};
+
+enum TextureFlags {
+	TEXTURE_WRAPX = 1,
+	TEXTURE_WRAPY
+};
+enum BlendModes {
+	BM_OPAQUE,
+	BM_TRANSPARENT,
+	BM_ALPHA_BLEND,
+	BM_ADDITIVE,
+	BM_ADDITIVE_ALPHA,
+	BM_MODULATE,
+	BM_MODULATEX2,
+	BM_7,
+};
+
+enum ModelType {
+	MT_NORMAL,
+	MT_CHAR,
+	MT_WMO,
+	MT_NPC
 };

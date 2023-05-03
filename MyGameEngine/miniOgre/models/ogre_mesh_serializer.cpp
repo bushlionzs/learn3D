@@ -132,7 +132,7 @@ void OgreMeshSerializerImpl::readSubMesh(
     bool useShared;
     readBools(stream, &useShared, 1);
 
-    Ogre::SubMesh* sm = pMesh->addSubMesh(useShared, useShared);
+    Ogre::SubMesh* sm = pMesh->addSubMesh(useShared, false);
 
     sm->setMaterialName(materialName);
 
@@ -145,7 +145,7 @@ void OgreMeshSerializerImpl::readSubMesh(
     if (indexCount > 0)
     {
         IndexData* indexData = nullptr;
-        if (useShared)
+        if (false)
         {
             indexData = pMesh->getIndexData();
         }
