@@ -9,7 +9,11 @@
 
 
 namespace Ogre {
-    SubMesh::SubMesh(Mesh* mesh, bool sharedVertices)
+    SubMesh::SubMesh(
+        Mesh* mesh, 
+        bool sharedVertices,
+        bool sharedIndex
+    )
     {
         mParent = mesh;
         mIndexView.mIndexCount = 0;
@@ -17,15 +21,24 @@ namespace Ogre {
         mIndexView.mIndexLocation = 0;
 
         mSharedVertices = sharedVertices;
-
+        mSharedIndex = sharedIndex;
         if (!sharedVertices)
         {
             mVertexData = new VertexData;
-            mIndexData = new IndexData;
+            
         }
         else
         {
             mVertexData = nullptr;
+            
+        }
+
+        if (!sharedIndex)
+        {
+            mIndexData = new IndexData;
+        }
+        else
+        {
             mIndexData = nullptr;
         }
 
@@ -39,11 +52,19 @@ namespace Ogre {
 
     VertexData* SubMesh::getVertexData()
     {
+        if (mSharedVertices)
+        {
+            return mParent->getVertexData();
+        }
         return mVertexData;
     }
 
     IndexData* SubMesh::getIndexData()
     {
+        if (mSharedIndex)
+        {
+            return mParent->getIndexData();
+        }
         return mIndexData;
     }
 

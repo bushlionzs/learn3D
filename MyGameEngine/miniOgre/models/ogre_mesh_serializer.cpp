@@ -129,10 +129,10 @@ void OgreMeshSerializerImpl::readSubMesh(
     String materialName = readString(stream);
 
   
-    bool useSharedVertices;
-    readBools(stream, &useSharedVertices, 1);
+    bool useShared;
+    readBools(stream, &useShared, 1);
 
-    Ogre::SubMesh* sm = pMesh->addSubMesh(useSharedVertices);
+    Ogre::SubMesh* sm = pMesh->addSubMesh(useShared, useShared);
 
     sm->setMaterialName(materialName);
 
@@ -145,7 +145,7 @@ void OgreMeshSerializerImpl::readSubMesh(
     if (indexCount > 0)
     {
         IndexData* indexData = nullptr;
-        if (useSharedVertices)
+        if (useShared)
         {
             indexData = pMesh->getIndexData();
         }
@@ -173,7 +173,7 @@ void OgreMeshSerializerImpl::readSubMesh(
 
     pushInnerChunk(stream);
     {
-        if (!useSharedVertices)
+        if (!useShared)
         {
             streamID = readChunk(stream);
             if (streamID != Ogre::M_GEOMETRY)

@@ -23,9 +23,9 @@ namespace Ogre {
 
     }
 
-    SubMesh* Mesh::addSubMesh(bool shareVertices)
+    SubMesh* Mesh::addSubMesh(bool shareVertices, bool shareIndex)
     {
-        SubMesh* sub = new SubMesh(this, shareVertices);
+        SubMesh* sub = new SubMesh(this, shareVertices, shareIndex);
         mSubMeshList.push_back(sub);
         return sub;
     }

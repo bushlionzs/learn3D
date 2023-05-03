@@ -182,7 +182,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 continue;
             }
 
-            auto subMesh = pMesh->addSubMesh(false);
+            auto subMesh = pMesh->addSubMesh(false, false);
             VertexData* vd = subMesh->getVertexData();
 
             std::vector<GltfVertex> mVertexBuffer(positionCount);

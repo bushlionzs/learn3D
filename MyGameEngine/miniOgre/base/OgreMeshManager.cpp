@@ -879,17 +879,17 @@ std::shared_ptr<Mesh> MeshManager::createSimpleRoom(const std::string& name)
 	declaration->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
 	declaration->addElement(0, 0, 36, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
-	SubMesh* floor = pMesh->addSubMesh();
+	SubMesh* floor = pMesh->addSubMesh(true, true);
 	floor->addIndexs(6, 0, 0);
 	auto mat_floor = MaterialManager::getSingletonPtr()->getByName("floor");
 	floor->setMaterial(mat_floor);
 
-	SubMesh* wall = pMesh->addSubMesh();
+	SubMesh* wall = pMesh->addSubMesh(true, true);
 	wall->addIndexs(18, 6, 0);
 	auto mat_wall = MaterialManager::getSingletonPtr()->getByName("wall");
 	wall->setMaterial(mat_wall);
 
-	SubMesh* mirror = pMesh->addSubMesh();
+	SubMesh* mirror = pMesh->addSubMesh(true, true);
 	mirror->addIndexs(6, 24, 0);
 	auto mat_mirror = MaterialManager::getSingletonPtr()->getByName("mirror");
 	mirror->setMaterial(mat_mirror);
@@ -1005,7 +1005,7 @@ Mesh* MeshManager::BuildHardBuffer(
 	id->mIndexCount = indices.size();
 	id->createBuffer(4, id->mIndexCount);
 	id->writeData((const char*)indices.data(), 4 * id->mIndexCount);
-	SubMesh* sub = pMesh->addSubMesh();
+	SubMesh* sub = pMesh->addSubMesh(true, true);
 
 	sub->addIndexs(indices.size(), 0, 0);
 

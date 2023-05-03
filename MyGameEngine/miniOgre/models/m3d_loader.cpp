@@ -179,7 +179,7 @@ std::shared_ptr<Mesh> M3dLoader::loadMeshFromFile(std::shared_ptr<DataStream>& s
 
 	for (int32_t i = 0; i < subsets.size(); i++)
 	{
-		SubMesh* sub = pMesh->addSubMesh();
+		SubMesh* sub = pMesh->addSubMesh(true, true);
 
 		std::shared_ptr<Material> m = MaterialManager::getSingletonPtr()->getByName(mats[i].Name);
 		sub->setMaterial(m);

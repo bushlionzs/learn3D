@@ -2,6 +2,12 @@
 #include "M2Loader.h"
 #include "OgreMemoryStream.h"
 #include "OgreResourceManager.h"
+#include "OgreMesh.h"
+#include "OgreSubMesh.h"
+#include "vertex_data.h"
+#include "OgreMaterialManager.h"
+#include "OgreString.h"
+#include "vertex_declaration.h"
 
 
 M2Loader::M2Loader()
@@ -53,6 +59,7 @@ std::shared_ptr<Ogre::Mesh> M2Loader::loadMeshFromFile(std::shared_ptr<Ogre::Dat
 
 	initStatic(stream.get());
 
+	mesh = std::shared_ptr<Ogre::Mesh>(pMesh);
 	return mesh;
 }
 
@@ -74,8 +81,9 @@ void M2Loader::initCommon(Ogre::DataStream* stream)
 	// textures
 	ModelTextureDef* texdef = (ModelTextureDef*)(stream->getStreamData() + mHeader.ofsTextures);
 	if (mHeader.nTextures) {
-		std::vector<uint32_t> textures(mHeader.nTextures);
-		std::vector<std::string> texnames(mHeader.nTextures);
+		texturetypes.resize(mHeader.nTextures);
+		texnames.resize(mHeader.nTextures);
+
 		for (size_t i = 0; i < mHeader.nTextures; i++) {
 
 			// Error check
@@ -84,7 +92,7 @@ void M2Loader::initCommon(Ogre::DataStream* stream)
 				break;
 			}
 
-
+			texturetypes[i] = texdef[i].type;
 			if (texdef[i].type == TEXTURE_FILENAME)
 			{
 				const char* name = stream->getStreamData() + texdef[i].nameOfs;
@@ -94,11 +102,7 @@ void M2Loader::initCommon(Ogre::DataStream* stream)
 			{
 				assert(false);
 				std::vector<uint32_t> specialTextures(mHeader.nTextures);
-				// special texture - only on characters and such...
-				textures[i] = 0;
-				//while (texdef[i].type < TEXTURE_MAX && specialTextures[texdef[i].type]!=-1) texdef[i].type++;
-				//if (texdef[i].type < TEXTURE_MAX)specialTextures[texdef[i].type] = (int)i;
-				specialTextures[i] = texdef[i].type;
+
 
 				std::string texname = "Special_";
 				texname += std::to_string(texdef[i].type);
@@ -112,7 +116,7 @@ void M2Loader::initCommon(Ogre::DataStream* stream)
 						texname = "Fur.blp";
 				}
 
-				texnames.push_back(texname);
+				texnames[i] = texname;
 
 				if (texdef[i].type < TEXTURE_MAX)
 				{
@@ -174,7 +178,7 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 
 	// remove suffix .M2
 	std::string lodname = mName.substr(0, mName.length() - 3);
-	lodname.append("00.skin");
+	lodname.append("00.SKIN");
 
 	std::shared_ptr<DataStream> lodstream = ResourceManager::getSingleton().openResource(lodname);
 	ModelView* view = (ModelView*)(lodstream->getStreamData());
@@ -187,18 +191,14 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 	uint16_t* indexLookup = (uint16_t*)(lodstream->getStreamData() + view->ofs_index);
 	uint16_t* triangles = (uint16_t*)(lodstream->getStreamData() + view->ofs_triangle);
 	nIndices = view->n_triangle;
-	if (indices)
-	{
-		delete indices;
-	}
-	indices = new uint16_t[nIndices];
+	indices.resize(nIndices);
 	for (size_t i = 0; i < nIndices; i++) {
 		indices[i] = indexLookup[triangles[i]];
 	}
 
 	// render ops
 	ModelGeoset* ops = (ModelGeoset*)(lodstream->getStreamData() + view->ofs_submesh);
-	ModelTexUnit* tex = (ModelTexUnit*)(lodstream->getStreamData() + view->ofs_texture_unit);
+	ModelTexUnit* texunit = (ModelTexUnit*)(lodstream->getStreamData() + view->ofs_texture_unit);
 	ModelRenderFlags* renderFlags = (ModelRenderFlags*)(lodstream->getStreamData() + mHeader.ofsTexFlags);
 	uint16* texlookup = (uint16*)(lodstream->getStreamData()+ mHeader.ofsTexLookup);
 	uint16* texanimlookup = (uint16*)(lodstream->getStreamData()+ mHeader.ofsTexAnimLookup);
@@ -209,21 +209,31 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 	for (size_t i = 0; i < view->n_submesh; i++) {
 		showGeosets[i] = true;
 	}
+	ModelRenderPass pass;
 
+	pMesh = new Mesh(mName);
+	AxisAlignedBox bounds;
+	bounds.setInfinite();
+	pMesh->_setBounds(bounds);
+	VertexData* vd = pMesh->getVertexData();
+
+	vd->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+	vd->vertexDeclaration->addElement(0, 0, 20, VET_FLOAT3, VES_NORMAL);
+	vd->vertexDeclaration->addElement(0, 0, 32, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+
+	vd->vertexSlotInfo.emplace_back();
+	auto& back = vd->vertexSlotInfo.back();
+	auto vertexSize = sizeof(M2ModelVertex);
+	back.createBuffer(vertexSize, mHeader.nVertices);
+	back.writeData((const char*)mOrigVertices, vertexSize * mHeader.nVertices);
+
+	IndexData* indexdata = pMesh->getIndexData();
+
+	indexdata->createBuffer(2, nIndices);
+	indexdata->writeData((const char*)indices.data(), 2 * nIndices);
 	for (size_t j = 0; j < view->n_texture_unit; j++) {
-		ModelRenderPass pass;
-
-		pass.useTex2 = false;
-		pass.useEnvMap = false;
-		pass.cull = false;
-		pass.trans = false;
-		pass.unlit = false;
-		pass.noZWrite = false;
-		pass.billboard = false;
-		pass.texanim = -1; // no texture animation
-
-		//pass.texture2 = 0;
-		size_t geoset = tex[j].op;
+		
+		size_t geoset = texunit[j].op;
 
 		pass.geoset = (int)geoset;
 
@@ -231,44 +241,20 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 		pass.indexCount = ops[geoset].icount;
 		pass.vertexStart = ops[geoset].vstart;
 		pass.vertexEnd = pass.vertexStart + ops[geoset].vcount;
+		pass.tex = texlookup[texunit[j].textureid];
 
-		//TextureID texid = textures[texlookup[tex[j].textureid]];
-		//pass.texture = texid;
-		pass.tex = texlookup[tex[j].textureid];
+		SubMesh* sub = pMesh->addSubMesh(true, true);
 
-		// TODO: figure out these flags properly -_-
-		ModelRenderFlags& rf = renderFlags[tex[j].flagsIndex];
+		std::string name = Ogre::StringUtil::format("%s%d", mName, j);
+		std::shared_ptr<Material> mat = MaterialManager::getSingleton().create(name);
+		const std::string& texname = texnames[pass.tex];
+		mat->addTexture(texname);
+		ShaderInfo info;
+		info.shaderName = "ogresimple";
+		mat->addShader(info);
+		mat->setCullMode(CULL_NONE);
+		sub->setMaterial(mat);
 
-		pass.blendmode = rf.blend;
-		//if (rf.blend == 0) // Test to disable/hide different blend types
-		//	continue;
-
-		pass.color = tex[j].colorIndex;
-		pass.opacity = transLookup[tex[j].transid];
-
-		pass.unlit = (rf.flags & RENDERFLAGS_UNLIT) != 0;
-
-		pass.cull = (rf.flags & RENDERFLAGS_TWOSIDED) == 0;
-
-		pass.billboard = (rf.flags & RENDERFLAGS_BILLBOARD) != 0;
-
-		// Use environmental reflection effects?
-		pass.useEnvMap = (texunitlookup[tex[j].texunit] == -1) && pass.billboard && rf.blend > 2; //&& rf.blend<5;
-
-		//todo
-
-
-		pass.noZWrite = (rf.flags & RENDERFLAGS_ZBUFFERED) != 0;
-
-		// ToDo: Work out the correct way to get the true/false of transparency
-		pass.trans = (pass.blendmode > 0) && (pass.opacity > 0);	// Transparency - not the correct way to get transparency
-
-		pass.p = ops[geoset].BoundingBox[0].z;
-
-		// Texture flags
-		pass.swrap = (texdef[pass.tex].flags & TEXTURE_WRAPX) != 0; // Texture wrap X
-		pass.twrap = (texdef[pass.tex].flags & TEXTURE_WRAPY) != 0; // Texture wrap Y
-
+		sub->addIndexs(pass.indexCount, pass.indexStart, pass.vertexStart);
 	}
-
 }

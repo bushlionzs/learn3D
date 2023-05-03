@@ -41,7 +41,7 @@ namespace Ogre {
         {
             dds = true;
         }
-        else if (strcmp(suffix, ".blp") == 0)
+        else if (strcmp(suffix, ".BLP") == 0)
         {
             blp = true;
         }

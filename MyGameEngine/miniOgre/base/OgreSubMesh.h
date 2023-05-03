@@ -74,7 +74,10 @@ namespace Ogre {
     {
         friend class Mesh;
     public:
-        SubMesh(Mesh* mesh, bool sharedVertices = false);
+        SubMesh(
+            Mesh* mesh,
+            bool sharedVertices = false,
+            bool sharedIndex = false);
         ~SubMesh();
 
         VertexData* getVertexData();
@@ -128,5 +131,6 @@ namespace Ogre {
         Ogre::Vector3 mPosition;
 
         bool mSharedVertices = false;
+        bool mSharedIndex = false;
     };
 }

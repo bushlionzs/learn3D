@@ -11,7 +11,7 @@ namespace Ogre {
     public:
         Mesh(const std::string& name);
         ~Mesh();
-        SubMesh* addSubMesh(bool shareVertices = true);
+        SubMesh* addSubMesh(bool shareVertices, bool shareIndex);
 
         int32_t getSubMeshCount();
 

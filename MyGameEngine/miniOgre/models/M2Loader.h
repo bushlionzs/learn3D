@@ -31,7 +31,12 @@ private:
 
 	uint32_t nIndices = 0;
 
-	uint16_t* indices = nullptr;
+	std::vector<uint16_t> indices;
 
 	std::vector<bool> showGeosets;
+
+	std::vector<uint32_t> texturetypes;
+	std::vector<std::string> texnames;
+
+	Ogre::Mesh* pMesh;
 };
