@@ -229,23 +229,6 @@ static void updateTimeline(Timeline& timeline, std::vector<TimeT>& times, int ke
 	}
 }
 
-static void QuaternionToAxisAngle(const Vector4 q, Ogre::Vector4& v) {
-	float sqrLength = q.x * q.x + q.y * q.y + q.z * q.z;
-	if (sqrLength > 0) {
-		float invLength = 1 / sqrtf(sqrLength);
-		v.x = q.x * invLength;
-		v.y = q.y * invLength;
-		v.z = q.z * invLength;
-		v.w = 2.0f * acosf(q.w);
-	}
-	else {
-		v.w = 0;
-		v.x = 1;
-		v.y = 0;
-		v.z = 0;
-	}
-}
-
 Ogre::Vector3 M2Loader::getBoneParentTrans(int n) const
 {
 	const M2Bone& b = bones[n];
@@ -355,18 +338,18 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 								ntrans++;
 							}
 							if (it->second & KEY_ROTATE) {
-								Ogre::Vector4 v;
-								QuaternionToAxisAngle(b.rot.data[animIdx][nrot], v);
 								Quaternion q;
-	
-								q.FromAngleAxis(Radian(-v.w), Ogre::Vector3(v.x, v.y, v.z));
+								q.x = -b.rot.data[animIdx][nrot].x;
+								q.y = -b.rot.data[animIdx][nrot].y;
+								q.z = -b.rot.data[animIdx][nrot].z;
+								q.w = b.rot.data[animIdx][nrot].w;
 								frame->setRotation(q);
-
 								nrot++;
 							}
 							if (it->second & KEY_SCALE) 
 							{
 								Ogre::Vector3& v = b.scale.data[animIdx][nscale];
+								//frame->setScale(v);
 								nscale++;
 							}
 						}

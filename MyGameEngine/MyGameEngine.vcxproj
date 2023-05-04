@@ -357,7 +357,6 @@
     <ClInclude Include="miniOgre\base\vertex_declaration.h" />
     <ClInclude Include="miniOgre\models\gltf_helper.h" />
     <ClInclude Include="miniOgre\models\gltf_loader.h" />
-    <ClInclude Include="miniOgre\models\aa.h" />
     <ClInclude Include="miniOgre\models\m3d_loader.h" />
     <ClInclude Include="miniOgre\models\model_loader.h" />
     <ClInclude Include="miniOgre\models\OgreMeshFileFormat.h" />
@@ -367,12 +366,6 @@
     <ClInclude Include="miniOgre\models\ogre_skeleton_serializer.h" />
     <ClInclude Include="miniOgre\models\WaterEntity.h" />
     <ClInclude Include="miniOgre\models\Waves.h" />
-    <ClInclude Include="miniOgre\models\wow\animated.h" />
-    <ClInclude Include="miniOgre\models\wow\dbcfile.h" />
-    <ClInclude Include="miniOgre\models\wow\m2Bone.h" />
-    <ClInclude Include="miniOgre\models\wow\M2Header.h" />
-    <ClInclude Include="miniOgre\models\wow\M2Loader.h" />
-    <ClInclude Include="miniOgre\models\wow\wowUtil.h" />
     <ClInclude Include="miniOgre\particle\OgreBillboard.h" />
     <ClInclude Include="miniOgre\particle\OgreBillboardChain.h" />
     <ClInclude Include="miniOgre\particle\OgreBillboardParticleRenderer.h" />
@@ -759,6 +752,12 @@
     <ClInclude Include="platform\windows\platform_mutex.h" />
     <ClInclude Include="platform\windows\platform_rw_mutex.h" />
     <ClInclude Include="platform\windows\platform_signal.h" />
+    <ClInclude Include="wow\animated.h" />
+    <ClInclude Include="wow\dbcfile.h" />
+    <ClInclude Include="wow\m2Bone.h" />
+    <ClInclude Include="wow\M2Header.h" />
+    <ClInclude Include="wow\M2Loader.h" />
+    <ClInclude Include="wow\wowUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="middle\AdvancedAnimation\OGAASAnimation.cpp" />
@@ -1011,10 +1010,6 @@
     <ClCompile Include="miniOgre\models\ogre_skeleton_serializer.cpp" />
     <ClCompile Include="miniOgre\models\WaterEnity.cpp" />
     <ClCompile Include="miniOgre\models\Waves.cpp" />
-    <ClCompile Include="miniOgre\models\wow\dbcfile.cpp" />
-    <ClCompile Include="miniOgre\models\wow\m2Bone.cpp" />
-    <ClCompile Include="miniOgre\models\wow\M2Loader.cpp" />
-    <ClCompile Include="miniOgre\models\wow\wowUtil.cpp" />
     <ClCompile Include="miniOgre\particle\OgreBillboard.cpp" />
     <ClCompile Include="miniOgre\particle\OgreBillboardChain.cpp" />
     <ClCompile Include="miniOgre\particle\OgreBillboardParticleRenderer.cpp" />
@@ -1260,6 +1255,10 @@
     <ClCompile Include="platform\windows\platform_mutex.cpp" />
     <ClCompile Include="platform\windows\platform_rw_mutex.cpp" />
     <ClCompile Include="platform\windows\platform_signal.cpp" />
+    <ClCompile Include="wow\dbcfile.cpp" />
+    <ClCompile Include="wow\m2Bone.cpp" />
+    <ClCompile Include="wow\M2Loader.cpp" />
+    <ClCompile Include="wow\wowUtil.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -1366,7 +1365,7 @@
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4819;4099;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)wow;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

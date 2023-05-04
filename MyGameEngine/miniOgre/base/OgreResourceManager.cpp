@@ -6,7 +6,7 @@
 #include "m3d_loader.h"
 #include "ogre_loader.h"
 #include "gltf_loader.h"
-#include "wow/M2Loader.h"
+#include "M2Loader.h"
 #include "ResourceParserManager.h"
 #include "OgreScriptLoader.h"
 #include "renderSystem.h"

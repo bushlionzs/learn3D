@@ -91,8 +91,8 @@
     <Filter Include="miniOgre\render\directx11">
       <UniqueIdentifier>{a77f0b82-067f-4d3b-a379-8ee8c0df9ec4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="miniOgre\model\wow">
-      <UniqueIdentifier>{d5d94251-75de-4848-95db-edf75081ba6e}</UniqueIdentifier>
+    <Filter Include="wow">
+      <UniqueIdentifier>{c455c9eb-48fe-4bb2-851a-92223ec1ac08}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2295,26 +2295,23 @@
     <ClInclude Include="parser\WowResourceParser.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="miniOgre\models\wow\animated.h">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClInclude Include="wow\animated.h">
+      <Filter>wow</Filter>
     </ClInclude>
-    <ClInclude Include="miniOgre\models\wow\dbcfile.h">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClInclude Include="wow\dbcfile.h">
+      <Filter>wow</Filter>
     </ClInclude>
-    <ClInclude Include="miniOgre\models\wow\m2Bone.h">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClInclude Include="wow\m2Bone.h">
+      <Filter>wow</Filter>
     </ClInclude>
-    <ClInclude Include="miniOgre\models\aa.h">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClInclude Include="wow\M2Header.h">
+      <Filter>wow</Filter>
     </ClInclude>
-    <ClInclude Include="miniOgre\models\wow\wowUtil.h">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClInclude Include="wow\M2Loader.h">
+      <Filter>wow</Filter>
     </ClInclude>
-    <ClInclude Include="miniOgre\models\wow\M2Header.h">
-      <Filter>miniOgre\model\wow</Filter>
-    </ClInclude>
-    <ClInclude Include="miniOgre\models\wow\M2Loader.h">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClInclude Include="wow\wowUtil.h">
+      <Filter>wow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3803,17 +3800,17 @@
     <ClCompile Include="parser\WowResourceParser.cpp">
       <Filter>parser</Filter>
     </ClCompile>
-    <ClCompile Include="miniOgre\models\wow\dbcfile.cpp">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClCompile Include="wow\dbcfile.cpp">
+      <Filter>wow</Filter>
     </ClCompile>
-    <ClCompile Include="miniOgre\models\wow\m2Bone.cpp">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClCompile Include="wow\m2Bone.cpp">
+      <Filter>wow</Filter>
     </ClCompile>
-    <ClCompile Include="miniOgre\models\wow\wowUtil.cpp">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClCompile Include="wow\M2Loader.cpp">
+      <Filter>wow</Filter>
     </ClCompile>
-    <ClCompile Include="miniOgre\models\wow\M2Loader.cpp">
-      <Filter>miniOgre\model\wow</Filter>
+    <ClCompile Include="wow\wowUtil.cpp">
+      <Filter>wow</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
