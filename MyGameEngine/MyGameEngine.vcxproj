@@ -357,8 +357,7 @@
     <ClInclude Include="miniOgre\base\vertex_declaration.h" />
     <ClInclude Include="miniOgre\models\gltf_helper.h" />
     <ClInclude Include="miniOgre\models\gltf_loader.h" />
-    <ClInclude Include="miniOgre\models\M2Header.h" />
-    <ClInclude Include="miniOgre\models\M2Loader.h" />
+    <ClInclude Include="miniOgre\models\aa.h" />
     <ClInclude Include="miniOgre\models\m3d_loader.h" />
     <ClInclude Include="miniOgre\models\model_loader.h" />
     <ClInclude Include="miniOgre\models\OgreMeshFileFormat.h" />
@@ -368,6 +367,12 @@
     <ClInclude Include="miniOgre\models\ogre_skeleton_serializer.h" />
     <ClInclude Include="miniOgre\models\WaterEntity.h" />
     <ClInclude Include="miniOgre\models\Waves.h" />
+    <ClInclude Include="miniOgre\models\wow\animated.h" />
+    <ClInclude Include="miniOgre\models\wow\dbcfile.h" />
+    <ClInclude Include="miniOgre\models\wow\m2Bone.h" />
+    <ClInclude Include="miniOgre\models\wow\M2Header.h" />
+    <ClInclude Include="miniOgre\models\wow\M2Loader.h" />
+    <ClInclude Include="miniOgre\models\wow\wowUtil.h" />
     <ClInclude Include="miniOgre\particle\OgreBillboard.h" />
     <ClInclude Include="miniOgre\particle\OgreBillboardChain.h" />
     <ClInclude Include="miniOgre\particle\OgreBillboardParticleRenderer.h" />
@@ -999,7 +1004,6 @@
     <ClCompile Include="miniOgre\base\vertex_declaration.cpp" />
     <ClCompile Include="miniOgre\models\gltf_helper.cpp" />
     <ClCompile Include="miniOgre\models\gltf_loader.cpp" />
-    <ClCompile Include="miniOgre\models\M2Loader.cpp" />
     <ClCompile Include="miniOgre\models\m3d_loader.cpp" />
     <ClCompile Include="miniOgre\models\model_loader.cpp" />
     <ClCompile Include="miniOgre\models\ogre_loader.cpp" />
@@ -1007,6 +1011,10 @@
     <ClCompile Include="miniOgre\models\ogre_skeleton_serializer.cpp" />
     <ClCompile Include="miniOgre\models\WaterEnity.cpp" />
     <ClCompile Include="miniOgre\models\Waves.cpp" />
+    <ClCompile Include="miniOgre\models\wow\dbcfile.cpp" />
+    <ClCompile Include="miniOgre\models\wow\m2Bone.cpp" />
+    <ClCompile Include="miniOgre\models\wow\M2Loader.cpp" />
+    <ClCompile Include="miniOgre\models\wow\wowUtil.cpp" />
     <ClCompile Include="miniOgre\particle\OgreBillboard.cpp" />
     <ClCompile Include="miniOgre\particle\OgreBillboardChain.cpp" />
     <ClCompile Include="miniOgre\particle\OgreBillboardParticleRenderer.cpp" />

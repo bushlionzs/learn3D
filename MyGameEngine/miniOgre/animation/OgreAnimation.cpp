@@ -96,12 +96,6 @@ namespace Ogre {
 			// get bone to apply to 
 			Bone* b = skel->getBone(i->first);
 			i->second->interpolate(timePos, ti);
-
-			if (b->getName() == "Dummy08")
-			{
-				int kk = 0;
-			}
-
 			b->translate(ti.translate * weight * scale);
 
 			Quaternion rotate = Quaternion::nlerp(weight,

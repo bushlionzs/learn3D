@@ -3,8 +3,8 @@
 #pragma pack(1) 
 struct M2Sphere
 {
-	float min[3];
-	float max[3];
+	Ogre::Vector3 min;
+	Ogre::Vector3 max;
 	float radius;
 };
 
@@ -205,6 +205,72 @@ struct ModelRenderPass {
 	// colours
 	Ogre::Vector4 ocol, ecol;
 };
+
+struct AnimationBlock {
+	int16_t type;		// interpolation type (0=none, 1=linear, 2=hermite)
+	int16_t seq;		// global sequence id or -1
+	uint32_t nTimes;
+	uint32_t ofsTimes;
+	uint32_t nKeys;
+	uint32_t ofsKeys;
+};
+
+struct FakeAnimationBlock {
+	uint32 nTimes;
+	uint32 ofsTimes;
+	uint32 nKeys;
+	uint32 ofsKeys;
+};
+
+struct AnimationBlockHeader
+{
+	uint32 nEntrys;
+	uint32 ofsEntrys;
+};
+
+struct ModelBoneDef {
+	int32_t keyboneid; // Back-reference to the key bone lookup table. -1 if this is no key bone.
+	int32_t flags; // Only known flags: 8 - billboarded and 512 - transformed
+	int32_t parent; // parent bone index
+	int32_t geoid; // A geoset for this bone.
+	int32_t unknown; // new int added to the bone definitions.  Added in WoW 2.0
+	AnimationBlock translation; // (Vec3D)
+	AnimationBlock rotation; // (QuatS)
+	AnimationBlock scaling; // (Vec3D)
+	Ogre::Vector3 pivot;
+};
+
+struct ModelColorDef {
+	AnimationBlock color; // (Vec3D) Three floats. One for each color.
+	AnimationBlock opacity; // (UInt16) 0 - transparent, 0x7FFF - opaque.
+};
+
+struct ModelTransDef {
+	AnimationBlock trans; // (UInt16)
+};
+
+
+struct ModelAnimation
+{
+	int16_t animID; // AnimationDataDB.ID
+	int16_t subAnimID;
+	uint32_t length;
+
+	float moveSpeed;
+
+	uint32_t flags;
+	uint16_t probability; // This is used to determine how often the animation is played. For all animations of the same type, this adds up to 0x7FFF (32767).
+	uint16_t unused;
+	uint32_t d1;
+	uint32_t d2;
+	uint32_t playSpeed;  // note: this can't be play speed because it's 0 for some models
+
+	M2Sphere boundSphere;
+
+	int16_t NextAnimation;
+	int16_t Index;
+};
+
 #pragma pack() 
 
 enum TextureTypes {
@@ -246,4 +312,55 @@ enum ModelType {
 	MT_CHAR,
 	MT_WMO,
 	MT_NPC
+};
+
+enum Version
+{
+	VERSION_WOTLK = 30000,
+	VERSION_CATACLYSM = 40000,
+	VERSION_MOP = 50000
+};
+
+#define	MODELBONE_BILLBOARD	8
+#define	MODELBONE_TRANSFORM	512
+
+enum KeyBoneTable { // wxString Bone_Names[]
+	//Block F - Key Bone lookup table.
+	//---------------------------------
+	BONE_LARM = 0,		// 0, ArmL: Left upper arm
+	BONE_RARM,			// 1, ArmR: Right upper arm
+	BONE_LSHOULDER,		// 2, ShoulderL: Left Shoulder / deltoid area
+	BONE_RSHOULDER,		// 3, ShoulderR: Right Shoulder / deltoid area
+	BONE_STOMACH,		// 4, SpineLow: (upper?) abdomen
+	BONE_WAIST,			// 5, Waist: (lower abdomen?) waist
+	BONE_HEAD,			// 6, Head
+	BONE_JAW,			// 7, Jaw: jaw/mouth
+	BONE_RFINGER1,		// 8, IndexFingerR: (Trolls have 3 "fingers", this points to the 2nd one.
+	BONE_RFINGER2,		// 9, MiddleFingerR: center finger - only used by dwarfs.. don't know why
+	BONE_RFINGER3,		// 10, PinkyFingerR: (Trolls have 3 "fingers", this points to the 3rd one.
+	BONE_RFINGERS,		// 11, RingFingerR: Right fingers -- this is -1 for trolls, they have no fingers, only the 3 thumb like thingys
+	BONE_RTHUMB,		// 12, ThumbR: Right Thumb
+	BONE_LFINGER1,		// 13, IndexFingerL: (Trolls have 3 "fingers", this points to the 2nd one.
+	BONE_LFINGER2,		// 14, MiddleFingerL: Center finger - only used by dwarfs.
+	BONE_LFINGER3,		// 15, PinkyFingerL: (Trolls have 3 "fingers", this points to the 3rd one.
+	BONE_LFINGERS,		// 16, RingFingerL: Left fingers
+	BONE_LTHUMB,		// 17, ThubbL: Left Thumb
+	BONE_BTH,			// 18, $BTH: In front of head
+	BONE_CSR,			// 19, $CSR: Left hand
+	BONE_CSL,			// 20, $CSL: Left hand
+	BONE_BREATH,		// 21, _Breath
+	BONE_NAME,			// 22, _Name
+	BONE_NAMEMOUNT,		// 23, _NameMount
+	BONE_CHD,			// 24, $CHD: Head
+	BONE_CCH,			// 25, $CCH: Bust
+	BONE_ROOT,			// 26, Root: The "Root" bone,  this controls rotations, transformations, etc of the whole model and all subsequent bones.
+	BONE_WHEEL1,		// 27, Wheel1
+	BONE_WHEEL2,		// 28, Wheel2
+	BONE_WHEEL3,		// 29, Wheel3
+	BONE_WHEEL4,		// 30, Wheel4
+	BONE_WHEEL5,		// 31, Wheel5
+	BONE_WHEEL6,		// 32, Wheel6
+	BONE_WHEEL7,		// 33, Wheel7
+	BONE_WHEEL8,		// 34, Wheel8
+	BONE_MAX
 };

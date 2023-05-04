@@ -1,6 +1,7 @@
 #pragma once
 #include "M2Header.h"
 #include "model_loader.h"
+#include "m2Bone.h"
 namespace Ogre 
 {
 	class DataStream;
@@ -13,18 +14,16 @@ public:
 	~M2Loader();
 	virtual std::shared_ptr<Ogre::Mesh> loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream);
 private:
-	void initStatic(Ogre::DataStream* stream);
 	void initCommon(Ogre::DataStream* stream);
+	void initAnimated(Ogre::DataStream* stream);
 	bool isAnimated(Ogre::DataStream* stream);
 	void setLOD(Ogre::DataStream* stream, int index);
-	Ogre::Vector3 fixCoordSystem(Ogre::Vector3& v)
-	{
-		return Ogre::Vector3(v.x, v.z, -v.y);
-	}
+
+	bool hasAnimation(size_t animIdx) const;
 private:
 	std::string mName;
 	M2Header mHeader;
-
+	int gameVersion = VERSION_WOTLK;
 	M2ModelVertex* mOrigVertices;
 
 	ModelType mModelType = MT_NORMAL;
@@ -38,5 +37,19 @@ private:
 	std::vector<uint32_t> texturetypes;
 	std::vector<std::string> texnames;
 
-	Ogre::Mesh* pMesh;
+	Ogre::Mesh* mMesh = nullptr;
+
+	bool animGeometry, animTextures, animBones;
+	bool animated;
+	bool ind;
+	std::vector<ModelAnimation> mAnimations;
+
+	std::vector<std::string> mAnimNamefiles;
+
+	int16 keyBoneLookup[BONE_MAX];
+
+	std::vector<uint32_t> globalSequences;
+
+	std::vector<M2Bone> bones;
+	Skeleton* mSkeleton = nullptr;
 };

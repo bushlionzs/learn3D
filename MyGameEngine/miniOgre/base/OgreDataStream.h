@@ -18,12 +18,13 @@ namespace Ogre {
         ~DataStream();
 
         virtual void seek(int64_t pos) = 0;
+        virtual void seekRelative(int64_t pos) = 0;
         virtual int64_t tell(void) const = 0;
         virtual bool eof(void) const = 0;
         virtual size_t read(void* buf, int64_t count) = 0;
         virtual void skip(int64_t count) = 0;
         virtual uint32_t getStreamLength();
-        virtual String getLine(bool trimAfter);
+        virtual std::string getLine(bool trimAfter);
         virtual const char* getStreamData();
         std::string getBaseDir();
 
@@ -32,7 +33,7 @@ namespace Ogre {
             return mStreamName;
         }
 
-        String getAsString(void);
+        std::string getAsString(void);
     protected:
         std::string mStreamName;
         int64_t mSize;

@@ -47,6 +47,11 @@ namespace Ogre {
         mCurrent = mFirst + pos;
     }
 
+    void MemoryDataStream::seekRelative(int64_t pos)
+    {
+        mCurrent += pos;
+    }
+
     int64_t MemoryDataStream::tell(void) const
     {
         return mCurrent - mFirst;

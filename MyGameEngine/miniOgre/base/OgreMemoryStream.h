@@ -11,6 +11,7 @@ namespace Ogre {
         ~MemoryDataStream();
 
         virtual void seek(int64_t pos);
+        virtual void seekRelative(int64_t pos);
         virtual int64_t tell(void) const;
         virtual bool eof(void) const;
         virtual size_t read(void* buf, int64_t count);
