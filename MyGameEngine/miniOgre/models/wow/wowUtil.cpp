@@ -11,7 +11,7 @@ Ogre::Vector3 fixCoordSystem2(Ogre::Vector3 v)
 	return Ogre::Vector3(v.x, v.z, v.y);
 }
 
-Ogre::Quaternion fixCoordSystemQuat(Ogre::Quaternion v)
+Ogre::Vector4 fixCoordSystemQuat(Ogre::Vector4 v)
 {
-	return Ogre::Quaternion(-v.x, -v.z, v.y, v.w);
+	return Ogre::Vector4(-v.x, -v.z, v.y, v.w);
 }

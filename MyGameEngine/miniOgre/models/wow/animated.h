@@ -87,9 +87,9 @@ struct PACK_QUATERNION {
 
 class Quat16ToQuat32 {
 public:
-	static const Ogre::Quaternion conv(const PACK_QUATERNION t)
+	static const Ogre::Vector4 conv(const PACK_QUATERNION t)
 	{
-		return Quaternion(
+		return Vector4(
 			float(t.x < 0? t.x + 32768 : t.x - 32767)/ 32767.0f, 
 			float(t.y < 0? t.y + 32768 : t.y - 32767)/ 32767.0f,
 			float(t.z < 0? t.z + 32768 : t.z - 32767)/ 32767.0f,
@@ -295,7 +295,7 @@ public:
 			AnimationBlockHeader* pHeadTimes = (AnimationBlockHeader*)(stream->getStreamData() 
 				+ b.ofsTimes + j*sizeof(AnimationBlockHeader));
 			uint32 *ptimes;
-			if (animfiles[j]->getStreamLength() > pHeadTimes->ofsEntrys)
+			if (animfiles[j] && animfiles[j]->getStreamLength() > pHeadTimes->ofsEntrys)
 				ptimes = (uint32*)(animfiles[j]->getStreamData() + pHeadTimes->ofsEntrys);
 			else if (stream->getStreamLength() > pHeadTimes->ofsEntrys)
 				ptimes = (uint32*)(stream->getStreamData() + pHeadTimes->ofsEntrys);
@@ -309,9 +309,8 @@ public:
 		for(size_t j=0; j < b.nKeys; j++) {
 			AnimationBlockHeader* pHeadKeys = (AnimationBlockHeader*)(stream->getStreamData() 
 				+ b.ofsKeys + j*sizeof(AnimationBlockHeader));
-			assert((D*)(stream->getStreamData() + pHeadKeys->ofsEntrys));
 			D *keys;
-			if (animfiles[j]->getStreamLength() > pHeadKeys->ofsEntrys)
+			if (animfiles[j] && animfiles[j]->getStreamLength() > pHeadKeys->ofsEntrys)
 				keys = (D*)(animfiles[j]->getStreamData() + pHeadKeys->ofsEntrys);
 			else if (stream->getStreamLength() > pHeadKeys->ofsEntrys)
 				keys = (D*)(stream->getStreamData() + pHeadKeys->ofsEntrys);

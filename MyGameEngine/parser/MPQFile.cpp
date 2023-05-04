@@ -45,7 +45,8 @@ void MPQArchive::load()
             {
                 stringToUpper(current);
                 ResourceInfo* res = new ResourceInfo();
-                if (current == "CREATURE\\AKAMA\\AKAMA.M2")
+                const char* aa = getSuffix(current);
+                if (aa && strcmp(aa, ".ANIM") == 0)
                 {
                     int kk = 0;
                 }

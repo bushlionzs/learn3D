@@ -229,11 +229,11 @@ struct AnimationBlockHeader
 };
 
 struct ModelBoneDef {
-	int32_t keyboneid; // Back-reference to the key bone lookup table. -1 if this is no key bone.
-	int32_t flags; // Only known flags: 8 - billboarded and 512 - transformed
-	int32_t parent; // parent bone index
-	int32_t geoid; // A geoset for this bone.
-	int32_t unknown; // new int added to the bone definitions.  Added in WoW 2.0
+	int32 keyboneid; // Back-reference to the key bone lookup table. -1 if this is no key bone.
+	int32 flags; // Only known flags: 8 - billboarded and 512 - transformed
+	int16 parent; // parent bone index
+	int16 geoid; // A geoset for this bone.
+	int32 unknown; // new int added to the bone definitions.  Added in WoW 2.0
 	AnimationBlock translation; // (Vec3D)
 	AnimationBlock rotation; // (QuatS)
 	AnimationBlock scaling; // (Vec3D)

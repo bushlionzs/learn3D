@@ -10,7 +10,7 @@ class M2Bone {
 public:
 	Animated<Ogre::Vector3> trans;
 	//Animated<Quaternion> rot;
-	Animated<Quaternion, PACK_QUATERNION, Quat16ToQuat32> rot;
+	Animated<Ogre::Vector4, PACK_QUATERNION, Quat16ToQuat32> rot;
 	Animated<Ogre::Vector3> scale;
 
 	Ogre::Vector3 pivot, transPivot;

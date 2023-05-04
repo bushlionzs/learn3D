@@ -12,6 +12,7 @@
 #include "OgreSkeleton.h"
 #include "OgreBone.h"
 #include "OgreAnimation.h"
+#include "keyframe.h"
 #include "animation_track.h"
 #include "dbcfile.h"
 #include "m2Bone.h"
@@ -101,6 +102,8 @@ std::shared_ptr<Ogre::Mesh> M2Loader::loadMeshFromFile(std::shared_ptr<Ogre::Dat
 	if (animated)
 	{
 		initAnimated(stream.get());
+		mSkeleton->setBindingPose();
+		mMesh->applySkeleton(std::shared_ptr<Skeleton>(mSkeleton));
 	}
 
 	mesh = std::shared_ptr<Ogre::Mesh>(mMesh);
@@ -226,7 +229,7 @@ static void updateTimeline(Timeline& timeline, std::vector<TimeT>& times, int ke
 	}
 }
 
-static void QuaternionToAxisAngle(const Quaternion q, Ogre::Vector4& v) {
+static void QuaternionToAxisAngle(const Vector4 q, Ogre::Vector4& v) {
 	float sqrLength = q.x * q.x + q.y * q.y + q.z * q.z;
 	if (sqrLength > 0) {
 		float invLength = 1 / sqrtf(sqrLength);
@@ -241,6 +244,16 @@ static void QuaternionToAxisAngle(const Quaternion q, Ogre::Vector4& v) {
 		v.y = 0;
 		v.z = 0;
 	}
+}
+
+Ogre::Vector3 M2Loader::getBoneParentTrans(int n) const
+{
+	const M2Bone& b = bones[n];
+	Ogre::Vector3 tr = b.pivot;
+	int pid = b.parent;
+	if (pid > -1)
+		tr -= bones[pid].pivot;
+	return tr;
 }
 
 void M2Loader::initAnimated(Ogre::DataStream* stream)
@@ -264,9 +277,6 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 			sizeof(ModelAnimation) * mHeader.nAnimations);
 		for (size_t i = 0; i < mHeader.nAnimations; i++)
 		{
-			AnimDB::Record r = animdb.getByAnimID(mAnimations[i].animID);
-			auto name = r.getString(AnimDB::Name);
-			mSkeleton->createAnimation(name, 0);
 			tempname = Ogre::StringUtil::format("%s%04d-%02d.ANIM", prefix.c_str(), 
 				mAnimations[i].animID, mAnimations[i].subAnimID);
 			mAnimNamefiles[i] = tempname;
@@ -281,10 +291,15 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 		for (uint32_t i = 0; i < mHeader.nAnimations; i++)
 		{
 			auto anim = ResourceManager::getSingleton().openResource(mAnimNamefiles[i]);
+			if (anim)
+			{
+				int kk = 0;
+			}
 			animfiles[i] = anim;
 		}
 		ModelBoneDef* mb = (ModelBoneDef*)(stream->getStreamData() + mHeader.ofsBones);
 		for (size_t i = 0; i < mHeader.nBones; i++) {
+			bones[i].parent = mb[i].parent;
 			bones[i].initV3(stream, mb + i, animfiles, globalSequences);
 			mSkeleton->createBone(std::to_string(i), i);
 		}
@@ -293,6 +308,8 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 			Bone* bone = mSkeleton->getBone(i);
 			Bone* boneParent = mSkeleton->getBone(mb[i].parent);
 			bone->updateParent(boneParent);
+			Ogre::Vector3 pos = getBoneParentTrans(i);
+			bone->setPosition(pos);
 		}
 
 		// Block keyBoneLookup is a lookup table for Key Skeletal Bones, hands, arms, legs, etc.
@@ -315,13 +332,13 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 
 				AnimDB::Record r = animdb.getByAnimID(anim.animID);
 				aniname = r.getString(AnimDB::Name);
-
+				aniname += std::to_string(animIdx);
 				Ogre::Animation* ogreAni = mSkeleton->createAnimation(aniname, 0);
-
+				
 				for (size_t boneIdx = 0; boneIdx < bones.size(); boneIdx++) {
 					M2Bone& b = bones[boneIdx];
 					if (usesAnimation(b, animIdx)) {
-
+						AnimationTrack* track = ogreAni->createNodeTrack(boneIdx, nullptr);
 						Timeline timeline;
 						updateTimeline(timeline, b.trans.times[animIdx], KEY_TRANSLATE);
 						updateTimeline(timeline, b.rot.times[animIdx], KEY_ROTATE);
@@ -331,15 +348,20 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 						size_t nrot = 0;
 						size_t nscale = 0;
 						for (Timeline::iterator it = timeline.begin(); it != timeline.end(); it++) {
+							KeyFrame* frame = track->createKeyFrame(it->first / 1000.0f);
 							if (it->second & KEY_TRANSLATE) {
 								Ogre::Vector3& v = b.trans.data[animIdx][ntrans];
+								frame->setTranslate(v);
 								ntrans++;
 							}
 							if (it->second & KEY_ROTATE) {
-								Quaternion q = b.rot.data[animIdx][nrot];
 								Ogre::Vector4 v;
-								QuaternionToAxisAngle(q, v);
-		
+								QuaternionToAxisAngle(b.rot.data[animIdx][nrot], v);
+								Quaternion q;
+	
+								q.FromAngleAxis(Radian(-v.w), Ogre::Vector3(v.x, v.y, v.z));
+								frame->setRotation(q);
+
 								nrot++;
 							}
 							if (it->second & KEY_SCALE) 
@@ -353,6 +375,26 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 				}
 			}
 		}	
+
+		//skinned
+
+		VertexData* vd = mMesh->getVertexData();
+		vd->vertexCount = mHeader.nVertices;
+		vd->mBoneAssignments.reserve(mHeader.nVertices);
+		VertexBoneAssignment tmp;
+		for (uint32_t i = 0; i < mHeader.nVertices; i++)
+		{
+			for (uint32_t j = 0; j < 4; j++)
+			{
+				if (mOrigVertices[i].weights[j] == 0)
+					continue;
+				tmp.boneIndex = mOrigVertices[i].bones[j];
+				tmp.vertexIndex = i;
+				tmp.weight = (float)mOrigVertices[i].weights[j] / 255.0f;
+				vd->mBoneAssignments.push_back(tmp);
+			}
+		}
+		vd->buildHardBuffer();
 	}
 }
 
@@ -506,8 +548,8 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 		
 		mat->addTexture(texname);
 		ShaderInfo info;
-		info.shaderName = "ogresimple";
-		
+		info.shaderName = "basic";
+		info.shaderMacros.emplace_back("SKINNED", "1");
 		mat->addShader(info);
 		mat->setCullMode(CULL_NONE);
 		if (pass.noZWrite)
@@ -550,6 +592,8 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 	}
 
 	VertexData* vd = mMesh->getVertexData();
+
+
 
 	vd->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
 	vd->vertexDeclaration->addElement(0, 0, 20, VET_FLOAT3, VES_NORMAL);

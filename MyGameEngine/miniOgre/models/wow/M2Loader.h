@@ -20,6 +20,7 @@ private:
 	void setLOD(Ogre::DataStream* stream, int index);
 
 	bool hasAnimation(size_t animIdx) const;
+	Ogre::Vector3 getBoneParentTrans(int n) const;
 private:
 	std::string mName;
 	M2Header mHeader;

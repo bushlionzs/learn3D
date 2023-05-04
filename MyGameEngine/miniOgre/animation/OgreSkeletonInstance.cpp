@@ -7,7 +7,7 @@
 #include "OgreAnimationState.h"
 #include "OgreRoot.h"
 
-#define MAX_BONE_NUMBER 100
+#define MAX_BONE_NUMBER 200
 namespace Ogre {
 
 	SkeletonInstance::SkeletonInstance(std::shared_ptr<Skeleton>& skeleton)
