@@ -31,7 +31,7 @@ public:
 private:
     void createGraphicsPipeline(VulkanPass* pass);
     std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions(VertexDeclaration* vd);
-    VkShaderModule VulkanShader::createShaderModule(const std::string& code);
+    VkShaderModule createShaderModule(const std::string& code);
 private:
     VulkanRenderSystem* mEngine = nullptr;
     ShaderInfo mShaderInfo;

@@ -131,4 +131,9 @@ namespace Ogre {
     {
         return mFirst;
     }
+
+    const char* MemoryDataStream::getCurrentStreamData()
+    {
+        return mCurrent;
+    }
 }

@@ -27,6 +27,11 @@ namespace Ogre {
 	{ 
 		return nullptr; 
 	}
+
+	const char* DataStream::getCurrentStreamData()
+	{
+		return nullptr;
+	}
 	std::string DataStream::getBaseDir()
 	{
 		std::string dir;

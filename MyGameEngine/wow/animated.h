@@ -231,18 +231,18 @@ public:
 			return;
 
 		for(size_t j=0; j < b.nTimes; j++) {
-			AnimationBlockHeader* pHeadTimes = (AnimationBlockHeader*)(f.getBuffer() + b.ofsTimes + j*sizeof(AnimationBlockHeader));
+			AnimationBlockHeader* pHeadTimes = (AnimationBlockHeader*)(stream->getStreamData() + b.ofsTimes + j*sizeof(AnimationBlockHeader));
 		
-			unsigned int *ptimes = (unsigned int*)(f.getBuffer() + pHeadTimes->ofsEntrys);
+			unsigned int *ptimes = (unsigned int*)(stream->getStreamData() + pHeadTimes->ofsEntrys);
 			for (size_t i=0; i < pHeadTimes->nEntrys; i++)
 				times[j].push_back(ptimes[i]);
 		}
 
 		// keyframes
 		for(size_t j=0; j < b.nKeys; j++) {
-			AnimationBlockHeader* pHeadKeys = (AnimationBlockHeader*)(f.getBuffer() + b.ofsKeys + j*sizeof(AnimationBlockHeader));
+			AnimationBlockHeader* pHeadKeys = (AnimationBlockHeader*)(stream->getStreamData() + b.ofsKeys + j*sizeof(AnimationBlockHeader));
 
-			D *keys = (D*)(f.getBuffer() + pHeadKeys->ofsEntrys);
+			D *keys = (D*)(stream->getStreamData() + pHeadKeys->ofsEntrys);
 			switch (type) {
 				case INTERPOLATION_NONE:
 				case INTERPOLATION_LINEAR:
@@ -375,22 +375,22 @@ public:
 	{
 		if (v.sizes == 0)
 			return out;
-		out << "      <type>"<< v.type << "</type>" << endl;
-		out << "      <seq>"<< v.seq << "</seq>" << endl;
-		out << "      <anims>"<< endl;
+		out << "      <type>"<< v.type << "</type>" << '\n';
+		out << "      <seq>"<< v.seq << "</seq>" << '\n';
+		out << "      <anims>"<< '\n';
 		for(size_t j=0; j<v.sizes; j++) {
 			if (j != 0) continue; // only output walk animation
 			if (v.uses((unsigned int)j)) {
-				out << "    <anim id=\"" << j << "\" size=\""<< v.data[j].size() <<"\">" << endl;
+				out << "    <anim id=\"" << j << "\" size=\""<< v.data[j].size() <<"\">" << '\n';
 				for(size_t k=0; k<v.data[j].size(); k++) {
-					out << "      <data time=\"" << v.times[j][k]  << "\">" << v.data[j][k] << "</data>" << endl;
+					out << "      <data time=\"" << v.times[j][k]  << "\">" << v.data[j][k] << "</data>" << '\n';
 				}
-				out << "    </anim>" << endl;
+				out << "    </anim>" << '\n';
 			}
 			if (v.seq > -1 && j > 0)
 				break;
 		}
-		out << "      </anims>"<< endl;
+		out << "      </anims>"<< '\n';
 		return out;
 	}
 };

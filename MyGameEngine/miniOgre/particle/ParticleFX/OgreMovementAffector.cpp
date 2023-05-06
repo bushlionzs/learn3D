@@ -262,8 +262,8 @@ namespace Ogre {
 	}
 	void MovementAffector::CmdStartVelocityMin::doSet(void* target, const String& val)
 	{
-		static_cast<MovementAffector*>(target)->setStartVelocityMin(
-			StringConverter::parseVector3(val));
+		auto tmp = StringConverter::parseVector3(val);
+		static_cast<MovementAffector*>(target)->setStartVelocityMin(tmp);
 	}
 #if OGRE_STRING_INTERFACE_COPY
     //-----------------------------------------------------------------------
@@ -281,8 +281,8 @@ namespace Ogre {
 	}
 	void MovementAffector::CmdStartVelocityMax::doSet(void* target, const String& val)
 	{
-		static_cast<MovementAffector*>(target)->setStartVelocityMax(
-			StringConverter::parseVector3(val));
+		auto tmp = StringConverter::parseVector3(val);
+		static_cast<MovementAffector*>(target)->setStartVelocityMax(tmp);
 	}
 #if OGRE_STRING_INTERFACE_COPY
     //-----------------------------------------------------------------------
@@ -300,8 +300,8 @@ namespace Ogre {
 	}
 	void MovementAffector::CmdAcceleration::doSet(void* target, const String& val)
 	{
-		static_cast<MovementAffector*>(target)->setAcceleration(
-			StringConverter::parseVector3(val));
+		auto tmp = StringConverter::parseVector3(val);
+		static_cast<MovementAffector*>(target)->setAcceleration(tmp);
 	}
 #if OGRE_STRING_INTERFACE_COPY
     //-----------------------------------------------------------------------
@@ -319,8 +319,8 @@ namespace Ogre {
 	}
 	void MovementAffector::CmdVelocityLossMin::doSet(void* target, const String& val)
 	{
-		static_cast<MovementAffector*>(target)->setVelocityLossMin(
-			StringConverter::parseVector3(val));
+		auto tmp = StringConverter::parseVector3(val);
+		static_cast<MovementAffector*>(target)->setVelocityLossMin(tmp);
 	}
 #if OGRE_STRING_INTERFACE_COPY
     //-----------------------------------------------------------------------
@@ -338,8 +338,8 @@ namespace Ogre {
 	}
 	void MovementAffector::CmdVelocityLossMax::doSet(void* target, const String& val)
 	{
-		static_cast<MovementAffector*>(target)->setVelocityLossMax(
-			StringConverter::parseVector3(val));
+		auto tmp = StringConverter::parseVector3(val);
+		static_cast<MovementAffector*>(target)->setVelocityLossMax(tmp);
 	}
 #if OGRE_STRING_INTERFACE_COPY
     //-----------------------------------------------------------------------
@@ -357,8 +357,8 @@ namespace Ogre {
 	}
 	void MovementAffector::CmdRandomnessMin::doSet(void* target, const String& val)
 	{
-		static_cast<MovementAffector*>(target)->setRandomnessMin(
-			StringConverter::parseVector3(val));
+		auto tmp = StringConverter::parseVector3(val);
+		static_cast<MovementAffector*>(target)->setRandomnessMin(tmp);
 	}
 #if OGRE_STRING_INTERFACE_COPY
     //-----------------------------------------------------------------------
@@ -376,8 +376,8 @@ namespace Ogre {
 	}
 	void MovementAffector::CmdRandomnessMax::doSet(void* target, const String& val)
 	{
-		static_cast<MovementAffector*>(target)->setRandomnessMax(
-			StringConverter::parseVector3(val));
+		auto tmp = StringConverter::parseVector3(val);
+		static_cast<MovementAffector*>(target)->setRandomnessMax(tmp);
 	}
 #if OGRE_STRING_INTERFACE_COPY
     //-----------------------------------------------------------------------

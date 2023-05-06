@@ -131,16 +131,18 @@ void Dx12RenderTexture::preRender(ID3D12GraphicsCommandList* cl)
 {
 	cl->RSSetViewports(1, &mViewport);
 	cl->RSSetScissorRects(1, &mScissorRect);
-	cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mParentTexture->getTextureResource(),
-		D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET));
+	auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(mParentTexture->getTextureResource(),
+		D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	cl->ResourceBarrier(1, &barrier);
 
 }
 
 void Dx12RenderTexture::swapBuffers()
 {
 	auto cl = mRenderSystem->getCommandList();
-	cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mParentTexture->getTextureResource(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ));
+	auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(mParentTexture->getTextureResource(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+	cl->ResourceBarrier(1, &barrier);
 
 }
 

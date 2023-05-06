@@ -1,5 +1,17 @@
 #include "dbcfile.h"
 
+AreaDB gAreaDB;
+MapDB gMapDB;
+LoadingScreensDB gLoadingScreensDB;
+LightDB gLightDB;
+LightParamsDB gLightParamsDB;
+LightSkyboxDB gLightSkyboxDB;
+LightIntBandDB gLightIntBandDB;
+LightFloatBandDB gLightFloatBandDB;
+GroundEffectDoodadDB gGroundEffectDoodadDB;
+GroundEffectTextureDB gGroundEffectTextureDB;
+LiquidTypeDB gLiquidTypeDB;
+
 DBCFile::DBCFile(const std::string&filename) : filename(filename)
 {
 	data = NULL;

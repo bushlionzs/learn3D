@@ -435,7 +435,7 @@ void Dx12RenderSystem::updateMainPassCB(Ogre::ICamera* camera)
 using namespace DirectX;
 void Dx12RenderSystem::updateMainPassCBForTest(ICamera* camera)
 {
-	if (camera->getCameraType() == CameraType_Light)
+	/*if (camera->getCameraType() == CameraType_Light)
 	{
 		
 		UpdateShadowPassCBForTest(camera);
@@ -484,12 +484,12 @@ void Dx12RenderSystem::updateMainPassCBForTest(ICamera* camera)
 
 	D3D12_GPU_VIRTUAL_ADDRESS frameAddress = cb->Resource()->GetGPUVirtualAddress();
 	mCurrentFrame->getCommandList()->SetGraphicsRootConstantBufferView(
-		mMainConstantIndex, frameAddress);
+		mMainConstantIndex, frameAddress);*/
 }
 
 void Dx12RenderSystem::UpdateShadowPassCBForTest(Ogre::ICamera* camera)
 {
-	Ogre::Vector3 camepos = Ogre::Vector3(-20.8166504, 20.8166504, -20.8166504);
+	/*Ogre::Vector3 camepos = Ogre::Vector3(-20.8166504, 20.8166504, -20.8166504);
 	XMVECTOR lightPos = XMVectorSet(-20.8166504, 20.8166504, -20.8166504, 0.0f);
 	XMVECTOR targetPos = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR lightUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -536,7 +536,7 @@ void Dx12RenderSystem::UpdateShadowPassCBForTest(Ogre::ICamera* camera)
 
 	D3D12_GPU_VIRTUAL_ADDRESS frameAddress = cb->Resource()->GetGPUVirtualAddress();
 	mCurrentFrame->getCommandList()->SetGraphicsRootConstantBufferView(
-		mMainConstantIndex, frameAddress);
+		mMainConstantIndex, frameAddress);*/
 }
 
 

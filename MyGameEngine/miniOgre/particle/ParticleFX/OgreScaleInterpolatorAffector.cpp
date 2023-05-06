@@ -398,8 +398,8 @@ namespace Ogre {
 	//-----------------------------------------------------------------------
 	void ScaleInterpolatorAffector::CmdConstantScale::doSet(void* target, const String& val)
 	{
-		static_cast<ScaleInterpolatorAffector*>(target)->setConstantScale(
-			StringConverter::parseVector3(val));
+		auto tmp = StringConverter::parseVector3(val);
+		static_cast<ScaleInterpolatorAffector*>(target)->setConstantScale(tmp);
 	}
 #if OGRE_STRING_INTERFACE_COPY
     //-----------------------------------------------------------------------
@@ -416,8 +416,8 @@ namespace Ogre {
     }
     void ScaleInterpolatorAffector::CmdScaleAdjust::doSet(void* target, const String& val)
     {
-        static_cast<ScaleInterpolatorAffector*>(target)->setScaleAdjust(mIndex,
-            StringConverter::parseVector3(val));
+		auto tmp = StringConverter::parseVector3(val);
+        static_cast<ScaleInterpolatorAffector*>(target)->setScaleAdjust(mIndex,tmp);
     }
 #if OGRE_STRING_INTERFACE_COPY
     //-----------------------------------------------------------------------

@@ -126,7 +126,7 @@ uint64_t DX12Helper::getFenceCompletedValue()
 
 void DX12Helper::waitFence(uint64_t fence)
 {
-	HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+	HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
 	ThrowIfFailed(mFence->SetEventOnCompletion(fence, eventHandle));
 	WaitForSingleObject(eventHandle, INFINITE);
 	CloseHandle(eventHandle);

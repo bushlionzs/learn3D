@@ -924,7 +924,7 @@ namespace Orphigine
 		if (mLogicModelEffectReqList.empty())
 			return;
 
-		Ogre::Vector3& playerPos = EngineManager::getSingletonPtr()->getMyPosition();
+		Ogre::Vector3 playerPos = EngineManager::getSingletonPtr()->getMyPosition();
 
 		if (playerPos.length() >= 9999999.f) //Ä©³õÊ¼»¯
 		{

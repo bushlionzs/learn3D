@@ -18,6 +18,7 @@ namespace Ogre {
         virtual void skip(int64_t count);
         virtual String getLine(bool trimAfter);
         virtual const char* getStreamData();
+        virtual const char* getCurrentStreamData();
     private:
         std::string mMem;
 

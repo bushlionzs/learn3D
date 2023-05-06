@@ -26,6 +26,7 @@ namespace Ogre {
         virtual uint32_t getStreamLength();
         virtual std::string getLine(bool trimAfter);
         virtual const char* getStreamData();
+        virtual const char* getCurrentStreamData();
         std::string getBaseDir();
 
         const std::string& getName()

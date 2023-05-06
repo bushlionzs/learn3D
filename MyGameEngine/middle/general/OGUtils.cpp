@@ -167,7 +167,7 @@ addAttachedObjects(Iterator it, ObjectList& objects)
 {
     while (it.hasMoreElements())
     {
-        MovableObject* object = it.getNext();
+        MoveObject* object = it.getNext();
         addAttachedObject(object, objects);
     }
 }

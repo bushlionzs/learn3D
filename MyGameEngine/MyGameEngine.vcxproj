@@ -752,11 +752,30 @@
     <ClInclude Include="platform\windows\platform_mutex.h" />
     <ClInclude Include="platform\windows\platform_rw_mutex.h" />
     <ClInclude Include="platform\windows\platform_signal.h" />
+    <ClInclude Include="wow\alphamap.hpp" />
     <ClInclude Include="wow\animated.h" />
+    <ClInclude Include="wow\AsyncObject.h" />
+    <ClInclude Include="wow\Brush.h" />
+    <ClInclude Include="wow\ChunkWater.hpp" />
     <ClInclude Include="wow\dbcfile.h" />
+    <ClInclude Include="wow\liquid_layer.hpp" />
     <ClInclude Include="wow\m2Bone.h" />
     <ClInclude Include="wow\M2Header.h" />
     <ClInclude Include="wow\M2Loader.h" />
+    <ClInclude Include="wow\MapChunk.h" />
+    <ClInclude Include="wow\MapHeaders.h" />
+    <ClInclude Include="wow\MapTile.h" />
+    <ClInclude Include="wow\map_enums.hpp" />
+    <ClInclude Include="wow\map_index.hpp" />
+    <ClInclude Include="wow\Misc.h" />
+    <ClInclude Include="wow\Selection.h" />
+    <ClInclude Include="wow\TileWater.hpp" />
+    <ClInclude Include="wow\tile_index.hpp" />
+    <ClInclude Include="wow\tool_enums.hpp" />
+    <ClInclude Include="wow\WMO.h" />
+    <ClInclude Include="wow\WMOInstance.h" />
+    <ClInclude Include="wow\wmo_liquid.hpp" />
+    <ClInclude Include="wow\World.h" />
     <ClInclude Include="wow\wowUtil.h" />
   </ItemGroup>
   <ItemGroup>
@@ -1255,9 +1274,22 @@
     <ClCompile Include="platform\windows\platform_mutex.cpp" />
     <ClCompile Include="platform\windows\platform_rw_mutex.cpp" />
     <ClCompile Include="platform\windows\platform_signal.cpp" />
+    <ClCompile Include="wow\alphamap.cpp" />
+    <ClCompile Include="wow\Brush.cpp" />
+    <ClCompile Include="wow\ChunkWater.cpp" />
     <ClCompile Include="wow\dbcfile.cpp" />
+    <ClCompile Include="wow\liquid_layer.cpp" />
     <ClCompile Include="wow\m2Bone.cpp" />
     <ClCompile Include="wow\M2Loader.cpp" />
+    <ClCompile Include="wow\MapChunk.cpp" />
+    <ClCompile Include="wow\MapTile.cpp" />
+    <ClCompile Include="wow\map_index.cpp" />
+    <ClCompile Include="wow\Misc.cpp" />
+    <ClCompile Include="wow\TileWater.cpp" />
+    <ClCompile Include="wow\WMO.cpp" />
+    <ClCompile Include="wow\WMOInstance.cpp" />
+    <ClCompile Include="wow\wmo_liquid.cpp" />
+    <ClCompile Include="wow\World.cpp" />
     <ClCompile Include="wow\wowUtil.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -1363,7 +1395,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4819;4099;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)wow;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>

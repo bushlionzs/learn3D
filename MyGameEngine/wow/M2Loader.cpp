@@ -18,29 +18,6 @@
 #include "m2Bone.h"
 #include "wowUtil.h"
 
-class AnimDB : public DBCFile
-{
-public:
-	AnimDB() : DBCFile("DBFILESCLIENT\\ANIMATIONDATA.DBC") {}
-	~AnimDB() {}
-
-	/// Fields
-	static const size_t AnimID = 0;		// uint
-	static const size_t Name = 1;		// string
-
-
-	Record getByAnimID(unsigned int id)
-	{
-		for (Iterator i = begin(); i != end(); ++i)
-		{
-			if (i->getUInt(AnimID) == id)
-				return (*i);
-		}
-
-		throw std::exception();
-	}
-};
-
 
 static bool usesAnimation(const M2Bone& b, size_t animIdx) {
 	return (b.trans.uses((unsigned int)animIdx) ||
@@ -103,7 +80,8 @@ std::shared_ptr<Ogre::Mesh> M2Loader::loadMeshFromFile(std::shared_ptr<Ogre::Dat
 	{
 		initAnimated(stream.get());
 		mSkeleton->setBindingPose();
-		mMesh->applySkeleton(std::shared_ptr<Skeleton>(mSkeleton));
+		std::shared_ptr<Skeleton> tmp(mSkeleton);
+		mMesh->applySkeleton(tmp);
 	}
 
 	mesh = std::shared_ptr<Ogre::Mesh>(mMesh);
@@ -241,11 +219,10 @@ Ogre::Vector3 M2Loader::getBoneParentTrans(int n) const
 
 void M2Loader::initAnimated(Ogre::DataStream* stream)
 {
-	AnimDB animdb;
-	std::string animdbcname = animdb.getFilename();
+	std::string animdbcname = gAnimDB.getFilename();
 
 	auto animdb_stream = ResourceManager::getSingleton().openResource(animdbcname);
-	animdb.open(animdb_stream.get());
+	gAnimDB.open(animdb_stream.get());
 
 
 	mSkeleton = new Skeleton(mName);
@@ -313,7 +290,7 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 			{
 				ModelAnimation& anim = mAnimations[animIdx];
 
-				AnimDB::Record r = animdb.getByAnimID(anim.animID);
+				AnimDB::Record r = gAnimDB.getByAnimID(anim.animID);
 				aniname = r.getString(AnimDB::Name);
 				aniname += std::to_string(animIdx);
 				Ogre::Animation* ogreAni = mSkeleton->createAnimation(aniname, 0);

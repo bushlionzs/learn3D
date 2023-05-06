@@ -107,8 +107,8 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
     int32_t start = textureDescriptors.size();
     if (start< VULKAN_TEXTURE_COUNT)
     {
-        auto default = VulkanHelper::getSingleton().getDefaultTexture();
-        VulkanTexture* tex = (VulkanTexture*)default.get();
+        auto defaultTex = VulkanHelper::getSingleton().getDefaultTexture();
+        VulkanTexture* tex = (VulkanTexture*)defaultTex.get();
         for (int32_t i = start; i < VULKAN_TEXTURE_COUNT; i++)
         {
             textureDescriptors.emplace_back();

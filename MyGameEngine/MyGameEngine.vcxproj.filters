@@ -2313,6 +2313,63 @@
     <ClInclude Include="wow\wowUtil.h">
       <Filter>wow</Filter>
     </ClInclude>
+    <ClInclude Include="wow\map_index.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\map_enums.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\MapChunk.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\MapHeaders.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\MapTile.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\tile_index.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\TileWater.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\tool_enums.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\Misc.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\ChunkWater.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\liquid_layer.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\alphamap.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\WMOInstance.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\WMO.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\World.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\AsyncObject.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\wmo_liquid.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\Brush.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\Selection.h">
+      <Filter>wow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="miniOgre\base\OgreAlignedAllocator.cpp">
@@ -3810,6 +3867,45 @@
       <Filter>wow</Filter>
     </ClCompile>
     <ClCompile Include="wow\wowUtil.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\map_index.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\MapChunk.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\MapTile.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\TileWater.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\Misc.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\ChunkWater.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\liquid_layer.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\alphamap.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\WMOInstance.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\WMO.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\World.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\wmo_liquid.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\Brush.cpp">
       <Filter>wow</Filter>
     </ClCompile>
   </ItemGroup>

@@ -133,8 +133,9 @@ void Dx12Texture::_create2DTex()
     
     
     auto device = DX12Helper::getSingleton().getDevice();
+    auto heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
     auto hr = device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        &heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &texDesc,
         states,
@@ -154,11 +155,12 @@ void Dx12Texture::_create2DTex()
 
     const UINT num2DSubresources = texDesc.DepthOrArraySize * texDesc.MipLevels;
     const UINT64 uploadBufferSize = GetRequiredIntermediateSize(mTex.Get(), 0, num2DSubresources);
-
+    heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    auto bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
     hr = device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        &heapProperties,
         D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+        &bufferDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
         IID_PPV_ARGS(&mTexUpload));
@@ -262,8 +264,9 @@ void Dx12Texture::generateMipmaps()
         D3D12_RECT mScissorRect = { 0, 0, (int)width, (int)height };
         cl->RSSetViewports(1, &mViewport);
         cl->RSSetScissorRects(1, &mScissorRect);
-        cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mTex.Get(),
-            D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET, i));
+        auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(mTex.Get(),
+            D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET, i);
+        cl->ResourceBarrier(1, &barrier);
         
         CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = mgr->getGpuHandleByIndex(mTexStartIndex);
         cl->SetGraphicsRootDescriptorTable(0, gpuHandle);
@@ -273,9 +276,9 @@ void Dx12Texture::generateMipmaps()
         cl->OMSetRenderTargets(1, &mipRtvHandle, FALSE, nullptr);
         cl->ClearRenderTargetView(mipRtvHandle, DirectX::Colors::Gold, 0, nullptr);
         cl->DrawInstanced(6, 1, 0, 0);
-
-        cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mTex.Get(),
-            D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, i));
+        barrier = CD3DX12_RESOURCE_BARRIER::Transition(mTex.Get(),
+            D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, i);
+        cl->ResourceBarrier(1, &barrier);
 
        }
 

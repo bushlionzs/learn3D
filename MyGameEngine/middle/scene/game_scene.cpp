@@ -329,12 +329,12 @@ Orphigine::NeSDK* GameScene::getNeSDK()
 
 int32_t GameScene::GetZoneX(Real fx) const
 {
-	return(int32_t)(fx / SIZE_OF_ZONE);
+	return(int32_t)(fx / static_cast<int>(SIZE_OF_ZONE));
 }
 
 int32_t GameScene::GetZoneZ(Real fz) const
 {
-	return(int32_t)(fz / SIZE_OF_ZONE);
+	return(int32_t)(fz / static_cast<int>(SIZE_OF_ZONE));
 }
 
 int32_t GameScene::GetRegionCount()

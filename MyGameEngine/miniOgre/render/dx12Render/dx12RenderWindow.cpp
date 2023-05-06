@@ -160,8 +160,9 @@ void Dx12RenderWindow::resize(unsigned int width, unsigned int height)
 	optClear.DepthStencil.Stencil = 0;
 
 	auto device = DX12Helper::getSingleton().getDevice();
+	auto heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	ThrowIfFailed(device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&depthStencilDesc,
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
@@ -216,8 +217,9 @@ void Dx12RenderWindow::preRender(ID3D12GraphicsCommandList* cl)
 		auto scissorRect = mDx12ShadowMap->scissorRect();
 		cl->RSSetViewports(1, &viewport);
 		cl->RSSetScissorRects(1, &scissorRect);
-		cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
-			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+		auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
+			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+		cl->ResourceBarrier(1, &barrier);
 
 		mCurrentDst = mDx12ShadowMap->dsvHandle();
 		cl->OMSetRenderTargets(0, nullptr, false, &mCurrentDst);
@@ -245,11 +247,12 @@ void Dx12RenderWindow::clearFrameBuffer(uint32_t buffers,
 	
 	if (!mUseShadow)
 	{
-		cl->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
-			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ));
+		D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
+			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+		cl->ResourceBarrier(1, &barrier);
 
 		ID3D12Resource* renderTarget = mMsaaRenderTarget.getRenderTarget();
-		D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 			renderTarget,
 			D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
 			D3D12_RESOURCE_STATE_RENDER_TARGET);

@@ -28,19 +28,21 @@ Dx12HardwareBuffer::Dx12HardwareBuffer(BufferType btype, size_t vertexSize, size
         }
     }
     
-    
+    auto heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+    auto bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(byteSize);
     ThrowIfFailed(dx12Device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        &heapProperties,
         D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(byteSize),
+        &bufferDesc,
         D3D12_RESOURCE_STATE_COMMON,
         nullptr,
         IID_PPV_ARGS(BufferGPU.GetAddressOf())));
-
+    heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(byteSize);
     ThrowIfFailed(dx12Device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        &heapProperties,
         D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(byteSize),
+        &bufferDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
         IID_PPV_ARGS(BufferUploader.GetAddressOf())));
@@ -74,11 +76,13 @@ void Dx12HardwareBuffer::_copydataimpl(
     // Schedule to copy the data to the default buffer resource.  At a high level, the helper function UpdateSubresources
     // will copy the CPU memory into the intermediate upload heap.  Then, using ID3D12CommandList::CopySubresourceRegion,
     // the intermediate upload heap data will be copied to mBuffer.
-    cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(BufferGPU.Get(),
-        D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
+    auto dstBarrier = CD3DX12_RESOURCE_BARRIER::Transition(BufferGPU.Get(),
+        D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+    cmdList->ResourceBarrier(1, &dstBarrier);
     UpdateSubresources<1>(cmdList, BufferGPU.Get(), BufferUploader.Get(), 0, 0, 1, &subResourceData);
-    cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(BufferGPU.Get(),
-        D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
+    dstBarrier = CD3DX12_RESOURCE_BARRIER::Transition(BufferGPU.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+    cmdList->ResourceBarrier(1, &dstBarrier);
 }
 
 void Dx12HardwareBuffer::bind(int32_t slot) const

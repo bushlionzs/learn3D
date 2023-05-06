@@ -120,13 +120,11 @@ namespace Ogre
         { }
 
         /// memory allocation (elements, used by STL)
-        inline pointer allocate( size_type count,
-            typename std::allocator<void>::const_pointer ptr = 0 )
+        inline pointer allocate(size_type count)
         {
-                        (void)ptr;
             // convert request to bytes
-            register size_type sz = count*sizeof( T );
-            pointer p  = static_cast<pointer>(AllocPolicy::allocateBytes(sz));
+            size_type sz = count * sizeof(T);
+            pointer p = static_cast<pointer>(AllocPolicy::allocateBytes(sz));
             return p;
         }
 

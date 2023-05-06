@@ -131,7 +131,7 @@ public:
 		int32_t lightmapXIndex,
 		int32_t lightmapZIndex);
 
-	String Terrain::getTerrainMaterialNameData(
+	String getTerrainMaterialNameData(
 		const TerrainInfo::GridInfoStr& gridInfo,
 		int32_t depthBias,
 		int32_t lightMapXIndex,
@@ -140,11 +140,11 @@ public:
 	TerrainInfo::LightmapQualityEnum getLightmapQuality(void) const;
 	int32_t _getPixmapAtlasIdData(int32_t pixmapId);
 	bool _createAtlasPixmapData(size_t pixmapId);
-	std::pair<Real, Real> Terrain::_getPixmapCorner(
+	std::pair<Real, Real> _getPixmapCorner(
 		const TerrainInfo::ImageAreaLayerStr& layerInfo,
 		TerrainInfo::AreaVertexEnum corner,
 		uint32_t flags) const;
-	std::pair<Real, Real> Terrain::_getPixmapCornerData(
+	std::pair<Real, Real> _getPixmapCornerData(
 		const TerrainInfo::ImageAreaLayerStr& layerInfo,
 		TerrainInfo::AreaVertexEnum corner,
 		uint32_t flags) const;

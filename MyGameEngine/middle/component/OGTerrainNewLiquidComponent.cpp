@@ -795,7 +795,9 @@ namespace Orphigine
 		{
 			delete* it;
 		}
-		mLiquidRenderables.swap(LiquidRenderableList());
+
+		LiquidRenderableList emptyList;
+		mLiquidRenderables.swap(emptyList);
 
 		mPositionVertexBuffer.reset();
 		mTexcoordVertexBuffer.reset();
