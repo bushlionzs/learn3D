@@ -302,3 +302,33 @@ material mirror
 		}
 	}
 }
+
+material wow
+{
+    technique
+	{
+		pass
+		{
+		    cull_hardware none
+			//scene_blend alpha_blend
+			texture_unit
+			{
+				texture Moon.blp
+				//texture ice.dds
+			}
+		}
+	}
+}
+
+pbrmaterial DamagedHelmet
+{
+    cull_hardware none
+    basecolor_texture Default_albedo.jpg
+	occlusion_texture Default_AO.jpg
+	emissive_texture  Default_emissive.jpg
+	metallic_roughness_texture Default_metalRoughness.jpg
+	diffuse_texture studio_garden_diffuse.png cubic
+	//specular_texture studio_garden.jpg cubic
+	brdflut_texture brdfLUT.png
+}
+

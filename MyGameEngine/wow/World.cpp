@@ -326,15 +326,7 @@ void World::changeShader(
 Ogre::Vector3 World::pickShaderColor(Ogre::Vector3 const& pos)
 {
   Ogre::Vector3 color = Ogre::Vector3(1.0f, 1.0f, 1.0f);
-  for_all_chunks_in_range
-  (pos, 0.1f
-    , [&] (MapChunk* chunk)
-  {
-    color = chunk->pickMCCV(pos);
-    return true;
-  }
-  );
-
+ 
   return color;
 }
 

@@ -435,10 +435,10 @@ void liquid_layer::crop(MapChunk* chunk)
         {
           int water_index = 9 * z + x, terrain_index = 17 * z + x;
 
-          if (_vertices[water_index].y < chunk->mVertices[terrain_index].y
-            && _vertices[water_index + 1].y < chunk->mVertices[terrain_index + 1].y
-            && _vertices[water_index + 9].y < chunk->mVertices[terrain_index + 17].y
-            && _vertices[water_index + 10].y < chunk->mVertices[terrain_index + 18].y
+          if (_vertices[water_index].y < chunk->getHeight(terrain_index)
+            && _vertices[water_index + 1].y < chunk->getHeight(terrain_index+1)
+            && _vertices[water_index + 9].y < chunk->getHeight(terrain_index + 17)
+            && _vertices[water_index + 10].y < chunk->getHeight(terrain_index + 18)
             )
           {
             setSubchunk(x, z, false);
@@ -531,7 +531,7 @@ void liquid_layer::copy_subchunk_height(int x, int z, liquid_layer const& from)
 
 void liquid_layer::update_vertex_opacity(int x, int z, MapChunk* chunk, float factor)
 {
-  float diff = _vertices[z * 9 + x].y - chunk->mVertices[z * 17 + x].y;
+  float diff = _vertices[z * 9 + x].y - chunk->getHeight(z * 17 + x);
   _depth[z * 9 + x] = diff < 0.0f ? 0.0f : (std::min(1.0f, std::max(0.0f, (diff + 1.0f) * factor)));
 }
 

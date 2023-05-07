@@ -6,6 +6,8 @@
 #include "MapTile.h"
 #include "tool_enums.hpp"
 #include "OgreColourValue.h"
+#include "OgreMoveObject.h"
+
 #include <map>
 #include <memory>
 #include <optional>
@@ -14,10 +16,19 @@ class Brush;
 class ChunkWater;
 class sExtendableArray;
 class MapTile;
+class TextureSet;
 using StripType = uint16_t;
-static const int mapbufsize = 9 * 9 + 8 * 8; // chunk size
+static const uint32_t mapbufsize = 9 * 9 + 8 * 8; // chunk size
 
-class MapChunk
+class WowTerrainVertex
+{
+public:
+    Ogre::Vector3 _vertex;
+    Ogre::Vector3 _normal;
+    Ogre::Vector2 _texCoord;
+    Ogre::ColourValue _mcvv;
+};
+class MapChunk: public MoveObject
 {
 private:
   tile_mode _mode;
@@ -36,8 +47,6 @@ private:
   std::vector<StripType> strip_without_holes;
   std::map<int, std::vector<StripType>> strip_lods;
 
-  Ogre::Vector3 mNormals[mapbufsize];
-  Ogre::Vector3 mccv[mapbufsize];
 
   std::vector<uint8_t> compressed_shadow_map() const;
   bool has_shadows() const;
@@ -65,6 +74,7 @@ private:
 
 public:
   MapChunk(MapTile* mt, std::shared_ptr<DataStream>& stream, bool bigAlpha, tile_mode mode);
+  virtual const AxisAlignedBox& getBoundingBox(void) const;
 
   MapTile *mt;
   Ogre::Vector3 vmin, vmax, vcenter;
@@ -76,8 +86,11 @@ public:
 
   mcnk_flags header_flags;
   bool use_big_alphamap;
+  std::unique_ptr<TextureSet> texture_set;
 
-  Ogre::Vector3 mVertices[mapbufsize];
+  WowTerrainVertex mWowVertices[mapbufsize];
+  mutable Ogre::AxisAlignedBox mAABB;
+  static Ogre::Vector2 mTexCorrd[mapbufsize];
 
 private:
 
@@ -96,7 +109,7 @@ public:
         Ogre::Vector3 const& pos,
         Ogre::ColourValue const& color,
       float change, float radius, bool editMode);
-    Ogre::Vector3 pickMCCV(Ogre::Vector3 const& pos);
+    //Ogre::Vector3 pickMCCV(Ogre::Vector3 const& pos);
 
   ChunkWater* liquid_chunk() const;
 
@@ -138,6 +151,7 @@ public:
 
   bool GetVertex(float x, float z, Ogre::Vector3*V);
   float getHeight(int x, int z);
+  float getHeight(int index);
   float getMinHeight();
 
   void clearHeight();

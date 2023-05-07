@@ -9,30 +9,30 @@ Alphamap::Alphamap()
   createNew();
 }
 
-Alphamap::Alphamap(
-    std::shared_ptr<DataStream>&stream, 
-    unsigned int flags, 
-    bool use_big_alphamaps, 
+
+void Alphamap::load(std::shared_ptr<DataStream>& stream,
+    unsigned int flags,
+    bool use_big_alphamaps,
     bool do_not_fix_alpha_map)
 {
-  createNew();
+    createNew();
 
-  if (use_big_alphamaps)
-  {
-    // can only compress big alpha
-    if (flags & 0x200)
+    if (use_big_alphamaps)
     {
-      readCompressed(stream);
+        // can only compress big alpha
+        if (flags & 0x200)
+        {
+            readCompressed(stream);
+        }
+        else
+        {
+            readBigAlpha(stream);
+        }
     }
     else
     {
-      readBigAlpha(stream);
-    }    
-  }    
-  else
-  {
-    readNotCompressed(stream, do_not_fix_alpha_map);
-  }
+        readNotCompressed(stream, do_not_fix_alpha_map);
+    }
 }
 
 namespace

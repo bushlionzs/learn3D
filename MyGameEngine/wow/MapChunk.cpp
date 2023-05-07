@@ -4,9 +4,19 @@
 #include "MapChunk.h"
 #include "OgreDataStream.h"
 #include "Misc.h"
+#include "texture_set.hpp"
+#include "custom_renderable.h"
+#include "vertex_data.h"
+#include "index_data.h"
+#include "vertex_declaration.h"
+#include "OgreMaterial.h"
+#include "engine_manager.h"
+#include "OgreSceneNode.h"
 #include <algorithm>
 #include <iostream>
 #include <map>
+
+Ogre::Vector2 MapChunk::mTexCorrd[mapbufsize];
 
 MapChunk::MapChunk(
     MapTile *maintile, 
@@ -53,6 +63,8 @@ MapChunk::MapChunk(
     vmax = Ogre::Vector3(-9999999.0f, -9999999.0f, -9999999.0f);
   }
 
+  texture_set = std::make_unique<TextureSet>(header, stream, base, maintile, bigAlpha, !!header_flags.flags.do_not_fix_alpha_map, mode == tile_mode::uid_fix_all);
+
  
   // - MCVT ----------------------------------------------
   {
@@ -62,7 +74,7 @@ MapChunk::MapChunk(
 
     assert(fourcc == 'MCVT');
 
-    Ogre::Vector3*ttv = mVertices;
+    WowTerrainVertex* ttv = mWowVertices;
 
     // vertices
     for (int j = 0; j < 17; ++j) {
@@ -74,10 +86,10 @@ MapChunk::MapChunk(
         if (j % 2) {
           xpos += UNITSIZE*0.5f;
         }
-        Ogre::Vector3 v = Ogre::Vector3(xbase + xpos, ybase + h, zbase + zpos);
-        *ttv++ = v;
-        vmin.y = std::min(vmin.y, v.y);
-        vmax.y = std::max(vmax.y, v.y);
+        ttv->_vertex = Ogre::Vector3(xbase + xpos, ybase + h, zbase + zpos);
+        ttv++;
+        vmin.y = std::min(vmin.y, ttv->_vertex.y);
+        vmax.y = std::max(vmax.y, ttv->_vertex.y);
       }
     }
 
@@ -101,11 +113,12 @@ MapChunk::MapChunk(
     assert(fourcc == 'MCNR');
 
     char nor[3];
-    Ogre::Vector3*ttn = mNormals;
+    WowTerrainVertex*ttn = mWowVertices;
     for (int i = 0; i< mapbufsize; ++i)
     {
       stream->read(nor, 3);
-      *ttn++ = Ogre::Vector3(nor[0] / 127.0f, nor[2] / 127.0f, nor[1] / 127.0f);
+      ttn->_normal = Ogre::Vector3(nor[0] / 127.0f, nor[2] / 127.0f, nor[1] / 127.0f);
+      ttn++;
     }
   }
   // - MCSH ----------------------------------------------
@@ -172,15 +185,14 @@ MapChunk::MapChunk(
     for (int i = 0; i < mapbufsize; ++i)
     {
         stream->read(t, 4);
-      mccv[i] = Ogre::Vector3((float)t[2] / 127.0f, (float)t[1] / 127.0f, (float)t[0] / 127.0f);
+        mWowVertices[i]._mcvv = Ogre::ColourValue((float)t[2] / 127.0f, (float)t[1] / 127.0f, (float)t[0] / 127.0f);
     }
   }
   else
   {
-      Ogre::Vector3 mccv_default(1.f, 1.f, 1.f);
     for (int i = 0; i < mapbufsize; ++i)
     {
-      mccv[i] = mccv_default;
+        mWowVertices[i]._mcvv = Ogre::ColourValue::White;
     }
   }
 
@@ -209,6 +221,80 @@ MapChunk::MapChunk(
   }
 
   vcenter = (vmin + vmax) * 0.5f;
+
+  bool calTexCoord = false;
+
+  if (!calTexCoord)
+  {
+      float detail_size = 8.0f;
+      float tx, ty;
+      Ogre::Vector2* vt = mTexCorrd;
+      const float detail_half = 0.5f * detail_size / 8.0f;
+      for (int j = 0; j < 17; ++j) {
+          for (int i = 0; i < ((j % 2) ? 8 : 9); ++i) {
+              tx = detail_size / 8.0f * i;
+              ty = detail_size / 8.0f * j * 0.5f;
+              if (j % 2) {
+                  // offset by half
+                  tx += detail_half;
+              }
+              *vt++ = Ogre::Vector2(tx, ty);
+          }
+      }
+  }
+
+  for (uint32_t i = 0; i < mapbufsize; i++)
+  {
+      mWowVertices[i]._texCoord = mTexCorrd[i];
+  }
+
+  //create renderable
+  initStrip();
+  VertexData* vd = new VertexData;
+  vd->vertexCount = mapbufsize;
+  vd->vertexSlotInfo.emplace_back();
+  auto& back = vd->vertexSlotInfo.back();
+  back.createBuffer(sizeof(WowTerrainVertex), mapbufsize);
+  vd->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+  vd->vertexDeclaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+  vd->vertexDeclaration->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+  vd->vertexDeclaration->addElement(0, 0, 32, VET_FLOAT4, VES_COLOUR);
+  back.writeData((const char*)&mWowVertices[0], sizeof(WowTerrainVertex)* mapbufsize);
+  IndexData* id = new IndexData;
+  id->createBuffer(2, strip_with_holes.size());
+  id->writeData((const char*)strip_with_holes.data(), 2 * strip_with_holes.size());
+  CustomRenderable* renderable = new CustomRenderable(vd, id);
+  std::shared_ptr<Material> mat = std::make_shared<Material>("");
+
+  for (uint32_t i = 0; i < texture_set->num(); i++)
+  {
+      const std::string& name = texture_set->filename(i);
+      mat->addTexture(name);
+  }
+  IndexDataView* view = renderable->getIndexView();
+  view->mIndexCount = strip_with_holes.size();
+  view->mBaseVertexLocation = 0;
+  view->mIndexLocation = 0;
+  std::string alphaname = Ogre::StringUtil::format("alpha%d-%d", px, py);
+  auto alphatex = texture_set->createAlphaMapTexture(alphaname);
+  mat->addTexture(alphatex);
+  
+  ShaderInfo info;
+  info.shaderName = "wowterrain";
+  mat->addShader(info);
+  mat->load();
+  renderable->setMaterial(mat);
+  mRenderables.push_back(renderable);
+
+  auto parent = EngineManager::getSingleton().getBaseSceneNode();
+  auto node = parent->createChildSceneNode(std::string("MapChunk"));
+  node->attachObject(this);
+}
+
+const AxisAlignedBox& MapChunk::getBoundingBox(void) const
+{
+    mAABB.setInfinite();
+    return mAABB;
 }
 
 int MapChunk::indexLoD(int x, int y)
@@ -383,23 +469,28 @@ bool MapChunk::GetVertex(float x, float z, Ogre::Vector3 *V)
   if ((row < 0) || (column < 0) || (row > 16) || (column >((row % 2) ? 8 : 9)))
     return false;
 
-  *V = mVertices[17 * (row / 2) + ((row % 2) ? 9 : 0) + column];
+  *V = mWowVertices[17 * (row / 2) + ((row % 2) ? 9 : 0) + column]._vertex;
   return true;
 }
 
 float MapChunk::getHeight(int x, int z)
 {
   if (x > 9 || z > 9 || x < 0 || z < 0) return 0.0f;
-  return mVertices[indexNoLoD(x, z)].y;
+  return mWowVertices[indexNoLoD(x, z)]._vertex.y;
+}
+
+float MapChunk::getHeight(int index)
+{
+    return mWowVertices[index]._vertex.y;
 }
 
 float MapChunk::getMinHeight()
 {
-  float min (mVertices[0].y);
+  float min (mWowVertices[0]._vertex.y);
 
-  for (auto&& vertex : mVertices)
+  for (auto&& vertex : mWowVertices)
   {
-    min = std::min (min, (float)vertex.y);
+    min = std::min (min, (float)vertex._vertex.y);
   }
 
   return min;
@@ -409,7 +500,7 @@ void MapChunk::clearHeight()
 {
   for (int i = 0; i < mapbufsize; ++i)
   {
-    mVertices[i].y = 0.0f;
+      mWowVertices[i]._vertex.y = 0.0f;
   }
 
   vmin.y = 0.0f;
@@ -426,8 +517,8 @@ void MapChunk::updateVerticesData()
 
   for (int i(0); i < mapbufsize; ++i)
   {
-    vmin.y = std::min(vmin.y, mVertices[i].y);
-    vmax.y = std::max(vmax.y, mVertices[i].y);
+    vmin.y = std::min(vmin.y, mWowVertices[i]._vertex.y);
+    vmax.y = std::max(vmax.y, mWowVertices[i]._vertex.y);
   }
 
   update_intersect_points();
@@ -448,14 +539,14 @@ bool MapChunk::changeTerrain(
 
   for (int i = 0; i < mapbufsize; ++i)
   {
-    xdiff = mVertices[i].x - pos.x;
-    zdiff = mVertices[i].z - pos.z;
+    xdiff = mWowVertices[i]._vertex.x - pos.x;
+    zdiff = mWowVertices[i]._vertex.z - pos.z;
     if (BrushType == eTerrainType_Quadra)
     {
       if ((std::abs(xdiff) < std::abs(radius / 2)) && (std::abs(zdiff) < std::abs(radius / 2)))
       {
         dist = std::sqrt(xdiff*xdiff + zdiff*zdiff);
-        mVertices[i].y += change * (1.0f - dist * inner_radius / radius);
+        mWowVertices[i]._vertex.y += change * (1.0f - dist * inner_radius / radius);
         changed = true;
       }
     }
@@ -469,22 +560,22 @@ bool MapChunk::changeTerrain(
         switch (BrushType)
         {
           case eTerrainType_Flat:
-            mVertices[i].y += change;
+              mWowVertices[i]._vertex.y += change;
             break;
           case eTerrainType_Linear:
-            mVertices[i].y += change * (1.0f - dist * (1.0f - inner_radius) / radius);
+              mWowVertices[i]._vertex.y += change * (1.0f - dist * (1.0f - inner_radius) / radius);
             break;
           case eTerrainType_Smooth:
-            mVertices[i].y += change / (1.0f + dist / radius);
+              mWowVertices[i]._vertex.y += change / (1.0f + dist / radius);
             break;
           case eTerrainType_Polynom:
-            mVertices[i].y += change*((dist / radius)*(dist / radius) + dist / radius + 1.0f);
+              mWowVertices[i]._vertex.y += change*((dist / radius)*(dist / radius) + dist / radius + 1.0f);
             break;
           case eTerrainType_Trigo:
-            mVertices[i].y += change*cos(dist / radius);
+              mWowVertices[i]._vertex.y += change*cos(dist / radius);
             break;
           case eTerrainType_Gaussian:
-            mVertices[i].y += dist < radius * inner_radius ? change * std::exp(-(std::pow(radius * inner_radius / radius, 2) / (2 * std::pow(0.39f, 2)))) : change * std::exp(-(std::pow(dist / radius, 2) / (2 * std::pow(0.39f, 2))));
+              mWowVertices[i]._vertex.y += dist < radius * inner_radius ? change * std::exp(-(std::pow(radius * inner_radius / radius, 2) / (2 * std::pow(0.39f, 2)))) : change * std::exp(-(std::pow(dist / radius, 2) / (2 * std::pow(0.39f, 2))));
 
             break;
           default:
@@ -513,9 +604,9 @@ bool MapChunk::ChangeMCCV(
   {
     for (int i = 0; i < mapbufsize; ++i)
     {
-      mccv[i].x = 1.0f; // set default shaders
-      mccv[i].y = 1.0f;
-      mccv[i].z = 1.0f;
+        mWowVertices[i]._mcvv.r = 1.0f; // set default shaders
+        mWowVertices[i]._mcvv.g = 1.0f;
+        mWowVertices[i]._mcvv.b = 1.0f;
     }
 
     changed = true;
@@ -525,26 +616,18 @@ bool MapChunk::ChangeMCCV(
 
   for (int i = 0; i < mapbufsize; ++i)
   {
-    dist = misc::dist(mVertices[i], pos);
+    dist = misc::dist(mWowVertices[i]._vertex, pos);
     if (dist <= radius)
     {
       float edit = change * (1.0f - dist / radius);
-      if (editMode)
-      {
-        mccv[i].x += (color.r / 0.5f - mccv[i].x)* edit;
-        mccv[i].y += (color.g / 0.5f - mccv[i].y)* edit;
-        mccv[i].z += (color.b / 0.5f - mccv[i].z)* edit;
-      }
-      else
-      {
-        mccv[i].x += (1.0f - mccv[i].x) * edit;
-        mccv[i].y += (1.0f - mccv[i].y) * edit;
-        mccv[i].z += (1.0f - mccv[i].z) * edit;
-      }
+      
+    mWowVertices[i]._mcvv.r += (1.0f - mWowVertices[i]._mcvv.r) * edit;
+    mWowVertices[i]._mcvv.g += (1.0f - mWowVertices[i]._mcvv.g) * edit;
+    mWowVertices[i]._mcvv.b += (1.0f - mWowVertices[i]._mcvv.b) * edit;
 
-      mccv[i].x = std::min(std::max(mccv[i].x, 0.0f), 2.0f);
-      mccv[i].y = std::min(std::max(mccv[i].y, 0.0f), 2.0f);
-      mccv[i].z = std::min(std::max(mccv[i].z, 0.0f), 2.0f);
+      mWowVertices[i]._mcvv.r = std::min(std::max(mWowVertices[i]._mcvv.r, 0.0f), 2.0f);
+      mWowVertices[i]._mcvv.g = std::min(std::max(mWowVertices[i]._mcvv.g, 0.0f), 2.0f);
+      mWowVertices[i]._mcvv.b = std::min(std::max(mWowVertices[i]._mcvv.b, 0.0f), 2.0f);
 
       changed = true;
     }
@@ -552,31 +635,6 @@ bool MapChunk::ChangeMCCV(
 
 
   return changed;
-}
-
-Ogre::Vector3 MapChunk::pickMCCV(Ogre::Vector3 const& pos)
-{
-  float dist;
-  float cur_dist = UNITSIZE;
-
-  if (!hasMCCV)
-  {
-    return Ogre::Vector3(1.0f, 1.0f, 1.0f);
-  }
-
-  int v_index = 0;
-  for (int i = 0; i < mapbufsize; ++i)
-  {
-    dist = misc::dist(mVertices[i], pos);
-    if (dist <= cur_dist)
-    {
-      cur_dist = dist;
-      v_index = i;
-    }
-  }
-
-  return mccv[v_index];
-
 }
 
 bool MapChunk::flattenTerrain (Ogre::Vector3 const& pos
@@ -676,11 +734,11 @@ bool MapChunk::fixGapLeft(const MapChunk* chunk)
 
   for (size_t i = 0; i <= 136; i+= 17)
   {
-    float h = chunk->mVertices[i + 8].y;
-    if (mVertices[i].y != h)
+    float h = chunk->mWowVertices[i + 8]._vertex.y;
+    if (mWowVertices[i]._vertex.y != h)
     {
-      mVertices[i].y = h;
-      changed = true;
+        mWowVertices[i]._vertex.y = h;
+        changed = true;
     }
   }
 
@@ -701,11 +759,11 @@ bool MapChunk::fixGapAbove(const MapChunk* chunk)
 
   for (size_t i = 0; i < 9; i++)
   {
-    float h = chunk->mVertices[i + 136].y;
-    if (mVertices[i].y != h)
+    float h = chunk->mWowVertices[i + 136]._vertex.y;
+    if (mWowVertices[i]._vertex.y != h)
     {
-      mVertices[i].y = h;
-      changed = true;
+        mWowVertices[i]._vertex.y = h;
+        changed = true;
     }
   }
 
@@ -730,9 +788,9 @@ void MapChunk::selectVertex(
 
   for (int i = 0; i < mapbufsize; ++i)
   {
-    if (misc::dist(pos.x, pos.z, mVertices[i].x, mVertices[i].z) <= radius)
+    if (misc::dist(pos.x, pos.z, mWowVertices[i]._vertex.x, mWowVertices[i]._vertex.z) <= radius)
     {
-      vertices.emplace(&mVertices[i]);
+      vertices.emplace(&mWowVertices[i]._vertex);
     }
   }
 }
@@ -748,7 +806,7 @@ void MapChunk::fixVertices(std::set<Ogre::Vector3*>& selected)
 
     for (int& index : ids)
     {
-      if (selected.find(&mVertices[index]) == selected.end())
+      if (selected.find(&mWowVertices[index]._vertex) == selected.end())
       {
         not_selected = index;
       }
@@ -756,17 +814,17 @@ void MapChunk::fixVertices(std::set<Ogre::Vector3*>& selected)
       {
         count++;
       }
-      h += mVertices[index].y;
+      h += mWowVertices[index]._vertex.y;
       index += (((i+1) % 8) == 0) ? 10 : 1;
     }
 
     if (count == 2)
     {
-      mVertices[mid_vertex].y = h * 0.25f;
+        mWowVertices[mid_vertex]._vertex.y = h * 0.25f;
     }
     else if (count == 3)
     {
-      mVertices[mid_vertex].y = (h - mVertices[not_selected].y) / 3.0f;
+        mWowVertices[mid_vertex]._vertex.y = (h - mWowVertices[not_selected]._vertex.y) / 3.0f;
     }
   }
 }
@@ -776,7 +834,7 @@ bool MapChunk::isBorderChunk(std::set<Ogre::Vector3*>& selected)
   for (int i = 0; i < mapbufsize; ++i)
   {
     // border chunk if at least a vertex isn't selected
-    if (selected.find(&mVertices[i]) == selected.end())
+    if (selected.find(&mWowVertices[i]._vertex) == selected.end())
     {
       return true;
     }

@@ -769,6 +769,7 @@
     <ClInclude Include="wow\map_index.hpp" />
     <ClInclude Include="wow\Misc.h" />
     <ClInclude Include="wow\Selection.h" />
+    <ClInclude Include="wow\texture_set.hpp" />
     <ClInclude Include="wow\TileWater.hpp" />
     <ClInclude Include="wow\tile_index.hpp" />
     <ClInclude Include="wow\tool_enums.hpp" />
@@ -1285,6 +1286,7 @@
     <ClCompile Include="wow\MapTile.cpp" />
     <ClCompile Include="wow\map_index.cpp" />
     <ClCompile Include="wow\Misc.cpp" />
+    <ClCompile Include="wow\texture_set.cpp" />
     <ClCompile Include="wow\TileWater.cpp" />
     <ClCompile Include="wow\WMO.cpp" />
     <ClCompile Include="wow\WMOInstance.cpp" />

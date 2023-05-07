@@ -11,6 +11,7 @@ LightFloatBandDB gLightFloatBandDB;
 GroundEffectDoodadDB gGroundEffectDoodadDB;
 GroundEffectTextureDB gGroundEffectTextureDB;
 LiquidTypeDB gLiquidTypeDB;
+AnimDB gAnimDB;
 
 DBCFile::DBCFile(const std::string&filename) : filename(filename)
 {
@@ -108,3 +109,12 @@ DBCFile::Iterator DBCFile::end()
 	return Iterator(*this, stringTable);
 }
 
+DBCFile::Record AnimDB::getByAnimID(unsigned int id)
+{
+	for (Iterator i = begin(); i != end(); ++i)
+	{
+		if (i->getUInt(AnimID) == id)
+			return (*i);
+	}
+	throw NotFound();
+}

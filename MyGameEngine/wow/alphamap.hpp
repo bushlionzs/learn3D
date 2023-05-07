@@ -8,12 +8,11 @@ class Alphamap
 {
 public:
   Alphamap();
-  Alphamap(
-	  std::shared_ptr<DataStream>& stream, 
-	  unsigned int flags, 
-	  bool use_big_alphamaps, 
-	  bool do_not_fix_alpha_map);
 
+  void load(std::shared_ptr<DataStream>& stream,
+	  unsigned int flags,
+	  bool use_big_alphamaps,
+	  bool do_not_fix_alpha_map);
   void setAlpha(size_t offset, unsigned char value);
   void setAlpha(unsigned char *pAmap);
 

@@ -135,7 +135,13 @@ void MapTile::finishLoading()
       while (lCurPos < lEnd)
       {
           name = lCurPos;
+          std::size_t found;
+          if ((found = name.rfind(".mdx")) != std::string::npos)
+          {
+              name.replace(found, 4, ".m2");
+          }
           stringToUpper(name);
+          
         mModelFilenames.push_back(name);
         lCurPos += strlen(lCurPos) + 1;
       }
@@ -238,36 +244,7 @@ void MapTile::finishLoading()
     }
   }
 
-  // - MTFX ----------------------------------------------
-  /*
-  //! \todo Implement this or just use Terrain Cube maps?
-  Log << "MTFX offs: " << Header.mtfx << std::endl;
-  if(Header.mtfx != 0){
-  Log << "Try to load MTFX" << std::endl;
-  theFile.seek( Header.mtfx + 0x14 );
-
-  theFile.read( &fourcc, 4 );
-  theFile.read( &size, 4 );
-
-  assert( fourcc == 'MTFX' );
-
-
-  {
-  char* lCurPos = reinterpret_cast<char*>( theFile.getPointer() );
-  char* lEnd = lCurPos + size;
-  int tCount = 0;
-  while( lCurPos < lEnd ) {
-  int temp = 0;
-  theFile.read(&temp, 4);
-  Log << "Adding to " << mTextureFilenames[tCount].first << " texture effect: " << temp << std::endl;
-  mTextureFilenames[tCount++].second = temp;
-  lCurPos += 4;
-  }
-  }
-
-  }*/
-
-  // - Done. ---------------------------------------------
+  
 
   // - Load textures -------------------------------------
 

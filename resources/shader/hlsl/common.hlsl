@@ -22,7 +22,7 @@ TextureCube gCubeMap : register(t0);
 Texture2D gShadowMap : register(t1);
 // An array of textures, which is only supported in shader model 5.1+.  Unlike Texture2DArray, the textures
 // in this array can be different sizes and formats, making it more flexible than texture arrays.
-Texture2D gTextureArray[4] : register(t2);
+Texture2D gTextureArray[5] : register(t2);
 
 
 

@@ -8,6 +8,7 @@
 #include "OgreDataStream.h"
 #include "Misc.h"
 #include "WMOInstance.h"
+#include "myutils.h"
 #include <forward_list>
 
 MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
@@ -25,7 +26,9 @@ MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
   std::stringstream filename;
   filename << "World\\Maps\\" << basename << "\\" << basename << ".wdt";
 
-  auto stream = ResourceManager::getSingleton().openResource(filename.str());
+  std::string wdtname = filename.str();
+  stringToUpper(wdtname);
+  auto stream = ResourceManager::getSingleton().openResource(wdtname);
   uint32_t fourcc;
   uint32_t size;
 
@@ -78,9 +81,10 @@ MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
 
           std::stringstream adt_filename;
           adt_filename << "World\\Maps\\" << basename << "\\" << basename << "_" << i << "_" << j << ".adt";
-
+          std::string adtname = adt_filename.str();
+          stringToUpper(adtname);
           mTiles[j][i].tile = nullptr;
-          mTiles[j][i].onDisc = ResourceManager::getSingleton().getResource(adt_filename.str()) != nullptr;
+          mTiles[j][i].onDisc = ResourceManager::getSingleton().hasResource(adtname);
 
           if (mTiles[j][i].onDisc && !(mTiles[j][i].flags & 1))
           {
@@ -231,16 +235,18 @@ MapTile* MapIndex::loadTile(const tile_index& tile, bool reloading)
 
   std::stringstream filename;
   filename << "World\\Maps\\" << basename << "\\" << basename << "_" << tile.x << "_" << tile.z << ".adt";
-
-  if (!ResourceManager::getSingleton().hasResource(filename.str()))
+ 
+  std::string mapname = filename.str();
+  stringToUpper(mapname);
+  if (!ResourceManager::getSingleton().hasResource(mapname))
   {
     return nullptr;
   }
   
-  mTiles[tile.z][tile.x].tile = std::make_unique<MapTile> (tile.x, tile.z, filename.str(), mBigAlpha, true, use_mclq_green_lava(), reloading, _world);
+  mTiles[tile.z][tile.x].tile = std::make_unique<MapTile> (tile.x, tile.z, mapname, mBigAlpha, true, use_mclq_green_lava(), reloading, _world);
 
   MapTile* adt = mTiles[tile.z][tile.x].tile.get();
-
+  adt->finishLoading();
   return adt;
 }
 

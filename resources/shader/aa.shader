@@ -270,3 +270,20 @@ shader shadows
 		frag_shader shadow.glsl ps
 	 }
 }
+
+shader wowterrain
+{
+    shader_unit
+	 {
+		shader_type directx
+		vertex_shader wowterrain.hlsl vs
+		frag_shader wowterrain.hlsl ps
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader wowterrain.glsl vs
+		frag_shader wowterrain.glsl ps
+	 }
+}
