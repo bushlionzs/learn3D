@@ -56,6 +56,7 @@ void OgreBlpImage::loadFromCompressedData(BLPHeader const* lHeader, std::shared_
 
 	int width = mImageData.width, height = mImageData.height;
 	mImageData.num_mipmaps = -1;
+	
 	for (int i = 0; i < 16; i++)
 	{
 		if (lHeader->sizes[i] <= 0 || lHeader->offsets[i] <= 0)

@@ -265,11 +265,18 @@ MapChunk::MapChunk(
   id->writeData((const char*)strip_with_holes.data(), 2 * strip_with_holes.size());
   CustomRenderable* renderable = new CustomRenderable(vd, id);
   std::shared_ptr<Material> mat = std::make_shared<Material>("");
-
-  for (uint32_t i = 0; i < texture_set->num(); i++)
+  uint32_t texcount = texture_set->num();
+  
+  for (uint32_t i = 0; i < texcount; i++)
   {
       const std::string& name = texture_set->filename(i);
       mat->addTexture(name);
+  }
+
+  
+  for(uint32_t i = texcount; i < 4; i++)
+  {
+      mat->addTexture("white1x1.dds");
   }
   IndexDataView* view = renderable->getIndexView();
   view->mIndexCount = strip_with_holes.size();

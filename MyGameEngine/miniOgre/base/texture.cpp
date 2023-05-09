@@ -186,8 +186,13 @@ namespace Ogre {
 		mTextureProperty._depth = mSrcDepth;
 		mTextureProperty._tex_format = mSrcFormat;
 		mTextureProperty._numMipmaps = images[0]->getNumMipmaps();
-		uint32 imageMips = images[0]->getNumMipmaps();
-		mNumMipmaps = imageMips;
+		mNumMipmaps = mTextureProperty._numMipmaps;
+
+		if (PixelUtil::isCompressed(mSrcFormat) && mNumMipmaps > 0)
+		{
+			mNumMipmaps = std::max((uint32_t)1, mNumMipmaps - 2);
+			mTextureProperty._numMipmaps = mNumMipmaps;
+		}
 
 		mFormat = PixelUtil::getFormatForBitDepths(mSrcFormat, 
 			0, 0);
@@ -215,7 +220,7 @@ namespace Ogre {
 		
 		int32_t mip = 0;
 		int32_t depth = 1;
-		for (uint32 mip = 0; mip <= imageMips; ++mip)
+		for (uint32 mip = 0; mip <= mNumMipmaps; ++mip)
 		{
 			for (uint32 i = 0; i < mFace; ++i)
 			{

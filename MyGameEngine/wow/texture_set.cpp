@@ -74,13 +74,14 @@ std::shared_ptr<ITexture> TextureSet::createAlphaMapTexture(const std::string& n
     TextureProperty texProperty;
     texProperty._width = 64;
     texProperty._height = 64;
-    texProperty._tex_format = PF_R8G8B8;
+    texProperty._tex_format = PF_BYTE_RGB;
+
     texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
     auto tex = TextureManager::getSingleton().createManual(name, texProperty);
 
     const auto& buffer = tex->getBuffer();
 
-    std::vector<uint8_t> amap(4 * 64 * 64);
+    std::vector<uint8_t> amap(3 * 64 * 64);
     uint8_t const* alpha_ptr[3];
 
     for (int i = 0; i < nTextures - 1; ++i)
@@ -88,8 +89,19 @@ std::shared_ptr<ITexture> TextureSet::createAlphaMapTexture(const std::string& n
         alpha_ptr[i] = alphamaps[i]->getAlpha();
     }
 
-    uint32_t size = buffer->getSizeInBytes();
-    buffer->writeData(0, size, amap.data());
+    for (int i = 0; i < 64 * 64; ++i)
+    {
+        for (int alpha_id = 0; alpha_id < 3; ++alpha_id)
+        {
+            amap[i * 3 + alpha_id] = (alpha_id < nTextures - 1)
+                ? *(alpha_ptr[alpha_id]++)
+                : 0
+                ;
+        }
+    }
+
+    PixelBox src(64, 64, 1, PF_BYTE_RGB, amap.data());
+    buffer->blitFromMemory(src);
     buffer->uploadData();
 
     return tex;
