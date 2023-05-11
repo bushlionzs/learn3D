@@ -64,7 +64,7 @@ bool ApplicationBase::appInit()
 
 	
 	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\resources"), "sujian", true);
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\shader"), "sujian", true);
+	addCustomDirectory();
 	ResourceManager::getSingletonPtr()->loadAllResource();
 	
 	mSceneManager = EngineManager::getSingletonPtr()->getSceneManager();

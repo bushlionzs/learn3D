@@ -7,6 +7,7 @@
 #include "myutils.h"
 #include "OgreResourceManager.h"
 #include "OgreMaterialManager.h"
+#include "OgreAnimationState.h"
 
 Basic::Basic()
 {
@@ -24,7 +25,24 @@ bool Basic::appInit()
 
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-	float aa = 1.0f;
+	std::string m2name = "CREATURE\\AKAMA\\AKAMA.M2";
+	m2name = "CREATURE\\GOBLIN\\GLBLINSHREDDER.M2";
+	m2name = "CREATURE\\GOBLIN\\GOBLIN.M2";
+	m2name = "ITEM\\OBJECTCOMPONENTS\\AMMO\\ARROWFIREFLIGHT_01.M2";
+	//m2name = "akama.mesh";
+	//m2name = "ninja.mesh";
+	auto mesh =
+	MeshManager::getSingletonPtr()->load(m2name);
+	Entity* m2 = mSceneManager->createEntity("m2", mesh);
+	SceneNode* gltfnode = root->createChildSceneNode("m2");
+	gltfnode->attachObject(m2);
+	//mAnimationState = m2->getAnimationState(std::string("Walk0"));
+	//if (mAnimationState)
+	//{
+	//	mAnimationState->setEnabled(true);
+	//	mAnimationState->setLoop(true);
+	//}
+	/*float aa = 1.0f;
 	Ogre::Vector3 leftop = Ogre::Vector3(-aa, aa, 0.0f);
 	Ogre::Vector3 leftbottom = Ogre::Vector3(-aa, -aa, 0.0f);
 	Ogre::Vector3 righttop = Ogre::Vector3(aa, aa, 0.0f);
@@ -35,11 +53,9 @@ bool Basic::appInit()
 		leftop, leftbottom, righttop, rightbottom, normal);
 	Entity* rect = mSceneManager->createEntity("rect", mesh);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
-	rectnode->attachObject(rect);
-	auto mat = MaterialManager::getSingleton().getByName("myrect2");
-	rect->setMaterial(0, mat);
+	rectnode->attachObject(rect);*/
 
-	mGameCamera->setDistance(5.0f);
+	mGameCamera->setDistance(3.0f);
 	mGameCamera->setMoveSpeed(25.0f);
 	return true;
 }
@@ -47,9 +63,18 @@ bool Basic::appInit()
 void Basic::appUpdate(float delta)
 {
 	ApplicationBase::appUpdate(delta);
+	if (mAnimationState)
+	{
+		mAnimationState->addTime(delta);
+	}
 }
 
 EngineType Basic::getEngineType()
 {
-	return EngineType_Vulkan;
+	return EngineType_Dx11;
+}
+
+void Basic::addCustomDirectory()
+{
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("D:\\wow3.3.5\\Data"), "wow", true);
 }

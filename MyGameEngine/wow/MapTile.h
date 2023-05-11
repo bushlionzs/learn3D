@@ -84,8 +84,15 @@ public:
 
   TileWater Water;
 
-  bool tile_is_being_reloaded() const { return _tile_is_being_reloaded; }
+  bool tile_is_being_reloaded() const 
+  { 
+      return _tile_is_being_reloaded; 
+  }
 
+
+private:
+    void createModel(const ENTRY_MDDF& entry);
+    void createWMO(const ENTRY_MODF& entry);
 private:
   tile_mode _mode;
   bool _tile_is_being_reloaded;

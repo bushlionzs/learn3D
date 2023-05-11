@@ -1,10 +1,10 @@
 #pragma once
 #include "application_base.h"
-class Basic : public ApplicationBase
+class gltfModel : public ApplicationBase
 {
 public:
-	Basic();
-	~Basic();
+	gltfModel();
+	~gltfModel();
 	virtual bool appInit();
 	virtual void appUpdate(float delta);
 	virtual bool isUseMyGUI()
@@ -12,8 +12,4 @@ public:
 		return false;
 	}
 	EngineType getEngineType();
-
-	void addCustomDirectory();
-private:
-	AnimationState* mAnimationState = nullptr;
 };

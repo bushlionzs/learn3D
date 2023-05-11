@@ -23,6 +23,7 @@ public:
 	{
 		return true;
 	}
+	virtual void addCustomDirectory() {}
 private:
 	virtual bool frameStarted(const FrameEvent& evt);
 	void ShowFrameFrequency();

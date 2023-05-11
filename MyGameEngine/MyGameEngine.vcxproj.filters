@@ -2373,6 +2373,9 @@
     <ClInclude Include="wow\texture_set.hpp">
       <Filter>wow</Filter>
     </ClInclude>
+    <ClInclude Include="wow\wowParticle.h">
+      <Filter>wow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="miniOgre\base\OgreAlignedAllocator.cpp">
@@ -3912,6 +3915,9 @@
       <Filter>wow</Filter>
     </ClCompile>
     <ClCompile Include="wow\texture_set.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\wowParticle.cpp">
       <Filter>wow</Filter>
     </ClCompile>
   </ItemGroup>

@@ -64,8 +64,6 @@ public:
   unsigned int getAreaID (Ogre::Vector3 const&);
   void setAreaID(Ogre::Vector3 const& pos, int id, bool adt);
 
-  
-
 private:
   // Information about the currently selected model / WMO / triangle.
   std::vector<selection_type> _current_selection;
@@ -225,6 +223,8 @@ public:
   Ogre::Vector3 const& vertexCenter();
 
   void recalc_norms (MapChunk*) const;
+
+  void loadDB();
 
   bool need_model_updates = false;
 

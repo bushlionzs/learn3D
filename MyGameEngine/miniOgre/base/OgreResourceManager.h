@@ -34,6 +34,7 @@ namespace Ogre {
         bool _addResource(
             const String& name, 
             ResourceInfo* res, 
+            bool forceUpdate = false,
             const String& group = BLANKSTRING);
         virtual void _notifyResourceLoaded(Resource* res) {}
 

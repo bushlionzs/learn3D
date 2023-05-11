@@ -75,7 +75,7 @@ std::shared_ptr<Ogre::Mesh> M2Loader::loadMeshFromFile(std::shared_ptr<Ogre::Dat
 	initCommon(stream.get());
 
 	animated = isAnimated(stream.get());
-
+	animated = false;
 	if (animated)
 	{
 		initAnimated(stream.get());
@@ -86,6 +86,16 @@ std::shared_ptr<Ogre::Mesh> M2Loader::loadMeshFromFile(std::shared_ptr<Ogre::Dat
 
 	mesh = std::shared_ptr<Ogre::Mesh>(mMesh);
 	return mesh;
+}
+
+std::string M2Loader::getTexture(uint32_t i)
+{
+	return texnames[i];
+}
+
+Bone* M2Loader::getBone(uint32_t i)
+{
+	return mSkeleton->getBone(i);
 }
 
 void M2Loader::initCommon(Ogre::DataStream* stream)
@@ -150,6 +160,11 @@ void M2Loader::initCommon(Ogre::DataStream* stream)
 				}
 			}
 		}
+	}
+
+	if (mHeader.nTexAnims > 0)
+	{
+
 	}
 
 	if (mHeader.nAttachments)
@@ -219,12 +234,6 @@ Ogre::Vector3 M2Loader::getBoneParentTrans(int n) const
 
 void M2Loader::initAnimated(Ogre::DataStream* stream)
 {
-	std::string animdbcname = gAnimDB.getFilename();
-
-	auto animdb_stream = ResourceManager::getSingleton().openResource(animdbcname);
-	gAnimDB.open(animdb_stream.get());
-
-
 	mSkeleton = new Skeleton(mName);
 	if (mHeader.nAnimations > 0) {
 		mAnimations.resize(mHeader.nAnimations);
@@ -244,17 +253,11 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 	}
 
 	if (animBones) {
-		// init bones...
-		
 		bones.resize(mHeader.nBones);
 		std::vector<std::shared_ptr<DataStream>> animfiles(mHeader.nAnimations);
 		for (uint32_t i = 0; i < mHeader.nAnimations; i++)
 		{
 			auto anim = ResourceManager::getSingleton().openResource(mAnimNamefiles[i]);
-			if (anim)
-			{
-				int kk = 0;
-			}
 			animfiles[i] = anim;
 		}
 		ModelBoneDef* mb = (ModelBoneDef*)(stream->getStreamData() + mHeader.ofsBones);
@@ -272,17 +275,17 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 			bone->setPosition(pos);
 		}
 
-		// Block keyBoneLookup is a lookup table for Key Skeletal Bones, hands, arms, legs, etc.
-		if (mHeader.nKeyBoneLookup < BONE_MAX) {
+		if (mHeader.nKeyBoneLookup < BONE_MAX)
+		{
 			memcpy(keyBoneLookup, stream->getStreamData() + mHeader.ofsKeyBoneLookup,
 				sizeof(int16) * mHeader.nKeyBoneLookup);
 		}
-		else {
+		else
+		{
 			memcpy(keyBoneLookup, stream->getStreamData() + mHeader.ofsKeyBoneLookup,
 				sizeof(int16) * BONE_MAX);
 		}
 
-		//to ogre skeleton
 		std::string aniname;
 		for (uint32_t animIdx = 0; animIdx < mHeader.nAnimations; animIdx++)
 		{
@@ -326,7 +329,6 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 							if (it->second & KEY_SCALE) 
 							{
 								Ogre::Vector3& v = b.scale.data[animIdx][nscale];
-								//frame->setScale(v);
 								nscale++;
 							}
 						}
@@ -360,7 +362,6 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 
 bool M2Loader::isAnimated(Ogre::DataStream* stream)
 {
-	// see if we have any animated bones
 	ModelBoneDef* bo = (ModelBoneDef*)(stream->getStreamData() + mHeader.ofsBones);
 
 	animGeometry = false;
@@ -509,7 +510,8 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 		mat->addTexture(texname);
 		ShaderInfo info;
 		info.shaderName = "basic";
-		info.shaderMacros.emplace_back("SKINNED", "1");
+		/*if(animated)
+			info.shaderMacros.emplace_back("SKINNED", "1");*/
 		mat->addShader(info);
 		mat->setCullMode(CULL_NONE);
 		if (pass.noZWrite)
@@ -519,15 +521,15 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 
 		if (pass.blendmode == BM_OPAQUE)
 		{
+			int kk = 0;
+		}
+		else if (pass.blendmode == BM_TRANSPARENT)
+		{
 			blendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
 			blendState.destFactor = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
 			blendState.sourceFactorAlpha = Ogre::SBF_SOURCE_ALPHA;
 			blendState.destFactorAlpha = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
 			mat->setBlendState(blendState);
-		}
-		else if (pass.blendmode == BM_TRANSPARENT)
-		{
-			
 		}
 		else if (pass.blendmode == BM_ADDITIVE_ALPHA)
 		{

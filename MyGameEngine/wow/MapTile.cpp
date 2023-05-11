@@ -6,6 +6,11 @@
 #include "OgreDataStream.h"
 #include "myutils.h"
 #include "Misc.h"
+#include "M2Loader.h"
+#include "engine_manager.h"
+#include "OgreSceneManager.h"
+#include "OgreMeshManager.h"
+#include "OgreEntity.h"
 #include <algorithm>
 #include <cassert>
 #include <list>
@@ -263,7 +268,7 @@ void MapTile::finishLoading()
 
     for (auto const& model : lModelInstances)
     {
-      
+        createModel(model);
     }
 
    
@@ -392,4 +397,46 @@ void MapTile::add_model(uint32_t uid)
   {
     uids.push_back(uid);
   }
+}
+
+inline float normalize_degrees(float deg)
+{
+    return deg - std::floor((deg + 180.f) / 360.f) * 360.f;
+}
+
+void MapTile::createModel(const ENTRY_MDDF& entry)
+{
+    std::string& modelname = mModelFilenames[entry.nameID];
+
+    auto mesh = MeshManager::getSingleton().load(modelname);
+
+    Ogre::SceneManager*  sceneMgr = EngineManager::getSingleton().getSceneManager();
+
+    std::string entryname = modelname + std::to_string(entry.uniqueID);
+    Entity* entity = sceneMgr->createEntity(entryname, mesh);
+    SceneNode* root = sceneMgr->getRoot();
+    SceneNode* node = root->createChildSceneNode(entryname);
+    node->attachObject(entity);
+
+    node->setPosition(Ogre::Vector3(entry.pos[0], entry.pos[1], entry.pos[2]));
+
+    Ogre::Vector3 dir = Ogre::Vector3(
+        normalize_degrees(entry.rot[0]),
+        normalize_degrees(entry.rot[1]),
+        normalize_degrees(entry.rot[2]));
+
+
+    Matrix3 rotMatrix;
+    rotMatrix.FromEulerAnglesXYZ(Ogre::Radian(Ogre::Degree(-dir.z)), Ogre::Radian(Ogre::Degree(dir.y - 90.0f)), Ogre::Radian(Ogre::Degree(dir.x)));
+    Ogre::Quaternion q(rotMatrix);
+    node->setOrientation(q);
+    float scale = entry.scale / 1024.0f;
+
+    node->setScale(Ogre::Vector3(scale, scale, scale));
+
+}
+
+void MapTile::createWMO(const ENTRY_MODF& entry)
+{
+
 }

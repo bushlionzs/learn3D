@@ -27,6 +27,7 @@
 #include <variant>
 #include "OgreDataStream.h"
 #include "OgreResourceManager.h"
+#include "dbcfile.h"
 
 bool World::IsEditableWorld(int pMapId)
 {
@@ -85,7 +86,7 @@ World::World(const std::string& name, int map_id)
   , culldistance(fogdistance)
   , _current_selection()
 {
-  
+    loadDB();
 }
 
 void World::update_selection_pivot()
@@ -902,4 +903,12 @@ void World::update_models_by_filename()
   _models_by_filename.clear();
 
   need_model_updates = false;
+}
+
+void World::loadDB()
+{
+    std::string animdbcname = gAnimDB.getFilename();
+
+    auto animdb_stream = ResourceManager::getSingleton().openResource(animdbcname);
+    gAnimDB.open(animdb_stream.get());
 }

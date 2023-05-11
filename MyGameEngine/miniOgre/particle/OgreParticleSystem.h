@@ -331,7 +331,7 @@ namespace Ogre {
         */
         virtual const String& getMaterialName(void) const;
 
-        virtual void _notifyCurrentCamera(Camera* cam);
+        virtual void _notifyCurrentCamera(ICamera* cam);
         void _notifyAttached(Node* parent, bool isTagPoint = false) ;
         virtual const AxisAlignedBox& getBoundingBox(void) const  { return mAABB; }
         virtual Real getBoundingRadius(void) const  { return mBoundingRadius; }

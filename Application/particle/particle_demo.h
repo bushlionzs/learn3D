@@ -1,10 +1,10 @@
 #pragma once
 #include "application_base.h"
-class Basic : public ApplicationBase
+class ParticleDemo : public ApplicationBase
 {
 public:
-	Basic();
-	~Basic();
+	ParticleDemo();
+	~ParticleDemo();
 	virtual bool appInit();
 	virtual void appUpdate(float delta);
 	virtual bool isUseMyGUI()

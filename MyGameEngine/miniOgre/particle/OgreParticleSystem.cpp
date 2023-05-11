@@ -518,13 +518,10 @@ namespace Ogre {
 
     const std::vector<Renderable*>& ParticleSystem::getRenderableList()
     {
-        
-
         if (mRenderables.empty())
         {
             mRenderables.push_back(mRenderer->getRenderable());
         }
-        ;
         return mRenderables;
     }
 
@@ -943,8 +940,9 @@ namespace Ogre {
         return mDefaultHeight;
     }
     //-----------------------------------------------------------------------
-    void ParticleSystem::_notifyCurrentCamera(Camera* cam)
+    void ParticleSystem::_notifyCurrentCamera(ICamera* cam)
     {
+        Camera* pCamera = (Camera*)cam;
         if (true)
         {
             mLastVisibleFrame = Root::getSingleton().getNextFrameNumber();
@@ -952,7 +950,7 @@ namespace Ogre {
 
             if (mSorted)
             {
-                _sortParticles(cam);
+                _sortParticles(pCamera);
             }
 
             if (mRenderer)
@@ -960,7 +958,7 @@ namespace Ogre {
                 if (!mIsRendererConfigured)
                     configureRenderer();
 
-                mRenderer->_notifyCurrentCamera(cam);
+                mRenderer->_notifyCurrentCamera(pCamera);
             }
         }
     }

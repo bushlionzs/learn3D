@@ -189,13 +189,18 @@ namespace Ogre {
     bool ResourceManager::_addResource(
         const String& name,
         ResourceInfo* res,
+        bool forceUpdate,
         const String& group)
     {
         auto itor = mResourceMap.find(name);
         if (itor != mResourceMap.end())
         {
             //OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "resource already exist!");
-            return false;
+            if(!forceUpdate)
+                return false;
+            delete itor->second;
+            itor->second = res;
+            return true;
         }
 
         mResourceMap[name] = res;

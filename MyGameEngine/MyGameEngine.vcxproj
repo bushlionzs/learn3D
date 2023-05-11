@@ -777,6 +777,7 @@
     <ClInclude Include="wow\WMOInstance.h" />
     <ClInclude Include="wow\wmo_liquid.hpp" />
     <ClInclude Include="wow\World.h" />
+    <ClInclude Include="wow\wowParticle.h" />
     <ClInclude Include="wow\wowUtil.h" />
   </ItemGroup>
   <ItemGroup>
@@ -1292,6 +1293,7 @@
     <ClCompile Include="wow\WMOInstance.cpp" />
     <ClCompile Include="wow\wmo_liquid.cpp" />
     <ClCompile Include="wow\World.cpp" />
+    <ClCompile Include="wow\wowParticle.cpp" />
     <ClCompile Include="wow\wowUtil.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

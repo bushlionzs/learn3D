@@ -220,7 +220,7 @@ namespace Ogre {
 		
 		int32_t mip = 0;
 		int32_t depth = 1;
-		for (uint32 mip = 0; mip <= mNumMipmaps; ++mip)
+		for (uint32 mip = 0; mip <= std::min(mNumMipmaps, mTextureProperty._numMipmaps); ++mip)
 		{
 			for (uint32 i = 0; i < mFace; ++i)
 			{

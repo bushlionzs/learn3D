@@ -38,7 +38,11 @@ namespace Ogre {
             {
                 continue;
             }
-            it->_notifyCurrentCamera(cam);
+            if (!useShadow)
+            {
+                it->_notifyCurrentCamera(cam);
+            }
+            
             const AxisAlignedBox& box = it->getWorldBoundingBox(true);
             if (!cam->isVisible(box))
             {

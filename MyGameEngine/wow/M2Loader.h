@@ -12,7 +12,11 @@ class M2Loader: public ModelLoader
 public:
 	M2Loader();
 	~M2Loader();
-	virtual std::shared_ptr<Ogre::Mesh> loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream);
+	virtual std::shared_ptr<Ogre::Mesh> loadMeshFromFile(
+		std::shared_ptr<Ogre::DataStream>& stream);
+
+	std::string getTexture(uint32_t i);
+	Bone* getBone(uint32_t i);
 private:
 	void initCommon(Ogre::DataStream* stream);
 	void initAnimated(Ogre::DataStream* stream);

@@ -314,7 +314,7 @@ public:
 class AnimDB : public DBCFile
 {
 public:
-	AnimDB() : DBCFile("DBFilesClient\\AnimationData.dbc") {}
+	AnimDB() : DBCFile("DBFILESCLIENT\\ANIMATIONDATA.DBC") {}
 	~AnimDB() {}
 
 	/// Fields

@@ -1,10 +1,13 @@
 #pragma once
 #include "application_base.h"
-class Basic : public ApplicationBase
+
+class World;
+
+class WowMap : public ApplicationBase
 {
 public:
-	Basic();
-	~Basic();
+	WowMap();
+	~WowMap();
 	virtual bool appInit();
 	virtual void appUpdate(float delta);
 	virtual bool isUseMyGUI()
@@ -16,4 +19,6 @@ public:
 	void addCustomDirectory();
 private:
 	AnimationState* mAnimationState = nullptr;
+
+	World* mWorld = nullptr;
 };

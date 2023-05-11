@@ -16,13 +16,20 @@ MPQArchive::MPQArchive(const String& name)
 
 void MPQArchive::load()
 {
-
+    static std::set<std::string> patches = {"patch-2.MPQ", "patch-3.MPQ", "patch-7.MPQ"};
+    
     if (!SFileOpenArchive(_mpqName.c_str(), 0, 
         MPQ_OPEN_NO_LISTFILE | STREAM_FLAG_READ_ONLY, &_archiveHandle))
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to open mpq!");
     }
 
+    bool forceUpdate = false;
+    std::string shortname = getShortFilename(_mpqName);
+    if (patches.count(shortname))
+    {
+        forceUpdate = true;
+    }
     HANDLE fh;
 
 
@@ -44,15 +51,15 @@ void MPQArchive::load()
             if (c == '\n')
             {
                 stringToUpper(current);
-                ResourceInfo* res = new ResourceInfo();
-                const char* aa = getSuffix(current);
-                if (aa && strcmp(aa, ".ANIM") == 0)
+                std::string aa = getShortFilename(current);
+                if (aa == "ARROWFLIGHT_01.M2")
                 {
                     int kk = 0;
                 }
+                ResourceInfo* res = new ResourceInfo();
                 res->_fullname = current;
                 res->_base = this;
-                bool add = ResourceManager::getSingleton()._addResource(current, res);
+                bool add = ResourceManager::getSingleton()._addResource(current, res, forceUpdate);
                 if (!add)
                 {
                     delete res;
@@ -67,15 +74,17 @@ void MPQArchive::load()
 
         if (!current.empty())
         {
+            std::string aa = getShortFilename(current);
+            if (aa == "arrowflight_01.m2")
+            {
+                int kk = 0;
+            }
             stringToUpper(current);
             ResourceInfo* res = new ResourceInfo();
             res->_fullname = current;
             res->_base = this;
-            if (current == "CREATURE\\AKAMA\\AKAMA.M2")
-            {
-                int kk = 0;
-            }
-            ResourceManager::getSingleton()._addResource(current, res);
+            
+            ResourceManager::getSingleton()._addResource(current, res, forceUpdate);
             current.clear();
         }
 
