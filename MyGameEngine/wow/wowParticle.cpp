@@ -3,10 +3,47 @@
 #include "wowUtil.h"
 #include "M2Loader.h"
 #include "OgreBone.h"
-
+#include "vertex_data.h"
+#include "index_data.h"
+#include "vertex_declaration.h"
+#include "OgreHardwareVertexBuffer.h"
+#include "OgreHardwareIndexBuffer.h"
+#include "OgreCamera.h"
+#include "OgreMaterial.h"
+#include "OgreController.h"
+#include "OgreControllerManager.h"
+#include "engine_manager.h"
+#include "OgreSceneNode.h"
 
 #define MAX_PARTICLES 10000
 bool bZeroParticle = true;
+
+class WowParticleSystemUpdateValue : public ControllerValue<Real>
+{
+protected:
+	std::vector<WowParticleSystem*> mParticleSystemVector;
+public:
+	WowParticleSystemUpdateValue()
+	{
+
+	}
+
+	Real getValue(void) const { return 0; } // N/A
+
+	void setValue(Real value)
+	{
+		return;
+		for (auto ps : mParticleSystemVector)
+		{
+			ps->update(value);
+		}
+	}
+
+	void addParticleSystem(WowParticleSystem* ps)
+	{
+		mParticleSystemVector.push_back(ps);
+	}
+};
 
 Ogre::ColourValue fromARGB(uint32 color)
 {
@@ -26,12 +63,51 @@ T lifeRamp(float life, float mid, const T &a, const T &b, const T &c)
 		return interpolate<T>((life-mid) / (1.0f-mid),b,c);
 }
 
+WowParticleSystem::WowParticleSystem() : mid(0), emitter(0), rem(0)
+{
+	blend = 0;
+	order = 0;
+	ParticleType = 0;
+	manim = 0;
+	mtime = 0;
+	rows = 0;
+	cols = 0;
+
+	parent = 0;
+
+	slowdown = 0;
+	rotation = 0;
+	tofs = 0;
+
+	static WowParticleSystemUpdateValue* pWowParticleSystemUpdateValue = nullptr;
+
+	if (!pWowParticleSystemUpdateValue)
+	{
+		pWowParticleSystemUpdateValue = new WowParticleSystemUpdateValue();
+
+		ControllerManager& mgr = ControllerManager::getSingleton();
+
+		ControllerValueRealPtr updValue(pWowParticleSystemUpdateValue);
+
+		mgr.createFrameTimePassthroughController(updValue);
+	}
+
+	pWowParticleSystemUpdateValue->addParticleSystem(this);
+
+	auto root = EngineManager::getSingleton().getBaseSceneNode();
+
+	auto sub = root->createChildSceneNode("");
+
+	sub->attachObject(this);
+}
+
 void WowParticleSystem::init(
 	std::shared_ptr<DataStream>& stream, 
 	ModelParticleEmitterDef &mta,
 	uint32 *globals,
 	M2Loader* model)
 {
+	mtime = 0.0f;
 	speed.init (mta.EmissionSpeed, stream.get(), globals);
 	variation.init (mta.SpeedVariation, stream.get(), globals);
 	spread.init (mta.VerticalRange, stream.get(), globals);
@@ -90,6 +166,7 @@ void WowParticleSystem::init(
 		break;
 	case MODELPARTICLE_EMITTER_SPLINE: // Spline? (can't be bothered to find one)
 	default:
+		assert(false);
 		break;
 	}
 
@@ -101,6 +178,89 @@ void WowParticleSystem::init(
 		initTile(tc.tc, i);
 		tiles.push_back(tc);
 	}
+
+	//create vertex buffer and index buffer
+
+	mVertexData.reset(new VertexData);
+	mVertexData->vertexCount = maxParticles;
+	mVertexData->vertexSlotInfo.emplace_back();
+	mVertexData->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+	mVertexData->vertexDeclaration->addElement(0, 0, 12, VET_UBYTE4_NORM, VES_DIFFUSE);
+	mVertexData->vertexDeclaration->addElement(0, 0, 16, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+	auto& back = mVertexData->vertexSlotInfo.back();
+	//position
+	//color
+	//texcoord
+	uint32_t vertexSize = 4*3 + 4 + 4*2;
+	back.createBuffer(vertexSize, maxParticles + 10);
+	mIndexDataView.reset(new IndexDataView);
+	mIndexDataView->mIndexCount = 0;
+	mIndexDataView->mBaseVertexLocation = 0;
+	mIndexDataView->mIndexLocation = 0;
+	mIndexData.reset(new IndexData());
+	mIndexData->mIndexStart = 0;
+	mIndexData->mIndexCount = maxParticles * 6;
+	mIndexData->createBuffer(2, mIndexData->mIndexCount);
+	/* Create indexes (will be the same every frame)
+	   Using indexes because it means 1/3 less vertex transforms (4 instead of 6)
+
+	   Billboard layout relative to camera:
+
+		0-----1
+		|    /|
+		|  /  |
+		|/    |
+		2-----3
+	*/
+
+	HardwareBufferLockGuard lockGuard(mIndexData->mIndexBuffer.get());
+	uint16_t* pIdx = (uint16_t*)lockGuard.data();
+
+	for (size_t idx, idxOff, bboard = 0; bboard < maxParticles; ++bboard)
+	{
+		// Do indexes
+		idx = bboard * 6;
+		idxOff = bboard * 4;
+
+		pIdx[idx] = static_cast<unsigned short>(idxOff); // + 0;, for clarity
+		pIdx[idx + 1] = static_cast<unsigned short>(idxOff + 2);
+		pIdx[idx + 2] = static_cast<unsigned short>(idxOff + 1);
+		pIdx[idx + 3] = static_cast<unsigned short>(idxOff + 1);
+		pIdx[idx + 4] = static_cast<unsigned short>(idxOff + 2);
+		pIdx[idx + 5] = static_cast<unsigned short>(idxOff + 3);
+	}
+
+	mMaterial = std::make_shared<Material>("wowParticle");
+	mMaterial->addTexture(texture);
+
+	Ogre::ColourBlendState blendState;
+
+	if (blend == BM_TRANSPARENT)
+	{
+		blendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
+		blendState.destFactor = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
+		blendState.sourceFactorAlpha = Ogre::SBF_SOURCE_ALPHA;
+		blendState.destFactorAlpha = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
+		mMaterial->setBlendState(blendState);
+	}
+	else if (blend == BM_ADDITIVE_ALPHA)
+	{
+		blendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
+		blendState.destFactor = Ogre::SBF_ONE;
+		blendState.sourceFactorAlpha = Ogre::SBF_SOURCE_ALPHA;
+		blendState.destFactorAlpha = Ogre::SBF_ONE;
+		mMaterial->setBlendState(blendState);
+	}
+
+	ShaderInfo info;
+	info.shaderName = "ogreparticle";
+	mMaterial->addShader(info);
+
+	static int aa = 0;
+	index = aa++;
+
+	if(index == 1)
+		mRenderables.push_back(this);
 }
 
 void WowParticleSystem::initTile(Ogre::Vector2 *tc, int num)
@@ -129,6 +289,10 @@ void WowParticleSystem::initTile(Ogre::Vector2 *tc, int num)
 
 void WowParticleSystem::update(float dt)
 {
+	if (index != 1)
+	{
+		return;
+	}
 	size_t l_manim = manim;
 	if (bZeroParticle)
 		l_manim = 0;
@@ -136,7 +300,8 @@ void WowParticleSystem::update(float dt)
 	float deaccel = deacceleration.getValue(l_manim, mtime);
 
 	// spawn new particles
-	if (emitter) {
+	if (emitter)
+	{
 		float frate = rate.getValue(l_manim, mtime);
 		float flife = lifespan.getValue(l_manim, mtime);
 
@@ -149,11 +314,16 @@ void WowParticleSystem::update(float dt)
 			rem = ftospawn;
 			if (rem < 0) 
 				rem = 0;
-		} else {
+		} 
+		else
+		{
 			unsigned int tospawn = (int)ftospawn;
 
-			if ((tospawn + particles.size()) > MAX_PARTICLES) // Error check to prevent the program from trying to load insane amounts of particles.
-				tospawn = (unsigned int)(MAX_PARTICLES - particles.size());
+			if ((tospawn + particles.size()) > maxParticles)
+			{
+				tospawn = (unsigned int)(maxParticles - particles.size());
+			}
+				
 
 			rem = ftospawn - (float)tospawn;
 
@@ -179,13 +349,16 @@ void WowParticleSystem::update(float dt)
 		}
 	}
 
+	
 	float mspeed = 1.0f;
 
-	for (ParticleList::iterator it = particles.begin(); it != particles.end(); ) {
+	for (auto it = particles.begin(); it != particles.end(); )
+	{
 		WowParticle&p = *it;
 		p.speed += p.down * grav * dt - p.dir * deaccel * dt;
 
-		if (slowdown>0) {
+		if (slowdown>0)
+		{
 			mspeed = expf(-1.0f * slowdown * p.life);
 		}
 		p.pos += p.speed * mspeed * dt;
@@ -198,10 +371,100 @@ void WowParticleSystem::update(float dt)
 
 		// kill off old particles
 		if (rlife >= 1.0f) 
-			particles.erase(it++);
+			it = particles.erase(it);
 		else 
 			++it;
 	}
+
+	
+	mIndexDataView->mIndexCount = particles.size() * 6;
+
+	Ogre::Vector3 vRight(1.0f, 0.0f, 0.0f);
+	Ogre::Vector3 vUp(0.0f, 1.0f, 0.0f);
+
+	if (billboard)
+	{
+		Camera* cam = (Camera*)mCamera;
+		if (cam)
+		{
+			Quaternion camQ = cam->getDerivedOrientation();
+			vRight = camQ * Vector3::UNIT_X;
+			vUp = camQ * Vector3::UNIT_Y;
+		}
+		
+	}
+
+	RGBA* pCol;
+	std::shared_ptr<Ogre::HardwareVertexBuffer>& buf = mVertexData->vertexSlotInfo.back().hardwareVertexBuffer;
+	float* lockPtr = reinterpret_cast<float*>(buf->lock());
+	float* firstPtr = lockPtr;
+	uint32_t kk = 0;
+	for (auto it = particles.begin(); it != particles.end(); it++)
+	{
+		kk++;
+		const float size = it->size;
+		RGBA colour = it->color.getAsBYTE();
+		
+		//top-left
+		Ogre::Vector3 leftTop = it->pos - (vRight - vUp) * size;
+		*lockPtr++ = leftTop.x;
+		*lockPtr++ = leftTop.y;
+		*lockPtr++ = leftTop.z;
+
+		pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
+		*pCol++ = colour;
+		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
+		
+		*lockPtr++ = tiles[it->tile].tc[3].x;
+		*lockPtr++ = tiles[it->tile].tc[3].y;
+
+		//top-right
+		Ogre::Vector3 topRight = it->pos + (vRight + vUp) * size;
+		*lockPtr++ = topRight.x;
+		*lockPtr++ = topRight.y;
+		*lockPtr++ = topRight.z;
+
+		pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
+		*pCol++ = colour;
+		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
+
+		*lockPtr++ = tiles[it->tile].tc[2].x;
+		*lockPtr++ = tiles[it->tile].tc[2].y;
+
+		//left-bottom
+		Ogre::Vector3 leftBottom = it->pos - (vRight + vUp) * size;
+		*lockPtr++ = leftBottom.x;
+		*lockPtr++ = leftBottom.y;
+		*lockPtr++ = leftBottom.z;
+
+		pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
+		*pCol++ = colour;
+		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
+
+		*lockPtr++ = tiles[it->tile].tc[0].x;
+		*lockPtr++ = tiles[it->tile].tc[0].y;
+
+		//right-bottom
+
+		Ogre::Vector3 rightBottom = it->pos + (vRight - vUp) * size;
+		*lockPtr++ = rightBottom.x;
+		*lockPtr++ = rightBottom.y;
+		*lockPtr++ = rightBottom.z;
+
+		pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
+		*pCol++ = colour;
+		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
+
+		*lockPtr++ = tiles[it->tile].tc[1].x;
+		*lockPtr++ = tiles[it->tile].tc[1].y;
+	}
+
+	uint32_t size = lockPtr - firstPtr;
+	if (size > 2400)
+	{
+		int kk = 0;
+	}
+	buf->unlock();
 }
 
 void WowParticleSystem::setup(size_t anim, size_t time)
@@ -210,9 +473,16 @@ void WowParticleSystem::setup(size_t anim, size_t time)
 	mtime = time;
 }
 
-void WowParticleSystem::draw()
+const AxisAlignedBox& WowParticleSystem::getBoundingBox(void) const
 {
-	
+	static AxisAlignedBox box;
+	box.setInfinite();
+	return box;
+}
+
+void WowParticleSystem::_notifyCurrentCamera(ICamera* cam)
+{
+	mCamera = cam;
 }
 
 Matrix4 CalcSpreadMatrix(float Spread1,float Spread2, float w, float l)
@@ -231,7 +501,7 @@ Matrix4 CalcSpreadMatrix(float Spread1,float Spread2, float w, float l)
 		c[i]=cos(a[i]);
 		s[i]=sin(a[i]);
 	}
-	Temp = Matrix3::IDENTITY;
+	Temp = Matrix4::IDENTITY;
 	Temp[1][1]=c[0];
 	Temp[2][1]=s[0];
 	Temp[2][2]=c[0];
@@ -239,7 +509,7 @@ Matrix4 CalcSpreadMatrix(float Spread1,float Spread2, float w, float l)
 
 	SpreadMat=SpreadMat*Temp;
 
-	Temp = Matrix3::IDENTITY;
+	Temp = Matrix4::IDENTITY;
 	Temp[0][0]=c[1];
 	Temp[1][0]=s[1];
 	Temp[1][1]=c[1];
@@ -262,7 +532,6 @@ WowParticle PlaneParticleEmitter::newParticle(
 
 	//Spread Calculation
 	Matrix4 SpreadMat = CalcSpreadMatrix(spr, spr, 1.0f, 1.0f);
-
 	Matrix4 mrot = Matrix4::IDENTITY;
 	Matrix4 mat = Matrix4::IDENTITY;
 	mrot = mrot*SpreadMat;
@@ -277,8 +546,8 @@ WowParticle PlaneParticleEmitter::newParticle(
 
 		Ogre::Vector3 dir(0.0f, 1.0f, 0.0f);
 		p.dir = dir;
-
-		p.speed = dir.normalise() * spd * randfloat(0, var);
+		dir.normalise();
+		p.speed = dir * spd * randfloat(0, var);
 	} 
 	else if (sys->flags == 25 ) 
 	{ // Weapon Flame
@@ -292,13 +561,14 @@ WowParticle PlaneParticleEmitter::newParticle(
 	else 
 	{
 		p.pos = sys->pos + Ogre::Vector3(randfloat(-l,l), 0, randfloat(-w,w));
-		p.pos = mat * p.pos;
 
-		Ogre::Vector3 dir = mrot * Ogre::Vector3(0,1,0);
+		Ogre::Vector3 dir = Ogre::Vector3(0,1,0);
 		
 		p.dir = dir;//.normalize();
 		p.down = Ogre::Vector3(0,-1.0f,0); // dir * -1.0f;
-		p.speed = dir.normalise() * spd * (1.0f+randfloat(-var,var));
+		float tmp = spd * (1.0f + randfloat(-var, var));
+		dir.normalise();
+		p.speed = dir * tmp;
 	}
 
 	if(!sys->billboard)	{
@@ -319,6 +589,11 @@ WowParticle PlaneParticleEmitter::newParticle(
 	p.origin = p.pos;
 
 	p.tile = randint(0, sys->rows*sys->cols-1);
+
+	if (p.tile >= sys->rows * sys->cols)
+	{
+		p.tile = sys->rows * sys->cols - 1;
+	}
 	return p;
 }
 

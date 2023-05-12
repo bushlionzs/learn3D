@@ -7,7 +7,7 @@
 
 void VertexSlotInfo::createBuffer(uint32_t vertexSize, uint32_t vertexCount)
 {
-    vertexSize = vertexSize;
+    mVertexSize = vertexSize;
     hardwareVertexBuffer = HardwareBufferManager::getSingletonPtr()->createVertexBuffer(
         vertexSize,
         vertexCount,
@@ -41,9 +41,9 @@ void VertexData::buildHardBuffer()
         int32_t bindIndex = -1;
         for (auto& slotInfo : vertexSlotInfo)
         {
-            if (bindIndex < slotInfo.slot)
+            if (bindIndex < slotInfo.mSlot)
             {
-                bindIndex = slotInfo.slot;
+                bindIndex = slotInfo.mSlot;
             }
         }
 
@@ -53,8 +53,8 @@ void VertexData::buildHardBuffer()
 
         
 
-        slot.slot = bindIndex;
-        slot.vertexSize = sizeof(SkinnedData);
+        slot.mSlot = bindIndex;
+        slot.mVertexSize = sizeof(SkinnedData);
         slot.createBuffer(sizeof(SkinnedData), vertexCount);
 
         HardwareBufferLockGuard lockGuard(slot.hardwareVertexBuffer.get());
@@ -97,7 +97,7 @@ void VertexData::bind()
 {
     for (auto& slot : vertexSlotInfo)
     {
-        slot.hardwareVertexBuffer->bind(slot.slot);
+        slot.hardwareVertexBuffer->bind(slot.mSlot);
     }
 }
 
@@ -105,7 +105,7 @@ void VertexData::setBinding(int32_t index, std::shared_ptr<HardwareVertexBuffer>
 {
     for (auto& slot : vertexSlotInfo)
     {
-        if (slot.slot == index)
+        if (slot.mSlot == index)
         {
             slot.hardwareVertexBuffer = buf;
             break;
@@ -117,7 +117,7 @@ std::shared_ptr<HardwareVertexBuffer> VertexData::getBuffer(int32_t index) const
 {
     for (auto& slot : vertexSlotInfo)
     {
-        if (slot.slot == index)
+        if (slot.mSlot == index)
         {
             return slot.hardwareVertexBuffer;
         }

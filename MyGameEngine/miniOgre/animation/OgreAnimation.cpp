@@ -89,9 +89,8 @@ namespace Ogre {
 	void Animation::apply(SkeletonInstance* skel, Real timePos, Real weight,
 		Real scale)
 	{
-		NodeTrackList::iterator i;
 		TransformInfo ti;
-		for (i = mNodeTrackList.begin(); i != mNodeTrackList.end(); ++i)
+		for (auto i = mNodeTrackList.begin(); i != mNodeTrackList.end(); ++i)
 		{
 			// get bone to apply to 
 			Bone* b = skel->getBone(i->first);

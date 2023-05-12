@@ -71,6 +71,10 @@ void AnimationTrack::interpolate(Real t, Ogre::Matrix4& m)
 
 float AnimationTrack::getAnimationLength()
 {
+	if (mKeyFrames.empty())
+	{
+		return 0.0f;
+	}
 	return mKeyFrames.back()->mTimePos;
 }
 

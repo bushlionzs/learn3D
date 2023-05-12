@@ -16,6 +16,10 @@ namespace Ogre {
 
 		void setBindingPose(void);
 
+		void setBillboard(bool billboard)
+		{
+			mBillboard = billboard;
+		}
 		void reset(void);
 
 		void _getOffsetTransform(Ogre::Matrix4& m);
@@ -33,5 +37,7 @@ namespace Ogre {
 
 
 		Ogre::Matrix4 mInverseMatrix;
+
+		bool mBillboard = false;
 	};
 }

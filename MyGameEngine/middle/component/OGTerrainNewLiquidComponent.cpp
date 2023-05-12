@@ -1002,7 +1002,7 @@ namespace Orphigine
 		{
 			vertexData->vertexSlotInfo.emplace_back();
 			auto& back = vertexData->vertexSlotInfo.back();
-			back.slot = VERTEXSTREAM_POSITION;
+			back.mSlot = VERTEXSTREAM_POSITION;
 			back.createBuffer(VertexElement::getTypeSize(VET_FLOAT3), mVertexNum);
 			auto size = mVertexNum * VertexElement::getTypeSize(VET_FLOAT3);
 			Ogre::Vector3* tmp = (Ogre::Vector3*)mTempPositionBuffer;
@@ -1015,7 +1015,7 @@ namespace Orphigine
 		{
 			vertexData->vertexSlotInfo.emplace_back();
 			auto& back = vertexData->vertexSlotInfo.back();
-			back.slot = VERTEXSTREAM_DIFFUSE;
+			back.mSlot = VERTEXSTREAM_DIFFUSE;
 			back.createBuffer(VertexElement::getTypeSize(VET_COLOUR), mVertexNum);
 			auto size = mVertexNum * VertexElement::getTypeSize(VET_COLOUR);
 			back.writeData((const char*)mTempColourBuffer, size);
@@ -1025,7 +1025,7 @@ namespace Orphigine
 		{
 			vertexData->vertexSlotInfo.emplace_back();
 			auto& back = vertexData->vertexSlotInfo.back();
-			back.slot = VERTEXSTREAM_TEXCOORD_1;
+			back.mSlot = VERTEXSTREAM_TEXCOORD_1;
 			back.createBuffer(VertexElement::getTypeSize(VET_FLOAT2), mVertexNum);
 			auto size = mVertexNum * VertexElement::getTypeSize(VET_FLOAT2);
 			back.writeData((const char*)mTempTexcoordBuffer, size);

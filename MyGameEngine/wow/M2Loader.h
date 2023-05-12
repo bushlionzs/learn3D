@@ -2,10 +2,8 @@
 #include "M2Header.h"
 #include "model_loader.h"
 #include "m2Bone.h"
-namespace Ogre 
-{
-	class DataStream;
-}
+
+class WowParticleSystem;
 
 class M2Loader: public ModelLoader
 {
@@ -57,4 +55,6 @@ private:
 
 	std::vector<M2Bone> bones;
 	Skeleton* mSkeleton = nullptr;
+
+	WowParticleSystem* particleSystems = nullptr;
 };

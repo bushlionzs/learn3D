@@ -861,11 +861,11 @@ std::shared_ptr<Mesh> MeshManager::createSimpleRoom(const std::string& name)
 
 	vd->vertexSlotInfo.emplace_back();
 	VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-	slotInfo.slot = 0;
+	slotInfo.mSlot = 0;
 	slotInfo.createBuffer(sizeof(SVertexElement), vertices.size());
 	slotInfo.writeData((const char*)vertices.data(), size);
 	vd->vertexCount = vertices.size();
-	slotInfo.vertexSize = sizeof(SVertexElement);
+	slotInfo.mVertexSize = sizeof(SVertexElement);
 	id->createBuffer(4, indices.size());
 	id->writeData((const char*)indices.data(), indices.size() * 4);
 
@@ -997,7 +997,7 @@ Mesh* MeshManager::BuildHardBuffer(
 	
 	vd->vertexSlotInfo.emplace_back();
 	VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-	slotInfo.slot = 0;
+	slotInfo.mSlot = 0;
 	slotInfo.createBuffer(sizeof(SVertexElement), vertices.size());
 	slotInfo.writeData((const char*)vertices.data(), size);
 	vd->vertexCount = vertices.size();

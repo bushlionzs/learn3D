@@ -106,9 +106,9 @@ void WaterEntity::buildHardBuffer()
 
     vd->vertexSlotInfo.emplace_back();
     VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-    slotInfo.slot = 0;
+    slotInfo.mSlot = 0;
     vd->vertexCount = mVertexs.size();
-    slotInfo.vertexSize = sizeof(SVertexElement);
+    slotInfo.mVertexSize = sizeof(SVertexElement);
 
 
     slotInfo.hardwareVertexBuffer = HardwareBufferManager::getSingletonPtr()->createVertexBuffer(

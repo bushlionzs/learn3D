@@ -29,7 +29,7 @@ Dx11HardwareBuffer::Dx11HardwareBuffer(BufferType btype, size_t vertexSize, size
 
     if (FAILED(hr))
     {
-        int32_t kk = 0;
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to CreateBuffer using directx11!");
     }
    
     if (btype == INDEX_BUFFER)
@@ -56,6 +56,10 @@ void* Dx11HardwareBuffer::lockimpl(
     D3D11_MAPPED_SUBRESOURCE mappedData;
     mappedData.pData = nullptr;
     HRESULT hr = DX11Helper::getSingleton().getDeviceContext()->Map(mVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+    if (FAILED(hr))
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to Map buffer using dx11!");
+    }
     return mappedData.pData;
 }
 

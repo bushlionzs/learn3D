@@ -17,6 +17,7 @@
 #include "dbcfile.h"
 #include "m2Bone.h"
 #include "wowUtil.h"
+#include "wowParticle.h"
 
 
 static bool usesAnimation(const M2Bone& b, size_t animIdx) {
@@ -72,16 +73,38 @@ std::shared_ptr<Ogre::Mesh> M2Loader::loadMeshFromFile(std::shared_ptr<Ogre::Dat
 		return mesh;
 	}
 
+	animated = isAnimated(stream.get());
+
 	initCommon(stream.get());
 
-	animated = isAnimated(stream.get());
-	animated = false;
 	if (animated)
 	{
 		initAnimated(stream.get());
 		mSkeleton->setBindingPose();
 		std::shared_ptr<Skeleton> tmp(mSkeleton);
 		mMesh->applySkeleton(tmp);
+	}
+
+	// particle systems
+	if (mHeader.nParticleEmitters) {
+		if (mHeader.version[0] >= 0x10) {
+			ModelParticleEmitterDefV10* pdefsV10 = (ModelParticleEmitterDefV10*)(
+				stream->getStreamData() + mHeader.ofsParticleEmitters);
+			ModelParticleEmitterDef* pdefs;
+			particleSystems = new WowParticleSystem[mHeader.nParticleEmitters];
+			for (size_t i = 0; i < mHeader.nParticleEmitters; i++) {
+				pdefs = (ModelParticleEmitterDef*)&pdefsV10[i];
+				particleSystems[i].init(stream, *pdefs, globalSequences.data(), this);
+			}
+		}
+		else {
+			ModelParticleEmitterDef* pdefs = (ModelParticleEmitterDef*)(
+				stream->getStreamData() + mHeader.ofsParticleEmitters);
+			particleSystems = new WowParticleSystem[mHeader.nParticleEmitters];
+			for (size_t i = 0; i < mHeader.nParticleEmitters; i++) {
+				particleSystems[i].init(stream, pdefs[i], globalSequences.data(), this);
+			}
+		}
 	}
 
 	mesh = std::shared_ptr<Ogre::Mesh>(mMesh);
@@ -271,6 +294,7 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 			Bone* bone = mSkeleton->getBone(i);
 			Bone* boneParent = mSkeleton->getBone(mb[i].parent);
 			bone->updateParent(boneParent);
+			bone->setBillboard(bones[i].billboard);
 			Ogre::Vector3 pos = getBoneParentTrans(i);
 			bone->setPosition(pos);
 		}
@@ -292,10 +316,17 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 			if (hasAnimation(animIdx))
 			{
 				ModelAnimation& anim = mAnimations[animIdx];
-
-				AnimDB::Record r = gAnimDB.getByAnimID(anim.animID);
-				aniname = r.getString(AnimDB::Name);
-				aniname += std::to_string(animIdx);
+				try
+				{
+					AnimDB::Record r = gAnimDB.getByAnimID(anim.animID);
+					aniname = r.getString(AnimDB::Name);
+					aniname += std::to_string(animIdx);
+				}
+				catch(...)
+				{
+					aniname = mName + "_animation" + std::to_string(animIdx);
+				}
+				
 				Ogre::Animation* ogreAni = mSkeleton->createAnimation(aniname, 0);
 				
 				for (size_t boneIdx = 0; boneIdx < bones.size(); boneIdx++) {
@@ -510,8 +541,8 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 		mat->addTexture(texname);
 		ShaderInfo info;
 		info.shaderName = "basic";
-		/*if(animated)
-			info.shaderMacros.emplace_back("SKINNED", "1");*/
+		if(animated)
+			info.shaderMacros.emplace_back("SKINNED", "1");
 		mat->addShader(info);
 		mat->setCullMode(CULL_NONE);
 		if (pass.noZWrite)
@@ -535,8 +566,8 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 		{
 			blendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
 			blendState.destFactor = Ogre::SBF_ONE;
-			blendState.sourceFactorAlpha = SBF_SOURCE_ALPHA;
-			blendState.destFactorAlpha = SBF_ONE;
+			blendState.sourceFactorAlpha = Ogre::SBF_ONE;
+			blendState.destFactorAlpha = Ogre::SBF_ZERO;
 			mat->setBlendState(blendState);
 		}
 		else

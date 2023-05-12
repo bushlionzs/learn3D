@@ -17,7 +17,11 @@ public:
         cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
         auto device = DX11Helper::getSingleton().getDevice();
-        device->CreateBuffer(&cbd, nullptr, &mConstantBuffer);
+        auto hr = device->CreateBuffer(&cbd, nullptr, &mConstantBuffer);
+        if (FAILED(hr))
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to CreateBuffer using directx11!");
+        }
     }
 
     ~Dx11UploadBuffer()

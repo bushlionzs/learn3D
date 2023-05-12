@@ -6,13 +6,16 @@
 #include "M2Header.h"
 #include "animated.h"
 #include "OgreColourValue.h"
-
+#include "OgreMoveObject.h"
+#include "OgreRenderable.h"
 #include <list>
 class WowParticleSystem;
 class RibbonEmitter;
 class M2Bone;
 class M2Loader;
-
+class VertexData;
+class IndexData;
+class IndexDataView;
 struct WowParticle
 {
 	Ogre::Vector3 pos, speed, down, origin, dir;
@@ -74,28 +77,30 @@ struct TexCoordSet {
     Ogre::Vector2 tc[4];
 };
 
-class WowParticleSystem {
+class WowParticleSystem: public MoveObject, public Renderable
+{
 	float mid, slowdown, rotation;
 	Ogre::Vector3 pos;
 	std::string texture;
 	ParticleEmitter *emitter;
 	ParticleList particles;
 	int blend, order, ParticleType;
-	size_t manim, mtime;
+	size_t manim;
+	size_t mtime;
 	int rows, cols;
 	std::vector<TexCoordSet> tiles;
 	void initTile(Ogre::Vector2*tc, int num);
 	bool billboard;
-
+	int index;
 	float rem;
-	//bool transform;
-
-	// unknown parameters omitted for now ...
 	int32 flags;
 	int16 EmitterType;
-
+	int32 maxParticles = 100;
 	Bone*parent;
-
+	ICamera* mCamera = nullptr;
+	std::unique_ptr<VertexData> mVertexData;
+	std::unique_ptr<IndexData> mIndexData;
+	std::unique_ptr<IndexDataView> mIndexDataView;
 public:
 	float tofs;
 
@@ -104,22 +109,7 @@ public:
 	Ogre::ColourValue colors[3];
 	float sizes[3];
 
-	WowParticleSystem(): mid(0), emitter(0), rem(0)
-	{
-		blend = 0;
-		order = 0;
-		ParticleType = 0;
-		manim = 0;
-		mtime = 0;
-		rows = 0;
-		cols = 0;
-
-		parent = 0;
-
-		slowdown = 0;
-		rotation = 0;
-		tofs = 0;
-	}
+	WowParticleSystem();
 	~WowParticleSystem() { delete emitter; }
 
 	void init(
@@ -130,16 +120,24 @@ public:
 	void update(float dt);
 
 	void setup(size_t anim, size_t time);
-	void draw();
+	virtual const AxisAlignedBox& getBoundingBox(void) const;
+	virtual void _notifyCurrentCamera(ICamera* cam);
+	virtual VertexData* getVertexData() override
+	{
+		return mVertexData.get();
+	}
+
+	IndexData* getIndexData() override
+	{
+		return mIndexData.get();
+	}
+	IndexDataView* getIndexView() override
+	{
+		return mIndexDataView.get();
+	}
 
 	friend class PlaneParticleEmitter;
 	friend class SphereParticleEmitter;
-
-	friend std::ostream& operator<<(std::ostream& out, ParticleSystem& v)
-	{
-		
-		return out;
-	}
 };
 
 

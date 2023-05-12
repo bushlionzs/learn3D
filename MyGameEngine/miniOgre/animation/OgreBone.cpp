@@ -1,6 +1,7 @@
 #include "OgreHeader.h"
 #include "OgreBone.h"
-
+#include "engine_manager.h"
+#include "OgreCamera.h"
 namespace Ogre {
 
     Bone::Bone(const std::string& name, uint32_t boneId)
@@ -83,6 +84,22 @@ namespace Ogre {
         Ogre::Vector3 locTranslate = DerivedPosition + locRotate * (locScale * mBindDerivedInversePosition);
 
         m.makeTransform(locTranslate, locScale, locRotate);
+
+        if (mBillboard)
+        {
+            Ogre::Camera*  cam = EngineManager::getSingleton().getMainCamera();
+            const Ogre::Quaternion& q = cam->getDerivedOrientation();
+            auto vRight = q * Vector3::UNIT_X;
+            auto vUp = q * Vector3::UNIT_Y;
+
+            m[0][2] = vRight.x;
+            m[1][2] = vRight.y;
+            m[2][2] = vRight.z;
+
+            m[0][1] = vUp.x;
+            m[1][1] = vUp.y;
+            m[2][1] = vUp.z;
+        }
     }
 }
 

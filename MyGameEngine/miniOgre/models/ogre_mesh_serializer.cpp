@@ -373,8 +373,8 @@ void OgreMeshSerializerImpl::readGeometryVertexBuffer(
 
         vd->vertexSlotInfo.emplace_back();
         VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-        slotInfo.slot = bindIndex;
-        slotInfo.vertexSize = vertexSize;
+        slotInfo.mSlot = bindIndex;
+        slotInfo.mVertexSize = vertexSize;
         slotInfo.createBuffer(vertexSize, vd->vertexCount);
         void* data = slotInfo.hardwareVertexBuffer->lock();
         stream->read((void*)data, vd->vertexCount * vertexSize);

@@ -328,12 +328,12 @@ namespace Ogre {
             if (mPointRendering)
             {
                 // just one vertex per billboard (this also excludes texcoords)
-                billboardSize = back.vertexSize;
+                billboardSize = back.mVertexSize;
             }
             else
             {
                 // 4 corners
-                billboardSize = back.vertexSize * 4;
+                billboardSize = back.mVertexSize * 4;
             }
 
 
@@ -622,8 +622,8 @@ namespace Ogre {
         mVertexData->vertexSlotInfo.emplace_back();
 
         auto& back = mVertexData->vertexSlotInfo.back();
-        back.vertexSize = decl->getVertexSize(0);
-        back.createBuffer(back.vertexSize, mVertexData->vertexCount);
+        back.mVertexSize = decl->getVertexSize(0);
+        back.createBuffer(back.mVertexSize, mVertexData->vertexCount);
 
         if (!mPointRendering)
         {

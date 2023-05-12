@@ -46,10 +46,10 @@ namespace MyGUI
 		vertexData->vertexSlotInfo.emplace_back();
 
 		auto& slotInfo = vertexData->vertexSlotInfo.back();
-		slotInfo.slot = 0;
-		slotInfo.vertexSize = vd->getVertexSize(0);
+		slotInfo.mSlot = 0;
+		slotInfo.mVertexSize = vd->getVertexSize(0);
 		vertexData->vertexCount = mVertexCount;
-		slotInfo.createBuffer(slotInfo.vertexSize, mVertexCount);
+		slotInfo.createBuffer(slotInfo.mVertexSize, mVertexCount);
 
 		/*mVertexBuffer = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
 			mRenderOperation.vertexData->vertexDeclaration->getVertexSize(0), 

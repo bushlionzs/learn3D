@@ -121,18 +121,18 @@ std::shared_ptr<Mesh> M3dLoader::loadMeshFromFile(std::shared_ptr<DataStream>& s
 
 	vd->vertexSlotInfo.emplace_back();
 	VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-	slotInfo.slot = 0;
+	slotInfo.mSlot = 0;
 
 	if (use_assign)
 	{
-		slotInfo.vertexSize = sizeof(M3dVertex);
+		slotInfo.mVertexSize = sizeof(M3dVertex);
 	}
 	else
 	{
-		slotInfo.vertexSize = sizeof(M3dSkinnedVertex);
+		slotInfo.mVertexSize = sizeof(M3dSkinnedVertex);
 	}
-	slotInfo.createBuffer(slotInfo.vertexSize, vertices_.size());
-	slotInfo.writeData((const char*)vertices_.data(), vertices_.size() * slotInfo.vertexSize);
+	slotInfo.createBuffer(slotInfo.mVertexSize, vertices_.size());
+	slotInfo.writeData((const char*)vertices_.data(), vertices_.size() * slotInfo.mVertexSize);
 	
 	
 

@@ -6,8 +6,8 @@ class GraphicsCommandList;
 class VertexSlotInfo
 {
 public:
-    int32_t slot;
-    uint32_t vertexSize;
+    int32_t mSlot;
+    uint32_t mVertexSize;
     std::shared_ptr<Ogre::HardwareVertexBuffer> hardwareVertexBuffer;
     void createBuffer(uint32_t vertexSize, uint32_t vertexCount);
     void writeData(const char* data, uint32_t size);

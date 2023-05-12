@@ -341,9 +341,9 @@ void TerrainFixedGrid::setVertexData(
 
 	vertexData.vertexSlotInfo.emplace_back();
 	auto& back = vertexData.vertexSlotInfo.back();
-	back.slot = MAIN_BINDING;
-	back.vertexSize = vertexDeclaration.getVertexSize( MAIN_BINDING );
-	back.createBuffer(back.vertexSize, vertexData.vertexCount);
+	back.mSlot = MAIN_BINDING;
+	back.mVertexSize = vertexDeclaration.getVertexSize( MAIN_BINDING );
+	back.createBuffer(back.mVertexSize, vertexData.vertexCount);
 }
 
 CustomRenderable* TerrainFixedGrid::addRenderable(

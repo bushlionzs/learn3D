@@ -7,6 +7,7 @@
 #include "OgreHeader.h"
 #include "OgreDataStream.h"
 #include "M2Header.h"
+#include "OgreRoot.h"
 
 // interpolation functions
 template<class T>
@@ -59,7 +60,6 @@ inline Ogre::Quaternion interpolate<Ogre::Quaternion>(
 typedef std::pair<size_t, size_t> AnimRange;
 
 // global time for global sequences
-extern size_t globalTime;
 extern size_t globalFrame;
 
 enum Interpolations {
@@ -121,7 +121,7 @@ public:
 template <class T, class D=T, class Conv=Identity<T> >
 class Animated {
 public:
-	size_t type, seq;
+	int64_t type, seq;
 	uint32_t *globals;
 	std::vector<size_t> times[MAX_ANIMATED];
 	std::vector<T> data[MAX_ANIMATED];
@@ -129,16 +129,18 @@ public:
 	std::vector<T> in[MAX_ANIMATED], out[MAX_ANIMATED];
 	size_t sizes; // for fix function
 
-	bool uses(size_t anim) const
+	bool uses(int64_t anim) const
 	{
 		if (seq>-1)
 			anim = 0;
 		return ((data[anim].size()) > 0);
 	}
 
-	T getValue(size_t anim, size_t time)
+	T getValue(int64_t anim, size_t time)
 	{
 		// obtain a time value and a data range
+
+		uint64_t globalTime = Ogre::Root::getSingleton().getTimer()->getMilliseconds();
 		if (seq>-1) {
 			// TODO
 			if ((!globals)||(!globals[seq]))
