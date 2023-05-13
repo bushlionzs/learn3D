@@ -287,3 +287,20 @@ shader wowterrain
 		frag_shader wowterrain.glsl ps
 	 }
 }
+
+shader pbr
+{
+     shader_unit
+	 {
+		shader_type directx
+		vertex_shader pbr.hlsl VS
+		frag_shader pbr.hlsl PS
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader wowterrain.glsl vs
+		frag_shader wowterrain.glsl ps
+	 }
+}

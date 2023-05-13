@@ -126,6 +126,19 @@ public:
     }
 };
 
+class NormalTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setPbrTexture(TextureTypePbr_NormalMap, val);
+    }
+};
+
 class OcclusionTexture : public ParamCommand
 {
 public:
@@ -367,6 +380,12 @@ void OgreMaterialParam::initParameters()
             "basecolor_texture",
             PT_STRING),
             &mBaseColorTexture);
+
+        static NormalTexture mNormalTexture;
+        dict->addParameter(ParameterDef("normal_texture",
+            "normal_texture",
+            PT_STRING),
+            &mNormalTexture);
 
         static OcclusionTexture mOcclusionTexture;
         dict->addParameter(ParameterDef("occlusion_texture",

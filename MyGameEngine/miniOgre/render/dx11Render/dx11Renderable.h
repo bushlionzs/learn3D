@@ -18,6 +18,7 @@ private:
     void _initialise();
     void updateObject(ICamera* cam);
     ID3D11Buffer* getObjectBuffer(ICamera* cam);
+    void applyMaterialTexture(Material* mat);
 private:
     
     ObjectConstantBuffer mObjectConstantBuffer;
@@ -25,7 +26,8 @@ private:
     std::unordered_map<Ogre::ICamera*, std::shared_ptr<Dx11UploadBuffer<ObjectConstantBuffer>>> mCamaraDataMap;
 
     MaterialConstantBuffer mMaterialConstantBuffer;
+    PbrMaterialConstanceBuffer mPbrMaterialConstanceBuffer;
     std::unique_ptr<Dx11UploadBuffer<MaterialConstantBuffer>> mMaterialCB;
-
+    std::unique_ptr<Dx11UploadBuffer<PbrMaterialConstanceBuffer>> mPbrMaterialCB;
     std::unique_ptr<Dx11UploadBuffer<SkinnedConstantBuffer>> mSkinnedCB;
 };

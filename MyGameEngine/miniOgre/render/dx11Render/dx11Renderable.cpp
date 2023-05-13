@@ -48,16 +48,7 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 
 	updateObject(cam);
 
-	const MaterialConstantBuffer& mcb = pass._mat->getMatInfo();
-	if (pass._mat->getTextureUnitCount())
-	{
-		auto unit = pass._mat->getTextureUnit(0);
-		mMaterialConstantBuffer.TexTransform =
-			unit->getTextureTransform().transpose();
-
-		mMaterialCB->CopyData(0, mMaterialConstantBuffer);
-	}
-	
+	applyMaterialTexture(pass._mat);
 	
 	ID3D11VertexShader* vertexShader = pass._shader->getVertexShader();
 	ID3D11PixelShader* pixelShader = pass._shader->getPixelShader();
@@ -69,7 +60,17 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 	ID3D11Buffer* buf = getObjectBuffer(cam);
 	dx11Context->VSSetConstantBuffers(0, 1, &buf);
 
-	ID3D11Buffer* matbuf = mMaterialCB->Resource();
+	ID3D11Buffer* matbuf = nullptr;
+	
+	if (pass._mat->isPbr())
+	{
+		matbuf = mPbrMaterialCB->Resource();
+	}
+	else
+	{
+		matbuf = mMaterialCB->Resource();
+	}
+	
 	dx11Context->VSSetConstantBuffers(2, 1, &matbuf);
 	dx11Context->PSSetConstantBuffers(2, 1, &matbuf);
 	
@@ -84,42 +85,6 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 		dx11Context->VSSetConstantBuffers(3, 1, &buf);
 	}
 
-	auto texs = pass._mat->getAllTexureUnit();
-	std::vector<ID3D11ShaderResourceView*> res;
-	res.reserve(texs.size());
-	std::vector<ID3D11ShaderResourceView*> rescube;
-	rescube.reserve(texs.size());
-	for (int i = 0; i < texs.size(); i++)
-	{
-		Dx11Texture* current = (Dx11Texture*)texs[i]->getRaw();
-		ID3D11ShaderResourceView* texView = current->getResourceView();
-
-		if (current->isCubeTexture())
-		{
-			rescube.push_back(texView);
-		}
-		else
-		{
-			res.push_back(texView);
-		}
-	}
-
-	if (texs.size() == 0)
-	{
-		int kk = 0;
-	}
-	if (!rescube.empty())
-	{
-		dx11Context->PSSetShaderResources(0, rescube.size(), rescube.data());
-	}
-	
-	if (!res.empty())
-	{
-		dx11Context->PSSetShaderResources(2, res.size(), res.data());
-	}
-	
-
-	
 	DX11Helper::getSingleton()._setDepthBufferWriteEnabled(
 		pass._mat->isWriteDepth());
 	
@@ -163,4 +128,94 @@ ID3D11Buffer* Dx11RenderableData::getObjectBuffer(ICamera* cam)
 		return itor->second->Resource();
 	}
 	return nullptr;
+}
+
+void Dx11RenderableData::applyMaterialTexture(Material* mat)
+{
+	auto dx11Context = DX11Helper::getSingleton().getDeviceContext();
+	if (mat->isPbr())
+	{
+		if (!mPbrMaterialCB)
+		{
+			mPbrMaterialCB = 
+				std::make_unique<Dx11UploadBuffer<PbrMaterialConstanceBuffer>>(1, true);
+		}
+		mPbrMaterialCB->CopyData(0, mPbrMaterialConstanceBuffer);
+		
+		auto texs = mat->getAllTexureUnit();
+		std::vector<ID3D11ShaderResourceView*> res(6);
+		res.reserve(texs.size());
+		std::vector<ID3D11ShaderResourceView*> rescube(2);
+		rescube.reserve(texs.size());
+		for (int i = 0; i < texs.size(); i++)
+		{
+			Dx11Texture* current = (Dx11Texture*)texs[i]->getRaw();
+			ID3D11ShaderResourceView* texView = current->getResourceView();
+
+			TextureProperty* tp = current->getTextureProperty();
+
+			if (current->isCubeTexture())
+			{
+				uint32_t index = tp->_pbrType - TextureTypePbr_IBL_Diffuse;
+				rescube[index] = texView;
+			}
+			else
+			{
+				uint32_t index = tp->_pbrType - TextureTypePbr_Albedo;
+				res[index] = texView;
+			}
+			
+		}
+
+		if (!rescube.empty())
+		{
+			dx11Context->PSSetShaderResources(0, rescube.size(), rescube.data());
+		}
+
+		if (!res.empty())
+		{
+			dx11Context->PSSetShaderResources(2, res.size(), res.data());
+		}
+	}
+	else
+	{
+		const MaterialConstantBuffer& mcb = mat->getMatInfo();
+		if (mat->getTextureUnitCount())
+		{
+			auto unit = mat->getTextureUnit(0);
+			mMaterialConstantBuffer.TexTransform =
+				unit->getTextureTransform().transpose();
+
+			mMaterialCB->CopyData(0, mMaterialConstantBuffer);
+		}
+		auto texs = mat->getAllTexureUnit();
+		std::vector<ID3D11ShaderResourceView*> res;
+		res.reserve(texs.size());
+		std::vector<ID3D11ShaderResourceView*> rescube;
+		rescube.reserve(texs.size());
+		for (int i = 0; i < texs.size(); i++)
+		{
+			Dx11Texture* current = (Dx11Texture*)texs[i]->getRaw();
+			ID3D11ShaderResourceView* texView = current->getResourceView();
+
+			if (current->isCubeTexture())
+			{
+				rescube.push_back(texView);
+			}
+			else
+			{
+				res.push_back(texView);
+			}
+		}
+
+		if (!rescube.empty())
+		{
+			dx11Context->PSSetShaderResources(0, rescube.size(), rescube.data());
+		}
+
+		if (!res.empty())
+		{
+			dx11Context->PSSetShaderResources(2, res.size(), res.data());
+		}
+	}
 }

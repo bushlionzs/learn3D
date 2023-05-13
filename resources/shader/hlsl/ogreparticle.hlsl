@@ -2,8 +2,8 @@
 struct VertexIn
 {
 	float3 PosL    : POSITION;
-	float4 color  : COLOR;
 	float2 iTexcoord_0 : TEXCOORD0;
+	float4 color  : COLOR;
 };
 
 struct VertexOut
@@ -25,6 +25,9 @@ VertexOut VS(VertexIn vIn)
 
 float4 PS(VertexOut pin) : SV_Target
 {
-	float4 texel_0	=	gTextureArray[0].Sample(gsamLinearWrap, pin.oTexcoord_0);
-	return texel_0 * pin.color;
+	float4 texel_0	=	gTextureArray[0].Sample(gsamLinearClamp, pin.oTexcoord_0);
+	clip(texel_0.a - 0.3f);
+	float4 outcolor = texel_0 * pin.color;
+	outcolor.a = texel_0.a;
+	return outcolor;
 }

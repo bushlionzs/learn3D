@@ -56,7 +56,7 @@ void MaterialScriptParser::parseMaterialImpl(const std::string& content)
         materialname = string_trim(materialname);
         materialname = UTF8ToGBK(materialname.c_str());
 
-        auto mat = MaterialManager::getSingletonPtr()->create(materialname);
+        auto mat = MaterialManager::getSingletonPtr()->create(materialname, pbr);
 
 
         OgreMaterialParam* param = new OgreMaterialParam(mat.get(), this);

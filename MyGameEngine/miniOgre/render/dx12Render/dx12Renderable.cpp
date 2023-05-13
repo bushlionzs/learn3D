@@ -187,8 +187,6 @@ void Dx12RenderableData::buildPbrMaterial(Material* mat)
 		{
 			mTexCount++;
 		}
-
-
 	}
 
 	if (mCubeTexCount > 0)

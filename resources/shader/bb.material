@@ -61,7 +61,7 @@ material myrect
 			shader ogresimple
 			texture_unit
 			{
-				texture awesomeface.png
+				texture wall.jpg
 				scroll_anim 0 -0.9
 				tex_address_mode clamp
 			}
@@ -320,15 +320,40 @@ material wow
 	}
 }
 
+
 pbrmaterial DamagedHelmet
 {
     cull_hardware none
+	shader_macro PBR HAS_TANGENTS MANUAL_SRGB SRGB_FAST_APPROXIMATION HAS_NORMALS HAS_BASECOLORMAP HAS_NORMALMAP HAS_EMISSIVEMAP HAS_METALROUGHNESSMAP HAS_OCCLUSIONMAP USE_IBL
+	shader pbr
     basecolor_texture Default_albedo.jpg
+	normal_texture Default_normal.jpg
 	occlusion_texture Default_AO.jpg
 	emissive_texture  Default_emissive.jpg
 	metallic_roughness_texture Default_metalRoughness.jpg
 	diffuse_texture studio_garden_diffuse.png cubic
-	//specular_texture studio_garden.jpg cubic
+	specular_texture studio_garden.jpg cubic
 	brdflut_texture brdfLUT.png
 }
 
+material Examples/Smoke
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			cull_hardware none
+			scene_blend alpha_blend
+			depth_write off
+			diffuse vertexcolour
+			
+			shader ogreparticle
+			texture_unit
+			{
+				texture Smoke15Frames.png
+				tex_address_mode clamp
+			}
+		}
+	}
+}
