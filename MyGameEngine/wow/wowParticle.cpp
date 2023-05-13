@@ -185,14 +185,14 @@ void WowParticleSystem::init(
 	mVertexData->vertexCount = maxParticles;
 	mVertexData->vertexSlotInfo.emplace_back();
 	mVertexData->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-	mVertexData->vertexDeclaration->addElement(0, 0, 12, VET_UBYTE4_NORM, VES_DIFFUSE);
-	mVertexData->vertexDeclaration->addElement(0, 0, 16, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+	mVertexData->vertexDeclaration->addElement(0, 0, 12, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+	mVertexData->vertexDeclaration->addElement(0, 0, 20, VET_UBYTE4_NORM, VES_DIFFUSE);
 	auto& back = mVertexData->vertexSlotInfo.back();
 	//position
 	//color
 	//texcoord
-	uint32_t vertexSize = 4*3 + 4 + 4*2;
-	back.createBuffer(vertexSize, maxParticles + 10);
+	uint32_t vertexSize = 4*3 + 4*2 + 4;
+	back.createBuffer(vertexSize, maxParticles * 4);
 	mIndexDataView.reset(new IndexDataView);
 	mIndexDataView->mIndexCount = 0;
 	mIndexDataView->mBaseVertexLocation = 0;
@@ -247,8 +247,8 @@ void WowParticleSystem::init(
 	{
 		blendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
 		blendState.destFactor = Ogre::SBF_ONE;
-		blendState.sourceFactorAlpha = Ogre::SBF_SOURCE_ALPHA;
-		blendState.destFactorAlpha = Ogre::SBF_ONE;
+		blendState.sourceFactorAlpha = Ogre::SBF_ONE;
+		blendState.destFactorAlpha = Ogre::SBF_ZERO;
 		mMaterial->setBlendState(blendState);
 	}
 
@@ -256,11 +256,8 @@ void WowParticleSystem::init(
 	info.shaderName = "ogreparticle";
 	mMaterial->addShader(info);
 
-	static int aa = 0;
-	index = aa++;
 
-	if(index == 1)
-		mRenderables.push_back(this);
+	mRenderables.push_back(this);
 }
 
 void WowParticleSystem::initTile(Ogre::Vector2 *tc, int num)
@@ -289,10 +286,6 @@ void WowParticleSystem::initTile(Ogre::Vector2 *tc, int num)
 
 void WowParticleSystem::update(float dt)
 {
-	if (index != 1)
-	{
-		return;
-	}
 	size_t l_manim = manim;
 	if (bZeroParticle)
 		l_manim = 0;
@@ -365,6 +358,10 @@ void WowParticleSystem::update(float dt)
 		
 		p.life += dt;
 		float rlife = p.life / p.maxlife;
+		if (rlife >= 1.0f)
+		{
+			rlife = 1.0f;
+		}
 		// calculate size and color based on lifetime
 		p.size = lifeRamp<float>(rlife, mid, sizes[0], sizes[1], sizes[2]);
 		p.color = lifeRamp<Ogre::ColourValue>(rlife, mid, colors[0], colors[1], colors[2]);
@@ -398,10 +395,8 @@ void WowParticleSystem::update(float dt)
 	std::shared_ptr<Ogre::HardwareVertexBuffer>& buf = mVertexData->vertexSlotInfo.back().hardwareVertexBuffer;
 	float* lockPtr = reinterpret_cast<float*>(buf->lock());
 	float* firstPtr = lockPtr;
-	uint32_t kk = 0;
 	for (auto it = particles.begin(); it != particles.end(); it++)
 	{
-		kk++;
 		const float size = it->size;
 		RGBA colour = it->color.getAsBYTE();
 		
@@ -410,13 +405,13 @@ void WowParticleSystem::update(float dt)
 		*lockPtr++ = leftTop.x;
 		*lockPtr++ = leftTop.y;
 		*lockPtr++ = leftTop.z;
+		
+		*lockPtr++ = tiles[it->tile].tc[3].x;
+		*lockPtr++ = tiles[it->tile].tc[3].y;
 
 		pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
 		*pCol++ = colour;
 		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
-		
-		*lockPtr++ = tiles[it->tile].tc[3].x;
-		*lockPtr++ = tiles[it->tile].tc[3].y;
 
 		//top-right
 		Ogre::Vector3 topRight = it->pos + (vRight + vUp) * size;
@@ -424,12 +419,12 @@ void WowParticleSystem::update(float dt)
 		*lockPtr++ = topRight.y;
 		*lockPtr++ = topRight.z;
 
+		*lockPtr++ = tiles[it->tile].tc[2].x;
+		*lockPtr++ = tiles[it->tile].tc[2].y;
+
 		pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
 		*pCol++ = colour;
 		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
-
-		*lockPtr++ = tiles[it->tile].tc[2].x;
-		*lockPtr++ = tiles[it->tile].tc[2].y;
 
 		//left-bottom
 		Ogre::Vector3 leftBottom = it->pos - (vRight + vUp) * size;
@@ -437,12 +432,12 @@ void WowParticleSystem::update(float dt)
 		*lockPtr++ = leftBottom.y;
 		*lockPtr++ = leftBottom.z;
 
+		*lockPtr++ = tiles[it->tile].tc[0].x;
+		*lockPtr++ = tiles[it->tile].tc[0].y;
+
 		pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
 		*pCol++ = colour;
 		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
-
-		*lockPtr++ = tiles[it->tile].tc[0].x;
-		*lockPtr++ = tiles[it->tile].tc[0].y;
 
 		//right-bottom
 
@@ -451,18 +446,12 @@ void WowParticleSystem::update(float dt)
 		*lockPtr++ = rightBottom.y;
 		*lockPtr++ = rightBottom.z;
 
+		*lockPtr++ = tiles[it->tile].tc[1].x;
+		*lockPtr++ = tiles[it->tile].tc[1].y;
+
 		pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
 		*pCol++ = colour;
 		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
-
-		*lockPtr++ = tiles[it->tile].tc[1].x;
-		*lockPtr++ = tiles[it->tile].tc[1].y;
-	}
-
-	uint32_t size = lockPtr - firstPtr;
-	if (size > 2400)
-	{
-		int kk = 0;
 	}
 	buf->unlock();
 }
