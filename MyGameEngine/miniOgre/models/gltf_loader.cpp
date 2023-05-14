@@ -221,18 +221,19 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                     uint16_t* gltfJoint = (uint16_t*)vertexData[Vertex_Joint].mData;
                     for (int32_t i = 0; i < weightCount; i++)
                     {
+                        float totalweight = gltfWeight[0] + gltfWeight[1] + gltfWeight[2] + gltfWeight[3];
                         assignInfo.vertexIndex = i;
                         assignInfo.boneIndex = gltfJoint[0];
-                        assignInfo.weight = gltfWeight[0];
+                        assignInfo.weight = gltfWeight[0]/totalweight;
                         vd->mBoneAssignments.push_back(assignInfo);
                         assignInfo.boneIndex = gltfJoint[1];
-                        assignInfo.weight = gltfWeight[1];
+                        assignInfo.weight = gltfWeight[1] / totalweight;
                         vd->mBoneAssignments.push_back(assignInfo);
                         assignInfo.boneIndex = gltfJoint[2];
-                        assignInfo.weight = gltfWeight[2];
+                        assignInfo.weight = gltfWeight[2] / totalweight;
                         vd->mBoneAssignments.push_back(assignInfo);
                         assignInfo.boneIndex = gltfJoint[3];
-                        assignInfo.weight = gltfWeight[3];
+                        assignInfo.weight = gltfWeight[3] / totalweight;
                         vd->mBoneAssignments.push_back(assignInfo);
                         gltfWeight += 4;
                         gltfJoint += 4;
@@ -256,7 +257,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                         assignInfo.boneIndex = gltfJoint[3];
                         assignInfo.weight = gltfWeight[3];
                         vd->mBoneAssignments.push_back(assignInfo);
-                        gltfWeight += 3;
+                        gltfWeight += 4;
                         gltfJoint += 4;
                     }
                 }
@@ -297,7 +298,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             const tinygltf::Image& tinyImage = model.images[model.textures[texIndex].source];
             ShaderInfo sinfo;
             sinfo.shaderName = "basic";
-            //sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
+            sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
             auto mat = Ogre::MaterialManager::getSingletonPtr()->create(mesh.name);
             mat->addTexture(tinyImage.uri);
             mat->addShader(sinfo);

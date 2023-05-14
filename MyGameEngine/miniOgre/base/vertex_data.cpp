@@ -65,6 +65,7 @@ void VertexData::buildHardBuffer()
         tmp.boneWeight[0] = 0.0f;
         tmp.boneWeight[1] = 0.0f;
         tmp.boneWeight[2] = 0.0f;
+        tmp.boneWeight[3] = 0.0f;
         tmp.boneIndices[0] = 0;
         tmp.boneIndices[1] = 0;
         tmp.boneIndices[2] = 0;
@@ -78,17 +79,13 @@ void VertexData::buildHardBuffer()
         {
             int32_t i = assign.vertexIndex;
             int32_t wix = vertexIndex[i];
-            if (wix <= 2)
-            {
-                skin[i].boneWeight[wix] = assign.weight;
-            }
-
+            skin[i].boneWeight[wix] = assign.weight;
             skin[i].boneIndices[wix] = assign.boneIndex;
             vertexIndex[i]++;
         }
 
-        vertexDeclaration->addElement(bindIndex, 0, 0, VET_FLOAT3, VES_BLEND_WEIGHTS);
-        vertexDeclaration->addElement(bindIndex, 0, 12, VET_UINT4, VES_BLEND_INDICES);
+        vertexDeclaration->addElement(bindIndex, 0, 0, VET_FLOAT4, VES_BLEND_WEIGHTS);
+        vertexDeclaration->addElement(bindIndex, 0, 16, VET_UINT4, VES_BLEND_INDICES);
     }
 }
 

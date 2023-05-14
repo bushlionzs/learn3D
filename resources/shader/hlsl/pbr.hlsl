@@ -38,7 +38,7 @@ struct PBRInfo
     float3 specularColor;           // color contribution from specular lighting
 };
 
-float M_PI = 3.1415926;
+#define  M_PI  3.141592653
 float c_MinRoughness = 0.04;
 
 #define  albedoIndex  0
@@ -115,7 +115,7 @@ float3 getIBLContribution(PBRInfo pbrInputs, float3 n, float3 reflection)
 // See also [1], Equation 1
 float3 diffuse(PBRInfo pbrInputs)
 {
-    return pbrInputs.diffuseColor / 3.1415926;
+    return pbrInputs.diffuseColor / M_PI;
 }
 
 // The following equation models the Fresnel reflectance term of the spec equation (aka F())
@@ -147,8 +147,7 @@ float microfacetDistribution(PBRInfo pbrInputs)
 {
     float roughnessSq = pbrInputs.alphaRoughness * pbrInputs.alphaRoughness;
     float f = (pbrInputs.NdotH * roughnessSq - pbrInputs.NdotH) * pbrInputs.NdotH + 1.0;
-	float pi = 3.1415926;
-	float a = pi * f * f;
+	float a = M_PI * f * f;
     return roughnessSq / a;
 }
 

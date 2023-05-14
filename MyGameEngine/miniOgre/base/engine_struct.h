@@ -56,7 +56,7 @@ typedef struct VertexBoneAssignment_s
 class SkinnedData
 {
 public:
-    float boneWeight[3];
+    float boneWeight[4];
     uint32_t boneIndices[4];
 };
 
