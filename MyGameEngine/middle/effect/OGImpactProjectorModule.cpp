@@ -198,7 +198,6 @@ namespace Orphigine	{
 			mProjector->setFOVy( _getFovFromProjectionSize() );
 			mProjector->setTerrain(EngineManager::getSingletonPtr()->getTerrain());
 			mProjector->setAspectRatio(1);
-			mProjector->setOrthoWindow(500.0f, 500.0f);
 			mProjector->setShowFrustum(mShowFrustum);
 			mProjector->setEnableClipPlanes(false);
 			mProjector->setPatchMaterial(mMaterialName);

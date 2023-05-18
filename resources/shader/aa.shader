@@ -304,3 +304,20 @@ shader pbr
 		frag_shader wowterrain.glsl ps
 	 }
 }
+
+shader projector
+{
+  shader_unit
+	 {
+		shader_type directx
+		vertex_shader projector.hlsl VS
+		frag_shader projector.hlsl PS
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader projector.glsl vs
+		frag_shader projector.glsl ps
+	 }
+}

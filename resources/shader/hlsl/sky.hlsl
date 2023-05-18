@@ -40,6 +40,6 @@ VertexOut VS(VertexIn vin)
 float4 PS(VertexOut pin) : SV_Target
 {
 	//return float4(1.0, 0.0, 0.0, 1.0);
-	return gCubeMap.Sample(gsamLinearWrap, pin.PosL);
+	return gCubeMap[0].Sample(gsamLinearWrap, pin.PosL);
 }
 

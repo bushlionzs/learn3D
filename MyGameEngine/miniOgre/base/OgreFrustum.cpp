@@ -46,7 +46,7 @@ namespace Ogre {
         mFarDist(100000.0f), 
         mNearDist(100.0f), 
         mAspect(1.33333333333333f), 
-        mOrthoHeight(1000),
+        mOrthoHeight(100),
         mFrustumOffset(Vector2::ZERO),
         mFocalLength(1.0f),
         mLastParentOrientation(Quaternion::IDENTITY),
@@ -783,7 +783,7 @@ namespace Ogre {
         mRecalcWorldSpaceCorners = true;
     }
     // -------------------------------------------------------------------
-    const Frustum::Corners& Frustum::getWorldSpaceCorners(void) const
+    const Vector3* Frustum::getWorldSpaceCorners(void) const
     {
         updateWorldSpaceCorners();
 

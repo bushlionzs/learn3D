@@ -127,7 +127,7 @@ float4 ps_main(VertexOut pIn): SV_Target
 	float3 reflectVec = reflect(-pIn.oEyePosition.xyz,adjustNormal);
 	reflectVec.z = - reflectVec.z;
 	
-	float3 reflectioncolour = gCubeMap.Sample(gsamLinearClamp, reflectVec).xyz;
+	float3 reflectioncolour = gCubeMap[0].Sample(gsamLinearClamp, reflectVec).xyz;
 	reflectioncolour *= (reflectioncolour.x + reflectioncolour.y + reflectioncolour.z) * 0.7;
 	
 	float facing = 1.0 - max(dot(pIn.oEyePosition.xyz,adjustNormal),0.0);

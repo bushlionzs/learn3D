@@ -113,7 +113,83 @@ namespace Ogre {
     void SceneNode::setDirection(const Vector3& vec, TransformSpace relativeTo,
         const Vector3& localDirectionVector)
     {
+        // Do nothing if given a zero vector
+        if (vec == Vector3::ZERO) return;
 
+        // The direction we want the local direction point to
+        Vector3 targetDir = vec.normalisedCopy();
+
+        // Transform target direction to world space
+        switch (relativeTo)
+        {
+        case TS_PARENT:
+            if (mInheritOrientation)
+            {
+                if (mParent)
+                {
+                    targetDir = mParent->_getDerivedOrientation() * targetDir;
+                }
+            }
+            break;
+        case TS_LOCAL:
+            targetDir = _getDerivedOrientation() * targetDir;
+            break;
+        case TS_WORLD:
+            // default orientation
+            break;
+        }
+
+        // Calculate target orientation relative to world space
+        Quaternion targetOrientation;
+        if (mYawFixed)
+        {
+            // Calculate the quaternion for rotate local Z to target direction
+            Vector3 xVec = mYawFixedAxis.crossProduct(targetDir);
+            xVec.normalise();
+            Vector3 yVec = targetDir.crossProduct(xVec);
+            yVec.normalise();
+            Quaternion unitZToTarget = Quaternion(xVec, yVec, targetDir);
+
+            if (localDirectionVector == Vector3::NEGATIVE_UNIT_Z)
+            {
+                // Specail case for avoid calculate 180 degree turn
+                targetOrientation =
+                    Quaternion(-unitZToTarget.y, -unitZToTarget.z, unitZToTarget.w, unitZToTarget.x);
+            }
+            else
+            {
+                // Calculate the quaternion for rotate local direction to target direction
+                Quaternion localToUnitZ = localDirectionVector.getRotationTo(Vector3::UNIT_Z);
+                targetOrientation = unitZToTarget * localToUnitZ;
+            }
+        }
+        else
+        {
+            const Quaternion& currentOrient = _getDerivedOrientation();
+
+            // Get current local direction relative to world space
+            Vector3 currentDir = currentOrient * localDirectionVector;
+
+            if ((currentDir + targetDir).squaredLength() < 0.00005f)
+            {
+                // Oops, a 180 degree turn (infinite possible rotation axes)
+                // Default to yaw i.e. use current UP
+                targetOrientation =
+                    Quaternion(-currentOrient.y, -currentOrient.z, currentOrient.w, currentOrient.x);
+            }
+            else
+            {
+                // Derive shortest arc to new direction
+                Quaternion rotQuat = currentDir.getRotationTo(targetDir);
+                targetOrientation = rotQuat * currentOrient;
+            }
+        }
+
+        // Set target orientation, transformed to parent space
+        if (mParent && mInheritOrientation)
+            setOrientation(mParent->_getDerivedOrientation().UnitInverse() * targetOrientation);
+        else
+            setOrientation(targetOrientation);
     }
 
     void SceneNode::detachObject(MoveObject* obj)

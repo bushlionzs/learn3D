@@ -312,6 +312,11 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     const Ogre::Vector3& Node::_getDerivedPosition(void) const
     {
+        if (mName == "ImpactModule:45")
+        {
+            int kk = 0;
+        }
+
         if (mNeedParentUpdate)
         {
             _updateFromParent();

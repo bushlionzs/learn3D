@@ -456,7 +456,7 @@ namespace Ogre
             top-left near, bottom-left near, bottom-right near, 
             top-right far, top-left far, bottom-left far, bottom-right far.
         */
-        virtual const Corners& getWorldSpaceCorners(void) const;
+        virtual const Vector3* getWorldSpaceCorners(void) const;
 
         /** Sets the type of projection to use (orthographic or perspective). Default is perspective.
         */

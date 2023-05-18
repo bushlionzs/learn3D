@@ -384,7 +384,7 @@ bool GameScene::getIntersectObject(
 
 void GameScene::loadImpl()
 {
-	mTerrain->buildTerrain();
+	//mTerrain->buildTerrain();
 	EngineManager::getSingleton().setTerrain(mTerrain.get());
 
 	for (int32_t i = 0; i < mActors.size(); i++)

@@ -678,7 +678,8 @@ MAIN_DECLARATION
     vec3 diffuseContrib = (1.0 - F) * diffuse(pbrInputs);
     vec3 specContrib = F * G * D / (4.0 * pbrInputs.NdotL * pbrInputs.NdotV);
     vec3 color = pbrInputs.NdotL * u_LightColor * (diffuseContrib + specContrib);
-
+	
+	return float4(1.0f, 0.0f, 0.0f, 1.0f);
     // Calculate lighting contribution from image based lighting source (IBL)
 #ifdef USE_IBL
     //color += getIBLContribution(pbrInputs, n, reflection);
@@ -687,7 +688,7 @@ MAIN_DECLARATION
     // Apply optional PBR terms for additional (optional) shading
 #ifdef HAS_OCCLUSIONMAP
     float ao = texture2D(u_OcclusionSampler, v_UV).r;
-    //color = mix(color, color * ao, u_OcclusionStrength);
+    color = mix(color, color * ao, u_OcclusionStrength);
 #endif
 
 #ifdef HAS_EMISSIVEMAP

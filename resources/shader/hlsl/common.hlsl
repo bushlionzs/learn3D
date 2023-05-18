@@ -38,7 +38,7 @@ SamplerComparisonState gsamShadow : register(s6);
 cbuffer cbPerObject : register(b0)
 {
     float4x4 gWorld;
-	float4x4 gWorldInvTranspose;
+	float4x4 gProjector;
 	float4x4 gWorldViewProj;
 };
 

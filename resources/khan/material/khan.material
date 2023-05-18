@@ -7988,27 +7988,6 @@ material chuansongdian_01_09
 
 }
 
-material Examples/Smoke
-{
-	technique
-	{
-		pass
-		{
-			lighting off
-			scene_blend alpha_blend
-			depth_write off
-			diffuse vertexcolour
-			
-			shader ogreparticle
-			texture_unit
-			{
-				texture Smoke15Frames.png
-				tex_address_mode clamp
-			}
-		}
-	}
-}
-
 material cj_hcplz_01
 {
 	technique
@@ -8461,4 +8440,29 @@ material 突厥武士男刀_01
 {
     material_parent WeaponTemplate
     set $basetexture TGA_突厥武士男刀_01.dds
+}
+
+material Game/ReachAble
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_check on
+			depth_write off
+			depth_bias 0
+			cull_hardware none
+			shader projector
+			texture_unit
+			{
+				texture jpg_reachable.dds
+				tex_address_mode clamp
+				rotate_anim 1.2
+				filtering none
+			}
+
+		}
+	}
 }

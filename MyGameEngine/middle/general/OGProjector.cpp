@@ -106,8 +106,10 @@ namespace Orphigine {
             float zFar = mParent->getFarClipDistance();
             Ogre::Matrix4 aa =
                 Ogre::Math::makeOrthoRH(left, right, bottom, top, zNear, zFar);
-            Ogre::Vector3 eyePos(0, 200.0f, 0.0f);
-            Ogre::Vector3 targetPos(0, 0, 0);
+
+            Ogre::Vector3 eyePos = mParent->getParentSceneNode()->_getDerivedPosition();
+            Ogre::Vector3 targetPos = eyePos;
+            targetPos.y -= 100;
             Ogre::Vector3 up(1.0, 0.0, 0.0);
             Ogre::Matrix4 bb = Ogre::Math::makeLookAtRH(eyePos, targetPos, up);
         

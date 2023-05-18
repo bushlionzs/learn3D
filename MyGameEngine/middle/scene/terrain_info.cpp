@@ -704,7 +704,7 @@ size_t TerrainInfo::isFrustumIntersectGround(
 	{
 		// The projector may be full inside the terrain bounding box, so use the
 		// projector world bounding box to determinate the intersection triangles
-		const Ogre::AxisAlignedBox& aabb = frustum->getWorldBoundingBox();
+		const Ogre::AxisAlignedBox& aabb = frustum->getWorldBoundingBox(true);
 		minX = aabb.getMinimum().x; minZ = aabb.getMinimum().z;
 		maxX = aabb.getMaximum().x; maxZ = aabb.getMaximum().z;
 	}
@@ -805,7 +805,7 @@ size_t TerrainInfo::isFrustumIntersectGround(
 					this->getWorldPosFromGridIndex(x + 1, z + 1),
 			};
 
-			const uint m[4] =
+			/*const uint m[4] =
 			{
 				getClippingMask(viewProjectionMatrix, p[0]),
 					getClippingMask(viewProjectionMatrix, p[1]),
@@ -821,7 +821,7 @@ size_t TerrainInfo::isFrustumIntersectGround(
 				(m[3] & 1 << Ogre::FRUSTUM_PLANE_FAR))
 			{
 				continue;
-			}
+			}*/
 
 			const Ogre::Vector3 n[4] =
 			{

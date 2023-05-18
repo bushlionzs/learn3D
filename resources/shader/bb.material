@@ -130,7 +130,7 @@ material BaseWhite
 			shader basic
 			texture_unit
 			{
-				texture bricks2.dds
+				texture white1x1.dds
 				tex_address_mode clamp
 			}
 		}
