@@ -243,6 +243,19 @@ public:
     }
 };
 
+class CmdRotateAnimTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setRotateTexture(val);
+    }
+};
+
 class CmdScrollTexture : public ParamCommand
 {
 public:
@@ -361,6 +374,12 @@ void OgreMaterialParam::initParameters()
             "animation texture",
             PT_STRING),
             &mAnimTexture);
+
+        static CmdRotateAnimTexture mRotateTexture;
+        dict->addParameter(ParameterDef("rotate_anim",
+            "rotate texture",
+            PT_STRING),
+            &mRotateTexture);
 
         static CmdScrollTexture mScrollTexture;
         dict->addParameter(ParameterDef("scroll_anim",
@@ -566,6 +585,14 @@ void OgreMaterialParam::setAnimTexture(const String& val)
     }
 }
 
+
+void OgreMaterialParam::setRotateTexture(const String& val)
+{
+    float value = Ogre::StringConverter::parseReal(val);
+    auto unit = mMaterial->getTextureUnit(0);
+    unit->setTextureRotate(Ogre::Radian(value));
+}
+
 void OgreMaterialParam::setScrollTexture(const String& val)
 {
     std::vector<std::string> aa = Ogre::StringUtil::split(val);
@@ -588,10 +615,6 @@ void OgreMaterialParam::setScrollTexture(const String& val)
 
 void OgreMaterialParam::setCullMode(const String& val)
 {
-    if (mMaterial->getName() == "myground")
-    {
-        int kk = 0;
-    }
     if (val == "none")
     {
         mMaterial->setCullMode(Ogre::CULL_NONE);

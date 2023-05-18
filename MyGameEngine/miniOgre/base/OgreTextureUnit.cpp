@@ -11,6 +11,7 @@ void TextureAnimationControllerValue::setValue(Ogre::Real value)
 
 TextureUnit::TextureUnit():
     mRotate(0),
+    mCurrentRotate(0),
     mUMod(0.0f),
     mVMod(0.0f),
     mU(0.0f),
@@ -18,7 +19,7 @@ TextureUnit::TextureUnit():
     mUScale(1.0f),
     mVScale(1.0f)
 {
-    mControllerOwner = std::make_shared<TextureAnimationControllerValue>(this);
+    
 }
 
 
@@ -114,8 +115,10 @@ void TextureUnit::_load()
         mTextures.push_back(tex);
     }
     
-    if (mUseAnimation || mUseScroll)
+    if (mUseAnimation || mUseScroll || mRotate != Ogre::Radian(0))
     {
+        if(!mControllerOwner)
+            mControllerOwner = std::make_shared<TextureAnimationControllerValue>(this);
         Ogre::ControllerManager& controllerManager = Ogre::ControllerManager::getSingleton();
         mAnimController = controllerManager.createFrameTimePassthroughController(
             mControllerOwner);
@@ -168,6 +171,12 @@ std::shared_ptr<TextureUnit> TextureUnit::clone()
     tu->mNameList = mNameList;
     tu->mTextureProperty = mTextureProperty;
     tu->mAnimDuration = mAnimDuration;
+    tu->mRotate = mRotate;
+    tu->mUseScroll = mUseScroll;
+    tu->mU = mU;
+    tu->mV = mV;
+    tu->mUScale = mUScale;
+    tu->mVScale = mVScale;
     return tu;
 }
 
@@ -187,7 +196,101 @@ void TextureUnit::setColourOperationEx(
 void TextureUnit::setProjectiveTexturing(bool enable,
     const Frustum* projectionSettings)
 {
+    if (enable)
+    {
+        TextureEffect eff;
+        eff.type = ET_PROJECTIVE_TEXTURE;
+        eff.frustum = projectionSettings;
+        addEffect(eff);
+    }
+    else
+    {
+        removeEffect(ET_PROJECTIVE_TEXTURE);
+    }
+}
 
+void TextureUnit::addEffect(TextureEffect& effect)
+{
+    // Ensure controller pointer is null
+    effect.controller = 0;
+
+    if (effect.type == ET_ENVIRONMENT_MAP
+        || effect.type == ET_UVSCROLL
+        || effect.type == ET_USCROLL
+        || effect.type == ET_VSCROLL
+        || effect.type == ET_ROTATE
+        || effect.type == ET_PROJECTIVE_TEXTURE)
+    {
+        // Replace - must be unique
+        // Search for existing effect of this type
+        auto i = mEffects.find(effect.type);
+        if (i != mEffects.end())
+        {
+            // Destroy old effect controller if exist
+            if (i->second.controller)
+            {
+                ControllerManager::getSingleton().destroyController(i->second.controller);
+            }
+
+            mEffects.erase(i);
+        }
+    }
+
+    if (isLoaded())
+    {
+        // Create controller
+        createEffectController(effect);
+    }
+
+    // Record new effect
+    mEffects.insert(EffectMap::value_type(effect.type, effect));
+
+}
+
+//-----------------------------------------------------------------------
+void TextureUnit::createEffectController(TextureEffect& effect)
+{
+    assert(effect.controller == 0);
+    ControllerManager& cMgr = ControllerManager::getSingleton();
+    switch (effect.type)
+    {
+    case ET_UVSCROLL:
+
+        break;
+    case ET_USCROLL:
+  
+        break;
+    case ET_VSCROLL:
+
+        break;
+    case ET_ROTATE:
+
+        break;
+    case ET_TRANSFORM:
+
+        break;
+    case ET_ENVIRONMENT_MAP:
+        break;
+    default:
+        break;
+    }
+}
+
+void TextureUnit::removeEffect(const TextureEffectType type)
+{
+    // Get range of items matching this effect
+    std::pair< EffectMap::iterator, EffectMap::iterator > remPair =
+        mEffects.equal_range(type);
+    // Remove controllers
+    for (EffectMap::iterator i = remPair.first; i != remPair.second; ++i)
+    {
+        if (i->second.controller)
+        {
+            ControllerManager::getSingleton().destroyController(i->second.controller);
+        }
+    }
+    // Erase         
+    mEffects.erase(remPair.first, remPair.second);
 }
 
 int32_t TextureUnit::getNumFrames()
@@ -238,6 +341,8 @@ void TextureUnit::addTime(float delta)
         mV += mVMod * delta;
         mRecalcTexMatrix = true;
     }
+
+    mCurrentRotate += mRotate * delta;
 }
 
 float TextureUnit::getAnimationDuration()
@@ -313,23 +418,23 @@ void TextureUnit::recalcTextureMatrix() const
         mTexModMatrix.setTrans(Ogre::Vector3(mU, mV, 0));
     }
 
-    //if (mRotate != Radian(0))
-    //{
-    //    Affine3 rot = Affine3::IDENTITY;
-    //    Radian theta(mRotate);
-    //    Real cosTheta = Math::Cos(theta);
-    //    Real sinTheta = Math::Sin(theta);
+    if (mRotate != Radian(0))
+    {
+        Ogre::Matrix4 rot = Ogre::Matrix4::IDENTITY;
+        Radian theta(mCurrentRotate);
+        Real cosTheta = Math::Cos(theta);
+        Real sinTheta = Math::Sin(theta);
 
-    //    rot[0][0] = cosTheta;
-    //    rot[0][1] = -sinTheta;
-    //    rot[1][0] = sinTheta;
-    //    rot[1][1] = cosTheta;
-    //    // Offset center of rotation to center of texture
-    //    rot[0][3] = 0.5f + ((-0.5f * cosTheta) - (-0.5f * sinTheta));
-    //    rot[1][3] = 0.5f + ((-0.5f * sinTheta) + (-0.5f * cosTheta));
+        rot[0][0] = cosTheta;
+        rot[0][1] = -sinTheta;
+        rot[1][0] = sinTheta;
+        rot[1][1] = cosTheta;
+        // Offset center of rotation to center of texture
+        rot[0][3] = 0.5f + ((-0.5f * cosTheta) - (-0.5f * sinTheta));
+        rot[1][3] = 0.5f + ((-0.5f * sinTheta) + (-0.5f * cosTheta));
 
-    //    xform = rot * xform;
-    //}
+        mTexModMatrix = rot * mTexModMatrix;
+    }
 
     mRecalcTexMatrix = false;
 

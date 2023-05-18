@@ -99,7 +99,7 @@ int32_t Material::getTextureUnitCount()
     return mTextureUnits.size();
 }
 
-const std::vector<std::shared_ptr<TextureUnit>>& Material::getAllTexureUnit() const 
+std::vector<std::shared_ptr<TextureUnit>>& Material::getAllTexureUnit() 
 {
     return mTextureUnits;
 }
@@ -184,6 +184,10 @@ Ogre::Vector2 Material::getTexAnimationOffset()
 
 void Material::setCullMode(Ogre::CullingMode mode)
 {
+    if (mMaterialName == "Game/ReachAble")
+    {
+        int kk = 0;
+    }
     mCullingMode = mode;
 }
 
@@ -210,7 +214,7 @@ Material& Material::operator=(const Material& rhs)
     mPbr = rhs.mPbr;
     mLoad = false;
     mWriteDepth = rhs.mWriteDepth;
-
+    mCullingMode = rhs.mCullingMode;
     for (auto tu : rhs.mTextureUnits)
     {
         mTextureUnits.push_back(tu->clone());

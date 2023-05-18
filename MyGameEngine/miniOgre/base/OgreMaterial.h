@@ -36,7 +36,7 @@ namespace Ogre {
         std::shared_ptr<TextureUnit>& getTextureUnit(const String& name);
        
         int32_t getTextureUnitCount();
-        const std::vector<std::shared_ptr<TextureUnit>>& getAllTexureUnit() const;
+        std::vector<std::shared_ptr<TextureUnit>>& getAllTexureUnit();
 
         void addShader(ShaderInfo& sinfo);
         const std::shared_ptr<Shader>& getShader() const;

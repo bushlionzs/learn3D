@@ -45,6 +45,12 @@ namespace Ogre {
         {
             return nullptr;
         }
+
+        virtual const Ogre::Matrix4& getProjectorMatrix()
+        {
+            return Ogre::Matrix4::IDENTITY;
+        }
+
         virtual uint64_t getSortValue()
         {
             return 0;

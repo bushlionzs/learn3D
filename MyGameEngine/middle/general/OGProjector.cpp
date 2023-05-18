@@ -11,6 +11,10 @@
 #include "OgreRenderable.h"
 #include "OgreEntity.h"
 #include "OGProjector.h"
+#include "terrain.h"
+#include "terrain_info.h"
+#include "vertex_data.h"
+#include "vertex_declaration.h"
 
 namespace Orphigine {
 
@@ -20,56 +24,112 @@ namespace Orphigine {
         Projector* mParent;
 
     public:
-        Ogre::Entity* mEntity;
-       // Ogre::RenderOperation mRenderOp;
-
+        VertexData* mVertexData = nullptr;
+        Ogre::Matrix4 mProjectorMatrix;
     public:
-        
-        //-----------------------------------------------------------------------
-        /** Overridden - see Renderable. */
-        const Ogre::MaterialPtr& getMaterial(void) const
+
+        ProjectorRenderable(Projector* parent)
+            : Renderable()
+            , mParent(parent)
         {
-            return mParent->mPatchMaterial;
+            mVertexData = new VertexData;
+            mVertexData->vertexCount = 6;
+            auto decl = mVertexData->vertexDeclaration;
+            decl->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+            decl->addElement(0, 0, 3 * sizeof(Real), VET_COLOUR, VES_DIFFUSE);
+            mVertexData->vertexSlotInfo.emplace_back();
+
+            auto& back = mVertexData->vertexSlotInfo.back();
+            back.createBuffer(16, mVertexData->vertexCount);
+            
         }
-       
-        //-----------------------------------------------------------------------
-        /** Overridden - see Renderable. */
+
+        virtual VertexData* getVertexData()
+        {
+            return mVertexData;
+        }
+
+        virtual IndexData* getIndexData()
+        {
+            return nullptr;
+        }
+
+        virtual IndexDataView* getIndexView()
+        {
+            return nullptr;
+        }
+
+        void setVertexData(
+            const std::vector<Ogre::Vector3> mTempPositions,
+            size_t vertexStart, size_t vertexCount, unsigned int mColour)
+        {
+            auto& back = mVertexData->vertexSlotInfo.back();
+            
+            uint32_t numVerts = back.hardwareVertexBuffer->getNumVerts();
+
+            if (numVerts < mTempPositions.size())
+            {
+                back.createBuffer(back.mVertexSize, mTempPositions.size());
+            }
+            mVertexData->vertexStart = vertexStart;
+            mVertexData->vertexCount = vertexCount;
+
+            float* pFloat = static_cast<float*>(back.hardwareVertexBuffer->lock());
+            for (uint32_t i = 0; i < mTempPositions.size(); i++)
+            {
+                *pFloat++ = mTempPositions[i].x;
+                *pFloat++ = mTempPositions[i].y;
+                *pFloat++ = mTempPositions[i].z;
+                unsigned int* pColour = (unsigned int*)pFloat;
+                *pColour = mColour;
+                pFloat++;
+            }
+            back.hardwareVertexBuffer->unlock();
+        }
+        virtual const std::shared_ptr<Material>& getMaterial() override
+        {
+            return mParent->_getPatchMaterial();
+        }
+    
+        virtual const Ogre::Matrix4& getProjectorMatrix() override
+        {
+            float width = mParent->getOrthoWindowWidth();
+            float height = mParent->getOrthoWindowHeight();
+            const Ogre::Matrix4& view = mParent->getViewMatrix();
+            const Ogre::Matrix4& proj = mParent->getProjectionMatrix();
+
+            Real left = -width / 2.0f;
+            Real right = width / 2.0f;
+            Real top = height / 2.0f;
+            Real bottom = -height / 2.0f;
+            float zNear = mParent->getNearClipDistance();
+            float zFar = mParent->getFarClipDistance();
+            Ogre::Matrix4 aa =
+                Ogre::Math::makeOrthoRH(left, right, bottom, top, zNear, zFar);
+            Ogre::Vector3 eyePos(0, 200.0f, 0.0f);
+            Ogre::Vector3 targetPos(0, 0, 0);
+            Ogre::Vector3 up(1.0, 0.0, 0.0);
+            Ogre::Matrix4 bb = Ogre::Math::makeLookAtRH(eyePos, targetPos, up);
+        
+            mProjectorMatrix = bb * aa;
+            return mProjectorMatrix;
+        }
+
         void getWorldTransforms(Ogre::Matrix4* xform) const
         {
-            if (mEntity)
-            {
-                *xform = mEntity->_getParentNodeFullTransform();
-            }
-            else
-            {
-                *xform = Ogre::Matrix4::IDENTITY;
-            }
+            *xform = Ogre::Matrix4::IDENTITY;
         }
         //-----------------------------------------------------------------------
         /** Overridden - see Renderable. */
         const Ogre::Quaternion& getWorldOrientation(void) const
         {
-            if (mEntity)
-            {
-                return mEntity->getParentSceneNode()->_getDerivedOrientation();
-            }
-            else
-            {
-                return Ogre::Quaternion::IDENTITY;
-            }
+            return Ogre::Quaternion::IDENTITY;
         }
         //-----------------------------------------------------------------------
         /** Overridden - see Renderable. */
         const Ogre::Vector3& getWorldPosition(void) const
         {
-            if (mEntity)
-            {
-                return mEntity->getParentSceneNode()->_getDerivedPosition();
-            }
-            else
-            {
-                return Ogre::Vector3::ZERO;
-            }
+            return Ogre::Vector3::ZERO;
         }
         //-----------------------------------------------------------------------
         /** Overridden - see Renderable. */
@@ -123,7 +183,6 @@ namespace Orphigine {
         , mQueryTypeMask(~0)
         , mVertexLimit(4096)
         , mVertexBuffer()
-        , mRenderables()
         , mPatchMaterial()
         , mPatchMaterialName()
         , mPatchMaterialDirty()
@@ -156,27 +215,30 @@ namespace Orphigine {
     //-----------------------------------------------------------------------
     void Projector::_clearRenderables(void)
     {
-        _freeRenderables();
-
-        for (ProjectorRenderableList::const_iterator it = mFreeRenderables.begin(); it != mFreeRenderables.end(); ++it)
-        {
-            delete *it;
-        }
-        mFreeRenderables.clear();
+      
     }
     //-----------------------------------------------------------------------
     void Projector::_freeRenderables(void)
     {
-        
     }
     //-----------------------------------------------------------------------
     ProjectorRenderable* Projector::_allocRenderable(Ogre::Entity* entity)
     {
-        return nullptr;
+        if (mRenderables.empty())
+        {
+            mRenderables.push_back(new ProjectorRenderable(this));
+        }
+
+        return (ProjectorRenderable*)mRenderables.front();
     }
     //-----------------------------------------------------------------------
     void Projector::_addRenderable(Ogre::Entity* entity, size_t vertexStart, size_t vertexCount)
     {
+        if (vertexCount > 0 && !m_bUsingProjScene)  // 如果不用ProjScene，那么才可以自己独立渲染，否则自己不独立渲染，而是交给ProjScene渲染
+        {
+            ProjectorRenderable* result = _allocRenderable(entity);
+            result->setVertexData(mTempPositions, vertexStart, vertexCount, mColour);
+        }
     }
     //-----------------------------------------------------------------------
     void Projector::setShowFrustum(bool showFrustum)
@@ -274,7 +336,14 @@ namespace Orphigine {
     //-----------------------------------------------------------------------
     bool Projector::_updateMaterial(void)
     {
-        return false;
+        if (!mPatchMaterial)
+        {
+            if (!mPatchMaterialName.empty())
+            {
+                mPatchMaterial = createProjectiveMaterial(mPatchMaterialName, this);
+            }
+        }
+        return true;
     }
     //-----------------------------------------------------------------------
     void Projector::_notifyCurrentCamera(Ogre::Camera* camera)
@@ -286,10 +355,8 @@ namespace Orphigine {
     }
 
 	void Projector::setVisible(bool visible)
-	{
-	
-
-		
+    {
+        mVisible = visible;
 	}
 
 	//-----------------------------------------------------------------------
@@ -308,13 +375,43 @@ namespace Orphigine {
     {
 		
     }
+
+    void Projector::update(float delta)
+    {
+        _updateVertexBuffer(false);
+    }
 	//-----------------------------------------------------------------------
     void Projector::_populateForTerrain(void)
     {
         if (!mTerrain)
+        {
+            mTempPositions.clear();
+            float a = 100.0f;
+            mTempPositions.push_back(Ogre::Vector3(-a, 0, -a));
+            mTempPositions.push_back(Ogre::Vector3(a, 0, -a));
+            mTempPositions.push_back(Ogre::Vector3(-a, 0, a));
+
+            mTempPositions.push_back(Ogre::Vector3(-a, 0, a));
+            mTempPositions.push_back(Ogre::Vector3(a, 0, -a));
+            mTempPositions.push_back(Ogre::Vector3(a, 0, a));
+            _addRenderable(NULL, 0, 6);
+            return;
+        }
+            
+
+        // Check vertex limit
+        if (mTempPositions.size() >= mVertexLimit)
             return;
 
-        
+        auto data = mTerrain->getTerrainInfo();
+        assert(data);
+
+        Real fOldFar = getFarClipDistance();
+
+        size_t vertexStart = mTempPositions.size();
+        size_t vertexCount = data->isFrustumIntersectGround(
+            this, mTerrainGridLimit, true, mTempPositions, nullptr);
+        _addRenderable(NULL, vertexStart, vertexCount);
     }
 
 	void Projector::calcAABB()
@@ -327,15 +424,71 @@ namespace Orphigine {
 		}
 	}
 
-
-	bool Projector::_populateForMovables(Real & fHitY)
-	{
-        return true;
-	}
-
 	void Projector::_updateVertexBuffer(bool bUpdateAnyway)
 	{
-		
+		const Ogre::Vector3& curPos = getParentSceneNode()->_getDerivedPosition();
+		const Ogre::Quaternion& curOrient = getParentSceneNode()->_getDerivedOrientation();
+		Real squaredLen = (mLastUpdatePos - curPos).squaredLength();
+		const Real slRef = 50;  // 位置改变量超过这个阈值才发生更新。此阈值原先是0.5，未免太小了吧
+		//只有水平方向的位置或者角度发生变化才需要重新构建vertexbuffer
+		//设备重置……非特效光圈……位置改变……方向改变
+		if (bUpdateAnyway || mDirty || mForceUpdate || (squaredLen > slRef) || 
+            !curOrient.equals(mLastOrient, Ogre::Radian(0.02f)))
+		{
+			mLastUpdatePos = curPos;
+			mLastOrient = curOrient;
+
+			_freeRenderables();
+			mTempPositions.clear();
+			calcAABB();
+			Real fHitY = 0.0f;
+			bool bTerrainNeedProject = _populateForMovables(fHitY);
+			static Real fOffset = 30.0f;
+			//如果没有与行走面相交，仅仅投影到地形上
+			if (fHitY == 0.0f)
+			{
+				fOffset = 300.0f;
+			}
+			else
+			{
+				//如果projector是阴影光圈或者选中光圈，需要把offset设的小一点
+				if (mSphereRadius == 100.0f)
+				{
+					fOffset = 60.0f;
+				}
+				//如果projector是粒子系统投影到地面上
+				else
+				{
+					fOffset = 300.0f;
+				}
+			}
+			if (bTerrainNeedProject)
+			{
+				Real fOldFar = getFarClipDistance();
+				Ogre::Vector3 frustumPos;
+				frustumPos = getParentSceneNode()->_getDerivedPosition();
+				Real fTerrainHeight = 0;
+				if (mTerrain)
+				{
+					fTerrainHeight = mTerrain->getTerrainInfo()->getWorldIndexWorldHeight(frustumPos.x, frustumPos.z);
+				}
+				
+				if (fHitY == 0.0f)
+					setFarClipDistance(frustumPos.y - fTerrainHeight + fOffset);
+				else
+					setFarClipDistance(frustumPos.y - fHitY + fOffset);
+				_populateForTerrain();
+				setFarClipDistance(fOldFar);
+			}
+			if (mTempPositions.empty() || (mRenderables.empty() && !m_bUsingProjScene))
+			{
+				return;
+			}
+
+			_buildVertexBuffer();
+
+			mDirty = false;
+		}
 	}
 
 	void Projector::enableUsingProjScene(bool bEnable)
@@ -356,196 +509,10 @@ namespace Orphigine {
 	}
 
     //-----------------------------------------------------------------------
-    /*void Projector::_populateForMovables(void)
-    {
-        // Shortcut to ignore all movables
-        if (!mQueryMask || !mQueryTypeMask)
-            return;
-
-        // Check vertex limit
-        if (mTempPositions.size() >= mVertexLimit)
-            return;
-
-        Ogre::SceneNode* sn = this->getParentSceneNode(); assert(sn);
-        Ogre::SceneManager* sm = sn->getCreator(); assert(sm);
-
-        Ogre::PlaneBoundedVolumeListSceneQuery* query = sm->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList());
-
-        {
-            Ogre::PlaneBoundedVolumeList volumes;
-            Ogre::PlaneBoundedVolume volume;
-            const Ogre::Plane* frustumPlanes;
-
-            // Pre-allocate spaces
-            volume.planes.reserve(6 * 2);
-
-            // Inject our clip planes
-            frustumPlanes = this->getFrustumPlanes();
-            volume.planes.insert(volume.planes.end(), frustumPlanes, frustumPlanes + 6);
-
-            // Setup renderable clip planes if need
-            if (mEnableClipPlanes)
-            {
-                mClipPlanes = volume.planes;
-            }
-
-            // Inject camera's clip planes
-            frustumPlanes = mCurrentCamera->getFrustumPlanes();
-            volume.planes.insert(volume.planes.end(), frustumPlanes, frustumPlanes + 6);
-
-            // Construct volumes and query
-            volumes.push_back(volume);
-            query->setVolumes(volumes);
-        }
-
-        // Cache the view-projection matrix
-        Ogre::Matrix4 viewProjMatrix = this->getProjectionMatrix() * this->getViewMatrix();
-        CollisionModelManager& cmm = CollisionModelManager::getSingleton();
-
-        // TODO: Optimize usage of the following variables
-        Opcode::PlanesCollider planesCollider;
-        Opcode::PlanesCache planesCache;
-        IceMaths::Plane clipPlanes[6];
-
-		query->setQueryMask(mQueryMask);
-        query->setQueryTypeMask(mQueryTypeMask);
-        Ogre::SceneQueryResult& result = query->execute();
-        for (Ogre::SceneQueryResultMovableList::const_iterator it = result.movables.begin(); it != result.movables.end(); ++it)
-        {
-            Ogre::MovableObject* movable = *it;
-            if (!(movable->_notifyCurrentCamera(mCurrentCamera), movable->isVisible()))
-                continue;
-
-            if (movable->getMovableType() == Ogre::EntityFactory::FACTORY_TYPE_NAME)
-            {
-                Ogre::Entity* entity = static_cast<Ogre::Entity*>(movable);
-                if (!entity->hasSkeleton() && !entity->hasVertexAnimation())
-                {
-                    // Static entity
-
-                    const Ogre::MeshPtr& mesh = entity->getMesh();
-                    // Get world matrix
-                    Ogre::Matrix4 worldMatrix = entity->_getParentNodeFullTransform();
-                    // Compute world-view-projection matrix
-                    Ogre::Matrix4 worldViewProjMatrix = viewProjMatrix * worldMatrix;
-                    // Get the collision mode
-                    CollisionModelPtr collisionModel = cmm.getCollisionModel(mesh);
-
-                    // Setup clip planes in model space, NB: Opcode use negative side as inside
-                    clipPlanes[Ogre::FRUSTUM_PLANE_LEFT].Set(
-                        - worldViewProjMatrix[0][0] - worldViewProjMatrix[3][0],
-                        - worldViewProjMatrix[0][1] - worldViewProjMatrix[3][1],
-                        - worldViewProjMatrix[0][2] - worldViewProjMatrix[3][2],
-                        - worldViewProjMatrix[0][3] - worldViewProjMatrix[3][3]);
-                    clipPlanes[Ogre::FRUSTUM_PLANE_RIGHT].Set(
-                        + worldViewProjMatrix[0][0] - worldViewProjMatrix[3][0],
-                        + worldViewProjMatrix[0][1] - worldViewProjMatrix[3][1],
-                        + worldViewProjMatrix[0][2] - worldViewProjMatrix[3][2],
-                        + worldViewProjMatrix[0][3] - worldViewProjMatrix[3][3]);
-                    clipPlanes[Ogre::FRUSTUM_PLANE_BOTTOM].Set(
-                        - worldViewProjMatrix[1][0] - worldViewProjMatrix[3][0],
-                        - worldViewProjMatrix[1][1] - worldViewProjMatrix[3][1],
-                        - worldViewProjMatrix[1][2] - worldViewProjMatrix[3][2],
-                        - worldViewProjMatrix[1][3] - worldViewProjMatrix[3][3]);
-                    clipPlanes[Ogre::FRUSTUM_PLANE_TOP].Set(
-                        + worldViewProjMatrix[1][0] - worldViewProjMatrix[3][0],
-                        + worldViewProjMatrix[1][1] - worldViewProjMatrix[3][1],
-                        + worldViewProjMatrix[1][2] - worldViewProjMatrix[3][2],
-                        + worldViewProjMatrix[1][3] - worldViewProjMatrix[3][3]);
-                    clipPlanes[Ogre::FRUSTUM_PLANE_NEAR].Set(
-                        - worldViewProjMatrix[2][0] - worldViewProjMatrix[3][0],
-                        - worldViewProjMatrix[2][1] - worldViewProjMatrix[3][1],
-                        - worldViewProjMatrix[2][2] - worldViewProjMatrix[3][2],
-                        - worldViewProjMatrix[2][3] - worldViewProjMatrix[3][3]);
-                    clipPlanes[Ogre::FRUSTUM_PLANE_FAR].Set(
-                        + worldViewProjMatrix[2][0] - worldViewProjMatrix[3][0],
-                        + worldViewProjMatrix[2][1] - worldViewProjMatrix[3][1],
-                        + worldViewProjMatrix[2][2] - worldViewProjMatrix[3][2],
-                        + worldViewProjMatrix[2][3] - worldViewProjMatrix[3][3]);
-
-                    // collide check
-                    if (!planesCollider.Collide(planesCache, clipPlanes, 6, collisionModel->getOpcodeModel(), NULL))
-                        continue;
-
-                    const udword* triangles = planesCollider.GetTouchedPrimitives();
-                    udword numTriangles = planesCollider.GetNbTouchedPrimitives();
-                    if (!triangles || !numTriangles)
-                        continue;
-
-                    // Get the view vector base on projection type
-                    Ogre::Vector4 vv;
-                    Ogre::Matrix4 eyeToModel = (this->getViewMatrix() * worldMatrix).inverse();
-                    if (this->getProjectionType() == Ogre::PT_PERSPECTIVE)
-                    {
-                        // Use view position as view vector
-                        vv[0] = eyeToModel[0][3];
-                        vv[1] = eyeToModel[1][3];
-                        vv[2] = eyeToModel[2][3];
-                        vv[3] = eyeToModel[3][3];
-                    }
-                    else
-                    {
-                        // Use view direction as view vector
-                        vv[0] = eyeToModel[0][2];
-                        vv[1] = eyeToModel[1][2];
-                        vv[2] = eyeToModel[2][2];
-                        vv[3] = eyeToModel[3][2];
-                    }
-
-                    const std::vector<Ogre::Vector4>& faceNormals = collisionModel->getFaceNormals();
-                    const std::vector<Ogre::Vector3>& vertices = collisionModel->getVertices();
-                    const std::vector<size_t>& indices = collisionModel->getIndices();
-                    size_t vertexStart = mTempPositions.size();
-                    size_t vertexCount = 0;
-
-                    // Reserve memory avoid allocate overhead
-                    mTempPositions.reserve(vertexStart + numTriangles * 3);
-
-                    for (udword i = 0; i < numTriangles; ++i)
-                    {
-                        udword triangleIndex = triangles[i];
-                        const Ogre::Vector4& faceNormal = faceNormals[triangleIndex];
-
-                        // Check the triangle is projector facing
-                        if (faceNormal.dotProduct(vv) > 0)
-                        {
-                            mTempPositions.push_back(vertices[indices[triangleIndex*3 + 0]]);
-                            mTempPositions.push_back(vertices[indices[triangleIndex*3 + 1]]);
-                            mTempPositions.push_back(vertices[indices[triangleIndex*3 + 2]]);
-                            vertexCount += 3;
-                        }
-                    }
-
-                    // Check vertex limit
-                    assert(vertexStart <= mVertexLimit);
-                    if (mVertexLimit <= vertexStart)
-                        break;  // Just for safely
-
-                    // Check overrun
-                    bool overrun = vertexStart + vertexCount > mVertexLimit;
-                    if (overrun)
-                    {
-                        // discard overrun vertices
-                        vertexCount = (mVertexLimit - vertexStart) / 3 * 3;
-                        mTempPositions.resize(vertexStart + vertexCount);
-                    }
-
-                    _addRenderable(entity, vertexStart, vertexCount);
-
-                    // No more process because vertices overrun
-                    if (overrun)
-                        break;
-                }
-                else
-                {
-                    // Animation entity
-                    // TODO:
-                }
-            }
-        }
-
-        sm->destroyQuery(query);
-    }*/
+    bool Projector::_populateForMovables(Real & fHitY)
+	{
+        return true;
+	}
 	//-----------------------------------------------------------------------
 	//-----------------------------------------------------------------------
 	const String ProjectorFactory::FACTORY_TYPE_NAME = "Projector";

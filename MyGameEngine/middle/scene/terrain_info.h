@@ -332,6 +332,15 @@ public:
 
 	std::pair<Real, Real> getRealGridIndexFromWorldIndex(Real worldXIndex, Real worldZIndex) const;
 	
+	uint32_t getClippingMask(const Ogre::Matrix4& m, const Ogre::Vector3& v);
+
+	std::pair<int, int>	getNearestGridJoint(Real worldXIndex, Real worldZIndex) const;
+	size_t isFrustumIntersectGround(
+		const Ogre::Frustum* frustum,
+		int areaLimit,
+		bool receivedDecalOnly,
+		std::vector<Ogre::Vector3>& positions,
+		std::vector<Ogre::Vector3>* normals);
 public:
 	String mName;
 	int32_t						    mXGridSize;

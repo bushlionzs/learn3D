@@ -24,6 +24,40 @@ public:
     void setValue(Ogre::Real value);
 };
 
+enum TextureEffectType
+{
+    /// Generate all texture coords based on angle between camera and vertex
+    ET_ENVIRONMENT_MAP,
+    /// Generate texture coords based on a frustum
+    ET_PROJECTIVE_TEXTURE,
+    /// Constant u/v scrolling effect
+    ET_UVSCROLL,
+    /// Constant u scrolling effect
+    ET_USCROLL,
+    /// Constant u/v scrolling effect
+    ET_VSCROLL,
+    /// Constant rotation
+    ET_ROTATE,
+    /// More complex transform
+    ET_TRANSFORM
+
+};
+
+/** Internal structure defining a texture effect.
+        */
+struct TextureEffect {
+    TextureEffectType type;
+    int subtype;
+    Real arg1, arg2;
+    WaveformType waveType;
+    Real base;
+    Real frequency;
+    Real phase;
+    Real amplitude;
+    Controller<Real>* controller;
+    const Frustum* frustum;
+};
+
 class TextureUnit
 {
 public:
@@ -60,7 +94,9 @@ public:
 
     void setProjectiveTexturing(bool enable,
         const Frustum* projectionSettings);
-
+    void addEffect(TextureEffect& effect);
+    void removeEffect(const TextureEffectType type);
+    void createEffectController(TextureEffect& effect);
     int32_t getNumFrames();
 
     unsigned int getCurrentFrame(void) const;
@@ -79,6 +115,11 @@ public:
 
     const Matrix4& getTextureTransform() const;
     void recalcTextureMatrix() const;
+
+    /** Texture effects in a multimap paired array
+       */
+    typedef std::multimap<TextureEffectType, TextureEffect, std::less<TextureEffectType> > EffectMap;
+
 private:
     std::vector<TexturePtr> mTextures;
     std::vector<String> mNameList;
@@ -98,6 +139,10 @@ private:
     Real mU, mV;
     Real mUScale, mVScale;
     Ogre::Radian mRotate;
+    Ogre::Radian mCurrentRotate;
     mutable Matrix4 mTexModMatrix;
     mutable bool mRecalcTexMatrix = true;
+
+    //
+    EffectMap mEffects;
 };

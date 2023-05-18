@@ -446,23 +446,22 @@ namespace Orphigine	{
 			strName += Ogre::StringConverter::toString(nProjectorNum);
 			auto sceneMgr = EngineManager::getSingleton().getSceneManager();
 			Projector * projector = static_cast<Projector*>(sceneMgr->createMovableObject(strName, ProjectorFactory::FACTORY_TYPE_NAME, nullptr) );
-			projector->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
 
 			nProjectorNum++;
 
-			projector->setNearClipDistance(100.0f);
-			projector->setFarClipDistance(2000.0f);
 
-			Real nearClip = projector->getNearClipDistance();
+
+			Real nearClip = 100.0f;
 
 			Ogre::Radian fovy = Ogre::Math::ATan(mParticleSystem->getDefaultWidth() / (nearClip * 2) ) * 2.0f;
 
 			projector->setFOVy(fovy);
 			//projector->setTerrain(gSystemPtr->getTerrain());
 			projector->setTerrain(EngineManager::getSingleton().getTerrain());
-			projector->setAspectRatio(mParticleSystem->getDefaultWidth()/mParticleSystem->getDefaultHeight());
-			projector->setShowFrustum(false);
-			projector->setEnableClipPlanes(false);
+			float width = mParticleSystem->getDefaultWidth();
+			float height = mParticleSystem->getDefaultHeight();
+			projector->setOrthoWindow(width, height);
+
 			projector->setPatchMaterial(mParticleSystem->getMaterialName());
 			projector->setCastShadows(false);
 

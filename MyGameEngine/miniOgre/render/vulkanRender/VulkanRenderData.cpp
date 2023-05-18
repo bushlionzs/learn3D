@@ -37,7 +37,7 @@ void VulkanRenderableData::updateData(VulkanPass* pass)
     const Ogre::Matrix4& proj = cam->getProjectMatrix();
     const Ogre::Matrix4& model = pass->mRenderable->getModelMatrix();
     mObjectConstantBuffer.world = model.transpose();
-    mObjectConstantBuffer.invWorld = mObjectConstantBuffer.world.inverse();
+    mObjectConstantBuffer.projector = mObjectConstantBuffer.world.inverse();
     mObjectConstantBuffer.worldViewProj = mObjectConstantBuffer.world * view * proj;
 
     VulkanObjectPool::getSingleton().updateObject(

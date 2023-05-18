@@ -29,9 +29,6 @@ namespace Orphigine {
 		uint32 mQueryTypeMask;
         size_t mVertexLimit;
         Ogre::HardwareVertexBufferSharedPtr mVertexBuffer;
-        typedef std::list<ProjectorRenderable*> ProjectorRenderableList;
-        ProjectorRenderableList mRenderables;
-        ProjectorRenderableList mFreeRenderables;
         std::vector<Ogre::Vector3> mTempPositions;
         Ogre::PlaneList mClipPlanes;
         Ogre::Camera* mCurrentCamera;
@@ -63,7 +60,7 @@ namespace Orphigine {
         bool _populateForMovables(Real & fHitY);
 
         void _buildVertexBuffer(void);	
-			
+        virtual void update(float delta);
 		void calcAABB();
     public:
 		virtual void setVisible(bool visible);

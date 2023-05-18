@@ -30,6 +30,7 @@ public:
 	void setTexture(const std::string& val);
 	void setPbrTexture(TextureTypePbr pbrtype, const std::string& val);
 	void setAnimTexture(const String& val);
+	void setRotateTexture(const String& val);
 	void setScrollTexture(const String& val);
 	void setCullMode(const String& val);
 	void setShaderMacro(const std::string& val);

@@ -21,6 +21,7 @@
 #include "OgreBone.h"
 #include "animation_track.h"
 #include "keyframe.h"
+#include "OgreTextureUnit.h"
 
 namespace Ogre {
 
@@ -151,7 +152,12 @@ createProjectiveMaterial(const String& materialTemplateName, const Frustum* frus
 void
 fixupProjectiveMaterial(const MaterialPtr& material, const Frustum* frustum)
 {
-    
+    std::vector<std::shared_ptr<TextureUnit>>& tus = material->getAllTexureUnit();
+
+    for (auto itor = tus.begin(); itor != tus.end(); itor++)
+    {
+        (*itor)->setProjectiveTexturing(true, frustum);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -2,6 +2,7 @@
 #include "terrain_info.h"
 #include "OGUtils.h"
 #include "OGUtil.h"
+#include "OgreFrustum.h"
 
 const TerrainInfo::AreaVertexEnum TerrainInfo::mAreaVertexLayout[2][4] =
 {
@@ -586,4 +587,284 @@ std::pair<Real, Real> TerrainInfo::getRealGridIndexFromWorldIndex(Real worldXInd
 	return std::pair<Real, Real>(
 		(worldXIndex - mFirstGridWorldPos.x) * mInvWorldUnit.x,
 		(worldZIndex - mFirstGridWorldPos.z) * mInvWorldUnit.z);
+}
+
+
+uint32_t TerrainInfo::getClippingMask(const Ogre::Matrix4& m, const Ogre::Vector3& v)
+{
+	Ogre::Vector4 p;
+	p = v;
+	p = m * p;
+
+	uint32_t mask = 0;
+	if (p.x <= -p.w) mask |= 1 << Ogre::FRUSTUM_PLANE_LEFT;
+	if (p.x >= +p.w) mask |= 1 << Ogre::FRUSTUM_PLANE_RIGHT;
+	if (p.y <= -p.w) mask |= 1 << Ogre::FRUSTUM_PLANE_BOTTOM;
+	if (p.y >= +p.w) mask |= 1 << Ogre::FRUSTUM_PLANE_TOP;
+	if (p.z <= -p.w) mask |= 1 << Ogre::FRUSTUM_PLANE_NEAR;
+	if (p.z >= +p.w) mask |= 1 << Ogre::FRUSTUM_PLANE_FAR;
+	return mask;
+}
+
+std::pair<int, int>	TerrainInfo::getNearestGridJoint(Real worldXIndex, Real worldZIndex) const
+{
+	return std::pair<int, int>(
+		Ogre::Math::Floor((worldXIndex - mFirstGridWorldPos.x) * mInvWorldUnit.x + (Real)0.5),
+		Ogre::Math::Floor((worldZIndex - mFirstGridWorldPos.z) * mInvWorldUnit.z + (Real)0.5));
+}
+
+size_t TerrainInfo::isFrustumIntersectGround(
+	const Ogre::Frustum* frustum,
+	int areaLimit,
+	bool receivedDecalOnly,
+	std::vector<Ogre::Vector3>& positions,
+	std::vector<Ogre::Vector3>* normals)
+{
+	assert(areaLimit >= 0);
+
+	const Ogre::AxisAlignedBox& bound = computerBoundBox();
+	if (!frustum->isVisible(bound))
+		return false;
+
+	// Clip by Y plane to found terrain region that affect by the frustum
+
+	const Ogre::Vector3* corners = frustum->getWorldSpaceCorners();
+	static const size_t edges[][2] =
+	{
+		0, 1,       // top-near
+			1, 2,       // left-near
+			2, 3,       // bottom-near
+			3, 0,       // right-near
+
+			4, 5,       // top-far
+			5, 6,       // left-far
+			6, 7,       // bottom-far
+			7, 4,       // right-far
+
+			0, 4,       // top-right
+			1, 5,       // top-left
+			2, 6,       // bottom-left
+			3, 7,       // bottom-right
+	};
+
+	const Real minY = bound.getMinimum().y;
+	const Real maxY = bound.getMaximum().y;
+	Real minX = Ogre::Math::POS_INFINITY;
+	Real minZ = Ogre::Math::POS_INFINITY;
+	Real maxX = Ogre::Math::NEG_INFINITY;
+	Real maxZ = Ogre::Math::NEG_INFINITY;
+	const Real epsilon = 1e-3f;
+	for (size_t e = 0; e < sizeof(edges) / sizeof(*edges); ++e)
+	{
+		const Ogre::Vector3& v0 = corners[edges[e][0]];
+		const Ogre::Vector3& v1 = corners[edges[e][1]];
+		Real diff = v1.y - v0.y;
+		if (Ogre::Math::Abs(diff) <= epsilon)
+		{
+			if (Ogre::Math::RealEqual(minY, v0.y, epsilon) || Ogre::Math::RealEqual(maxY, v0.y, epsilon))
+			{
+				Real x = v0.x;
+				Real z = v0.z;
+				if (minX > x) minX = x;
+				if (maxX < x) maxX = x;
+				if (minZ > z) minZ = z;
+				if (maxZ < z) maxZ = z;
+			}
+		}
+		else
+		{
+			Real denom = 1 / diff;
+			Real t;
+
+			t = (minY - v0.y) * denom;
+			if (0 <= t && t <= 1)
+			{
+				Real x = v0.x + (v1.x - v0.x) * t;
+				Real z = v0.z + (v1.z - v0.z) * t;
+				if (minX > x) minX = x;
+				if (maxX < x) maxX = x;
+				if (minZ > z) minZ = z;
+				if (maxZ < z) maxZ = z;
+			}
+
+			t = (maxY - v0.y) * denom;
+			if (0 <= t && t <= 1)
+			{
+				Real x = v0.x + (v1.x - v0.x) * t;
+				Real z = v0.z + (v1.z - v0.z) * t;
+				if (minX > x) minX = x;
+				if (maxX < x) maxX = x;
+				if (minZ > z) minZ = z;
+				if (maxZ < z) maxZ = z;
+			}
+		}
+	}
+
+	if (!(minX < maxX && minZ < maxZ))
+	{
+		// The projector may be full inside the terrain bounding box, so use the
+		// projector world bounding box to determinate the intersection triangles
+		const Ogre::AxisAlignedBox& aabb = frustum->getWorldBoundingBox();
+		minX = aabb.getMinimum().x; minZ = aabb.getMinimum().z;
+		maxX = aabb.getMaximum().x; maxZ = aabb.getMaximum().z;
+	}
+
+	if (!(minX < maxX && minZ < maxZ))
+		return 0;
+
+	int startX = std::max(Ogre::Math::Floor((minX - this->mFirstGridWorldPos.x) * this->mInvWorldUnit.x), 0.0f);
+	int startZ = std::max(Ogre::Math::Floor((minZ - this->mFirstGridWorldPos.z) * this->mInvWorldUnit.z), 0.0f);
+	int endX = std::min(Ogre::Math::Ceil((maxX - this->mFirstGridWorldPos.x) * this->mInvWorldUnit.x), (float)mXGridSize);
+	int endZ = std::min(Ogre::Math::Ceil((maxZ - this->mFirstGridWorldPos.z) * this->mInvWorldUnit.z), (float)mZGridSize);
+	if (!(startX < endX && startZ < endZ))
+		return 0;
+
+	Ogre::Matrix4 eyeToWorld = frustum->getViewMatrix().inverse();
+
+	// Adjust max vertices
+	int sizeX = endX - startX;
+	int sizeZ = endZ - startZ;
+	if (sizeX * sizeZ > areaLimit)
+	{
+		Ogre::Ray ray(
+			Ogre::Vector3(+eyeToWorld[0][3], +eyeToWorld[1][3], +eyeToWorld[2][3]),
+			Ogre::Vector3(-eyeToWorld[0][2], -eyeToWorld[1][2], -eyeToWorld[2][2]));
+		Ogre::Vector3 position;
+		if (!this->isRayIntersectGround(ray, position))
+			return 0; // just in case
+
+		std::pair<int, int> hit = this->getNearestGridJoint(position.x, position.z);
+		if (sizeX < sizeZ)
+		{
+			sizeX = std::max(Ogre::Math::Floor(Ogre::Math::Sqrt(
+				(Real)areaLimit * sizeX / sizeZ)), 1.0f);
+			sizeZ = areaLimit / sizeX;
+		}
+		else
+		{
+			sizeZ = std::max(Ogre::Math::Floor(Ogre::Math::Sqrt(
+				(Real)areaLimit * sizeZ / sizeX)), 1.0f);
+			sizeX = areaLimit / sizeZ;
+		}
+		startX = std::max(hit.first - sizeX / 2, 0);
+		startZ = std::max(hit.second - sizeZ / 2, 0);
+		endX = std::min(startX + sizeX, this->mXGridSize);
+		endZ = std::min(startZ + sizeZ, this->mZGridSize);
+		assert(startX < endX&& startZ < endZ);
+		if (!(startX < endX && startZ < endZ))
+			return 0; // just in case
+	}
+	size_t maxVertices = sizeX * sizeZ * 2 * 3;
+
+	// Pre-allocate buffer
+	// 此处耗费内存过大，有待优化 [15/01/2009 dscky 内存优化]
+	positions.reserve(positions.size() + maxVertices);
+	if (normals)
+		normals->reserve(normals->size() + maxVertices);
+
+	// Compute view and projection matrix for fast clipping 
+	Ogre::Matrix4 viewProjectionMatrix =
+		frustum->getProjectionMatrix() * frustum->getViewMatrix();
+
+	// Get the view vector base on projection type
+	Ogre::Vector4 vv;
+	if (frustum->getProjectionType() == Ogre::PT_PERSPECTIVE)
+	{
+		// Use view position as view vector
+		vv[0] = eyeToWorld[0][3];
+		vv[1] = eyeToWorld[1][3];
+		vv[2] = eyeToWorld[2][3];
+		vv[3] = eyeToWorld[3][3];
+	}
+	else
+	{
+		// Use view direction as view vector
+		vv[0] = eyeToWorld[0][2];
+		vv[1] = eyeToWorld[1][2];
+		vv[2] = eyeToWorld[2][2];
+		vv[3] = eyeToWorld[3][2];
+	}
+
+	// Gather triangles
+	size_t numTriangles = 0;
+	for (int z = startZ; z < endZ; ++z)
+	{
+		for (int x = startX; x < endX; ++x)
+		{
+			const GridInfoStr& gridInfo = this->getGridInfo(getGridIndex(x, z));
+
+			// Skip decal disabled grids
+			if (receivedDecalOnly && (gridInfo.gridOperationFlags & GO_DISABLE_DECAL))
+				continue;
+
+			const Ogre::Vector3 p[4] =
+			{
+				this->getWorldPosFromGridIndex(x + 0, z + 0),
+					this->getWorldPosFromGridIndex(x + 1, z + 0),
+					this->getWorldPosFromGridIndex(x + 0, z + 1),
+					this->getWorldPosFromGridIndex(x + 1, z + 1),
+			};
+
+			const uint m[4] =
+			{
+				getClippingMask(viewProjectionMatrix, p[0]),
+					getClippingMask(viewProjectionMatrix, p[1]),
+					getClippingMask(viewProjectionMatrix, p[2]),
+					getClippingMask(viewProjectionMatrix, p[3]),
+			};
+			if (m[0] & m[1] & m[2] & m[3])
+				continue;
+
+			if ((m[0] & 1 << Ogre::FRUSTUM_PLANE_FAR) ||
+				(m[1] & 1 << Ogre::FRUSTUM_PLANE_FAR) ||
+				(m[2] & 1 << Ogre::FRUSTUM_PLANE_FAR) ||
+				(m[3] & 1 << Ogre::FRUSTUM_PLANE_FAR))
+			{
+				continue;
+			}
+
+			const Ogre::Vector3 n[4] =
+			{
+				this->getGridJointNormal(x + 0, z + 0),
+					this->getGridJointNormal(x + 1, z + 0),
+					this->getGridJointNormal(x + 0, z + 1),
+					this->getGridJointNormal(x + 1, z + 1),
+			};
+
+			const TerrainInfo::AreaVertexEnum* corners = gridInfo.getVertexes();
+			Ogre::Vector4 faceNormal;
+
+			faceNormal = Ogre::Math::calculateFaceNormalWithoutNormalize(p[corners[1]], p[corners[0]], p[corners[2]]);
+			if (faceNormal.dotProduct(vv) > 0)
+			{
+				positions.push_back(p[corners[1]]);
+				positions.push_back(p[corners[0]]);
+				positions.push_back(p[corners[2]]);
+				if (normals)
+				{
+					normals->push_back(n[corners[1]]);
+					normals->push_back(n[corners[0]]);
+					normals->push_back(n[corners[2]]);
+				}
+				++numTriangles;
+			}
+
+			faceNormal = Ogre::Math::calculateFaceNormalWithoutNormalize(p[corners[1]], p[corners[2]], p[corners[3]]);
+			if (faceNormal.dotProduct(vv) > 0)
+			{
+				positions.push_back(p[corners[1]]);
+				positions.push_back(p[corners[2]]);
+				positions.push_back(p[corners[3]]);
+				if (normals)
+				{
+					normals->push_back(n[corners[1]]);
+					normals->push_back(n[corners[2]]);
+					normals->push_back(n[corners[3]]);
+				}
+				++numTriangles;
+			}
+		}
+	}
+
+	return numTriangles * 3;
 }

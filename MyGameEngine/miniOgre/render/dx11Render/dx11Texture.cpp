@@ -58,11 +58,12 @@ void Dx11Texture::_create2DTex()
 
     D3D11_TEXTURE2D_DESC desc;
     UINT retVal = D3D11_BIND_SHADER_RESOURCE;
-    if (mTextureProperty._numMipmaps == 0)
+    if (mTextureProperty._numMipmaps == 0 && !PixelUtil::isCompressed(mTextureProperty._tex_format))
     {
         mNumMipmaps = getMaxMipmaps();
         numMips = mNumMipmaps + 1;
         retVal |= D3D11_BIND_RENDER_TARGET;
+        mAutoMipMapGeneration = true;
     }
 
     if (mUsage & TU_RENDERTARGET)
@@ -125,11 +126,6 @@ void Dx11Texture::_create2DTex()
         srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
         srvDesc.Texture2D.MostDetailedMip = 0;
         srvDesc.Texture2D.MipLevels = desc.MipLevels;
-    }
-
-    if (mTextureProperty._numMipmaps == 0)
-    {
-        mAutoMipMapGeneration = true;
     }
     
 

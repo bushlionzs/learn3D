@@ -154,7 +154,8 @@ namespace Ogre {
 	}
 	void Camera::getCameraToViewportRay(Real screenX, Real screenY, Ray* outRay) const
 	{
-		Matrix4 inverseVP = (getProjectMatrix() * getViewMatrix()).inverse();
+		auto m = getViewMatrix() * getProjectMatrix();
+		Matrix4 inverseVP = m.transpose().inverse();
 
 		Real nx = (2.0f * screenX) - 1.0f;
 		Real ny = 1.0f - (2.0f * screenY);

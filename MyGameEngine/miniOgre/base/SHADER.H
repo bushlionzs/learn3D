@@ -6,7 +6,7 @@
 struct ObjectConstantBuffer
 {
     Ogre::Matrix4 world;
-    Ogre::Matrix4 invWorld;
+    Ogre::Matrix4 projector;
     Ogre::Matrix4 worldViewProj;
 };
 
