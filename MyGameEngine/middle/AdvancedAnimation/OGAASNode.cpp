@@ -203,6 +203,20 @@ namespace Orphigine
 			m_nonmaskedBonesWeightAccumulater = 1.0f;
 	}*/
 
+	Real			AASNode::getNodeTotalWeight() const
+	{
+		return m_nodeTotalWeight;
+	}
+	
+	void			AASNode::setNodeTotalWeight(Real val)
+	{
+		if (m_handle == 18)
+		{
+			int kk = 0;
+		}
+		m_nodeTotalWeight = val;
+	}
+
 	unsigned short AASNode::getHandle() const
 	{
 		return m_handle;
@@ -413,6 +427,31 @@ namespace Orphigine
 		tmpSize += getName().length() + 1;
 
 		return tmpSize;
+	}
+
+	float		AASNode::getBlendWeight() const
+	{
+		return m_blendWeight;
+	}
+	void			AASNode::setBlendWeight(const float val)
+	{
+		if (m_handle == 111 && val > 0.001f)
+		{
+			int kk = 0;
+		}
+		m_blendWeight = val;
+	}
+
+	void			AASNode::resetBlendWeightAccumulater()
+	{
+		m_blendWeightAccumulater = 0.0f;
+	}
+
+	void			AASNode::increaseBlendWeightAccumulater(Real val)
+	{
+		m_blendWeightAccumulater += val;
+		if (1.0f < m_blendWeightAccumulater)
+			m_blendWeightAccumulater = 1.0f;
 	}
 
 	void AASNode::_initSerializers()

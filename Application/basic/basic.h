@@ -1,5 +1,6 @@
 #pragma once
 #include "application_base.h"
+#include "OGImpact.h"
 class Basic : public ApplicationBase
 {
 public:
@@ -15,5 +16,10 @@ public:
 
 	void addCustomDirectory();
 private:
+	void base1();
+	void base2();
+	void base3();
+private:
 	AnimationState* mAnimationState = nullptr;
+	Orphigine::Impact* mProjectorEffect;
 };

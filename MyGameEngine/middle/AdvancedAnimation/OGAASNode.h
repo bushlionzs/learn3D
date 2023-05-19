@@ -77,14 +77,10 @@ namespace Orphigine
 
 		virtual size_t calcSize(AdvancedAnimationSystemSerializerImpl* serializer);
 
-		inline float		getBlendWeight() const
-		{
-			return m_blendWeight;
-		}
-		inline void			setBlendWeight(const float val)
-		{
-			m_blendWeight = val;
-		}
+		float		getBlendWeight() const;
+
+		void			setBlendWeight(const float val);
+
 
 		inline Real			getMaskedBonesWeight() const
 		{
@@ -108,26 +104,20 @@ namespace Orphigine
 		{
 			return m_blendWeightAccumulater;
 		}
-		inline void			resetBlendWeightAccumulater()
-		{
-			m_blendWeightAccumulater = 0.0f;
-		}
-		inline void			increaseBlendWeightAccumulater(Real val)
-		{
-			m_blendWeightAccumulater += val; 
-			if(1.0f < m_blendWeightAccumulater)
-				m_blendWeightAccumulater = 1.0f;
-		}
+		void			resetBlendWeightAccumulater();
+
+		void			increaseBlendWeightAccumulater(Real val);
 
 		inline Real			getMaskedBonesWeightAccumulater() const
 		{
 			return m_maskedBonesWeightAccumulater;
 		}
-		inline void			resetMaskedBonesWeightAccumulater()
+		void			resetMaskedBonesWeightAccumulater()
 		{
 			m_maskedBonesWeightAccumulater = 0.0f;
 		}
-		inline void			increaseMaskedBonesWeightAccumulater(Real val)
+
+		void			increaseMaskedBonesWeightAccumulater(Real val)
 		{
 			m_maskedBonesWeightAccumulater += val; 
 			if(1.0f < m_maskedBonesWeightAccumulater)
@@ -167,14 +157,8 @@ namespace Orphigine
 			m_justCeaseActive = val;
 		}
 
-		inline Real			getNodeTotalWeight() const
-		{
-			return m_nodeTotalWeight;
-		}
-		inline void			setNodeTotalWeight(Real val)
-		{
-			m_nodeTotalWeight = val;
-		}
+		Real			getNodeTotalWeight() const;
+		void			setNodeTotalWeight(Real val);
 
 		unsigned short	getHandle() const;
 		void			setHandle(unsigned short val);

@@ -104,5 +104,5 @@ void RenderToTexture::appUpdate(float delta)
 
 EngineType RenderToTexture::getEngineType()
 {
-	return EngineType_Dx12;
+	return EngineType_Dx11;
 }

@@ -522,11 +522,11 @@ namespace Orphigine
 	
 	bool SkeletonMeshActor::attachModelObj(const String& locatorName, SkeletonMeshActor* modelObj)
 	{	
-		return true;
+		return mLogicModel->attachModel(locatorName, modelObj->getLogicModel());
 	}
 	bool SkeletonMeshActor::detachModelObj(SkeletonMeshActor* modelObj)
 	{		
-		return true;
+		return mLogicModel->detachModel(modelObj->getLogicModel());
 	}
 	void SkeletonMeshActor::setVisibleFlag(uint32 flags)
 	{

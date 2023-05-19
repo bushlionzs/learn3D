@@ -154,10 +154,16 @@ namespace Orphigine
 
 		TraverseBranchMaskCollection* bonesWeightCollectionCache = getBranchBonesWeightCollectionCache();
 		
+		float port_weight = port->getBlendWeight();
+
+		if (port_weight < 0.99f && port_weight > 0.001f)
+		{
+			int kk = 0;
+		}
 		if (bonesWeightCollectionCache)
-			childMaskedBonesWeight = m_maskedBonesWeight * port->getBlendWeight();
+			childMaskedBonesWeight = m_maskedBonesWeight * port_weight;
 		else
-			childMaskedBonesWeight = m_blendWeight * port->getBlendWeight();
+			childMaskedBonesWeight = m_blendWeight * port_weight;
 
 		_accumulateTraverseMaskCollection(port);
 

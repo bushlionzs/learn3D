@@ -23,7 +23,10 @@ bool WowMap::appInit()
 
 	std::string wmo = "WORLD\\WMO\\KHAZMODAN\\BUILDINGS\\DWARVEN_1STORY_HOVEL\\MUD_HOVEL\\MUD_HOVEL.WMO";
 	mWorld = new World("Azeroth", 0);
-
+	std::string m2name = "CREATURE\\AKAMA\\AKAMA.M2";
+	m2name = "CREATURE\\GOBLIN\\GLBLINSHREDDER.M2";
+	m2name = "CREATURE\\GOBLIN\\GOBLIN.M2";
+	m2name = "ITEM\\OBJECTCOMPONENTS\\AMMO\\ARROWFIREFLIGHT_01.M2";
 	
 	Ogre::Vector3 pos(20037.3, 150.875, 16829.3);
 	mWorld->mapIndex.loadTile(pos);
