@@ -8,6 +8,7 @@
 #include "demoHeader.h"
 #include "TAB.h"
 #include "demoHeader.h"
+#include "CharacterCommon.h"
 
 class MyCallback : public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -28,6 +29,7 @@ class Player
 {
 private:
 	Orphigine::ActorPtr		mOrphigineObj;
+	Orphigine::ActorPtr     mMountObj;
 	Ogre::Vector3 mGamePosition;
 	Ogre::Real  mDirection = 0.0f;
 	Ogre::Real  mCurrentDirection = 0.0f;
@@ -51,6 +53,7 @@ private:
 	std::map<Ogre::String, int32_t> mASSNodeTypeMap;
 
 	const TAB::TABFile* m_pCharActionSet = nullptr;
+	const TAB::TABFile* m_pMountActionSet = nullptr;
 public:
 	Player();
 
@@ -96,4 +99,6 @@ public:
 	bool createSkillImpact(int32_t nActionID, float fDir);
 
 	bool startMood();
+
+	void createMount();
 };

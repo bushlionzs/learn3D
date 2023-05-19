@@ -26,7 +26,10 @@
     <ClCompile Include="..\common\PackageWindow.cpp" />
     <ClCompile Include="..\common\SelfEquipWindow.cpp" />
     <ClCompile Include="..\common\ToolTip.cpp" />
+    <ClCompile Include="CharacterCommon.cpp" />
     <ClCompile Include="fulldemo.cpp" />
+    <ClCompile Include="gameobject\GameEntity.cpp" />
+    <ClCompile Include="gameobject\GameObject.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PathComponent.cpp" />
@@ -40,8 +43,11 @@
     <ClInclude Include="..\common\PackageWindow.h" />
     <ClInclude Include="..\common\SelfEquipWindow.h" />
     <ClInclude Include="..\common\ToolTip.h" />
+    <ClInclude Include="CharacterCommon.h" />
     <ClInclude Include="demoHeader.h" />
     <ClInclude Include="fulldemo.h" />
+    <ClInclude Include="gameobject\GameEntity.h" />
+    <ClInclude Include="gameobject\GameObject.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="PathComponent.h" />
     <ClInclude Include="player.h" />

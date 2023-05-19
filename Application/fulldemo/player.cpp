@@ -16,6 +16,18 @@
 #include "OgreEntity.h"
 #include "game_scene_manager.h"
 #include "game_scene.h"
+#include "CharacterCommon.h"
+
+
+class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
+{
+public:
+	virtual void	onAnimationEnd(const char* animName, const char* parentNodeType, const char* parentNodeName,
+		uint64_t info)
+	{
+
+	}
+};
 
 class PlayerLogicModelHaveCreateCallback:public Orphigine::LogicModelHaveCreateCallback
 {
@@ -51,7 +63,6 @@ bool Player::initialize()
 {
 	mOrphigineObj =
 		Orphigine::ActorFactoryManager::getSingleton().createInstance("SkeletonMeshActor");
-
 	std::string modelname = "突厥武士女_01.lmodel";
 	mOrphigineObj->createRenderInstance();
 	mOrphigineObj->setProperty(FOBJ_ACTOR_FILE, modelname);
@@ -83,6 +94,7 @@ bool Player::initialize()
 		model->setWeaponTypeName("Falchion");
 	}
 
+	model->setAASAnimEndCallback(new PlayerAASAnimPlayCallback, (uint64_t)this);
 	int32_t mCharacterID = 12;
 	const CGameTable* pChar_Table = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MODEL);
 	const _TABLE_CHARACTER_MODEL* pInfo = (const _TABLE_CHARACTER_MODEL*)pChar_Table->GetFieldDataByIndex(mCharacterID);
@@ -105,19 +117,12 @@ bool Player::initialize()
 	//mousetarget
 
 	mMouseNode = EngineManager::getSingleton().getBaseSceneNode()->createChildSceneNode("mouse");
-	/*Ogre::String effectName = "reachable_projector";
+	Ogre::String effectName = "reachable_projector";
 	mProjectorEffect = Orphigine::ImpactManager::getSingleton().createEffect(effectName, 0);
-	mProjectorEffect->createSceneNode(mMouseNode);*/
+	mProjectorEffect->createSceneNode(mMouseNode);
 
-	/*auto mesh = MeshManager::getSingleton().load("sphere.mesh");
 
-	auto sceneMgr = EngineManager::getSingleton().getSceneManager();
-	Entity* sphere = sceneMgr->createEntity("sphere", mesh);
-
-	mMouseNode->attachObject(sphere);*/
-
-	auto pos = Ogre::Vector3(6550.f, -568.960022f, -5200.00000f);
-	mMouseNode->setPosition(pos);
+	//createMount();
 	return true;
 }
 
@@ -137,8 +142,18 @@ void Player::setGamePosition(Ogre::Vector3& position)
 
 	
 	EngineManager::getSingleton().setMyPosition(fvEnginePosition);
+
+	if (mMountObj)
+	{
+		((Orphigine::SkeletonMeshActor*)mMountObj.get())->SetLogicModelIsCreateListener(mCallback);
+
+		((Orphigine::SkeletonMeshActor*)mMountObj.get())->setPosition(fvEnginePosition);
+
+		((Orphigine::SkeletonMeshActor*)mMountObj.get())->getLogicModel();
+		((Orphigine::SkeletonMeshActor*)mMountObj.get())->setVisible(true);
+	}
 	
-	((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->SetLogicModelIsCreateListener(mCallback);
+	
 	
 }
 
@@ -162,6 +177,11 @@ void Player::setDirection(float dir)
 
 	Ogre::Quaternion qu(Ogre::Radian(dir), Ogre::Vector3::UNIT_Y);
 	((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->setOrientation(qu);
+	if (mMountObj)
+	{
+		((Orphigine::SkeletonMeshActor*)mMountObj.get())->setOrientation(qu);
+	}
+	
 }
 
 void Player::setWeaponname(Ogre::String& name)
@@ -181,10 +201,6 @@ void Player::input(KeyCode _key)
 {
 	if(_key == KeyCode::L)
 	{
-		/*ChangeAction(CA_MOVING, 0.0f);
-		ChangeAction(CA_JUMP, 0.0f);
-		ChangeAction(CA_MOVING, 1.0f);
-		ChangeAction(CA_WALK, 1.0f);*/
 	
 	}
 	else if (_key == KeyCode::S)
@@ -253,6 +269,7 @@ void Player::onAnimationEnd(const char* animName, const char* parentNodeType, co
 
 void Player::ChangeAction(int32_t nActionType, float fDegree, int32_t nActionID)
 {
+	//
 	float fCharDegree = fDegree;
 	if (INVALID_ID != nActionID)
 	{
@@ -266,6 +283,27 @@ void Player::ChangeAction(int32_t nActionType, float fDegree, int32_t nActionID)
 
 	((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->setAdvancedAnimationSystemMonitoringDegree(
 		Orphigine::SkeletonMeshComponent::AdvancedAnimationSystemMonitoringDegree(nActionType), fDegree);
+
+	//change mount action
+	
+
+	if (mMountObj)
+	{
+		float fMountDegree = fDegree;
+		if (INVALID_ID != nActionID)
+		{
+			const _TABLE_CHARACTER_ACTION_SET* pActionSet =
+				(const _TABLE_CHARACTER_ACTION_SET*)(m_pMountActionSet->Search_Index_EQU(nActionID));
+			if (pActionSet)
+			{
+				fMountDegree = pActionSet->nMonitoringDegree;
+			}
+		}
+		((Orphigine::SkeletonMeshActor*)mMountObj.get())->setAdvancedAnimationSystemMonitoringDegree(
+			Orphigine::SkeletonMeshComponent::AdvancedAnimationSystemMonitoringDegree(nActionType), fDegree);
+
+	}
+	
 }
 
 void Player::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
@@ -291,6 +329,7 @@ void Player::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 
 		
 		mMouseNode->setPosition(fvEnginePosition);
+		mMouseNode->updatechildren();
 		ChangeAction(CA_MOVING, 0.0f);
 		ChangeAction(CA_JUMP, 0.0f);
 		ChangeAction(CA_MOVING, 1.0f);
@@ -508,4 +547,94 @@ bool Player::startMood()
 	setCharActionSlot(AASSLOT_UP_IDLE_MOOD, nActID, TRUE, 1.f, bLoop);
 	setCharActionSlot(AASSLOT_UP_MOVE_MOOD, nActID, TRUE, 1.f, bLoop);
 	return true;
+}
+
+void Player::createMount()
+{
+	mMountObj = Orphigine::ActorFactoryManager::getSingleton().createInstance("SkeletonMeshActor");
+
+	int32_t mountId = 5;
+
+	const CGameTable* pCharMountTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MOUNT);
+	if (nullptr == pCharMountTable)
+	{
+		return;
+	}
+
+	const _TABLE_CHARACTER_MOUNT* pMount = (const _TABLE_CHARACTER_MOUNT*)(pCharMountTable->GetFieldDataByIndex(mountId));
+	if (nullptr == pMount)
+		return;
+
+	// 模型表
+	const CGameTable* pCharModelTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MODEL);
+	if (nullptr == pCharModelTable)
+	{
+		return;
+	}
+
+	const _TABLE_CHARACTER_MODEL* pMountModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(pMount->m_nModelID));
+
+
+	mMountObj->createRenderInstance();
+
+	int32_t nObjID = 105;
+	((Orphigine::SkeletonMeshActor*)mMountObj.get())->setSkeletonMeshActorTypeandId((Orphigine::SkeletonMeshActor::TypeEnum)0, nObjID);
+	mMountObj->setProperty(FOBJ_ACTOR_FILE, String(pMountModel->m_pszModelName));
+
+	//
+
+
+	if (pMountModel != NULL && strlen(pMountModel->m_pszActionSetName_None) > 0)
+	{
+		m_pMountActionSet = GetActionSetData()->GetActionSetFile(pMountModel->m_pszActionSetName_None);
+		if (NULL == m_pMountActionSet)
+		{
+			OGRE_EXCEPT(0);
+		}
+	}
+	else
+	{
+		OGRE_EXCEPT(0);
+	}
+
+	const _TABLE_CHARACTER_MODEL* pCharModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(0));
+	if (NULL == pCharModel)
+	{
+		OGRE_EXCEPT(0);
+		return;
+	}
+
+	LPCSTR pszActionSetFileName = nullptr;
+	//update charactor action
+	// int32 nCharActionIndex = pMount->m_nCharActionIndex; // 人物骑乘时的动作组,对应char_model.tab的mount0~19
+	int32 nCharActionIndex = pMount->m_nCharActionIndex;
+	if (nCharActionIndex >= 0 && nCharActionIndex < MAX_MOUNT_NUMBER)
+	{
+		if (strlen(pCharModel->m_apszActionSetName_Mount[nCharActionIndex]) > 0)
+		{
+			pszActionSetFileName = pCharModel->m_apszActionSetName_Mount[nCharActionIndex];
+		}
+		else
+		{
+			pszActionSetFileName = pCharModel->m_pszActionSetName_None;
+
+			//KLThrow("pszActionSetFileName Error! nCharActionIndex=%d, m_nCurrMountModelID=%d ", nCharActionIndex, m_nCurrMountModelID );
+		}
+	}
+
+	if (pszActionSetFileName && '\0' != pszActionSetFileName[0])
+	{
+		m_pCharActionSet = GetActionSetData()->GetActionSetFile(pszActionSetFileName);
+		if (nullptr == m_pCharActionSet)
+		{
+			OGRE_EXCEPT(0);
+		}
+	}
+	//attach
+	auto locator = GetMountLocatorName(LOCATOR_MOUNT_BACK);
+	((Orphigine::SkeletonMeshActor*)mMountObj.get())->attachModelObj(
+		locator, (Orphigine::SkeletonMeshActor*)mOrphigineObj.get());
+
+
+	ChangeAction(CA_RIDING, 1.0f);
 }
