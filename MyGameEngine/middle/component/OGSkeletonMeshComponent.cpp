@@ -3129,6 +3129,7 @@ namespace Orphigine
 		if (mOrigParentNode == mModelSceneNode->getParent())
 		{
 			mModelSceneNode->setPosition(mModelPosition);
+			mModelSceneNode->updatechildren();
 			mSceneNodeNeedUpdate = true;
 		}		
 	}
