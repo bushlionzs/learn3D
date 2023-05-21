@@ -65,57 +65,10 @@ namespace Orphigine
 			}
 		}
 
-		/*AASPort* port0 = getPort(0);
-		assert(port0 && "AASCrossFadeByTimeWithMaskNode::tickAnimation");
-
-		if (port0)
-			port0->setNonmaskedBonesWeight(1.0f);
-
-		AASPort* port1 = getPort(1);
-		assert(port1 && "AASCrossFadeByTimeWithMaskNode::tickAnimation");
-
-		if (port1)
-			port1->setNonmaskedBonesWeight(0.0f);*/
 	}
 
 	void AASCrossFadeByTimeWithMaskNode::tickAnimation( const float elapsedTime, ReachedAnimSequenceNodeCollection& reachedAnimSequenceNodeCollection )
 	{
-		/*AASPort* port0 = getPort(0);
-		assert(port0 && "AASCrossFadeByTimeWithMaskNode::tickAnimation");
-
-		TraverseBranchMaskCollection* port0Collection = NULL;
-		if (port0)
-		{
-			port0Collection = port0->getBranchBonesWeightCollection();
-			assert(port0Collection && "AASCrossFadeByTimeWithMaskNode::tickAnimation");
-			if(port0Collection)
-			{
-				if(m_branchBonesWeightCollectionCache)
-					port0Collection->m_traverseFeatherNodeCount = 
-					m_branchBonesWeightCollectionCache->m_traverseFeatherNodeCount + 1;
-				else
-					port0Collection->m_traverseFeatherNodeCount = 1;
-			}
-		}
-
-		AASPort* port1 = getPort(1);
-		assert(port1 && "AASCrossFadeByTimeWithMaskNode::tickAnimation");
-
-		TraverseBranchMaskCollection* port1Collection = NULL;
-		if (port1)
-		{
-			port1Collection = port1->getBranchBonesWeightCollection();
-			assert(port1Collection && "AASCrossFadeByTimeWithMaskNode::tickAnimation");
-			if(port1Collection)
-			{
-				if(m_branchBonesWeightCollectionCache)
-					port1Collection->m_traverseFeatherNodeCount = 
-					m_branchBonesWeightCollectionCache->m_traverseFeatherNodeCount + 1;
-				else
-					port1Collection->m_traverseFeatherNodeCount = 1;
-			}
-		}*/
-
 		AASCrossFadeByTimeNode::tickAnimation(elapsedTime,reachedAnimSequenceNodeCollection);
 	}
 

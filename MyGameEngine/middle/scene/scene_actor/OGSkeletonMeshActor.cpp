@@ -648,7 +648,7 @@ namespace Orphigine
 
 	Spell* SkeletonMeshActor::getCurrentSkill(void)
 	{
-		if (mLogicModel && Orphigine::CommandCacheManager::getSingleton().commandCacheisEmpty(mCommandCacheHandle))
+		if (mLogicModel)
 		{
 			return mLogicModel->getCurrentSkill();
 		}

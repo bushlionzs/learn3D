@@ -2376,6 +2376,9 @@
     <ClInclude Include="wow\wowParticle.h">
       <Filter>wow</Filter>
     </ClInclude>
+    <ClInclude Include="parser\skbFileParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="miniOgre\base\OgreAlignedAllocator.cpp">
@@ -3919,6 +3922,9 @@
     </ClCompile>
     <ClCompile Include="wow\wowParticle.cpp">
       <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\skbFileParser.cpp">
+      <Filter>parser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

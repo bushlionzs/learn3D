@@ -19,6 +19,7 @@
 #include "OGBulletSystemManager.h"
 #include "platform_log.h"
 #include "OgreStringConverter.h"
+#include "OgreMemoryStream.h"
 
 
 template<> Orphigine::BulletFlowSystemManager* Ogre::Singleton<Orphigine::BulletFlowSystemManager>::msSingleton = NULL;
@@ -38,6 +39,8 @@ namespace Orphigine
 		m_bulletSystemHitTargetCallback = NULL;
 
 		registerOperatorFactories();
+
+		new BulletSystemManager;
 	}
 
 	BulletFlowSystemManager::~BulletFlowSystemManager()
@@ -60,9 +63,9 @@ namespace Orphigine
 
 	}
 
-	const StringVector& BulletFlowSystemManager::getScriptPatterns( void ) const
+	String BulletFlowSystemManager::getSuffix( void )
 	{
-		return m_scriptPatterns;
+		return ".bullet";
 	}
 
 	/*
@@ -90,13 +93,13 @@ namespace Orphigine
 			}
 		}
 	 */
-	void BulletFlowSystemManager::parseScript( Ogre::DataStreamPtr& stream, const String& groupName, const String& scriptPath)
+	void BulletFlowSystemManager::parseScript(ResourceInfo* res, const String& groupName)
 	{
 		String line;
 		BulletFlowSystem *tmpBulletFlowSystem = NULL;
 
 		std::vector<String> vecparams;
-
+		std::shared_ptr<DataStream> stream = std::make_shared<MemoryDataStream>(res);
 		while(!stream->eof())
 		{
 			line = stream->getLine(true);

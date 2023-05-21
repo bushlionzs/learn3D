@@ -128,7 +128,7 @@ namespace Orphigine
 	}
 	Real AdvancedAnimationSystemManager::getLoadingOrder(void) const
 	{
-		return 300.0f;
+		return 1001.0f;
 	}
 
 	AdvancedAnimationSystemPtr AdvancedAnimationSystemManager::getAnimationSystem(const String& name)

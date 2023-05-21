@@ -54,10 +54,6 @@ namespace Orphigine
 		if (!childNode)
 			return;
 
-		if (childNode->getHandle() == 7)
-		{
-			int kk = 0;
-		}
 
 		Real childNodeWeight = 0.0f;
 		Real childNonmaskedBonesWeight = 0.0f;
@@ -73,21 +69,13 @@ namespace Orphigine
 
 		childNode->setBranchBonesWeightCollectionCache(bonesWeightCollectionCache);
 
-		/*childNode->setBlendWeight(childNodeWeight);
-		childNode->setNonmaskedBonesWeight(childNonmaskedBonesWeight);
-		childNode->setMaskedBonesWeight(childMaskedBonesWeight);*/
+
 		childNode->increaseBlendWeightAccumulater(childNodeWeight);
 		childNode->increaseNonmaskedBonesWeightAccumulater(childNonmaskedBonesWeight);
 		childNode->increaseMaskedBonesWeightAccumulater(childMaskedBonesWeight);
 
 		childNodeTotalWeight = childNode->getBlendWeightAccumulater();
 
-		//zhousha animation
-
-		if (childNodeTotalWeight < 0.999f && childNodeTotalWeight > 0.001f)
-		{
-			int kk = 0;
-		}
 		childNode->setNodeTotalWeight(childNodeTotalWeight);
 	}
 

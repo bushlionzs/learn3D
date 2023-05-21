@@ -1420,6 +1420,11 @@ namespace Orphigine
 
 			entity->shareSkeletonInstanceWith(mSkeletonEntity);
 		}
+
+		if (mSkeletonEntity && !mSkeleton)
+		{
+			mSkeleton = mSkeletonEntity->getSkeleton();
+		}
 		if (nullptr == m_advancedAnimationSystem)
 			_createAdvancedAnimationSystem();
 		return entity;
@@ -2738,6 +2743,7 @@ namespace Orphigine
 	//-----------------------------------------------------------------------
 	void SkeletonMeshComponent::_updateAnimationLight(Real oldTime, Real currTime)
 	{
+		return;
 		MainSceneLight* light = ImpactManager::getSingleton().getMainSceneLight();
 
 		assert (light);

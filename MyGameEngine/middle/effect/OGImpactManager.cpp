@@ -27,7 +27,7 @@
 #include <OgreParticleSystemRenderer.h>
 #include <OgreParticleEmitter.h>
 #include "OGImpactSerializer.h"
-
+#include "OGSpellManager.h"
 #include "OgreRoot.h"
 #include "engine_manager.h"
 //#include "OgreTimer.h"
@@ -177,6 +177,8 @@ namespace Orphigine
 		{
 			SpellsSerializer tmpSerializer;
 			tmpSerializer.importSkillFromStream(stream,NULL);
+			stream->seek(0);
+			SpellManager::getSingleton().parseScript(stream, groupName);
 		}		
 		else if (Ogre::StringUtil::endsWith(parsingFileName, ".efb", false) )
 		{
@@ -708,7 +710,7 @@ namespace Orphigine
 	{
 		String sLowerCaseSkill = skillName;
 		Ogre::StringUtil::toLowerCase( sLowerCaseSkill );
-		Spell *skillTemplate = Orphigine::ImpactManager::getSingleton().getSkillTemplate(sLowerCaseSkill);
+		Spell *skillTemplate = getSkillTemplate(sLowerCaseSkill);
 
 		if ( NULL == skillTemplate )
 			return NULL;

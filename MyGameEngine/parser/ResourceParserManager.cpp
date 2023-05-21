@@ -11,7 +11,9 @@
 #include "packFileParser.h"
 #include "WowResourceParser.h"
 #include "platform_file_system.h"
-
+#include "skbFileParser.h"
+#include "OGBulletFlowSystemManager.h"
+#include "OGSpellManager.h"
 namespace Ogre {
 
 	template<> ResourceParserManager* Ogre::Singleton<ResourceParserManager>::msSingleton = 0;
@@ -30,14 +32,17 @@ namespace Ogre {
 	{
 		new Orphigine::AdvancedAnimationSystemManager;
 		new ShaderManager;
+		new Orphigine::SpellManager;
 		registerParser(new MaterialScriptParser);
 		registerParser(new ParticleScriptParser);
 		registerParser(new Orphigine::ImpactManager);
+		registerParser(new SkbfileParser);
 		registerParser(Orphigine::SkeletonMeshComponentManager::getSingletonPtr());
 		registerParser(Orphigine::AdvancedAnimationSystemManager::getSingletonPtr());
 		registerParser(ShaderManager::getSingletonPtr());
 		registerParser(new PackfileParser);
 		registerParser(new WowResourceParser);
+		registerParser(new Orphigine::BulletFlowSystemManager);
 		return true;
 	}
 

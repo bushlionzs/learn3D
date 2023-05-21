@@ -3,7 +3,7 @@
 
 #include "OgreSingleton.h"
 #include "OGBulletCallbacks.h"
-
+#include "OgreScriptLoader.h"
 
 namespace Orphigine
 {
@@ -13,7 +13,7 @@ namespace Orphigine
 	class BulletSystem;
 	class BulletOperatorFactory;
 	
-	class _OrphigineExport BulletFlowSystemManager :
+	class _OrphigineExport BulletFlowSystemManager : public ScriptLoader,
 		public Ogre::Singleton<BulletFlowSystemManager>
 	{
 	public:
@@ -23,9 +23,9 @@ namespace Orphigine
 		/*
 		*	ÖØÔØScriptLoader´¿Ðéº¯Êý
 		*/
-		virtual const StringVector& getScriptPatterns(void) const;
+		virtual String getSuffix(void);
 
-		virtual void				parseScript(Ogre::DataStreamPtr& stream, const String& groupName, const String& scriptPath = "");
+		virtual void				parseScript(ResourceInfo* res, const String& groupName);
 
 		virtual void				reloadParseScript(Ogre::DataStreamPtr& stream, const String& groupName);
 

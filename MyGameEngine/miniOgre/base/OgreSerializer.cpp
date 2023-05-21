@@ -8,7 +8,7 @@ namespace Ogre {
 
     Serializer::Serializer()
     {
-
+        mVersion = "[Serializer_v1.00]";
     }
 
     Serializer::~Serializer()
