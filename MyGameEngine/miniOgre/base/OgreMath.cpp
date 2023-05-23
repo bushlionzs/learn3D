@@ -1022,7 +1022,7 @@ namespace Ogre
     {
         float const tanHalfFovy = tan(fovy / 2.0f);
 
-        Matrix4 m = Matrix4::IDENTITY;
+        Matrix4 m = Matrix4::ZERO;
         m[0][0] = 1.0f / (aspect * tanHalfFovy);
         m[1][1] = 1.0f / (tanHalfFovy);
         m[2][3] = -1.0f;

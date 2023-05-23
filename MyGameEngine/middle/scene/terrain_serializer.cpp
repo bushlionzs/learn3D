@@ -197,11 +197,6 @@ void TerrainSerializer::readImageNames(std::shared_ptr<DataStream>& stream, Terr
 		String texType = readStringBin(stream);//类型暂时没用
 		item.texName = readStringBin(stream); // Name
 		pTerrain->mImages.push_back(item);//mTextures只保存了图片名称
-
-		if (!ResourceManager::getSingleton().hasResource(item.texName))
-		{
-			WARNING_LOG("fail to load terrain texture:%s", item.texName.c_str())
-		}
 	}
 
 	//change imagename from tga to dds
@@ -211,7 +206,10 @@ void TerrainSerializer::readImageNames(std::shared_ptr<DataStream>& stream, Terr
 
 		auto& item = pTerrain->mImages.at(i);
 		item.texName = Ogre::StringUtil::replaceAll(item.texName, ".tga", ".dds");
-		int kk = 0;
+		if (!ResourceManager::getSingleton().hasResource(item.texName))
+		{
+			WARNING_LOG("fail to load terrain texture:%s", item.texName.c_str())
+		}
 	}
 
 }

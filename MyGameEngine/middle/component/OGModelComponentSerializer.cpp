@@ -96,7 +96,7 @@ void ModelComponentSerializer::importModelComponent( DataStreamPtr& stream, Mode
 	// Warn on old version of mesh
 	if ( ver != msCurrentVersion )
 	{
-		WARNING_LOG("ModelComponent %s is an older format, should upgrade it", stream->getName().c_str());
+		//WARNING_LOG("ModelComponent %s is an older format, should upgrade it", stream->getName().c_str());
 	}
 }
 

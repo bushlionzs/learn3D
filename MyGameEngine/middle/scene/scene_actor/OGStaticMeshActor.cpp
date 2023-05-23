@@ -161,7 +161,7 @@ namespace Orphigine
 
 		if (animationState)
 		{
-			NOTICE_LOG("%s has animation", mMeshName.c_str());
+			//NOTICE_LOG("%s has animation", mMeshName.c_str());
 			animationState->setEnabled(true);
 			animationState->setLoop(true);
 			auto aa = ControllerValueRealPtr(new AnimationControllerValue(animationState));

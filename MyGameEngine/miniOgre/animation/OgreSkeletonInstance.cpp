@@ -217,6 +217,7 @@ namespace Ogre {
 		{
 			Bone* b = mBoneList[i];
 			b->_getOffsetTransform(mBoneTransformsOgre[i]);
+			
 			mBoneTransformsOgre[i] = mBoneTransformsOgre[i].transpose();
 		}
 	}

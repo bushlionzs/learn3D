@@ -4,6 +4,7 @@
 #include "OGSkeletonMeshComponent.h"
 #include "OgreMemoryStream.h"
 #include "OgreSerializer.h"
+#include "myutils.h"
 
 namespace Orphigine
 {
@@ -360,7 +361,7 @@ bool SkeletonMeshComponentSerializer::importSkeletonMeshComponentFromOldStream(O
 			for (int i=0; i<aasNum; i++)
 			{
 				readString(stream, name);
-
+				stringToLower(name);
 				pSkeletonMeshComponent->setAdvancedAnimationSystemName(name);			
 			}
 		}

@@ -53,6 +53,15 @@
 #define EFFECT_RESTRICT 1 //是否限制effect的数量
 namespace Orphigine	
 {
+	const String mAutoNamePrefix = "Unnamed_";
+	uint64_t mAutoNameIndex = 0;
+	String generateAutoName(const Actor* pObject)//dscky add
+	{
+		assert(pObject);
+		String objectType = pObject->getType();
+		assert(!objectType.empty());
+		return mAutoNamePrefix + objectType + "_" + Ogre::StringConverter::toString(mAutoNameIndex++);
+	}
 
 	OnPlaySound SkeletonMeshComponent::mOnPlaySound = NULL;
 	OnStopSound SkeletonMeshComponent::mOnStopSound = NULL;
@@ -1869,14 +1878,85 @@ namespace Orphigine
 	void SkeletonMeshComponent::addEffect( const String& effectName, const String& locatorName,
 		SkeletonMeshComponent::GetTransformInfoType transformType, const Ogre::ColourValue& colour,const char* pName, int priority, const Ogre::Vector3& OffsetPos, const Ogre::Quaternion& OffsetQuat)
 	{
+		ImpactManager::SkeletonMeshComponentImpactParam param;
+		param.model = this;
+		param.reqType = 0;
+		param.effectName = effectName;
+		param.locatorName = locatorName;
+		param.transformType = transformType;
+		param.colour = colour;
+		param.priority = priority;
+		param.position = OffsetPos;
+		param.rotation = OffsetQuat;
 
+		Ogre::String name;
+		if (pName)
+			name = Ogre::String(pName);
+		else
+		{
+			EffectActor  Temp;
+			name = generateAutoName(&Temp);
+		}
+		param.name = name;
+
+		ImpactManager::getSingleton().requestCreateEffect(param);
 	}
 	//-----------------------------------------------------------------------
 	SkeletonMeshComponent::EffectHandle SkeletonMeshComponent::_addEffect( const String& effectName, const String& locatorName,
 		SkeletonMeshComponent::GetTransformInfoType transformType, const Ogre::ColourValue& colour,const char* pName, int priority, const Ogre::Vector3& OffsetPos, const Ogre::Quaternion& OffsetQuat)
 	{	
-		
-				return 0;		
+		// 找到这个locator的scene node
+		LocatorMap::iterator i = mLocatorMap.find(locatorName);
+
+		if (i == mLocatorMap.end())
+		{
+			OGRE_EXCEPT(Ogre::Exception::ERR_ITEM_NOT_FOUND,
+				"Logic Model Locator with name '" + locatorName + "' doesn't exists! " +
+				"SkeletonMeshComponent::addEffect " + mName + " " + effectName,
+				"SkeletonMeshComponent::addEffect");
+
+			return 0;
+		}
+		else
+		{
+			Impact* effect = ImpactManager::getSingleton().addEffect(effectName);
+
+			if (effect)
+			{
+				effect->createSceneNode();
+
+				// 在创建的时候先设置为一个较远的地方，因为有可能剔除了，不会执行
+				// 这个model的execute，effect的位置的信息不会被更新，这样作会避免在
+				// 场景中看到一个没被更新位置的effect
+				TransformInfo info;
+				info.mPosition = Ogre::Vector3(0, -10000, 0);
+
+				effect->setTransformInfo(info);
+
+				// 设置effect为当前的visible flag
+				effect->setVisibleFlag(mVisibleFlag);
+				effect->setPriority(priority);
+				effect->setVisible(mVisible);
+
+				// 只有特别指定了颜色，才需要设置到effect中
+				if (colour != Ogre::ColourValue::White)
+					effect->setColour(colour);
+				//生成唯一的EffectName,dscky add///////
+				Ogre::String name;
+				if (pName)
+					name = Ogre::String(pName);
+				else
+				{
+					EffectActor  Temp;
+					name = generateAutoName(&Temp);
+				}
+				mCreatedEffectList.push_back(CreatedEffectInfo(effect, locatorName, transformType, ++mEffectHandleCount, name, OffsetPos, OffsetQuat));
+
+				return mEffectHandleCount;
+			}
+			else
+				return 0;
+		}
 	}
 	//-----------------------------------------------------------------------	
 	bool SkeletonMeshComponent::delEffect( EffectHandle handle )

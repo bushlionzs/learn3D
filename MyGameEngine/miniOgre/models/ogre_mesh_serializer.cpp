@@ -331,14 +331,13 @@ void OgreMeshSerializerImpl::readGeometryVertexElement(
     // unsigned short index;    // index of the semantic
     readShorts(stream, &index, 1);
 
-   
+    if (vSemantic == VES_BLEND_WEIGHTS ||
+        vSemantic == VES_BLEND_INDICES)
+    {
+        return;
+    }
 
     vd->vertexDeclaration->addElement(source, index, offset, vType, vSemantic);
-
-    if (vType == _DETAIL_SWAP_RB)
-    {
-        
-    }
 }
 
 void OgreMeshSerializerImpl::readGeometryVertexBuffer(
@@ -365,27 +364,36 @@ void OgreMeshSerializerImpl::readGeometryVertexBuffer(
         }
         // Check that vertex size agrees
         uint32_t vsize = vd->vertexDeclaration->getVertexSize(bindIndex);
-        if (vsize != vertexSize)
-        {
-            OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, "Buffer vertex size does not agree with vertex declaration",
-                "MeshSerializerImpl::readGeometryVertexBuffer");
-        }
 
-        vd->vertexSlotInfo.emplace_back();
-        VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-        slotInfo.mSlot = bindIndex;
-        slotInfo.mVertexSize = vertexSize;
-        slotInfo.createBuffer(vertexSize, vd->vertexCount);
-        void* data = slotInfo.hardwareVertexBuffer->lock();
-        stream->read((void*)data, vd->vertexCount * vertexSize);
-        Ogre::Vector3* tmp = (Ogre::Vector3*)data;
-        for (int32_t i = 0; i < vd->vertexCount; i++)
+        if (vsize == 0)
         {
-            tmp = (Ogre::Vector3 *)((char*)data + i * vertexSize);
-
-            int kk = 0;
+            stream->seekRelative(vd->vertexCount * vertexSize);
         }
-        slotInfo.hardwareVertexBuffer->unlock();
+        else
+        {
+            if (vsize != vertexSize)
+            {
+                OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, "Buffer vertex size does not agree with vertex declaration",
+                    "MeshSerializerImpl::readGeometryVertexBuffer");
+            }
+
+            vd->vertexSlotInfo.emplace_back();
+            VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
+            slotInfo.mSlot = bindIndex;
+            slotInfo.mVertexSize = vertexSize;
+            slotInfo.createBuffer(vertexSize, vd->vertexCount);
+            void* data = slotInfo.hardwareVertexBuffer->lock();
+            stream->read((void*)data, vd->vertexCount * vertexSize);
+            Ogre::Vector3* tmp = (Ogre::Vector3*)data;
+            for (int32_t i = 0; i < vd->vertexCount; i++)
+            {
+                tmp = (Ogre::Vector3*)((char*)data + i * vertexSize);
+
+                int kk = 0;
+            }
+            slotInfo.hardwareVertexBuffer->unlock();
+        }
+        
     }
     popInnerChunk(stream);
 }

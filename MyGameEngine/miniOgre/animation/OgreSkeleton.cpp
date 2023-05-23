@@ -124,6 +124,7 @@ namespace Ogre {
 
 		for (auto* b : mBoneList)
 		{
+			b->needUpdate();
 			b->_updateFromParent();
 		}
 

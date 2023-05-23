@@ -45,6 +45,10 @@ namespace Ogre {
 
 	float Animation::getAnimationLength()
 	{
+		if (mNodeTrackList.empty())
+		{
+			return 0.0f;
+		}
 		auto itor = mNodeTrackList.begin();
 
 		return itor->second->getAnimationLength();

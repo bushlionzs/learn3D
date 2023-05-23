@@ -317,9 +317,7 @@ namespace Ogre
         AnimationStateMap::const_iterator i = mAnimationStates.find(name);
         if (i == mAnimationStates.end())
         {
-            OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND, 
-                "No state found for animation named '" + name + "'", 
-                "AnimationStateSet::getAnimationState");
+            return nullptr;
         }
         return i->second;
     }
