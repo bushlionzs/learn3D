@@ -61,7 +61,7 @@ namespace Ogre {
             mQueryFlags |= flags; 
         }
 
-
+        virtual Real getBoundingRadius(void) const { return 0; }
         virtual const AxisAlignedBox& getBoundingBox(void) const = 0;
 
         virtual const AxisAlignedBox& getWorldBoundingBox(bool derive = false) const;

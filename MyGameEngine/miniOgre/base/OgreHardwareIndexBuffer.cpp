@@ -33,3 +33,8 @@ uint32_t HardwareIndexBuffer::getIndexSize()
     assert(false);
     return 0;
 }
+
+HardwareIndexBuffer::IndexType HardwareIndexBuffer::getType()
+{
+    return IT_16BIT;
+}

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "OgreUserObjectBindings.h"
 class SVertexElement
 {
 public:
@@ -138,7 +138,10 @@ namespace Ogre {
         void addChild(Node* child);
         void removeChild(Node* child);
         const ChildNodeMap& getChildren() const;
-
+        UserObjectBindings& getUserObjectBindings() 
+        { 
+            return mUserObjectBindings; 
+        }
         static void queueNeedUpdate(Node* n);
     protected:
         Ogre::Matrix4 mModel;
@@ -183,5 +186,7 @@ namespace Ogre {
         Ogre::Matrix4 mCacheMatrix;
 
         Listener* mListener = nullptr;
+
+        UserObjectBindings mUserObjectBindings;
     };
 }

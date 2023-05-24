@@ -120,6 +120,14 @@ public:
                 static_cast<unsigned char*>(pBase) + mOffset));
     }
 
+    template<typename T>
+    void baseVertexPointerToElement(void* pBase, T** pElem) const
+    {
+        // The only way we can do this is to cast to char* in order to use byte offset
+        // then cast back to T*.
+        *pElem = reinterpret_cast<T*>(static_cast<char*>(pBase) + mOffset);
+    }
+
     static size_t getTypeSize(VertexElementType etype);
 
     static uint32_t convertColourValue(const Ogre::ColourValue& src,

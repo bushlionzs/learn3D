@@ -355,6 +355,7 @@
     <ClInclude Include="miniOgre\base\OgreTextureUnit.h" />
     <ClInclude Include="miniOgre\base\vertex_data.h" />
     <ClInclude Include="miniOgre\base\vertex_declaration.h" />
+    <ClInclude Include="miniOgre\component\OgreBullet.h" />
     <ClInclude Include="miniOgre\models\gltf_helper.h" />
     <ClInclude Include="miniOgre\models\gltf_loader.h" />
     <ClInclude Include="miniOgre\models\m3d_loader.h" />
@@ -1023,6 +1024,7 @@
     <ClCompile Include="miniOgre\base\OgreTextureUnit.cpp" />
     <ClCompile Include="miniOgre\base\vertex_data.cpp" />
     <ClCompile Include="miniOgre\base\vertex_declaration.cpp" />
+    <ClCompile Include="miniOgre\component\OgreBullet.cpp" />
     <ClCompile Include="miniOgre\models\gltf_helper.cpp" />
     <ClCompile Include="miniOgre\models\gltf_loader.cpp" />
     <ClCompile Include="miniOgre\models\m3d_loader.cpp" />
@@ -1403,7 +1405,7 @@
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4819;4099;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)wow;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)wow;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd\bullet3\include;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -1412,7 +1414,7 @@
     <Lib>
       <AdditionalOptions />
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>OIS_d.lib;tinyxmld.lib;vulkan-1.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;dxgi.lib;dxguid.lib;d3d12.lib;d3d11.lib;D3DCompiler.lib;Shlwapi.lib;winmm.lib;LibBulletCollisiond.lib;LibBulletDynamicsd.lib;LibBulletSoftBodyd.lib;LibLinearMathd.lib;GlslUtil.lib;StormLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OIS_d.lib;tinyxmld.lib;vulkan-1.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;dxgi.lib;dxguid.lib;d3d12.lib;d3d11.lib;D3DCompiler.lib;Shlwapi.lib;winmm.lib;GlslUtil.lib;StormLib.lib;LinearMath_Debug.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;BulletSoftBody_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\3rd\lib;$(ProjectDir)..\bin</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>

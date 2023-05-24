@@ -94,6 +94,9 @@
     <Filter Include="wow">
       <UniqueIdentifier>{c455c9eb-48fe-4bb2-851a-92223ec1ac08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="miniOgre\compoment">
+      <UniqueIdentifier>{2855039a-54a8-4e8a-827f-5c1eef59749c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="miniOgre\base\asm_math.h">
@@ -2379,6 +2382,9 @@
     <ClInclude Include="parser\skbFileParser.h">
       <Filter>parser</Filter>
     </ClInclude>
+    <ClInclude Include="miniOgre\component\OgreBullet.h">
+      <Filter>miniOgre\compoment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="miniOgre\base\OgreAlignedAllocator.cpp">
@@ -3925,6 +3931,9 @@
     </ClCompile>
     <ClCompile Include="parser\skbFileParser.cpp">
       <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="miniOgre\component\OgreBullet.cpp">
+      <Filter>miniOgre\compoment</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
