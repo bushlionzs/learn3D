@@ -55,7 +55,14 @@ void* Dx11HardwareBuffer::lockimpl(
 {
     D3D11_MAPPED_SUBRESOURCE mappedData;
     mappedData.pData = nullptr;
-    HRESULT hr = DX11Helper::getSingleton().getDeviceContext()->Map(mVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+
+    D3D11_MAP MapType = D3D11_MAP_WRITE_DISCARD;
+
+    if (options == HBL_READ_ONLY)
+    {
+        MapType = D3D11_MAP_WRITE_NO_OVERWRITE;
+    }
+    HRESULT hr = DX11Helper::getSingleton().getDeviceContext()->Map(mVertexBuffer, 0, MapType, 0, &mappedData);
     if (FAILED(hr))
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to Map buffer using dx11!");

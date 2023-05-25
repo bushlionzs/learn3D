@@ -36,5 +36,9 @@ uint32_t HardwareIndexBuffer::getIndexSize()
 
 HardwareIndexBuffer::IndexType HardwareIndexBuffer::getType()
 {
-    return IT_16BIT;
+    if (mDelegate->getVertexSize() == 2)
+    {
+        return IT_16BIT;
+    }
+    return IT_32BIT;
 }

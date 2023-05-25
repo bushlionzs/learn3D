@@ -19,7 +19,6 @@ public:
 private:
     Dx11RenderSystem* mRenderSystem;
     ID3D11Buffer* mVertexBuffer = nullptr;
-    int32_t mVertexSize;
     int32_t mNumVerts;
     BufferType mBufferType;
     DXGI_FORMAT mIndexFormat;

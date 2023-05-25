@@ -105,9 +105,15 @@ namespace Ogre {
         {
             return mSizeInBytes;
         }
+
+        size_t getVertexSize() const
+        {
+            return mVertexSize;
+        }
     protected:
         Usage mUsage;
         uint32_t mSizeInBytes = 0;
+        int32_t mVertexSize = 0;
         std::unique_ptr<HardwareBuffer> mShadowBuffer;
         bool mShadowUpdated = false;
         bool mIsLocked = false;

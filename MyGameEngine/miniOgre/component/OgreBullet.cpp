@@ -12,6 +12,7 @@
 #include "OgreMesh.h"
 #include "vertex_declaration.h"
 #include "OgrehardwareIndexBuffer.h"
+#include "OgreSubEntity.h"
 
 namespace Ogre
 {
@@ -293,6 +294,8 @@ void VertexIndexToShape::addStaticVertexData(const VertexData* vertex_data)
 {
     if (!vertex_data)
         return;
+    if (vertex_data->vertexCount == 0)
+        return;
 
     const VertexData* data = vertex_data;
 
@@ -524,6 +527,7 @@ void VertexIndexToShape::addEntity(const Entity* entity, const Matrix4& transfor
     auto node = entity->getParentSceneNode();
     mTransform = transform;
     mScale = node ? node->getScale() : Vector3(1, 1, 1);
+  
 
     bool hasSkeleton = entity->hasSkeleton();
     auto sharedVertexData = entity->getMesh()->getVertexData();

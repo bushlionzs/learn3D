@@ -19,7 +19,7 @@ namespace Ogre {
             return mRenderables;
         }
 
-        const Ogre::Matrix4& getModelMatrix();
+        const Ogre::Matrix4& getModelMatrix() const;
 
         virtual void update(float delta) {}
         virtual bool isTransparent();

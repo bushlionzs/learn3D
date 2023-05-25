@@ -33,7 +33,7 @@ namespace Ogre {
 
     }
 
-    const Ogre::Matrix4& MoveObject::getModelMatrix()
+    const Ogre::Matrix4& MoveObject::getModelMatrix() const
     {
         return mParent->getWorldModelMatrix();
     }
