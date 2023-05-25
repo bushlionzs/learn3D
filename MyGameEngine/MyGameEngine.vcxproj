@@ -211,6 +211,36 @@
     <ClInclude Include="middle\Navigate\quat_aos.h" />
     <ClInclude Include="middle\Navigate\vectormath_aos.h" />
     <ClInclude Include="middle\Navigate\vec_aos.h" />
+    <ClInclude Include="middle\Physics\OGCollisionBuilding.h" />
+    <ClInclude Include="middle\Physics\OGCollisionBuildingFileFormat.h" />
+    <ClInclude Include="middle\Physics\OGCollisionBuildingManager.h" />
+    <ClInclude Include="middle\Physics\OGCollisionBuildingSerializer.h" />
+    <ClInclude Include="middle\Physics\OGCollisionModel.h" />
+    <ClInclude Include="middle\Physics\OGCollisionModelManager.h" />
+    <ClInclude Include="middle\Physics\OGPhyActor.h" />
+    <ClInclude Include="middle\Physics\OGPhyBoxShape.h" />
+    <ClInclude Include="middle\Physics\OGPhyCapsuleShape.h" />
+    <ClInclude Include="middle\Physics\OGPhyCollection.h" />
+    <ClInclude Include="middle\Physics\OGPhyCollectionFileFormat.h" />
+    <ClInclude Include="middle\Physics\OGPhyCollectionSerializer.h" />
+    <ClInclude Include="middle\Physics\OGPhyConstraint.h" />
+    <ClInclude Include="middle\Physics\OGPhyConvexCullShape.h" />
+    <ClInclude Include="middle\Physics\OGPhyCookedTriangleMesh.h" />
+    <ClInclude Include="middle\Physics\OGPhyCookedTriangleMeshFileFormat.h" />
+    <ClInclude Include="middle\Physics\OGPhyCookedTriangleMeshManager.h" />
+    <ClInclude Include="middle\Physics\OGPhyCookedTriangleMeshSerializer.h" />
+    <ClInclude Include="middle\Physics\OGPhyHeightFieldShape.h" />
+    <ClInclude Include="middle\Physics\OGPhyShape.h" />
+    <ClInclude Include="middle\Physics\OGPhyShapeSerializersManager.h" />
+    <ClInclude Include="middle\Physics\OGPhysicsManager.h" />
+    <ClInclude Include="middle\Physics\OGPhySixDofConstraint.h" />
+    <ClInclude Include="middle\Physics\OGPhySoftBody.h" />
+    <ClInclude Include="middle\Physics\OGPhySpaceSerializer.h" />
+    <ClInclude Include="middle\Physics\OGPhySphereShape.h" />
+    <ClInclude Include="middle\Physics\OGPhyStaticConcaveShape.h" />
+    <ClInclude Include="middle\Physics\OGPhyTimeController.h" />
+    <ClInclude Include="middle\Physics\OGPhyUtil.h" />
+    <ClInclude Include="middle\Physics\OGPhyWorld.h" />
     <ClInclude Include="middle\scene\GameMapCollisionManager.h" />
     <ClInclude Include="middle\scene\GameMapPath.h" />
     <ClInclude Include="middle\scene\GameMapRegion.h" />
@@ -906,6 +936,32 @@
     <ClCompile Include="middle\Navigate\OGNavigateRegionImp.cpp" />
     <ClCompile Include="middle\Navigate\OGNavigateSpaceImp.cpp" />
     <ClCompile Include="middle\Navigate\OGNavigateUtilLibImp.cpp" />
+    <ClCompile Include="middle\Physics\OGCollisionBuilding.cpp" />
+    <ClCompile Include="middle\Physics\OGCollisionBuildingManager.cpp" />
+    <ClCompile Include="middle\Physics\OGCollisionBuildingSerializer.cpp" />
+    <ClCompile Include="middle\Physics\OGCollisionModel.cpp" />
+    <ClCompile Include="middle\Physics\OGCollisionModelManager.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyActor.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyBoxShape.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyCapsuleShape.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyCollection.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyCollectionSerializer.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyConstraint.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyConvexCullShape.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyCookedTriangleMesh.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyCookedTriangleMeshManager.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyCookedTriangleMeshSerializer.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyHeightFieldShape.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyShape.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyShapeSerializersManager.cpp" />
+    <ClCompile Include="middle\Physics\OGPhysicsManager.cpp" />
+    <ClCompile Include="middle\Physics\OGPhySixDofConstraint.cpp" />
+    <ClCompile Include="middle\Physics\OGPhySoftBody.cpp" />
+    <ClCompile Include="middle\Physics\OGPhySpaceSerializer.cpp" />
+    <ClCompile Include="middle\Physics\OGPhySphereShape.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyStaticConcaveShape.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyTimeController.cpp" />
+    <ClCompile Include="middle\Physics\OGPhyWorld.cpp" />
     <ClCompile Include="middle\scene\GameMapCollisionManager.cpp" />
     <ClCompile Include="middle\scene\GameMapPath.cpp" />
     <ClCompile Include="middle\scene\GameMapRegion.cpp" />
@@ -1405,7 +1461,7 @@
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4819;4099;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)wow;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd\bullet3\include;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)miniOgre\base;$(ProjectDir)miniOgre\parser;$(ProjectDir)miniOgre\models;$(ProjectDir)miniOgre\animation;$(ProjectDir)miniOgre\particle;$(ProjectDir)miniOgre\render\dx12render;$(ProjectDir)miniOgre\render\dx11render;$(ProjectDir)miniOgre\render\vulkanrender;$(ProjectDir)miniOgre\particle\ParticleFX;$(ProjectDir)middle\AdvancedAnimation;$(ProjectDir)middle\component;$(ProjectDir)middle\Navigate;$(ProjectDir)middle\effect;$(ProjectDir)middle\physics;$(ProjectDir)middle\general;$(ProjectDir)middle\scene\scene_actor;$(ProjectDir)middle\scene\effect;$(ProjectDir)multimedia;$(ProjectDir)middle\scene;$(ProjectDir)wow;$(ProjectDir)parser;$(ProjectDir)mygui\uicommon;$(ProjectDir)mygui\uirender;$(ProjectDir)mygui\uiengine;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd\Opcode;$(ProjectDir)..\3rd\bullet;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd\bullet3\include;$(ProjectDir)..\3rd;$(ProjectDir)..\GlslUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

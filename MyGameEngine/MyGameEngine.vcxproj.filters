@@ -97,6 +97,9 @@
     <Filter Include="miniOgre\compoment">
       <UniqueIdentifier>{2855039a-54a8-4e8a-827f-5c1eef59749c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="middle\physics">
+      <UniqueIdentifier>{8a5e9ebd-44a3-4647-b67b-6288e900ee6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="miniOgre\base\asm_math.h">
@@ -2385,6 +2388,96 @@
     <ClInclude Include="miniOgre\component\OgreBullet.h">
       <Filter>miniOgre\compoment</Filter>
     </ClInclude>
+    <ClInclude Include="middle\Physics\OGCollisionBuilding.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGCollisionBuildingFileFormat.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGCollisionBuildingManager.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGCollisionBuildingSerializer.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGCollisionModel.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGCollisionModelManager.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyActor.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyBoxShape.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyCapsuleShape.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyCollection.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyCollectionFileFormat.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyCollectionSerializer.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyConstraint.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyConvexCullShape.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyCookedTriangleMesh.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyCookedTriangleMeshFileFormat.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyCookedTriangleMeshManager.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyCookedTriangleMeshSerializer.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyHeightFieldShape.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyShape.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyShapeSerializersManager.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhysicsManager.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhySixDofConstraint.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhySoftBody.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhySpaceSerializer.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhySphereShape.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyStaticConcaveShape.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyTimeController.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyUtil.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="middle\Physics\OGPhyWorld.h">
+      <Filter>middle\physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="miniOgre\base\OgreAlignedAllocator.cpp">
@@ -3934,6 +4027,84 @@
     </ClCompile>
     <ClCompile Include="miniOgre\component\OgreBullet.cpp">
       <Filter>miniOgre\compoment</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGCollisionBuilding.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGCollisionBuildingManager.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGCollisionBuildingSerializer.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGCollisionModel.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGCollisionModelManager.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyActor.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyBoxShape.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyCapsuleShape.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyCollection.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyCollectionSerializer.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyConstraint.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyConvexCullShape.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyCookedTriangleMesh.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyCookedTriangleMeshManager.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyCookedTriangleMeshSerializer.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyHeightFieldShape.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyShape.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyShapeSerializersManager.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhysicsManager.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhySixDofConstraint.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhySoftBody.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhySpaceSerializer.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhySphereShape.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyStaticConcaveShape.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyTimeController.cpp">
+      <Filter>middle\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="middle\Physics\OGPhyWorld.cpp">
+      <Filter>middle\physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

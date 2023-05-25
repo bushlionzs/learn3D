@@ -17,7 +17,7 @@
 #include "OGNavigateRegion.h"
 #include "OGNavigateSpace.h"
 #include "GameMapZone.h"
-
+#include "OGPhyCollectionSerializer.h"
 
 GameScene::GameScene(const _TABLE_SCENE_DEFINE* define)
 {
@@ -71,15 +71,13 @@ bool GameScene::load()
 	std::shared_ptr<DataStream> stream = ResourceManager::getSingletonPtr()->openResource(strSceneName);
 	serializer.import(stream, this);
 
-	//因为之前Bullet serialize是32位程序保存的，64位程序加载会失败，猜测主要是结构体里有指针，
-	// 导致32位程序和64程序的结构体大小不一致，等以后有时间再
-	//试试32位程序编译，先暂时屏蔽
-	/*Orphigine::PhyCollectionSerializer physicsSerializer;
+
+	Orphigine::PhyCollectionSerializer physicsSerializer;
 	String phyName = baseName + ".phy";
 	Ogre::DataStreamPtr	phyDataStream = Ogre::ResourceManager::getSingleton().openResource(phyName);
 	Orphigine::PhyCollection phyiscsCollection;
 	physicsSerializer.importPhyCollection(phyDataStream, &phyiscsCollection);
-	phyiscsCollection.instantiate();*/
+	phyiscsCollection.instantiate();
 
 
 	stream = ResourceManager::getSingletonPtr()->openResource(mTerrainFilename);
@@ -391,5 +389,8 @@ void GameScene::loadImpl()
 	{
 		mActors[i]->createRenderInstance();
 	}
+
+	//load physics
+
 
 }
