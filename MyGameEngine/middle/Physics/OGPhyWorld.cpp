@@ -103,9 +103,7 @@ namespace Orphigine
 		m_collisionConfiguration = NULL;
 	}
 
-	//------------------------------------------------------------------------
-	//chunlin added, 2009.1.16，球形碰撞+光线 行走面碰撞,利用半径和中心距离快速排除碰撞对象
-	//chenwu modify,2009.2.17,加入AABB碰撞，并返回所有碰撞的btCollisionObject
+
 	bool PhyWorld::sphereGroundTest(const Ogre::Vector3& pos, Real radius, const Ogre::AxisAlignedBox & aabb,bool & bAABBIntersect,btCollisionObject ** ppObject,std::vector<btCollisionObject *> & aryAllObject,Ogre::Vector3 * outPosition)
 	{
 		btSoftRigidDynamicsWorld * collisionWorld = this->m_collisionWorld;
@@ -267,8 +265,6 @@ namespace Orphigine
 		btCollisionWorld::ClosestRayResultCallback cb(tmpRayFrom,tmpRayTo);
 
 
-		//chunlin modified, 2009.1.16
-		//m_collisionWorld->rayTest(tmpRayFrom, tmpRayTo, cb);
 		rayTest(m_collisionWorld, tmpRayFrom, tmpRayTo, cb);
 		//end
 		if ( cb.hasHit() )
@@ -294,10 +290,7 @@ namespace Orphigine
 
 		btCollisionWorld::ClosestRayResultCallback cb(tmpRayFrom, tmpRayTo);
 
-		//chunlin modified, 2009.1.16
-		//m_collisionWorld->rayTest (tmpRayFrom, tmpRayTo, cb);
 		rayTest(m_collisionWorld, tmpRayFrom, tmpRayTo, cb);
-		//end
 
 		if (cb.hasHit ())
 		{
@@ -351,8 +344,9 @@ namespace Orphigine
 	void PhyWorld::addActor( PhyActor* actor)
 	{
 		m_actors.push_back(actor);
-
-		m_collisionWorld->addCollisionObject(actor->getBtActor());
+		btCollisionObject* bco = actor->getBtActor();
+		if(bco->getCollisionShape())
+			m_collisionWorld->addCollisionObject(bco);
 	}
 
 	unsigned int PhyWorld::getNumActors() const

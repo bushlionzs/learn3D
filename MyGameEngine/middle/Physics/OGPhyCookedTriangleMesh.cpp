@@ -31,7 +31,11 @@ namespace Orphigine
 	
 		Ogre::DataStreamPtr tmpStream = Ogre::ResourceManager::getSingleton().openResource(mName,
 			mGroup);
-
+		if (!tmpStream)
+		{
+			WARNING_LOG("fail to load ctm file:%s", mName.c_str());
+			return;
+		}
 		tmpSerializer.importCookedTriangleMesh(tmpStream,this);
 
 		

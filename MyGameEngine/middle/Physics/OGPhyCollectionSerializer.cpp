@@ -22,7 +22,7 @@ namespace Orphigine
 
 	PhyCollectionSerializer::PhyCollectionSerializer()
 	{	
-		mVersion = "[Serializer_v1.20]";
+		mVersion = "[Serializer_v1.10]";
 	}
 
 	PhyCollectionSerializer::~PhyCollectionSerializer()

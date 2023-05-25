@@ -59,13 +59,13 @@ namespace Orphigine
 
 		btTriangleIndexVertexArray* triangleArray = m_cookedTriangleMesh->getTriangleMeshDesc();
 
-		btOptimizedBvh*	optimizedBvh = m_cookedTriangleMesh->getTriangleMesh();
+		if (triangleArray)
+		{
+			m_bvhTriangleMeshShapeCache = new btBvhTriangleMeshShape(triangleArray, true, true);
 
-		m_bvhTriangleMeshShapeCache = new btBvhTriangleMeshShape(triangleArray,true,false);
+			m_shape = new btScaledBvhTriangleMeshShape(m_bvhTriangleMeshShapeCache, ogreToBulletVector3(m_localScaling));
 
-		m_bvhTriangleMeshShapeCache->setOptimizedBvh(optimizedBvh);
-
-		m_shape = new btScaledBvhTriangleMeshShape(m_bvhTriangleMeshShapeCache,ogreToBulletVector3(m_localScaling));
+		}
 	}
 
 	void PhyStaticConcaveShape::_destroyStaticConcaveShapeImpl()

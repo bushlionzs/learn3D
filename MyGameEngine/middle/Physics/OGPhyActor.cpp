@@ -86,7 +86,6 @@ namespace Orphigine
 	{
 		m_position = val;
 
-		//chunlin added, 2009.1.16
 		if (m_actor)
 		{
 			btTransform actorTrans;
@@ -117,7 +116,6 @@ namespace Orphigine
 	void PhyActor::setOrientationWorld( const Ogre::Quaternion& val )
 	{
 		m_rotation = val;
-		//chunlin added, 2009.1.16
 		if (m_actor)
 		{
 			btTransform actorTrans;
@@ -139,7 +137,6 @@ namespace Orphigine
 	{
 		m_actor = new btCollisionObject();
 
-		//begin: chunlin added, 2009.1.16
 		m_actor->setUserPointer(this);
 		//end
 
@@ -163,7 +160,6 @@ namespace Orphigine
 		return m_shape;
 	}
 
-	//chunlin added, 2009.1.16
 	const Ogre::Vector3& PhyActor::getCenterPos() const 
 	{
 		return m_centerPos;
@@ -175,7 +171,12 @@ namespace Orphigine
 
 			btVector3 aabbMin, aabbMax;
 			btTransform &actorTrans = m_actor->getWorldTransform();
-			m_shape->getBtShape()->getAabb(actorTrans, aabbMin, aabbMax);
+			auto shape = m_shape->getBtShape();
+			if (!shape)
+			{
+				return;
+			}
+			shape->getAabb(actorTrans, aabbMin, aabbMax);
 			m_boundingBox = Ogre::AxisAlignedBox(bulletToOgreVector3(aabbMin), bulletToOgreVector3(aabbMax));
 			Ogre::Vector3 size = m_boundingBox.getHalfSize();
 			//ogre的aabbbox好象有bug，这里取绝对值
@@ -195,7 +196,6 @@ namespace Orphigine
 	{
 		m_shape = val;		
 		m_actor->setCollisionShape(val->getBtShape());
-		//chunlin added, 2009.1.16
 		updateBounds();
 		//end
 	}
@@ -212,7 +212,6 @@ namespace Orphigine
 		return m_boundingBox;
 	}
 
-	//chunlin modified, 2009.1.16
 	Ogre::Real PhyActor::getBoundingRadius( void ) const
 	{
 		return m_boundRadius;

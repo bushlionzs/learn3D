@@ -78,9 +78,7 @@ namespace Orphigine
 
 		bool						launchRay( const Ogre::Vector3& rayOrgin, const Ogre::Vector3& rayDir,Ogre::Vector3& outPosition );
 
-		//chunlin added
 		bool						sphereGroundTest(const Ogre::Vector3& pos, Real radius,const Ogre::AxisAlignedBox & aabb,bool & bAABBIntersect,btCollisionObject ** ppObject,std::vector<btCollisionObject *> & aryAllObject,Ogre::Vector3 * outPosition = 0);
-		//end
 
 		bool						rayTestSingle(const Ogre::Vector3 & pos,const Ogre::Vector3 & rayDir,btCollisionObject * pObject,Ogre::Vector3 & outPosition);
 

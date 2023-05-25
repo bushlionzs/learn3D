@@ -231,6 +231,7 @@ namespace Orphigine {
             mRenderables.push_back(new ProjectorRenderable(this));
         }
 
+
         return (ProjectorRenderable*)mRenderables.front();
     }
     //-----------------------------------------------------------------------

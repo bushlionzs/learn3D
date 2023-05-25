@@ -65,11 +65,6 @@ bool GameScene::load()
 
 	loadRegionBinary(strRegion.c_str());
 
-	String strCollision = baseName + ".phy";
-
-	SceneSerializer serializer;
-	std::shared_ptr<DataStream> stream = ResourceManager::getSingletonPtr()->openResource(strSceneName);
-	serializer.import(stream, this);
 
 
 	Orphigine::PhyCollectionSerializer physicsSerializer;
@@ -79,6 +74,9 @@ bool GameScene::load()
 	physicsSerializer.importPhyCollection(phyDataStream, &phyiscsCollection);
 	phyiscsCollection.instantiate();
 
+	SceneSerializer serializer;
+	std::shared_ptr<DataStream> stream = ResourceManager::getSingletonPtr()->openResource(strSceneName);
+	serializer.import(stream, this);
 
 	stream = ResourceManager::getSingletonPtr()->openResource(mTerrainFilename);
 

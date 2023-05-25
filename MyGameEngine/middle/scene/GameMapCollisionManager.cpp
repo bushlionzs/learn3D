@@ -3,6 +3,8 @@
 #include <limits>
 #include "engine_manager.h"
 #include "KDefine.h"
+#include "OgPhyWorld.h"
+#include "OGPhysicsManager.h"
 
 const int32_t	BUILD_COLLISION_SEARCH_RANGE = 30;
 
@@ -14,12 +16,7 @@ const int32_t	BUILD_COLLISION_SEARCH_RANGE = 30;
 CMapCollisionManager::CMapCollisionManager(void) :
 	m_physicsWorld(NULL)
 {
-	/*if (Orphigine::PhysicsManager::getSingletonPtr() == nullptr)
-	{
-		new Orphigine::PhysicsManager;
-		new Orphigine::PhyCookedTriangleMeshManager;
-	}
-	m_physicsWorld = Orphigine::PhysicsManager::getSingleton().getWorld();*/
+	m_physicsWorld = Orphigine::PhysicsManager::getSingleton().getWorld();
 }
 
 /*
@@ -50,8 +47,11 @@ BOOL CMapCollisionManager::Get3DMapHeight(FLOAT fx, FLOAT fy, FLOAT fz, FLOAT &o
 	Ogre::Vector3 tmpDir		= Ogre::Vector3(-0.0001f, -30000.0f, -0.0001f);
 	Ogre::Vector3 tmpResultPos	= Ogre::Vector3(0.0f, 0.0f, 0.0f);
 
-
-	hasIntersection = true;
+	hasIntersection = m_physicsWorld->launchRay(tmpStart, tmpDir, tmpResultPos);
+	if (hasIntersection)
+	{
+		int kk = 0;
+	}
 		
 
 

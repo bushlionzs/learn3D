@@ -126,11 +126,11 @@ namespace Orphigine
 
 		stream->read(buffer,tmpOptimalBVHDataSize);
 
-		btOptimizedBvh*	tmpTriangleMesh = NULL;
+		/*btOptimizedBvh*	tmpTriangleMesh = NULL;
 
 		tmpTriangleMesh = btOptimizedBvh::deSerializeInPlace(buffer,buffersize,false);
 
-		cookedTriangleMesh->setTriangleMesh(tmpTriangleMesh);
+		cookedTriangleMesh->setTriangleMesh(tmpTriangleMesh);*/
 	}
 
 	

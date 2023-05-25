@@ -99,7 +99,6 @@ namespace Orphigine
 		static CmdOrientationWorld				ms_orientationWorldCmd;
 	protected:
 		void									_createActorImpl(const Ogre::Vector3& position,const Ogre::Quaternion& rotation);
-		//chunlin added
 		void                                    updateBounds();
 		//end
 	protected:

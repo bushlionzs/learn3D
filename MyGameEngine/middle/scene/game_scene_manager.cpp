@@ -7,12 +7,15 @@
 #include "GameTableData.h"
 #include "GameTableDefine.h"
 #include "KTable.h"
+#include "OGPhyCookedTriangleMeshManager.h"
+#include "OGPhysicsManager.h"
 
 template<> GameSceneManager* Ogre::Singleton<GameSceneManager>::msSingleton = 0;
 
 GameSceneManager::GameSceneManager()
 {
-
+	new Orphigine::PhyCookedTriangleMeshManager;
+	new Orphigine::PhysicsManager;
 }
 
 GameSceneManager::~GameSceneManager()
