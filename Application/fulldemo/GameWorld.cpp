@@ -41,23 +41,26 @@ bool GameWorld::gameWorldInit()
 		OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to load action table");
 		return false;
 	}
-
-	
+	g_nProcess = 9;
+	mPlayer = new Player();
+	mPlayer->setRaceId(11970);
 
 	GameSceneManager::getSingletonPtr()->loadScene(87);
 
 
 	mGameCamera->setDistance(1200.0f);
 	mGameCamera->setHeight(200.0f);
-	mPlayer = new Player();
 
+	
+
+	
 	Ogre::Vector3 mPosition;
-	mPosition.x = 193;
+	mPosition.x = 174;
 	mPosition.y = 0;
-	mPosition.z = 224;
+	mPosition.z = 47;
 
 
-	mPlayer->setGamePosition(mPosition);
+	mPlayer->setPosition(mPosition);
 
 	InputManager::getSingleton().addListener(this);
 

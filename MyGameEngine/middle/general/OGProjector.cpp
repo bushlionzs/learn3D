@@ -15,6 +15,19 @@
 #include "terrain_info.h"
 #include "vertex_data.h"
 #include "vertex_declaration.h"
+#include "engine_manager.h"
+#include "OGCollisionModel.h"
+#include "OGCollisionModelManager.h"
+//#include "OGOpcode.h"
+#include "OGPhyConvexCullShape.h"
+#include "OGPhysicsManager.h"
+#include "OGPhyWorld.h"
+#include "OGPhyActor.h"
+#include "OGPhyUtil.h"
+#include "LinearMath\btVector3.h"
+#include "BulletCollision\CollisionShapes\btTriangleCallback.h"
+#include "BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.h"
+#include "BulletCollision\CollisionDispatch\btCollisionObject.h"
 
 namespace Orphigine {
 
@@ -57,6 +70,11 @@ namespace Orphigine {
         virtual IndexDataView* getIndexView()
         {
             return nullptr;
+        }
+
+        virtual uint64_t getSortValue()
+        {
+            return 100000;
         }
 
         void setVertexData(
@@ -514,7 +532,173 @@ namespace Orphigine {
     //-----------------------------------------------------------------------
     bool Projector::_populateForMovables(Real & fHitY)
 	{
-        return true;
+        PhyWorld* pWorld = PhysicsManager::getSingletonPtr()->getWorld();
+        int nNumActors = pWorld->getNumActors();
+
+        const Ogre::Vector3* corners = getWorldSpaceCorners();
+
+
+
+        Ogre::Vector3 vDir = Ogre::Vector3(-0.0001f, -20000.0f, -0.0001f);
+
+
+
+
+        //是否需要投影到地形上
+        bool bTerrainNeedProject = true;
+
+
+
+        Ogre::Vector3 startPos[5];
+        startPos[0] = getParentSceneNode()->_getDerivedPosition();
+        for (int i = 0; i < 4; i++)
+        {
+            startPos[i + 1] = corners[i];
+        }
+
+
+
+        btCollisionObject* pObject = NULL;
+        Ogre::Vector3 outPosition;
+        bool bAABBIntersect = false;
+        std::vector<btCollisionObject*> aryAllHitObject;
+
+        bool bCenterHitMovables = pWorld->sphereGroundTest(startPos[0], mSphereRadius, mAABB, bAABBIntersect, &pObject, aryAllHitObject, &outPosition);
+
+        if (bAABBIntersect)
+        {
+
+            //如果有一个行走面和projector相交，那么projector可能不需要投影到地形上
+            bTerrainNeedProject = false;
+
+            if (bCenterHitMovables)
+            {
+                fHitY = outPosition.y;
+                Real fTerrainHeight = EngineManager::getSingleton().getTerrain()->getTerrainInfo()->getWorldIndexWorldHeight(outPosition.x, outPosition.z);
+
+                //如果projector与行走面的交点在与地形交点的下面，那么projector也还是需要投影到地形上
+                if (fTerrainHeight > fHitY)
+                {
+                    fHitY = fTerrainHeight;
+                    bTerrainNeedProject = true;
+                }
+                else
+                {
+                    //计算projector的四个顶点是否与行走面相交
+                    for (int i = 1; i < 5; i++)
+                    {
+                        bool bCornerIntersect = false;
+                        for (int j = 0; j < aryAllHitObject.size(); j++)
+                        {
+                            //如果projector的任意一个顶点和行走面相交，并且交点比地形低，那么projector还是需要投影到地形上
+                            Ogre::Vector3 vCornerIntersect;
+
+                            btCollisionObject* pObject = aryAllHitObject[j];
+                            if (pWorld->rayTestSingle(startPos[i], vDir, pObject, vCornerIntersect))
+                            {
+                                bCornerIntersect = true;
+                                Real fCornerTerrainHeight = 
+                                    EngineManager::getSingleton().getTerrain()->getTerrainInfo()->getWorldIndexWorldHeight(vCornerIntersect.x, vCornerIntersect.z);
+                                if (vCornerIntersect.y < fCornerTerrainHeight)
+                                {
+                                    bTerrainNeedProject = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        //如果projector的任意一个顶点没有和行走面相交，那么projector还是需要投影到地形上
+                        if (!bCornerIntersect)
+                        {
+                            bTerrainNeedProject = true;
+                            break;
+                        }
+
+                        if (bTerrainNeedProject)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                fHitY = EngineManager::getSingleton().getTerrain()->getTerrainInfo()->getWorldIndexWorldHeight(startPos[0].x, startPos[0].z);
+                bTerrainNeedProject = true;
+            }
+
+
+
+
+
+            for (int i = 0; i < (int)aryAllHitObject.size(); i++)
+            {
+
+                size_t vertexStart = mTempPositions.size();
+                size_t vertexCount = 0;
+
+                btCollisionObject* pObject = aryAllHitObject[i];
+                btCollisionShape* pShape = pObject->getCollisionShape();
+                PhyActor* actor = (PhyActor*)pObject->getUserPointer();
+                String shapeType;
+                if (actor)
+                {
+                    PhyShape* shape = actor->getShape();
+                    if (shape)
+                    {
+                        shapeType = shape->getType();
+                    }
+                }
+
+                if (shapeType == "StaticConcaveShape")
+                {
+                    btScaledBvhTriangleMeshShape* ScaledBvhShape = (btScaledBvhTriangleMeshShape*)pShape;
+
+                    btBvhTriangleMeshShape* pBTMS = ScaledBvhShape->getChildShape();
+
+                    Ogre::Matrix4 worldMatrix;
+                    worldMatrix.makeTransform(bulletToOgreVector3(pObject->getWorldTransform().getOrigin()), bulletToOgreVector3(ScaledBvhShape->getLocalScaling()), bulletToOgreQuaternion(pObject->getWorldTransform().getRotation()));
+
+
+                    const unsigned char* vertexBase = NULL;
+                    int numVerts;
+                    PHY_ScalarType vertexType;
+                    int vertexStride;
+                    const unsigned char* indexBase = NULL;
+                    int indexStride;
+                    int numFaces;
+                    PHY_ScalarType indexType;
+
+                    pBTMS->getMeshInterface()->getLockedReadOnlyVertexIndexBase(&vertexBase, numVerts, vertexType, vertexStride, &indexBase, indexStride, numFaces, indexType);
+
+
+                    Ogre::Vector3* tmpVertexBase = (Ogre::Vector3*)vertexBase;
+                    static Ogre::Vector3 vOffset(0.0f, 5.0f, 0.0f);
+
+                    for (int j = 0; j < numFaces; j++)
+                    {
+                        unsigned int* tmpIndexBase = (unsigned int*)indexBase;
+                        for (int k = 0; k < 3; k++)
+                        {
+                            unsigned int tmpIndex = tmpIndexBase[k];
+
+                            mTempPositions.push_back(worldMatrix.transformAffine(tmpVertexBase[tmpIndex]) + vOffset);
+                        }
+                        vertexCount += 3;
+
+                        indexBase += indexStride;
+                    }
+                    pBTMS->getMeshInterface()->unLockReadOnlyVertexBase(0);
+                }
+
+                if (vertexCount > 0)
+                {
+                    _addRenderable(NULL, vertexStart, vertexCount);
+                }
+            }
+        }
+
+        return bTerrainNeedProject;
 	}
 	//-----------------------------------------------------------------------
 	//-----------------------------------------------------------------------

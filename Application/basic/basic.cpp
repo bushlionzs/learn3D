@@ -9,6 +9,7 @@
 #include "OgreMaterialManager.h"
 #include "OgreAnimationState.h"
 
+
 Basic::Basic()
 {
 
@@ -23,16 +24,40 @@ bool Basic::appInit()
 {
 	ApplicationBase::appInit();
 
-	base3();
+	base2();
 	return true;
 }
 
+class MyRayResultCallback : public Bullet::RayResultCallback
+{
+	virtual void addSingleResult(const MoveObject* other, float distance)
+	{
+		int kk = 0;
+	}
+};
 void Basic::appUpdate(float delta)
 {
 	ApplicationBase::appUpdate(delta);
 	if (mAnimationState)
 	{
 		mAnimationState->addTime(delta);
+	}
+
+	if (mDynWorld)
+	{
+		mDynWorld->getBtWorld()->stepSimulation(delta, 1);
+
+		//for (int x = -100; x < 100; x++)
+		{
+			//for (int z = 0; z < 100; z++)
+			{
+				Ogre::Ray ray(Ogre::Vector3(210, 1000, 0), Ogre::Vector3(0, -1, 0));
+				MyRayResultCallback cb;
+				mDynWorld->rayTest(ray, &cb, 2000);
+			}
+			
+		}
+		
 	}
 }
 
@@ -50,13 +75,15 @@ void Basic::base1()
 {
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-
 	float aa = 1.0f;
 	Ogre::Vector3 leftop = Ogre::Vector3(-aa, aa, 0.0f);
 	Ogre::Vector3 leftbottom = Ogre::Vector3(-aa, -aa, 0.0f);
 	Ogre::Vector3 righttop = Ogre::Vector3(aa, aa, 0.0f);
 	Ogre::Vector3 rightbottom = Ogre::Vector3(aa, -aa, 0.0f);
 	Ogre::Vector3 normal = Ogre::Vector3(0.0f, 0.0f, 1.0f);
+
+	
+	
 	auto mesh = MeshManager::getSingletonPtr()->createRect(
 		"myrect",
 		leftop, leftbottom, righttop, rightbottom, normal);
@@ -70,29 +97,50 @@ void Basic::base1()
 
 void Basic::base2()
 {
-	auto mesh =
-		MeshManager::getSingletonPtr()->load(std::string("sphere.mesh"));
+	float aa = 100.0f;
+	Ogre::Vector3 leftop = Ogre::Vector3(-aa, 0.0f, aa);
+	Ogre::Vector3 leftbottom = Ogre::Vector3(-aa, 0.0f, -aa);
+	Ogre::Vector3 righttop = Ogre::Vector3(aa, 0.0f, aa);
+	Ogre::Vector3 rightbottom = Ogre::Vector3(aa, 0.0f, -aa);
+	Ogre::Vector3 normal = Ogre::Vector3(0.0f, 0.0f, 1.0f);
+	auto mesh = MeshManager::getSingletonPtr()->createRect(
+		"myrect",
+		leftop, leftbottom, righttop, rightbottom, normal);
+	//mesh = MeshManager::getSingletonPtr()->load(std::string("Ä¾ÇÅ2.mesh"));
 
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
 	Entity* sphere = mSceneManager->createEntity("sphere", mesh);
 	SceneNode* spherenode = root->createChildSceneNode("sphere");
 	spherenode->attachObject(sphere);
+	auto pos = Ogre::Vector3(200, 0, 0);
+	spherenode->setPosition(pos);
+	const AxisAlignedBox& box = sphere->getBoundingBox();
 
-	mGameCamera->setDistance(300.0f);
+	mGameCamera->setDistance(2000);
 	mGameCamera->setMoveSpeed(100.0f);
+
+	initPhysics();
+
+	mDynWorld->addRigidBody(0, sphere, Bullet::CT_TRIMESH);
 }
 
 void Basic::base3()
 {
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 	SceneNode* node = root->createChildSceneNode("sphere");
-	Ogre::String effectName = "reachable_projector";
+	Ogre::String effectName = "ui_Éñ±øÌ¨ÂÌ_01";
 	mProjectorEffect = Orphigine::ImpactManager::getSingleton().createEffect(effectName, 0);
 	mProjectorEffect->createSceneNode(node);
 
-	mGameCamera->setDistance(300.0f);
+	mGameCamera->setDistance(1200);
 	mGameCamera->setHeight(30.0f);
 
 	mGameCamera->setMoveSpeed(25.0f);
+}
+
+void Basic::initPhysics()
+{
+	
+	mDynWorld.reset(new Bullet::DynamicsWorld(Vector3(0, -9.8, 0)));
 }

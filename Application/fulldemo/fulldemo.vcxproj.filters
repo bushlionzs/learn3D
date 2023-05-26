@@ -7,9 +7,6 @@
     <Filter Include="src\common">
       <UniqueIdentifier>{bed4245e-8fd5-4f2d-a041-6d5fc16a92eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\gameobject">
-      <UniqueIdentifier>{11c946e3-1fd4-47dc-9d37-bbfab8605f9c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\application_base.cpp">
@@ -48,13 +45,16 @@
     <ClCompile Include="player.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="gameobject\GameObject.cpp">
-      <Filter>src\gameobject</Filter>
-    </ClCompile>
-    <ClCompile Include="gameobject\GameEntity.cpp">
-      <Filter>src\gameobject</Filter>
-    </ClCompile>
     <ClCompile Include="CharacterCommon.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\GameEntity.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\GameObject.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,13 +95,16 @@
     <ClInclude Include="player.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="gameobject\GameObject.h">
-      <Filter>src\gameobject</Filter>
-    </ClInclude>
-    <ClInclude Include="gameobject\GameEntity.h">
-      <Filter>src\gameobject</Filter>
-    </ClInclude>
     <ClInclude Include="CharacterCommon.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\GameEntity.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\GameObject.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="character.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

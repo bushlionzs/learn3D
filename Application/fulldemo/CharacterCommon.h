@@ -133,6 +133,32 @@ enum ENUM_CHAR_JUMP_STATE
 	ENUM_CHAR_JUMP_STATE_TOUCHDOWN,
 };
 
+/// NPC 类型
+enum eNPC_TYPE
+{
+	NPC_TYPE_INVALID = -1,
+	NPC_TYPE_MONSTER,			// 怪物
+	//NPC_TYPE_PET,				// 宠物
+	NPC_TYPE_HORSE,				// 马
+	NPC_TYPE_BUS,				// BUS
+	NPC_TYPE_BEASTIE,			// 动物
+	NPC_TYPE_GUARDER,			// 召唤兽
+
+	NPC_TYPE_NUMBERS
+};
+
+
+// 模型标识
+enum CHARATER_MODEL_TYPE
+{
+	CHAR_MODEL_INVAILD = 0,
+	CHAR_MODEL_CHAR,					// 人物
+	CHAR_MODEL_MOUNT,					// 坐骑
+	CHAR_MODEL_ADJUNCT_1,				// 挂接物1
+	CHAR_MODEL_ADJUNCT_2,				// 挂接物2
+
+	CHAR_MODEL_TYPE_NUM,
+};
 
 const char* GetCharaLocatorName( ENUM_CHARACTER_LOCATOR eLocator );
 const char* GetMountLocatorName( ENUM_MOUNT_LOCATOR eLocator );

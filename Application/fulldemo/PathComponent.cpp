@@ -1,16 +1,16 @@
 #include "OgreHeader.h"
 #include "PathComponent.h"
 #include "GameMapPath.h"
-#include "player.h"
+#include "character.h"
 #include "game_scene_manager.h"
 #include "game_scene.h"
 #include "engine_manager.h"
 #include "GameMath.h"
 
 
-PathComponent::PathComponent(Player* player)
+PathComponent::PathComponent(Character* character)
 {
-	mPlayer = player;
+	mCharacter = character;
 }
 
 
@@ -46,7 +46,7 @@ void PathComponent::update(float deltatime)
 {
 	if (mPathList.empty())
 		return;
-	const Ogre::Vector3& playerPos = mPlayer->getGamePosition();
+	const Ogre::Vector3& playerPos = mCharacter->getPosition();
 
 	Ogre::Vector2 currentPos(playerPos.x, playerPos.z);
 
@@ -120,7 +120,7 @@ void PathComponent::update(float deltatime)
 
 	if (bStopMove)
 	{
-		mPlayer->ChangeAction(CA_MOVING, 0.0f);
+		mCharacter->ChangeAction(CA_MOVING, 0.0f);
 	}
 }
 
@@ -200,12 +200,12 @@ void PathComponent::updateToFaceDir(float deltatime)
 
 Ogre::Real PathComponent::getFaceDir()
 {
-	return mPlayer->getDirection();
+	return mCharacter->getDirection();
 }
 
 void PathComponent::setFaceDir(Ogre::Real dir)
 {
-	mPlayer->setDirection(dir);
+	mCharacter->setDirection(dir);
 }
 
 void PathComponent::calculateNodePos(const Ogre::Vector2 & fvPosition, FLOAT fModifyHeight)
@@ -214,7 +214,7 @@ void PathComponent::calculateNodePos(const Ogre::Vector2 & fvPosition, FLOAT fMo
 
 
 		//当前位置
-	Ogre::Vector3	fvCurObjPos = mPlayer->getGamePosition();
+	Ogre::Vector3	fvCurObjPos = mCharacter->getPosition();
 	FLOAT	fInAirHeight = fvCurObjPos.y;
 
 	//---------------------------------------------------
@@ -231,10 +231,6 @@ void PathComponent::calculateNodePos(const Ogre::Vector2 & fvPosition, FLOAT fMo
 	{
 		fHeight = -FLT_MAX;
 	}
-	else
-	{
-		int kk = 0;
-	}
 
 	// 设置最终高度， 并且设置是否在行走面上的状态
 	FLOAT fRealHeight = 0.0f;
@@ -249,7 +245,7 @@ void PathComponent::calculateNodePos(const Ogre::Vector2 & fvPosition, FLOAT fMo
 	}
 
 	Ogre::Vector3 position(fvPosition.x, fRealHeight + fModifyHeight, fvPosition.y);
-	mPlayer->setGamePosition(position);
+	mCharacter->setPosition(position, false);
 	
 
 }
