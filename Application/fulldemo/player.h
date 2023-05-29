@@ -11,6 +11,8 @@
 #include "CharacterCommon.h"
 #include "InputManager.h"
 #include "character.h"
+#include "GameTableData.h"
+
 
 class PathComponent;
 class PlayerLogicModelHaveCreateCallback;
@@ -26,4 +28,17 @@ public:
 
 	void injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id);
 	void input(KeyCode _key);
+private:
+	void createCharRenderInterface(void);
+
+	void UpdateFaceMesh(void);
+	void UpdateHairMesh(void);
+
+	int32 GetFashionHead(BODY_PART_MODEL part);
+private:
+	// 模型更新
+	ModelPartDataList m_ModelPartDateList;
+
+	/// CharRace表中的定义
+	const _TABLE_CHAR_RACE* m_pCharRace;
 };

@@ -18,7 +18,8 @@
 #include "game_scene.h"
 #include "CharacterCommon.h"
 #include "GameEntity.h"
-
+#include "Basics.h"
+#include "data/GameDataCharacter.h"
 
 class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -399,7 +400,7 @@ bool Character::startSkill()
 	ChangeAction(CA_ATTACK, 1.0f);
 	//125 É±ÎÞÉâ
 	//103 ÆÕÍ¨¹¥»÷
-	int32_t nRandAnimID = 103;
+	int32_t nRandAnimID = 100;
 	createSkillImpact(nRandAnimID, mDirection);
 
 	
@@ -580,6 +581,67 @@ void Character::setMountId(int32_t mountId)
 	}
 }
 
+void Character::UpdateEquip(PLAYER_EQUIP point)
+{
+
+}
+
+void Character::DoDataEvent_DataID()
+{
+
+}
+
+void Character::DoDataEvent_ModelID()
+{
+
+
+}
+
+void Character::DoDataEvent_MountID()
+{
+
+}
+
+void Character::DoDataEvent_Dir()
+{
+
+}
+
+void Character::DoDataEvent_Level()
+{
+
+}
+
+void Character::DoDataEvent_MoveSpeed()
+{
+
+}
+
+void Character::DoDataEvent_Equip(PLAYER_EQUIP point)
+{
+
+}
+
+void Character::OnDataChanged_FaceImage()
+{
+
+}
+
+void Character::OnDataChanged_HairMesh()
+{
+
+}
+
+void Character::OnDataChanged_FaceMesh()
+{
+
+}
+
+
+int32_t Character::GetCurrCharModelID()
+{
+	return mCurrCharModelID;
+}
 
 void Character::OnChangeOfModelId()
 {
@@ -587,7 +649,7 @@ void Character::OnChangeOfModelId()
 
 	if (mCurrCharModelID != INVALID_ID)
 	{
-		CreateCharRenderInterface();
+		createCharRenderInterface();
 	}
 }
 
@@ -720,7 +782,7 @@ void Character::UpdateModel_MountActionSet(void)
 	}
 }
 
-void Character::CreateCharRenderInterface(void)
+void Character::createCharRenderInterface(void)
 {
 	if (!mMainEntity)
 	{ 
@@ -743,4 +805,17 @@ void Character::CreateCharRenderInterface(void)
 
 	mMainEntity->getLogicModel()->setAASAnimEndCallback(new PlayerAASAnimPlayCallback, (uint64_t)this);
 
+}
+
+KCharatcterBaseData* Character::GetCharacterData(void)
+{
+	if (NULL != m_pCharacterData && !_CrtIsValidHeapPointer(m_pCharacterData))
+	{
+		m_pCharacterData = NULL;
+	}
+	if (NULL == m_pCharacterData)
+	{
+		m_pCharacterData = new KCharatcterBaseData(this);
+	}
+	return m_pCharacterData;
 }

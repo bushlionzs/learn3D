@@ -7,10 +7,10 @@
 #include "myutils.h"
 #include "Misc.h"
 #include "M2Loader.h"
-#include "engine_manager.h"
 #include "OgreSceneManager.h"
 #include "OgreMeshManager.h"
 #include "OgreEntity.h"
+#include "OgreRoot.h"
 #include <algorithm>
 #include <cassert>
 #include <list>
@@ -410,7 +410,7 @@ void MapTile::createModel(const ENTRY_MDDF& entry)
 
     auto mesh = MeshManager::getSingleton().load(modelname);
 
-    Ogre::SceneManager*  sceneMgr = EngineManager::getSingleton().getSceneManager();
+    Ogre::SceneManager* sceneMgr = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
 
     std::string entryname = modelname + std::to_string(entry.uniqueID);
     Entity* entity = sceneMgr->createEntity(entryname, mesh);

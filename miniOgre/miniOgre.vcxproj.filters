@@ -43,6 +43,9 @@
     <Filter Include="parser">
       <UniqueIdentifier>{2a9f0588-94e0-4aaf-9eb8-d6f8cb821273}</UniqueIdentifier>
     </Filter>
+    <Filter Include="wow">
+      <UniqueIdentifier>{e1260202-9554-4079-a531-2424aef325d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animation\animation_track.cpp">
@@ -752,6 +755,63 @@
     </ClCompile>
     <ClCompile Include="parser\WowResourceParser.cpp">
       <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\alphamap.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\Brush.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\ChunkWater.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\dbcfile.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\liquid_layer.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\m2Bone.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\M2Loader.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\map_index.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\MapChunk.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\MapTile.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\Misc.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\texture_set.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\TileWater.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\WMO.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\wmo_liquid.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\WMOInstance.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\World.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\wowParticle.cpp">
+      <Filter>wow</Filter>
+    </ClCompile>
+    <ClCompile Include="wow\wowUtil.cpp">
+      <Filter>wow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1717,6 +1777,87 @@
     </ClInclude>
     <ClInclude Include="parser\WowResourceParser.h">
       <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\alphamap.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\animated.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\AsyncObject.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\Brush.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\ChunkWater.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\dbcfile.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\liquid_layer.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\m2Bone.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\M2Header.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\M2Loader.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\map_enums.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\map_index.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\MapChunk.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\MapHeaders.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\MapTile.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\Misc.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\Selection.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\texture_set.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\tile_index.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\TileWater.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\tool_enums.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\WMO.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\wmo_liquid.hpp">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\WMOInstance.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\World.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\wowParticle.h">
+      <Filter>wow</Filter>
+    </ClInclude>
+    <ClInclude Include="wow\wowUtil.h">
+      <Filter>wow</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

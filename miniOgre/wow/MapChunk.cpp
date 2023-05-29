@@ -10,8 +10,9 @@
 #include "index_data.h"
 #include "vertex_declaration.h"
 #include "OgreMaterial.h"
-#include "engine_manager.h"
 #include "OgreSceneNode.h"
+#include "OgreRoot.h"
+#include "OgreSceneManager.h"
 #include <algorithm>
 #include <iostream>
 #include <map>
@@ -293,7 +294,8 @@ MapChunk::MapChunk(
   renderable->setMaterial(mat);
   mRenderables.push_back(renderable);
 
-  auto parent = EngineManager::getSingleton().getBaseSceneNode();
+  auto sceneMgr = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
+  auto parent = sceneMgr->getRoot();
   auto node = parent->createChildSceneNode(std::string("MapChunk"));
   node->attachObject(this);
 }

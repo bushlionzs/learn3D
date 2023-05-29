@@ -9,6 +9,7 @@
 #include "TAB.h"
 #include "demoHeader.h"
 #include "CharacterCommon.h"
+#include "DefineItem.h"
 
 class MyCallback : public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -22,7 +23,7 @@ public:
 
 class PathComponent;
 class PlayerLogicModelHaveCreateCallback;
-
+class KCharatcterBaseData;
 class GameEntity;
 
 class Character
@@ -64,7 +65,7 @@ protected:
 	std::string mMountModelName;
 	std::string mWeaponModelName;
 	eNPC_TYPE				m_eNpcType;
-
+	KCharatcterBaseData* m_pCharacterData;
 	// 基本跑步速度
 	FLOAT					m_fRunBaseSpeed;
 
@@ -84,8 +85,6 @@ public:
 	LPCSTR getCharActionNameByActionSetID(int32_t nActionSetID, int32_t nWeaponType, BOOL* pbHideWeapon, int32_t* pnAppointedWeaponID);
 	eWEAPON_TYPE getMainWeaponType();
 	void onAnimationEnd(const char* animName, const char* parentNodeType, const char* parentNodeName);
-
-	
 
 	bool setCharActionSlot(
 		int32_t nAASNode, 
@@ -120,12 +119,33 @@ public:
 	void setCharModelId(int32_t modelId);
 	void setMountId(int32_t mountId);
 
+	virtual CHARACTER_BASE_TYPE	GetCharacterType(void) const
+	{
+		return CHAR_BASE_TYPE_INVALID;
+	}
 
-	
-private:
+	void UpdateEquip(PLAYER_EQUIP point);
+	void DoDataEvent_DataID();
+	void DoDataEvent_ModelID();
+	void DoDataEvent_MountID();
+	void DoDataEvent_Dir();
+	void DoDataEvent_Level();
+	void DoDataEvent_MoveSpeed();
+	void DoDataEvent_Equip(PLAYER_EQUIP point);
+	void OnDataChanged_FaceImage();
+	void OnDataChanged_HairMesh();
+	void OnDataChanged_FaceMesh();
+
+	int32_t GetCurrCharModelID();
+protected:
 	void OnChangeOfModelId();
 	void OnChangeOfMountId();
 	void UpdateModel_CharActionSet(void);
 	void UpdateModel_MountActionSet(void);
-	void CreateCharRenderInterface(void);
+	
+	virtual void createCharRenderInterface(void);
+
+	//
+	KCharatcterBaseData* GetCharacterData(void);
+	
 };

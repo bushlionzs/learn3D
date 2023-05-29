@@ -12,8 +12,9 @@
 #include "OgreMaterial.h"
 #include "OgreController.h"
 #include "OgreControllerManager.h"
-#include "engine_manager.h"
+#include "OgreRoot.h"
 #include "OgreSceneNode.h"
+#include "OgreSceneManager.h"
 
 #define MAX_PARTICLES 10000
 bool bZeroParticle = true;
@@ -94,7 +95,8 @@ WowParticleSystem::WowParticleSystem() : mid(0), emitter(0), rem(0)
 
 	pWowParticleSystemUpdateValue->addParticleSystem(this);
 
-	auto root = EngineManager::getSingleton().getBaseSceneNode();
+	auto sceneMgr = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
+	auto root = sceneMgr->getRoot();
 
 	auto sub = root->createChildSceneNode("");
 

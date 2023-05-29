@@ -46,7 +46,7 @@ bool ApplicationBase::appInit()
 	HWND wnd = mApplicationWindow->getWnd();
 	InputManager::getSingletonPtr()->createInput((size_t)wnd);
 
-	new Ogre::Root();
+	
 
 
 	EngineType type = getEngineType();
