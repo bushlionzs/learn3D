@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{782f508e-f5c9-4be3-ba5a-1a7728c0fd67}</ProjectGuid>
+    <RootNamespace>Middle</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)..\bin\</OutDir>
+    <IntDir>$(OutDir)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;__WINDOWS__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\miniOgre\base;$(ProjectDir)..\miniOgre\parser;$(ProjectDir)..\miniOgre\models;$(ProjectDir)..\miniOgre\animation;$(ProjectDir)..\miniOgre\platform\windows;$(ProjectDir)..\miniOgre\platform;$(ProjectDir)..\miniOgre\particle;$(ProjectDir)AdvancedAnimation;$(ProjectDir)component;$(ProjectDir)Navigate;$(ProjectDir)effect;$(ProjectDir)physics;$(ProjectDir)..\GameShare;$(ProjectDir)general;$(ProjectDir)scene\scene_actor;$(ProjectDir)scene;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OpCode;$(ProjectDir)..\3rd;$(ProjectDir)..\3rd\bullet3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AdvancedAnimation\OGAASAnimation.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASAnimSequenceNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASAnimTreeOutputNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASAttackAnimSequenceNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByAttackNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByDamageNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByDanceNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByDirectionalNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByEquitationNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByGuardNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByIdleNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByLifeNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByMoodNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByPostureNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByRandomNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByRidingNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByWalkNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASBlendByWeaponTypeNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASContinuousNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASCrossFadeByTimeListNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASCrossFadeByTimeNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASCrossFadeByTimeSlotNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASCrossFadeByTimeWithMaskNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASCrossFadeByValNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASCrossFadeNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASFIFO.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASMask.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASMoodAnimSequenceNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASPort.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASSkelControlBase.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASWeaponAnimExtSequenceNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAASWeaponAnimSequenceNode.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAdvancedAnimationSystem.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAdvancedAnimationSystemAbstract.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAdvancedAnimationSystemInstance.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAdvancedAnimationSystemManager.cpp" />
+    <ClCompile Include="AdvancedAnimation\OGAdvancedAnimationSystemSerializer.cpp" />
+    <ClCompile Include="component\OGCommandManager.cpp" />
+    <ClCompile Include="component\OGModelComponent.cpp" />
+    <ClCompile Include="component\OGModelComponentSerializer.cpp" />
+    <ClCompile Include="component\OGSkeletonMeshComponent.cpp" />
+    <ClCompile Include="component\OGSkeletonMeshComponentCommand.cpp" />
+    <ClCompile Include="component\OGSkeletonMeshComponentManager.cpp" />
+    <ClCompile Include="component\OGSkeletonMeshComponentSerializer.cpp" />
+    <ClCompile Include="component\OGStaticMeshComponent.cpp" />
+    <ClCompile Include="component\OGTerrainNewLiquidComponent.cpp" />
+    <ClCompile Include="effect\OGBullet.cpp" />
+    <ClCompile Include="effect\OGBulletAgeTester.cpp" />
+    <ClCompile Include="effect\OGBulletBirthOperator.cpp" />
+    <ClCompile Include="effect\OGBulletCameraShakeOperator.cpp" />
+    <ClCompile Include="effect\OGBulletDeleterOperator.cpp" />
+    <ClCompile Include="effect\OGBulletEventSystem.cpp" />
+    <ClCompile Include="effect\OGBulletFindTargetTester.cpp" />
+    <ClCompile Include="effect\OGBulletFlowSystem.cpp" />
+    <ClCompile Include="effect\OGBulletFlowSystemManager.cpp" />
+    <ClCompile Include="effect\OGBulletForceOperator.cpp" />
+    <ClCompile Include="effect\OGBulletHeightFieldCollisionTester.cpp" />
+    <ClCompile Include="effect\OGBulletMotionAffector.cpp" />
+    <ClCompile Include="effect\OGBulletScaleTester.cpp" />
+    <ClCompile Include="effect\OGBulletScriptTester.cpp" />
+    <ClCompile Include="effect\OGBulletSpawnOperator.cpp" />
+    <ClCompile Include="effect\OGBulletSpawnTester.cpp" />
+    <ClCompile Include="effect\OGBulletSpeedOperator.cpp" />
+    <ClCompile Include="effect\OGBulletSystem.cpp" />
+    <ClCompile Include="effect\OGBulletSystemBeamElement.cpp" />
+    <ClCompile Include="effect\OGBulletSystemEffectElement.cpp" />
+    <ClCompile Include="effect\OGBulletSystemElement.cpp" />
+    <ClCompile Include="effect\OGBulletSystemManager.cpp" />
+    <ClCompile Include="effect\OGBulletTester.cpp" />
+    <ClCompile Include="effect\OGImpact.cpp" />
+    <ClCompile Include="effect\OGImpactBeamModule.cpp" />
+    <ClCompile Include="effect\OGImpactBillboardSetModule.cpp" />
+    <ClCompile Include="effect\OGImpactManager.cpp" />
+    <ClCompile Include="effect\OGImpactMeshModule.cpp" />
+    <ClCompile Include="effect\OGImpactModule.cpp" />
+    <ClCompile Include="effect\OGImpactModuleFactory.cpp" />
+    <ClCompile Include="effect\OGImpactParticleModule.cpp" />
+    <ClCompile Include="effect\OGImpactPointLightModule.cpp" />
+    <ClCompile Include="effect\OGImpactProjectorModule.cpp" />
+    <ClCompile Include="effect\OGImpactRibandModule.cpp" />
+    <ClCompile Include="effect\OGImpactSerializer.cpp" />
+    <ClCompile Include="effect\OGMainSceneLight.cpp" />
+    <ClCompile Include="effect\OGSpell.cpp" />
+    <ClCompile Include="effect\OGSpellBulletFlowModule.cpp" />
+    <ClCompile Include="effect\OGSpellImpactModule.cpp" />
+    <ClCompile Include="effect\OGSpellManager.cpp" />
+    <ClCompile Include="effect\OGSpellModelModule.cpp" />
+    <ClCompile Include="effect\OGSpellRibandModule.cpp" />
+    <ClCompile Include="effect\OGSpellSceneLightModule.cpp" />
+    <ClCompile Include="effect\OGSpellSerializer.cpp" />
+    <ClCompile Include="effect\OGSpellSoundModule.cpp" />
+    <ClCompile Include="general\engine_manager.cpp" />
+    <ClCompile Include="general\OGBasicRenderable.cpp" />
+    <ClCompile Include="general\OGMeshInformer.cpp" />
+    <ClCompile Include="general\OGProjector.cpp" />
+    <ClCompile Include="general\OGPropertyInterface.cpp" />
+    <ClCompile Include="general\OgreCpuResource.cpp" />
+    <ClCompile Include="general\OgreEffectBillboardChain.cpp" />
+    <ClCompile Include="general\OgreMeshComponentParticleVisualData.cpp" />
+    <ClCompile Include="general\OGResources.cpp" />
+    <ClCompile Include="general\OgreUserDefinedObject.cpp" />
+    <ClCompile Include="general\OGUtil.cpp" />
+    <ClCompile Include="general\OGUtils.cpp" />
+    <ClCompile Include="Navigate\OGNavigate.cpp" />
+    <ClCompile Include="Navigate\OGNavigateAStarNodeImp.cpp" />
+    <ClCompile Include="Navigate\OGNavigateAStarSolverImp.cpp" />
+    <ClCompile Include="Navigate\OGNavigateImp.cpp" />
+    <ClCompile Include="Navigate\OGNavigateRegionImp.cpp" />
+    <ClCompile Include="Navigate\OGNavigateSpaceImp.cpp" />
+    <ClCompile Include="Navigate\OGNavigateUtilLibImp.cpp" />
+    <ClCompile Include="Physics\OGCollisionBuilding.cpp" />
+    <ClCompile Include="Physics\OGCollisionBuildingManager.cpp" />
+    <ClCompile Include="Physics\OGCollisionBuildingSerializer.cpp" />
+    <ClCompile Include="Physics\OGCollisionModel.cpp" />
+    <ClCompile Include="Physics\OGCollisionModelManager.cpp" />
+    <ClCompile Include="Physics\OGPhyActor.cpp" />
+    <ClCompile Include="Physics\OGPhyBoxShape.cpp" />
+    <ClCompile Include="Physics\OGPhyCapsuleShape.cpp" />
+    <ClCompile Include="Physics\OGPhyCollection.cpp" />
+    <ClCompile Include="Physics\OGPhyCollectionSerializer.cpp" />
+    <ClCompile Include="Physics\OGPhyConstraint.cpp" />
+    <ClCompile Include="Physics\OGPhyConvexCullShape.cpp" />
+    <ClCompile Include="Physics\OGPhyCookedTriangleMesh.cpp" />
+    <ClCompile Include="Physics\OGPhyCookedTriangleMeshManager.cpp" />
+    <ClCompile Include="Physics\OGPhyCookedTriangleMeshSerializer.cpp" />
+    <ClCompile Include="Physics\OGPhyHeightFieldShape.cpp" />
+    <ClCompile Include="Physics\OGPhyShape.cpp" />
+    <ClCompile Include="Physics\OGPhyShapeSerializersManager.cpp" />
+    <ClCompile Include="Physics\OGPhysicsManager.cpp" />
+    <ClCompile Include="Physics\OGPhySixDofConstraint.cpp" />
+    <ClCompile Include="Physics\OGPhySoftBody.cpp" />
+    <ClCompile Include="Physics\OGPhySpaceSerializer.cpp" />
+    <ClCompile Include="Physics\OGPhySphereShape.cpp" />
+    <ClCompile Include="Physics\OGPhyStaticConcaveShape.cpp" />
+    <ClCompile Include="Physics\OGPhyTimeController.cpp" />
+    <ClCompile Include="Physics\OGPhyWorld.cpp" />
+    <ClCompile Include="scene\GameMapCollisionManager.cpp" />
+    <ClCompile Include="scene\GameMapPath.cpp" />
+    <ClCompile Include="scene\GameMapRegion.cpp" />
+    <ClCompile Include="scene\GameMapZone.cpp" />
+    <ClCompile Include="scene\game_object.cpp" />
+    <ClCompile Include="scene\game_scene.cpp" />
+    <ClCompile Include="scene\game_scene_data.cpp" />
+    <ClCompile Include="scene\game_scene_manager.cpp" />
+    <ClCompile Include="scene\scene_actor\OGActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGActorFactory.cpp" />
+    <ClCompile Include="scene\scene_actor\OGActorFactoryManager.cpp" />
+    <ClCompile Include="scene\scene_actor\OGActorProxy.cpp" />
+    <ClCompile Include="scene\scene_actor\OGDetailActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGEffectActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGEnviromentActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGFactory.cpp" />
+    <ClCompile Include="scene\scene_actor\OGLightActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGModelActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGParticleSystemActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGPlacementActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGSkeletonMeshActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGSkyActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGSkyLayerActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGStaticMeshActor.cpp" />
+    <ClCompile Include="scene\scene_actor\OGTerrainLiquidActor.cpp" />
+    <ClCompile Include="scene\scene_serializer.cpp" />
+    <ClCompile Include="scene\terrain.cpp" />
+    <ClCompile Include="scene\terrain_fixed_grid.cpp" />
+    <ClCompile Include="scene\terrain_grid.cpp" />
+    <ClCompile Include="scene\terrain_info.cpp" />
+    <ClCompile Include="scene\terrain_serializer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AdvancedAnimation\OGAASAnimation.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASAnimSequenceNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASAnimSequenceNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASAnimTreeOutputNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASAnimTreeOutputNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASAttackAnimSequenceNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASAttackAnimSequenceNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByAttackNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByAttackNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByDamageNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByDamageNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByDanceNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByDanceNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByDirectionalNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByDirectionalNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByEquitationNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByEquitationNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByGuardNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByGuardNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByIdleNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByIdleNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByLifeNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByLifeNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByMoodNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByMoodNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByPostureNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByPostureNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByRandomNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByRandomNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByRidingNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByRidingNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByWalkNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByWalkNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByWeaponTypeNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASBlendByWeaponTypeNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASCommon.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASContinuousNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASCrossFadeByTimeListNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASCrossFadeByTimeListNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASCrossFadeByTimeNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASCrossFadeByTimeSlotNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASCrossFadeByTimeSlotNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASCrossFadeByTimeWithMaskNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASCrossFadeByValNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASCrossFadeNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASFIFO.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASFileFormat.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASMask.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASMoodAnimSequenceNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASMoodAnimSequenceNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASPort.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASSkelControlBase.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASWeaponAnimExtSequenceNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASWeaponAnimSequenceNode.h" />
+    <ClInclude Include="AdvancedAnimation\OGAASWeaponAnimSequenceNodeFactory.h" />
+    <ClInclude Include="AdvancedAnimation\OGAdvancedAnimationSystem.h" />
+    <ClInclude Include="AdvancedAnimation\OGAdvancedAnimationSystemAbstract.h" />
+    <ClInclude Include="AdvancedAnimation\OGAdvancedAnimationSystemInstance.h" />
+    <ClInclude Include="AdvancedAnimation\OGAdvancedAnimationSystemManager.h" />
+    <ClInclude Include="AdvancedAnimation\OGAdvancedAnimationSystemSerializer.h" />
+    <ClInclude Include="component\OGCommandManager.h" />
+    <ClInclude Include="component\OGComponent.h" />
+    <ClInclude Include="component\OGModelComponent.h" />
+    <ClInclude Include="component\OGModelComponentSerializer.h" />
+    <ClInclude Include="component\OGSkeletonMeshComponent.h" />
+    <ClInclude Include="component\OGSkeletonMeshComponentCommand.h" />
+    <ClInclude Include="component\OGSkeletonMeshComponentManager.h" />
+    <ClInclude Include="component\OGSkeletonMeshComponentSerializer.h" />
+    <ClInclude Include="component\OGStaticMeshComponent.h" />
+    <ClInclude Include="component\OGTerrainNewLiquidComponent.h" />
+    <ClInclude Include="effect\OGBullet.h" />
+    <ClInclude Include="effect\OGBulletAgeTester.h" />
+    <ClInclude Include="effect\OGBulletAgeTesterFactory.h" />
+    <ClInclude Include="effect\OGBulletBirthOperator.h" />
+    <ClInclude Include="effect\OGBulletBirthOperatorFactory.h" />
+    <ClInclude Include="effect\OGBulletCallbacks.h" />
+    <ClInclude Include="effect\OGBulletCameraShakeOperator.h" />
+    <ClInclude Include="effect\OGBulletCameraShakeOperatorFactory.h" />
+    <ClInclude Include="effect\OGBulletDeleterOperator.h" />
+    <ClInclude Include="effect\OGBulletDeleterOperatorFactory.h" />
+    <ClInclude Include="effect\OGBulletEventSystem.h" />
+    <ClInclude Include="effect\OGBulletFindTargetTester.h" />
+    <ClInclude Include="effect\OGBulletFindTargetTesterFactory.h" />
+    <ClInclude Include="effect\OGBulletFlowSystem.h" />
+    <ClInclude Include="effect\OGBulletFlowSystemManager.h" />
+    <ClInclude Include="effect\OGBulletForceOperator.h" />
+    <ClInclude Include="effect\OGBulletForceOperatorFactory.h" />
+    <ClInclude Include="effect\OGBulletHeightFieldCollisionTester.h" />
+    <ClInclude Include="effect\OGBulletHeightFieldCollisionTesterFactory.h" />
+    <ClInclude Include="effect\OGBulletMotionAffector.h" />
+    <ClInclude Include="effect\OGBulletOperator.h" />
+    <ClInclude Include="effect\OGBulletOperatorFactory.h" />
+    <ClInclude Include="effect\OGBulletScaleTester.h" />
+    <ClInclude Include="effect\OGBulletScaleTesterFactory.h" />
+    <ClInclude Include="effect\OGBulletScriptTester.h" />
+    <ClInclude Include="effect\OGBulletScriptTesterFactory.h" />
+    <ClInclude Include="effect\OGBulletSpawnOperator.h" />
+    <ClInclude Include="effect\OGBulletSpawnOperatorFactory.h" />
+    <ClInclude Include="effect\OGBulletSpawnTester.h" />
+    <ClInclude Include="effect\OGBulletSpawnTesterFactory.h" />
+    <ClInclude Include="effect\OGBulletSpeedOperator.h" />
+    <ClInclude Include="effect\OGBulletSpeedOperatorFactory.h" />
+    <ClInclude Include="effect\OGBulletSystem.h" />
+    <ClInclude Include="effect\OGBulletSystemBeamElement.h" />
+    <ClInclude Include="effect\OGBulletSystemEffectElement.h" />
+    <ClInclude Include="effect\OGBulletSystemElement.h" />
+    <ClInclude Include="effect\OGBulletSystemManager.h" />
+    <ClInclude Include="effect\OGBulletTester.h" />
+    <ClInclude Include="effect\OGImpact.h" />
+    <ClInclude Include="effect\OGImpactBeamModule.h" />
+    <ClInclude Include="effect\OGImpactBillboardSetModule.h" />
+    <ClInclude Include="effect\OGImpactManager.h" />
+    <ClInclude Include="effect\OGImpactMeshModule.h" />
+    <ClInclude Include="effect\OGImpactModule.h" />
+    <ClInclude Include="effect\OGImpactModuleFactory.h" />
+    <ClInclude Include="effect\OGImpactParticleModule.h" />
+    <ClInclude Include="effect\OGImpactPointLightModule.h" />
+    <ClInclude Include="effect\OGImpactProjectorModule.h" />
+    <ClInclude Include="effect\OGImpactRibandModule.h" />
+    <ClInclude Include="effect\OGImpactSerializer.h" />
+    <ClInclude Include="effect\OGMainSceneLight.h" />
+    <ClInclude Include="effect\OGSpell.h" />
+    <ClInclude Include="effect\OGSpellBulletFlowModule.h" />
+    <ClInclude Include="effect\OGSpellImpactModule.h" />
+    <ClInclude Include="effect\OGSpellManager.h" />
+    <ClInclude Include="effect\OGSpellModelModule.h" />
+    <ClInclude Include="effect\OGSpellRibandModule.h" />
+    <ClInclude Include="effect\OGSpellSceneLightModule.h" />
+    <ClInclude Include="effect\OGSpellSerializer.h" />
+    <ClInclude Include="effect\OGSpellSoundModule.h" />
+    <ClInclude Include="general\engine_manager.h" />
+    <ClInclude Include="general\lexical_cast_util.h" />
+    <ClInclude Include="general\OGBasicRenderable.h" />
+    <ClInclude Include="general\OGFlags.h" />
+    <ClInclude Include="general\OGMeshInformer.h" />
+    <ClInclude Include="general\OGOpcode.h" />
+    <ClInclude Include="general\OGProjector.h" />
+    <ClInclude Include="general\OGPropertyInterface.h" />
+    <ClInclude Include="general\OgreCpuResource.h" />
+    <ClInclude Include="general\OgreEffectBillboardChain.h" />
+    <ClInclude Include="general\OgreMeshComponentParticleVisualData.h" />
+    <ClInclude Include="general\OgreParseCommandHelper.h" />
+    <ClInclude Include="general\OGResources.h" />
+    <ClInclude Include="general\OgreUserDefinedObject.h" />
+    <ClInclude Include="general\OGUtil.h" />
+    <ClInclude Include="general\OGUtils.h" />
+    <ClInclude Include="general\OGVariant.h" />
+    <ClInclude Include="Navigate\mat_aos.h" />
+    <ClInclude Include="Navigate\OGNavigate.h" />
+    <ClInclude Include="Navigate\OGNavigateAStarNode.h" />
+    <ClInclude Include="Navigate\OGNavigateAStarNodeImp.h" />
+    <ClInclude Include="Navigate\OGNavigateAStarSolver.h" />
+    <ClInclude Include="Navigate\OGNavigateAStarSolverImp.h" />
+    <ClInclude Include="Navigate\OGNavigateAxisAlignedBoundingBox.h" />
+    <ClInclude Include="Navigate\OGNavigateImp.h" />
+    <ClInclude Include="Navigate\OGNavigatePathNode.h" />
+    <ClInclude Include="Navigate\OGNavigateRegion.h" />
+    <ClInclude Include="Navigate\OGNavigateRegionImp.h" />
+    <ClInclude Include="Navigate\OGNavigateSolver.h" />
+    <ClInclude Include="Navigate\OGNavigateSpace.h" />
+    <ClInclude Include="Navigate\OGNavigateSpaceImp.h" />
+    <ClInclude Include="Navigate\OGNavigateUtil.h" />
+    <ClInclude Include="Navigate\OGNavigateUtilLibImp.h" />
+    <ClInclude Include="Navigate\quat_aos.h" />
+    <ClInclude Include="Navigate\vectormath_aos.h" />
+    <ClInclude Include="Navigate\vec_aos.h" />
+    <ClInclude Include="Physics\OGCollisionBuilding.h" />
+    <ClInclude Include="Physics\OGCollisionBuildingFileFormat.h" />
+    <ClInclude Include="Physics\OGCollisionBuildingManager.h" />
+    <ClInclude Include="Physics\OGCollisionBuildingSerializer.h" />
+    <ClInclude Include="Physics\OGCollisionModel.h" />
+    <ClInclude Include="Physics\OGCollisionModelManager.h" />
+    <ClInclude Include="Physics\OGPhyActor.h" />
+    <ClInclude Include="Physics\OGPhyBoxShape.h" />
+    <ClInclude Include="Physics\OGPhyCapsuleShape.h" />
+    <ClInclude Include="Physics\OGPhyCollection.h" />
+    <ClInclude Include="Physics\OGPhyCollectionFileFormat.h" />
+    <ClInclude Include="Physics\OGPhyCollectionSerializer.h" />
+    <ClInclude Include="Physics\OGPhyConstraint.h" />
+    <ClInclude Include="Physics\OGPhyConvexCullShape.h" />
+    <ClInclude Include="Physics\OGPhyCookedTriangleMesh.h" />
+    <ClInclude Include="Physics\OGPhyCookedTriangleMeshFileFormat.h" />
+    <ClInclude Include="Physics\OGPhyCookedTriangleMeshManager.h" />
+    <ClInclude Include="Physics\OGPhyCookedTriangleMeshSerializer.h" />
+    <ClInclude Include="Physics\OGPhyHeightFieldShape.h" />
+    <ClInclude Include="Physics\OGPhyShape.h" />
+    <ClInclude Include="Physics\OGPhyShapeSerializersManager.h" />
+    <ClInclude Include="Physics\OGPhysicsManager.h" />
+    <ClInclude Include="Physics\OGPhySixDofConstraint.h" />
+    <ClInclude Include="Physics\OGPhySoftBody.h" />
+    <ClInclude Include="Physics\OGPhySpaceSerializer.h" />
+    <ClInclude Include="Physics\OGPhySphereShape.h" />
+    <ClInclude Include="Physics\OGPhyStaticConcaveShape.h" />
+    <ClInclude Include="Physics\OGPhyTimeController.h" />
+    <ClInclude Include="Physics\OGPhyUtil.h" />
+    <ClInclude Include="Physics\OGPhyWorld.h" />
+    <ClInclude Include="scene\GameMapCollisionManager.h" />
+    <ClInclude Include="scene\GameMapPath.h" />
+    <ClInclude Include="scene\GameMapRegion.h" />
+    <ClInclude Include="scene\GameMapZone.h" />
+    <ClInclude Include="scene\game_object.h" />
+    <ClInclude Include="scene\game_scene.h" />
+    <ClInclude Include="scene\game_scene_data.h" />
+    <ClInclude Include="scene\game_scene_manager.h" />
+    <ClInclude Include="scene\scene_actor\OGActor.h" />
+    <ClInclude Include="scene\scene_actor\OGActorFactory.h" />
+    <ClInclude Include="scene\scene_actor\OGActorFactoryManager.h" />
+    <ClInclude Include="scene\scene_actor\OGActorProxy.h" />
+    <ClInclude Include="scene\scene_actor\OGDetailActor.h" />
+    <ClInclude Include="scene\scene_actor\OGEffectActor.h" />
+    <ClInclude Include="scene\scene_actor\OGEnviromentActor.h" />
+    <ClInclude Include="scene\scene_actor\OGFactory.h" />
+    <ClInclude Include="scene\scene_actor\OGLightActor.h" />
+    <ClInclude Include="scene\scene_actor\OGModelActor.h" />
+    <ClInclude Include="scene\scene_actor\OGParticleSystemActor.h" />
+    <ClInclude Include="scene\scene_actor\OGPlacementActor.h" />
+    <ClInclude Include="scene\scene_actor\OGSkeletonMeshActor.h" />
+    <ClInclude Include="scene\scene_actor\OGSkyActor.h" />
+    <ClInclude Include="scene\scene_actor\OGSkyLayerActor.h" />
+    <ClInclude Include="scene\scene_actor\OGStaticMeshActor.h" />
+    <ClInclude Include="scene\scene_actor\OGTerrainLiquidActor.h" />
+    <ClInclude Include="scene\scene_serializer.h" />
+    <ClInclude Include="scene\terrain.h" />
+    <ClInclude Include="scene\terrain_fixed_grid.h" />
+    <ClInclude Include="scene\terrain_grid.h" />
+    <ClInclude Include="scene\terrain_info.h" />
+    <ClInclude Include="scene\terrain_serializer.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

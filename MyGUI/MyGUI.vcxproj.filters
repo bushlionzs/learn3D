@@ -1,0 +1,933 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="uicommon">
+      <UniqueIdentifier>{93982b01-ea45-4687-9b94-7b4183df4797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uiengine">
+      <UniqueIdentifier>{344cd862-a407-460a-9c09-20aeeb2dc259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uirender">
+      <UniqueIdentifier>{27cf591f-3448-4be1-ab5e-f1d0b3b810f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uicommon\BaseLayout">
+      <UniqueIdentifier>{7e09a34b-858c-44bd-8d8c-294853c2e550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uicommon\ItemBox">
+      <UniqueIdentifier>{5d3a432f-cac7-44b5-b7d4-e6f89f44c76e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uicommon\MessageBox">
+      <UniqueIdentifier>{309833dc-f304-4183-9591-f96aefb1f2d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uicommon\PanelView">
+      <UniqueIdentifier>{c8824398-a4fe-428f-a734-36338cc383cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uicommon\renderbox">
+      <UniqueIdentifier>{b2b21335-039c-43d8-a8cb-9a363f7b038d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="uirender\MyGUI_OgreDataManager.cpp">
+      <Filter>uirender</Filter>
+    </ClCompile>
+    <ClCompile Include="uirender\MyGUI_OgreDataStream.cpp">
+      <Filter>uirender</Filter>
+    </ClCompile>
+    <ClCompile Include="uirender\MyGUI_OgreRenderble.cpp">
+      <Filter>uirender</Filter>
+    </ClCompile>
+    <ClCompile Include="uirender\MyGUI_OgreRenderManager.cpp">
+      <Filter>uirender</Filter>
+    </ClCompile>
+    <ClCompile Include="uirender\MyGUI_OgreRTTexture.cpp">
+      <Filter>uirender</Filter>
+    </ClCompile>
+    <ClCompile Include="uirender\MyGUI_OgreTexture.cpp">
+      <Filter>uirender</Filter>
+    </ClCompile>
+    <ClCompile Include="uirender\MyGUI_OgreVertexBuffer.cpp">
+      <Filter>uirender</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ActionController.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Any.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_BackwardCompatibility.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_BiIndexBase.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Button.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Canvas.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ChildSkinInfo.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ClipboardManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Colour.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ComboBox.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ConsoleLogListener.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Constants.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ControllerEdgeHide.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ControllerFadeAlpha.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ControllerManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ControllerPosition.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ControllerRepeatClick.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_DataFileStream.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_DataManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_DataMemoryStream.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_DataStream.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_DDContainer.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_DynLib.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_DynLibManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_EditBox.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_EditText.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Exception.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_FactoryManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_FileLogListener.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_FontManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_GeometryUtility.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Gui.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ImageBox.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_InputManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ItemBox.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_LanguageManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_LayerItem.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_LayerManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_LayerNode.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_LayoutManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_LevelLogFilter.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ListBox.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_LogManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_LogSource.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_MainSkin.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_MaskPickInfo.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_MenuBar.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_MenuControl.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_MenuItem.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_MultiListBox.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_MultiListItem.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_OverlappedLayer.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_PluginManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_PointerManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_PolygonalSkin.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_PopupMenu.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Precompiled.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ProgressBar.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_RenderItem.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_RenderManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ResourceImageSet.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ResourceImageSetPointer.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ResourceLayout.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ResourceManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ResourceManualFont.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ResourceManualPointer.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ResourceSkin.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ResourceTrueTypeFont.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_RotatingSkin.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ScrollBar.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ScrollView.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ScrollViewBase.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_SharedLayer.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_SharedLayerNode.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_SimpleText.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_SkinItem.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_SkinManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_SubSkin.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_SubWidgetBinding.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_SubWidgetManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_TabControl.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_TabItem.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_TextBox.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_TextIterator.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_TextureUtility.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_TextView.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_TileRect.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Timer.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_ToolTipManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_UString.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Widget.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_WidgetInput.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_WidgetManager.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_WidgetUserData.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_Window.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_WindowsClipboardHandler.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uiengine\MyGUI_XmlDocument.cpp">
+      <Filter>uiengine</Filter>
+    </ClCompile>
+    <ClCompile Include="uicommon\CEGUIResourceManager.cpp">
+      <Filter>uicommon</Filter>
+    </ClCompile>
+    <ClCompile Include="uicommon\MyGUIManager.cpp">
+      <Filter>uicommon</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="uirender\MyGUI_OgreDataManager.h">
+      <Filter>uirender</Filter>
+    </ClInclude>
+    <ClInclude Include="uirender\MyGUI_OgreDataStream.h">
+      <Filter>uirender</Filter>
+    </ClInclude>
+    <ClInclude Include="uirender\MyGUI_OgreDiagnostic.h">
+      <Filter>uirender</Filter>
+    </ClInclude>
+    <ClInclude Include="uirender\MyGUI_OgrePlatform.h">
+      <Filter>uirender</Filter>
+    </ClInclude>
+    <ClInclude Include="uirender\MyGUI_OgreRenderable.h">
+      <Filter>uirender</Filter>
+    </ClInclude>
+    <ClInclude Include="uirender\MyGUI_OgreRenderManager.h">
+      <Filter>uirender</Filter>
+    </ClInclude>
+    <ClInclude Include="uirender\MyGUI_OgreRTTexture.h">
+      <Filter>uirender</Filter>
+    </ClInclude>
+    <ClInclude Include="uirender\MyGUI_OgreTexture.h">
+      <Filter>uirender</Filter>
+    </ClInclude>
+    <ClInclude Include="uirender\MyGUI_OgreVertexBuffer.h">
+      <Filter>uirender</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ActionController.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Align.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Any.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_BackwardCompatibility.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_BiIndexBase.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Bitwise.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Button.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Canvas.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ChildSkinInfo.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ClipboardManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Colour.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ComboBox.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Common.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_CommonStateInfo.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ConsoleLogListener.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Constants.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ControllerEdgeHide.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ControllerFadeAlpha.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ControllerItem.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ControllerManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ControllerPosition.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ControllerRepeatClick.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_CoordConverter.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DataFileStream.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DataManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DataMemoryStream.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DataStream.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DataStreamHolder.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DDContainer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DDItemInfo.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Delegate.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DeprecatedTypes.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DeprecatedWidgets.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Diagnostic.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DynLib.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_DynLibManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_EditBox.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_EditText.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Enumerator.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_EventPair.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Exception.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_FactoryManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_FileLogListener.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_FlowDirection.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_FontData.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_FontManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_GenericFactory.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_GeometryUtility.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Gui.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IBItemInfo.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ICroppedRectangle.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IDataStream.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IFont.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IItem.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IItemContainer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ILayer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ILayerItem.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ILayerNode.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ILogFilter.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ILogListener.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ImageBox.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ImageInfo.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_InputManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IObject.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IPointer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IRenderTarget.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IResource.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ISerializable.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IStateInfo.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ISubWidget.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ISubWidgetRect.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ISubWidgetText.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ItemBox.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ITexture.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IUnlinkWidget.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_IVertexBuffer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_KeyCode.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LanguageManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LayerItem.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LayerManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LayerNode.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LayoutData.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LayoutManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LevelLogFilter.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ListBox.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LogLevel.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LogManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LogSource.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_LogStream.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Macros.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_MainSkin.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_MaskPickInfo.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_MenuBar.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_MenuControl.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_MenuItem.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_MenuItemType.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_MouseButton.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_MultiListBox.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_MultiListItem.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_OverlappedLayer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Platform.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Plugin.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_PluginManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_PointerManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_PolygonalSkin.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_PopupMenu.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Precompiled.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Prerequest.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ProgressBar.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_RenderFormat.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_RenderItem.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_RenderManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_RenderTargetInfo.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResizingPolicy.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResourceImageSet.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResourceImageSetData.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResourceImageSetPointer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResourceLayout.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResourceManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResourceManualFont.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResourceManualPointer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResourceSkin.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ResourceTrueTypeFont.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_RotatingSkin.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_RTTI.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ScrollBar.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ScrollView.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ScrollViewBase.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_SharedLayer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_SharedLayerNode.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_SimpleText.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Singleton.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_SkinItem.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_SkinManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_StringUtility.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_SubSkin.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_SubWidgetBinding.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_SubWidgetInfo.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_SubWidgetManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TabControl.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TabItem.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TCoord.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TextBox.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TextChangeHistory.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TextIterator.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TextureUtility.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TextView.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TextViewData.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TileRect.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Timer.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_ToolTipManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TPoint.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TRect.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_TSize.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Types.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_UString.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Version.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_VertexData.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Widget.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_WidgetDefines.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_WidgetInput.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_WidgetManager.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_WidgetStyle.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_WidgetToolTip.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_WidgetTranslate.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_WidgetUserData.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_Window.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_WindowsClipboardHandler.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uiengine\MyGUI_XmlDocument.h">
+      <Filter>uiengine</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\CEGUIResourceManager.h">
+      <Filter>uicommon</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\MyGUIManager.h">
+      <Filter>uicommon</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\BaseLayout\Attribute.h">
+      <Filter>uicommon\BaseLayout</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\BaseLayout\BaseLayout.h">
+      <Filter>uicommon\BaseLayout</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\BaseLayout\WrapsAttribute.h">
+      <Filter>uicommon\BaseLayout</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\ItemBox\BaseCellView.h">
+      <Filter>uicommon\ItemBox</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\ItemBox\BaseItemBox.h">
+      <Filter>uicommon\ItemBox</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\ItemBox\ItemDropInfo.h">
+      <Filter>uicommon\ItemBox</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\MessageBox\MessageBox.h">
+      <Filter>uicommon\MessageBox</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\MessageBox\MessageBoxStyle.h">
+      <Filter>uicommon\MessageBox</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\PanelView\BasePanelView.h">
+      <Filter>uicommon\PanelView</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\PanelView\BasePanelViewCell.h">
+      <Filter>uicommon\PanelView</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\PanelView\BasePanelViewItem.h">
+      <Filter>uicommon\PanelView</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\RenderBox\RenderBox.h">
+      <Filter>uicommon\renderbox</Filter>
+    </ClInclude>
+    <ClInclude Include="uicommon\RenderBox\RenderBoxScene.h">
+      <Filter>uicommon\renderbox</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

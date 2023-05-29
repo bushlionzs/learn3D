@@ -1,0 +1,1722 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="animation">
+      <UniqueIdentifier>{1c78fd0c-a26a-4098-952e-e6a7e2c63bea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{2cfe4cf8-9cc9-4bc9-9518-6921037654a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="component">
+      <UniqueIdentifier>{66838bd4-8c6a-4cab-b611-07e5c198aea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="models">
+      <UniqueIdentifier>{17055d24-bf17-4eff-a7bb-74c73ee0ce85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="particle">
+      <UniqueIdentifier>{f2f24d0a-a615-4839-b979-e6a824b8b12e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render">
+      <UniqueIdentifier>{289ac9fa-3f58-4ef2-9197-b9b3f10618dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{d0e791a8-5c9c-4ea9-a010-bf0a0eb1f664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\windows">
+      <UniqueIdentifier>{4f1178c3-169b-494d-ab36-6bdaa5a1b9c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render\dx11">
+      <UniqueIdentifier>{d4c27ae5-ca1e-4065-9765-a4600ded9920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render\dx12">
+      <UniqueIdentifier>{db12ca6e-ff9d-4201-bb3f-e80b1bceb7ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render\vulkan">
+      <UniqueIdentifier>{f176d64b-c959-4a46-8dca-dae1cca8dc9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="particle\fx">
+      <UniqueIdentifier>{88d79ce4-e817-4096-9cf1-c6bb6661e3b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="multimedia">
+      <UniqueIdentifier>{f59cdd58-796d-4cc6-a75d-0b07e321f9b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parser">
+      <UniqueIdentifier>{2a9f0588-94e0-4aaf-9eb8-d6f8cb821273}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="animation\animation_track.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\keyframe.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\OgreAnimation.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\OgreBone.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\OgreSkeleton.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animation\OgreSkeletonInstance.cpp">
+      <Filter>animation</Filter>
+    </ClCompile>
+    <ClCompile Include="base\camera_impl.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\custom_renderable.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\dds_load.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\file_stream.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\index_data.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\InputManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreAlignedAllocator.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreAnimationState.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreArchive.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreAxisAlignedBox.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreBase.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreBlp.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreCamera.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreColourValue.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreCommon.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreControllerManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreDataStream.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreDepthBuffer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreEntity.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreException.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreFrustum.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreHardwareBuffer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreHardwareBufferManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreHardwareIndexBuffer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreHardwarePixelBuffer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreHardwareVertexBuffer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreImage.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreLight.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMaterial.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMaterialManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMath.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMatrix3.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMatrix4.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMemoryNedPooling.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMemoryStream.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMesh.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMeshManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMovablePlane.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreMoveObject.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreNode.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgrePixelFormat.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgrePlane.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgrePredefinedControllers.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreQuaternion.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreRenderable.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreRenderTarget.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreRenderTexture.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreRenderWindow.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreResource.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreResourceManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreRibbonTrail.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreRoot.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSceneManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSceneNode.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSceneQuery.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreScriptLoader.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSerializer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSimpleRenderable.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSimpleSpline.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSkeletonManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSky.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreString.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreStringConverter.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreStringInterface.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSubEntity.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreSubMesh.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreTagPoint.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreTextureManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreTextureUnit.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreTimer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreUserObjectBindings.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreVector2.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreVector3.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreVector4.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\OgreViewport.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\renderSystem.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\shader.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\texture.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\vertex_data.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\vertex_declaration.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="component\OgreBullet.cpp">
+      <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="models\gltf_helper.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="models\gltf_loader.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="models\m3d_loader.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="models\model_loader.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="models\ogre_loader.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="models\ogre_mesh_serializer.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="models\ogre_skeleton_serializer.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="models\WaterEnity.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="models\Waves.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\double_list.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\message_queue.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\myutils.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\platform_common.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\platform_file.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\platform_file_system.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\platform_log.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\platform_thread.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\platform_util.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\stb_image.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\time_util.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\timer_logic.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\tiny_gltf.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\windows\platform_mutex.cpp">
+      <Filter>platform\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\windows\platform_rw_mutex.cpp">
+      <Filter>platform\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\windows\platform_signal.cpp">
+      <Filter>platform\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11HardwareBuffer.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11HardwareBufferManager.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11HardwarePixelBuffer.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11Helper.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11Renderable.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11RenderSystem.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11RenderTarget.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11RenderTexture.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11RenderWindow.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11Shader.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11ShadowMap.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\dx11Texture.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx11Render\OgreD3D11Mappings.cpp">
+      <Filter>render\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\D3D12Mappings.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\d3dutil.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12Frame.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12HardwareBuffer.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12HardwareBufferManager.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12HardwarePixelBuffer.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12Helper.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12Renderable.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12RenderSystem.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12RenderTarget.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12RenderTargetHelper.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12RenderTexture.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12RenderWindow.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12Shader.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12ShadowMap.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12Texture.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\dx12Render\dx12TextureHandleManager.cpp">
+      <Filter>render\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanCommon.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanFrame.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanHardwareBuffer.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanHardwareBufferManager.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanHardwarePixelBuffer.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanHelper.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanMappings.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanObjectPool.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanRenderData.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanRenderSystem.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanRenderTarget.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanRenderTexture.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanShader.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanTexture.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanTools.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="render\vulkanRender\VulkanWindow.cpp">
+      <Filter>render\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreBillboard.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreBillboardChain.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreBillboardParticleRenderer.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreBillboardSet.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreHeightFieldAffector.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreMeshComponentAnimAffector.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreMeshComponentParticleRenderer.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreMeshComponentRotationAffector.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreParticle.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreParticleEmitter.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreParticleEmitterCommands.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreParticleSystem.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreParticleSystemManager.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreRibandParticleRenderer.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreRibandSet.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreTexcoordBillboardParticleRenderer.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreAreaEmitter.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreBoxEmitter.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreColourFaderAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreColourFaderAffector2.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreColourFadingAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreColourImageAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreColourInterpolatorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreCylinderEmitter.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreDeflectorPlaneAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreDirectionRandomiserAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreEllipsoidEmitter.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreFollowTargetAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreHollowEllipsoidEmitter.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreLinearForceAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreMovementAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreNoiseColorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreNoiseScaleAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreParticleFx.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgrePointEmitter.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgrePolarEmitter.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreRevolutionAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreRingEmitter.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreRotationAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreScaleAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreScaleInterpolatorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreTexture1PosInterpolatorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreTexture1RotateInterpolatorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreTexture1ScaleInterpolatorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreTexture2PosInterpolatorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreTexture2RotateInterpolatorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreTexture2ScaleInterpolatorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\ParticleFX\OgreTextureAnimatorAffector.cpp">
+      <Filter>particle\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AudioPlayer.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVAudioDecoder.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVAudioRender.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVBoard.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVClock.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVCommon.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVDecoderBase.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVDemuxer.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVFrameQueue.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVPacketQueue.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVPlayer.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVPlayerEventQueue.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVRenderBase.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVSubTitleDecoder.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVSubTitleRender.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVSyncTuner.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVVideoDecoder.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\AVVideoRender.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\FFmpegInitializer.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="multimedia\VideoManager.cpp">
+      <Filter>multimedia</Filter>
+    </ClCompile>
+    <ClCompile Include="particle\OgreMeshComponentParticleVisualData.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="base\ResourceParserManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\MaterialScriptParser.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\MPQFile.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\OgreScriptParam.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\packFileParser.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\ParticleScriptParser.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\ScriptParserUtil.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\shaderManager.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\WowResourceParser.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="animation\animation_track.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\keyframe.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\OgreAnimation.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\OgreBone.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\OgreSkeleton.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animation\OgreSkeletonInstance.h">
+      <Filter>animation</Filter>
+    </ClInclude>
+    <ClInclude Include="base\asm_math.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\camera_impl.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\custom_renderable.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\dds_load.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\engine_struct.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\file_stream.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\index_data.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\InputManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreAlignedAllocator.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreAnimationState.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreAny.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreArchive.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreAxisAlignedBox.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreBase.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreBitwise.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreBlendMode.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreBlp.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreCamera.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreColourValue.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreCommon.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreController.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreControllerManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreDataStream.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreDepthBuffer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreEntity.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreException.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreFrameListener.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreFrustum.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreHardwareBuffer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreHardwareBufferManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreHardwareIndexBuffer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreHardwarePixelBuffer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreHardwareVertexBuffer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreHeader.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreImage.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreIteratorWrapper.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreLight.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMaterial.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMaterialManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMath.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMatrix3.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMatrix4.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMemoryAllocatedObject.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMemoryAllocatorConfig.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMemoryNedPooling.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMemoryStdAlloc.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMemorySTLAllocator.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMemoryStream.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMemoryTrackAlloc.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMemoryTracker.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMesh.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMeshManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMovablePlane.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreMoveObject.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreNode.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgrePixelFormat.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgrePixelFormatDescriptions.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgrePlane.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgrePlaneBoundedVolume.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgrePolygon.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgrePredefinedControllers.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgrePrerequisites.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreQuaternion.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRadixSort.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRay.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRectangle2D.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRenderable.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRenderOperation.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRenderTarget.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRenderTargetListener.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRenderTexture.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRenderWindow.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreResource.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreResourceManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRibbonTrail.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreRoot.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSceneManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSceneNode.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSceneQuery.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreScriptLoader.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSerializer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSimpleRenderable.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSimpleSpline.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSingleton.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSkeletonManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSky.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSphere.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreString.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreStringConverter.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreStringInterface.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSubEntity.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreSubMesh.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreTagPoint.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreTextureManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreTextureUnit.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreTimer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreUserObjectBindings.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreVector2.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreVector3.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreVector4.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\OgreViewport.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\renderSystem.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\SHADER.H">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\texture.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\vertex_data.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\vertex_declaration.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="component\OgreBullet.h">
+      <Filter>component</Filter>
+    </ClInclude>
+    <ClInclude Include="models\gltf_helper.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\gltf_loader.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\m3d_loader.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\model_loader.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\ogre_loader.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\ogre_mesh_serializer.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\ogre_skeleton_serializer.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\OgreMeshFileFormat.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\OgreSkeletonFileFormat.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\WaterEntity.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="models\Waves.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\double_list.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\json.hpp">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\message_queue.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\myutils.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\object_index.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\pid.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\platform.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\platform_common.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\platform_defines.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\platform_file.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\platform_file_system.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\platform_log.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\platform_thread.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\platform_util.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\scoped_lock.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\stb_image.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\stb_image_write.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\time_util.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\timer_logic.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\tiny_gltf.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\windows\platform_mutex.h">
+      <Filter>platform\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\windows\platform_rw_mutex.h">
+      <Filter>platform\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\windows\platform_signal.h">
+      <Filter>platform\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11Common.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11HardwareBuffer.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11HardwareBufferManager.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11HardwarePixelBuffer.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11Helper.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11Renderable.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11RenderSystem.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11RenderTarget.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11RenderTexture.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11RenderWindow.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11Shader.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11ShadowMap.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11Texture.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\dx11UploadBuffer.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\LightHelper.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx11Render\OgreD3D11Mappings.h">
+      <Filter>render\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\D3D12Mappings.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\d3dutil.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\d3dx12.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12Common.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12Frame.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12HardwareBuffer.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12HardwareBufferManager.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12HardwarePixelBuffer.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12Helper.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12Renderable.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12RenderSystem.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12RenderTarget.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12RenderTargetHelper.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12RenderTexture.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12RenderWindow.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12Shader.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12ShadowMap.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12Texture.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\dx12TextureHandleManager.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\dx12Render\UploadBuffer.h">
+      <Filter>render\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanCommon.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanFrame.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanHardwareBuffer.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanHardwareBufferManager.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanHardwarePixelBuffer.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanHelper.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanInitializers.hpp">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanMappings.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanObjectPool.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanRenderData.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanRenderSystem.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanRenderTarget.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanRenderTexture.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanShader.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanTexture.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanTools.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanUploadbuffer.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="render\vulkanRender\VulkanWindow.h">
+      <Filter>render\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreBillboard.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreBillboardChain.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreBillboardParticleRenderer.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreBillboardSet.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreFactoryObj.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreHeightFieldAffector.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreHeightFieldAffectorFactory.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreIteratorWrapper.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreMeshComponentAnimAffector.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreMeshComponentAnimAffectorFactory.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreMeshComponentParticleRenderer.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreMeshComponentRotationAffector.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreMeshComponentRotationAffectorFactory.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreParticle.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreParticleAffector.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreParticleAffectorFactory.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreParticleEmitter.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreParticleEmitterCommands.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreParticleEmitterFactory.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreParticleSystem.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreParticleSystemManager.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreParticleSystemRenderer.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreRibandParticleRenderer.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreRibandSet.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreTexcoordBillboardParticleRenderer.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\particle_common.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreAreaEmitter.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreBoxEmitter.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreBoxEmitterFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourFaderAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourFaderAffector2.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourFaderAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourFaderAffectorFactory2.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourFadingAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourFadingAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourImageAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourImageAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourInterpolatorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreColourInterpolatorAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreCylinderEmitter.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreCylinderEmitterFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreDeflectorPlaneAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreDeflectorPlaneAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreDirectionRandomiserAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreDirectionRandomiserAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreEllipsoidEmitter.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreEllipsoidEmitterFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreFollowTargetAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreFollowTargetAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreHollowEllipsoidEmitter.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreHollowEllipsoidEmitterFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreLinearForceAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreLinearForceAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreMovementAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreMovementAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreNoiseColorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreNoiseColorAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreNoiseScaleAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreNoiseScaleAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreParticleFx.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgrePointEmitter.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgrePointEmitterFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgrePolarEmitter.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgrePolarEmitterFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreRevolutionAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreRevolutionAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreRingEmitter.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreRingEmitterFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreRotationAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreRotationAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreScaleAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreScaleAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreScaleInterpolatorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreScaleInterpolatorAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture1PosInterpolatorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture1PosInterpolatorAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture1RotateInterpolatorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture1RotateInterpolatorAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture1ScaleInterpolatorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture1ScaleInterpolatorAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture2PosInterpolatorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture2PosInterpolatorAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture2RotateInterpolatorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture2RotateInterpolatorAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture2ScaleInterpolatorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTexture2ScaleInterpolatorAffectorFactory.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\ParticleFX\OgreTextureAnimatorAffector.h">
+      <Filter>particle\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AudioPlayer.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVAudioDecoder.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVAudioRender.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVBoard.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVClock.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVCommon.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVDecoderBase.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVDemuxer.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVFrameQueue.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVPacketQueue.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVPlayCallback.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVPlayer.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVPlayerEventQueue.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVRenderBase.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVSubTitleDecoder.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVSubTitleRender.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVSyncTuner.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVVideoDecoder.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\AVVideoRender.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\FFmpegInitializer.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\FFmpegLib.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\SampleCounter.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="multimedia\VideoManager.h">
+      <Filter>multimedia</Filter>
+    </ClInclude>
+    <ClInclude Include="particle\OgreMeshComponentParticleVisualData.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="base\ResourceParserManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\MaterialScriptParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\MPQFile.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\OgreScriptParam.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\packFileParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\ParticleScriptParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\ScriptParserUtil.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\shaderManager.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\WowResourceParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
