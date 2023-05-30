@@ -59,16 +59,6 @@ namespace ku
 		// 参数：传入的原串、操作类型（0--正向，1--反向）、原串尺寸（传入0会计算原串的实际长度）
 		unsigned int GetCrcString( const char*, int nType = 0, int nSize = 0 );
 
-
-	public:
-
-		/**
-		*	获取网络服务器数据（可以修改为发送数据）
-		*/
-		// 参数：网址、参数、返回数据、返回数据尺寸
-		bool	HttpUtil( const char*, const char*, int, const char* );
-		bool	HttpUtil( eHttpVerb eType/* L"POST"|L"GET" */, const char*, const char*, unsigned char*, DWORD& );
-
 	public:
 
 		/**

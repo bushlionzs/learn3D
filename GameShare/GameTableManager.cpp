@@ -6,7 +6,7 @@
 #include "platform_log.h"
 
 template<>
-CGameTableManager *Ogre::Singleton<CGameTableManager>::msSingleton = NULL;
+CGameTableManager * GameSingleton<CGameTableManager>::m_sSingleton = NULL;
 
 CGameTableManager::CGameTableManager(void)
 {

@@ -256,7 +256,7 @@ void _Check3(const char *file, uint32 line, const char *func, const char *expr, 
  =======================================================================================================================
  =======================================================================================================================
  */
-BOOL RangeCheck_KCheck(int32 nIndex, int32 nFrom, int32 nTo, char const *szCodeLocation)
+bool RangeCheck_KCheck(int32 nIndex, int32 nFrom, int32 nTo, char const *szCodeLocation)
 {
 	/*~~~~~~~~~~~~~~~~~~~*/
 	int32	nUpBorder = 0;

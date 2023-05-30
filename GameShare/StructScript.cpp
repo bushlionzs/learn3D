@@ -1,0 +1,325 @@
+/*$T Common/StructScript.cpp GC 1.140 10/10/07 10:06:56 */
+
+
+/*$6
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ */
+
+
+#include "stdafx.h"
+#include "StructScript.h"
+#include "StreamSystem.h"
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+SXParam::SXParam()
+{
+	Clear();
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+SXParam::~SXParam()
+{
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+void SXParam::Clear()
+{
+	m_IntCount = 0;
+	m_StrCount = 0;
+	memset(m_aIntValue, 0, sizeof(int32) * MAX_PARAM_SZIE);
+	memset(m_aStrOffset, 0, sizeof(int16) * MAX_PARAM_SZIE);
+	memset(m_aStrValue, 0, sizeof(char) * MAX_STR_SIZE);
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+void SXParam::Reci(RecieveStream &iStream)
+{
+	iStream.Reci((char *) &m_IntCount, sizeof(uchar));
+	iStream.Reci((char *) &m_StrCount, sizeof(uchar));
+
+	if(m_IntCount > 0)
+	{
+		iStream.Reci((char *) &m_aIntValue, sizeof(int32) * m_IntCount);
+	}
+
+	if(m_StrCount > 0)
+	{
+		iStream.Reci((char *) &m_aStrOffset, sizeof(int16) * m_StrCount);
+		iStream.Reci((char *) &m_aStrValue, sizeof(char) * (m_aStrOffset[m_StrCount - 1] + 1));
+	}
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+void SXParam::Send(SendStream &oStream) const
+{
+	oStream.Send((char *) &m_IntCount, sizeof(uchar));
+	oStream.Send((char *) &m_StrCount, sizeof(uchar));
+
+	if(m_IntCount > 0)
+	{
+		oStream.Send((char *) &m_aIntValue, sizeof(int32) * m_IntCount);
+	}
+
+	if(m_StrCount > 0)
+	{
+		oStream.Send((char *) &m_aStrOffset, sizeof(int16) * m_StrCount);
+		oStream.Send((char *) &m_aStrValue, sizeof(char) * (m_aStrOffset[m_StrCount - 1] + 1));
+	}
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+int32 SXParam::GetSize() const
+{
+	if(m_StrCount > 0)
+	{
+		return sizeof(uchar) +		/* m_IntCount */
+		sizeof(uchar) +			/* m_StrCount */
+		(m_IntCount * sizeof(int32)) +	/* m_aIntValue */
+		(m_StrCount * sizeof(int16)) +	/* m_aStrOffset */
+		(m_aStrOffset[m_StrCount - 1] + 1) * sizeof(char);	/* m_aStrValue */
+	}
+
+	return sizeof(uchar) +		/* m_IntCount */
+	sizeof(uchar) +			/* m_StrCount */
+	(m_IntCount * sizeof(int32));	/* m_aIntValue */
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+int32 SXParam::GetIntCount()
+{
+	return m_IntCount;
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+int32 SXParam::GetIntValue(int32 nIndex)
+{
+	if(nIndex < 0 || nIndex >= MAX_PARAM_SZIE) return 0;
+	if(nIndex >= m_IntCount) return 0;
+
+	return m_aIntValue[nIndex];
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+int32 SXParam::GetStrCount()
+{
+	return m_StrCount;
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+char *SXParam::GetStrValue(int32 nIndex)
+{
+	if(nIndex < 0 || nIndex >= MAX_PARAM_SZIE) return NULL;
+	if(nIndex >= m_StrCount) return NULL;
+	if(nIndex == 0) return m_aStrValue;
+
+	return m_aStrValue + m_aStrOffset[nIndex - 1] + 1;
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+int32 SXParam::AppendIntValue(int32 nValue)
+{
+	if(m_IntCount >= MAX_PARAM_SZIE - 1) return INVALID_INDEX;
+
+	m_IntCount++;
+
+	m_aIntValue[m_IntCount - 1] = nValue;
+
+	return m_IntCount - 1;
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+int32 SXParam::SetIntValue(int32 nIndex, int32 nValue)
+{
+	if(nIndex < 0 || nIndex >= MAX_PARAM_SZIE) return INVALID_INDEX;
+	if(nIndex >= m_IntCount) return INVALID_INDEX;
+
+	m_aIntValue[nIndex] = nValue;
+
+	return nIndex;
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+int32 SXParam::AppendStrValue(const char *szIn)
+{
+	if(m_StrCount >= MAX_PARAM_SZIE - 1) return INVALID_INDEX;
+
+	/*~~~~~~~~~~~*/
+	int32	nStart;
+	/*~~~~~~~~~~~*/
+
+	if(m_StrCount == 0)
+	{
+		nStart = 0;
+	}
+	else
+	{
+		nStart = m_aStrOffset[m_StrCount - 1] + 1;
+	}
+
+	strncpy(m_aStrValue + nStart, szIn, MAX_STR_SIZE - nStart - 1);
+	m_aStrValue[MAX_STR_SIZE - 1] = 0;
+
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	int32	nLen = (int32) strlen(m_aStrValue + nStart);
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+	m_aStrOffset[m_StrCount] = nStart + nLen;
+
+	m_StrCount++;
+
+	return m_StrCount - 1;
+}
+
+/*
+ =======================================================================================================================
+        int32 SXParam::SetStrValue( int32 nIndex, char* szIn ) ;
+        { ;
+        KCheck("目前此函数还没支持") ;
+        return INVALID_INDEX ;
+        }
+ =======================================================================================================================
+ */
+SXScript::SXScript()
+{
+	Clear();
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+SXScript::~SXScript()
+{
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+void SXScript::Clear()
+{
+	m_ScriptID = INVALID_ID;
+	m_uFunNameSize = 0;
+
+	/*
+	 * m_uStrParamSize = 0 ;
+	 */
+	m_uParamCount = 0;
+	memset(m_szFunName, 0, sizeof(char) * MAX_FUNC_NAME_SIZE);
+
+	/*
+	 * memset( m_szStrParam, 0, sizeof(char)*MAX_STRING_PARAM_SIZE ) ;
+	 */
+	memset(m_aParam, 0, sizeof(int32) * MAX_INT_PARAM_COUNT);
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+void SXScript::Reci(RecieveStream &iStream)
+{
+	iStream.Reci((char *) &m_ScriptID, sizeof(ScriptID_t));
+
+	iStream.Reci((char *) &m_uFunNameSize, sizeof(uchar));
+	if(m_uFunNameSize > 0)
+	{
+		iStream.Reci((char *) &m_szFunName, sizeof(char) * m_uFunNameSize);
+	}
+
+	/*
+	 * iStream.Reci( (char*)&m_uStrParamSize, sizeof(uchar) );
+	 * if( m_uStrParamSize>0 ) ;
+	 * { ;
+	 * iStream.Reci( (char*)&m_szStrParam, sizeof(char)*m_uStrParamSize );
+	 * }
+	 */
+	iStream.Reci((char *) &m_uParamCount, sizeof(uchar));
+	if(m_uParamCount > 0)
+	{
+		iStream.Reci((char *) &m_aParam, sizeof(int32) * m_uParamCount);
+	}
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+void SXScript::Send(SendStream &oStream) const
+{
+	oStream.Send((char *) &m_ScriptID, sizeof(ScriptID_t));
+
+	oStream.Send((char *) &m_uFunNameSize, sizeof(uchar));
+	if(m_uFunNameSize > 0)
+	{
+		oStream.Send((char *) &m_szFunName, sizeof(char) * m_uFunNameSize);
+	}
+
+	/*
+	 * oStream.Send( (char*)&m_uStrParamSize, sizeof(uchar) );
+	 * if( m_uStrParamSize>0 ) ;
+	 * { ;
+	 * oStream.Send( (char*)&m_szStrParam, sizeof(char)*m_uStrParamSize );
+	 * }
+	 */
+	oStream.Send((char *) &m_uParamCount, sizeof(uchar));
+	if(m_uParamCount > 0)
+	{
+		oStream.Send((char *) &m_aParam, sizeof(int32) * m_uParamCount);
+	}
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+int32 SXScript::GetSize() const
+{
+	return sizeof(ScriptID_t) + sizeof(uchar) + sizeof(char) * m_uFunNameSize +
+
+	/*
+	 * sizeof(uchar)+ ;
+	 * sizeof(char)*m_uStrParamSize+
+	 */
+	sizeof(uchar) + sizeof(int32) * m_uParamCount;
+}

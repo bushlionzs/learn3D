@@ -25,7 +25,7 @@ extern void _Check1(const char *file, uint32_t line, const char *func, const cha
 extern void _Check2(const char *file, uint32_t line, const char *func, const char *expr, const char *msg);
 extern void _Check3(const char *file, uint32_t line, const char *func, const char *expr, const char *msg);
 extern void _KMB(const char *msg);
-extern BOOL RangeCheck_KCheck(int32 nIndex, int32 nFrom, int32 nTo, char const *szCodeLocation);
+extern bool RangeCheck_KCheck(int32 nIndex, int32 nFrom, int32 nTo, char const *szCodeLocation);
 
 
 //////////////////////////////////////////////////////////////////////////

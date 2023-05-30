@@ -1,17 +1,27 @@
 #ifndef _GAME_DEFINE_H_
 #define _GAME_DEFINE_H_
 
-#include <OgreVector2.h>
-#include <OgreVector3.h>
+//#include <OgreVector2.h>
+//#include <OgreVector3.h>
 #include "ku.h"
 
 /*  */ 
 //typedef static			STATIC
 
 
-/* 调用数学库 */
-typedef Ogre::Vector3	vector3;
-typedef Ogre::Vector2	vector2;
+///* 调用数学库 */
+//typedef Ogre::Vector3	vector3;
+//typedef Ogre::Vector2	vector2;
+
+struct vector3
+{
+	float x, y, z;
+};
+
+struct vector2
+{
+	float x, y;
+};
 
 struct fRay
 {

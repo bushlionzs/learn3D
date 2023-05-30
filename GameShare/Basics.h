@@ -18,6 +18,7 @@
 #if defined(__WINDOWS__)
 #pragma warning(disable : 4786)
 #pragma warning(disable : 4018)
+#include <WinSock2.h>
 #include <Windows.h>
 #include "crtdbg.h"
 #elif defined(__LINUX__)

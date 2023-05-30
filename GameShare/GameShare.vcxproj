@@ -31,6 +31,7 @@
     <ClInclude Include="Basics.h" />
     <ClInclude Include="BitOper.h" />
     <ClInclude Include="BlowFish.h" />
+    <ClInclude Include="Camp.h" />
     <ClInclude Include="CaptchaTable.h" />
     <ClInclude Include="Compress_Minilzo.h" />
     <ClInclude Include="CRC.h" />
@@ -55,6 +56,7 @@
     <ClInclude Include="formula.h" />
     <ClInclude Include="GameMath.h" />
     <ClInclude Include="GameResourceLoad.h" />
+    <ClInclude Include="GameSingleton.h" />
     <ClInclude Include="GameTableData.h" />
     <ClInclude Include="GameTableDefine.h" />
     <ClInclude Include="GameTableManager.h" />
@@ -112,11 +114,13 @@
     <ClInclude Include="StructMonitor.h" />
     <ClInclude Include="StructPet.h" />
     <ClInclude Include="StructQuery.h" />
+    <ClInclude Include="StructScript.h" />
     <ClInclude Include="StructSpell.h" />
     <ClInclude Include="StructTeam.h" />
     <ClInclude Include="StructTopList.h" />
     <ClInclude Include="StructWorldShop.h" />
     <ClInclude Include="TAB.h" />
+    <ClInclude Include="TabTemplateLoader.h" />
     <ClInclude Include="tea.h" />
     <ClInclude Include="TypeDefine.h" />
     <ClInclude Include="Util.h" />
@@ -135,6 +139,7 @@
     <ClCompile Include="BaseTool_Time.cpp" />
     <ClCompile Include="BitOper.cpp" />
     <ClCompile Include="BlowFish.cpp" />
+    <ClCompile Include="Camp.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="DefineResult.cpp" />
     <ClCompile Include="DES.cpp" />
@@ -177,8 +182,10 @@
     <ClCompile Include="StructHorseFindMate.cpp" />
     <ClCompile Include="StructMinorPasswd.cpp" />
     <ClCompile Include="StructPet.cpp" />
+    <ClCompile Include="StructScript.cpp" />
     <ClCompile Include="StructTeam.cpp" />
     <ClCompile Include="TAB.cpp" />
+    <ClCompile Include="TabTemplateLoader.cpp" />
     <ClCompile Include="tea.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="vlong.cpp" />
@@ -283,7 +290,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;__WINDOWS__;_CRT_SECURE_NO_WARNINGS;_70_WORLD;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\miniOgre\platform\windows;$(ProjectDir)..\miniOgre\platform;$(ProjectDir)..\miniOgre\base;$(ProjectDir)..\3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\miniOgre\platform\windows;$(ProjectDir)..\miniOgre\platform;$(ProjectDir)..\miniOgre\base;$(ProjectDir)..\3rd;$(ProjectDir)..\GameUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

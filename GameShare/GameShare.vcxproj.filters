@@ -104,6 +104,10 @@
     <ClInclude Include="Util.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="vlong.h" />
+    <ClInclude Include="GameSingleton.h" />
+    <ClInclude Include="Camp.h" />
+    <ClInclude Include="TabTemplateLoader.h" />
+    <ClInclude Include="StructScript.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActionSetManager.cpp" />
@@ -164,5 +168,8 @@
     <ClCompile Include="tea.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="vlong.cpp" />
+    <ClCompile Include="Camp.cpp" />
+    <ClCompile Include="TabTemplateLoader.cpp" />
+    <ClCompile Include="StructScript.cpp" />
   </ItemGroup>
 </Project>

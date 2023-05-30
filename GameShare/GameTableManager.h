@@ -1,13 +1,13 @@
 #ifndef _GAME_TABLE_MANAGER_H_
 #define _GAME_TABLE_MANAGER_H_
 
-#include "OgreSingleton.h"
+#include "GameSingleton.h"
 #include "KDefine.h"
 
 class CGameTable;
 
 class CGameTableManager :
-	public Ogre::Singleton<CGameTableManager>
+	public GameSingleton<CGameTableManager>
 {
 /*
  -----------------------------------------------------------------------------------------------------------------------
@@ -35,6 +35,6 @@ protected:
 	/* Êý¾Ý¿â */
 	std::map<int32, CGameTable *> m_TableMap;
 };	/* class */
-#define GAME_TABLE_MANAGER		CGameTableManager::getSingleton()
-#define GAME_TABLE_MANAGER_PTR	CGameTableManager::getSingletonPtr()
+#define GAME_TABLE_MANAGER		CGameTableManager::GetSingleton()
+#define GAME_TABLE_MANAGER_PTR	CGameTableManager::GetSingletonPtr()
 #endif /* _GAME_TABLE_MANAGER_H_ */
