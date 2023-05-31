@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="data">
+      <UniqueIdentifier>{2407ccfa-360f-4509-895e-1b8e6a846729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\struct">
+      <UniqueIdentifier>{54594ecf-581a-4324-afd6-0dd471c52631}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="data\GameDataCharacter.cpp">
+      <Filter>data</Filter>
+    </ClCompile>
+    <ClCompile Include="kcharacter.cpp" />
+    <ClCompile Include="CharacterCommon.cpp" />
+    <ClCompile Include="fulldemo.cpp" />
+    <ClCompile Include="GameWorld.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="PathComponent.cpp" />
+    <ClCompile Include="kplayer.cpp" />
+    <ClCompile Include="application_base.cpp" />
+    <ClCompile Include="application_util.cpp" />
+    <ClCompile Include="application_window.cpp" />
+    <ClCompile Include="game_camera.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameEntity.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="data\GameDataCharacter.h">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="data\GameDataDefine.h">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="data\struct\GameDataStructCharacterData.h">
+      <Filter>data\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="data\struct\GameDataStructTitle.h">
+      <Filter>data\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="kcharacter.h" />
+    <ClInclude Include="CharacterCommon.h" />
+    <ClInclude Include="demoHeader.h" />
+    <ClInclude Include="fulldemo.h" />
+    <ClInclude Include="GameWorld.h" />
+    <ClInclude Include="PathComponent.h" />
+    <ClInclude Include="kplayer.h" />
+    <ClInclude Include="application_base.h" />
+    <ClInclude Include="application_util.h" />
+    <ClInclude Include="application_window.h" />
+    <ClInclude Include="game_camera.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameEntity.h" />
+  </ItemGroup>
+</Project>
