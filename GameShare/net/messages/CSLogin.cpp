@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "CSLogin.h"
-#include "server/gameobject/Player.h"
-#include "server/map/game_map.h"
-#include "server/map/map_manager.h"
+#include "gameobject/Player.h"
+#include "map/game_map.h"
+#include "map/map_manager.h"
 #include "net/messages/SCEnterMap.h"
 #include "net/net_message_manager.h"
-#include "server/db/db_manager.h"
-#include "server/db/db_task.h"
+#include "db/db_manager.h"
+#include "db/db_task.h"
 
 CSLogin::CSLogin():
 	NetPacket(CS_LOGIN)
@@ -41,7 +41,8 @@ bool CSLogin::process()
 	pMap->ObjectEnterMap(player);*/
 	//1610000020 ĞÂÊÖ´å
 	//1610000020 »Ê¹¬
-	CharDataTask* task = new CharDataTask(std::string("1610000020"));
+	auto id = std::string("1610000020");
+	CharDataTask* task = new CharDataTask(id);
 	DBManager::GetSingletonPtr()->addDbTask(task);
 
 	return true;

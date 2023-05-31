@@ -187,6 +187,8 @@ CDSystem ;
 ，主要是给脚本中提供一个直接无条件（冷却时间除外）使用技能的方法
 =======================================================================================================================
 */
+
+class Player;
 typedef class	CDSystem
 {
 public:
@@ -685,7 +687,7 @@ public:
 	float			GetMaxSkillDistance() const;
 	void			SetMaxSkillDistance(float val);
 	void			SetChargesOrInterval(int32 val);
-	int16			GetProfession(void) const;
+	int16_t			GetProfession(void) const;
 	char const		*GetName(void) const;
 	int32			GetTalentLevelRequirement(void) const;
 	BOOL			GetMustUseWeaponFlag(void) const;

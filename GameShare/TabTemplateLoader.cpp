@@ -9,4 +9,4 @@
 
 #include "stdafx.h"
 #include "TabTemplateLoader.h"
-#include "TAB/TAB.h"
+#include "TAB.h"

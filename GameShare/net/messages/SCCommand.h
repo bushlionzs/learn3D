@@ -1,5 +1,6 @@
 #pragma once
 #include "net/net_message.h"
+#include "StructScript.h"
 class SCCommand : public NetPacket
 {
 public:

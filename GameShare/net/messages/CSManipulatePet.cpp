@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include "CSManipulatePet.h"
-#include "server/gameobject/Player.h"
-#include "server/map/game_map.h"
-#include "server/map/map_manager.h"
+#include "gameobject/Player.h"
+#include "map/game_map.h"
+#include "map/map_manager.h"
 #include "net/messages/SCEnterMap.h"
 #include "net/net_message_manager.h"
-#include "server/db/db_manager.h"
-#include "server/db/db_task.h"
+#include "db/db_manager.h"
+#include "db/db_task.h"
 #include "net/messages/SCCharHumanBaseAttrib.h"
-#include "server/server_settting.h"
-#include "server/data/data_manager.h"
+#include "server_settting.h"
+#include "data/data_manager.h"
 
 CSManipulatePet::CSManipulatePet():
 	NetPacket(CS_MANIPULATE_PET)

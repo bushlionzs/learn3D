@@ -15,7 +15,7 @@ SCDetailItemList::~SCDetailItemList()
 
 bool SCDetailItemList::process()
 {
-	KObject* pObj = (KObject*)OBJECT_MANAGER_PTR->FindServerObject(mObjectId);
+	/*KObject* pObj = (KObject*)OBJECT_MANAGER_PTR->FindServerObject(mObjectId);
 
 	if (nullptr == pObj || FALSE == pObj->CheckClassType(GET_CLASS(KCharacter)))
 	{
@@ -45,7 +45,7 @@ bool SCDetailItemList::process()
 	{
 		ACTION_SYS_PTR->UserBag_Update();
 		COMMAND_SYS_PTR->AddCommand(GCD_PACKAGE_ITEM_CHANGED);
-	}
+	}*/
 
 	return true;
 }

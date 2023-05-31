@@ -1,5 +1,7 @@
 #pragma once
 #include "net/net_message.h"
+#include "StructDB.h"
+
 class SCDetailAttribPet : public NetPacket
 {
 public:

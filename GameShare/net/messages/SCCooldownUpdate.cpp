@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SCCooldownUpdate.h"
-#include "server/server_manager.h"
 
 SCCooldownUpdate::SCCooldownUpdate():
 	NetPacket(SC_COOLDOWN_UPDATE)

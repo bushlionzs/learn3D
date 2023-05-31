@@ -1,6 +1,9 @@
 #pragma once
 
 #include "net/net_message.h"
+#include "StructDB.h"
+#include "StructPet.h"
+class Player;
 
 class CSManipulatePet : public NetPacket
 {

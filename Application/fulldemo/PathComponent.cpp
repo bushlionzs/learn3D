@@ -52,7 +52,7 @@ void PathComponent::update(float deltatime)
 
 	Ogre::Vector2 targetPos = mPathList.back();
 
-	Ogre::Real fDistToTarget = CGameMath::KLU_GetDist(currentPos, targetPos);
+	Ogre::Real fDistToTarget = currentPos.distance(targetPos); 
 
 	Ogre::Real fElapseTime = (FLOAT)deltatime;
 	Ogre::Real fSpeed = 3.5f;
@@ -82,7 +82,9 @@ void PathComponent::update(float deltatime)
 			fvSetToPos.x = currentPos.x + fDistX;
 			fvSetToPos.y = currentPos.y + fDistZ;
 
-			fSetToDir = CGameMath::KLU_GetYAngle(currentPos, targetPos);
+			auto a = vector2(currentPos.x, currentPos.y);
+			auto b = vector2(targetPos.x, targetPos.y);
+			fSetToDir = CGameMath::KLU_GetYAngle(a, b);
 
 			break;
 		}
@@ -97,7 +99,9 @@ void PathComponent::update(float deltatime)
 				fvSetToPos = targetPos;
 				if (currentPos != targetPos)// 原地, 不改变朝向
 				{
-					fSetToDir = CGameMath::KLU_GetYAngle(currentPos, targetPos);
+					auto a = vector2(currentPos.x, currentPos.y);
+					auto b = vector2(targetPos.x, targetPos.y);
+					fSetToDir = CGameMath::KLU_GetYAngle(a, b);
 				}
 				break;
 			}
@@ -108,7 +112,7 @@ void PathComponent::update(float deltatime)
 				currentPos = targetPos;
 				targetPos = mPathList.back();
 
-				fDistToTarget = CGameMath::KLU_GetDist(currentPos, targetPos);
+				fDistToTarget = currentPos.distance(targetPos);
 			}
 		}
 	}

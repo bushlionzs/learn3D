@@ -10,13 +10,13 @@
 #include "stdafx.h"
 #include "LuaFunction.h"
 #include "LuaMacro.h"
-#include "server/map/map_manager.h"
-#include "server/map/game_map.h"
-#include "server/gameobject/Player.h"
-#include "server/gameobject/Monster.h"
-#include "server/gameobject/Behavior_Player.h"
-#include "server/item/Item_Interface.h"
-#include "server/Archive/PlayerDB.h"
+#include "map/map_manager.h"
+#include "map/game_map.h"
+#include "gameobject/Player.h"
+#include "gameobject/Monster.h"
+#include "gameobject/Behavior_Player.h"
+#include "item/Item_Interface.h"
+#include "Archive/PlayerDB.h"
 
 int32_t LuaFunction_GetLevel(Lua_State *L)
 {

@@ -14,7 +14,7 @@
 #include "Spell_TrapObjLogic_Trap.h"
 #include "Spell_Logic_Profession.h"
 #include "Spell_EffectLogic_All.h"
-#include "server/data/data_manager.h"
+#include "data/data_manager.h"
 
 /*
  =======================================================================================================================

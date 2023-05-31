@@ -37,10 +37,10 @@ uint32 CMapCollisionManager::LoadCollisionTriInfoFromFile(const char *szFileName
 BOOL CMapCollisionManager::Get3DMapHeight(FLOAT fx, FLOAT fy, FLOAT fz, FLOAT &outY)
 {
 	BOOL hasIntersection = FALSE;
-	vector3 fvAtTerrain;
+	Ogre::Vector3 fvAtTerrain;
 
 
-	EngineManager::getSingleton().positionAxisTrans(GAT_SCENE, vector3(fx, fy, fz), GAT_ENGINE, fvAtTerrain);
+	EngineManager::getSingleton().positionAxisTrans(GAT_SCENE, Ogre::Vector3(fx, fy, fz), GAT_ENGINE, fvAtTerrain);
 
 
 	Ogre::Vector3 tmpStart		= Ogre::Vector3(fvAtTerrain.x, fvAtTerrain.y + 20000.0f, fvAtTerrain.z);
@@ -55,8 +55,8 @@ BOOL CMapCollisionManager::Get3DMapHeight(FLOAT fx, FLOAT fy, FLOAT fz, FLOAT &o
 		
 
 
-	vector3	resultPosGameCoord;
-	EngineManager::getSingleton().positionAxisTrans(GAT_ENGINE,vector3(tmpResultPos.x, tmpResultPos.y, tmpResultPos.z),GAT_SCENE,	resultPosGameCoord);
+	Ogre::Vector3	resultPosGameCoord;
+	EngineManager::getSingleton().positionAxisTrans(GAT_ENGINE, Ogre::Vector3(tmpResultPos.x, tmpResultPos.y, tmpResultPos.z),GAT_SCENE,	resultPosGameCoord);
 	outY = resultPosGameCoord.y;
 
 	return hasIntersection;
@@ -68,19 +68,19 @@ BOOL CMapCollisionManager::Get3DMapHeight(FLOAT fx, FLOAT fy, FLOAT fz, FLOAT &o
  */
 BOOL CMapCollisionManager::GetMapHeight(FLOAT fx, FLOAT fz, FLOAT &outY)
 {
-	vector3 fvAtTerrain;
+	Ogre::Vector3 fvAtTerrain;
 
-	EngineManager().getSingleton().positionAxisTrans(GAT_GAME, vector3(fx, 0.0f, fz), GAT_ENGINE, fvAtTerrain);
+	EngineManager().getSingleton().positionAxisTrans(GAT_GAME, Ogre::Vector3(fx, 0.0f, fz), GAT_ENGINE, fvAtTerrain);
 
 	Ogre::Vector3	tmpStart = Ogre::Vector3(fvAtTerrain.x, 20000.0f, fvAtTerrain.z);
 	Ogre::Vector3	tmpDir = Ogre::Vector3(-0.0001f, -30000.0f, -0.0001f);
 	Ogre::Vector3	tmpResultPos = Ogre::Vector3(0.0f, 0.0f, 0.0f);
-	vector3			resultPosGameCoord;
+	Ogre::Vector3			resultPosGameCoord;
 
 	EngineManager().getSingleton().positionAxisTrans
 		(
 			GAT_ENGINE,
-			vector3(tmpResultPos.x, tmpResultPos.y, tmpResultPos.z),
+			Ogre::Vector3(tmpResultPos.x, tmpResultPos.y, tmpResultPos.z),
 			GAT_SCENE,
 			resultPosGameCoord
 		);
@@ -109,20 +109,20 @@ BOOL CMapCollisionManager::IsIntersection
 	FLOAT	&fPosz	/* 返回建筑物的行走面位置。 */
 )
 {
-	vector3 rayOrigin;
+	Ogre::Vector3 rayOrigin;
 
-	EngineManager().getSingleton().positionAxisTrans(GAT_SCENE, vector3(fOrigx, fOrigy, fOrigz), GAT_ENGINE, rayOrigin);
+	EngineManager().getSingleton().positionAxisTrans(GAT_SCENE, Ogre::Vector3(fOrigx, fOrigy, fOrigz), GAT_ENGINE, rayOrigin);
 
-	vector3	tmpStart = rayOrigin;
-	vector3	tmpDir = Ogre::Vector3(fDirx, fDiry, fDirz) * 30000.0f;
-	vector3	tmpResultPos = Ogre::Vector3(0.0f, 0.0f, 0.0f);
+	Ogre::Vector3	tmpStart = rayOrigin;
+	Ogre::Vector3	tmpDir = Ogre::Vector3(fDirx, fDiry, fDirz) * 30000.0f;
+	Ogre::Vector3	tmpResultPos = Ogre::Vector3(0.0f, 0.0f, 0.0f);
 	bool			hasIntersection = true;
-	vector3			resultPosGameCoord;
+	Ogre::Vector3			resultPosGameCoord;
 
 	EngineManager().getSingleton().positionAxisTrans
 		(
 			GAT_ENGINE,
-			vector3(tmpResultPos.x, tmpResultPos.y, tmpResultPos.z),
+			Ogre::Vector3(tmpResultPos.x, tmpResultPos.y, tmpResultPos.z),
 			GAT_SCENE,
 			resultPosGameCoord
 		);

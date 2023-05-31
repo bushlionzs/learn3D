@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SCDetailBuff.h"
-#include "server/server_manager.h"
 
 SCDetailBuff::SCDetailBuff():
 	NetPacket(SC_DETAIL_BUFF)
@@ -16,7 +15,7 @@ SCDetailBuff::~SCDetailBuff()
 bool SCDetailBuff::process()
 {
 	
-	if (mEnable && INVALID_ID != mSN)
+	/*if (mEnable && INVALID_ID != mSN)
 	{
 		_BUFF_EFFECT_INFO	infoBuffImpact;
 		infoBuffImpact.m_nReceiverID = mReceiverId;
@@ -34,7 +33,7 @@ bool SCDetailBuff::process()
 	else
 	{
 		GAME_DATA_SKILL_PTR->BuffEffect_Remove(mSN);
-	}
+	}*/
 	return true;
 }
 

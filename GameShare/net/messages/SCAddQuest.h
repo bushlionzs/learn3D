@@ -1,7 +1,6 @@
 #pragma once
 #include "net/net_message.h"
-
-struct OWN_QUEST;
+#include "StructDB.h"
 class SCAddQuest : public NetPacket
 {
 public:

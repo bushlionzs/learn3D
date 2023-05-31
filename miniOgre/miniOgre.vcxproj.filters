@@ -19,12 +19,6 @@
     <Filter Include="render">
       <UniqueIdentifier>{289ac9fa-3f58-4ef2-9197-b9b3f10618dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="platform">
-      <UniqueIdentifier>{d0e791a8-5c9c-4ea9-a010-bf0a0eb1f664}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="platform\windows">
-      <UniqueIdentifier>{4f1178c3-169b-494d-ab36-6bdaa5a1b9c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="render\dx11">
       <UniqueIdentifier>{d4c27ae5-ca1e-4065-9765-a4600ded9920}</UniqueIdentifier>
     </Filter>
@@ -335,54 +329,6 @@
     </ClCompile>
     <ClCompile Include="models\Waves.cpp">
       <Filter>models</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\double_list.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\message_queue.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\myutils.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\platform_common.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\platform_file.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\platform_file_system.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\platform_log.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\platform_thread.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\platform_util.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\stb_image.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\time_util.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\timer_logic.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\tiny_gltf.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\windows\platform_mutex.cpp">
-      <Filter>platform\windows</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\windows\platform_rw_mutex.cpp">
-      <Filter>platform\windows</Filter>
-    </ClCompile>
-    <ClCompile Include="platform\windows\platform_signal.cpp">
-      <Filter>platform\windows</Filter>
     </ClCompile>
     <ClCompile Include="render\dx11Render\dx11HardwareBuffer.cpp">
       <Filter>render\dx11</Filter>
@@ -1186,75 +1132,6 @@
     </ClInclude>
     <ClInclude Include="models\Waves.h">
       <Filter>models</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\double_list.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\json.hpp">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\message_queue.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\myutils.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\object_index.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\pid.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\platform.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\platform_common.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\platform_defines.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\platform_file.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\platform_file_system.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\platform_log.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\platform_thread.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\platform_util.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\scoped_lock.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\stb_image.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\stb_image_write.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\time_util.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\timer_logic.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\tiny_gltf.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\windows\platform_mutex.h">
-      <Filter>platform\windows</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\windows\platform_rw_mutex.h">
-      <Filter>platform\windows</Filter>
-    </ClInclude>
-    <ClInclude Include="platform\windows\platform_signal.h">
-      <Filter>platform\windows</Filter>
     </ClInclude>
     <ClInclude Include="render\dx11Render\dx11Common.h">
       <Filter>render\dx11</Filter>

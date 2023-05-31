@@ -15,7 +15,7 @@ SCDetailEquipList::~SCDetailEquipList()
 
 bool SCDetailEquipList::process()
 {
-	KObject* pObj = (KObject*)OBJECT_MANAGER_PTR->FindServerObject(mObjectId);
+	/*KObject* pObj = (KObject*)OBJECT_MANAGER_PTR->FindServerObject(mObjectId);
 
 	if (nullptr == pObj || FALSE == pObj->CheckClassType(GET_CLASS(KCharacter)))
 	{
@@ -43,7 +43,7 @@ bool SCDetailEquipList::process()
 		GAME_DATA_ITEM_PTR->UserEquip_SetItem((PLAYER_EQUIP)it->first, pItemObj, TRUE);
 	}
 
-	ACTION_SYS_PTR->UserEquip_Update();
+	ACTION_SYS_PTR->UserEquip_Update();*/
 	
 
 	return true;

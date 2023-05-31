@@ -1,7 +1,7 @@
 #pragma once
 
 #include "net/net_message.h"
-
+#include "StructDB.h"
 class SCQuestList : public NetPacket
 {
 public:

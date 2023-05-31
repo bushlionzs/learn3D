@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SCQuestListRefresh.h"
-#include "server/server_manager.h"
+
 
 SCQuestListRefresh::SCQuestListRefresh():
 	NetPacket(SC_QUESTLIST_REFRESH)

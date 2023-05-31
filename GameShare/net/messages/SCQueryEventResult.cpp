@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SCQueryEventResult.h"
-#include "server/server_manager.h"
 
 SCQueryEventResult::SCQueryEventResult():
 	NetPacket(SC_QUERY_EVENT_RESULT)
@@ -17,7 +16,7 @@ SCQueryEventResult::~SCQueryEventResult()
 
 bool SCQueryEventResult::process()
 {
-	GAME_DATA_QUEST_PTR->QuestEventListResponse(&mParamEventList);
+	//GAME_DATA_QUEST_PTR->QuestEventListResponse(&mParamEventList);
 	return true;
 }
 

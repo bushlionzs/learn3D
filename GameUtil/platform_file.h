@@ -9,7 +9,7 @@ bool get_file_content(const char* filename, std::string& content);
 
 void trave_dir(const char* path, std::vector<std::string>& filelist, uint32_t day);
 
-#ifdef _WIN32
+#ifdef WIN32
 std::wstring acsi_to_widebyte(const char* name);
 std::wstring utf8_to_unicode(const std::string& utf8string);
 std::string utf8_to_ansi(const std::string& utf8string);

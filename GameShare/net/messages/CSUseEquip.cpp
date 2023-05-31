@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "CSUseEquip.h"
-#include "server/item/Item_Base.h"
-#include "server/item/Item_Interface.h"
-#include "server/map/map_manager.h"
-#include "server/map/game_map.h"
-#include "server/gameobject/Player.h"
+#include "item/Item_Base.h"
+#include "item/Item_Interface.h"
+#include "map/map_manager.h"
+#include "map/game_map.h"
+#include "gameobject/Player.h"
 #include "SCUseEquipResult.h"
 
 

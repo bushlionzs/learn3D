@@ -176,6 +176,20 @@ void EngineManager::unregisterObject(const Ogre::String& ObjName)
 	}
 }
 
+BOOL V3_IsNan(Ogre::Vector3& fvPos)
+{
+	try
+	{
+		if (!CGameMath::KLU_IsNan(fvPos.x) && !CGameMath::KLU_IsNan(fvPos.y) && !CGameMath::KLU_IsNan(fvPos.z)) return FALSE;
+	}
+	catch (...)
+	{
+		return TRUE;
+	}
+
+	return TRUE;	/* 说明是无效的数字 */
+};
+
 bool EngineManager::positionAxisTrans(
 	GAME_AXIS_TYPE typeSource,
 	const Ogre::Vector3& fvSource,
@@ -196,7 +210,7 @@ bool EngineManager::positionAxisTrans(
 	/* 检查是否是合法的坐标 */
 	fvTarget = fvSource;
 
-	if (CGameMath::KLU_IsNan(fvTarget)) /* 无效的不计算 */
+	if (V3_IsNan(fvTarget)) /* 无效的不计算 */
 	{
 		return false;
 	}

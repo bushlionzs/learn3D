@@ -12,7 +12,7 @@
 
 
 #include <string.h>
-
+#include "LuaPlus.h"
 #ifndef __linux
 #ifdef LUASCRIPTVM_EXPORTS
 #define _LUAVM	__declspec(dllexport)

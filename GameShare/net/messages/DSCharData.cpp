@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "DSCharData.h"
-#include "server/gameobject/Player.h"
-#include "server/map/game_map.h"
-#include "server/map/map_manager.h"
+#include "gameobject/Player.h"
+#include "map/game_map.h"
+#include "map/map_manager.h"
 #include "net/messages/SCEnterMap.h"
 #include "net/net_message_manager.h"
 

@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "CSTick.h"
-#include "server/map/map_manager.h"
-#include "server/map/game_map.h"
-#include "server/map/map_info.h"
-#include "server/gameobject/ObjectManager.h"
-#include "server/gameobject/Player.h"
-#include "server/gameobject/Behavior_Player.h"
+#include "map/map_manager.h"
+#include "map/game_map.h"
+#include "map/map_info.h"
+#include "gameobject/ObjectManager.h"
+#include "gameobject/Player.h"
+#include "gameobject/Behavior_Player.h"
 
 
 

@@ -321,9 +321,6 @@
     <ClCompile Include="general\OgreEffectBillboardChain.cpp">
       <Filter>general</Filter>
     </ClCompile>
-    <ClCompile Include="general\OgreMeshComponentParticleVisualData.cpp">
-      <Filter>general</Filter>
-    </ClCompile>
     <ClCompile Include="general\OGResources.cpp">
       <Filter>general</Filter>
     </ClCompile>
@@ -529,6 +526,9 @@
       <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="general\engine_manager.cpp">
+      <Filter>general</Filter>
+    </ClCompile>
+    <ClCompile Include="general\skbFileParser.cpp">
       <Filter>general</Filter>
     </ClCompile>
   </ItemGroup>
@@ -956,9 +956,6 @@
     <ClInclude Include="general\OgreEffectBillboardChain.h">
       <Filter>general</Filter>
     </ClInclude>
-    <ClInclude Include="general\OgreMeshComponentParticleVisualData.h">
-      <Filter>general</Filter>
-    </ClInclude>
     <ClInclude Include="general\OgreParseCommandHelper.h">
       <Filter>general</Filter>
     </ClInclude>
@@ -1218,6 +1215,9 @@
       <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="general\engine_manager.h">
+      <Filter>general</Filter>
+    </ClInclude>
+    <ClInclude Include="general\skbFileParser.h">
       <Filter>general</Filter>
     </ClInclude>
   </ItemGroup>

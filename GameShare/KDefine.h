@@ -16,11 +16,112 @@
 struct vector3
 {
 	float x, y, z;
+	vector3()
+	{
+		x = 0.0f;
+		y = 0.0f;
+		z = 0.0f;
+	}
+	vector3(float _x, float _y, float _z)
+	{
+		x = _x;
+		y = _y;
+		z = _z;
+	}
+	inline float normalise()
+	{
+		//Real fLength = Math::Sqrt( x * x + y * y + z * z );
+
+		float fLength = sqrtf(x * x + y * y + z * z);
+
+		// Will also work for zero-sized vectors, but will change nothing
+		if (fLength > 1e-08)
+		{
+			float fInvLength = 1.0f / fLength;
+			x *= fInvLength;
+			y *= fInvLength;
+			z *= fInvLength;
+		}
+
+		return fLength;
+	}
 };
 
 struct vector2
 {
 	float x, y;
+	vector2()
+	{
+		x = 0.0f;
+		y = 0.0f;
+	}
+	vector2(float _x, float _y)
+	{
+		x = _x;
+		y = _y;
+	}
+	inline float normalise()
+	{
+		//Real fLength = Math::Sqrt( x * x + y * y + z * z );
+
+		float fLength = sqrtf(x * x + y * y);
+
+		// Will also work for zero-sized vectors, but will change nothing
+		if (fLength > 1e-08)
+		{
+			float fInvLength = 1.0f / fLength;
+			x *= fInvLength;
+			y *= fInvLength;
+		}
+
+		return fLength;
+	}
+
+	inline vector2 operator + (const vector2& rkVector) const
+	{
+		return vector2(
+			x + rkVector.x,
+			y + rkVector.y);
+	}
+
+	inline vector2 operator - (const vector2& rkVector) const
+	{
+		return vector2(
+			x - rkVector.x,
+			y - rkVector.y);
+	}
+
+	inline bool operator == (const vector2& rkVector) const
+	{
+		return (x == rkVector.x && y == rkVector.y);
+	}
+
+	inline vector2 operator * (const float fScalar) const
+	{
+		return vector2(
+			x * fScalar,
+			y * fScalar);
+	}
+
+	inline vector2 operator * (const vector2& rhs) const
+	{
+		return vector2(
+			x * rhs.x,
+			y * rhs.y);
+	}
+
+	// overloaded operators to help Vector2
+	inline friend vector2 operator * (const float fScalar, const vector2& rkVector)
+	{
+		return vector2(
+			fScalar * rkVector.x,
+			fScalar * rkVector.y);
+	}
+
+	inline float dotProduct(const vector2& vec) const
+	{
+		return x * vec.x + y * vec.y;
+	}
 };
 
 struct fRay

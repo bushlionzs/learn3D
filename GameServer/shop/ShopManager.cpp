@@ -19,7 +19,6 @@
 #include "BaseTool.h"
 #include "FileDef.h"
 #include "map/game_map.h"
-#include "GuildCacheManager.h"
 
 using namespace		TAB;
 StaticShangDianManager	*g_pStaticShangDianManager = NULL;
@@ -236,7 +235,7 @@ int32 ShangDianManager::GetShopElementByItemId(	Player *pPlayer,
 		return -1;
 	}
 
-	Map* pMap = pPlayer->GetMap();
+	GameMap* pMap = pPlayer->GetMap();
 
 	if(NULL == pMap)
 	{

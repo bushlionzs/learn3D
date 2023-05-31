@@ -11,7 +11,7 @@
 #include "Camp.h"
 #include "Util.h"
 #include "StructDB.h"
-#include "TAB/TAB.h"
+#include "TAB.h"
 
 /*
  * void logInfo( const char* cpchString, ... ) ;

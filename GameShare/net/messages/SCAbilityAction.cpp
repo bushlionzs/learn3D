@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SCAbilityAction.h"
-#include "server/server_manager.h"
 
 SCAbilityAction::SCAbilityAction():
 	NetPacket(SC_MESSAGE_ABILITY_ACTION)
@@ -15,7 +14,7 @@ SCAbilityAction::~SCAbilityAction()
 
 bool SCAbilityAction::process()
 {
-	KObject* pObj = (KObject*)OBJECT_MANAGER_PTR->FindServerObject(mObjectId);
+	/*KObject* pObj = (KObject*)OBJECT_MANAGER_PTR->FindServerObject(mObjectId);
 	if (pObj == NULL)
 	{
 		return false;
@@ -31,7 +30,7 @@ bool SCAbilityAction::process()
 		cmdTemp.nParam[3] = mPrescriptionId;
 		cmdTemp.nParam[4] = mTargetId;
 		pObj->AddCommand(&cmdTemp);
-	}
+	}*/
 	
 	return true;
 }

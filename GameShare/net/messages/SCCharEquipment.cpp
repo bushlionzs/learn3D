@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SCCharEquipment.h"
-#include "server/server_manager.h"
 
 SCCharEquipment::SCCharEquipment():
 	NetPacket(SC_CHAR_EQUIPMENT)

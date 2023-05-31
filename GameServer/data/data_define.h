@@ -47,7 +47,7 @@ struct MonsterProperty
 
 struct MonsterAIData
 {
-	std::vector<vector<uint32_t>> mAIData;
+	std::vector<std::vector<uint32_t>> mAIData;
 
 	int32_t get(uint32_t aiType, uint32_t aiParam);
 };

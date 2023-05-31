@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "SCEnterMap.h"
-#include "scene/GameSceneManager.h"
-#include "game_world.h"
-#include "game_camera.h"
+//#include "scene/GameSceneManager.h"
+//#include "game_world.h"
+//#include "game_camera.h"
 SCEnterMap::SCEnterMap():
 	NetPacket(SC_ENTER_MAP)
 {
@@ -16,7 +16,7 @@ SCEnterMap::~SCEnterMap()
 
 bool SCEnterMap::process()
 {
-	bool bResult = SCENE_MANAGER_PTR->EnterScene(mSceneId, mSceneId);
+	/*bool bResult = SCENE_MANAGER_PTR->EnterScene(mSceneId, mSceneId);
 
 	Ogre::Vector3 mPosition;
 	mPosition.x = mPositionX;
@@ -27,7 +27,7 @@ bool SCEnterMap::process()
 
 	GameWorld::GetSingletonPtr()->createMyself(mObjectID, mGUID, mPositionX, mPositionZ);
 
-	COMMAND_SYS_PTR->AddCommand(GCD_PLAYER_ENTER_WORLD, 0);
+	COMMAND_SYS_PTR->AddCommand(GCD_PLAYER_ENTER_WORLD, 0);*/
 
 	return true;
 }

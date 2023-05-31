@@ -14,7 +14,7 @@ SCQuestList::~SCQuestList()
 
 bool SCQuestList::process()
 {
-	DPCCmd	cmdTemp;
+	/*DPCCmd	cmdTemp;
 	cmdTemp.m_wID = DPC_UPDATE_QUEST_LIST;
 
 	cmdTemp.uParam[0] = (uint32)(mPlayerId);
@@ -30,7 +30,7 @@ bool SCQuestList::process()
 
 	COMMAND_SYS_PTR->AddCommand(GCD_UPDATE_QUEST_SCOUT);
 	COMMAND_SYS_PTR->AddCommand(GCD_UPDATE_QUEST, "0");
-	OBJECT_MANAGER_PTR->Set_Update_NPC_InfoBoard(TRUE);
+	OBJECT_MANAGER_PTR->Set_Update_NPC_InfoBoard(TRUE);*/
     return true;
 }
 

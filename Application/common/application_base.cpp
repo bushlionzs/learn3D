@@ -84,11 +84,11 @@ bool ApplicationBase::appInit()
 
 	if (isUseMyGUI())
 	{
-		if (!CGameTableManager::getSingletonPtr())
+		if (!CGameTableManager::GetSingletonPtr())
 		{
 			new CGameTableManager;
 
-			CGameTableManager::getSingleton().Initialize();
+			CGameTableManager::GetSingleton().Initialize();
 		}
 
 		new MyGUIManager;

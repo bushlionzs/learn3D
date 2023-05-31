@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "SCRetSkillSetting.h"
-#include "server/server_manager.h"
 
 SCRetSkillSetting::SCRetSkillSetting():
 	NetPacket(SC_SKILL_SETTING)
@@ -16,12 +15,12 @@ SCRetSkillSetting::~SCRetSkillSetting()
 bool SCRetSkillSetting::process()
 {
 	
-	ACTION_SYS_PTR->MainMenuBar_SetID
+	/*ACTION_SYS_PTR->MainMenuBar_SetID
 	(
 		mIndex - SETTING_TYPE_K0,
 		mPlayerSetting.m_SettingType,
 		mPlayerSetting.m_SettingData
-	);
+	);*/
 
 	return true;
 }

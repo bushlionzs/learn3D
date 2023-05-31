@@ -7,7 +7,6 @@
 #include "LuaFunction.h"
 #include "map/map_manager.h"
 #include "server_manager.h"
-#include "LuaFunction.h"
 
 #define LUA_DISABLE_VERIFYFUNCTION
 void LuaErrorInfo(LuaPlus::LuaStateOwner& owner)
@@ -298,7 +297,8 @@ int32 LuaSystem::RunScriptFunction(MapID_t nMapID, ScriptID_t scriptid, const ch
 	}
 
 	std::string fullfuncname = "x" + std::to_string(scriptid) + "_" + funcname;
-	LuaFunction<int32_t> func = m_LuaState->GetGlobal(fullfuncname.c_str());
+	auto luaObj = m_LuaState->GetGlobal(fullfuncname.c_str());
+	LuaFunction<int32_t> func(luaObj);
 	int v = func();
 
 	
@@ -316,7 +316,8 @@ int32 LuaSystem::RunScriptFunction(MapID_t nMapID, ScriptID_t scriptid, const ch
 		return -1;
 	}
 	std::string fullfuncname = "x" + std::to_string(scriptid) + "_" + funcname;
-	LuaFunction<int32_t> func = m_LuaState->GetGlobal(fullfuncname.c_str());
+	auto luaObj = m_LuaState->GetGlobal(fullfuncname.c_str());
+	LuaFunction<int32_t> func(luaObj);
 	int v = func(Param0);
 
 
@@ -334,7 +335,8 @@ int32 LuaSystem::RunScriptFunction(MapID_t nMapID, ScriptID_t scriptid, const ch
 		return -1;
 	}
 	std::string fullfuncname = "x" + std::to_string(scriptid) + "_" + funcname;
-	LuaFunction<int32_t> func = m_LuaState->GetGlobal(fullfuncname.c_str());
+	auto luaObj = m_LuaState->GetGlobal(fullfuncname.c_str());
+	LuaFunction<int32_t> func(luaObj);
 	int v = func(Param0, Param1);
 
 
@@ -349,7 +351,8 @@ int32 LuaSystem::RunScriptFunction(MapID_t nMapID, ScriptID_t scriptid, const ch
 		return -1;
 	}
 	std::string fullfuncname = "x" + std::to_string(scriptid) + "_" + funcname;
-	LuaFunction<int32_t> func = m_LuaState->GetGlobal(fullfuncname.c_str());
+	auto luaObj = m_LuaState->GetGlobal(fullfuncname.c_str());
+	LuaFunction<int32_t> func(luaObj);
 	int v = func(Param0, Param1, Param2);
 
 
@@ -386,7 +389,8 @@ int32 LuaSystem::RunScriptFunction(MapID_t nMapID, ScriptID_t scriptid, const ch
 		return -1;
 	}
 	std::string fullfuncname = "x" + std::to_string(scriptid) + "_" + funcname;
-	LuaFunction<int32_t> func = m_LuaState->GetGlobal(fullfuncname.c_str());
+	auto luaObj = m_LuaState->GetGlobal(fullfuncname.c_str());
+	LuaFunction<int32_t> func(luaObj);
 	
 	int v = func(Param0, Param1, Param2, Param3, Param4);
 	return v;
@@ -402,7 +406,8 @@ int32 LuaSystem::RunScriptFunction(MapID_t nMapID, ScriptID_t scriptid, const ch
 		return -1;
 	}
 	std::string fullfuncname = "x" + std::to_string(scriptid) + "_" + funcname;
-	LuaFunction<int32_t> func = m_LuaState->GetGlobal(fullfuncname.c_str());
+	auto luaObj = m_LuaState->GetGlobal(fullfuncname.c_str());
+	LuaFunction<int32_t> func(luaObj);
 	int v = func(Param0, Param1, Param2, Param3, Param4, Param5);
 
 	return v;
@@ -416,7 +421,8 @@ int32 LuaSystem::RunScriptFunction(MapID_t nMapID, ScriptID_t scriptid, const ch
 		return -1;
 	}
 	std::string fullfuncname = "x" + std::to_string(scriptid) + "_" + funcname;
-	LuaFunction<int32_t> func = m_LuaState->GetGlobal(fullfuncname.c_str());
+	auto luaObj = m_LuaState->GetGlobal(fullfuncname.c_str());
+	LuaFunction<int32_t> func(luaObj);
 	int v = func(Param0, Param1, Param2, Param3, Param4, Param5, Param6);
 
 	return v;
@@ -441,7 +447,8 @@ int32				LuaSystem::RunScriptFunction(MapID_t nMapID, ScriptID_t idScript, const
 		return -1;
 	}
 	std::string fullfuncname = "x" + std::to_string(idScript) + "_" + szFunction;
-	LuaFunction<int32_t> func = m_LuaState->GetGlobal(fullfuncname.c_str());
+	auto luaObj = m_LuaState->GetGlobal(fullfuncname.c_str());
+	LuaFunction<int32_t> func(luaObj);
 	int v = func(Param0, Param1, Param2, Param3);
 
 	return v;

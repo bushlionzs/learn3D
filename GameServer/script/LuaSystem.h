@@ -13,7 +13,7 @@
 #include "LuaStack.h"
 #include "IntegerHashMap.h"
 #include "LuaScriptVM.h"
-
+#include "LuaPlus.h"
 int32_t LuaFunction_CallScriptFunction(Lua_State* L);
 
 class LuaSystem

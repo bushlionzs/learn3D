@@ -14,51 +14,51 @@ SCDeltailOfHealsAndDamage::~SCDeltailOfHealsAndDamage()
 
 bool SCDeltailOfHealsAndDamage::process()
 {
-	KObject* pObj = (KObject*)(OBJECT_MANAGER_PTR->FindServerObject(m_ObjId));
+	//KObject* pObj = (KObject*)(OBJECT_MANAGER_PTR->FindServerObject(m_ObjId));
 
-	if (nullptr == pObj)
-		return false;
+	//if (nullptr == pObj)
+	//	return false;
 
-	SDamageInfo	infoDamage;
-	infoDamage.m_nSkillID = INVALID_ID;
-	infoDamage.m_nTargetID = m_ObjId;
-	infoDamage.m_nSenderID = mSenderId;
-	infoDamage.m_nSenderLogicCount = mSenderLogicCount;
-	infoDamage.m_nImpactID = INVALID_ID;
-	infoDamage.m_nType = infoDamage.TYPE_HEAL_AND_DAMAGE;
+	//SDamageInfo	infoDamage;
+	//infoDamage.m_nSkillID = INVALID_ID;
+	//infoDamage.m_nTargetID = m_ObjId;
+	//infoDamage.m_nSenderID = mSenderId;
+	//infoDamage.m_nSenderLogicCount = mSenderLogicCount;
+	//infoDamage.m_nImpactID = INVALID_ID;
+	//infoDamage.m_nType = infoDamage.TYPE_HEAL_AND_DAMAGE;
 
-	infoDamage.m_bDeathblow = mDeathBlow;
+	//infoDamage.m_bDeathblow = mDeathBlow;
 
-	
-	infoDamage.m_bHealthDirty = TRUE;
-	infoDamage.m_nHealthIncrement = m_nHpModification;
+	//
+	//infoDamage.m_bHealthDirty = TRUE;
+	//infoDamage.m_nHealthIncrement = m_nHpModification;
 
 
 
-	infoDamage.m_bIsCriticalHit = mCriticalHit;
+	//infoDamage.m_bIsCriticalHit = mCriticalHit;
 
-	static LogicEventData*	logicEvent = nullptr;
+	//static LogicEventData*	logicEvent = nullptr;
 
-	if (logicEvent == nullptr)
-	{
-		logicEvent = new LogicEventData;
-	}
-	logicEvent->Initialize(mSenderId, mSenderLogicCount, &infoDamage);
+	//if (logicEvent == nullptr)
+	//{
+	//	logicEvent = new LogicEventData;
+	//}
+	//logicEvent->Initialize(mSenderId, mSenderLogicCount, &infoDamage);
 
-	/* 如果是子弹技能就缓冲起来，等待子弹碰撞回调 */
-	//if (pPacket->IsHpModificationDirty())
-	{
-		if (BULLET_ENTITY_MANAGER_PTR->PushDamageEvent(*logicEvent)) return MP_CONTINUE;
-	}
+	///* 如果是子弹技能就缓冲起来，等待子弹碰撞回调 */
+	////if (pPacket->IsHpModificationDirty())
+	//{
+	//	if (BULLET_ENTITY_MANAGER_PTR->PushDamageEvent(*logicEvent)) return MP_CONTINUE;
+	//}
 
-	if (infoDamage.m_bDeathblow)
-	{
-		int kk = 0;
-	}
-	ObjectCmd	cmdTemp;
-	cmdTemp.m_wID = OBJ_CMD_LOGIC_EVENT;
-	cmdTemp.pParam[0] = (void*)(&logicEvent);
-	pObj->AddCommand(&cmdTemp);
+	//if (infoDamage.m_bDeathblow)
+	//{
+	//	int kk = 0;
+	//}
+	//ObjectCmd	cmdTemp;
+	//cmdTemp.m_wID = OBJ_CMD_LOGIC_EVENT;
+	//cmdTemp.pParam[0] = (void*)(&logicEvent);
+	//pObj->AddCommand(&cmdTemp);
 	return true;
 }
 

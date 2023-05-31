@@ -42,12 +42,12 @@ Player::Player()
 	mProjectorEffect->createSceneNode(mMouseNode);
 }
 
-void CalculateNodePos(const vector3& fvPosition, FLOAT fModifyHeight, vector3& outPos)
+void CalculateNodePos(const Ogre::Vector3& fvPosition, FLOAT fModifyHeight, Ogre::Vector3& outPos)
 {
 	GameScene* activeScene = GameSceneManager::getSingleton().GetActiveScene();
 
 		//µ±«∞Œª÷√
-	vector3	fvCurObjPos = fvPosition;
+	Ogre::Vector3	fvCurObjPos = fvPosition;
 	FLOAT	fInAirHeight = fvCurObjPos.y;
 
 	//---------------------------------------------------

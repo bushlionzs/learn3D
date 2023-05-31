@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SCCharSkill_Gather.h"
-#include "server/server_manager.h"
+
 
 SCCharSkill_Gather::SCCharSkill_Gather():
 	NetPacket(SC_CHAR_SKILL_GATHER)
@@ -15,7 +15,7 @@ SCCharSkill_Gather::~SCCharSkill_Gather()
 
 bool SCCharSkill_Gather::process()
 {
-	KObject* pObj = (KObject*)OBJECT_MANAGER_PTR->FindServerObject(mObjId);
+	/*KObject* pObj = (KObject*)OBJECT_MANAGER_PTR->FindServerObject(mObjId);
 	if (pObj == NULL) 
 		return false;
 
@@ -29,7 +29,7 @@ bool SCCharSkill_Gather::process()
 	cmdTemp.fParam[5] = mTargetPos.m_fZ;
 	cmdTemp.fParam[6] = mDir;
 	cmdTemp.uParam[7] = mTotalTime;
-	pObj->AddCommand(&cmdTemp);
+	pObj->AddCommand(&cmdTemp);*/
 	
 	return true;
 }

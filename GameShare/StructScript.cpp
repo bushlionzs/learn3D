@@ -9,7 +9,6 @@
 
 #include "stdafx.h"
 #include "StructScript.h"
-#include "StreamSystem.h"
 
 /*
  =======================================================================================================================
@@ -41,47 +40,7 @@ void SXParam::Clear()
 	memset(m_aStrValue, 0, sizeof(char) * MAX_STR_SIZE);
 }
 
-/*
- =======================================================================================================================
- =======================================================================================================================
- */
-void SXParam::Reci(RecieveStream &iStream)
-{
-	iStream.Reci((char *) &m_IntCount, sizeof(uchar));
-	iStream.Reci((char *) &m_StrCount, sizeof(uchar));
 
-	if(m_IntCount > 0)
-	{
-		iStream.Reci((char *) &m_aIntValue, sizeof(int32) * m_IntCount);
-	}
-
-	if(m_StrCount > 0)
-	{
-		iStream.Reci((char *) &m_aStrOffset, sizeof(int16) * m_StrCount);
-		iStream.Reci((char *) &m_aStrValue, sizeof(char) * (m_aStrOffset[m_StrCount - 1] + 1));
-	}
-}
-
-/*
- =======================================================================================================================
- =======================================================================================================================
- */
-void SXParam::Send(SendStream &oStream) const
-{
-	oStream.Send((char *) &m_IntCount, sizeof(uchar));
-	oStream.Send((char *) &m_StrCount, sizeof(uchar));
-
-	if(m_IntCount > 0)
-	{
-		oStream.Send((char *) &m_aIntValue, sizeof(int32) * m_IntCount);
-	}
-
-	if(m_StrCount > 0)
-	{
-		oStream.Send((char *) &m_aStrOffset, sizeof(int16) * m_StrCount);
-		oStream.Send((char *) &m_aStrValue, sizeof(char) * (m_aStrOffset[m_StrCount - 1] + 1));
-	}
-}
 
 /*
  =======================================================================================================================
@@ -253,61 +212,6 @@ void SXScript::Clear()
 	memset(m_aParam, 0, sizeof(int32) * MAX_INT_PARAM_COUNT);
 }
 
-/*
- =======================================================================================================================
- =======================================================================================================================
- */
-void SXScript::Reci(RecieveStream &iStream)
-{
-	iStream.Reci((char *) &m_ScriptID, sizeof(ScriptID_t));
-
-	iStream.Reci((char *) &m_uFunNameSize, sizeof(uchar));
-	if(m_uFunNameSize > 0)
-	{
-		iStream.Reci((char *) &m_szFunName, sizeof(char) * m_uFunNameSize);
-	}
-
-	/*
-	 * iStream.Reci( (char*)&m_uStrParamSize, sizeof(uchar) );
-	 * if( m_uStrParamSize>0 ) ;
-	 * { ;
-	 * iStream.Reci( (char*)&m_szStrParam, sizeof(char)*m_uStrParamSize );
-	 * }
-	 */
-	iStream.Reci((char *) &m_uParamCount, sizeof(uchar));
-	if(m_uParamCount > 0)
-	{
-		iStream.Reci((char *) &m_aParam, sizeof(int32) * m_uParamCount);
-	}
-}
-
-/*
- =======================================================================================================================
- =======================================================================================================================
- */
-void SXScript::Send(SendStream &oStream) const
-{
-	oStream.Send((char *) &m_ScriptID, sizeof(ScriptID_t));
-
-	oStream.Send((char *) &m_uFunNameSize, sizeof(uchar));
-	if(m_uFunNameSize > 0)
-	{
-		oStream.Send((char *) &m_szFunName, sizeof(char) * m_uFunNameSize);
-	}
-
-	/*
-	 * oStream.Send( (char*)&m_uStrParamSize, sizeof(uchar) );
-	 * if( m_uStrParamSize>0 ) ;
-	 * { ;
-	 * oStream.Send( (char*)&m_szStrParam, sizeof(char)*m_uStrParamSize );
-	 * }
-	 */
-	oStream.Send((char *) &m_uParamCount, sizeof(uchar));
-	if(m_uParamCount > 0)
-	{
-		oStream.Send((char *) &m_aParam, sizeof(int32) * m_uParamCount);
-	}
-}
 
 /*
  =======================================================================================================================

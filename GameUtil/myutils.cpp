@@ -1,4 +1,3 @@
-#include "OgreHeader.h"
 #include "myutils.h"
 #include <fstream>
 #include <sstream>
@@ -7,7 +6,7 @@
 #include <chrono>
 #include <locale>
 #include <codecvt>
-#include "OgreSceneNode.h"
+#include <windows.h>
 
 
 std::string getPath(const char* name)
@@ -83,7 +82,7 @@ std::string getShortFilename(const std::string& name)
     return tmp;
 }
 
-bool loadStringFromMemory(String& str, char*& pCurrentPos)
+bool loadStringFromMemory(std::string& str, char*& pCurrentPos)
 {
     if (pCurrentPos)
     {

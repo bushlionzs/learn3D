@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SCSkillUpgrade.h"
-#include "server/server_manager.h"
+
 
 SCSkillUpgrade::SCSkillUpgrade():
 	NetPacket(SC_SKILL_UPGRADE)
@@ -15,38 +15,38 @@ SCSkillUpgrade::~SCSkillUpgrade()
 
 bool SCSkillUpgrade::process()
 {
-	KCharacter_Me* pMySelf = OBJECT_MANAGER_PTR->GetMySelf();
-	if (NULL == pMySelf)
-		return false;
+	//KCharacter_Me* pMySelf = OBJECT_MANAGER_PTR->GetMySelf();
+	//if (NULL == pMySelf)
+	//	return false;
 
-	// 学习成功
-	if (false == mSuccess)
-		return false;
+	//// 学习成功
+	//if (false == mSuccess)
+	//	return false;
 
-	switch (mType)
-	{
-	case TYPE_SKILL:
-	{
-		const SkillDetail* skill = pMySelf->GetCharacterData()->Get_Skill(mSkillId);
-		if (NULL == skill)
-		{
-			pMySelf->GetCharacterData()->Set_Skill(mSkillId, TRUE);
-		}
-		pMySelf->GetCharacterData()->Set_SkillLevel(mSkillId, mSkillLevel);
+	//switch (mType)
+	//{
+	//case TYPE_SKILL:
+	//{
+	//	const SkillDetail* skill = pMySelf->GetCharacterData()->Get_Skill(mSkillId);
+	//	if (NULL == skill)
+	//	{
+	//		pMySelf->GetCharacterData()->Set_Skill(mSkillId, TRUE);
+	//	}
+	//	pMySelf->GetCharacterData()->Set_SkillLevel(mSkillId, mSkillLevel);
 
-		/* 通知技能框刷新 */
-		COMMAND_SYS_PTR->AddCommand(GCD_SKILL_UPDATE);
-	}
-	break;
-	case TYPE_INHERENCE:
-	{
-		pMySelf->GetCharacterData()->Set_AttrGift(mSkillId, mSkillLevel);
-		COMMAND_SYS_PTR->AddCommand(GCD_UPDATE_SELF_GIFT);
-	}
-	break;
-	default:
-		break;
-	}
+	//	/* 通知技能框刷新 */
+	//	COMMAND_SYS_PTR->AddCommand(GCD_SKILL_UPDATE);
+	//}
+	//break;
+	//case TYPE_INHERENCE:
+	//{
+	//	pMySelf->GetCharacterData()->Set_AttrGift(mSkillId, mSkillLevel);
+	//	COMMAND_SYS_PTR->AddCommand(GCD_UPDATE_SELF_GIFT);
+	//}
+	//break;
+	//default:
+	//	break;
+	//}
 	
 	return true;
 }

@@ -108,6 +108,218 @@
     <ClInclude Include="Camp.h" />
     <ClInclude Include="TabTemplateLoader.h" />
     <ClInclude Include="StructScript.h" />
+    <ClInclude Include="ScriptCacheMgr.h" />
+    <ClInclude Include="StructCommandScript.h" />
+    <ClInclude Include="net\net_client_message_define.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\net_message.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\net_message_define.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\net_message_manager.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\net_server_message_define.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSCharMove.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSCharUseSkill.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSEventRequest.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSLogin.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSManipulatePet.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSPickItem.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSPlayerRequestBaseAttrib.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSQueryEvent.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSQuestAbandon.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSQuestAccept.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSQuestContinue.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSQuestRefuse.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSQuestSubmit.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSSwapItem.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSTick.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSUnEquip.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSUseAbility.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\CSUseEquip.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\DSCharData.h">
+      <Filter>net\messages\servermessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCAbilityAction.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCAbilityResult.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCAbilitySuccess.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCAddQuest.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCAddSkillToSkillList.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCCharEquipment.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCCharHumanBaseAttrib.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCCharImpactListUpdate.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCCharMove.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCCharSkill_Gather.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCCharStopAction.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCChat.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCCommand.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCCooldownUpdate.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDelObject.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDelQuest.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDeltailOfHealsAndDamage.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDetailAbilityInfo.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDetailAttrib.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDetailAttribPet.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDetailBuff.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDetailEquipList.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDetailItemList.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCDetailSkillList.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCEnterMap.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCItemInfo.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCManipulatePetRet.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCModifyQuest.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCMonsterAttribute.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCNewBeastie.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCNewItem.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCNewItemBox.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCNewMonster.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCNotifyEquip.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCOperateResult.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCPickItemResult.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCQueryEventResult.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCQuestList.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCQuestListRefresh.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCRetSkillSetting.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCScriptCommand.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCSkillUpgrade.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCSwapItem.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCTargetListAndHitFlags.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCUnEquipResult.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
+    <ClInclude Include="net\messages\SCUseEquipResult.h">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActionSetManager.cpp" />
@@ -171,5 +383,221 @@
     <ClCompile Include="Camp.cpp" />
     <ClCompile Include="TabTemplateLoader.cpp" />
     <ClCompile Include="StructScript.cpp" />
+    <ClCompile Include="StructCommandScript.cpp" />
+    <ClCompile Include="net\net_message.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\net_message_manager.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSCharMove.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSCharUseSkill.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSEventRequest.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSLogin.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSManipulatePet.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSPickItem.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSPlayerRequestBaseAttrib.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSQueryEvent.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSQuestAbandon.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSQuestAccept.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSQuestContinue.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSQuestRefuse.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSQuestSubmit.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSSwapItem.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSTick.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSUnEquip.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSUseAbility.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\CSUseEquip.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\DSCharData.cpp">
+      <Filter>net\messages\servermessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCAbilityAction.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCAbilityResult.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCAbilitySuccess.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCAddQuest.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCAddSkillToSkillList.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCCharEquipment.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCCharHumanBaseAttrib.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCCharImpactListUpdate.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCCharMove.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCCharSkill_Gather.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCCharStopAction.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCChat.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCCommand.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCCooldownUpdate.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDelObject.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDelQuest.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDeltailOfHealsAndDamage.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDetailAbilityInfo.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDetailAttrib.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDetailAttribPet.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDetailBuff.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDetailEquipList.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDetailItemList.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCDetailSkillList.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCEnterMap.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCItemInfo.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCManipulatePetRet.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCModifyQuest.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCMonsterAttribute.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCNewBeastie.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCNewItem.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCNewItemBox.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCNewMonster.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCNotifyEquip.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCOperateResult.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCPickItemResult.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCQueryEventResult.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCQuestList.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCQuestListRefresh.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCRetSkillSetting.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCScriptCommand.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCSkillUpgrade.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCSwapItem.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCTargetListAndHitFlags.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCUnEquipResult.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="net\messages\SCUseEquipResult.cpp">
+      <Filter>net\messages\clientmessage</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="net">
+      <UniqueIdentifier>{62b3c6aa-89fe-499f-b655-fc8f472d5e9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net\messages">
+      <UniqueIdentifier>{04104e27-9d26-4ef3-9d4f-7d57d4ca9764}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net\messages\clientmessage">
+      <UniqueIdentifier>{9635a7fc-e1d2-40bb-ad19-7975b3c98595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net\messages\servermessage">
+      <UniqueIdentifier>{f1681788-c067-4bbe-834b-cc79370fdc10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

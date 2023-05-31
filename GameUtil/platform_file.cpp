@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <time_util.h>
-#ifdef _WIN32
+#include "time_util.h"
+#ifdef WIN32
 #include <tchar.h>
+#include <WinSock2.h>
+#include <Windows.h>
 #endif
 bool get_file_content(const char* filename, std::string& content)
 {
@@ -31,7 +33,7 @@ bool get_file_content(const char* filename, std::string& content)
 }
 
 
-#ifdef _WIN32
+#ifdef _WINDOWS_
 
 typedef struct _dirdesc {
     int     dd_fd;      /** file descriptor associated with directory */

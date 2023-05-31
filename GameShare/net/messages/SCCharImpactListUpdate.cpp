@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SCCharImpactListUpdate.h"
-#include "server/server_manager.h"
+
 
 SCCharImpactListUpdate::SCCharImpactListUpdate():
 	NetPacket(SC_IMPACTLIST_UPDATE)

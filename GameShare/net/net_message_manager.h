@@ -1,6 +1,7 @@
 #pragma once
 #include "platform_mutex.h"
 #include "scoped_lock.h"
+#include "GameSingleton.h"
 class NetPacket;
 class NetManager:public GameSingleton<NetManager>
 {

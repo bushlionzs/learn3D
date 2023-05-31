@@ -1,13 +1,13 @@
 #pragma once
 #include "stdafx.h"
 #include "CSUseAbility.h"
-#include "server/map/map_manager.h"
-#include "server/map/game_map.h"
-#include "server/gameobject/ObjectManager.h"
-#include "server/gameobject/Player.h"
-#include "server/gameobject/Behavior_Player.h"
-#include "server/skill/Skill_Base.h"
-#include "server/skill/Skill_Manager.h"
+#include "map/map_manager.h"
+#include "map/game_map.h"
+#include "gameobject/ObjectManager.h"
+#include "gameobject/Player.h"
+#include "gameobject/Behavior_Player.h"
+#include "skill/Skill_Base.h"
+#include "skill/Skill_Manager.h"
 #include "net/messages/SCAbilityResult.h"
 
 CSUseAbility::CSUseAbility():
@@ -29,7 +29,7 @@ bool CSUseAbility::process()
 	pSkill = g_pSkillManager->GetAbility(mAbilityId);
 	if (pSkill == NULL)
 	{
-		return MP_CONTINUE;
+		return false;
 	}
 
 
@@ -49,7 +49,7 @@ bool CSUseAbility::process()
 	pAbilityOpera = pPlayer->GetAbilityOpera();
 	if (0 != pAbilityOpera->m_SkillID)
 	{
-		return MP_CONTINUE;
+		return false;
 	}
 
 	pPlayer->reset_AbilityOpera();

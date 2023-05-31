@@ -14,7 +14,7 @@ SCTargetListAndHitFlags::~SCTargetListAndHitFlags()
 
 bool SCTargetListAndHitFlags::process()
 {
-	KObject* pObj = (KObject*)(OBJECT_MANAGER_PTR->FindServerObject(mObjId));
+	/*KObject* pObj = (KObject*)(OBJECT_MANAGER_PTR->FindServerObject(mObjId));
 	if (pObj == NULL)
 		return false;
 
@@ -45,7 +45,7 @@ bool SCTargetListAndHitFlags::process()
 	const vector3& pos = pObj->GetPosition();
 
 	float deltax = pos.x - mPositionX;
-	float deltaz = pos.z - mPositionZ;
+	float deltaz = pos.z - mPositionZ;*/
 
 	return true;
 }

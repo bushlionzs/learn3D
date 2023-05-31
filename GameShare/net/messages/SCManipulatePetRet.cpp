@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SCManipulatePetRet.h"
-#include "server/server_manager.h"
+
 
 SCManipulatePetRet::SCManipulatePetRet():
 	NetPacket(SC_MANIPULATE_PET_RESULT)

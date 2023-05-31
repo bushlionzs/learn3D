@@ -72,10 +72,10 @@ const CMapPath::PathUnit & CMapPath::GetConstPathUnit(int32 nIndex) const
  =======================================================================================================================
  =======================================================================================================================
  */
-BOOL CMapPath::CheckCross(vector2 fvmStart, vector2 fvmEnd, const CMapRegion *pcr)
+BOOL CMapPath::CheckCross(Ogre::Vector2 fvmStart, Ogre::Vector2 fvmEnd, const CMapRegion *pcr)
 {
-	vector2 fv0;
-	vector2 fv1;
+	Ogre::Vector2 fv0;
+	Ogre::Vector2 fv1;
 
 	if(NULL == pcr)
 	{
@@ -102,7 +102,8 @@ BOOL CMapPath::CheckCross(vector2 fvmStart, vector2 fvmEnd, const CMapRegion *pc
  =======================================================================================================================
  =======================================================================================================================
  */
-BOOL CMapPath::CheckCross(vector2 fvMS, vector2 fvME, vector2 fvNS, vector2 fvNE)
+BOOL CMapPath::CheckCross(
+	Ogre::Vector2 fvMS, Ogre::Vector2 fvME, Ogre::Vector2 fvNS, Ogre::Vector2 fvNE)
 {
 	if(std::max(fvMS.x, fvME.x) <= std::min(fvNS.x, fvNE.x))
 	{
@@ -139,9 +140,9 @@ BOOL CMapPath::CheckCross(vector2 fvMS, vector2 fvME, vector2 fvNS, vector2 fvNE
  =======================================================================================================================
  =======================================================================================================================
  */
-vector2 CMapPath::fvAdd(vector2 fv1, vector2 fv2)
+Ogre::Vector2 CMapPath::fvAdd(Ogre::Vector2 fv1, Ogre::Vector2 fv2)
 {
-	vector2 fvResult = vector2(fv1.x + fv2.x, fv1.y + fv2.y);
+	Ogre::Vector2 fvResult = Ogre::Vector2(fv1.x + fv2.x, fv1.y + fv2.y);
 
 	return fvResult;
 }
@@ -150,9 +151,9 @@ vector2 CMapPath::fvAdd(vector2 fv1, vector2 fv2)
  =======================================================================================================================
  =======================================================================================================================
  */
-vector2 CMapPath::fvSub(vector2 fv1, vector2 fv2)
+Ogre::Vector2 CMapPath::fvSub(Ogre::Vector2 fv1, Ogre::Vector2 fv2)
 {
-	vector2 fvResult = vector2(fv1.x - fv2.x, fv1.y - fv2.y);
+	Ogre::Vector2 fvResult = Ogre::Vector2(fv1.x - fv2.x, fv1.y - fv2.y);
 
 	return fvResult;
 }
@@ -161,7 +162,7 @@ vector2 CMapPath::fvSub(vector2 fv1, vector2 fv2)
  =======================================================================================================================
  =======================================================================================================================
  */
-FLOAT CMapPath::fvMulti(vector2 fv1, vector2 fv2)
+FLOAT CMapPath::fvMulti(Ogre::Vector2 fv1, Ogre::Vector2 fv2)
 {
 	return(fv1.x * fv2.y - fv1.y * fv2.x);
 }
@@ -170,7 +171,7 @@ FLOAT CMapPath::fvMulti(vector2 fv1, vector2 fv2)
  =======================================================================================================================
  =======================================================================================================================
  */
-BOOL CMapPath::fvEuqual(vector2 fv1, vector2 fv2)
+BOOL CMapPath::fvEuqual(Ogre::Vector2 fv1, Ogre::Vector2 fv2)
 {
 	if((abs(fv1.x - fv2.x) < 1e-10) && (abs(fv1.y - fv2.y) < 1e-10))
 	{
@@ -184,7 +185,7 @@ BOOL CMapPath::fvEuqual(vector2 fv1, vector2 fv2)
  =======================================================================================================================
  =======================================================================================================================
  */
-FLOAT CMapPath::fvDistancePow(vector2 fv1, vector2 fv2)
+FLOAT CMapPath::fvDistancePow(Ogre::Vector2 fv1, Ogre::Vector2 fv2)
 {
 	return pow((fv1.x - fv2.x), 2) + pow((fv1.y - fv2.y), 2);
 }
@@ -193,7 +194,7 @@ FLOAT CMapPath::fvDistancePow(vector2 fv1, vector2 fv2)
     计算从开始点到结束点的路径
  =======================================================================================================================
  */
-BOOL CMapPath::CreateMovePath(const vector2 &fvCurrent, const vector2 &fvTarget)
+BOOL CMapPath::CreateMovePath(const Ogre::Vector2&fvCurrent, const Ogre::Vector2&fvTarget)
 {
 	KYLIN_TRY
 
@@ -243,13 +244,13 @@ BOOL CMapPath::CreateMovePath(const vector2 &fvCurrent, const vector2 &fvTarget)
 			tmpAStarNodeArray[i]->getVertexNormal() *
 			PATH_NODE_OFFSET;	
 
-		newPathUnit.fvStart = vector2(tmpStart.getX(), tmpStart.getZ());
+		newPathUnit.fvStart = Ogre::Vector2(tmpStart.getX(), tmpStart.getZ());
 
 		Orphigine::NeVector3	tmpTarget = tmpAStarNodeArray[i - 1]->getPosition() +
 			tmpAStarNodeArray[i - 1]->getVertexNormal() *
 			PATH_NODE_OFFSET;	
 
-		newPathUnit.fvTarget = vector2(tmpTarget.getX(), tmpTarget.getZ());
+		newPathUnit.fvTarget = Ogre::Vector2(tmpTarget.getX(), tmpTarget.getZ());
 		m_vPosStack.push_back(newPathUnit);
 	}
 
@@ -271,7 +272,7 @@ BOOL CMapPath::CreateMovePath(const vector2 &fvCurrent, const vector2 &fvTarget)
     当前点是否在不可行走区域之内 目标点是否合法 ;
  =======================================================================================================================
  */
-BOOL CMapPath::IsPointInUnreachRegion(const vector2 &fvTarget)
+BOOL CMapPath::IsPointInUnreachRegion(const Ogre::Vector2&fvTarget)
 {
 	Orphigine::NeVector3	tmpTarget = Orphigine::NeVector3(fvTarget.x, 0.0f, fvTarget.y);
 	GameScene* tmpActiveScene = (GameScene*)GameSceneManager::getSingleton().GetActiveScene();
@@ -288,21 +289,21 @@ BOOL CMapPath::IsPointInUnreachRegion(const vector2 &fvTarget)
 }
 
 bool CMapPath::IsPassRegion(
-	const vector2 &fvCurrPos, 
-	const vector2 &fvTargetPos, 
+	const Ogre::Vector2&fvCurrPos,
+	const Ogre::Vector2&fvTargetPos,
 	PassRegionInfo &outRegionData)
 {
 	KYLIN_TRY GameScene*pActiveScene = (GameScene*)GameSceneManager::getSingleton().GetActiveScene();
 
 	if(NULL == pActiveScene) return FALSE;
 
-	static vector2 q1;
-	static vector2 q2;
-	static vector2 p1;
-	static vector2 p2;
-	static vector2 fvCrossPos;
-	static vector2 fvRegionPos1;					/* 阻挡顶点 */
-	static vector2 fvRegionPos2;
+	static Ogre::Vector2 q1;
+	static Ogre::Vector2 q2;
+	static Ogre::Vector2 p1;
+	static Ogre::Vector2 p2;
+	static Ogre::Vector2 fvCrossPos;
+	static Ogre::Vector2 fvRegionPos1;					/* 阻挡顶点 */
+	static Ogre::Vector2 fvRegionPos2;
 	static Orphigine::NeVector3 vertexNormal;		/* 阻挡边的法线 */
 
 	p1 = fvCurrPos;
@@ -400,7 +401,7 @@ bool CMapPath::IsPassRegion(
 					fCrossPosY = tempRight / tempLeft;
 				}
 
-				FLOAT fTempDis = CGameMath::KLU_GetDistSq(fvCurrPos, vector2(fCrossPosX, fCrossPosY));
+				FLOAT fTempDis = fvCurrPos.squaredDistance(Ogre::Vector2(fCrossPosX, fCrossPosY));
 
 				if(fMinDis > fTempDis)
 				{
@@ -455,19 +456,21 @@ bool CMapPath::IsPassRegion(
  =======================================================================================================================
  =======================================================================================================================
  */
-BOOL CMapPath::GetPathDirect(const vector2 &fvCurrent, const vector2 &fvTarget, BOOL bOffset, FLOAT fMinDist)
+BOOL CMapPath::GetPathDirect(
+	const Ogre::Vector2&fvCurrent,
+	const Ogre::Vector2&fvTarget, BOOL bOffset, FLOAT fMinDist)
 {
 	KYLIN_TRY m_vPosStack.clear();
 
 	/* 移动距离过近 */
-	FLOAT fToTargetDist = CGameMath::KLU_GetDist(fvCurrent, fvTarget);
+	FLOAT fToTargetDist = fvCurrent.distance(fvTarget);
 
 	if(fToTargetDist < fMinDist)
 	{
 		return FALSE;
 	}
 
-	vector2 fvFinalPos = fvTarget;
+	Ogre::Vector2 fvFinalPos = fvTarget;
 	static PassRegionInfo RegionInfo;
 
 	if(IsPassRegion(fvCurrent, fvTarget, RegionInfo))
@@ -477,7 +480,7 @@ BOOL CMapPath::GetPathDirect(const vector2 &fvCurrent, const vector2 &fvTarget, 
 		/* 是否贴边走 */
 		if(bOffset)
 		{
-			vector2 fvOffsetPos = RegionInfo.fvCrossPos;
+			Ogre::Vector2 fvOffsetPos = RegionInfo.fvCrossPos;
 
 			if
 			(
@@ -514,7 +517,7 @@ BOOL CMapPath::GetPathDirect(const vector2 &fvCurrent, const vector2 &fvTarget, 
 		}
 
 		/* 过于接近，不再行走,防止突然转向 */
-		if(CGameMath::KLU_GetDistSq(fvCurrent, fvFinalPos) < 0.1f) return FALSE;
+		if(fvCurrent.squaredDistance(fvFinalPos) < 0.1f) return FALSE;
 	}
 
 	PathUnit newPathUnit;
@@ -528,6 +531,13 @@ BOOL CMapPath::GetPathDirect(const vector2 &fvCurrent, const vector2 &fvTarget, 
 	return TRUE;
 }
 
+
+FLOAT V2_Multiply(
+	const Ogre::Vector2& fvSp, const Ogre::Vector2& fvEp, const Ogre::Vector2& fvOp)
+{
+	return((fvSp.x - fvOp.x) * (fvEp.y - fvOp.y) - (fvEp.x - fvOp.x) * (fvSp.y - fvOp.y));
+}
+
 /*
  =======================================================================================================================
     撞到阻挡时, 如果距离阻挡很近, 就沿阻挡边计算一个偏移, 让角色贴阻挡边走
@@ -535,17 +545,17 @@ BOOL CMapPath::GetPathDirect(const vector2 &fvCurrent, const vector2 &fvTarget, 
  */
 BOOL CMapPath::GetRegionOffsetPos
 (
-	const vector2	&fvCurrPos,
-	const vector2	&fvCrossPos,
-	const vector2 fvRegionPos1,
-	const vector2 fvRegionPos2,
+	const Ogre::Vector2&fvCurrPos,
+	const Ogre::Vector2&fvCrossPos,
+	const Ogre::Vector2 fvRegionPos1,
+	const Ogre::Vector2 fvRegionPos2,
 	FLOAT fOffsetDist,
-	vector2 &fvOutPos
+	Ogre::Vector2&fvOutPos
 )
 {
 	KYLIN_TRY FLOAT fToRegionDist = 1.f;
-	FLOAT fMult = CGameMath::KLU_Multiply(fvRegionPos1, fvCurrPos, fvRegionPos2);
-	FLOAT fRegionLength = CGameMath::KLU_GetDist(fvRegionPos1, fvRegionPos2);
+	FLOAT fMult = V2_Multiply(fvRegionPos1, fvCurrPos, fvRegionPos2);
+	FLOAT fRegionLength = fvRegionPos1.distance(fvRegionPos2);
 
 	if(fRegionLength > 0.0001f)
 	{
@@ -554,7 +564,7 @@ BOOL CMapPath::GetRegionOffsetPos
 
 	if(fToRegionDist <= 0.5f)	/* 当前位置到阻挡的距离足够近 */
 	{
-		FLOAT fToCrossDist = CGameMath::KLU_GetDist(fvCurrPos, fvCrossPos);
+		FLOAT fToCrossDist = fvCurrPos.distance(fvCrossPos);
 		FLOAT fSin = 1.f;
 
 		if(fToCrossDist > 0.0001f)
@@ -566,11 +576,11 @@ BOOL CMapPath::GetRegionOffsetPos
 
 		if(fSin < fNeed)		/* 入射角大于一定角度 */
 		{
-			vector2 fvRegionWay = fvRegionPos2 - fvRegionPos1;
+			Ogre::Vector2 fvRegionWay = fvRegionPos2 - fvRegionPos1;
 
 			fvRegionWay.normalise();
 
-			vector2 fvToCrossWay = fvCrossPos - fvCurrPos;
+			Ogre::Vector2 fvToCrossWay = fvCrossPos - fvCurrPos;
 
 			fvToCrossWay.normalise();
 
@@ -598,8 +608,8 @@ BOOL CMapPath::GetRegionOffsetPos
  */
 BOOL CMapPath::CheckCross
 (
-	vector2 fvStart,	/* 直线的开始点。 */
-	vector2 fvEnd,		/* 直线的结束点。 */
+	Ogre::Vector2 fvStart,	/* 直线的开始点。 */
+	Ogre::Vector2 fvEnd,		/* 直线的结束点。 */
 	const CMapRegion *pcr, /* 要查找的直线。 */
 	FLOAT &fFindX,		/* 找到的交点x。 */
 	FLOAT &fFindY,		/* 找到的交点y */
@@ -612,8 +622,8 @@ BOOL CMapPath::CheckCross
 		return FALSE;
 	}
 
-	vector2 p1;
-	vector2 p2;
+	Ogre::Vector2 p1;
+	Ogre::Vector2 p2;
 	FLOAT fDistance = 10000.0f;
 	FLOAT fDis = 0;
 	BOOL bFind = FALSE;
@@ -662,10 +672,10 @@ BOOL CMapPath::CheckCross
  */
 BOOL CMapPath::CheckLineCross
 (
-	vector2 fv1Start,	/* 直线1的开始点。 */
-	vector2 fv1End,		/* 直线1的结束点。 */
-	vector2 fv2Start,	/* 直线2的开始点。 */
-	vector2 fv2End,		/* 直线2的结束点。 */
+	Ogre::Vector2 fv1Start,	/* 直线1的开始点。 */
+	Ogre::Vector2 fv1End,		/* 直线1的结束点。 */
+	Ogre::Vector2 fv2Start,	/* 直线2的开始点。 */
+	Ogre::Vector2 fv2End,		/* 直线2的结束点。 */
 	FLOAT &fcrossx,		/* 找到的交点x。 */
 	FLOAT &fcrossy		/* 找到的交点y */
 )
@@ -824,10 +834,12 @@ BOOL CMapPath::CheckLineCross
 	}
 }
 
-BOOL CMapPath::MoveTo(const vector2 fvOrigin , const vector2 fvTarget, FLOAT fModifyDist, BOOL bDirectMove)
+BOOL CMapPath::MoveTo(
+	const Ogre::Vector2 fvOrigin ,
+	const Ogre::Vector2 fvTarget, FLOAT fModifyDist, BOOL bDirectMove)
 {
-	vector2	fvCurPos		= fvOrigin;
-	vector2	fvTargetPos		= fvTarget;	
+	Ogre::Vector2	fvCurPos		= fvOrigin;
+	Ogre::Vector2	fvTargetPos		= fvTarget;
 	FLOAT	fContainDist	= 0.f;		/* 容错距离 */
 	BOOL	bResult			= TRUE;
 	BOOL	bHaveOutlet		= FALSE;	/* 需要出口路点 */
@@ -849,22 +861,22 @@ BOOL CMapPath::MoveTo(const vector2 fvOrigin , const vector2 fvTarget, FLOAT fMo
 		/* 已经进入阻挡时, 向4个方向扩展1米距离, 寻找出口 */
 		if(bCurrInRegion)
 		{
-			if(FALSE == IsPointInUnreachRegion(vector2(fvCurPos.x + 1.f, fvCurPos.y)))
+			if(FALSE == IsPointInUnreachRegion(Ogre::Vector2(fvCurPos.x + 1.f, fvCurPos.y)))
 			{
 				fvCurPos.x += 1.f;
 				bHaveOutlet = TRUE;
 			}
-			else if(FALSE == IsPointInUnreachRegion(vector2(fvCurPos.x - 1.f, fvCurPos.y)))
+			else if(FALSE == IsPointInUnreachRegion(Ogre::Vector2(fvCurPos.x - 1.f, fvCurPos.y)))
 			{
 				fvCurPos.x -= 1.f;
 				bHaveOutlet = TRUE;
 			}
-			else if(FALSE == IsPointInUnreachRegion(vector2(fvCurPos.x, fvCurPos.y + 1.f)))
+			else if(FALSE == IsPointInUnreachRegion(Ogre::Vector2(fvCurPos.x, fvCurPos.y + 1.f)))
 			{
 				fvCurPos.y += 1.f;
 				bHaveOutlet = TRUE;
 			}
-			else if(FALSE == IsPointInUnreachRegion(vector2(fvCurPos.x, fvCurPos.y - 1.f)))
+			else if(FALSE == IsPointInUnreachRegion(Ogre::Vector2(fvCurPos.x, fvCurPos.y - 1.f)))
 			{
 				fvCurPos.y -= 1.f;
 				bHaveOutlet = TRUE;
@@ -872,7 +884,7 @@ BOOL CMapPath::MoveTo(const vector2 fvOrigin , const vector2 fvTarget, FLOAT fMo
 			else
 			{
 				/* 以点击的方向做偏移, 寻找出口, 并设置为第一个路点 */
-				const vector2	&fvOutlet = GetTargetPos(fvCurPos, fvTargetPos, 1.f, 0.f);
+				const Ogre::Vector2&fvOutlet = GetTargetPos(fvCurPos, fvTargetPos, 1.f, 0.f);
 
 				if(FALSE == IsPointInUnreachRegion(fvOutlet))
 				{
@@ -893,19 +905,19 @@ BOOL CMapPath::MoveTo(const vector2 fvOrigin , const vector2 fvTarget, FLOAT fMo
 			fContainDist = 1.0f;
 			if(fModifyDist > fContainDist)
 			{
-				if(FALSE == IsPointInUnreachRegion(vector2(fvTargetPos.x + fContainDist, fvTargetPos.y)))
+				if(FALSE == IsPointInUnreachRegion(Ogre::Vector2(fvTargetPos.x + fContainDist, fvTargetPos.y)))
 				{
 					fvTargetPos.x += fContainDist;
 				}
-				else if(FALSE == IsPointInUnreachRegion(vector2(fvTargetPos.x - fContainDist, fvTargetPos.y)))
+				else if(FALSE == IsPointInUnreachRegion(Ogre::Vector2(fvTargetPos.x - fContainDist, fvTargetPos.y)))
 				{
 					fvTargetPos.x -= fContainDist;
 				}
-				else if(FALSE == IsPointInUnreachRegion(vector2(fvTargetPos.x, fvTargetPos.y + fContainDist)))
+				else if(FALSE == IsPointInUnreachRegion(Ogre::Vector2(fvTargetPos.x, fvTargetPos.y + fContainDist)))
 				{
 					fvTargetPos.y += fContainDist;
 				}
-				else if(FALSE == IsPointInUnreachRegion(vector2(fvTargetPos.x, fvTargetPos.y - fContainDist)))
+				else if(FALSE == IsPointInUnreachRegion(Ogre::Vector2(fvTargetPos.x, fvTargetPos.y - fContainDist)))
 				{
 					fvTargetPos.y -= fContainDist;
 				}
@@ -977,7 +989,10 @@ BOOL CMapPath::MoveTo(const vector2 fvOrigin , const vector2 fvTarget, FLOAT fMo
 =======================================================================================================================
 =======================================================================================================================
 */
-void CMapPath::ModifyPathNode(const vector2 &fvCurPos, const vector2 &TargetPos, GLPos *pPathNode, uint32 &uNodeNum, FLOAT fModifyDist)
+void CMapPath::ModifyPathNode(
+	const Ogre::Vector2&fvCurPos,
+	const Ogre::Vector2&TargetPos,
+	GLPos *pPathNode, uint32 &uNodeNum, FLOAT fModifyDist)
 {
 	FLOAT fDist = fModifyDist - 0.5f; /* 误差修正 */
 
@@ -989,13 +1004,13 @@ void CMapPath::ModifyPathNode(const vector2 &fvCurPos, const vector2 &TargetPos,
 
 	if(1 == uNodeNum)
 	{
-		vector2 fvPos = GetTargetPos(fvCurPos, TargetPos, fDist);
+		Ogre::Vector2 fvPos = GetTargetPos(fvCurPos, TargetPos, fDist);
 		pPathNode[0].m_fX = fvPos.x;
 		pPathNode[0].m_fZ = fvPos.y;
 	}
 	else if(uNodeNum >= 2)
 	{
-		vector2 fvCur(pPathNode[uNodeNum-2].m_fX, pPathNode[uNodeNum-2].m_fZ);
+		Ogre::Vector2 fvCur(pPathNode[uNodeNum-2].m_fX, pPathNode[uNodeNum-2].m_fZ);
 		int32	nCount = 0;
 
 		for (uint32 i = uNodeNum - 1; i >= 1; --i)
@@ -1004,7 +1019,7 @@ void CMapPath::ModifyPathNode(const vector2 &fvCurPos, const vector2 &TargetPos,
 				return;
 			++nCount;
 
-			vector2 fvTarget(pPathNode[i].m_fX, pPathNode[i].m_fZ);
+			Ogre::Vector2 fvTarget(pPathNode[i].m_fX, pPathNode[i].m_fZ);
 
 			if(ModifyTargetPos(fvCur, fvTarget, fDist))
 			{
@@ -1025,7 +1040,9 @@ void CMapPath::ModifyPathNode(const vector2 &fvCurPos, const vector2 &TargetPos,
 =======================================================================================================================
 =======================================================================================================================
 */
-BOOL CMapPath::ModifyTargetPos(const vector2& fvCurPos, vector2& fvTargetOut, FLOAT fModifyDist)
+BOOL CMapPath::ModifyTargetPos(
+	const Ogre::Vector2& fvCurPos,
+	Ogre::Vector2& fvTargetOut, FLOAT fModifyDist)
 {
 	if(fModifyDist <= 0.f)
 		return FALSE;
@@ -1076,10 +1093,12 @@ BOOL CMapPath::ModifyTargetPos(const vector2& fvCurPos, vector2& fvTargetOut, FL
 =======================================================================================================================
 =======================================================================================================================
 */
-vector2 CMapPath::GetTargetPos(const vector2& fvCurPos, const vector2& TargetPos, FLOAT fDist, FLOAT fWarp)
+Ogre::Vector2 CMapPath::GetTargetPos(
+	const Ogre::Vector2& fvCurPos,
+	const Ogre::Vector2& TargetPos, FLOAT fDist, FLOAT fWarp)
 {
-	vector2 fvTarget;
-	FLOAT fMTDist = CGameMath::KLU_GetDist(fvCurPos, TargetPos);
+	Ogre::Vector2 fvTarget;
+	FLOAT fMTDist = fvCurPos.distance(TargetPos);
 
 	if(0.f == fMTDist)	/* 避免除0 */
 	{

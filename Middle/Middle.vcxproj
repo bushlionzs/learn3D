@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;__WINDOWS__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\miniOgre\base;$(ProjectDir)..\miniOgre\parser;$(ProjectDir)..\miniOgre\models;$(ProjectDir)..\miniOgre\animation;$(ProjectDir)..\miniOgre\platform\windows;$(ProjectDir)..\miniOgre\platform;$(ProjectDir)..\miniOgre\particle;$(ProjectDir)AdvancedAnimation;$(ProjectDir)component;$(ProjectDir)Navigate;$(ProjectDir)effect;$(ProjectDir)physics;$(ProjectDir)..\GameShare;$(ProjectDir)general;$(ProjectDir)scene\scene_actor;$(ProjectDir)scene;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OpCode;$(ProjectDir)..\3rd;$(ProjectDir)..\3rd\bullet3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\miniOgre\base;$(ProjectDir)..\miniOgre\parser;$(ProjectDir)..\miniOgre\models;$(ProjectDir)..\miniOgre\animation;$(ProjectDir)..\GameUtil\windows;$(ProjectDir)..\GameUtil;$(ProjectDir)..\miniOgre\particle;$(ProjectDir)AdvancedAnimation;$(ProjectDir)component;$(ProjectDir)Navigate;$(ProjectDir)effect;$(ProjectDir)physics;$(ProjectDir)..\GameShare;$(ProjectDir)general;$(ProjectDir)scene\scene_actor;$(ProjectDir)scene;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)..\3rd\OpCode;$(ProjectDir)..\3rd;$(ProjectDir)..\3rd\bullet3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -242,11 +242,11 @@
     <ClCompile Include="general\OGPropertyInterface.cpp" />
     <ClCompile Include="general\OgreCpuResource.cpp" />
     <ClCompile Include="general\OgreEffectBillboardChain.cpp" />
-    <ClCompile Include="general\OgreMeshComponentParticleVisualData.cpp" />
     <ClCompile Include="general\OGResources.cpp" />
     <ClCompile Include="general\OgreUserDefinedObject.cpp" />
     <ClCompile Include="general\OGUtil.cpp" />
     <ClCompile Include="general\OGUtils.cpp" />
+    <ClCompile Include="general\skbFileParser.cpp" />
     <ClCompile Include="Navigate\OGNavigate.cpp" />
     <ClCompile Include="Navigate\OGNavigateAStarNodeImp.cpp" />
     <ClCompile Include="Navigate\OGNavigateAStarSolverImp.cpp" />
@@ -455,13 +455,13 @@
     <ClInclude Include="general\OGPropertyInterface.h" />
     <ClInclude Include="general\OgreCpuResource.h" />
     <ClInclude Include="general\OgreEffectBillboardChain.h" />
-    <ClInclude Include="general\OgreMeshComponentParticleVisualData.h" />
     <ClInclude Include="general\OgreParseCommandHelper.h" />
     <ClInclude Include="general\OGResources.h" />
     <ClInclude Include="general\OgreUserDefinedObject.h" />
     <ClInclude Include="general\OGUtil.h" />
     <ClInclude Include="general\OGUtils.h" />
     <ClInclude Include="general\OGVariant.h" />
+    <ClInclude Include="general\skbFileParser.h" />
     <ClInclude Include="Navigate\mat_aos.h" />
     <ClInclude Include="Navigate\OGNavigate.h" />
     <ClInclude Include="Navigate\OGNavigateAStarNode.h" />

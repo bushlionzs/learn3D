@@ -16,7 +16,7 @@
 #include "gameobject/Pet.h"
 #include "gameobject/Monster.h"
 #include "gameobject/Player.h"
-#include "TabDefine.h"
+#include "share/TAB/TabDefine.h"
 #include "gameobject/Behavior_Character.h"
 #include "gameobject/Behavior_Player.h"
 #include "Spell_Interface.h"

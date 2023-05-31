@@ -14,7 +14,7 @@ SCCommand::~SCCommand()
 
 bool SCCommand::process()
 {
-    GAME_DATA_QUEST_PTR->ProcessCommand_(&mSXParam, mUIIndex);
+   // GAME_DATA_QUEST_PTR->ProcessCommand_(&mSXParam, mUIIndex);
     return true;
 }
 

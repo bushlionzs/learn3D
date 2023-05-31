@@ -14,12 +14,12 @@ SCPickItemResult::~SCPickItemResult()
 
 bool SCPickItemResult::process()
 {
-    if (mResultCode == PICK_SUCCESS)
+    /*if (mResultCode == PICK_SUCCESS)
     {
         INPUT_SYS_PTR->SetCaptureType(IC_NONE);
         GAME_CURSOR_PTR->EndUICursor();
         GAME_CURSOR_PTR->SetCursor(CURSOR_NORMAL);
-    }
+    }*/
     
     return true;
 }

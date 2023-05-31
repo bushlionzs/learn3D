@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "SCDetailAttrib.h"
-#include "server/server_manager.h"
-#include "ScriptFunction/GameScriptFunctionTalk.h"
+
 
 SCDetailAttrib::SCDetailAttrib():
 	NetPacket(SC_DETAIL_ATTR)

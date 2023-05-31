@@ -6,7 +6,7 @@
 #include "TabStruct.h"
 #include "IntegerHashMap.h"
 
-
+class CGameTable;
 // ÈÎÎñ±í
 class TableInit_Map_Quest
 {

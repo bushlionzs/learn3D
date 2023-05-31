@@ -1,8 +1,8 @@
 #ifndef __ITEM_INL__
 #define __ITEM_INL__
 #include "StructDB.h"
-#include "TabDefine.h"
-#include "TabDefine_Map_Item.h"
+#include "share/TAB/TabDefine.h"
+#include "share/TAB/TabDefine_Map_Item.h"
 #include "BaseTool.h"
 
 inline int32 Item::GetLayedNum( ) const

@@ -118,7 +118,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;__WINDOWS__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)base;$(ProjectDir)parser;$(ProjectDir)models;$(ProjectDir)multimedia;$(ProjectDir)animation;$(ProjectDir)platform\windows;$(ProjectDir)platform;$(ProjectDir)wow;$(ProjectDir)particle;$(ProjectDir)render\dx12render;$(ProjectDir)render\dx11render;$(ProjectDir)render\vulkanrender;$(ProjectDir)particle\ParticleFX;$(ProjectDir)..\GlslUtil;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd\bullet3\include;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)base;$(ProjectDir)parser;$(ProjectDir)models;$(ProjectDir)multimedia;$(ProjectDir)animation;$(ProjectDir)..\GameUtil\Windows;$(ProjectDir)..\GameUtil;$(ProjectDir)wow;$(ProjectDir)particle;$(ProjectDir)render\dx12render;$(ProjectDir)render\dx11render;$(ProjectDir)render\vulkanrender;$(ProjectDir)particle\ParticleFX;$(ProjectDir)..\GlslUtil;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\stormlib;$(ProjectDir)..\3rd\bullet3\include;$(ProjectDir)..\3rd\ffmpeg\include;$(ProjectDir)..\3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -317,22 +317,6 @@
     <ClCompile Include="particle\ParticleFX\OgreTexture2RotateInterpolatorAffector.cpp" />
     <ClCompile Include="particle\ParticleFX\OgreTexture2ScaleInterpolatorAffector.cpp" />
     <ClCompile Include="particle\ParticleFX\OgreTextureAnimatorAffector.cpp" />
-    <ClCompile Include="platform\double_list.cpp" />
-    <ClCompile Include="platform\message_queue.cpp" />
-    <ClCompile Include="platform\myutils.cpp" />
-    <ClCompile Include="platform\platform_common.cpp" />
-    <ClCompile Include="platform\platform_file.cpp" />
-    <ClCompile Include="platform\platform_file_system.cpp" />
-    <ClCompile Include="platform\platform_log.cpp" />
-    <ClCompile Include="platform\platform_thread.cpp" />
-    <ClCompile Include="platform\platform_util.cpp" />
-    <ClCompile Include="platform\stb_image.cpp" />
-    <ClCompile Include="platform\timer_logic.cpp" />
-    <ClCompile Include="platform\time_util.cpp" />
-    <ClCompile Include="platform\tiny_gltf.cpp" />
-    <ClCompile Include="platform\windows\platform_mutex.cpp" />
-    <ClCompile Include="platform\windows\platform_rw_mutex.cpp" />
-    <ClCompile Include="platform\windows\platform_signal.cpp" />
     <ClCompile Include="render\dx11Render\dx11HardwareBuffer.cpp" />
     <ClCompile Include="render\dx11Render\dx11HardwareBufferManager.cpp" />
     <ClCompile Include="render\dx11Render\dx11HardwarePixelBuffer.cpp" />
@@ -644,29 +628,6 @@
     <ClInclude Include="particle\ParticleFX\OgreTexture2ScaleInterpolatorAffectorFactory.h" />
     <ClInclude Include="particle\ParticleFX\OgreTextureAnimatorAffector.h" />
     <ClInclude Include="particle\particle_common.h" />
-    <ClInclude Include="platform\double_list.h" />
-    <ClInclude Include="platform\json.hpp" />
-    <ClInclude Include="platform\message_queue.h" />
-    <ClInclude Include="platform\myutils.h" />
-    <ClInclude Include="platform\object_index.h" />
-    <ClInclude Include="platform\pid.h" />
-    <ClInclude Include="platform\platform.h" />
-    <ClInclude Include="platform\platform_common.h" />
-    <ClInclude Include="platform\platform_defines.h" />
-    <ClInclude Include="platform\platform_file.h" />
-    <ClInclude Include="platform\platform_file_system.h" />
-    <ClInclude Include="platform\platform_log.h" />
-    <ClInclude Include="platform\platform_thread.h" />
-    <ClInclude Include="platform\platform_util.h" />
-    <ClInclude Include="platform\scoped_lock.h" />
-    <ClInclude Include="platform\stb_image.h" />
-    <ClInclude Include="platform\stb_image_write.h" />
-    <ClInclude Include="platform\timer_logic.h" />
-    <ClInclude Include="platform\time_util.h" />
-    <ClInclude Include="platform\tiny_gltf.h" />
-    <ClInclude Include="platform\windows\platform_mutex.h" />
-    <ClInclude Include="platform\windows\platform_rw_mutex.h" />
-    <ClInclude Include="platform\windows\platform_signal.h" />
     <ClInclude Include="render\dx11Render\dx11Common.h" />
     <ClInclude Include="render\dx11Render\dx11HardwareBuffer.h" />
     <ClInclude Include="render\dx11Render\dx11HardwareBufferManager.h" />
