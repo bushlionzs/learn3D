@@ -23,10 +23,7 @@ namespace Ogre {
 	}
 
 	bool ResourceParserManager::_initialise()
-	{
-		
-		new ShaderManager;
-		
+	{		
 		registerParser(new MaterialScriptParser);
 		registerParser(new ParticleScriptParser);
 		registerParser(ShaderManager::getSingletonPtr());

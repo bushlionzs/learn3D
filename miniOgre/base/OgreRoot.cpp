@@ -18,6 +18,7 @@
 #include "dx12RenderSystem.h"
 #include "VulkanRenderSystem.h"
 #include "VideoManager.h"
+#include "shaderManager.h"
 
 namespace Ogre {
 
@@ -34,7 +35,7 @@ namespace Ogre {
         new VideoManager;
         new Ogre::ParticleSystemManager;
         new Ogre::ControllerManager;
-
+        new ShaderManager;
         mRenderSystem = nullptr;
         mNextFrame = 0;
 
@@ -59,7 +60,6 @@ namespace Ogre {
     void Root::_initialise()
     {
         OgreParticleFx_init();
-        ResourceParserManager::getSingletonPtr()->_initialise();
         ParticleSystemManager::getSingletonPtr()->_initialise();
     }
 

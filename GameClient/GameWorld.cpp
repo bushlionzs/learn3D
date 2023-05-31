@@ -43,7 +43,7 @@ bool GameWorld::gameWorldInit()
 	}
 	g_nProcess = 9;
 	mPlayer = new KPlayer();
-	mPlayer->setRaceId(1);
+	mPlayer->setRaceId(11970);
 
 	GameSceneManager::getSingletonPtr()->loadScene(87);
 

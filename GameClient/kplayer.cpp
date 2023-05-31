@@ -132,7 +132,7 @@ void KPlayer::input(KeyCode _key)
 void KPlayer::createCharRenderInterface(void)
 {
 	KCharacter::createCharRenderInterface();
-
+	return;
 	UpdateFaceMesh();
 	UpdateHairMesh();
 	UpdateEquip(HEQUIP_MAINHAND);		// Ö÷¸± ÊÖ

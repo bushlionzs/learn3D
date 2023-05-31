@@ -798,6 +798,10 @@ void KCharacter::createCharRenderInterface(void)
 	setPosition(mGamePosition);
 	mMainEntity->SetModelType(CHAR_MODEL_CHAR);
 
+	if (mWeaponname.empty())
+	{
+		mWeaponname = "Falchion";
+	}
 	// 设置相关武器动作
 	mMainEntity->setWeapon(mWeaponname);
 

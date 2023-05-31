@@ -142,6 +142,11 @@ BOOL CGameTable::OpenFromTXT(LPCTSTR szFileName, BOOL bSpecial, BOOL bPackRes)
  */
 String CGameTable::GetSplitData(LPCTSTR szData, uint32 nCount)
 {
+	if (NULL == szData)
+	{
+		return std::string();
+	}
+
 	/* ÆðÊ¼Î»ÖÃ */
 	int32 off1 = 0;
 

@@ -13,6 +13,7 @@
 #include "MyGUIManager.h"
 #include "OgreViewport.h"
 #include "GameTableManager.h"
+#include "engine_manager.h"
 
 ApplicationBase::ApplicationBase()
 {
@@ -46,8 +47,8 @@ bool ApplicationBase::appInit()
 	HWND wnd = mApplicationWindow->getWnd();
 	InputManager::getSingletonPtr()->createInput((size_t)wnd);
 
-	
-
+	new EngineManager;
+	EngineManager::getSingleton().initialise();
 
 	EngineType type = getEngineType();
 	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(wnd, type);

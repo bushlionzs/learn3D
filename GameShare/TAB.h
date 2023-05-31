@@ -1,20 +1,11 @@
-/*$T Common/TAB/TAB.h GC 1.140 10/10/07 10:06:57 */
-
-
-/*$6
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- */
-
 
 #ifndef _TAB_H_
 #define _TAB_H_
 
-#include <vector>
-#include "TypeDefine.h"
+#include "Define.h"
 
 typedef int64_t table_int_t;
-typedef float  table_float_t;
+typedef double  table_float_t;
 namespace	TAB
 {
 class	TABFile
@@ -26,10 +17,10 @@ class	TABFile
 public:
 	struct FILE_HEAD
 	{
-		uint32	m_Identify;
-		int32	m_nFieldsNum;
-		int32	m_nRecordsNum;
-		int32	m_nStringBlockSize;
+		uint32_t	m_Identify;
+		int32_t		m_nFieldsNum;
+		int32_t		m_nRecordsNum;
+		int32_t		m_nStringBlockSize;
 	};
 
 	enum FIELD_TYPE { T_INT = 0, T_FLOAT = 1, T_STRING = 2, };
@@ -38,18 +29,18 @@ public:
 
 	union FIELD
 	{
-		float		fValue;
-		int32		iValue;
+		table_float_t		fValue;
+		table_int_t		iValue;
 		const char	*pString;
 
 		FIELD()
 		{
 		}
-		FIELD(int32 value)
+		FIELD(table_int_t value)
 		{
 			iValue = value;
 		}
-		FIELD (float value)
+		FIELD (table_float_t value)
 		{
 			fValue = value;
 		}
@@ -66,19 +57,17 @@ public:
  -----------------------------------------------------------------------------------------------------------------------
  */
 public:
+	TABFile() {}
 	// 从文件中打开
-	BOOL	OpenFromTXT(const char *szFileName);
+	bool	OpenFromTXT(const char *szFileName);
 	// 从内存中打开
-	BOOL	OpenFromMemory(const char *pMemory, const char *pDeadEnd, const char *szFileName = 0);
+	bool	OpenFromMemory(const char *pMemory, const char *pDeadEnd, const char *szFileName = 0);
 
-/*
- -----------------------------------------------------------------------------------------------------------------------
- -----------------------------------------------------------------------------------------------------------------------
- */
+	void   SaveToTXT(const char* szFileName);
 protected:
-	BOOL	OpenFromMemoryImpl_Text(const char *pMemory, const char *pDeadEnd, const char *szFileName = 0);
+	bool	OpenFromMemoryImpl_Text(const char *pMemory, const char *pDeadEnd, const char *szFileName = 0);
 
-	BOOL	OpenFromMemoryImpl_Binary(const char *pMemory, const char *pDeadEnd, const char *szFileName = 0);
+	bool	OpenFromMemoryImpl_Binary(const char *pMemory, const char *pDeadEnd, const char *szFileName = 0);
 
 /*
  -----------------------------------------------------------------------------------------------------------------------
@@ -86,11 +75,11 @@ protected:
  */
 public:
 	// 查找索引等于nValue的值， 没有找到返回0
-	virtual const FIELD	*Search_Index_EQU(int32 nValue) const;
+	virtual const FIELD	*Search_Index_EQU(int32_t nValue) const;
 	// 查找值 nRecordLine 行，ColumNum 列
-	virtual const FIELD	*Search_Posistion(int32 nRecordLine, int32 nColumNum) const;
+	virtual const FIELD	*Search_Posistion(int32_t nRecordLine, int32_t nColumNum) const;
 	// 查找nColumnNum列第一个等于value的值， 没有找到返回0
-	virtual const FIELD	*Search_First_Column_Equ(int32 nColumnNum, const FIELD &value) const;
+	virtual const FIELD	*Search_First_Column_Equ(int32_t nColumnNum, const FIELD &value) const;
 
 /*
  -----------------------------------------------------------------------------------------------------------------------
@@ -99,51 +88,49 @@ public:
 public:
 
 	// 没有用到
-	uint32 GetID(void) const
+	uint32_t GetID(void) const
 	{
 		return m_ID;
 	}
 
 	// 列
-	int32 GetFieldsNum(void) const
+	int32_t GetFieldsNum(void) const
 	{
 		return m_nFieldsNum;
 	}
 
 	// 有效行数
-	int32 GetRecordsNum(void) const
+	int32_t GetRecordsNum(void) const
 	{
 		return m_nRecordsNum;
 	}
 
 	// 以某一列创建hash索引，方便查找。默认是把第一列创建为索引
-	void	CreateIndex(int32 nColum = 0, const char *szFileName = 0);
+	void	CreateIndex(int32_t nColum = 0, const char *szFileName = 0);
 
 /*
  -----------------------------------------------------------------------------------------------------------------------
  -----------------------------------------------------------------------------------------------------------------------
  */
 protected:
-
-	typedef std::unordered_map<int32, FIELD *>	FIELD_HASHMAP;
-
-	uint32 m_ID;
+	typedef std::unordered_map<int32_t, FIELD*>	FIELD_HASHMAP;
+	uint32_t m_ID;
 
 	FILEDS_TYPE m_theType;
 
-	int32 m_nRecordsNum;
+	int32_t m_nRecordsNum;
 
-	int32 m_nFieldsNum;
+	int32_t m_nFieldsNum;
 
 	DATA_BUF m_vDataBuf;
 
 	char *m_pStringBuf;
 
-	int32 m_nStringBufSize;
+	int32_t m_nStringBufSize;
 
 	FIELD_HASHMAP m_hashIndex;
 
-	int32 m_nIndexColum;
+	int32_t m_nIndexColum;
 
 	char m_szFileName[MAX_FILE_PATH];
 
@@ -152,19 +139,19 @@ protected:
  -----------------------------------------------------------------------------------------------------------------------
  */
 public:
-	static int32		_ConvertStringToVector
+	static int32_t		_ConvertStringToVector
 				(
 					const char		*strStrINTgSource,
 					std::vector<std::string>	&vRet,
 					const char		*szKey,
-					BOOL bOneOfKey,
-					BOOL bIgnoreEmpty
+					bool bOneOfKey,
+					bool bIgnoreEmpty
 				);
 
 	static const char	*_GetLineFromMemory
 				(
 					char	*pStringBuf,
-					int32 nBufSize,
+					int32_t nBufSize,
 					const char *pMemory,
 					const char *pDeadEnd
 				);
@@ -177,7 +164,7 @@ public:
  -----------------------------------------------------------------------------------------------------------------------
  */
 public:
-	TABFile(uint32 id);
+	TABFile(uint32_t id);
 	virtual ~TABFile();
 };
 }

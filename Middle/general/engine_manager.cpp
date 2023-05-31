@@ -25,7 +25,7 @@ template<> EngineManager* Ogre::Singleton<EngineManager>::msSingleton = 0;
 
 EngineManager::EngineManager()
 {
-	new Orphigine::SkeletonMeshComponentManager(nullptr);
+	
 	mPosition = Ogre::Vector3::ZERO;
 	mSceneManager = nullptr;
 	mMainCamera = nullptr;
@@ -39,8 +39,10 @@ EngineManager::~EngineManager()
 
 bool EngineManager::initialise()
 {
+	new Ogre::Root;
+	Ogre::Root::getSingleton()._initialise();
+	new Orphigine::SkeletonMeshComponentManager(nullptr);
 	Ogre::Root::getSingleton().addMovableObjectFactory(new Orphigine::ProjectorFactory);
-	new Ogre::Root();
 	new Orphigine::ActorFactoryManager;
 	new GameSceneManager;
 	new Orphigine::AdvancedAnimationSystemManager;
