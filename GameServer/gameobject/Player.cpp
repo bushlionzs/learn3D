@@ -347,9 +347,7 @@ extern eREFESH_PROPERTY_TYPE	Calc_RefeshAttrType(Character *pSour, Character *pT
 
 Player::Player()
 {
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	__GUARD__	m_EquipEffectNum = 0;
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	m_EquipEffectNum = 0;
 
 	m_EffectSkillNum = 0;
 	m_iTargetForExp = 0;
@@ -361,11 +359,6 @@ Player::Player()
 
 	m_pShop = NULL;
 	BankIsOpen = FALSE;
-
-
-
-
-	KCheck(m_pAvoidOverlap);
 
 	Clear();
 
@@ -385,7 +378,6 @@ Player::Player()
 
 
 	m_pAI_Character = new Behavior_Player;
-	KCheck(m_pAI_Character);
 
 	m_iDataID = INVALID_ID;
 
@@ -429,11 +421,6 @@ Player::Player()
 
 	
 	mDB = new PlayerArchive;
-
-	printf("%p\n", mDB);
-	
-
-	__UNGUARD__
 }
 
 /*

@@ -35,16 +35,12 @@ extern eREFESH_PROPERTY_TYPE Calc_RefeshAttrType(Character* pSour, Character* pT
 Monster::Monster(void)
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	__GUARD__	m_pShopManager = NULL;
+	m_pShopManager = NULL;
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	m_nOwnerElapsedTick = 0;
 	ClearSelf();
-	KCheck(m_pAI_Character);
-
 	m_pAI_Character = new Behavior_Monster;
-
-	__UNGUARD__
 }
 
 /*

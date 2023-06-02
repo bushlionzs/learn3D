@@ -8,7 +8,7 @@ class TableInit_Map;
 
 class LuaSystem;
 
-
+#include "GameSingleton.h"
 class ServerManager :public GameSingleton<ServerManager>
 {
 public:

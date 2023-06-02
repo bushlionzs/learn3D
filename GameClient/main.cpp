@@ -2,10 +2,12 @@
 #include "application_base.h"
 #include "fulldemo.h"
 #include "platform_log.h"
+#include "platform_util.h"
 
 int main()
 {
 	platform_log_init();
+	platform_timer_init();
 	CoInitialize(NULL);
 	FullDemo app;
 	app.appInit();

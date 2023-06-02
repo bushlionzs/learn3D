@@ -72,7 +72,7 @@ bool GameWorld::gameWorldInit()
 
 void GameWorld::update(float delta)
 {
-	mPlayer->update(delta);
+	//mPlayer->update(delta);
 }
 
 void GameWorld::injectMouseWheel(int _absz)
@@ -88,9 +88,8 @@ void GameWorld::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 {
 	if (_id == OIS::MB_Left)
 	{
-		mPlayer->injectMousePress(_absx, _absy, _id);
-
-		
+		if(mPlayer)
+			mPlayer->injectMousePress(_absx, _absy, _id);
 	}
 
 	if (_id == OIS::MB_Right)

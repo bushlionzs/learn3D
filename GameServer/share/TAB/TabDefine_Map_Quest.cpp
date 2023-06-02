@@ -33,8 +33,6 @@ TableInit_Map_Quest::~TableInit_Map_Quest()
  */
 BOOL TableInit_Map_Quest::Init()
 {
-	__GUARD__
-
 	Init_NPCPaoPaoIndexTable();
 	Init_NPCQuestTable();
 	LoadSceneMapNPCTable();
@@ -45,8 +43,6 @@ BOOL TableInit_Map_Quest::Init()
 	LoadQuestShituTable();
 
 	return TRUE;
-	__UNGUARD__
-	return FALSE;
 }
 
 
@@ -256,7 +252,7 @@ void TableInit_Map_Quest::LoadSceneMapNPCTable()
 void TableInit_Map_Quest::LoadQuestionsAndAnswersTable()
 {
 	/*~~~~~~~~~~~~*/
-	__GUARD__ enum QuestionsIndex { QI_Index, QI_Type, };
+	enum QuestionsIndex { QI_Index, QI_Type, };
 	/*~~~~~~~~~~~~*/
 
 	enum AnswersIndex { AI_Index, AI_Answer1, AI_Answer2, };
@@ -302,8 +298,6 @@ void TableInit_Map_Quest::LoadQuestionsAndAnswersTable()
 		g_QuestionDataTable.m_QuestionData[i].nAnswerIndex1 = Answers.Search_Posistion(i, AI_Answer1)->iValue;
 		g_QuestionDataTable.m_QuestionData[i].nAnswerIndex2 = Answers.Search_Posistion(i, AI_Answer2)->iValue;
 	}
-
-	__UNGUARD__
 }
 
 static void _LoadQuestDengmiTable(QUEST_DENGMI_ATTR& attr, const char* pathName)

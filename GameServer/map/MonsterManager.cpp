@@ -477,7 +477,7 @@ Monster *MonsterObjectManager::GetMonster(ObjID_t idObj)
 BOOL MonsterObjectManager::LoadMonsterTab(const char *pszFileName, MapID_t MapID)
 {
 	/*~~~~~~~~~~~~*/
-	__GUARD__ enum Monster_Tab
+     enum Monster_Tab
 	{
 		Monster_Tab_Index,
 		Monster_Tab_Guid,
@@ -714,7 +714,6 @@ BOOL MonsterObjectManager::LoadMonsterTab(const char *pszFileName, MapID_t MapID
 	}
 
 	return TRUE;
-	__UNGUARD__ return FALSE;
 }
 
 /*

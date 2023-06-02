@@ -7,6 +7,9 @@
     <Filter Include="data\struct">
       <UniqueIdentifier>{54594ecf-581a-4324-afd6-0dd471c52631}</UniqueIdentifier>
     </Filter>
+    <Filter Include="clientmessage">
+      <UniqueIdentifier>{e6521af8-6cb2-4f96-9092-9d28bc60c6e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="data\GameDataCharacter.cpp">
@@ -25,6 +28,9 @@
     <ClCompile Include="game_camera.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameEntity.cpp" />
+    <ClCompile Include="clientmessage\SCEnterSceneProcess.cpp">
+      <Filter>clientmessage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\GameDataCharacter.h">

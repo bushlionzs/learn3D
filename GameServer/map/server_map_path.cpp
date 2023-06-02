@@ -16,7 +16,6 @@
 
 Wayfinding::Wayfinding(MapInfo *owner, const char *filename, uint32 &mx, uint32 &mz)
 {
-	assert(false);
 	ReadNavMap(filename, mx, mz);
 
 	InitFourDirections();
