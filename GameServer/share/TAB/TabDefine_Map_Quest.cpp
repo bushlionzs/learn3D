@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "TabDefine_Map.h"
-#include "share/core/filedef.h"
+#include "filedef.h"
 #include "ScriptCacheMgr.h"
 
 #include "TAB.h"

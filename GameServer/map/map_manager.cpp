@@ -56,7 +56,7 @@ bool MapManager::initialize()
 void MapManager::update()
 {
 	static uint64_t start_time  = get_tick_count();
-	uint32_t current = get_tick_count();
+	uint64_t current = get_tick_count();
 	auto it = mSceneMap.begin();
 	for (; it != mSceneMap.end(); it++)
 	{
@@ -93,7 +93,7 @@ bool MapManager::loadSceneConfig()
 	std::string mapfilename = "../ServerConfig/mapdefines.tab";
 
 	TAB::TABFile ThirdFile(0);
-	BOOL ret = ThirdFile.OpenFromTXT(mapfilename.c_str());
+	bool ret = ThirdFile.OpenFromTXT(mapfilename.c_str());
 
 	int32_t	mapCount = ThirdFile.GetRecordsNum();
 

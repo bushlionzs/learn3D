@@ -231,6 +231,20 @@
     <ClCompile Include="script\LuaFunction_Skill.cpp" />
     <ClCompile Include="script\LuaStack.cpp" />
     <ClCompile Include="script\LuaSystem.cpp" />
+    <ClCompile Include="server_manager.cpp" />
+    <ClCompile Include="server_settting.cpp" />
+    <ClCompile Include="share\TAB\TabDefine_GL.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_Map.cpp" />
+    <ClCompile Include="share\TAB\TabDefine_Map_Item.cpp" />
+    <ClCompile Include="share\TAB\TabDefine_Map_Misc.cpp" />
+    <ClCompile Include="share\TAB\TabDefine_Map_Monster.cpp" />
+    <ClCompile Include="share\TAB\TabDefine_Map_Pet.cpp" />
+    <ClCompile Include="share\TAB\TabDefine_Map_Quest.cpp" />
+    <ClCompile Include="share\TAB\TabDefine_Map_Skill.cpp" />
+    <ClCompile Include="share\TAB\TabDefine_Share.cpp" />
+    <ClCompile Include="share\TAB\TabStruct.cpp" />
     <ClCompile Include="shop\ShopManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -343,6 +357,19 @@
     <ClInclude Include="script\LuaScriptVM.h" />
     <ClInclude Include="script\LuaStack.h" />
     <ClInclude Include="script\LuaSystem.h" />
+    <ClInclude Include="server_manager.h" />
+    <ClInclude Include="server_settting.h" />
+    <ClInclude Include="share\TAB\TabDefine.h" />
+    <ClInclude Include="share\TAB\TabDefine_GL.h" />
+    <ClInclude Include="share\TAB\TabDefine_Map.h" />
+    <ClInclude Include="share\TAB\TabDefine_Map_Item.h" />
+    <ClInclude Include="share\TAB\TabDefine_Map_Misc.h" />
+    <ClInclude Include="share\TAB\TabDefine_Map_Monster.h" />
+    <ClInclude Include="share\TAB\TabDefine_Map_Pet.h" />
+    <ClInclude Include="share\TAB\TabDefine_Map_Quest.h" />
+    <ClInclude Include="share\TAB\TabDefine_Map_Skill.h" />
+    <ClInclude Include="share\TAB\TabDefine_Share.h" />
+    <ClInclude Include="share\TAB\TabStruct.h" />
     <ClInclude Include="shop\ShopManager.h" />
     <ClInclude Include="skill\Skill_All.h" />
     <ClInclude Include="skill\Skill_Base.h" />

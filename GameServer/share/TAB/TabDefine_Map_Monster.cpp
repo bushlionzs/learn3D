@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "share/Core/BaseTool.h"
+#include "BaseTool.h"
 
 #include "TAB.h"
-#include "share/core/FileDef.h"
+#include "FileDef.h"
 #include "SplitStringLevelOne.h"
 #include "SplitStringLevelTwo.h"
 #include "TabDefine_Map_Monster.h"

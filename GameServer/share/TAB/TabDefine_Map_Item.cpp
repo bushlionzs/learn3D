@@ -8,16 +8,16 @@
 
 
 #include "stdafx.h"
-#include "server/item/Item_Helper.h"
+#include "item/Item_Helper.h"
 #include "TabDefine_Map_Item.h"
 #include "TAB.h"
-#include "share/core/BaseTool.h"
-#include "server/item/ItemBox.h"
-#include "server/item/Item_Manager.h"
-#include "share/core/FileDef.h"
+#include "BaseTool.h"
+#include "item/ItemBox.h"
+#include "item/Item_Manager.h"
+#include "FileDef.h"
 #include "SplitStringLevelOne.h"
 #include "SplitStringLevelTwo.h"
-#include "server/item/Item_Ruler.h"
+#include "item/Item_Ruler.h"
 
 ItemTemplateTable	g_ItemTab;
 
@@ -386,8 +386,8 @@ int32 CompareSuckAmuletTB(const void *pArg1, const void *pArg2)
 	__GUARD__ GUID_t	guid1, guid2;
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	guid1 = ((ATTR_SUCK_AMULET_TB *) pArg1)->m_ItemId;
-	guid2 = ((ATTR_SUCK_AMULET_TB *) pArg2)->m_ItemId;
+	guid1 = ((SERVER_ATTR_SUCK_AMULET_TB*) pArg1)->m_ItemId;
+	guid2 = ((SERVER_ATTR_SUCK_AMULET_TB*) pArg2)->m_ItemId;
 
 	if(guid1 > guid2)
 		return 1;
@@ -3483,7 +3483,7 @@ void ItemTemplateTable::InitAttrSuckAmuletTable()
 	m_uAttrSuckAmuletCount = iTableCount;
 	KCheck(iTableCount > 0);
 
-	m_pAttrSuckAmuletData = new ATTR_SUCK_AMULET_TB[m_uAttrSuckAmuletCount];
+	m_pAttrSuckAmuletData = new SERVER_ATTR_SUCK_AMULET_TB[m_uAttrSuckAmuletCount];
 
 	KCheck(m_pAttrSuckAmuletData);
 
@@ -5383,21 +5383,21 @@ const  ATTR_SUCK_BALL_TB*ItemTemplateTable::GetAttrSuckBallTB(uint32 itemId) con
 =======================================================================================================================
 =======================================================================================================================
 */
-const  ATTR_SUCK_AMULET_TB*ItemTemplateTable::GetAttrSuckAmuletTB(uint32 itemId) const
+const  SERVER_ATTR_SUCK_AMULET_TB*ItemTemplateTable::GetAttrSuckAmuletTB(uint32 itemId) const
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~*/
-	__GUARD__ ATTR_SUCK_AMULET_TB tb;
+	__GUARD__ SERVER_ATTR_SUCK_AMULET_TB tb;
 	/*~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	tb.m_ItemId = itemId;
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	ATTR_SUCK_AMULET_TB	*pResult = (ATTR_SUCK_AMULET_TB *) bsearch
+	SERVER_ATTR_SUCK_AMULET_TB*pResult = (SERVER_ATTR_SUCK_AMULET_TB*) bsearch
 		(
 		&tb,
 		m_pAttrSuckAmuletData,
 		m_uAttrSuckAmuletCount,
-		sizeof(ATTR_SUCK_AMULET_TB),
+		sizeof(SERVER_ATTR_SUCK_AMULET_TB),
 		(int32(*) (const void *, const void *)) CompareSuckAmuletTB
 		);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

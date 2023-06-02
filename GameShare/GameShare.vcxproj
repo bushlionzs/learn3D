@@ -308,6 +308,7 @@
     <ClCompile Include="rc6.cpp" />
     <ClCompile Include="rsa.cpp" />
     <ClCompile Include="safer.cpp" />
+    <ClCompile Include="ScriptCacheMgr.cpp" />
     <ClCompile Include="SpellDataLoader.cpp" />
     <ClCompile Include="SpellDataMgr.cpp" />
     <ClCompile Include="SplitStringBase.cpp" />

@@ -179,7 +179,7 @@ void Behavior_TemplateManager::LoadAllBehavior_Templates()
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	TAB::TABFile ThirdFile(0);
-	BOOL	ret = ThirdFile.OpenFromTXT("./Config/monster_ai_template.tab");
+	bool	ret = ThirdFile.OpenFromTXT("./Config/monster_ai_template.tab");
 	int32	iTableCount = ThirdFile.GetRecordsNum();
 	int32	iTableColumn = ThirdFile.GetFieldsNum();
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

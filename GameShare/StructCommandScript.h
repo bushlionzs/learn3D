@@ -90,9 +90,6 @@ struct FlagTool
 		memset(m_uFlags, 0, sizeof(m_uFlags));
 	}
 
-	BOOL			Read(RecieveStream &iStream);
-
-	BOOL			Write(SendStream &oStream) const;
 
 	const static int32	FLAG_BIT = 256;
 	uint32			m_uFlags[FLAG_BIT / 32];
@@ -149,8 +146,6 @@ struct SScriptString
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
 };
 
 enum eEVENT_ITEM_TYPE
@@ -216,8 +211,6 @@ struct SScriptEventItem
 		m_strString = *pstrSection;
 	}
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
 };
 
 #define MAX_EVENT_LIST_ITEM_COUNT	(16)
@@ -272,11 +265,6 @@ struct SScriptParamEventList
 		return(yIndex < m_yItemCount) ? (&m_seiItem[yIndex]) : (NULL);
 	}
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
-
-	void	Reci(RecieveStream &iStream)		{ Read(iStream); }
-	void	Send(SendStream &oStream) const		{ Write(oStream); }
 };
 
 struct SQuestBonusItem
@@ -298,8 +286,6 @@ struct SQuestBonusItem
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
 };
 struct SQuestDemandKill
 {
@@ -324,8 +310,6 @@ struct SQuestDemandKill
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
 };
 enum ENUM_QUEST_BONUS_TYPE
 {
@@ -623,8 +607,6 @@ struct SQuestBonus
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
 };
 
 #define MAX_QUEST_TEXT_COUNT	(8)
@@ -699,11 +681,6 @@ struct ScriptParam_QuestInfo
 
 	void	SetFlag(int32 nIndex);
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
-
-	void	Reci(RecieveStream &iStream)		{ Read(iStream); }
-	void	Send(SendStream &oStream) const		{ Write(oStream); }
 };
 
 typedef SScriptParamEventList	ScriptParam_QuestRegie;
@@ -801,11 +778,6 @@ struct ScriptParam_QuestDemandInfo
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
-
-	void	Reci(RecieveStream &iStream)		{ Read(iStream); }
-	void	Send(SendStream &oStream) const		{ Write(oStream); }
 };
 
 struct ScriptParam_QuestContinueInfo
@@ -891,12 +863,6 @@ struct ScriptParam_QuestContinueInfo
 	}
 
 	uint32	GetBufSize(void) const;
-
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
-
-	void	Reci(RecieveStream &iStream)		{ Read(iStream); }
-	void	Send(SendStream &oStream) const		{ Write(oStream); }
 };
 
 struct ScriptParam_QuestTips
@@ -915,11 +881,6 @@ struct ScriptParam_QuestTips
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
-
-	void	Reci(RecieveStream &iStream)		{ Read(iStream); }
-	void	Send(SendStream &oStream) const		{ Write(oStream); }
 };
 
 #define MAX_TRADE_ITEM_COUNT	(128)
@@ -943,8 +904,6 @@ struct STradeUnit
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
 };
 
 struct SScriptParamTrade
@@ -974,11 +933,6 @@ struct SScriptParamTrade
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
-
-	void	Reci(RecieveStream &iStream)		{ Read(iStream); }
-	void	Send(SendStream &oStream) const		{ Write(oStream); }
 };
 
 struct ScriptParam_QuestUpdate
@@ -1119,11 +1073,6 @@ struct ScriptParam_QuestUpdate
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
-
-	void	Reci(RecieveStream &iStream)		{ Read(iStream); }
-	void	Send(SendStream &oStream) const		{ Write(oStream); }
 };
 
 struct ScriptParam_QuestDengmi
@@ -1162,10 +1111,5 @@ struct ScriptParam_QuestDengmi
 
 	uint32	GetBufSize(void) const;
 
-	BOOL	Read(RecieveStream &iStream);
-	BOOL	Write(SendStream &oStream) const;
-
-	void	Reci(RecieveStream &iStream)		{ Read(iStream); }
-	void	Send(SendStream &oStream) const		{ Write(oStream); }
 };
 #endif

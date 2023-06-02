@@ -37,6 +37,12 @@
     <Filter Include="dummy">
       <UniqueIdentifier>{5fed2b50-4144-448a-b74f-df1cce5b571d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="share">
+      <UniqueIdentifier>{1b034a68-f9a4-4df5-bc01-b180f040e809}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="share\tab">
+      <UniqueIdentifier>{3ff0bfe9-321e-4e37-b54b-b8fbb7741ad5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archive\PlayerDB.cpp">
@@ -351,6 +357,38 @@
     <ClCompile Include="dummy\stdafx.cpp">
       <Filter>dummy</Filter>
     </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_GL.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_Map.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_Map_Item.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_Map_Misc.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_Map_Monster.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_Map_Pet.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_Map_Quest.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_Map_Skill.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabDefine_Share.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="share\TAB\TabStruct.cpp">
+      <Filter>share\tab</Filter>
+    </ClCompile>
+    <ClCompile Include="server_manager.cpp" />
+    <ClCompile Include="server_settting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Archive\PlayerDB.h">
@@ -677,6 +715,41 @@
     <ClInclude Include="dummy\stdafx.h">
       <Filter>dummy</Filter>
     </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine_GL.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine_Map.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine_Map_Item.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine_Map_Misc.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine_Map_Monster.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine_Map_Pet.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine_Map_Quest.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine_Map_Skill.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabDefine_Share.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="share\TAB\TabStruct.h">
+      <Filter>share\tab</Filter>
+    </ClInclude>
+    <ClInclude Include="server_manager.h" />
+    <ClInclude Include="server_settting.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Archive\PlayerDB.inl">

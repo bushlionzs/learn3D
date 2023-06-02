@@ -46,7 +46,7 @@ BOOL SkillManager::InitPrescriptionList(const char *filename)
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	__GUARD__ TABFile	ThirdFile(0);
-	BOOL			ret = ThirdFile.OpenFromTXT(filename);
+	bool			ret = ThirdFile.OpenFromTXT(filename);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	if(!ret) return FALSE;
@@ -311,10 +311,8 @@ BOOL SkillManager::InitSkill(const char *filename)
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	__GUARD__ TABFile	ThirdFile(UINT_MAX);
-	BOOL			ret;
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	ret = ThirdFile.OpenFromTXT(filename);
+	bool ret = ThirdFile.OpenFromTXT(filename);
 	if(!ret) return FALSE;
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -402,7 +400,7 @@ BOOL SkillManager::InitSkillExpTable_i(uint32 j)
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	TABFile AbilityExpTableFile(0);
-	BOOL	ret = AbilityExpTableFile.OpenFromTXT(buff);
+	bool	ret = AbilityExpTableFile.OpenFromTXT(buff);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	KCheckEx(ret, buff);

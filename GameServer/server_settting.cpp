@@ -9,8 +9,8 @@
 
 #include "stdafx.h"
 #include "server_settting.h"
-#include "share/core/BaseTool.h"
-#include "share/Core/FileDef.h"
+#include "BaseTool.h"
+#include "FileDef.h"
 #include "TAB.h"
 #include "SplitStringLevelOne.h"
 

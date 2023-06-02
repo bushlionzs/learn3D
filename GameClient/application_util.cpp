@@ -21,10 +21,6 @@ void setImageInfo(
 		imageinfo._size);
 }
 
-uchar GetClassBySerial(uint32 Serial)
-{
-	return(uchar)(Serial / 1000000);
-}
 
 void setImageInfoFromIcon(MyGUI::ImageBox* image, uint32_t item_id)
 {

@@ -8,6 +8,7 @@
 #include "ActionSetManager.h"
 #include "kplayer.h"
 #include "game_scene.h"
+#include "net/messages/CSLogin.h"
 
 GameWorld::GameWorld(GameCamera* gameCamera)
 {
@@ -42,25 +43,25 @@ bool GameWorld::gameWorldInit()
 		return false;
 	}
 	g_nProcess = 9;
-	mPlayer = new KPlayer();
-	mPlayer->setRaceId(11970);
-
-	GameSceneManager::getSingletonPtr()->loadScene(87);
+	
 
 
 	mGameCamera->setDistance(1200.0f);
 	mGameCamera->setHeight(200.0f);
 
 	
-
+	login();
 	
-	Ogre::Vector3 mPosition;
+	/*Ogre::Vector3 mPosition;
 	mPosition.x = 174;
 	mPosition.y = 0;
 	mPosition.z = 47;
 
+	mPlayer = new KPlayer();
+	mPlayer->setRaceId(11970);
 
-	mPlayer->setPosition(mPosition);
+	GameSceneManager::getSingletonPtr()->loadScene(87);
+	mPlayer->setPosition(mPosition);*/
 
 	InputManager::getSingleton().addListener(this);
 
@@ -118,4 +119,11 @@ void GameWorld::injectKeyPress(KeyCode _key, uint32_t _text)
 void GameWorld::injectKeyRelease(KeyCode _key)
 {
     
+}
+
+void GameWorld::login()
+{
+	CSLogin* msg = new CSLogin;
+
+	NetManager::GetSingletonPtr()->sendNetMessage(msg);
 }

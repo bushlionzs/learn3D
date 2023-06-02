@@ -100,7 +100,7 @@ public:
 	~GameMap();
 
 	bool initialize(MAP_CONFIG& config);
-	void update(uint32_t utime);
+	void update(uint64_t utime);
 	MAP_CONFIG* getMapData();
 	BOOL		RegisterArea(const Region* pArea);
 

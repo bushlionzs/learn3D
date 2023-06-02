@@ -82,7 +82,7 @@ static uint32_t timer_entry(uint32_t moduleid, uint32_t msg_id, uint64_t sender,
 }
 
 static PlatformMutex _g_timer_mutex;
-extern struct NetLibParam g_param;
+struct NetLibParam g_param;
 bool platform_timer_init()
 {
     if (NULL == _timer_module)

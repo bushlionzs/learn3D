@@ -157,7 +157,7 @@ bool GameMap::initialize(MAP_CONFIG& config)
 	return true;
 }
 
-void GameMap::update(uint32_t utime)
+void GameMap::update(uint64_t utime)
 {
 	m_BackUpTime = utime;
 	m_pMonsterManager->HeartBeat(utime);

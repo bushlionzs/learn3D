@@ -23,7 +23,7 @@ public:
 	ScriptCache (void);
 	virtual~ScriptCache (void);
 
-	virtual BOOL	Init(uint32 uID, char *pszFileName, FILE *fp);
+	virtual BOOL	Init(uint32 uID, const char *pszFileName, FILE *fp);
 	virtual void	Term(void);
 public:
 

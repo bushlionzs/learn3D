@@ -585,6 +585,7 @@
     <ClCompile Include="net\messages\SCUseEquipResult.cpp">
       <Filter>net\messages\clientmessage</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptCacheMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="net">

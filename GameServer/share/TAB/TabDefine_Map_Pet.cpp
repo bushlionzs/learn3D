@@ -5,12 +5,12 @@
 
 #include "TAB.h"
 #include "FileDef.h"
-#include "Behavior_State.h"
+#include "gameobject/Behavior_State.h"
 #include "SplitStringLevelOne.h"
 #include "SplitStringLevelTwo.h"
-#include "ShopManager.h"
-#include "Item_Helper.h"
-#include "Behavior_Template.h"
+#include "shop/ShopManager.h"
+#include "item/Item_Helper.h"
+#include "gameobject/Behavior_Template.h"
 #include "TabDefine_Map_Pet.h"
 #include "TabDefine_Map_Quest.h"
 
