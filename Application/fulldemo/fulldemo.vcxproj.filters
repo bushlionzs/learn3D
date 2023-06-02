@@ -7,12 +7,6 @@
     <Filter Include="src\common">
       <UniqueIdentifier>{bed4245e-8fd5-4f2d-a041-6d5fc16a92eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\data">
-      <UniqueIdentifier>{b336d409-1b4f-4ccc-81ef-646aaf68f765}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\data\struct">
-      <UniqueIdentifier>{2c7cc230-f18d-4b93-9bda-c28c5ee68920}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\application_base.cpp">
@@ -48,7 +42,7 @@
     <ClCompile Include="PathComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
+    <ClCompile Include="kplayer.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\common\GameEntity.cpp">
@@ -56,15 +50,6 @@
     </ClCompile>
     <ClCompile Include="..\common\GameObject.cpp">
       <Filter>src\common</Filter>
-    </ClCompile>
-    <ClCompile Include="character.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterCommon.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="data\GameDataCharacter.cpp">
-      <Filter>src\data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,7 +86,7 @@
     <ClInclude Include="PathComponent.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
+    <ClInclude Include="kplayer.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\common\GameEntity.h">
@@ -109,21 +94,6 @@
     </ClInclude>
     <ClInclude Include="..\common\GameObject.h">
       <Filter>src\common</Filter>
-    </ClInclude>
-    <ClInclude Include="character.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterCommon.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="data\GameDataCharacter.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="data\GameDataDefine.h">
-      <Filter>src\data</Filter>
-    </ClInclude>
-    <ClInclude Include="data\struct\GameDataStructCharacterData.h">
-      <Filter>src\data\struct</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

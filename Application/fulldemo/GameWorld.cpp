@@ -6,7 +6,7 @@
 #include "InputManager.h"
 #include "GameTableManager.h"
 #include "ActionSetManager.h"
-#include "player.h"
+#include "kplayer.h"
 #include "game_scene.h"
 
 GameWorld::GameWorld(GameCamera* gameCamera)
@@ -42,8 +42,7 @@ bool GameWorld::gameWorldInit()
 		return false;
 	}
 	g_nProcess = 9;
-	mPlayer = new Player();
-	mPlayer->setRaceId(1);
+	mPlayer = new KPlayer();
 
 	GameSceneManager::getSingletonPtr()->loadScene(87);
 
@@ -60,7 +59,7 @@ bool GameWorld::gameWorldInit()
 	mPosition.z = 47;
 
 
-	mPlayer->setPosition(mPosition);
+	mPlayer->setGamePosition(mPosition);
 
 	InputManager::getSingleton().addListener(this);
 

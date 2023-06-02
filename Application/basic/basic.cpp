@@ -1,4 +1,4 @@
-#include "OgreHeader.h"
+#include "stdafx.h"
 #include "basic.h"
 #include "engine_manager.h"
 #include "OgreParticleSystem.h"
@@ -24,7 +24,7 @@ bool Basic::appInit()
 {
 	ApplicationBase::appInit();
 
-	base2();
+	base3();
 	return true;
 }
 
@@ -128,13 +128,38 @@ void Basic::base2()
 void Basic::base3()
 {
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
-	SceneNode* node = root->createChildSceneNode("sphere");
-	Ogre::String effectName = "ui_Éñ±øÌ¨ÂÌ_01";
-	mProjectorEffect = Orphigine::ImpactManager::getSingleton().createEffect(effectName, 0);
-	mProjectorEffect->createSceneNode(node);
+	auto mesh = MeshManager::getSingleton().createBox("box.mesh", 1, "mybox");
 
-	mGameCamera->setDistance(1200);
-	mGameCamera->setHeight(30.0f);
+	{
+		auto entity = mSceneManager->createEntity("box1", mesh);
+		SceneNode* node = root->createChildSceneNode("box1");
+		node->attachObject(entity);
+		node->setPosition(0.0f, 0.0f, -5.0f);
+	}
+
+	{
+		auto entity = mSceneManager->createEntity("box1", mesh);
+		SceneNode* node = root->createChildSceneNode("box1");
+		node->attachObject(entity);
+		node->setPosition(0.0f, 0.0f, 5.0f);
+	}
+
+	{
+		auto entity = mSceneManager->createEntity("box1", mesh);
+		SceneNode* node = root->createChildSceneNode("box1");
+		node->attachObject(entity);
+		node->setPosition(-5.0f, 0.0f, 0.0f);
+	}
+
+	{
+		auto entity = mSceneManager->createEntity("box1", mesh);
+		SceneNode* node = root->createChildSceneNode("box1");
+		node->attachObject(entity);
+		node->setPosition(5.0f, 0.0f, 0.0f);
+	}
+	
+
+	mGameCamera->setDistance(2.0f);
 
 	mGameCamera->setMoveSpeed(25.0f);
 }

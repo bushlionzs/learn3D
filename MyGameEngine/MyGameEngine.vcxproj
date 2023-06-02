@@ -135,7 +135,7 @@
     <Lib>
       <AdditionalOptions />
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>OIS_d.lib;tinyxmld.lib;vulkan-1.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;dxgi.lib;dxguid.lib;d3d12.lib;d3d11.lib;D3DCompiler.lib;Shlwapi.lib;winmm.lib;GlslUtil.lib;StormLib.lib;LinearMath_Debug.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;BulletSoftBody_Debug.lib;GameShare.lib;GameServer.lib;miniOgre.lib;Middle.lib;MyGUI.lib;GameUtil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OIS_d.lib;tinyxmld.lib;vulkan-1.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;dxgi.lib;dxguid.lib;d3d12.lib;d3d11.lib;D3DCompiler.lib;Shlwapi.lib;winmm.lib;GlslUtil.lib;StormLib.lib;LinearMath_Debug.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;BulletSoftBody_Debug.lib;GameShare.lib;GameServer.lib;miniOgre.lib;Middle.lib;MyGUI.lib;GameUtil.lib;luaplus5.1.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\3rd\mysql\lib;$(ProjectDir)..\3rd\lib;$(ProjectDir)..\bin</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>

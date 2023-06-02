@@ -44,5 +44,8 @@
     <ClInclude Include="basic.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 #include "InputManager.h"
 
 class GameCamera;
-class Player;
+class KPlayer;
 
 class GameWorld: public InputListener
 {
@@ -25,5 +25,5 @@ private:
 	virtual void injectMouseWheel(int _absz);
 private:
 	GameCamera* mGameCamera;
-	Player* mPlayer;
+	KPlayer* mPlayer;
 };

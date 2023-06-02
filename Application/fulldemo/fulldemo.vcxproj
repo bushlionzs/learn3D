@@ -28,14 +28,11 @@
     <ClCompile Include="..\common\PackageWindow.cpp" />
     <ClCompile Include="..\common\SelfEquipWindow.cpp" />
     <ClCompile Include="..\common\ToolTip.cpp" />
-    <ClCompile Include="character.cpp" />
-    <ClCompile Include="CharacterCommon.cpp" />
-    <ClCompile Include="data\GameDataCharacter.cpp" />
     <ClCompile Include="fulldemo.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PathComponent.cpp" />
-    <ClCompile Include="player.cpp" />
+    <ClCompile Include="kplayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\application_base.h" />
@@ -47,16 +44,11 @@
     <ClInclude Include="..\common\PackageWindow.h" />
     <ClInclude Include="..\common\SelfEquipWindow.h" />
     <ClInclude Include="..\common\ToolTip.h" />
-    <ClInclude Include="character.h" />
-    <ClInclude Include="CharacterCommon.h" />
-    <ClInclude Include="data\GameDataCharacter.h" />
-    <ClInclude Include="data\GameDataDefine.h" />
-    <ClInclude Include="data\struct\GameDataStructCharacterData.h" />
     <ClInclude Include="demoHeader.h" />
     <ClInclude Include="fulldemo.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="PathComponent.h" />
-    <ClInclude Include="player.h" />
+    <ClInclude Include="kplayer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -160,14 +152,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;__WINDOWS__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\miniOgre\base;$(ProjectDir)..\..\miniOgre\parser;$(ProjectDir)..\..\miniOgre\models;$(ProjectDir)..\..\miniOgre\animation;$(ProjectDir)..\..\miniOgre\particle;$(ProjectDir)..\..\miniOgre\particle\ParticleFX;$(ProjectDir)..\..\middle\AdvancedAnimation;$(ProjectDir)..\..\middle\component;$(ProjectDir)..\..\middle\effect;$(ProjectDir)..\..\middle\general;$(ProjectDir)..\..\middle\scene\scene_actor;$(ProjectDir)..\..\middle\Navigate;$(ProjectDir)..\..\middle\scene;$(ProjectDir)..\..\miniOgre\multimedia;$(ProjectDir)..\..\GameUtil;$(ProjectDir)..\..\mygui\uirender;$(ProjectDir)..\..\mygui\uiengine;$(ProjectDir)..\..\mygui\uicommon;$(ProjectDir)..\common;$(ProjectDir)..\..\3rd\OIS\include;$(ProjectDir)..\..\3rd\tinyxml;$(ProjectDir)..\..\3rd;$(ProjectDir)..\..\GameShare;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\miniOgre\base;$(ProjectDir)..\..\miniOgre\parser;$(ProjectDir)..\..\miniOgre\models;$(ProjectDir)..\..\miniOgre\animation;$(ProjectDir)..\..\miniOgre\particle;$(ProjectDir)..\..\miniOgre\particle\ParticleFX;$(ProjectDir)..\..\middle\AdvancedAnimation;$(ProjectDir)..\..\middle\component;$(ProjectDir)..\..\middle\effect;$(ProjectDir)..\..\middle\general;$(ProjectDir)..\..\middle\scene\scene_actor;$(ProjectDir)..\..\middle\Navigate;$(ProjectDir)..\..\middle\scene;$(ProjectDir)..\..\miniOgre\multimedia;$(ProjectDir)..\..\GameUtil\windows;$(ProjectDir)..\..\GameUtil;$(ProjectDir)..\..\mygui\uirender;$(ProjectDir)..\..\mygui\uiengine;$(ProjectDir)..\..\mygui\uicommon;$(ProjectDir)..\common;$(ProjectDir)..\..\3rd\OIS\include;$(ProjectDir)..\..\3rd\tinyxml;$(ProjectDir)..\..\3rd;$(ProjectDir)..\..\GameShare;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\bin\;$(ProjectDir)..\..\3rd\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\bin\;$(ProjectDir)..\..\3rd\lib\;$(ProjectDir)..\..\3rd\mysql\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>MyGameEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

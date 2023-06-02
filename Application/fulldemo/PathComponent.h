@@ -1,17 +1,17 @@
 #pragma once
 
-class Character;
+class KPlayer;
 class PathComponent
 {
 private:
-	Character* mCharacter = nullptr;
+	KPlayer* mPlayer = nullptr;
 	std::vector<Ogre::Vector2> mPathList;
 	int32_t mPathIndex = -1;
 	
 	Ogre::Real mfToRotation = 0.0;
 	Ogre::Real mRotationSpeed = 10.0f;
 public:
-	PathComponent(Character* character);
+	PathComponent(KPlayer* player);
 	~PathComponent();
 
 	bool moveTo(Ogre::Vector2& ownerPos, Ogre::Vector2& targetPos);
