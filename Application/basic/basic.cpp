@@ -28,36 +28,12 @@ bool Basic::appInit()
 	return true;
 }
 
-class MyRayResultCallback : public Bullet::RayResultCallback
-{
-	virtual void addSingleResult(const MoveObject* other, float distance)
-	{
-		int kk = 0;
-	}
-};
 void Basic::appUpdate(float delta)
 {
 	ApplicationBase::appUpdate(delta);
 	if (mAnimationState)
 	{
 		mAnimationState->addTime(delta);
-	}
-
-	if (mDynWorld)
-	{
-		mDynWorld->getBtWorld()->stepSimulation(delta, 1);
-
-		//for (int x = -100; x < 100; x++)
-		{
-			//for (int z = 0; z < 100; z++)
-			{
-				Ogre::Ray ray(Ogre::Vector3(210, 1000, 0), Ogre::Vector3(0, -1, 0));
-				MyRayResultCallback cb;
-				mDynWorld->rayTest(ray, &cb, 2000);
-			}
-			
-		}
-		
 	}
 }
 
@@ -119,10 +95,6 @@ void Basic::base2()
 
 	mGameCamera->setDistance(2000);
 	mGameCamera->setMoveSpeed(100.0f);
-
-	initPhysics();
-
-	mDynWorld->addRigidBody(0, sphere, Bullet::CT_TRIMESH);
 }
 
 void Basic::base3()
@@ -162,10 +134,4 @@ void Basic::base3()
 	mGameCamera->setDistance(2.0f);
 
 	mGameCamera->setMoveSpeed(25.0f);
-}
-
-void Basic::initPhysics()
-{
-	
-	mDynWorld.reset(new Bullet::DynamicsWorld(Vector3(0, -9.8, 0)));
 }

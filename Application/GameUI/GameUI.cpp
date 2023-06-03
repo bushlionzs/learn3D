@@ -1,4 +1,4 @@
-#include "OgreHeader.h"
+#include "stdafx.h"
 #include "GameUI.h"
 #include "engine_manager.h"
 #include "OgreParticleSystem.h"
