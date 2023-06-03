@@ -42,7 +42,6 @@ void MyCallback::onAnimationEnd(const char* animName, const char* parentNodeType
 const Ogre::String FOBJ_ACTOR_FILE = "logic model name";
 KCharacter::KCharacter()
 {
-	mRaceId = INVALID_ID;
 	mCurrCharModelID = INVALID_ID;
 	mCurrMountModelID = INVALID_ID;
 
@@ -50,6 +49,8 @@ KCharacter::KCharacter()
 	m_fWalkBaseSpeed = 0.0f;
 
 	mPathComponent = new PathComponent(this);
+
+	mObjectType = ObjectType_Npc;
 }
 
 
@@ -75,7 +76,7 @@ bool KCharacter::initialize()
 	
 
 	mMainEntity = std::make_shared<GameEntity>();
-	mMainEntity->loadModel("突厥武士女_01.lmodel");
+	mMainEntity->setModelName("突厥武士女_01.lmodel");
 	mMainEntity->changeAttributes(names, values);
 	mMainEntity->setWeapon("Falchion");
 
@@ -540,37 +541,7 @@ void KCharacter::createMount()
 	ChangeAction(CA_RIDING, 1.0f);
 }
 
-void KCharacter::setRaceId(int32_t raceId)
-{
-	if (mRaceId != raceId)
-	{
-		mRaceId = raceId;
 
-		const CGameTable* pCreatureTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CREATURE_ATT);
-		if (NULL == pCreatureTable)
-		{
-			return;
-		}
-
-		auto createInfo = (const _TABLE_CREATURE_ATT*)(pCreatureTable->GetFieldDataByIndex(mRaceId));
-		if (createInfo)
-		{
-			m_fRunBaseSpeed = createInfo->nRunSpeed * 0.001f;
-			m_fWalkBaseSpeed = createInfo->nWalkSpeed * 0.001f;
-
-			setCharModelId(createInfo->nModelID);
-		}
-	}
-}
-
-void KCharacter::setCharModelId(int32_t modelId)
-{
-	if (mCurrCharModelID != modelId)
-	{
-		mCurrCharModelID = modelId;
-		OnChangeOfModelId();
-	}
-}
 
 void KCharacter::setMountId(int32_t mountId)
 {
@@ -581,20 +552,39 @@ void KCharacter::setMountId(int32_t mountId)
 	}
 }
 
-void KCharacter::UpdateEquip(PLAYER_EQUIP point)
-{
 
-}
 
 void KCharacter::DoDataEvent_DataID()
 {
+	const CGameTable* pCreatureTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CREATURE_ATT);
+	if (NULL == pCreatureTable)
+	{
+		return;
+	}
+	auto id = m_pCharacterData->Get_RaceID();
+	auto createInfo = (const _TABLE_CREATURE_ATT*)(
+		pCreatureTable->GetFieldDataByIndex(id));
+	if (createInfo)
+	{
+		m_fRunBaseSpeed = createInfo->nRunSpeed * 0.001f;
+		m_fWalkBaseSpeed = createInfo->nWalkSpeed * 0.001f;
 
+		if (mCurrCharModelID != createInfo->nModelID)
+		{
+			mCurrCharModelID = createInfo->nModelID;
+			DoDataEvent_ModelID();
+		}
+	}
 }
 
 void KCharacter::DoDataEvent_ModelID()
 {
+	UpdateModel_CharActionSet();
 
-
+	if (mCurrCharModelID != INVALID_ID)
+	{
+		createCharRenderInterface();
+	}
 }
 
 void KCharacter::DoDataEvent_MountID()
@@ -643,15 +633,6 @@ int32_t KCharacter::GetCurrCharModelID()
 	return mCurrCharModelID;
 }
 
-void KCharacter::OnChangeOfModelId()
-{
-	UpdateModel_CharActionSet();
-
-	if (mCurrCharModelID != INVALID_ID)
-	{
-		createCharRenderInterface();
-	}
-}
 
 void KCharacter::OnChangeOfMountId()
 {
@@ -792,7 +773,7 @@ void KCharacter::createCharRenderInterface(void)
 	{
 		OGRE_EXCEPT(0);
 	}
-	mMainEntity->loadModel(mModelName);
+	mMainEntity->setModelName(mModelName);
 
 	// 在渲染层刷新位置
 	setPosition(mGamePosition);

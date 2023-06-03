@@ -9,10 +9,13 @@
 #include "kplayer.h"
 #include "game_scene.h"
 #include "net/messages/CSLogin.h"
+#include "KObjectManager.h"
 
 GameWorld::GameWorld(GameCamera* gameCamera)
 {
 	mGameCamera = gameCamera;
+
+	new KObjectManager;
 }
 
 GameWorld::~GameWorld()

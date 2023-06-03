@@ -10,7 +10,7 @@ public:
 	GameEntity();
 	~GameEntity();
 
-	bool loadModel(const String& modelName);
+	bool setModelName(const String& modelName);
 	bool changeAttributes(
 		const std::vector<String>& name, 
 		const std::vector<String>& value);

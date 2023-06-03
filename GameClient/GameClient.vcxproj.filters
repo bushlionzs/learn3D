@@ -10,26 +10,50 @@
     <Filter Include="clientmessage">
       <UniqueIdentifier>{e6521af8-6cb2-4f96-9092-9d28bc60c6e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="object">
+      <UniqueIdentifier>{51c36fec-1890-4988-8996-666c095a7815}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="data\GameDataCharacter.cpp">
       <Filter>data</Filter>
     </ClCompile>
-    <ClCompile Include="kcharacter.cpp" />
     <ClCompile Include="CharacterCommon.cpp" />
     <ClCompile Include="fulldemo.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PathComponent.cpp" />
-    <ClCompile Include="kplayer.cpp" />
     <ClCompile Include="application_base.cpp" />
     <ClCompile Include="application_util.cpp" />
     <ClCompile Include="application_window.cpp" />
     <ClCompile Include="game_camera.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="clientmessage\SCEnterSceneProcess.cpp">
       <Filter>clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="clientmessage\SCCharHumanBaseAttribProcess.cpp">
+      <Filter>clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kcharacter.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\KObject.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kplayer.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\KObjectManager.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\KItem.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\KItemEquip.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\KItemManager.cpp">
+      <Filter>object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -45,18 +69,36 @@
     <ClInclude Include="data\struct\GameDataStructTitle.h">
       <Filter>data\struct</Filter>
     </ClInclude>
-    <ClInclude Include="kcharacter.h" />
     <ClInclude Include="CharacterCommon.h" />
     <ClInclude Include="demoHeader.h" />
     <ClInclude Include="fulldemo.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="PathComponent.h" />
-    <ClInclude Include="kplayer.h" />
     <ClInclude Include="application_base.h" />
     <ClInclude Include="application_util.h" />
     <ClInclude Include="application_window.h" />
     <ClInclude Include="game_camera.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameEntity.h" />
+    <ClInclude Include="object\kcharacter.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KObject.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kplayer.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KObjectManager.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KItem.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KItemEquip.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KItemManager.h">
+      <Filter>object</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

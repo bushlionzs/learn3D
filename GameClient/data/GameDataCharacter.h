@@ -591,8 +591,8 @@ public:
 	int32							Get_CritHurt(void) const;
 	void						Set_CritHurt(int32 nCritHurt);
 
-	int32							Get_AttackSpeed(void) const;
-	void						Set_AttackSpeed(int32 fSpeed);
+	float							Get_AttackSpeed(void) const;
+	void						Set_AttackSpeed(float fSpeed);
 
 	int32							Get_AttCold(void) const;
 	void						Set_AttCold(int32 nAttCold);
@@ -771,6 +771,8 @@ public:
 
     void                        Set_DefendRemainPoints( uint32 uiPoints);
     uint32                      Get_DefendRemainPoints();
+
+	void Set_CampData(const SCampData* pCampData);
 /*
  -----------------------------------------------------------------------------------------------------------------------
  -----------------------------------------------------------------------------------------------------------------------

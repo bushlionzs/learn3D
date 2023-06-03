@@ -30,10 +30,15 @@ public:
 	void input(KeyCode _key);
 private:
 	void createCharRenderInterface(void);
-
+	void UpdateEquip(PLAYER_EQUIP point);
 	void UpdateFaceMesh(void);
 	void UpdateHairMesh(void);
-
+	bool isRightHandHabit();
+	int32 GetWeaponIDByModelID(PLAYER_EQUIP point);
+	bool isCanUpdateEquipByModelID(PLAYER_EQUIP point);
+	bool isCanUpdatePartModelByModelID(BODY_PART_MODEL part);
+	void UpdateBodyPartModel();
+	int32 GetFashionEquipParth(PLAYER_EQUIP point);
 	int32 GetFashionHead(BODY_PART_MODEL part);
 private:
 	// 模型更新

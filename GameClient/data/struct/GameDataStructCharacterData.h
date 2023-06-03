@@ -19,7 +19,7 @@ struct SDataCharacter
 	int32				m_nRage;			/* 怒气 */
 	int32				m_nMaxRage;			/* 最大怒气 */
 	FLOAT				m_fMoveSpeed;		/* 移动的速度 */
-
+	SCampData			m_CampData;			/* 阵营ID */
 	int32				m_nOwnerID;			/* 所有者ID */
 	int32				m_nRelative;		/* 相对关系，这个人是否可被攻击，是否主动攻击 */
 	int32				m_nModelID;			/* 模型ID */
@@ -186,7 +186,7 @@ struct SDataPlayerMyself :
 	int32					m_nMiss;					/* 闪避率 */
 	int32					m_nCritRate;				/* 会心率 */
 	int32					m_nCritHurt;				/* 爆击伤害 */
-	int32					m_nAttackSpeed;				/* 攻击速度 */
+	float					m_nAttackSpeed;				/* 攻击速度 */
 
 	int32					m_nAtt_Cold;				/* 冰攻击 */
 	int32					m_nDef_Cold;				/* 冰防御 */

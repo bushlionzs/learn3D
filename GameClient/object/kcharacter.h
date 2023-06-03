@@ -10,6 +10,7 @@
 #include "demoHeader.h"
 #include "CharacterCommon.h"
 #include "DefineItem.h"
+#include "KObject.h"
 
 class MyCallback : public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -26,10 +27,10 @@ class PlayerLogicModelHaveCreateCallback;
 class KCharatcterBaseData;
 class GameEntity;
 
-class KCharacter
+class KCharacter: public KObject
 {
 protected:
-	//Orphigine::ActorPtr		mOrphigineObj;
+	Orphigine::ActorPtr		mOrphigineObj;
 	Orphigine::ActorPtr     mMountObj;
 	Ogre::Vector3 mGamePosition;
 	Ogre::Real  mDirection = 0.0f;
@@ -58,7 +59,6 @@ protected:
 	std::shared_ptr<GameEntity> mMainEntity;
 	std::shared_ptr<GameEntity> mMountEntity;
 
-	int32_t mRaceId;
 	int32_t mCurrCharModelID;
 	int32_t mCurrMountModelID;
 	std::string mModelName;
@@ -115,8 +115,6 @@ public:
 
 	void createMount();
 
-	void setRaceId(int32_t raceId);
-	void setCharModelId(int32_t modelId);
 	void setMountId(int32_t mountId);
 
 	virtual CHARACTER_BASE_TYPE	GetCharacterType(void) const
@@ -124,7 +122,7 @@ public:
 		return CHAR_BASE_TYPE_INVALID;
 	}
 
-	void UpdateEquip(PLAYER_EQUIP point);
+	
 	void DoDataEvent_DataID();
 	void DoDataEvent_ModelID();
 	void DoDataEvent_MountID();
@@ -137,8 +135,9 @@ public:
 	void OnDataChanged_FaceMesh();
 
 	int32_t GetCurrCharModelID();
+
+	KCharatcterBaseData* GetCharacterData(void);
 protected:
-	void OnChangeOfModelId();
 	void OnChangeOfMountId();
 	void UpdateModel_CharActionSet(void);
 	void UpdateModel_MountActionSet(void);
@@ -146,6 +145,6 @@ protected:
 	virtual void createCharRenderInterface(void);
 
 	//
-	KCharatcterBaseData* GetCharacterData(void);
+	
 	
 };

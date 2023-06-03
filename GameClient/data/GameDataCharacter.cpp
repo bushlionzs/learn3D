@@ -32,11 +32,11 @@ void KCharatcterBaseData::ResetData()
 
 	m_nType = INVALID_ID;
 
-	switch(m_pObjRef->GetCharacterType())
+	switch(m_pObjRef->getObjectType())
 	{
-	case CHAR_BASE_TYPE_ME:
+	case ObjectType_PlayerOfMe:
 		{
-			if (NULL == m_pData)
+			if (nullptr == m_pData)
 				m_pData = new SDataPlayerMyself;
 			_Init_AsCharacter();
 			_Init_AsNPC();
@@ -44,18 +44,18 @@ void KCharatcterBaseData::ResetData()
 			_Init_AsPlayerMySelf();
 		}		
 		break;
-	case CHAR_BASE_TYPE_OHTER:
+	case ObjectType_Player:
 		{
-			if (NULL == m_pData)
+			if (nullptr == m_pData)
 				m_pData = new SDataPlayerOther;
 			_Init_AsCharacter();
 			_Init_AsNPC();
 			_Init_AsPlayerOther();
 		}		
 		break;
-	case CHAR_BASE_TYPE_NPC:
+	case ObjectType_Npc:
 		{
-			if (NULL == m_pData)
+			if (nullptr == m_pData)
 				m_pData = new SDataNPC;
 			_Init_AsCharacter();
 			_Init_AsNPC();
@@ -306,6 +306,11 @@ void KCharatcterBaseData::Set_RaceID(int32 nRaceID)
 	}
 
 	if(!m_pObjRef)
+	{
+		return;
+	}
+
+	if (m_pData->m_nRaceID == nRaceID)
 	{
 		return;
 	}
@@ -2914,7 +2919,7 @@ void KCharatcterBaseData::Set_CritHurt(int32 nCritHurt)
  =======================================================================================================================
  =======================================================================================================================
  */
-int32 KCharatcterBaseData::Get_AttackSpeed(void) const
+float KCharatcterBaseData::Get_AttackSpeed(void) const
 {
 	MUST_NOT_CHECK(CHAR_BASE_TYPE_NPC);
 	MUST_NOT_CHECK(CHAR_BASE_TYPE_OHTER);
@@ -2926,7 +2931,7 @@ int32 KCharatcterBaseData::Get_AttackSpeed(void) const
  =======================================================================================================================
  =======================================================================================================================
  */
-void KCharatcterBaseData::Set_AttackSpeed(int32 nSpeed)
+void KCharatcterBaseData::Set_AttackSpeed(float nSpeed)
 {
 	MUST_NOT_CHECK(CHAR_BASE_TYPE_NPC);
 	MUST_NOT_CHECK(CHAR_BASE_TYPE_OHTER);
@@ -3906,6 +3911,31 @@ uint32 KCharatcterBaseData::Get_DefendRemainPoints()
     MUST_NOT_CHECK( CHAR_BASE_TYPE_OHTER);
 
     return ( ( SDataPlayerMyself *) m_pData)->m_uiDefendRemainPoints;
+}
+
+void KCharatcterBaseData::Set_CampData(const SCampData* pCampData)
+{
+	if (NULL == pCampData)
+	{
+		if (g_bDebug) KLAssert(!"Set_CampData(), NULL == pCampData");
+		return;
+	}
+
+	if (!m_pData)
+	{
+		return;
+	}
+
+	if (!m_pObjRef)
+	{
+		return;
+	}
+
+	BOOL	bChangePKMode = FALSE;
+
+	if (pCampData->m_uPKMode != m_pData->m_CampData.m_uPKMode) bChangePKMode = TRUE;
+
+	m_pData->m_CampData = *pCampData;
 }
 
 

@@ -13,7 +13,9 @@
 
 GameEntity::GameEntity()
 {
-
+	mOrphigineObj =
+		Orphigine::ActorFactoryManager::getSingleton().createInstance("SkeletonMeshActor");
+	mOrphigineObj->createRenderInstance();
 }
 
 GameEntity::~GameEntity()
@@ -22,13 +24,9 @@ GameEntity::~GameEntity()
 }
 
 static const Ogre::String FOBJ_ACTOR_FILE = "logic model name";
-bool GameEntity::loadModel(const String& modelName)
+bool GameEntity::setModelName(const String& modelName)
 {
-	mOrphigineObj =
-		Orphigine::ActorFactoryManager::getSingleton().createInstance("SkeletonMeshActor");
-	mOrphigineObj->createRenderInstance();
 	mOrphigineObj->setProperty(FOBJ_ACTOR_FILE, modelName);
-
 	((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->setVisible(true);
 	return true;
 }

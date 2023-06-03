@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;__WINDOWS__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\miniOgre\base;$(ProjectDir)..\miniOgre\parser;$(ProjectDir)..\miniOgre\models;$(ProjectDir)..\miniOgre\animation;$(ProjectDir)..\miniOgre\particle;$(ProjectDir)..\miniOgre\particle\ParticleFX;$(ProjectDir)..\middle\AdvancedAnimation;$(ProjectDir)..\middle\component;$(ProjectDir)..\middle\effect;$(ProjectDir)..\middle\general;$(ProjectDir)..\middle\scene\scene_actor;$(ProjectDir)..\middle\Navigate;$(ProjectDir)..\middle\scene;$(ProjectDir)..\miniOgre\multimedia;$(ProjectDir)..\GameUtil\windows;$(ProjectDir)..\GameUtil;$(ProjectDir)..\mygui\uirender;$(ProjectDir)..\mygui\uiengine;$(ProjectDir)..\mygui\uicommon;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd;$(ProjectDir)..\GameShare;$(ProjectDir)dummy;$(ProjectDir);$(ProjectDir)..\GameServer;$(ProjectDir)..\GameShare\net\messages;$(ProjectDir)..\GameShare\net;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\miniOgre\base;$(ProjectDir)..\miniOgre\parser;$(ProjectDir)..\miniOgre\models;$(ProjectDir)..\miniOgre\animation;$(ProjectDir)..\miniOgre\particle;$(ProjectDir)..\miniOgre\particle\ParticleFX;$(ProjectDir)..\middle\AdvancedAnimation;$(ProjectDir)..\middle\component;$(ProjectDir)..\middle\effect;$(ProjectDir)..\middle\general;$(ProjectDir)..\middle\scene\scene_actor;$(ProjectDir)..\middle\Navigate;$(ProjectDir)..\middle\scene;$(ProjectDir)..\miniOgre\multimedia;$(ProjectDir)..\GameUtil\windows;$(ProjectDir)..\GameUtil;$(ProjectDir)..\mygui\uirender;$(ProjectDir)..\mygui\uiengine;$(ProjectDir)..\mygui\uicommon;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd;$(ProjectDir)..\GameShare;$(ProjectDir)dummy;$(ProjectDir)object;$(ProjectDir);$(ProjectDir)..\GameServer;$(ProjectDir)..\GameShare\net\messages;$(ProjectDir)..\GameShare\net;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -148,25 +148,29 @@
     <ClCompile Include="application_base.cpp" />
     <ClCompile Include="application_util.cpp" />
     <ClCompile Include="application_window.cpp" />
+    <ClCompile Include="clientmessage\SCCharHumanBaseAttribProcess.cpp" />
     <ClCompile Include="clientmessage\SCEnterSceneProcess.cpp" />
     <ClCompile Include="GameEntity.cpp" />
-    <ClCompile Include="kcharacter.cpp" />
     <ClCompile Include="CharacterCommon.cpp" />
     <ClCompile Include="data\GameDataCharacter.cpp" />
     <ClCompile Include="fulldemo.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="game_camera.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="object\kcharacter.cpp" />
+    <ClCompile Include="object\KItem.cpp" />
+    <ClCompile Include="object\KItemEquip.cpp" />
+    <ClCompile Include="object\KItemManager.cpp" />
+    <ClCompile Include="object\KObject.cpp" />
+    <ClCompile Include="object\KObjectManager.cpp" />
+    <ClCompile Include="object\kplayer.cpp" />
     <ClCompile Include="PathComponent.cpp" />
-    <ClCompile Include="kplayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application_base.h" />
     <ClInclude Include="application_util.h" />
     <ClInclude Include="application_window.h" />
     <ClInclude Include="GameEntity.h" />
-    <ClInclude Include="kcharacter.h" />
     <ClInclude Include="CharacterCommon.h" />
     <ClInclude Include="data\GameDataCharacter.h" />
     <ClInclude Include="data\GameDataDefine.h" />
@@ -174,11 +178,16 @@
     <ClInclude Include="data\struct\GameDataStructTitle.h" />
     <ClInclude Include="demoHeader.h" />
     <ClInclude Include="fulldemo.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="game_camera.h" />
+    <ClInclude Include="object\kcharacter.h" />
+    <ClInclude Include="object\KItem.h" />
+    <ClInclude Include="object\KItemEquip.h" />
+    <ClInclude Include="object\KItemManager.h" />
+    <ClInclude Include="object\KObject.h" />
+    <ClInclude Include="object\KObjectManager.h" />
+    <ClInclude Include="object\kplayer.h" />
     <ClInclude Include="PathComponent.h" />
-    <ClInclude Include="kplayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
