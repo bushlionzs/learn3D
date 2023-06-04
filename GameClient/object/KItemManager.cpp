@@ -6,6 +6,10 @@
 #include "GameTableManager.h"
 #include "KTable.h"
 #include "KItemEquip.h"
+#include "KItemMedicine.h"
+#include "KItemGem.h"
+#include "KItemBag.h"
+#include "KItemTask.h"
 
 template<>
 KItemManager* GameSingleton<KItemManager>::m_sSingleton = nullptr;
@@ -46,15 +50,15 @@ KItem* KItemManager::CreateNewItem(uint32 idTable)
 		if (nullptr == pGEquip)
 			return nullptr;
 
-			int32 nItemEquipId = AllotID();
+		int32 nItemEquipId = AllotID();
 		pNewItem = new KItemEquip(nItemEquipId);
 		if (nullptr == pNewItem)
 			return nullptr;
 
-		((KItemEquip*)pNewItem)->AsEquip(pGEquip);
+		//((KItemEquip*)pNewItem)->AsEquip(pGEquip);
 
 		// 物品规则
-		pNewItem->SetRule(pGEquip->nRule);
+		pNewItem->setRule(pGEquip->nRule);
 
 	}
 	break;
@@ -78,8 +82,8 @@ KItem* KItemManager::CreateNewItem(uint32 idTable)
 		if (NULL == pMedic)
 			return NULL;
 
-		pNewItem = new KItem_Medicine(AllotID());
-		((KItem_Medicine*)pNewItem)->AsMedicine(pMedic);
+		pNewItem = new KItemMedicine(AllotID());
+		//((KItemMedicine*)pNewItem)->AsMedicine(pMedic);
 
 		//物品规则
 		pNewItem->setRule(pMedic->nRule);
@@ -103,8 +107,8 @@ KItem* KItemManager::CreateNewItem(uint32 idTable)
 		if (NULL == pTask)
 			return NULL;
 
-		pNewItem = new KItem_Task(AllotID());
-		((KItem_Task*)pNewItem)->AsTask(pTask);
+		pNewItem = new KItemTask(AllotID());
+		//((KItemTask*)pNewItem)->AsTask(pTask);
 
 		// 物品规则
 		pNewItem->setRule(pTask->nRule);
@@ -129,8 +133,8 @@ KItem* KItemManager::CreateNewItem(uint32 idTable)
 		if (NULL == pGem)
 			return NULL;
 
-		pNewItem = new KItem_Gem(AllotID());
-		((KItem_Gem*)pNewItem)->AsGem(pGem);
+		pNewItem = new KItemGem(AllotID());
+		//((KItemGem*)pNewItem)->AsGem(pGem);
 
 		// 物品规则
 		pNewItem->setRule(pGem->nRule);
@@ -154,8 +158,8 @@ KItem* KItemManager::CreateNewItem(uint32 idTable)
 		if (NULL == pExtraBagMap)
 			return NULL;
 
-		pNewItem = new KItem_Bag(AllotID());
-		((KItem_Bag*)pNewItem)->AsExtBag(pExtraBagMap);
+		pNewItem = new KItemBag(AllotID());
+		//((KItemBag*)pNewItem)->AsExtBag(pExtraBagMap);
 		// 物品规则
 		pNewItem->setRule(pExtraBagMap->nRule);
 	}
@@ -171,7 +175,7 @@ KItem* KItemManager::CreateNewItem(uint32 idTable)
 	if (NULL == pNewItem)
 		return NULL;
 
-	pNewItem->m_idTable = idTable;
+	//pNewItem->m_idTable = idTable;
 	mObjectMap[pNewItem->getId()] = pNewItem;
 
 	return pNewItem;
@@ -188,4 +192,10 @@ void KItemManager::DestroyItem(KItem* pItem)
 		}
 		delete pItem;
 	}
+}
+
+uint64_t KItemManager::AllotID(void)
+{
+	static uint64_t s_ID = 1;
+	return s_ID++;
 }

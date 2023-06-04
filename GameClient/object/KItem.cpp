@@ -1,7 +1,7 @@
 #include "OgreHeader.h"
 #include "KItem.h"
 
-KItem::KItem()
+KItem::KItem(uint64_t id)
 {
 	mObjectType = ObjectType_Item;
 	mRuleId = -1;

@@ -11,6 +11,7 @@
 #include "CharacterCommon.h"
 #include "DefineItem.h"
 #include "KObject.h"
+#include "GameEntity.h"
 
 class MyCallback : public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -55,6 +56,7 @@ protected:
 
 	const TAB::TABFile* m_pCharActionSet = nullptr;
 	const TAB::TABFile* m_pMountActionSet = nullptr;
+	const TAB::TABFile* m_pWeaponActionSet;
 
 	std::shared_ptr<GameEntity> mMainEntity;
 	std::shared_ptr<GameEntity> mMountEntity;
@@ -71,6 +73,10 @@ protected:
 
 	// 基本步行速度
 	FLOAT					m_fWalkBaseSpeed;
+
+	// 当前武器类型
+	eWEAPON_TYPE		m_theLWeaponType;
+	eWEAPON_TYPE		m_theRWeaponType;
 public:
 	KCharacter();
 
@@ -104,7 +110,7 @@ public:
 		bool bBlendIn,
 		bool bBlendOut
 	);
-	void update(float deltatime);
+	virtual void update(float deltatime);
 
 	bool initialize();
 
@@ -137,6 +143,29 @@ public:
 	int32_t GetCurrCharModelID();
 
 	KCharatcterBaseData* GetCharacterData(void);
+
+	void ChangeWeaponEffect(
+		GameEntity::eWEAPATTR ePart,
+		LPCTSTR szEffectName,
+		LPCTSTR nLocatorName,
+		uint32 color);
+
+	int32 getEffectPriority();
+
+	eWEAPON_TYPE GetMainWeaponType();
+	eWEAPON_TYPE GetWeaponType(ENUM_WEAPON_LOCATOR_TYPE loc) const;
+
+	void SetWeaponType(
+		eWEAPON_TYPE type,
+		ENUM_WEAPON_LOCATOR_TYPE loc = WL_BOTH);
+
+	void SetWeaponAction(LPCTSTR szWeaponAnimName);
+
+	bool IsModelCreateAllCompleted();
+
+	bool IsFollowAttach();
+
+	virtual void UpdateModel_Visible();
 protected:
 	void OnChangeOfMountId();
 	void UpdateModel_CharActionSet(void);

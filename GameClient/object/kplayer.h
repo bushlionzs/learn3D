@@ -40,10 +40,45 @@ private:
 	void UpdateBodyPartModel();
 	int32 GetFashionEquipParth(PLAYER_EQUIP point);
 	int32 GetFashionHead(BODY_PART_MODEL part);
+
+	void EquipItem_BodyLocator(
+		int32_t nEquipId,
+		int32_t nWeaponId,
+		ENUM_WEAPON_LOCATOR_TYPE loc,
+		bool bUpdateWeaponAnimType = false);
+	void EquipItem_BodyPart(PLAYER_EQUIP nPart, int32 nID);
+
+	void SetBodyEquipEffect(int32 nEquipId, PLAYER_EQUIP nPart);
+	void SetBodyEquipEffect(
+		PLAYER_EQUIP nPart,
+		LPCTSTR szBindPoint,
+		LPCTSTR szEffect);
+	void AddEquipEffect(int32 nEquipId, PLAYER_EQUIP eEquipType);
+
+	bool IsRightHandHabit();
+
+	void SetWeaponActionName(LPCSTR szDown, LPCSTR szUp);
+
+	void UpdateModel_WeaponActionSet();
+
+	void DelEquipEffect(PLAYER_EQUIP nPart);
+
+	void UnEquipItem(PLAYER_EQUIP nPart, bool bUseDefaultEquip = true);
+
+	virtual void UpdateModel_Visible();
 private:
 	// 模型更新
 	ModelPartDataList m_ModelPartDateList;
 
 	/// CharRace表中的定义
 	const _TABLE_CHAR_RACE* m_pCharRace;
+
+	// 装备上的特效列表
+	typedef std::map<int32, std::vector<String> > EquipEffectMap;
+
+	EquipEffectMap m_EquipEffectMap;
+
+	// 武器动作名
+	String	m_strWeaponActorFile_Down;
+	String	m_strWeaponActorFile_Up;
 };

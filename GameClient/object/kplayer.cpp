@@ -23,6 +23,7 @@
 #include "data/GameDataCharacter.h"
 #include "GameEntity.h"
 #include "KItemEquip.h"
+#include "KItemManager.h"
 
 class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -133,8 +134,13 @@ void KPlayer::input(KeyCode _key)
 	}
 }
 
+
 void KPlayer::createCharRenderInterface(void)
 {
+	if (!mMainEntity)
+	{
+		mMainEntity = std::make_shared<GameEntity>();
+	}
 	const CGameTable* pCharModelTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MODEL);
 	if (NULL == pCharModelTable)
 	{
@@ -160,11 +166,9 @@ void KPlayer::createCharRenderInterface(void)
 
 		auto position = EngineManager::getSingleton().getMyPosition();
 		// 设置ActorFile
+		mGameEntity->setModelName(lpszModelFileName);
 		setPosition(position);
 	
-		mGameEntity->setModelName(lpszModelFileName);
-	
-
 		m_ModelPartDateList.Clear();
 
 
@@ -217,8 +221,8 @@ void KPlayer::UpdateEquip(PLAYER_EQUIP point)
 		nEquipID = pCharacterData->Get_Equip(point);
 		if (INVALID_ID != nEquipID)
 		{
-			pTempEquip = (KItemEquip*)ITEM_MANAGER_PTR->CreateNewItem(nEquipID);
-			if (pTempEquip && ICLASS_EQUIP == pTempEquip->GetItemClass() && pTempEquip->GetTermTime() != 1)
+			pTempEquip = (KItemEquip*)KItemManager::GetSingleton().CreateNewItem(nEquipID);
+			if (pTempEquip  && pTempEquip->GetTermTime() != 1)
 			{
 				nVisualID = pTempEquip->GetVisualID();
 			}
@@ -282,14 +286,14 @@ void KPlayer::UpdateEquip(PLAYER_EQUIP point)
 		UnEquipItem(point);
 	}
 
-	UpdateAnimWeaponType();
+	mGameEntity->Weapon_SetAasAnim(GetMainWeaponType());
 
-	ITEM_MANAGER_PTR->DestroyItem(pTempEquip);
+	KItemManager::GetSingleton().DestroyItem(pTempEquip);
 
 	// 刷新可见
 	if (IsModelCreateAllCompleted())
 	{
-		UpdateModel_Visiable();
+		UpdateModel_Visible();
 	}
 }
 
@@ -737,3 +741,542 @@ int32 KPlayer::GetFashionHead(BODY_PART_MODEL part)
 	}
 	return INVALID_ID;
 }
+
+void KPlayer::EquipItem_BodyLocator(
+	int32_t nEquipId,
+	int32_t nWeaponId,
+	ENUM_WEAPON_LOCATOR_TYPE loc, 
+	bool bUpdateWeaponAnimType)
+{
+	if (nullptr == mGameEntity)
+		return;
+
+	const CGameTable* pWeaponItemTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_ITEM_VISUAL_LOCATOR);
+	if (NULL == pWeaponItemTable)
+		return;
+
+	const _TABLE_ITEM_VISUAL_LOCATOR* pEquipVisual = (_TABLE_ITEM_VISUAL_LOCATOR*)pWeaponItemTable->GetFieldDataByIndex(nWeaponId);
+	if (NULL == pEquipVisual)
+		return;
+
+	BOOL bHaveRightWeapon = FALSE;
+	BOOL bHaveLeftWeapon = FALSE;
+
+	LPCSTR pObjFile_Right = NULL;
+	if (GENDER_MALE == GetCharacterData()->Get_RaceID())
+		pObjFile_Right = pEquipVisual->pObjFile_Right_Man;
+	else
+		pObjFile_Right = pEquipVisual->pObjFile_Right_Woman;
+
+	LPCSTR pObjFile_Left = NULL;
+	if (GENDER_MALE == GetCharacterData()->Get_RaceID())
+		pObjFile_Left = pEquipVisual->pObjFile_Left_Man;
+	else
+		pObjFile_Left = pEquipVisual->pObjFile_Left_Woman;
+
+	switch (pEquipVisual->nWeaponPointType)
+	{
+		// 右手武器
+	case WL_RIGHT:
+	{
+		if (pObjFile_Right && pObjFile_Right[0] != '\0')
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, pObjFile_Right);
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, nEquipId);
+
+			bHaveRightWeapon = TRUE;
+		}
+		else
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, "");
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, INVALID_ID);
+		}
+	}
+	break;
+	// 左手武器
+	case WL_LEFT:
+	{
+		if (pObjFile_Left && pObjFile_Left[0] != '\0')
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, pObjFile_Left);
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, nEquipId);
+
+			bHaveLeftWeapon = TRUE;
+		}
+		else
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, "");
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, INVALID_ID);
+		}
+	}
+	break;
+	// 左手盾
+	case WL_L_ARM:
+	{
+		if (pEquipVisual->pObjShieldFile && pEquipVisual->pObjShieldFile[0] != '\0')
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_SHIELD, pEquipVisual->pObjShieldFile);
+			m_ModelPartDateList.SetValue(BODY_PART_SHIELD, nEquipId);
+		}
+		else
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_SHIELD, "");
+			m_ModelPartDateList.SetValue(BODY_PART_SHIELD, INVALID_ID);
+		}
+	}
+	break;
+	// 遍历, 自动匹配
+	case WL_DEFAULT:
+	{
+		// 右手武器
+		if (pObjFile_Right && pObjFile_Right[0] != '\0')
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, pObjFile_Right);
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, nEquipId);
+
+			bHaveRightWeapon = TRUE;
+		}
+		// 左手武器
+		if (pObjFile_Left && pObjFile_Left[0] != '\0')
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, pObjFile_Left);
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, nEquipId);
+
+			bHaveLeftWeapon = TRUE;
+		}
+		// 左手盾
+		if (pEquipVisual->pObjShieldFile && pEquipVisual->pObjShieldFile[0] != '\0')
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_SHIELD, pEquipVisual->pObjShieldFile);
+			m_ModelPartDateList.SetValue(BODY_PART_SHIELD, nEquipId);
+		}
+	}
+	break;
+	default:
+		break;
+	}
+
+
+	// 更新主手武器动作
+	if (0 < pEquipVisual->nWeaponActor)
+	{
+		if (bHaveRightWeapon && IsRightHandHabit() || bHaveLeftWeapon && FALSE == IsRightHandHabit())
+		{
+			if (GENDER_MALE == GetCharacterData()->Get_RaceID())
+				SetWeaponActionName(pEquipVisual->pWeaponActorFile_Man_Down, pEquipVisual->pWeaponActorFile_Man_Up);
+			else
+				SetWeaponActionName(pEquipVisual->pWeaponActorFile_Woman_Down, pEquipVisual->pWeaponActorFile_Woman_Up);
+
+			UpdateModel_WeaponActionSet();
+		}
+	}
+
+	// 设置主手或副手的武器类型
+	if (pEquipVisual->pWeaponType >= 0 && pEquipVisual->pWeaponType < WEAPON_TYPE_NUMBERS)
+	{
+		if (bHaveRightWeapon || bHaveLeftWeapon)
+		{
+			if (IsRightHandHabit())
+				SetWeaponType((eWEAPON_TYPE)pEquipVisual->pWeaponType, WL_RIGHT);
+			else
+				SetWeaponType((eWEAPON_TYPE)pEquipVisual->pWeaponType, WL_LEFT);
+		}
+	}
+
+	// 更新人物手持武器的动作
+	if (bUpdateWeaponAnimType)
+	{
+		if (bHaveRightWeapon && IsRightHandHabit() ||
+			bHaveLeftWeapon && FALSE == IsRightHandHabit())
+		{
+			mGameEntity->Weapon_SetAasAnim(GetMainWeaponType());
+		}
+	}
+}
+
+void KPlayer::EquipItem_BodyPart(PLAYER_EQUIP nPart, int32 nID)
+{
+	if (NULL == mGameEntity)
+		return;
+
+	KCharatcterBaseData* pCharacterData = GetCharacterData();
+	if (NULL == pCharacterData)
+		return;
+
+	const _TABLE_EQUIP_LOC* pEquipLoc = NULL;
+
+	const CGameTable* pEquipItemTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_ITEM_VISUAL_CHAR);
+	if (NULL == pEquipItemTable)
+		return;
+
+	const _TABLE_ITEM_VISUAL_CHAR* pEquipVisual = (const _TABLE_ITEM_VISUAL_CHAR*)pEquipItemTable->GetFieldDataByIndex(nID);
+	if (NULL == pEquipVisual)
+		return;
+
+	// 根据性别和职业来确定模型
+
+	// 种族(男，女)
+	int32 nRaceID = GetCharacterData()->Get_RaceID();
+	if (nRaceID < 0 || nRaceID >= CHAR_RACE_NUM)
+		return;
+
+	// 职业
+	int32 nProfession = GetCharacterData()->GetProfession();
+	if (nProfession < 0 || nProfession >= PROFESSION_NUMBER)
+		return;
+
+	// 职业的模型索引
+	int32 nVisualIndex = nRaceID + nProfession * CHAR_RACE_NUM;// 2表示的是各职业间隔的列数
+	if (nVisualIndex < 0 || nVisualIndex >= PROFESSION_NUMBER * CHAR_RACE_NUM)
+		return;
+
+	// 取得装备索引
+	int32 nEquipIndex = pEquipVisual->pVisualEntityIndex[nVisualIndex];
+
+	// 角色装备类数据库
+	const CGameTable* pEquipLocTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_EQUIP_LOC);
+	if (NULL == pEquipLocTable)
+		return;
+
+	pEquipLoc = (const _TABLE_EQUIP_LOC*)pEquipLocTable->GetFieldDataByIndex(nEquipIndex);
+	if (NULL == pEquipLoc)
+		return;
+
+
+	switch (nPart)
+	{
+		// 披风
+	case HEQUIP_SHOULDER:
+		m_ModelPartDateList.SetValue(BODY_PART_MANTLE, pEquipLoc->pMeshFile);
+		break;
+		// 身体
+	case HEQUIP_BACK:
+		m_ModelPartDateList.SetValue(BODY_PART_BODY, pEquipLoc->pMeshFile);
+		break;
+		// 手臂
+	case HEQUIP_HAND:
+		m_ModelPartDateList.SetValue(BODY_PART_HAND, pEquipLoc->pMeshFile);
+		break;
+		// 鞋
+	case HEQUIP_FEET:
+		m_ModelPartDateList.SetValue(BODY_PART_FEET, pEquipLoc->pMeshFile);
+		break;
+	};
+
+
+	for (int32 i = 0; i < EQUIP_LOC_EFFECT_MAX_NUM; ++i)
+	{
+		if (0 == strcmp(pEquipLoc->szREffect[i].szEffect, "") ||
+			0 == strcmp(pEquipLoc->szREffect[i].szBindPoint, ""))
+			continue;
+
+		SetBodyEquipEffect(nPart, pEquipLoc->szREffect[i].szEffect, pEquipLoc->szREffect[i].szBindPoint);
+	}
+}
+
+void KPlayer::SetBodyEquipEffect(int32 nEquipId, PLAYER_EQUIP nPart)
+{
+	if (NULL == mGameEntity)
+		return;
+
+	const CGameTable* ppItem_EquipVisualTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_ITEM_EQUIP_VISUAL);
+	if (NULL == ppItem_EquipVisualTable)
+		return;
+
+	const _TABLE_ITEM_EQUIP_VISUAL* pEquipVisual =
+		(const _TABLE_ITEM_EQUIP_VISUAL*)ppItem_EquipVisualTable->GetFieldDataByIndex((uint32)nEquipId);
+
+	if (NULL == pEquipVisual)
+		return;
+
+	// 加载装备上的特效
+	for (int32 i = 0; i < EQUIP_EFFECT_MAX_NUM; ++i)
+	{
+		// 特效名称不为空
+		if (('\0' != pEquipVisual->szEffect[i].szEffect[0]) &&
+			('\0' != pEquipVisual->szEffect[i].szBindPoint[0]))
+		{
+			// 绑特效
+			String strEffect = mGameEntity->AddEffect(
+				pEquipVisual->szEffect[i].szEffect, 
+				pEquipVisual->szEffect[i].szBindPoint, 
+				0, "", getEffectPriority());
+
+			// 保存特效到列表
+			auto it = m_EquipEffectMap.find(nPart);
+			if (it == m_EquipEffectMap.end())
+			{
+				std::vector<String> effectList;
+
+				effectList.push_back(strEffect);
+
+				m_EquipEffectMap.insert(std::make_pair(nPart, effectList));
+			}
+			else
+			{
+				it->second.push_back(strEffect);
+			}
+		}
+	}
+
+}
+void KPlayer::SetBodyEquipEffect(
+	PLAYER_EQUIP nPart, 
+	LPCTSTR szBindPoint, 
+	LPCTSTR szEffect)
+{
+	if (nullptr == mGameEntity)
+		return;
+
+	if (0 == strcmp(szBindPoint, "") || 0 == strcmp(szEffect, ""))
+		return;
+
+	String strEffectID = mGameEntity->AddEffect(szEffect, szBindPoint, 0, "", this->getEffectPriority());
+	auto it = m_EquipEffectMap.find(nPart);
+
+	if (it == m_EquipEffectMap.end())
+	{
+		std::vector<String> effectList;
+		effectList.push_back(strEffectID);
+		m_EquipEffectMap.insert(std::make_pair(nPart, effectList));
+	}
+	else
+	{
+		it->second.push_back(strEffectID);
+	}
+}
+
+
+void KPlayer::AddEquipEffect(int32 nEquipId, PLAYER_EQUIP eEquipType)
+{
+	if (NULL == mGameEntity)
+		return;
+
+	const CGameTable* pItem_EquipVisualTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_ITEM_EQUIP_VISUAL);
+	if (NULL == pItem_EquipVisualTable)
+		return;
+
+	// 搜索纪录
+	const _TABLE_ITEM_EQUIP_VISUAL* pEquipVisual = \
+		(const _TABLE_ITEM_EQUIP_VISUAL*)pItem_EquipVisualTable->GetFieldDataByIndex((uint32)nEquipId);
+
+	if (NULL == pEquipVisual)
+		return;
+
+	switch (eEquipType)
+	{
+		// 主手
+	case HEQUIP_MAINHAND:
+	{
+		GameEntity::eWEAPATTR eType = GameEntity::WEAP_RIGHT;
+
+		mGameEntity->Weapon_RemoveEffect(eType);
+
+		// 加载武器默认的特效			
+		for (int32 i = 0; i < EQUIP_EFFECT_MAX_NUM; ++i)
+		{
+			KCharacter::ChangeWeaponEffect(eType,
+				pEquipVisual->szEffect[i].szEffect,
+				pEquipVisual->szEffect[i].szBindPoint, 1);
+		}
+	}
+	break;
+	// 副手
+	case HEQUIP_ASSIHAND:
+	{
+		GameEntity::eWEAPATTR eWeapAttr = GameEntity::WEAP_LEFT;
+
+		if (EQUIP_SDUN == pEquipVisual->nType ||
+			EQUIP_CRUSADE_ASSIST_HAND == pEquipVisual->nType)
+		{
+			eWeapAttr = GameEntity::WEAP_LEFT_SHIELD;
+		}
+
+		mGameEntity->Weapon_RemoveEffect(eWeapAttr);
+
+		// 加载武器默认的特效
+		for (int32 i = 0; i < EQUIP_EFFECT_MAX_NUM; ++i)
+		{
+			KCharacter::ChangeWeaponEffect(eWeapAttr,
+				pEquipVisual->szEffect[i].szEffect,
+				pEquipVisual->szEffect[i].szBindPoint, 1);
+		}
+	}
+	break;
+	default:
+		break;
+	}
+}
+
+bool KPlayer::IsRightHandHabit()
+{
+	//骑射的特例
+	int32 nProfession = GetCharacterData()->GetProfession();
+	if (PROFESSION_QISHE == (PROFESSION_TYPE)nProfession)
+	{
+		return false;
+	}
+	return true;
+}
+
+void KPlayer::SetWeaponActionName(LPCSTR szDown, LPCSTR szUp)
+{
+	if (szDown && szUp)
+	{
+		m_strWeaponActorFile_Down = szDown;
+		m_strWeaponActorFile_Up = szUp;
+	}
+}
+
+void KPlayer::UpdateModel_WeaponActionSet()
+{
+	
+	SetWeaponAction(m_strWeaponActorFile_Down.c_str());
+	
+}
+
+void KPlayer::DelEquipEffect(PLAYER_EQUIP nPart)
+{
+
+	// 查找该部位拥有的特效
+	auto it = m_EquipEffectMap.find(nPart);
+	if (it != m_EquipEffectMap.end())
+	{
+		// 删除该部位所有特效
+		auto effectID = it->second.begin();
+		for (; effectID != it->second.end(); ++effectID)
+		{
+			mGameEntity->DeleteEffect((*effectID).c_str());
+		}
+		it->second.clear();
+	}
+}
+
+void KPlayer::UnEquipItem(PLAYER_EQUIP nPart, bool bUseDefaultEquip)
+{
+	switch (nPart)
+	{
+		// 主手 == 右手
+	case HEQUIP_MAINHAND:
+	{
+		if (FALSE == IsRightHandHabit())
+		{
+			// 设为空手状态
+			SetWeaponType(WEAPON_TYPE_NONE, WL_LEFT);
+
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, "");
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, INVALID_ID);
+		}
+		else
+		{
+			// 设为空手状态
+			SetWeaponType(WEAPON_TYPE_NONE, WL_RIGHT);
+
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, "");
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, INVALID_ID);
+		}
+	}
+	break;
+	// 副手 == 左手
+	case HEQUIP_ASSIHAND:
+	{
+		if (FALSE == IsRightHandHabit())
+		{
+			SetWeaponType(WEAPON_TYPE_NONE, WL_RIGHT);
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, "");
+			m_ModelPartDateList.SetValue(BODY_PART_RIGHTHAND, INVALID_ID);
+		}
+		else
+		{
+			SetWeaponType(WEAPON_TYPE_NONE, WL_LEFT);
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, "");
+			m_ModelPartDateList.SetValue(BODY_PART_LEFTHAND, INVALID_ID);
+		}
+
+		SetWeaponType(WEAPON_TYPE_NONE, WL_L_ARM);
+		m_ModelPartDateList.SetValue(BODY_PART_SHIELD, "");
+		m_ModelPartDateList.SetValue(BODY_PART_SHIELD, INVALID_ID);
+	}
+	break;
+	// 头
+	case HEQUIP_HEAD:
+	{
+		// 设置缺省装备
+		if (m_pCharRace)
+			EquipItem_BodyPart(HEQUIP_HEAD, m_pCharRace->nDefHeadGeo);
+	}
+	break;
+	// 衣服
+	case HEQUIP_BACK:
+	{
+		if (bUseDefaultEquip)
+		{
+			// 设置缺省装备
+			if (m_pCharRace)
+				EquipItem_BodyPart(HEQUIP_BACK, m_pCharRace->nDefBody);
+		}
+		else
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_BODY, "");
+			m_ModelPartDateList.SetValue(BODY_PART_BODY, INVALID_ID);
+		}
+	}
+	break;
+	// 肩/披风
+	case HEQUIP_SHOULDER:
+	{
+		if (bUseDefaultEquip)
+		{
+			// 设置缺省装备
+			if (m_pCharRace)
+				EquipItem_BodyPart(HEQUIP_SHOULDER, m_pCharRace->nDefShoulder);
+		}
+		else
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_MANTLE, "");
+			m_ModelPartDateList.SetValue(BODY_PART_MANTLE, INVALID_ID);
+		}
+	}
+	break;
+	// 手
+	case HEQUIP_HAND:
+	{
+		if (bUseDefaultEquip)
+		{
+			// 设置缺省装备
+			if (m_pCharRace)
+				EquipItem_BodyPart(HEQUIP_HAND, m_pCharRace->nDefArm);
+		}
+		else
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_HAND, "");
+			m_ModelPartDateList.SetValue(BODY_PART_HAND, INVALID_ID);
+		}
+	}
+	break;
+	// 脚
+	case HEQUIP_FEET:
+	{
+		if (bUseDefaultEquip)
+		{
+			// 设置缺省装备
+			if (m_pCharRace)
+				EquipItem_BodyPart(HEQUIP_FEET, m_pCharRace->nDefFoot);
+		}
+		else
+		{
+			m_ModelPartDateList.SetValue(BODY_PART_FEET, "");
+			m_ModelPartDateList.SetValue(BODY_PART_FEET, INVALID_ID);
+		}
+	}
+	break;
+	default:
+		break;
+	};
+}
+
+void KPlayer::UpdateModel_Visible()
+{
+	KCharacter::UpdateModel_Visible();
+}
+

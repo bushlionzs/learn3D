@@ -13,6 +13,7 @@ public:
 	void DestroyItem(KItem* pItem);
 private:
 	bool addObject(int64_t id, KObject* obj);
+	uint64_t AllotID(void);
 private:
 	std::unordered_map<int64_t, KObject*> mObjectMap;
 

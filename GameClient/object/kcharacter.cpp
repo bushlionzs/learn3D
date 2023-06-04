@@ -1,4 +1,4 @@
-#include "OgreHeader.h"
+#include "stdafx.h"
 #include "OGActorFactoryManager.h"
 #include "OGSKeletonMeshActor.h"
 #include "OGImpactManager.h"
@@ -20,6 +20,7 @@
 #include "GameEntity.h"
 #include "Basics.h"
 #include "data/GameDataCharacter.h"
+#include "KObjectManager.h"
 
 class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -769,10 +770,7 @@ void KCharacter::createCharRenderInterface(void)
 	{ 
 		mMainEntity = std::make_shared<GameEntity>();
 	}
-	if (mModelName.empty())
-	{
-		OGRE_EXCEPT(0);
-	}
+
 	mMainEntity->setModelName(mModelName);
 
 	// 在渲染层刷新位置
@@ -803,4 +801,139 @@ KCharatcterBaseData* KCharacter::GetCharacterData(void)
 		m_pCharacterData = new KCharatcterBaseData(this);
 	}
 	return m_pCharacterData;
+}
+
+void KCharacter::ChangeWeaponEffect(
+	GameEntity::eWEAPATTR ePart,
+	LPCTSTR szEffectName, 
+	LPCTSTR nLocatorName, 
+	uint32 color)
+{
+	if (NULL == mGameEntity)
+		return;
+
+	//test 测试表中有空格
+	if ((0 == strcmp(nLocatorName, " ")) || (0 == strcmp(szEffectName, " ")))
+	{
+		KLThrow("20003");
+	}
+
+
+	if ((NULL == szEffectName) || (NULL == nLocatorName))
+		return;
+	if ((0 == strcmp(szEffectName, "")) || (0 == strcmp(nLocatorName, "")))
+		return;
+	if ((0 == strcmp(szEffectName, "-1")) || (0 == strcmp(nLocatorName, "-1")))
+		return;
+
+
+	switch (ePart)
+	{
+	case GameEntity::WEAP_RIGHT:
+		mGameEntity->RightWeapon_SetEffect(
+			szEffectName, nLocatorName, color, this->getEffectPriority());
+		break;
+	case GameEntity::WEAP_LEFT:
+		mGameEntity->LeftWeapon_SetEffect(
+			szEffectName, nLocatorName, color, this->getEffectPriority());
+		break;
+	case GameEntity::WEAP_LEFT_SHIELD:
+		mGameEntity->Shield_SetEffect(
+			szEffectName, nLocatorName, color, this->getEffectPriority());
+		break;
+	}
+}
+
+int32 KCharacter::getEffectPriority()
+{
+	int32 priority = 3;
+
+	if (mObjectType == ObjectType_PlayerOfMe)
+		priority = 0;
+
+	return priority;
+}
+
+eWEAPON_TYPE KCharacter::GetMainWeaponType()
+{
+	ENUM_WEAPON_LOCATOR_TYPE weapon_type = WL_RIGHT;
+	if (CHAR_BASE_TYPE_NPC != GetCharacterType() && GetCharacterData())
+	{
+		if (PROFESSION_QISHE == GetCharacterData()->GetProfession())
+			weapon_type = WL_LEFT;
+	}
+
+	return GetWeaponType(weapon_type);
+}
+
+eWEAPON_TYPE KCharacter::GetWeaponType(ENUM_WEAPON_LOCATOR_TYPE loc) const
+{
+	if (WL_RIGHT == loc)
+		return m_theRWeaponType;
+	else if (WL_LEFT == loc)
+		return m_theLWeaponType;
+
+	return WEAPON_TYPE_INVALID;
+}
+
+void KCharacter::SetWeaponType(
+	eWEAPON_TYPE type, 
+	ENUM_WEAPON_LOCATOR_TYPE loc)
+{
+	switch (loc)
+	{
+	case WL_RIGHT:
+		m_theRWeaponType = type;
+		break;
+	case WL_LEFT:
+		m_theLWeaponType = type;
+		break;
+	case WL_BOTH:
+		m_theRWeaponType = type;
+		m_theLWeaponType = type;
+		break;
+	};
+}
+
+void KCharacter::SetWeaponAction(LPCTSTR szWeaponAnimName)
+{
+	m_pWeaponActionSet = NULL;
+
+	if (szWeaponAnimName && GetActionSetData())
+	{
+		m_pWeaponActionSet = GetActionSetData()->GetActionSetFile(szWeaponAnimName);
+	}
+}
+
+bool KCharacter::IsModelCreateAllCompleted()
+{
+	// 绑定obj. 第一次创建时才检测. 只检测父obj
+	if (IsFollowAttach())
+	{
+		KObject* pObj = (KObject*)KObjectManager::GetSingleton().getObject(
+			GetCharacterData()->Get_AttachID());
+		if (pObj)
+		{
+			if (FALSE == ((KCharacter*)pObj)->IsModelCreateAllCompleted())
+			{
+				return FALSE;
+			}
+		}
+	}
+	return TRUE;
+}
+
+bool KCharacter::IsFollowAttach()
+{
+	if (GetCharacterData() && 
+		INVALID_ID != GetCharacterData()->Get_AttachID())
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void KCharacter::UpdateModel_Visible()
+{
+	mGameEntity->SetVisible(true);
 }

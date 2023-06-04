@@ -10,12 +10,13 @@
 #include "game_scene.h"
 #include "net/messages/CSLogin.h"
 #include "KObjectManager.h"
-
+#include "KItemManager.h"
 GameWorld::GameWorld(GameCamera* gameCamera)
 {
 	mGameCamera = gameCamera;
 
 	new KObjectManager;
+	new KItemManager;
 }
 
 GameWorld::~GameWorld()
@@ -75,7 +76,7 @@ bool GameWorld::gameWorldInit()
 
 void GameWorld::update(float delta)
 {
-	//mPlayer->update(delta);
+	KObjectManager::GetSingleton().update(delta);
 }
 
 void GameWorld::injectMouseWheel(int _absz)
@@ -91,6 +92,11 @@ void GameWorld::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 {
 	if (_id == OIS::MB_Left)
 	{
+		if (!mPlayer)
+		{
+			mPlayer = KObjectManager::GetSingleton().getMySelf();
+		}
+
 		if(mPlayer)
 			mPlayer->injectMousePress(_absx, _absy, _id);
 	}

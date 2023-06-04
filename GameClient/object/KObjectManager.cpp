@@ -51,6 +51,14 @@ KPlayer* KObjectManager::getMySelf()
 	return (KPlayer*)mPlayer;
 }
 
+void KObjectManager::update(float delta)
+{
+	for (auto& pair : mObjectMap)
+	{
+		pair.second->update(delta);
+	}
+}
+
 bool KObjectManager::addObject(int64_t id, KObject* obj)
 {
 	auto itor = mObjectMap.insert(std::pair<int64_t, KObject*>(id, obj));

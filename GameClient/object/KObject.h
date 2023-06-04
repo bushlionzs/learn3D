@@ -7,6 +7,10 @@ enum ObjectType
 	ObjectType_None = 0,
 	ObjectType_Item,
 	ObjectType_ItemEquip,
+	ObjectType_ItemGem,
+	ObjectType_ItemMedicine,
+	ObjectType_ItemTask,
+	ObjectType_ItemBag,
 	ObjectType_Npc,
 	ObjectType_Player,
 	ObjectType_PlayerOfMe
@@ -25,6 +29,8 @@ public:
 	const Ogre::Vector3& getOrientation();
 
 	GameEntity* createGameEntity(int32_t entityType);
+
+	virtual void update(float delta) {}
 protected:
 	GameEntity* mGameEntity;
 

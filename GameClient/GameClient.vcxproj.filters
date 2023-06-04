@@ -55,6 +55,21 @@
     <ClCompile Include="object\KItemManager.cpp">
       <Filter>object</Filter>
     </ClCompile>
+    <ClCompile Include="object\KItemGem.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\KItemMedicine.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\KItemBag.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\KItemTask.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\ItemCommon.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\GameDataCharacter.h">
@@ -98,6 +113,21 @@
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="object\KItemManager.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KItemGem.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KItemMedicine.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KItemBag.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KItemTask.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\ItemCommon.h">
       <Filter>object</Filter>
     </ClInclude>
   </ItemGroup>

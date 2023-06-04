@@ -4,7 +4,7 @@
 class KItem : public KObject
 {
 public:
-	KItem();
+	KItem(uint64_t id);
 	~KItem();
 
 	void setRule(int32_t nRuleID);
