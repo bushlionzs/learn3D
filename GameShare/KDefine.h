@@ -4,7 +4,8 @@
 //#include <OgreVector2.h>
 //#include <OgreVector3.h>
 #include "ku.h"
-
+#define BLEND_IN_TIME	(0.25f)
+#define BLEND_OUT_TIME	(0.25f)
 /*  */ 
 //typedef static			STATIC
 

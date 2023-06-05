@@ -59,13 +59,14 @@ private:
 
 	void SetWeaponActionName(LPCSTR szDown, LPCSTR szUp);
 
-	void UpdateModel_WeaponActionSet();
-
 	void DelEquipEffect(PLAYER_EQUIP nPart);
 
 	void UnEquipItem(PLAYER_EQUIP nPart, bool bUseDefaultEquip = true);
-
+public:
+	virtual void UpdateCharBaseData(void);
+	virtual void UpdateModel_WeaponActionSet(void);
 	virtual void UpdateModel_Visible();
+	virtual int32 AnalyseCharModel(void)const;
 private:
 	// 模型更新
 	ModelPartDataList m_ModelPartDateList;

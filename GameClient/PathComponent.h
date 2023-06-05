@@ -21,9 +21,11 @@ public:
 	void toFaceDir(Ogre::Real targetdir, Ogre::Real facedir);
 
 	void updateToFaceDir(float deltatime);
+
+	void calculateNodePos(const Ogre::Vector2& fvPosition, FLOAT fModifyHeight);
 private:
 	Ogre::Real getFaceDir();
 	void setFaceDir(Ogre::Real dir);
 private:
-	void calculateNodePos(const Ogre::Vector2& fvPosition, FLOAT fModifyHeight);
+	
 };

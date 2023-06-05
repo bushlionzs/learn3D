@@ -15,8 +15,8 @@
 //////////////////////////////////////////////////////////////////////////
 //全局变量
 //////////////////////////////////////////////////////////////////////////
-extern int32 __assert_state;
-extern int32 __message_state;
+extern int32_t __assert_state;
+extern int32_t __message_state;
 
 //////////////////////////////////////////////////////////////////////////
 //功能函数
@@ -25,7 +25,7 @@ extern void _Check1(const char *file, uint32_t line, const char *func, const cha
 extern void _Check2(const char *file, uint32_t line, const char *func, const char *expr, const char *msg);
 extern void _Check3(const char *file, uint32_t line, const char *func, const char *expr, const char *msg);
 extern void _KMB(const char *msg);
-extern bool RangeCheck_KCheck(int32 nIndex, int32 nFrom, int32 nTo, char const *szCodeLocation);
+extern bool RangeCheck_KCheck(int32_t nIndex, int32_t nFrom, int32_t nTo, char const *szCodeLocation);
 
 
 //////////////////////////////////////////////////////////////////////////

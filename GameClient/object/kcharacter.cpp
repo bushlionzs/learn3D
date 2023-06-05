@@ -57,45 +57,14 @@ KCharacter::KCharacter()
 
 bool KCharacter::initialize()
 {
-	std::vector<std::string> names =
-	{ "HairMesh",
-	  "FaceMesh",
-	  "RightWeaponObj",
-	  "MainBodyMesh",
-	  "ArmMesh",
-	  "FootMesh"
-	};
-	std::vector<std::string> values =
-	{
-		"女主角发型_01_白.mesh",
-		"新女主角脸_01.mesh",
-		"突厥武士男刀_01.lmodel",
-		"突厥武士女身体_01.mesh",
-		"突厥武士女双手_01.mesh",
-		"突厥武士女双脚_01.mesh"
-	};
-	
-
+	m_nAttachID = INVALID_ID;
+	m_bInAir = false;
 	mMainEntity = std::make_shared<GameEntity>();
-	mMainEntity->setModelName("突厥武士女_01.lmodel");
-	mMainEntity->changeAttributes(names, values);
-	mMainEntity->setWeapon("Falchion");
-
 	
-	int32_t mCharacterID = 12;
-	const CGameTable* pChar_Table = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MODEL);
-	const _TABLE_CHARACTER_MODEL* pInfo = (const _TABLE_CHARACTER_MODEL*)pChar_Table->GetFieldDataByIndex(mCharacterID);
+	m_pCharacterData = new KCharatcterBaseData(this);
 
-
-
-	if (nullptr == m_pCharActionSet)
-	{
-		std::string filename = pInfo->m_pszActionSetName_None;
-
-		CDBActionSet* setmgr = GetActionSetData();
-		m_pCharActionSet = setmgr->GetActionSetFile(pInfo->m_pszActionSetName_None);
-	}
-	//createMount();
+	UpdateCharBaseData();
+	
 	return true;
 }
 
@@ -120,9 +89,6 @@ void KCharacter::setPosition(
 		((Orphigine::SkeletonMeshActor*)mMountObj.get())->getLogicModel();
 		((Orphigine::SkeletonMeshActor*)mMountObj.get())->setVisible(true);
 	}
-	
-	
-	
 }
 
 
@@ -204,7 +170,7 @@ void KCharacter::onAnimationEnd(const char* animName, const char* parentNodeType
 	}
 }
 
-void KCharacter::ChangeAction(int32_t nActionType, float fDegree, int32_t nActionID)
+void KCharacter::ChangeAction(int32 nActionType, FLOAT fDegree, int32 nActionID, FLOAT fSpeed, BOOL bShowWeapon)
 {
 	//
 	float fCharDegree = fDegree;
@@ -420,6 +386,21 @@ bool KCharacter::startSkill()
 	return true;
 }
 
+void KCharacter::ChangeActionSpeed(FLOAT fSpeed)
+{
+	// 人物
+	if (mMainEntity)
+	{
+		mMainEntity->ChangeModelActionRate(fSpeed);
+	}
+
+	// 坐骑
+	if (mMountObj)
+	{
+		mMountObj->ChangeModelActionRate(fSpeed);
+	}
+}
+
 bool KCharacter::createSkillImpact(int32_t nActionID, float fDir)
 {
 	LPCSTR lpszCharActionName = getCharActionNameByActionSetID(nActionID, getMainWeaponType(), NULL, NULL);
@@ -454,8 +435,8 @@ bool KCharacter::startMood()
 
 void KCharacter::createMount()
 {
-	mMountObj = Orphigine::ActorFactoryManager::getSingleton().createInstance("SkeletonMeshActor");
-
+	//mMountObj = Orphigine::ActorFactoryManager::getSingleton().createInstance("SkeletonMeshActor");
+	
 	int32_t mountId = 5;
 
 	const CGameTable* pCharMountTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MOUNT);
@@ -478,12 +459,13 @@ void KCharacter::createMount()
 	const _TABLE_CHARACTER_MODEL* pMountModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(pMount->m_nModelID));
 
 
-	mMountObj->createRenderInstance();
+	/*mMountObj->createRenderInstance();
 
 	int32_t nObjID = 105;
 	((Orphigine::SkeletonMeshActor*)mMountObj.get())->setSkeletonMeshActorTypeandId((Orphigine::SkeletonMeshActor::TypeEnum)0, nObjID);
-	mMountObj->setProperty(FOBJ_ACTOR_FILE, String(pMountModel->m_pszModelName));
-
+	*/
+	String mountModelName = pMountModel->m_pszModelName;
+	mMountObj->setModelName(mountModelName);
 	//
 
 
@@ -792,14 +774,6 @@ void KCharacter::createCharRenderInterface(void)
 
 KCharatcterBaseData* KCharacter::GetCharacterData(void)
 {
-	if (NULL != m_pCharacterData && !_CrtIsValidHeapPointer(m_pCharacterData))
-	{
-		m_pCharacterData = NULL;
-	}
-	if (NULL == m_pCharacterData)
-	{
-		m_pCharacterData = new KCharatcterBaseData(this);
-	}
 	return m_pCharacterData;
 }
 
@@ -809,10 +783,6 @@ void KCharacter::ChangeWeaponEffect(
 	LPCTSTR nLocatorName, 
 	uint32 color)
 {
-	if (NULL == mGameEntity)
-		return;
-
-	//test 测试表中有空格
 	if ((0 == strcmp(nLocatorName, " ")) || (0 == strcmp(szEffectName, " ")))
 	{
 		KLThrow("20003");
@@ -830,15 +800,15 @@ void KCharacter::ChangeWeaponEffect(
 	switch (ePart)
 	{
 	case GameEntity::WEAP_RIGHT:
-		mGameEntity->RightWeapon_SetEffect(
+		mMainEntity->RightWeapon_SetEffect(
 			szEffectName, nLocatorName, color, this->getEffectPriority());
 		break;
 	case GameEntity::WEAP_LEFT:
-		mGameEntity->LeftWeapon_SetEffect(
+		mMainEntity->LeftWeapon_SetEffect(
 			szEffectName, nLocatorName, color, this->getEffectPriority());
 		break;
 	case GameEntity::WEAP_LEFT_SHIELD:
-		mGameEntity->Shield_SetEffect(
+		mMainEntity->Shield_SetEffect(
 			szEffectName, nLocatorName, color, this->getEffectPriority());
 		break;
 	}
@@ -933,7 +903,874 @@ bool KCharacter::IsFollowAttach()
 	return FALSE;
 }
 
+void KCharacter::ReleaseCharRenderInterface(void)
+{
+	//DetachMount();
+
+
+	mMainEntity->DeleteAllEffect();
+	mMainEntity->Destroy();
+	mMainEntity.reset();
+}
+
+
+int32_t KCharacter::GetAttachModelNum()
+{
+	int32 nCount = 0;
+
+
+	if (INVALID_ID != GetCharacterData()->Get_AttachID())
+		++nCount;
+
+	return nCount;
+}
+
+bool KCharacter::IsCanUpdateMountByModelID()
+{
+	int32 nModelID = GetCharacterData()->Get_ModelID();
+	if (INVALID_ID == nModelID)
+		return TRUE;
+
+	const CGameTable* pCharModelTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MODEL);
+	if (NULL == pCharModelTable)
+		return TRUE;
+
+	const _TABLE_CHARACTER_MODEL* pCharModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(nModelID));
+	if (NULL == pCharModel)
+		return TRUE;
+
+	if (0 <= pCharModel->m_nCheckMount)
+		return TRUE;
+
+	return FALSE;
+}
+
+bool KCharacter::UpdateMountingState()
+{
+		if (mMountEntity && mMainEntity)
+		{
+			// 是否被绑定
+			if (m_nAttachID != INVALID_ID)
+			{
+				return false;
+			}
+			// 是否变身
+			if (!IsCanUpdateMountByModelID())
+			{
+				return false;
+			}
+			// 回复缩放比例, 缩放指令一定要在绑定指令之前执行
+			//KObject::SetModel_Scale(1.f);
+
+			// 绑定
+			mMountEntity->Detach_Object(mMainEntity.get());
+			mMountEntity->Attach_Object(mMainEntity.get(), GetMountLocatorName(LOCATOR_MOUNT_BACK));
+
+			// 人物的动作
+			UpdateModel_CharActionSet();
+			// 武器的动作
+			UpdateModel_WeaponActionSet();
+
+			// 设置马上动作
+			BeginRiding();
+
+
+			return TRUE;
+		}
+
+	return FALSE;
+
+}
+
+bool KCharacter::AddAttachMember(int32 nObjId)
+{
+	return true;
+}
+
+// --------------------------------------------------------------------------
+bool KCharacter::RemoveAttachMember(int32 nObjId)
+{
+	return true;
+}
+
+void KCharacter::StopMove()
+{
+	
+}
+
+int32 KCharacter::GetSpecifyMountIDByModleID()
+{
+	int32 nModelID = GetCharacterData()->Get_ModelID();
+	if (INVALID_ID == nModelID)
+		return INVALID_ID;
+
+	const CGameTable* pCharModelTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MODEL);
+	if (NULL == pCharModelTable)
+		return INVALID_ID;
+
+	const _TABLE_CHARACTER_MODEL* pCharModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(nModelID));
+	if (NULL == pCharModel)
+		return INVALID_ID;
+
+	if (0 >= pCharModel->m_nCheckMount)
+		return INVALID_ID;
+
+	return pCharModel->m_nCheckMount;
+}
+
+
+void KCharacter::UpdateMountModel(void)
+{
+	if (NULL == GetCharacterData())
+		return;
+
+	if (INVALID_ID != m_nAttachID)
+		return;
+
+	int32 nMountID = GetCharacterData()->Get_MountID();
+	if (INVALID_ID != nMountID)
+	{
+		int32 nModelID = GetCharacterData()->Get_ModelID();
+		if (INVALID_ID != nModelID)
+		{
+			// 检测变身时，是否指定了坐骑。<0不能骑， >0指定坐骑， =0当前坐骑
+			int32 nSpecifyMountID = GetSpecifyMountIDByModleID();
+			if (0 > nSpecifyMountID)
+			{
+				return;
+			}
+			else if (0 < nSpecifyMountID)
+			{
+				nMountID = nSpecifyMountID;
+			}
+		}
+	}
+	if (m_nCurrMountModelID == nMountID)
+		return;
+
+	const CGameTable* pCharMountTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MOUNT);
+	if (NULL == pCharMountTable)
+		return;
+
+	const _TABLE_CHARACTER_MOUNT* pCharMount = (const _TABLE_CHARACTER_MOUNT*)(pCharMountTable->GetFieldDataByIndex(nMountID));
+
+	// 坐骑ID无效，当作下马处理
+	if (NULL == pCharMount)
+	{
+		// 下马
+		//Dismount();
+	}
+	else
+	{
+		// 上马
+		//Mounting(CreateMountRenderInterface(nMountID), nMountID);
+	}
+
+	UpdateModel_State();
+}
+
+void KCharacter::UpdateAttached()
+{
+	int32 nAttachID = GetCharacterData()->Get_AttachID();
+	if (INVALID_ID != nAttachID)
+	{
+		// 隐藏简模
+		
+	}
+	if (m_nAttachID != nAttachID)
+	{
+		if (INVALID_ID != m_nAttachID)
+		{
+			// 通知主体解除绑定
+			KObject* pObj = KObjectManager::GetSingleton().getObject(m_nAttachID);
+			if (pObj)
+			{
+				((KCharacter*)pObj)->RemoveAttachMember(getId());
+			}
+		}
+		if (INVALID_ID != nAttachID)
+		{
+			// 通知主体绑定
+			KObject* pObj = KObjectManager::GetSingleton().getObject(nAttachID);
+			
+			((KCharacter*)pObj)->AddAttachMember(getId());
+			
+			// 停止移动逻辑
+			StopMove();
+
+		}
+		//  解除绑定
+		else
+		{
+			// 更新坐骑
+			UpdateMountModel();
+
+			auto pos = getPosition();
+
+			Ogre::Vector2 pos2d(pos.x, pos.z);
+			mPathComponent->calculateNodePos(pos2d, 0.0f);
+		}
+	}
+}
+
+void KCharacter::UpdateModel_Attach()
+{
+	// 更新坐骑绑定
+	UpdateMountingState();
+
+	// 更新父绑定
+	UpdateAttached();
+
+}
+
+bool KCharacter::IsStopped_CharacterState(
+	CHARATER_LOGIC_TYPE nLogicTag) const
+{
+	if (CHAR_LOGIC_BASE == nLogicTag)
+	{
+		return m_bIsCharBaseLogicEnd;
+	}
+	else
+	{
+		return m_bIsCharActionLogicEnd;
+	}
+}
+
+CHARATER_STATE_TYPE KCharacter::GetCharacterState(
+	CHARATER_LOGIC_TYPE nLogicTag) const
+{
+	if (CHAR_LOGIC_BASE == nLogicTag)
+	{
+		return m_nCharBaseState;
+	}
+	else
+	{
+		return m_nCharActionState;
+	}
+}
+
+bool KCharacter::IsFightState(void) const
+{ 
+	return mFightStateTime > 0;
+}
+
+bool KCharacter::BeginIdle(void)
+{
+	// 跳跃时不设置移动动作
+	if (IsJumping())
+		return FALSE;
+
+	EndJump();
+	ChangeAction(CA_MOVING, 0.0f, INVALID_ID, 1.f, FALSE);			// 设置非移动状态	
+
+	if (mObjectType == ObjectType_PlayerOfMe)
+	{
+		ChangeAction(CA_POSTURE, 0.0f, INVALID_ID, 1.f, FALSE);		// 设置站立状态
+		// 警戒
+		if (IsFightState())
+		{
+			ChangeAction(CA_GUARD, 1.0f, BASE_ACTION_F_IDLE, 1.f, FALSE);	// 设置警戒状态
+
+			SetActionSlot(AASSLOT_DOWN_IDLE_STAND, BASE_ACTION_N_STAND);
+			SetActionSlot(AASSLOT_UP_IDLE_STAND, BASE_ACTION_N_STAND);
+		}
+		// 非警戒
+		else
+		{
+			ChangeAction(CA_GUARD, 0.0f, INVALID_ID, 1.0f, FALSE);	// 设置非警戒状态
+
+			// 休闲动作
+			if (0 == rand() % 10)
+			{
+				int32 nIdleActionId = BASE_ACTION_N_IDLE_1 + rand() % 5;
+				SetActionSlot(AASSLOT_DOWN_IDLE_STAND, nIdleActionId);
+				SetActionSlot(AASSLOT_UP_IDLE_STAND, nIdleActionId);
+			}
+			// 站立动作
+			else
+			{
+				SetActionSlot(AASSLOT_DOWN_IDLE_STAND, BASE_ACTION_N_STAND);
+				SetActionSlot(AASSLOT_UP_IDLE_STAND, BASE_ACTION_N_STAND);
+			}
+		}
+	}
+	// 非玩家
+	else
+	{
+		ChangeAction(CA_POSTURE, 0.0f, INVALID_ID);		// 设置站立状态
+		// 警戒
+		if (IsFightState())
+		{
+			ChangeAction(CA_GUARD, 1.0f, BASE_ACTION_F_IDLE);	// 设置警戒状态
+		}
+		// (和平)站立
+		else
+		{
+			ChangeAction(CA_GUARD, 0.0f, BASE_ACTION_N_STAND);	// 设置休闲状态
+		}
+	}
+	return TRUE;
+}
+// --------------------------------------------------------------------------
+bool KCharacter::EndIdle(void)
+{
+	return TRUE;
+}
+// --------------------------------------------------------------------------
+// 移动
+bool KCharacter::BeginMove(bool bPlayMoveSound)
+{
+	if (NULL == GetCharacterData())
+		return FALSE;
+
+	// 跳跃时不设置移动动作
+	if (IsJumping())
+		return FALSE;
+
+	EndJump();
+	ChangeAction(CA_MOVING, 1.0f);
+
+	if (MOVE_MODE_WALK == GetCharacterData()->Get_MoveActionMode())
+	{
+		// 走
+		ChangeAction(CA_WALK, 1.0f, BASE_ACTION_N_WALK);
+		StopWalkSound();
+	}
+	else if (MOVE_MODE_RUN == GetCharacterData()->Get_MoveActionMode())
+	{
+		// 跑
+		ChangeAction(CA_WALK, 1.0f, BASE_ACTION_N_RUN);
+
+		if (bPlayMoveSound)
+		{
+			ReadyPlayWalkSound();
+		}
+	}
+	ChangeActionSpeed(GetMoveRate());
+
+	return TRUE;
+}
+// --------------------------------------------------------------------------
+bool KCharacter::EndMove(void)
+{
+	ChangeAction(CA_MOVING, 0.0f);
+
+	ChangeActionSpeed(1.f);
+
+	// 终止移动声音
+	StopWalkSound();
+
+	return TRUE;
+}
+
+bool KCharacter::DoJump(void)
+{
+	if (IsDie())
+		return false;
+
+	if (m_nAttachID != INVALID_ID || IsFollowAttach())
+		return false;
+
+	KCharatcterBaseData* pCharacterData = GetCharacterData();
+	if (pCharacterData == NULL)
+		return false;
+
+	if (pCharacterData->Get_IsInStall())
+		return false;
+
+	BeginJump();
+	//SetProjectile(fabs(ACCELERATION_OF_GRAVITY) * 1.f * 0.5f);
+
+	return TRUE;
+}
+
+bool KCharacter::IsJumping() const
+{
+	return m_bInAir;
+}
+
+bool KCharacter::BeginJump()
+{
+	ChangeAction(CA_MOVING, 1.f);
+	ChangeAction(CA_JUMP, 1.f);
+
+	SetSlotIndex(AASSLOT_DOWN_IDLE_JUMP, BASE_ACTION_N_JUMP);
+
+	StopWalkSound();
+	SetJumpActionState(ENUM_CHAR_JUMP_STATE_JUMPING);
+	return true;
+}
+
+bool KCharacter::EndJump()
+{
+	ChangeAction(CA_MOVING, 0.f);
+	ChangeAction(CA_JUMP, 0.f);
+
+	SetJumpActionState(ENUM_CHAR_JUMP_STATE_INVALID);
+	return TRUE;
+}
+
+bool KCharacter::BeginRiding(void)
+{
+	ChangeAction(CA_RIDING, 1.0f);
+
+	return TRUE;
+}
+
+bool KCharacter::IsDie(void)
+{
+	if (GetCharacterState(CHAR_LOGIC_BASE) == CAHR_STATE_DEAD)
+	{
+		return true;
+	}
+	else if (GetCharacterData())
+	{
+		return GetCharacterData()->IsDie();
+	}
+	return false;
+}
+
+bool	KCharacter::SetActionSlot(
+	int32 nAASNode,
+	int32 nActionID,
+	BOOL bActionBySkill,
+	FLOAT fRate,
+	BOOL bLoop,
+	BOOL bBlendIn,
+	BOOL bBlendOut)
+{
+	// 添加武器动作
+	SetWeaponActionSlot(nAASNode, nActionID, bActionBySkill, fRate, bLoop, bBlendIn, bBlendOut);
+
+	// 添加坐骑动作
+	SetMountActionSlot(nAASNode, nActionID, bActionBySkill, fRate, bLoop, bBlendIn, bBlendOut);
+
+	// 添加人物动作
+	return SetCharActionSlot(nAASNode, nActionID, bActionBySkill, fRate, bLoop, bBlendIn, bBlendOut);
+
+}
+// 给人物添加动作
+bool	KCharacter::SetCharActionSlot(
+	int32 nAASNode,
+	int32 nActionID,
+	BOOL bActionBySkill,
+	FLOAT fRate,
+	BOOL bLoop,
+	BOOL bBlendIn,
+	BOOL bBlendOut)
+{
+	const CGameTable* pChar_AAS_NodeTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_AAS_NODE_INFO);
+	if (NULL == pChar_AAS_NodeTable)
+	{
+		return FALSE;
+	}
+
+	const _TABLE_AAS_NODE_INFO* pInfo = (const _TABLE_AAS_NODE_INFO*)(pChar_AAS_NodeTable->GetFieldDataByIndex(nAASNode));
+	if (pInfo)
+	{
+		Orphigine::Spell* pSkill = mMainEntity->GetCurrentSkill();
+		if (pSkill && bActionBySkill)
+		{
+			mMainEntity->Actor_SetActionSlot(pInfo->szNodeName, pSkill->getAnimationName().c_str(), bLoop, fRate, bBlendIn, bBlendOut);
+			return true;
+		}
+		else
+		{
+			if (NULL == GetActionSetData())
+				return FALSE;
+
+			if (NULL == m_pCharActionSet)
+				return FALSE;
+
+			const _TABLE_CHARACTER_ACTION_SET* pActionSet = (const _TABLE_CHARACTER_ACTION_SET*)(m_pCharActionSet->Search_Index_EQU(nActionID));
+			if (NULL == pActionSet)
+				return FALSE;
+			if (pActionSet->nIsSkill)
+				return FALSE;
+
+			LPCTSTR lpszCharActionName = GetCharActionNameByActionSetID(nActionID, GetMainWeaponType(), NULL, NULL);
+			if (lpszCharActionName)
+			{
+				mMainEntity->Actor_SetActionSlot(pInfo->szNodeName, lpszCharActionName, bLoop, fRate, bBlendIn, bBlendOut);
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
+// 给坐骑
+bool	KCharacter::SetMountActionSlot(
+	int32 nAASNode,
+	int32 nActionID,
+	BOOL bActionBySkill,
+	FLOAT fRate,
+	BOOL bLoop,
+	BOOL bBlendIn,
+	BOOL bBlendOut)
+{
+	if (NULL == GetActionSetData())
+		return FALSE;
+
+	if (NULL == m_pMountActionSet)
+		return FALSE;
+
+	const CGameTable* pChar_AAS_NodeTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_AAS_NODE_INFO);
+	if (NULL == pChar_AAS_NodeTable)
+	{
+		return FALSE;
+	}
+
+	const _TABLE_AAS_NODE_INFO* pInfo = (const _TABLE_AAS_NODE_INFO*)(pChar_AAS_NodeTable->GetFieldDataByIndex(nAASNode));
+	if (pInfo)
+	{
+
+		const _TABLE_CHARACTER_ACTION_SET* pActionSet = (const _TABLE_CHARACTER_ACTION_SET*)(m_pMountActionSet->Search_Index_EQU(nActionID));
+		if (NULL == pActionSet)
+			return FALSE;
+		if (pActionSet->nIsSkill)
+			return FALSE;
+
+		LPCTSTR lpszCharActionName = GetMountActionNameByActionSetID(nActionID);
+		if (lpszCharActionName)
+		{
+			mMountObj->Actor_SetActionSlot(pInfo->szNodeName, lpszCharActionName, bLoop, fRate, bBlendIn, bBlendOut);
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+// 给武器
+bool	KCharacter::SetWeaponActionSlot(
+	int32 nAASNode,
+	int32 nActionID,
+	BOOL bActionBySkill,
+	FLOAT fRate,
+	BOOL bLoop,
+	BOOL bBlendIn,
+	BOOL bBlendOut)
+{
+	if (NULL == GetMainWeaponTypeName())
+		return FALSE;
+
+	if (NULL == GetActionSetData())
+		return FALSE;
+
+	if (NULL == m_pWeaponActionSet)
+		return FALSE;
+
+	const CGameTable* pChar_AAS_NodeTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_AAS_NODE_INFO);
+	if (NULL == pChar_AAS_NodeTable)
+	{
+		return FALSE;
+	}
+
+	const _TABLE_AAS_NODE_INFO* pInfo = (const _TABLE_AAS_NODE_INFO*)(pChar_AAS_NodeTable->GetFieldDataByIndex(nAASNode));
+	if (pInfo)
+	{
+		const _TABLE_CHARACTER_ACTION_SET* pActionSet = (const _TABLE_CHARACTER_ACTION_SET*)(m_pWeaponActionSet->Search_Index_EQU(nActionID));
+		if (NULL == pActionSet)
+			return FALSE;
+		if (pActionSet->nIsSkill)
+			return FALSE;
+
+		LPCTSTR lpszCharActionName = GetWeaponActionNameByActionSetID(nActionID, GetMainWeaponType());
+		if (lpszCharActionName)
+		{
+			mMainEntity->Actor_SetWeaponActionSlot(pInfo->szNodeName, lpszCharActionName, GetMainWeaponTypeName(), bLoop, fRate, bBlendIn, bBlendOut);
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+LPCSTR KCharacter::GetMainWeaponTypeName()
+{
+	switch (GetMainWeaponType())
+	{
+	case WEAPON_TYPE_INVALID:
+	case WEAPON_TYPE_NONE:
+		return NULL;
+	case WEAPON_TYPE_BOW:
+		return g_szIDSTR_CURRENT_LEFTWEAPON;
+	default:
+		return g_szIDSTR_CURRENT_RIGHTWEAPON;
+	}
+	return NULL;
+}
+
+LPCSTR KCharacter::GetCharActionNameByActionSetID(
+	int32 nActionSetID, 
+	int32 nWeaponType, 
+	BOOL* pbHideWeapon, 
+	int32* pnAppointedWeaponID)
+{
+	if (NULL == m_pCharActionSet)
+		return NULL;
+
+	if (NULL == GetActionSetData())
+		return NULL;
+
+	if (INVALID_ID == nActionSetID)
+		return NULL;
+
+	int32 nCalcWeaponType = nWeaponType;
+
+	if (nCalcWeaponType < 0 || nCalcWeaponType >= MAX_WEAPON_TYPE_NUMBER)
+		return NULL;
+
+	const _TABLE_CHARACTER_ACTION_SET* pActionSet = (const _TABLE_CHARACTER_ACTION_SET*)(m_pCharActionSet->Search_Index_EQU(nActionSetID));
+	if (pActionSet)
+	{
+		// 隐藏武器
+		if (pbHideWeapon)
+			*pbHideWeapon = pActionSet->bHideWeapon;
+
+		// 指定武器
+		if (pnAppointedWeaponID)
+			*pnAppointedWeaponID = pActionSet->nAppointedWeaponID;
+
+		// 通过对象类型来获取武器类型
+		if (CHAR_BASE_TYPE_NPC == GetCharacterType())
+		{
+			assert(false);
+		}
+
+		// 取相应的列（拿什么武器的动作， 也包括Npc 和 怪的动作）
+		return pActionSet->pWeapon_Set[nCalcWeaponType];
+	}
+	return NULL;
+}
+
+LPCSTR KCharacter::GetMountActionNameByActionSetID(
+	int32 nActionSetID)
+{
+	if (m_pMountActionSet && 
+		INVALID_ID != nActionSetID && 
+		GetActionSetData())
+	{
+		const _TABLE_CHARACTER_ACTION_SET* pActionSet = 
+			(const _TABLE_CHARACTER_ACTION_SET*)(m_pMountActionSet->Search_Index_EQU(nActionSetID));
+		if (pActionSet != NULL)
+		{
+			return pActionSet->pWeapon_Set[WEAPON_TYPE_NONE];
+		}
+	}
+
+	return NULL;
+}
+
+LPCSTR KCharacter::GetWeaponActionNameByActionSetID(
+	int32 nActionSetID, int32 nWeaponType)
+{
+	if (NULL == GetActionSetData())
+		return NULL;
+
+	if (m_pWeaponActionSet && INVALID_ID != nActionSetID && nWeaponType >= 1 && nWeaponType < MAX_WEAPON_TYPE_NUMBER)
+	{
+		// 同人物动作表格式相同
+		const _TABLE_CHARACTER_ACTION_SET* pActionSet = (const _TABLE_CHARACTER_ACTION_SET*)(m_pWeaponActionSet->Search_Index_EQU(nActionSetID));
+		if (pActionSet != NULL)
+		{
+			return pActionSet->pWeapon_Set[nWeaponType];
+		}
+	}
+	return NULL;
+}
+
+bool KCharacter::SetSlotIndex(int32 nAASNode, int32 nActionID)
+{
+	return SetCharSlotIndex(nAASNode, nActionID);
+}
+
+// --------------------------------------------------------------------------
+bool KCharacter::SetCharSlotIndex(int32 nAASNode, int32 nActionID)
+{
+	if (NULL == GetActionSetData() || NULL == m_pCharActionSet)
+		return false;
+
+	const CGameTable* pChar_AAS_NodeTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_AAS_NODE_INFO);
+	if (NULL == pChar_AAS_NodeTable)
+	{
+		return false;
+	}
+
+	const _TABLE_AAS_NODE_INFO* pInfo = (const _TABLE_AAS_NODE_INFO*)(pChar_AAS_NodeTable->GetFieldDataByIndex(nAASNode));
+	if (pInfo)
+	{
+		const _TABLE_CHARACTER_ACTION_SET* pActionSet =
+			(const _TABLE_CHARACTER_ACTION_SET*)(m_pCharActionSet->Search_Index_EQU(nActionID));
+		if (pActionSet)
+		{
+			mMainEntity->Actor_SetSlotIndex(pInfo->szNodeName, (USHORT)pActionSet->nMonitoringDegree + 0.5f);
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool KCharacter::BeginCadaver()
+{
+	EndJump();
+	ChangeAction(CA_LIFE, 0.5, BASE_ACTION_F_CADAVER0);
+
+	return TRUE;
+}
+
+void KCharacter::RefreshBaseAnimation()
+{
+	if (nullptr == GetCharacterData())
+		return;
+
+	if (FALSE == IsStopped_CharacterState(CHAR_LOGIC_BASE))
+	{
+		switch (GetCharacterState(CHAR_LOGIC_BASE))
+		{
+		case CAHR_STATE_IDLE:
+		{
+			BeginIdle();
+		}
+		break;
+		case CAHR_STATE_MOVE:
+		{
+			BeginMove(TRUE);
+		}
+		break;
+		case CAHR_STATE_DEAD:
+		{
+			BeginCadaver();
+			return;
+		}
+		break;
+		default:
+			break;
+		};
+	}
+}
+
+void KCharacter::RefreshActionAnimation()
+{
+	if (NULL == GetCharacterData())
+		return;
+
+	if (INVALID_ID != GetCharacterData()->Get_ModelID())
+		return;
+
+	if (FALSE == IsStopped_CharacterState(CHAR_LOGIC_ACTION))
+	{
+		switch (GetCharacterState(CHAR_LOGIC_ACTION))
+		{
+		case CAHR_STATE_GATHER:
+		{
+			assert(false);
+		}
+		break;
+		case CAHR_STATE_LEAD:
+		{
+			assert(false);
+		}
+		break;
+		case CAHR_STATE_SEND:
+		{
+			assert(false);
+		}
+		break;
+		default:
+			break;
+		};
+	};
+}
+
+void KCharacter::RefreshAnimation()
+{
+	RefreshBaseAnimation();
+	RefreshActionAnimation();
+}
+
+void KCharacter::UpdateModel_Scale()
+{
+	FLOAT fScale = GetCharacterData()->Get_CharScale();
+	if (mMountObj)
+	{
+		mMountObj->SetScaleFactor(fScale);
+	}
+	else
+	{
+		mMainEntity->SetScaleFactor(fScale);
+	}
+}
+
+
+void KCharacter::UpdateModel_Effect()
+{
+
+}
+
+void KCharacter::UpdateModel_AllAttr(bool bAfresh)
+{
+	RefreshAnimation();						// 动作	
+	UpdateModel_Visible();					// 可见	
+	setPosition(getPosition());			// 位置
+	setDirection(getDirection());				// 方向
+	UpdateModel_Scale();					// 缩放
+	UpdateModel_Effect();					// 特效
+}
+
+void KCharacter::UpdateModel_State()
+{
+	if (IsModelCreateAllCompleted())
+	{
+		if (0 < GetAttachModelNum())
+		{
+			UpdateModel_Attach();
+		}
+		else
+		{
+			UpdateModel_AllAttr();
+		}
+	}
+}
+
+void KCharacter::ReadyPlayWalkSound()
+{
+
+}
+
+void KCharacter::StopWalkSound()
+{
+
+}
+
+void KCharacter::UpdateCharModel(void)
+{
+	// 这个函数的内容不可轻易更改, 这里涉及到引擎和服务器的刷新机制
+
+	int32 nCharModelID = AnalyseCharModel();
+	if (nCharModelID != m_nCurrCharModelID)
+	{
+		m_nCurrCharModelID = nCharModelID;
+
+		UpdateModel_CharActionSet();
+
+		ReleaseCharRenderInterface();
+
+		if (m_nCurrCharModelID != INVALID_ID)
+		{
+			createCharRenderInterface();
+		}
+
+		UpdateModel_State();
+	}
+}
+
 void KCharacter::UpdateModel_Visible()
 {
-	mGameEntity->SetVisible(true);
+	mMainEntity->SetVisible(true);
+}
+
+int32 KCharacter::AnalyseCharModel(void)const
+{
+	return INVALID_ID;
 }

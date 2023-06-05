@@ -1,10 +1,6 @@
 #pragma once
 #include "KDefine.h"
 
-#define BLEND_IN_TIME	(0.25f)
-#define BLEND_OUT_TIME	(0.25f)
-
-
 
 /* ¶¯×÷×´Ì¬ */
 enum CHARACTER_ACTION

@@ -9,6 +9,9 @@
 #include "KTable.h"
 #include "KDefine.h"
 #include "OGSpell.h"
+#include "OGAASNode.h"
+#include "OGAASCrossFadeByTimeListNode.h"
+#include "OGAASCrossFadeByTimeSlotNode.h"
 #include "CharacterCommon.h"
 
 
@@ -246,3 +249,317 @@ void GameEntity::SetVisible(bool bVisible)
 
 }
 
+void GameEntity::DeleteAllEffect(void)
+{
+	((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->delAllEffect();
+}
+
+void GameEntity::Destroy(void)
+{
+	mOrphigineObj->setData(0);
+}
+
+bool GameEntity::Attach_Object(
+	GameEntity* pObject, LPCTSTR szAttachLocator)
+{
+	TCHAR szTmp[MAX_PATH];
+
+	szTmp[0] = 0;
+	snprintf(szTmp, MAX_PATH, "20065 %s", szAttachLocator);
+
+
+	
+	if (mOrphigineObj && 
+		pObject != nullptr )
+	{
+		GameEntity* pRFObject = (GameEntity*)pObject;
+
+		Orphigine::SkeletonMeshActor* pActorImplObj = 
+			(Orphigine::SkeletonMeshActor*)pRFObject->mOrphigineObj.get();
+		return((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->attachModelObj(szAttachLocator, pActorImplObj);
+	}
+
+	return false;
+}
+
+
+bool GameEntity::Detach_Object(GameEntity* pObject)
+{
+	if (mOrphigineObj)
+	{
+		GameEntity* pRFObject = (GameEntity*)pObject;
+
+		Orphigine::SkeletonMeshActor* pActorImplObj =
+			(Orphigine::SkeletonMeshActor*)pRFObject->mOrphigineObj.get();
+
+		return((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->detachModelObj(pActorImplObj);
+	}
+
+	return false;
+}
+
+bool GameEntity::Actor_SetSlotIndex(
+	LPCTSTR szSlotName, USHORT uSlotIndex)
+{
+	if (NULL == szSlotName) return FALSE;
+
+	auto	it = m_mapCharAASNode.find(szSlotName);
+
+	if (it != m_mapCharAASNode.end())
+	{
+		Orphigine::AASNode* pAASNode = it->second;
+
+		if (pAASNode && pAASNode->getType() == "CrossFadeByTimeList")
+		{
+			auto* pSlotNode = (Orphigine::AASCrossFadeByTimeListNode*)pAASNode;
+
+			try
+			{
+				pSlotNode->setActiveChild(uSlotIndex, BLEND_OUT_TIME);
+			}
+			catch (...)
+			{
+				if (g_bDebug)
+				{
+					throw;
+				}
+			}
+			return TRUE;
+		}
+	}
+
+	Orphigine::SkeletonMeshComponent* pLogicModel = 
+		((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->getLogicModel();
+	if (pLogicModel)
+	{
+		Orphigine::AASNode* pAASNode = pLogicModel->findAASNode(szSlotName);
+		if (pAASNode && pAASNode->getType() == "CrossFadeByTimeList")
+		{
+			m_mapCharAASNode[szSlotName] = pAASNode;
+			try
+			{
+				Orphigine::AASCrossFadeByTimeListNode* pSlotNode = (Orphigine::AASCrossFadeByTimeListNode*)pAASNode;
+				pSlotNode->setActiveChild(uSlotIndex, BLEND_OUT_TIME);
+			}
+			catch (...)
+			{
+				if (g_bDebug)
+				{
+					throw;
+				}
+			}
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+/*
+ =======================================================================================================================
+ =======================================================================================================================
+ */
+bool GameEntity::Actor_SetActionSlot
+(
+	LPCTSTR szSlotName,
+	LPCTSTR szActionName,
+	BOOL bLoop,
+	FLOAT fRate,
+	BOOL bBlendIn,
+	BOOL bBlendOut
+)
+{
+	if (NULL == szSlotName || NULL == szActionName) return FALSE;
+
+	FLOAT fBlendInTime = 0.f;
+
+	if (bBlendIn)
+	{
+		fBlendInTime = BLEND_IN_TIME;
+	}
+
+	FLOAT fBlendOutTime = 0.f;
+
+	if (bBlendOut)
+	{
+		fBlendOutTime = BLEND_OUT_TIME;
+	}
+
+	AASNODE_MAP::iterator	it = m_mapCharAASNode.find(szSlotName);
+
+	if (it != m_mapCharAASNode.end())
+	{
+		Orphigine::AASNode* pAASNode = it->second;
+
+		if (pAASNode && pAASNode->getType() == "CrossFadeByTimeSlot")
+		{
+			auto* pSlotNode = (Orphigine::AASCrossFadeByTimeSlotNode*)pAASNode;
+			if (m_strLastActionName == szActionName)
+			{
+				pSlotNode->stopUserDefineAnimation(0.f);
+			}
+
+			try
+			{
+				pSlotNode->playUserDefineAnimation(szActionName, fBlendInTime, fBlendOutTime, bLoop == TRUE, fRate, TRUE);
+				m_strLastActionName = szActionName;
+			}
+			catch (...)
+			{
+				if (g_bDebug)
+				{
+					throw;
+				}
+			}
+			return TRUE;
+		}
+	}
+
+	Orphigine::SkeletonMeshComponent* pLogicModel = 
+		((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->getLogicModel();
+	if (pLogicModel)
+	{
+		Orphigine::AASNode* pAASNode = pLogicModel->findAASNode(szSlotName);
+		if (pAASNode && pAASNode->getType() == "CrossFadeByTimeSlot")
+		{
+			Orphigine::AASCrossFadeByTimeSlotNode* pSlotNode = (Orphigine::AASCrossFadeByTimeSlotNode*)pAASNode;
+			try
+			{
+				pSlotNode->playUserDefineAnimation(szActionName, fBlendInTime, fBlendOutTime, bLoop == TRUE, fRate, 1);
+				m_mapCharAASNode[szSlotName] = pAASNode;
+				m_strLastActionName = szActionName;
+			}
+			catch (...)
+			{
+				if (g_bDebug)
+				{
+					throw;
+				}
+			}
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+
+/*
+=======================================================================================================================
+=======================================================================================================================
+*/
+bool GameEntity::Actor_SetWeaponActionSlot
+(
+	LPCTSTR szSlotName,
+	LPCTSTR szActionName,
+	LPCTSTR	szWeaponTypeName,
+	BOOL bLoop,
+	FLOAT fRate,
+	BOOL bBlendIn,
+	BOOL bBlendOut
+)
+{
+	if (NULL == szSlotName || NULL == szActionName || NULL == szWeaponTypeName)
+		return FALSE;
+
+	FLOAT fBlendInTime = 0.f;
+
+	if (bBlendIn)
+	{
+		fBlendInTime = BLEND_IN_TIME;
+	}
+
+	FLOAT fBlendOutTime = 0.f;
+
+	if (bBlendOut)
+	{
+		fBlendOutTime = BLEND_OUT_TIME;
+	}
+
+	String strSlotName = "Weapon_";
+	strSlotName += szSlotName;
+
+	AASNODE_MAP::iterator	it = m_mapWeaponAASNode.find(strSlotName.c_str());
+
+	if (it != m_mapWeaponAASNode.end())
+	{
+		Orphigine::AASNode* pAASNode = it->second;
+
+		if (pAASNode && pAASNode->getType() == "CrossFadeByTimeSlot")
+		{
+			Orphigine::AASCrossFadeByTimeSlotNode* pSlotNode = (Orphigine::AASCrossFadeByTimeSlotNode*)pAASNode;
+
+			if (m_strLastActionName == szActionName)
+			{
+				pSlotNode->stopUserDefineAnimation(0.f);
+			}
+
+			try
+			{
+				pSlotNode->playUserDefineAnimation(szActionName, fBlendInTime, fBlendOutTime, bLoop == TRUE, fRate, 1);
+			}
+			catch (...)
+			{
+				if (g_bDebug)
+				{
+					throw;
+				}
+			}
+			return TRUE;
+		}
+	}
+
+	Orphigine::SkeletonMeshComponent* pLogicModel = 
+		((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->getLogicModel();
+	if (pLogicModel)
+	{
+		Orphigine::SkeletonMeshComponent* pWeaponModel = pLogicModel->getAttributePtr(szWeaponTypeName);
+		if (NULL == pWeaponModel)
+			return FALSE;
+
+		Orphigine::AASNode* pAASNode = pWeaponModel->findAASNode(szSlotName);
+		if (pAASNode && pAASNode->getType() == "CrossFadeByTimeSlot")
+		{
+			m_mapWeaponAASNode[strSlotName.c_str()] = pAASNode;
+
+			Orphigine::AASCrossFadeByTimeSlotNode* pSlotNode = (Orphigine::AASCrossFadeByTimeSlotNode*)pAASNode;
+
+			try
+			{
+				pSlotNode->playUserDefineAnimation(szActionName, fBlendInTime, fBlendOutTime, bLoop == TRUE, fRate, 1);
+			}
+			catch (...)
+			{
+				if (g_bDebug)
+				{
+					throw;
+				}
+			}
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+void GameEntity::SetScaleFactor(FLOAT fScale)
+{
+	if (fabs(m_fScale - fScale) < 0.001)
+		return;
+	m_fScale = fScale;
+
+
+	auto fvScaleFactor = m_fvDefaultScale * fScale;
+	((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->setScaleFactor(fvScaleFactor);
+
+}
+
+Orphigine::Spell* GameEntity::GetCurrentSkill()
+{
+	return((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->getCurrentSkill();
+}
+
+void GameEntity::ChangeModelActionRate(FLOAT fRate)
+{
+	((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->setAASGlobalAnimRate(fRate);
+
+}

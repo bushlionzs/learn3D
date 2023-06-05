@@ -149,6 +149,7 @@
     <ClCompile Include="application_util.cpp" />
     <ClCompile Include="application_window.cpp" />
     <ClCompile Include="clientmessage\SCCharHumanBaseAttribProcess.cpp" />
+    <ClCompile Include="clientmessage\SCDetailEquipProcess.cpp" />
     <ClCompile Include="clientmessage\SCEnterSceneProcess.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="CharacterCommon.cpp" />

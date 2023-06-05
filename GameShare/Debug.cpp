@@ -16,8 +16,8 @@
 #ifdef __LINUX__
 #include <execinfo.h>
 #endif
-int32	__assert_state = 0;
-int32	__message_state = FALSE;
+int32_t	__assert_state = 0;
+int32_t	__message_state = FALSE;
 
 /*
  =======================================================================================================================
@@ -256,11 +256,12 @@ void _Check3(const char *file, uint32 line, const char *func, const char *expr, 
  =======================================================================================================================
  =======================================================================================================================
  */
-bool RangeCheck_KCheck(int32 nIndex, int32 nFrom, int32 nTo, char const *szCodeLocation)
+bool RangeCheck_KCheck(
+	int32_t nIndex, int32_t nFrom, int32_t nTo, char const *szCodeLocation)
 {
 	/*~~~~~~~~~~~~~~~~~~~*/
-	int32	nUpBorder = 0;
-	int32	nLowBorder = 0;
+	int32_t	nUpBorder = 0;
+	int32_t	nLowBorder = 0;
 	char	szBuff[1024];
 	/*~~~~~~~~~~~~~~~~~~~*/
 

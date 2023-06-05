@@ -159,14 +159,9 @@ void KPlayer::createCharRenderInterface(void)
 
 	if (lpszModelFileName)
 	{
-		if (NULL == mGameEntity)
-		{
-			mGameEntity = createGameEntity(0);
-		}
-
 		auto position = EngineManager::getSingleton().getMyPosition();
 		// 设置ActorFile
-		mGameEntity->setModelName(lpszModelFileName);
+		mMainEntity->setModelName(lpszModelFileName);
 		setPosition(position);
 	
 		m_ModelPartDateList.Clear();
@@ -286,7 +281,7 @@ void KPlayer::UpdateEquip(PLAYER_EQUIP point)
 		UnEquipItem(point);
 	}
 
-	mGameEntity->Weapon_SetAasAnim(GetMainWeaponType());
+	mMainEntity->Weapon_SetAasAnim(GetMainWeaponType());
 
 	KItemManager::GetSingleton().DestroyItem(pTempEquip);
 
@@ -489,7 +484,7 @@ void KPlayer::UpdateBodyPartModel()
 		m_ModelPartDateList.Update();
 		return;
 	}
-	mGameEntity->changeAttributes(vName, vValue);
+	mMainEntity->changeAttributes(vName, vValue);
 	m_ModelPartDateList.Update();
 }
 
@@ -748,7 +743,7 @@ void KPlayer::EquipItem_BodyLocator(
 	ENUM_WEAPON_LOCATOR_TYPE loc, 
 	bool bUpdateWeaponAnimType)
 {
-	if (nullptr == mGameEntity)
+	if (nullptr == mMainEntity)
 		return;
 
 	const CGameTable* pWeaponItemTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_ITEM_VISUAL_LOCATOR);
@@ -889,14 +884,14 @@ void KPlayer::EquipItem_BodyLocator(
 		if (bHaveRightWeapon && IsRightHandHabit() ||
 			bHaveLeftWeapon && FALSE == IsRightHandHabit())
 		{
-			mGameEntity->Weapon_SetAasAnim(GetMainWeaponType());
+			mMainEntity->Weapon_SetAasAnim(GetMainWeaponType());
 		}
 	}
 }
 
 void KPlayer::EquipItem_BodyPart(PLAYER_EQUIP nPart, int32 nID)
 {
-	if (NULL == mGameEntity)
+	if (NULL == mMainEntity)
 		return;
 
 	KCharatcterBaseData* pCharacterData = GetCharacterData();
@@ -976,7 +971,7 @@ void KPlayer::EquipItem_BodyPart(PLAYER_EQUIP nPart, int32 nID)
 
 void KPlayer::SetBodyEquipEffect(int32 nEquipId, PLAYER_EQUIP nPart)
 {
-	if (NULL == mGameEntity)
+	if (NULL == mMainEntity)
 		return;
 
 	const CGameTable* ppItem_EquipVisualTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_ITEM_EQUIP_VISUAL);
@@ -997,7 +992,7 @@ void KPlayer::SetBodyEquipEffect(int32 nEquipId, PLAYER_EQUIP nPart)
 			('\0' != pEquipVisual->szEffect[i].szBindPoint[0]))
 		{
 			// 绑特效
-			String strEffect = mGameEntity->AddEffect(
+			String strEffect = mMainEntity->AddEffect(
 				pEquipVisual->szEffect[i].szEffect, 
 				pEquipVisual->szEffect[i].szBindPoint, 
 				0, "", getEffectPriority());
@@ -1025,13 +1020,13 @@ void KPlayer::SetBodyEquipEffect(
 	LPCTSTR szBindPoint, 
 	LPCTSTR szEffect)
 {
-	if (nullptr == mGameEntity)
+	if (nullptr == mMainEntity)
 		return;
 
 	if (0 == strcmp(szBindPoint, "") || 0 == strcmp(szEffect, ""))
 		return;
 
-	String strEffectID = mGameEntity->AddEffect(szEffect, szBindPoint, 0, "", this->getEffectPriority());
+	String strEffectID = mMainEntity->AddEffect(szEffect, szBindPoint, 0, "", this->getEffectPriority());
 	auto it = m_EquipEffectMap.find(nPart);
 
 	if (it == m_EquipEffectMap.end())
@@ -1049,7 +1044,7 @@ void KPlayer::SetBodyEquipEffect(
 
 void KPlayer::AddEquipEffect(int32 nEquipId, PLAYER_EQUIP eEquipType)
 {
-	if (NULL == mGameEntity)
+	if (NULL == mMainEntity)
 		return;
 
 	const CGameTable* pItem_EquipVisualTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_ITEM_EQUIP_VISUAL);
@@ -1070,7 +1065,7 @@ void KPlayer::AddEquipEffect(int32 nEquipId, PLAYER_EQUIP eEquipType)
 	{
 		GameEntity::eWEAPATTR eType = GameEntity::WEAP_RIGHT;
 
-		mGameEntity->Weapon_RemoveEffect(eType);
+		mMainEntity->Weapon_RemoveEffect(eType);
 
 		// 加载武器默认的特效			
 		for (int32 i = 0; i < EQUIP_EFFECT_MAX_NUM; ++i)
@@ -1092,7 +1087,7 @@ void KPlayer::AddEquipEffect(int32 nEquipId, PLAYER_EQUIP eEquipType)
 			eWeapAttr = GameEntity::WEAP_LEFT_SHIELD;
 		}
 
-		mGameEntity->Weapon_RemoveEffect(eWeapAttr);
+		mMainEntity->Weapon_RemoveEffect(eWeapAttr);
 
 		// 加载武器默认的特效
 		for (int32 i = 0; i < EQUIP_EFFECT_MAX_NUM; ++i)
@@ -1146,7 +1141,7 @@ void KPlayer::DelEquipEffect(PLAYER_EQUIP nPart)
 		auto effectID = it->second.begin();
 		for (; effectID != it->second.end(); ++effectID)
 		{
-			mGameEntity->DeleteEffect((*effectID).c_str());
+			mMainEntity->DeleteEffect((*effectID).c_str());
 		}
 		it->second.clear();
 	}
@@ -1275,8 +1270,54 @@ void KPlayer::UnEquipItem(PLAYER_EQUIP nPart, bool bUseDefaultEquip)
 	};
 }
 
+void KPlayer::UpdateCharBaseData(void) 
+{
+	KCharatcterBaseData* pCharacterData = GetCharacterData();
+
+	if (pCharacterData != NULL && pCharacterData->Get_RaceID() != INVALID_ID)
+	{
+		m_pCharRace = NULL;
+
+		int32 nProfession = pCharacterData->GetProfession();
+		int32 nRaceId = pCharacterData->Get_RaceID();
+		int32 nIndex = nRaceId * PROFESSION_NUMBER + nProfession + 100;
+
+		const CGameTable* pCharacterRaceTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_RACE);
+		if (NULL == pCharacterRaceTable)
+		{
+			return;
+		}
+
+		m_pCharRace = (const _TABLE_CHAR_RACE*)(pCharacterRaceTable->GetFieldDataByIndex(nRaceId));
+	}
+}
+
 void KPlayer::UpdateModel_Visible()
 {
 	KCharacter::UpdateModel_Visible();
+}
+
+int32 KPlayer::AnalyseCharModel(void)const
+{
+	// 经过变身
+	if (INVALID_ID != m_pCharacterData->Get_ModelID())
+	{
+		// 直接从模型定义表中读取模型名
+		return m_pCharacterData->Get_ModelID();
+	}
+	else
+	{
+		if (m_pCharRace != NULL)
+		{
+			// 通过性别和职业获取相应的模型
+			int32 nMenpai = m_pCharacterData->GetProfession();
+			if (INVALID_ID != nMenpai)
+				return m_pCharRace->nModelID + nMenpai;
+			else
+				return m_pCharRace->nModelID;
+		}
+	}
+
+	return INVALID_ID;
 }
 

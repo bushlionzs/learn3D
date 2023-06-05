@@ -70,6 +70,9 @@
     <ClCompile Include="object\ItemCommon.cpp">
       <Filter>object</Filter>
     </ClCompile>
+    <ClCompile Include="clientmessage\SCDetailEquipProcess.cpp">
+      <Filter>clientmessage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\GameDataCharacter.h">

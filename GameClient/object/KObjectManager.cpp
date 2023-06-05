@@ -19,9 +19,10 @@ KObject* KObjectManager::createPlayer(int64_t id)
 {
 	auto player = new KPlayer();
 	addObject(id, player);
-
+	player->initialize();
 	mPlayer = player;
 	mPlayer->setId(id);
+	
 	return player;
 }
 

@@ -75,12 +75,59 @@ public:
 	void DeleteEffect(LPCSTR effect);
 
 	void SetVisible(bool bVisible);
+
+	void DeleteAllEffect(void);
+
+	void Destroy(void);
+
+	bool Attach_Object(
+		GameEntity* pObject, LPCTSTR szAttachLocator);
+
+	bool Detach_Object(GameEntity* pObject);
+
+	bool Actor_SetSlotIndex(
+		LPCTSTR szSlotName, USHORT uSlotIndex);
+
+	bool Actor_SetActionSlot
+	(
+		LPCTSTR szSlotName,
+		LPCTSTR szActionName,
+		BOOL bLoop,
+		FLOAT fRate,
+		BOOL bBlendIn,
+		BOOL bBlendOut
+	);
+
+	bool Actor_SetWeaponActionSlot
+	(
+		LPCTSTR szSlotName,
+		LPCTSTR szActionName,
+		LPCTSTR	szWeaponTypeName,
+		BOOL bLoop,
+		FLOAT fRate,
+		BOOL bBlendIn,
+		BOOL bBlendOut
+	);
+
+	void SetScaleFactor(FLOAT fScale);
+
+	Orphigine::Spell* GetCurrentSkill();
+	void ChangeModelActionRate(FLOAT fRate);
 private:
 	Orphigine::ActorPtr		mOrphigineObj;
-	Orphigine::ActorPtr     mMountObj;
 	Ogre::Vector3 mEntityPosition;
 	Ogre::Real  mDirection = 0.0f;
 
 	std::string mModelName;
 	bool mVisible = false;
+
+	/* ²å²Û½Úµã»º³å */
+	typedef std::map<String, Orphigine::AASNode*>	AASNODE_MAP;
+	AASNODE_MAP		m_mapCharAASNode;
+	AASNODE_MAP		m_mapWeaponAASNode;
+
+	String			m_strLastActionName;
+
+	Ogre::Vector3	m_fvDefaultScale = Ogre::Vector3::UNIT_SCALE;
+	float m_fScale = 1.0f;
 };

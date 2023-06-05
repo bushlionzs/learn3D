@@ -32,8 +32,8 @@ public:
 
 	virtual void update(float delta) {}
 protected:
-	GameEntity* mGameEntity;
-
+	std::shared_ptr<GameEntity> mMainEntity;
+	
 	int64_t mServerId;
 
 	ObjectType mObjectType;
