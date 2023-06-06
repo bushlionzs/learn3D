@@ -17,6 +17,7 @@ public:
 	KPlayer* getMySelf();
 
 	void update(float delta);
+
 private:
 	bool addObject(int64_t id, KObject* obj);
 private:

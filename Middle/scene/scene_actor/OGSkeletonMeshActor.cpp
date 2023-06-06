@@ -560,10 +560,7 @@ namespace Orphigine
 	{
 		mLogicModel->setOrientation(orientation);
 	}
-	void SkeletonMeshActor::setSelected(bool selected)
-	{
-		
-	}
+	
 	int SkeletonMeshActor::_getTerrainSoundType(void)
 	{
 		return 0;
@@ -576,7 +573,7 @@ namespace Orphigine
 
 	void SkeletonMeshActor::setWeaponTypeName(const String& typeName)
 	{
-		
+		mLogicModel->setWeaponTypeName(typeName);
 	}
 	void SkeletonMeshActor::delCurrentSkill(void)
 	{
@@ -593,7 +590,10 @@ namespace Orphigine
 		
 	}
 	
-	
+	void	SkeletonMeshActor::setAASGlobalAnimRate(Real rate)
+	{
+		mLogicModel->setAASGlobalAnimRate(rate);
+	}
 
 	void SkeletonMeshActor::setSkillRate( Real val )
 	{
@@ -666,5 +666,29 @@ namespace Orphigine
 	{
 		mLogicModel->createSkill(
 			skillName, rot, nAnimFlag, loop, anim, delayTime, priority);
+	}
+
+	bool SkeletonMeshActor::setWeaponEffect(char* pEffectName, char* pLocatorName, SkeletonMeshComponent::WeaponEnum WeaponType, int priority)
+	{
+		if (Orphigine::CommandCacheManager::getSingleton().commandCacheisEmpty(mCommandCacheHandle))
+		{
+			if (mLogicModel)
+				return mLogicModel->setWeaponEffect(pEffectName, pLocatorName, WeaponType, priority);
+			else
+				return false;
+		}
+		else
+		{
+			LogicModelCommand* pLMC = OGRE_NEW LMsetWeaponEffectCommand(mName, pEffectName, pLocatorName, WeaponType, priority);
+			assert(pLMC);
+			Orphigine::CommandCacheManager::getSingleton().pushCommand(mCommandCacheHandle, pLMC);
+			return false;
+		}
+	}
+
+	bool SkeletonMeshActor::clearWeaponEffect(
+		SkeletonMeshComponent::WeaponEnum WeaponType)
+	{
+		return mLogicModel->clearWeaponEffect(WeaponType);
 	}
 }

@@ -21,6 +21,9 @@
 #include "Basics.h"
 #include "data/GameDataCharacter.h"
 #include "KObjectManager.h"
+#include "command/command.h"
+#include "DirectlyEffectMgr.h"
+#include "OgreRoot.h"
 
 class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -43,15 +46,10 @@ void MyCallback::onAnimationEnd(const char* animName, const char* parentNodeType
 const Ogre::String FOBJ_ACTOR_FILE = "logic model name";
 KCharacter::KCharacter()
 {
-	mCurrCharModelID = INVALID_ID;
-	mCurrMountModelID = INVALID_ID;
-
 	m_fRunBaseSpeed = 0.0f;
 	m_fWalkBaseSpeed = 0.0f;
 
 	mPathComponent = new PathComponent(this);
-
-	mObjectType = ObjectType_Npc;
 }
 
 
@@ -59,10 +57,16 @@ bool KCharacter::initialize()
 {
 	m_nAttachID = INVALID_ID;
 	m_bInAir = false;
-	mMainEntity = std::make_shared<GameEntity>();
-	
-	m_pCharacterData = new KCharatcterBaseData(this);
+	m_nCurrCharModelID = INVALID_ID;
+	m_nCurrMountModelID = INVALID_ID;
+	m_bIsCharBaseLogicEnd = true;
+	m_bIsCharActionLogicEnd = true;
 
+	m_nCharBaseState = CAHR_STATE_IDLE;
+	m_nCharActionState = CAHR_STATE_IDLE;
+
+	m_nJumpActionState = 0;
+	mMainEntity = std::make_shared<GameEntity>();
 	UpdateCharBaseData();
 	
 	return true;
@@ -77,7 +81,9 @@ void KCharacter::setPosition(
 	Ogre::Vector3 fvEnginePosition;
 	EngineManager::getSingleton().positionAxisTrans(GAT_GAME, mGamePosition,
 		GAT_ENGINE, fvEnginePosition, useTerrainHeight);
-	mMainEntity->setEntityPosition(fvEnginePosition);
+
+	if(mMainEntity)
+		mMainEntity->setEntityPosition(fvEnginePosition);
 	
 
 	EngineManager::getSingleton().setMyPosition(fvEnginePosition);
@@ -528,9 +534,9 @@ void KCharacter::createMount()
 
 void KCharacter::setMountId(int32_t mountId)
 {
-	if (mCurrMountModelID != mountId)
+	if (m_nCurrCharModelID != mountId)
 	{
-		mCurrMountModelID = mountId;
+		m_nCurrMountModelID = mountId;
 		OnChangeOfMountId();
 	}
 }
@@ -539,35 +545,17 @@ void KCharacter::setMountId(int32_t mountId)
 
 void KCharacter::DoDataEvent_DataID()
 {
-	const CGameTable* pCreatureTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CREATURE_ATT);
-	if (NULL == pCreatureTable)
+	UpdateCharBaseData();
+	UpdateCharModel();
+	if (IsCanUpdateMountByModelID())
 	{
-		return;
-	}
-	auto id = m_pCharacterData->Get_RaceID();
-	auto createInfo = (const _TABLE_CREATURE_ATT*)(
-		pCreatureTable->GetFieldDataByIndex(id));
-	if (createInfo)
-	{
-		m_fRunBaseSpeed = createInfo->nRunSpeed * 0.001f;
-		m_fWalkBaseSpeed = createInfo->nWalkSpeed * 0.001f;
-
-		if (mCurrCharModelID != createInfo->nModelID)
-		{
-			mCurrCharModelID = createInfo->nModelID;
-			DoDataEvent_ModelID();
-		}
+		UpdateMountModel();
 	}
 }
 
 void KCharacter::DoDataEvent_ModelID()
 {
-	UpdateModel_CharActionSet();
 
-	if (mCurrCharModelID != INVALID_ID)
-	{
-		createCharRenderInterface();
-	}
 }
 
 void KCharacter::DoDataEvent_MountID()
@@ -592,7 +580,17 @@ void KCharacter::DoDataEvent_MoveSpeed()
 
 void KCharacter::DoDataEvent_Equip(PLAYER_EQUIP point)
 {
+	KCharatcterBaseData* pCharacterData = GetCharacterData();
 
+	// 外装
+	if (HEQUIP_SUIT == point)
+	{
+		UpdateFashion();
+	}
+	else
+	{
+		UpdateEquip(point);
+	}
 }
 
 void KCharacter::OnDataChanged_FaceImage()
@@ -613,7 +611,7 @@ void KCharacter::OnDataChanged_FaceMesh()
 
 int32_t KCharacter::GetCurrCharModelID()
 {
-	return mCurrCharModelID;
+	return m_nCurrCharModelID;
 }
 
 
@@ -630,7 +628,7 @@ void KCharacter::UpdateModel_CharActionSet(void)
 	if (NULL == GetActionSetData())
 		return;
 
-	if (INVALID_ID == mCurrCharModelID)
+	if (INVALID_ID == m_nCurrCharModelID)
 		return;
 
 	//	TABLE_DEFINEHANDLE(s_pCharModelDBC, TABLE_CHARACTER_MODEL)
@@ -640,7 +638,7 @@ void KCharacter::UpdateModel_CharActionSet(void)
 
 	// 人物有效
 	const _TABLE_CHARACTER_MODEL* pCharModel = (const _TABLE_CHARACTER_MODEL*)(
-		pCharModelTable->GetFieldDataByIndex(mCurrCharModelID));
+		pCharModelTable->GetFieldDataByIndex(m_nCurrCharModelID));
 	if (NULL == pCharModel)
 	{
 		OGRE_EXCEPT(0);
@@ -658,7 +656,7 @@ void KCharacter::UpdateModel_CharActionSet(void)
 
 	// 坐骑有效，加载马上动作组
 	const _TABLE_CHARACTER_MOUNT* pMount = (const _TABLE_CHARACTER_MOUNT*)(
-		pCharMountTable->GetFieldDataByIndex(mCurrMountModelID));
+		pCharMountTable->GetFieldDataByIndex(m_nCurrMountModelID));
 	if (pMount)
 	{
 		const _TABLE_CHARACTER_MODEL* pMountModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(pMount->m_nModelID));
@@ -720,7 +718,7 @@ void KCharacter::UpdateModel_MountActionSet(void)
 		return;
 	}
 
-	const _TABLE_CHARACTER_MOUNT* pMount = (const _TABLE_CHARACTER_MOUNT*)(pCharMountTable->GetFieldDataByIndex(mCurrMountModelID));
+	const _TABLE_CHARACTER_MOUNT* pMount = (const _TABLE_CHARACTER_MOUNT*)(pCharMountTable->GetFieldDataByIndex(m_nCurrMountModelID));
 
 	if (pMount)
 	{
@@ -748,13 +746,7 @@ void KCharacter::UpdateModel_MountActionSet(void)
 
 void KCharacter::createCharRenderInterface(void)
 {
-	if (!mMainEntity)
-	{ 
-		mMainEntity = std::make_shared<GameEntity>();
-	}
-
 	mMainEntity->setModelName(mModelName);
-
 	// 在渲染层刷新位置
 	setPosition(mGamePosition);
 	mMainEntity->SetModelType(CHAR_MODEL_CHAR);
@@ -774,6 +766,8 @@ void KCharacter::createCharRenderInterface(void)
 
 KCharatcterBaseData* KCharacter::GetCharacterData(void)
 {
+	if(nullptr == m_pCharacterData)
+		m_pCharacterData = new KCharatcterBaseData(this);
 	return m_pCharacterData;
 }
 
@@ -877,6 +871,10 @@ void KCharacter::SetWeaponAction(LPCTSTR szWeaponAnimName)
 
 bool KCharacter::IsModelCreateAllCompleted()
 {
+	if (nullptr == mMainEntity->getLogicModel())
+	{
+		return false;
+	}
 	// 绑定obj. 第一次创建时才检测. 只检测父obj
 	if (IsFollowAttach())
 	{
@@ -910,7 +908,6 @@ void KCharacter::ReleaseCharRenderInterface(void)
 
 	mMainEntity->DeleteAllEffect();
 	mMainEntity->Destroy();
-	mMainEntity.reset();
 }
 
 
@@ -996,6 +993,32 @@ bool KCharacter::RemoveAttachMember(int32 nObjId)
 void KCharacter::StopMove()
 {
 	
+}
+
+KCharCmdDate_Logic* KCharacter::GetNextCommand(CHARATER_LOGIC_TYPE nLogicTag)
+{
+	// 基础逻辑
+	if (CHAR_LOGIC_BASE == nLogicTag)
+	{
+		if (!m_listBaseStateCommand.empty())
+		{
+			KCharCmdDate_Logic* pCmd = m_listBaseStateCommand.front();
+			m_listBaseStateCommand.pop_front();
+			return pCmd;
+		}
+	}
+	// 行为逻辑
+	else
+	{
+		if (!m_listActionStateCommand.empty())
+		{
+			KCharCmdDate_Logic* pCmd = m_listActionStateCommand.front();
+			m_listActionStateCommand.pop_front();
+			return pCmd;
+		}
+	}
+
+	return NULL;
 }
 
 int32 KCharacter::GetSpecifyMountIDByModleID()
@@ -1261,6 +1284,71 @@ bool KCharacter::EndMove(void)
 	StopWalkSound();
 
 	return TRUE;
+}
+
+void KCharacter::ModifyMove(void)
+{
+	if (GetCharacterState(CHAR_LOGIC_BASE) != CAHR_STATE_MOVE)
+		return;
+
+	KCharCmdDate_Move* pMoveCommand = (KCharCmdDate_Move*)GetBaseStateCommand();
+	if (pMoveCommand != NULL && pMoveCommand->GetNodeCount() > 0)
+	{
+		// 主角不走回头路，不瞬移
+		BOOL bAdjustPos = FALSE;
+		GLPos posAdjust;
+
+		// 当前索引超出了移动命令的节点数
+		if (m_StateDate_Move.m_nCurrentNodeIndex >= pMoveCommand->GetNodeCount())
+		{
+			const GLPos* paPos = pMoveCommand->GetNodeList();
+			int32 nEndNodeIndex = pMoveCommand->GetNodeCount() - 1;
+			// 取最后一个位置
+			posAdjust = paPos[nEndNodeIndex];
+
+			bAdjustPos = TRUE;
+		}
+		// 当前为最后节点
+		else if (m_StateDate_Move.m_nCurrentNodeIndex == pMoveCommand->GetNodeCount() - 1)
+		{
+			const GLPos* paPos = pMoveCommand->GetNodeList();
+			int32 nEndNodeIndex = pMoveCommand->GetNodeCount() - 1;
+			GLPos posCommandTarget = paPos[nEndNodeIndex];
+
+			FLOAT fLenCSTarget = fabsf(m_StateDate_Move.m_posSaveTarget.m_fX - posCommandTarget.m_fX)
+				+ fabsf(m_StateDate_Move.m_posSaveTarget.m_fZ - posCommandTarget.m_fZ);
+
+			// 目标点变动了
+			if (fLenCSTarget > 0.01f)
+			{
+				FLOAT fSaveToServerDist = Ogre::Vector2(m_StateDate_Move.m_posSaveTarget.m_fX, m_StateDate_Move.m_posSaveTarget.m_fZ).distance(
+					Ogre::Vector2(posCommandTarget.m_fX, posCommandTarget.m_fZ));
+
+				FLOAT fSaveToCurrentDist = Ogre::Vector2(m_StateDate_Move.m_posSaveTarget.m_fX, m_StateDate_Move.m_posSaveTarget.m_fZ).distance(
+					Ogre::Vector2(getPosition().x, getPosition().z));
+
+				// 这里忽略了服务器传过来的目标点不在路径上的情况
+				if (fSaveToServerDist - fSaveToCurrentDist >= 0.0f)
+				{
+					posAdjust = posCommandTarget;
+					bAdjustPos = TRUE;
+				}
+
+				m_StateDate_Move.m_posSaveTarget.m_fX = posCommandTarget.m_fX;
+				m_StateDate_Move.m_posSaveTarget.m_fZ = posCommandTarget.m_fZ;
+			}
+		}
+
+		// 需要调整
+		if (bAdjustPos)
+		{
+			ModifyCurrPos(Ogre::Vector2(posAdjust.m_fX, posAdjust.m_fZ));
+
+			ShutDown_CharacterState(CHAR_LOGIC_BASE);
+
+
+		}
+	}
 }
 
 bool KCharacter::DoJump(void)
@@ -1619,12 +1707,37 @@ bool KCharacter::BeginCadaver()
 	return TRUE;
 }
 
+bool KCharacter::IsAttached()
+{
+	return m_nAttachID != INVALID_ID;
+}
+
+bool KCharacter::IsInAir()
+{
+	return false;
+}
+
+bool KCharacter::IsMoving()
+{
+	if (!IsStopped_CharacterState(CHAR_LOGIC_BASE) && 
+		CAHR_STATE_MOVE == GetCharacterState(CHAR_LOGIC_BASE))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool KCharacter::IsUseSkill()
+{
+	return false;
+}
+
 void KCharacter::RefreshBaseAnimation()
 {
 	if (nullptr == GetCharacterData())
 		return;
 
-	if (FALSE == IsStopped_CharacterState(CHAR_LOGIC_BASE))
+	if (!IsStopped_CharacterState(CHAR_LOGIC_BASE))
 	{
 		switch (GetCharacterState(CHAR_LOGIC_BASE))
 		{
@@ -1679,8 +1792,8 @@ void KCharacter::RefreshActionAnimation()
 		break;
 		default:
 			break;
-		};
-	};
+		}
+	}
 }
 
 void KCharacter::RefreshAnimation()
@@ -1773,4 +1886,1050 @@ void KCharacter::UpdateModel_Visible()
 int32 KCharacter::AnalyseCharModel(void)const
 {
 	return INVALID_ID;
+}
+
+void KCharacter::calculateNodePos(
+	const Ogre::Vector2& fvPosition, 
+	FLOAT fModifyHeight)
+{
+	auto pActiveScene = GameSceneManager::getSingleton().GetActiveScene();
+
+
+	//当前位置
+	Ogre::Vector3	fvCurObjPos = getPosition();
+	FLOAT	fInAirHeight = fvCurObjPos.y;
+
+	//---------------------------------------------------
+	//首先取得在地形上的高度
+	Ogre::Vector3 fvAtTerrain;
+	FLOAT fHeight = -FLT_MAX;
+
+	EngineManager::getSingleton().positionAxisTrans(GAT_GAME, Ogre::Vector3(fvPosition.x, 0.0f, fvPosition.y),
+		GAT_SCENE, fvAtTerrain);
+
+	//---------------------------------------------------
+	//取得在行走面上高度
+	if (FALSE == pActiveScene->getCollision().Get3DMapHeight(fvPosition.x, fvCurObjPos.y, fvPosition.y, fHeight))
+	{
+		fHeight = -FLT_MAX;
+	}
+
+	// 设置最终高度， 并且设置是否在行走面上的状态
+	FLOAT fRealHeight = 0.0f;
+
+	if (fHeight > fvAtTerrain.y)
+	{
+		fRealHeight = fHeight;
+	}
+	else
+	{
+		fRealHeight = fvAtTerrain.y;
+	}
+
+	Ogre::Vector3 position(fvPosition.x, fRealHeight + fModifyHeight, fvPosition.y);
+	setPosition(position, false);
+}
+
+bool KCharacter::AddCommand(const ObjectCmd* pCmd)
+{
+	switch (pCmd->m_wID)
+	{
+		// 进入站立状态
+	case OBJ_CMD_IDLE:
+	{
+		EnterState_Idle();
+	}
+	break;
+	// 中断逻辑指令
+	case OBJ_CMD_STOP_ACTION:
+	{
+		KCharCmdDate_StopLogic* pStopCommand = (KCharCmdDate_StopLogic*)(CreateCharCmd(pCmd));
+		if (pStopCommand)
+		{
+			KCharCmdDate_Logic* pLogicCommand = FindActionStateCommand(pStopCommand->GetLogicCount());
+			if (pLogicCommand)
+			{
+				pLogicCommand->Modify(pStopCommand);
+			}
+		}
+	}
+	break;
+	// 移动中断
+	case OBJ_CMD_STOP_MOVE:
+	{
+		// 被绑定就不接收事件
+		if (IsAttached() || IsFollowAttach())
+		{
+			break;
+		}
+		KCharCmdDate_StopMove* pStopMoveCommand = (KCharCmdDate_StopMove*)(CreateCharCmd(pCmd));
+		if (pStopMoveCommand)
+		{
+			// 中断移动
+			if (pStopMoveCommand->IsArrive())
+			{
+				SetBaseLogicCount(pStopMoveCommand->GetLogicCount());
+
+				if (FALSE == IsLogicLocked())
+				{
+					// 停止移动逻辑
+					StopMove();
+					// 位置容错
+					ModifyCurrPos(Ogre::Vector2(pStopMoveCommand->GetEndPos()->m_fX, pStopMoveCommand->GetEndPos()->m_fZ));
+				}
+			}
+			// 修正当前位置
+			else if ((IsStopped_CharacterState(CHAR_LOGIC_BASE) || GetCharacterState(CHAR_LOGIC_BASE) != CAHR_STATE_MOVE) &&
+				pStopMoveCommand->GetLogicCount() == GetBaseLogicCount())
+			{
+				if (FALSE == IsLogicLocked())
+				{
+					ModifyCurrPos(Ogre::Vector2(pStopMoveCommand->GetEndPos()->m_fX, pStopMoveCommand->GetEndPos()->m_fZ));
+				}
+			}
+			// 修正移动目标点
+			else
+			{
+				KCharCmdDate_Logic* pLogicCommand = FindBaseStateCommand(pStopMoveCommand->GetLogicCount());
+				if (pLogicCommand)
+				{
+					// 修正
+					pLogicCommand->Modify(pStopMoveCommand);
+
+					// 如果修正的是当前移动
+					if (pStopMoveCommand->GetLogicCount() == GetBaseLogicCount())
+					{
+						ModifyMove();
+					}
+				}
+			}
+			DelObjectCmd(pStopMoveCommand);
+		}
+	}
+	break;
+	case OBJ_CMD_MOVE:// 移动	
+	{
+		// 被绑定就不接收事件
+		if (IsAttached() || IsFollowAttach())
+		{
+			break;
+		}
+
+		KCharCmdDate_Move* pMoveCommand = NULL;
+
+		pMoveCommand = (KCharCmdDate_Move*)(CreateCharCmd(pCmd));
+		if (pMoveCommand)
+		{
+			if (pMoveCommand->IsServerCommond())
+			{
+				/*
+					当自己拥有控制权, 并且服务器要争夺移动时.
+					将自身发起的移动立即中止掉, 好让服务器的移动事件能够立马执行.
+					例如 恐惧状态.
+				*/
+				if (IsMoving())
+				{
+					KCharCmdDate_Move* pCurrCommand = (KCharCmdDate_Move*)GetBaseStateCommand();
+					if (pCurrCommand && FALSE == pCurrCommand->IsServerCommond())
+					{
+						ShutDown_CharacterState(CHAR_LOGIC_BASE);
+					}
+				}
+				AddBaseStateCommand(pMoveCommand);
+			}
+			else
+			{
+				// 如果和当前的逻辑记数相等 或 是在它之前的逻辑命令就丢弃
+				if (pMoveCommand->GetLogicCount() <= GetBaseLogicCount())
+				{
+					DelObjectCmd(pMoveCommand);
+				}
+				else
+				{
+					KCharCmdDate_Logic* pFindCommand = FindBaseStateCommand(pMoveCommand->GetLogicCount());
+					if (NULL == pFindCommand)
+					{
+						// 没有找到对应的指令才加入，主要是防止与客户端主角的预测指令相冲突
+						AddBaseStateCommand(pMoveCommand);
+					}
+					else
+					{
+						DelObjectCmd(pMoveCommand);
+					}
+				}
+			}
+			// 当前没有执行的逻辑
+			if (IsStopped_CharacterState(CHAR_LOGIC_BASE) || CAHR_STATE_IDLE == GetCharacterState(CHAR_LOGIC_BASE))
+			{
+				ProcessBaseStateCommand();
+			}
+		}
+	}
+	break;
+	case OBJ_CMD_JUMP:
+	{
+		// 被绑定就不接收事件
+		if (IsAttached() || IsFollowAttach())
+			break;
+
+		/*
+			将跳跃和移动通过逻辑计数匹配上。
+			如果逻辑计数无效或和当前一致，则立即执行。如原地跳。
+			否则绑定在移动指令中一起执行。
+		*/
+		KCharCmdDate_Jump* pCommand = (KCharCmdDate_Jump*)(CreateCharCmd(pCmd));
+		if (pCommand)
+		{
+			KCharCmdDate_Logic* pLogicCommand = FindBaseStateCommand(pCommand->GetLogicCount());
+			if (pLogicCommand && OBJ_CMD_MOVE == pLogicCommand->GetCmdType())
+			{
+				if (pCommand->GetLogicCount() == GetBaseLogicCount())
+				{
+					ProcessStateCommand(pCommand);
+				}
+				else
+				{
+					KCharCmdDate_Move* pMoveCmd = (KCharCmdDate_Move*)pLogicCommand;
+					pMoveCmd->SetJumpMove();
+				}
+			}
+			else
+			{
+				ProcessStateCommand(pCommand);
+			}
+			DelObjectCmd(pCommand);
+		}
+	}
+	break;
+
+	case OBJ_CMD_ACTION:		// 动作（喝药等）
+	case OBJ_CMD_SKILL_SEND:	// 技能发招
+	case OBJ_CMD_SKILL_CHARGE:	// 技能聚气
+	case OBJ_CMD_SKILL_CHANNEL:	// 技能引导
+	case OBJ_CMD_ABILITY:		// 生活技能
+	{
+		KCharCmdDate_Logic* pLogicCommand = (KCharCmdDate_Logic*)(CreateCharCmd(pCmd));
+		if (pLogicCommand != nullptr)
+		{
+			AddActionStateCommand(pLogicCommand);
+		}
+		ProcessActionStateCommand();
+	}
+	break;
+
+	// 干扰动作
+	case OBJ_CMD_ACTION_MODIFY:
+	{
+		int32 nModifyTime, nLogicCount;
+		nLogicCount = pCmd->nParam[0];
+		nModifyTime = pCmd->nParam[1];
+
+		if (GetActionLogicCount() == nLogicCount && !IsStopped_CharacterState(CHAR_LOGIC_ACTION))
+		{
+			if (GetCharacterState(CHAR_LOGIC_ACTION) == CAHR_STATE_GATHER)
+			{
+				KCharCmdDate_SkillCharge* pMagicChargeCommand = (KCharCmdDate_SkillCharge*)(GetActionStateCommand());
+				if (nModifyTime >= 0)
+				{
+					uint32 uModifyTime = (uint32)nModifyTime;
+					if (m_StateDate_Charge.m_uCurrentTime > uModifyTime)
+					{
+						m_StateDate_Charge.m_uCurrentTime -= uModifyTime;
+					}
+					else
+					{
+						m_StateDate_Charge.m_uCurrentTime = 0;
+					}
+				}
+				else
+				{
+					uint32 uModifyTime = (uint32)(abs(nModifyTime));
+					if (m_StateDate_Charge.m_uCurrentTime + uModifyTime > pMagicChargeCommand->GetTotalTime())
+					{
+						m_StateDate_Charge.m_uCurrentTime = pMagicChargeCommand->GetTotalTime();
+					}
+					else
+					{
+						m_StateDate_Charge.m_uCurrentTime += uModifyTime;
+					}
+				}
+			}
+			else if (GetCharacterState(CHAR_LOGIC_ACTION) == CAHR_STATE_LEAD)
+			{
+				KCharCmdDate_SkillChannel* pMagicChannelCommand = (KCharCmdDate_SkillChannel*)(GetActionStateCommand());
+				if (nModifyTime >= 0)
+				{
+					uint32 uModifyTime = (uint32)nModifyTime;
+					if (m_StateDate_Channel.m_uCurrentTime > uModifyTime)
+					{
+						m_StateDate_Channel.m_uCurrentTime -= uModifyTime;
+					}
+					else
+					{
+						m_StateDate_Channel.m_uCurrentTime = 0;
+					}
+				}
+				else
+				{
+					uint32 uModifyTime = (uint32)(abs(nModifyTime));
+					if (m_StateDate_Channel.m_uCurrentTime + uModifyTime > pMagicChannelCommand->GetTotalTime())
+					{
+						m_StateDate_Channel.m_uCurrentTime = pMagicChannelCommand->GetTotalTime();
+					}
+					else
+					{
+						m_StateDate_Channel.m_uCurrentTime += uModifyTime;
+					}
+				}
+			}
+		}
+	}
+	break;
+	// 处理直接的效果或子弹事件
+	case OBJ_CMD_LOGIC_EVENT:
+	{
+		LogicEventData* pLogicEvent;
+		pLogicEvent = (LogicEventData*)(pCmd->pParam[0]);
+
+		int32 nCreaterID = pLogicEvent->m_nSenderID;
+		int32 nCreaterLogicCount = pLogicEvent->m_nSenderLogicCount;
+
+		KObject* pCreater = KObjectManager::GetSingleton().getObject(nCreaterID);
+
+		if (pCreater != nullptr)
+		{
+			if (!ProcessEvent(pLogicEvent))
+			{
+				AddEvent(pLogicEvent);
+			}
+		}
+		// 施法者有效 或 不是上一个skill的Impact就放入事件队列中
+		else
+		{
+			AddEvent(pLogicEvent);
+		}
+	}
+	break;
+	default:
+	{
+		// 直接处理命令
+		HandleCommand(pCmd);
+	}
+	break;
+
+	};
+
+	return TRUE;
+}
+
+eRUN_CMD_RESULT_CODE KCharacter::HandleCommand(const ObjectCmd* pCmd)
+{
+	eRUN_CMD_RESULT_CODE rcResult = RC_SKIP;
+
+	switch (pCmd->m_wID)
+	{
+	case OBJ_CMD_TELEPORT:
+	{
+		// 被绑定就不接收事件
+		if (IsAttached() || IsFollowAttach())
+			break;
+
+		// 逻辑解锁
+		SetLogicLocked(FALSE);
+
+		// 设置位置
+		Ogre::Vector2 fvServerPos;
+		fvServerPos.x = pCmd->fParam[0];
+		fvServerPos.y = pCmd->fParam[1];
+		calculateNodePos(fvServerPos, 0.0f);
+
+		// 清除移动
+		StopMove();
+
+		// 强制落地
+		if (IsInAir())
+		{
+			//SetTouchDown();
+		}
+
+
+		rcResult = RC_OK;
+	}
+	break;
+
+	case OBJ_CMD_DEATH:
+	{
+		BOOL bPlayDieAni;
+		bPlayDieAni = pCmd->bParam[0];
+		BOOL bResult = EnterState_Dead(bPlayDieAni);
+		if (bResult)
+			rcResult = RC_OK;
+		else
+			rcResult = RC_ERROR;
+	}
+	break;
+
+	case OBJ_CMD_IMPACT:
+	{
+		EffectID_t	idImpact;
+		BOOL		bEnable;
+		ObjID_t		nCreatorID;
+		uint32		nNumOflayer;
+		uint32		nSN;
+		int32			nSenderLogicCount;
+
+		idImpact = (EffectID_t)(pCmd->uParam[0]);
+		nSN = pCmd->uParam[1];
+		nNumOflayer = pCmd->nParam[2];
+		nCreatorID = pCmd->nParam[3];
+		bEnable = pCmd->bParam[4];
+		nSenderLogicCount = pCmd->nParam[5];
+
+		// 更新或生成
+		if (bEnable)
+		{
+			AddImpact(nSN, idImpact, nCreatorID, nNumOflayer, nSenderLogicCount);
+		}
+		// 删除
+		else
+		{
+			DelImpact(nSN);
+		}
+		rcResult = RC_OK;
+	}
+	break;
+
+	case OBJ_CMD_PLAY_IMPACT:
+	{
+		BOOL bMountEffect = pCmd->bParam[0];
+		int32  nEffectID = pCmd->nParam[1];
+
+		const _DBC_DIRECT_EFFECT* pImpact = CDirectlyEffectMgr::GetMe()->GetConstDirectlyImpact(nEffectID);
+		if (NULL == pImpact)
+			break;
+		if (0 == strlen(pImpact->m_pszEffectLocator))
+			break;
+
+		if (bMountEffect)
+		{
+			AddMountEffect(pImpact->m_pszEffect, pImpact->m_pszEffectLocator);
+		}
+		else
+		{
+			AddBindEffect(pImpact->m_pszEffect, pImpact->m_pszEffectLocator);
+		}
+	}
+	break;
+
+	default:
+		rcResult = RC_SKIP;
+		break;
+	}
+
+	return rcResult;
+}
+
+// 休闲
+bool	KCharacter::EnterState_Idle(void)
+{
+	return true;
+}
+
+// 动作
+bool	KCharacter::EnterState_Action(KCharCmdDate_Logic* pLogicCommand)
+{
+	return true;
+}
+
+// 移动
+bool	KCharacter::EnterState_Move(KCharCmdDate_Logic* pLogicCommand)
+{
+	return true;
+}
+
+// 法术聚气
+bool	KCharacter::EnterState_Charge(KCharCmdDate_Logic* pLogicCommand)
+{
+	return true;
+}
+
+// 法术引导
+bool	KCharacter::EnterState_Channel(KCharCmdDate_Logic* pLogicCommand)
+{
+	return true;
+}
+
+// 法术发招
+bool	KCharacter::EnterState_Send(KCharCmdDate_Logic* pLogicCommand)
+{
+	return true;
+}
+
+// 死亡
+bool	KCharacter::EnterState_Dead(BOOL bPlayDieAni)
+{
+	return true;
+}
+
+// 生活技能
+bool	KCharacter::EnterState_Ability(KCharCmdDate_Logic* pLogicCommand)
+{
+	return true;
+}
+
+// 摆摊
+bool	EnterState_Stall(BOOL bPlayAni)
+{
+	return true;
+}
+
+KCharCmdDate_Logic* KCharacter::FindBaseStateCommand(int32 nLogicCount)
+{
+	// 当前正在执行的指令
+	if (m_pBaseLogicCommand != NULL && m_pBaseLogicCommand->GetLogicCount() == nLogicCount)
+	{
+		return m_pBaseLogicCommand;
+	}
+
+	// 缓存的指令
+	ObjCommandList::iterator itCur, itEnd;
+	KCharCmdDate_Logic* pCommand;
+
+	itCur = m_listBaseStateCommand.begin();
+	itEnd = m_listBaseStateCommand.end();
+
+	while (itCur != itEnd)
+	{
+		pCommand = *itCur;
+		itCur++;
+		if (pCommand->GetLogicCount() == nLogicCount)
+		{
+			return pCommand;
+		}
+	}
+
+	return NULL;
+}
+
+
+KCharCmdDate_Logic* KCharacter::FindActionStateCommand(int32 nLogicCount)
+{
+	if (m_pActionLogicCommand != NULL && m_pActionLogicCommand->GetLogicCount() == nLogicCount)
+	{
+		return m_pActionLogicCommand;
+	}
+
+	// 缓存的指令
+	ObjCommandList::iterator itCur, itEnd;
+	KCharCmdDate_Logic* pCommand;
+
+	itCur = m_listActionStateCommand.begin();
+	itEnd = m_listActionStateCommand.end();
+
+	while (itCur != itEnd)
+	{
+		pCommand = *itCur;
+		itCur++;
+		if (pCommand->GetLogicCount() == nLogicCount)
+		{
+			return pCommand;
+		}
+	}
+
+	return NULL;
+}
+
+KCharCmdDate_Logic* KCharacter::GetBaseStateCommand(void)
+{
+	return m_pBaseLogicCommand;
+}
+void KCharacter::SetBaseStateCommand(KCharCmdDate_Logic* pLogicCommand)
+{
+	if (m_pBaseLogicCommand != NULL)
+	{
+		DelObjectCmd(m_pBaseLogicCommand);
+	}
+	m_pBaseLogicCommand = pLogicCommand;
+}
+
+KCharCmdDate_Logic* KCharacter::GetActionStateCommand(void)
+{
+	return m_pActionLogicCommand;
+}
+void KCharacter::SetActionStateCommand(KCharCmdDate_Logic* pLogicCommand)
+{
+	if (m_pActionLogicCommand != NULL)
+	{
+		DelObjectCmd(m_pActionLogicCommand);
+	}
+	m_pActionLogicCommand = pLogicCommand;
+}
+
+void KCharacter::DelAllMoveCommand()
+{
+	ObjCommandList::iterator tempIt;
+	ObjCommandList::iterator it = m_listBaseStateCommand.begin();
+	while (it != m_listBaseStateCommand.end())
+	{
+		tempIt = it;
+		++it;
+		KCharCmdDate_Logic* pLogic = *tempIt;
+		if (pLogic && OBJ_CMD_MOVE == pLogic->GetCmdType())
+		{
+			m_listBaseStateCommand.erase(tempIt);
+			DelObjectCmd(pLogic);
+		}
+	}
+}
+
+BOOL KCharacter::AddBaseStateCommand(KCharCmdDate_Logic* pCmd)
+{
+	int32 nLogicCount = pCmd->GetLogicCount();
+	if (!m_listBaseStateCommand.empty())
+	{
+		ObjCommandList::iterator itCur, itEnd;
+		KCharCmdDate_Logic* pCommand;
+
+		itCur = m_listBaseStateCommand.begin();
+		itEnd = m_listBaseStateCommand.end();
+
+		while (itCur != itEnd)
+		{
+			pCommand = *itCur;
+			if (pCommand->GetLogicCount() > nLogicCount)
+			{
+				m_listBaseStateCommand.insert(itCur, pCmd);
+				return TRUE;
+			}
+
+			itCur++;
+		}
+	}
+
+	m_listBaseStateCommand.push_back(pCmd);
+	return TRUE;
+}
+BOOL KCharacter::AddActionStateCommand(KCharCmdDate_Logic* pCmd)
+{
+	int32 nLogicCount = pCmd->GetLogicCount();
+	if (!m_listActionStateCommand.empty())
+	{
+		ObjCommandList::iterator itCur, itEnd;
+		KCharCmdDate_Logic* pCommand;
+
+		itCur = m_listActionStateCommand.begin();
+		itEnd = m_listActionStateCommand.end();
+
+		while (itCur != itEnd)
+		{
+			pCommand = *itCur;
+			if (pCommand->GetLogicCount() > nLogicCount)
+			{
+				m_listActionStateCommand.insert(itCur, pCmd);
+				return TRUE;
+			}
+
+			itCur++;
+		}
+	}
+
+	m_listActionStateCommand.push_back(pCmd);
+
+		return TRUE;
+}
+
+BOOL KCharacter::ProcessBaseStateCommand(void)
+{
+	if (IsLogicLocked())
+		return FALSE;
+
+	// 判断基础逻辑是否停止
+	if (IsStopped_CharacterState(CHAR_LOGIC_BASE))
+	{
+		// 执行下一条命令
+		if (FALSE == ProcessNextCommand(CHAR_LOGIC_BASE))
+		{
+			EnterState_Idle();
+		}
+	}
+	// 当前基础逻辑是休闲
+	else if (GetCharacterState(CHAR_LOGIC_BASE) == CAHR_STATE_IDLE)
+	{
+		ProcessNextCommand(CHAR_LOGIC_BASE);
+	}
+
+	FLOAT fSpeed = 1.f;
+	int32 nLogicCommandCount = (int32)(m_listBaseStateCommand.size());
+	if (nLogicCommandCount > 0)
+	{
+		fSpeed = (FLOAT)(nLogicCommandCount) * 0.5f + 1.f;
+	}
+	SetLogicSpeed(fSpeed);
+
+	return TRUE;
+}
+
+BOOL KCharacter::ProcessActionStateCommand(void)
+{
+		if (TRUE == IsLogicLocked())
+			return FALSE;
+
+
+		// 执行动作
+		if (CheckNextActionStateCommand())
+		{
+			ProcessNextCommand(CHAR_LOGIC_ACTION);
+		}
+
+
+
+	// 设置动作速度以及特效速度
+	FLOAT fImpactSpeed = GetActionLogicSpeed();
+	FLOAT fActionSpeed = 1.f;
+
+	int32 nLogicCommandCount = (int32)(m_listActionStateCommand.size());
+	if (nLogicCommandCount > 0)
+	{
+		fActionSpeed = 1.15f;
+		/*fActionSpeed = (FLOAT)(nLogicCommandCount) * 0.15f + 1.f;
+		if (fActionSpeed > 1.5f)
+		{
+		fActionSpeed = 1.5f;
+		}*/
+		fImpactSpeed = 1000.f;
+	}
+
+	SetActionImpactSpeed(fImpactSpeed);	// 立即生效
+	SetActionLogicSpeed(fActionSpeed);	// 下一个动作生效	
+
+		return TRUE;
+}
+
+BOOL KCharacter::CheckNextActionStateCommand()
+{
+	if (m_listActionStateCommand.empty())
+		return FALSE;
+
+	ObjCommandList::iterator it = m_listActionStateCommand.begin();
+	KCharCmdDate_Logic* pLogicCommand = *it;
+	if (NULL == pLogicCommand)
+	{
+		return TRUE;
+	}
+
+	// 当前有动作时, 新来动作缓冲一帧 
+	if (IsUseSkill())
+	{
+		uint64_t uStartTime = pLogicCommand->GetStartTime();
+		uint64_t uNowTime = Ogre::Root::getSingleton().getTimer()->getMicroseconds();
+
+		if (uNowTime < uStartTime + 1)
+		{
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+// 执行下一条逻辑命令
+BOOL KCharacter::ProcessNextCommand(CHARATER_LOGIC_TYPE nLogicTag)
+{
+	// 基础逻辑
+	if (CHAR_LOGIC_BASE == nLogicTag)
+	{
+		if (FALSE == IsEmpty_BaseStateCommand())
+		{
+			KCharCmdDate_Logic* pLogicCommand = GetNextCommand(CHAR_LOGIC_BASE);
+
+			BOOL bResult = ProcessStateCommand(pLogicCommand);
+			if (FALSE == bResult)
+			{
+				DelObjectCmd(pLogicCommand);
+			}
+			return bResult;
+		}
+	}
+	// 行为逻辑
+	else
+	{
+		if (FALSE == IsEmpty_ActionStateCommand())
+		{
+			KCharCmdDate_Logic* pLogicCommand = GetNextCommand(CHAR_LOGIC_ACTION);
+
+			BOOL bResult = ProcessStateCommand(pLogicCommand);
+			if (FALSE == bResult)
+			{
+				DelObjectCmd(pLogicCommand);
+			}
+			return bResult;
+		}
+	}
+	return FALSE;
+}
+
+// 处理逻辑命令
+BOOL KCharacter::ProcessStateCommand(KCharCmdDate_Logic* pLogicCmd)
+{
+	BOOL bResult = FALSE;
+	switch (pLogicCmd->GetCmdType())
+	{
+	case OBJ_CMD_ACTION:
+	{
+		bResult = EnterState_Action(pLogicCmd);
+	}
+	break;
+	case OBJ_CMD_MOVE:
+	{
+		bResult = EnterState_Move(pLogicCmd);
+	}
+	break;
+	case OBJ_CMD_SKILL_SEND:
+	{
+		bResult = EnterState_Send(pLogicCmd);
+	}
+	break;
+	case OBJ_CMD_SKILL_CHARGE:
+	{
+		bResult = EnterState_Charge(pLogicCmd);
+	}
+	break;
+	case OBJ_CMD_SKILL_CHANNEL:
+	{
+		bResult = EnterState_Channel(pLogicCmd);
+	}
+	break;
+	case OBJ_CMD_ABILITY:
+	{
+		bResult = EnterState_Ability(pLogicCmd);
+	}
+	break;
+	case OBJ_CMD_JUMP:
+	{
+		bResult = DoJump();
+	}
+	break;
+	default:
+		break;
+	}
+
+	return bResult;
+}
+
+bool KCharacter::IsLogicLocked()
+{
+	if (TRUE == m_bLogic_Locked)
+	{
+		UINT64 uCurrTime = Ogre::Root::getSingleton().getTimer()->getMicroseconds();
+		if (uCurrTime - m_uLogicLockTimer >= 5000)
+		{
+			// 超时
+			m_bLogic_Locked = false;
+		}
+	}
+	return m_bLogic_Locked;
+}
+
+void KCharacter::SetLogicLocked(BOOL bLock)
+{
+	m_bLogic_Locked = bLock;
+	if (m_bLogic_Locked)
+	{
+		m_uLogicLockTimer = Ogre::Root::getSingleton().getTimer()->getMicroseconds();
+	}
+}
+
+void KCharacter::SetActionImpactSpeed(FLOAT fSpeed)
+{
+	if (fabs(m_fActionImpact_Speed - fSpeed) >= 0.01f)
+	{
+		m_fActionImpact_Speed = fSpeed;
+		//mMainEntity->Actor_SetSkillRate(m_fActionImpact_Speed);
+	}
+}
+
+void KCharacter::ModifyCurrPos(const Ogre::Vector2& fvServerPos)
+{
+	Ogre::Vector2 targetPos(getPosition().x, getPosition().z);
+	FLOAT fStopToCurrentDistSq = fvServerPos.squaredDistance(targetPos);
+	if (fStopToCurrentDistSq > DEF_CHARACTER_POS_ADJUST_DIST * DEF_CHARACTER_POS_ADJUST_DIST)
+	{
+		// 瞬移到当前服务器对应的位置
+		calculateNodePos(fvServerPos, 0.0f);
+	}
+	
+}
+
+void KCharacter::ShutDown_CharacterState(CHARATER_LOGIC_TYPE nLogicTag)
+{
+	if (CHAR_LOGIC_BASE == nLogicTag)
+	{
+		SetBaseStateCommand(NULL);
+	}
+	else
+	{
+		SetActionStateCommand(NULL);
+	}
+	Exit_CharacterState(nLogicTag);
+}
+
+void KCharacter::Exit_CharacterState(CHARATER_LOGIC_TYPE nLogicTag)
+{
+	// 基础逻辑停止
+	if (CHAR_LOGIC_BASE == nLogicTag)
+	{
+		m_bIsCharBaseLogicEnd = TRUE;
+
+		switch (GetCharacterState(CHAR_LOGIC_BASE))
+		{
+		case CAHR_STATE_IDLE:
+		{
+
+		}
+		break;
+		case CAHR_STATE_MOVE:
+		{
+			EndMove();
+		}
+		break;
+		case CAHR_STATE_DEAD:
+		{
+
+		}
+		break;
+		case CAHR_STATE_STALL:
+		{
+
+		}
+		break;
+		default:
+			break;
+		};
+
+		m_nCharBaseState = CAHR_STATE_INVAILD;
+	}
+	// 行为逻辑停止
+	else
+	{
+		m_bIsCharActionLogicEnd = TRUE;
+
+		switch (GetCharacterState(CHAR_LOGIC_ACTION))
+		{
+		case CAHR_STATE_ABILITY:
+		{
+		}
+		break;
+		case CAHR_STATE_ACTION:
+			break;
+		case CAHR_STATE_LEAD:
+			break;
+		case CAHR_STATE_GATHER:
+		{
+		}
+		break;
+		case CAHR_STATE_SEND:
+		{
+			if (IsLogicLocked())
+			{
+				SetLogicLocked(FALSE);
+			}
+		}
+		break;
+		default:
+			break;
+		};
+
+		m_nCharActionState = CAHR_STATE_INVAILD;
+	}
+}
+
+// --------------------------------------------------------------------------
+void KCharacter::SetActionLogicSpeed(FLOAT fSpeed)
+{
+	if (fabs(m_fActionLogic_Speed - fSpeed) > 0.01f)
+	{
+		m_fActionLogic_Speed = fSpeed;
+	}
+}
+
+// --------------------------------------------------------------------------
+FLOAT KCharacter::GetActionLogicSpeed() const
+{
+	return m_fActionLogic_Speed;
+}
+
+void KCharacter::SetLogicSpeed(FLOAT fSpeed)
+{
+	if (fabsf(m_fLogic_Speed - fSpeed) > 0.1f)
+	{
+		m_fLogic_Speed = fSpeed;
+	}
+}
+
+void	KCharacter::AddEvent(const LogicEventData* pLogicEvent)
+{
+
+}
+
+void	KCharacter::RemoveEvent(int32 nLogicCount)
+{
+
+}
+
+void	KCharacter::RemoveAllEvent(void)
+{
+
+}
+
+void	KCharacter::Update_Event(void)
+{
+
+}
+
+bool	KCharacter::ProcessEvent(const LogicEventData* pLogicEvent)
+{
+	return true;
+}
+
+bool	KCharacter::ProcessEvent_Damage(const LogicEventData* pLogicEvent)
+{
+	return true;
+}
+
+void	KCharacter::UpdateModel_BuffEffect(void)
+{
+
+}
+
+bool	KCharacter::AddImpact(
+	uint32 nSN,
+	int32 idImpact,
+	ObjID_t nCreatorID,
+	int32 nNumOflayer, int32 nSenderLogicCount)
+{
+	return true;
+}
+
+void	KCharacter::DelImpact(uint32 nSN)
+{
+	
+}
+
+void	KCharacter::ClearBuffEffectHandle()
+{
+
+}
+
+void	KCharacter::ClearMountBuffEffect()
+{
+
+}
+
+bool KCharacter::AddBindEffect(const STRING& strEffect, const STRING& strBindLocat)
+{
+	return true;
+}
+
+bool KCharacter::AddMountEffect(const STRING& strEffect, const STRING& strBindLocat)
+{
+	return true;
 }

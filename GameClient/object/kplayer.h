@@ -28,16 +28,17 @@ public:
 
 	void injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id);
 	void input(KeyCode _key);
+	void UpdateBodyPartModel();
 private:
 	void createCharRenderInterface(void);
-	void UpdateEquip(PLAYER_EQUIP point);
+	
 	void UpdateFaceMesh(void);
 	void UpdateHairMesh(void);
 	bool isRightHandHabit();
 	int32 GetWeaponIDByModelID(PLAYER_EQUIP point);
 	bool isCanUpdateEquipByModelID(PLAYER_EQUIP point);
 	bool isCanUpdatePartModelByModelID(BODY_PART_MODEL part);
-	void UpdateBodyPartModel();
+	
 	int32 GetFashionEquipParth(PLAYER_EQUIP point);
 	int32 GetFashionHead(BODY_PART_MODEL part);
 
@@ -67,6 +68,11 @@ public:
 	virtual void UpdateModel_WeaponActionSet(void);
 	virtual void UpdateModel_Visible();
 	virtual int32 AnalyseCharModel(void)const;
+	virtual void UpdateEquip(PLAYER_EQUIP point);
+
+	virtual bool UpdateFashion();
+
+	virtual void update(float deltatime);
 private:
 	// 模型更新
 	ModelPartDataList m_ModelPartDateList;

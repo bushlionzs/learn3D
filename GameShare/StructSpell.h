@@ -1,8 +1,7 @@
-#ifndef __GAMESTRUCT_SKILL_H__
-#define __GAMESTRUCT_SKILL_H__
-
+#pragma once
 #include "TypeDefine.h"
 #include "Enum.h"
+#include "Define.h"
 #include "StructEffect.h"
 
 struct _DBC_DIRECT_EFFECT
@@ -843,17 +842,14 @@ struct _SkillMissMSGDelayTime
 
 struct _Monster_Pet_DB_Struct
 {
-	int32		m_iDataIndex;
-	int32		m_iHP;
-	int32		iLifeTime;
-	_OWN_EFFECT	m_aImpactList[MONSTER_PET_MAX_IMPACT];
-	int32		m_aSkillList[MONSTER_PET_MAX_SKILL];
-	int32		m_nCtrlState;
+	int32_t		m_iDataIndex;
+	int32_t		m_iHP;
+	int32_t		iLifeTime;
+	int32_t		m_nCtrlState;
 
-	/*
-	 ===============================================================================================================
-	 ===============================================================================================================
-	 */
+	int32_t		m_aSkillList[MONSTER_PET_MAX_SKILL];
+	_OWN_EFFECT	m_aImpactList[MONSTER_PET_MAX_IMPACT];
+	
 	void Clear()
 	{
 		memset(this, -1, sizeof(_Monster_Pet_DB_Struct));
@@ -875,4 +871,4 @@ typedef struct _InherenceBalanceRefixValue
 	}
 
 }InherenceBalanceRefixValue;
-#endif
+

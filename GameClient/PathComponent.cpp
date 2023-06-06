@@ -1,4 +1,4 @@
-#include "OgreHeader.h"
+#include "stdafx.h"
 #include "PathComponent.h"
 #include "GameMapPath.h"
 #include "kcharacter.h"

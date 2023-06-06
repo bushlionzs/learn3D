@@ -76,7 +76,6 @@ namespace Ogre {
 
 	bool Camera::isVisible(const AxisAlignedBox& bound) const
 	{
-		return true;
 		return mCameraImpl->isVisible(bound);
 	}
 

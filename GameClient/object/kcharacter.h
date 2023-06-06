@@ -13,6 +13,7 @@
 #include "KObject.h"
 #include "GameEntity.h"
 #include "Basics.h"
+#include "command/KCharStruct.h"
 
 class MyCallback : public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -61,8 +62,6 @@ protected:
 	
 	std::shared_ptr<GameEntity> mMountEntity;
 
-	int32_t mCurrCharModelID;
-	int32_t mCurrMountModelID;
 	std::string mModelName;
 	std::string mMountModelName;
 	std::string mWeaponModelName;
@@ -86,8 +85,8 @@ protected:
 	int32						m_nAttachID;
 
 	/// 逻辑是否停止
-	BOOL						m_bIsCharBaseLogicEnd;
-	BOOL						m_bIsCharActionLogicEnd;
+	bool						m_bIsCharBaseLogicEnd;
+	bool						m_bIsCharActionLogicEnd;
 
 	/// 正在执行的逻辑状态
 	CHARATER_STATE_TYPE			m_nCharBaseState;
@@ -99,6 +98,41 @@ protected:
 
 	float	mFightStateTime = 0.0f;
 	float   m_fMoveRate = 1.0f;
+
+	/// 当前逻辑命令
+
+	/// 逻辑命令列表
+	typedef std::list<KCharCmdDate_Logic*>	ObjCommandList;
+	ObjCommandList								m_listBaseStateCommand;
+	ObjCommandList								m_listActionStateCommand;
+
+	KCharCmdDate_Logic* m_pBaseLogicCommand;
+	KCharCmdDate_Logic* m_pActionLogicCommand;
+
+	CharStateData_Idle			m_StateDate_Idle;
+	CharStateData_Move			m_StateDate_Move;
+	CharStateData_Charge		m_StateDate_Charge;
+	CharStateData_Channel		m_StateDate_Channel;
+	CharStateData_Send			m_StateDate_Send;
+	CharStateData_Ability		m_StateDate_Ability;
+	CharStateData_Stall			m_StateDate_Stall;
+	CharStateData_Dead			m_StateDate_Dead;
+
+	// 逻辑锁定状态。锁定状态时，人物不可切换逻辑状态
+	bool m_bLogic_Locked = false;
+	// 加锁计时器
+	uint64_t m_uLogicLockTimer = 0;
+	// 动作速度
+	FLOAT m_fActionLogic_Speed;
+	// 特效速度
+	FLOAT m_fActionImpact_Speed;
+
+	FLOAT m_fRotationSpeed;
+	// 正在冲锋
+	bool m_bSkillTantivyFlag = false;
+
+	///// 当前逻揖执行的速度
+	float m_fLogic_Speed;
 public:
 	KCharacter();
 
@@ -208,6 +242,7 @@ public:
 	bool AddAttachMember(int32 nObjId);
 	bool RemoveAttachMember(int32 nObjId);
 	void StopMove();
+	KCharCmdDate_Logic* GetNextCommand(CHARATER_LOGIC_TYPE nLogicTag);
 	int32 GetSpecifyMountIDByModleID();
 	void UpdateMountModel(void);
 	void UpdateAttached();
@@ -230,6 +265,7 @@ public:
 	bool EndIdle(void);
 	bool BeginMove(bool bPlayMoveSound = true);
 	bool EndMove(void);
+	void ModifyMove(void);
 	bool DoJump(void);
 	bool IsJumping() const;
 	bool BeginJump();
@@ -238,6 +274,11 @@ public:
 	bool IsDie(void);
 	bool BeginCadaver();
 
+	//
+	bool IsAttached();
+	bool IsInAir();
+	bool IsMoving();
+	bool IsUseSkill();
 	//
 	// 添加一个动作
 	bool	SetActionSlot(
@@ -287,6 +328,90 @@ public:
 		int32 nActionSetID, int32 nWeaponType);
 	bool SetSlotIndex(int32 nAASNode, int32 nActionID);
 	bool SetCharSlotIndex(int32 nAASNode, int32 nActionID);
+
+	void calculateNodePos(
+		const Ogre::Vector2& fvPosition,
+		FLOAT fModifyHeight);
+
+	bool AddCommand(const ObjectCmd* pCmd);
+	eRUN_CMD_RESULT_CODE HandleCommand(const ObjectCmd* pCmd);
+	KCharCmdDate_Logic* FindBaseStateCommand(int32 nLogicCount);
+	KCharCmdDate_Logic* FindActionStateCommand(int32 nLogicCount);
+	KCharCmdDate_Logic* GetBaseStateCommand(void);
+	void SetBaseStateCommand(KCharCmdDate_Logic* pLogicCommand);
+	KCharCmdDate_Logic* GetActionStateCommand(void);
+	void SetActionStateCommand(KCharCmdDate_Logic* pLogicCommand);
+	void DelAllMoveCommand();
+	BOOL AddBaseStateCommand(KCharCmdDate_Logic* pCmd);
+	BOOL AddActionStateCommand(KCharCmdDate_Logic* pCmd);
+	BOOL ProcessBaseStateCommand(void);
+	BOOL ProcessActionStateCommand(void);
+	BOOL CheckNextActionStateCommand();
+	BOOL ProcessNextCommand(CHARATER_LOGIC_TYPE nLogicTag);
+	BOOL ProcessStateCommand(KCharCmdDate_Logic* pLogicCmd);
+
+	bool IsEmpty_BaseStateCommand(void)
+	{
+		return m_listBaseStateCommand.empty();
+	}
+	bool IsEmpty_ActionStateCommand(void)
+	{
+		return m_listActionStateCommand.empty();
+	}
+
+	bool IsLogicLocked();
+	void SetLogicLocked(BOOL bLock);
+
+	void SetActionImpactSpeed(FLOAT fSpeed);
+	void ModifyCurrPos(const Ogre::Vector2& fvServerPos);
+
+	void ShutDown_CharacterState(CHARATER_LOGIC_TYPE nLogicTag);
+	void Exit_CharacterState(CHARATER_LOGIC_TYPE nLogicTag);
+
+	void SetActionLogicSpeed(FLOAT fSpeed);
+	FLOAT GetActionLogicSpeed() const;
+	void SetLogicSpeed(FLOAT fSpeed);
+	// 休闲
+	bool	EnterState_Idle(void);
+	// 动作
+	bool	EnterState_Action(KCharCmdDate_Logic* pLogicCommand);
+	// 移动
+	bool	EnterState_Move(KCharCmdDate_Logic* pLogicCommand);
+	// 法术聚气
+	bool	EnterState_Charge(KCharCmdDate_Logic* pLogicCommand);
+	// 法术引导
+	bool	EnterState_Channel(KCharCmdDate_Logic* pLogicCommand);
+	// 法术发招
+	bool	EnterState_Send(KCharCmdDate_Logic* pLogicCommand);
+	// 死亡
+	bool	EnterState_Dead(BOOL bPlayDieAni = TRUE);
+	// 生活技能
+	bool	EnterState_Ability(KCharCmdDate_Logic* pLogicCommand);
+	// 摆摊
+	bool	EnterState_Stall(BOOL bPlayAni);
+
+	// 执行事件
+	void	AddEvent(const LogicEventData* pLogicEvent);
+	void	RemoveEvent(int32 nLogicCount);
+	void	RemoveAllEvent(void);
+	void	Update_Event(void);
+
+	
+	bool	ProcessEvent(const LogicEventData* pLogicEvent);
+	bool	ProcessEvent_Damage(const LogicEventData* pLogicEvent);
+
+	//
+	void	UpdateModel_BuffEffect(void);
+
+	bool	AddImpact(uint32 nSN, int32 idImpact, ObjID_t nCreatorID, int32 nNumOflayer, int32 nSenderLogicCount);
+	void	DelImpact(uint32 nSN);
+
+	void	ClearBuffEffectHandle();
+	void	ClearMountBuffEffect();
+
+	bool	AddBindEffect(const String&, const String&);
+
+	bool	AddMountEffect(const String&, const String&);
 public:
 	virtual void UpdateCharBaseData(void) {}
 	virtual void UpdateModel_WeaponActionSet(void) {}
@@ -294,6 +419,9 @@ public:
 	virtual void update(float deltatime);
 
 	virtual int32 AnalyseCharModel(void)const;
+
+	virtual void UpdateEquip(PLAYER_EQUIP point) {}
+	virtual bool UpdateFashion() { return true; }
 protected:
 	void OnChangeOfMountId();
 	void UpdateModel_CharActionSet(void);

@@ -1,6 +1,7 @@
-#include "OgreHeader.h"
+#include "stdafx.h"
 #include "KObjectManager.h"
 #include "kplayer.h"
+#include "KNpc.h"
 
 template<>
 KObjectManager* GameSingleton<KObjectManager>::m_sSingleton = NULL;
@@ -28,7 +29,12 @@ KObject* KObjectManager::createPlayer(int64_t id)
 
 KObject* KObjectManager::createNPC(int64_t id)
 {
-	return nullptr;
+	auto npc = new KNpc;
+	addObject(id, npc);
+	npc->initialize();
+	npc->setId(id);
+
+	return npc;
 }
 
 KObject* KObjectManager::createItem(int64_t id)

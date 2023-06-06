@@ -1236,17 +1236,10 @@ void KCharatcterBaseData::Set_Equip(PLAYER_EQUIP point, int32 nID, BOOL bUpdateS
 	{
 		((SDataPlayerOther *) m_pData)->m_nEquipmentID[point] = nID;
 
-		KYLIN_TRY
-
 		/* 通知角色层，更改外表 */
 		if(HEQUIP_HEAD != point) 
 			m_pObjRef->DoDataEvent_Equip(point);
-
-		KYLIN_CATCH("Set_Equip *") char szTmp[32] = { 0 };
-
-		_snprintf(szTmp, 32, "Set_Equip %d=%d", (int32) point, nID);
-
-		
+	
 	}
 }
 

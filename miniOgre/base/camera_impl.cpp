@@ -21,7 +21,7 @@ void CameraImpl::updateView(const Ogre::Vector3& position, const Ogre::Quaternio
 {
 	mViewMatrix = Ogre::Math::makeViewMatrix(position, orientation);
 
-    Ogre::Matrix4 combo = mProjectMatrix * mViewMatrix;
+    Ogre::Matrix4 combo = mProjectMatrix.transpose() * mViewMatrix.transpose();
 
     mFrustumPlanes[FRUSTUM_PLANE_LEFT].normal.x = combo[3][0] + combo[0][0];
     mFrustumPlanes[FRUSTUM_PLANE_LEFT].normal.y = combo[3][1] + combo[0][1];
@@ -67,7 +67,7 @@ void CameraImpl::updateView(
 {
     mViewMatrix = Ogre::Math::makeLookAtRH(eyePos, targetPos, up);
 
-    Ogre::Matrix4 combo = mProjectMatrix * mViewMatrix;
+    Ogre::Matrix4 combo = mProjectMatrix.transpose() * mViewMatrix.transpose();
 
     mFrustumPlanes[FRUSTUM_PLANE_LEFT].normal.x = combo[3][0] + combo[0][0];
     mFrustumPlanes[FRUSTUM_PLANE_LEFT].normal.y = combo[3][1] + combo[0][1];

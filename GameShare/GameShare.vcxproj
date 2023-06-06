@@ -320,6 +320,7 @@
     <ClCompile Include="StructCommandScript.cpp" />
     <ClCompile Include="StructCountry.cpp" />
     <ClCompile Include="StructDB.cpp" />
+    <ClCompile Include="StructEffect.cpp" />
     <ClCompile Include="StructHorseFindMate.cpp" />
     <ClCompile Include="StructMinorPasswd.cpp" />
     <ClCompile Include="StructPet.cpp" />

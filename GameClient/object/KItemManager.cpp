@@ -55,7 +55,7 @@ KItem* KItemManager::CreateNewItem(uint32 idTable)
 		if (nullptr == pNewItem)
 			return nullptr;
 
-		//((KItemEquip*)pNewItem)->AsEquip(pGEquip);
+		((KItemEquip*)pNewItem)->AsEquip(pGEquip);
 
 		// 物品规则
 		pNewItem->setRule(pGEquip->nRule);
@@ -172,10 +172,10 @@ KItem* KItemManager::CreateNewItem(uint32 idTable)
 	break;
 	};	// switch
 
-	if (NULL == pNewItem)
-		return NULL;
+	if (nullptr == pNewItem)
+		return nullptr;
 
-	//pNewItem->m_idTable = idTable;
+	pNewItem->setIdTable(idTable);
 	mObjectMap[pNewItem->getId()] = pNewItem;
 
 	return pNewItem;

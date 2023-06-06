@@ -13,6 +13,12 @@
     <Filter Include="object">
       <UniqueIdentifier>{51c36fec-1890-4988-8996-666c095a7815}</UniqueIdentifier>
     </Filter>
+    <Filter Include="entity">
+      <UniqueIdentifier>{4b36b9f0-b374-47ad-8fa7-9dc8013fc2fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="command">
+      <UniqueIdentifier>{e93fb22f-6412-4554-892e-6bbd3f1baa96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="data\GameDataCharacter.cpp">
@@ -27,7 +33,6 @@
     <ClCompile Include="application_util.cpp" />
     <ClCompile Include="application_window.cpp" />
     <ClCompile Include="game_camera.cpp" />
-    <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="clientmessage\SCEnterSceneProcess.cpp">
       <Filter>clientmessage</Filter>
     </ClCompile>
@@ -73,6 +78,21 @@
     <ClCompile Include="clientmessage\SCDetailEquipProcess.cpp">
       <Filter>clientmessage</Filter>
     </ClCompile>
+    <ClCompile Include="GameEntity.cpp">
+      <Filter>entity</Filter>
+    </ClCompile>
+    <ClCompile Include="clientmessage\SCNewMonsterProcess.cpp">
+      <Filter>clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="command\KObjCommand.cpp">
+      <Filter>command</Filter>
+    </ClCompile>
+    <ClCompile Include="command\KCharStruct.cpp">
+      <Filter>command</Filter>
+    </ClCompile>
+    <ClCompile Include="object\KNpc.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\GameDataCharacter.h">
@@ -96,7 +116,6 @@
     <ClInclude Include="application_util.h" />
     <ClInclude Include="application_window.h" />
     <ClInclude Include="game_camera.h" />
-    <ClInclude Include="GameEntity.h" />
     <ClInclude Include="object\kcharacter.h">
       <Filter>object</Filter>
     </ClInclude>
@@ -131,6 +150,24 @@
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="object\ItemCommon.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEntity.h">
+      <Filter>entity</Filter>
+    </ClInclude>
+    <ClInclude Include="command\KCommand.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\KObjCommand.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\command.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="command\KCharStruct.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="object\KNpc.h">
       <Filter>object</Filter>
     </ClInclude>
   </ItemGroup>

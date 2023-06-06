@@ -586,6 +586,7 @@
       <Filter>net\messages\clientmessage</Filter>
     </ClCompile>
     <ClCompile Include="ScriptCacheMgr.cpp" />
+    <ClCompile Include="StructEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="net">

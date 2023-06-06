@@ -1,4 +1,4 @@
-#include "OgreHeader.h"
+#include "stdafx.h"
 #include "GameWorld.h"
 #include "game_scene_manager.h"
 #include "engine_manager.h"

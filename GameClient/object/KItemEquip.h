@@ -7,6 +7,13 @@
 class KItemEquip : public KItem
 {
 public:
+	/* 区分普通和高级装备 */
+	enum EQUIP_ENUM
+	{
+		INVAILD_EQUIP = -1,					/* 无效 */
+		COMMON_EQUIP,							/* 普通 */
+		ADVANCED_EQUIP,							/* 高级 */
+	};
 	/* 属性和宝石 */
 	typedef std::vector<_ITEM_PROPERTY>			EQUIP_ATTRIBUTES;
 	typedef std::vector<SItemGemInfo>		EQUIP_ATTACH_GEM;
@@ -184,7 +191,22 @@ public:
 
 	int32 GetItemTableType(void) const;
 	bool IsDefence() const;
+	void AsEquip(const _TABLE_ITEM_EQUIP* pDefine);
+	void AsAdvancedEquip(const _TABLE_ITEM_EQUIP* pDefine);
+	void SetNeedLevel(int32_t level);
+	void SetEquipHoleNum(int32_t hole);
+	void SetStartLevel(int32_t level);
+	int32_t GetStartLevel();
+	PLAYER_EQUIP GetEquipPoint();
+	void CalcEquipBaseAttrByAddStar();
 private:
+	/* 区分普通装备和高级装备 */
+	EQUIP_ENUM m_eEquipStyle;
+	/* 基本属性 */
 	BASE_DEFINE m_theBaseDef;
+	/* 扩展属性(需要服务器传输) */
 	EXTRA_DEFINE* m_pExtraDefine;
+	String m_strExtraDesc;
+	/* 物品的详细编号 = ((nClass*100+nQuality)*100+nType)*1000+nIndex */
+	int32					m_nParticularID;
 };

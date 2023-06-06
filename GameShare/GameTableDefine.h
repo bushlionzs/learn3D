@@ -36,6 +36,12 @@ static TABLE_FILE_LOAD_DEFINE	g_TableFileLoad[] =
 	/* 装备类物品索引（身体，手臂，脚。。。。） */
 	{ TABLE_EQUIP_LOC, "equip_loc" },
 
+	/* 装备类物品显示定义（身体，手臂，脚。。。。） */
+	{ TABLE_ITEM_VISUAL_LOCATOR, "item_loc" },
+
+	/* 挂接类物品显示定义（武器） */
+	{ TABLE_ITEM_MONSTER_VISUAL_LOCATOR, "item_mon_loc" },
+
 	/* 怪挂武器表 */
 	{ TABLE_SOUND_INFO, "snd_info" },
 

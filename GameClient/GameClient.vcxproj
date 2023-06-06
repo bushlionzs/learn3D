@@ -151,6 +151,9 @@
     <ClCompile Include="clientmessage\SCCharHumanBaseAttribProcess.cpp" />
     <ClCompile Include="clientmessage\SCDetailEquipProcess.cpp" />
     <ClCompile Include="clientmessage\SCEnterSceneProcess.cpp" />
+    <ClCompile Include="clientmessage\SCNewMonsterProcess.cpp" />
+    <ClCompile Include="command\KCharStruct.cpp" />
+    <ClCompile Include="command\KObjCommand.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="CharacterCommon.cpp" />
     <ClCompile Include="data\GameDataCharacter.cpp" />
@@ -167,6 +170,7 @@
     <ClCompile Include="object\KItemManager.cpp" />
     <ClCompile Include="object\KItemMedicine.cpp" />
     <ClCompile Include="object\KItemTask.cpp" />
+    <ClCompile Include="object\KNpc.cpp" />
     <ClCompile Include="object\KObject.cpp" />
     <ClCompile Include="object\KObjectManager.cpp" />
     <ClCompile Include="object\kplayer.cpp" />
@@ -176,6 +180,10 @@
     <ClInclude Include="application_base.h" />
     <ClInclude Include="application_util.h" />
     <ClInclude Include="application_window.h" />
+    <ClInclude Include="command\command.h" />
+    <ClInclude Include="command\KCharStruct.h" />
+    <ClInclude Include="command\KCommand.h" />
+    <ClInclude Include="command\KObjCommand.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="CharacterCommon.h" />
     <ClInclude Include="data\GameDataCharacter.h" />
@@ -195,6 +203,7 @@
     <ClInclude Include="object\KItemManager.h" />
     <ClInclude Include="object\KItemMedicine.h" />
     <ClInclude Include="object\KItemTask.h" />
+    <ClInclude Include="object\KNpc.h" />
     <ClInclude Include="object\KObject.h" />
     <ClInclude Include="object\KObjectManager.h" />
     <ClInclude Include="object\kplayer.h" />

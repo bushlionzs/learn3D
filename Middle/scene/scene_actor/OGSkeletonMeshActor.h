@@ -99,6 +99,13 @@ namespace Orphigine
 			Ogre::Real delayTime,
 			int priority);
 
+		bool setWeaponEffect(
+			char* pEffectName, 
+			char* pLocatorName, 
+			SkeletonMeshComponent::WeaponEnum WeaponType, 
+			int priority);
+		bool clearWeaponEffect(
+			SkeletonMeshComponent::WeaponEnum WeaponType);
 	protected:		
 		Ogre::Vector2	mModelGridPosition;	//转换LogicModel的位置为格子坐标，用于加载排序
 		Ogre::Vector3	mModelPosition;		//LogicModel的位置,用于attach之前的设置
@@ -147,28 +154,28 @@ namespace Orphigine
 		void									setTransparent(Real time, Real transparency);
 		Ogre::String							addEffect( const String& effectName, const String& locatorName, 
 			uint32_t transformType , const Ogre::ColourValue& colour = Ogre::ColourValue::White, int priority = 3 );
-		bool									delEffect(Ogre::String EffectName);
-		void									delAllEffect(void);
-		void									setHairColour(const Ogre::ColourValue& colour);
-		bool									attachModelObj(const String& locatorName, SkeletonMeshActor* model);
-		bool									detachModelObj(SkeletonMeshActor* model);
-		void									setVisibleFlag(uint32 flags);
-		void									setPosition(Ogre::Vector3& pos);
-		void									setOrientation(Ogre::Quaternion& orientation);
-		void									setSelected(bool selected);
-		int										_getTerrainSoundType(void);
-		void									setScaleFactor(const Ogre::Vector3& scaleFactor);
-		void									setWeaponTypeName(const String& typeName);
-		void									delCurrentSkill(void);
-		void									setMoodAnimName(const String& name);
+		bool	delEffect(Ogre::String EffectName);
+		void	delAllEffect(void);
+		void	setHairColour(const Ogre::ColourValue& colour);
+		bool	attachModelObj(const String& locatorName, SkeletonMeshActor* model);
+		bool	detachModelObj(SkeletonMeshActor* model);
+		void	setVisibleFlag(uint32 flags);
+		void	setPosition(Ogre::Vector3& pos);
+		void	setOrientation(Ogre::Quaternion& orientation);
+		void	steSelected(bool selected);
+		int		_getTerrainSoundType(void);
+		void	setScaleFactor(const Ogre::Vector3& scaleFactor);
+		void	setWeaponTypeName(const String& typeName);
+		void	delCurrentSkill(void);
+		void	setMoodAnimName(const String& name);
 
-		void									forceUpdateBoundingBox();
-		void									setAASGlobalAnimRate(Real rate);
-		void									setSkillRate(Real val);
-		bool									getViewFrustumVisible();
-		bool									rayIntersect(const Ogre::Ray& ray);
-		bool									isUseExternalBoundingBox(void);
-		bool									setForceIgnoreAAS(bool val);
+		void	forceUpdateBoundingBox();
+		void	setAASGlobalAnimRate(Real rate);
+		void	setSkillRate(Real val);
+		bool	getViewFrustumVisible();
+		bool	rayIntersect(const Ogre::Ray& ray);
+		bool	isUseExternalBoundingBox(void);
+		bool	setForceIgnoreAAS(bool val);
 
 
 		//dscky add 创建和销毁logicModel需要延迟进行，添加是否创建成功的标志/////////

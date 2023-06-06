@@ -1,4 +1,4 @@
-#include "OgreHeader.h"
+#include "stdafx.h"
 #include "OGActorFactoryManager.h"
 #include "OGSKeletonMeshActor.h"
 #include "OGImpactManager.h"
@@ -137,10 +137,6 @@ void KPlayer::input(KeyCode _key)
 
 void KPlayer::createCharRenderInterface(void)
 {
-	if (!mMainEntity)
-	{
-		mMainEntity = std::make_shared<GameEntity>();
-	}
 	const CGameTable* pCharModelTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MODEL);
 	if (NULL == pCharModelTable)
 	{
@@ -159,10 +155,9 @@ void KPlayer::createCharRenderInterface(void)
 
 	if (lpszModelFileName)
 	{
-		auto position = EngineManager::getSingleton().getMyPosition();
 		// 设置ActorFile
 		mMainEntity->setModelName(lpszModelFileName);
-		setPosition(position);
+		setPosition(mGamePosition);
 	
 		m_ModelPartDateList.Clear();
 
@@ -290,6 +285,32 @@ void KPlayer::UpdateEquip(PLAYER_EQUIP point)
 	{
 		UpdateModel_Visible();
 	}
+}
+
+bool KPlayer::UpdateFashion()
+{
+	// 更新可见部件
+	UpdateFaceMesh();
+	UpdateHairMesh();
+	UpdateEquip(HEQUIP_MAINHAND);
+	UpdateEquip(HEQUIP_ASSIHAND);
+	UpdateEquip(HEQUIP_SHOULDER);
+	UpdateEquip(HEQUIP_BACK);
+	UpdateEquip(HEQUIP_HAND);
+	UpdateEquip(HEQUIP_FEET);
+
+	KCharatcterBaseData* pCharacterData = GetCharacterData();
+	// 更新外装特效
+	int32 nID = pCharacterData->Get_Equip(HEQUIP_SUIT);
+	if (INVALID_ID != nID)
+	{
+		SetBodyEquipEffect(nID, HEQUIP_SUIT);
+	}
+	else
+	{
+		DelEquipEffect(HEQUIP_SUIT);
+	}
+	return TRUE;
 }
 
 void KPlayer::UpdateFaceMesh(void)
@@ -891,13 +912,6 @@ void KPlayer::EquipItem_BodyLocator(
 
 void KPlayer::EquipItem_BodyPart(PLAYER_EQUIP nPart, int32 nID)
 {
-	if (NULL == mMainEntity)
-		return;
-
-	KCharatcterBaseData* pCharacterData = GetCharacterData();
-	if (NULL == pCharacterData)
-		return;
-
 	const _TABLE_EQUIP_LOC* pEquipLoc = NULL;
 
 	const CGameTable* pEquipItemTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_ITEM_VISUAL_CHAR);
@@ -1276,8 +1290,6 @@ void KPlayer::UpdateCharBaseData(void)
 
 	if (pCharacterData != NULL && pCharacterData->Get_RaceID() != INVALID_ID)
 	{
-		m_pCharRace = NULL;
-
 		int32 nProfession = pCharacterData->GetProfession();
 		int32 nRaceId = pCharacterData->Get_RaceID();
 		int32 nIndex = nRaceId * PROFESSION_NUMBER + nProfession + 100;
@@ -1319,5 +1331,10 @@ int32 KPlayer::AnalyseCharModel(void)const
 	}
 
 	return INVALID_ID;
+}
+
+void KPlayer::update(float deltatime)
+{
+	mPathComponent->update(deltatime);
 }
 

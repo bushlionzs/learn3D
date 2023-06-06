@@ -188,5 +188,7 @@ bool SCCharHumanBaseAttrib::process()
 		pCharacterData->Set_InherenceLevel(mInherenceLevel);
 	}
 
+	pCharObj->UpdateModel_Visible();
+
 	return true;
 }

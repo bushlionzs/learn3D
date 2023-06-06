@@ -1,21 +1,32 @@
 #include "OgreHeader.h"
 #include "SCDetailEquipList.h"
+#include "KObjectManager.h"
+#include "kplayer.h"
+#include "KItem.h"
+#include "KItemManager.h"
+#include "data/GameDataCharacter.h"
 
 bool SCDetailEquipList::process()
 {
-	/*KObject* pObj = (KObject*)OBJECT_MANAGER_PTR->FindServerObject(mObjectId);
+	KObject* pObj = KObjectManager::GetSingleton().getObject(mObjectId);
 
-	if (nullptr == pObj || FALSE == pObj->CheckClassType(GET_CLASS(KCharacter)))
+	if (nullptr == pObj)
 	{
 		return false;
 	}
 
-	KCharatcterBaseData* pCharacterData = ((KCharacter*)pObj)->GetCharacterData();
+	KPlayer* pPlayer = dynamic_cast<KPlayer*>(pObj);
+
+	if (nullptr == pPlayer)
+	{
+		return false;
+	}
+	KCharatcterBaseData* pCharacterData = pPlayer->GetCharacterData();
 
 	for (auto it = mItemMap.begin(); it != mItemMap.end(); it++)
 	{
 		SItem& item = it->second;
-		KItem* pItemObj = ITEM_MANAGER_PTR->CreateNewItem(item.m_ItemIndex);
+		KItem* pItemObj = KItemManager::GetSingleton().CreateNewItem(item.m_ItemIndex);
 		pItemObj->SetGUID(
 			item.m_ItemGUID.m_World,
 			item.m_ItemGUID.m_Server,
@@ -23,16 +34,15 @@ bool SCDetailEquipList::process()
 		);
 
 		pItemObj->SetExtraInfo(&item);
-		pItemObj->SetTypeOwner(IO_MYSELF_EQUIP);
 		pItemObj->SetPosIndex(it->first);
 
 		pCharacterData->Set_Equip((PLAYER_EQUIP)it->first, pItemObj->GetIdTable());
 
-		GAME_DATA_ITEM_PTR->UserEquip_SetItem((PLAYER_EQUIP)it->first, pItemObj, TRUE);
+		//GAME_DATA_ITEM_PTR->UserEquip_SetItem((PLAYER_EQUIP)it->first, pItemObj, TRUE);
 	}
 
-	ACTION_SYS_PTR->UserEquip_Update();*/
-
+	//ACTION_SYS_PTR->UserEquip_Update();
+	pPlayer->UpdateBodyPartModel();
 
 	return true;
 }
