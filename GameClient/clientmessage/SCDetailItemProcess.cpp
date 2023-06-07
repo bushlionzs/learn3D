@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "SCDetailEquipList.h"
+#include "SCDetailItemList.h"
 #include "KObjectManager.h"
 #include "kplayer.h"
 #include "KItem.h"
@@ -7,22 +7,16 @@
 #include "data/GameDataCharacter.h"
 #include "data/GameDataManager.h"
 
-bool SCDetailEquipList::process()
+bool SCDetailItemList::process()
 {
 	KObject* pObj = KObjectManager::GetSingleton().getObject(mObjectId);
 
-	if (nullptr == pObj)
-	{
-		return false;
-	}
-
+	
 	KPlayer* pPlayer = dynamic_cast<KPlayer*>(pObj);
 
-	if (nullptr == pPlayer)
-	{
-		return false;
-	}
-	KCharatcterBaseData* pCharacterData = pPlayer->GetCharacterData();
+
+	GameDataManager::GetSingleton().UserBag_Clear();
+
 
 	for (auto it = mItemMap.begin(); it != mItemMap.end(); it++)
 	{
@@ -37,14 +31,9 @@ bool SCDetailEquipList::process()
 		pItemObj->SetExtraInfo(&item);
 		pItemObj->SetPosIndex(it->first);
 
-		pCharacterData->Set_Equip((PLAYER_EQUIP)it->first, pItemObj->GetIdTable());
-
-		GameDataManager::GetSingleton().UserEquip_SetItem(
-			(PLAYER_EQUIP)it->first, pItemObj, true);
+		GameDataManager::GetSingleton().UserBag_SetItem(it->first, pItemObj);
 	}
 
-	//ACTION_SYS_PTR->UserEquip_Update();
-	pPlayer->UpdateBodyPartModel();
 
 	return true;
 }

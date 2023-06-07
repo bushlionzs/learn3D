@@ -92,12 +92,12 @@ public:
 	int32							m_nState;			/* 状态，MOUNT_STATE */
 
 	SHorseGuid					m_SpouseGUID;		/* 配偶ID */
-	STRING						m_szName;			/* 名称 */
-	STRING						m_szNickname;		/* 昵称 */
+	String						m_szName;			/* 名称 */
+	String						m_szNickname;		/* 昵称 */
 	int32							m_nGender;			/* 性别 */
 	int32							m_nLevel;			/* 等级 */
-	int64							m_nExp;				/* 经验 */
-	int64							m_nMaxExp;			/* 最大经验 */
+	int64_t							m_nExp;				/* 经验 */
+	int64_t							m_nMaxExp;			/* 最大经验 */
 	int32							m_nEraCount;		/* 几代宠 */
 	int32							m_nHappiness;		/* 快乐度 */
 	int32							m_nSkillGrid;		/* 技能栏数量 */
@@ -200,7 +200,7 @@ class	KCharacter_NPC;
 struct MountAvatar
 {
 	int32				nMountID;
-	STRING			strAvatarName;
+	String			strAvatarName;
 	KCharacter_NPC	*pAvatar;
 
 	MountAvatar()
@@ -228,9 +228,9 @@ enum { MATEMOUNT_MAX_NUM_ONEPAGE = 6, };
 struct MateMountInfo
 {
 	SHorseGuid	m_HorseGuid;
-	STRING		m_szHorseName;
-	STRING		m_szOwnerName;
-	STRING		m_szLeaveWords;
+	String		m_szHorseName;
+	String		m_szOwnerName;
+	String		m_szLeaveWords;
 	int32			m_iHorseLevel;
 	int32			m_iSex;
 	int32			m_iGrowRate;
@@ -249,7 +249,7 @@ struct MateMountInfo
 
 struct MateMount_Avatar
 {
-	STRING			m_strFakeObjName;
+	String			m_strFakeObjName;
 	int32				m_iDataID;
 	KCharacter_NPC	*m_pAvatar;
 

@@ -150,10 +150,15 @@
     <ClCompile Include="application_window.cpp" />
     <ClCompile Include="clientmessage\SCCharHumanBaseAttribProcess.cpp" />
     <ClCompile Include="clientmessage\SCDetailEquipProcess.cpp" />
+    <ClCompile Include="clientmessage\SCDetailItemProcess.cpp" />
+    <ClCompile Include="clientmessage\SCDetailSkillProcess.cpp" />
     <ClCompile Include="clientmessage\SCEnterSceneProcess.cpp" />
     <ClCompile Include="clientmessage\SCNewMonsterProcess.cpp" />
     <ClCompile Include="command\KCharStruct.cpp" />
     <ClCompile Include="command\KObjCommand.cpp" />
+    <ClCompile Include="data\GameDataManager.cpp" />
+    <ClCompile Include="data\struct\GameDataStructSkill.cpp" />
+    <ClCompile Include="GameClientUtil.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="CharacterCommon.cpp" />
     <ClCompile Include="data\GameDataCharacter.cpp" />
@@ -184,6 +189,10 @@
     <ClInclude Include="command\KCharStruct.h" />
     <ClInclude Include="command\KCommand.h" />
     <ClInclude Include="command\KObjCommand.h" />
+    <ClInclude Include="data\GameDataManager.h" />
+    <ClInclude Include="data\struct\GameDataStructPlayerShop.h" />
+    <ClInclude Include="data\struct\GameDataStructSkill.h" />
+    <ClInclude Include="GameClientUtil.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="CharacterCommon.h" />
     <ClInclude Include="data\GameDataCharacter.h" />

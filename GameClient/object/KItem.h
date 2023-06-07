@@ -43,6 +43,16 @@ public:
 	{
 		m_idTable = id;
 	}
+
+	int32_t GetNumber()
+	{
+		return m_nNum;
+	}
+
+	void SetNumber(int32_t num)
+	{
+		m_nNum = num;
+	}
 private:
 	int32_t mRuleId;
 
@@ -51,4 +61,6 @@ private:
 	int32_t m_nPosIndex = -1;
 
 	int32_t m_idTable = -1;
+
+	int32_t m_nNum = 1;
 };

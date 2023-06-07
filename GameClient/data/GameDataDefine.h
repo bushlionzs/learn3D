@@ -1,17 +1,3 @@
-/*$T Client/Game/DataPool/GameDataDefine.h GC 1.140 08/23/09 04:52:30 */
-
-
-/*$6
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- */
-
-
-/*
- * ;
- * 游戏数据定义 ;
- * ;
- */
 #ifndef _GAME_DATA_DEFINE_H_
 #define _GAME_DATA_DEFINE_H_
 
@@ -20,6 +6,8 @@
 #include "Data\Struct\GameDataStructPet.h"
 #include "Data\Struct\GameDataStructPlayerShop.h"
 #include "StructCommandScript.h"
+
+class KItem;
 namespace	GDataDef
 {
 /*
@@ -57,26 +45,26 @@ struct COOLDOWN_GROUP
  */
 struct PRIVATE_INFO
 {
-	STRING	m_szName;		/* 在CleanUp中不要清除 */
+	String	m_szName;		/* 在CleanUp中不要清除 */
 	int32		m_nInfoType;	/* 保密程度 */
 	uint32	m_unCharGUID;	/* 角色编号 */
 	int32		m_nAge;			/* 年龄 */
 	int32		m_nSex;			/* 性别 */
-	STRING	m_szJobInfo;	/* 职业信息 */
-	STRING	m_szSchoolInfo; /* 毕业院校 */
+	String	m_szJobInfo;	/* 职业信息 */
+	String	m_szSchoolInfo; /* 毕业院校 */
 	int32		m_nBloodType;	/* 血型 */
 	int32		m_nYearAnimal;	/* 生肖 */
 	int32		m_birthMonth;
 	int32		m_birthDay;
 	int32		m_nConsella;	/* 星座 */
-	STRING	m_szProvince;	/* 省份 */
-	STRING	m_szCity;		/* 城市 */
-	STRING	m_szEmailInfo;	/* 邮件 */
-	STRING	m_szLuckWord;	/* 心情寄语 */
+	String	m_szProvince;	/* 省份 */
+	String	m_szCity;		/* 城市 */
+	String	m_szEmailInfo;	/* 邮件 */
+	String	m_szLuckWord;	/* 心情寄语 */
 
-	STRING	m_szHomePage;	/* 主页 */
-	STRING	m_szQQ;			/* QQ */
-	STRING	m_szMSN;		/* MSN */
+	String	m_szHomePage;	/* 主页 */
+	String	m_szQQ;			/* QQ */
+	String	m_szMSN;		/* MSN */
 
 	/*
 	 ===================================================================================================================
@@ -175,9 +163,9 @@ struct TopData
 	GUID_t	m_Guid;			/* 玩家GUID */
 	int32		m_nLevel;		/* 等级 */
 	int32		m_nCountry;		/* 国家 */
-	STRING	m_strName;		/* 名称 */
+	String	m_strName;		/* 名称 */
 	int32		m_nMenPai;		/* 职业 */
-	STRING	m_strGuildName; /* 帮会名称 */
+	String	m_strGuildName; /* 帮会名称 */
 	int32		m_nKeyValue;	/* 排行榜关键值。根据排行榜的类型不同，其数值含义也不同 */
 	uint32	m_uTopVersion;	/* 排行榜版本号 */
 	int32		m_nReserved[3];
@@ -243,33 +231,29 @@ struct TopTypeData
 	}
 };
 
+class KCharatcterBaseData;
+typedef std::map<INT, TopTypeData, std::less<INT>>			TOP_TYPE_MAP;
 
-typedef std::map<INT, TopTypeData, std::less<INT>,
-Ogre::StlAllocator<pair<INT, TopTypeData>, Ogre::CompactablePoolAllocPolicy> >									TOP_TYPE_MAP;
+typedef std::map<INT, KCharatcterBaseData*, std::less<INT>>	MAP_CHARDATA;
 
-typedef std::map<INT, KCharatcterBaseData*, std::less<INT>,
-Ogre::StlAllocator<pair<INT, KCharatcterBaseData*>, Ogre::CompactablePoolAllocPolicy> >							MAP_CHARDATA;
+typedef std::vector< COOLDOWN_GROUP >		VECTOR_COOLDOWN;
+typedef std::vector< INT >						VECTOR_INT;
 
-typedef std::vector< COOLDOWN_GROUP, Ogre::StlAllocator<COOLDOWN_GROUP, Ogre::CompactablePoolAllocPolicy> >		VECTOR_COOLDOWN;
-typedef std::vector< INT, Ogre::StlAllocator<INT, Ogre::CompactablePoolAllocPolicy> >							VECTOR_INT;
+typedef std::map<INT, _BUFF_EFFECT_INFO*, std::less<INT> >	CBuffImpactMap;
 
-typedef std::map<INT, _BUFF_EFFECT_INFO*, std::less<INT>,
-Ogre::StlAllocator<pair<INT, _BUFF_EFFECT_INFO*>, Ogre::CompactablePoolAllocPolicy> >							CBuffImpactMap;
+typedef std::vector< SameCityData >			SameCityDataVec;
 
-typedef std::vector< SameCityData, Ogre::StlAllocator<SameCityData, Ogre::CompactablePoolAllocPolicy> >			SameCityDataVec;
-
-typedef std::map<STRING, SameCityData, std::less<STRING>,
-Ogre::StlAllocator<pair<STRING, SameCityData>, Ogre::CompactablePoolAllocPolicy> >								SameCityDataMap;
+typedef std::map<String, SameCityData, std::less<String>>								SameCityDataMap;
 
 
 typedef std::vector< _TABLE_PROVINCE_ZONE >	ZoneVec;				//市区
-typedef std::map< STRING, ZoneVec >			ProvinceZoneMap;		//省份市区表
-typedef std::pair< STRING, STRING >			ProvinceZonePair;		//市区省份对
+typedef std::map< String, ZoneVec >			ProvinceZoneMap;		//省份市区表
+typedef std::pair< String, String >			ProvinceZonePair;		//市区省份对
 typedef std::map< INT, ProvinceZonePair >	PostCodeProvinceZoneMap;//编号省份市区表
-typedef std::vector< STRING >				ProvinceVec;
+typedef std::vector< String >				ProvinceVec;
 
-typedef std::deque< INT, Ogre::StlAllocator<INT, Ogre::CompactablePoolAllocPolicy> >							LinkItemQue;
-typedef std::vector< SDataPet,  Ogre::StlAllocator<SDataPet, Ogre::CompactablePoolAllocPolicy> >				LinkHorseQue;
+typedef std::deque< INT>	LinkItemQue;
+typedef std::vector< SDataPet >				LinkHorseQue;
 
 
 /*
@@ -279,15 +263,15 @@ typedef std::vector< SDataPet,  Ogre::StlAllocator<SDataPet, Ogre::CompactablePo
  */
 struct SMessageEntry
 {
-	STRING AuthorName;
+	String AuthorName;
 	uint32 nID;
 	BYTE nHour;
 	BYTE nMin;
 	BOOL bHasReply;
-	STRING szMessage;
+	String szMessage;
 	BYTE nReHour;
 	BYTE nReMin;
-	STRING szReplyMessage;
+	String szReplyMessage;
 
 	SMessageEntry (void)
 	{
@@ -305,7 +289,7 @@ struct SMessageEntry
 
 struct BBS_t
 {
-	STRING m_szTitle;
+	String m_szTitle;
 	uint32 m_nSerial;
 	int32 m_nMessageNum;
 	std::vector<SMessageEntry> m_MessageList;
@@ -387,8 +371,8 @@ struct CLIENT_BAITAN_BOX
 	BOOL m_bIsOpen;						/* 自己摊位是否已经打开（是否处于交易状态） */
 	uint32 m_PosTax;						/* 摊位费 */
 	uint32 m_TradeTax;					/* 每次交易税收 */
-	STRING m_szStallName;				/* 标示摊位名 */
-	STRING m_szOwnerName;				/* 标示摊主名 */
+	String m_szStallName;				/* 标示摊位名 */
+	String m_szOwnerName;				/* 标示摊主名 */
 	uint32 m_nFirstPage;					/* 起始页 */
 	std::vector<BAITAN_ITEM> m_ItemList; /* 标示摊位中的所有物品 */
 	std::vector<STALL_PET> m_PetList;	/* 标示摊位中的所有宠物 */
@@ -482,9 +466,9 @@ struct PLAYERSHOP_BOX
 	uint32 m_BaseMoney;
 	uint32 m_ProfitMoney;
 	SPlayerShopGuid m_ShopID;
-	STRING m_szShopName;	/* 标示商店名 */
-	STRING m_szShopDesc;	/* 标示商店描述 */
-	STRING m_szOwnerName;	/* 标示店主名 */
+	String m_szShopName;	/* 标示商店名 */
+	String m_szShopDesc;	/* 标示商店描述 */
+	String m_szOwnerName;	/* 标示店主名 */
 	uint32 m_OwnerGuid;		/* 店主GUID */
 	BYTE m_bIsSaleOut;		/* 此商店已被盘出 */
 	uint32 m_uSaleOutPrice;	/* 商店的盘出价 */

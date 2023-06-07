@@ -1,5 +1,7 @@
 #pragma once
 #include "StructDB.h"
+#include "data/struct/GameDataStructSkill.h"
+
 struct SDataCharacter
 {
 	int32				m_nRaceID;			/* 数据表中的ID */
@@ -49,7 +51,7 @@ struct SDataCharacter
 	BOOL				m_bBusState;		/* 进入镖车状态 */
 	FLOAT				m_fCharScale;		// 人物缩放比例
 	int32				m_nDefaultSkill;	// 默认技能
-
+	SkillDataMap		m_theSkill;			/* 技能数据 */
 	/*
 	 * 注意: 添删数据需要在 _Init_AsCharacter() 初始化!!! 
 	 * 注意: 添删数据需要在 _Init_AsCharacter() 初始化!!! ;

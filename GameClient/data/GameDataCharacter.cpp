@@ -2,6 +2,10 @@
 #include "SpellDataMgr.h"
 #include "GameDataCharacter.h"
 #include "kcharacter.h"
+#include "KTable.h"
+#include "GameTableManager.h"
+#include "GameTableData.h"
+#include "GameTableDefine.h"
 
 
 
@@ -3929,6 +3933,56 @@ void KCharatcterBaseData::Set_CampData(const SCampData* pCampData)
 	if (pCampData->m_uPKMode != m_pData->m_CampData.m_uPKMode) bChangePKMode = TRUE;
 
 	m_pData->m_CampData = *pCampData;
+}
+
+void KCharatcterBaseData::Skill_CleanAll(void)
+{
+	SkillDataMap& mapSkill = m_pData->m_theSkill;
+
+	mapSkill.clear();
+
+}
+
+void KCharatcterBaseData::Set_Skill(int32 nID, bool bLean)
+{
+	SkillDataMap& mapSkill = m_pData->m_theSkill;
+	SkillDataMap::iterator	it = mapSkill.find(nID);
+
+	/* 新的技能 */
+	if (it == mapSkill.end())
+	{
+		TABLE_DEFINEHANDLE(s_pSkillDBC, TABLE_SKILL_DATA);
+
+		const _DBC_SPELL_DATA* pDefine = (const _DBC_SPELL_DATA*)s_pSkillDBC->GetFieldDataByIndex(nID);
+
+		if (pDefine)
+		{
+			SkillDetail newSkill;
+
+			newSkill.m_pDefine = pDefine;
+			newSkill.m_bLeaned = bLean;
+			newSkill.m_nPosIndex = (int32)mapSkill.size();
+
+			mapSkill.insert(std::make_pair(nID, newSkill));
+		}
+	}
+	else
+	{
+		it->second.m_bLeaned = bLean;
+	}
+
+}
+
+void KCharatcterBaseData::Set_SkillLevel(
+	int32 nSkillID, int32 nSkillLevel)
+{
+	SkillDataMap::iterator	it = m_pData->m_theSkill.find(nSkillID);
+
+	if (it == m_pData->m_theSkill.end()) return;
+
+	SkillDetail& Skill = it->second;
+
+	Skill.m_nLevel = nSkillLevel;
 }
 
 

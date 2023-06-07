@@ -93,6 +93,19 @@
     <ClCompile Include="object\KNpc.cpp">
       <Filter>object</Filter>
     </ClCompile>
+    <ClCompile Include="data\GameDataManager.cpp">
+      <Filter>data</Filter>
+    </ClCompile>
+    <ClCompile Include="clientmessage\SCDetailItemProcess.cpp">
+      <Filter>clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="clientmessage\SCDetailSkillProcess.cpp">
+      <Filter>clientmessage</Filter>
+    </ClCompile>
+    <ClCompile Include="data\struct\GameDataStructSkill.cpp">
+      <Filter>data\struct</Filter>
+    </ClCompile>
+    <ClCompile Include="GameClientUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\GameDataCharacter.h">
@@ -169,6 +182,16 @@
     </ClInclude>
     <ClInclude Include="object\KNpc.h">
       <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="data\GameDataManager.h">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="data\struct\GameDataStructSkill.h">
+      <Filter>data\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClientUtil.h" />
+    <ClInclude Include="data\struct\GameDataStructPlayerShop.h">
+      <Filter>data\struct</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

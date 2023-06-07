@@ -1,5 +1,6 @@
 #pragma once
 #include "net/net_message.h"
+#include "StructSpell.h"
 class SCDetailSkillList : public NetPacket
 {
 public:

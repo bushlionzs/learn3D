@@ -690,9 +690,6 @@ public:
 
 	int32						Get_CurrentSkillPoint();			/* 获得 拥有的技能点数 */
 	void						Set_CurrentSkillPoint(int32 nPoint);	/* 设置 .............. */
-
-	void						Set_SkillLevel(int32 nSkillID, int32 nSkillLevel);
-
 	
 	void						Set_Prescr(int32 nID, BOOL bLean);
 
@@ -773,10 +770,11 @@ public:
     uint32                      Get_DefendRemainPoints();
 
 	void Set_CampData(const SCampData* pCampData);
-/*
- -----------------------------------------------------------------------------------------------------------------------
- -----------------------------------------------------------------------------------------------------------------------
- */
+
+	void Skill_CleanAll(void);
+	void Set_Skill(int32 nID, bool bLean);
+	void Set_SkillLevel(
+		int32 nSkillID, int32 nSkillLevel);
 public:
 	KCharatcterBaseData(KCharacter*pCharObj);
 	virtual ~KCharatcterBaseData();
