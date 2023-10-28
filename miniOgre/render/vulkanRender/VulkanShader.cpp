@@ -109,7 +109,7 @@ void VulkanShader::createGraphicsPipeline(VulkanPass* pass)
         int32_t stride = vertexData->vertexDeclaration->getVertexSize(binding);
 
         if (stride <= 0)
-            break;
+            continue;
         vertexInputBindings.emplace_back();
         vertexInputBindings.back().binding = binding;
         vertexInputBindings.back().stride = stride;
