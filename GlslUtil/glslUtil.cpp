@@ -21,18 +21,22 @@ static std::string getContentFromFile(const char* name)
 class MyIncluderInterface : public shaderc::CompileOptions::IncluderInterface
 {
 public:
+    MyIncluderInterface(const std::string& rootpath)
+    {
+        mRootPath = rootpath;
+    }
     virtual shaderc_include_result* GetInclude(const char* requested_source,
         shaderc_include_type type,
         const char* requesting_source,
         size_t include_depth)
     {
-        std::string name(requested_source);
-        mIncludeResult.source_name = requested_source;
-        mIncludeResult.source_name_length = name.size();
+        mName = mRootPath + requested_source;
+        mIncludeResult.source_name = mName.c_str();
+        mIncludeResult.source_name_length = mName.size();
 
-        std::string content = getContentFromFile(name.c_str());
-        mIncludeResult.content = content.c_str();
-        mIncludeResult.content_length = content.length();
+        mContent = getContentFromFile(mName.c_str());
+        mIncludeResult.content = mContent.c_str();
+        mIncludeResult.content_length = mContent.length();
         return &mIncludeResult;
     }
 
@@ -43,6 +47,9 @@ public:
     }
 private:
     shaderc_include_result mIncludeResult;
+    std::string mName;
+    std::string mContent;
+    std::string mRootPath;
 };
 
 std::string getGlslKey(
@@ -92,7 +99,13 @@ bool glslCompileShader(
     }
     shaderc::Compiler compiler;
     shaderc::CompileOptions options;
-   options.SetIncluder(std::make_unique<MyIncluderInterface>());
+
+
+    auto pos = shaderName.find_last_of("\\");
+    std::string rootpath = shaderName.substr(0, pos+1);
+
+
+   options.SetIncluder(std::make_unique<MyIncluderInterface>(rootpath));
     // Like -DMY_DEFINE=1
     for (auto& pair : shaderMacros)
     {
