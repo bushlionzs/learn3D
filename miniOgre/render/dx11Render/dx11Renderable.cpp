@@ -174,7 +174,7 @@ void Dx11RenderableData::applyMaterialTexture(Material* mat)
 
 		if (!res.empty())
 		{
-			dx11Context->PSSetShaderResources(2, res.size(), res.data());
+			dx11Context->PSSetShaderResources(3, res.size(), res.data());
 		}
 	}
 	else
@@ -215,7 +215,7 @@ void Dx11RenderableData::applyMaterialTexture(Material* mat)
 
 		if (!res.empty())
 		{
-			dx11Context->PSSetShaderResources(2, res.size(), res.data());
+			dx11Context->PSSetShaderResources(3, res.size(), res.data());
 		}
 	}
 }

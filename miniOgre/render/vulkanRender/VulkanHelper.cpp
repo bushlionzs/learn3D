@@ -1012,36 +1012,36 @@ void VulkanHelper::copyBufferToImage(
     ITexture* tex)
 {
 
-    uint32_t width = tex->getWidth();
-    uint32_t height = tex->getHeight();
+    
     uint32_t mipLevels = tex->getSourceMipmaps() + 1;
+    uint32_t face_count = tex->getFace();
     VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
     std::vector<VkBufferImageCopy> regions;
-    regions.reserve(mipLevels);
+    regions.reserve(face_count * mipLevels);
 
     uint32_t offset = 0;
-    for (uint32_t i = 0; i < mipLevels; i++)
+    for (uint32_t face = 0; face < face_count; face++)
     {
-        regions.emplace_back();
-        VkBufferImageCopy& region = regions.back();
-        region.bufferOffset = (VkDeviceSize)offset;
-        region.bufferRowLength = 0;
-        region.bufferImageHeight = 0;
-        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        region.imageSubresource.mipLevel = i;
-        region.imageSubresource.baseArrayLayer = 0;
-        region.imageSubresource.layerCount = 1;
-        region.imageOffset = { 0, 0, 0 };
-        region.imageExtent = {
-                width,
-                height,
-                1
-        };
+        uint32_t width = tex->getWidth();
+        uint32_t height = tex->getHeight();
+        for (uint32_t i = 0; i < mipLevels; i++)
+        {
+            regions.emplace_back();
+            VkBufferImageCopy& region = regions.back();
+            region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            region.imageSubresource.mipLevel = i;
+            region.imageSubresource.baseArrayLayer = face;
+            region.imageSubresource.layerCount = 1;
+            region.imageExtent.width = width;
+            region.imageExtent.height = height;
+            region.imageExtent.depth = 1;
+            region.bufferOffset = offset;
 
-        if (width > 1)width /= 2;
-        if (height > 1)height /= 2;
-        offset += tex->getBuffer(0, i)->getSizeInBytes();
+            if (width > 1)width /= 2;
+            if (height > 1)height /= 2;
+            offset += tex->getBuffer(face, i)->getSizeInBytes();
+        }
     }
 
 
@@ -1049,7 +1049,7 @@ void VulkanHelper::copyBufferToImage(
     subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     subresourceRange.baseMipLevel = 0;
     subresourceRange.levelCount = mipLevels;
-    subresourceRange.layerCount = 1;
+    subresourceRange.layerCount = face_count;
 
     vks::tools::setImageLayout(
         commandBuffer,

@@ -134,6 +134,11 @@ namespace Ogre {
             return mNumMipmaps;
         }
 
+        uint32_t getFace()
+        {
+            return mFace;
+        }
+
         bool isCubeTexture()
         {
             return mTextureProperty._texType == TEX_TYPE_CUBE_MAP;
