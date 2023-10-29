@@ -33,7 +33,14 @@ bool VulkanShader::load()
 
     String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
     auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+
+    if (res == nullptr)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to find shader!");
+    }
     String vertexSpv;
+
+    
     glslCompileShader(
         vertexSpv, 
         res->_fullname,
@@ -43,7 +50,7 @@ bool VulkanShader::load()
         shaderc_glsl_vertex_shader);
     mVertexShader = createShaderModule(vertexSpv);
 
-
+    
     parserGlslInputDesc(vertexSpv, mInputDesc);
 
     String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);

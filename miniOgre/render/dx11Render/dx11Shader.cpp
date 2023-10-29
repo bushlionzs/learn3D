@@ -238,6 +238,7 @@ void Dx11Shader::updateInputDesc(VertexDeclaration* vDeclaration)
     {
         return;
     }
+
     const VertexDeclaration::VertexElementList& elementList = vDeclaration->getElementList();
 
     std::vector<D3D11_INPUT_ELEMENT_DESC> D3delems;

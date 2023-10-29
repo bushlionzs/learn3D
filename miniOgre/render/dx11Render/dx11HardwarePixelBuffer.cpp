@@ -6,6 +6,7 @@
 #include "dx11RenderSystem.h"
 #include "dx11Helper.h"
 #include "dx11RenderTexture.h"
+#include "OgreD3D11Mappings.h"
 
 Dx11HardwarePixelBuffer::Dx11HardwarePixelBuffer(
 	Dx11Texture* parentTexture,
@@ -84,12 +85,37 @@ void Dx11HardwarePixelBuffer::blitToMemory(const Box& srcBox, const PixelBox& ds
 
 void* Dx11HardwarePixelBuffer::lockimpl(size_t offset, size_t length, LockOptions options)
 {
-	return nullptr;
+	if (mUsage & TU_RENDERTARGET)
+	{
+		OGRE_EXCEPT(0);
+	}
+
+	createStagingBuffer();
+
+	mLockedBox = Box(0, 0, 0, mWidth, mHeight, mDepth);
+	PixelBox rval(mWidth, mHeight, mDepth, mFormat);
+
+	D3D11_MAP flags = D3D11_MAP_WRITE;
+	_map(mStagingBuffer.Get(), flags, rval);
+	mCurrentLock = rval;
+
+	mIsLocked = true;
+	return mCurrentLock.data;
 }
 
 void Dx11HardwarePixelBuffer::unlock()
 {
+	_unmap(mStagingBuffer.Get());
+	D3D11_BOX boxDx11 = getSubresourceBox(mLockedBox); // both src and dest
+	UINT subresource = getSubresourceIndex(mLockedBox.front);
+	auto context = DX11Helper::getSingleton().getDeviceContext();
+	context->CopySubresourceRegion(
+		mParentTexture->getTextureResource(), subresource, boxDx11.left, boxDx11.top, boxDx11.front,
+		mStagingBuffer.Get(), 0, &boxDx11);
 
+	mStagingBuffer.Reset();
+
+	mIsLocked = false;
 }
 
 D3D11_BOX Dx11HardwarePixelBuffer::getSubresourceBox(const Box& inBox) const
@@ -129,4 +155,52 @@ void Dx11HardwarePixelBuffer::_genMipmaps()
 		ID3D11DeviceContext* context = DX11Helper::getSingleton().getDeviceContext();
 		context->GenerateMips(pShaderResourceView);
 	}
+}
+
+void Dx11HardwarePixelBuffer::createStagingBuffer()
+{
+	if (mStagingBuffer)
+		return;
+	D3D11_TEXTURE2D_DESC desc;
+	mParentTexture->getTexture()->GetDesc(&desc);
+
+	desc.Width = mWidth;
+	desc.Height = mHeight;
+	desc.MipLevels = 0;
+	desc.BindFlags = 0;
+	desc.MiscFlags = 0;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+	desc.Usage = D3D11_USAGE_STAGING;
+	ID3D11Device* device = DX11Helper::getSingleton().getDevice();
+	device->CreateTexture2D(&desc, NULL, (ID3D11Texture2D**)mStagingBuffer.ReleaseAndGetAddressOf());
+
+	
+}
+
+void Dx11HardwarePixelBuffer::_map(
+	ID3D11Resource* res, 
+	D3D11_MAP flags, 
+	PixelBox& box)
+{
+	assert(mLockedBox.getDepth() == 1 || mParentTexture->getTextureType() == TEX_TYPE_3D);
+
+	D3D11_MAPPED_SUBRESOURCE pMappedResource = { 0 };
+	UINT subresource = (res == mStagingBuffer.Get()) ? 0 : getSubresourceIndex(mLockedBox.front);
+
+	auto context = DX11Helper::getSingleton().getDeviceContext();
+
+	HRESULT hr = context->Map(res, subresource, flags, 0, &pMappedResource);
+	if (FAILED(hr))
+	{
+		OGRE_EXCEPT(0);
+	}
+
+	D3D11Mappings::setPixelBoxMapping(box, pMappedResource);
+}
+
+void Dx11HardwarePixelBuffer::_unmap(ID3D11Resource* res)
+{
+	UINT subresource = (res == mStagingBuffer.Get()) ? 0 : getSubresourceIndex(mLockedBox.front);
+	auto context = DX11Helper::getSingleton().getDeviceContext();
+	context->Unmap(res, subresource);
 }

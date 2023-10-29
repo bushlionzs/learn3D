@@ -730,4 +730,5 @@ namespace Ogre
 
         return flags;
     }
+
 }

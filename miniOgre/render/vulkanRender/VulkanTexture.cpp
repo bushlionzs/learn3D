@@ -186,7 +186,7 @@ void VulkanTexture::createImage(
 
     if (result != VK_SUCCESS)
     {
-        OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "");
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "");
     }
 }
 

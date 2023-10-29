@@ -164,7 +164,7 @@ void VulkanWindow::swapBuffers()
     vkCmdEndRenderPass(pCommandBuffer);
     if (vkEndCommandBuffer(pCommandBuffer) != VK_SUCCESS)
     {
-        OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "failed to vkBeginCommandBuffer!");
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkBeginCommandBuffer!");
     }
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -185,12 +185,12 @@ void VulkanWindow::swapBuffers()
     auto result = vkQueueSubmit(queue, 1, &submitInfo, mFlightFence);
     if(result!= VK_SUCCESS)
     {
-        OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "failed to submit draw command buffer!");
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to submit draw command buffer!");
     }
 
     auto device = VulkanHelper::getSingleton()._getVkDevice();
-    vkWaitForFences(device, 1, &mFlightFence, VK_TRUE, UINT64_MAX);
-    vkResetFences(device, 1, &mFlightFence);
+    result = vkWaitForFences(device, 1, &mFlightFence, VK_TRUE, UINT64_MAX);
+    result = vkResetFences(device, 1, &mFlightFence);
 
     auto swapchain = VulkanHelper::getSingleton().getSwapchain();
 
@@ -209,7 +209,7 @@ void VulkanWindow::swapBuffers()
 
     if (result != VK_SUCCESS)
     {
-        OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "failed to present swap chain image!");
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to present swap chain image!");
     }
 }
 

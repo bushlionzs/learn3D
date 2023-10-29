@@ -226,6 +226,9 @@ void Dx12RenderWindow::preRender(ID3D12GraphicsCommandList* cl)
 	}
 	else
 	{
+		/*auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
+			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+		cl->ResourceBarrier(1, &barrier);*/
 		cl->RSSetViewports(1, &mScreenViewport);
 		cl->RSSetScissorRects(1, &mScissorRect);
 		CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = mDx12ShadowMap->gpuSrvHandle();
@@ -247,14 +250,14 @@ void Dx12RenderWindow::clearFrameBuffer(uint32_t buffers,
 	
 	if (!mUseShadow)
 	{
-		D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
+		/*D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(mDx12ShadowMap->resource(),
 			D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
-		cl->ResourceBarrier(1, &barrier);
+		cl->ResourceBarrier(1, &barrier);*/
 
 		ID3D12Resource* renderTarget = mMsaaRenderTarget.getRenderTarget();
-		barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 			renderTarget,
-			D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
+			D3D12_RESOURCE_STATE_COPY_SOURCE,
 			D3D12_RESOURCE_STATE_RENDER_TARGET);
 		cl->ResourceBarrier(1, &barrier);
 		cl->ClearRenderTargetView(mCurrentRtv, colour.ptr(), 0, nullptr);
@@ -283,11 +286,11 @@ void Dx12RenderWindow::swapBuffers()
 		CD3DX12_RESOURCE_BARRIER::Transition(
 			renderTarget,
 			D3D12_RESOURCE_STATE_RENDER_TARGET,
-			D3D12_RESOURCE_STATE_RESOLVE_SOURCE),
+			D3D12_RESOURCE_STATE_COPY_SOURCE),
 		CD3DX12_RESOURCE_BARRIER::Transition(
 			backBuffer,
 			D3D12_RESOURCE_STATE_PRESENT,
-			D3D12_RESOURCE_STATE_RESOLVE_DEST)
+			D3D12_RESOURCE_STATE_COPY_DEST)
 	};
 
 	cl->ResourceBarrier(2, barriers);
@@ -298,7 +301,7 @@ void Dx12RenderWindow::swapBuffers()
 		DX12Helper::getSingleton().getBackBufferFormat());*/
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 		backBuffer,
-		D3D12_RESOURCE_STATE_RESOLVE_DEST,
+		D3D12_RESOURCE_STATE_COPY_DEST,
 		D3D12_RESOURCE_STATE_PRESENT);
 	cl->ResourceBarrier(1, &barrier);
 }

@@ -258,10 +258,11 @@ void Dx12RenderSystem::buildRootSignature()
 	texTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0);
 
 	CD3DX12_DESCRIPTOR_RANGE texTable2;
-	texTable2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 5, 2, 0);
+	texTable2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 6, 2, 0);
 
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[7];
+
 
 
 	slotRootParameter[0].InitAsDescriptorTable(1, &texTable0, D3D12_SHADER_VISIBILITY_PIXEL);

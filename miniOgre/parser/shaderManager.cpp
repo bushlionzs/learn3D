@@ -5,6 +5,7 @@
 #include "OgreString.h"
 #include "OgreResourceManager.h"
 #include "OgreMemoryStream.h"
+#include "platform_file.h"
 namespace Ogre {
 
 	template<> ShaderManager* Ogre::Singleton<ShaderManager>::msSingleton = 0;
@@ -196,7 +197,7 @@ namespace Ogre {
 			return nullptr;
 		}
 
-		mShaderContentMap[name] = getContentFromFile(res->_fullname.c_str());
+		get_file_content(res->_fullname.c_str(), mShaderContentMap[name]);
 
 		itor = mShaderContentMap.find(name);
 

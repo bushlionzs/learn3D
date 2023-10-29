@@ -90,8 +90,17 @@ namespace Ogre {
                 return a->getSortValue() < b->getSortValue();
             }
             );
+
+            int kk = 0;
             for (auto r : mEngineRenderList.mOpaqueList)
             {
+                //kk++;
+
+                //if (kk == 7)
+                //{
+                //    
+                //    continue;
+                //}
                 mRenderSystem->render(r, RenderListType_Opaque);
             }
 

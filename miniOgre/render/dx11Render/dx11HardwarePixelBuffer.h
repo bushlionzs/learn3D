@@ -32,11 +32,18 @@ public:
 	UINT getSubresourceIndex(size_t box_front) const;
 private:
 	void _genMipmaps();
+	void createStagingBuffer();
+	void _map(
+		ID3D11Resource* res,
+		D3D11_MAP flags,
+		PixelBox& box);
+	void _unmap(ID3D11Resource* res);
 private:
 	Dx11Texture* mParentTexture;
 
 	const uint32_t mFace;
 	const uint32_t mMipLevel;
 
-	ID3D11Resource* mBufferGPU = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Resource> mStagingBuffer;
+
 };

@@ -2,6 +2,7 @@
 #include "OgreMemoryStream.h"
 #include "OgreResourceManager.h"
 #include "myutils.h"
+#include "platform_file.h"
 namespace Ogre {
 
     MemoryDataStream::MemoryDataStream(ResourceInfo* res)
@@ -28,7 +29,7 @@ namespace Ogre {
         }
         else
         {
-            mMem = getContentFromFile(res->_fullname.c_str());
+            get_file_content(res->_fullname.c_str(), mMem);
             mSize = mMem.size();
             mFirst = mMem.data();
             mEnd = mFirst + mSize;
