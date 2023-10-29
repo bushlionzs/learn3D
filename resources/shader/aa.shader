@@ -147,8 +147,8 @@ shader ogreterrain_onelayer
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader basic.vert.spv main
-		frag_shader basic.frag.spv main
+		vertex_shader onelayer.vert.glsl main
+		frag_shader onelayer.frag.glsl main
 	 }
 }
 
@@ -164,8 +164,8 @@ shader ogreterrain_onelayer_lightmap
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader basic.vert.spv main
-		frag_shader basic.frag.spv main
+		vertex_shader onelayer_lightmap.vert.glsl main
+		frag_shader onelayer_lightmap.frag.glsl main
 	 }
 }
 
@@ -181,8 +181,8 @@ shader ogreterrain_twolayer
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader basic.vert.spv main
-		frag_shader basic.frag.spv main
+		vertex_shader twolayer.vert.glsl main
+		frag_shader twolayer.frag.glsl main
 	 }
 }
 
@@ -198,8 +198,8 @@ shader ogreterrain_twolayer_lightmap
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader basic.vert.spv main
-		frag_shader basic.frag.spv main
+		vertex_shader twolayer_lightmap.vert.glsl main
+		frag_shader twolayer_lightmap.frag.glsl main
 	 }
 }
 

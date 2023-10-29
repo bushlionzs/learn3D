@@ -63,6 +63,7 @@ VertexOut VS(VertexIn vIn)
     float4 posW = mul(gWorld, float4(vIn.PosL, 1.0f));
     //vOut.PosH = mul(gWorldViewProj, float4(vIn.PosL, 1.0f));
 	vOut.PosH = mul(gViewProj, posW);
+	//vOut.PosH = float4(vIn.PosL, 1.0f);
     vOut.PosW = posW.xyz;
     vOut.NormalW = mul((float3x3) gWorld, vIn.NormalL);
 #ifdef USETANGENT
@@ -79,7 +80,6 @@ float4 PS(VertexOut pin) : SV_Target
 	{
 		return float4(0.0f, 1.0f, 0.0f, 1.0f);
 	}
-	//return float4(0.0f, 1.0f, 0.0f, 1.0f);
     float4 diffuseAlbedo = gTextureArray[0].Sample(gsamLinearWrap, pin.TexC) * gDiffuseAlbedo;
 	clip(diffuseAlbedo.a - 0.5f);
 	return diffuseAlbedo;
