@@ -2,8 +2,6 @@
 #include <string>
 std::string getPath(const char* name);
 
-std::string getContentFromFile(const char* name);
-
 uint64_t getMicroseconds();
 
 std::wstring to_wide_string(const std::string& input);

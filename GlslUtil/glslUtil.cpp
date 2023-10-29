@@ -68,7 +68,7 @@ std::string getGlslKey(
 
     std::sort(keys.begin(), keys.end());
 
-    std::string result;
+    std::string result = shaderName;
     for (auto& key : keys)
     {
         result += key;
@@ -170,5 +170,6 @@ void parserGlslInputDesc(
         }
 
         inputDesc[i]._location = glsl.get_decoration(input.id, spv::DecorationLocation);
+
     }
 }

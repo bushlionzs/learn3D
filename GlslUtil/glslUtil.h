@@ -24,6 +24,9 @@ struct GlslInputDesc
 	std::string _name;
 	uint32_t _index;
 	uint32_t _location;
+	uint32_t _size;
+	uint32_t _type;
+	uint32_t _offset;
 };
 
 void _GLSLExport parserGlslInputDesc(

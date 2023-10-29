@@ -15,21 +15,6 @@ std::string getPath(const char* name)
     return dir + name;
 }
 
-std::string getContentFromFile(const char* name)
-{
-    FILE* fp = fopen(name, "rb");
-    fseek(fp, 0, SEEK_END);
-
-    int32_t size = ftell(fp);
-
-    fseek(fp, 0, SEEK_SET);
-
-    std::string content;
-    content.resize(size);
-    fread((void*)content.data(), 1, size, fp);
-    fclose(fp);
-    return content;
-}
 
 uint64_t getMicroseconds()
 {
