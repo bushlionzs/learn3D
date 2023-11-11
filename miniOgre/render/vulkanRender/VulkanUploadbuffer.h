@@ -52,6 +52,7 @@ public:
 
     void CopyData(int elementIndex, const char* data, uint32_t size)
     {
+        assert(size <= mObjectSize);
         memcpy(&mMappedData[elementIndex * mObjectSize], data, size);
     }
 

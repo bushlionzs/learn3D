@@ -24,8 +24,22 @@ public:
 	{
 		return mFrameCB;
 	}
+
+	VkFence getFence()
+	{
+		return mFlightFence;
+	}
+
+	VkSemaphore getFinishedSemaphore()
+	{
+		return mRenderFinishedSemaphore;
+	}
 private:
 	uint32_t mFrameIndex;
 	VkCommandBuffer mPrimaryCommandBuffer;
 	std::unique_ptr<VulkanUploadBuffer<FrameConstantBuffer>>  mFrameCB;
+
+	
+	VkFence mFlightFence;
+	VkSemaphore mRenderFinishedSemaphore;
 };

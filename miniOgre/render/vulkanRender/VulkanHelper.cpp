@@ -20,7 +20,10 @@ static const std::vector<const char*> deviceExtensions =
 
 static std::vector<const char*> getRequiredExtensions()
 {
-    std::vector<const char*> aa = { "VK_KHR_surface", "VK_KHR_win32_surface" };
+    std::vector<const char*> aa = { 
+        "VK_KHR_surface", 
+        "VK_KHR_win32_surface",
+        VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
     return aa;
 }
 
@@ -109,6 +112,26 @@ VkPhysicalDeviceProperties& VulkanHelper::_getVkPhysicalDeviceProperties()
     return mPhysicalDeviceProperties;
 }
 
+VKAPI_ATTR VkBool32 VKAPI_CALL debugUtilsCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+    VkDebugUtilsMessageTypeFlagsEXT types, const VkDebugUtilsMessengerCallbackDataEXT* cbdata,
+    void* pUserData) {
+    if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+        std::cout << "VULKAN ERROR: (" << cbdata->pMessageIdName << ") " << cbdata->pMessage
+            << std::endl;
+    }
+    else {
+        // TODO: emit best practices warnings about aggressive pipeline barriers.
+        if (strstr(cbdata->pMessage, "ALL_GRAPHICS_BIT")
+            || strstr(cbdata->pMessage, "ALL_COMMANDS_BIT")) {
+            return VK_FALSE;
+        }
+        std::cout << "VULKAN WARNING: (" << cbdata->pMessageIdName << ") " << cbdata->pMessage
+            << std::endl;
+    }
+ 
+    return VK_FALSE;
+}
+
 void VulkanHelper::createInstance()
 {
     if (mEnableValidationLayers &&
@@ -139,8 +162,9 @@ void VulkanHelper::createInstance()
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
 
-        /*populateDebugMessengerCreateInfo(debugCreateInfo);
-        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;*/
+
+        populateDebugMessengerCreateInfo(debugCreateInfo);
+        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
     }
     else
     {
@@ -149,9 +173,26 @@ void VulkanHelper::createInstance()
         createInfo.pNext = nullptr;
     }
 
+
+    
+
     if (vkCreateInstance(&createInfo, nullptr, &mVKInstance) != VK_SUCCESS) {
         throw std::runtime_error("failed to create instance!");
     }
+
+    VkDebugUtilsMessengerCreateInfoEXT const debugInfo = {
+                .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+                .pNext = nullptr,
+                .flags = 0,
+                .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
+                                   | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+                .messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+                               | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+                .pfnUserCallback = debugUtilsCallback,
+    };
+
+    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(mVKInstance, "vkCreateDebugUtilsMessengerEXT");
+    auto result = func(mVKInstance, &debugInfo, 0, &mDebugMessenger);
 }
 
 bool VulkanHelper::isDeviceSuitable(VkPhysicalDevice device)

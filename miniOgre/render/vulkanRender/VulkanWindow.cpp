@@ -112,9 +112,28 @@ VulkanFrame* VulkanWindow::getNextFrame()
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkAcquireNextImageKHR error");
     }
     
-    
 
-    return VulkanHelper::getSingleton()._getFrame(index);
+
+    auto frame =  VulkanHelper::getSingleton()._getFrame(index);
+
+    auto fence = frame->getFence();
+
+    auto result2 = vkGetFenceStatus(device, fence);
+    result = vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+
+    if (result != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkWaitForFences error");
+    }
+
+    result = vkResetFences(device, 1, &fence);
+
+    if (result != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkResetFences error");
+    }
+
+    return frame;
 }
 
 void VulkanWindow::createFramebuffers()
@@ -170,27 +189,31 @@ void VulkanWindow::swapBuffers()
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
 
-    VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    VkPipelineStageFlags waitDestStageMasks[2] = {
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+    };
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = &mImageAvailableSemaphore;
 
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &pCommandBuffer;
 
+    auto renderFinshedSemaphore = currentFrame->getFinishedSemaphore();
     submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = &mRenderFinishedSemaphore;
+    submitInfo.pSignalSemaphores = &renderFinshedSemaphore;
+    submitInfo.pWaitDstStageMask = waitDestStageMasks;
 
     auto queue = VulkanHelper::getSingleton()._getCommandQueue();
 
-    auto result = vkQueueSubmit(queue, 1, &submitInfo, mFlightFence);
+    auto result = vkQueueSubmit(queue, 1, &submitInfo, currentFrame->getFence());
     if(result!= VK_SUCCESS)
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to submit draw command buffer!");
     }
 
     auto device = VulkanHelper::getSingleton()._getVkDevice();
-    result = vkWaitForFences(device, 1, &mFlightFence, VK_TRUE, UINT64_MAX);
-    result = vkResetFences(device, 1, &mFlightFence);
+    
 
     auto swapchain = VulkanHelper::getSingleton().getSwapchain();
 
@@ -198,7 +221,7 @@ void VulkanWindow::swapBuffers()
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.pNext = NULL;
     presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = &mRenderFinishedSemaphore;
+    presentInfo.pWaitSemaphores = &renderFinshedSemaphore;
 
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = &swapchain;
@@ -224,9 +247,7 @@ void VulkanWindow::createSyncObjects()
     fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
     fenceInfo.flags = 0;
-    if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mImageAvailableSemaphore) != VK_SUCCESS ||
-        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mRenderFinishedSemaphore) != VK_SUCCESS ||
-        vkCreateFence(device, &fenceInfo, nullptr, &mFlightFence) != VK_SUCCESS)
+    if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mImageAvailableSemaphore) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create synchronization objects for a frame!");
     }

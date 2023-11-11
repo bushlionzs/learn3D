@@ -52,10 +52,8 @@ private:
 
 	
 	std::vector<VkFramebuffer> mSwapChainFramebuffers;
-
 	VkSemaphore mImageAvailableSemaphore;
-	VkSemaphore mRenderFinishedSemaphore;
-	VkFence mFlightFence;
+	
 
 	uint32_t mFrameIndex = 0;
 };

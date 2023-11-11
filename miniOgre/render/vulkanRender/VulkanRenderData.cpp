@@ -69,6 +69,12 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
 {
     updateData(pass);
 
+    if (mUpdate)
+    {
+        return;
+    }
+    mUpdate = true;
+
     auto texs = pass->mMaterial->getAllTexureUnit();
 
     std::vector<VkDescriptorImageInfo> textureDescriptors;
