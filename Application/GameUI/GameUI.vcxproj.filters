@@ -32,6 +32,12 @@
     <ClCompile Include="..\common\role.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\imageButton.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\testWindow.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\application_base.h">
@@ -57,6 +63,12 @@
     </ClInclude>
     <ClInclude Include="GameUI.h" />
     <ClInclude Include="..\common\role.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\imageButton.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\testWindow.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>

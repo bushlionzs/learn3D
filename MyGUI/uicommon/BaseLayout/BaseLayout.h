@@ -44,8 +44,8 @@ namespace wraps
 					}
 					else
 					{
-						MYGUI_LOG(Warning, "Widget with name '" << _name << "' have wrong type ('" <<
-							find->getTypeName() << "instead of '" << T::getClassTypeName() << "'). [" << mLayoutName << "]");
+						/*MYGUI_LOG(Warning, "Widget with name '" << _name << "' have wrong type ('" <<
+							find->getTypeName() << "instead of '" << T::getClassTypeName() << "'). [" << mLayoutName << "]");*/
 						MYGUI_ASSERT( ! _throw, "Can't assign widget with name '" << _name << "'. [" << mLayoutName << "]");
 						if (_createFakeWidgets)
 							_widget = _createFakeWidget<T>(mMainWidget);

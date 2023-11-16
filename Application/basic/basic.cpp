@@ -24,7 +24,7 @@ bool Basic::appInit()
 {
 	ApplicationBase::appInit();
 
-	base3();
+	base1();
 	return true;
 }
 
@@ -39,7 +39,7 @@ void Basic::appUpdate(float delta)
 
 EngineType Basic::getEngineType()
 {
-	return EngineType_Dx11;
+	return EngineType_Vulkan;
 }
 
 void Basic::addCustomDirectory()
@@ -67,7 +67,9 @@ void Basic::base1()
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 
-	mGameCamera->setDistance(3.0f);
+	mSceneManager->setSkyBox(true, "SkyLan", 50000);
+
+	mGameCamera->setDistance(6.0f);
 	mGameCamera->setMoveSpeed(25.0f);
 }
 

@@ -24,6 +24,7 @@ MyGUIManager::~MyGUIManager()
 
 bool MyGUIManager::_initialise(Ogre::RenderWindow* window)
 {
+	NOTICE_LOG("MyGUI initialise begin");
 	mRenderWindow = window;
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(std::string("mygui"));
 
@@ -51,6 +52,8 @@ bool MyGUIManager::_initialise(Ogre::RenderWindow* window)
 
 	Ogre::Root::getSingleton().addFrameListener(this);
 
+
+	NOTICE_LOG("MyGUI initialise end");
 	return true;
 }
 

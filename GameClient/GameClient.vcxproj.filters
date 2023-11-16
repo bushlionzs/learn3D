@@ -19,6 +19,9 @@
     <Filter Include="command">
       <UniqueIdentifier>{e93fb22f-6412-4554-892e-6bbd3f1baa96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{31f938de-947c-447a-a774-df27b16425ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="data\GameDataCharacter.cpp">
@@ -106,6 +109,22 @@
       <Filter>data\struct</Filter>
     </ClCompile>
     <ClCompile Include="GameClientUtil.cpp" />
+    <ClCompile Include="ui\PackageWindow.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\SelfEquipWindow.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ToolTip.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\role.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInput.cpp" />
+    <ClCompile Include="ui\UIManager.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\GameDataCharacter.h">
@@ -192,6 +211,25 @@
     <ClInclude Include="GameClientUtil.h" />
     <ClInclude Include="data\struct\GameDataStructPlayerShop.h">
       <Filter>data\struct</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\PackageWindow.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\SelfEquipWindow.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ToolTip.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\role.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInput.h" />
+    <ClInclude Include="ui\UIManager.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UIDefine.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

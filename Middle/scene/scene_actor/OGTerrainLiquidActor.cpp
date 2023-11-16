@@ -85,6 +85,7 @@ namespace Orphigine {
 	//-----------------------------------------------------------------------
 	void TerrainLiquidActor::createRenderInstance()
 	{
+		return;
 		assert(!mMaterialName.empty());
 
 		if (!mTerrainLiquid)

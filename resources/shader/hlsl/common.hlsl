@@ -19,10 +19,10 @@
 #include "LightingUtil.hlsl"
 
 TextureCube gCubeMap[2] : register(t0);
-Texture2D gShadowMap[4] : register(t1);
+Texture2D gShadowMap : register(t2);
 // An array of textures, which is only supported in shader model 5.1+.  Unlike Texture2DArray, the textures
 // in this array can be different sizes and formats, making it more flexible than texture arrays.
-Texture2D gTextureArray[6] : register(t2);
+Texture2D gTextureArray[6] : register(t3);
 
 
 
@@ -155,7 +155,7 @@ float CalcShadowFactor(float4 shadowPosH)
 	
 
     uint width, height, numMips;
-    gShadowMap[0].GetDimensions(0, width, height, numMips);
+    gShadowMap.GetDimensions(0, width, height, numMips);
 
     // Texel size.
     float dx = 1.0f / (float)width;
@@ -173,7 +173,7 @@ float CalcShadowFactor(float4 shadowPosH)
     [unroll]
     for(int i = 0; i < 9; ++i)
     {
-        percentLit += gShadowMap[0].SampleCmpLevelZero(gsamShadow,
+        percentLit += gShadowMap.SampleCmpLevelZero(gsamShadow,
             shadowPosH.xy + offsets[i], depth).r;
     }
     

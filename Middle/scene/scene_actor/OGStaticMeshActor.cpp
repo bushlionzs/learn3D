@@ -130,7 +130,6 @@ namespace Orphigine
 	//-----------------------------------------------------------------------
 	void StaticMeshActor::createRenderInstance()
 	{
-		return;
 		auto mesh = MeshManager::getSingletonPtr()->load(mMeshName);
 
 		if (!mesh)

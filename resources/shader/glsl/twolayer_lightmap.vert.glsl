@@ -22,4 +22,5 @@ void main()
 	outTexC = texcoord;
 	outTexC2 = texcoord1;
 	outTexC3 = texcoord2;
+	gl_Position.y = -gl_Position.y;
 }

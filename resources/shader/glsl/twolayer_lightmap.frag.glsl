@@ -17,7 +17,7 @@ void main()
 	vec4 BaseTex2 = texture(gTextureArray[1], outTexC2);
 	vec4 LightMapTex = texture(gTextureArray[2], outTexC3);
 	
-	vec3 BlendTexColor = mix(BaseTex.rgb, BaseTex2.rgb, BaseTex.a); 
+	vec3 BlendTexColor = mix(BaseTex.rgb, BaseTex2.rgb, BaseTex2.a); 
 	
 	
 	vec3 TexColor = LightMapTex.rgb * BlendTexColor; 

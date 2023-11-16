@@ -116,9 +116,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;__WINDOWS__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;__WINDOWS__;MYGUI_USE_FREETYPE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\GameUtil\windows;$(ProjectDir)..\GameUtil;$(ProjectDir)..\miniOgre\base;$(ProjectDir)uicommon;$(ProjectDir)uirender;$(ProjectDir)uiengine;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\GameUtil\windows;$(ProjectDir)..\GameUtil;$(ProjectDir)..\miniOgre\base;$(ProjectDir)uicommon;$(ProjectDir)uirender;$(ProjectDir)uiengine;$(ProjectDir)..\3rdSource\freetype-2.12.0\include;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

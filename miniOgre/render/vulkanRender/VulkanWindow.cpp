@@ -205,14 +205,18 @@ void VulkanWindow::swapBuffers()
     submitInfo.pWaitDstStageMask = waitDestStageMasks;
 
     auto queue = VulkanHelper::getSingleton()._getCommandQueue();
-
-    auto result = vkQueueSubmit(queue, 1, &submitInfo, currentFrame->getFence());
+    auto fence = currentFrame->getFence();
+    auto result = vkQueueSubmit(queue, 1, &submitInfo, fence);
     if(result!= VK_SUCCESS)
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to submit draw command buffer!");
     }
 
     auto device = VulkanHelper::getSingleton()._getVkDevice();
+
+    vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+
+    
     
 
     auto swapchain = VulkanHelper::getSingleton().getSwapchain();

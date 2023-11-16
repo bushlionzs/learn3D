@@ -94,13 +94,9 @@ namespace Ogre {
             int kk = 0;
             for (auto r : mEngineRenderList.mOpaqueList)
             {
-                //kk++;
-
-                //if (kk == 7)
-                //{
-                //    
-                //    continue;
-                //}
+                /*kk++;
+                if (kk > 1000)
+                    break;*/
                 mRenderSystem->render(r, RenderListType_Opaque);
             }
 

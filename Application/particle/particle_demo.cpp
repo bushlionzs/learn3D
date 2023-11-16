@@ -48,7 +48,7 @@ void ParticleDemo::appUpdate(float delta)
 
 EngineType ParticleDemo::getEngineType()
 {
-	return EngineType_Dx12;
+	return EngineType_Vulkan;
 }
 
 void ParticleDemo::addCustomDirectory()

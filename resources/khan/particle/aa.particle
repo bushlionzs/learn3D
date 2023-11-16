@@ -16,9 +16,9 @@ particle_system Examples/Smoke
 	emitter Point
 	{
 		position 0 15 -15
-		angle 15
+		angle 35
 		emission_rate 15
-		time_to_live 10
+		time_to_live 4
 		direction 0 1 0
 		velocity_min 50
 		velocity_max 80    	

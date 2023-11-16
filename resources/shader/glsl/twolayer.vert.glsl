@@ -20,4 +20,5 @@ void main()
 	outTexC = texcoord;
 	outTexC2 = texcoord1;
 	vec4 tmp = cbPerObject.gWorld * vec4(normal, 1.0);
+	gl_Position.y = -gl_Position.y;
 }

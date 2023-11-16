@@ -105,28 +105,7 @@ void VulkanRenderSystem::postRender()
 }
 
 
-void VulkanRenderSystem::render(Renderable* r, RenderListType t)
-{
-    const std::shared_ptr<Material>& mat = r->getMaterial();
-    const std::shared_ptr<Shader>& shader = mat->getShader();
-    mCurrentPass.mRenderListType = t;
-    mCurrentPass.mMaterial = mat.get();
-    mCurrentPass.mMaterial->load();
-    mCurrentPass.mShader = (VulkanShader*)shader.get();
-    mCurrentPass.mRenderable = r;
-    mCurrentPass.mVulkanRenderableData = (VulkanRenderableData*)r->getRenderableData();
-    mCurrentPass.mVulkanRenderableData->buildMaterial(mCurrentPass.mMaterial);
 
-    auto descriptorSet = mCurrentPass.mVulkanRenderableData->getDescriptorSet();
-
-    auto pipelineLayout = mCurrentPass.mVulkanRenderableData->getPipelineLayout();
-    vkCmdBindDescriptorSets(
-        mCurrentVulkanFrame->getVkCommandBuffer(),
-        VK_PIPELINE_BIND_POINT_GRAPHICS,
-        pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
-
-    renderImpl(&mCurrentPass);
-}
 
 ITexture* VulkanRenderSystem::createTextureFromFile(
     const std::string& name,
@@ -218,8 +197,22 @@ Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
     return mRenderWindow;
 }
 
+void VulkanRenderSystem::render(Renderable* r, RenderListType t)
+{
+    const std::shared_ptr<Material>& mat = r->getMaterial();
+    const std::shared_ptr<Shader>& shader = mat->getShader();
+    mCurrentPass.mRenderListType = t;
+    mCurrentPass.mMaterial = mat.get();
+    mCurrentPass.mMaterial->load();
+    mCurrentPass.mShader = (VulkanShader*)shader.get();
+    mCurrentPass.mRenderable = r;
+    mCurrentPass.mVulkanRenderableData = (VulkanRenderableData*)r->getRenderableData();
+    mCurrentPass.mVulkanRenderableData->buildMaterial(mCurrentPass.mMaterial);
 
+    
 
+    renderImpl(&mCurrentPass);
+}
 
 void VulkanRenderSystem::renderImpl(VulkanPass* pass)
 {
@@ -238,6 +231,15 @@ void VulkanRenderSystem::renderImpl(VulkanPass* pass)
     VertexData* vertexData = pass->mRenderable->getVertexData();
     IndexData* indexData = pass->mRenderable->getIndexData();
     vertexData->bind();
+
+    auto descriptorSet = mCurrentPass.mVulkanRenderableData->getDescriptorSet();
+
+    auto pipelineLayout = mCurrentPass.mVulkanRenderableData->getPipelineLayout();
+    vkCmdBindDescriptorSets(
+        mCurrentVulkanFrame->getVkCommandBuffer(),
+        VK_PIPELINE_BIND_POINT_GRAPHICS,
+        pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+
     if (indexData)
     {
         indexData->getIndexBuffer()->bind();

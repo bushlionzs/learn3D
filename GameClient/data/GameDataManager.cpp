@@ -9,7 +9,8 @@ GameDataManager* GameSingleton<GameDataManager>::m_sSingleton = nullptr;
 
 GameDataManager::GameDataManager()
 {
-
+	m_vUserEquip.resize(20);
+	m_vUserBag.resize(200);
 }
 
 GameDataManager::~GameDataManager()
@@ -103,6 +104,22 @@ void GameDataManager::UserBag_SetItem(
 	}
 
 	m_vUserBag[nBagIndex] = pItem;
+}
+
+void GameDataManager::SetMyDefaultSkillID(int32_t skillId)
+{
+
+}
+
+uint64_t GameDataManager::GetSpecialCoolDown()
+{
+	return 0;
+}
+
+
+int32_t GameDataManager::GetCommonCoolDown()
+{
+	return 0;
 }
 
 int32 GameDataManager::GetCoolDownGroupTime(int32 nCoolDownID)

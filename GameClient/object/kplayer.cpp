@@ -126,11 +126,11 @@ void KPlayer::input(KeyCode _key)
 {
 	if (_key == KeyCode::M)
 	{
-		startSkill();
+		//startSkill();
 	}
 	else if (_key == KeyCode::N)
 	{
-		startMood();
+		//startMood();
 	}
 }
 

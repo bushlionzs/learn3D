@@ -10,6 +10,7 @@
 #include "MyGUI_DataStreamHolder.h"
 #include "MyGUI_RenderManager.h"
 #include "MyGUI_Bitwise.h"
+#include "platform_log.h"
 
 #ifdef MYGUI_USE_FREETYPE
 
@@ -500,7 +501,7 @@ namespace MyGUI
 		// these variables many thousands of times inside tight nested loops later. From this point on, the various function
 		// templates ensure that all of the necessary branching is done purely at compile time for all combinations.
 		int init = (laMode ? 2 : 0) | (mAntialias ? 1 : 0);
-
+		init = 0; //zhousha
 		switch (init)
 		{
 		case 0:
@@ -794,6 +795,8 @@ namespace MyGUI
 		FT_Done_FreeType(ftLibrary);
 
 		delete [] fontBuffer;
+
+		NOTICE_LOG("ResourceTrueTypeFont init");
 	}
 
 	FT_Face ResourceTrueTypeFont::loadFace(const FT_Library& _ftLibrary, uint8*& _fontBuffer)

@@ -39,6 +39,8 @@ bool CEGUIResourceManager::load(const std::string& name)
 		if (strcmp(aa, "Imageset") == 0)
 		{
 			const char* Name = pRoot->Attribute("Name");
+
+			
 			bool icon = false;
 			
 
@@ -66,6 +68,11 @@ bool CEGUIResourceManager::load(const std::string& name)
 			{
 
 				Name = child->Attribute("Name");
+
+				if (strcmp(Name, "CJSH_icons_1_change_1") == 0)
+				{
+					int kk = 0;
+				}
 				item._imagename = imageset->_mageFilename;
 				value = child->Attribute("XPos");
 				
@@ -78,6 +85,8 @@ bool CEGUIResourceManager::load(const std::string& name)
 				item._size.height = Ogre::StringConverter::parseInt(value);
 				item._coord.width = item._coord.left + item._size.width;
 				item._coord.height = item._coord.top + item._size.height;
+				//item._coord.width = item._size.width;
+				//item._coord.height = item._size.height;
 				imageset->_imageMap.emplace(Name, item);
 				child = child->NextSiblingElement();
 

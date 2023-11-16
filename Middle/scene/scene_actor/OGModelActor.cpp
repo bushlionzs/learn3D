@@ -70,7 +70,6 @@ namespace Orphigine
 	//-----------------------------------------------------------------------
 	void ModelActor::createRenderInstance()
 	{
-		return;
 		PlacementActor::createRenderInstance();
 
 		mProxy = new ActorProxy(shared_from_this());

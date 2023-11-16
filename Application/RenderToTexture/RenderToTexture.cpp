@@ -40,7 +40,6 @@ bool RenderToTexture::appInit()
 	}
 	
 	mGameCamera->setDistance(500.0f);
-	//return true;
 
 	TextureProperty texProperty;
 	texProperty._tex_usage = TU_RENDERTARGET;
@@ -56,6 +55,8 @@ bool RenderToTexture::appInit()
 	Viewport* rv = textureTarget->addViewport(mGameCamera->getCamera());
 	//DirectX::XMVECTORF32 mClearColor = DirectX::Colors::Gold;
 	rv->setBackgroundColour(texProperty._backgroudColor);
+
+	return true;
 	MaterialPtr renderMaterial =
 		MaterialManager::getSingleton().create("RenderToTextureMaterial");
 
@@ -104,5 +105,5 @@ void RenderToTexture::appUpdate(float delta)
 
 EngineType RenderToTexture::getEngineType()
 {
-	return EngineType_Dx11;
+	return EngineType_Vulkan;
 }

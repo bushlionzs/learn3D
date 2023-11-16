@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING;__WINDOWS__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\miniOgre\base;$(ProjectDir)..\miniOgre\parser;$(ProjectDir)..\miniOgre\models;$(ProjectDir)..\miniOgre\animation;$(ProjectDir)..\miniOgre\particle;$(ProjectDir)..\miniOgre\particle\ParticleFX;$(ProjectDir)..\middle\AdvancedAnimation;$(ProjectDir)..\middle\component;$(ProjectDir)..\middle\effect;$(ProjectDir)..\middle\general;$(ProjectDir)..\middle\scene\scene_actor;$(ProjectDir)..\middle\Navigate;$(ProjectDir)..\middle\scene;$(ProjectDir)..\miniOgre\multimedia;$(ProjectDir)..\GameUtil\windows;$(ProjectDir)..\GameUtil;$(ProjectDir)..\mygui\uirender;$(ProjectDir)..\mygui\uiengine;$(ProjectDir)..\mygui\uicommon;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd;$(ProjectDir)..\GameShare;$(ProjectDir)dummy;$(ProjectDir)object;$(ProjectDir);$(ProjectDir)..\GameServer;$(ProjectDir)..\GameShare\net\messages;$(ProjectDir)..\GameShare\net;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\miniOgre\base;$(ProjectDir)..\miniOgre\parser;$(ProjectDir)..\miniOgre\models;$(ProjectDir)..\miniOgre\animation;$(ProjectDir)..\miniOgre\particle;$(ProjectDir)..\miniOgre\particle\ParticleFX;$(ProjectDir)..\middle\AdvancedAnimation;$(ProjectDir)..\middle\component;$(ProjectDir)..\middle\effect;$(ProjectDir)..\middle\general;$(ProjectDir)..\middle\scene\scene_actor;$(ProjectDir)..\middle\Navigate;$(ProjectDir)..\middle\scene;$(ProjectDir)..\miniOgre\multimedia;$(ProjectDir)..\GameUtil\windows;$(ProjectDir)..\GameUtil;$(ProjectDir)..\mygui\uirender;$(ProjectDir)..\mygui\uiengine;$(ProjectDir)..\mygui\uicommon;$(ProjectDir)..\3rd\OIS\include;$(ProjectDir)..\3rd\tinyxml;$(ProjectDir)..\3rd;$(ProjectDir)..\GameShare;$(ProjectDir)dummy;$(ProjectDir)object;$(ProjectDir);$(ProjectDir)..\GameServer;$(ProjectDir)..\GameShare\net\messages;$(ProjectDir)..\GameShare\net;$(ProjectDir)ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -163,6 +163,7 @@
     <ClCompile Include="CharacterCommon.cpp" />
     <ClCompile Include="data\GameDataCharacter.cpp" />
     <ClCompile Include="fulldemo.cpp" />
+    <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="game_camera.cpp" />
     <ClCompile Include="main.cpp" />
@@ -180,6 +181,11 @@
     <ClCompile Include="object\KObjectManager.cpp" />
     <ClCompile Include="object\kplayer.cpp" />
     <ClCompile Include="PathComponent.cpp" />
+    <ClCompile Include="ui\PackageWindow.cpp" />
+    <ClCompile Include="ui\role.cpp" />
+    <ClCompile Include="ui\SelfEquipWindow.cpp" />
+    <ClCompile Include="ui\ToolTip.cpp" />
+    <ClCompile Include="ui\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application_base.h" />
@@ -201,6 +207,7 @@
     <ClInclude Include="data\struct\GameDataStructTitle.h" />
     <ClInclude Include="demoHeader.h" />
     <ClInclude Include="fulldemo.h" />
+    <ClInclude Include="GameInput.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="game_camera.h" />
     <ClInclude Include="object\ItemCommon.h" />
@@ -217,6 +224,12 @@
     <ClInclude Include="object\KObjectManager.h" />
     <ClInclude Include="object\kplayer.h" />
     <ClInclude Include="PathComponent.h" />
+    <ClInclude Include="ui\PackageWindow.h" />
+    <ClInclude Include="ui\role.h" />
+    <ClInclude Include="ui\SelfEquipWindow.h" />
+    <ClInclude Include="ui\ToolTip.h" />
+    <ClInclude Include="ui\UIDefine.h" />
+    <ClInclude Include="ui\UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

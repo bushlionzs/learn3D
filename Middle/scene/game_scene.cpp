@@ -377,7 +377,10 @@ void GameScene::loadImpl()
 	mTerrain->buildTerrain();
 	EngineManager::getSingleton().setTerrain(mTerrain.get());
 
-	for (int32_t i = 0; i < mActors.size(); i++)
+	uint32_t count = 2000;
+
+	count = std::min(count, (uint32_t)mActors.size());
+	for (int32_t i = 0; i < count; i++)
 	{
 		mActors[i]->createRenderInstance();
 	}

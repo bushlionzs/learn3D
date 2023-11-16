@@ -336,6 +336,7 @@ namespace Orphigine
 	//-----------------------------------------------------------------------
 	void SkyBoxActor::createRenderInstance()
 	{
+		return;
 		{
 			mSceneManager = EngineManager::getSingleton().getSceneManager();
 

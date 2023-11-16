@@ -15,4 +15,5 @@ void main()
 	
 	vec3 TexColor = mix(basetex.rgb, basetex2.rgb, basetex.a);
 	outColor =  vec4(TexColor, 1.0);
+	gl_Position.y = -gl_Position.y;
 }

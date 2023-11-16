@@ -135,5 +135,5 @@ void ShadowMap::appUpdate(float delta)
 
 EngineType ShadowMap::getEngineType()
 {
-	return EngineType_Dx11;
+	return EngineType_Dx12;
 }

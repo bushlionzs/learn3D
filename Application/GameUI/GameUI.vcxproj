@@ -23,9 +23,11 @@
     <ClCompile Include="..\common\application_util.cpp" />
     <ClCompile Include="..\common\application_window.cpp" />
     <ClCompile Include="..\common\game_camera.cpp" />
+    <ClCompile Include="..\common\imageButton.cpp" />
     <ClCompile Include="..\common\PackageWindow.cpp" />
     <ClCompile Include="..\common\role.cpp" />
     <ClCompile Include="..\common\SelfEquipWindow.cpp" />
+    <ClCompile Include="..\common\testWindow.cpp" />
     <ClCompile Include="..\common\ToolTip.cpp" />
     <ClCompile Include="GameUI.cpp" />
     <ClCompile Include="main.cpp" />
@@ -35,9 +37,11 @@
     <ClInclude Include="..\common\application_util.h" />
     <ClInclude Include="..\common\application_window.h" />
     <ClInclude Include="..\common\game_camera.h" />
+    <ClInclude Include="..\common\imageButton.h" />
     <ClInclude Include="..\common\PackageWindow.h" />
     <ClInclude Include="..\common\role.h" />
     <ClInclude Include="..\common\SelfEquipWindow.h" />
+    <ClInclude Include="..\common\testWindow.h" />
     <ClInclude Include="..\common\ToolTip.h" />
     <ClInclude Include="GameUI.h" />
   </ItemGroup>

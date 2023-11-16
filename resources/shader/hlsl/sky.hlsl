@@ -3,7 +3,7 @@
 //=============================================================================
 
 // Include common HLSL code.
-#include "Common.hlsl"
+#include "common.hlsl"
 
 struct VertexIn
 {

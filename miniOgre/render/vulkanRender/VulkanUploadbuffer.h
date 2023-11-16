@@ -32,12 +32,17 @@ public:
         );
 
         mDevice = VulkanHelper::getSingleton()._getVkDevice();
-        vkMapMemory(
+        auto result = vkMapMemory(
             mDevice,
             mUniformBufferMemory, 
             0, 
             VK_WHOLE_SIZE, 
             0, (void**)&mMappedData);
+
+        if (result != VK_SUCCESS)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkMapMemory error");
+        }
     }
 
     ~VulkanUploadBuffer()

@@ -4943,7 +4943,7 @@ material 魔法摊
 	{
 		pass
 		{
-		    shader add
+		    shader ogresimple
 			
 			texture_unit
 			{
@@ -8275,6 +8275,473 @@ material cj_fengsha_01
 
 }
 
+material ui_神兵台紫_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3194.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+}
+
+material ui_神兵台紫_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3226.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台紫_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_0047.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material ui_神兵台绿_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3194.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台绿_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3011.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台绿_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture bmp_kl_2053.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material ui_神兵台红_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3194.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台红_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_0027.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台红_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3226.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material ui_神兵台金_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3194.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台金_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3011.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台金_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture bmp_kl_2053.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material ui_神兵台白_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3194.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台白_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_4422.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台蓝_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3194.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台蓝_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3178.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material ui_神兵台弓_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3302.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material ui_神兵台弓_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3045.dds
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material 施法武士攻击_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture jpg_kl_2019.dds -1
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
 material Terrain/OneLayer
 {
     technique
@@ -8290,6 +8757,8 @@ material Terrain/OneLayer
 	}
 }
 
+
+
 material Terrain/OneLayerLightmap
 {
     technique
@@ -8297,6 +8766,7 @@ material Terrain/OneLayerLightmap
         pass
         {
 		    shader ogreterrain_onelayer_lightmap
+			shader_macro SECOND_TEX
 		    texture_unit
 			{
 			    texture white1x1.dds
@@ -8316,6 +8786,7 @@ material Terrain/TwoLayer
         pass
         {
 		    shader ogreterrain_twolayer
+			shader_macro SECOND_TEX
 		    texture_unit
 			{
 			    texture white1x1.dds
@@ -8336,6 +8807,7 @@ material Terrain/TwoLayerLightmap
         pass
         {
 		    shader ogreterrain_twolayer_lightmap
+			shader_macro SECOND_TEX
 		    texture_unit
 			{
 			    texture white1x1.dds
@@ -8406,6 +8878,511 @@ material 突厥武士女双脚_01
       set $tex_template  TGA_突厥武士女双脚_01.dds 
 }
 
+material 男主角头发_01_白色
+{
+    material_parent premierBaseTemplate
+    set $tex_template  tga_男主角头发_01_白色.dds
+}
+
+material 新男主角脸01
+{
+    material_parent premierBaseTemplate
+    set $tex_template  tga_新男主角脸01.dds
+}
+
+material 男主角身体_01_new
+{
+    material_parent premierBaseTemplate
+    set $tex_template  tga_男主角身体_01_new.dds
+}
+
+material 男主角双手_01_new
+{
+    material_parent premierBaseTemplate
+    set $tex_template  tga_男主角双手_01_new.dds
+}
+
+material 男主角双脚_01_new
+{
+    material_parent premierBaseTemplate
+    set $tex_template  tga_男主角双脚_01_new.dds
+}
+
+material 广告披风_老虎
+{
+    material_parent premierBaseTemplate
+    set $tex_template  tga_广告披风_老虎.dds
+}
+
+material 突厥武士男身体_01
+{
+    material_parent premierBaseTemplate
+    set $tex_template  tga_突厥武士男身体_01.dds
+}
+
+material 突厥武士男双脚_01
+{
+    material_parent premierBaseTemplate
+    set $tex_template  tga_突厥武士男双脚_01.dds 
+}
+
+material 成2马_01红
+{
+      material_parent premierBaseTemplate
+      set $tex_template tga_成2马_01红.dds 
+}
+
+material 成2熊
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_成2熊_棕.dds
+}
+
+material 仗_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_仗_npc.dds 
+}
+
+
+material 刀_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_刀_npc.dds
+}
+
+material 剑_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_剑_npc.dds
+}
+
+material 幡_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_幡_npc.dds
+}
+
+material 弓_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_弓_npc.dds
+}
+
+material 弩_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_弩_npc.dds
+}
+
+material 枪_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_枪_npc.dds 
+}
+
+material 架_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_架_npc.dds
+}
+
+material 火_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_火_npc.dds
+}
+
+material 矛_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_矛_npc.dds 
+}
+
+material 铳_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_铳_npc.dds 
+}
+
+material 锤_npc
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_锤_npc.dds 
+}
+
+material 苍鹰长老
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_苍鹰长老.dds
+}
+
+material 苍鹰长老2_01
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_苍鹰长老2.dds
+}
+material 苍鹰长老2_02
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_苍鹰长老2.dds
+}
+
+material 苍狼老人_01
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_苍狼老人_01.dds
+      set_texture_alias <baseTexture> TGA_苍狼老人_01.dds 
+}
+
+material 苍狼老人_02
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_苍狼老人_02.dds
+}
+
+material npc_苍狼老人_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3074.dds -1
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material npc_苍狼老人_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_8074.dds -1
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material npc_苍狼老人_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture jpg_kl_7310.dds -1
+				tex_address_mode clamp
+			}
+		}
+
+	}
+
+}
+
+material 骑乘繁殖_new
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_骑乘繁殖_new.dds
+}
+
+
+material 苍鹰长老_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture jpg_kl_0014.dds -1
+			}
+		}
+
+	}
+
+}
+
+
+material 苍鹰长老_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture jpg_kl_7297.dds -1
+				colour_op_ex modulate_x4 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+
+material 苍鹰长老_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_4726.dds -1
+			}
+		}
+
+	}
+
+}
+
+
+material 苍鹰长老_04
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_4138.dds -1
+			}
+		}
+
+	}
+
+}
+
+
+material 苍鹰长老_05
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend alpha_blend
+			depth_write off
+			fog_override true none
+            shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3020.dds -1
+			}
+		}
+
+	}
+
+}
+
+
+material 汉人武官男_03_new
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_汉人武官男_03_new.dds
+}
+
+material 国王卫兵_红_new
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_国王卫兵_红_new.dds
+}
+
+material 小女孩  : premierBaseTemplate
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_小女孩.dds
+}
+
+material 蒙古贵族女_03_01  : premierBaseTemplate
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_蒙古贵族女_03.dds 
+}
+material 蒙古贵族女_03_02  : premierBaseTemplate
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_蒙古贵族女_03.dds  
+}
+
+material 蒙古武官男_01_new
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_蒙古武官男_01_new.dds  
+}
+
+material 汉人孩童女_01
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_汉人孩童女_01.dds  
+}
+
+material 领双脸
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_领双脸.dds   
+}
+
+material 领双身体_01
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_领双身体_01.dds   
+}
+
+material 领双身体_02
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_领双身体_02.dds   
+}
+
+material 狼_new 
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_狼_01_new.dds 
+}
+
+material 蒙古文官_03
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_蒙古文官_03.dds 
+}
+
+material 鹿长老
+{
+    material_parent premierBaseTemplate
+	cull_hardware none
+	set $tex_template tga_鹿长老.dds 
+}
+
+material 鹿长老_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3069.dds -1
+			}
+		}
+
+	}
+
+}
+
+
+material 鹿长老_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_8071.dds -1
+			}
+		}
+
+	}
+
+}
+
+
+material 鹿长老_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture jpg_kl_0014.dds -1
+			}
+		}
+
+	}
+
+}
+
+material 成2蒙古商人男_01  : premierBaseTemplate
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_成2蒙古商人男_01.dds 
+}
 
 material WeaponTemplate
 {
@@ -8441,6 +9418,7 @@ material 突厥武士男刀_01
     material_parent WeaponTemplate
     set $basetexture TGA_突厥武士男刀_01.dds
 }
+
 
 material Game/ReachAble
 {

@@ -11,12 +11,19 @@
 #include "net/messages/CSLogin.h"
 #include "KObjectManager.h"
 #include "KItemManager.h"
+#include "GameInput.h"
+#include "UIManager.h"
+#include "data/GameDataManager.h"
+
 GameWorld::GameWorld(GameCamera* gameCamera)
 {
 	mGameCamera = gameCamera;
 
 	new KObjectManager;
 	new KItemManager;
+	new GameInput;
+	new UIManager;
+	new GameDataManager;
 }
 
 GameWorld::~GameWorld()
@@ -122,6 +129,8 @@ void GameWorld::injectMouseRelease(int _absx, int _absy, OIS::MouseButtonID _id)
 void GameWorld::injectKeyPress(KeyCode _key, uint32_t _text)
 {
 	mPlayer->input(_key);
+
+	GameInput::GetSingleton().input(_key);
 }
 
 void GameWorld::injectKeyRelease(KeyCode _key)

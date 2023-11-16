@@ -14,4 +14,5 @@ void main()
 {
 	gl_Position = cbPerObject.gWorldViewProj * vec4(position, 1.0);
 	outTexC = texcoord;
+	gl_Position.y = -gl_Position.y;
 }
