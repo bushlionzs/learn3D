@@ -433,12 +433,12 @@ BOOL Wayfinding::FindPath
 		}
 
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-		int32	minz = min(mStartz, mEndz);
-		int32	maxz = max(mStartz, mEndz);
+		int32	minz = std::min(mStartz, mEndz);
+		int32	maxz = std::max(mStartz, mEndz);
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-		minz = max(minz - OFFSETZ, 0);
-		maxz = min(maxz + OFFSETZ, mHeight - 1);
+		minz = std::max(minz - OFFSETZ, 0);
+		maxz = std::min(maxz + OFFSETZ, mHeight - 1);
 
 		Reset(minz, maxz);
 
