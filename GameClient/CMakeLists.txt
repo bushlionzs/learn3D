@@ -6,14 +6,14 @@ set(GAMECLIENT_INC)
 if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-add_definitions(-DWIN32_LEAN_AND_MEAN)
+add_definitions(-D__WINDOWS__)
 endif()
 
 
 macro(add_subdir)
     set(SUBDIR_SRC_LIST)
     foreach(DIR ${ARGV})
-        list(APPEND GAMECLIENT_INC_INC ${CMAKE_CURRENT_SOURCE_DIR}/${DIR})
+        list(APPEND GAMECLIENT_INC ${CMAKE_CURRENT_SOURCE_DIR}/${DIR})
 
         list(APPEND GAMECLIENT_INC_SUBDIR ${DIR})
 
@@ -57,6 +57,12 @@ target_include_directories(${GAMECLIENT_LIB_NAME}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GAMECLIENT_INC}
+	${GAMEUTIL_INC}
+	${GAMESHARE_INC}
+	${MIDDLE_INC}
+	${MINIOGRE_INC}
+	${MYGUI_INC}
+	${ROOT_INC}/3rd/OIS/include
 )
 
 
