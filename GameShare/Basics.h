@@ -33,7 +33,6 @@
 #include <math.h>
 #include <stdarg.h>
 
-using namespace			std;
 
 /*
  * define void void ;
