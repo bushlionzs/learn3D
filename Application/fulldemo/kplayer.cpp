@@ -28,7 +28,8 @@ public:
 	}
 	virtual bool onLogicModelHaveCreate(int objId = -1, int logicModelId = -1, int typeId = -1)
 	{
-		mPlayer->setWeaponname(Ogre::String("Falchion"));
+		Ogre::String dummy("Falchion");
+		mPlayer->setWeaponname(dummy);
 		return true;
 	}
 };
