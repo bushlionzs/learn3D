@@ -45,9 +45,6 @@ add_subdir(uirender)
 
 add_library(${MYGUI_LIB_NAME} STATIC ${MYGUI_SRC_LIST})
 
-if(MSVC)
-set_property(TARGET ${MYGUI_LIB_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
 
 
 target_include_directories(${MYGUI_LIB_NAME}

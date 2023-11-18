@@ -57,4 +57,27 @@ target_include_directories(${PROJECT_NAME}
 	${ROOT_INC}/3rd/OIS/include
 )
 
+target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
+target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre MyGUI Middle GameServer GameShare stormlib OIS_d
+tinyxmld
+LinearMath_Debug
+BulletCollision_Debug
+BulletDynamics_Debug
+BulletSoftBody_Debug
+vulkan-1
+avcodec
+avdevice
+avfilter
+avformat
+avutil
+postproc
+swresample
+swscale
+dxgi
+dxguid
+d3d12
+d3d11
+D3DCompiler
+Shlwapi
+winmm)

@@ -48,9 +48,6 @@ add_subdir(object)
 
 add_library(${GAMECLIENT_LIB_NAME} STATIC ${GAMECLIENT_SRC_LIST})
 
-if(MSVC)
-set_property(TARGET ${GAMECLIENT_LIB_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
 
 
 target_include_directories(${GAMECLIENT_LIB_NAME}

@@ -20,7 +20,7 @@ set_property(TARGET luaplus PROPERTY FOLDER third_party)
 set_property(TARGET stormlib PROPERTY FOLDER third_party)
 
 add_subdirectory(GameUtil GameUtil)
-add_subdirectory(GLSLUTIL GLSLUTIL)
+add_subdirectory(GLSLUTIL GlslUtil)
 add_subdirectory(miniOgre miniOgre)
 add_subdirectory(MyGUI MyGUI)
 add_subdirectory(Middle Middle)
