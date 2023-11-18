@@ -92,8 +92,8 @@ bool ApplicationBase::appInit()
 			CGameTableManager::GetSingleton().Initialize();
 		}
 
-		new MyGUIManager;
-		MyGUIManager::getSingleton()._initialise(mRenderWindow);
+		/*new MyGUIManager;
+		MyGUIManager::getSingleton()._initialise(mRenderWindow);*/
 	}
 	
 
