@@ -680,7 +680,7 @@ struct SItemList
 		BOOL	bFindSame = FALSE;
 		/*~~~~~~~~~~~~~~~~~~~~~~*/
 
-		for(int32 i = 0; i < m_ListCount; i++)
+		/*for(int32 i = 0; i < m_ListCount; i++)
 		{
 			if(m_ListType[i] == it)
 			{
@@ -688,7 +688,7 @@ struct SItemList
 				bFindSame = TRUE;
 				break;
 			}
-		}
+		}*/
 
 		if(m_ListCount >= MAX_ITEM_LIST_COUNT)
 		{

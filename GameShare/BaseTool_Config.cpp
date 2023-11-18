@@ -46,7 +46,7 @@ BOOL Configer::Open(const char* filename)
 
 	strncpy( m_szFileName, filename, MAX_FILE_PATH - 1 );
 
-	m_ifile.open( filename, ios_base::in );
+	m_ifile.open( filename, std::ios_base::in );
 	if( !m_ifile )
 	{
 		char szMsg[128] = {0};

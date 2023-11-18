@@ -47,7 +47,7 @@ void RC6Base::SetUserKey(const byte *k)
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	RC6_WORD	a = 0, b = 0;
-	const unsigned	n = 3 * max(sTable.m_size, c);
+	const unsigned	n = 3 * std::max(sTable.m_size, c);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	for(unsigned h = 0; h < n; h++)
