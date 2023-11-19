@@ -43,6 +43,7 @@ add_subdir(.)
 
 add_library(${GLSLUTIL_LIB_NAME} SHARED ${GLSLUTIL_SRC_LIST})
 
+SET(LIBRARY_OUTPUT_PATH  ${ROOT_INC}/bin)
 
 target_include_directories(${GLSLUTIL_LIB_NAME}
     PUBLIC

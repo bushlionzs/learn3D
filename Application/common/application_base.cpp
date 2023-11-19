@@ -64,7 +64,7 @@ bool ApplicationBase::appInit()
 	mRenderWindow = mRenderSystem->createRenderWindow("", 1024, 768, &params);
 
 	
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\resources"), "sujian", true);
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("../../resources"), "sujian", true);
 	addCustomDirectory();
 	ResourceManager::getSingletonPtr()->loadAllResource();
 	

@@ -30,7 +30,7 @@ void FullDemo::appUpdate(float delta)
 
 EngineType FullDemo::getEngineType()
 {
-	return EngineType_Dx11;
+	//return EngineType_Dx11;
 	return EngineType_Vulkan;
 	return EngineType_Dx12;
 }
