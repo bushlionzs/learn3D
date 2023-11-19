@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 set(ROOT_INC ${CMAKE_CURRENT_SOURCE_DIR})
-project(learn3D)
+project(learn3D_cmake)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory(3rdSource/mariadbclient mariadbclient)
 add_subdirectory(3rdSource/freetype-2.12.0 freetype)
@@ -27,7 +27,6 @@ add_subdirectory(Middle Middle)
 add_subdirectory(GameClient GameClient)
 add_subdirectory(GameServer GameServer)
 add_subdirectory(GameShare GameShare)
-add_subdirectory(MyGameEngine MyGameEngine)
 add_subdirectory(Application/fulldemo fulldemo)
 
 set_property(TARGET fulldemo PROPERTY FOLDER Application)

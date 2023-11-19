@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 
-set(GAMECLIENT_LIB_NAME GameClient)
+project(GameClient)
+
 set(GAMECLIENT_INC)
 
 if (WIN32)
@@ -36,30 +37,54 @@ macro(add_subdir)
     unset(SRC_FILES)
 endmacro()
 
-
 add_subdir(.)
 add_subdir(clientmessage)
 add_subdir(command)
 add_subdir(data)
 add_subdir(dummy)
 add_subdir(object)
+add_subdir(ui)
+
+
+add_executable(${PROJECT_NAME} ${GAMECLIENT_SRC_LIST})
 
 
 
-add_library(${GAMECLIENT_LIB_NAME} STATIC ${GAMECLIENT_SRC_LIST})
-
-
-
-target_include_directories(${GAMECLIENT_LIB_NAME}
+target_include_directories(${PROJECT_NAME}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GAMECLIENT_INC}
 	${GAMEUTIL_INC}
 	${GAMESHARE_INC}
+	${GAMESERVER_INC}
 	${MIDDLE_INC}
 	${MINIOGRE_INC}
 	${MYGUI_INC}
 	${ROOT_INC}/3rd/OIS/include
 )
 
+target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
+target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre MyGUI Middle GameServer 
+GameShare GameServer stormlib mariadbclient LuaPlus5.1 OIS_d
+tinyxmld
+LinearMath_Debug
+BulletCollision_Debug
+BulletDynamics_Debug
+BulletSoftBody_Debug
+vulkan-1
+avcodec
+avdevice
+avfilter
+avformat
+avutil
+postproc
+swresample
+swscale
+dxgi
+dxguid
+d3d12
+d3d11
+D3DCompiler
+Shlwapi
+winmm)

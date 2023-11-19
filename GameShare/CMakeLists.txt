@@ -40,7 +40,7 @@ endmacro()
 add_subdir(.)
 add_subdir(dummy)
 add_subdir(net)
-
+add_subdir(net/messages)
 
 
 add_library(${GAMESHARE_LIB_NAME} STATIC ${GAMESHARE_SRC_LIST})
@@ -53,6 +53,8 @@ target_include_directories(${GAMESHARE_LIB_NAME}
     ${GAMESHARE_INC}
 	${MINIOGRE_INC}
 	${GAMEUTIL_INC}
+	${GAMESERVER_INC}
+	${LUAPLUS_INC}
 )
 
 set(GAMESHARE_INC ${GAMESHARE_INC}  CACHE INTERNAL "shared")

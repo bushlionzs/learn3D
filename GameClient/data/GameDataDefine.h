@@ -104,11 +104,11 @@ struct PRIVATE_INFO
 struct SameCityData
 {
 	GUID_t		m_playerGUID;
-	string		m_strName;
+	std::string		m_strName;
 	int32			m_iLevel;
 	int32			m_iZhiYe;
 	int32			m_iCountry;
-	string		m_strGuild;
+	std::string		m_strGuild;
 	int32			m_nGuildId;
 	int32			m_nGuildPos;
 	POSTCODE	m_postCode;

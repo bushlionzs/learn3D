@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "mysql_db.h"
 
-#pragma comment(lib, "libmysql.lib")
+//#pragma comment(lib, "libmysql.lib")
 
 
 CMySQLConnection::CMySQLConnection(void)
