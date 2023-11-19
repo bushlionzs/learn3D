@@ -39,7 +39,7 @@ void Basic::appUpdate(float delta)
 
 EngineType Basic::getEngineType()
 {
-	return EngineType_Vulkan;
+	return EngineType_Dx11;
 }
 
 void Basic::addCustomDirectory()

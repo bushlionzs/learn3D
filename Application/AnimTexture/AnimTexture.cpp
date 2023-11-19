@@ -65,7 +65,7 @@ void AnimTexture::appUpdate(float delta)
 
 EngineType AnimTexture::getEngineType()
 {
-	return EngineType_Vulkan;
+	return EngineType_Dx11;
 }
 
 bool AnimTexture::isUseMyGUI()
