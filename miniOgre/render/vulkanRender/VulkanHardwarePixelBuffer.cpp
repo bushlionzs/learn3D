@@ -13,11 +13,13 @@ VulkanHardwarePixelBuffer::VulkanHardwarePixelBuffer(
 	size_t height,
 	size_t depth,
 	UINT face,
+	size_t offset,
 	PixelFormat format,
 	HardwareBuffer::Usage usage)
 	:HardwarePixelBuffer(width, height, depth, format, usage, false, false),
 	mParentTexture(parentTexture),
 	mFace(face),
+	mOffset(offset),
 	mMipLevel(mipLevel)
 {
 	mUsage = usage;
@@ -57,7 +59,7 @@ void VulkanHardwarePixelBuffer::blitFromMemory(const PixelBox& src, const Box& d
 			"VulkanHardwarePixelBuffer::blitFromMemory");
 	}
 
-	void* data = mParentTexture->getVulkanBuffer(mFace, mMipLevel);
+	void* data = mParentTexture->getVulkanBuffer(mOffset);
 	PixelBox dstBox = PixelBox(src.getWidth(), src.getHeight(),
 		src.getDepth(), mFormat, data);
 	PixelUtil::bulkPixelConversion(src, dstBox);
@@ -72,7 +74,7 @@ void VulkanHardwarePixelBuffer::blitToMemory(
 void* VulkanHardwarePixelBuffer::lockimpl(
 	size_t offset, size_t length, LockOptions options)
 {
-	return mParentTexture->getVulkanBuffer(mFace, mMipLevel);
+	return mParentTexture->getVulkanBuffer(mOffset);
 }
 
 void VulkanHardwarePixelBuffer::unlock()

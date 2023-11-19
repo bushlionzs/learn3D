@@ -33,7 +33,7 @@ public:
     
 
     void updateTextureData();
-    void* getVulkanBuffer(size_t face, size_t mipmap);
+    void* getVulkanBuffer(uint32_t offset);
 private:
     void _createSurfaceList(void);
     virtual void createInternalResourcesImpl(void);

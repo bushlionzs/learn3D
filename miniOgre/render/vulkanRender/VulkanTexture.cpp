@@ -50,6 +50,7 @@ void VulkanTexture::_createSurfaceList(void)
                 height,
                 depth,
                 face,
+                bufferSizeAll,
                 mFormat,
                 (HardwareBuffer::Usage)mUsage
             );
@@ -242,10 +243,8 @@ void VulkanTexture::createTextureSampler()
 }
 
 
-void* VulkanTexture::getVulkanBuffer(size_t face, size_t mipmap)
+void* VulkanTexture::getVulkanBuffer(uint32_t offset)
 {
-    uint32_t offset = face * PixelUtil::getMemorySize(
-        getWidth(), getHeight(), getDepth(), mFormat);
     return mMappedMemory + offset;
 }
 

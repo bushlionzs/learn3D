@@ -15,6 +15,7 @@ public:
 		size_t height,
 		size_t depth,
 		UINT face,
+		size_t offset,
 		PixelFormat format,
 		HardwareBuffer::Usage usage);
 	~VulkanHardwarePixelBuffer();
@@ -36,4 +37,6 @@ private:
 
 	const uint32_t mFace;
 	const uint32_t mMipLevel;
+
+	const uint32_t mOffset;
 };
