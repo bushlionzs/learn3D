@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Layout" version="3.2.0">
+    <Widget type="Widget" skin="PanelSkin" position="0 0 800 600" align="Stretch" layer="Middle" name="_Main">
+        <Widget type="ImageBox" skin="ImageBox" position="0 0 800 600" name="BackgroudImageBox"/>
+        <UserString key="SnapTo" value="Stretch"/>
+        <Widget type="Widget" skin="PanelEmpty" position="0 270 210 5" name="SeparatorV">
+            <Property key="Pointer" value="size_vert"/>
+        </Widget>
+        <Widget type="Widget" skin="PanelEmpty" position="220 0 5 260" name="SeparatorH">
+            <Property key="Pointer" value="size_horz"/>
+        </Widget>
+        <Widget type="ImageBox" skin="ImageBox" position="0 0 220 270" name="Left">
+            <Widget type="Widget" skin="PanelEmpty" position="210 260 10 10" name="SeparatorCorner">
+                <Property key="Pointer" value="size_left"/>
+            </Widget>
+        </Widget>
+    </Widget>
+</MyGUI>

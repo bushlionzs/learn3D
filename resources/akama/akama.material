@@ -1,0 +1,196 @@
+material akama_0
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMA.tga -1
+			}
+		}
+	}
+}
+material akama_1
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture LOSTONE_SKULLBAG.tga -1
+			}
+		}
+	}
+}
+material akama_2
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMA.tga -1
+			}
+		}
+	}
+}
+material akama_3
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMABRACERSKIRTBELT.tga -1
+			}
+		}
+	}
+}
+material akama_4
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMA.tga -1
+			}
+		}
+	}
+}
+material akama_5
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMABRACERSKIRTBELT.tga -1
+			}
+		}
+	}
+}
+material akama_6
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture EYEREFLECT.tga -1
+			}
+		}
+	}
+}
+material akama_7
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMA.tga -1
+			}
+		}
+	}
+}
+material akama_8
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMABRACERSKIRTBELT.tga -1
+			}
+		}
+	}
+}
+material akama_9
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMA.tga -1
+			}
+		}
+	}
+}
+material akama_10
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture EYEREFLECT.tga -1
+			}
+		}
+	}
+}
+material akama_11
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMABRACERSKIRTBELT.tga -1
+			}
+		}
+	}
+}
+material akama_12
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture EYEREFLECT.tga -1
+			}
+		}
+	}
+}
+material akama_13
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.7 0.7 0.7
+			texture_unit
+			{
+				texture AKAMAEYEGLOWBLUE.tga -1
+			}
+		}
+	}
+}

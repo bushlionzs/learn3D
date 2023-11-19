@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Layout" version="3.2.0">
+    <Widget type="Widget" skin="PanelSkin" position="310 60 440 390" layer="Main" name="_Main"/>
+    <CodeGeneratorSettings/>
+</MyGUI>

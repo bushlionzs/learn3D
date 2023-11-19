@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Layout" version="3.2.0">
+    <Widget type="Widget" skin="Default" position="0 0 32 32" align="Stretch" name="_Main">
+        <Property key="NeedMouse" value="false"/>
+        <Property key="NeedKey" value="false"/>
+        <Widget type="ImageBox" skin="ImageBox" position="0 0 -26 -10" align="Stretch" name="image_Back">
+            <Widget type="ImageBox" skin="ImageBox" position="0 0 -84 -52" align="Stretch" name="image_Border"/>
+        </Widget>
+    </Widget>
+    <CodeGeneratorSettings/>
+</MyGUI>
