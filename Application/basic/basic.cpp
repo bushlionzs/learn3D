@@ -24,7 +24,7 @@ bool Basic::appInit()
 {
 	ApplicationBase::appInit();
 
-	base1();
+	base2();
 	return true;
 }
 
@@ -39,7 +39,8 @@ void Basic::appUpdate(float delta)
 
 EngineType Basic::getEngineType()
 {
-	return EngineType_Dx11;
+	//return EngineType_Dx12;
+	return EngineType_Vulkan;
 }
 
 void Basic::addCustomDirectory()
@@ -75,28 +76,20 @@ void Basic::base1()
 
 void Basic::base2()
 {
-	float aa = 100.0f;
-	Ogre::Vector3 leftop = Ogre::Vector3(-aa, 0.0f, aa);
-	Ogre::Vector3 leftbottom = Ogre::Vector3(-aa, 0.0f, -aa);
-	Ogre::Vector3 righttop = Ogre::Vector3(aa, 0.0f, aa);
-	Ogre::Vector3 rightbottom = Ogre::Vector3(aa, 0.0f, -aa);
-	Ogre::Vector3 normal = Ogre::Vector3(0.0f, 0.0f, 1.0f);
-	auto mesh = MeshManager::getSingletonPtr()->createRect(
-		"myrect",
-		leftop, leftbottom, righttop, rightbottom, normal);
-	//mesh = MeshManager::getSingletonPtr()->load(std::string("Ä¾ÇÅ2.mesh"));
+	std::string name = "Êé_·ðÉ½_·¿ÎÝ_13.mesh";
+	name = "Â¥À¼ÕÊÅñ04.mesh";
+	auto mesh = MeshManager::getSingletonPtr()->load(name);
 
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
 	Entity* sphere = mSceneManager->createEntity("sphere", mesh);
 	SceneNode* spherenode = root->createChildSceneNode("sphere");
-	spherenode->attachObject(sphere);
-	auto pos = Ogre::Vector3(200, 0, 0);
-	spherenode->setPosition(pos);
-	const AxisAlignedBox& box = sphere->getBoundingBox();
 
-	mGameCamera->setDistance(2000);
-	mGameCamera->setMoveSpeed(100.0f);
+	spherenode->attachObject(sphere);
+
+	mGameCamera->setDistance(1000.0f);
+
+	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
 }
 
 void Basic::base3()
