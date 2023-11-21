@@ -207,7 +207,10 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     
     viewInfo.format = format;
     viewInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-    viewInfo.subresourceRange.levelCount = 1;
+
+    uint32_t numMips = mTextureProperty._numMipmaps + 1;
+
+    viewInfo.subresourceRange.levelCount = numMips;
     viewInfo.subresourceRange.layerCount = mFace;
 
     VkImageView imageView;
@@ -224,16 +227,22 @@ void VulkanTexture::createTextureSampler()
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     samplerInfo.magFilter = VK_FILTER_LINEAR;
     samplerInfo.minFilter = VK_FILTER_LINEAR;
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
     samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerInfo.anisotropyEnable = VK_FALSE;
-    samplerInfo.maxAnisotropy = 1.0f;
-    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
-    samplerInfo.unnormalizedCoordinates = VK_FALSE;
-    samplerInfo.compareEnable = VK_FALSE;
+    samplerInfo.mipLodBias = 0.0f;
     samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
-    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerInfo.minLod = 0.0f;
+
+    uint32_t numMips = mTextureProperty._numMipmaps + 1;
+    samplerInfo.maxLod = numMips;
+    samplerInfo.anisotropyEnable = VK_TRUE;
+    samplerInfo.maxAnisotropy = 8.0f;
+    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+    samplerInfo.compareEnable = VK_FALSE;
+    
+    
 
 
     if (vkCreateSampler(mVKDevice, &samplerInfo, nullptr, &mTextureSampler) != VK_SUCCESS)

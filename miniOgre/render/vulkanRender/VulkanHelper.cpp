@@ -1068,16 +1068,16 @@ void VulkanHelper::copyBufferToImage(
         uint32_t height = tex->getHeight();
         for (uint32_t i = 0; i < mipLevels; i++)
         {
-            regions.emplace_back();
-            VkBufferImageCopy& region = regions.back();
-            region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            region.imageSubresource.mipLevel = i;
-            region.imageSubresource.baseArrayLayer = face;
-            region.imageSubresource.layerCount = 1;
-            region.imageExtent.width = width;
-            region.imageExtent.height = height;
-            region.imageExtent.depth = 1;
-            region.bufferOffset = offset;
+            VkBufferImageCopy bufferCopyRegion = {};
+            bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            bufferCopyRegion.imageSubresource.mipLevel = i;
+            bufferCopyRegion.imageSubresource.baseArrayLayer = 0;
+            bufferCopyRegion.imageSubresource.layerCount = 1;
+            bufferCopyRegion.imageExtent.width = width;
+            bufferCopyRegion.imageExtent.height = height;
+            bufferCopyRegion.imageExtent.depth = 1;
+            bufferCopyRegion.bufferOffset = offset;
+            regions.push_back(bufferCopyRegion);
 
             if (width > 1)width /= 2;
             if (height > 1)height /= 2;
