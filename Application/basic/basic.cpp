@@ -77,7 +77,7 @@ void Basic::base1()
 void Basic::base2()
 {
 	std::string name = "Êé_·ðÉ½_·¿ÎÝ_13.mesh";
-	name = "Â¥À¼ÕÊÅñ04.mesh";
+	//name = "Â¥À¼ÕÊÅñ04.mesh";
 	auto mesh = MeshManager::getSingletonPtr()->load(name);
 
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
@@ -87,7 +87,7 @@ void Basic::base2()
 
 	spherenode->attachObject(sphere);
 
-	mGameCamera->setDistance(1000.0f);
+	mGameCamera->setDistance(2000.0f);
 
 	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
 }

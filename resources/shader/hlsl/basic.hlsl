@@ -80,7 +80,7 @@ float4 PS(VertexOut pin) : SV_Target
 	{
 		return float4(0.0f, 1.0f, 0.0f, 1.0f);
 	}
-    float4 diffuseAlbedo = gTextureArray[0].Sample(gsamLinearWrap, pin.TexC) * gDiffuseAlbedo;
+    float4 diffuseAlbedo = gTextureArray[0].Sample(gsamAnisotropicWrap, pin.TexC) * gDiffuseAlbedo;
 	clip(diffuseAlbedo.a - 0.5f);
 	return diffuseAlbedo;
 	pin.NormalW = normalize(pin.NormalW);

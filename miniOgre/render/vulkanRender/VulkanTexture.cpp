@@ -237,7 +237,7 @@ void VulkanTexture::createTextureSampler()
 
     uint32_t numMips = mTextureProperty._numMipmaps + 1;
     samplerInfo.maxLod = numMips;
-    samplerInfo.anisotropyEnable = VK_TRUE;
+    samplerInfo.anisotropyEnable = VK_FALSE;
     samplerInfo.maxAnisotropy = 8.0f;
     samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
     samplerInfo.compareEnable = VK_FALSE;

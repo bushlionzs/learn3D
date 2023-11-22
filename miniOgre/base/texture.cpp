@@ -190,7 +190,7 @@ namespace Ogre {
 
 		if (PixelUtil::isCompressed(mSrcFormat) && mNumMipmaps > 0)
 		{
-			mNumMipmaps = std::max((uint32_t)1, mNumMipmaps - 2);
+			mNumMipmaps = std::max((uint32_t)1, mNumMipmaps);
 			mTextureProperty._numMipmaps = mNumMipmaps;
 		}
 

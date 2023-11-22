@@ -52,7 +52,6 @@ namespace Orphigine {
 
 	void EffectActor::createRenderInstance()
 	{
-		return;
 		PlacementActor::createRenderInstance();
 
 		

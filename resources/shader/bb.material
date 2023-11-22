@@ -61,7 +61,7 @@ material myrect
 			shader ogresimple
 			texture_unit
 			{
-				texture wall.jpg
+				texture 书_佛山_墙_09_.dds
 				scroll_anim 0 -0.9
 				tex_address_mode clamp
 			}

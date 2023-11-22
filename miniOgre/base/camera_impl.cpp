@@ -113,7 +113,6 @@ bool CameraImpl::isVisible(const Ogre::Sphere& bound) const
 
 bool CameraImpl::isVisible(const Ogre::AxisAlignedBox& bound) const
 {
-    return true;
     // Null boxes always invisible
     if (bound.isNull())
     {
