@@ -41,7 +41,7 @@ void main() {
     gl_Position = cbPerObject.gWorldViewProj * vec4(position, 1.0);
 #endif
     outTexC = (cbMaterial.gTexTransform * vec4(texcoord, 0.0f, 1.0f)).xy;
-	//outTexC = texcoord;
+	outTexC = texcoord;
 	gl_Position.y = -gl_Position.y;
 }
 

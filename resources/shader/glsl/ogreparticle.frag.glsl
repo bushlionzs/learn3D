@@ -9,6 +9,9 @@ layout(location = 0) out vec4 outColor;
 
 void main() {
     vec4 tex1 = texture(gTextureArray[0], inTexC);
-	
-	outColor = tex1 * inColor;
+	if(tex1.a - 0.9 < 0)
+	{
+	    discard;
+	}
+	outColor = tex1 * inColor * 2;
 }
