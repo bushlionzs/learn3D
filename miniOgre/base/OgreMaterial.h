@@ -25,9 +25,9 @@ namespace Ogre {
         Material(const std::string& name, bool pbr = false);
         ~Material();
 
-        void addTexture(const std::string& name, Ogre::TextureProperty* texProperty = nullptr);
-        void addAnimTexture(const std::vector<String>& namelist, float duration);
-        void addTexture(const Ogre::TexturePtr& tex);
+        uint32_t addTexture(const std::string& name, Ogre::TextureProperty* texProperty = nullptr);
+        uint32_t addAnimTexture(const std::vector<String>& namelist, float duration);
+        uint32_t addTexture(const Ogre::TexturePtr& tex);
         void load();
         bool isLoaded();
 

@@ -243,6 +243,19 @@ public:
     }
 };
 
+class CmdTextureAddrMode : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setTextureAddrMode(val);
+    }
+};
+
 class CmdRotateAnimTexture : public ParamCommand
 {
 public:
@@ -374,6 +387,11 @@ void OgreMaterialParam::initParameters()
             "animation texture",
             PT_STRING),
             &mAnimTexture);
+        static CmdTextureAddrMode mTextureAddrMode;
+        dict->addParameter(ParameterDef("tex_address_mode",
+            "tex_address_mode",
+            PT_STRING),
+            &mTextureAddrMode);
 
         static CmdRotateAnimTexture mRotateTexture;
         dict->addParameter(ParameterDef("rotate_anim",
@@ -532,8 +550,26 @@ void OgreMaterialParam::setTexture(const std::string& val)
 
     if (!video)
     {
-        mMaterial->addTexture(aa[0], &tp);
+        mTexIndex = mMaterial->addTexture(aa[0], &tp);
     }
+}
+
+void OgreMaterialParam::setTextureAddrMode(const std::string& val)
+{
+    TextureAddressingMode mode = Ogre::TAM_WRAP;
+    if (val == "clamp")
+    {
+        mode = Ogre::TAM_CLAMP;
+    }
+    else if (val == "mirror")
+    {
+        mode = Ogre::TAM_MIRROR;
+    }
+
+    auto unit = mMaterial->getTextureUnit(mTexIndex);
+
+    TextureProperty* tp = unit->getTextureProperty();
+    tp->_tex_addr_mod = mode;
 }
 
 void OgreMaterialParam::setPbrTexture(TextureTypePbr pbrtype, const std::string& val)
@@ -589,7 +625,7 @@ void OgreMaterialParam::setAnimTexture(const String& val)
 void OgreMaterialParam::setRotateTexture(const String& val)
 {
     float value = Ogre::StringConverter::parseReal(val);
-    auto unit = mMaterial->getTextureUnit(0);
+    auto unit = mMaterial->getTextureUnit(mTexIndex);
     unit->setTextureRotate(Ogre::Radian(value));
 }
 
@@ -607,7 +643,7 @@ void OgreMaterialParam::setScrollTexture(const String& val)
         float u = Ogre::StringConverter::parseReal(aa[0]);
         float v = Ogre::StringConverter::parseReal(aa[1]);
 
-        auto unit = mMaterial->getTextureUnit(0);
+        auto unit = mMaterial->getTextureUnit(mTexIndex);
 
         unit->setTextureScroll(u, v);
     }

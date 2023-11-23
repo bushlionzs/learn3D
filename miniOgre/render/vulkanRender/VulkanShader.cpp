@@ -168,11 +168,11 @@ void VulkanShader::createGraphicsPipeline(VulkanPass* pass)
         vks::initializers::pipelineColorBlendStateCreateInfo(
             1,
             &blendAttachmentState);
-
+    
     VkPipelineDepthStencilStateCreateInfo depthStencilState =
         vks::initializers::pipelineDepthStencilStateCreateInfo(
             VK_TRUE,
-            VK_TRUE,
+            pass->mMaterial->isWriteDepth(),
             VK_COMPARE_OP_LESS_OR_EQUAL);
 
     VkPipelineViewportStateCreateInfo viewportState =

@@ -78,6 +78,7 @@ namespace Ogre {
         uint32_t _fsaa = 0;
         TextureUsage _tex_usage = TU_DEFAULT;
         ColourValue _backgroudColor = ColourValue::Black;
+        TextureAddressingMode  _tex_addr_mod = Ogre::TAM_WRAP;
     };
 
     class ITexture

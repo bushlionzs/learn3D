@@ -19,29 +19,33 @@ Material::~Material()
 
 }
 
-void Material::addTexture(const std::string& name, Ogre::TextureProperty* texProperty)
+uint32_t Material::addTexture(const std::string& name, Ogre::TextureProperty* texProperty)
 {
     std::shared_ptr<TextureUnit> tu(new TextureUnit);
 
     tu->setTexture(name, texProperty);
 
     mTextureUnits.push_back(tu);
+    return mTextureUnits.size() - 1;
 }
 
-void Material::addAnimTexture(const std::vector<String>& namelist, float duration)
+uint32_t Material::addAnimTexture(const std::vector<String>& namelist, float duration)
 {
     std::shared_ptr<TextureUnit> tu(new TextureUnit);
 
     tu->setAnimtexture(namelist, duration);
 
     mTextureUnits.push_back(tu);
+
+    return mTextureUnits.size() - 1;
 }
 
-void Material::addTexture(const Ogre::TexturePtr& tex)
+uint32_t Material::addTexture(const Ogre::TexturePtr& tex)
 {
     std::shared_ptr<TextureUnit> tu(new TextureUnit);
     tu->setTexture(tex);
     mTextureUnits.push_back(tu);
+    return mTextureUnits.size() - 1;
 }
 
 void Material::load()

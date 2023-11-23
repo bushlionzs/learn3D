@@ -203,6 +203,12 @@ void VulkanRenderSystem::render(Renderable* r, RenderListType t)
     const std::shared_ptr<Shader>& shader = mat->getShader();
     mCurrentPass.mRenderListType = t;
     mCurrentPass.mMaterial = mat.get();
+    auto name = mCurrentPass.mMaterial->getName();
+
+    if (strstr(name.c_str(), "chuansongmen"))
+    {
+        int kk = 0;
+    }
     mCurrentPass.mMaterial->load();
     mCurrentPass.mShader = (VulkanShader*)shader.get();
     mCurrentPass.mRenderable = r;

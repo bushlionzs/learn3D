@@ -28,6 +28,7 @@ public:
 	void setShader(const std::string& val);
 	void setInherit(const std::string& val);
 	void setTexture(const std::string& val);
+	void setTextureAddrMode(const std::string& val);
 	void setPbrTexture(TextureTypePbr pbrtype, const std::string& val);
 	void setAnimTexture(const String& val);
 	void setRotateTexture(const String& val);
@@ -55,4 +56,6 @@ public:
 	std::map<std::string, std::string> mVariablesMap;
 
 	MaterialScriptParser* mParser;
+
+	uint32_t mTexIndex = 0;
 };
