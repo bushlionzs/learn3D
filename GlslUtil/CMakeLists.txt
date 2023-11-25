@@ -52,11 +52,14 @@ target_include_directories(${GLSLUTIL_LIB_NAME}
 	${ROOT_INC}/3rd
 )
 
-
+set( MyFavLib_LIBRARIES 
+    debug shaderc_sharedd.lib optimized shaderc_shared.lib
+    debug SpirvToolsd.lib optimized SpirvTools.lib )
+	
+message(${MyFavLib_LIBRARIES})
 target_link_directories(${GLSLUTIL_LIB_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
-target_link_libraries(${GLSLUTIL_LIB_NAME} shaderc_sharedd SpirvToolsd)
-
+target_link_libraries(${GLSLUTIL_LIB_NAME} ${MyFavLib_LIBRARIES})
 set(GLSLUTIL_INC ${GLSLUTIL_INC}  CACHE INTERNAL "shared")
 
 

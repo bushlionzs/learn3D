@@ -28,7 +28,7 @@ run fulldemo.exe
 
 If everything goes smoothly, you will see the following picture.
 
-If there is a prompt indicating that vulkan-1.dll is missing, please download the Windows 64-bit version from https://vulkan.lunarg.com/sdk/home and install it.
+If there is a prompt indicating that vulkan-1.dll is missing, please Update the graphics card driver.
 
 ![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/fulldemo.jpg)
 

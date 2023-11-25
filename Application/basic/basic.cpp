@@ -39,7 +39,7 @@ void Basic::appUpdate(float delta)
 
 EngineType Basic::getEngineType()
 {
-	//return EngineType_Dx12;
+	//return EngineType_Dx11;
 	return EngineType_Vulkan;
 }
 
@@ -85,11 +85,11 @@ void Basic::base2()
 	Entity* sphere = mSceneManager->createEntity("sphere", mesh);
 	SceneNode* spherenode = root->createChildSceneNode("sphere");
 
-	spherenode->attachObject(sphere);
+	//spherenode->attachObject(sphere);
 
 	mGameCamera->setDistance(2000.0f);
 
-	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
+	mSceneManager->setSkyBox(true, "SkyLan", 50000);
 }
 
 void Basic::base3()

@@ -202,11 +202,6 @@ material SkyLan
 				texture cloudy_noon.jpg cubic
 				tex_address_mode clamp
 			}
-			
-			texture_unit
-			{
-			    texture nskingr.jpg
-			}
 		}
 	}
 }
