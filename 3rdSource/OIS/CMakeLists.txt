@@ -27,8 +27,8 @@ if(NOT CMAKE_BUILD_TYPE)
         FORCE)
 endif()
 
-option(OIS_BUILD_SHARED_LIBS "Build shared libraries" ON)
-option(OIS_BUILD_DEMOS "Build demo applications" ON)
+option(OIS_BUILD_SHARED_LIBS "Build shared libraries" OFF)
+option(OIS_BUILD_DEMOS "Build demo applications" OFF)
 set(CMAKE_MACOSX_RPATH 0)
 
 include_directories(
@@ -176,7 +176,7 @@ endif()
 
 source_group("OIS" FILES ${ois_source})
 
-add_library(OIS ${ois_source})
+add_library(OIS STATIC ${ois_source})
 
 # This is neccessary to get the dll import/export to work without modifying the
 # source to use cmake's method of setting the dll import/export definitions
@@ -282,7 +282,7 @@ install(TARGETS OIS
 )
 
 if(MSVC AND BUILD_SHARED_LIBS)
-  install(FILES $<TARGET_PDB_FILE:OIS> DESTINATION bin OPTIONAL)
+  #install(FILES $<TARGET_PDB_FILE:OIS> DESTINATION bin OPTIONAL)
 endif(MSVC AND BUILD_SHARED_LIBS)
 
 if(UNIX)
