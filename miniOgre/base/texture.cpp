@@ -194,8 +194,7 @@ namespace Ogre {
 			mTextureProperty._numMipmaps = mNumMipmaps;
 		}
 
-		mFormat = PixelUtil::getFormatForBitDepths(mSrcFormat, 
-			0, 0);
+		mFormat = PixelUtil::getFormatForBitDepths(mSrcFormat, 0, 0);
 		mFace = 1;
 		if (isCubeTexture())
 		{
