@@ -34,16 +34,4 @@ class VulkanShader;
 class VulkanRenderableData;
 
 
-
-class VulkanPass
-{
-public:
-    Material* mMaterial;
-    VulkanShader* mShader;
-    Renderable* mRenderable;
-    uint32_t  mPassState;
-    VulkanRenderableData* mVulkanRenderableData;
-    RenderListType mRenderListType;
-};
-
 VkFormat getVKFormatFromType(VertexElementType type);

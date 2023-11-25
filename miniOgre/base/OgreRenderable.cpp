@@ -12,12 +12,12 @@ namespace Ogre {
     {
     }
 
-    void* Renderable::getRenderableData()
+    RenderableData* Renderable::getRenderableData()
     {
         if (!mRenderableData)
         {
             auto rs = Ogre::Root::getSingleton().getRenderSystem();
-            mRenderableData = rs->createRenderableData();
+            mRenderableData = rs->createRenderableData(this);
         }
         return mRenderableData;
     }

@@ -54,9 +54,6 @@ bool VulkanRenderSystem::engineInit()
     new VulkanHardwareBufferManager(this);
     
     VulkanHelper::getSingleton()._initialise();
-    new VulkanObjectPool;
-
-    VulkanObjectPool::getSingleton().init(this);
 
     return true;
 }
@@ -128,9 +125,9 @@ void VulkanRenderSystem::ready()
     VulkanHelper::getSingleton().loadDefaultResources();
 }
 
-void* VulkanRenderSystem::createRenderableData()
+RenderableData* VulkanRenderSystem::createRenderableData(Ogre::Renderable* r)
 {
-    return new VulkanRenderableData(this);
+    return new VulkanRenderableData(this, r);
 }
 
 void VulkanRenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
@@ -199,69 +196,11 @@ Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
 
 void VulkanRenderSystem::render(Renderable* r, RenderListType t)
 {
-    const std::shared_ptr<Material>& mat = r->getMaterial();
-    const std::shared_ptr<Shader>& shader = mat->getShader();
-    mCurrentPass.mRenderListType = t;
-    mCurrentPass.mMaterial = mat.get();
-    auto name = mCurrentPass.mMaterial->getName();
-
-    if (strstr(name.c_str(), "chuansongmen"))
-    {
-        int kk = 0;
-    }
-    mCurrentPass.mMaterial->load();
-    mCurrentPass.mShader = (VulkanShader*)shader.get();
-    mCurrentPass.mRenderable = r;
-    mCurrentPass.mVulkanRenderableData = (VulkanRenderableData*)r->getRenderableData();
-    mCurrentPass.mVulkanRenderableData->buildMaterial(mCurrentPass.mMaterial);
-
-    
-
-    renderImpl(&mCurrentPass);
+    VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
+    rd->update(mCurrentVulkanFrame);
+    rd->render(mCurrentVulkanFrame);
 }
 
-void VulkanRenderSystem::renderImpl(VulkanPass* pass)
-{
-    //bind object and texture
-
-    pass->mVulkanRenderableData->updateDescriptorSet(pass);
-
-    VkCommandBuffer pCommandBuffer = mCurrentVulkanFrame->getVkCommandBuffer();
-
-    //bind pipeline
-    VkPipeline pipeline = pass->mShader->getVKPipeline(pass);
-    
-    vkCmdBindPipeline(pCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-    //draw object
-
-    VertexData* vertexData = pass->mRenderable->getVertexData();
-    IndexData* indexData = pass->mRenderable->getIndexData();
-    vertexData->bind();
-
-    auto descriptorSet = mCurrentPass.mVulkanRenderableData->getDescriptorSet();
-
-    auto pipelineLayout = mCurrentPass.mVulkanRenderableData->getPipelineLayout();
-    vkCmdBindDescriptorSets(
-        mCurrentVulkanFrame->getVkCommandBuffer(),
-        VK_PIPELINE_BIND_POINT_GRAPHICS,
-        pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
-
-    if (indexData)
-    {
-        indexData->getIndexBuffer()->bind();
-        IndexDataView* view = pass->mRenderable->getIndexView();
-        vkCmdDrawIndexed(pCommandBuffer, view->mIndexCount, 1,
-            view->mIndexLocation, view->mBaseVertexLocation, 0);
-        mTriangleCount += view->mIndexCount / 3;
-    }
-    else
-    {
-        vkCmdDraw(pCommandBuffer, vertexData->vertexCount, 1, 0, 0);
-        mTriangleCount += vertexData->vertexCount / 3;
-    }
-
-   
-}
 
 void VulkanRenderSystem::updateMainPassCB(ICamera* camera)
 {

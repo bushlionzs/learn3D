@@ -7,6 +7,8 @@ class RenderSystem;
 class VertexData;
 class IndexData;
 class IndexDataView;
+class RenderableData;
+
 namespace Ogre {
     class Renderable
     {
@@ -58,10 +60,10 @@ namespace Ogre {
         virtual const Ogre::Matrix4& getModelMatrix();
         virtual Ogre::Vector3 getPosition() { return Ogre::Vector3(0.0f, 0.0f, 0.0f); }
 
-        void* getRenderableData();
+        RenderableData* getRenderableData();
     protected:
         std::shared_ptr<Material> mMaterial;
-        void* mRenderableData = nullptr;
+        RenderableData* mRenderableData = nullptr;
 
         Ogre::Matrix4 mWorld;
     };

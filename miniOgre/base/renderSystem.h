@@ -5,6 +5,7 @@
 #include "texture.h"
 
 class GraphicsCommandList;
+class RenderableData;
 
 namespace Ogre
 {
@@ -53,16 +54,31 @@ public:
 
     virtual void ready() {}
 
-    virtual void* createRenderableData() { return nullptr; }
+    virtual RenderableData* createRenderableData(Ogre::Renderable* r) { return nullptr; }
 
     virtual EngineType getRenderType() = 0;
     virtual const String& getRenderSystemName()
     {
         return mRenderSystemName;
     }
+
+    void incrTriangleCount(uint32_t count)
+    {
+        mTriangleCount += count;
+    }
     uint32_t getTriangleCount()
     {
         return mTriangleCount;
+    }
+
+    void incrBatchCount(uint32_t count)
+    {
+        mBatchCount += count;
+    }
+
+    uint32_t getBatchCount()
+    {
+        return mBatchCount;
     }
 
     uint64_t getNextFrame()

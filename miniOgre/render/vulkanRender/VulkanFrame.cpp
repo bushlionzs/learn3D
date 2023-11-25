@@ -25,6 +25,8 @@ VulkanFrame::VulkanFrame(uint32_t index)
     }
 
     auto result = vkGetFenceStatus(device, mFlightFence);
+
+    _vulkanObjectPool.init(VulkanHelper::getSingleton()._getRenderSystem());
 }
 
 VulkanFrame::~VulkanFrame()

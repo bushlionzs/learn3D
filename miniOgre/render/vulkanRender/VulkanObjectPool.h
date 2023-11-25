@@ -25,7 +25,7 @@ struct VulkanBufferInfo
 
 class VulkanRenderSystem;
 
-class VulkanObjectPool : public Ogre::Singleton<VulkanObjectPool>
+class VulkanObjectPool
 {
 public:
 	VulkanObjectPool();

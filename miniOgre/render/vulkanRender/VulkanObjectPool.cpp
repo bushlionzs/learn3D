@@ -1,7 +1,7 @@
 #include "OgreHeader.h"
 #include "VulkanObjectPool.h"
 
-template<> VulkanObjectPool* Ogre::Singleton<VulkanObjectPool>::msSingleton = 0;
+
 
 VulkanObjectPool::VulkanObjectPool()
 {

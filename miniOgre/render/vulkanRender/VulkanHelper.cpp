@@ -477,7 +477,7 @@ void VulkanHelper::createDescriptorPool()
         vks::initializers::descriptorPoolCreateInfo(
             static_cast<uint32_t>(poolSizes.size()),
             poolSizes.data(),
-            10000);
+            30000);
 
     if (vkCreateDescriptorPool(mVKDevice, &descriptorPoolInfo, nullptr, &mDescriptorPool) != VK_SUCCESS)
     {

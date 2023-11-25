@@ -76,21 +76,13 @@ void VulkanShader::updateInputDesc(VertexDeclaration* vDeclaration)
 
 }
 
-VkPipeline VulkanShader::getVKPipeline(VulkanPass* pass)
+VkPipeline VulkanShader::getVKPipeline(Ogre::Renderable* r)
 {
     if (mGraphicsPipeline != VK_NULL_HANDLE)
     {
         return mGraphicsPipeline;
     }
 
-    createGraphicsPipeline(pass);
-
-    return mGraphicsPipeline;
-}
-
-
-void VulkanShader::createGraphicsPipeline(VulkanPass* pass)
-{
     VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
     vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -105,9 +97,9 @@ void VulkanShader::createGraphicsPipeline(VulkanPass* pass)
 
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages = { vertShaderStageInfo, fragShaderStageInfo };
 
-    
 
-    VertexData* vertexData = pass->mRenderable->getVertexData();
+
+    VertexData* vertexData = r->getVertexData();
 
     std::vector<VkVertexInputBindingDescription> vertexInputBindings;
 
@@ -131,7 +123,7 @@ void VulkanShader::createGraphicsPipeline(VulkanPass* pass)
     vertexInputInfo.vertexBindingDescriptionCount = vertexInputBindings.size();
     vertexInputInfo.pVertexBindingDescriptions = vertexInputBindings.data();
     vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-    
+
     vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyState =
@@ -151,8 +143,8 @@ void VulkanShader::createGraphicsPipeline(VulkanPass* pass)
         vks::initializers::pipelineColorBlendAttachmentState(
             0xf,
             VK_FALSE);
-
-    auto blendState = pass->mMaterial->getBlendState();
+    auto& mat = r->getMaterial();
+    auto blendState = mat->getBlendState();
     if (blendState.blendingEnabled())
     {
         blendAttachmentState.blendEnable = true;
@@ -168,11 +160,11 @@ void VulkanShader::createGraphicsPipeline(VulkanPass* pass)
         vks::initializers::pipelineColorBlendStateCreateInfo(
             1,
             &blendAttachmentState);
-    
+
     VkPipelineDepthStencilStateCreateInfo depthStencilState =
         vks::initializers::pipelineDepthStencilStateCreateInfo(
             VK_TRUE,
-            pass->mMaterial->isWriteDepth(),
+            mat->isWriteDepth(),
             VK_COMPARE_OP_LESS_OR_EQUAL);
 
     VkPipelineViewportStateCreateInfo viewportState =
@@ -192,7 +184,7 @@ void VulkanShader::createGraphicsPipeline(VulkanPass* pass)
             dynamicStateEnables.data(),
             static_cast<uint32_t>(dynamicStateEnables.size()),
             0);
-    
+
     auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout();
     VkGraphicsPipelineCreateInfo pipelineCreateInfo =
         vks::initializers::pipelineCreateInfo(
@@ -219,8 +211,9 @@ void VulkanShader::createGraphicsPipeline(VulkanPass* pass)
     {
         throw std::runtime_error("failed to create graphics pipeline!");
     }
-}
 
+    return mGraphicsPipeline;
+}
 
 std::vector<VkVertexInputAttributeDescription> VulkanShader::getAttributeDescriptions(VertexDeclaration* vd)
 {

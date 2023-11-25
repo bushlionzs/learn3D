@@ -2,27 +2,13 @@
 #include "shader.h"
 #include "VulkanUploadBuffer.h"
 #include "VulkanObjectPool.h"
+#include "renderHelper.h"
 
 class VulkanRenderSystem;
-class VulkanRenderableData
+
+class VulkanFrameRenderableData
 {
 public:
-	VulkanRenderableData(VulkanRenderSystem* engine);
-	~VulkanRenderableData();
-
-	void buildMaterial(Material* mat);
-	
-	void updateDescriptorSet(VulkanPass* pass);
-
-	VkDescriptorSet getDescriptorSet();
-	VkPipelineLayout  getPipelineLayout();
-private:
-	void updateData(VulkanPass* pass);
-	void buildInitData();
-private:
-	VulkanRenderSystem* mEngine;
-	VkDevice mDevice;
-
 	VulkanObjectDesc mObjectDesc;
 	VulkanObjectDesc mMaterialDesc;
 	VulkanObjectDesc mSkinnedDesc;
@@ -30,6 +16,29 @@ private:
 	ObjectConstantBuffer mObjectConstantBuffer;
 	MaterialConstantBuffer mMaterialConstantBuffer;
 	VkDescriptorSet mDescriptorSet;
+
+public:
+	void _initialise();
+};
+
+class VulkanRenderableData: public RenderableData
+{
+public:
+	VulkanRenderableData(VulkanRenderSystem* engine, Ogre::Renderable* r);
+	~VulkanRenderableData();
+
+	void update(VulkanFrame* frame);
+	void render(VulkanFrame* frame);
+
+	//VkPipelineLayout  getPipelineLayout();
+private:
+
+	void buildInitData();
+private:
+	VulkanRenderSystem* mEngine;
+	VkDevice mDevice;
+	std::vector<VulkanFrameRenderableData> _frameRenderableData;
+	
 
 	bool mUpdate = false;
 };

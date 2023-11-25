@@ -11,8 +11,13 @@
 #include "engine_struct.h"
 #include "VulkanHelper.h"
 #include "VulkanFrame.h"
+#include "vertex_data.h"
+#include "index_data.h"
+#include "vertex_declaration.h"
+#include "OgreHardwareIndexBuffer.h"
 
-VulkanRenderableData::VulkanRenderableData(VulkanRenderSystem* engine)
+VulkanRenderableData::VulkanRenderableData(VulkanRenderSystem* engine, Ogre::Renderable* r)
+    :RenderableData(r)
 {
 	mEngine = engine;
     mDevice = VulkanHelper::getSingleton()._getVkDevice();
@@ -24,58 +29,55 @@ VulkanRenderableData::~VulkanRenderableData()
 
 }
 
-
-void VulkanRenderableData::buildMaterial(Material* mat)
+void VulkanRenderableData::update(VulkanFrame* frame)
 {
+    auto mat = _r->getMaterial().get();
 
-}
+    if (!mat->isLoaded())
+    {
+        mat->load();
+    }
 
-void VulkanRenderableData::updateData(VulkanPass* pass)
-{
     auto cam = mEngine->_getCamera();
     const Ogre::Matrix4& view = cam->getViewMatrix();
     const Ogre::Matrix4& proj = cam->getProjectMatrix();
-    const Ogre::Matrix4& model = pass->mRenderable->getModelMatrix();
-    mObjectConstantBuffer.world = model.transpose();
-    mObjectConstantBuffer.projector = mObjectConstantBuffer.world.inverse();
-    mObjectConstantBuffer.worldViewProj = mObjectConstantBuffer.world * view * proj;
+    const Ogre::Matrix4& model = _r->getModelMatrix();
 
-    VulkanObjectPool::getSingleton().updateObject(
-        mObjectDesc, (const char*)&mObjectConstantBuffer, sizeof(mObjectConstantBuffer));
+    VulkanObjectPool& pool = frame->getObjectPool();
+    auto& current = _frameRenderableData[frame->getFrameIndex()];
+    current.mObjectConstantBuffer.world = model.transpose();
+    current.mObjectConstantBuffer.projector = current.mObjectConstantBuffer.world.inverse();
+    current.mObjectConstantBuffer.worldViewProj = current.mObjectConstantBuffer.world * view * proj;
 
-    RawData* rd = pass->mRenderable->getShaderConstantData(2);
+    pool.updateObject(
+        current.mObjectDesc, (const char*)&current.mObjectConstantBuffer, sizeof(current.mObjectConstantBuffer));
+
+    RawData* rd = _r->getShaderConstantData(2);
     if (rd)
     {
-        if (mSkinnedDesc._vkObjectIndex == 0)
+        if (current.mSkinnedDesc._vkObjectIndex == 0)
         {
-            mSkinnedDesc = VulkanObjectPool::getSingleton().allocObject(VulkanObject_SkinnedCB);
+            current.mSkinnedDesc = pool.allocObject(VulkanObject_SkinnedCB);
         }
-        VulkanObjectPool::getSingleton().updateObject(mSkinnedDesc, rd->mData, rd->mDataSize);
+        pool.updateObject(current.mSkinnedDesc, rd->mData, rd->mDataSize);
     }
 
-    if (pass->mMaterial->getTextureUnitCount())
+    if (mat->getTextureUnitCount())
     {
-        auto unit = pass->mMaterial->getTextureUnit(0);
-        mMaterialConstantBuffer.TexTransform =
+        auto unit = mat->getTextureUnit(0);
+        current.mMaterialConstantBuffer.TexTransform =
             unit->getTextureTransform().transpose();
     }
 
-    VulkanObjectPool::getSingleton().updateObject(
-        mMaterialDesc, (const char*)&mMaterialConstantBuffer, sizeof(mMaterialConstantBuffer));
-}
+    pool.updateObject(
+        current.mMaterialDesc, 
+        (const char*)&current.mMaterialConstantBuffer, 
+        sizeof(current.mMaterialConstantBuffer));
 
 
-void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
-{
-    updateData(pass);
+    
 
-    if (mUpdate)
-    {
-        return;
-    }
-    mUpdate = true;
-
-    auto texs = pass->mMaterial->getAllTexureUnit();
+    auto texs = mat->getAllTexureUnit();
 
     std::vector<VkDescriptorImageInfo> textureDescriptors;
 
@@ -83,7 +85,7 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
 
     textureDescriptors.reserve(VULKAN_TEXTURE_COUNT);
 
-    
+
     for (int32_t i = 0; i < texs.size(); i++)
     {
         if (texs[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
@@ -111,7 +113,7 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
     }
 
     int32_t start = textureDescriptors.size();
-    if (start< VULKAN_TEXTURE_COUNT)
+    if (start < VULKAN_TEXTURE_COUNT)
     {
         auto defaultTex = VulkanHelper::getSingleton().getDefaultTexture();
         VulkanTexture* tex = (VulkanTexture*)defaultTex.get();
@@ -124,17 +126,17 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
             textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         }
     }
-    
+
     VkDescriptorBufferInfo bufferDescriptor = {};
 
-    auto objectCBInfo = VulkanObjectPool::getSingleton().getObjectInfo(mObjectDesc);
+    auto objectCBInfo = pool.getObjectInfo(current.mObjectDesc);
 
     bufferDescriptor.buffer = objectCBInfo._vulkanBuffer;
     bufferDescriptor.offset = objectCBInfo._offset;
     bufferDescriptor.range = sizeof(ObjectConstantBuffer);
 
     VkDescriptorBufferInfo materialDescriptor = {};
-    auto materialInfo = VulkanObjectPool::getSingleton().getObjectInfo(mMaterialDesc);
+    auto materialInfo = pool.getObjectInfo(current.mMaterialDesc);
     materialDescriptor.buffer = materialInfo._vulkanBuffer;
     materialDescriptor.offset = materialInfo._offset;
     materialDescriptor.range = sizeof(MaterialConstantBuffer);
@@ -146,41 +148,41 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
     frameDescriptor.offset = 0;
     frameDescriptor.range = VK_WHOLE_SIZE;
 
-    
-    
+
+
 
     std::vector<VkWriteDescriptorSet> writeDescriptorSets =
     {
         // Binding 0 : Vertex shader uniform buffer
         vks::initializers::writeDescriptorSet(
-            mDescriptorSet,
+            current.mDescriptorSet,
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             0,
             &bufferDescriptor),
         // Binding 1 : Vertex shader uniform buffer
         vks::initializers::writeDescriptorSet(
-            mDescriptorSet,
+            current.mDescriptorSet,
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             1,
             &frameDescriptor),
         //Bind 2:
         vks::initializers::writeDescriptorSet(
-            mDescriptorSet,
+            current.mDescriptorSet,
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             2,
             &materialDescriptor),
         // Binding 4 : Fragment shader texture sampler
         vks::initializers::writeDescriptorSet(
-            mDescriptorSet,
-            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,		 
-            4,												
+            current.mDescriptorSet,
+            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            4,
             textureDescriptors.data(),
             std::min((uint32_t)VULKAN_TEXTURE_COUNT, (uint32_t)textureDescriptors.size()))
     };
 
-    if (mSkinnedDesc._vkObjectIndex > 0)
+    if (current.mSkinnedDesc._vkObjectIndex > 0)
     {
-        auto skinnedInfo = VulkanObjectPool::getSingleton().getObjectInfo(mSkinnedDesc);
+        auto skinnedInfo = pool.getObjectInfo(current.mSkinnedDesc);
         VkDescriptorBufferInfo skinDescriptor = {};
         skinDescriptor.buffer = skinnedInfo._vulkanBuffer;
         skinDescriptor.offset = skinnedInfo._offset;
@@ -188,7 +190,7 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
 
         // Binding 5 : Vertex shader uniform buffer
         writeDescriptorSets.push_back(vks::initializers::writeDescriptorSet(
-            mDescriptorSet,
+            current.mDescriptorSet,
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             5,
             &skinDescriptor));
@@ -197,7 +199,7 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
     if (!textureDescriptors3d.empty())
     {
         writeDescriptorSets.push_back(vks::initializers::writeDescriptorSet(
-            mDescriptorSet,
+            current.mDescriptorSet,
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             3,
             textureDescriptors3d.data(),
@@ -205,28 +207,65 @@ void VulkanRenderableData::updateDescriptorSet(VulkanPass* pass)
     }
 
     vkUpdateDescriptorSets(
-        mDevice, 
-        static_cast<uint32_t>(writeDescriptorSets.size()), 
+        mDevice,
+        static_cast<uint32_t>(writeDescriptorSets.size()),
         writeDescriptorSets.data(), 0, nullptr);
 }
 
-
-VkDescriptorSet VulkanRenderableData::getDescriptorSet()
+void VulkanRenderableData::render(VulkanFrame* frame)
 {
-    return mDescriptorSet;
+    VkCommandBuffer pCommandBuffer = frame->getVkCommandBuffer();
+
+    auto mat = _r->getMaterial().get();
+
+    const std::shared_ptr<Shader>& shader = mat->getShader();
+
+    VulkanShader* vShader = (VulkanShader*)shader.get();
+    //bind pipeline
+    VkPipeline pipeline = vShader->getVKPipeline(_r);
+
+    vkCmdBindPipeline(pCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    //draw object
+
+    VertexData* vertexData = _r->getVertexData();
+    IndexData* indexData = _r->getIndexData();
+    vertexData->bind();
+    VulkanFrameRenderableData& current = _frameRenderableData[frame->getFrameIndex()];
+    
+    auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout();
+    vkCmdBindDescriptorSets(
+        frame->getVkCommandBuffer(),
+        VK_PIPELINE_BIND_POINT_GRAPHICS,
+        pipelineLayout, 0, 1, &current.mDescriptorSet, 0, NULL);
+
+    if (indexData)
+    {
+        indexData->getIndexBuffer()->bind();
+        IndexDataView* view = _r->getIndexView();
+        vkCmdDrawIndexed(pCommandBuffer, view->mIndexCount, 1,
+            view->mIndexLocation, view->mBaseVertexLocation, 0);
+
+        mEngine->incrTriangleCount(view->mIndexCount / 3);
+    }
+    else
+    {
+        vkCmdDraw(pCommandBuffer, vertexData->vertexCount, 1, 0, 0);
+        mEngine->incrTriangleCount(vertexData->vertexCount / 3);
+    }
+
+    mEngine->incrBatchCount(1);
 }
 
-VkPipelineLayout  VulkanRenderableData::getPipelineLayout()
-{
-    return VulkanHelper::getSingleton()._getPipelineLayout();
-}
+
+
+
+//VkPipelineLayout  VulkanRenderableData::getPipelineLayout()
+//{
+//    return VulkanHelper::getSingleton()._getPipelineLayout();
+//}
 
 void VulkanRenderableData::buildInitData()
 {
-    mObjectDesc = VulkanObjectPool::getSingleton().allocObject(VulkanObject_ObjectCB);
-    mMaterialDesc = VulkanObjectPool::getSingleton().allocObject(VulkanObject_MaterialCB);
-    mSkinnedDesc._vkObjectType = VulkanObject_SkinnedCB;
-
     auto descriptorPool = VulkanHelper::getSingleton()._getDescriptorPool();
     auto descriptorSetLayout = VulkanHelper::getSingleton()._getDescriptorSetLayout();
 
@@ -236,9 +275,30 @@ void VulkanRenderableData::buildInitData()
             &descriptorSetLayout,
             1);
 
-    if (vkAllocateDescriptorSets(mDevice, &allocInfo, &mDescriptorSet) != VK_SUCCESS)
+    _frameRenderableData.resize(VULKAN_FRAME_RESOURCE_COUNT);
+
+    for (uint32_t i = 0; i < VULKAN_FRAME_RESOURCE_COUNT; i++)
     {
-        throw std::runtime_error("failed to allocate descriptor set!");
+        VulkanFrameRenderableData& current = _frameRenderableData[i];
+
+        VulkanFrame* frame = VulkanHelper::getSingleton()._getFrame(i);
+
+        VulkanObjectPool& pool = frame->getObjectPool();
+        current.mObjectDesc = pool.allocObject(VulkanObject_ObjectCB);
+        current.mMaterialDesc = pool.allocObject(VulkanObject_MaterialCB);
+        current.mSkinnedDesc._vkObjectType = VulkanObject_SkinnedCB;
+
+        auto result = vkAllocateDescriptorSets(mDevice, &allocInfo, &current.mDescriptorSet);
+        if(result != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to allocate descriptor set!");
+        }
+        
     }
+    
+
+    
+
+    
 }
 

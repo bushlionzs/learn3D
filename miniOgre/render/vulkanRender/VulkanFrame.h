@@ -2,9 +2,10 @@
 #include "VulkanCommon.h"
 #include "VulkanUploadbuffer.h"
 #include "shader.h"
+#include "renderHelper.h"
+#include "VulkanObjectPool.h"
 
-
-class VulkanFrame
+class VulkanFrame: public RenderFrame
 {
 public:
 	VulkanFrame(uint32_t index);
@@ -34,6 +35,11 @@ public:
 	{
 		return mRenderFinishedSemaphore;
 	}
+
+	VulkanObjectPool& getObjectPool()
+	{
+		return _vulkanObjectPool;
+	}
 private:
 	uint32_t mFrameIndex;
 	VkCommandBuffer mPrimaryCommandBuffer;
@@ -42,4 +48,6 @@ private:
 	
 	VkFence mFlightFence;
 	VkSemaphore mRenderFinishedSemaphore;
+
+	VulkanObjectPool _vulkanObjectPool;
 };

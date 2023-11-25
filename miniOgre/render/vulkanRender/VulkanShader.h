@@ -16,7 +16,7 @@ public:
     bool load();
     void updateInputDesc(VertexDeclaration* vDeclaration);
 
-    VkPipeline getVKPipeline(VulkanPass* pass);
+    VkPipeline getVKPipeline(Ogre::Renderable* r);
 
     VkShaderModule getVertexModule()
     {
@@ -27,9 +27,7 @@ public:
     {
         return mFragShader;
     }
-
 private:
-    void createGraphicsPipeline(VulkanPass* pass);
     std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions(VertexDeclaration* vd);
     VkShaderModule createShaderModule(const std::string& code);
 private:
