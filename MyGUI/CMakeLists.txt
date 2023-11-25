@@ -54,7 +54,7 @@ target_include_directories(${MYGUI_LIB_NAME}
 	${MINIOGRE_INC}
 	${GAMEUTIL_INC}
 	${ROOT_INC}/3rd
-	${ROOT_INC}/3rd/OIS/include
+	${ROOT_INC}/3rdSource/OIS/includes
 )
 
 

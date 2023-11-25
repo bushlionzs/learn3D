@@ -61,9 +61,9 @@ target_include_directories(${MINIOGRE_LIB_NAME}
     ${MINIOGRE_INC}
 	${GAMEUTIL_INC}
 	${ROOT_INC}/3rd
+	${ROOT_INC}/3rdSource/OIS/includes
 	${ROOT_INC}/GameUtil
 	${ROOT_INC}/GlslUtil
-	${ROOT_INC}/3rd/OIS/include
 	${ROOT_INC}/3rd/bullet3/include
 	${ROOT_INC}/3rd/ffmpeg/include
 	${ROOT_INC}/3rd/stormlib

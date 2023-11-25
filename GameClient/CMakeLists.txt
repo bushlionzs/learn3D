@@ -66,12 +66,8 @@ target_include_directories(${PROJECT_NAME}
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre MyGUI Middle GameServer 
-GameShare GameServer stormlib mariadbclient LuaPlus5.1 OIS_d
+GameShare GameServer stormlib mariadbclient luaplus OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
-LinearMath_Debug
-BulletCollision_Debug
-BulletDynamics_Debug
-BulletSoftBody_Debug
 vulkan-1
 avcodec
 avdevice

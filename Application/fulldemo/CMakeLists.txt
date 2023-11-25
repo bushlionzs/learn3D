@@ -59,17 +59,13 @@ target_include_directories(${PROJECT_NAME}
 	${MIDDLE_INC}
 	${MINIOGRE_INC}
 	${MYGUI_INC}
-	${ROOT_INC}/3rd/OIS/include
 )
 
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
-set( MyFavLib_LIBRARIES 
-    debug OIS_d.lib optimized OIS.lib)
-	
+
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
-MyGUI Middle GameServer GameShare stormlib LinearMath BulletCollision BulletDynamics BulletSoftBody
-${MyFavLib_LIBRARIES}  
+MyGUI Middle GameServer GameShare stormlib luaplus ois LinearMath BulletCollision BulletDynamics BulletSoftBody  
 tinyxmld
 vulkan-1
 avcodec

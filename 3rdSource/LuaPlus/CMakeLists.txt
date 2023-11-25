@@ -7,6 +7,7 @@ if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D__WINDOWS__)
+add_definitions(-DLUA_OPNAMES)
 endif()
 
 
@@ -37,11 +38,14 @@ macro(add_subdir)
 endmacro()
 
 
-add_subdir(.)
 add_subdir(src)
+list(REMOVE_ITEM LUAPLUS_SRC_LIST "${CMAKE_CURRENT_SOURCE_DIR}/src/luac.c")
+list(REMOVE_ITEM LUAPLUS_SRC_LIST "${CMAKE_CURRENT_SOURCE_DIR}/src/lua.c")
+list(APPEND LUAPLUS_SRC_LIST LuaCall.cpp LuaObject.cpp LuaPlus.cpp LuaPlus_Libs.cpp LuaPlusAddons.c 
+     LuaPlusFunctions.cpp LuaStackObject.cpp LuaStackTableIterator.cpp LuaState.cpp LuaState_DumpObject.cpp
+	 LuaStateOutFile.cpp LuaTableIterator.cpp lwstrlib.c popen.c)
 
-
-
+message(${LUAPLUS_SRC_LIST})
 
 add_library(${LUAPLUS_LIB_NAME} STATIC ${LUAPLUS_SRC_LIST})
 

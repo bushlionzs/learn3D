@@ -1,0 +1,20 @@
+version: 1.5.1.{build}
+image:
+- Visual Studio 2019
+- Visual Studio 2017
+- Visual Studio 2015
+- Visual Studio 2013
+configuration:
+- Debug
+- Release
+#platform:
+#- Win32
+#- x64
+environment:
+  matrix:
+  - OIS_BUILD_SHARED_LIBS: 0
+  - OIS_BUILD_SHARED_LIBS: 1
+before_build:
+- cmd: cmake -H. -B./build -DOIS_BUILD_SHARED_LIBS=%OIS_BUILD_SHARED_LIBS%
+build:
+  verbosity: normal
