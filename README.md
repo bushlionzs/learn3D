@@ -29,6 +29,7 @@ run fulldemo.exe
 If everything goes smoothly, you will see the following picture.
 
 If there is a prompt indicating that vulkan-1.dll is missing, please Update the graphics card driver.
+![screenshot](https://github.com/bushlionzs/learn3D/blob/main/resources/screenshot/fulldemo.jpg)
 
 # how to compile in windows(only 64bit supported)
 
