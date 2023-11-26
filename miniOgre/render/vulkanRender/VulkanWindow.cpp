@@ -213,7 +213,7 @@ void VulkanWindow::swapBuffers()
 
     auto device = VulkanHelper::getSingleton()._getVkDevice();
 
-    vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+    //vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
 
     
     
