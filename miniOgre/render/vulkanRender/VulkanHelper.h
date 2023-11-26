@@ -71,7 +71,10 @@ public:
     void _endCommandBuffer(uint32_t frame_index);
     VkCommandBuffer getMainCommandBuffer(uint32_t frame_index);
     VkCommandBuffer _getThreadCommandBuffer(uint32_t tdx, uint32_t frame_index);
-    void fillCommandBufferList(std::vector<VkCommandBuffer>& cmdlist, uint32_t frame_index);
+    void fillCommandBufferList(
+        std::vector<VkCommandBuffer>& cmdlist, 
+        uint32_t frame_index,
+        bool have_main = true);
     VulkanFrame* _getFrame(uint32_t index);
     VkDescriptorPool _getDescriptorPool();
     VkDescriptorSetLayout _getDescriptorSetLayout();
@@ -142,7 +145,7 @@ private:
     VkPipelineCache mPipelineCache;
     VkQueue mGraphicsQueue;
 
-    VkCommandPool mCommandPool;
+    VkCommandPool mCommandPool[VULKAN_FRAME_RESOURCE_COUNT];
 
     VkCommandBuffer mMainCommandBuffer[VULKAN_FRAME_RESOURCE_COUNT];
     std::vector<CommandHelper> mCommandPools;

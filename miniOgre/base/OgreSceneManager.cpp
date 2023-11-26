@@ -92,18 +92,24 @@ namespace Ogre {
             );
 
             int kk = 0;
-            for (auto r : mEngineRenderList.mOpaqueList)
-            {
-                /*kk++;
-                if (kk > 1000)
-                    break;*/
-                mRenderSystem->render(r, RenderListType_Opaque);
-            }
+            //for (auto r : mEngineRenderList.mOpaqueList)
+            //{
+            //    /*kk++;
+            //    if (kk > 1000)
+            //        break;*/
+            //    mRenderSystem->render(r, RenderListType_Opaque);
+            //}
 
-            for (auto r : mEngineRenderList.mTransparentList)
+            if(!mEngineRenderList.mOpaqueList.empty())
+                mRenderSystem->multiRender(mEngineRenderList.mOpaqueList);
+
+            if (!mEngineRenderList.mTransparentList.empty())
+                mRenderSystem->multiRender(mEngineRenderList.mTransparentList);
+
+            /*for (auto r : mEngineRenderList.mTransparentList)
             {
                 mRenderSystem->render(r, RenderListType_Transparent);
-            }
+            }*/
         }
     }
 

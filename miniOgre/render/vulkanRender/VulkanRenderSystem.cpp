@@ -143,23 +143,25 @@ void VulkanRenderSystem::clearFrameBuffer(uint32 buffers,
     const ColourValue& colour,
     float depth, uint16 stencil)
 {
+    auto frame_index = mCurrentVulkanFrame->getFrameIndex();
     VkCommandBuffer pCommandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(
-        mCurrentVulkanFrame->getFrameIndex());
+        frame_index);
     VkClearValue clearValues[2];
     memcpy(clearValues[0].color.float32, colour.ptr(), sizeof(ColourValue));
     clearValues[1].depthStencil = { 1.0f, 0 };
 
     auto renderPass = VulkanHelper::getSingleton()._getRenderPass();
 
+    auto width = mActiveVulkanRenderTarget->getTargetWidth();
+    auto height = mActiveVulkanRenderTarget->getTargetHeight();
+
     VkRenderPassBeginInfo renderPassBeginInfo = 
         vks::initializers::renderPassBeginInfo();
     renderPassBeginInfo.renderPass = renderPass;
     renderPassBeginInfo.renderArea.offset.x = 0;
     renderPassBeginInfo.renderArea.offset.y = 0;
-    renderPassBeginInfo.renderArea.extent.width = 
-        mActiveVulkanRenderTarget->getTargetWidth();
-    renderPassBeginInfo.renderArea.extent.height = 
-        mActiveVulkanRenderTarget->getTargetHeight();
+    renderPassBeginInfo.renderArea.extent.width = width;
+    renderPassBeginInfo.renderArea.extent.height = height;
     renderPassBeginInfo.clearValueCount = 2;
     renderPassBeginInfo.pClearValues = clearValues;
 
@@ -169,8 +171,34 @@ void VulkanRenderSystem::clearFrameBuffer(uint32 buffers,
         
 
     vkCmdBeginRenderPass(pCommandBuffer, &renderPassBeginInfo,
-        VK_SUBPASS_CONTENTS_INLINE);
+        VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 
+    VkCommandBufferInheritanceInfo inheritanceInfo = vks::initializers::commandBufferInheritanceInfo();
+    inheritanceInfo.renderPass = renderPass;
+    // Secondary command buffer also use the currently active framebuffer
+    inheritanceInfo.framebuffer = framebuffer;
+
+    
+
+    VkCommandBufferBeginInfo commandBufferBeginInfo = vks::initializers::commandBufferBeginInfo();
+    commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+    commandBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
+    VkViewport viewport = vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
+    VkRect2D scissor = vks::initializers::rect2D(width, height, 0, 0);
+
+
+    static std::vector<VkCommandBuffer>  cmdlist;
+    VulkanHelper::getSingleton().fillCommandBufferList(cmdlist, frame_index, false);
+
+    for (auto commandBuffer : cmdlist)
+    {
+        VK_CHECK_RESULT(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo));
+
+        vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+        vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+    }
+
+    
 }
 
 Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
@@ -203,7 +231,7 @@ void VulkanRenderSystem::render(Renderable* r, RenderListType t)
 
 using fn_on_got_tracker_info = std::function<void(uint32_t)>;
 
-struct ParallelTaskSet : enki::ITaskSet
+struct ParallelTaskSet : public enki::IPinnedTask
 {
     void update(int32_t start, int32_t end, VulkanFrame* frame, std::vector<Ogre::Renderable*>* objs)
     {
@@ -212,8 +240,13 @@ struct ParallelTaskSet : enki::ITaskSet
         _frame = frame;
         _objs = objs;
     }
-    void ExecuteRange(enki::TaskSetPartition range_, uint32_t tdx) override
+    ParallelTaskSet(uint32_t tdx):IPinnedTask(tdx)
     {
+
+    }
+    virtual void Execute() 
+    { 
+        auto tdx = threadNum;
         std::vector<Ogre::Renderable*>& objs = *_objs;
         for (int32_t i = _start; i < _end; i++)
         {
@@ -233,6 +266,11 @@ struct ParallelTaskSet : enki::ITaskSet
 
 void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
 {
+    for (auto r : objs)
+    {
+        VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
+        rd->update(mCurrentVulkanFrame, nullptr);
+    }
     uint32_t size = (uint32_t)objs.size();
 
     uint32_t every = size / VULKAN_COMMAND_THREAD;
@@ -251,7 +289,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
         tasklist.resize(VULKAN_COMMAND_THREAD);
         for (int32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
         {
-            tasklist[i] = new ParallelTaskSet;
+            tasklist[i] = new ParallelTaskSet(i);
         }
     }
 
@@ -259,11 +297,20 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
     for (int32_t i = 0; i < VULKAN_COMMAND_THREAD - 1; i++)
     {
         end = start + every;
-        ParallelTaskSet* task = tasklist[i];
-        task->update(start, end, mCurrentVulkanFrame, &objs);
-        mTaskScheduler.AddTaskSetToPipe(task);
+        if (end > start)
+        {
+            ParallelTaskSet* task = tasklist[i];
+            task->update(start, end, mCurrentVulkanFrame, &objs);
+            mTaskScheduler.AddPinnedTask(task);
+        }
+        
         start = end;
     }
+
+    ParallelTaskSet* task = tasklist[VULKAN_COMMAND_THREAD - 1];
+    end = start + every + left;
+    task->update(start, end, mCurrentVulkanFrame, &objs);
+    mTaskScheduler.AddPinnedTask(task);
 
     mTaskScheduler.WaitforAll();
 }

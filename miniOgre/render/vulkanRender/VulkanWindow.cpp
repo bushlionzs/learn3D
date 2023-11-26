@@ -180,8 +180,8 @@ void VulkanWindow::swapBuffers()
 {
     auto currentFrame = VulkanHelper::getSingleton()._getRenderSystem()->_getCurrentFrame();
     
-
-    VulkanHelper::getSingleton()._endCommandBuffer(currentFrame->getFrameIndex());
+    auto frame_index = currentFrame->getFrameIndex();
+    VulkanHelper::getSingleton()._endCommandBuffer(frame_index);
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -194,9 +194,9 @@ void VulkanWindow::swapBuffers()
     submitInfo.pWaitSemaphores = &mImageAvailableSemaphore;
 
     static std::vector<VkCommandBuffer>  cmdlist;
-    VulkanHelper::getSingleton().fillCommandBufferList(cmdlist, currentFrame->getFrameIndex());
+    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frame_index);
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = cmdlist.data();
+    submitInfo.pCommandBuffers = &commandBuffer;
 
     auto renderFinshedSemaphore = currentFrame->getFinishedSemaphore();
     submitInfo.signalSemaphoreCount = 1;
@@ -213,7 +213,7 @@ void VulkanWindow::swapBuffers()
 
     auto device = VulkanHelper::getSingleton()._getVkDevice();
 
-    //vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+    vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
 
     
     
