@@ -153,7 +153,7 @@ namespace Ogre {
 
         virtual void* lockimpl(size_t offset, size_t length, LockOptions options);
         virtual void unlock();
-        virtual void bind(int32_t slot);
+        virtual void bind(int32_t slot, void* cb);
 
         int32_t getNumVerts()
         {

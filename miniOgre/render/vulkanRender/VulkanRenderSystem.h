@@ -2,6 +2,7 @@
 #include "renderSystem.h"
 #include "VulkanTexture.h"
 #include "VulkanUploadbuffer.h"
+#include "enkiTS/TaskScheduler.h"
 
 class VulkanGraphicsCommandList;
 class VulkanFrame;
@@ -18,7 +19,9 @@ public:
     virtual void frameStart();
     virtual void frameEnd();
     virtual void preRender(Ogre::Camera* cam);
+    virtual void update(Renderable* r);
     virtual void render(Renderable* r, RenderListType t);
+    virtual void multiRender(std::vector<Ogre::Renderable*>& objs);
     virtual void postRender();
 
 
@@ -58,4 +61,6 @@ private:
     VulkanWindow* mRenderWindow;
 
     VulkanRenderTarget* mActiveVulkanRenderTarget;
+
+    enki::TaskScheduler mTaskScheduler;
 };

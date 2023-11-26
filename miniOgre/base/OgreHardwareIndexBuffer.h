@@ -18,7 +18,7 @@ public:
     virtual void* lockimpl(size_t offset, size_t length, LockOptions options);
     virtual void unlock();
 
-    virtual void bind();
+    virtual void bind(void* cb);
 
     uint32_t getIndexSize();
 

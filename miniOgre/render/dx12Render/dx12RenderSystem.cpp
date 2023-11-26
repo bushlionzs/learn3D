@@ -338,9 +338,9 @@ void Dx12RenderSystem::renderImpl(Dx12Pass* pass)
 
 	//draw object
 
-	vertexData->bind();
+	vertexData->bind(commandlist);
 	if(indexData)
-		indexData->getIndexBuffer()->bind();
+		indexData->getIndexBuffer()->bind(commandlist);
 
 	commandlist->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

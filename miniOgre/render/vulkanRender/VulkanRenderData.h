@@ -16,6 +16,7 @@ public:
 	ObjectConstantBuffer mObjectConstantBuffer;
 	MaterialConstantBuffer mMaterialConstantBuffer;
 	VkDescriptorSet mDescriptorSet;
+	bool mDescriptorSetUpdate = false;
 
 public:
 	void _initialise();
@@ -27,8 +28,8 @@ public:
 	VulkanRenderableData(VulkanRenderSystem* engine, Ogre::Renderable* r);
 	~VulkanRenderableData();
 
-	void update(VulkanFrame* frame);
-	void render(VulkanFrame* frame);
+	void update(VulkanFrame* frame, VkCommandBuffer cb);
+	void render(VulkanFrame* frame, VkCommandBuffer cb);
 
 	//VkPipelineLayout  getPipelineLayout();
 private:

@@ -7,6 +7,7 @@
 
 #define VULKAN_FRAME_RESOURCE_COUNT 3
 #define VULKAN_TEXTURE_COUNT 4
+#define VULKAN_COMMAND_THREAD 4
 
 struct SwapChainBuffer
 {
@@ -17,6 +18,11 @@ struct SwapChainBuffer
 class VulkanRenderSystem;
 class VulkanFrame;
 
+struct CommandHelper
+{
+    VkCommandPool _commandPool;
+    VkCommandBuffer _commandBuffer;
+};
 class VulkanHelper : public Ogre::Singleton<VulkanHelper>
 {
 public:
@@ -61,7 +67,11 @@ public:
     VkRenderPass _getRenderPass();
     VkPhysicalDevice _getPhysicalDevice();
     VkPipelineLayout _getPipelineLayout();
-    VkCommandBuffer _getCurrentCommandBuffer();
+    void _resetCommandBuffer(uint32_t frame_index);
+    void _endCommandBuffer(uint32_t frame_index);
+    VkCommandBuffer getMainCommandBuffer(uint32_t frame_index);
+    VkCommandBuffer _getThreadCommandBuffer(uint32_t tdx, uint32_t frame_index);
+    void fillCommandBufferList(std::vector<VkCommandBuffer>& cmdlist, uint32_t frame_index);
     VulkanFrame* _getFrame(uint32_t index);
     VkDescriptorPool _getDescriptorPool();
     VkDescriptorSetLayout _getDescriptorSetLayout();
@@ -133,6 +143,10 @@ private:
     VkQueue mGraphicsQueue;
 
     VkCommandPool mCommandPool;
+
+    VkCommandBuffer mMainCommandBuffer[VULKAN_FRAME_RESOURCE_COUNT];
+    std::vector<CommandHelper> mCommandPools;
+
     VkRenderPass mRenderPass;
     VkFormat mSwapChainImageFormat;
     VkColorSpaceKHR mColorSpace;

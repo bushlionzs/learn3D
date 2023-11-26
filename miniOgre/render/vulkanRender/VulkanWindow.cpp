@@ -179,12 +179,9 @@ void VulkanWindow::setupDepthStencil()
 void VulkanWindow::swapBuffers()
 {
     auto currentFrame = VulkanHelper::getSingleton()._getRenderSystem()->_getCurrentFrame();
-    VkCommandBuffer pCommandBuffer = currentFrame->getVkCommandBuffer();
-    vkCmdEndRenderPass(pCommandBuffer);
-    if (vkEndCommandBuffer(pCommandBuffer) != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkBeginCommandBuffer!");
-    }
+    
+
+    VulkanHelper::getSingleton()._endCommandBuffer(currentFrame->getFrameIndex());
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -196,8 +193,10 @@ void VulkanWindow::swapBuffers()
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = &mImageAvailableSemaphore;
 
+    static std::vector<VkCommandBuffer>  cmdlist;
+    VulkanHelper::getSingleton().fillCommandBufferList(cmdlist, currentFrame->getFrameIndex());
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &pCommandBuffer;
+    submitInfo.pCommandBuffers = cmdlist.data();
 
     auto renderFinshedSemaphore = currentFrame->getFinishedSemaphore();
     submitInfo.signalSemaphoreCount = 1;

@@ -36,7 +36,7 @@ bool VulkanRenderTexture::requiresTextureFlipping() const
 void VulkanRenderTexture::preRender(VkCommandBuffer commandBuffer)
 {
 	auto currentFrame = VulkanHelper::getSingleton()._getRenderSystem()->_getCurrentFrame();
-	VkCommandBuffer pCommandBuffer = currentFrame->getVkCommandBuffer();
+	VkCommandBuffer pCommandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(currentFrame->getFrameIndex());
 	VkViewport viewport = vks::initializers::viewport((float)mWidth, (float)mHeight, 0.0f, 1.0f);
 
 	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
@@ -61,7 +61,7 @@ void VulkanRenderTexture::preRender(VkCommandBuffer commandBuffer)
 void VulkanRenderTexture::swapBuffers()
 {
 	auto currentFrame = VulkanHelper::getSingleton()._getRenderSystem()->_getCurrentFrame();
-	VkCommandBuffer pCommandBuffer = currentFrame->getVkCommandBuffer();
+	VkCommandBuffer pCommandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(currentFrame->getFrameIndex());
 	vkCmdEndRenderPass(pCommandBuffer);
 
 	VkImageSubresourceRange subresourceRange = {};

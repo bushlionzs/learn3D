@@ -18,7 +18,7 @@ public:
     virtual void* lockimpl(size_t offset, size_t length, LockOptions options);
     virtual void unlock();
 
-    virtual void bind(int32_t slot) const;
+    virtual void bind(int32_t slot, void* cb) const override;
 private:
     VulkanRenderSystem* mEngine;
 

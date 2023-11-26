@@ -34,10 +34,6 @@ VulkanFrame::~VulkanFrame()
 
 }
 
-VkCommandBuffer VulkanFrame::getVkCommandBuffer()
-{
-	return mPrimaryCommandBuffer;
-}
 
 void VulkanFrame::updateFrameConstantBuffer(
     const FrameConstantBuffer& data,
@@ -51,7 +47,3 @@ uint32_t& VulkanFrame::getFrameIndex()
     return mFrameIndex;
 }
 
-void VulkanFrame::updateFrameBuffer(VkCommandBuffer cb)
-{
-    mPrimaryCommandBuffer = cb;
-}

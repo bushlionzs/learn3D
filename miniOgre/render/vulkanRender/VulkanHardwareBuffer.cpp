@@ -62,19 +62,16 @@ void VulkanHardwareBuffer::unlock()
     vkUnmapMemory(device, mVertexBufferMemory);
 }
 
-void VulkanHardwareBuffer::bind(int32_t slot) const
+void VulkanHardwareBuffer::bind(int32_t slot, void* cb) const
 {
-    VkCommandBuffer pVkCommandBuffer = 
-        VulkanHelper::getSingleton()._getCurrentCommandBuffer();
-
-
+    VkCommandBuffer commandbuffer = (VkCommandBuffer)cb;
     if (mBufferType == VERTEX_BUFFER)
     {
         VkDeviceSize offsets[1] = { 0 };
-        vkCmdBindVertexBuffers(pVkCommandBuffer, slot, 1, &mVkBuffer, offsets);
+        vkCmdBindVertexBuffers(commandbuffer, slot, 1, &mVkBuffer, offsets);
     }
     else
     {
-        vkCmdBindIndexBuffer(pVkCommandBuffer, mVkBuffer, 0, mVkIndexType);
+        vkCmdBindIndexBuffer(commandbuffer, mVkBuffer, 0, mVkIndexType);
     }
 }

@@ -29,7 +29,7 @@ VulkanRenderableData::~VulkanRenderableData()
 
 }
 
-void VulkanRenderableData::update(VulkanFrame* frame)
+void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
 {
     auto mat = _r->getMaterial().get();
 
@@ -74,8 +74,11 @@ void VulkanRenderableData::update(VulkanFrame* frame)
         (const char*)&current.mMaterialConstantBuffer, 
         sizeof(current.mMaterialConstantBuffer));
 
-
-    
+    if (current.mDescriptorSetUpdate)
+    {
+        return;
+    }
+    current.mDescriptorSetUpdate = true;
 
     auto texs = mat->getAllTexureUnit();
 
@@ -212,10 +215,8 @@ void VulkanRenderableData::update(VulkanFrame* frame)
         writeDescriptorSets.data(), 0, nullptr);
 }
 
-void VulkanRenderableData::render(VulkanFrame* frame)
+void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
 {
-    VkCommandBuffer pCommandBuffer = frame->getVkCommandBuffer();
-
     auto mat = _r->getMaterial().get();
 
     const std::shared_ptr<Shader>& shader = mat->getShader();
@@ -224,32 +225,32 @@ void VulkanRenderableData::render(VulkanFrame* frame)
     //bind pipeline
     VkPipeline pipeline = vShader->getVKPipeline(_r);
 
-    vkCmdBindPipeline(pCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
     //draw object
 
     VertexData* vertexData = _r->getVertexData();
     IndexData* indexData = _r->getIndexData();
-    vertexData->bind();
+    vertexData->bind(cb);
     VulkanFrameRenderableData& current = _frameRenderableData[frame->getFrameIndex()];
     
     auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout();
     vkCmdBindDescriptorSets(
-        frame->getVkCommandBuffer(),
+        cb,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
         pipelineLayout, 0, 1, &current.mDescriptorSet, 0, NULL);
 
     if (indexData)
     {
-        indexData->getIndexBuffer()->bind();
+        indexData->getIndexBuffer()->bind(cb);
         IndexDataView* view = _r->getIndexView();
-        vkCmdDrawIndexed(pCommandBuffer, view->mIndexCount, 1,
+        vkCmdDrawIndexed(cb, view->mIndexCount, 1,
             view->mIndexLocation, view->mBaseVertexLocation, 0);
 
         mEngine->incrTriangleCount(view->mIndexCount / 3);
     }
     else
     {
-        vkCmdDraw(pCommandBuffer, vertexData->vertexCount, 1, 0, 0);
+        vkCmdDraw(cb, vertexData->vertexCount, 1, 0, 0);
         mEngine->incrTriangleCount(vertexData->vertexCount / 3);
     }
 

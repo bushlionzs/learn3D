@@ -90,11 +90,11 @@ void VertexData::buildHardBuffer()
 }
 
 
-void VertexData::bind()
+void VertexData::bind(void* cb)
 {
     for (auto& slot : vertexSlotInfo)
     {
-        slot.hardwareVertexBuffer->bind(slot.mSlot);
+        slot.hardwareVertexBuffer->bind(slot.mSlot, cb);
     }
 }
 

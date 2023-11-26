@@ -23,9 +23,9 @@ void HardwareIndexBuffer::unlock()
     mDelegate->unlock();
 }
 
-void HardwareIndexBuffer::bind()
+void HardwareIndexBuffer::bind(void* cb)
 {
-    mDelegate->bind(0);
+    mDelegate->bind(0, cb);
 }
 
 uint32_t HardwareIndexBuffer::getIndexSize()

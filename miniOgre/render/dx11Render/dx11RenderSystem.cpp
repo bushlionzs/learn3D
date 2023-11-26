@@ -249,11 +249,11 @@ void Dx11RenderSystem::renderImpl(Dx11Pass& pass)
 	mDx11Context->IASetInputLayout(pass._shader->getLayoutEx());
 	mDx11Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	vertexData->bind();
+	vertexData->bind(nullptr);
 
 	if (indexData)
 	{
-		indexData->mIndexBuffer->bind();
+		indexData->mIndexBuffer->bind(nullptr);
 		IndexDataView* view = pass._render->getIndexView();
 		mDx11Context->DrawIndexedInstanced(
 			view->mIndexCount,

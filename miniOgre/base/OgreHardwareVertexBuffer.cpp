@@ -103,8 +103,8 @@ namespace Ogre {
         mDelegate->unlock();
     }
 
-    void HardwareVertexBuffer::bind(int32_t slot)
+    void HardwareVertexBuffer::bind(int32_t slot, void* cb)
     {
-        mDelegate->bind(slot);
+        mDelegate->bind(slot, cb);
     }
 }

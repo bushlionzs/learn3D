@@ -458,10 +458,41 @@ void VulkanHelper::createCommandPool()
     cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     cmdPoolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
     cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    
+
+    mCommandPools.resize(VULKAN_COMMAND_THREAD);
+
+    for (uint32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
+    {
+        if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &mCommandPools[i]._commandPool) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to create command pool!");
+        }
+        
+        VkCommandBufferAllocateInfo cmdBufAllocateInfo =
+            vks::initializers::commandBufferAllocateInfo(
+                mCommandPools[i]._commandPool,
+                VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+                1);
+        vkAllocateCommandBuffers(mVKDevice, &cmdBufAllocateInfo, &mCommandPools[i]._commandBuffer);
+    }
+
+
     if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &mCommandPool) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create command pool!");
     }
+
+    VkCommandBufferAllocateInfo cmdBufAllocateInfo =
+        vks::initializers::commandBufferAllocateInfo(
+            mCommandPool,
+            VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            1);
+    for (int32_t i = 0; i < VULKAN_FRAME_RESOURCE_COUNT; i++)
+    {
+        vkAllocateCommandBuffers(mVKDevice, &cmdBufAllocateInfo, &mMainCommandBuffer[i]);
+    }
+    
 }
 
 void VulkanHelper::createDescriptorPool()
@@ -691,7 +722,6 @@ void VulkanHelper::createCommandBuffer()
     {
         vkAllocateCommandBuffers(mVKDevice, &cmdBufAllocateInfo, &cb);
         mFrameList[i] = new VulkanFrame(i);
-        mFrameList[i]->updateFrameBuffer(cb);
     }
 }
 
@@ -1219,9 +1249,72 @@ VulkanFrame* VulkanHelper::_getFrame(uint32_t index)
     return mFrameList[index];
 }
 
-VkCommandBuffer VulkanHelper::_getCurrentCommandBuffer()
+void VulkanHelper::_resetCommandBuffer(uint32_t frame_index)
 {
-    return mVulkanRenderSystem->_getCurrentFrame()->getVkCommandBuffer();
+    if (vkResetCommandBuffer(mMainCommandBuffer[frame_index], 0) != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkResetCommandBuffer!");
+    }
+
+    VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
+    if (vkBeginCommandBuffer(mMainCommandBuffer[frame_index], &cmdBufInfo) != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkBeginCommandBuffer!");
+    }
+
+    for (uint32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
+    {
+        VkCommandBuffer pCommandBuffer = mCommandPools[i]._commandBuffer;
+        if (vkResetCommandBuffer(pCommandBuffer, 0) != VK_SUCCESS)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkResetCommandBuffer!");
+        }
+
+        VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
+        if (vkBeginCommandBuffer(pCommandBuffer, &cmdBufInfo) != VK_SUCCESS)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkBeginCommandBuffer!");
+        }
+    }
+}
+
+void VulkanHelper::_endCommandBuffer(uint32_t frame_index)
+{
+    vkCmdEndRenderPass(mMainCommandBuffer[frame_index]);
+    if (vkEndCommandBuffer(mMainCommandBuffer[frame_index]) != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkEndCommandBuffer!");
+    }
+
+    for (uint32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
+    {
+        VkCommandBuffer pCommandBuffer = mCommandPools[i]._commandBuffer;
+
+        if (vkEndCommandBuffer(pCommandBuffer) != VK_SUCCESS)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkEndCommandBuffer!");
+        }
+    }
+}
+
+void VulkanHelper::fillCommandBufferList(std::vector<VkCommandBuffer>& cmdlist, uint32_t frame_index)
+{
+    cmdlist.clear();
+    cmdlist.push_back(mMainCommandBuffer[frame_index]);
+    for (uint32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
+    {
+        cmdlist.push_back(mCommandPools[i]._commandBuffer);
+    }
+}
+
+VkCommandBuffer VulkanHelper::getMainCommandBuffer(uint32_t frame_index)
+{
+    return mMainCommandBuffer[frame_index];
+}
+
+VkCommandBuffer VulkanHelper::_getThreadCommandBuffer(uint32_t tdx, uint32_t frame_index)
+{
+    return mCommandPools[tdx]._commandBuffer;
 }
 
 VkDescriptorPool VulkanHelper::_getDescriptorPool()

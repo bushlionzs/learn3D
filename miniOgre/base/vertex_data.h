@@ -22,7 +22,7 @@ public:
     ~VertexData();
 
     void buildHardBuffer();
-    void bind();
+    void bind(void* cb);
 
     void setBinding(int32_t index, std::shared_ptr<Ogre::HardwareVertexBuffer>& buf);
 

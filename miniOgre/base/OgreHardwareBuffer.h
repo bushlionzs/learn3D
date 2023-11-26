@@ -91,7 +91,7 @@ namespace Ogre {
         }
         virtual void unlock() = 0;
 
-        virtual void bind(int32_t slot) const {};
+        virtual void bind(int32_t slot, void* cb) const {};
 
         virtual void writeData(size_t offset, size_t length, const void* pSource,
             bool discardWholeBuffer = false) {}

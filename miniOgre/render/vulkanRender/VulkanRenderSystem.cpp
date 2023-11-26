@@ -55,6 +55,9 @@ bool VulkanRenderSystem::engineInit()
     
     VulkanHelper::getSingleton()._initialise();
 
+    enki::TaskSchedulerConfig config;
+    config.numTaskThreadsToCreate = VULKAN_COMMAND_THREAD;
+    mTaskScheduler.Initialize(config);
     return true;
 }
 
@@ -66,19 +69,8 @@ void VulkanRenderSystem::frameStart()
 
     mCurrentVulkanFrame = mRenderWindow->getNextFrame();
 
-    VkCommandBuffer pCommandBuffer =
-        mCurrentVulkanFrame->getVkCommandBuffer();
 
-    if (vkResetCommandBuffer(pCommandBuffer, 0) != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkResetCommandBuffer!");
-    }
-
-    VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
-    if (vkBeginCommandBuffer(pCommandBuffer, &cmdBufInfo) != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkBeginCommandBuffer!");
-    }
+    VulkanHelper::getSingleton()._resetCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
 }
 
 void VulkanRenderSystem::frameEnd()
@@ -138,8 +130,8 @@ void VulkanRenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
     target = vp->getTarget();
     updateMainPassCB(cam);
     mActiveVulkanRenderTarget = dynamic_cast<VulkanRenderTarget*>(target);
-    mActiveVulkanRenderTarget->preRender(
-        mCurrentVulkanFrame->getVkCommandBuffer());
+    mActiveVulkanRenderTarget->preRender(VulkanHelper::getSingleton().
+        getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex()));
 }
 
 EngineType VulkanRenderSystem::getRenderType()
@@ -151,8 +143,8 @@ void VulkanRenderSystem::clearFrameBuffer(uint32 buffers,
     const ColourValue& colour,
     float depth, uint16 stencil)
 {
-    VkCommandBuffer pCommandBuffer =
-        mCurrentVulkanFrame->getVkCommandBuffer();
+    VkCommandBuffer pCommandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(
+        mCurrentVulkanFrame->getFrameIndex());
     VkClearValue clearValues[2];
     memcpy(clearValues[0].color.float32, colour.ptr(), sizeof(ColourValue));
     clearValues[1].depthStencil = { 1.0f, 0 };
@@ -194,13 +186,87 @@ Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
     return mRenderWindow;
 }
 
+void VulkanRenderSystem::update(Renderable* r)
+{
+    VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
+
+    rd->update(mCurrentVulkanFrame, nullptr);
+}
+
 void VulkanRenderSystem::render(Renderable* r, RenderListType t)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-    rd->update(mCurrentVulkanFrame);
-    rd->render(mCurrentVulkanFrame);
+    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
+    rd->update(mCurrentVulkanFrame, nullptr);
+    rd->render(mCurrentVulkanFrame, commandBuffer);
 }
 
+using fn_on_got_tracker_info = std::function<void(uint32_t)>;
+
+struct ParallelTaskSet : enki::ITaskSet
+{
+    void update(int32_t start, int32_t end, VulkanFrame* frame, std::vector<Ogre::Renderable*>* objs)
+    {
+        _start = start;
+        _end = end;
+        _frame = frame;
+        _objs = objs;
+    }
+    void ExecuteRange(enki::TaskSetPartition range_, uint32_t tdx) override
+    {
+        std::vector<Ogre::Renderable*>& objs = *_objs;
+        for (int32_t i = _start; i < _end; i++)
+        {
+            Ogre::Renderable* r = objs[i];
+            VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
+
+            VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(tdx, _frame->getFrameIndex());
+            rd->render(_frame, commandBuffer);
+        }
+    }
+
+    int32_t _start;
+    int32_t _end;
+    std::vector<Ogre::Renderable*>* _objs;
+    VulkanFrame* _frame;
+};
+
+void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
+{
+    uint32_t size = (uint32_t)objs.size();
+
+    uint32_t every = size / VULKAN_COMMAND_THREAD;
+
+    uint32_t left = size - every * VULKAN_COMMAND_THREAD;
+
+    int32 start = 0;
+    int32 end = 0;
+    VulkanFrame* frame = mCurrentVulkanFrame;
+
+    
+
+    static std::vector<ParallelTaskSet*> tasklist;
+    if (tasklist.empty())
+    {
+        tasklist.resize(VULKAN_COMMAND_THREAD);
+        for (int32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
+        {
+            tasklist[i] = new ParallelTaskSet;
+        }
+    }
+
+    
+    for (int32_t i = 0; i < VULKAN_COMMAND_THREAD - 1; i++)
+    {
+        end = start + every;
+        ParallelTaskSet* task = tasklist[i];
+        task->update(start, end, mCurrentVulkanFrame, &objs);
+        mTaskScheduler.AddTaskSetToPipe(task);
+        start = end;
+    }
+
+    mTaskScheduler.WaitforAll();
+}
 
 void VulkanRenderSystem::updateMainPassCB(ICamera* camera)
 {
