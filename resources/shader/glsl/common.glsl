@@ -23,7 +23,7 @@ struct Light {
 
 layout(binding = 0) uniform UniformBufferObject {
     mat4 gWorld;
-    mat4 gWorldInvTranspose;
+    mat4 gProjector;
     mat4 gWorldViewProj;
 } cbPerObject;
 
