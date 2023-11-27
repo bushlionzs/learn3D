@@ -44,6 +44,7 @@ list(REMOVE_ITEM LUAPLUS_SRC_LIST "${CMAKE_CURRENT_SOURCE_DIR}/src/lua.c")
 list(APPEND LUAPLUS_SRC_LIST LuaCall.cpp LuaObject.cpp LuaPlus.cpp LuaPlus_Libs.cpp LuaPlusAddons.c 
      LuaPlusFunctions.cpp LuaStackObject.cpp LuaStackTableIterator.cpp LuaState.cpp LuaState_DumpObject.cpp
 	 LuaStateOutFile.cpp LuaTableIterator.cpp lwstrlib.c popen.c)
+list(APPEND LUAPLUS_INC ${CMAKE_CURRENT_SOURCE_DIR})
 
 message(${LUAPLUS_SRC_LIST})
 

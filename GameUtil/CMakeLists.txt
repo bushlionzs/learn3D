@@ -39,6 +39,7 @@ endmacro()
 
 add_subdir(.)
 add_subdir(windows)
+add_subdir(enkiTS)
 
 
 
