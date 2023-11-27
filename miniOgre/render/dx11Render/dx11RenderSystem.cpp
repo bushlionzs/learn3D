@@ -125,6 +125,14 @@ void Dx11RenderSystem::render(Renderable* r, RenderListType t)
 	renderImpl(mDx11Pass);
 }
 
+void Dx11RenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
+{
+	for (auto r : objs)
+	{
+		render(r, RenderListType_Opaque);
+	}
+}
+
 void Dx11RenderSystem::postRender()
 {
 	
@@ -149,9 +157,9 @@ Shader* Dx11RenderSystem::createShader(ShaderInfo& sinfo)
 	return shader;
 }
 
-void* Dx11RenderSystem::createRenderableData()
+RenderableData* Dx11RenderSystem::createRenderableData(Ogre::Renderable* r)
 {
-	return new Dx11RenderableData;
+	return new Dx11RenderableData(r);
 }
 
 EngineType Dx11RenderSystem::getRenderType()

@@ -22,9 +22,10 @@ public:
     virtual void frameStart();
     virtual void frameEnd();
     virtual void render(Ogre::Renderable* r, RenderListType t);
+    virtual void multiRender(std::vector<Ogre::Renderable*>& objs);
     virtual Ogre::ITexture* createTextureFromFile(const std::string& name, Ogre::TextureProperty* texProperty);
     virtual Shader* createShader(ShaderInfo& sinfo);
-    void* createRenderableData();
+    RenderableData* createRenderableData(Ogre::Renderable* r);
     ID3D12GraphicsCommandList* getCommandList();
     virtual void _setViewport(ICamera* cam, Ogre::Viewport* vp);
     EngineType getRenderType();

@@ -312,7 +312,12 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
     task->update(start, end, mCurrentVulkanFrame, &objs);
     mTaskScheduler.AddPinnedTask(task);
 
-    mTaskScheduler.WaitforAll();
+    mTaskScheduler.RunPinnedTasks();
+
+    for (int32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
+    {
+        mTaskScheduler.WaitforTask(tasklist[i]);
+    }
 }
 
 void VulkanRenderSystem::updateMainPassCB(ICamera* camera)

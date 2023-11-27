@@ -3,6 +3,7 @@
 #include "shader.h"
 #include "UploadBuffer.h"
 #include "texture.h"
+#include "renderHelper.h"
 class Dx12RenderSystem;
 class Dx12Shader;
 class RawData;
@@ -27,10 +28,10 @@ public:
     D3D12_GPU_VIRTUAL_ADDRESS getSkinnedAddress();
 };
 
-class Dx12RenderableData
+class Dx12RenderableData: public RenderableData
 {
 public:
-    Dx12RenderableData(Dx12RenderSystem* engine);
+    Dx12RenderableData(Dx12RenderSystem* engine, Ogre::Renderable* r);
 
     D3D12_GPU_VIRTUAL_ADDRESS getObjectAddress();
 

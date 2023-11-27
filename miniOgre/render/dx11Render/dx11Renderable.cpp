@@ -17,7 +17,7 @@
 
 
 
-Dx11RenderableData::Dx11RenderableData()
+Dx11RenderableData::Dx11RenderableData(Ogre::Renderable* r):RenderableData(r)
 {
 	_initialise();
 }

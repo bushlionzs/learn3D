@@ -75,7 +75,7 @@ void Dx11HardwareBuffer::unlock()
     DX11Helper::getSingleton().getDeviceContext()->Unmap(mVertexBuffer, 0);
 }
 
-void Dx11HardwareBuffer::bind(int32_t slot) const
+void Dx11HardwareBuffer::bind(int32_t slot, void* cb) const
 {
     auto context = DX11Helper::getSingleton().getDeviceContext();
     if (mBufferType == INDEX_BUFFER)

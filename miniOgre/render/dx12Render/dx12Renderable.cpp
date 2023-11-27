@@ -62,7 +62,8 @@ D3D12_GPU_VIRTUAL_ADDRESS FrameRenderableData::getSkinnedAddress()
 	return mSkinnedCB->Resource()->GetGPUVirtualAddress();
 }
 
-Dx12RenderableData::Dx12RenderableData(Dx12RenderSystem* engine)
+Dx12RenderableData::Dx12RenderableData(Dx12RenderSystem* engine, Ogre::Renderable* r)
+	:RenderableData(r)
 {
 	mEngine = engine;
 	ID3D12Device* device = DX12Helper::getSingleton().getDevice();

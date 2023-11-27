@@ -3,14 +3,14 @@
 #include "OgreRenderable.h"
 #include "shader.h"
 #include "dx11UploadBuffer.h"
-
+#include "renderHelper.h"
 
 class Dx11Pass;
 
-class Dx11RenderableData
+class Dx11RenderableData: public RenderableData
 {
 public:
-    Dx11RenderableData();
+    Dx11RenderableData(Ogre::Renderable* r);
     ~Dx11RenderableData();
 
     void updateData(Dx11Pass& pass, ICamera* cam);

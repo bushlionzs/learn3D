@@ -163,6 +163,14 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	renderImpl(&mCurrentPass);
 }
 
+void Dx12RenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
+{
+	for (auto r : objs)
+	{
+		render(r, RenderListType_Opaque);
+	}
+}
+
 ITexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
 {
 	Dx12Texture* tex = new Dx12Texture(name, texProperty, this);
@@ -197,9 +205,9 @@ Shader* Dx12RenderSystem::createShader(ShaderInfo& sinfo)
 	return new Dx12Shader(sinfo);
 }
 
-void* Dx12RenderSystem::createRenderableData()
+RenderableData* Dx12RenderSystem::createRenderableData(Ogre::Renderable* r)
 {
-	return new Dx12RenderableData(this);
+	return new Dx12RenderableData(this, r);
 }
 
 ID3D12GraphicsCommandList* Dx12RenderSystem::getCommandList()

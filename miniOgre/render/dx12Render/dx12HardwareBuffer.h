@@ -22,7 +22,7 @@ public:
 
     void _copydataimpl(ID3D12GraphicsCommandList* cmdList, void* data, uint32_t size);
 
-    virtual void bind(int32_t slot) const;
+    virtual void bind(int32_t slot, void* cb) const;
 
     void bind(ID3D12GraphicsCommandList* cmdList, int32_t slot);
 private:

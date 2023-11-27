@@ -25,10 +25,11 @@ public:
     virtual void ready();
     virtual void preRender();
     virtual void render(Renderable* r, RenderListType t);
+    virtual void multiRender(std::vector<Ogre::Renderable*>& objs);
     virtual void postRender();
     virtual ITexture* createTextureFromFile(const std::string& name, TextureProperty* texProperty);
     virtual Shader* createShader(ShaderInfo& sinfo);
-    virtual void* createRenderableData();
+    virtual RenderableData* createRenderableData(Ogre::Renderable* r);
     EngineType getRenderType();
     ICamera* getCamera()
     {

@@ -85,7 +85,7 @@ void Dx12HardwareBuffer::_copydataimpl(
     cmdList->ResourceBarrier(1, &dstBarrier);
 }
 
-void Dx12HardwareBuffer::bind(int32_t slot) const
+void Dx12HardwareBuffer::bind(int32_t slot, void* cb) const
 {
     ID3D12GraphicsCommandList* cmdList = DX12Helper::getSingleton().getCurrentCommandList();
 
