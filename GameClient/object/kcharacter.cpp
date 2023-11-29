@@ -48,7 +48,7 @@ KCharacter::KCharacter()
 {
 	m_fRunBaseSpeed = 0.0f;
 	m_fWalkBaseSpeed = 0.0f;
-
+	m_pCharacterData = nullptr;
 	mPathComponent = new PathComponent(this);
 }
 

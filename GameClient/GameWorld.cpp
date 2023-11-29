@@ -18,7 +18,7 @@
 GameWorld::GameWorld(GameCamera* gameCamera)
 {
 	mGameCamera = gameCamera;
-
+	mPlayer = nullptr;
 	new KObjectManager;
 	new KItemManager;
 	new GameInput;
