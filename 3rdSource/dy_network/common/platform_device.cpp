@@ -284,7 +284,7 @@ bool GetNetworkCardInfo(plaform_device_t& dummy)
         while (pAdapter)
         {
             if (
-                strstr(pAdapter->Description, "PCI") > 0 // pAdapter->Description中包含"PCI"为：物理网卡
+                strstr(pAdapter->Description, "PCI") // pAdapter->Description中包含"PCI"为：物理网卡
                 || pAdapter->Type == 71 // pAdapter->Type是71为：无线网卡
                 )
             {

@@ -19,7 +19,7 @@
 #include <net_manager.h>
 #include <time_util.h>
 #include <common_base64.h>
-
+#include <dy_sha1.h>
 
 
 ServerLogic::ServerLogic()
