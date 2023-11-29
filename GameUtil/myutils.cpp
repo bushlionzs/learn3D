@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-
+#include <algorithm>
 #include <chrono>
 #include <locale>
 #include <codecvt>
