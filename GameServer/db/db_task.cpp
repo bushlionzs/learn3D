@@ -404,7 +404,7 @@ void CharDataTask::success(CMySQLRecordSet* recordset)
 
 		DSCharData* packet = new DSCharData(pCharDBNode);
 
-		NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	}
 }

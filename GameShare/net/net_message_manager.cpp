@@ -5,6 +5,7 @@
 #include "client_message.pb.h"
 #include "net_header.h"
 #include "platform_log.h"
+#include "net_factory.h"
 #include "db/db_manager.h"
 #include "db/db_task.h"
 
@@ -20,25 +21,19 @@ NetMessageManager::~NetMessageManager()
 
 }
 
-bool NetMessageManager::sendNetMessage(NetPacket* packet)
+bool NetMessageManager::sendNetMessage(NetHandle h, uint32_t msg_id, google::protobuf::Message* msg)
 {
-	if (packet == nullptr)
+	std::string msgdata;
+	InitNetHeader(msgdata);
+	if (!msg->AppendToString(&msgdata))
 	{
-		assert(false);
+		WARNING_LOG("fail to create MsgLogin message");
+		return false;
 	}
-	if (packet->getMessageID() < 10000)
-	{
-		ScopedLock<PlatformMutex> lock(mClientMutex);
-		mClientList.push_back(packet);
-	}
-	else
-	{
-		ScopedLock<PlatformMutex> lock(mServerMutex);
 
-		int32_t id = packet->getMessageID();
-		//printf("send server message:%d, p:%p\n", id, packet);
-		mServerList.push_back(packet);
-	}
+	InitNetHeader(msgdata, msg_id, msgdata.size());
+
+	int32_t ret = NetFactory::GetInstance()->SendData(h, (const uint8_t*)msgdata.data(), msgdata.size());
 
 	return true;
 }

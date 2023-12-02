@@ -731,7 +731,7 @@ OPT_RESULT SkillGather::OnEvent_ProcSuccess(Player *pPlayer)
 
 		packet->setAbilityId(AbilityID);
 		packet->setPrescriptionId(INVALID_ID);
-		NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 	else
 	{

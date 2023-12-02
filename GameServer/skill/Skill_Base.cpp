@@ -39,7 +39,7 @@ void BaseSkill::OnEvent_ProcInterrupt(Player *pPlayer)
 	packet->setTargetId(pAbilityOpera->m_Obj);
 	packet->setPrescriptionId(pAbilityOpera->m_PresID);
 	packet->setBeginOrEnd(SCAbilityAction::ABILITY_END);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	/*~~~~~~~~~~~~~~~~*/
 	SCAbilityResult* packet2 = new SCAbilityResult;
@@ -48,7 +48,7 @@ void BaseSkill::OnEvent_ProcInterrupt(Player *pPlayer)
 	packet2->setAbilityId(pAbilityOpera->m_SkillID);
 	packet2->setPrescriptionId(pAbilityOpera->m_PresID);
 	packet2->setResult(OR_FAILURE);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet2);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet2);
 }
 
 /*

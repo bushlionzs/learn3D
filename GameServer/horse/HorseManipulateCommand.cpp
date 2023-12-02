@@ -110,7 +110,7 @@ void HorseManipulateCommand::SendResult(Player *pPlayer, int32 iResult)
 	SCManipulatePetRet* packet = new SCManipulatePetRet;
 
 	packet->setManipulateRet(iResult);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 /*

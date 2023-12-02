@@ -4,6 +4,7 @@
 #include "GameSingleton.h"
 #include "net_define.h"
 #include <functional>
+#include "server_message.pb.h"
 class NetPacket;
 
 using Handler = std::function<void(NetHandle handle, const char* data, uint32_t size)>;
@@ -12,7 +13,9 @@ class NetMessageManager:public GameSingleton<NetMessageManager>
 public:
 	NetMessageManager();
 	~NetMessageManager();
-	bool sendNetMessage(NetPacket* packet);
+
+
+	bool sendNetMessage(NetHandle h, uint32_t msg_id, google::protobuf::Message* msg);
 
 	void fetchServerMessage(std::vector<NetPacket*>& messagelist);
 	void fetchClientMessage(std::vector<NetPacket*>& messagelist);

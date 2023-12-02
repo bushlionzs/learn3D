@@ -141,7 +141,7 @@ bool CSUseEquip::process()
     packet->setBagIndex(mBagIndex);
     packet->setEquipPoint(clientEquipPoint);
 
-    NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+    //NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
     return true;
 }

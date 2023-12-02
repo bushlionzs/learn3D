@@ -1874,7 +1874,7 @@ void BaseSpellLogic::BroadcastTargetListMessage
 			packet->addTargetId(pTarget->GetID());
 	}
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 	__UNGUARD__
 }
 

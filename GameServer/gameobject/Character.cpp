@@ -1466,7 +1466,7 @@ void	Character::SendArriveMSG()
 	//msgArrive.SetWorldPos(GetGLPos());
 
 	//GetMap()->BroadCast(&msgArrive, this, TRUE);
-	NetManager::GetSingletonPtr()->sendNetMessage(nullptr);
+	//NetManager::GetSingletonPtr()->sendNetMessage(nullptr);
 }
 
 void	Character::SendstopActionMSG()
@@ -1495,7 +1495,7 @@ void	Character::SendstopActionMSG()
 
 	packet->setStopTime(rParams.GetContinuance());
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 void Character::StopCharacterLogic(BOOL bAbortive)
@@ -2548,7 +2548,7 @@ void Character::SendHealAndDamageMSG
 	}
 
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 	
 }
 

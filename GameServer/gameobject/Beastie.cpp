@@ -390,7 +390,7 @@ void Beastie::RequestBaseProperty(Player *pTargetHuman, BASEPROPERTY_REFESH_MODE
 		if (GetCampData() != NULL) 
 			packet->setCampData(*GetCampData());
 		packet->setMoveSpeed(Get_Property_MoveSpeed());
-		NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 
 	__UNGUARD__

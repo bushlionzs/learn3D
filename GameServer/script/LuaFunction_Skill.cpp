@@ -146,13 +146,13 @@ int32_t LuaFunction_AddSkillToPlayer(Lua_State *L)
 
 	packet->setPlayerSetting(oOwnSetting);
 	packet->setIndex(iSkillBarIndex);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 
 
 	SCAddSkillToSkillList* packet2 = new SCAddSkillToSkillList;
 	packet2->setObjectId(selfId);
 	packet2->setSpell(oOwnSkill);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet2);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet2);
 	return 1;
 }
 
@@ -299,7 +299,7 @@ int32_t LuaFunction_OpenSkillStudyUI(Lua_State *L)
 
 	packet->setCmdId(SCRIPT_COMMAND_SKILL_STUDY);
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	Lua_PushNumber(L, TRUE);
 	return 1;
@@ -890,7 +890,7 @@ int32_t LuaFunction_RefreshImpactByDataIndex(Lua_State *L)
 			packet->setDelayTime(0);
 			packet->setSenderLogicCount(rImp.GetCasterLogicCount());
 
-			NetManager::GetSingletonPtr()->sendNetMessage(packet);
+			//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 			
 
 			return 0;

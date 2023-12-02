@@ -23,7 +23,7 @@
 #include "map/game_map.h"
 #include "data/data_manager.h"
 #include "net/net_message_manager.h"
-#include "net/messages/SCEnterMap.h"
+#include "server_message.pb.h"
 #include "ObjectList.h"
 #include "Behavior_Player.h"
 #include "StructDB.h"
@@ -795,15 +795,18 @@ void Player::OnEnterMap(void)
 
 	SetGLPos(GetDB()->GetDBPosition());
 
-	SCEnterMap* packet = new SCEnterMap;
-	
-	packet->setActorID(GetID(), this->GetGUID());
 	const GLPos* pos = GetGLPos();
-	packet->setPosition(pos->m_fX, pos->m_fZ);
-	packet->setSceneId(GetMap()->MapID());
+
+	servermessage::ServerMsgEnterMap dummy;
+	dummy.set_guid(GetGUID());
+	dummy.set_object_id(GetID());
+	dummy.set_position_x(pos->m_fX);
+	dummy.set_position_y(pos->m_fZ);
+	dummy.set_scene_id(GetMap()->MapID());
 
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_ENTER_MAP, &dummy);
 
 	SetActiveFlag(true);
 
@@ -1114,7 +1117,7 @@ void Player::RefeshHorseDetailAttrib(SHorseGuid guidPet, BOOL bUpdateSkill)
 
 	SCDetailAttribPet* packet = new SCDetailAttribPet;
 	CalculatePetDetailAttrib(*packet, pPetItem, bUpdateSkill, iIndex);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 OPT_RESULT Player::TestCallUpPet(const SHorseGuid guidPet)
@@ -1567,7 +1570,7 @@ void Player::SetRuntimeData(int32_t index, int32_t value)
 
 void Player::sendPacket(NetPacket* packet)
 {
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 float	Player::Get_Property_MoveSpeed(void)
@@ -2529,7 +2532,7 @@ void Player::SendOperateResultMsg(int32 nCode, int32 nResType)
 
 	packet->setResType(nResType);
 	packet->setResult(nCode);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 _EFFECT_LIST& Player::Effect_GetEffectList(void)
@@ -2632,7 +2635,7 @@ void Player::updateAttr()
 
 	packet->setName(this->GetName());
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 void Player::updateHorse()
@@ -2700,14 +2703,14 @@ void Player::updateSkills()
 	}
 
 	packet->setPrescrList(pAbilityList->m_aPrescr);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	//¼¼ÄÜ
 	SCDetailSkillList* packet2 = new SCDetailSkillList;
 	packet2->setPlayerId(GetID());
 	const _SPELL_LIST&  spelllist = GetSpellList();
 	packet2->setSkillList(spelllist.m_Count, spelllist.m_aSkill);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet2);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet2);
 }
 
 void Player::updateEquip()
@@ -2729,7 +2732,7 @@ void Player::updateEquip()
 
 	packet->setObjectId(GetID());
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 void Player::updateBag()
@@ -2755,7 +2758,7 @@ void Player::updateBag()
 	}
 	packet->setObjectId(GetID());
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 
@@ -2787,7 +2790,7 @@ void Player::updateQuest()
 	}
 
 	packet->setQuestList((QUEST_LIST*)GetQuestList());
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 
 }
 
@@ -3646,21 +3649,21 @@ void Player::SendMsg_RefeshAttribToMyself(void)
 	
 	if (CheckRefeshBase(mSCCharHumanBaseAttrib))
 	{
-		NetManager::GetSingletonPtr()->sendNetMessage(mSCCharHumanBaseAttrib);
+		//NetManager::GetSingletonPtr()->sendNetMessage(mSCCharHumanBaseAttrib);
 		mSCCharHumanBaseAttrib = nullptr;
 	}
 
 
 	if (CheckRefeshEquip(mSCCharEquipment))
 	{
-		NetManager::GetSingletonPtr()->sendNetMessage(mSCCharEquipment);
+		//NetManager::GetSingletonPtr()->sendNetMessage(mSCCharEquipment);
 		mSCCharEquipment = nullptr;
 	}
 
 
 	if (CheckRefeshQuest(mSCQuestListRefresh))
 	{
-		NetManager::GetSingletonPtr()->sendNetMessage(mSCQuestListRefresh);
+		//NetManager::GetSingletonPtr()->sendNetMessage(mSCQuestListRefresh);
 		mSCQuestListRefresh = nullptr;
 	}
 }
@@ -4249,7 +4252,7 @@ BOOL Player::SpellDepleteItem(void)
 					packet->setId(nBagIndex);
 					packet->setIsNull(false);
 					pItem->SaveValueTo(packet->getItem());
-					NetManager::GetSingletonPtr()->sendNetMessage(packet);
+					//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 				}
 				else
 					return FALSE;
@@ -4678,7 +4681,7 @@ void	Player::OnQuestParamChanged(uint32 uIndexQuest, uint32 uIndexParam, int32 i
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 		packet->setQuest(pQuest);
 		packet->setFlagParam(uIndexParam);
-		NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 	break;
 
@@ -4687,7 +4690,7 @@ void	Player::OnQuestParamChanged(uint32 uIndexQuest, uint32 uIndexParam, int32 i
 		if (QuestManager::GetSingletonPtr()->getFlagMDClientFilter().IsSetBit(uIndexQuest))
 		{
 			packet->setFlagParam(uIndexParam);
-			NetManager::GetSingletonPtr()->sendNetMessage(packet);
+			//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 		}
 		
 	}
@@ -4711,7 +4714,7 @@ void	Player::OnAddQuest(uint32 uIndex)
 	packet->setPlayerId(this->GetID());
 	packet->setQuest(pQuest);
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 
 }
 
@@ -4728,7 +4731,7 @@ void	Player::OnRemoveQuest(QuestID_t idQuest)
 
 		packet->setPlayerId(this->GetID());
 		packet->setQuestId(idQuest);
-		NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 
 	__UNGUARD__

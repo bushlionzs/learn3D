@@ -14,6 +14,8 @@
 #include "item/Item_HorseContainer.h"
 #include "horse/HorseAttrCalculater.h"
 
+#include "net_handle.h"
+
 #define HIDE_NAME_MODEL_MAN 6000
 #define HIDE_NAME_MODEL_WOMAN 6001
 
@@ -340,19 +342,18 @@ public:
 
 	ConnectorID_t		GetPlayerID();
 
-	GameConnector *GetConnector()
+	NetHandle GetConnector()
 	{
-		return m_pConnector;
+		return _player_handle;
 	}
 
-	void SetConnector(GameConnector *pConnector)
+	void SetConnector(NetHandle handle)
 	{
-		m_pConnector = pConnector;
+		_player_handle = handle;
 	}
 
 private:
-	ConnectorID_t	m_ConnectorID;
-	GameConnector*	m_pConnector;
+	NetHandle _player_handle = INVALID_NET_HANDLE;
 
 	/*****************************************************************************************************************
 	// »ù´¡ÊôÐÔ

@@ -74,7 +74,7 @@ bool CSUseAbility::process()
 	packet->setAbilityId(pAbilityOpera->m_SkillID);
 	packet->setPrescriptionId(pAbilityOpera->m_PresID);
 	packet->setResult(res);
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 	return true;
 }
 

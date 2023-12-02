@@ -573,7 +573,7 @@ void ActionDelegator::Broadcast_UnitStartChargeAction(Character &rActor, ActionI
 	packet->setTargetPosition((const GLPos*)&rParams.GetTargetPosition());
 	packet->setDir(rParams.GetTargetDirection());
 	packet->setTotalTime(nContinuance);
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	__UNGUARD__
 }

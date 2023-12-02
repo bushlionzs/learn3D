@@ -367,7 +367,7 @@ BOOL CommonSpell004::EffectOnUnitOnce(Character &rMe, Character &rTar, BOOL bCri
 		packet->setManipulateRet(SCManipulatePetRet::OPT_HORSE_RET_CAPTUREFALID);
 	}
 
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	return TRUE;
 }

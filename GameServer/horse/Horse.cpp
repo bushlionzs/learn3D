@@ -596,7 +596,7 @@ void Horse::RequestBaseProperty(Player *pTargetHuman, BASEPROPERTY_REFESH_MODE n
 		packet->setMountID(INVALID_ID);
 		packet->setMoveSpeed(Get_Property_MoveSpeed());
 		packet->setAttackSpeed((float)Get_Property_AttackSpeed());
-		NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 }
 

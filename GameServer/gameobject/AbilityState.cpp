@@ -47,7 +47,7 @@ OPT_RESULT CharAbilityState::OnEnterState()
 	packet->setTargetId(((Player*)m_pOnwer)->m_LastOpera.m_Obj);
 	packet->setBeginOrEnd(SCAbilityAction::ABILITY_BEGIN);
 	
-	NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 	/*~~~~~~~~~~~~~~~~*/
 	
 	((Behavior_Player *) m_pOnwer->GetAIObj())->ForceInterruptAutoSpell();

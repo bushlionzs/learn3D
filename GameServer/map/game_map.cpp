@@ -220,7 +220,7 @@ BOOL		GameMap::ObjGrid_Register(Object* pObj, GridID_t idZone)
 
 			if (pPacket != NULL)
 			{
-				NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
+				//NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
 			}
 		}
 		
@@ -372,7 +372,7 @@ BOOL		GameMap::ObjGrid_Unregister(Object* pObj, GridID_t idZone)
 	pPacket->setSceneId(mMapID);
 	pPacket->setObjectId(pObj->GetID());
 	
-	NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
+	//NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
 
 	//if (pObj->GetObjType() == Object::OBJECT_CLASS_PLAYER)
 	//{
@@ -484,7 +484,7 @@ BOOL		GameMap::ObjGrid_Changed(Object* pObj, GridID_t idNew, GridID_t idOld)
 
 				if (listHuman.m_Count > 0)
 				{
-					NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
+					//NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
 				}
 				else
 				{
@@ -533,7 +533,7 @@ BOOL		GameMap::ObjGrid_Changed(Object* pObj, GridID_t idNew, GridID_t idOld)
 
 					if (pPacket != NULL)
 					{
-						NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
+						//NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
 
 						pFindObj->DestroyNewObjMsg(pPacket);
 					}
@@ -949,7 +949,7 @@ void  GameMap::broadCast(NetPacket* packet, Character* pOwnCharacter)
 
 	if (listHuman.m_Count > 0)
 	{
-		NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 	else
 	{

@@ -1700,7 +1700,7 @@ void QuestManager::AddDispatchQuestInfo(Player* pPlayer, int32 iMissionID, ObjID
     SCScriptCommand* packet = new SCScriptCommand;
     packet->setCmdId(SCRIPT_COMMAND_QUEST_RESPONSE);
     packet->setQuestInfo(paramEventList);
-    NetManager::GetSingletonPtr()->sendNetMessage(packet);
+    //NetManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 
