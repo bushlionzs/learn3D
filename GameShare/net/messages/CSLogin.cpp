@@ -5,8 +5,6 @@
 #include "map/map_manager.h"
 #include "net/messages/SCEnterMap.h"
 #include "net/net_message_manager.h"
-#include "db/db_manager.h"
-#include "db/db_task.h"
 
 CSLogin::CSLogin():
 	NetPacket(CS_LOGIN)
@@ -41,9 +39,9 @@ bool CSLogin::process()
 	pMap->ObjectEnterMap(player);*/
 	//1610000020 ĞÂÊÖ´å
 	//1610000020 »Ê¹¬
-	auto id = std::string("1610000020");
+	/*auto id = std::string("1610000020");
 	CharDataTask* task = new CharDataTask(id);
-	DBManager::GetSingletonPtr()->addDbTask(task);
+	DBManager::GetSingletonPtr()->addDbTask(task);*/
 
 	return true;
 }
