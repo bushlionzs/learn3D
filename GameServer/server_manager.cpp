@@ -34,8 +34,11 @@ ServerManager::~ServerManager()
 
 }
 
-bool ServerManager::initialize()
+void ServerManager::OnPreInit()
 {
+
+	g_pItemMgr = new ItemManager;
+	g_pItemMgr->Init();
 
 	g_Config.Init();
 
@@ -66,10 +69,12 @@ bool ServerManager::initialize()
 	g_pSkillManager->Init();
 
 	g_ItemTab.Init();
+}
 
-	
-	
-	return true;
+int ServerManager::process_message(NetHandle handle, const char* msg, uint32_t msg_size, void* pNetThreadData)
+{
+	NetManager::GetSingleton().processMessage(handle, msg, msg_size);
+	return 0;
 }
 
 void ServerManager::run()
@@ -94,69 +99,69 @@ void ServerManager::registerMessage()
 	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
 		std::bind(cs_user_login, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_CHAR_MOVE,
 		std::bind(cs_char_move, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_USE_SKILL,
 		std::bind(cs_char_use_skill, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_EVENT_REQUEST,
 		std::bind(cs_event_request, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_MANIPULATE_PET,
 		std::bind(cs_manipulate_pet, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_PICK_ITEM,
 		std::bind(cs_pick_item, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_REQUEST_BASEATTR,
 		std::bind(cs_player_request_base_attr, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUERY_EVENT,
 		std::bind(cs_query_event, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_ABANDON,
 		std::bind(cs_quest_abandon, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_ACCEPT,
 		std::bind(cs_quest_accept, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_CONTINUE,
 		std::bind(cs_quest_continue, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_REFUSE,
 		std::bind(cs_quest_refuse, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_SUBMIT,
 		std::bind(cs_quest_submit, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_SWAP_ITEM,
 		std::bind(cs_swap_item, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_TICK,
 		std::bind(cs_tick, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_UNEQUIP,
 		std::bind(cs_takedown_equip, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_USE_ABILITY,
 		std::bind(cs_use_ability, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_USE_EQUIP,
 		std::bind(cs_use_equip, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
@@ -184,9 +189,8 @@ void server_init_func()
 	
 	ServerManager* serverManager = new ServerManager;
 
-	g_pItemMgr = new ItemManager;
-	g_pItemMgr->Init();
-	serverManager->initialize();
+	
+	
 }
 
 uint32_t server_entry_func(uint32_t moduleid,
@@ -245,23 +249,22 @@ int32_t server_timer_callback(void* param)
 
 void run_game_server()
 {
+	new ServerManager;
 	new NetManager;
 	new DBManager;
-
-	serverModule =
-		create_platform_module(1, "server_module");
-	serverModule->attach_module(0, server_init_func, server_entry_func, nullptr);
-	serverModule->run_module();
-
-	platform_create_timer(10, server_timer_callback, nullptr);
 
 	dbModule = create_platform_module(1, "db_module");
 	dbModule->attach_module(0, db_init_func, db_entry_func, nullptr);
 	dbModule->run_module();
+
+	ServerManager::GetSingleton().init();
+
+	ServerManager::GetSingleton().start(true);
 }
 
 int main()
 {
 	run_game_server();
+
 	return 0 ;
 }

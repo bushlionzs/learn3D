@@ -9,13 +9,25 @@ class TableInit_Map;
 class LuaSystem;
 
 #include "GameSingleton.h"
-class ServerManager :public GameSingleton<ServerManager>
+#include "server_logic.h"
+class ServerManager :public GameSingleton<ServerManager>, public ServerLogic
 {
 public:
 	ServerManager();
 	~ServerManager();
 
-	bool initialize();
+	virtual std::string get_server_ip()
+	{
+		return "0.0.0.0";
+	}
+
+	virtual uint16_t get_server_port()
+	{
+		return 8888;
+	}
+	
+	virtual void OnPreInit();
+	virtual int process_message(NetHandle handle, const char* msg, uint32_t msg_size, void* pNetThreadData) override;
 	void run();
 
 	QuestManager* getQuestManager();

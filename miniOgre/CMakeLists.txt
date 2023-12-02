@@ -67,6 +67,7 @@ target_include_directories(${MINIOGRE_LIB_NAME}
 	${ROOT_INC}/3rd/bullet3/include
 	${ROOT_INC}/3rd/ffmpeg/include
 	${ROOT_INC}/3rd/stormlib
+	${DYNETWORK_INCLUDE_HEADERS}
 )
 
 set(MINIOGRE_INC ${MINIOGRE_INC} CACHE INTERNAL "shared")

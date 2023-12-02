@@ -1,6 +1,7 @@
 #include "platform_file_system.h"
 #include <stdio.h>
 #include <string.h>
+#include <filesystem>
 #ifdef _WIN32
 #include <windows.h>
 #include <fileapi.h>
@@ -138,6 +139,21 @@ const std::string& CPlatformFileSystem::GetWorkDirectory()
 	return m_strWorkDirectory;
 }
 
+
+std::string CPlatformFileSystem::getFullPath(const std::string& dir)
+{
+    std::filesystem::path myPath(dir);
+    if (myPath.is_relative())
+    {
+        std::string workdir =
+            CPlatformFileSystem::GetInstance()->GetWorkDirectory();
+        workdir += "\\";
+        workdir += dir;
+        return workdir;
+    }
+    return dir;
+}
+
 // static 
 bool CPlatformFileSystem::exists(const char *path)
 {
@@ -215,4 +231,39 @@ bool CPlatformFileSystem::remove_file(const char *path)
 #else
     return 0 == ::unlink(path);
 #endif
+}
+
+std::string CPlatformFileSystem::get_filename(const char* fullname, bool erase_postfix)
+{
+    std::string full = fullname;
+
+    std::string name;
+    auto npos = full.find_last_of("\\");
+    if (npos != std::string::npos)
+    {
+        name = full.substr(npos + 1, full.size());
+    }
+    else
+    {
+        npos = full.find_last_of("/");
+
+        if (npos != std::string::npos)
+        {
+            name = full.substr(npos + 1, full.size());
+        }
+    }
+
+    if (!name.empty())
+    {
+        if (erase_postfix)
+        {
+            npos = name.find_last_of(".");
+            if (npos != std::string::npos)
+            {
+                name.erase(npos);
+            }
+        }
+        return name;
+    }
+    return full;
 }

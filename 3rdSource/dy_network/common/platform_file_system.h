@@ -11,6 +11,8 @@ public:
 	bool InitFileSystem();
 	const std::string& GetProcessDirectory();
 	const std::string& GetWorkDirectory();
+    std::string getFullPath(const std::string& dir);
+    static std::string get_filename(const char* fullname, bool erase_postfix);
     const std::string& GetProcessName()
     {
         return m_strProcessName;
