@@ -28,7 +28,8 @@ public:
 	
 	virtual void OnPreInit();
 	virtual int process_message(NetHandle handle, const char* msg, uint32_t msg_size, void* pNetThreadData) override;
-	void run();
+
+	virtual void OnTimer(platform_timer_t, void* param);
 
 	QuestManager* getQuestManager();
 
@@ -41,7 +42,6 @@ public:
 	}
 private:
 	void registerMessage();
-	void processNetMessage();
 private:
 	QuestManager* mQuestManager = nullptr;
 
@@ -55,6 +55,8 @@ private:
 
 	LuaSystem* mLuaSystem = nullptr;
 
+
+	platform_timer_t mUpdateTimer = INVALID_TIMER_ID;
 	
 };
 

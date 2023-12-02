@@ -54,9 +54,9 @@ bool GameWorld::gameWorldInit()
 
 	
 	Ogre::Vector3 mPosition;
-	mPosition.x = 174;
+	mPosition.x = 98;
 	mPosition.y = 0;
-	mPosition.z = 47;
+	mPosition.z = 224;
 
 
 	mPlayer->setGamePosition(mPosition);

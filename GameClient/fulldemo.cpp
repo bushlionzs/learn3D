@@ -35,6 +35,8 @@ bool FullDemo::appInit()
 void FullDemo::appUpdate(float delta)
 {
 	ApplicationBase::appUpdate(delta);
+
+	NetMessageManager::GetSingleton().processMessage();
 	mGameWorld->update(delta);
 }
 

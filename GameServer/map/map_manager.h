@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameSingleton.h"
 struct Region;
 struct REGION_FILE
 {

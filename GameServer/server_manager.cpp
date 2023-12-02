@@ -69,17 +69,19 @@ void ServerManager::OnPreInit()
 	g_pSkillManager->Init();
 
 	g_ItemTab.Init();
+
+	mUpdateTimer = create_timer(10, nullptr, true);
 }
 
 int ServerManager::process_message(NetHandle handle, const char* msg, uint32_t msg_size, void* pNetThreadData)
 {
-	NetMessageManager::GetSingleton().processMessage(handle, msg, msg_size);
+	NetMessageManager::GetSingleton().dispatchMessage(handle, msg, msg_size);
 	return 0;
 }
 
-void ServerManager::run()
+void ServerManager::OnTimer(platform_timer_t, void* param)
 {
-	processNetMessage();
+	NetMessageManager::GetSingleton().processMessage();
 	MapManager::GetSingletonPtr()->update();
 }
 
@@ -169,41 +171,6 @@ void ServerManager::registerMessage()
 	
 }
 
-void ServerManager::processNetMessage()
-{
-	mNetMessageList.clear();
-	NetMessageManager::GetSingletonPtr()->fetchClientMessage(mNetMessageList);
-
-	uint32_t count = mNetMessageList.size();
-
-	for (int32_t i = 0; i < count; i++)
-	{
-		NetPacket* packet = mNetMessageList[i];
-		packet->process();
-		delete packet;
-	}
-}
-
-void server_init_func()
-{
-	
-	ServerManager* serverManager = new ServerManager;
-
-	
-	
-}
-
-uint32_t server_entry_func(uint32_t moduleid,
-	uint32_t msg_id,
-	uint64_t sender,
-	uint64_t param,
-	void* msg,
-	uint32_t msg_size,
-	void* pModulePrivateData)
-{
-	ServerManager::GetSingletonPtr()->run();
-	return 0;
-}
 
 void db_init_func()
 {

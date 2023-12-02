@@ -75,7 +75,7 @@ VertexOnelayerOut onelayer_vs(VertexOnelayerIn vIn)
 
 float4 onelayer_ps(VertexOnelayerOut pIn) : SV_Target
 {
-    float4 texColor = gTextureArray[0].Sample(gsamAnisotropicWrap, pIn.tex);
+    float4 texColor = gTextureArray[0].Sample(gsamAnisotropicClamp, pIn.tex);
 	return texColor;
 }
 
@@ -111,8 +111,8 @@ VertexTwolayerOut twolayer_vs(VertexTwolayerIn vIn)
 
 float4 twolayer_ps(VertexTwolayerOut pIn) : SV_Target
 {
-    float4 BaseTex0 = gTextureArray[0].Sample(gsamAnisotropicWrap, pIn.tex);
-	float4 BaseTex1 = gTextureArray[1].Sample(gsamAnisotropicWrap, pIn.tex2);
+    float4 BaseTex0 = gTextureArray[0].Sample(gsamAnisotropicClamp, pIn.tex);
+	float4 BaseTex1 = gTextureArray[1].Sample(gsamAnisotropicClamp, pIn.tex2);
 	
 	float3 TexColor = lerp(BaseTex0.rgb, BaseTex1.rgb, BaseTex1.a);
     return float4(TexColor, 1.0);

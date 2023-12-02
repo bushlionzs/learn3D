@@ -38,24 +38,28 @@ bool NetMessageManager::sendNetMessage(NetHandle h, uint32_t msg_id, google::pro
 	return true;
 }
 
-void NetMessageManager::fetchServerMessage(std::vector<NetPacket*>& messagelist)
+void NetMessageManager::processMessage()
 {
-	ScopedLock<PlatformMutex> lock(mServerMutex);
-	messagelist.swap(mServerList);
+	std::vector<NetPacket*> tmp;
+	{
+		ScopedLock<PlatformMutex> lock(mMutex);
+		tmp.swap(mPacketList);
+	}
+	
+	for (auto packet : tmp)
+	{
+		packet->process();
+		delete packet;
+	}
 }
 
-void NetMessageManager::fetchClientMessage(std::vector<NetPacket*>& messagelist)
-{
-	ScopedLock<PlatformMutex> lock(mClientMutex);
-	messagelist.swap(mClientList);
-}
 
 void NetMessageManager::registerMessage(uint32_t msg_id, Handler func)
 {
 	_handlers[msg_id] = func;
 }
 
-void NetMessageManager::processMessage(NetHandle h, const char* msg, uint32_t msg_size)
+void NetMessageManager::dispatchMessage(NetHandle h, const char* msg, uint32_t msg_size)
 {
 	NetHeader* header = (NetHeader*)msg;
 	uint32_t data_size = msg_size - sizeof(NetHeader);
@@ -63,7 +67,9 @@ void NetMessageManager::processMessage(NetHandle h, const char* msg, uint32_t ms
 	auto itor = _handlers.find(header->mMsgId);
 	if (itor != _handlers.end())
 	{
-		itor->second(h, msg + sizeof(NetHeader), msg_size - sizeof(NetHeader));
+		NetPacket* packet = new  NetPacket(itor->second, msg, msg_size);
+
+		mPacketList.push_back(packet);
 	}
 	else
 	{

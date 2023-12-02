@@ -36,6 +36,9 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
     if (!mat->isLoaded())
     {
         mat->load();
+
+        VulkanShader* shader = (VulkanShader*)mat->getShader().get();
+        shader->getVKPipeline(_r);
     }
 
     auto cam = mEngine->_getCamera();

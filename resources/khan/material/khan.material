@@ -8752,6 +8752,7 @@ material Terrain/OneLayer
 		    texture_unit
 			{
 			    texture white1x1.dds
+				tex_address_mode clamp
 			}
 		}
 	}
@@ -8770,10 +8771,12 @@ material Terrain/OneLayerLightmap
 		    texture_unit
 			{
 			    texture white1x1.dds
+				tex_address_mode clamp
 			}
 			texture_unit
 			{
 			    texture white1x1.dds
+				tex_address_mode clamp
 			}
 		}
 	}
@@ -8790,10 +8793,12 @@ material Terrain/TwoLayer
 		    texture_unit
 			{
 			    texture white1x1.dds
+				tex_address_mode clamp
 			}
 			texture_unit
 			{
 			    texture white1x1.dds
+				tex_address_mode clamp
 			}
 		}
 	}
@@ -8811,15 +8816,18 @@ material Terrain/TwoLayerLightmap
 		    texture_unit
 			{
 			    texture white1x1.dds
+				tex_address_mode clamp
 			}
 			texture_unit
 			{
 			    texture white1x1.dds
+				tex_address_mode clamp
 			}
 			
 			texture_unit
 			{
 			    texture white1x1.dds
+				tex_address_mode clamp
 			}
 		}
 	}
