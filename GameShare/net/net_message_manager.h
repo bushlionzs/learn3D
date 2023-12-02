@@ -7,11 +7,11 @@
 class NetPacket;
 
 using Handler = std::function<void(NetHandle handle, const char* data, uint32_t size)>;
-class NetManager:public GameSingleton<NetManager>
+class NetMessageManager:public GameSingleton<NetMessageManager>
 {
 public:
-	NetManager();
-	~NetManager();
+	NetMessageManager();
+	~NetMessageManager();
 	bool sendNetMessage(NetPacket* packet);
 
 	void fetchServerMessage(std::vector<NetPacket*>& messagelist);

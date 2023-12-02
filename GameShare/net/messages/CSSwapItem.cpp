@@ -65,7 +65,7 @@ bool CSSwapItem::process()
         packet->setResult(SWITCHITEM_SUCCESS);
         packet->setSourcePos(mSourcePos);
         packet->setDestPos(mDestPos);
-        NetManager::GetSingletonPtr()->sendNetMessage(packet);
+        NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
     }
     return true;

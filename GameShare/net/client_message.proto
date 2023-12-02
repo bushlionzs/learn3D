@@ -1,0 +1,189 @@
+syntax = "proto3";
+ 
+package clientmessage;
+
+enum MessageID
+{
+    CS_MSG_NONE 		= 0;
+    CS_LOGIN 			= 1000;
+    CS_QUERY_EVENT 		= 1100;
+    CS_QUERY_QUEST 		= 1101;
+    CS_USE_SKILL   		= 1102;
+    CS_CHAR_MOVE   		= 1103;
+    CS_TICK        		= 1104;
+    CS_PICK_ITEM   		= 1105;
+    CS_SWAP_ITEM   		= 1106;
+    CS_UNEQUIP     		= 1107;
+    CS_USE_EQUIP   		= 1108;
+    CS_EVENT_REQUEST 	= 1109;
+    CS_QUEST_ACCEPT 	= 1110;
+    CS_QUEST_REFUSE 	= 1111;
+    CS_QUEST_CONTINUE 	= 1112;
+    CS_QUEST_ABANDON 	= 1113;
+    CS_QUEST_SUBMIT 	= 1114;
+    CS_REQUEST_BASEATTR = 1115;
+    CS_MANIPULATE_PET 	= 1116;
+    CS_USE_ABILITY 		= 1117;    
+}
+
+message MsgLogin
+{
+    string username = 1;
+	string passwd = 2;
+}
+
+message MsgQueryEvent
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 object_id = 3;
+}
+
+message MsgQueryQuest
+{
+     
+}
+
+message MsgCharMove
+{
+    int32 object_id = 1;
+	int32 map_id = 2;
+	int32 handle_id = 3;
+	int32 stop_logic_count = 4;
+	float target_x = 5;
+	float target_y = 6;
+	float world_x = 7;
+	float world_y = 8;
+}
+
+message MsgUseSkill
+{
+    int32 player_id = 1;
+	int32 skill_id = 2;
+	int32 target_id = 3;
+	int32 map_id = 4;
+	float target_x = 5;
+	float target_y = 6;
+	float dir = 7;
+	uint32 guid = 8;
+	int32 hurt_delay_time = 9;
+}
+
+message MsgEventRequest
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 target_id = 3;
+	int32 ex_index = 4;
+	int32 mid_script = 5;
+}
+
+message MsgManipulatePet
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	uint32 high_section_horse = 3;
+	uint32 low_section_horse = 4;
+	int32 manipulate_type = 5;
+}
+
+message MsgPickItem
+{
+    int32 object_id = 1;
+	int32 map_id = 2;
+	int32 player_id = 3;
+}
+
+message MsgRequestBaseAttrib
+{
+    int32 target_id = 1;
+	int32 player_id = 2;
+	int32 map_id = 3;
+}
+
+message MsgQuestAbandon
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 target_id = 3;
+	int32 script_id = 4;
+}
+
+message MsgQuestAccept
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 target_id = 3;
+	int32 script_id = 4;
+}
+
+message MsgQuestContinue
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 target_id = 3;
+	int32 script_id = 4;
+}
+
+message MsgQuestRefuse
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 target_id = 3;
+	int32 script_id = 4;
+}
+
+message MsgQuestSubmit
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 target_id = 3;
+	int32 script_id = 4;
+	int32 radio_id = 5;
+}
+
+message MsgSwapItem
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 object_id = 3;
+	int32 source_pos = 4;
+	int32 dest_pos = 5;
+}
+
+message MsgTick
+{
+    int32 object_id = 1;
+	int32 map_id = 2;
+	float position_x = 3;
+	float position_z = 4;
+	int32 player_id = 5;
+	float player_pos_x = 6;
+	float player_pos_y = 7;
+}
+
+message MsgTakeDownEquip
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 equip_point = 3;
+	int32 bag_index = 4;
+}
+
+message MsgUseAbility
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 ability_id = 3;
+	int32 object_guid = 4;
+	int32 prescription_id = 5;
+}
+
+message MsgUseEquip
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 equip_point = 3;
+	int32 bag_index = 4;
+}
+

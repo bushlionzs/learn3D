@@ -59,9 +59,6 @@ bool GameWorld::gameWorldInit()
 
 	mGameCamera->setDistance(1200.0f);
 	mGameCamera->setHeight(200.0f);
-
-	
-	login();
 	
 	/*Ogre::Vector3 mPosition;
 	mPosition.x = 174;
@@ -136,11 +133,4 @@ void GameWorld::injectKeyPress(KeyCode _key, uint32_t _text)
 void GameWorld::injectKeyRelease(KeyCode _key)
 {
     
-}
-
-void GameWorld::login()
-{
-	CSLogin* msg = new CSLogin;
-
-	NetManager::GetSingletonPtr()->sendNetMessage(msg);
 }

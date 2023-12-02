@@ -73,7 +73,7 @@ void ServerManager::OnPreInit()
 
 int ServerManager::process_message(NetHandle handle, const char* msg, uint32_t msg_size, void* pNetThreadData)
 {
-	NetManager::GetSingleton().processMessage(handle, msg, msg_size);
+	NetMessageManager::GetSingleton().processMessage(handle, msg, msg_size);
 	return 0;
 }
 
@@ -96,72 +96,72 @@ QuestManager* ServerManager::getQuestManager()
 
 void ServerManager::registerMessage()
 {
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
 		std::bind(cs_user_login, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_CHAR_MOVE,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_CHAR_MOVE,
 		std::bind(cs_char_move, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_USE_SKILL,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_USE_SKILL,
 		std::bind(cs_char_use_skill, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_EVENT_REQUEST,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_EVENT_REQUEST,
 		std::bind(cs_event_request, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_MANIPULATE_PET,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_MANIPULATE_PET,
 		std::bind(cs_manipulate_pet, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_PICK_ITEM,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_PICK_ITEM,
 		std::bind(cs_pick_item, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_REQUEST_BASEATTR,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_REQUEST_BASEATTR,
 		std::bind(cs_player_request_base_attr, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUERY_EVENT,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_QUERY_EVENT,
 		std::bind(cs_query_event, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_ABANDON,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_ABANDON,
 		std::bind(cs_quest_abandon, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_ACCEPT,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_ACCEPT,
 		std::bind(cs_quest_accept, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_CONTINUE,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_CONTINUE,
 		std::bind(cs_quest_continue, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_REFUSE,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_REFUSE,
 		std::bind(cs_quest_refuse, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_SUBMIT,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_QUEST_SUBMIT,
 		std::bind(cs_quest_submit, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_SWAP_ITEM,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_SWAP_ITEM,
 		std::bind(cs_swap_item, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_TICK,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_TICK,
 		std::bind(cs_tick, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_UNEQUIP,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_UNEQUIP,
 		std::bind(cs_takedown_equip, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_USE_ABILITY,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_USE_ABILITY,
 		std::bind(cs_use_ability, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
 
-	NetManager::GetSingleton().registerMessage(clientmessage::CS_USE_EQUIP,
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_USE_EQUIP,
 		std::bind(cs_use_equip, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 
@@ -172,7 +172,7 @@ void ServerManager::registerMessage()
 void ServerManager::processNetMessage()
 {
 	mNetMessageList.clear();
-	NetManager::GetSingletonPtr()->fetchClientMessage(mNetMessageList);
+	NetMessageManager::GetSingletonPtr()->fetchClientMessage(mNetMessageList);
 
 	uint32_t count = mNetMessageList.size();
 
@@ -250,7 +250,7 @@ int32_t server_timer_callback(void* param)
 void run_game_server()
 {
 	new ServerManager;
-	new NetManager;
+	new NetMessageManager;
 	new DBManager;
 
 	dbModule = create_platform_module(1, "db_module");

@@ -9,18 +9,18 @@
 #include "db/db_task.h"
 
 template<>
-NetManager* GameSingleton<NetManager>::m_sSingleton = NULL;
+NetMessageManager* GameSingleton<NetMessageManager>::m_sSingleton = NULL;
 
-NetManager::NetManager()
+NetMessageManager::NetMessageManager()
 {
 }
 
-NetManager::~NetManager()
+NetMessageManager::~NetMessageManager()
 {
 
 }
 
-bool NetManager::sendNetMessage(NetPacket* packet)
+bool NetMessageManager::sendNetMessage(NetPacket* packet)
 {
 	if (packet == nullptr)
 	{
@@ -43,24 +43,24 @@ bool NetManager::sendNetMessage(NetPacket* packet)
 	return true;
 }
 
-void NetManager::fetchServerMessage(std::vector<NetPacket*>& messagelist)
+void NetMessageManager::fetchServerMessage(std::vector<NetPacket*>& messagelist)
 {
 	ScopedLock<PlatformMutex> lock(mServerMutex);
 	messagelist.swap(mServerList);
 }
 
-void NetManager::fetchClientMessage(std::vector<NetPacket*>& messagelist)
+void NetMessageManager::fetchClientMessage(std::vector<NetPacket*>& messagelist)
 {
 	ScopedLock<PlatformMutex> lock(mClientMutex);
 	messagelist.swap(mClientList);
 }
 
-void NetManager::registerMessage(uint32_t msg_id, Handler func)
+void NetMessageManager::registerMessage(uint32_t msg_id, Handler func)
 {
 	_handlers[msg_id] = func;
 }
 
-void NetManager::processMessage(NetHandle h, const char* msg, uint32_t msg_size)
+void NetMessageManager::processMessage(NetHandle h, const char* msg, uint32_t msg_size)
 {
 	NetHeader* header = (NetHeader*)msg;
 	uint32_t data_size = msg_size - sizeof(NetHeader);

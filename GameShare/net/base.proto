@@ -1,0 +1,186 @@
+syntax = "proto3";
+ 
+package base;
+
+message Quest
+{
+    int32 quest_id = 1;
+	int32 script_id = 2;
+	int32 y_flag = 3;
+    repeated uint32 a_param  = 4;
+	repeated float af_param = 5;
+	repeated int32 an_param = 6;
+	repeated int32 ab_param = 7;
+}
+
+message Flag64
+{
+    uint32	low_flags = 1;
+	uint32	high_flags = 2;
+}
+
+message SCampData
+{
+    int32 camp_id = 1;
+	int32 pk_mode = 2;
+	int32 reserve1 = 3;
+	int32 reserve2 = 4;
+}
+
+message SHorseGuid
+{
+    uint32	high_section = 1;
+	uint32	low_section = 2;
+}
+
+message ImpactStruct
+{
+    int32 buff_id = 1;
+	uint32 sn = 2;
+}
+
+message GLPos
+{
+    float fx = 1;
+	float fz = 2;
+}
+
+message SXParam
+{
+    repeated int32 int_value = 1;
+	repeated int32 str_offset = 2;
+	string str_value = 3;
+}
+
+message PlayerAbility
+{
+    uint32	level = 1;
+	uint32	exp = 2;
+}
+
+message HorseSkill
+{
+    int32 skill_id = 1;
+	bool  can_use = 2;
+}
+
+message SItemGuid
+{
+    int32	world = 1;
+	int32	server = 2;
+	int32	serial = 3;
+}
+
+message SItemGemInfo
+{
+    uint32 gem_index = 1;
+}
+
+message SItemValue
+{
+    int32 value = 1;
+}
+
+message SItemProperty
+{
+    int32 attr_type = 1;
+	int32 intensify_count = 2; //属性强化次数
+	SItemValue item_value = 3;
+}
+
+//星座信息
+message SItemConstInfo
+{
+    int32	const_id = 1;          //星座Id:0~11
+	repeated SItemProperty const_attrs = 2;
+}
+
+message SEquipInfo
+{
+    int32 equip_level = 1;//装备等级
+	int32 bind = 2; //低4位灵魂铭刻，高4位荣誉铭刻
+	int32 pai_type = 3;
+	int32 equip_type = 4;
+	int32 equip_score = 5;
+    int32 level = 6;	//打星个数
+	int32 curr_max_dur = 7;
+	int32 curr_dur_point = 8;
+	int32 curr_damage_point = 9;
+	int32 curr_gem_hole = 10;
+	repeated SItemGemInfo gems = 11;
+	repeated SItemProperty propertys = 12;
+	int32 lock = 13;
+	int32 lock_time = 14;
+	repeated SItemConstInfo consts = 15;
+}
+
+message SMedicInfo
+{
+    int32 count = 1;
+	int32 level = 2;
+}
+
+message ExtraBagInfo
+{
+    uint32 begin_time = 1;
+}
+
+message SItem
+{
+    int32 item_id = 1;
+    SItemGuid item_guid = 2;
+	uint32 item_index = 3;
+	int32 ns_bind = 4;
+	string creator = 5;
+	repeated int32 params = 6;
+	uint32 term_endtime = 7;
+	optional SEquipInfo equip_info = 8;
+	optional SMedicInfo medic_info = 9;
+	optional ExtraBagInfo extra_bag = 10;
+}
+
+message PlayerSpell
+{
+    int32 skill_id = 1;
+	int32 state = 2;
+	int32 level = 3;
+}
+
+message SArchiveLoader_Quest
+{
+    int32 count = 1;
+	repeated Quest quests = 2;
+	repeated uint32 have_dones = 3;
+	repeated int32 quest_datas = 4;
+}
+
+message Player_Setting
+{
+    int32	setting_type = 1;
+	int32	setting_data = 2;
+}
+
+message SQuestBonusItem
+{
+    int32 ycount = 1;
+	uint32 item_id = 2;
+	int32 yindex = 3;
+}
+
+message SQuestBonus
+{
+    int32 type = 1;
+	optional uint32 money = 2;
+	optional uint32 exp = 3;
+	optional SQuestBonusItem bonus_item = 4;
+}
+
+message ScriptParam_QuestInfo
+{
+    int32 npc_id = 1;
+	int32 script_id = 2;
+	int32 quest_id = 3;
+	int32 yflags = 4;
+	string text = 5;
+	repeated SQuestBonus bonus = 6;
+}

@@ -23,8 +23,6 @@ private:
 	virtual void injectKeyRelease(KeyCode _key);
 
 	virtual void injectMouseWheel(int _absz);
-
-	void login();
 private:
 	GameCamera* mGameCamera;
 	KPlayer* mPlayer;

@@ -2,7 +2,7 @@
 #include "application_base.h"
 
 class GameWorld;
-
+class NetContext;
 class FullDemo : public ApplicationBase
 {
 public:
@@ -13,4 +13,5 @@ public:
 	virtual EngineType getEngineType();
 private:
 	GameWorld* mGameWorld;
+	NetContext* mNetContext;
 };

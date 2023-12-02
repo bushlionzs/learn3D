@@ -106,7 +106,7 @@ bool CSUnEquip::process()
     packet->setEquipPoint(mEquipPoint);
     packet->setResult(UNEQUIP_SUCCESS);
 
-    NetManager::GetSingletonPtr()->sendNetMessage(packet);
+    NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
     return true;
 }

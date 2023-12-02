@@ -1,0 +1,627 @@
+syntax = "proto3";
+
+import "base.proto";
+
+package servermessage;
+
+
+
+enum MessageID
+{
+    SC_MSG_NONE 					= 0;
+    DS_CHAR_DATA   					= 5000;
+
+    SC_ENTER_MAP 					= 10000;
+    SC_QUERY_EVENT_RESULT  			= 11000;
+    SC_QUERY_QUEST_RESULT  			= 11001;
+    SC_NEWMONSTER          			= 11002;
+    SC_CHARACTER_MOVE      			= 11003;
+    SC_TARGETLIST_HITFLAGS 			= 11004;
+    SC_DETAIL_HEALS_DAMAGE 			= 11005;
+    SC_DELETE_OBJECT       			= 11006;
+    SC_MONSTER_ATTRBUTE    			= 11007;
+    SC_NEWITEM 						= 11008;
+    SC_EQUIP_LIST 					= 11009;
+    SC_PICK_ITEM_RESULT 			= 11010;
+    SC_ITEM_INFO 					= 11011;
+    SC_NOTIFY_EQUIP 				= 11012;
+    SC_SWAP_ITEM 					= 11013;
+    SC_UNEQUIP_RESULT 				= 11014;
+    SC_USEEQUIP_RESULT 				= 11015;
+    SC_QUEST_LIST 					= 11016;
+    SC_ADD_QUEST 					= 11017;
+    SC_DEL_QUEST 					= 11018;
+    SC_COMMAND 						= 11019;
+    SC_SCRIPT_COMMAND 				= 11020;
+    SC_CHAT 						= 11021;
+    SC_MANIPULATE_PET_RESULT 		= 11022;
+    SC_NEW_BEASTIE 					= 11023;
+    SC_COOLDOWN_UPDATE 				= 11024;
+    SC_DETAIL_ATTRIB_PET 			= 11025;
+    SC_IMPACTLIST_UPDATE 			= 11026;
+    SC_CHAR_EQUIPMENT 				= 11027;
+    SC_QUESTLIST_REFRESH 			= 11028;
+    SC_DETAIL_ATTR 					= 11029;
+    SC_CHAR_SKILL_GATHER 			= 11030;
+    SC_CHAR_STOP_ACTION 			= 11031;
+    SC_SKILL_UPGRADE 				= 11032;
+    SC_DETAIL_BUFF 					= 11033;
+    SC_SKILL_SETTING 				= 11034;
+    SC_ADD_SKILL_TO_SKILL_LIST 		= 11035;
+    SC_NEW_ITEMBOX 					= 11036;
+    SC_DETAIL_ABILITY_INFO 			= 11037;
+    SC_ABILITY_RESULT 				= 11038;
+    SC_OPERATE_RESULT 				= 11039;
+    SC_MESSAGE_ABILITY_ACTION 		= 11040;
+    SC_ABILITY_SUCCESS 				= 11041;
+	SC_HUMAN_BASE_ATTR              = 11042;
+	SC_DETAIL_EQUIP                 = 11043;
+	SC_DETAIL_ITEM                  = 11044;
+	SC_DETAIL_SKILL                 = 11045;
+}
+
+message ServerMsgAbilityAction
+{
+    int32 object_id = 1;
+	int32 logic_count = 2;
+	int32 ability_id = 3;
+	int32 prescription_id = 4;
+	int32 target_id = 5;
+	int32 begin_end = 6;
+}
+
+message ServerMsgAbilityResult
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 ability_id = 3;
+	int32 prescription_id = 4;
+	int32 result_code = 5;
+}
+
+message ServerMsgAbilitySuccess
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 ability_id = 3;
+	int32 prescription_id = 4;
+	int32 result_code = 5;
+	int32 item_serial = 6;
+}
+
+
+
+message ServerMsgAddQuest
+{
+    int32 player_id = 1;
+	base.Quest quest = 2;
+}
+
+message ServerMsgAddSkillToSkillList
+{
+    int32 object_id = 1;
+	int32 skill_id = 2;
+	int32 skill_state = 3;
+	int32 skill_level = 4;
+}
+
+
+message ServerMsgCharEquipment
+{
+    int32 object_id = 1;
+	int32 scene_id = 2;
+}
+
+
+
+
+
+message ServerHumanBaseAttrib
+{
+    int32 player_id = 1;
+	base.Flag64 flags = 2;
+	int32 job = 3;
+	int32 country = 4;
+	int32 data_id = 5;
+	int32 level = 6;
+	int32 hair_mesh_id = 7;
+	int32 face_mesh_id = 8;
+	int32 hp_percent = 9;
+	int32 hp = 10;
+	int32 hp_max = 11;
+	int32 rage = 12;
+	int32 max_rage = 13;
+	int32 steal_level = 14;
+	int32 mood_state = 15;
+	float move_speed = 16;
+	float attack_speed = 17;
+	base.SCampData camp_data = 18;
+	int32 portrait_id = 19;
+	int32 model_id = 20;
+	int32 mount_id = 21;
+	string name = 22;
+	string country_title = 23;
+	string guild_title = 24;
+	string normal_title = 25;
+	int32 country_title_type = 26;
+	int32 guild_title_type = 27;
+	int32 stall_is_open = 28;
+	int32 target_id = 29;
+	int32 pk_value = 30;
+	int32 generation = 31;
+	int32 world_id = 32;
+	uint32 inherence_exp = 33;
+	uint32 inherence_level = 34;
+	base.SHorseGuid current_horse_guid = 35;
+}
+
+
+
+message ServerMsgCharImpactListUpdate
+{
+    int32 owner_id = 1;
+	int32 scene_id = 2;
+	int32 impact_count = 3;
+	uint32 last_sn = 4;
+	repeated  base.ImpactStruct a_impact = 5;
+}
+
+message ServerMsgCharMove
+{
+    int32 object_id = 1;
+	int32 handle_id = 2;
+	int32 impact_count = 3;
+	uint32 last_sn = 4;
+	repeated  base.ImpactStruct a_impact = 5;
+	optional base.GLPos target_pos = 6;
+	optional base.GLPos stop_pos = 7;
+}
+
+message ServerMsgCharSkillGather
+{
+    int32 object_id = 1;
+	int32 logic_count = 2;
+	int32 skill_data_id = 3;
+	base.GLPos user_position = 4;
+	int32  target_id = 5;
+	base.GLPos target_pos = 6;
+	float dir = 7;
+	int32 total_time = 8;
+}
+
+message ServerMsgCharStopAction
+{
+    int32 object_id = 1;
+	int32 logic_count = 2;
+	int32 stop_time = 3;
+}
+
+message ServerMsgChat
+{
+    int32  chat_type = 1;
+	string chat_content = 2;
+	int32  show_position = 3;
+	int32  cycle_count = 4;
+	int32  animate_image = 5;
+}
+
+
+
+message ServerMsgCommand
+{
+    int32 ui_index = 1;
+	base.SXParam  sx_param = 2;
+}
+
+message ServerMsgCooldownUpdate
+{
+    int32 object_id = 1;
+	int32 scene_id = 2;
+}
+
+message ServerMsgDelObject
+{
+    int32 object_id = 1;
+	int32 scene_id = 2;
+}
+
+message ServerMsgDelQuest
+{
+    int32 player_id = 1;
+	int32 quest_id = 2;
+}
+
+message ServerMsgDeltailOfHealsAndDamage
+{
+    int32 hp_modify = 1;
+	int32 object_id = 2;
+	int32 sender_id = 3;
+	int32 sender_logic_count = 4;
+	bool critical_hit = 5;
+	bool death_blow = 6;
+}
+
+
+
+message ServerMsgDetailAbilityInfo
+{
+    int32 object_id = 1;
+	int32 scene_id = 2;
+	int32 ability_count = 3;
+	repeated int32 ability_list = 4;
+	repeated base.PlayerAbility abilitys = 5;
+	string prescr = 6;
+	repeated int32 next_need_level = 7;
+	repeated int32 next_need_money = 8;
+	repeated int32 next_need_exp = 9;
+}
+
+
+message ServerMsgDetailAttrib
+{
+    repeated base.HorseSkill skills = 1;
+	string extra_data = 2;
+	base.Flag64 flags = 3;
+	int32 map_id = 4;
+	base.SHorseGuid horse_guid = 5;
+	int32 trade_index = 6;
+	int32 data_id = 7;
+	string name = 8;
+	string nickname = 9;
+	int32 ai_type = 10;
+	int32 level = 11;
+	int32 exp = 12;
+	int32 hp = 13;
+	int32 hp_max = 14;
+	int32 horse_state = 15;
+	int32 generation = 16;
+	int32 happiness = 17;
+	int32 attr_near = 18;
+	int32 attr_far = 19;
+	int32 attr_magic = 20;
+	int32 def_near = 21;
+	int32 def_far = 22;
+	int32 def_magic = 23;
+	int32 hit = 24;
+	int32 miss = 25;
+	int32 critical = 26;
+	int32 model_id = 27;
+	int32 mount_id = 28;
+	int32 str_perception = 29;
+	int32 con_perception = 30;
+	int32 dex_perception = 31;
+	int32 int_perception = 32;
+	int32 str_perception_limit = 33;
+	int32 con_perception_limit = 34;
+	int32 dex_perception_limit = 35;
+	int32 int_perception_limit = 36;
+	
+	int32 strength = 37;
+	int32 con = 38;
+	int32 dex = 39;
+	int32 intelligence = 40;
+	int32 grow_rate = 41;
+	int32 remain_point = 42;
+	int32 strength_point = 43;
+	int32 smartness_point = 44;
+	int32 mind_point = 45;
+	int32 constitution_point = 46;
+	int32 index = 47;
+	int32 stall_order = 48;
+	int32 pet_lock = 49;
+	int32 unlock_time = 50;
+	bool current_horse_flag = 51;
+}
+
+message ServerMsgDetailAttribPet
+{
+    repeated base.HorseSkill skills = 1;
+	string extra_data = 2;
+	base.Flag64 flags = 3;
+	int32 map_id = 4;
+	base.SHorseGuid horse_guid = 5;
+	int32 trade_index = 6;
+	int32 data_id = 7;
+	string name = 8;
+	string nickname = 9;
+	int32 ai_type = 10;
+	int32 level = 11;
+	int32 exp = 12;
+	int32 hp = 13;
+	int32 hp_max = 14;
+	int32 horse_state = 15;
+	int32 generation = 16;
+	int32 happiness = 17;
+	int32 attr_near = 18;
+	int32 attr_far = 19;
+	int32 attr_magic = 20;
+	int32 def_near = 21;
+	int32 def_far = 22;
+	int32 def_magic = 23;
+	int32 hit = 24;
+	int32 miss = 25;
+	int32 critical = 26;
+	int32 model_id = 27;
+	int32 mount_id = 28;
+	int32 str_perception = 29;
+	int32 con_perception = 30;
+	int32 dex_perception = 31;
+	int32 int_perception = 32;
+	int32 str_perception_limit = 33;
+	int32 con_perception_limit = 34;
+	int32 dex_perception_limit = 35;
+	int32 int_perception_limit = 36;
+	
+	int32 strength = 37;
+	int32 con = 38;
+	int32 dex = 39;
+	int32 intelligence = 40;
+	int32 grow_rate = 41;
+	int32 remain_point = 42;
+	int32 strength_point = 43;
+	int32 smartness_point = 44;
+	int32 mind_point = 45;
+	int32 constitution_point = 46;
+	int32 index = 47;
+	int32 stall_order = 48;
+	int32 pet_lock = 49;
+	int32 unlock_time = 50;
+}
+
+message ServerMsgDetailBuff
+{
+    int32 object_id = 1;
+	int32 receiver_id = 2;
+	int32 sender_id = 3;
+	bool  enable = 4;
+	int32 skill_id = 5;
+	int32 sn = 6;
+	int32 buff_id = 7;
+	int32 continuance = 8;
+	int32 delay_time = 9;
+	int32 sender_logic_count = 10;
+}
+
+
+
+message ServerMsgDetailEquipList
+{
+    int32 object_id = 1;
+	repeated base.SItem items = 2;
+}
+
+message ServerMsgDetailDetailItemList
+{
+    int32 object_id = 1;
+	repeated base.SItem items = 2;
+}
+
+
+
+message ServerMsgDetailSkillList
+{
+    int32 player_id = 1;
+	repeated base.PlayerSpell skills = 2;
+}
+
+
+message ServerMsgEnterMap 
+{
+    uint32 scene_id = 1;
+	float position_x = 2;
+	float position_y = 3;
+	int32 guid = 4;
+	int32 object_id = 5;
+}
+
+message ServerMsgItemInfo
+{
+    int32 bag_index = 1;
+	base.SItem item = 2;
+	bool  null = 3;
+	int32 tips = 4;
+}
+
+message ServerMsgManipulatePetResult
+{
+    int32 result = 1;
+	int32 object_id = 2;
+	int32 scene_id = 3;
+}
+
+message ServerMsgModifyQuest
+{
+    int32 player_id = 1;
+	int32 quest_id = 2;
+	int32 flag = 3;
+	uint32 flag32 = 4;
+	base.Quest quest = 5;
+}
+
+message ServerMsgMonsterAttribute
+{
+    int32 refresh = 1;
+	base.Flag64 flags = 2;
+	int32 object_id = 3;
+	uint32 data_id = 4;
+	int32 level = 5;
+	int32 hp_percent = 6;
+	int32 steal_level = 7;
+	int32 mood_state = 8;
+	float move_speed = 9;
+	float attack_speed = 10;
+	base.SCampData camp_data = 11;
+	int32 portrait_id = 12;
+	int32 model_id = 13;
+	int32 mount_id = 14;
+	int32 ai_type = 15;
+	string name = 16;
+	string country_title = 17;
+	string guild_title = 18;
+	string normal_title = 19;
+	int32 country_title_type = 20;
+	int32 guild_title_type = 21;
+	int32 normal_title_type = 22;
+	uint32 occupant_guid = 23;
+	int32 owner_id = 24;
+	int32 target_id = 25;
+	float dir = 26;
+	int32 ctrl_state = 27;
+	float scale = 28;
+}
+
+message ServerMsgNewBeastie
+{
+    uint32 object_id = 1;
+	string name = 2;
+	float position_x = 3;
+	float position_z = 4;
+	float dir = 5;
+	float move_speed = 6;
+	bool moving = 7;
+	int32 handle_id = 8;
+	float target_x = 9;
+	float target_z = 10;
+}
+
+message ServerMsgNewItem
+{
+    int32 object_id = 1;
+	int32 scene_id = 2;
+	int32 item_index = 3;
+	int32 item_count = 4;
+	float position_x = 5;
+	float position_z = 6;
+}
+
+message ServerMsgNewItemBox
+{
+    int32 object_id = 1;
+	int32 type = 2;
+	uint32 owner_id = 3;
+	int32 scene_id = 4;
+	base.GLPos pos = 5;
+	int32 drop_monster_id = 6;
+}
+
+message ServerMsgNewMonster
+{
+    uint32 object_id = 1;
+	string name = 2;
+	float position_x = 3;
+	float positiion_y = 4;
+	float dir = 5;
+	float move_speed = 6;
+	float horse_id = 7;
+	float weapon_id = 8;
+	int32 monster_type = 9;
+	uint32 guid = 10;
+	int32 race_id = 11;
+	int32 camp_id = 12;
+}
+
+message ServerMsgNotifyEquip
+{
+    int32 bag_index = 1;
+	base.SItem item = 2;
+}
+
+message ServerMsgOperateResult
+{
+    int32 player_id = 1;
+	int32 map_id = 2;
+	int32 res_type = 3;
+	int32 result_code = 4;
+}
+
+message ServerMsgPickItemResult
+{
+    int32 object_id = 1;
+	int32 result_code = 2;
+}
+
+message ServerMsgQueryEventResult
+{
+    uint32 object_id = 1;
+}
+
+
+
+message ServerMsgQuestList
+{
+    int32 player_id = 1;
+	base.SArchiveLoader_Quest quest_list = 2;
+}
+
+message ServerMsgQuestListRefresh
+{
+    int32 object_id = 1;
+	int32 scene_id = 2;
+}
+
+
+
+message ServerMsgSkillSettingResult
+{
+    int32 object_id = 1;
+	base.Player_Setting setting = 2;
+	int32 index = 3;
+}
+
+
+
+message ServerMsgScriptCommand
+{
+    int32 cmd_id = 1;
+	base.Player_Setting setting = 2;
+	int32 index = 3;
+	base.ScriptParam_QuestInfo continue_param = 4;
+	base.ScriptParam_QuestInfo quest_info = 5;
+	string quest_tips = 6;
+}
+
+
+message ServerMsgSkillUpgrade
+{
+    int32 object_id = 1;
+	int32 skill_id  = 2;
+	int32 skill_level = 3;
+	bool  sucess = 4;
+	int32 type = 5;
+}
+
+message ServerMsgSwapItem
+{
+    int32 result = 1;
+	int32 source_pos = 2;
+	int32 dest_pos = 3;
+}
+
+message ServerMsgTargetListAndHitFlags
+{
+    int32 object_id = 1;
+	int32 logic_count = 2;
+	int32 skill_id = 3;
+	repeated int32 target_list = 4;
+	float position_x = 5;
+	float position_z = 6;
+}
+
+
+message ServerMsgTaskDownEquipResult
+{
+    int32 result = 1;
+	int32 player_id = 2;
+	int32 map_id = 3;
+	int32 equip_point = 4;
+	int32 bag_index = 5;
+}
+
+message ServerMsgUseEquipResult
+{
+    int32 result = 1;
+	int32 equip_point = 2;
+	int32 bag_index = 3;
+}
+
+
