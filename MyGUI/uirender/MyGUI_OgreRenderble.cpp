@@ -11,7 +11,7 @@ namespace MyGUI
 	MyGUIRender::MyGUIRender()
 	{
 		mMaterial = std::make_shared<Ogre::Material>("");
-		mMaterial->addTexture("white1x1.dds");
+		mMaterial->addTexture("white1x1.dds", nullptr);
 		ShaderInfo sInfo;
 		sInfo.shaderName = "mygui";
 		mMaterial->addShader(sInfo);

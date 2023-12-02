@@ -9,7 +9,7 @@ public:
 	SCDetailEquipList();
 	~SCDetailEquipList();
 
-	virtual bool process();
+	//virtual bool process();
 
 	void setObjectId(int32_t id);
 

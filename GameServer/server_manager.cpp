@@ -16,6 +16,8 @@
 #include "Share/TAB/TabDefine_Map_Item.h"
 #include "item/Item_Manager.h"
 #include "skill/Skill_Manager.h"
+#include "message_process.h"
+#include "client_message.pb.h"
 
 extern ScriptCacheMgr g_ScriptFileMgr;
 template<>
@@ -84,6 +86,82 @@ void ServerManager::QueryEvent(uint32_t mapId, uint32_t playeId, uint32_t object
 QuestManager* ServerManager::getQuestManager()
 {
 	return mQuestManager;
+}
+
+
+void ServerManager::registerMessage()
+{
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_user_login, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_char_move, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_char_use_skill, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_event_request, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_manipulate_pet, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_pick_item, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_player_request_base_attr, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_query_event, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_quest_abandon, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_quest_accept, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_quest_continue, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_quest_refuse, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_quest_submit, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_swap_item, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_tick, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_takedown_equip, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_use_ability, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+
+	NetManager::GetSingleton().registerMessage(clientmessage::CS_LOGIN,
+		std::bind(cs_use_equip, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+
+
+	
 }
 
 void ServerManager::processNetMessage()
@@ -180,4 +258,10 @@ void run_game_server()
 	dbModule = create_platform_module(1, "db_module");
 	dbModule->attach_module(0, db_init_func, db_entry_func, nullptr);
 	dbModule->run_module();
+}
+
+int main()
+{
+	run_game_server();
+	return 0 ;
 }

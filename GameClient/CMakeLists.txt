@@ -59,7 +59,6 @@ target_include_directories(${PROJECT_NAME}
     ${GAMECLIENT_INC}
 	${GAMEUTIL_INC}
 	${GAMESHARE_INC}
-	${GAMESERVER_INC}
 	${MIDDLE_INC}
 	${MINIOGRE_INC}
 	${MYGUI_INC}
@@ -68,8 +67,8 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
-target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre MyGUI Middle GameServer 
-GameShare GameServer stormlib mariadbclient luaplus OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
+target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre MyGUI Middle
+GameShare stormlib mariadbclient luaplus OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
 vulkan-1
 avcodec

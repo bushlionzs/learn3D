@@ -7,7 +7,7 @@ public:
 	SCDetailSkillList();
 	~SCDetailSkillList();
 
-	virtual bool process();
+	//virtual bool process();
 
 	void setPlayerId(uint32_t id);
 	void setSkillList(int32_t count, const _PLAYER_SPELL* paSkill);

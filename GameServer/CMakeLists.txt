@@ -1,5 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 
+
+project(GameServer)
+
 set(GAMESERVER_LIB_NAME GameServer)
 set(GAMESERVER_INC)
 
@@ -55,7 +58,7 @@ add_subdir(skill)
 
 
 
-add_library(${GAMESERVER_LIB_NAME} STATIC ${GAMESERVER_SRC_LIST})
+add_executable(${GAMESERVER_LIB_NAME} ${GAMESERVER_SRC_LIST})
 
 
 
@@ -67,7 +70,17 @@ target_include_directories(${GAMESERVER_LIB_NAME}
 	${GAMESHARE_INC}
     ${LUAPLUS_INC}
 	${MYSQL_INC}
+	${PROTOBUF_INC}
+	${DYNETWORK_INCLUDE_HEADERS}
 )
 
-set(GAMESERVER_INC ${GAMESERVER_INC}  CACHE INTERNAL "shared")
+target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
+
+target_link_libraries(${PROJECT_NAME} GameUtil   
+GameShare  mariadbclient luaplus dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
+tinyxmld
+dxgi
+dxguid
+winmm)
+
 

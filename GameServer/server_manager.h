@@ -28,6 +28,7 @@ public:
 		return mLuaSystem;
 	}
 private:
+	void registerMessage();
 	void processNetMessage();
 private:
 	QuestManager* mQuestManager = nullptr;

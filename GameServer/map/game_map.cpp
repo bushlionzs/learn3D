@@ -6,7 +6,7 @@
 #include "map/Grid.h"
 #include "map/MonsterManager.h"
 #include "gameobject/Monster.h"
-#include "map/ObjectManager.h"
+#include "ObjectManager.h"
 #include "gameobject/PlayerManager.h"
 #include "gameobject/Player.h"
 #include "gameobject/Beastie.h"

@@ -334,3 +334,4 @@ if(protobuf_VERBOSE)
   message(STATUS "Protocol Buffers Configuring done")
 endif(protobuf_VERBOSE)
 
+set(PROTOBUF_INC ${protobuf_SOURCE_DIR}/src  CACHE INTERNAL "shared")

@@ -8,7 +8,7 @@ public:
 	SCNewMonster();
 	virtual ~SCNewMonster();
 
-	virtual bool process();
+	//virtual bool process();
 
 	void setObjID(uint32_t id);
 	void setPosition(float x, float z);

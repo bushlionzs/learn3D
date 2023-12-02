@@ -5,17 +5,17 @@
 #include "KObjectManager.h"
 #include "kplayer.h"
 
-bool SCEnterMap::process()
-{
-	GameSceneManager::getSingletonPtr()->loadScene(mSceneId);
-
-	Ogre::Vector3 mPosition;
-	mPosition.x = mPositionX;
-	mPosition.y = 0;
-	mPosition.z = mPositionZ;
-
-
-	KPlayer* pPlayer = (KPlayer*)KObjectManager::GetSingleton().createPlayer(mObjectID);
-	pPlayer->setPosition(mPosition);
-	return true;
-}
+//bool SCEnterMap::process()
+//{
+//	GameSceneManager::getSingletonPtr()->loadScene(mSceneId);
+//
+//	Ogre::Vector3 mPosition;
+//	mPosition.x = mPositionX;
+//	mPosition.y = 0;
+//	mPosition.z = mPositionZ;
+//
+//
+//	KPlayer* pPlayer = (KPlayer*)KObjectManager::GetSingleton().createPlayer(mObjectID);
+//	pPlayer->setPosition(mPosition);
+//	return true;
+//}

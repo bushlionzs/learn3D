@@ -8,7 +8,7 @@ public:
 	SCEnterMap();
 	~SCEnterMap();
 
-	virtual bool process();
+	//virtual bool process();
 
 	void setActorID(int32_t objId, int32_t serverGuid);
 	void setSceneId(int32_t id);

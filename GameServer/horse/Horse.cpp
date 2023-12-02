@@ -11,7 +11,7 @@
 #include "StructDB.h"
 
 #include "map/game_map.h"
-#include "map/ObjectManager.h"
+#include "ObjectManager.h"
 
 #include "Behavior_Horse.h"
 #include "skill/Spell_Interface.h"

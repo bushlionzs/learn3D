@@ -7,7 +7,7 @@ public:
 	NetPacket(uint32_t messageID);
 	virtual ~NetPacket();
 
-	virtual bool process() = 0;
+	virtual bool process() { return false; };
 
 	uint32_t getMessageID()
 	{

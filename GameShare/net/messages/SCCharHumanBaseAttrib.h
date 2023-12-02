@@ -51,7 +51,7 @@ public:
 	SCCharHumanBaseAttrib();
 	~SCCharHumanBaseAttrib();
 
-	virtual bool process();
+	//virtual bool process();
 
 	void setPlayerId(int32_t playerId);
 	void setJob(int32_t job)

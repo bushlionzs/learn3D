@@ -67,7 +67,7 @@ target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 	
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
-MyGUI Middle GameServer GameShare stormlib OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
+MyGUI Middle stormlib OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
 vulkan-1
 avcodec

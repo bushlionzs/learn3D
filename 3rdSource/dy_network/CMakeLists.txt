@@ -10,6 +10,7 @@ if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-DWIN32_LEAN_AND_MEAN)
+add_definitions(-DDY_NETWORK_DISNABLE_SSL)
 endif()
 
 
@@ -61,10 +62,6 @@ dy_network_add_subdir(minizip)
 
 add_library(${DY_NETWORK_LIB_NAME} STATIC ${DY_NETWORK_SRC_LIST})
 
-if(MSVC)
-set_property(TARGET ${DY_NETWORK_LIB_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
-
 
 target_include_directories(${DY_NETWORK_LIB_NAME}
     PUBLIC
@@ -74,23 +71,5 @@ target_include_directories(${DY_NETWORK_LIB_NAME}
 		${ZLIB_INCLUDE_DIRECTORIES}
 )
 
-target_compile_definitions(${DY_NETWORK_LIB_NAME}
-    PUBLIC
-        __STDC_FORMAT_MACROS
-)
 
-target_compile_features(${DY_NETWORK_LIB_NAME}
-    PUBLIC
-        cxx_std_11
-)
-
-if (INSTALL_INC_DIR)
-    foreach(dir ${DY_NETWORK_SUBDIR})
-        file(GLOB DY_NETWORK_INC ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/*.hpp)
-        install(FILES ${DY_NETWORK_INC} DESTINATION ${INSTALL_INC_DIR}/${DY_NETWORK_LIB_NAME}/${dir})
-    endforeach(dir)
-endif()
-
-if (INSTALL_LIB_DIR)
-    install(TARGETS ${DY_NETWORK_LIB_NAME} ARCHIVE DESTINATION ${INSTALL_LIB_DIR})
-endif()
+set(DYNETWORK_INCLUDE_HEADERS ${DY_NETWORK_INC}  CACHE INTERNAL "shared")

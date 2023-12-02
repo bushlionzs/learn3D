@@ -1,6 +1,7 @@
 #pragma once
 
 class DBTask;
+#include <list>
 #include "platform_mutex.h"
 #include "scoped_lock.h"
 #include "GameSingleton.h"
