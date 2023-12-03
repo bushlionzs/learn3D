@@ -32,6 +32,8 @@ public:
 
 	virtual void OnTimer(platform_timer_t, void* param);
 
+	void add_packet(NetPacket* packet);
+
 	QuestManager* getQuestManager();
 
 
@@ -43,6 +45,7 @@ public:
 	}
 private:
 	void registerMessage();
+	void run_packet();
 private:
 	QuestManager* mQuestManager = nullptr;
 
@@ -52,7 +55,9 @@ private:
 
 	TableInit_Map* mMapTable = nullptr;
 
-	std::vector<NetPacket*> mNetMessageList;
+	std::vector<NetPacket*> mServerMessageList;
+
+	std::mutex mMutex;
 
 	LuaSystem* mLuaSystem = nullptr;
 
@@ -60,5 +65,3 @@ private:
 	platform_timer_t mUpdateTimer = INVALID_TIMER_ID;
 	
 };
-
-void run_game_server();

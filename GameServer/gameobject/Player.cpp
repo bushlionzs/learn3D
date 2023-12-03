@@ -1570,7 +1570,7 @@ void Player::SetRuntimeData(int32_t index, int32_t value)
 
 void Player::sendPacket(NetPacket* packet)
 {
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, packet);
 }
 
 float	Player::Get_Property_MoveSpeed(void)

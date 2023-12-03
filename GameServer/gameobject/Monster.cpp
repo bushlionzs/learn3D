@@ -26,6 +26,7 @@
 #include "script/LuaSystem.h"
 #include "ScriptDef.h"
 #include "net/messages/SCChat.h"
+#include "server_message.pb.h"
 using namespace Messages;
 
 
@@ -744,22 +745,24 @@ int32_t		Monster::GetLevel(void) const
 
 NetPacket* Monster::CreateNewObjMsg(void)
 {
-	SCNewMonster* pMonster = new SCNewMonster;
-
-	pMonster->setObjID(GetID());
 	const GLPos* pos = this->GetGLPos();
-	pMonster->setPosition(pos->m_fX, pos->m_fZ);
-	pMonster->setDir(GetDir());
-	pMonster->setSpeed(Get_Property_MoveSpeed());
-	pMonster->setMonsterType(MT_MONSTER);
-	pMonster->setHourseID(GetHorseID());
-	pMonster->setWeaponID(GetWeaponID());
-	pMonster->setGUID(GetGUID());
-	pMonster->setRaceID(GetDataID());
-	pMonster->setName(mMonsterProperty->m_Name);
-	pMonster->setCampID(mMonsterProperty->m_Camp);
+	servermessage::ServerMsgNewMonster dummy;
+
+	dummy.set_object_id(GetID());
+	dummy.set_position_x(pos->m_fX);
+	dummy.set_positiion_y(pos->m_fZ);
+	dummy.set_dir(GetDir());
+	dummy.set_move_speed(Get_Property_MoveSpeed());
+	dummy.set_monster_type(MT_MONSTER);
+	dummy.set_horse_id(GetHorseID());
+	dummy.set_weapon_id(GetWeaponID());
+	dummy.set_guid(GetGUID());
+	dummy.set_race_id(GetDataID());
+	dummy.set_name(mMonsterProperty->m_Name);
+	dummy.set_camp_id(mMonsterProperty->m_Camp);
 	
-	return pMonster;
+	NetPacket* packet = new NetPacket(servermessage::SC_NEWMONSTER, dummy);
+	return packet;
 }
 void		Monster::DestroyNewObjMsg(NetPacket* pPacket)
 {

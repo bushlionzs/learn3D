@@ -1505,10 +1505,10 @@ void Behavior_Monster::MovePhonily(const GLPos &rTar)
 	servermessage::ServerMsgCharMove dummy;
 	dummy.set_object_id(pMonster->GetID());
 	dummy.set_handle_id(pMonster->GetMoveLogicCount());
-	base::GLPos pos;
-	pos.set_fx(rTar.m_fX);
-	pos.set_fz(rTar.m_fZ);
-	dummy.set_allocated_target_pos(&pos);
+	base::GLPos* target = dummy.mutable_target_pos();
+	target->set_fx(rTar.m_fX);
+	target->set_fz(rTar.m_fZ);
+
 
 	pMonster->GetMap()->broadCast(servermessage::SC_CHARACTER_MOVE, dummy, pMonster);
 }

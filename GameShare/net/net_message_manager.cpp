@@ -27,6 +27,15 @@ bool NetMessageManager::sendNetMessage(NetPacket*)
 	return false;
 }
 
+bool NetMessageManager::sendNetMessage(NetHandle h, NetPacket* packet)
+{
+	const std::string& data = packet->getNetData();
+
+	int32_t ret = NetFactory::GetInstance()->SendData(h, (const uint8_t*)data.data(), data.size());
+
+	return true;
+}
+
 bool NetMessageManager::sendNetMessage(NetHandle h, uint32_t msg_id, google::protobuf::Message* msg)
 {
 	std::string msgdata;

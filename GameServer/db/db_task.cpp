@@ -4,7 +4,7 @@
 #include "db_manager.h"
 #include "net/messages/DSCharData.h"
 #include "net/net_message_manager.h"
-
+#include "server_manager.h"
 DBTask::DBTask()
 {
 
@@ -404,7 +404,7 @@ void CharDataTask::success(CMySQLRecordSet* recordset)
 
 		DSCharData* packet = new DSCharData(pCharDBNode);
 
-		NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+		ServerManager::GetSingleton().add_packet(packet);
 
 	}
 }

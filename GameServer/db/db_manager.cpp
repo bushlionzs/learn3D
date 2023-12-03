@@ -17,6 +17,22 @@ DBManager::~DBManager()
 }
 
 
+void db_init_func()
+{
+}
+
+uint32_t db_entry_func(uint32_t moduleid,
+    uint32_t msg_id,
+    uint64_t sender,
+    uint64_t param,
+    void* msg,
+    uint32_t msg_size,
+    void* pModulePrivateData)
+{
+    DBManager::GetSingletonPtr()->run();
+    return 0;
+}
+
 bool DBManager::initialize()
 {
     mConnection = new CMySQLConnection;
@@ -26,6 +42,11 @@ bool DBManager::initialize()
     bool ret = mConnection->Connect();
     const char* szerror = mConnection->GetLastErrorInfo();
     mRecordSet = new CMySQLRecordSet;
+
+    m_module = create_platform_module(1, "db_module");
+    m_module->attach_module(0, db_init_func, db_entry_func, nullptr);
+    m_module->run_module();
+
     return ret;
 }
 
@@ -75,8 +96,17 @@ void DBManager::runDBTask(DBTask* task)
 
 void DBManager::addDbTask(DBTask* task)
 {
-    ScopedLock<PlatformMutex> lock(mMutex);
-    mTaskList.push_back(task);
+    {
+        ScopedLock<PlatformMutex> lock(mMutex);
+        mTaskList.push_back(task);
+    }
+    m_module->post_module_message(0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false);
 }
 
 void DBManager::addCharListTask(const char* account)

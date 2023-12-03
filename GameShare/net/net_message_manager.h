@@ -18,6 +18,7 @@ public:
 
 	bool sendNetMessage(NetPacket*);
 
+	bool sendNetMessage(NetHandle h, NetPacket* packet);
 	bool sendNetMessage(NetHandle h, uint32_t msg_id, google::protobuf::Message* msg);
 
 	void processMessage();

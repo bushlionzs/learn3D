@@ -5,6 +5,7 @@ class DBTask;
 #include "platform_mutex.h"
 #include "scoped_lock.h"
 #include "GameSingleton.h"
+#include "platform_common.h"
 
 class CMySQLConnection;
 class CMySQLRecordSet;
@@ -32,4 +33,6 @@ private:
 
     CMySQLConnection* mConnection = nullptr;
     CMySQLRecordSet* mRecordSet = nullptr;
+
+    IPlatformModule* m_module = nullptr;
 };

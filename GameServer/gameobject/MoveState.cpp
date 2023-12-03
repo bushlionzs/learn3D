@@ -471,18 +471,20 @@ OPT_RESULT CharMoveState::AfreshMove(uint16 wNumTargetPos, const GLPos *paTarget
 void CharMoveState::BroatMoveMessage(const GLPos* pTargetPos, const GLPos* stopPos)
 {
 	int32_t logicCount = m_pOnwer->GetMoveLogicCount();
+
 	servermessage::ServerMsgCharMove dummy;
 	dummy.set_object_id(m_pOnwer->GetID());
 	dummy.set_handle_id(logicCount);
-	base::GLPos pos;
-	pos.set_fx(pTargetPos->m_fX);
-	pos.set_fz(pTargetPos->m_fZ);
-	dummy.set_allocated_target_pos(&pos);
 
-	pos.set_fx(stopPos->m_fX);
-	pos.set_fz(stopPos->m_fZ);
+		
+	base::GLPos* target = dummy.mutable_target_pos();
+	target->set_fx(pTargetPos->m_fX);
+	target->set_fz(pTargetPos->m_fZ);
 
-	m_pOnwer->GetMap()->broadCast(servermessage::SC_CHARACTER_MOVE, dummy, m_pOnwer);
+	base::GLPos* stop = dummy.mutable_stop_pos();
+	target->set_fx(stopPos->m_fX);
+	target->set_fz(stopPos->m_fZ);
+    m_pOnwer->GetMap()->broadCast(servermessage::SC_CHARACTER_MOVE, dummy, m_pOnwer);
 }
 
 float CharMoveState::GetSafeMoveSpeed()

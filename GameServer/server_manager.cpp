@@ -70,7 +70,7 @@ void ServerManager::OnPreInit()
 
 	g_ItemTab.Init();
 
-	
+	registerMessage();
 }
 
 void ServerManager::OnAfterInit()
@@ -86,7 +86,28 @@ int ServerManager::process_message(NetHandle handle, const char* msg, uint32_t m
 
 void ServerManager::OnTimer(platform_timer_t, void* param)
 {
+	run_packet();
 	MapManager::GetSingletonPtr()->update();
+}
+
+void ServerManager::add_packet(NetPacket* packet)
+{
+	std::lock_guard<std::mutex> lock(mMutex);
+	mServerMessageList.push_back(packet);
+}
+
+void ServerManager::run_packet()
+{
+	if (!mServerMessageList.empty())
+	{
+		std::lock_guard<std::mutex> lock(mMutex);
+		for (auto packet : mServerMessageList)
+		{
+			packet->process();
+			delete packet;
+		}
+	}
+	
 }
 
 void ServerManager::QueryEvent(uint32_t mapId, uint32_t playeId, uint32_t objectId)
@@ -169,53 +190,7 @@ void ServerManager::registerMessage()
 
 	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_USE_EQUIP,
 		std::bind(cs_use_equip, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-
-
-
 	
-}
-
-
-void db_init_func()
-{
-	bool ret = DBManager::GetSingletonPtr()->initialize();
-
-	assert(ret);
-}
-
-uint32_t db_entry_func(uint32_t moduleid,
-	uint32_t msg_id,
-	uint64_t sender,
-	uint64_t param,
-	void* msg,
-	uint32_t msg_size,
-	void* pModulePrivateData)
-{
-	DBManager::GetSingletonPtr()->run();
-	return 0;
-}
-
-
-IPlatformModule* serverModule = nullptr;
-IPlatformModule* dbModule = nullptr;
-int32_t server_timer_callback(void* param)
-{
-	serverModule->post_module_message(0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		false);
-
-	dbModule->post_module_message(0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		false);
-	return 0;
 }
 
 void run_game_server()
@@ -224,9 +199,8 @@ void run_game_server()
 	new NetMessageManager;
 	new DBManager;
 
-	dbModule = create_platform_module(1, "db_module");
-	dbModule->attach_module(0, db_init_func, db_entry_func, nullptr);
-	dbModule->run_module();
+	DBManager::GetSingleton().initialize();
+	
 
 	ServerManager::GetSingleton().init();
 

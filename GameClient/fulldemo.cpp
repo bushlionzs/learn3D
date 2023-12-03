@@ -18,6 +18,7 @@ FullDemo::~FullDemo()
 
 bool FullDemo::appInit()
 {
+	new NetMessageManager;
 	ApplicationBase::appInit();
 	mGameCamera->getCamera()->setNearClipDistance(100.0f);
 
