@@ -134,7 +134,7 @@ int32_t LuaFunction_Msg2Player(Lua_State* L)
 		packet->setChatType(type);
 		packet->setChatMsg(msg);
 		packet->setChatShowPos(ShowPos);
-		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 	break;
 	}

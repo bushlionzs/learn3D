@@ -211,7 +211,7 @@ public:
 
 	uint32_t GetRand100();
 
-	void  broadCast(NetPacket* packet, Character* pOwnCharacter);
+	void  broadCast(uint32_t msg_id, google::protobuf::Message& msg, Character* pOwnCharacter);
 
 	uint32_t GetCurHeartBeatTime()
 	{

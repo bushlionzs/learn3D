@@ -48,7 +48,7 @@ PacketUseCount::~PacketUseCount()
 void PacketUseCount::SetActive(MapID_t iSceneID)
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	__GUARD__ lock_guard<FastLock>	autolock(m_Lock);
+	__GUARD__ std::lock_guard<FastLock>	autolock(m_Lock);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	Reset();

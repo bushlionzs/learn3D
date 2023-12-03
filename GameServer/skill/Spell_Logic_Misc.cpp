@@ -20,7 +20,7 @@
 #include "script/LuaSystem.h"
 #include "net/messages/SCManipulatePetRet.h"
 #include "map/BeastieManager.h"
-
+#include "net_message_manager.h"
 /*
  =======================================================================================================================
  =======================================================================================================================
@@ -367,7 +367,7 @@ BOOL CommonSpell004::EffectOnUnitOnce(Character &rMe, Character &rTar, BOOL bCri
 		packet->setManipulateRet(SCManipulatePetRet::OPT_HORSE_RET_CAPTUREFALID);
 	}
 
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	return TRUE;
 }

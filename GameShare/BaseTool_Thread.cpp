@@ -147,7 +147,7 @@ ulong WINAPI ThreadEntry(void *derivedThread)
 
 	if(thread == NULL) return 0;
 	{
-		lock_guard<FastLock> autolock(g_thread_lock);
+		std::lock_guard<FastLock> autolock(g_thread_lock);
 
 		g_ThreadCount++;
 	}
@@ -159,7 +159,7 @@ ulong WINAPI ThreadEntry(void *derivedThread)
 	thread->setState(KThread::THREAD_FINISH);
 	thread->exit(NULL);
 	{
-		lock_guard<FastLock> autolock(g_thread_lock);
+		std::lock_guard<FastLock> autolock(g_thread_lock);
 
 		g_WaitQuitThreadCount++;
 	}

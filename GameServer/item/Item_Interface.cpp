@@ -578,7 +578,7 @@ BOOL ItemInterface::CreateMultiItemToInventory
 				packet->setBagIndex(iOldBagIndex);
 				Item* pItem = GetBagItem(pPlayer, iOldBagIndex);
 				pItem->SaveValueTo(packet->getItem());
-				//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+				NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 				iOldBagIndex = iBagIndex;
 
 				uLastCount -= uEachPileCount;
@@ -608,7 +608,7 @@ BOOL ItemInterface::CreateMultiItemToInventory
 				SCNotifyEquip* packet = new SCNotifyEquip;
 				packet->setBagIndex(iBagIndex);
 				pItem->SaveValueTo(packet->getItem());
-				//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+				NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 			}
 			else
 			{
@@ -617,7 +617,7 @@ BOOL ItemInterface::CreateMultiItemToInventory
 				packet->setId(iBagIndex);
 				packet->setTips(1);
 				pChangedItem->SaveValueTo(packet->getItem());
-				//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+				NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 			}
 			
 			pPlayer->OnEvent_ItemChanged(uItemIndex, ITEM_CHANGE_ADDITEM);
@@ -1043,7 +1043,7 @@ BOOL ItemInterface::RecieveItemToInventory(ItemLogRecordInfo *pLogParam, Player 
 			packet->setBagIndex(index);
 			pDestItem->SaveValueTo(packet->getItem());
 
-			//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+			NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 		}
 		else
 		{
@@ -1055,7 +1055,7 @@ BOOL ItemInterface::RecieveItemToInventory(ItemLogRecordInfo *pLogParam, Player 
 			packet->setTips(1);
 			pDestItem->SaveValueTo(packet->getItem());
 
-			//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+			NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 		}
 
 		pPlayer->OnEvent_ItemChanged(pDestItem->GetItemTableIndex(), ITEM_CHANGE_ADDITEM);

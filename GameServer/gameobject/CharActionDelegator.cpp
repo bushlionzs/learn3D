@@ -22,6 +22,7 @@ purpose:	动作接口类 也就是动作封装类 其他模块对动作相关操作只与本类打交道
 #include "TabDefine.h"
 #include "data/data_manager.h"
 #include "net/messages/SCCharSkill_Gather.h"
+#include "net_message_manager.h"
 
 
 enum { MIN_ACTION_TIME = 500, };
@@ -573,7 +574,7 @@ void ActionDelegator::Broadcast_UnitStartChargeAction(Character &rActor, ActionI
 	packet->setTargetPosition((const GLPos*)&rParams.GetTargetPosition());
 	packet->setDir(rParams.GetTargetDirection());
 	packet->setTotalTime(nContinuance);
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	__UNGUARD__
 }

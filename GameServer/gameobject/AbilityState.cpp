@@ -16,6 +16,7 @@
 #include "skill/Skill_All.h"
 #include "skill/Skill_Manager.h"
 #include "item/item_interface.h"
+#include "net_message_manager.h"
 /*
  =======================================================================================================================
  =======================================================================================================================
@@ -47,7 +48,7 @@ OPT_RESULT CharAbilityState::OnEnterState()
 	packet->setTargetId(((Player*)m_pOnwer)->m_LastOpera.m_Obj);
 	packet->setBeginOrEnd(SCAbilityAction::ABILITY_BEGIN);
 	
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 	/*~~~~~~~~~~~~~~~~*/
 	
 	((Behavior_Player *) m_pOnwer->GetAIObj())->ForceInterruptAutoSpell();

@@ -106,7 +106,7 @@ int32_t LuaFunction_DispatchQuestEventList(Lua_State* L)
 		}
 	}
 
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 	lua_pushnumber(L, 1);
 	return 1;
 }
@@ -738,7 +738,7 @@ int32_t LuaFunction_DispatchUICommand(Lua_State* L)
 	packet->setParam(pMap->m_XParam);
 	packet->setUIIndex(nUIIndex);
 
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	return 0;
 }
@@ -1546,7 +1546,7 @@ int32 LuaFunction_DispatchQuestContinueInfoNM(Lua_State* L)
 	SCScriptCommand* packet = new SCScriptCommand;
 	packet->setCmdId(SCRIPT_COMMAND_QUEST_CONTINUE_RESPONSE);
 	packet->setParam(paramEventList);
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	return 0;
 }
@@ -2059,7 +2059,7 @@ int32_t LuaFunction_DispatchQuestInfoNM(Lua_State* L)
 	SCScriptCommand* packet = new SCScriptCommand;
 	packet->setCmdId(SCRIPT_COMMAND_QUEST_RESPONSE);
 	packet->setQuestInfo(paramEventList);
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	return 0;
 }
@@ -2492,7 +2492,7 @@ int32_t LuaFunction_DispatchQuestTips(Lua_State* L)
 	SCScriptCommand* packet = new SCScriptCommand;
 	packet->setCmdId(SCRIPT_COMMAND_QUEST_TIPS);
 	packet->setQuestTips(paramQuestTips);
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 	return 0;
 }
 

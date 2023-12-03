@@ -258,14 +258,14 @@ void	Monster::SendCharBaseDirectForHP()
 				case REFESH_ATTR_TYPE_PUBLIC:
 				case REFESH_ATTR_TYPE_PUBLIC_AND_LEVEL:
 				{
-					//NetManager::GetSingletonPtr()->sendNetMessage(nullptr);
+					NetMessageManager::GetSingletonPtr()->sendNetMessage(nullptr);
 					packet = nullptr;
 				}
 				break;
 
 				case REFESH_ATTR_TYPE_PROTECTED:
 				{
-					//NetManager::GetSingletonPtr()->sendNetMessage(nullptr);
+					NetMessageManager::GetSingletonPtr()->sendNetMessage(nullptr);
 					packet = nullptr;
 				}
 				break;
@@ -419,7 +419,7 @@ void		Monster::ExpToHuman(int32 nValidMemberCount, Player** apValidMember, BOOL 
 			packet->setChatType(CHAT_TYPE_SELF);
 
 			packet->setChatShowPos(CHAT_PLUMB_SCROLL);
-			//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+			NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 		}
 
 		apValidMember[i]->OnEvent_KillObject(GetID());
@@ -943,7 +943,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 	if (listHuman.m_Count)
 	{
-		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 	else
 	{
@@ -1058,7 +1058,7 @@ void Monster::RequestBaseProperty(Player* pTargetHuman, BASEPROPERTY_REFESH_MODE
 			packet->setOwnerID(GetOwnerID());
 		}
 
-		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 		
@@ -1071,7 +1071,7 @@ void Monster::RequestBaseProperty(Player* pTargetHuman, BASEPROPERTY_REFESH_MODE
 			packet->setImpactList(effectlist);
 			packet->setOwnerId(GetID());
 			packet->setLastSN(Effect_GetSNSeed());
-			//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+			NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 		}
 	}
 }

@@ -15,7 +15,7 @@
 #include "item/Item_Interface.h"
 #include "net/messages/SCAbilityAction.h"
 #include "net/messages/SCAbilityResult.h"
-
+#include "net_message_manager.h"
 const float	EXT_ABILITY_DISTANCE = 5.0f;
 
 /*
@@ -39,7 +39,7 @@ void BaseSkill::OnEvent_ProcInterrupt(Player *pPlayer)
 	packet->setTargetId(pAbilityOpera->m_Obj);
 	packet->setPrescriptionId(pAbilityOpera->m_PresID);
 	packet->setBeginOrEnd(SCAbilityAction::ABILITY_END);
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
 	/*~~~~~~~~~~~~~~~~*/
 	SCAbilityResult* packet2 = new SCAbilityResult;
@@ -48,7 +48,7 @@ void BaseSkill::OnEvent_ProcInterrupt(Player *pPlayer)
 	packet2->setAbilityId(pAbilityOpera->m_SkillID);
 	packet2->setPrescriptionId(pAbilityOpera->m_PresID);
 	packet2->setResult(OR_FAILURE);
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet2);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet2);
 }
 
 /*

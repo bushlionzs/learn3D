@@ -53,7 +53,7 @@ void ThreadIndent::AddThread(TID tid)
 		static FastLock tlock;
 		/*~~~~~~~~~~~~~~~~~~*/
 
-		lock_guard<FastLock> autolock(tlock);
+		std::lock_guard<FastLock> autolock(tlock);
 
 		for(int32 i = 0; i < THREAD_CAPS; i++)
 		{
@@ -1419,7 +1419,7 @@ KLRandom::~KLRandom()
 */
 void KLRandom::SetRand(uint32 uKey)
 {
-	lock_guard<FastLock> autolock(m_Lock);
+	std::lock_guard<FastLock> autolock(m_Lock);
 
 	m_uKey = uKey % MAX_KEY_SIZE;
 }
@@ -1430,7 +1430,7 @@ void KLRandom::SetRand(uint32 uKey)
 */
 uint32 KLRandom::Rand()
 {
-	lock_guard<FastLock> autolock(m_Lock);
+	std::lock_guard<FastLock> autolock(m_Lock);
 
 	if(m_uKey == 0)
 	{

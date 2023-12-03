@@ -185,7 +185,7 @@ int32 ItemManager::GenItemSN()
 
 	do
 	{
-		lock_guard<FastLock> autolock(m_Lock);
+		std::lock_guard<FastLock> autolock(m_Lock);
 
 		iSerialId = ++m_nLastGenItemSerial;
 	} while(0);

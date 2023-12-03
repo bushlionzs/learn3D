@@ -50,7 +50,7 @@ void _KMessage(const char *szTemp)
 		static FastLock llock;
 		/*~~~~~~~~~~~~~~~~~~*/
 
-		lock_guard<FastLock> autolock(llock);
+		std::lock_guard<FastLock> autolock(llock);
 
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 		char	szName[_MAX_PATH] = { 0 };
@@ -89,7 +89,7 @@ void _KMessage(const char *szTemp)
 
 		if(KCheckState() != 1)
 		{
-			lock_guard<FastLock> autolock(lock);
+			std::lock_guard<FastLock> autolock(lock);
 
 			/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 			int32	iRet = ::MessageBoxA(NULL, szTemp, "“Ï≥£", MB_OK);

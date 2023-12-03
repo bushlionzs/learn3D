@@ -2319,7 +2319,7 @@ _GATHER_POINT_INFO *_GATHER_POINT_INFO_TAB::Get(int32 GrowType)
 
 void GameOpenManager::SetGameOpen( int32 gameId, BOOL bOpen)
 {
-    lock_guard< FastLock> autolock( m_Lock);
+    std::lock_guard< FastLock> autolock( m_Lock);
 
     for(int32 i = 0; i < g_GameOpenInfoTbl.m_Count; i++)
     {

@@ -28,7 +28,7 @@
 #include "net/messages/SCMonsterAttribute.h"
 #include "net/messages/SCNewBeastie.h"
 #include "data/data_manager.h"
-
+#include "net_message_manager.h"
 
 #define TONGQU_BUFF_ID	(7515)
 
@@ -390,7 +390,7 @@ void Beastie::RequestBaseProperty(Player *pTargetHuman, BASEPROPERTY_REFESH_MODE
 		if (GetCampData() != NULL) 
 			packet->setCampData(*GetCampData());
 		packet->setMoveSpeed(Get_Property_MoveSpeed());
-		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 
 	__UNGUARD__

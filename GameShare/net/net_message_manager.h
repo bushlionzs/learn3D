@@ -16,15 +16,16 @@ public:
 	NetMessageManager();
 	~NetMessageManager();
 
+	bool sendNetMessage(NetPacket*);
 
 	bool sendNetMessage(NetHandle h, uint32_t msg_id, google::protobuf::Message* msg);
 
 	void processMessage();
-
+	void processMessage(NetHandle h, const char* msg, uint32_t msg_size);
 
 	void registerMessage(uint32_t msg_id, Handler func);
 
-	void dispatchMessage(NetHandle h, const char* data, uint32_t size);
+	void dispatchMessage(NetHandle h, const char* msg, uint32_t msg_size);
 
 private:
 	std::vector<NetPacket*> mPacketList;

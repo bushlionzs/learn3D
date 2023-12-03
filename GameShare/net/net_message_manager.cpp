@@ -21,6 +21,12 @@ NetMessageManager::~NetMessageManager()
 
 }
 
+bool NetMessageManager::sendNetMessage(NetPacket*)
+{
+	assert(false);
+	return false;
+}
+
 bool NetMessageManager::sendNetMessage(NetHandle h, uint32_t msg_id, google::protobuf::Message* msg)
 {
 	std::string msgdata;
@@ -52,6 +58,23 @@ void NetMessageManager::processMessage()
 		delete packet;
 	}
 }
+
+void NetMessageManager::processMessage(NetHandle h, const char* msg, uint32_t msg_size)
+{
+	NetHeader* header = (NetHeader*)msg;
+	uint32_t data_size = msg_size - sizeof(NetHeader);
+
+	auto itor = _handlers.find(header->mMsgId);
+	if (itor != _handlers.end())
+	{
+		itor->second(h, msg, msg_size);
+	}
+	else
+	{
+		WARNING_LOG("invalid message, handle:%lld, msgid:%d, length:%d", h, header->mMsgId, header->mMsgLength);
+	}
+}
+
 
 
 void NetMessageManager::registerMessage(uint32_t msg_id, Handler func)

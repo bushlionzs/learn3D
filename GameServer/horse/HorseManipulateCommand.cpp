@@ -2,7 +2,7 @@
 #include "HorseManipulateCommand.h"
 #include "gameobject/Player.h"
 #include "net/messages/SCManipulatePetRet.h"
-
+#include "net_message_manager.h"
 
 /*
  =======================================================================================================================
@@ -110,7 +110,7 @@ void HorseManipulateCommand::SendResult(Player *pPlayer, int32 iResult)
 	SCManipulatePetRet* packet = new SCManipulatePetRet;
 
 	packet->setManipulateRet(iResult);
-	//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 /*

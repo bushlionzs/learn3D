@@ -52,8 +52,8 @@ void ServerManager::OnPreInit()
 
 	mQuestTable->Init();
 
-	const std::string scriptname = "D:\\Khan2\\Bin\\Client\\Public\\Data\\MyScript.tab";
-	g_ScriptFileMgr.Init(scriptname.c_str(), false);
+	const std::string scriptname = "..\\Public\\Data\\MyScript.tab";
+	BOOL load = g_ScriptFileMgr.Init(scriptname.c_str(), false);
 	ScriptCache* cache = g_ScriptFileMgr.GetFileData(200001);
 	if (cache)
 	{
@@ -70,18 +70,22 @@ void ServerManager::OnPreInit()
 
 	g_ItemTab.Init();
 
+	
+}
+
+void ServerManager::OnAfterInit()
+{
 	mUpdateTimer = create_timer(10, nullptr, true);
 }
 
 int ServerManager::process_message(NetHandle handle, const char* msg, uint32_t msg_size, void* pNetThreadData)
 {
-	NetMessageManager::GetSingleton().dispatchMessage(handle, msg, msg_size);
+	NetMessageManager::GetSingleton().processMessage(handle, msg, msg_size);
 	return 0;
 }
 
 void ServerManager::OnTimer(platform_timer_t, void* param)
 {
-	NetMessageManager::GetSingleton().processMessage();
 	MapManager::GetSingletonPtr()->update();
 }
 

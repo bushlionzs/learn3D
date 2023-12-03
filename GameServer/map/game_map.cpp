@@ -220,7 +220,7 @@ BOOL		GameMap::ObjGrid_Register(Object* pObj, GridID_t idZone)
 
 			if (pPacket != NULL)
 			{
-				//NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
+				NetMessageManager::GetSingletonPtr()->sendNetMessage(pPacket);
 			}
 		}
 		
@@ -372,7 +372,7 @@ BOOL		GameMap::ObjGrid_Unregister(Object* pObj, GridID_t idZone)
 	pPacket->setSceneId(mMapID);
 	pPacket->setObjectId(pObj->GetID());
 	
-	//NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(pPacket);
 
 	//if (pObj->GetObjType() == Object::OBJECT_CLASS_PLAYER)
 	//{
@@ -484,7 +484,7 @@ BOOL		GameMap::ObjGrid_Changed(Object* pObj, GridID_t idNew, GridID_t idOld)
 
 				if (listHuman.m_Count > 0)
 				{
-					//NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
+					NetMessageManager::GetSingletonPtr()->sendNetMessage(pPacket);
 				}
 				else
 				{
@@ -533,7 +533,7 @@ BOOL		GameMap::ObjGrid_Changed(Object* pObj, GridID_t idNew, GridID_t idOld)
 
 					if (pPacket != NULL)
 					{
-						//NetManager::GetSingletonPtr()->sendNetMessage(pPacket);
+						NetMessageManager::GetSingletonPtr()->sendNetMessage(pPacket);
 
 						pFindObj->DestroyNewObjMsg(pPacket);
 					}
@@ -931,31 +931,24 @@ uint32_t GameMap::GetRand100()
 	return m_Rand100.GetRand();
 }
 
-void  GameMap::broadCast(NetPacket* packet, Character* pOwnCharacter)
+void  GameMap::broadCast(uint32_t msg_id, google::protobuf::Message& msg, Character* pOwnCharacter)
 {
 	if (pOwnCharacter->GetGridID() == INVALID_ID)
 	{
-		delete packet;
 		return;
 	}
 
 	if (pOwnCharacter->GetObjType() == Object::OBJECT_CLASS_PLAYER)
 	{
-		delete packet;
 		return;
 	}
 	PLAYERLIST	listHuman;
 	ScanPlayer(pOwnCharacter->GetGridID(), MAX_RADIUS, &listHuman);
-
-	if (listHuman.m_Count > 0)
+	for (int32_t i = 0; i < listHuman.m_Count; i++)
 	{
-		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
-	}
-	else
-	{
-		delete packet;
-		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
-	}
+		Player* player = listHuman.m_aHuman[i];
 
+		NetMessageManager::GetSingletonPtr()->sendNetMessage(player->GetConnector(), msg_id, &msg);
+	}
 }
 

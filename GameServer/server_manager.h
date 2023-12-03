@@ -27,6 +27,7 @@ public:
 	}
 	
 	virtual void OnPreInit();
+	virtual void OnAfterInit();
 	virtual int process_message(NetHandle handle, const char* msg, uint32_t msg_size, void* pNetThreadData) override;
 
 	virtual void OnTimer(platform_timer_t, void* param);

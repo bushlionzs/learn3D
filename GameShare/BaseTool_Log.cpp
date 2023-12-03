@@ -194,7 +194,7 @@ namespace	QLogSystem
 
 		{
 			//开始写日志
-			lock_guard<FastLock> guard(__logger_guard__);
+			std::lock_guard<FastLock> guard(__logger_guard__);
 
 			_NET_TRY
 			{
@@ -298,7 +298,7 @@ namespace	QLogSystem
 
 		{
 			//开始写日志
-			lock_guard<FastLock> guard(__logger_guard__);
+			std::lock_guard<FastLock> guard(__logger_guard__);
 
 			_NET_TRY
 			{
@@ -366,7 +366,7 @@ namespace	QLogSystem
 		{
 			GET_TIME().Update();
 
-			lock_guard<FastLock> guard(__connector_log_guard__);
+		    std::lock_guard<FastLock> guard(__connector_log_guard__);
 
 			va_start(argptr, cszFormat);
 			tvsnprintf(szBuff, ciLog_Temp_Buff - ciLog_Temp_Name - 1, cszFormat, argptr);
@@ -441,7 +441,7 @@ namespace	QLogSystem
 		_NET_TRY
 		{
 			GET_TIME().Update();
-			lock_guard<FastLock> guard(__logger_guard__);
+		    std::lock_guard<FastLock> guard(__logger_guard__);
 			va_start(argptr, cszFormat);
 			tvsnprintf(szBuff, ciLog_Temp_Buff - ciLog_Temp_Name - 1, cszFormat, argptr);
 			va_end(argptr);
@@ -667,7 +667,7 @@ namespace	QLogSystem
 			return;
 		}
 		{
-			lock_guard<FastLock> guard(m_channelLock[eChannel]);
+			std::lock_guard<FastLock> guard(m_channelLock[eChannel]);
 
 			_NET_TRY
 			{
@@ -771,7 +771,7 @@ namespace	QLogSystem
 		int32	nNeedSaveSize = 0;
 		/*~~~~~~~~~~~~~~~~~~~~~~*/
 		{
-			lock_guard<FastLock> guard(m_channelLock[channel]);
+			std::lock_guard<FastLock> guard(m_channelLock[channel]);
 
 			/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 			char	*pTemp = m_pMemoryLog[channel];

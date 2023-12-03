@@ -24,7 +24,7 @@
 #include "Skill_All.h"
 #include "net/messages/SCAbilitySuccess.h"
 #include "data/data_manager.h"
-
+#include "net_message_manager.h"
 /*
  =======================================================================================================================
  =======================================================================================================================
@@ -731,7 +731,7 @@ OPT_RESULT SkillGather::OnEvent_ProcSuccess(Player *pPlayer)
 
 		packet->setAbilityId(AbilityID);
 		packet->setPrescriptionId(INVALID_ID);
-		//NetManager::GetSingletonPtr()->sendNetMessage(packet);
+		NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 	}
 	else
 	{

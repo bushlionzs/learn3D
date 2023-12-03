@@ -14,6 +14,7 @@
 #include "item/Item_Helper.h"
 #include "Archive/PlayerDB.h"
 #include "net/messages/SCScriptCommand.h"
+#include "net_message_manager.h"
 #include "SplitStringLevelOne.h"
 #include "SplitStringLevelTwo.h"
 
@@ -1700,7 +1701,7 @@ void QuestManager::AddDispatchQuestInfo(Player* pPlayer, int32 iMissionID, ObjID
     SCScriptCommand* packet = new SCScriptCommand;
     packet->setCmdId(SCRIPT_COMMAND_QUEST_RESPONSE);
     packet->setQuestInfo(paramEventList);
-    //NetManager::GetSingletonPtr()->sendNetMessage(packet);
+    NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 }
 
 

@@ -28,7 +28,7 @@
 #include "server_settting.h"
 #include "gameobject/Player.h"
 #include "net/messages/SCCharMove.h"
-
+#include "server_message.pb.h"
 
 
 /*
@@ -1502,7 +1502,15 @@ void Behavior_Monster::MovePhonily(const GLPos &rTar)
 	packet->setHandleID(pMonster->GetMoveLogicCount());
 	packet->setTargetPos(&rTar);
 
-	pMonster->GetMap()->broadCast(packet, pMonster);
+	servermessage::ServerMsgCharMove dummy;
+	dummy.set_object_id(pMonster->GetID());
+	dummy.set_handle_id(pMonster->GetMoveLogicCount());
+	base::GLPos pos;
+	pos.set_fx(rTar.m_fX);
+	pos.set_fz(rTar.m_fZ);
+	dummy.set_allocated_target_pos(&pos);
+
+	pMonster->GetMap()->broadCast(servermessage::SC_CHARACTER_MOVE, dummy, pMonster);
 }
 
 /*

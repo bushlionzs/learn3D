@@ -7,7 +7,7 @@
 
 
 #include "OgreHeader.h"
-
+#include <google/protobuf/message.h>
 #define Lua_CFunction				lua_CFunction
 #define Lua_State				lua_State
 #define Lua_Create(nSize)			lua_open(nSize)
