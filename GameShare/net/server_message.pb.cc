@@ -330,19 +330,10 @@ struct ServerMsgDeltailOfHealsAndDamageDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgDeltailOfHealsAndDamageDefaultTypeInternal _ServerMsgDeltailOfHealsAndDamage_default_instance_;
 PROTOBUF_CONSTEXPR ServerMsgDetailAbilityInfo::ServerMsgDetailAbilityInfo(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.ability_list_)*/{}
-  , /*decltype(_impl_._ability_list_cached_byte_size_)*/{0}
-  , /*decltype(_impl_.abilitys_)*/{}
-  , /*decltype(_impl_.next_need_level_)*/{}
-  , /*decltype(_impl_._next_need_level_cached_byte_size_)*/{0}
-  , /*decltype(_impl_.next_need_money_)*/{}
-  , /*decltype(_impl_._next_need_money_cached_byte_size_)*/{0}
-  , /*decltype(_impl_.next_need_exp_)*/{}
-  , /*decltype(_impl_._next_need_exp_cached_byte_size_)*/{0}
+    /*decltype(_impl_.abilitys_)*/{}
   , /*decltype(_impl_.prescr_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.object_id_)*/0
   , /*decltype(_impl_.scene_id_)*/0
-  , /*decltype(_impl_.ability_count_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ServerMsgDetailAbilityInfoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ServerMsgDetailAbilityInfoDefaultTypeInternal()
@@ -514,20 +505,20 @@ struct ServerMsgDetailEquipListDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgDetailEquipListDefaultTypeInternal _ServerMsgDetailEquipList_default_instance_;
-PROTOBUF_CONSTEXPR ServerMsgDetailDetailItemList::ServerMsgDetailDetailItemList(
+PROTOBUF_CONSTEXPR ServerMsgDetailItemList::ServerMsgDetailItemList(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.items_)*/{}
   , /*decltype(_impl_.object_id_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct ServerMsgDetailDetailItemListDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ServerMsgDetailDetailItemListDefaultTypeInternal()
+struct ServerMsgDetailItemListDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ServerMsgDetailItemListDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~ServerMsgDetailDetailItemListDefaultTypeInternal() {}
+  ~ServerMsgDetailItemListDefaultTypeInternal() {}
   union {
-    ServerMsgDetailDetailItemList _instance;
+    ServerMsgDetailItemList _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgDetailDetailItemListDefaultTypeInternal _ServerMsgDetailDetailItemList_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgDetailItemListDefaultTypeInternal _ServerMsgDetailItemList_default_instance_;
 PROTOBUF_CONSTEXPR ServerMsgDetailSkillList::ServerMsgDetailSkillList(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.skills_)*/{}
@@ -710,7 +701,7 @@ PROTOBUF_CONSTEXPR ServerMsgNewMonster::ServerMsgNewMonster(
     /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.object_id_)*/0u
   , /*decltype(_impl_.position_x_)*/0
-  , /*decltype(_impl_.positiion_y_)*/0
+  , /*decltype(_impl_.position_z_)*/0
   , /*decltype(_impl_.dir_)*/0
   , /*decltype(_impl_.move_speed_)*/0
   , /*decltype(_impl_.horse_id_)*/0
@@ -788,7 +779,7 @@ struct ServerMsgQueryEventResultDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgQueryEventResultDefaultTypeInternal _ServerMsgQueryEventResult_default_instance_;
 PROTOBUF_CONSTEXPR ServerMsgQuestList::ServerMsgQuestList(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.quest_list_)*/nullptr
+    /*decltype(_impl_.quests_)*/{}
   , /*decltype(_impl_.player_id_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ServerMsgQuestListDefaultTypeInternal {
@@ -1155,13 +1146,8 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAbilityInfo, _impl_.object_id_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAbilityInfo, _impl_.scene_id_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAbilityInfo, _impl_.ability_count_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAbilityInfo, _impl_.ability_list_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAbilityInfo, _impl_.abilitys_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAbilityInfo, _impl_.prescr_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAbilityInfo, _impl_.next_need_level_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAbilityInfo, _impl_.next_need_money_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAbilityInfo, _impl_.next_need_exp_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailAttrib, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1300,13 +1286,13 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailEquipList, _impl_.object_id_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailEquipList, _impl_.items_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailDetailItemList, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailItemList, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailDetailItemList, _impl_.object_id_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailDetailItemList, _impl_.items_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailItemList, _impl_.object_id_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailItemList, _impl_.items_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgDetailSkillList, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1439,7 +1425,7 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgNewMonster, _impl_.object_id_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgNewMonster, _impl_.name_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgNewMonster, _impl_.position_x_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgNewMonster, _impl_.positiion_y_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgNewMonster, _impl_.position_z_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgNewMonster, _impl_.dir_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgNewMonster, _impl_.move_speed_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgNewMonster, _impl_.horse_id_),
@@ -1488,7 +1474,7 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgQuestList, _impl_.player_id_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgQuestList, _impl_.quest_list_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgQuestList, _impl_.quests_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgQuestListRefresh, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1590,34 +1576,34 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 191, -1, -1, sizeof(::servermessage::ServerMsgDelQuest)},
   { 199, -1, -1, sizeof(::servermessage::ServerMsgDeltailOfHealsAndDamage)},
   { 211, -1, -1, sizeof(::servermessage::ServerMsgDetailAbilityInfo)},
-  { 226, -1, -1, sizeof(::servermessage::ServerMsgDetailAttrib)},
-  { 283, -1, -1, sizeof(::servermessage::ServerMsgDetailAttribPet)},
-  { 339, -1, -1, sizeof(::servermessage::ServerMsgDetailBuff)},
-  { 355, -1, -1, sizeof(::servermessage::ServerMsgDetailEquipList)},
-  { 363, -1, -1, sizeof(::servermessage::ServerMsgDetailDetailItemList)},
-  { 371, -1, -1, sizeof(::servermessage::ServerMsgDetailSkillList)},
-  { 379, -1, -1, sizeof(::servermessage::ServerMsgEnterMap)},
-  { 390, -1, -1, sizeof(::servermessage::ServerMsgItemInfo)},
-  { 400, -1, -1, sizeof(::servermessage::ServerMsgManipulatePetResult)},
-  { 409, -1, -1, sizeof(::servermessage::ServerMsgModifyQuest)},
-  { 420, -1, -1, sizeof(::servermessage::ServerMsgMonsterAttribute)},
-  { 454, -1, -1, sizeof(::servermessage::ServerMsgNewBeastie)},
-  { 470, -1, -1, sizeof(::servermessage::ServerMsgNewItem)},
-  { 482, -1, -1, sizeof(::servermessage::ServerMsgNewItemBox)},
-  { 494, -1, -1, sizeof(::servermessage::ServerMsgNewMonster)},
-  { 512, -1, -1, sizeof(::servermessage::ServerMsgNotifyEquip)},
-  { 520, -1, -1, sizeof(::servermessage::ServerMsgOperateResult)},
-  { 530, -1, -1, sizeof(::servermessage::ServerMsgPickItemResult)},
-  { 538, -1, -1, sizeof(::servermessage::ServerMsgQueryEventResult)},
-  { 545, -1, -1, sizeof(::servermessage::ServerMsgQuestList)},
-  { 553, -1, -1, sizeof(::servermessage::ServerMsgQuestListRefresh)},
-  { 561, -1, -1, sizeof(::servermessage::ServerMsgSkillSettingResult)},
-  { 570, -1, -1, sizeof(::servermessage::ServerMsgScriptCommand)},
-  { 582, -1, -1, sizeof(::servermessage::ServerMsgSkillUpgrade)},
-  { 593, -1, -1, sizeof(::servermessage::ServerMsgSwapItem)},
-  { 602, -1, -1, sizeof(::servermessage::ServerMsgTargetListAndHitFlags)},
-  { 614, -1, -1, sizeof(::servermessage::ServerMsgTaskDownEquipResult)},
-  { 625, -1, -1, sizeof(::servermessage::ServerMsgUseEquipResult)},
+  { 221, -1, -1, sizeof(::servermessage::ServerMsgDetailAttrib)},
+  { 278, -1, -1, sizeof(::servermessage::ServerMsgDetailAttribPet)},
+  { 334, -1, -1, sizeof(::servermessage::ServerMsgDetailBuff)},
+  { 350, -1, -1, sizeof(::servermessage::ServerMsgDetailEquipList)},
+  { 358, -1, -1, sizeof(::servermessage::ServerMsgDetailItemList)},
+  { 366, -1, -1, sizeof(::servermessage::ServerMsgDetailSkillList)},
+  { 374, -1, -1, sizeof(::servermessage::ServerMsgEnterMap)},
+  { 385, -1, -1, sizeof(::servermessage::ServerMsgItemInfo)},
+  { 395, -1, -1, sizeof(::servermessage::ServerMsgManipulatePetResult)},
+  { 404, -1, -1, sizeof(::servermessage::ServerMsgModifyQuest)},
+  { 415, -1, -1, sizeof(::servermessage::ServerMsgMonsterAttribute)},
+  { 449, -1, -1, sizeof(::servermessage::ServerMsgNewBeastie)},
+  { 465, -1, -1, sizeof(::servermessage::ServerMsgNewItem)},
+  { 477, -1, -1, sizeof(::servermessage::ServerMsgNewItemBox)},
+  { 489, -1, -1, sizeof(::servermessage::ServerMsgNewMonster)},
+  { 507, -1, -1, sizeof(::servermessage::ServerMsgNotifyEquip)},
+  { 515, -1, -1, sizeof(::servermessage::ServerMsgOperateResult)},
+  { 525, -1, -1, sizeof(::servermessage::ServerMsgPickItemResult)},
+  { 533, -1, -1, sizeof(::servermessage::ServerMsgQueryEventResult)},
+  { 540, -1, -1, sizeof(::servermessage::ServerMsgQuestList)},
+  { 548, -1, -1, sizeof(::servermessage::ServerMsgQuestListRefresh)},
+  { 556, -1, -1, sizeof(::servermessage::ServerMsgSkillSettingResult)},
+  { 565, -1, -1, sizeof(::servermessage::ServerMsgScriptCommand)},
+  { 577, -1, -1, sizeof(::servermessage::ServerMsgSkillUpgrade)},
+  { 588, -1, -1, sizeof(::servermessage::ServerMsgSwapItem)},
+  { 597, -1, -1, sizeof(::servermessage::ServerMsgTargetListAndHitFlags)},
+  { 609, -1, -1, sizeof(::servermessage::ServerMsgTaskDownEquipResult)},
+  { 620, -1, -1, sizeof(::servermessage::ServerMsgUseEquipResult)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1643,7 +1629,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::servermessage::_ServerMsgDetailAttribPet_default_instance_._instance,
   &::servermessage::_ServerMsgDetailBuff_default_instance_._instance,
   &::servermessage::_ServerMsgDetailEquipList_default_instance_._instance,
-  &::servermessage::_ServerMsgDetailDetailItemList_default_instance_._instance,
+  &::servermessage::_ServerMsgDetailItemList_default_instance_._instance,
   &::servermessage::_ServerMsgDetailSkillList_default_instance_._instance,
   &::servermessage::_ServerMsgEnterMap_default_instance_._instance,
   &::servermessage::_ServerMsgItemInfo_default_instance_._instance,
@@ -1737,190 +1723,187 @@ const char descriptor_table_protodef_server_5fmessage_2eproto[] PROTOBUF_SECTION
   "ailOfHealsAndDamage\022\021\n\thp_modify\030\001 \001(\005\022\021"
   "\n\tobject_id\030\002 \001(\005\022\021\n\tsender_id\030\003 \001(\005\022\032\n\022"
   "sender_logic_count\030\004 \001(\005\022\024\n\014critical_hit"
-  "\030\005 \001(\010\022\022\n\ndeath_blow\030\006 \001(\010\"\356\001\n\032ServerMsg"
-  "DetailAbilityInfo\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010"
-  "scene_id\030\002 \001(\005\022\025\n\rability_count\030\003 \001(\005\022\024\n"
-  "\014ability_list\030\004 \003(\005\022%\n\010abilitys\030\005 \003(\0132\023."
-  "base.PlayerAbility\022\016\n\006prescr\030\006 \001(\t\022\027\n\017ne"
-  "xt_need_level\030\007 \003(\005\022\027\n\017next_need_money\030\010"
-  " \003(\005\022\025\n\rnext_need_exp\030\t \003(\005\"\266\010\n\025ServerMs"
-  "gDetailAttrib\022 \n\006skills\030\001 \003(\0132\020.base.Hor"
-  "seSkill\022\022\n\nextra_data\030\002 \001(\t\022\033\n\005flags\030\003 \001"
-  "(\0132\014.base.Flag64\022\016\n\006map_id\030\004 \001(\005\022$\n\nhors"
-  "e_guid\030\005 \001(\0132\020.base.SHorseGuid\022\023\n\013trade_"
-  "index\030\006 \001(\005\022\017\n\007data_id\030\007 \001(\005\022\014\n\004name\030\010 \001"
-  "(\t\022\020\n\010nickname\030\t \001(\t\022\017\n\007ai_type\030\n \001(\005\022\r\n"
-  "\005level\030\013 \001(\005\022\013\n\003exp\030\014 \001(\005\022\n\n\002hp\030\r \001(\005\022\016\n"
-  "\006hp_max\030\016 \001(\005\022\023\n\013horse_state\030\017 \001(\005\022\022\n\nge"
-  "neration\030\020 \001(\005\022\021\n\thappiness\030\021 \001(\005\022\021\n\tatt"
-  "r_near\030\022 \001(\005\022\020\n\010attr_far\030\023 \001(\005\022\022\n\nattr_m"
-  "agic\030\024 \001(\005\022\020\n\010def_near\030\025 \001(\005\022\017\n\007def_far\030"
-  "\026 \001(\005\022\021\n\tdef_magic\030\027 \001(\005\022\013\n\003hit\030\030 \001(\005\022\014\n"
-  "\004miss\030\031 \001(\005\022\020\n\010critical\030\032 \001(\005\022\020\n\010model_i"
-  "d\030\033 \001(\005\022\020\n\010mount_id\030\034 \001(\005\022\026\n\016str_percept"
-  "ion\030\035 \001(\005\022\026\n\016con_perception\030\036 \001(\005\022\026\n\016dex"
-  "_perception\030\037 \001(\005\022\026\n\016int_perception\030  \001("
-  "\005\022\034\n\024str_perception_limit\030! \001(\005\022\034\n\024con_p"
-  "erception_limit\030\" \001(\005\022\034\n\024dex_perception_"
-  "limit\030# \001(\005\022\034\n\024int_perception_limit\030$ \001("
-  "\005\022\020\n\010strength\030% \001(\005\022\013\n\003con\030& \001(\005\022\013\n\003dex\030"
-  "\' \001(\005\022\024\n\014intelligence\030( \001(\005\022\021\n\tgrow_rate"
-  "\030) \001(\005\022\024\n\014remain_point\030* \001(\005\022\026\n\016strength"
-  "_point\030+ \001(\005\022\027\n\017smartness_point\030, \001(\005\022\022\n"
-  "\nmind_point\030- \001(\005\022\032\n\022constitution_point\030"
-  ". \001(\005\022\r\n\005index\030/ \001(\005\022\023\n\013stall_order\0300 \001("
-  "\005\022\020\n\010pet_lock\0301 \001(\005\022\023\n\013unlock_time\0302 \001(\005"
-  "\022\032\n\022current_horse_flag\0303 \001(\010\"\235\010\n\030ServerM"
-  "sgDetailAttribPet\022 \n\006skills\030\001 \003(\0132\020.base"
-  ".HorseSkill\022\022\n\nextra_data\030\002 \001(\t\022\033\n\005flags"
-  "\030\003 \001(\0132\014.base.Flag64\022\016\n\006map_id\030\004 \001(\005\022$\n\n"
-  "horse_guid\030\005 \001(\0132\020.base.SHorseGuid\022\023\n\013tr"
-  "ade_index\030\006 \001(\005\022\017\n\007data_id\030\007 \001(\005\022\014\n\004name"
-  "\030\010 \001(\t\022\020\n\010nickname\030\t \001(\t\022\017\n\007ai_type\030\n \001("
-  "\005\022\r\n\005level\030\013 \001(\005\022\013\n\003exp\030\014 \001(\005\022\n\n\002hp\030\r \001("
-  "\005\022\016\n\006hp_max\030\016 \001(\005\022\023\n\013horse_state\030\017 \001(\005\022\022"
-  "\n\ngeneration\030\020 \001(\005\022\021\n\thappiness\030\021 \001(\005\022\021\n"
-  "\tattr_near\030\022 \001(\005\022\020\n\010attr_far\030\023 \001(\005\022\022\n\nat"
-  "tr_magic\030\024 \001(\005\022\020\n\010def_near\030\025 \001(\005\022\017\n\007def_"
-  "far\030\026 \001(\005\022\021\n\tdef_magic\030\027 \001(\005\022\013\n\003hit\030\030 \001("
-  "\005\022\014\n\004miss\030\031 \001(\005\022\020\n\010critical\030\032 \001(\005\022\020\n\010mod"
-  "el_id\030\033 \001(\005\022\020\n\010mount_id\030\034 \001(\005\022\026\n\016str_per"
-  "ception\030\035 \001(\005\022\026\n\016con_perception\030\036 \001(\005\022\026\n"
-  "\016dex_perception\030\037 \001(\005\022\026\n\016int_perception\030"
-  "  \001(\005\022\034\n\024str_perception_limit\030! \001(\005\022\034\n\024c"
-  "on_perception_limit\030\" \001(\005\022\034\n\024dex_percept"
-  "ion_limit\030# \001(\005\022\034\n\024int_perception_limit\030"
-  "$ \001(\005\022\020\n\010strength\030% \001(\005\022\013\n\003con\030& \001(\005\022\013\n\003"
-  "dex\030\' \001(\005\022\024\n\014intelligence\030( \001(\005\022\021\n\tgrow_"
-  "rate\030) \001(\005\022\024\n\014remain_point\030* \001(\005\022\026\n\016stre"
-  "ngth_point\030+ \001(\005\022\027\n\017smartness_point\030, \001("
-  "\005\022\022\n\nmind_point\030- \001(\005\022\032\n\022constitution_po"
-  "int\030. \001(\005\022\r\n\005index\030/ \001(\005\022\023\n\013stall_order\030"
-  "0 \001(\005\022\020\n\010pet_lock\0301 \001(\005\022\023\n\013unlock_time\0302"
-  " \001(\005\"\324\001\n\023ServerMsgDetailBuff\022\021\n\tobject_i"
-  "d\030\001 \001(\005\022\023\n\013receiver_id\030\002 \001(\005\022\021\n\tsender_i"
-  "d\030\003 \001(\005\022\016\n\006enable\030\004 \001(\010\022\020\n\010skill_id\030\005 \001("
-  "\005\022\n\n\002sn\030\006 \001(\005\022\017\n\007buff_id\030\007 \001(\005\022\023\n\013contin"
-  "uance\030\010 \001(\005\022\022\n\ndelay_time\030\t \001(\005\022\032\n\022sende"
-  "r_logic_count\030\n \001(\005\"I\n\030ServerMsgDetailEq"
-  "uipList\022\021\n\tobject_id\030\001 \001(\005\022\032\n\005items\030\002 \003("
-  "\0132\013.base.SItem\"N\n\035ServerMsgDetailDetailI"
-  "temList\022\021\n\tobject_id\030\001 \001(\005\022\032\n\005items\030\002 \003("
-  "\0132\013.base.SItem\"P\n\030ServerMsgDetailSkillLi"
-  "st\022\021\n\tplayer_id\030\001 \001(\005\022!\n\006skills\030\002 \003(\0132\021."
-  "base.PlayerSpell\"n\n\021ServerMsgEnterMap\022\020\n"
-  "\010scene_id\030\001 \001(\r\022\022\n\nposition_x\030\002 \001(\002\022\022\n\np"
-  "osition_y\030\003 \001(\002\022\014\n\004guid\030\004 \001(\005\022\021\n\tobject_"
-  "id\030\005 \001(\005\"]\n\021ServerMsgItemInfo\022\021\n\tbag_ind"
-  "ex\030\001 \001(\005\022\031\n\004item\030\002 \001(\0132\013.base.SItem\022\014\n\004n"
-  "ull\030\003 \001(\010\022\014\n\004tips\030\004 \001(\005\"S\n\034ServerMsgMani"
-  "pulatePetResult\022\016\n\006result\030\001 \001(\005\022\021\n\tobjec"
-  "t_id\030\002 \001(\005\022\020\n\010scene_id\030\003 \001(\005\"u\n\024ServerMs"
-  "gModifyQuest\022\021\n\tplayer_id\030\001 \001(\005\022\020\n\010quest"
-  "_id\030\002 \001(\005\022\014\n\004flag\030\003 \001(\005\022\016\n\006flag32\030\004 \001(\r\022"
-  "\032\n\005quest\030\005 \001(\0132\013.base.Quest\"\336\004\n\031ServerMs"
-  "gMonsterAttribute\022\017\n\007refresh\030\001 \001(\005\022\033\n\005fl"
-  "ags\030\002 \001(\0132\014.base.Flag64\022\021\n\tobject_id\030\003 \001"
-  "(\005\022\017\n\007data_id\030\004 \001(\r\022\r\n\005level\030\005 \001(\005\022\022\n\nhp"
-  "_percent\030\006 \001(\005\022\023\n\013steal_level\030\007 \001(\005\022\022\n\nm"
-  "ood_state\030\010 \001(\005\022\022\n\nmove_speed\030\t \001(\002\022\024\n\014a"
-  "ttack_speed\030\n \001(\002\022\"\n\tcamp_data\030\013 \001(\0132\017.b"
-  "ase.SCampData\022\023\n\013portrait_id\030\014 \001(\005\022\020\n\010mo"
-  "del_id\030\r \001(\005\022\020\n\010mount_id\030\016 \001(\005\022\017\n\007ai_typ"
-  "e\030\017 \001(\005\022\014\n\004name\030\020 \001(\t\022\025\n\rcountry_title\030\021"
-  " \001(\t\022\023\n\013guild_title\030\022 \001(\t\022\024\n\014normal_titl"
-  "e\030\023 \001(\t\022\032\n\022country_title_type\030\024 \001(\005\022\030\n\020g"
-  "uild_title_type\030\025 \001(\005\022\031\n\021normal_title_ty"
-  "pe\030\026 \001(\005\022\025\n\roccupant_guid\030\027 \001(\r\022\020\n\010owner"
-  "_id\030\030 \001(\005\022\021\n\ttarget_id\030\031 \001(\005\022\013\n\003dir\030\032 \001("
-  "\002\022\022\n\nctrl_state\030\033 \001(\005\022\r\n\005scale\030\034 \001(\002\"\306\001\n"
-  "\023ServerMsgNewBeastie\022\021\n\tobject_id\030\001 \001(\r\022"
-  "\014\n\004name\030\002 \001(\t\022\022\n\nposition_x\030\003 \001(\002\022\022\n\npos"
-  "ition_z\030\004 \001(\002\022\013\n\003dir\030\005 \001(\002\022\022\n\nmove_speed"
-  "\030\006 \001(\002\022\016\n\006moving\030\007 \001(\010\022\021\n\thandle_id\030\010 \001("
-  "\005\022\020\n\010target_x\030\t \001(\002\022\020\n\010target_z\030\n \001(\002\"\207\001"
-  "\n\020ServerMsgNewItem\022\021\n\tobject_id\030\001 \001(\005\022\020\n"
-  "\010scene_id\030\002 \001(\005\022\022\n\nitem_index\030\003 \001(\005\022\022\n\ni"
-  "tem_count\030\004 \001(\005\022\022\n\nposition_x\030\005 \001(\002\022\022\n\np"
-  "osition_z\030\006 \001(\002\"\215\001\n\023ServerMsgNewItemBox\022"
-  "\021\n\tobject_id\030\001 \001(\005\022\014\n\004type\030\002 \001(\005\022\020\n\010owne"
-  "r_id\030\003 \001(\r\022\020\n\010scene_id\030\004 \001(\005\022\030\n\003pos\030\005 \001("
-  "\0132\013.base.GLPos\022\027\n\017drop_monster_id\030\006 \001(\005\""
-  "\353\001\n\023ServerMsgNewMonster\022\021\n\tobject_id\030\001 \001"
-  "(\r\022\014\n\004name\030\002 \001(\t\022\022\n\nposition_x\030\003 \001(\002\022\023\n\013"
-  "positiion_y\030\004 \001(\002\022\013\n\003dir\030\005 \001(\002\022\022\n\nmove_s"
-  "peed\030\006 \001(\002\022\020\n\010horse_id\030\007 \001(\002\022\021\n\tweapon_i"
-  "d\030\010 \001(\002\022\024\n\014monster_type\030\t \001(\005\022\014\n\004guid\030\n "
-  "\001(\r\022\017\n\007race_id\030\013 \001(\005\022\017\n\007camp_id\030\014 \001(\005\"D\n"
-  "\024ServerMsgNotifyEquip\022\021\n\tbag_index\030\001 \001(\005"
-  "\022\031\n\004item\030\002 \001(\0132\013.base.SItem\"b\n\026ServerMsg"
-  "OperateResult\022\021\n\tplayer_id\030\001 \001(\005\022\016\n\006map_"
-  "id\030\002 \001(\005\022\020\n\010res_type\030\003 \001(\005\022\023\n\013result_cod"
-  "e\030\004 \001(\005\"A\n\027ServerMsgPickItemResult\022\021\n\tob"
-  "ject_id\030\001 \001(\005\022\023\n\013result_code\030\002 \001(\005\".\n\031Se"
-  "rverMsgQueryEventResult\022\021\n\tobject_id\030\001 \001"
-  "(\r\"W\n\022ServerMsgQuestList\022\021\n\tplayer_id\030\001 "
-  "\001(\005\022.\n\nquest_list\030\002 \001(\0132\032.base.SArchiveL"
-  "oader_Quest\"@\n\031ServerMsgQuestListRefresh"
-  "\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\"f\n"
-  "\033ServerMsgSkillSettingResult\022\021\n\tobject_i"
-  "d\030\001 \001(\005\022%\n\007setting\030\002 \001(\0132\024.base.Player_S"
-  "etting\022\r\n\005index\030\003 \001(\005\"\330\001\n\026ServerMsgScrip"
-  "tCommand\022\016\n\006cmd_id\030\001 \001(\005\022%\n\007setting\030\002 \001("
-  "\0132\024.base.Player_Setting\022\r\n\005index\030\003 \001(\005\0223"
-  "\n\016continue_param\030\004 \001(\0132\033.base.ScriptPara"
-  "m_QuestInfo\022/\n\nquest_info\030\005 \001(\0132\033.base.S"
-  "criptParam_QuestInfo\022\022\n\nquest_tips\030\006 \001(\t"
-  "\"o\n\025ServerMsgSkillUpgrade\022\021\n\tobject_id\030\001"
-  " \001(\005\022\020\n\010skill_id\030\002 \001(\005\022\023\n\013skill_level\030\003 "
-  "\001(\005\022\016\n\006sucess\030\004 \001(\010\022\014\n\004type\030\005 \001(\005\"I\n\021Ser"
-  "verMsgSwapItem\022\016\n\006result\030\001 \001(\005\022\022\n\nsource"
-  "_pos\030\002 \001(\005\022\020\n\010dest_pos\030\003 \001(\005\"\227\001\n\036ServerM"
-  "sgTargetListAndHitFlags\022\021\n\tobject_id\030\001 \001"
-  "(\005\022\023\n\013logic_count\030\002 \001(\005\022\020\n\010skill_id\030\003 \001("
-  "\005\022\023\n\013target_list\030\004 \003(\005\022\022\n\nposition_x\030\005 \001"
-  "(\002\022\022\n\nposition_z\030\006 \001(\002\"y\n\034ServerMsgTaskD"
-  "ownEquipResult\022\016\n\006result\030\001 \001(\005\022\021\n\tplayer"
-  "_id\030\002 \001(\005\022\016\n\006map_id\030\003 \001(\005\022\023\n\013equip_point"
-  "\030\004 \001(\005\022\021\n\tbag_index\030\005 \001(\005\"Q\n\027ServerMsgUs"
-  "eEquipResult\022\016\n\006result\030\001 \001(\005\022\023\n\013equip_po"
-  "int\030\002 \001(\005\022\021\n\tbag_index\030\003 \001(\005*\207\t\n\tMessage"
-  "ID\022\017\n\013SC_MSG_NONE\020\000\022\021\n\014DS_CHAR_DATA\020\210\'\022\021"
-  "\n\014SC_ENTER_MAP\020\220N\022\032\n\025SC_QUERY_EVENT_RESU"
-  "LT\020\370U\022\032\n\025SC_QUERY_QUEST_RESULT\020\371U\022\022\n\rSC_"
-  "NEWMONSTER\020\372U\022\026\n\021SC_CHARACTER_MOVE\020\373U\022\033\n"
-  "\026SC_TARGETLIST_HITFLAGS\020\374U\022\033\n\026SC_DETAIL_"
-  "HEALS_DAMAGE\020\375U\022\025\n\020SC_DELETE_OBJECT\020\376U\022\030"
-  "\n\023SC_MONSTER_ATTRBUTE\020\377U\022\017\n\nSC_NEWITEM\020\200"
-  "V\022\022\n\rSC_EQUIP_LIST\020\201V\022\030\n\023SC_PICK_ITEM_RE"
-  "SULT\020\202V\022\021\n\014SC_ITEM_INFO\020\203V\022\024\n\017SC_NOTIFY_"
-  "EQUIP\020\204V\022\021\n\014SC_SWAP_ITEM\020\205V\022\026\n\021SC_UNEQUI"
-  "P_RESULT\020\206V\022\027\n\022SC_USEEQUIP_RESULT\020\207V\022\022\n\r"
-  "SC_QUEST_LIST\020\210V\022\021\n\014SC_ADD_QUEST\020\211V\022\021\n\014S"
-  "C_DEL_QUEST\020\212V\022\017\n\nSC_COMMAND\020\213V\022\026\n\021SC_SC"
-  "RIPT_COMMAND\020\214V\022\014\n\007SC_CHAT\020\215V\022\035\n\030SC_MANI"
-  "PULATE_PET_RESULT\020\216V\022\023\n\016SC_NEW_BEASTIE\020\217"
-  "V\022\027\n\022SC_COOLDOWN_UPDATE\020\220V\022\031\n\024SC_DETAIL_"
-  "ATTRIB_PET\020\221V\022\031\n\024SC_IMPACTLIST_UPDATE\020\222V"
-  "\022\026\n\021SC_CHAR_EQUIPMENT\020\223V\022\031\n\024SC_QUESTLIST"
-  "_REFRESH\020\224V\022\023\n\016SC_DETAIL_ATTR\020\225V\022\031\n\024SC_C"
-  "HAR_SKILL_GATHER\020\226V\022\030\n\023SC_CHAR_STOP_ACTI"
-  "ON\020\227V\022\025\n\020SC_SKILL_UPGRADE\020\230V\022\023\n\016SC_DETAI"
-  "L_BUFF\020\231V\022\025\n\020SC_SKILL_SETTING\020\232V\022\037\n\032SC_A"
-  "DD_SKILL_TO_SKILL_LIST\020\233V\022\023\n\016SC_NEW_ITEM"
-  "BOX\020\234V\022\033\n\026SC_DETAIL_ABILITY_INFO\020\235V\022\026\n\021S"
-  "C_ABILITY_RESULT\020\236V\022\026\n\021SC_OPERATE_RESULT"
-  "\020\237V\022\036\n\031SC_MESSAGE_ABILITY_ACTION\020\240V\022\027\n\022S"
-  "C_ABILITY_SUCCESS\020\241V\022\027\n\022SC_HUMAN_BASE_AT"
-  "TR\020\242V\022\024\n\017SC_DETAIL_EQUIP\020\243V\022\023\n\016SC_DETAIL"
-  "_ITEM\020\244V\022\024\n\017SC_DETAIL_SKILL\020\245Vb\006proto3"
+  "\030\005 \001(\010\022\022\n\ndeath_blow\030\006 \001(\010\"x\n\032ServerMsgD"
+  "etailAbilityInfo\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010s"
+  "cene_id\030\002 \001(\005\022%\n\010abilitys\030\003 \003(\0132\023.base.P"
+  "layerAbility\022\016\n\006prescr\030\004 \001(\t\"\266\010\n\025ServerM"
+  "sgDetailAttrib\022 \n\006skills\030\001 \003(\0132\020.base.Ho"
+  "rseSkill\022\022\n\nextra_data\030\002 \001(\t\022\033\n\005flags\030\003 "
+  "\001(\0132\014.base.Flag64\022\016\n\006map_id\030\004 \001(\005\022$\n\nhor"
+  "se_guid\030\005 \001(\0132\020.base.SHorseGuid\022\023\n\013trade"
+  "_index\030\006 \001(\005\022\017\n\007data_id\030\007 \001(\005\022\014\n\004name\030\010 "
+  "\001(\t\022\020\n\010nickname\030\t \001(\t\022\017\n\007ai_type\030\n \001(\005\022\r"
+  "\n\005level\030\013 \001(\005\022\013\n\003exp\030\014 \001(\005\022\n\n\002hp\030\r \001(\005\022\016"
+  "\n\006hp_max\030\016 \001(\005\022\023\n\013horse_state\030\017 \001(\005\022\022\n\ng"
+  "eneration\030\020 \001(\005\022\021\n\thappiness\030\021 \001(\005\022\021\n\tat"
+  "tr_near\030\022 \001(\005\022\020\n\010attr_far\030\023 \001(\005\022\022\n\nattr_"
+  "magic\030\024 \001(\005\022\020\n\010def_near\030\025 \001(\005\022\017\n\007def_far"
+  "\030\026 \001(\005\022\021\n\tdef_magic\030\027 \001(\005\022\013\n\003hit\030\030 \001(\005\022\014"
+  "\n\004miss\030\031 \001(\005\022\020\n\010critical\030\032 \001(\005\022\020\n\010model_"
+  "id\030\033 \001(\005\022\020\n\010mount_id\030\034 \001(\005\022\026\n\016str_percep"
+  "tion\030\035 \001(\005\022\026\n\016con_perception\030\036 \001(\005\022\026\n\016de"
+  "x_perception\030\037 \001(\005\022\026\n\016int_perception\030  \001"
+  "(\005\022\034\n\024str_perception_limit\030! \001(\005\022\034\n\024con_"
+  "perception_limit\030\" \001(\005\022\034\n\024dex_perception"
+  "_limit\030# \001(\005\022\034\n\024int_perception_limit\030$ \001"
+  "(\005\022\020\n\010strength\030% \001(\005\022\013\n\003con\030& \001(\005\022\013\n\003dex"
+  "\030\' \001(\005\022\024\n\014intelligence\030( \001(\005\022\021\n\tgrow_rat"
+  "e\030) \001(\005\022\024\n\014remain_point\030* \001(\005\022\026\n\016strengt"
+  "h_point\030+ \001(\005\022\027\n\017smartness_point\030, \001(\005\022\022"
+  "\n\nmind_point\030- \001(\005\022\032\n\022constitution_point"
+  "\030. \001(\005\022\r\n\005index\030/ \001(\005\022\023\n\013stall_order\0300 \001"
+  "(\005\022\020\n\010pet_lock\0301 \001(\005\022\023\n\013unlock_time\0302 \001("
+  "\005\022\032\n\022current_horse_flag\0303 \001(\010\"\235\010\n\030Server"
+  "MsgDetailAttribPet\022 \n\006skills\030\001 \003(\0132\020.bas"
+  "e.HorseSkill\022\022\n\nextra_data\030\002 \001(\t\022\033\n\005flag"
+  "s\030\003 \001(\0132\014.base.Flag64\022\016\n\006map_id\030\004 \001(\005\022$\n"
+  "\nhorse_guid\030\005 \001(\0132\020.base.SHorseGuid\022\023\n\013t"
+  "rade_index\030\006 \001(\005\022\017\n\007data_id\030\007 \001(\005\022\014\n\004nam"
+  "e\030\010 \001(\t\022\020\n\010nickname\030\t \001(\t\022\017\n\007ai_type\030\n \001"
+  "(\005\022\r\n\005level\030\013 \001(\005\022\013\n\003exp\030\014 \001(\005\022\n\n\002hp\030\r \001"
+  "(\005\022\016\n\006hp_max\030\016 \001(\005\022\023\n\013horse_state\030\017 \001(\005\022"
+  "\022\n\ngeneration\030\020 \001(\005\022\021\n\thappiness\030\021 \001(\005\022\021"
+  "\n\tattr_near\030\022 \001(\005\022\020\n\010attr_far\030\023 \001(\005\022\022\n\na"
+  "ttr_magic\030\024 \001(\005\022\020\n\010def_near\030\025 \001(\005\022\017\n\007def"
+  "_far\030\026 \001(\005\022\021\n\tdef_magic\030\027 \001(\005\022\013\n\003hit\030\030 \001"
+  "(\005\022\014\n\004miss\030\031 \001(\005\022\020\n\010critical\030\032 \001(\005\022\020\n\010mo"
+  "del_id\030\033 \001(\005\022\020\n\010mount_id\030\034 \001(\005\022\026\n\016str_pe"
+  "rception\030\035 \001(\005\022\026\n\016con_perception\030\036 \001(\005\022\026"
+  "\n\016dex_perception\030\037 \001(\005\022\026\n\016int_perception"
+  "\030  \001(\005\022\034\n\024str_perception_limit\030! \001(\005\022\034\n\024"
+  "con_perception_limit\030\" \001(\005\022\034\n\024dex_percep"
+  "tion_limit\030# \001(\005\022\034\n\024int_perception_limit"
+  "\030$ \001(\005\022\020\n\010strength\030% \001(\005\022\013\n\003con\030& \001(\005\022\013\n"
+  "\003dex\030\' \001(\005\022\024\n\014intelligence\030( \001(\005\022\021\n\tgrow"
+  "_rate\030) \001(\005\022\024\n\014remain_point\030* \001(\005\022\026\n\016str"
+  "ength_point\030+ \001(\005\022\027\n\017smartness_point\030, \001"
+  "(\005\022\022\n\nmind_point\030- \001(\005\022\032\n\022constitution_p"
+  "oint\030. \001(\005\022\r\n\005index\030/ \001(\005\022\023\n\013stall_order"
+  "\0300 \001(\005\022\020\n\010pet_lock\0301 \001(\005\022\023\n\013unlock_time\030"
+  "2 \001(\005\"\324\001\n\023ServerMsgDetailBuff\022\021\n\tobject_"
+  "id\030\001 \001(\005\022\023\n\013receiver_id\030\002 \001(\005\022\021\n\tsender_"
+  "id\030\003 \001(\005\022\016\n\006enable\030\004 \001(\010\022\020\n\010skill_id\030\005 \001"
+  "(\005\022\n\n\002sn\030\006 \001(\005\022\017\n\007buff_id\030\007 \001(\005\022\023\n\013conti"
+  "nuance\030\010 \001(\005\022\022\n\ndelay_time\030\t \001(\005\022\032\n\022send"
+  "er_logic_count\030\n \001(\005\"I\n\030ServerMsgDetailE"
+  "quipList\022\021\n\tobject_id\030\001 \001(\005\022\032\n\005items\030\002 \003"
+  "(\0132\013.base.SItem\"H\n\027ServerMsgDetailItemLi"
+  "st\022\021\n\tobject_id\030\001 \001(\005\022\032\n\005items\030\002 \003(\0132\013.b"
+  "ase.SItem\"P\n\030ServerMsgDetailSkillList\022\021\n"
+  "\tplayer_id\030\001 \001(\005\022!\n\006skills\030\002 \003(\0132\021.base."
+  "PlayerSpell\"n\n\021ServerMsgEnterMap\022\020\n\010scen"
+  "e_id\030\001 \001(\r\022\022\n\nposition_x\030\002 \001(\002\022\022\n\npositi"
+  "on_y\030\003 \001(\002\022\014\n\004guid\030\004 \001(\005\022\021\n\tobject_id\030\005 "
+  "\001(\005\"]\n\021ServerMsgItemInfo\022\021\n\tbag_index\030\001 "
+  "\001(\005\022\031\n\004item\030\002 \001(\0132\013.base.SItem\022\014\n\004null\030\003"
+  " \001(\010\022\014\n\004tips\030\004 \001(\005\"S\n\034ServerMsgManipulat"
+  "ePetResult\022\016\n\006result\030\001 \001(\005\022\021\n\tobject_id\030"
+  "\002 \001(\005\022\020\n\010scene_id\030\003 \001(\005\"u\n\024ServerMsgModi"
+  "fyQuest\022\021\n\tplayer_id\030\001 \001(\005\022\020\n\010quest_id\030\002"
+  " \001(\005\022\014\n\004flag\030\003 \001(\005\022\016\n\006flag32\030\004 \001(\r\022\032\n\005qu"
+  "est\030\005 \001(\0132\013.base.Quest\"\336\004\n\031ServerMsgMons"
+  "terAttribute\022\017\n\007refresh\030\001 \001(\005\022\033\n\005flags\030\002"
+  " \001(\0132\014.base.Flag64\022\021\n\tobject_id\030\003 \001(\005\022\017\n"
+  "\007data_id\030\004 \001(\r\022\r\n\005level\030\005 \001(\005\022\022\n\nhp_perc"
+  "ent\030\006 \001(\005\022\023\n\013steal_level\030\007 \001(\005\022\022\n\nmood_s"
+  "tate\030\010 \001(\005\022\022\n\nmove_speed\030\t \001(\002\022\024\n\014attack"
+  "_speed\030\n \001(\002\022\"\n\tcamp_data\030\013 \001(\0132\017.base.S"
+  "CampData\022\023\n\013portrait_id\030\014 \001(\005\022\020\n\010model_i"
+  "d\030\r \001(\005\022\020\n\010mount_id\030\016 \001(\005\022\017\n\007ai_type\030\017 \001"
+  "(\005\022\014\n\004name\030\020 \001(\t\022\025\n\rcountry_title\030\021 \001(\t\022"
+  "\023\n\013guild_title\030\022 \001(\t\022\024\n\014normal_title\030\023 \001"
+  "(\t\022\032\n\022country_title_type\030\024 \001(\005\022\030\n\020guild_"
+  "title_type\030\025 \001(\005\022\031\n\021normal_title_type\030\026 "
+  "\001(\005\022\025\n\roccupant_guid\030\027 \001(\r\022\020\n\010owner_id\030\030"
+  " \001(\005\022\021\n\ttarget_id\030\031 \001(\005\022\013\n\003dir\030\032 \001(\002\022\022\n\n"
+  "ctrl_state\030\033 \001(\005\022\r\n\005scale\030\034 \001(\002\"\306\001\n\023Serv"
+  "erMsgNewBeastie\022\021\n\tobject_id\030\001 \001(\r\022\014\n\004na"
+  "me\030\002 \001(\t\022\022\n\nposition_x\030\003 \001(\002\022\022\n\nposition"
+  "_z\030\004 \001(\002\022\013\n\003dir\030\005 \001(\002\022\022\n\nmove_speed\030\006 \001("
+  "\002\022\016\n\006moving\030\007 \001(\010\022\021\n\thandle_id\030\010 \001(\005\022\020\n\010"
+  "target_x\030\t \001(\002\022\020\n\010target_z\030\n \001(\002\"\207\001\n\020Ser"
+  "verMsgNewItem\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010scen"
+  "e_id\030\002 \001(\005\022\022\n\nitem_index\030\003 \001(\005\022\022\n\nitem_c"
+  "ount\030\004 \001(\005\022\022\n\nposition_x\030\005 \001(\002\022\022\n\npositi"
+  "on_z\030\006 \001(\002\"\215\001\n\023ServerMsgNewItemBox\022\021\n\tob"
+  "ject_id\030\001 \001(\005\022\014\n\004type\030\002 \001(\005\022\020\n\010owner_id\030"
+  "\003 \001(\r\022\020\n\010scene_id\030\004 \001(\005\022\030\n\003pos\030\005 \001(\0132\013.b"
+  "ase.GLPos\022\027\n\017drop_monster_id\030\006 \001(\005\"\352\001\n\023S"
+  "erverMsgNewMonster\022\021\n\tobject_id\030\001 \001(\r\022\014\n"
+  "\004name\030\002 \001(\014\022\022\n\nposition_x\030\003 \001(\002\022\022\n\nposit"
+  "ion_z\030\004 \001(\002\022\013\n\003dir\030\005 \001(\002\022\022\n\nmove_speed\030\006"
+  " \001(\002\022\020\n\010horse_id\030\007 \001(\002\022\021\n\tweapon_id\030\010 \001("
+  "\002\022\024\n\014monster_type\030\t \001(\005\022\014\n\004guid\030\n \001(\r\022\017\n"
+  "\007race_id\030\013 \001(\005\022\017\n\007camp_id\030\014 \001(\005\"D\n\024Serve"
+  "rMsgNotifyEquip\022\021\n\tbag_index\030\001 \001(\005\022\031\n\004it"
+  "em\030\002 \001(\0132\013.base.SItem\"b\n\026ServerMsgOperat"
+  "eResult\022\021\n\tplayer_id\030\001 \001(\005\022\016\n\006map_id\030\002 \001"
+  "(\005\022\020\n\010res_type\030\003 \001(\005\022\023\n\013result_code\030\004 \001("
+  "\005\"A\n\027ServerMsgPickItemResult\022\021\n\tobject_i"
+  "d\030\001 \001(\005\022\023\n\013result_code\030\002 \001(\005\".\n\031ServerMs"
+  "gQueryEventResult\022\021\n\tobject_id\030\001 \001(\r\"D\n\022"
+  "ServerMsgQuestList\022\021\n\tplayer_id\030\001 \001(\005\022\033\n"
+  "\006quests\030\002 \003(\0132\013.base.Quest\"@\n\031ServerMsgQ"
+  "uestListRefresh\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010sc"
+  "ene_id\030\002 \001(\005\"f\n\033ServerMsgSkillSettingRes"
+  "ult\022\021\n\tobject_id\030\001 \001(\005\022%\n\007setting\030\002 \001(\0132"
+  "\024.base.Player_Setting\022\r\n\005index\030\003 \001(\005\"\330\001\n"
+  "\026ServerMsgScriptCommand\022\016\n\006cmd_id\030\001 \001(\005\022"
+  "%\n\007setting\030\002 \001(\0132\024.base.Player_Setting\022\r"
+  "\n\005index\030\003 \001(\005\0223\n\016continue_param\030\004 \001(\0132\033."
+  "base.ScriptParam_QuestInfo\022/\n\nquest_info"
+  "\030\005 \001(\0132\033.base.ScriptParam_QuestInfo\022\022\n\nq"
+  "uest_tips\030\006 \001(\t\"o\n\025ServerMsgSkillUpgrade"
+  "\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010skill_id\030\002 \001(\005\022\023\n"
+  "\013skill_level\030\003 \001(\005\022\016\n\006sucess\030\004 \001(\010\022\014\n\004ty"
+  "pe\030\005 \001(\005\"I\n\021ServerMsgSwapItem\022\016\n\006result\030"
+  "\001 \001(\005\022\022\n\nsource_pos\030\002 \001(\005\022\020\n\010dest_pos\030\003 "
+  "\001(\005\"\227\001\n\036ServerMsgTargetListAndHitFlags\022\021"
+  "\n\tobject_id\030\001 \001(\005\022\023\n\013logic_count\030\002 \001(\005\022\020"
+  "\n\010skill_id\030\003 \001(\005\022\023\n\013target_list\030\004 \003(\005\022\022\n"
+  "\nposition_x\030\005 \001(\002\022\022\n\nposition_z\030\006 \001(\002\"y\n"
+  "\034ServerMsgTaskDownEquipResult\022\016\n\006result\030"
+  "\001 \001(\005\022\021\n\tplayer_id\030\002 \001(\005\022\016\n\006map_id\030\003 \001(\005"
+  "\022\023\n\013equip_point\030\004 \001(\005\022\021\n\tbag_index\030\005 \001(\005"
+  "\"Q\n\027ServerMsgUseEquipResult\022\016\n\006result\030\001 "
+  "\001(\005\022\023\n\013equip_point\030\002 \001(\005\022\021\n\tbag_index\030\003 "
+  "\001(\005*\226\t\n\tMessageID\022\017\n\013SC_MSG_NONE\020\000\022\021\n\014DS"
+  "_CHAR_DATA\020\210\'\022\021\n\014SC_ENTER_MAP\020\220N\022\032\n\025SC_Q"
+  "UERY_EVENT_RESULT\020\370U\022\032\n\025SC_QUERY_QUEST_R"
+  "ESULT\020\371U\022\022\n\rSC_NEWMONSTER\020\372U\022\026\n\021SC_CHARA"
+  "CTER_MOVE\020\373U\022\033\n\026SC_TARGETLIST_HITFLAGS\020\374"
+  "U\022\033\n\026SC_DETAIL_HEALS_DAMAGE\020\375U\022\025\n\020SC_DEL"
+  "ETE_OBJECT\020\376U\022\030\n\023SC_MONSTER_ATTRBUTE\020\377U\022"
+  "\017\n\nSC_NEWITEM\020\200V\022\022\n\rSC_EQUIP_LIST\020\201V\022\030\n\023"
+  "SC_PICK_ITEM_RESULT\020\202V\022\021\n\014SC_ITEM_INFO\020\203"
+  "V\022\024\n\017SC_NOTIFY_EQUIP\020\204V\022\021\n\014SC_SWAP_ITEM\020"
+  "\205V\022\026\n\021SC_UNEQUIP_RESULT\020\206V\022\027\n\022SC_USEEQUI"
+  "P_RESULT\020\207V\022\022\n\rSC_QUEST_LIST\020\210V\022\021\n\014SC_AD"
+  "D_QUEST\020\211V\022\021\n\014SC_DEL_QUEST\020\212V\022\017\n\nSC_COMM"
+  "AND\020\213V\022\026\n\021SC_SCRIPT_COMMAND\020\214V\022\014\n\007SC_CHA"
+  "T\020\215V\022\035\n\030SC_MANIPULATE_PET_RESULT\020\216V\022\023\n\016S"
+  "C_NEW_BEASTIE\020\217V\022\027\n\022SC_COOLDOWN_UPDATE\020\220"
+  "V\022\031\n\024SC_DETAIL_ATTRIB_PET\020\221V\022\031\n\024SC_IMPAC"
+  "TLIST_UPDATE\020\222V\022\026\n\021SC_CHAR_EQUIPMENT\020\223V\022"
+  "\031\n\024SC_QUESTLIST_REFRESH\020\224V\022\023\n\016SC_DETAIL_"
+  "ATTR\020\225V\022\031\n\024SC_CHAR_SKILL_GATHER\020\226V\022\030\n\023SC"
+  "_CHAR_STOP_ACTION\020\227V\022\025\n\020SC_SKILL_UPGRADE"
+  "\020\230V\022\023\n\016SC_DETAIL_BUFF\020\231V\022\025\n\020SC_SKILL_SET"
+  "TING\020\232V\022\037\n\032SC_ADD_SKILL_TO_SKILL_LIST\020\233V"
+  "\022\023\n\016SC_NEW_ITEMBOX\020\234V\022\033\n\026SC_DETAIL_ABILI"
+  "TY_INFO\020\235V\022\026\n\021SC_ABILITY_RESULT\020\236V\022\026\n\021SC"
+  "_OPERATE_RESULT\020\237V\022\036\n\031SC_MESSAGE_ABILITY"
+  "_ACTION\020\240V\022\027\n\022SC_ABILITY_SUCCESS\020\241V\022\027\n\022S"
+  "C_HUMAN_BASE_ATTR\020\242V\022\031\n\024SC_DETAIL_EQUIP_"
+  "LIST\020\243V\022\030\n\023SC_DETAIL_ITEM_LIST\020\244V\022\031\n\024SC_"
+  "DETAIL_SKILL_LIST\020\245Vb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_server_5fmessage_2eproto_deps[1] = {
   &::descriptor_table_base_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_server_5fmessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_server_5fmessage_2eproto = {
-    false, false, 9758, descriptor_table_protodef_server_5fmessage_2eproto,
+    false, false, 9628, descriptor_table_protodef_server_5fmessage_2eproto,
     "server_message.proto",
     &descriptor_table_server_5fmessage_2eproto_once, descriptor_table_server_5fmessage_2eproto_deps, 1, 46,
     schemas, file_default_instances, TableStruct_server_5fmessage_2eproto::offsets,
@@ -7671,19 +7654,10 @@ ServerMsgDetailAbilityInfo::ServerMsgDetailAbilityInfo(const ServerMsgDetailAbil
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ServerMsgDetailAbilityInfo* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.ability_list_){from._impl_.ability_list_}
-    , /*decltype(_impl_._ability_list_cached_byte_size_)*/{0}
-    , decltype(_impl_.abilitys_){from._impl_.abilitys_}
-    , decltype(_impl_.next_need_level_){from._impl_.next_need_level_}
-    , /*decltype(_impl_._next_need_level_cached_byte_size_)*/{0}
-    , decltype(_impl_.next_need_money_){from._impl_.next_need_money_}
-    , /*decltype(_impl_._next_need_money_cached_byte_size_)*/{0}
-    , decltype(_impl_.next_need_exp_){from._impl_.next_need_exp_}
-    , /*decltype(_impl_._next_need_exp_cached_byte_size_)*/{0}
+      decltype(_impl_.abilitys_){from._impl_.abilitys_}
     , decltype(_impl_.prescr_){}
     , decltype(_impl_.object_id_){}
     , decltype(_impl_.scene_id_){}
-    , decltype(_impl_.ability_count_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -7696,8 +7670,8 @@ ServerMsgDetailAbilityInfo::ServerMsgDetailAbilityInfo(const ServerMsgDetailAbil
       _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.object_id_, &from._impl_.object_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.ability_count_) -
-    reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.ability_count_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.scene_id_) -
+    reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.scene_id_));
   // @@protoc_insertion_point(copy_constructor:servermessage.ServerMsgDetailAbilityInfo)
 }
 
@@ -7706,19 +7680,10 @@ inline void ServerMsgDetailAbilityInfo::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.ability_list_){arena}
-    , /*decltype(_impl_._ability_list_cached_byte_size_)*/{0}
-    , decltype(_impl_.abilitys_){arena}
-    , decltype(_impl_.next_need_level_){arena}
-    , /*decltype(_impl_._next_need_level_cached_byte_size_)*/{0}
-    , decltype(_impl_.next_need_money_){arena}
-    , /*decltype(_impl_._next_need_money_cached_byte_size_)*/{0}
-    , decltype(_impl_.next_need_exp_){arena}
-    , /*decltype(_impl_._next_need_exp_cached_byte_size_)*/{0}
+      decltype(_impl_.abilitys_){arena}
     , decltype(_impl_.prescr_){}
     , decltype(_impl_.object_id_){0}
     , decltype(_impl_.scene_id_){0}
-    , decltype(_impl_.ability_count_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.prescr_.InitDefault();
@@ -7738,11 +7703,7 @@ ServerMsgDetailAbilityInfo::~ServerMsgDetailAbilityInfo() {
 
 inline void ServerMsgDetailAbilityInfo::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.ability_list_.~RepeatedField();
   _impl_.abilitys_.~RepeatedPtrField();
-  _impl_.next_need_level_.~RepeatedField();
-  _impl_.next_need_money_.~RepeatedField();
-  _impl_.next_need_exp_.~RepeatedField();
   _impl_.prescr_.Destroy();
 }
 
@@ -7756,15 +7717,11 @@ void ServerMsgDetailAbilityInfo::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.ability_list_.Clear();
   _impl_.abilitys_.Clear();
-  _impl_.next_need_level_.Clear();
-  _impl_.next_need_money_.Clear();
-  _impl_.next_need_exp_.Clear();
   _impl_.prescr_.ClearToEmpty();
   ::memset(&_impl_.object_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.ability_count_) -
-      reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.ability_count_));
+      reinterpret_cast<char*>(&_impl_.scene_id_) -
+      reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.scene_id_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -7790,78 +7747,26 @@ const char* ServerMsgDetailAbilityInfo::_InternalParse(const char* ptr, ::_pbi::
         } else
           goto handle_unusual;
         continue;
-      // int32 ability_count = 3;
+      // repeated .base.PlayerAbility abilitys = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
-          _impl_.ability_count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // repeated int32 ability_list = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt32Parser(_internal_mutable_ability_list(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<uint8_t>(tag) == 32) {
-          _internal_add_ability_list(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr));
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // repeated .base.PlayerAbility abilitys = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr -= 1;
           do {
             ptr += 1;
             ptr = ctx->ParseMessage(_internal_add_abilitys(), ptr);
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<42>(ptr));
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
         } else
           goto handle_unusual;
         continue;
-      // string prescr = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+      // string prescr = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           auto str = _internal_mutable_prescr();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "servermessage.ServerMsgDetailAbilityInfo.prescr"));
-        } else
-          goto handle_unusual;
-        continue;
-      // repeated int32 next_need_level = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt32Parser(_internal_mutable_next_need_level(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<uint8_t>(tag) == 56) {
-          _internal_add_next_need_level(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr));
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // repeated int32 next_need_money = 8;
-      case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt32Parser(_internal_mutable_next_need_money(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<uint8_t>(tag) == 64) {
-          _internal_add_next_need_money(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr));
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // repeated int32 next_need_exp = 9;
-      case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt32Parser(_internal_mutable_next_need_exp(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<uint8_t>(tag) == 72) {
-          _internal_add_next_need_exp(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr));
-          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -7906,64 +7811,22 @@ uint8_t* ServerMsgDetailAbilityInfo::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_scene_id(), target);
   }
 
-  // int32 ability_count = 3;
-  if (this->_internal_ability_count() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_ability_count(), target);
-  }
-
-  // repeated int32 ability_list = 4;
-  {
-    int byte_size = _impl_._ability_list_cached_byte_size_.load(std::memory_order_relaxed);
-    if (byte_size > 0) {
-      target = stream->WriteInt32Packed(
-          4, _internal_ability_list(), byte_size, target);
-    }
-  }
-
-  // repeated .base.PlayerAbility abilitys = 5;
+  // repeated .base.PlayerAbility abilitys = 3;
   for (unsigned i = 0,
       n = static_cast<unsigned>(this->_internal_abilitys_size()); i < n; i++) {
     const auto& repfield = this->_internal_abilitys(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(5, repfield, repfield.GetCachedSize(), target, stream);
+        InternalWriteMessage(3, repfield, repfield.GetCachedSize(), target, stream);
   }
 
-  // string prescr = 6;
+  // string prescr = 4;
   if (!this->_internal_prescr().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_prescr().data(), static_cast<int>(this->_internal_prescr().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "servermessage.ServerMsgDetailAbilityInfo.prescr");
     target = stream->WriteStringMaybeAliased(
-        6, this->_internal_prescr(), target);
-  }
-
-  // repeated int32 next_need_level = 7;
-  {
-    int byte_size = _impl_._next_need_level_cached_byte_size_.load(std::memory_order_relaxed);
-    if (byte_size > 0) {
-      target = stream->WriteInt32Packed(
-          7, _internal_next_need_level(), byte_size, target);
-    }
-  }
-
-  // repeated int32 next_need_money = 8;
-  {
-    int byte_size = _impl_._next_need_money_cached_byte_size_.load(std::memory_order_relaxed);
-    if (byte_size > 0) {
-      target = stream->WriteInt32Packed(
-          8, _internal_next_need_money(), byte_size, target);
-    }
-  }
-
-  // repeated int32 next_need_exp = 9;
-  {
-    int byte_size = _impl_._next_need_exp_cached_byte_size_.load(std::memory_order_relaxed);
-    if (byte_size > 0) {
-      target = stream->WriteInt32Packed(
-          9, _internal_next_need_exp(), byte_size, target);
-    }
+        4, this->_internal_prescr(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -7982,70 +7845,14 @@ size_t ServerMsgDetailAbilityInfo::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated int32 ability_list = 4;
-  {
-    size_t data_size = ::_pbi::WireFormatLite::
-      Int32Size(this->_impl_.ability_list_);
-    if (data_size > 0) {
-      total_size += 1 +
-        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
-    }
-    int cached_size = ::_pbi::ToCachedSize(data_size);
-    _impl_._ability_list_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
-    total_size += data_size;
-  }
-
-  // repeated .base.PlayerAbility abilitys = 5;
+  // repeated .base.PlayerAbility abilitys = 3;
   total_size += 1UL * this->_internal_abilitys_size();
   for (const auto& msg : this->_impl_.abilitys_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  // repeated int32 next_need_level = 7;
-  {
-    size_t data_size = ::_pbi::WireFormatLite::
-      Int32Size(this->_impl_.next_need_level_);
-    if (data_size > 0) {
-      total_size += 1 +
-        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
-    }
-    int cached_size = ::_pbi::ToCachedSize(data_size);
-    _impl_._next_need_level_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
-    total_size += data_size;
-  }
-
-  // repeated int32 next_need_money = 8;
-  {
-    size_t data_size = ::_pbi::WireFormatLite::
-      Int32Size(this->_impl_.next_need_money_);
-    if (data_size > 0) {
-      total_size += 1 +
-        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
-    }
-    int cached_size = ::_pbi::ToCachedSize(data_size);
-    _impl_._next_need_money_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
-    total_size += data_size;
-  }
-
-  // repeated int32 next_need_exp = 9;
-  {
-    size_t data_size = ::_pbi::WireFormatLite::
-      Int32Size(this->_impl_.next_need_exp_);
-    if (data_size > 0) {
-      total_size += 1 +
-        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
-    }
-    int cached_size = ::_pbi::ToCachedSize(data_size);
-    _impl_._next_need_exp_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
-    total_size += data_size;
-  }
-
-  // string prescr = 6;
+  // string prescr = 4;
   if (!this->_internal_prescr().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
@@ -8060,11 +7867,6 @@ size_t ServerMsgDetailAbilityInfo::ByteSizeLong() const {
   // int32 scene_id = 2;
   if (this->_internal_scene_id() != 0) {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_scene_id());
-  }
-
-  // int32 ability_count = 3;
-  if (this->_internal_ability_count() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_ability_count());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -8085,11 +7887,7 @@ void ServerMsgDetailAbilityInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_impl_.ability_list_.MergeFrom(from._impl_.ability_list_);
   _this->_impl_.abilitys_.MergeFrom(from._impl_.abilitys_);
-  _this->_impl_.next_need_level_.MergeFrom(from._impl_.next_need_level_);
-  _this->_impl_.next_need_money_.MergeFrom(from._impl_.next_need_money_);
-  _this->_impl_.next_need_exp_.MergeFrom(from._impl_.next_need_exp_);
   if (!from._internal_prescr().empty()) {
     _this->_internal_set_prescr(from._internal_prescr());
   }
@@ -8098,9 +7896,6 @@ void ServerMsgDetailAbilityInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_
   }
   if (from._internal_scene_id() != 0) {
     _this->_internal_set_scene_id(from._internal_scene_id());
-  }
-  if (from._internal_ability_count() != 0) {
-    _this->_internal_set_ability_count(from._internal_ability_count());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -8121,18 +7916,14 @@ void ServerMsgDetailAbilityInfo::InternalSwap(ServerMsgDetailAbilityInfo* other)
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.ability_list_.InternalSwap(&other->_impl_.ability_list_);
   _impl_.abilitys_.InternalSwap(&other->_impl_.abilitys_);
-  _impl_.next_need_level_.InternalSwap(&other->_impl_.next_need_level_);
-  _impl_.next_need_money_.InternalSwap(&other->_impl_.next_need_money_);
-  _impl_.next_need_exp_.InternalSwap(&other->_impl_.next_need_exp_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.prescr_, lhs_arena,
       &other->_impl_.prescr_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ServerMsgDetailAbilityInfo, _impl_.ability_count_)
-      + sizeof(ServerMsgDetailAbilityInfo::_impl_.ability_count_)
+      PROTOBUF_FIELD_OFFSET(ServerMsgDetailAbilityInfo, _impl_.scene_id_)
+      + sizeof(ServerMsgDetailAbilityInfo::_impl_.scene_id_)
       - PROTOBUF_FIELD_OFFSET(ServerMsgDetailAbilityInfo, _impl_.object_id_)>(
           reinterpret_cast<char*>(&_impl_.object_id_),
           reinterpret_cast<char*>(&other->_impl_.object_id_));
@@ -11932,22 +11723,22 @@ void ServerMsgDetailEquipList::InternalSwap(ServerMsgDetailEquipList* other) {
 
 // ===================================================================
 
-class ServerMsgDetailDetailItemList::_Internal {
+class ServerMsgDetailItemList::_Internal {
  public:
 };
 
-void ServerMsgDetailDetailItemList::clear_items() {
+void ServerMsgDetailItemList::clear_items() {
   _impl_.items_.Clear();
 }
-ServerMsgDetailDetailItemList::ServerMsgDetailDetailItemList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+ServerMsgDetailItemList::ServerMsgDetailItemList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:servermessage.ServerMsgDetailDetailItemList)
+  // @@protoc_insertion_point(arena_constructor:servermessage.ServerMsgDetailItemList)
 }
-ServerMsgDetailDetailItemList::ServerMsgDetailDetailItemList(const ServerMsgDetailDetailItemList& from)
+ServerMsgDetailItemList::ServerMsgDetailItemList(const ServerMsgDetailItemList& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  ServerMsgDetailDetailItemList* const _this = this; (void)_this;
+  ServerMsgDetailItemList* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.items_){from._impl_.items_}
     , decltype(_impl_.object_id_){}
@@ -11955,10 +11746,10 @@ ServerMsgDetailDetailItemList::ServerMsgDetailDetailItemList(const ServerMsgDeta
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   _this->_impl_.object_id_ = from._impl_.object_id_;
-  // @@protoc_insertion_point(copy_constructor:servermessage.ServerMsgDetailDetailItemList)
+  // @@protoc_insertion_point(copy_constructor:servermessage.ServerMsgDetailItemList)
 }
 
-inline void ServerMsgDetailDetailItemList::SharedCtor(
+inline void ServerMsgDetailItemList::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -11969,8 +11760,8 @@ inline void ServerMsgDetailDetailItemList::SharedCtor(
   };
 }
 
-ServerMsgDetailDetailItemList::~ServerMsgDetailDetailItemList() {
-  // @@protoc_insertion_point(destructor:servermessage.ServerMsgDetailDetailItemList)
+ServerMsgDetailItemList::~ServerMsgDetailItemList() {
+  // @@protoc_insertion_point(destructor:servermessage.ServerMsgDetailItemList)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -11978,17 +11769,17 @@ ServerMsgDetailDetailItemList::~ServerMsgDetailDetailItemList() {
   SharedDtor();
 }
 
-inline void ServerMsgDetailDetailItemList::SharedDtor() {
+inline void ServerMsgDetailItemList::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.items_.~RepeatedPtrField();
 }
 
-void ServerMsgDetailDetailItemList::SetCachedSize(int size) const {
+void ServerMsgDetailItemList::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void ServerMsgDetailDetailItemList::Clear() {
-// @@protoc_insertion_point(message_clear_start:servermessage.ServerMsgDetailDetailItemList)
+void ServerMsgDetailItemList::Clear() {
+// @@protoc_insertion_point(message_clear_start:servermessage.ServerMsgDetailItemList)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -11998,7 +11789,7 @@ void ServerMsgDetailDetailItemList::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ServerMsgDetailDetailItemList::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* ServerMsgDetailItemList::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -12048,9 +11839,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* ServerMsgDetailDetailItemList::_InternalSerialize(
+uint8_t* ServerMsgDetailItemList::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:servermessage.ServerMsgDetailDetailItemList)
+  // @@protoc_insertion_point(serialize_to_array_start:servermessage.ServerMsgDetailItemList)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -12072,12 +11863,12 @@ uint8_t* ServerMsgDetailDetailItemList::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:servermessage.ServerMsgDetailDetailItemList)
+  // @@protoc_insertion_point(serialize_to_array_end:servermessage.ServerMsgDetailItemList)
   return target;
 }
 
-size_t ServerMsgDetailDetailItemList::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:servermessage.ServerMsgDetailDetailItemList)
+size_t ServerMsgDetailItemList::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:servermessage.ServerMsgDetailItemList)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -12099,17 +11890,17 @@ size_t ServerMsgDetailDetailItemList::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ServerMsgDetailDetailItemList::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ServerMsgDetailItemList::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    ServerMsgDetailDetailItemList::MergeImpl
+    ServerMsgDetailItemList::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ServerMsgDetailDetailItemList::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ServerMsgDetailItemList::GetClassData() const { return &_class_data_; }
 
 
-void ServerMsgDetailDetailItemList::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<ServerMsgDetailDetailItemList*>(&to_msg);
-  auto& from = static_cast<const ServerMsgDetailDetailItemList&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:servermessage.ServerMsgDetailDetailItemList)
+void ServerMsgDetailItemList::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ServerMsgDetailItemList*>(&to_msg);
+  auto& from = static_cast<const ServerMsgDetailItemList&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:servermessage.ServerMsgDetailItemList)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -12121,25 +11912,25 @@ void ServerMsgDetailDetailItemList::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& 
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void ServerMsgDetailDetailItemList::CopyFrom(const ServerMsgDetailDetailItemList& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:servermessage.ServerMsgDetailDetailItemList)
+void ServerMsgDetailItemList::CopyFrom(const ServerMsgDetailItemList& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:servermessage.ServerMsgDetailItemList)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool ServerMsgDetailDetailItemList::IsInitialized() const {
+bool ServerMsgDetailItemList::IsInitialized() const {
   return true;
 }
 
-void ServerMsgDetailDetailItemList::InternalSwap(ServerMsgDetailDetailItemList* other) {
+void ServerMsgDetailItemList::InternalSwap(ServerMsgDetailItemList* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.items_.InternalSwap(&other->_impl_.items_);
   swap(_impl_.object_id_, other->_impl_.object_id_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgDetailDetailItemList::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgDetailItemList::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
       file_level_metadata_server_5fmessage_2eproto[22]);
@@ -15722,7 +15513,7 @@ ServerMsgNewMonster::ServerMsgNewMonster(const ServerMsgNewMonster& from)
       decltype(_impl_.name_){}
     , decltype(_impl_.object_id_){}
     , decltype(_impl_.position_x_){}
-    , decltype(_impl_.positiion_y_){}
+    , decltype(_impl_.position_z_){}
     , decltype(_impl_.dir_){}
     , decltype(_impl_.move_speed_){}
     , decltype(_impl_.horse_id_){}
@@ -15756,7 +15547,7 @@ inline void ServerMsgNewMonster::SharedCtor(
       decltype(_impl_.name_){}
     , decltype(_impl_.object_id_){0u}
     , decltype(_impl_.position_x_){0}
-    , decltype(_impl_.positiion_y_){0}
+    , decltype(_impl_.position_z_){0}
     , decltype(_impl_.dir_){0}
     , decltype(_impl_.move_speed_){0}
     , decltype(_impl_.horse_id_){0}
@@ -15818,13 +15609,12 @@ const char* ServerMsgNewMonster::_InternalParse(const char* ptr, ::_pbi::ParseCo
         } else
           goto handle_unusual;
         continue;
-      // string name = 2;
+      // bytes name = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_name();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "servermessage.ServerMsgNewMonster.name"));
         } else
           goto handle_unusual;
         continue;
@@ -15836,10 +15626,10 @@ const char* ServerMsgNewMonster::_InternalParse(const char* ptr, ::_pbi::ParseCo
         } else
           goto handle_unusual;
         continue;
-      // float positiion_y = 4;
+      // float position_z = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 37)) {
-          _impl_.positiion_y_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          _impl_.position_z_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
@@ -15943,13 +15733,9 @@ uint8_t* ServerMsgNewMonster::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt32ToArray(1, this->_internal_object_id(), target);
   }
 
-  // string name = 2;
+  // bytes name = 2;
   if (!this->_internal_name().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "servermessage.ServerMsgNewMonster.name");
-    target = stream->WriteStringMaybeAliased(
+    target = stream->WriteBytesMaybeAliased(
         2, this->_internal_name(), target);
   }
 
@@ -15963,14 +15749,14 @@ uint8_t* ServerMsgNewMonster::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_position_x(), target);
   }
 
-  // float positiion_y = 4;
+  // float position_z = 4;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_positiion_y = this->_internal_positiion_y();
-  uint32_t raw_positiion_y;
-  memcpy(&raw_positiion_y, &tmp_positiion_y, sizeof(tmp_positiion_y));
-  if (raw_positiion_y != 0) {
+  float tmp_position_z = this->_internal_position_z();
+  uint32_t raw_position_z;
+  memcpy(&raw_position_z, &tmp_position_z, sizeof(tmp_position_z));
+  if (raw_position_z != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_positiion_y(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_position_z(), target);
   }
 
   // float dir = 5;
@@ -16053,10 +15839,10 @@ size_t ServerMsgNewMonster::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string name = 2;
+  // bytes name = 2;
   if (!this->_internal_name().empty()) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
         this->_internal_name());
   }
 
@@ -16074,12 +15860,12 @@ size_t ServerMsgNewMonster::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // float positiion_y = 4;
+  // float position_z = 4;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_positiion_y = this->_internal_positiion_y();
-  uint32_t raw_positiion_y;
-  memcpy(&raw_positiion_y, &tmp_positiion_y, sizeof(tmp_positiion_y));
-  if (raw_positiion_y != 0) {
+  float tmp_position_z = this->_internal_position_z();
+  uint32_t raw_position_z;
+  memcpy(&raw_position_z, &tmp_position_z, sizeof(tmp_position_z));
+  if (raw_position_z != 0) {
     total_size += 1 + 4;
   }
 
@@ -16171,11 +15957,11 @@ void ServerMsgNewMonster::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, co
     _this->_internal_set_position_x(from._internal_position_x());
   }
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_positiion_y = from._internal_positiion_y();
-  uint32_t raw_positiion_y;
-  memcpy(&raw_positiion_y, &tmp_positiion_y, sizeof(tmp_positiion_y));
-  if (raw_positiion_y != 0) {
-    _this->_internal_set_positiion_y(from._internal_positiion_y());
+  float tmp_position_z = from._internal_position_z();
+  uint32_t raw_position_z;
+  memcpy(&raw_position_z, &tmp_position_z, sizeof(tmp_position_z));
+  if (raw_position_z != 0) {
+    _this->_internal_set_position_z(from._internal_position_z());
   }
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_dir = from._internal_dir();
@@ -17136,18 +16922,10 @@ void ServerMsgQueryEventResult::InternalSwap(ServerMsgQueryEventResult* other) {
 
 class ServerMsgQuestList::_Internal {
  public:
-  static const ::base::SArchiveLoader_Quest& quest_list(const ServerMsgQuestList* msg);
 };
 
-const ::base::SArchiveLoader_Quest&
-ServerMsgQuestList::_Internal::quest_list(const ServerMsgQuestList* msg) {
-  return *msg->_impl_.quest_list_;
-}
-void ServerMsgQuestList::clear_quest_list() {
-  if (GetArenaForAllocation() == nullptr && _impl_.quest_list_ != nullptr) {
-    delete _impl_.quest_list_;
-  }
-  _impl_.quest_list_ = nullptr;
+void ServerMsgQuestList::clear_quests() {
+  _impl_.quests_.Clear();
 }
 ServerMsgQuestList::ServerMsgQuestList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -17159,14 +16937,11 @@ ServerMsgQuestList::ServerMsgQuestList(const ServerMsgQuestList& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ServerMsgQuestList* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.quest_list_){nullptr}
+      decltype(_impl_.quests_){from._impl_.quests_}
     , decltype(_impl_.player_id_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_quest_list()) {
-    _this->_impl_.quest_list_ = new ::base::SArchiveLoader_Quest(*from._impl_.quest_list_);
-  }
   _this->_impl_.player_id_ = from._impl_.player_id_;
   // @@protoc_insertion_point(copy_constructor:servermessage.ServerMsgQuestList)
 }
@@ -17176,7 +16951,7 @@ inline void ServerMsgQuestList::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.quest_list_){nullptr}
+      decltype(_impl_.quests_){arena}
     , decltype(_impl_.player_id_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
@@ -17193,7 +16968,7 @@ ServerMsgQuestList::~ServerMsgQuestList() {
 
 inline void ServerMsgQuestList::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete _impl_.quest_list_;
+  _impl_.quests_.~RepeatedPtrField();
 }
 
 void ServerMsgQuestList::SetCachedSize(int size) const {
@@ -17206,10 +16981,7 @@ void ServerMsgQuestList::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArenaForAllocation() == nullptr && _impl_.quest_list_ != nullptr) {
-    delete _impl_.quest_list_;
-  }
-  _impl_.quest_list_ = nullptr;
+  _impl_.quests_.Clear();
   _impl_.player_id_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -17228,11 +17000,16 @@ const char* ServerMsgQuestList::_InternalParse(const char* ptr, ::_pbi::ParseCon
         } else
           goto handle_unusual;
         continue;
-      // .base.SArchiveLoader_Quest quest_list = 2;
+      // repeated .base.Quest quests = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_quest_list(), ptr);
-          CHK_(ptr);
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_quests(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -17271,11 +17048,12 @@ uint8_t* ServerMsgQuestList::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_player_id(), target);
   }
 
-  // .base.SArchiveLoader_Quest quest_list = 2;
-  if (this->_internal_has_quest_list()) {
+  // repeated .base.Quest quests = 2;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_quests_size()); i < n; i++) {
+    const auto& repfield = this->_internal_quests(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, _Internal::quest_list(this),
-        _Internal::quest_list(this).GetCachedSize(), target, stream);
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -17294,11 +17072,11 @@ size_t ServerMsgQuestList::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .base.SArchiveLoader_Quest quest_list = 2;
-  if (this->_internal_has_quest_list()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.quest_list_);
+  // repeated .base.Quest quests = 2;
+  total_size += 1UL * this->_internal_quests_size();
+  for (const auto& msg : this->_impl_.quests_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // int32 player_id = 1;
@@ -17324,10 +17102,7 @@ void ServerMsgQuestList::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_quest_list()) {
-    _this->_internal_mutable_quest_list()->::base::SArchiveLoader_Quest::MergeFrom(
-        from._internal_quest_list());
-  }
+  _this->_impl_.quests_.MergeFrom(from._impl_.quests_);
   if (from._internal_player_id() != 0) {
     _this->_internal_set_player_id(from._internal_player_id());
   }
@@ -17348,12 +17123,8 @@ bool ServerMsgQuestList::IsInitialized() const {
 void ServerMsgQuestList::InternalSwap(ServerMsgQuestList* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ServerMsgQuestList, _impl_.player_id_)
-      + sizeof(ServerMsgQuestList::_impl_.player_id_)
-      - PROTOBUF_FIELD_OFFSET(ServerMsgQuestList, _impl_.quest_list_)>(
-          reinterpret_cast<char*>(&_impl_.quest_list_),
-          reinterpret_cast<char*>(&other->_impl_.quest_list_));
+  _impl_.quests_.InternalSwap(&other->_impl_.quests_);
+  swap(_impl_.player_id_, other->_impl_.player_id_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgQuestList::GetMetadata() const {
@@ -19711,9 +19482,9 @@ template<> PROTOBUF_NOINLINE ::servermessage::ServerMsgDetailEquipList*
 Arena::CreateMaybeMessage< ::servermessage::ServerMsgDetailEquipList >(Arena* arena) {
   return Arena::CreateMessageInternal< ::servermessage::ServerMsgDetailEquipList >(arena);
 }
-template<> PROTOBUF_NOINLINE ::servermessage::ServerMsgDetailDetailItemList*
-Arena::CreateMaybeMessage< ::servermessage::ServerMsgDetailDetailItemList >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::servermessage::ServerMsgDetailDetailItemList >(arena);
+template<> PROTOBUF_NOINLINE ::servermessage::ServerMsgDetailItemList*
+Arena::CreateMaybeMessage< ::servermessage::ServerMsgDetailItemList >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::servermessage::ServerMsgDetailItemList >(arena);
 }
 template<> PROTOBUF_NOINLINE ::servermessage::ServerMsgDetailSkillList*
 Arena::CreateMaybeMessage< ::servermessage::ServerMsgDetailSkillList >(Arena* arena) {

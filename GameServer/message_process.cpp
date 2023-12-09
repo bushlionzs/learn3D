@@ -6,7 +6,7 @@
 void cs_user_login(NetHandle h, const char* msg, uint32_t msg_size)
 {
 	auto id = std::string("1610000020");
-	CharDataTask* task = new CharDataTask(id);
+	CharDataTask* task = new CharDataTask(id, h);
 	DBManager::GetSingletonPtr()->addDbTask(task);
 }
 

@@ -153,7 +153,7 @@ typedef int64_t int64;
 typedef uint64_t uint64;
 typedef std::string STRING;
 typedef unsigned char uchar;
-typedef uint32			GUID_t;
+typedef uint32_t			GUID_t;
 typedef unsigned long	TID;
 typedef unsigned int		IP_t;
 typedef double float64;

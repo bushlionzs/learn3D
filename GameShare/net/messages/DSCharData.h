@@ -6,10 +6,11 @@ struct CHARDBNODE;
 class DSCharData : public NetPacket
 {
 public:
-    DSCharData(CHARDBNODE* charDBNode);
+    DSCharData(CHARDBNODE* charDBNode, NetHandle h);
     ~DSCharData();
 
     bool process();
 private:
     CHARDBNODE* mCharDBNode;
+    NetHandle mHandle;
 };

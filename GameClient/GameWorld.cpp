@@ -8,7 +8,6 @@
 #include "ActionSetManager.h"
 #include "kplayer.h"
 #include "game_scene.h"
-#include "net/messages/CSLogin.h"
 #include "KObjectManager.h"
 #include "KItemManager.h"
 #include "GameInput.h"

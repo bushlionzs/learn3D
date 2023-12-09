@@ -12,6 +12,8 @@ public:
 	virtual void appUpdate(float delta);
 	virtual EngineType getEngineType();
 private:
+	void registerMessage();
+private:
 	GameWorld* mGameWorld;
 	NetContext* mNetContext;
 };

@@ -14,10 +14,22 @@
 #include "Basics.h"
 #include <stdint.h>
 
-typedef int16		ID_t;
-typedef uint16		MKID_t;
-typedef uint32		MK_VALUE;
-typedef uint32		ObjID_t;
+typedef uint16_t ushort;
+typedef uint64_t uint64;
+typedef uint32_t uint32;
+typedef int32_t int32;
+typedef uint16_t uint16;
+typedef int16_t int16;
+typedef uint8_t uint8;
+typedef int8_t int8;
+
+typedef unsigned char uchar;
+typedef unsigned long ulong;
+
+typedef int16_t		ID_t;
+typedef uint16_t		MKID_t;
+typedef uint32_t		MK_VALUE;
+typedef uint32_t		ObjID_t;
 typedef int32_t     int32;
 
 typedef int32_t		PrescriptionID_t;
@@ -36,7 +48,7 @@ typedef int32_t		QuestID_t;
 typedef ID_t		GroupID_t;
 typedef ID_t		ChannelID_t;
 typedef ID_t		CooldownID_t;
-typedef uchar		CampID_t;
+typedef ID_t		CampID_t;
 typedef ID_t		GuildID_t;
 typedef ID_t		CityID_t;
 typedef ID_t		TopListID_t;
@@ -53,7 +65,7 @@ typedef struct _Int64
 	unsigned long	b;
 } Int64;
 
-typedef uint32			GUID_t;
+typedef uint32_t			GUID_t;
 
 #define INVALID_GUID	((GUID_t) (-1))
 #define INVALID_INDEX	(-1)

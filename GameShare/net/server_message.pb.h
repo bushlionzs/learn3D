@@ -110,12 +110,12 @@ extern ServerMsgDetailAttribPetDefaultTypeInternal _ServerMsgDetailAttribPet_def
 class ServerMsgDetailBuff;
 struct ServerMsgDetailBuffDefaultTypeInternal;
 extern ServerMsgDetailBuffDefaultTypeInternal _ServerMsgDetailBuff_default_instance_;
-class ServerMsgDetailDetailItemList;
-struct ServerMsgDetailDetailItemListDefaultTypeInternal;
-extern ServerMsgDetailDetailItemListDefaultTypeInternal _ServerMsgDetailDetailItemList_default_instance_;
 class ServerMsgDetailEquipList;
 struct ServerMsgDetailEquipListDefaultTypeInternal;
 extern ServerMsgDetailEquipListDefaultTypeInternal _ServerMsgDetailEquipList_default_instance_;
+class ServerMsgDetailItemList;
+struct ServerMsgDetailItemListDefaultTypeInternal;
+extern ServerMsgDetailItemListDefaultTypeInternal _ServerMsgDetailItemList_default_instance_;
 class ServerMsgDetailSkillList;
 struct ServerMsgDetailSkillListDefaultTypeInternal;
 extern ServerMsgDetailSkillListDefaultTypeInternal _ServerMsgDetailSkillList_default_instance_;
@@ -208,8 +208,8 @@ template<> ::servermessage::ServerMsgDetailAbilityInfo* Arena::CreateMaybeMessag
 template<> ::servermessage::ServerMsgDetailAttrib* Arena::CreateMaybeMessage<::servermessage::ServerMsgDetailAttrib>(Arena*);
 template<> ::servermessage::ServerMsgDetailAttribPet* Arena::CreateMaybeMessage<::servermessage::ServerMsgDetailAttribPet>(Arena*);
 template<> ::servermessage::ServerMsgDetailBuff* Arena::CreateMaybeMessage<::servermessage::ServerMsgDetailBuff>(Arena*);
-template<> ::servermessage::ServerMsgDetailDetailItemList* Arena::CreateMaybeMessage<::servermessage::ServerMsgDetailDetailItemList>(Arena*);
 template<> ::servermessage::ServerMsgDetailEquipList* Arena::CreateMaybeMessage<::servermessage::ServerMsgDetailEquipList>(Arena*);
+template<> ::servermessage::ServerMsgDetailItemList* Arena::CreateMaybeMessage<::servermessage::ServerMsgDetailItemList>(Arena*);
 template<> ::servermessage::ServerMsgDetailSkillList* Arena::CreateMaybeMessage<::servermessage::ServerMsgDetailSkillList>(Arena*);
 template<> ::servermessage::ServerMsgEnterMap* Arena::CreateMaybeMessage<::servermessage::ServerMsgEnterMap>(Arena*);
 template<> ::servermessage::ServerMsgItemInfo* Arena::CreateMaybeMessage<::servermessage::ServerMsgItemInfo>(Arena*);
@@ -283,15 +283,15 @@ enum MessageID : int {
   SC_MESSAGE_ABILITY_ACTION = 11040,
   SC_ABILITY_SUCCESS = 11041,
   SC_HUMAN_BASE_ATTR = 11042,
-  SC_DETAIL_EQUIP = 11043,
-  SC_DETAIL_ITEM = 11044,
-  SC_DETAIL_SKILL = 11045,
+  SC_DETAIL_EQUIP_LIST = 11043,
+  SC_DETAIL_ITEM_LIST = 11044,
+  SC_DETAIL_SKILL_LIST = 11045,
   MessageID_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MessageID_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MessageID_IsValid(int value);
 constexpr MessageID MessageID_MIN = SC_MSG_NONE;
-constexpr MessageID MessageID_MAX = SC_DETAIL_SKILL;
+constexpr MessageID MessageID_MAX = SC_DETAIL_SKILL_LIST;
 constexpr int MessageID_ARRAYSIZE = MessageID_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MessageID_descriptor();
@@ -4007,39 +4007,12 @@ class ServerMsgDetailAbilityInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kAbilityListFieldNumber = 4,
-    kAbilitysFieldNumber = 5,
-    kNextNeedLevelFieldNumber = 7,
-    kNextNeedMoneyFieldNumber = 8,
-    kNextNeedExpFieldNumber = 9,
-    kPrescrFieldNumber = 6,
+    kAbilitysFieldNumber = 3,
+    kPrescrFieldNumber = 4,
     kObjectIdFieldNumber = 1,
     kSceneIdFieldNumber = 2,
-    kAbilityCountFieldNumber = 3,
   };
-  // repeated int32 ability_list = 4;
-  int ability_list_size() const;
-  private:
-  int _internal_ability_list_size() const;
-  public:
-  void clear_ability_list();
-  private:
-  int32_t _internal_ability_list(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      _internal_ability_list() const;
-  void _internal_add_ability_list(int32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      _internal_mutable_ability_list();
-  public:
-  int32_t ability_list(int index) const;
-  void set_ability_list(int index, int32_t value);
-  void add_ability_list(int32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      ability_list() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      mutable_ability_list();
-
-  // repeated .base.PlayerAbility abilitys = 5;
+  // repeated .base.PlayerAbility abilitys = 3;
   int abilitys_size() const;
   private:
   int _internal_abilitys_size() const;
@@ -4057,73 +4030,7 @@ class ServerMsgDetailAbilityInfo final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::PlayerAbility >&
       abilitys() const;
 
-  // repeated int32 next_need_level = 7;
-  int next_need_level_size() const;
-  private:
-  int _internal_next_need_level_size() const;
-  public:
-  void clear_next_need_level();
-  private:
-  int32_t _internal_next_need_level(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      _internal_next_need_level() const;
-  void _internal_add_next_need_level(int32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      _internal_mutable_next_need_level();
-  public:
-  int32_t next_need_level(int index) const;
-  void set_next_need_level(int index, int32_t value);
-  void add_next_need_level(int32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      next_need_level() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      mutable_next_need_level();
-
-  // repeated int32 next_need_money = 8;
-  int next_need_money_size() const;
-  private:
-  int _internal_next_need_money_size() const;
-  public:
-  void clear_next_need_money();
-  private:
-  int32_t _internal_next_need_money(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      _internal_next_need_money() const;
-  void _internal_add_next_need_money(int32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      _internal_mutable_next_need_money();
-  public:
-  int32_t next_need_money(int index) const;
-  void set_next_need_money(int index, int32_t value);
-  void add_next_need_money(int32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      next_need_money() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      mutable_next_need_money();
-
-  // repeated int32 next_need_exp = 9;
-  int next_need_exp_size() const;
-  private:
-  int _internal_next_need_exp_size() const;
-  public:
-  void clear_next_need_exp();
-  private:
-  int32_t _internal_next_need_exp(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      _internal_next_need_exp() const;
-  void _internal_add_next_need_exp(int32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      _internal_mutable_next_need_exp();
-  public:
-  int32_t next_need_exp(int index) const;
-  void set_next_need_exp(int index, int32_t value);
-  void add_next_need_exp(int32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      next_need_exp() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      mutable_next_need_exp();
-
-  // string prescr = 6;
+  // string prescr = 4;
   void clear_prescr();
   const std::string& prescr() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -4155,15 +4062,6 @@ class ServerMsgDetailAbilityInfo final :
   void _internal_set_scene_id(int32_t value);
   public:
 
-  // int32 ability_count = 3;
-  void clear_ability_count();
-  int32_t ability_count() const;
-  void set_ability_count(int32_t value);
-  private:
-  int32_t _internal_ability_count() const;
-  void _internal_set_ability_count(int32_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:servermessage.ServerMsgDetailAbilityInfo)
  private:
   class _Internal;
@@ -4172,19 +4070,10 @@ class ServerMsgDetailAbilityInfo final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > ability_list_;
-    mutable std::atomic<int> _ability_list_cached_byte_size_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::PlayerAbility > abilitys_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > next_need_level_;
-    mutable std::atomic<int> _next_need_level_cached_byte_size_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > next_need_money_;
-    mutable std::atomic<int> _next_need_money_cached_byte_size_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > next_need_exp_;
-    mutable std::atomic<int> _next_need_exp_cached_byte_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr prescr_;
     int32_t object_id_;
     int32_t scene_id_;
-    int32_t ability_count_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -6076,24 +5965,24 @@ class ServerMsgDetailEquipList final :
 };
 // -------------------------------------------------------------------
 
-class ServerMsgDetailDetailItemList final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:servermessage.ServerMsgDetailDetailItemList) */ {
+class ServerMsgDetailItemList final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:servermessage.ServerMsgDetailItemList) */ {
  public:
-  inline ServerMsgDetailDetailItemList() : ServerMsgDetailDetailItemList(nullptr) {}
-  ~ServerMsgDetailDetailItemList() override;
-  explicit PROTOBUF_CONSTEXPR ServerMsgDetailDetailItemList(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline ServerMsgDetailItemList() : ServerMsgDetailItemList(nullptr) {}
+  ~ServerMsgDetailItemList() override;
+  explicit PROTOBUF_CONSTEXPR ServerMsgDetailItemList(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  ServerMsgDetailDetailItemList(const ServerMsgDetailDetailItemList& from);
-  ServerMsgDetailDetailItemList(ServerMsgDetailDetailItemList&& from) noexcept
-    : ServerMsgDetailDetailItemList() {
+  ServerMsgDetailItemList(const ServerMsgDetailItemList& from);
+  ServerMsgDetailItemList(ServerMsgDetailItemList&& from) noexcept
+    : ServerMsgDetailItemList() {
     *this = ::std::move(from);
   }
 
-  inline ServerMsgDetailDetailItemList& operator=(const ServerMsgDetailDetailItemList& from) {
+  inline ServerMsgDetailItemList& operator=(const ServerMsgDetailItemList& from) {
     CopyFrom(from);
     return *this;
   }
-  inline ServerMsgDetailDetailItemList& operator=(ServerMsgDetailDetailItemList&& from) noexcept {
+  inline ServerMsgDetailItemList& operator=(ServerMsgDetailItemList&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -6116,20 +6005,20 @@ class ServerMsgDetailDetailItemList final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const ServerMsgDetailDetailItemList& default_instance() {
+  static const ServerMsgDetailItemList& default_instance() {
     return *internal_default_instance();
   }
-  static inline const ServerMsgDetailDetailItemList* internal_default_instance() {
-    return reinterpret_cast<const ServerMsgDetailDetailItemList*>(
-               &_ServerMsgDetailDetailItemList_default_instance_);
+  static inline const ServerMsgDetailItemList* internal_default_instance() {
+    return reinterpret_cast<const ServerMsgDetailItemList*>(
+               &_ServerMsgDetailItemList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     22;
 
-  friend void swap(ServerMsgDetailDetailItemList& a, ServerMsgDetailDetailItemList& b) {
+  friend void swap(ServerMsgDetailItemList& a, ServerMsgDetailItemList& b) {
     a.Swap(&b);
   }
-  inline void Swap(ServerMsgDetailDetailItemList* other) {
+  inline void Swap(ServerMsgDetailItemList* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -6142,7 +6031,7 @@ class ServerMsgDetailDetailItemList final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(ServerMsgDetailDetailItemList* other) {
+  void UnsafeArenaSwap(ServerMsgDetailItemList* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -6150,14 +6039,14 @@ class ServerMsgDetailDetailItemList final :
 
   // implements Message ----------------------------------------------
 
-  ServerMsgDetailDetailItemList* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<ServerMsgDetailDetailItemList>(arena);
+  ServerMsgDetailItemList* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ServerMsgDetailItemList>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const ServerMsgDetailDetailItemList& from);
+  void CopyFrom(const ServerMsgDetailItemList& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const ServerMsgDetailDetailItemList& from) {
-    ServerMsgDetailDetailItemList::MergeImpl(*this, from);
+  void MergeFrom( const ServerMsgDetailItemList& from) {
+    ServerMsgDetailItemList::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -6175,15 +6064,15 @@ class ServerMsgDetailDetailItemList final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(ServerMsgDetailDetailItemList* other);
+  void InternalSwap(ServerMsgDetailItemList* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "servermessage.ServerMsgDetailDetailItemList";
+    return "servermessage.ServerMsgDetailItemList";
   }
   protected:
-  explicit ServerMsgDetailDetailItemList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit ServerMsgDetailItemList(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -6227,7 +6116,7 @@ class ServerMsgDetailDetailItemList final :
   void _internal_set_object_id(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:servermessage.ServerMsgDetailDetailItemList)
+  // @@protoc_insertion_point(class_scope:servermessage.ServerMsgDetailItemList)
  private:
   class _Internal;
 
@@ -8439,7 +8328,7 @@ class ServerMsgNewMonster final :
     kNameFieldNumber = 2,
     kObjectIdFieldNumber = 1,
     kPositionXFieldNumber = 3,
-    kPositiionYFieldNumber = 4,
+    kPositionZFieldNumber = 4,
     kDirFieldNumber = 5,
     kMoveSpeedFieldNumber = 6,
     kHorseIdFieldNumber = 7,
@@ -8449,7 +8338,7 @@ class ServerMsgNewMonster final :
     kRaceIdFieldNumber = 11,
     kCampIdFieldNumber = 12,
   };
-  // string name = 2;
+  // bytes name = 2;
   void clear_name();
   const std::string& name() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -8481,13 +8370,13 @@ class ServerMsgNewMonster final :
   void _internal_set_position_x(float value);
   public:
 
-  // float positiion_y = 4;
-  void clear_positiion_y();
-  float positiion_y() const;
-  void set_positiion_y(float value);
+  // float position_z = 4;
+  void clear_position_z();
+  float position_z() const;
+  void set_position_z(float value);
   private:
-  float _internal_positiion_y() const;
-  void _internal_set_positiion_y(float value);
+  float _internal_position_z() const;
+  void _internal_set_position_z(float value);
   public:
 
   // float dir = 5;
@@ -8573,7 +8462,7 @@ class ServerMsgNewMonster final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     uint32_t object_id_;
     float position_x_;
-    float positiion_y_;
+    float position_z_;
     float dir_;
     float move_speed_;
     float horse_id_;
@@ -9366,26 +9255,26 @@ class ServerMsgQuestList final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kQuestListFieldNumber = 2,
+    kQuestsFieldNumber = 2,
     kPlayerIdFieldNumber = 1,
   };
-  // .base.SArchiveLoader_Quest quest_list = 2;
-  bool has_quest_list() const;
+  // repeated .base.Quest quests = 2;
+  int quests_size() const;
   private:
-  bool _internal_has_quest_list() const;
+  int _internal_quests_size() const;
   public:
-  void clear_quest_list();
-  const ::base::SArchiveLoader_Quest& quest_list() const;
-  PROTOBUF_NODISCARD ::base::SArchiveLoader_Quest* release_quest_list();
-  ::base::SArchiveLoader_Quest* mutable_quest_list();
-  void set_allocated_quest_list(::base::SArchiveLoader_Quest* quest_list);
+  void clear_quests();
+  ::base::Quest* mutable_quests(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >*
+      mutable_quests();
   private:
-  const ::base::SArchiveLoader_Quest& _internal_quest_list() const;
-  ::base::SArchiveLoader_Quest* _internal_mutable_quest_list();
+  const ::base::Quest& _internal_quests(int index) const;
+  ::base::Quest* _internal_add_quests();
   public:
-  void unsafe_arena_set_allocated_quest_list(
-      ::base::SArchiveLoader_Quest* quest_list);
-  ::base::SArchiveLoader_Quest* unsafe_arena_release_quest_list();
+  const ::base::Quest& quests(int index) const;
+  ::base::Quest* add_quests();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >&
+      quests() const;
 
   // int32 player_id = 1;
   void clear_player_id();
@@ -9404,7 +9293,7 @@ class ServerMsgQuestList final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::base::SArchiveLoader_Quest* quest_list_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest > quests_;
     int32_t player_id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -13857,74 +13746,7 @@ inline void ServerMsgDetailAbilityInfo::set_scene_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgDetailAbilityInfo.scene_id)
 }
 
-// int32 ability_count = 3;
-inline void ServerMsgDetailAbilityInfo::clear_ability_count() {
-  _impl_.ability_count_ = 0;
-}
-inline int32_t ServerMsgDetailAbilityInfo::_internal_ability_count() const {
-  return _impl_.ability_count_;
-}
-inline int32_t ServerMsgDetailAbilityInfo::ability_count() const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgDetailAbilityInfo.ability_count)
-  return _internal_ability_count();
-}
-inline void ServerMsgDetailAbilityInfo::_internal_set_ability_count(int32_t value) {
-  
-  _impl_.ability_count_ = value;
-}
-inline void ServerMsgDetailAbilityInfo::set_ability_count(int32_t value) {
-  _internal_set_ability_count(value);
-  // @@protoc_insertion_point(field_set:servermessage.ServerMsgDetailAbilityInfo.ability_count)
-}
-
-// repeated int32 ability_list = 4;
-inline int ServerMsgDetailAbilityInfo::_internal_ability_list_size() const {
-  return _impl_.ability_list_.size();
-}
-inline int ServerMsgDetailAbilityInfo::ability_list_size() const {
-  return _internal_ability_list_size();
-}
-inline void ServerMsgDetailAbilityInfo::clear_ability_list() {
-  _impl_.ability_list_.Clear();
-}
-inline int32_t ServerMsgDetailAbilityInfo::_internal_ability_list(int index) const {
-  return _impl_.ability_list_.Get(index);
-}
-inline int32_t ServerMsgDetailAbilityInfo::ability_list(int index) const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgDetailAbilityInfo.ability_list)
-  return _internal_ability_list(index);
-}
-inline void ServerMsgDetailAbilityInfo::set_ability_list(int index, int32_t value) {
-  _impl_.ability_list_.Set(index, value);
-  // @@protoc_insertion_point(field_set:servermessage.ServerMsgDetailAbilityInfo.ability_list)
-}
-inline void ServerMsgDetailAbilityInfo::_internal_add_ability_list(int32_t value) {
-  _impl_.ability_list_.Add(value);
-}
-inline void ServerMsgDetailAbilityInfo::add_ability_list(int32_t value) {
-  _internal_add_ability_list(value);
-  // @@protoc_insertion_point(field_add:servermessage.ServerMsgDetailAbilityInfo.ability_list)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-ServerMsgDetailAbilityInfo::_internal_ability_list() const {
-  return _impl_.ability_list_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-ServerMsgDetailAbilityInfo::ability_list() const {
-  // @@protoc_insertion_point(field_list:servermessage.ServerMsgDetailAbilityInfo.ability_list)
-  return _internal_ability_list();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-ServerMsgDetailAbilityInfo::_internal_mutable_ability_list() {
-  return &_impl_.ability_list_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-ServerMsgDetailAbilityInfo::mutable_ability_list() {
-  // @@protoc_insertion_point(field_mutable_list:servermessage.ServerMsgDetailAbilityInfo.ability_list)
-  return _internal_mutable_ability_list();
-}
-
-// repeated .base.PlayerAbility abilitys = 5;
+// repeated .base.PlayerAbility abilitys = 3;
 inline int ServerMsgDetailAbilityInfo::_internal_abilitys_size() const {
   return _impl_.abilitys_.size();
 }
@@ -13961,7 +13783,7 @@ ServerMsgDetailAbilityInfo::abilitys() const {
   return _impl_.abilitys_;
 }
 
-// string prescr = 6;
+// string prescr = 4;
 inline void ServerMsgDetailAbilityInfo::clear_prescr() {
   _impl_.prescr_.ClearToEmpty();
 }
@@ -14009,147 +13831,6 @@ inline void ServerMsgDetailAbilityInfo::set_allocated_prescr(std::string* prescr
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgDetailAbilityInfo.prescr)
-}
-
-// repeated int32 next_need_level = 7;
-inline int ServerMsgDetailAbilityInfo::_internal_next_need_level_size() const {
-  return _impl_.next_need_level_.size();
-}
-inline int ServerMsgDetailAbilityInfo::next_need_level_size() const {
-  return _internal_next_need_level_size();
-}
-inline void ServerMsgDetailAbilityInfo::clear_next_need_level() {
-  _impl_.next_need_level_.Clear();
-}
-inline int32_t ServerMsgDetailAbilityInfo::_internal_next_need_level(int index) const {
-  return _impl_.next_need_level_.Get(index);
-}
-inline int32_t ServerMsgDetailAbilityInfo::next_need_level(int index) const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgDetailAbilityInfo.next_need_level)
-  return _internal_next_need_level(index);
-}
-inline void ServerMsgDetailAbilityInfo::set_next_need_level(int index, int32_t value) {
-  _impl_.next_need_level_.Set(index, value);
-  // @@protoc_insertion_point(field_set:servermessage.ServerMsgDetailAbilityInfo.next_need_level)
-}
-inline void ServerMsgDetailAbilityInfo::_internal_add_next_need_level(int32_t value) {
-  _impl_.next_need_level_.Add(value);
-}
-inline void ServerMsgDetailAbilityInfo::add_next_need_level(int32_t value) {
-  _internal_add_next_need_level(value);
-  // @@protoc_insertion_point(field_add:servermessage.ServerMsgDetailAbilityInfo.next_need_level)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-ServerMsgDetailAbilityInfo::_internal_next_need_level() const {
-  return _impl_.next_need_level_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-ServerMsgDetailAbilityInfo::next_need_level() const {
-  // @@protoc_insertion_point(field_list:servermessage.ServerMsgDetailAbilityInfo.next_need_level)
-  return _internal_next_need_level();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-ServerMsgDetailAbilityInfo::_internal_mutable_next_need_level() {
-  return &_impl_.next_need_level_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-ServerMsgDetailAbilityInfo::mutable_next_need_level() {
-  // @@protoc_insertion_point(field_mutable_list:servermessage.ServerMsgDetailAbilityInfo.next_need_level)
-  return _internal_mutable_next_need_level();
-}
-
-// repeated int32 next_need_money = 8;
-inline int ServerMsgDetailAbilityInfo::_internal_next_need_money_size() const {
-  return _impl_.next_need_money_.size();
-}
-inline int ServerMsgDetailAbilityInfo::next_need_money_size() const {
-  return _internal_next_need_money_size();
-}
-inline void ServerMsgDetailAbilityInfo::clear_next_need_money() {
-  _impl_.next_need_money_.Clear();
-}
-inline int32_t ServerMsgDetailAbilityInfo::_internal_next_need_money(int index) const {
-  return _impl_.next_need_money_.Get(index);
-}
-inline int32_t ServerMsgDetailAbilityInfo::next_need_money(int index) const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgDetailAbilityInfo.next_need_money)
-  return _internal_next_need_money(index);
-}
-inline void ServerMsgDetailAbilityInfo::set_next_need_money(int index, int32_t value) {
-  _impl_.next_need_money_.Set(index, value);
-  // @@protoc_insertion_point(field_set:servermessage.ServerMsgDetailAbilityInfo.next_need_money)
-}
-inline void ServerMsgDetailAbilityInfo::_internal_add_next_need_money(int32_t value) {
-  _impl_.next_need_money_.Add(value);
-}
-inline void ServerMsgDetailAbilityInfo::add_next_need_money(int32_t value) {
-  _internal_add_next_need_money(value);
-  // @@protoc_insertion_point(field_add:servermessage.ServerMsgDetailAbilityInfo.next_need_money)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-ServerMsgDetailAbilityInfo::_internal_next_need_money() const {
-  return _impl_.next_need_money_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-ServerMsgDetailAbilityInfo::next_need_money() const {
-  // @@protoc_insertion_point(field_list:servermessage.ServerMsgDetailAbilityInfo.next_need_money)
-  return _internal_next_need_money();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-ServerMsgDetailAbilityInfo::_internal_mutable_next_need_money() {
-  return &_impl_.next_need_money_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-ServerMsgDetailAbilityInfo::mutable_next_need_money() {
-  // @@protoc_insertion_point(field_mutable_list:servermessage.ServerMsgDetailAbilityInfo.next_need_money)
-  return _internal_mutable_next_need_money();
-}
-
-// repeated int32 next_need_exp = 9;
-inline int ServerMsgDetailAbilityInfo::_internal_next_need_exp_size() const {
-  return _impl_.next_need_exp_.size();
-}
-inline int ServerMsgDetailAbilityInfo::next_need_exp_size() const {
-  return _internal_next_need_exp_size();
-}
-inline void ServerMsgDetailAbilityInfo::clear_next_need_exp() {
-  _impl_.next_need_exp_.Clear();
-}
-inline int32_t ServerMsgDetailAbilityInfo::_internal_next_need_exp(int index) const {
-  return _impl_.next_need_exp_.Get(index);
-}
-inline int32_t ServerMsgDetailAbilityInfo::next_need_exp(int index) const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgDetailAbilityInfo.next_need_exp)
-  return _internal_next_need_exp(index);
-}
-inline void ServerMsgDetailAbilityInfo::set_next_need_exp(int index, int32_t value) {
-  _impl_.next_need_exp_.Set(index, value);
-  // @@protoc_insertion_point(field_set:servermessage.ServerMsgDetailAbilityInfo.next_need_exp)
-}
-inline void ServerMsgDetailAbilityInfo::_internal_add_next_need_exp(int32_t value) {
-  _impl_.next_need_exp_.Add(value);
-}
-inline void ServerMsgDetailAbilityInfo::add_next_need_exp(int32_t value) {
-  _internal_add_next_need_exp(value);
-  // @@protoc_insertion_point(field_add:servermessage.ServerMsgDetailAbilityInfo.next_need_exp)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-ServerMsgDetailAbilityInfo::_internal_next_need_exp() const {
-  return _impl_.next_need_exp_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-ServerMsgDetailAbilityInfo::next_need_exp() const {
-  // @@protoc_insertion_point(field_list:servermessage.ServerMsgDetailAbilityInfo.next_need_exp)
-  return _internal_next_need_exp();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-ServerMsgDetailAbilityInfo::_internal_mutable_next_need_exp() {
-  return &_impl_.next_need_exp_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-ServerMsgDetailAbilityInfo::mutable_next_need_exp() {
-  // @@protoc_insertion_point(field_mutable_list:servermessage.ServerMsgDetailAbilityInfo.next_need_exp)
-  return _internal_mutable_next_need_exp();
 }
 
 // -------------------------------------------------------------------
@@ -16921,62 +16602,62 @@ ServerMsgDetailEquipList::items() const {
 
 // -------------------------------------------------------------------
 
-// ServerMsgDetailDetailItemList
+// ServerMsgDetailItemList
 
 // int32 object_id = 1;
-inline void ServerMsgDetailDetailItemList::clear_object_id() {
+inline void ServerMsgDetailItemList::clear_object_id() {
   _impl_.object_id_ = 0;
 }
-inline int32_t ServerMsgDetailDetailItemList::_internal_object_id() const {
+inline int32_t ServerMsgDetailItemList::_internal_object_id() const {
   return _impl_.object_id_;
 }
-inline int32_t ServerMsgDetailDetailItemList::object_id() const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgDetailDetailItemList.object_id)
+inline int32_t ServerMsgDetailItemList::object_id() const {
+  // @@protoc_insertion_point(field_get:servermessage.ServerMsgDetailItemList.object_id)
   return _internal_object_id();
 }
-inline void ServerMsgDetailDetailItemList::_internal_set_object_id(int32_t value) {
+inline void ServerMsgDetailItemList::_internal_set_object_id(int32_t value) {
   
   _impl_.object_id_ = value;
 }
-inline void ServerMsgDetailDetailItemList::set_object_id(int32_t value) {
+inline void ServerMsgDetailItemList::set_object_id(int32_t value) {
   _internal_set_object_id(value);
-  // @@protoc_insertion_point(field_set:servermessage.ServerMsgDetailDetailItemList.object_id)
+  // @@protoc_insertion_point(field_set:servermessage.ServerMsgDetailItemList.object_id)
 }
 
 // repeated .base.SItem items = 2;
-inline int ServerMsgDetailDetailItemList::_internal_items_size() const {
+inline int ServerMsgDetailItemList::_internal_items_size() const {
   return _impl_.items_.size();
 }
-inline int ServerMsgDetailDetailItemList::items_size() const {
+inline int ServerMsgDetailItemList::items_size() const {
   return _internal_items_size();
 }
-inline ::base::SItem* ServerMsgDetailDetailItemList::mutable_items(int index) {
-  // @@protoc_insertion_point(field_mutable:servermessage.ServerMsgDetailDetailItemList.items)
+inline ::base::SItem* ServerMsgDetailItemList::mutable_items(int index) {
+  // @@protoc_insertion_point(field_mutable:servermessage.ServerMsgDetailItemList.items)
   return _impl_.items_.Mutable(index);
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SItem >*
-ServerMsgDetailDetailItemList::mutable_items() {
-  // @@protoc_insertion_point(field_mutable_list:servermessage.ServerMsgDetailDetailItemList.items)
+ServerMsgDetailItemList::mutable_items() {
+  // @@protoc_insertion_point(field_mutable_list:servermessage.ServerMsgDetailItemList.items)
   return &_impl_.items_;
 }
-inline const ::base::SItem& ServerMsgDetailDetailItemList::_internal_items(int index) const {
+inline const ::base::SItem& ServerMsgDetailItemList::_internal_items(int index) const {
   return _impl_.items_.Get(index);
 }
-inline const ::base::SItem& ServerMsgDetailDetailItemList::items(int index) const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgDetailDetailItemList.items)
+inline const ::base::SItem& ServerMsgDetailItemList::items(int index) const {
+  // @@protoc_insertion_point(field_get:servermessage.ServerMsgDetailItemList.items)
   return _internal_items(index);
 }
-inline ::base::SItem* ServerMsgDetailDetailItemList::_internal_add_items() {
+inline ::base::SItem* ServerMsgDetailItemList::_internal_add_items() {
   return _impl_.items_.Add();
 }
-inline ::base::SItem* ServerMsgDetailDetailItemList::add_items() {
+inline ::base::SItem* ServerMsgDetailItemList::add_items() {
   ::base::SItem* _add = _internal_add_items();
-  // @@protoc_insertion_point(field_add:servermessage.ServerMsgDetailDetailItemList.items)
+  // @@protoc_insertion_point(field_add:servermessage.ServerMsgDetailItemList.items)
   return _add;
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SItem >&
-ServerMsgDetailDetailItemList::items() const {
-  // @@protoc_insertion_point(field_list:servermessage.ServerMsgDetailDetailItemList.items)
+ServerMsgDetailItemList::items() const {
+  // @@protoc_insertion_point(field_list:servermessage.ServerMsgDetailItemList.items)
   return _impl_.items_;
 }
 
@@ -18912,7 +18593,7 @@ inline void ServerMsgNewMonster::set_object_id(uint32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewMonster.object_id)
 }
 
-// string name = 2;
+// bytes name = 2;
 inline void ServerMsgNewMonster::clear_name() {
   _impl_.name_.ClearToEmpty();
 }
@@ -18924,7 +18605,7 @@ template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerMsgNewMonster::set_name(ArgT0&& arg0, ArgT... args) {
  
- _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+ _impl_.name_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewMonster.name)
 }
 inline std::string* ServerMsgNewMonster::mutable_name() {
@@ -18982,24 +18663,24 @@ inline void ServerMsgNewMonster::set_position_x(float value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewMonster.position_x)
 }
 
-// float positiion_y = 4;
-inline void ServerMsgNewMonster::clear_positiion_y() {
-  _impl_.positiion_y_ = 0;
+// float position_z = 4;
+inline void ServerMsgNewMonster::clear_position_z() {
+  _impl_.position_z_ = 0;
 }
-inline float ServerMsgNewMonster::_internal_positiion_y() const {
-  return _impl_.positiion_y_;
+inline float ServerMsgNewMonster::_internal_position_z() const {
+  return _impl_.position_z_;
 }
-inline float ServerMsgNewMonster::positiion_y() const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgNewMonster.positiion_y)
-  return _internal_positiion_y();
+inline float ServerMsgNewMonster::position_z() const {
+  // @@protoc_insertion_point(field_get:servermessage.ServerMsgNewMonster.position_z)
+  return _internal_position_z();
 }
-inline void ServerMsgNewMonster::_internal_set_positiion_y(float value) {
+inline void ServerMsgNewMonster::_internal_set_position_z(float value) {
   
-  _impl_.positiion_y_ = value;
+  _impl_.position_z_ = value;
 }
-inline void ServerMsgNewMonster::set_positiion_y(float value) {
-  _internal_set_positiion_y(value);
-  // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewMonster.positiion_y)
+inline void ServerMsgNewMonster::set_position_z(float value) {
+  _internal_set_position_z(value);
+  // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewMonster.position_z)
 }
 
 // float dir = 5;
@@ -19447,89 +19128,41 @@ inline void ServerMsgQuestList::set_player_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgQuestList.player_id)
 }
 
-// .base.SArchiveLoader_Quest quest_list = 2;
-inline bool ServerMsgQuestList::_internal_has_quest_list() const {
-  return this != internal_default_instance() && _impl_.quest_list_ != nullptr;
+// repeated .base.Quest quests = 2;
+inline int ServerMsgQuestList::_internal_quests_size() const {
+  return _impl_.quests_.size();
 }
-inline bool ServerMsgQuestList::has_quest_list() const {
-  return _internal_has_quest_list();
+inline int ServerMsgQuestList::quests_size() const {
+  return _internal_quests_size();
 }
-inline const ::base::SArchiveLoader_Quest& ServerMsgQuestList::_internal_quest_list() const {
-  const ::base::SArchiveLoader_Quest* p = _impl_.quest_list_;
-  return p != nullptr ? *p : reinterpret_cast<const ::base::SArchiveLoader_Quest&>(
-      ::base::_SArchiveLoader_Quest_default_instance_);
+inline ::base::Quest* ServerMsgQuestList::mutable_quests(int index) {
+  // @@protoc_insertion_point(field_mutable:servermessage.ServerMsgQuestList.quests)
+  return _impl_.quests_.Mutable(index);
 }
-inline const ::base::SArchiveLoader_Quest& ServerMsgQuestList::quest_list() const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgQuestList.quest_list)
-  return _internal_quest_list();
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >*
+ServerMsgQuestList::mutable_quests() {
+  // @@protoc_insertion_point(field_mutable_list:servermessage.ServerMsgQuestList.quests)
+  return &_impl_.quests_;
 }
-inline void ServerMsgQuestList::unsafe_arena_set_allocated_quest_list(
-    ::base::SArchiveLoader_Quest* quest_list) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.quest_list_);
-  }
-  _impl_.quest_list_ = quest_list;
-  if (quest_list) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:servermessage.ServerMsgQuestList.quest_list)
+inline const ::base::Quest& ServerMsgQuestList::_internal_quests(int index) const {
+  return _impl_.quests_.Get(index);
 }
-inline ::base::SArchiveLoader_Quest* ServerMsgQuestList::release_quest_list() {
-  
-  ::base::SArchiveLoader_Quest* temp = _impl_.quest_list_;
-  _impl_.quest_list_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
+inline const ::base::Quest& ServerMsgQuestList::quests(int index) const {
+  // @@protoc_insertion_point(field_get:servermessage.ServerMsgQuestList.quests)
+  return _internal_quests(index);
 }
-inline ::base::SArchiveLoader_Quest* ServerMsgQuestList::unsafe_arena_release_quest_list() {
-  // @@protoc_insertion_point(field_release:servermessage.ServerMsgQuestList.quest_list)
-  
-  ::base::SArchiveLoader_Quest* temp = _impl_.quest_list_;
-  _impl_.quest_list_ = nullptr;
-  return temp;
+inline ::base::Quest* ServerMsgQuestList::_internal_add_quests() {
+  return _impl_.quests_.Add();
 }
-inline ::base::SArchiveLoader_Quest* ServerMsgQuestList::_internal_mutable_quest_list() {
-  
-  if (_impl_.quest_list_ == nullptr) {
-    auto* p = CreateMaybeMessage<::base::SArchiveLoader_Quest>(GetArenaForAllocation());
-    _impl_.quest_list_ = p;
-  }
-  return _impl_.quest_list_;
+inline ::base::Quest* ServerMsgQuestList::add_quests() {
+  ::base::Quest* _add = _internal_add_quests();
+  // @@protoc_insertion_point(field_add:servermessage.ServerMsgQuestList.quests)
+  return _add;
 }
-inline ::base::SArchiveLoader_Quest* ServerMsgQuestList::mutable_quest_list() {
-  ::base::SArchiveLoader_Quest* _msg = _internal_mutable_quest_list();
-  // @@protoc_insertion_point(field_mutable:servermessage.ServerMsgQuestList.quest_list)
-  return _msg;
-}
-inline void ServerMsgQuestList::set_allocated_quest_list(::base::SArchiveLoader_Quest* quest_list) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.quest_list_);
-  }
-  if (quest_list) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(quest_list));
-    if (message_arena != submessage_arena) {
-      quest_list = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, quest_list, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  _impl_.quest_list_ = quest_list;
-  // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgQuestList.quest_list)
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >&
+ServerMsgQuestList::quests() const {
+  // @@protoc_insertion_point(field_list:servermessage.ServerMsgQuestList.quests)
+  return _impl_.quests_;
 }
 
 // -------------------------------------------------------------------

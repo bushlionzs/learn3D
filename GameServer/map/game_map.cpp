@@ -213,15 +213,18 @@ BOOL		GameMap::ObjGrid_Register(Object* pObj, GridID_t idZone)
 	}
 	else
 	{
-		if (m_pHumanManager->GetCount() > 0)
+		auto count = m_pHumanManager->GetCount();
+		if (count > 0)
 		{
 			NetPacket* pPacket = pObj->CreateNewObjMsg();
-			/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-			if (pPacket != NULL)
+			for (int32_t i = 0; i < count; i++)
 			{
-				NetMessageManager::GetSingletonPtr()->sendNetMessage(pPacket);
+				Player* player = (Player*)m_pHumanManager->GetObjByIndex(i);
+				NetHandle player_handle = player->GetConnector();
+				NetMessageManager::GetSingletonPtr()->sendNetMessage(player_handle, pPacket);
 			}
+
+			delete pPacket;
 		}
 		
 	}

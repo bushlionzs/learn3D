@@ -1470,6 +1470,8 @@ public:
 protected:
 	CTinyTimer			m_RefeshTimer;
 	_PLAYER_ATTR_BACKUP	m_AttrBackUp;
+
+
 	SCCharHumanBaseAttrib* mSCCharHumanBaseAttrib = nullptr;
 	SCCharEquipment* mSCCharEquipment = nullptr;
 	SCQuestListRefresh* mSCQuestListRefresh = nullptr;

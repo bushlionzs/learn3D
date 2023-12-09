@@ -69,7 +69,7 @@ namespace Ogre {
         @note Not valid as a pointer to GPU buffers / parameters
         */
         typedef float Real;
-        typedef uint32 RealAsUint;
+        typedef uint32_t RealAsUint;
     #endif
 
     #if OGRE_COMPILER == OGRE_COMPILER_GNUC && OGRE_COMP_VER >= 310 && !defined(STLPORT)

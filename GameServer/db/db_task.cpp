@@ -45,9 +45,10 @@ void CharListTask::success(CMySQLRecordSet* recordset)
     int32_t size = recordset->GetRecordCount();
 }
 
-CharDataTask::CharDataTask(std::string& guid)
+CharDataTask::CharDataTask(std::string& guid, NetHandle h)
 {
     mGuid = guid;
+	mHandle = h;
 }
 
 CharDataTask::~CharDataTask()
@@ -402,7 +403,7 @@ void CharDataTask::success(CMySQLRecordSet* recordset)
 		//·þÎñÆ÷
 		pCharDBNode->m_Human.m_nPlayerWorldID = 1;
 
-		DSCharData* packet = new DSCharData(pCharDBNode);
+		DSCharData* packet = new DSCharData(pCharDBNode, mHandle);
 
 		ServerManager::GetSingleton().add_packet(packet);
 

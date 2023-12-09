@@ -106,6 +106,7 @@ void ServerManager::run_packet()
 			packet->process();
 			delete packet;
 		}
+		mServerMessageList.clear();
 	}
 	
 }

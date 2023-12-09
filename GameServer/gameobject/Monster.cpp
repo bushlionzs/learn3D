@@ -750,7 +750,7 @@ NetPacket* Monster::CreateNewObjMsg(void)
 
 	dummy.set_object_id(GetID());
 	dummy.set_position_x(pos->m_fX);
-	dummy.set_positiion_y(pos->m_fZ);
+	dummy.set_position_z(pos->m_fZ);
 	dummy.set_dir(GetDir());
 	dummy.set_move_speed(Get_Property_MoveSpeed());
 	dummy.set_monster_type(MT_MONSTER);
@@ -776,10 +776,9 @@ void Monster::SendMsg_RefeshAttrib(void)
 	BOOL		bSendMsgForWhoLockMe = FALSE;
 
 	
-	SCMonsterAttribute* packet = new SCMonsterAttribute;
+	servermessage::ServerMsgMonsterAttribute dummy;
+	dummy.set_object_id(GetID());
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-	packet->setObjId(GetID());
 
 
 	if (m_AttrBackUp.m_HP != GetHP())
@@ -803,7 +802,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 			m_AttrBackUp.m_HPPercent = yHPPercent;
 
-			packet->setHpPercent(yHPPercent);
+			dummy.set_hp_percent(yHPPercent);
 		}
 	}
 
@@ -812,8 +811,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 		bSendMsgForBroadcast = TRUE;
 
 		m_AttrBackUp.m_MoveSpeed = Get_Property_MoveSpeed();
-
-		packet->setMoveSpeed(Get_Property_MoveSpeed());
+		dummy.set_move_speed(Get_Property_MoveSpeed());
 	}
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -828,7 +826,11 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 			m_AttrBackUp.m_CampData = *pCampData;
 
-			packet->setCampData(*pCampData);
+			auto* camp_data = dummy.mutable_camp_data();
+			camp_data->set_camp_id(pCampData->m_nCampID);
+			camp_data->set_pk_mode(pCampData->m_uPKMode);
+			camp_data->set_reserve1(pCampData->m_nReserve1);
+			camp_data->set_reserve2(pCampData->m_nReserve2);
 		}
 	}
 
@@ -837,7 +839,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 		bSendMsgForBroadcast = TRUE;
 
 		m_AttrBackUp.m_OwnerID = GetOwnerID();
-		packet->setOwnerID(GetOwnerID());
+		dummy.set_owner_id(GetOwnerID());
 	}
 
 	if (m_AttrBackUp.m_OccupantGUID != GetOccupantGUID())
@@ -846,7 +848,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 		m_AttrBackUp.m_OccupantGUID = GetOccupantGUID();
 
-		packet->setOccupantGUID(GetOccupantGUID());
+		dummy.set_occupant_guid(GetOccupantGUID());
 	}
 
 	if (m_AttrBackUp.m_nMountID != GetMountID())
@@ -855,7 +857,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 		m_AttrBackUp.m_nMountID = GetMountID();
 
-		packet->setMountID(GetMountID());
+		dummy.set_mount_id(GetMountID());
 	}
 
 	if (m_AttrBackUp.m_nModelID != GetModelID())
@@ -864,7 +866,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 		m_AttrBackUp.m_nModelID = GetModelID();
 
-		packet->setModelID(GetModelID());
+		dummy.set_model_id(GetModelID());
 	}
 
 	if (m_AttrBackUp.m_nScale != GetIntAttr_EX(CharIntProperty::PROPERTY_ZOOM_SCALE))
@@ -873,7 +875,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 		m_AttrBackUp.m_nScale = GetIntAttr_EX(CharIntProperty::PROPERTY_ZOOM_SCALE);
 
-		packet->setScale(m_AttrBackUp.m_nScale);
+		dummy.set_scale(m_AttrBackUp.m_nScale);
 	}
 
 	if (m_AttrBackUp.m_nAIType != GetAIType())
@@ -886,7 +888,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 		m_AttrBackUp.m_nAIType = nRet;
 
-		packet->setAIType(nRet);
+		dummy.set_ai_type(nRet);
 	}
 
 	if (m_AttrBackUp.m_nStealthLevel != GetStealthLevel())
@@ -895,7 +897,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 		m_AttrBackUp.m_nStealthLevel = GetStealthLevel();
 
-		packet->setStealthLevel(m_AttrBackUp.m_nStealthLevel);
+		dummy.set_steal_level(m_AttrBackUp.m_nStealthLevel);
 	}
 
 	if (m_AttrBackUp.m_iHorseID != GetHorseID())
@@ -903,7 +905,7 @@ void Monster::SendMsg_RefeshAttrib(void)
 		bSendMsgForBroadcast = TRUE;
 
 		m_AttrBackUp.m_iHorseID = GetHorseID();
-		packet->setMountID(m_AttrBackUp.m_iHorseID);
+		dummy.set_mount_id(m_AttrBackUp.m_iHorseID);
 	}
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -928,13 +930,12 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 			SetLockedTarget(nTargetID);
 			m_AttrBackUp.m_nTargetID = nTargetID;
-			packet->setTargetID(nTargetID);
+			dummy.set_target_id(nTargetID);
 		}
 	}
 
 	if (!bSendMsgForBroadcast && !bSendMsgForWhoLockMe)
 	{
-		delete packet;
 		return;
 	}
 
@@ -944,14 +945,13 @@ void Monster::SendMsg_RefeshAttrib(void)
 
 	GetMap()->ScanPlayer(GetGridID(), MAX_REFESH_OBJ_GRID_RADIUS, &(listHuman));
 
-	if (listHuman.m_Count)
+	for(int32_t i = 0; i < listHuman.m_Count; i++)
 	{
-		NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+		Player* player = listHuman.m_aHuman[i];
+		NetHandle player_handle = player->GetConnector();
+		NetMessageManager::GetSingletonPtr()->sendNetMessage(player_handle, servermessage::SC_MONSTER_ATTRBUTE, &dummy);
 	}
-	else
-	{
-		delete packet;
-	}
+
 }
 
 

@@ -148,275 +148,6 @@ namespace base {
 
 // ===================================================================
 
-class Quest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:base.Quest) */ {
- public:
-  inline Quest() : Quest(nullptr) {}
-  ~Quest() override;
-  explicit PROTOBUF_CONSTEXPR Quest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  Quest(const Quest& from);
-  Quest(Quest&& from) noexcept
-    : Quest() {
-    *this = ::std::move(from);
-  }
-
-  inline Quest& operator=(const Quest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline Quest& operator=(Quest&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const Quest& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const Quest* internal_default_instance() {
-    return reinterpret_cast<const Quest*>(
-               &_Quest_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    0;
-
-  friend void swap(Quest& a, Quest& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(Quest* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(Quest* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  Quest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<Quest>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const Quest& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const Quest& from) {
-    Quest::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  uint8_t* _InternalSerialize(
-      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(Quest* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "base.Quest";
-  }
-  protected:
-  explicit Quest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kAParamFieldNumber = 4,
-    kAfParamFieldNumber = 5,
-    kAnParamFieldNumber = 6,
-    kAbParamFieldNumber = 7,
-    kQuestIdFieldNumber = 1,
-    kScriptIdFieldNumber = 2,
-    kYFlagFieldNumber = 3,
-  };
-  // repeated uint32 a_param = 4;
-  int a_param_size() const;
-  private:
-  int _internal_a_param_size() const;
-  public:
-  void clear_a_param();
-  private:
-  uint32_t _internal_a_param(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
-      _internal_a_param() const;
-  void _internal_add_a_param(uint32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
-      _internal_mutable_a_param();
-  public:
-  uint32_t a_param(int index) const;
-  void set_a_param(int index, uint32_t value);
-  void add_a_param(uint32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
-      a_param() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
-      mutable_a_param();
-
-  // repeated float af_param = 5;
-  int af_param_size() const;
-  private:
-  int _internal_af_param_size() const;
-  public:
-  void clear_af_param();
-  private:
-  float _internal_af_param(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      _internal_af_param() const;
-  void _internal_add_af_param(float value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      _internal_mutable_af_param();
-  public:
-  float af_param(int index) const;
-  void set_af_param(int index, float value);
-  void add_af_param(float value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      af_param() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      mutable_af_param();
-
-  // repeated int32 an_param = 6;
-  int an_param_size() const;
-  private:
-  int _internal_an_param_size() const;
-  public:
-  void clear_an_param();
-  private:
-  int32_t _internal_an_param(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      _internal_an_param() const;
-  void _internal_add_an_param(int32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      _internal_mutable_an_param();
-  public:
-  int32_t an_param(int index) const;
-  void set_an_param(int index, int32_t value);
-  void add_an_param(int32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      an_param() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      mutable_an_param();
-
-  // repeated int32 ab_param = 7;
-  int ab_param_size() const;
-  private:
-  int _internal_ab_param_size() const;
-  public:
-  void clear_ab_param();
-  private:
-  int32_t _internal_ab_param(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      _internal_ab_param() const;
-  void _internal_add_ab_param(int32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      _internal_mutable_ab_param();
-  public:
-  int32_t ab_param(int index) const;
-  void set_ab_param(int index, int32_t value);
-  void add_ab_param(int32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      ab_param() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      mutable_ab_param();
-
-  // int32 quest_id = 1;
-  void clear_quest_id();
-  int32_t quest_id() const;
-  void set_quest_id(int32_t value);
-  private:
-  int32_t _internal_quest_id() const;
-  void _internal_set_quest_id(int32_t value);
-  public:
-
-  // int32 script_id = 2;
-  void clear_script_id();
-  int32_t script_id() const;
-  void set_script_id(int32_t value);
-  private:
-  int32_t _internal_script_id() const;
-  void _internal_set_script_id(int32_t value);
-  public:
-
-  // int32 y_flag = 3;
-  void clear_y_flag();
-  int32_t y_flag() const;
-  void set_y_flag(int32_t value);
-  private:
-  int32_t _internal_y_flag() const;
-  void _internal_set_y_flag(int32_t value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:base.Quest)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t > a_param_;
-    mutable std::atomic<int> _a_param_cached_byte_size_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > af_param_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > an_param_;
-    mutable std::atomic<int> _an_param_cached_byte_size_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > ab_param_;
-    mutable std::atomic<int> _ab_param_cached_byte_size_;
-    int32_t quest_id_;
-    int32_t script_id_;
-    int32_t y_flag_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_base_2eproto;
-};
-// -------------------------------------------------------------------
-
 class Flag64 final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:base.Flag64) */ {
  public:
@@ -465,7 +196,7 @@ class Flag64 final :
                &_Flag64_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    0;
 
   friend void swap(Flag64& a, Flag64& b) {
     a.Swap(&b);
@@ -624,7 +355,7 @@ class SCampData final :
                &_SCampData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    1;
 
   friend void swap(SCampData& a, SCampData& b) {
     a.Swap(&b);
@@ -805,7 +536,7 @@ class SHorseGuid final :
                &_SHorseGuid_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    2;
 
   friend void swap(SHorseGuid& a, SHorseGuid& b) {
     a.Swap(&b);
@@ -964,7 +695,7 @@ class ImpactStruct final :
                &_ImpactStruct_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    3;
 
   friend void swap(ImpactStruct& a, ImpactStruct& b) {
     a.Swap(&b);
@@ -1123,7 +854,7 @@ class GLPos final :
                &_GLPos_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    4;
 
   friend void swap(GLPos& a, GLPos& b) {
     a.Swap(&b);
@@ -1282,7 +1013,7 @@ class SXParam final :
                &_SXParam_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    5;
 
   friend void swap(SXParam& a, SXParam& b) {
     a.Swap(&b);
@@ -1485,7 +1216,7 @@ class PlayerAbility final :
                &_PlayerAbility_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    6;
 
   friend void swap(PlayerAbility& a, PlayerAbility& b) {
     a.Swap(&b);
@@ -1558,10 +1289,23 @@ class PlayerAbility final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kLevelFieldNumber = 1,
-    kExpFieldNumber = 2,
+    kIdFieldNumber = 1,
+    kLevelFieldNumber = 2,
+    kExpFieldNumber = 3,
+    kNeedLevelFieldNumber = 4,
+    kNeedExpFieldNumber = 5,
+    kNeedMoneyFieldNumber = 6,
   };
-  // uint32 level = 1;
+  // uint32 id = 1;
+  void clear_id();
+  uint32_t id() const;
+  void set_id(uint32_t value);
+  private:
+  uint32_t _internal_id() const;
+  void _internal_set_id(uint32_t value);
+  public:
+
+  // uint32 level = 2;
   void clear_level();
   uint32_t level() const;
   void set_level(uint32_t value);
@@ -1570,13 +1314,40 @@ class PlayerAbility final :
   void _internal_set_level(uint32_t value);
   public:
 
-  // uint32 exp = 2;
+  // uint32 exp = 3;
   void clear_exp();
   uint32_t exp() const;
   void set_exp(uint32_t value);
   private:
   uint32_t _internal_exp() const;
   void _internal_set_exp(uint32_t value);
+  public:
+
+  // int32 need_level = 4;
+  void clear_need_level();
+  int32_t need_level() const;
+  void set_need_level(int32_t value);
+  private:
+  int32_t _internal_need_level() const;
+  void _internal_set_need_level(int32_t value);
+  public:
+
+  // int32 need_exp = 5;
+  void clear_need_exp();
+  int32_t need_exp() const;
+  void set_need_exp(int32_t value);
+  private:
+  int32_t _internal_need_exp() const;
+  void _internal_set_need_exp(int32_t value);
+  public:
+
+  // int32 need_money = 6;
+  void clear_need_money();
+  int32_t need_money() const;
+  void set_need_money(int32_t value);
+  private:
+  int32_t _internal_need_money() const;
+  void _internal_set_need_money(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:base.PlayerAbility)
@@ -1587,8 +1358,12 @@ class PlayerAbility final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    uint32_t id_;
     uint32_t level_;
     uint32_t exp_;
+    int32_t need_level_;
+    int32_t need_exp_;
+    int32_t need_money_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1644,7 +1419,7 @@ class HorseSkill final :
                &_HorseSkill_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    7;
 
   friend void swap(HorseSkill& a, HorseSkill& b) {
     a.Swap(&b);
@@ -1803,7 +1578,7 @@ class SItemGuid final :
                &_SItemGuid_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    8;
 
   friend void swap(SItemGuid& a, SItemGuid& b) {
     a.Swap(&b);
@@ -1973,7 +1748,7 @@ class SItemGemInfo final :
                &_SItemGemInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    9;
 
   friend void swap(SItemGemInfo& a, SItemGemInfo& b) {
     a.Swap(&b);
@@ -2121,7 +1896,7 @@ class SItemValue final :
                &_SItemValue_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    10;
 
   friend void swap(SItemValue& a, SItemValue& b) {
     a.Swap(&b);
@@ -2269,7 +2044,7 @@ class SItemProperty final :
                &_SItemProperty_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    11;
 
   friend void swap(SItemProperty& a, SItemProperty& b) {
     a.Swap(&b);
@@ -2448,7 +2223,7 @@ class SItemConstInfo final :
                &_SItemConstInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    12;
 
   friend void swap(SItemConstInfo& a, SItemConstInfo& b) {
     a.Swap(&b);
@@ -2616,7 +2391,7 @@ class SEquipInfo final :
                &_SEquipInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    13;
 
   friend void swap(SEquipInfo& a, SEquipInfo& b) {
     a.Swap(&b);
@@ -2945,7 +2720,7 @@ class SMedicInfo final :
                &_SMedicInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    14;
 
   friend void swap(SMedicInfo& a, SMedicInfo& b) {
     a.Swap(&b);
@@ -3104,7 +2879,7 @@ class ExtraBagInfo final :
                &_ExtraBagInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    15;
 
   friend void swap(ExtraBagInfo& a, ExtraBagInfo& b) {
     a.Swap(&b);
@@ -3252,7 +3027,7 @@ class SItem final :
                &_SItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    16;
 
   friend void swap(SItem& a, SItem& b) {
     a.Swap(&b);
@@ -3325,18 +3100,19 @@ class SItem final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kParamsFieldNumber = 6,
-    kCreatorFieldNumber = 5,
-    kItemGuidFieldNumber = 2,
-    kEquipInfoFieldNumber = 8,
-    kMedicInfoFieldNumber = 9,
-    kExtraBagFieldNumber = 10,
+    kParamsFieldNumber = 7,
+    kCreatorFieldNumber = 6,
+    kItemGuidFieldNumber = 3,
+    kEquipInfoFieldNumber = 9,
+    kMedicInfoFieldNumber = 10,
+    kExtraBagFieldNumber = 11,
     kItemIdFieldNumber = 1,
-    kItemIndexFieldNumber = 3,
-    kNsBindFieldNumber = 4,
-    kTermEndtimeFieldNumber = 7,
+    kItemPosFieldNumber = 2,
+    kItemIndexFieldNumber = 4,
+    kNsBindFieldNumber = 5,
+    kTermEndtimeFieldNumber = 8,
   };
-  // repeated int32 params = 6;
+  // repeated int32 params = 7;
   int params_size() const;
   private:
   int _internal_params_size() const;
@@ -3358,7 +3134,7 @@ class SItem final :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
       mutable_params();
 
-  // string creator = 5;
+  // string creator = 6;
   void clear_creator();
   const std::string& creator() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -3372,7 +3148,7 @@ class SItem final :
   std::string* _internal_mutable_creator();
   public:
 
-  // .base.SItemGuid item_guid = 2;
+  // .base.SItemGuid item_guid = 3;
   bool has_item_guid() const;
   private:
   bool _internal_has_item_guid() const;
@@ -3390,7 +3166,7 @@ class SItem final :
       ::base::SItemGuid* item_guid);
   ::base::SItemGuid* unsafe_arena_release_item_guid();
 
-  // optional .base.SEquipInfo equip_info = 8;
+  // optional .base.SEquipInfo equip_info = 9;
   bool has_equip_info() const;
   private:
   bool _internal_has_equip_info() const;
@@ -3408,7 +3184,7 @@ class SItem final :
       ::base::SEquipInfo* equip_info);
   ::base::SEquipInfo* unsafe_arena_release_equip_info();
 
-  // optional .base.SMedicInfo medic_info = 9;
+  // optional .base.SMedicInfo medic_info = 10;
   bool has_medic_info() const;
   private:
   bool _internal_has_medic_info() const;
@@ -3426,7 +3202,7 @@ class SItem final :
       ::base::SMedicInfo* medic_info);
   ::base::SMedicInfo* unsafe_arena_release_medic_info();
 
-  // optional .base.ExtraBagInfo extra_bag = 10;
+  // optional .base.ExtraBagInfo extra_bag = 11;
   bool has_extra_bag() const;
   private:
   bool _internal_has_extra_bag() const;
@@ -3453,7 +3229,16 @@ class SItem final :
   void _internal_set_item_id(int32_t value);
   public:
 
-  // uint32 item_index = 3;
+  // int32 item_pos = 2;
+  void clear_item_pos();
+  int32_t item_pos() const;
+  void set_item_pos(int32_t value);
+  private:
+  int32_t _internal_item_pos() const;
+  void _internal_set_item_pos(int32_t value);
+  public:
+
+  // uint32 item_index = 4;
   void clear_item_index();
   uint32_t item_index() const;
   void set_item_index(uint32_t value);
@@ -3462,7 +3247,7 @@ class SItem final :
   void _internal_set_item_index(uint32_t value);
   public:
 
-  // int32 ns_bind = 4;
+  // int32 ns_bind = 5;
   void clear_ns_bind();
   int32_t ns_bind() const;
   void set_ns_bind(int32_t value);
@@ -3471,7 +3256,7 @@ class SItem final :
   void _internal_set_ns_bind(int32_t value);
   public:
 
-  // uint32 term_endtime = 7;
+  // uint32 term_endtime = 8;
   void clear_term_endtime();
   uint32_t term_endtime() const;
   void set_term_endtime(uint32_t value);
@@ -3498,6 +3283,7 @@ class SItem final :
     ::base::SMedicInfo* medic_info_;
     ::base::ExtraBagInfo* extra_bag_;
     int32_t item_id_;
+    int32_t item_pos_;
     uint32_t item_index_;
     int32_t ns_bind_;
     uint32_t term_endtime_;
@@ -3555,7 +3341,7 @@ class PlayerSpell final :
                &_PlayerSpell_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    17;
 
   friend void swap(PlayerSpell& a, PlayerSpell& b) {
     a.Swap(&b);
@@ -3670,6 +3456,297 @@ class PlayerSpell final :
     int32_t skill_id_;
     int32_t state_;
     int32_t level_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_base_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Quest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:base.Quest) */ {
+ public:
+  inline Quest() : Quest(nullptr) {}
+  ~Quest() override;
+  explicit PROTOBUF_CONSTEXPR Quest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  Quest(const Quest& from);
+  Quest(Quest&& from) noexcept
+    : Quest() {
+    *this = ::std::move(from);
+  }
+
+  inline Quest& operator=(const Quest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Quest& operator=(Quest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const Quest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const Quest* internal_default_instance() {
+    return reinterpret_cast<const Quest*>(
+               &_Quest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    18;
+
+  friend void swap(Quest& a, Quest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Quest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Quest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  Quest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<Quest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const Quest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const Quest& from) {
+    Quest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Quest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "base.Quest";
+  }
+  protected:
+  explicit Quest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAParamFieldNumber = 4,
+    kAfParamFieldNumber = 5,
+    kAnParamFieldNumber = 6,
+    kAbParamFieldNumber = 7,
+    kQuestIdFieldNumber = 1,
+    kScriptIdFieldNumber = 2,
+    kYFlagFieldNumber = 3,
+    kHaveDoneFieldNumber = 8,
+    kQuestDataFieldNumber = 9,
+  };
+  // repeated uint32 a_param = 4;
+  int a_param_size() const;
+  private:
+  int _internal_a_param_size() const;
+  public:
+  void clear_a_param();
+  private:
+  uint32_t _internal_a_param(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
+      _internal_a_param() const;
+  void _internal_add_a_param(uint32_t value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
+      _internal_mutable_a_param();
+  public:
+  uint32_t a_param(int index) const;
+  void set_a_param(int index, uint32_t value);
+  void add_a_param(uint32_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
+      a_param() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
+      mutable_a_param();
+
+  // repeated float af_param = 5;
+  int af_param_size() const;
+  private:
+  int _internal_af_param_size() const;
+  public:
+  void clear_af_param();
+  private:
+  float _internal_af_param(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
+      _internal_af_param() const;
+  void _internal_add_af_param(float value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
+      _internal_mutable_af_param();
+  public:
+  float af_param(int index) const;
+  void set_af_param(int index, float value);
+  void add_af_param(float value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
+      af_param() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
+      mutable_af_param();
+
+  // repeated int32 an_param = 6;
+  int an_param_size() const;
+  private:
+  int _internal_an_param_size() const;
+  public:
+  void clear_an_param();
+  private:
+  int32_t _internal_an_param(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+      _internal_an_param() const;
+  void _internal_add_an_param(int32_t value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+      _internal_mutable_an_param();
+  public:
+  int32_t an_param(int index) const;
+  void set_an_param(int index, int32_t value);
+  void add_an_param(int32_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+      an_param() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+      mutable_an_param();
+
+  // repeated int32 ab_param = 7;
+  int ab_param_size() const;
+  private:
+  int _internal_ab_param_size() const;
+  public:
+  void clear_ab_param();
+  private:
+  int32_t _internal_ab_param(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+      _internal_ab_param() const;
+  void _internal_add_ab_param(int32_t value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+      _internal_mutable_ab_param();
+  public:
+  int32_t ab_param(int index) const;
+  void set_ab_param(int index, int32_t value);
+  void add_ab_param(int32_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+      ab_param() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+      mutable_ab_param();
+
+  // int32 quest_id = 1;
+  void clear_quest_id();
+  int32_t quest_id() const;
+  void set_quest_id(int32_t value);
+  private:
+  int32_t _internal_quest_id() const;
+  void _internal_set_quest_id(int32_t value);
+  public:
+
+  // int32 script_id = 2;
+  void clear_script_id();
+  int32_t script_id() const;
+  void set_script_id(int32_t value);
+  private:
+  int32_t _internal_script_id() const;
+  void _internal_set_script_id(int32_t value);
+  public:
+
+  // int32 y_flag = 3;
+  void clear_y_flag();
+  int32_t y_flag() const;
+  void set_y_flag(int32_t value);
+  private:
+  int32_t _internal_y_flag() const;
+  void _internal_set_y_flag(int32_t value);
+  public:
+
+  // uint32 have_done = 8;
+  void clear_have_done();
+  uint32_t have_done() const;
+  void set_have_done(uint32_t value);
+  private:
+  uint32_t _internal_have_done() const;
+  void _internal_set_have_done(uint32_t value);
+  public:
+
+  // int32 quest_data = 9;
+  void clear_quest_data();
+  int32_t quest_data() const;
+  void set_quest_data(int32_t value);
+  private:
+  int32_t _internal_quest_data() const;
+  void _internal_set_quest_data(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:base.Quest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t > a_param_;
+    mutable std::atomic<int> _a_param_cached_byte_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > af_param_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > an_param_;
+    mutable std::atomic<int> _an_param_cached_byte_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > ab_param_;
+    mutable std::atomic<int> _ab_param_cached_byte_size_;
+    int32_t quest_id_;
+    int32_t script_id_;
+    int32_t y_flag_;
+    uint32_t have_done_;
+    int32_t quest_data_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3798,12 +3875,9 @@ class SArchiveLoader_Quest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kQuestsFieldNumber = 2,
-    kHaveDonesFieldNumber = 3,
-    kQuestDatasFieldNumber = 4,
-    kCountFieldNumber = 1,
+    kQuestsFieldNumber = 1,
   };
-  // repeated .base.Quest quests = 2;
+  // repeated .base.Quest quests = 1;
   int quests_size() const;
   private:
   int _internal_quests_size() const;
@@ -3821,59 +3895,6 @@ class SArchiveLoader_Quest final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >&
       quests() const;
 
-  // repeated uint32 have_dones = 3;
-  int have_dones_size() const;
-  private:
-  int _internal_have_dones_size() const;
-  public:
-  void clear_have_dones();
-  private:
-  uint32_t _internal_have_dones(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
-      _internal_have_dones() const;
-  void _internal_add_have_dones(uint32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
-      _internal_mutable_have_dones();
-  public:
-  uint32_t have_dones(int index) const;
-  void set_have_dones(int index, uint32_t value);
-  void add_have_dones(uint32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
-      have_dones() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
-      mutable_have_dones();
-
-  // repeated int32 quest_datas = 4;
-  int quest_datas_size() const;
-  private:
-  int _internal_quest_datas_size() const;
-  public:
-  void clear_quest_datas();
-  private:
-  int32_t _internal_quest_datas(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      _internal_quest_datas() const;
-  void _internal_add_quest_datas(int32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      _internal_mutable_quest_datas();
-  public:
-  int32_t quest_datas(int index) const;
-  void set_quest_datas(int index, int32_t value);
-  void add_quest_datas(int32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-      quest_datas() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-      mutable_quest_datas();
-
-  // int32 count = 1;
-  void clear_count();
-  int32_t count() const;
-  void set_count(int32_t value);
-  private:
-  int32_t _internal_count() const;
-  void _internal_set_count(int32_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:base.SArchiveLoader_Quest)
  private:
   class _Internal;
@@ -3883,11 +3904,6 @@ class SArchiveLoader_Quest final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest > quests_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t > have_dones_;
-    mutable std::atomic<int> _have_dones_cached_byte_size_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > quest_datas_;
-    mutable std::atomic<int> _quest_datas_cached_byte_size_;
-    int32_t count_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4647,258 +4663,6 @@ class ScriptParam_QuestInfo final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// Quest
-
-// int32 quest_id = 1;
-inline void Quest::clear_quest_id() {
-  _impl_.quest_id_ = 0;
-}
-inline int32_t Quest::_internal_quest_id() const {
-  return _impl_.quest_id_;
-}
-inline int32_t Quest::quest_id() const {
-  // @@protoc_insertion_point(field_get:base.Quest.quest_id)
-  return _internal_quest_id();
-}
-inline void Quest::_internal_set_quest_id(int32_t value) {
-  
-  _impl_.quest_id_ = value;
-}
-inline void Quest::set_quest_id(int32_t value) {
-  _internal_set_quest_id(value);
-  // @@protoc_insertion_point(field_set:base.Quest.quest_id)
-}
-
-// int32 script_id = 2;
-inline void Quest::clear_script_id() {
-  _impl_.script_id_ = 0;
-}
-inline int32_t Quest::_internal_script_id() const {
-  return _impl_.script_id_;
-}
-inline int32_t Quest::script_id() const {
-  // @@protoc_insertion_point(field_get:base.Quest.script_id)
-  return _internal_script_id();
-}
-inline void Quest::_internal_set_script_id(int32_t value) {
-  
-  _impl_.script_id_ = value;
-}
-inline void Quest::set_script_id(int32_t value) {
-  _internal_set_script_id(value);
-  // @@protoc_insertion_point(field_set:base.Quest.script_id)
-}
-
-// int32 y_flag = 3;
-inline void Quest::clear_y_flag() {
-  _impl_.y_flag_ = 0;
-}
-inline int32_t Quest::_internal_y_flag() const {
-  return _impl_.y_flag_;
-}
-inline int32_t Quest::y_flag() const {
-  // @@protoc_insertion_point(field_get:base.Quest.y_flag)
-  return _internal_y_flag();
-}
-inline void Quest::_internal_set_y_flag(int32_t value) {
-  
-  _impl_.y_flag_ = value;
-}
-inline void Quest::set_y_flag(int32_t value) {
-  _internal_set_y_flag(value);
-  // @@protoc_insertion_point(field_set:base.Quest.y_flag)
-}
-
-// repeated uint32 a_param = 4;
-inline int Quest::_internal_a_param_size() const {
-  return _impl_.a_param_.size();
-}
-inline int Quest::a_param_size() const {
-  return _internal_a_param_size();
-}
-inline void Quest::clear_a_param() {
-  _impl_.a_param_.Clear();
-}
-inline uint32_t Quest::_internal_a_param(int index) const {
-  return _impl_.a_param_.Get(index);
-}
-inline uint32_t Quest::a_param(int index) const {
-  // @@protoc_insertion_point(field_get:base.Quest.a_param)
-  return _internal_a_param(index);
-}
-inline void Quest::set_a_param(int index, uint32_t value) {
-  _impl_.a_param_.Set(index, value);
-  // @@protoc_insertion_point(field_set:base.Quest.a_param)
-}
-inline void Quest::_internal_add_a_param(uint32_t value) {
-  _impl_.a_param_.Add(value);
-}
-inline void Quest::add_a_param(uint32_t value) {
-  _internal_add_a_param(value);
-  // @@protoc_insertion_point(field_add:base.Quest.a_param)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
-Quest::_internal_a_param() const {
-  return _impl_.a_param_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
-Quest::a_param() const {
-  // @@protoc_insertion_point(field_list:base.Quest.a_param)
-  return _internal_a_param();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
-Quest::_internal_mutable_a_param() {
-  return &_impl_.a_param_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
-Quest::mutable_a_param() {
-  // @@protoc_insertion_point(field_mutable_list:base.Quest.a_param)
-  return _internal_mutable_a_param();
-}
-
-// repeated float af_param = 5;
-inline int Quest::_internal_af_param_size() const {
-  return _impl_.af_param_.size();
-}
-inline int Quest::af_param_size() const {
-  return _internal_af_param_size();
-}
-inline void Quest::clear_af_param() {
-  _impl_.af_param_.Clear();
-}
-inline float Quest::_internal_af_param(int index) const {
-  return _impl_.af_param_.Get(index);
-}
-inline float Quest::af_param(int index) const {
-  // @@protoc_insertion_point(field_get:base.Quest.af_param)
-  return _internal_af_param(index);
-}
-inline void Quest::set_af_param(int index, float value) {
-  _impl_.af_param_.Set(index, value);
-  // @@protoc_insertion_point(field_set:base.Quest.af_param)
-}
-inline void Quest::_internal_add_af_param(float value) {
-  _impl_.af_param_.Add(value);
-}
-inline void Quest::add_af_param(float value) {
-  _internal_add_af_param(value);
-  // @@protoc_insertion_point(field_add:base.Quest.af_param)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-Quest::_internal_af_param() const {
-  return _impl_.af_param_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-Quest::af_param() const {
-  // @@protoc_insertion_point(field_list:base.Quest.af_param)
-  return _internal_af_param();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-Quest::_internal_mutable_af_param() {
-  return &_impl_.af_param_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-Quest::mutable_af_param() {
-  // @@protoc_insertion_point(field_mutable_list:base.Quest.af_param)
-  return _internal_mutable_af_param();
-}
-
-// repeated int32 an_param = 6;
-inline int Quest::_internal_an_param_size() const {
-  return _impl_.an_param_.size();
-}
-inline int Quest::an_param_size() const {
-  return _internal_an_param_size();
-}
-inline void Quest::clear_an_param() {
-  _impl_.an_param_.Clear();
-}
-inline int32_t Quest::_internal_an_param(int index) const {
-  return _impl_.an_param_.Get(index);
-}
-inline int32_t Quest::an_param(int index) const {
-  // @@protoc_insertion_point(field_get:base.Quest.an_param)
-  return _internal_an_param(index);
-}
-inline void Quest::set_an_param(int index, int32_t value) {
-  _impl_.an_param_.Set(index, value);
-  // @@protoc_insertion_point(field_set:base.Quest.an_param)
-}
-inline void Quest::_internal_add_an_param(int32_t value) {
-  _impl_.an_param_.Add(value);
-}
-inline void Quest::add_an_param(int32_t value) {
-  _internal_add_an_param(value);
-  // @@protoc_insertion_point(field_add:base.Quest.an_param)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-Quest::_internal_an_param() const {
-  return _impl_.an_param_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-Quest::an_param() const {
-  // @@protoc_insertion_point(field_list:base.Quest.an_param)
-  return _internal_an_param();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-Quest::_internal_mutable_an_param() {
-  return &_impl_.an_param_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-Quest::mutable_an_param() {
-  // @@protoc_insertion_point(field_mutable_list:base.Quest.an_param)
-  return _internal_mutable_an_param();
-}
-
-// repeated int32 ab_param = 7;
-inline int Quest::_internal_ab_param_size() const {
-  return _impl_.ab_param_.size();
-}
-inline int Quest::ab_param_size() const {
-  return _internal_ab_param_size();
-}
-inline void Quest::clear_ab_param() {
-  _impl_.ab_param_.Clear();
-}
-inline int32_t Quest::_internal_ab_param(int index) const {
-  return _impl_.ab_param_.Get(index);
-}
-inline int32_t Quest::ab_param(int index) const {
-  // @@protoc_insertion_point(field_get:base.Quest.ab_param)
-  return _internal_ab_param(index);
-}
-inline void Quest::set_ab_param(int index, int32_t value) {
-  _impl_.ab_param_.Set(index, value);
-  // @@protoc_insertion_point(field_set:base.Quest.ab_param)
-}
-inline void Quest::_internal_add_ab_param(int32_t value) {
-  _impl_.ab_param_.Add(value);
-}
-inline void Quest::add_ab_param(int32_t value) {
-  _internal_add_ab_param(value);
-  // @@protoc_insertion_point(field_add:base.Quest.ab_param)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-Quest::_internal_ab_param() const {
-  return _impl_.ab_param_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-Quest::ab_param() const {
-  // @@protoc_insertion_point(field_list:base.Quest.ab_param)
-  return _internal_ab_param();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-Quest::_internal_mutable_ab_param() {
-  return &_impl_.ab_param_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-Quest::mutable_ab_param() {
-  // @@protoc_insertion_point(field_mutable_list:base.Quest.ab_param)
-  return _internal_mutable_ab_param();
-}
-
-// -------------------------------------------------------------------
-
 // Flag64
 
 // uint32 low_flags = 1;
@@ -5309,7 +5073,27 @@ inline void SXParam::set_allocated_str_value(std::string* str_value) {
 
 // PlayerAbility
 
-// uint32 level = 1;
+// uint32 id = 1;
+inline void PlayerAbility::clear_id() {
+  _impl_.id_ = 0u;
+}
+inline uint32_t PlayerAbility::_internal_id() const {
+  return _impl_.id_;
+}
+inline uint32_t PlayerAbility::id() const {
+  // @@protoc_insertion_point(field_get:base.PlayerAbility.id)
+  return _internal_id();
+}
+inline void PlayerAbility::_internal_set_id(uint32_t value) {
+  
+  _impl_.id_ = value;
+}
+inline void PlayerAbility::set_id(uint32_t value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:base.PlayerAbility.id)
+}
+
+// uint32 level = 2;
 inline void PlayerAbility::clear_level() {
   _impl_.level_ = 0u;
 }
@@ -5329,7 +5113,7 @@ inline void PlayerAbility::set_level(uint32_t value) {
   // @@protoc_insertion_point(field_set:base.PlayerAbility.level)
 }
 
-// uint32 exp = 2;
+// uint32 exp = 3;
 inline void PlayerAbility::clear_exp() {
   _impl_.exp_ = 0u;
 }
@@ -5347,6 +5131,66 @@ inline void PlayerAbility::_internal_set_exp(uint32_t value) {
 inline void PlayerAbility::set_exp(uint32_t value) {
   _internal_set_exp(value);
   // @@protoc_insertion_point(field_set:base.PlayerAbility.exp)
+}
+
+// int32 need_level = 4;
+inline void PlayerAbility::clear_need_level() {
+  _impl_.need_level_ = 0;
+}
+inline int32_t PlayerAbility::_internal_need_level() const {
+  return _impl_.need_level_;
+}
+inline int32_t PlayerAbility::need_level() const {
+  // @@protoc_insertion_point(field_get:base.PlayerAbility.need_level)
+  return _internal_need_level();
+}
+inline void PlayerAbility::_internal_set_need_level(int32_t value) {
+  
+  _impl_.need_level_ = value;
+}
+inline void PlayerAbility::set_need_level(int32_t value) {
+  _internal_set_need_level(value);
+  // @@protoc_insertion_point(field_set:base.PlayerAbility.need_level)
+}
+
+// int32 need_exp = 5;
+inline void PlayerAbility::clear_need_exp() {
+  _impl_.need_exp_ = 0;
+}
+inline int32_t PlayerAbility::_internal_need_exp() const {
+  return _impl_.need_exp_;
+}
+inline int32_t PlayerAbility::need_exp() const {
+  // @@protoc_insertion_point(field_get:base.PlayerAbility.need_exp)
+  return _internal_need_exp();
+}
+inline void PlayerAbility::_internal_set_need_exp(int32_t value) {
+  
+  _impl_.need_exp_ = value;
+}
+inline void PlayerAbility::set_need_exp(int32_t value) {
+  _internal_set_need_exp(value);
+  // @@protoc_insertion_point(field_set:base.PlayerAbility.need_exp)
+}
+
+// int32 need_money = 6;
+inline void PlayerAbility::clear_need_money() {
+  _impl_.need_money_ = 0;
+}
+inline int32_t PlayerAbility::_internal_need_money() const {
+  return _impl_.need_money_;
+}
+inline int32_t PlayerAbility::need_money() const {
+  // @@protoc_insertion_point(field_get:base.PlayerAbility.need_money)
+  return _internal_need_money();
+}
+inline void PlayerAbility::_internal_set_need_money(int32_t value) {
+  
+  _impl_.need_money_ = value;
+}
+inline void PlayerAbility::set_need_money(int32_t value) {
+  _internal_set_need_money(value);
+  // @@protoc_insertion_point(field_set:base.PlayerAbility.need_money)
 }
 
 // -------------------------------------------------------------------
@@ -6159,7 +6003,27 @@ inline void SItem::set_item_id(int32_t value) {
   // @@protoc_insertion_point(field_set:base.SItem.item_id)
 }
 
-// .base.SItemGuid item_guid = 2;
+// int32 item_pos = 2;
+inline void SItem::clear_item_pos() {
+  _impl_.item_pos_ = 0;
+}
+inline int32_t SItem::_internal_item_pos() const {
+  return _impl_.item_pos_;
+}
+inline int32_t SItem::item_pos() const {
+  // @@protoc_insertion_point(field_get:base.SItem.item_pos)
+  return _internal_item_pos();
+}
+inline void SItem::_internal_set_item_pos(int32_t value) {
+  
+  _impl_.item_pos_ = value;
+}
+inline void SItem::set_item_pos(int32_t value) {
+  _internal_set_item_pos(value);
+  // @@protoc_insertion_point(field_set:base.SItem.item_pos)
+}
+
+// .base.SItemGuid item_guid = 3;
 inline bool SItem::_internal_has_item_guid() const {
   return this != internal_default_instance() && _impl_.item_guid_ != nullptr;
 }
@@ -6249,7 +6113,7 @@ inline void SItem::set_allocated_item_guid(::base::SItemGuid* item_guid) {
   // @@protoc_insertion_point(field_set_allocated:base.SItem.item_guid)
 }
 
-// uint32 item_index = 3;
+// uint32 item_index = 4;
 inline void SItem::clear_item_index() {
   _impl_.item_index_ = 0u;
 }
@@ -6269,7 +6133,7 @@ inline void SItem::set_item_index(uint32_t value) {
   // @@protoc_insertion_point(field_set:base.SItem.item_index)
 }
 
-// int32 ns_bind = 4;
+// int32 ns_bind = 5;
 inline void SItem::clear_ns_bind() {
   _impl_.ns_bind_ = 0;
 }
@@ -6289,7 +6153,7 @@ inline void SItem::set_ns_bind(int32_t value) {
   // @@protoc_insertion_point(field_set:base.SItem.ns_bind)
 }
 
-// string creator = 5;
+// string creator = 6;
 inline void SItem::clear_creator() {
   _impl_.creator_.ClearToEmpty();
 }
@@ -6339,7 +6203,7 @@ inline void SItem::set_allocated_creator(std::string* creator) {
   // @@protoc_insertion_point(field_set_allocated:base.SItem.creator)
 }
 
-// repeated int32 params = 6;
+// repeated int32 params = 7;
 inline int SItem::_internal_params_size() const {
   return _impl_.params_.size();
 }
@@ -6386,7 +6250,7 @@ SItem::mutable_params() {
   return _internal_mutable_params();
 }
 
-// uint32 term_endtime = 7;
+// uint32 term_endtime = 8;
 inline void SItem::clear_term_endtime() {
   _impl_.term_endtime_ = 0u;
 }
@@ -6406,7 +6270,7 @@ inline void SItem::set_term_endtime(uint32_t value) {
   // @@protoc_insertion_point(field_set:base.SItem.term_endtime)
 }
 
-// optional .base.SEquipInfo equip_info = 8;
+// optional .base.SEquipInfo equip_info = 9;
 inline bool SItem::_internal_has_equip_info() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.equip_info_ != nullptr);
@@ -6496,7 +6360,7 @@ inline void SItem::set_allocated_equip_info(::base::SEquipInfo* equip_info) {
   // @@protoc_insertion_point(field_set_allocated:base.SItem.equip_info)
 }
 
-// optional .base.SMedicInfo medic_info = 9;
+// optional .base.SMedicInfo medic_info = 10;
 inline bool SItem::_internal_has_medic_info() const {
   bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.medic_info_ != nullptr);
@@ -6586,7 +6450,7 @@ inline void SItem::set_allocated_medic_info(::base::SMedicInfo* medic_info) {
   // @@protoc_insertion_point(field_set_allocated:base.SItem.medic_info)
 }
 
-// optional .base.ExtraBagInfo extra_bag = 10;
+// optional .base.ExtraBagInfo extra_bag = 11;
 inline bool SItem::_internal_has_extra_bag() const {
   bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.extra_bag_ != nullptr);
@@ -6742,29 +6606,301 @@ inline void PlayerSpell::set_level(int32_t value) {
 
 // -------------------------------------------------------------------
 
+// Quest
+
+// int32 quest_id = 1;
+inline void Quest::clear_quest_id() {
+  _impl_.quest_id_ = 0;
+}
+inline int32_t Quest::_internal_quest_id() const {
+  return _impl_.quest_id_;
+}
+inline int32_t Quest::quest_id() const {
+  // @@protoc_insertion_point(field_get:base.Quest.quest_id)
+  return _internal_quest_id();
+}
+inline void Quest::_internal_set_quest_id(int32_t value) {
+  
+  _impl_.quest_id_ = value;
+}
+inline void Quest::set_quest_id(int32_t value) {
+  _internal_set_quest_id(value);
+  // @@protoc_insertion_point(field_set:base.Quest.quest_id)
+}
+
+// int32 script_id = 2;
+inline void Quest::clear_script_id() {
+  _impl_.script_id_ = 0;
+}
+inline int32_t Quest::_internal_script_id() const {
+  return _impl_.script_id_;
+}
+inline int32_t Quest::script_id() const {
+  // @@protoc_insertion_point(field_get:base.Quest.script_id)
+  return _internal_script_id();
+}
+inline void Quest::_internal_set_script_id(int32_t value) {
+  
+  _impl_.script_id_ = value;
+}
+inline void Quest::set_script_id(int32_t value) {
+  _internal_set_script_id(value);
+  // @@protoc_insertion_point(field_set:base.Quest.script_id)
+}
+
+// int32 y_flag = 3;
+inline void Quest::clear_y_flag() {
+  _impl_.y_flag_ = 0;
+}
+inline int32_t Quest::_internal_y_flag() const {
+  return _impl_.y_flag_;
+}
+inline int32_t Quest::y_flag() const {
+  // @@protoc_insertion_point(field_get:base.Quest.y_flag)
+  return _internal_y_flag();
+}
+inline void Quest::_internal_set_y_flag(int32_t value) {
+  
+  _impl_.y_flag_ = value;
+}
+inline void Quest::set_y_flag(int32_t value) {
+  _internal_set_y_flag(value);
+  // @@protoc_insertion_point(field_set:base.Quest.y_flag)
+}
+
+// repeated uint32 a_param = 4;
+inline int Quest::_internal_a_param_size() const {
+  return _impl_.a_param_.size();
+}
+inline int Quest::a_param_size() const {
+  return _internal_a_param_size();
+}
+inline void Quest::clear_a_param() {
+  _impl_.a_param_.Clear();
+}
+inline uint32_t Quest::_internal_a_param(int index) const {
+  return _impl_.a_param_.Get(index);
+}
+inline uint32_t Quest::a_param(int index) const {
+  // @@protoc_insertion_point(field_get:base.Quest.a_param)
+  return _internal_a_param(index);
+}
+inline void Quest::set_a_param(int index, uint32_t value) {
+  _impl_.a_param_.Set(index, value);
+  // @@protoc_insertion_point(field_set:base.Quest.a_param)
+}
+inline void Quest::_internal_add_a_param(uint32_t value) {
+  _impl_.a_param_.Add(value);
+}
+inline void Quest::add_a_param(uint32_t value) {
+  _internal_add_a_param(value);
+  // @@protoc_insertion_point(field_add:base.Quest.a_param)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
+Quest::_internal_a_param() const {
+  return _impl_.a_param_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
+Quest::a_param() const {
+  // @@protoc_insertion_point(field_list:base.Quest.a_param)
+  return _internal_a_param();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
+Quest::_internal_mutable_a_param() {
+  return &_impl_.a_param_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
+Quest::mutable_a_param() {
+  // @@protoc_insertion_point(field_mutable_list:base.Quest.a_param)
+  return _internal_mutable_a_param();
+}
+
+// repeated float af_param = 5;
+inline int Quest::_internal_af_param_size() const {
+  return _impl_.af_param_.size();
+}
+inline int Quest::af_param_size() const {
+  return _internal_af_param_size();
+}
+inline void Quest::clear_af_param() {
+  _impl_.af_param_.Clear();
+}
+inline float Quest::_internal_af_param(int index) const {
+  return _impl_.af_param_.Get(index);
+}
+inline float Quest::af_param(int index) const {
+  // @@protoc_insertion_point(field_get:base.Quest.af_param)
+  return _internal_af_param(index);
+}
+inline void Quest::set_af_param(int index, float value) {
+  _impl_.af_param_.Set(index, value);
+  // @@protoc_insertion_point(field_set:base.Quest.af_param)
+}
+inline void Quest::_internal_add_af_param(float value) {
+  _impl_.af_param_.Add(value);
+}
+inline void Quest::add_af_param(float value) {
+  _internal_add_af_param(value);
+  // @@protoc_insertion_point(field_add:base.Quest.af_param)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
+Quest::_internal_af_param() const {
+  return _impl_.af_param_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
+Quest::af_param() const {
+  // @@protoc_insertion_point(field_list:base.Quest.af_param)
+  return _internal_af_param();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
+Quest::_internal_mutable_af_param() {
+  return &_impl_.af_param_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
+Quest::mutable_af_param() {
+  // @@protoc_insertion_point(field_mutable_list:base.Quest.af_param)
+  return _internal_mutable_af_param();
+}
+
+// repeated int32 an_param = 6;
+inline int Quest::_internal_an_param_size() const {
+  return _impl_.an_param_.size();
+}
+inline int Quest::an_param_size() const {
+  return _internal_an_param_size();
+}
+inline void Quest::clear_an_param() {
+  _impl_.an_param_.Clear();
+}
+inline int32_t Quest::_internal_an_param(int index) const {
+  return _impl_.an_param_.Get(index);
+}
+inline int32_t Quest::an_param(int index) const {
+  // @@protoc_insertion_point(field_get:base.Quest.an_param)
+  return _internal_an_param(index);
+}
+inline void Quest::set_an_param(int index, int32_t value) {
+  _impl_.an_param_.Set(index, value);
+  // @@protoc_insertion_point(field_set:base.Quest.an_param)
+}
+inline void Quest::_internal_add_an_param(int32_t value) {
+  _impl_.an_param_.Add(value);
+}
+inline void Quest::add_an_param(int32_t value) {
+  _internal_add_an_param(value);
+  // @@protoc_insertion_point(field_add:base.Quest.an_param)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+Quest::_internal_an_param() const {
+  return _impl_.an_param_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+Quest::an_param() const {
+  // @@protoc_insertion_point(field_list:base.Quest.an_param)
+  return _internal_an_param();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+Quest::_internal_mutable_an_param() {
+  return &_impl_.an_param_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+Quest::mutable_an_param() {
+  // @@protoc_insertion_point(field_mutable_list:base.Quest.an_param)
+  return _internal_mutable_an_param();
+}
+
+// repeated int32 ab_param = 7;
+inline int Quest::_internal_ab_param_size() const {
+  return _impl_.ab_param_.size();
+}
+inline int Quest::ab_param_size() const {
+  return _internal_ab_param_size();
+}
+inline void Quest::clear_ab_param() {
+  _impl_.ab_param_.Clear();
+}
+inline int32_t Quest::_internal_ab_param(int index) const {
+  return _impl_.ab_param_.Get(index);
+}
+inline int32_t Quest::ab_param(int index) const {
+  // @@protoc_insertion_point(field_get:base.Quest.ab_param)
+  return _internal_ab_param(index);
+}
+inline void Quest::set_ab_param(int index, int32_t value) {
+  _impl_.ab_param_.Set(index, value);
+  // @@protoc_insertion_point(field_set:base.Quest.ab_param)
+}
+inline void Quest::_internal_add_ab_param(int32_t value) {
+  _impl_.ab_param_.Add(value);
+}
+inline void Quest::add_ab_param(int32_t value) {
+  _internal_add_ab_param(value);
+  // @@protoc_insertion_point(field_add:base.Quest.ab_param)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+Quest::_internal_ab_param() const {
+  return _impl_.ab_param_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+Quest::ab_param() const {
+  // @@protoc_insertion_point(field_list:base.Quest.ab_param)
+  return _internal_ab_param();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+Quest::_internal_mutable_ab_param() {
+  return &_impl_.ab_param_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+Quest::mutable_ab_param() {
+  // @@protoc_insertion_point(field_mutable_list:base.Quest.ab_param)
+  return _internal_mutable_ab_param();
+}
+
+// uint32 have_done = 8;
+inline void Quest::clear_have_done() {
+  _impl_.have_done_ = 0u;
+}
+inline uint32_t Quest::_internal_have_done() const {
+  return _impl_.have_done_;
+}
+inline uint32_t Quest::have_done() const {
+  // @@protoc_insertion_point(field_get:base.Quest.have_done)
+  return _internal_have_done();
+}
+inline void Quest::_internal_set_have_done(uint32_t value) {
+  
+  _impl_.have_done_ = value;
+}
+inline void Quest::set_have_done(uint32_t value) {
+  _internal_set_have_done(value);
+  // @@protoc_insertion_point(field_set:base.Quest.have_done)
+}
+
+// int32 quest_data = 9;
+inline void Quest::clear_quest_data() {
+  _impl_.quest_data_ = 0;
+}
+inline int32_t Quest::_internal_quest_data() const {
+  return _impl_.quest_data_;
+}
+inline int32_t Quest::quest_data() const {
+  // @@protoc_insertion_point(field_get:base.Quest.quest_data)
+  return _internal_quest_data();
+}
+inline void Quest::_internal_set_quest_data(int32_t value) {
+  
+  _impl_.quest_data_ = value;
+}
+inline void Quest::set_quest_data(int32_t value) {
+  _internal_set_quest_data(value);
+  // @@protoc_insertion_point(field_set:base.Quest.quest_data)
+}
+
+// -------------------------------------------------------------------
+
 // SArchiveLoader_Quest
 
-// int32 count = 1;
-inline void SArchiveLoader_Quest::clear_count() {
-  _impl_.count_ = 0;
-}
-inline int32_t SArchiveLoader_Quest::_internal_count() const {
-  return _impl_.count_;
-}
-inline int32_t SArchiveLoader_Quest::count() const {
-  // @@protoc_insertion_point(field_get:base.SArchiveLoader_Quest.count)
-  return _internal_count();
-}
-inline void SArchiveLoader_Quest::_internal_set_count(int32_t value) {
-  
-  _impl_.count_ = value;
-}
-inline void SArchiveLoader_Quest::set_count(int32_t value) {
-  _internal_set_count(value);
-  // @@protoc_insertion_point(field_set:base.SArchiveLoader_Quest.count)
-}
-
-// repeated .base.Quest quests = 2;
+// repeated .base.Quest quests = 1;
 inline int SArchiveLoader_Quest::_internal_quests_size() const {
   return _impl_.quests_.size();
 }
@@ -6802,100 +6938,6 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >&
 SArchiveLoader_Quest::quests() const {
   // @@protoc_insertion_point(field_list:base.SArchiveLoader_Quest.quests)
   return _impl_.quests_;
-}
-
-// repeated uint32 have_dones = 3;
-inline int SArchiveLoader_Quest::_internal_have_dones_size() const {
-  return _impl_.have_dones_.size();
-}
-inline int SArchiveLoader_Quest::have_dones_size() const {
-  return _internal_have_dones_size();
-}
-inline void SArchiveLoader_Quest::clear_have_dones() {
-  _impl_.have_dones_.Clear();
-}
-inline uint32_t SArchiveLoader_Quest::_internal_have_dones(int index) const {
-  return _impl_.have_dones_.Get(index);
-}
-inline uint32_t SArchiveLoader_Quest::have_dones(int index) const {
-  // @@protoc_insertion_point(field_get:base.SArchiveLoader_Quest.have_dones)
-  return _internal_have_dones(index);
-}
-inline void SArchiveLoader_Quest::set_have_dones(int index, uint32_t value) {
-  _impl_.have_dones_.Set(index, value);
-  // @@protoc_insertion_point(field_set:base.SArchiveLoader_Quest.have_dones)
-}
-inline void SArchiveLoader_Quest::_internal_add_have_dones(uint32_t value) {
-  _impl_.have_dones_.Add(value);
-}
-inline void SArchiveLoader_Quest::add_have_dones(uint32_t value) {
-  _internal_add_have_dones(value);
-  // @@protoc_insertion_point(field_add:base.SArchiveLoader_Quest.have_dones)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
-SArchiveLoader_Quest::_internal_have_dones() const {
-  return _impl_.have_dones_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >&
-SArchiveLoader_Quest::have_dones() const {
-  // @@protoc_insertion_point(field_list:base.SArchiveLoader_Quest.have_dones)
-  return _internal_have_dones();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
-SArchiveLoader_Quest::_internal_mutable_have_dones() {
-  return &_impl_.have_dones_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint32_t >*
-SArchiveLoader_Quest::mutable_have_dones() {
-  // @@protoc_insertion_point(field_mutable_list:base.SArchiveLoader_Quest.have_dones)
-  return _internal_mutable_have_dones();
-}
-
-// repeated int32 quest_datas = 4;
-inline int SArchiveLoader_Quest::_internal_quest_datas_size() const {
-  return _impl_.quest_datas_.size();
-}
-inline int SArchiveLoader_Quest::quest_datas_size() const {
-  return _internal_quest_datas_size();
-}
-inline void SArchiveLoader_Quest::clear_quest_datas() {
-  _impl_.quest_datas_.Clear();
-}
-inline int32_t SArchiveLoader_Quest::_internal_quest_datas(int index) const {
-  return _impl_.quest_datas_.Get(index);
-}
-inline int32_t SArchiveLoader_Quest::quest_datas(int index) const {
-  // @@protoc_insertion_point(field_get:base.SArchiveLoader_Quest.quest_datas)
-  return _internal_quest_datas(index);
-}
-inline void SArchiveLoader_Quest::set_quest_datas(int index, int32_t value) {
-  _impl_.quest_datas_.Set(index, value);
-  // @@protoc_insertion_point(field_set:base.SArchiveLoader_Quest.quest_datas)
-}
-inline void SArchiveLoader_Quest::_internal_add_quest_datas(int32_t value) {
-  _impl_.quest_datas_.Add(value);
-}
-inline void SArchiveLoader_Quest::add_quest_datas(int32_t value) {
-  _internal_add_quest_datas(value);
-  // @@protoc_insertion_point(field_add:base.SArchiveLoader_Quest.quest_datas)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-SArchiveLoader_Quest::_internal_quest_datas() const {
-  return _impl_.quest_datas_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
-SArchiveLoader_Quest::quest_datas() const {
-  // @@protoc_insertion_point(field_list:base.SArchiveLoader_Quest.quest_datas)
-  return _internal_quest_datas();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-SArchiveLoader_Quest::_internal_mutable_quest_datas() {
-  return &_impl_.quest_datas_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
-SArchiveLoader_Quest::mutable_quest_datas() {
-  // @@protoc_insertion_point(field_mutable_list:base.SArchiveLoader_Quest.quest_datas)
-  return _internal_mutable_quest_datas();
 }
 
 // -------------------------------------------------------------------

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <net_handle.h>
 class CMySQLRecordSet;
 struct CHARDBNODE;
 
@@ -33,7 +34,7 @@ private:
 class CharDataTask : public DBTask
 {
 public:
-    CharDataTask(std::string& guid);
+    CharDataTask(std::string& guid, NetHandle h);
     ~CharDataTask();
 
     virtual std::string get_sql();
@@ -42,6 +43,8 @@ public:
     virtual void success(CMySQLRecordSet* recordset);
 private:
     std::string mGuid;
+
+    NetHandle mHandle;
 };
 
 class CharItemTask : public DBTask

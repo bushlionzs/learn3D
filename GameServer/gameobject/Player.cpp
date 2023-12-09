@@ -53,6 +53,7 @@
 #include "ScriptDef.h"
 #include "skill/Skill_Base.h"
 #include "skill/Skill_Manager.h"
+#include "server_message.pb.h"
 
 _PLAYER_ATTR_BACKUP::_PLAYER_ATTR_BACKUP(void)
 {
@@ -1115,9 +1116,10 @@ void Player::RefeshHorseDetailAttrib(SHorseGuid guidPet, BOOL bUpdateSkill)
 		return;
 	}
 
-	SCDetailAttribPet* packet = new SCDetailAttribPet;
+	servermessage::ServerMsgDetailAttribPet dummy;//todo
+	/*SCDetailAttribPet* packet = new SCDetailAttribPet;
 	CalculatePetDetailAttrib(*packet, pPetItem, bUpdateSkill, iIndex);
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);*/
 }
 
 OPT_RESULT Player::TestCallUpPet(const SHorseGuid guidPet)
@@ -2592,50 +2594,55 @@ ItemContainer* Player::GetPetContain()
 
 void Player::updateAttr()
 {
-	SCCharHumanBaseAttrib* packet = new SCCharHumanBaseAttrib;
+	servermessage::ServerHumanBaseAttrib dummy;
 
-	packet->setPlayerId(this->GetID());
-	packet->setJob(this->GetProfession());
-	packet->setCountry(this->GetCountry());
-	packet->setDataId(this->GetDataID());
-	packet->setLevel(this->GetLevel());
+	dummy.set_player_id(GetID());
+	dummy.set_job(GetProfession());
+	dummy.set_country(GetCountry());
+	dummy.set_data_id(GetDataID());
+	dummy.set_level(GetLevel());
 
 	int32_t hp = GetHP();
 	int32_t max_hp = GetMaxHP();
-	packet->setHPPercent(hp/(float)max_hp);
-	packet->setHP(hp);
-	packet->setHPMAX(max_hp);
 
+	dummy.set_hp_percent(hp / (float)max_hp);
+	dummy.set_hp(hp);
+	dummy.set_hp_max(max_hp);
 	float move_speed = Get_Property_MoveSpeed();
-	packet->setMoveSpeed(move_speed);
 	float attack_speed = Get_Property_AttackSpeed();
-	packet->setAttackSpeed(attack_speed/100.0f);
+	dummy.set_move_speed(move_speed);
+	dummy.set_attack_speed(attack_speed);
+	
 	const SCampData* data = GetCampData();
 	if (data)
 	{
-		packet->setCampData(*data);
+		base::SCampData* camp_data = dummy.mutable_camp_data();
+		camp_data->set_camp_id(data->m_nCampID);
+		camp_data->set_pk_mode(data->m_uPKMode);
+		camp_data->set_reserve1(data->m_nReserve1);
+		camp_data->set_reserve2(data->m_nReserve2);
 	}
-
-	packet->setFaceMeshID(Get_Property_FaceModel());
-	packet->setHairMeshID(Get_Property_HairModel());
-	packet->setPortraitID(GetPortraitID());
-
-	packet->setModelID(GetModelID());
-	packet->setMountID(GetMountID());
-
+	
+	dummy.set_face_mesh_id(Get_Property_FaceModel());
+	dummy.set_hair_mesh_id(Get_Property_HairModel());
+	dummy.set_portrait_id(GetPortraitID());
+	dummy.set_mount_id(GetMountID());
+	dummy.set_model_id(GetModelID());
 	SHorseGuid guid = GetGUIDOfCallUpHorse();
-	packet->setCurentHorseGuid(guid);
-	packet->setStealthLevel(GetStealthLevel());
-	packet->setMoodState(GetMoodState());
-	packet->setTargetID(GetLockedTarget());
-	packet->setRage(Get_Property_Rage());
 
-	packet->setCurInherenceExp(GetCurInherenceExp());
-	packet->setInherenceLevel(GetInherenceLevel());
+	base::SHorseGuid* horse_guid = dummy.mutable_current_horse_guid();
+	horse_guid->set_high_section(guid.GetHighSection());
+	horse_guid->set_low_section(guid.GetLowSection());
+	dummy.set_steal_level(GetStealthLevel());
+	dummy.set_mood_state(GetMoodState());
+	dummy.set_target_id(GetLockedTarget());
+	dummy.set_rage(Get_Property_Rage());
+	dummy.set_inherence_exp(GetCurInherenceExp());
+	dummy.set_inherence_level(GetInherenceLevel());
+	dummy.set_name(GetName());
 
-	packet->setName(this->GetName());
 
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_HUMAN_BASE_ATTR, &dummy);
 }
 
 void Player::updateHorse()
@@ -2665,6 +2672,13 @@ void Player::updateSkills()
 
 #define MAX_SKILL_NUM 38
 
+	servermessage::ServerMsgDetailAbilityInfo dummy2;
+	dummy2.set_object_id(0);
+	dummy2.set_scene_id(0);
+	dummy2.set_prescr(pAbilityList->m_aPrescr);
+
+	auto* abilitys = dummy2.mutable_abilitys();
+
 	for (int32 i = 0; i < MAX_SKILL_NUM; ++i)
 	{
 		if (pAbilityList->m_aABility[i].m_Level < 1)
@@ -2672,7 +2686,7 @@ void Player::updateSkills()
 			continue;
 		}
 
-		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		auto* ability = abilitys->Add();
 		int32	nextAbilityLevel = pAbilityList->m_aABility[i].m_Level + 1;
 		int32	nextNeedExp = -1;
 		int32	nextNeedMoney = -1;
@@ -2698,25 +2712,38 @@ void Player::updateSkills()
 			nextNeedMoney = abilityExpTable->GetCostMoney(nextAbilityLevel - 1);
 			nextNeedLevel = abilityExpTable->GetPlayerLevel(nextAbilityLevel - 1);
 		}
-
-		packet->setAbility(pAbilityList->m_aABility[i], i, nextNeedLevel, nextNeedExp, nextNeedMoney);
+		ability->set_exp(pAbilityList->m_aABility[i].m_Exp);
+		ability->set_level(pAbilityList->m_aABility[i].m_Level);
+		ability->set_need_level(nextNeedExp);
+		ability->set_need_money(nextNeedMoney);
+		ability->set_need_level(nextNeedLevel);
 	}
 
-	packet->setPrescrList(pAbilityList->m_aPrescr);
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
-
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_DETAIL_ABILITY_INFO, &dummy2);
 	//¼¼ÄÜ
-	SCDetailSkillList* packet2 = new SCDetailSkillList;
-	packet2->setPlayerId(GetID());
-	const _SPELL_LIST&  spelllist = GetSpellList();
-	packet2->setSkillList(spelllist.m_Count, spelllist.m_aSkill);
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet2);
+
+
+	servermessage::ServerMsgDetailSkillList dummy;
+	dummy.set_player_id(GetID());
+	const _SPELL_LIST& spelllist = GetSpellList();
+	auto * skills = dummy.mutable_skills();
+	for (int32_t i = 0; i < spelllist.m_Count; i++)
+	{
+		auto* skill = skills->Add();
+		const _PLAYER_SPELL& spell = spelllist.m_aSkill[i];
+		skill->set_level(spell.m_nLevel);
+		skill->set_skill_id(spell.m_nSkillID);
+		skill->set_state(spell.m_eState);
+	}
+
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_ADD_SKILL_TO_SKILL_LIST, &dummy);
 }
 
 void Player::updateEquip()
 {
-	SCDetailEquipList* packet = new SCDetailEquipList;
-
+	servermessage::ServerMsgDetailEquipList dummy;
+	dummy.set_object_id(GetID());
+	auto* equips = dummy.mutable_items();
 	for (int32_t i = 0; i < HEQUIP_NUMBER; i++)
 	{
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -2727,38 +2754,61 @@ void Player::updateEquip()
 
 		if (pEquipItem->IsFree()) continue;
 
-		packet->addItem(i, *pEquipItem->GetItemData());
-	};
+		auto* equip = equips->Add();
+		SItem* itemData = pEquipItem->GetItemData();
 
-	packet->setObjectId(GetID());
+		equip->set_item_index(itemData->m_ItemIndex);
+		equip->set_ns_bind(itemData->m_nsBind);
+		equip->set_creator(itemData->m_Creator);
+		equip->set_term_endtime(itemData->m_TermEndTime);
 
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+		for (int32_t i = 0; i < MAX_ITEM_PARAM; i++)
+		{
+			equip->add_params(itemData->m_Param[i]);
+		}
+	}
+
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_DETAIL_EQUIP_LIST, &dummy);
 }
 
 void Player::updateBag()
 {
 	ItemContainer* container = GetBaseContain();
+	servermessage::ServerMsgDetailItemList dummy;
+	dummy.set_object_id(GetID());
 
-	SCDetailItemList* packet = new SCDetailItemList;
-	uint32_t	nItemCount = 0;
+	auto size = container->GetContainerSize();
 
-	for (int32 i = 0; i < container->GetContainerSize(); i++)
+	if (size > 0)
 	{
-		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-		Item* pItem = container->GetItem(i);
-		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-		KCheck(pItem);
-
-		if (!(pItem->IsFree()))
+		for (int32 i = 0; i < size; i++)
 		{
-			int32_t index = container->ConIndex2BagIndex(i);
-			packet->addItem(index, *pItem->GetItemData());
+			/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+			Item* pItem = container->GetItem(i);
+			/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+			KCheck(pItem);
+
+			if (!(pItem->IsFree()))
+			{
+				auto* base_item = dummy.add_items();
+				int32_t index = container->ConIndex2BagIndex(i);
+				base_item->set_item_index(index);
+				SItem* itemData = pItem->GetItemData();
+				base_item->set_ns_bind(itemData->m_nsBind);
+				base_item->set_creator(itemData->m_Creator);
+				base_item->set_term_endtime(itemData->m_TermEndTime);
+
+				for (int32_t i = 0; i < MAX_ITEM_PARAM; i++)
+				{
+					base_item->add_params(itemData->m_Param[i]);
+				}
+			}
 		}
 	}
-	packet->setObjectId(GetID());
+	
 
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_DETAIL_ITEM_LIST, &dummy);
 }
 
 
@@ -2790,8 +2840,33 @@ void Player::updateQuest()
 	}
 
 	packet->setQuestList((QUEST_LIST*)GetQuestList());
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 
+
+	delete packet;
+
+	servermessage::ServerMsgQuestList dummy;
+	dummy.set_player_id(GetID());
+
+	for (int32_t i = 0; i < MAX_CHAR_QUEST_NUM; i++)
+	{
+		const OWN_QUEST* pQuest = GetQuest(i);
+		if (pQuest->m_idQuest != INVALID_ID)
+		{
+			auto* quest = dummy.add_quests();
+			quest->set_quest_id(pQuest->m_idQuest);
+			quest->set_script_id(pQuest->m_idScript);
+			quest->set_y_flag(pQuest->m_yFlags);
+			for (int32_t j = 0; j < MAX_QUEST_PARAM_NUM; j++)
+			{
+				quest->add_a_param(pQuest->m_aParam[j]);
+				quest->add_af_param(pQuest->m_afParam[j]);
+				quest->add_an_param(pQuest->m_anParam[j]);
+				quest->add_ab_param(pQuest->m_abParam[j]);
+			}
+		}
+	}
+
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_QUEST_LIST, &dummy);
 }
 
 BOOL		Player::IsEnemy(Character* pCharacter)
@@ -3649,22 +3724,19 @@ void Player::SendMsg_RefeshAttribToMyself(void)
 	
 	if (CheckRefeshBase(mSCCharHumanBaseAttrib))
 	{
-		NetMessageManager::GetSingletonPtr()->sendNetMessage(mSCCharHumanBaseAttrib);
-		mSCCharHumanBaseAttrib = nullptr;
+		updateAttr();
 	}
 
 
 	if (CheckRefeshEquip(mSCCharEquipment))
 	{
-		NetMessageManager::GetSingletonPtr()->sendNetMessage(mSCCharEquipment);
-		mSCCharEquipment = nullptr;
+		updateEquip();
 	}
 
 
 	if (CheckRefeshQuest(mSCQuestListRefresh))
 	{
-		NetMessageManager::GetSingletonPtr()->sendNetMessage(mSCQuestListRefresh);
-		mSCQuestListRefresh = nullptr;
+		updateQuest();
 	}
 }
 

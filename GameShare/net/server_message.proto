@@ -55,9 +55,9 @@ enum MessageID
     SC_MESSAGE_ABILITY_ACTION 		= 11040;
     SC_ABILITY_SUCCESS 				= 11041;
 	SC_HUMAN_BASE_ATTR              = 11042;
-	SC_DETAIL_EQUIP                 = 11043;
-	SC_DETAIL_ITEM                  = 11044;
-	SC_DETAIL_SKILL                 = 11045;
+	SC_DETAIL_EQUIP_LIST            = 11043;
+	SC_DETAIL_ITEM_LIST             = 11044;
+	SC_DETAIL_SKILL_LIST             = 11045;
 }
 
 message ServerMsgAbilityAction
@@ -247,13 +247,8 @@ message ServerMsgDetailAbilityInfo
 {
     int32 object_id = 1;
 	int32 scene_id = 2;
-	int32 ability_count = 3;
-	repeated int32 ability_list = 4;
-	repeated base.PlayerAbility abilitys = 5;
-	string prescr = 6;
-	repeated int32 next_need_level = 7;
-	repeated int32 next_need_money = 8;
-	repeated int32 next_need_exp = 9;
+	repeated base.PlayerAbility abilitys = 3;
+	string prescr = 4;
 }
 
 
@@ -390,7 +385,7 @@ message ServerMsgDetailEquipList
 	repeated base.SItem items = 2;
 }
 
-message ServerMsgDetailDetailItemList
+message ServerMsgDetailItemList
 {
     int32 object_id = 1;
 	repeated base.SItem items = 2;
@@ -507,9 +502,9 @@ message ServerMsgNewItemBox
 message ServerMsgNewMonster
 {
     uint32 object_id = 1;
-	string name = 2;
+	bytes name = 2;
 	float position_x = 3;
-	float positiion_y = 4;
+	float position_z = 4;
 	float dir = 5;
 	float move_speed = 6;
 	float horse_id = 7;
@@ -550,7 +545,7 @@ message ServerMsgQueryEventResult
 message ServerMsgQuestList
 {
     int32 player_id = 1;
-	base.SArchiveLoader_Quest quest_list = 2;
+	repeated base.Quest quests = 2;
 }
 
 message ServerMsgQuestListRefresh
