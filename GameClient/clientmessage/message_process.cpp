@@ -50,33 +50,29 @@ void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 	KCharacter* pCharObj = (KCharacter*)pObj;
 	
 	KCharatcterBaseData* pCharacterData = pCharObj->GetCharacterData();
-	auto & flags = dummy.flags();
-	
-	SFlag64 mFlags;
-	mFlags.m_uHighFlags = flags.high_flags();
-	mFlags.m_uLowFlags = flags.low_flags();
 
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_JOB))
+
+	if (dummy.has_job())
 	{
 		pCharacterData->SetProfession(dummy.job());
 	}
 	
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_COUNTRY))
+	if (dummy.has_country())
 	{
 		pCharacterData->Set_Country(dummy.country());
 	}
 	
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_MODEL_ID))
+	if (dummy.has_model_id())
 	{
 		//pCharacterData->Set_ModelID(mModelID);
 	}
 	
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_NAME))
+	if (dummy.has_name())
 	{
 		pCharacterData->Set_Name(dummy.name().c_str());
 	}
 	
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_COUNTRYTITLE))
+	if (dummy.has_country_title())
 	{
 		pCharacterData->Set_CurTitle(dummy.country_title().c_str(), STitle::GUOJIA_TITLE);
 	}
@@ -87,67 +83,67 @@ void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 	
 	
 	/* 等级 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_LEVEL))
+	if (dummy.has_level())
 	{
 		pCharacterData->Set_Level(dummy.level());
 	}
 	
 	/* HP百分比 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_HP_PERCENT))
+	if (dummy.has_hp_percent())
 	{
 		pCharacterData->Set_HPPercent(dummy.hp_percent() / 100.0f);
 	
 	}
 	
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_HP))
+	if (dummy.has_hp())
 	{
 		pCharacterData->Set_HP(dummy.hp());
 	
 	}
 	
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_HP_MAX))
+	if (dummy.has_hp_max())
 	{
 		pCharacterData->Set_MaxHP(dummy.hp_max());
 	
 	}
 	
 	/* 怒气 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_RAGE))
+	if (dummy.has_rage())
 	{
 		pCharacterData->Set_Rage(dummy.rage());
 	}
 	
 	/* 怒气上限 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_MAX_RAGE))
+	if (dummy.has_max_rage())
 	{
 		pCharacterData->Set_MaxRage(dummy.max_rage());
 	}
 	
 	/* 隐身级别 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_STEALTH_LEVEL))
+	if (dummy.has_steal_level())
 	{
 		pCharacterData->Set_StealthLevel(dummy.steal_level());
 	}
 	
 	/* 是否为坐下状态 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_SIT))
+	if (dummy.has_job())
 	{
 	}
 	
 	/* 移动速度 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_MOVE_SPEED))
+	if (dummy.has_move_speed())
 	{
 		pCharacterData->Set_MoveSpeed(dummy.move_speed());
 	}
 	
 	/* 攻击速度 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_ATTACK_SPEED))
+	if (dummy.has_attack_speed())
 	{
 		pCharacterData->Set_AttackSpeed(dummy.attack_speed());
 	}
 	
 	/* 阵营ID */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_CAMP_ID))
+	if (dummy.has_camp_data())
 	{
 		auto& camp_data = dummy.camp_data();
 		SCampData tmp;
@@ -159,51 +155,55 @@ void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 	}
 	
 	/* 头像ID */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_PORTRAIT_ID))
+	if (dummy.has_portrait_id())
 	{
 		pCharacterData->Set_PortraitID(dummy.portrait_id());
 	}
 	
 	/* 脸、头发、头发颜色 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_PLAYER_DATA))
+	if (dummy.has_face_mesh_id())
 	{
 		pCharacterData->Set_FaceMesh(dummy.face_mesh_id());
+	}
+
+	if (dummy.has_hair_mesh_id())
+	{
 		pCharacterData->Set_HairMesh(dummy.hair_mesh_id());
 	}
 	
 	/* 选择的目标 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_TARGETID))
+	if (dummy.has_target_id())
 	{
 		pCharacterData->Set_TargetId(dummy.target_id());
 	}
 	
 	/* PK值 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_PK_VALUE))
+	if (dummy.has_pk_value())
 	{
 		pCharacterData->Set_PKValue(dummy.pk_value());
 	}
 	
 	
 	/* 骑乘代数 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_BYGENERATION))
+	if (dummy.has_generation())
 	{
 		pCharacterData->Set_MountEra(dummy.generation());
 		bSecond = TRUE;
 	}
 	
 	/* 角色种族（更换模型）（数据资源ID）, 要放到其他模型数据之后处理, 以保证一次性创建 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_DATA_ID))
+	if (dummy.has_data_id())
 	{
 		pCharacterData->Set_RaceID(dummy.data_id());
 	}
 	
 	/* 座骑ID, 要在人物之后创建 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_MOUNT_ID))
+	if (dummy.has_mount_id())
 	{
 		pCharacterData->Set_MountID(dummy.mount_id());
 	}
 	
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_ATT_CURRENT_HORSE_GUID))
+	if (dummy.has_current_horse_guid())
 	{
 		auto& horseGuid = dummy.current_horse_guid();
 
@@ -215,12 +215,12 @@ void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 	
 	// 需要天赋特效是打开
 	/* 天赋 */
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_INHERENCE_EXP))
+	if (dummy.has_inherence_exp())
 	{
 		pCharacterData->Set_InherenceExp(dummy.inherence_exp());
 	}
 	
-	if (mFlags.isSetBit(UPDATE_CHARPLAYER_INHERENCE_LEVEL))
+	if (dummy.has_inherence_level())
 	{
 		pCharacterData->Set_InherenceLevel(dummy.inherence_level());
 	}
@@ -301,7 +301,7 @@ void sc_detail_skill(NetHandle h, const char* msg, uint32_t msg_size)
 void sc_enter_scene(NetHandle h, const char* msg, uint32_t msg_size)
 {
 	servermessage::ServerMsgEnterMap dummy;
-	dummy.ParseFromArray(msg, msg_size);
+	bool ret = dummy.ParseFromArray(msg, msg_size);
 	auto scene_id = dummy.scene_id();
 	GameSceneManager::getSingletonPtr()->loadScene(scene_id);
 

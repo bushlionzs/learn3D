@@ -726,7 +726,10 @@ namespace Orphigine
 
 		tmpAnimState = getAnimationState(animName);
 
-
+		if (tmpAnimState == nullptr)
+		{
+			int kk = 0;
+		}
 		assert(NULL != tmpAnimState && "动画状态不能为NULL AdvancedAnimationSystem::_addAnimation");
 
 		AASAnimation* tmpAnimation = OGRE_NEW AASAnimation(this,tmpAnimState);

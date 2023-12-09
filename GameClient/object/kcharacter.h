@@ -15,15 +15,6 @@
 #include "Basics.h"
 #include "command/KCharStruct.h"
 
-class MyCallback : public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
-{
-public:
-	void	onAnimationEnd(
-		const char* animName, 
-		const char* parentNodeType, 
-		const char* parentNodeName,
-		uint64_t info);
-};
 
 class PathComponent;
 class PlayerLogicModelHaveCreateCallback;

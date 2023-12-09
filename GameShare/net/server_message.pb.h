@@ -1541,7 +1541,6 @@ class ServerHumanBaseAttrib final :
     kCountryTitleFieldNumber = 23,
     kGuildTitleFieldNumber = 24,
     kNormalTitleFieldNumber = 25,
-    kFlagsFieldNumber = 2,
     kCampDataFieldNumber = 18,
     kCurrentHorseGuidFieldNumber = 35,
     kPlayerIdFieldNumber = 1,
@@ -1573,7 +1572,11 @@ class ServerHumanBaseAttrib final :
     kInherenceExpFieldNumber = 33,
     kInherenceLevelFieldNumber = 34,
   };
-  // string name = 22;
+  // optional string name = 22;
+  bool has_name() const;
+  private:
+  bool _internal_has_name() const;
+  public:
   void clear_name();
   const std::string& name() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1587,7 +1590,11 @@ class ServerHumanBaseAttrib final :
   std::string* _internal_mutable_name();
   public:
 
-  // string country_title = 23;
+  // optional string country_title = 23;
+  bool has_country_title() const;
+  private:
+  bool _internal_has_country_title() const;
+  public:
   void clear_country_title();
   const std::string& country_title() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1601,7 +1608,11 @@ class ServerHumanBaseAttrib final :
   std::string* _internal_mutable_country_title();
   public:
 
-  // string guild_title = 24;
+  // optional string guild_title = 24;
+  bool has_guild_title() const;
+  private:
+  bool _internal_has_guild_title() const;
+  public:
   void clear_guild_title();
   const std::string& guild_title() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1615,7 +1626,11 @@ class ServerHumanBaseAttrib final :
   std::string* _internal_mutable_guild_title();
   public:
 
-  // string normal_title = 25;
+  // optional string normal_title = 25;
+  bool has_normal_title() const;
+  private:
+  bool _internal_has_normal_title() const;
+  public:
   void clear_normal_title();
   const std::string& normal_title() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1629,25 +1644,7 @@ class ServerHumanBaseAttrib final :
   std::string* _internal_mutable_normal_title();
   public:
 
-  // .base.Flag64 flags = 2;
-  bool has_flags() const;
-  private:
-  bool _internal_has_flags() const;
-  public:
-  void clear_flags();
-  const ::base::Flag64& flags() const;
-  PROTOBUF_NODISCARD ::base::Flag64* release_flags();
-  ::base::Flag64* mutable_flags();
-  void set_allocated_flags(::base::Flag64* flags);
-  private:
-  const ::base::Flag64& _internal_flags() const;
-  ::base::Flag64* _internal_mutable_flags();
-  public:
-  void unsafe_arena_set_allocated_flags(
-      ::base::Flag64* flags);
-  ::base::Flag64* unsafe_arena_release_flags();
-
-  // .base.SCampData camp_data = 18;
+  // optional .base.SCampData camp_data = 18;
   bool has_camp_data() const;
   private:
   bool _internal_has_camp_data() const;
@@ -1665,7 +1662,7 @@ class ServerHumanBaseAttrib final :
       ::base::SCampData* camp_data);
   ::base::SCampData* unsafe_arena_release_camp_data();
 
-  // .base.SHorseGuid current_horse_guid = 35;
+  // optional .base.SHorseGuid current_horse_guid = 35;
   bool has_current_horse_guid() const;
   private:
   bool _internal_has_current_horse_guid() const;
@@ -1692,7 +1689,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_player_id(int32_t value);
   public:
 
-  // int32 job = 3;
+  // optional int32 job = 3;
+  bool has_job() const;
+  private:
+  bool _internal_has_job() const;
+  public:
   void clear_job();
   int32_t job() const;
   void set_job(int32_t value);
@@ -1701,7 +1702,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_job(int32_t value);
   public:
 
-  // int32 country = 4;
+  // optional int32 country = 4;
+  bool has_country() const;
+  private:
+  bool _internal_has_country() const;
+  public:
   void clear_country();
   int32_t country() const;
   void set_country(int32_t value);
@@ -1710,7 +1715,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_country(int32_t value);
   public:
 
-  // int32 data_id = 5;
+  // optional int32 data_id = 5;
+  bool has_data_id() const;
+  private:
+  bool _internal_has_data_id() const;
+  public:
   void clear_data_id();
   int32_t data_id() const;
   void set_data_id(int32_t value);
@@ -1719,7 +1728,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_data_id(int32_t value);
   public:
 
-  // int32 level = 6;
+  // optional int32 level = 6;
+  bool has_level() const;
+  private:
+  bool _internal_has_level() const;
+  public:
   void clear_level();
   int32_t level() const;
   void set_level(int32_t value);
@@ -1728,7 +1741,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_level(int32_t value);
   public:
 
-  // int32 hair_mesh_id = 7;
+  // optional int32 hair_mesh_id = 7;
+  bool has_hair_mesh_id() const;
+  private:
+  bool _internal_has_hair_mesh_id() const;
+  public:
   void clear_hair_mesh_id();
   int32_t hair_mesh_id() const;
   void set_hair_mesh_id(int32_t value);
@@ -1737,7 +1754,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_hair_mesh_id(int32_t value);
   public:
 
-  // int32 face_mesh_id = 8;
+  // optional int32 face_mesh_id = 8;
+  bool has_face_mesh_id() const;
+  private:
+  bool _internal_has_face_mesh_id() const;
+  public:
   void clear_face_mesh_id();
   int32_t face_mesh_id() const;
   void set_face_mesh_id(int32_t value);
@@ -1746,7 +1767,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_face_mesh_id(int32_t value);
   public:
 
-  // int32 hp_percent = 9;
+  // optional int32 hp_percent = 9;
+  bool has_hp_percent() const;
+  private:
+  bool _internal_has_hp_percent() const;
+  public:
   void clear_hp_percent();
   int32_t hp_percent() const;
   void set_hp_percent(int32_t value);
@@ -1755,7 +1780,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_hp_percent(int32_t value);
   public:
 
-  // int32 hp = 10;
+  // optional int32 hp = 10;
+  bool has_hp() const;
+  private:
+  bool _internal_has_hp() const;
+  public:
   void clear_hp();
   int32_t hp() const;
   void set_hp(int32_t value);
@@ -1764,7 +1793,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_hp(int32_t value);
   public:
 
-  // int32 hp_max = 11;
+  // optional int32 hp_max = 11;
+  bool has_hp_max() const;
+  private:
+  bool _internal_has_hp_max() const;
+  public:
   void clear_hp_max();
   int32_t hp_max() const;
   void set_hp_max(int32_t value);
@@ -1773,7 +1806,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_hp_max(int32_t value);
   public:
 
-  // int32 rage = 12;
+  // optional int32 rage = 12;
+  bool has_rage() const;
+  private:
+  bool _internal_has_rage() const;
+  public:
   void clear_rage();
   int32_t rage() const;
   void set_rage(int32_t value);
@@ -1782,7 +1819,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_rage(int32_t value);
   public:
 
-  // int32 max_rage = 13;
+  // optional int32 max_rage = 13;
+  bool has_max_rage() const;
+  private:
+  bool _internal_has_max_rage() const;
+  public:
   void clear_max_rage();
   int32_t max_rage() const;
   void set_max_rage(int32_t value);
@@ -1791,7 +1832,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_max_rage(int32_t value);
   public:
 
-  // int32 steal_level = 14;
+  // optional int32 steal_level = 14;
+  bool has_steal_level() const;
+  private:
+  bool _internal_has_steal_level() const;
+  public:
   void clear_steal_level();
   int32_t steal_level() const;
   void set_steal_level(int32_t value);
@@ -1800,7 +1845,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_steal_level(int32_t value);
   public:
 
-  // int32 mood_state = 15;
+  // optional int32 mood_state = 15;
+  bool has_mood_state() const;
+  private:
+  bool _internal_has_mood_state() const;
+  public:
   void clear_mood_state();
   int32_t mood_state() const;
   void set_mood_state(int32_t value);
@@ -1809,7 +1858,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_mood_state(int32_t value);
   public:
 
-  // float move_speed = 16;
+  // optional float move_speed = 16;
+  bool has_move_speed() const;
+  private:
+  bool _internal_has_move_speed() const;
+  public:
   void clear_move_speed();
   float move_speed() const;
   void set_move_speed(float value);
@@ -1818,7 +1871,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_move_speed(float value);
   public:
 
-  // float attack_speed = 17;
+  // optional float attack_speed = 17;
+  bool has_attack_speed() const;
+  private:
+  bool _internal_has_attack_speed() const;
+  public:
   void clear_attack_speed();
   float attack_speed() const;
   void set_attack_speed(float value);
@@ -1827,7 +1884,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_attack_speed(float value);
   public:
 
-  // int32 portrait_id = 19;
+  // optional int32 portrait_id = 19;
+  bool has_portrait_id() const;
+  private:
+  bool _internal_has_portrait_id() const;
+  public:
   void clear_portrait_id();
   int32_t portrait_id() const;
   void set_portrait_id(int32_t value);
@@ -1836,7 +1897,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_portrait_id(int32_t value);
   public:
 
-  // int32 model_id = 20;
+  // optional int32 model_id = 20;
+  bool has_model_id() const;
+  private:
+  bool _internal_has_model_id() const;
+  public:
   void clear_model_id();
   int32_t model_id() const;
   void set_model_id(int32_t value);
@@ -1845,7 +1910,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_model_id(int32_t value);
   public:
 
-  // int32 mount_id = 21;
+  // optional int32 mount_id = 21;
+  bool has_mount_id() const;
+  private:
+  bool _internal_has_mount_id() const;
+  public:
   void clear_mount_id();
   int32_t mount_id() const;
   void set_mount_id(int32_t value);
@@ -1854,7 +1923,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_mount_id(int32_t value);
   public:
 
-  // int32 country_title_type = 26;
+  // optional int32 country_title_type = 26;
+  bool has_country_title_type() const;
+  private:
+  bool _internal_has_country_title_type() const;
+  public:
   void clear_country_title_type();
   int32_t country_title_type() const;
   void set_country_title_type(int32_t value);
@@ -1863,7 +1936,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_country_title_type(int32_t value);
   public:
 
-  // int32 guild_title_type = 27;
+  // optional int32 guild_title_type = 27;
+  bool has_guild_title_type() const;
+  private:
+  bool _internal_has_guild_title_type() const;
+  public:
   void clear_guild_title_type();
   int32_t guild_title_type() const;
   void set_guild_title_type(int32_t value);
@@ -1872,7 +1949,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_guild_title_type(int32_t value);
   public:
 
-  // int32 stall_is_open = 28;
+  // optional int32 stall_is_open = 28;
+  bool has_stall_is_open() const;
+  private:
+  bool _internal_has_stall_is_open() const;
+  public:
   void clear_stall_is_open();
   int32_t stall_is_open() const;
   void set_stall_is_open(int32_t value);
@@ -1881,7 +1962,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_stall_is_open(int32_t value);
   public:
 
-  // int32 target_id = 29;
+  // optional int32 target_id = 29;
+  bool has_target_id() const;
+  private:
+  bool _internal_has_target_id() const;
+  public:
   void clear_target_id();
   int32_t target_id() const;
   void set_target_id(int32_t value);
@@ -1890,7 +1975,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_target_id(int32_t value);
   public:
 
-  // int32 pk_value = 30;
+  // optional int32 pk_value = 30;
+  bool has_pk_value() const;
+  private:
+  bool _internal_has_pk_value() const;
+  public:
   void clear_pk_value();
   int32_t pk_value() const;
   void set_pk_value(int32_t value);
@@ -1899,7 +1988,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_pk_value(int32_t value);
   public:
 
-  // int32 generation = 31;
+  // optional int32 generation = 31;
+  bool has_generation() const;
+  private:
+  bool _internal_has_generation() const;
+  public:
   void clear_generation();
   int32_t generation() const;
   void set_generation(int32_t value);
@@ -1908,7 +2001,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_generation(int32_t value);
   public:
 
-  // int32 world_id = 32;
+  // optional int32 world_id = 32;
+  bool has_world_id() const;
+  private:
+  bool _internal_has_world_id() const;
+  public:
   void clear_world_id();
   int32_t world_id() const;
   void set_world_id(int32_t value);
@@ -1917,7 +2014,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_world_id(int32_t value);
   public:
 
-  // uint32 inherence_exp = 33;
+  // optional uint32 inherence_exp = 33;
+  bool has_inherence_exp() const;
+  private:
+  bool _internal_has_inherence_exp() const;
+  public:
   void clear_inherence_exp();
   uint32_t inherence_exp() const;
   void set_inherence_exp(uint32_t value);
@@ -1926,7 +2027,11 @@ class ServerHumanBaseAttrib final :
   void _internal_set_inherence_exp(uint32_t value);
   public:
 
-  // uint32 inherence_level = 34;
+  // optional uint32 inherence_level = 34;
+  bool has_inherence_level() const;
+  private:
+  bool _internal_has_inherence_level() const;
+  public:
   void clear_inherence_level();
   uint32_t inherence_level() const;
   void set_inherence_level(uint32_t value);
@@ -1943,11 +2048,12 @@ class ServerHumanBaseAttrib final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<2> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr country_title_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr guild_title_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr normal_title_;
-    ::base::Flag64* flags_;
     ::base::SCampData* camp_data_;
     ::base::SHorseGuid* current_horse_guid_;
     int32_t player_id_;
@@ -1978,7 +2084,6 @@ class ServerHumanBaseAttrib final :
     int32_t world_id_;
     uint32_t inherence_exp_;
     uint32_t inherence_level_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_server_5fmessage_2eproto;
@@ -11434,94 +11539,17 @@ inline void ServerHumanBaseAttrib::set_player_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.player_id)
 }
 
-// .base.Flag64 flags = 2;
-inline bool ServerHumanBaseAttrib::_internal_has_flags() const {
-  return this != internal_default_instance() && _impl_.flags_ != nullptr;
+// optional int32 job = 3;
+inline bool ServerHumanBaseAttrib::_internal_has_job() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
+  return value;
 }
-inline bool ServerHumanBaseAttrib::has_flags() const {
-  return _internal_has_flags();
+inline bool ServerHumanBaseAttrib::has_job() const {
+  return _internal_has_job();
 }
-inline const ::base::Flag64& ServerHumanBaseAttrib::_internal_flags() const {
-  const ::base::Flag64* p = _impl_.flags_;
-  return p != nullptr ? *p : reinterpret_cast<const ::base::Flag64&>(
-      ::base::_Flag64_default_instance_);
-}
-inline const ::base::Flag64& ServerHumanBaseAttrib::flags() const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerHumanBaseAttrib.flags)
-  return _internal_flags();
-}
-inline void ServerHumanBaseAttrib::unsafe_arena_set_allocated_flags(
-    ::base::Flag64* flags) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.flags_);
-  }
-  _impl_.flags_ = flags;
-  if (flags) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:servermessage.ServerHumanBaseAttrib.flags)
-}
-inline ::base::Flag64* ServerHumanBaseAttrib::release_flags() {
-  
-  ::base::Flag64* temp = _impl_.flags_;
-  _impl_.flags_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::base::Flag64* ServerHumanBaseAttrib::unsafe_arena_release_flags() {
-  // @@protoc_insertion_point(field_release:servermessage.ServerHumanBaseAttrib.flags)
-  
-  ::base::Flag64* temp = _impl_.flags_;
-  _impl_.flags_ = nullptr;
-  return temp;
-}
-inline ::base::Flag64* ServerHumanBaseAttrib::_internal_mutable_flags() {
-  
-  if (_impl_.flags_ == nullptr) {
-    auto* p = CreateMaybeMessage<::base::Flag64>(GetArenaForAllocation());
-    _impl_.flags_ = p;
-  }
-  return _impl_.flags_;
-}
-inline ::base::Flag64* ServerHumanBaseAttrib::mutable_flags() {
-  ::base::Flag64* _msg = _internal_mutable_flags();
-  // @@protoc_insertion_point(field_mutable:servermessage.ServerHumanBaseAttrib.flags)
-  return _msg;
-}
-inline void ServerHumanBaseAttrib::set_allocated_flags(::base::Flag64* flags) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.flags_);
-  }
-  if (flags) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(flags));
-    if (message_arena != submessage_arena) {
-      flags = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, flags, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  _impl_.flags_ = flags;
-  // @@protoc_insertion_point(field_set_allocated:servermessage.ServerHumanBaseAttrib.flags)
-}
-
-// int32 job = 3;
 inline void ServerHumanBaseAttrib::clear_job() {
   _impl_.job_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000040u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_job() const {
   return _impl_.job_;
@@ -11531,7 +11559,7 @@ inline int32_t ServerHumanBaseAttrib::job() const {
   return _internal_job();
 }
 inline void ServerHumanBaseAttrib::_internal_set_job(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000040u;
   _impl_.job_ = value;
 }
 inline void ServerHumanBaseAttrib::set_job(int32_t value) {
@@ -11539,9 +11567,17 @@ inline void ServerHumanBaseAttrib::set_job(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.job)
 }
 
-// int32 country = 4;
+// optional int32 country = 4;
+inline bool ServerHumanBaseAttrib::_internal_has_country() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_country() const {
+  return _internal_has_country();
+}
 inline void ServerHumanBaseAttrib::clear_country() {
   _impl_.country_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000080u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_country() const {
   return _impl_.country_;
@@ -11551,7 +11587,7 @@ inline int32_t ServerHumanBaseAttrib::country() const {
   return _internal_country();
 }
 inline void ServerHumanBaseAttrib::_internal_set_country(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000080u;
   _impl_.country_ = value;
 }
 inline void ServerHumanBaseAttrib::set_country(int32_t value) {
@@ -11559,9 +11595,17 @@ inline void ServerHumanBaseAttrib::set_country(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.country)
 }
 
-// int32 data_id = 5;
+// optional int32 data_id = 5;
+inline bool ServerHumanBaseAttrib::_internal_has_data_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000100u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_data_id() const {
+  return _internal_has_data_id();
+}
 inline void ServerHumanBaseAttrib::clear_data_id() {
   _impl_.data_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000100u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_data_id() const {
   return _impl_.data_id_;
@@ -11571,7 +11615,7 @@ inline int32_t ServerHumanBaseAttrib::data_id() const {
   return _internal_data_id();
 }
 inline void ServerHumanBaseAttrib::_internal_set_data_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000100u;
   _impl_.data_id_ = value;
 }
 inline void ServerHumanBaseAttrib::set_data_id(int32_t value) {
@@ -11579,9 +11623,17 @@ inline void ServerHumanBaseAttrib::set_data_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.data_id)
 }
 
-// int32 level = 6;
+// optional int32 level = 6;
+inline bool ServerHumanBaseAttrib::_internal_has_level() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000200u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_level() const {
+  return _internal_has_level();
+}
 inline void ServerHumanBaseAttrib::clear_level() {
   _impl_.level_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000200u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_level() const {
   return _impl_.level_;
@@ -11591,7 +11643,7 @@ inline int32_t ServerHumanBaseAttrib::level() const {
   return _internal_level();
 }
 inline void ServerHumanBaseAttrib::_internal_set_level(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000200u;
   _impl_.level_ = value;
 }
 inline void ServerHumanBaseAttrib::set_level(int32_t value) {
@@ -11599,9 +11651,17 @@ inline void ServerHumanBaseAttrib::set_level(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.level)
 }
 
-// int32 hair_mesh_id = 7;
+// optional int32 hair_mesh_id = 7;
+inline bool ServerHumanBaseAttrib::_internal_has_hair_mesh_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000400u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_hair_mesh_id() const {
+  return _internal_has_hair_mesh_id();
+}
 inline void ServerHumanBaseAttrib::clear_hair_mesh_id() {
   _impl_.hair_mesh_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000400u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_hair_mesh_id() const {
   return _impl_.hair_mesh_id_;
@@ -11611,7 +11671,7 @@ inline int32_t ServerHumanBaseAttrib::hair_mesh_id() const {
   return _internal_hair_mesh_id();
 }
 inline void ServerHumanBaseAttrib::_internal_set_hair_mesh_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000400u;
   _impl_.hair_mesh_id_ = value;
 }
 inline void ServerHumanBaseAttrib::set_hair_mesh_id(int32_t value) {
@@ -11619,9 +11679,17 @@ inline void ServerHumanBaseAttrib::set_hair_mesh_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.hair_mesh_id)
 }
 
-// int32 face_mesh_id = 8;
+// optional int32 face_mesh_id = 8;
+inline bool ServerHumanBaseAttrib::_internal_has_face_mesh_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000800u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_face_mesh_id() const {
+  return _internal_has_face_mesh_id();
+}
 inline void ServerHumanBaseAttrib::clear_face_mesh_id() {
   _impl_.face_mesh_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000800u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_face_mesh_id() const {
   return _impl_.face_mesh_id_;
@@ -11631,7 +11699,7 @@ inline int32_t ServerHumanBaseAttrib::face_mesh_id() const {
   return _internal_face_mesh_id();
 }
 inline void ServerHumanBaseAttrib::_internal_set_face_mesh_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000800u;
   _impl_.face_mesh_id_ = value;
 }
 inline void ServerHumanBaseAttrib::set_face_mesh_id(int32_t value) {
@@ -11639,9 +11707,17 @@ inline void ServerHumanBaseAttrib::set_face_mesh_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.face_mesh_id)
 }
 
-// int32 hp_percent = 9;
+// optional int32 hp_percent = 9;
+inline bool ServerHumanBaseAttrib::_internal_has_hp_percent() const {
+  bool value = (_impl_._has_bits_[0] & 0x00001000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_hp_percent() const {
+  return _internal_has_hp_percent();
+}
 inline void ServerHumanBaseAttrib::clear_hp_percent() {
   _impl_.hp_percent_ = 0;
+  _impl_._has_bits_[0] &= ~0x00001000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_hp_percent() const {
   return _impl_.hp_percent_;
@@ -11651,7 +11727,7 @@ inline int32_t ServerHumanBaseAttrib::hp_percent() const {
   return _internal_hp_percent();
 }
 inline void ServerHumanBaseAttrib::_internal_set_hp_percent(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00001000u;
   _impl_.hp_percent_ = value;
 }
 inline void ServerHumanBaseAttrib::set_hp_percent(int32_t value) {
@@ -11659,9 +11735,17 @@ inline void ServerHumanBaseAttrib::set_hp_percent(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.hp_percent)
 }
 
-// int32 hp = 10;
+// optional int32 hp = 10;
+inline bool ServerHumanBaseAttrib::_internal_has_hp() const {
+  bool value = (_impl_._has_bits_[0] & 0x00002000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_hp() const {
+  return _internal_has_hp();
+}
 inline void ServerHumanBaseAttrib::clear_hp() {
   _impl_.hp_ = 0;
+  _impl_._has_bits_[0] &= ~0x00002000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_hp() const {
   return _impl_.hp_;
@@ -11671,7 +11755,7 @@ inline int32_t ServerHumanBaseAttrib::hp() const {
   return _internal_hp();
 }
 inline void ServerHumanBaseAttrib::_internal_set_hp(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00002000u;
   _impl_.hp_ = value;
 }
 inline void ServerHumanBaseAttrib::set_hp(int32_t value) {
@@ -11679,9 +11763,17 @@ inline void ServerHumanBaseAttrib::set_hp(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.hp)
 }
 
-// int32 hp_max = 11;
+// optional int32 hp_max = 11;
+inline bool ServerHumanBaseAttrib::_internal_has_hp_max() const {
+  bool value = (_impl_._has_bits_[0] & 0x00004000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_hp_max() const {
+  return _internal_has_hp_max();
+}
 inline void ServerHumanBaseAttrib::clear_hp_max() {
   _impl_.hp_max_ = 0;
+  _impl_._has_bits_[0] &= ~0x00004000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_hp_max() const {
   return _impl_.hp_max_;
@@ -11691,7 +11783,7 @@ inline int32_t ServerHumanBaseAttrib::hp_max() const {
   return _internal_hp_max();
 }
 inline void ServerHumanBaseAttrib::_internal_set_hp_max(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00004000u;
   _impl_.hp_max_ = value;
 }
 inline void ServerHumanBaseAttrib::set_hp_max(int32_t value) {
@@ -11699,9 +11791,17 @@ inline void ServerHumanBaseAttrib::set_hp_max(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.hp_max)
 }
 
-// int32 rage = 12;
+// optional int32 rage = 12;
+inline bool ServerHumanBaseAttrib::_internal_has_rage() const {
+  bool value = (_impl_._has_bits_[0] & 0x00008000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_rage() const {
+  return _internal_has_rage();
+}
 inline void ServerHumanBaseAttrib::clear_rage() {
   _impl_.rage_ = 0;
+  _impl_._has_bits_[0] &= ~0x00008000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_rage() const {
   return _impl_.rage_;
@@ -11711,7 +11811,7 @@ inline int32_t ServerHumanBaseAttrib::rage() const {
   return _internal_rage();
 }
 inline void ServerHumanBaseAttrib::_internal_set_rage(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00008000u;
   _impl_.rage_ = value;
 }
 inline void ServerHumanBaseAttrib::set_rage(int32_t value) {
@@ -11719,9 +11819,17 @@ inline void ServerHumanBaseAttrib::set_rage(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.rage)
 }
 
-// int32 max_rage = 13;
+// optional int32 max_rage = 13;
+inline bool ServerHumanBaseAttrib::_internal_has_max_rage() const {
+  bool value = (_impl_._has_bits_[0] & 0x00010000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_max_rage() const {
+  return _internal_has_max_rage();
+}
 inline void ServerHumanBaseAttrib::clear_max_rage() {
   _impl_.max_rage_ = 0;
+  _impl_._has_bits_[0] &= ~0x00010000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_max_rage() const {
   return _impl_.max_rage_;
@@ -11731,7 +11839,7 @@ inline int32_t ServerHumanBaseAttrib::max_rage() const {
   return _internal_max_rage();
 }
 inline void ServerHumanBaseAttrib::_internal_set_max_rage(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00010000u;
   _impl_.max_rage_ = value;
 }
 inline void ServerHumanBaseAttrib::set_max_rage(int32_t value) {
@@ -11739,9 +11847,17 @@ inline void ServerHumanBaseAttrib::set_max_rage(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.max_rage)
 }
 
-// int32 steal_level = 14;
+// optional int32 steal_level = 14;
+inline bool ServerHumanBaseAttrib::_internal_has_steal_level() const {
+  bool value = (_impl_._has_bits_[0] & 0x00020000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_steal_level() const {
+  return _internal_has_steal_level();
+}
 inline void ServerHumanBaseAttrib::clear_steal_level() {
   _impl_.steal_level_ = 0;
+  _impl_._has_bits_[0] &= ~0x00020000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_steal_level() const {
   return _impl_.steal_level_;
@@ -11751,7 +11867,7 @@ inline int32_t ServerHumanBaseAttrib::steal_level() const {
   return _internal_steal_level();
 }
 inline void ServerHumanBaseAttrib::_internal_set_steal_level(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00020000u;
   _impl_.steal_level_ = value;
 }
 inline void ServerHumanBaseAttrib::set_steal_level(int32_t value) {
@@ -11759,9 +11875,17 @@ inline void ServerHumanBaseAttrib::set_steal_level(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.steal_level)
 }
 
-// int32 mood_state = 15;
+// optional int32 mood_state = 15;
+inline bool ServerHumanBaseAttrib::_internal_has_mood_state() const {
+  bool value = (_impl_._has_bits_[0] & 0x00040000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_mood_state() const {
+  return _internal_has_mood_state();
+}
 inline void ServerHumanBaseAttrib::clear_mood_state() {
   _impl_.mood_state_ = 0;
+  _impl_._has_bits_[0] &= ~0x00040000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_mood_state() const {
   return _impl_.mood_state_;
@@ -11771,7 +11895,7 @@ inline int32_t ServerHumanBaseAttrib::mood_state() const {
   return _internal_mood_state();
 }
 inline void ServerHumanBaseAttrib::_internal_set_mood_state(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00040000u;
   _impl_.mood_state_ = value;
 }
 inline void ServerHumanBaseAttrib::set_mood_state(int32_t value) {
@@ -11779,9 +11903,17 @@ inline void ServerHumanBaseAttrib::set_mood_state(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.mood_state)
 }
 
-// float move_speed = 16;
+// optional float move_speed = 16;
+inline bool ServerHumanBaseAttrib::_internal_has_move_speed() const {
+  bool value = (_impl_._has_bits_[0] & 0x00080000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_move_speed() const {
+  return _internal_has_move_speed();
+}
 inline void ServerHumanBaseAttrib::clear_move_speed() {
   _impl_.move_speed_ = 0;
+  _impl_._has_bits_[0] &= ~0x00080000u;
 }
 inline float ServerHumanBaseAttrib::_internal_move_speed() const {
   return _impl_.move_speed_;
@@ -11791,7 +11923,7 @@ inline float ServerHumanBaseAttrib::move_speed() const {
   return _internal_move_speed();
 }
 inline void ServerHumanBaseAttrib::_internal_set_move_speed(float value) {
-  
+  _impl_._has_bits_[0] |= 0x00080000u;
   _impl_.move_speed_ = value;
 }
 inline void ServerHumanBaseAttrib::set_move_speed(float value) {
@@ -11799,9 +11931,17 @@ inline void ServerHumanBaseAttrib::set_move_speed(float value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.move_speed)
 }
 
-// float attack_speed = 17;
+// optional float attack_speed = 17;
+inline bool ServerHumanBaseAttrib::_internal_has_attack_speed() const {
+  bool value = (_impl_._has_bits_[0] & 0x00100000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_attack_speed() const {
+  return _internal_has_attack_speed();
+}
 inline void ServerHumanBaseAttrib::clear_attack_speed() {
   _impl_.attack_speed_ = 0;
+  _impl_._has_bits_[0] &= ~0x00100000u;
 }
 inline float ServerHumanBaseAttrib::_internal_attack_speed() const {
   return _impl_.attack_speed_;
@@ -11811,7 +11951,7 @@ inline float ServerHumanBaseAttrib::attack_speed() const {
   return _internal_attack_speed();
 }
 inline void ServerHumanBaseAttrib::_internal_set_attack_speed(float value) {
-  
+  _impl_._has_bits_[0] |= 0x00100000u;
   _impl_.attack_speed_ = value;
 }
 inline void ServerHumanBaseAttrib::set_attack_speed(float value) {
@@ -11819,9 +11959,11 @@ inline void ServerHumanBaseAttrib::set_attack_speed(float value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.attack_speed)
 }
 
-// .base.SCampData camp_data = 18;
+// optional .base.SCampData camp_data = 18;
 inline bool ServerHumanBaseAttrib::_internal_has_camp_data() const {
-  return this != internal_default_instance() && _impl_.camp_data_ != nullptr;
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.camp_data_ != nullptr);
+  return value;
 }
 inline bool ServerHumanBaseAttrib::has_camp_data() const {
   return _internal_has_camp_data();
@@ -11842,14 +11984,14 @@ inline void ServerHumanBaseAttrib::unsafe_arena_set_allocated_camp_data(
   }
   _impl_.camp_data_ = camp_data;
   if (camp_data) {
-    
+    _impl_._has_bits_[0] |= 0x00000010u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000010u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:servermessage.ServerHumanBaseAttrib.camp_data)
 }
 inline ::base::SCampData* ServerHumanBaseAttrib::release_camp_data() {
-  
+  _impl_._has_bits_[0] &= ~0x00000010u;
   ::base::SCampData* temp = _impl_.camp_data_;
   _impl_.camp_data_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -11865,13 +12007,13 @@ inline ::base::SCampData* ServerHumanBaseAttrib::release_camp_data() {
 }
 inline ::base::SCampData* ServerHumanBaseAttrib::unsafe_arena_release_camp_data() {
   // @@protoc_insertion_point(field_release:servermessage.ServerHumanBaseAttrib.camp_data)
-  
+  _impl_._has_bits_[0] &= ~0x00000010u;
   ::base::SCampData* temp = _impl_.camp_data_;
   _impl_.camp_data_ = nullptr;
   return temp;
 }
 inline ::base::SCampData* ServerHumanBaseAttrib::_internal_mutable_camp_data() {
-  
+  _impl_._has_bits_[0] |= 0x00000010u;
   if (_impl_.camp_data_ == nullptr) {
     auto* p = CreateMaybeMessage<::base::SCampData>(GetArenaForAllocation());
     _impl_.camp_data_ = p;
@@ -11896,17 +12038,25 @@ inline void ServerHumanBaseAttrib::set_allocated_camp_data(::base::SCampData* ca
       camp_data = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, camp_data, submessage_arena);
     }
-    
+    _impl_._has_bits_[0] |= 0x00000010u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000010u;
   }
   _impl_.camp_data_ = camp_data;
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerHumanBaseAttrib.camp_data)
 }
 
-// int32 portrait_id = 19;
+// optional int32 portrait_id = 19;
+inline bool ServerHumanBaseAttrib::_internal_has_portrait_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00200000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_portrait_id() const {
+  return _internal_has_portrait_id();
+}
 inline void ServerHumanBaseAttrib::clear_portrait_id() {
   _impl_.portrait_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00200000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_portrait_id() const {
   return _impl_.portrait_id_;
@@ -11916,7 +12066,7 @@ inline int32_t ServerHumanBaseAttrib::portrait_id() const {
   return _internal_portrait_id();
 }
 inline void ServerHumanBaseAttrib::_internal_set_portrait_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00200000u;
   _impl_.portrait_id_ = value;
 }
 inline void ServerHumanBaseAttrib::set_portrait_id(int32_t value) {
@@ -11924,9 +12074,17 @@ inline void ServerHumanBaseAttrib::set_portrait_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.portrait_id)
 }
 
-// int32 model_id = 20;
+// optional int32 model_id = 20;
+inline bool ServerHumanBaseAttrib::_internal_has_model_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00400000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_model_id() const {
+  return _internal_has_model_id();
+}
 inline void ServerHumanBaseAttrib::clear_model_id() {
   _impl_.model_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00400000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_model_id() const {
   return _impl_.model_id_;
@@ -11936,7 +12094,7 @@ inline int32_t ServerHumanBaseAttrib::model_id() const {
   return _internal_model_id();
 }
 inline void ServerHumanBaseAttrib::_internal_set_model_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00400000u;
   _impl_.model_id_ = value;
 }
 inline void ServerHumanBaseAttrib::set_model_id(int32_t value) {
@@ -11944,9 +12102,17 @@ inline void ServerHumanBaseAttrib::set_model_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.model_id)
 }
 
-// int32 mount_id = 21;
+// optional int32 mount_id = 21;
+inline bool ServerHumanBaseAttrib::_internal_has_mount_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00800000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_mount_id() const {
+  return _internal_has_mount_id();
+}
 inline void ServerHumanBaseAttrib::clear_mount_id() {
   _impl_.mount_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00800000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_mount_id() const {
   return _impl_.mount_id_;
@@ -11956,7 +12122,7 @@ inline int32_t ServerHumanBaseAttrib::mount_id() const {
   return _internal_mount_id();
 }
 inline void ServerHumanBaseAttrib::_internal_set_mount_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00800000u;
   _impl_.mount_id_ = value;
 }
 inline void ServerHumanBaseAttrib::set_mount_id(int32_t value) {
@@ -11964,9 +12130,17 @@ inline void ServerHumanBaseAttrib::set_mount_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.mount_id)
 }
 
-// string name = 22;
+// optional string name = 22;
+inline bool ServerHumanBaseAttrib::_internal_has_name() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_name() const {
+  return _internal_has_name();
+}
 inline void ServerHumanBaseAttrib::clear_name() {
   _impl_.name_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& ServerHumanBaseAttrib::name() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerHumanBaseAttrib.name)
@@ -11975,7 +12149,7 @@ inline const std::string& ServerHumanBaseAttrib::name() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerHumanBaseAttrib::set_name(ArgT0&& arg0, ArgT... args) {
- 
+ _impl_._has_bits_[0] |= 0x00000001u;
  _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.name)
 }
@@ -11988,22 +12162,32 @@ inline const std::string& ServerHumanBaseAttrib::_internal_name() const {
   return _impl_.name_.Get();
 }
 inline void ServerHumanBaseAttrib::_internal_set_name(const std::string& value) {
-  
+  _impl_._has_bits_[0] |= 0x00000001u;
   _impl_.name_.Set(value, GetArenaForAllocation());
 }
 inline std::string* ServerHumanBaseAttrib::_internal_mutable_name() {
-  
+  _impl_._has_bits_[0] |= 0x00000001u;
   return _impl_.name_.Mutable(GetArenaForAllocation());
 }
 inline std::string* ServerHumanBaseAttrib::release_name() {
   // @@protoc_insertion_point(field_release:servermessage.ServerHumanBaseAttrib.name)
-  return _impl_.name_.Release();
+  if (!_internal_has_name()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.name_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
 }
 inline void ServerHumanBaseAttrib::set_allocated_name(std::string* name) {
   if (name != nullptr) {
-    
+    _impl_._has_bits_[0] |= 0x00000001u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000001u;
   }
   _impl_.name_.SetAllocated(name, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -12014,9 +12198,17 @@ inline void ServerHumanBaseAttrib::set_allocated_name(std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerHumanBaseAttrib.name)
 }
 
-// string country_title = 23;
+// optional string country_title = 23;
+inline bool ServerHumanBaseAttrib::_internal_has_country_title() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_country_title() const {
+  return _internal_has_country_title();
+}
 inline void ServerHumanBaseAttrib::clear_country_title() {
   _impl_.country_title_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
 inline const std::string& ServerHumanBaseAttrib::country_title() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerHumanBaseAttrib.country_title)
@@ -12025,7 +12217,7 @@ inline const std::string& ServerHumanBaseAttrib::country_title() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerHumanBaseAttrib::set_country_title(ArgT0&& arg0, ArgT... args) {
- 
+ _impl_._has_bits_[0] |= 0x00000002u;
  _impl_.country_title_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.country_title)
 }
@@ -12038,22 +12230,32 @@ inline const std::string& ServerHumanBaseAttrib::_internal_country_title() const
   return _impl_.country_title_.Get();
 }
 inline void ServerHumanBaseAttrib::_internal_set_country_title(const std::string& value) {
-  
+  _impl_._has_bits_[0] |= 0x00000002u;
   _impl_.country_title_.Set(value, GetArenaForAllocation());
 }
 inline std::string* ServerHumanBaseAttrib::_internal_mutable_country_title() {
-  
+  _impl_._has_bits_[0] |= 0x00000002u;
   return _impl_.country_title_.Mutable(GetArenaForAllocation());
 }
 inline std::string* ServerHumanBaseAttrib::release_country_title() {
   // @@protoc_insertion_point(field_release:servermessage.ServerHumanBaseAttrib.country_title)
-  return _impl_.country_title_.Release();
+  if (!_internal_has_country_title()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.country_title_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.country_title_.IsDefault()) {
+    _impl_.country_title_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
 }
 inline void ServerHumanBaseAttrib::set_allocated_country_title(std::string* country_title) {
   if (country_title != nullptr) {
-    
+    _impl_._has_bits_[0] |= 0x00000002u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000002u;
   }
   _impl_.country_title_.SetAllocated(country_title, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -12064,9 +12266,17 @@ inline void ServerHumanBaseAttrib::set_allocated_country_title(std::string* coun
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerHumanBaseAttrib.country_title)
 }
 
-// string guild_title = 24;
+// optional string guild_title = 24;
+inline bool ServerHumanBaseAttrib::_internal_has_guild_title() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_guild_title() const {
+  return _internal_has_guild_title();
+}
 inline void ServerHumanBaseAttrib::clear_guild_title() {
   _impl_.guild_title_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000004u;
 }
 inline const std::string& ServerHumanBaseAttrib::guild_title() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerHumanBaseAttrib.guild_title)
@@ -12075,7 +12285,7 @@ inline const std::string& ServerHumanBaseAttrib::guild_title() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerHumanBaseAttrib::set_guild_title(ArgT0&& arg0, ArgT... args) {
- 
+ _impl_._has_bits_[0] |= 0x00000004u;
  _impl_.guild_title_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.guild_title)
 }
@@ -12088,22 +12298,32 @@ inline const std::string& ServerHumanBaseAttrib::_internal_guild_title() const {
   return _impl_.guild_title_.Get();
 }
 inline void ServerHumanBaseAttrib::_internal_set_guild_title(const std::string& value) {
-  
+  _impl_._has_bits_[0] |= 0x00000004u;
   _impl_.guild_title_.Set(value, GetArenaForAllocation());
 }
 inline std::string* ServerHumanBaseAttrib::_internal_mutable_guild_title() {
-  
+  _impl_._has_bits_[0] |= 0x00000004u;
   return _impl_.guild_title_.Mutable(GetArenaForAllocation());
 }
 inline std::string* ServerHumanBaseAttrib::release_guild_title() {
   // @@protoc_insertion_point(field_release:servermessage.ServerHumanBaseAttrib.guild_title)
-  return _impl_.guild_title_.Release();
+  if (!_internal_has_guild_title()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000004u;
+  auto* p = _impl_.guild_title_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.guild_title_.IsDefault()) {
+    _impl_.guild_title_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
 }
 inline void ServerHumanBaseAttrib::set_allocated_guild_title(std::string* guild_title) {
   if (guild_title != nullptr) {
-    
+    _impl_._has_bits_[0] |= 0x00000004u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000004u;
   }
   _impl_.guild_title_.SetAllocated(guild_title, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -12114,9 +12334,17 @@ inline void ServerHumanBaseAttrib::set_allocated_guild_title(std::string* guild_
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerHumanBaseAttrib.guild_title)
 }
 
-// string normal_title = 25;
+// optional string normal_title = 25;
+inline bool ServerHumanBaseAttrib::_internal_has_normal_title() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_normal_title() const {
+  return _internal_has_normal_title();
+}
 inline void ServerHumanBaseAttrib::clear_normal_title() {
   _impl_.normal_title_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000008u;
 }
 inline const std::string& ServerHumanBaseAttrib::normal_title() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerHumanBaseAttrib.normal_title)
@@ -12125,7 +12353,7 @@ inline const std::string& ServerHumanBaseAttrib::normal_title() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerHumanBaseAttrib::set_normal_title(ArgT0&& arg0, ArgT... args) {
- 
+ _impl_._has_bits_[0] |= 0x00000008u;
  _impl_.normal_title_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.normal_title)
 }
@@ -12138,22 +12366,32 @@ inline const std::string& ServerHumanBaseAttrib::_internal_normal_title() const 
   return _impl_.normal_title_.Get();
 }
 inline void ServerHumanBaseAttrib::_internal_set_normal_title(const std::string& value) {
-  
+  _impl_._has_bits_[0] |= 0x00000008u;
   _impl_.normal_title_.Set(value, GetArenaForAllocation());
 }
 inline std::string* ServerHumanBaseAttrib::_internal_mutable_normal_title() {
-  
+  _impl_._has_bits_[0] |= 0x00000008u;
   return _impl_.normal_title_.Mutable(GetArenaForAllocation());
 }
 inline std::string* ServerHumanBaseAttrib::release_normal_title() {
   // @@protoc_insertion_point(field_release:servermessage.ServerHumanBaseAttrib.normal_title)
-  return _impl_.normal_title_.Release();
+  if (!_internal_has_normal_title()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000008u;
+  auto* p = _impl_.normal_title_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.normal_title_.IsDefault()) {
+    _impl_.normal_title_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
 }
 inline void ServerHumanBaseAttrib::set_allocated_normal_title(std::string* normal_title) {
   if (normal_title != nullptr) {
-    
+    _impl_._has_bits_[0] |= 0x00000008u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000008u;
   }
   _impl_.normal_title_.SetAllocated(normal_title, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -12164,9 +12402,17 @@ inline void ServerHumanBaseAttrib::set_allocated_normal_title(std::string* norma
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerHumanBaseAttrib.normal_title)
 }
 
-// int32 country_title_type = 26;
+// optional int32 country_title_type = 26;
+inline bool ServerHumanBaseAttrib::_internal_has_country_title_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x01000000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_country_title_type() const {
+  return _internal_has_country_title_type();
+}
 inline void ServerHumanBaseAttrib::clear_country_title_type() {
   _impl_.country_title_type_ = 0;
+  _impl_._has_bits_[0] &= ~0x01000000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_country_title_type() const {
   return _impl_.country_title_type_;
@@ -12176,7 +12422,7 @@ inline int32_t ServerHumanBaseAttrib::country_title_type() const {
   return _internal_country_title_type();
 }
 inline void ServerHumanBaseAttrib::_internal_set_country_title_type(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x01000000u;
   _impl_.country_title_type_ = value;
 }
 inline void ServerHumanBaseAttrib::set_country_title_type(int32_t value) {
@@ -12184,9 +12430,17 @@ inline void ServerHumanBaseAttrib::set_country_title_type(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.country_title_type)
 }
 
-// int32 guild_title_type = 27;
+// optional int32 guild_title_type = 27;
+inline bool ServerHumanBaseAttrib::_internal_has_guild_title_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x02000000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_guild_title_type() const {
+  return _internal_has_guild_title_type();
+}
 inline void ServerHumanBaseAttrib::clear_guild_title_type() {
   _impl_.guild_title_type_ = 0;
+  _impl_._has_bits_[0] &= ~0x02000000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_guild_title_type() const {
   return _impl_.guild_title_type_;
@@ -12196,7 +12450,7 @@ inline int32_t ServerHumanBaseAttrib::guild_title_type() const {
   return _internal_guild_title_type();
 }
 inline void ServerHumanBaseAttrib::_internal_set_guild_title_type(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x02000000u;
   _impl_.guild_title_type_ = value;
 }
 inline void ServerHumanBaseAttrib::set_guild_title_type(int32_t value) {
@@ -12204,9 +12458,17 @@ inline void ServerHumanBaseAttrib::set_guild_title_type(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.guild_title_type)
 }
 
-// int32 stall_is_open = 28;
+// optional int32 stall_is_open = 28;
+inline bool ServerHumanBaseAttrib::_internal_has_stall_is_open() const {
+  bool value = (_impl_._has_bits_[0] & 0x04000000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_stall_is_open() const {
+  return _internal_has_stall_is_open();
+}
 inline void ServerHumanBaseAttrib::clear_stall_is_open() {
   _impl_.stall_is_open_ = 0;
+  _impl_._has_bits_[0] &= ~0x04000000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_stall_is_open() const {
   return _impl_.stall_is_open_;
@@ -12216,7 +12478,7 @@ inline int32_t ServerHumanBaseAttrib::stall_is_open() const {
   return _internal_stall_is_open();
 }
 inline void ServerHumanBaseAttrib::_internal_set_stall_is_open(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x04000000u;
   _impl_.stall_is_open_ = value;
 }
 inline void ServerHumanBaseAttrib::set_stall_is_open(int32_t value) {
@@ -12224,9 +12486,17 @@ inline void ServerHumanBaseAttrib::set_stall_is_open(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.stall_is_open)
 }
 
-// int32 target_id = 29;
+// optional int32 target_id = 29;
+inline bool ServerHumanBaseAttrib::_internal_has_target_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x08000000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_target_id() const {
+  return _internal_has_target_id();
+}
 inline void ServerHumanBaseAttrib::clear_target_id() {
   _impl_.target_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x08000000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_target_id() const {
   return _impl_.target_id_;
@@ -12236,7 +12506,7 @@ inline int32_t ServerHumanBaseAttrib::target_id() const {
   return _internal_target_id();
 }
 inline void ServerHumanBaseAttrib::_internal_set_target_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x08000000u;
   _impl_.target_id_ = value;
 }
 inline void ServerHumanBaseAttrib::set_target_id(int32_t value) {
@@ -12244,9 +12514,17 @@ inline void ServerHumanBaseAttrib::set_target_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.target_id)
 }
 
-// int32 pk_value = 30;
+// optional int32 pk_value = 30;
+inline bool ServerHumanBaseAttrib::_internal_has_pk_value() const {
+  bool value = (_impl_._has_bits_[0] & 0x10000000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_pk_value() const {
+  return _internal_has_pk_value();
+}
 inline void ServerHumanBaseAttrib::clear_pk_value() {
   _impl_.pk_value_ = 0;
+  _impl_._has_bits_[0] &= ~0x10000000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_pk_value() const {
   return _impl_.pk_value_;
@@ -12256,7 +12534,7 @@ inline int32_t ServerHumanBaseAttrib::pk_value() const {
   return _internal_pk_value();
 }
 inline void ServerHumanBaseAttrib::_internal_set_pk_value(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x10000000u;
   _impl_.pk_value_ = value;
 }
 inline void ServerHumanBaseAttrib::set_pk_value(int32_t value) {
@@ -12264,9 +12542,17 @@ inline void ServerHumanBaseAttrib::set_pk_value(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.pk_value)
 }
 
-// int32 generation = 31;
+// optional int32 generation = 31;
+inline bool ServerHumanBaseAttrib::_internal_has_generation() const {
+  bool value = (_impl_._has_bits_[0] & 0x20000000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_generation() const {
+  return _internal_has_generation();
+}
 inline void ServerHumanBaseAttrib::clear_generation() {
   _impl_.generation_ = 0;
+  _impl_._has_bits_[0] &= ~0x20000000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_generation() const {
   return _impl_.generation_;
@@ -12276,7 +12562,7 @@ inline int32_t ServerHumanBaseAttrib::generation() const {
   return _internal_generation();
 }
 inline void ServerHumanBaseAttrib::_internal_set_generation(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x20000000u;
   _impl_.generation_ = value;
 }
 inline void ServerHumanBaseAttrib::set_generation(int32_t value) {
@@ -12284,9 +12570,17 @@ inline void ServerHumanBaseAttrib::set_generation(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.generation)
 }
 
-// int32 world_id = 32;
+// optional int32 world_id = 32;
+inline bool ServerHumanBaseAttrib::_internal_has_world_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x40000000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_world_id() const {
+  return _internal_has_world_id();
+}
 inline void ServerHumanBaseAttrib::clear_world_id() {
   _impl_.world_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x40000000u;
 }
 inline int32_t ServerHumanBaseAttrib::_internal_world_id() const {
   return _impl_.world_id_;
@@ -12296,7 +12590,7 @@ inline int32_t ServerHumanBaseAttrib::world_id() const {
   return _internal_world_id();
 }
 inline void ServerHumanBaseAttrib::_internal_set_world_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x40000000u;
   _impl_.world_id_ = value;
 }
 inline void ServerHumanBaseAttrib::set_world_id(int32_t value) {
@@ -12304,9 +12598,17 @@ inline void ServerHumanBaseAttrib::set_world_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.world_id)
 }
 
-// uint32 inherence_exp = 33;
+// optional uint32 inherence_exp = 33;
+inline bool ServerHumanBaseAttrib::_internal_has_inherence_exp() const {
+  bool value = (_impl_._has_bits_[0] & 0x80000000u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_inherence_exp() const {
+  return _internal_has_inherence_exp();
+}
 inline void ServerHumanBaseAttrib::clear_inherence_exp() {
   _impl_.inherence_exp_ = 0u;
+  _impl_._has_bits_[0] &= ~0x80000000u;
 }
 inline uint32_t ServerHumanBaseAttrib::_internal_inherence_exp() const {
   return _impl_.inherence_exp_;
@@ -12316,7 +12618,7 @@ inline uint32_t ServerHumanBaseAttrib::inherence_exp() const {
   return _internal_inherence_exp();
 }
 inline void ServerHumanBaseAttrib::_internal_set_inherence_exp(uint32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x80000000u;
   _impl_.inherence_exp_ = value;
 }
 inline void ServerHumanBaseAttrib::set_inherence_exp(uint32_t value) {
@@ -12324,9 +12626,17 @@ inline void ServerHumanBaseAttrib::set_inherence_exp(uint32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.inherence_exp)
 }
 
-// uint32 inherence_level = 34;
+// optional uint32 inherence_level = 34;
+inline bool ServerHumanBaseAttrib::_internal_has_inherence_level() const {
+  bool value = (_impl_._has_bits_[1] & 0x00000001u) != 0;
+  return value;
+}
+inline bool ServerHumanBaseAttrib::has_inherence_level() const {
+  return _internal_has_inherence_level();
+}
 inline void ServerHumanBaseAttrib::clear_inherence_level() {
   _impl_.inherence_level_ = 0u;
+  _impl_._has_bits_[1] &= ~0x00000001u;
 }
 inline uint32_t ServerHumanBaseAttrib::_internal_inherence_level() const {
   return _impl_.inherence_level_;
@@ -12336,7 +12646,7 @@ inline uint32_t ServerHumanBaseAttrib::inherence_level() const {
   return _internal_inherence_level();
 }
 inline void ServerHumanBaseAttrib::_internal_set_inherence_level(uint32_t value) {
-  
+  _impl_._has_bits_[1] |= 0x00000001u;
   _impl_.inherence_level_ = value;
 }
 inline void ServerHumanBaseAttrib::set_inherence_level(uint32_t value) {
@@ -12344,9 +12654,11 @@ inline void ServerHumanBaseAttrib::set_inherence_level(uint32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerHumanBaseAttrib.inherence_level)
 }
 
-// .base.SHorseGuid current_horse_guid = 35;
+// optional .base.SHorseGuid current_horse_guid = 35;
 inline bool ServerHumanBaseAttrib::_internal_has_current_horse_guid() const {
-  return this != internal_default_instance() && _impl_.current_horse_guid_ != nullptr;
+  bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.current_horse_guid_ != nullptr);
+  return value;
 }
 inline bool ServerHumanBaseAttrib::has_current_horse_guid() const {
   return _internal_has_current_horse_guid();
@@ -12367,14 +12679,14 @@ inline void ServerHumanBaseAttrib::unsafe_arena_set_allocated_current_horse_guid
   }
   _impl_.current_horse_guid_ = current_horse_guid;
   if (current_horse_guid) {
-    
+    _impl_._has_bits_[0] |= 0x00000020u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000020u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:servermessage.ServerHumanBaseAttrib.current_horse_guid)
 }
 inline ::base::SHorseGuid* ServerHumanBaseAttrib::release_current_horse_guid() {
-  
+  _impl_._has_bits_[0] &= ~0x00000020u;
   ::base::SHorseGuid* temp = _impl_.current_horse_guid_;
   _impl_.current_horse_guid_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -12390,13 +12702,13 @@ inline ::base::SHorseGuid* ServerHumanBaseAttrib::release_current_horse_guid() {
 }
 inline ::base::SHorseGuid* ServerHumanBaseAttrib::unsafe_arena_release_current_horse_guid() {
   // @@protoc_insertion_point(field_release:servermessage.ServerHumanBaseAttrib.current_horse_guid)
-  
+  _impl_._has_bits_[0] &= ~0x00000020u;
   ::base::SHorseGuid* temp = _impl_.current_horse_guid_;
   _impl_.current_horse_guid_ = nullptr;
   return temp;
 }
 inline ::base::SHorseGuid* ServerHumanBaseAttrib::_internal_mutable_current_horse_guid() {
-  
+  _impl_._has_bits_[0] |= 0x00000020u;
   if (_impl_.current_horse_guid_ == nullptr) {
     auto* p = CreateMaybeMessage<::base::SHorseGuid>(GetArenaForAllocation());
     _impl_.current_horse_guid_ = p;
@@ -12421,9 +12733,9 @@ inline void ServerHumanBaseAttrib::set_allocated_current_horse_guid(::base::SHor
       current_horse_guid = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, current_horse_guid, submessage_arena);
     }
-    
+    _impl_._has_bits_[0] |= 0x00000020u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000020u;
   }
   _impl_.current_horse_guid_ = current_horse_guid;
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerHumanBaseAttrib.current_horse_guid)

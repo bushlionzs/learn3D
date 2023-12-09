@@ -28,20 +28,19 @@
 class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
 public:
+	PlayerAASAnimPlayCallback(KCharacter* owner)
+	{
+		_owner = owner;
+	}
 	virtual void	onAnimationEnd(const char* animName, const char* parentNodeType, const char* parentNodeName,
 		uint64_t info)
 	{
-
+		_owner->onAnimationEnd(animName, parentNodeType, parentNodeName);
 	}
+private:
+	KCharacter* _owner;
 };
 
-
-void MyCallback::onAnimationEnd(const char* animName, const char* parentNodeType, const char* parentNodeName,
-	uint64_t info)
-{
-	KCharacter* character = (KCharacter*)info;
-	character->onAnimationEnd(animName, parentNodeType, parentNodeName);
-}
 
 const Ogre::String FOBJ_ACTOR_FILE = "logic model name";
 KCharacter::KCharacter()
@@ -156,8 +155,6 @@ CHARACTER_ACTION getAASNodeActionType(CHARACTER_AAS_NODE eNode)
 
 void KCharacter::onAnimationEnd(const char* animName, const char* parentNodeType, const char* parentNodeName)
 {
-	::OutputDebugString(animName);
-	::OutputDebugString("\n");
 
 	int32_t type = mASSNodeTypeMap[parentNodeName];
 
@@ -760,7 +757,7 @@ void KCharacter::createCharRenderInterface(void)
 
 	// 设置加载完成回调
 
-	mMainEntity->getLogicModel()->setAASAnimEndCallback(new PlayerAASAnimPlayCallback, (uint64_t)this);
+	mMainEntity->getLogicModel()->setAASAnimEndCallback(new PlayerAASAnimPlayCallback(this), (uint64_t)this);
 
 }
 
@@ -1731,6 +1728,7 @@ bool KCharacter::IsUseSkill()
 {
 	return false;
 }
+
 
 void KCharacter::RefreshBaseAnimation()
 {

@@ -803,7 +803,8 @@ void Player::OnEnterMap(void)
 	dummy.set_object_id(GetID());
 	dummy.set_position_x(pos->m_fX);
 	dummy.set_position_y(pos->m_fZ);
-	dummy.set_scene_id(GetMap()->MapID());
+	auto map_id = GetMap()->MapID();
+	dummy.set_scene_id(map_id);
 
 
 
@@ -2761,6 +2762,7 @@ void Player::updateEquip()
 		equip->set_ns_bind(itemData->m_nsBind);
 		equip->set_creator(itemData->m_Creator);
 		equip->set_term_endtime(itemData->m_TermEndTime);
+		equip->set_item_pos(i);
 
 		for (int32_t i = 0; i < MAX_ITEM_PARAM; i++)
 		{

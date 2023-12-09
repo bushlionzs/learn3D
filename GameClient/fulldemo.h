@@ -11,6 +11,10 @@ public:
 	virtual bool appInit();
 	virtual void appUpdate(float delta);
 	virtual EngineType getEngineType();
+	virtual bool isUseMyGUI()
+	{
+		return false;
+	}
 private:
 	void registerMessage();
 private:

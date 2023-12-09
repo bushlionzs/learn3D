@@ -99,7 +99,7 @@ void NetMessageManager::dispatchMessage(NetHandle h, const char* msg, uint32_t m
 	auto itor = _handlers.find(header->mMsgId);
 	if (itor != _handlers.end())
 	{
-		NetPacket* packet = new  NetPacket(itor->second, msg, msg_size);
+		NetPacket* packet = new  NetPacket(itor->second, msg + sizeof(NetHeader), data_size);
 
 		mPacketList.push_back(packet);
 	}

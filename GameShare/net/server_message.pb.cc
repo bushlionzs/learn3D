@@ -120,11 +120,12 @@ struct ServerMsgCharEquipmentDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgCharEquipmentDefaultTypeInternal _ServerMsgCharEquipment_default_instance_;
 PROTOBUF_CONSTEXPR ServerHumanBaseAttrib::ServerHumanBaseAttrib(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.country_title_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.guild_title_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.normal_title_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.flags_)*/nullptr
   , /*decltype(_impl_.camp_data_)*/nullptr
   , /*decltype(_impl_.current_horse_guid_)*/nullptr
   , /*decltype(_impl_.player_id_)*/0
@@ -154,8 +155,7 @@ PROTOBUF_CONSTEXPR ServerHumanBaseAttrib::ServerHumanBaseAttrib(
   , /*decltype(_impl_.generation_)*/0
   , /*decltype(_impl_.world_id_)*/0
   , /*decltype(_impl_.inherence_exp_)*/0u
-  , /*decltype(_impl_.inherence_level_)*/0u
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+  , /*decltype(_impl_.inherence_level_)*/0u} {}
 struct ServerHumanBaseAttribDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ServerHumanBaseAttribDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -988,14 +988,13 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgCharEquipment, _impl_.object_id_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgCharEquipment, _impl_.scene_id_),
-  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _impl_.player_id_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _impl_.flags_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _impl_.job_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _impl_.country_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _impl_.data_id_),
@@ -1029,6 +1028,40 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _impl_.inherence_exp_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _impl_.inherence_level_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerHumanBaseAttrib, _impl_.current_horse_guid_),
+  ~0u,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  4,
+  21,
+  22,
+  23,
+  0,
+  1,
+  2,
+  3,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,
+  31,
+  32,
+  5,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgCharImpactListUpdate, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1564,46 +1597,46 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 35, -1, -1, sizeof(::servermessage::ServerMsgAddQuest)},
   { 43, -1, -1, sizeof(::servermessage::ServerMsgAddSkillToSkillList)},
   { 53, -1, -1, sizeof(::servermessage::ServerMsgCharEquipment)},
-  { 61, -1, -1, sizeof(::servermessage::ServerHumanBaseAttrib)},
-  { 102, -1, -1, sizeof(::servermessage::ServerMsgCharImpactListUpdate)},
-  { 113, 126, -1, sizeof(::servermessage::ServerMsgCharMove)},
-  { 133, -1, -1, sizeof(::servermessage::ServerMsgCharSkillGather)},
-  { 147, -1, -1, sizeof(::servermessage::ServerMsgCharStopAction)},
-  { 156, -1, -1, sizeof(::servermessage::ServerMsgChat)},
-  { 167, -1, -1, sizeof(::servermessage::ServerMsgCommand)},
-  { 175, -1, -1, sizeof(::servermessage::ServerMsgCooldownUpdate)},
-  { 183, -1, -1, sizeof(::servermessage::ServerMsgDelObject)},
-  { 191, -1, -1, sizeof(::servermessage::ServerMsgDelQuest)},
-  { 199, -1, -1, sizeof(::servermessage::ServerMsgDeltailOfHealsAndDamage)},
-  { 211, -1, -1, sizeof(::servermessage::ServerMsgDetailAbilityInfo)},
-  { 221, -1, -1, sizeof(::servermessage::ServerMsgDetailAttrib)},
-  { 278, -1, -1, sizeof(::servermessage::ServerMsgDetailAttribPet)},
-  { 334, -1, -1, sizeof(::servermessage::ServerMsgDetailBuff)},
-  { 350, -1, -1, sizeof(::servermessage::ServerMsgDetailEquipList)},
-  { 358, -1, -1, sizeof(::servermessage::ServerMsgDetailItemList)},
-  { 366, -1, -1, sizeof(::servermessage::ServerMsgDetailSkillList)},
-  { 374, -1, -1, sizeof(::servermessage::ServerMsgEnterMap)},
-  { 385, -1, -1, sizeof(::servermessage::ServerMsgItemInfo)},
-  { 395, -1, -1, sizeof(::servermessage::ServerMsgManipulatePetResult)},
-  { 404, -1, -1, sizeof(::servermessage::ServerMsgModifyQuest)},
-  { 415, -1, -1, sizeof(::servermessage::ServerMsgMonsterAttribute)},
-  { 449, -1, -1, sizeof(::servermessage::ServerMsgNewBeastie)},
-  { 465, -1, -1, sizeof(::servermessage::ServerMsgNewItem)},
-  { 477, -1, -1, sizeof(::servermessage::ServerMsgNewItemBox)},
-  { 489, -1, -1, sizeof(::servermessage::ServerMsgNewMonster)},
-  { 507, -1, -1, sizeof(::servermessage::ServerMsgNotifyEquip)},
-  { 515, -1, -1, sizeof(::servermessage::ServerMsgOperateResult)},
-  { 525, -1, -1, sizeof(::servermessage::ServerMsgPickItemResult)},
-  { 533, -1, -1, sizeof(::servermessage::ServerMsgQueryEventResult)},
-  { 540, -1, -1, sizeof(::servermessage::ServerMsgQuestList)},
-  { 548, -1, -1, sizeof(::servermessage::ServerMsgQuestListRefresh)},
-  { 556, -1, -1, sizeof(::servermessage::ServerMsgSkillSettingResult)},
-  { 565, -1, -1, sizeof(::servermessage::ServerMsgScriptCommand)},
-  { 577, -1, -1, sizeof(::servermessage::ServerMsgSkillUpgrade)},
-  { 588, -1, -1, sizeof(::servermessage::ServerMsgSwapItem)},
-  { 597, -1, -1, sizeof(::servermessage::ServerMsgTargetListAndHitFlags)},
-  { 609, -1, -1, sizeof(::servermessage::ServerMsgTaskDownEquipResult)},
-  { 620, -1, -1, sizeof(::servermessage::ServerMsgUseEquipResult)},
+  { 61, 101, -1, sizeof(::servermessage::ServerHumanBaseAttrib)},
+  { 135, -1, -1, sizeof(::servermessage::ServerMsgCharImpactListUpdate)},
+  { 146, 159, -1, sizeof(::servermessage::ServerMsgCharMove)},
+  { 166, -1, -1, sizeof(::servermessage::ServerMsgCharSkillGather)},
+  { 180, -1, -1, sizeof(::servermessage::ServerMsgCharStopAction)},
+  { 189, -1, -1, sizeof(::servermessage::ServerMsgChat)},
+  { 200, -1, -1, sizeof(::servermessage::ServerMsgCommand)},
+  { 208, -1, -1, sizeof(::servermessage::ServerMsgCooldownUpdate)},
+  { 216, -1, -1, sizeof(::servermessage::ServerMsgDelObject)},
+  { 224, -1, -1, sizeof(::servermessage::ServerMsgDelQuest)},
+  { 232, -1, -1, sizeof(::servermessage::ServerMsgDeltailOfHealsAndDamage)},
+  { 244, -1, -1, sizeof(::servermessage::ServerMsgDetailAbilityInfo)},
+  { 254, -1, -1, sizeof(::servermessage::ServerMsgDetailAttrib)},
+  { 311, -1, -1, sizeof(::servermessage::ServerMsgDetailAttribPet)},
+  { 367, -1, -1, sizeof(::servermessage::ServerMsgDetailBuff)},
+  { 383, -1, -1, sizeof(::servermessage::ServerMsgDetailEquipList)},
+  { 391, -1, -1, sizeof(::servermessage::ServerMsgDetailItemList)},
+  { 399, -1, -1, sizeof(::servermessage::ServerMsgDetailSkillList)},
+  { 407, -1, -1, sizeof(::servermessage::ServerMsgEnterMap)},
+  { 418, -1, -1, sizeof(::servermessage::ServerMsgItemInfo)},
+  { 428, -1, -1, sizeof(::servermessage::ServerMsgManipulatePetResult)},
+  { 437, -1, -1, sizeof(::servermessage::ServerMsgModifyQuest)},
+  { 448, -1, -1, sizeof(::servermessage::ServerMsgMonsterAttribute)},
+  { 482, -1, -1, sizeof(::servermessage::ServerMsgNewBeastie)},
+  { 498, -1, -1, sizeof(::servermessage::ServerMsgNewItem)},
+  { 510, -1, -1, sizeof(::servermessage::ServerMsgNewItemBox)},
+  { 522, -1, -1, sizeof(::servermessage::ServerMsgNewMonster)},
+  { 540, -1, -1, sizeof(::servermessage::ServerMsgNotifyEquip)},
+  { 548, -1, -1, sizeof(::servermessage::ServerMsgOperateResult)},
+  { 558, -1, -1, sizeof(::servermessage::ServerMsgPickItemResult)},
+  { 566, -1, -1, sizeof(::servermessage::ServerMsgQueryEventResult)},
+  { 573, -1, -1, sizeof(::servermessage::ServerMsgQuestList)},
+  { 581, -1, -1, sizeof(::servermessage::ServerMsgQuestListRefresh)},
+  { 589, -1, -1, sizeof(::servermessage::ServerMsgSkillSettingResult)},
+  { 598, -1, -1, sizeof(::servermessage::ServerMsgScriptCommand)},
+  { 610, -1, -1, sizeof(::servermessage::ServerMsgSkillUpgrade)},
+  { 621, -1, -1, sizeof(::servermessage::ServerMsgSwapItem)},
+  { 630, -1, -1, sizeof(::servermessage::ServerMsgTargetListAndHitFlags)},
+  { 642, -1, -1, sizeof(::servermessage::ServerMsgTaskDownEquipResult)},
+  { 653, -1, -1, sizeof(::servermessage::ServerMsgUseEquipResult)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1673,237 +1706,253 @@ const char descriptor_table_protodef_server_5fmessage_2eproto[] PROTOBUF_SECTION
   "SkillToSkillList\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010s"
   "kill_id\030\002 \001(\005\022\023\n\013skill_state\030\003 \001(\005\022\023\n\013sk"
   "ill_level\030\004 \001(\005\"=\n\026ServerMsgCharEquipmen"
-  "t\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\"\367"
-  "\005\n\025ServerHumanBaseAttrib\022\021\n\tplayer_id\030\001 "
-  "\001(\005\022\033\n\005flags\030\002 \001(\0132\014.base.Flag64\022\013\n\003job\030"
-  "\003 \001(\005\022\017\n\007country\030\004 \001(\005\022\017\n\007data_id\030\005 \001(\005\022"
-  "\r\n\005level\030\006 \001(\005\022\024\n\014hair_mesh_id\030\007 \001(\005\022\024\n\014"
-  "face_mesh_id\030\010 \001(\005\022\022\n\nhp_percent\030\t \001(\005\022\n"
-  "\n\002hp\030\n \001(\005\022\016\n\006hp_max\030\013 \001(\005\022\014\n\004rage\030\014 \001(\005"
-  "\022\020\n\010max_rage\030\r \001(\005\022\023\n\013steal_level\030\016 \001(\005\022"
-  "\022\n\nmood_state\030\017 \001(\005\022\022\n\nmove_speed\030\020 \001(\002\022"
-  "\024\n\014attack_speed\030\021 \001(\002\022\"\n\tcamp_data\030\022 \001(\013"
-  "2\017.base.SCampData\022\023\n\013portrait_id\030\023 \001(\005\022\020"
-  "\n\010model_id\030\024 \001(\005\022\020\n\010mount_id\030\025 \001(\005\022\014\n\004na"
-  "me\030\026 \001(\t\022\025\n\rcountry_title\030\027 \001(\t\022\023\n\013guild"
-  "_title\030\030 \001(\t\022\024\n\014normal_title\030\031 \001(\t\022\032\n\022co"
-  "untry_title_type\030\032 \001(\005\022\030\n\020guild_title_ty"
-  "pe\030\033 \001(\005\022\025\n\rstall_is_open\030\034 \001(\005\022\021\n\ttarge"
-  "t_id\030\035 \001(\005\022\020\n\010pk_value\030\036 \001(\005\022\022\n\ngenerati"
-  "on\030\037 \001(\005\022\020\n\010world_id\030  \001(\005\022\025\n\rinherence_"
-  "exp\030! \001(\r\022\027\n\017inherence_level\030\" \001(\r\022,\n\022cu"
-  "rrent_horse_guid\030# \001(\0132\020.base.SHorseGuid"
-  "\"\220\001\n\035ServerMsgCharImpactListUpdate\022\020\n\010ow"
-  "ner_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\022\024\n\014impact"
-  "_count\030\003 \001(\005\022\017\n\007last_sn\030\004 \001(\r\022$\n\010a_impac"
-  "t\030\005 \003(\0132\022.base.ImpactStruct\"\354\001\n\021ServerMs"
-  "gCharMove\022\021\n\tobject_id\030\001 \001(\005\022\021\n\thandle_i"
-  "d\030\002 \001(\005\022\024\n\014impact_count\030\003 \001(\005\022\017\n\007last_sn"
-  "\030\004 \001(\r\022$\n\010a_impact\030\005 \003(\0132\022.base.ImpactSt"
-  "ruct\022$\n\ntarget_pos\030\006 \001(\0132\013.base.GLPosH\000\210"
-  "\001\001\022\"\n\010stop_pos\030\007 \001(\0132\013.base.GLPosH\001\210\001\001B\r"
-  "\n\013_target_posB\013\n\t_stop_pos\"\322\001\n\030ServerMsg"
-  "CharSkillGather\022\021\n\tobject_id\030\001 \001(\005\022\023\n\013lo"
-  "gic_count\030\002 \001(\005\022\025\n\rskill_data_id\030\003 \001(\005\022\""
-  "\n\ruser_position\030\004 \001(\0132\013.base.GLPos\022\021\n\tta"
-  "rget_id\030\005 \001(\005\022\037\n\ntarget_pos\030\006 \001(\0132\013.base"
-  ".GLPos\022\013\n\003dir\030\007 \001(\002\022\022\n\ntotal_time\030\010 \001(\005\""
-  "T\n\027ServerMsgCharStopAction\022\021\n\tobject_id\030"
-  "\001 \001(\005\022\023\n\013logic_count\030\002 \001(\005\022\021\n\tstop_time\030"
-  "\003 \001(\005\"{\n\rServerMsgChat\022\021\n\tchat_type\030\001 \001("
-  "\005\022\024\n\014chat_content\030\002 \001(\t\022\025\n\rshow_position"
-  "\030\003 \001(\005\022\023\n\013cycle_count\030\004 \001(\005\022\025\n\ranimate_i"
-  "mage\030\005 \001(\005\"E\n\020ServerMsgCommand\022\020\n\010ui_ind"
-  "ex\030\001 \001(\005\022\037\n\010sx_param\030\002 \001(\0132\r.base.SXPara"
-  "m\">\n\027ServerMsgCooldownUpdate\022\021\n\tobject_i"
-  "d\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\"9\n\022ServerMsgDe"
-  "lObject\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030\002"
-  " \001(\005\"8\n\021ServerMsgDelQuest\022\021\n\tplayer_id\030\001"
-  " \001(\005\022\020\n\010quest_id\030\002 \001(\005\"\241\001\n ServerMsgDelt"
-  "ailOfHealsAndDamage\022\021\n\thp_modify\030\001 \001(\005\022\021"
-  "\n\tobject_id\030\002 \001(\005\022\021\n\tsender_id\030\003 \001(\005\022\032\n\022"
-  "sender_logic_count\030\004 \001(\005\022\024\n\014critical_hit"
-  "\030\005 \001(\010\022\022\n\ndeath_blow\030\006 \001(\010\"x\n\032ServerMsgD"
-  "etailAbilityInfo\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010s"
-  "cene_id\030\002 \001(\005\022%\n\010abilitys\030\003 \003(\0132\023.base.P"
-  "layerAbility\022\016\n\006prescr\030\004 \001(\t\"\266\010\n\025ServerM"
-  "sgDetailAttrib\022 \n\006skills\030\001 \003(\0132\020.base.Ho"
-  "rseSkill\022\022\n\nextra_data\030\002 \001(\t\022\033\n\005flags\030\003 "
-  "\001(\0132\014.base.Flag64\022\016\n\006map_id\030\004 \001(\005\022$\n\nhor"
-  "se_guid\030\005 \001(\0132\020.base.SHorseGuid\022\023\n\013trade"
-  "_index\030\006 \001(\005\022\017\n\007data_id\030\007 \001(\005\022\014\n\004name\030\010 "
-  "\001(\t\022\020\n\010nickname\030\t \001(\t\022\017\n\007ai_type\030\n \001(\005\022\r"
-  "\n\005level\030\013 \001(\005\022\013\n\003exp\030\014 \001(\005\022\n\n\002hp\030\r \001(\005\022\016"
-  "\n\006hp_max\030\016 \001(\005\022\023\n\013horse_state\030\017 \001(\005\022\022\n\ng"
-  "eneration\030\020 \001(\005\022\021\n\thappiness\030\021 \001(\005\022\021\n\tat"
-  "tr_near\030\022 \001(\005\022\020\n\010attr_far\030\023 \001(\005\022\022\n\nattr_"
-  "magic\030\024 \001(\005\022\020\n\010def_near\030\025 \001(\005\022\017\n\007def_far"
-  "\030\026 \001(\005\022\021\n\tdef_magic\030\027 \001(\005\022\013\n\003hit\030\030 \001(\005\022\014"
-  "\n\004miss\030\031 \001(\005\022\020\n\010critical\030\032 \001(\005\022\020\n\010model_"
-  "id\030\033 \001(\005\022\020\n\010mount_id\030\034 \001(\005\022\026\n\016str_percep"
-  "tion\030\035 \001(\005\022\026\n\016con_perception\030\036 \001(\005\022\026\n\016de"
-  "x_perception\030\037 \001(\005\022\026\n\016int_perception\030  \001"
-  "(\005\022\034\n\024str_perception_limit\030! \001(\005\022\034\n\024con_"
-  "perception_limit\030\" \001(\005\022\034\n\024dex_perception"
-  "_limit\030# \001(\005\022\034\n\024int_perception_limit\030$ \001"
-  "(\005\022\020\n\010strength\030% \001(\005\022\013\n\003con\030& \001(\005\022\013\n\003dex"
-  "\030\' \001(\005\022\024\n\014intelligence\030( \001(\005\022\021\n\tgrow_rat"
-  "e\030) \001(\005\022\024\n\014remain_point\030* \001(\005\022\026\n\016strengt"
-  "h_point\030+ \001(\005\022\027\n\017smartness_point\030, \001(\005\022\022"
-  "\n\nmind_point\030- \001(\005\022\032\n\022constitution_point"
-  "\030. \001(\005\022\r\n\005index\030/ \001(\005\022\023\n\013stall_order\0300 \001"
-  "(\005\022\020\n\010pet_lock\0301 \001(\005\022\023\n\013unlock_time\0302 \001("
-  "\005\022\032\n\022current_horse_flag\0303 \001(\010\"\235\010\n\030Server"
-  "MsgDetailAttribPet\022 \n\006skills\030\001 \003(\0132\020.bas"
-  "e.HorseSkill\022\022\n\nextra_data\030\002 \001(\t\022\033\n\005flag"
-  "s\030\003 \001(\0132\014.base.Flag64\022\016\n\006map_id\030\004 \001(\005\022$\n"
-  "\nhorse_guid\030\005 \001(\0132\020.base.SHorseGuid\022\023\n\013t"
-  "rade_index\030\006 \001(\005\022\017\n\007data_id\030\007 \001(\005\022\014\n\004nam"
-  "e\030\010 \001(\t\022\020\n\010nickname\030\t \001(\t\022\017\n\007ai_type\030\n \001"
-  "(\005\022\r\n\005level\030\013 \001(\005\022\013\n\003exp\030\014 \001(\005\022\n\n\002hp\030\r \001"
-  "(\005\022\016\n\006hp_max\030\016 \001(\005\022\023\n\013horse_state\030\017 \001(\005\022"
-  "\022\n\ngeneration\030\020 \001(\005\022\021\n\thappiness\030\021 \001(\005\022\021"
-  "\n\tattr_near\030\022 \001(\005\022\020\n\010attr_far\030\023 \001(\005\022\022\n\na"
-  "ttr_magic\030\024 \001(\005\022\020\n\010def_near\030\025 \001(\005\022\017\n\007def"
-  "_far\030\026 \001(\005\022\021\n\tdef_magic\030\027 \001(\005\022\013\n\003hit\030\030 \001"
-  "(\005\022\014\n\004miss\030\031 \001(\005\022\020\n\010critical\030\032 \001(\005\022\020\n\010mo"
-  "del_id\030\033 \001(\005\022\020\n\010mount_id\030\034 \001(\005\022\026\n\016str_pe"
-  "rception\030\035 \001(\005\022\026\n\016con_perception\030\036 \001(\005\022\026"
-  "\n\016dex_perception\030\037 \001(\005\022\026\n\016int_perception"
-  "\030  \001(\005\022\034\n\024str_perception_limit\030! \001(\005\022\034\n\024"
-  "con_perception_limit\030\" \001(\005\022\034\n\024dex_percep"
-  "tion_limit\030# \001(\005\022\034\n\024int_perception_limit"
-  "\030$ \001(\005\022\020\n\010strength\030% \001(\005\022\013\n\003con\030& \001(\005\022\013\n"
-  "\003dex\030\' \001(\005\022\024\n\014intelligence\030( \001(\005\022\021\n\tgrow"
-  "_rate\030) \001(\005\022\024\n\014remain_point\030* \001(\005\022\026\n\016str"
-  "ength_point\030+ \001(\005\022\027\n\017smartness_point\030, \001"
-  "(\005\022\022\n\nmind_point\030- \001(\005\022\032\n\022constitution_p"
-  "oint\030. \001(\005\022\r\n\005index\030/ \001(\005\022\023\n\013stall_order"
-  "\0300 \001(\005\022\020\n\010pet_lock\0301 \001(\005\022\023\n\013unlock_time\030"
-  "2 \001(\005\"\324\001\n\023ServerMsgDetailBuff\022\021\n\tobject_"
-  "id\030\001 \001(\005\022\023\n\013receiver_id\030\002 \001(\005\022\021\n\tsender_"
-  "id\030\003 \001(\005\022\016\n\006enable\030\004 \001(\010\022\020\n\010skill_id\030\005 \001"
-  "(\005\022\n\n\002sn\030\006 \001(\005\022\017\n\007buff_id\030\007 \001(\005\022\023\n\013conti"
-  "nuance\030\010 \001(\005\022\022\n\ndelay_time\030\t \001(\005\022\032\n\022send"
-  "er_logic_count\030\n \001(\005\"I\n\030ServerMsgDetailE"
-  "quipList\022\021\n\tobject_id\030\001 \001(\005\022\032\n\005items\030\002 \003"
-  "(\0132\013.base.SItem\"H\n\027ServerMsgDetailItemLi"
-  "st\022\021\n\tobject_id\030\001 \001(\005\022\032\n\005items\030\002 \003(\0132\013.b"
-  "ase.SItem\"P\n\030ServerMsgDetailSkillList\022\021\n"
-  "\tplayer_id\030\001 \001(\005\022!\n\006skills\030\002 \003(\0132\021.base."
-  "PlayerSpell\"n\n\021ServerMsgEnterMap\022\020\n\010scen"
-  "e_id\030\001 \001(\r\022\022\n\nposition_x\030\002 \001(\002\022\022\n\npositi"
-  "on_y\030\003 \001(\002\022\014\n\004guid\030\004 \001(\005\022\021\n\tobject_id\030\005 "
-  "\001(\005\"]\n\021ServerMsgItemInfo\022\021\n\tbag_index\030\001 "
-  "\001(\005\022\031\n\004item\030\002 \001(\0132\013.base.SItem\022\014\n\004null\030\003"
-  " \001(\010\022\014\n\004tips\030\004 \001(\005\"S\n\034ServerMsgManipulat"
-  "ePetResult\022\016\n\006result\030\001 \001(\005\022\021\n\tobject_id\030"
-  "\002 \001(\005\022\020\n\010scene_id\030\003 \001(\005\"u\n\024ServerMsgModi"
-  "fyQuest\022\021\n\tplayer_id\030\001 \001(\005\022\020\n\010quest_id\030\002"
-  " \001(\005\022\014\n\004flag\030\003 \001(\005\022\016\n\006flag32\030\004 \001(\r\022\032\n\005qu"
-  "est\030\005 \001(\0132\013.base.Quest\"\336\004\n\031ServerMsgMons"
-  "terAttribute\022\017\n\007refresh\030\001 \001(\005\022\033\n\005flags\030\002"
-  " \001(\0132\014.base.Flag64\022\021\n\tobject_id\030\003 \001(\005\022\017\n"
-  "\007data_id\030\004 \001(\r\022\r\n\005level\030\005 \001(\005\022\022\n\nhp_perc"
-  "ent\030\006 \001(\005\022\023\n\013steal_level\030\007 \001(\005\022\022\n\nmood_s"
-  "tate\030\010 \001(\005\022\022\n\nmove_speed\030\t \001(\002\022\024\n\014attack"
-  "_speed\030\n \001(\002\022\"\n\tcamp_data\030\013 \001(\0132\017.base.S"
-  "CampData\022\023\n\013portrait_id\030\014 \001(\005\022\020\n\010model_i"
-  "d\030\r \001(\005\022\020\n\010mount_id\030\016 \001(\005\022\017\n\007ai_type\030\017 \001"
-  "(\005\022\014\n\004name\030\020 \001(\t\022\025\n\rcountry_title\030\021 \001(\t\022"
-  "\023\n\013guild_title\030\022 \001(\t\022\024\n\014normal_title\030\023 \001"
-  "(\t\022\032\n\022country_title_type\030\024 \001(\005\022\030\n\020guild_"
-  "title_type\030\025 \001(\005\022\031\n\021normal_title_type\030\026 "
-  "\001(\005\022\025\n\roccupant_guid\030\027 \001(\r\022\020\n\010owner_id\030\030"
-  " \001(\005\022\021\n\ttarget_id\030\031 \001(\005\022\013\n\003dir\030\032 \001(\002\022\022\n\n"
-  "ctrl_state\030\033 \001(\005\022\r\n\005scale\030\034 \001(\002\"\306\001\n\023Serv"
-  "erMsgNewBeastie\022\021\n\tobject_id\030\001 \001(\r\022\014\n\004na"
-  "me\030\002 \001(\t\022\022\n\nposition_x\030\003 \001(\002\022\022\n\nposition"
-  "_z\030\004 \001(\002\022\013\n\003dir\030\005 \001(\002\022\022\n\nmove_speed\030\006 \001("
-  "\002\022\016\n\006moving\030\007 \001(\010\022\021\n\thandle_id\030\010 \001(\005\022\020\n\010"
-  "target_x\030\t \001(\002\022\020\n\010target_z\030\n \001(\002\"\207\001\n\020Ser"
-  "verMsgNewItem\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010scen"
-  "e_id\030\002 \001(\005\022\022\n\nitem_index\030\003 \001(\005\022\022\n\nitem_c"
-  "ount\030\004 \001(\005\022\022\n\nposition_x\030\005 \001(\002\022\022\n\npositi"
-  "on_z\030\006 \001(\002\"\215\001\n\023ServerMsgNewItemBox\022\021\n\tob"
-  "ject_id\030\001 \001(\005\022\014\n\004type\030\002 \001(\005\022\020\n\010owner_id\030"
-  "\003 \001(\r\022\020\n\010scene_id\030\004 \001(\005\022\030\n\003pos\030\005 \001(\0132\013.b"
-  "ase.GLPos\022\027\n\017drop_monster_id\030\006 \001(\005\"\352\001\n\023S"
-  "erverMsgNewMonster\022\021\n\tobject_id\030\001 \001(\r\022\014\n"
-  "\004name\030\002 \001(\014\022\022\n\nposition_x\030\003 \001(\002\022\022\n\nposit"
-  "ion_z\030\004 \001(\002\022\013\n\003dir\030\005 \001(\002\022\022\n\nmove_speed\030\006"
-  " \001(\002\022\020\n\010horse_id\030\007 \001(\002\022\021\n\tweapon_id\030\010 \001("
-  "\002\022\024\n\014monster_type\030\t \001(\005\022\014\n\004guid\030\n \001(\r\022\017\n"
-  "\007race_id\030\013 \001(\005\022\017\n\007camp_id\030\014 \001(\005\"D\n\024Serve"
-  "rMsgNotifyEquip\022\021\n\tbag_index\030\001 \001(\005\022\031\n\004it"
-  "em\030\002 \001(\0132\013.base.SItem\"b\n\026ServerMsgOperat"
-  "eResult\022\021\n\tplayer_id\030\001 \001(\005\022\016\n\006map_id\030\002 \001"
-  "(\005\022\020\n\010res_type\030\003 \001(\005\022\023\n\013result_code\030\004 \001("
-  "\005\"A\n\027ServerMsgPickItemResult\022\021\n\tobject_i"
-  "d\030\001 \001(\005\022\023\n\013result_code\030\002 \001(\005\".\n\031ServerMs"
-  "gQueryEventResult\022\021\n\tobject_id\030\001 \001(\r\"D\n\022"
-  "ServerMsgQuestList\022\021\n\tplayer_id\030\001 \001(\005\022\033\n"
-  "\006quests\030\002 \003(\0132\013.base.Quest\"@\n\031ServerMsgQ"
-  "uestListRefresh\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010sc"
-  "ene_id\030\002 \001(\005\"f\n\033ServerMsgSkillSettingRes"
-  "ult\022\021\n\tobject_id\030\001 \001(\005\022%\n\007setting\030\002 \001(\0132"
-  "\024.base.Player_Setting\022\r\n\005index\030\003 \001(\005\"\330\001\n"
-  "\026ServerMsgScriptCommand\022\016\n\006cmd_id\030\001 \001(\005\022"
-  "%\n\007setting\030\002 \001(\0132\024.base.Player_Setting\022\r"
-  "\n\005index\030\003 \001(\005\0223\n\016continue_param\030\004 \001(\0132\033."
-  "base.ScriptParam_QuestInfo\022/\n\nquest_info"
-  "\030\005 \001(\0132\033.base.ScriptParam_QuestInfo\022\022\n\nq"
-  "uest_tips\030\006 \001(\t\"o\n\025ServerMsgSkillUpgrade"
-  "\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010skill_id\030\002 \001(\005\022\023\n"
-  "\013skill_level\030\003 \001(\005\022\016\n\006sucess\030\004 \001(\010\022\014\n\004ty"
-  "pe\030\005 \001(\005\"I\n\021ServerMsgSwapItem\022\016\n\006result\030"
-  "\001 \001(\005\022\022\n\nsource_pos\030\002 \001(\005\022\020\n\010dest_pos\030\003 "
-  "\001(\005\"\227\001\n\036ServerMsgTargetListAndHitFlags\022\021"
-  "\n\tobject_id\030\001 \001(\005\022\023\n\013logic_count\030\002 \001(\005\022\020"
-  "\n\010skill_id\030\003 \001(\005\022\023\n\013target_list\030\004 \003(\005\022\022\n"
-  "\nposition_x\030\005 \001(\002\022\022\n\nposition_z\030\006 \001(\002\"y\n"
-  "\034ServerMsgTaskDownEquipResult\022\016\n\006result\030"
-  "\001 \001(\005\022\021\n\tplayer_id\030\002 \001(\005\022\016\n\006map_id\030\003 \001(\005"
-  "\022\023\n\013equip_point\030\004 \001(\005\022\021\n\tbag_index\030\005 \001(\005"
-  "\"Q\n\027ServerMsgUseEquipResult\022\016\n\006result\030\001 "
-  "\001(\005\022\023\n\013equip_point\030\002 \001(\005\022\021\n\tbag_index\030\003 "
-  "\001(\005*\226\t\n\tMessageID\022\017\n\013SC_MSG_NONE\020\000\022\021\n\014DS"
-  "_CHAR_DATA\020\210\'\022\021\n\014SC_ENTER_MAP\020\220N\022\032\n\025SC_Q"
-  "UERY_EVENT_RESULT\020\370U\022\032\n\025SC_QUERY_QUEST_R"
-  "ESULT\020\371U\022\022\n\rSC_NEWMONSTER\020\372U\022\026\n\021SC_CHARA"
-  "CTER_MOVE\020\373U\022\033\n\026SC_TARGETLIST_HITFLAGS\020\374"
-  "U\022\033\n\026SC_DETAIL_HEALS_DAMAGE\020\375U\022\025\n\020SC_DEL"
-  "ETE_OBJECT\020\376U\022\030\n\023SC_MONSTER_ATTRBUTE\020\377U\022"
-  "\017\n\nSC_NEWITEM\020\200V\022\022\n\rSC_EQUIP_LIST\020\201V\022\030\n\023"
-  "SC_PICK_ITEM_RESULT\020\202V\022\021\n\014SC_ITEM_INFO\020\203"
-  "V\022\024\n\017SC_NOTIFY_EQUIP\020\204V\022\021\n\014SC_SWAP_ITEM\020"
-  "\205V\022\026\n\021SC_UNEQUIP_RESULT\020\206V\022\027\n\022SC_USEEQUI"
-  "P_RESULT\020\207V\022\022\n\rSC_QUEST_LIST\020\210V\022\021\n\014SC_AD"
-  "D_QUEST\020\211V\022\021\n\014SC_DEL_QUEST\020\212V\022\017\n\nSC_COMM"
-  "AND\020\213V\022\026\n\021SC_SCRIPT_COMMAND\020\214V\022\014\n\007SC_CHA"
-  "T\020\215V\022\035\n\030SC_MANIPULATE_PET_RESULT\020\216V\022\023\n\016S"
-  "C_NEW_BEASTIE\020\217V\022\027\n\022SC_COOLDOWN_UPDATE\020\220"
-  "V\022\031\n\024SC_DETAIL_ATTRIB_PET\020\221V\022\031\n\024SC_IMPAC"
-  "TLIST_UPDATE\020\222V\022\026\n\021SC_CHAR_EQUIPMENT\020\223V\022"
-  "\031\n\024SC_QUESTLIST_REFRESH\020\224V\022\023\n\016SC_DETAIL_"
-  "ATTR\020\225V\022\031\n\024SC_CHAR_SKILL_GATHER\020\226V\022\030\n\023SC"
-  "_CHAR_STOP_ACTION\020\227V\022\025\n\020SC_SKILL_UPGRADE"
-  "\020\230V\022\023\n\016SC_DETAIL_BUFF\020\231V\022\025\n\020SC_SKILL_SET"
-  "TING\020\232V\022\037\n\032SC_ADD_SKILL_TO_SKILL_LIST\020\233V"
-  "\022\023\n\016SC_NEW_ITEMBOX\020\234V\022\033\n\026SC_DETAIL_ABILI"
-  "TY_INFO\020\235V\022\026\n\021SC_ABILITY_RESULT\020\236V\022\026\n\021SC"
-  "_OPERATE_RESULT\020\237V\022\036\n\031SC_MESSAGE_ABILITY"
-  "_ACTION\020\240V\022\027\n\022SC_ABILITY_SUCCESS\020\241V\022\027\n\022S"
-  "C_HUMAN_BASE_ATTR\020\242V\022\031\n\024SC_DETAIL_EQUIP_"
-  "LIST\020\243V\022\030\n\023SC_DETAIL_ITEM_LIST\020\244V\022\031\n\024SC_"
-  "DETAIL_SKILL_LIST\020\245Vb\006proto3"
+  "t\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\"\347"
+  "\n\n\025ServerHumanBaseAttrib\022\021\n\tplayer_id\030\001 "
+  "\001(\005\022\020\n\003job\030\003 \001(\005H\000\210\001\001\022\024\n\007country\030\004 \001(\005H\001"
+  "\210\001\001\022\024\n\007data_id\030\005 \001(\005H\002\210\001\001\022\022\n\005level\030\006 \001(\005"
+  "H\003\210\001\001\022\031\n\014hair_mesh_id\030\007 \001(\005H\004\210\001\001\022\031\n\014face"
+  "_mesh_id\030\010 \001(\005H\005\210\001\001\022\027\n\nhp_percent\030\t \001(\005H"
+  "\006\210\001\001\022\017\n\002hp\030\n \001(\005H\007\210\001\001\022\023\n\006hp_max\030\013 \001(\005H\010\210"
+  "\001\001\022\021\n\004rage\030\014 \001(\005H\t\210\001\001\022\025\n\010max_rage\030\r \001(\005H"
+  "\n\210\001\001\022\030\n\013steal_level\030\016 \001(\005H\013\210\001\001\022\027\n\nmood_s"
+  "tate\030\017 \001(\005H\014\210\001\001\022\027\n\nmove_speed\030\020 \001(\002H\r\210\001\001"
+  "\022\031\n\014attack_speed\030\021 \001(\002H\016\210\001\001\022\'\n\tcamp_data"
+  "\030\022 \001(\0132\017.base.SCampDataH\017\210\001\001\022\030\n\013portrait"
+  "_id\030\023 \001(\005H\020\210\001\001\022\025\n\010model_id\030\024 \001(\005H\021\210\001\001\022\025\n"
+  "\010mount_id\030\025 \001(\005H\022\210\001\001\022\021\n\004name\030\026 \001(\tH\023\210\001\001\022"
+  "\032\n\rcountry_title\030\027 \001(\tH\024\210\001\001\022\030\n\013guild_tit"
+  "le\030\030 \001(\tH\025\210\001\001\022\031\n\014normal_title\030\031 \001(\tH\026\210\001\001"
+  "\022\037\n\022country_title_type\030\032 \001(\005H\027\210\001\001\022\035\n\020gui"
+  "ld_title_type\030\033 \001(\005H\030\210\001\001\022\032\n\rstall_is_ope"
+  "n\030\034 \001(\005H\031\210\001\001\022\026\n\ttarget_id\030\035 \001(\005H\032\210\001\001\022\025\n\010"
+  "pk_value\030\036 \001(\005H\033\210\001\001\022\027\n\ngeneration\030\037 \001(\005H"
+  "\034\210\001\001\022\025\n\010world_id\030  \001(\005H\035\210\001\001\022\032\n\rinherence"
+  "_exp\030! \001(\rH\036\210\001\001\022\034\n\017inherence_level\030\" \001(\r"
+  "H\037\210\001\001\0221\n\022current_horse_guid\030# \001(\0132\020.base"
+  ".SHorseGuidH \210\001\001B\006\n\004_jobB\n\n\010_countryB\n\n\010"
+  "_data_idB\010\n\006_levelB\017\n\r_hair_mesh_idB\017\n\r_"
+  "face_mesh_idB\r\n\013_hp_percentB\005\n\003_hpB\t\n\007_h"
+  "p_maxB\007\n\005_rageB\013\n\t_max_rageB\016\n\014_steal_le"
+  "velB\r\n\013_mood_stateB\r\n\013_move_speedB\017\n\r_at"
+  "tack_speedB\014\n\n_camp_dataB\016\n\014_portrait_id"
+  "B\013\n\t_model_idB\013\n\t_mount_idB\007\n\005_nameB\020\n\016_"
+  "country_titleB\016\n\014_guild_titleB\017\n\r_normal"
+  "_titleB\025\n\023_country_title_typeB\023\n\021_guild_"
+  "title_typeB\020\n\016_stall_is_openB\014\n\n_target_"
+  "idB\013\n\t_pk_valueB\r\n\013_generationB\013\n\t_world"
+  "_idB\020\n\016_inherence_expB\022\n\020_inherence_leve"
+  "lB\025\n\023_current_horse_guid\"\220\001\n\035ServerMsgCh"
+  "arImpactListUpdate\022\020\n\010owner_id\030\001 \001(\005\022\020\n\010"
+  "scene_id\030\002 \001(\005\022\024\n\014impact_count\030\003 \001(\005\022\017\n\007"
+  "last_sn\030\004 \001(\r\022$\n\010a_impact\030\005 \003(\0132\022.base.I"
+  "mpactStruct\"\354\001\n\021ServerMsgCharMove\022\021\n\tobj"
+  "ect_id\030\001 \001(\005\022\021\n\thandle_id\030\002 \001(\005\022\024\n\014impac"
+  "t_count\030\003 \001(\005\022\017\n\007last_sn\030\004 \001(\r\022$\n\010a_impa"
+  "ct\030\005 \003(\0132\022.base.ImpactStruct\022$\n\ntarget_p"
+  "os\030\006 \001(\0132\013.base.GLPosH\000\210\001\001\022\"\n\010stop_pos\030\007"
+  " \001(\0132\013.base.GLPosH\001\210\001\001B\r\n\013_target_posB\013\n"
+  "\t_stop_pos\"\322\001\n\030ServerMsgCharSkillGather\022"
+  "\021\n\tobject_id\030\001 \001(\005\022\023\n\013logic_count\030\002 \001(\005\022"
+  "\025\n\rskill_data_id\030\003 \001(\005\022\"\n\ruser_position\030"
+  "\004 \001(\0132\013.base.GLPos\022\021\n\ttarget_id\030\005 \001(\005\022\037\n"
+  "\ntarget_pos\030\006 \001(\0132\013.base.GLPos\022\013\n\003dir\030\007 "
+  "\001(\002\022\022\n\ntotal_time\030\010 \001(\005\"T\n\027ServerMsgChar"
+  "StopAction\022\021\n\tobject_id\030\001 \001(\005\022\023\n\013logic_c"
+  "ount\030\002 \001(\005\022\021\n\tstop_time\030\003 \001(\005\"{\n\rServerM"
+  "sgChat\022\021\n\tchat_type\030\001 \001(\005\022\024\n\014chat_conten"
+  "t\030\002 \001(\t\022\025\n\rshow_position\030\003 \001(\005\022\023\n\013cycle_"
+  "count\030\004 \001(\005\022\025\n\ranimate_image\030\005 \001(\005\"E\n\020Se"
+  "rverMsgCommand\022\020\n\010ui_index\030\001 \001(\005\022\037\n\010sx_p"
+  "aram\030\002 \001(\0132\r.base.SXParam\">\n\027ServerMsgCo"
+  "oldownUpdate\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010scene"
+  "_id\030\002 \001(\005\"9\n\022ServerMsgDelObject\022\021\n\tobjec"
+  "t_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\"8\n\021ServerMs"
+  "gDelQuest\022\021\n\tplayer_id\030\001 \001(\005\022\020\n\010quest_id"
+  "\030\002 \001(\005\"\241\001\n ServerMsgDeltailOfHealsAndDam"
+  "age\022\021\n\thp_modify\030\001 \001(\005\022\021\n\tobject_id\030\002 \001("
+  "\005\022\021\n\tsender_id\030\003 \001(\005\022\032\n\022sender_logic_cou"
+  "nt\030\004 \001(\005\022\024\n\014critical_hit\030\005 \001(\010\022\022\n\ndeath_"
+  "blow\030\006 \001(\010\"x\n\032ServerMsgDetailAbilityInfo"
+  "\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\022%\n"
+  "\010abilitys\030\003 \003(\0132\023.base.PlayerAbility\022\016\n\006"
+  "prescr\030\004 \001(\t\"\266\010\n\025ServerMsgDetailAttrib\022 "
+  "\n\006skills\030\001 \003(\0132\020.base.HorseSkill\022\022\n\nextr"
+  "a_data\030\002 \001(\t\022\033\n\005flags\030\003 \001(\0132\014.base.Flag6"
+  "4\022\016\n\006map_id\030\004 \001(\005\022$\n\nhorse_guid\030\005 \001(\0132\020."
+  "base.SHorseGuid\022\023\n\013trade_index\030\006 \001(\005\022\017\n\007"
+  "data_id\030\007 \001(\005\022\014\n\004name\030\010 \001(\t\022\020\n\010nickname\030"
+  "\t \001(\t\022\017\n\007ai_type\030\n \001(\005\022\r\n\005level\030\013 \001(\005\022\013\n"
+  "\003exp\030\014 \001(\005\022\n\n\002hp\030\r \001(\005\022\016\n\006hp_max\030\016 \001(\005\022\023"
+  "\n\013horse_state\030\017 \001(\005\022\022\n\ngeneration\030\020 \001(\005\022"
+  "\021\n\thappiness\030\021 \001(\005\022\021\n\tattr_near\030\022 \001(\005\022\020\n"
+  "\010attr_far\030\023 \001(\005\022\022\n\nattr_magic\030\024 \001(\005\022\020\n\010d"
+  "ef_near\030\025 \001(\005\022\017\n\007def_far\030\026 \001(\005\022\021\n\tdef_ma"
+  "gic\030\027 \001(\005\022\013\n\003hit\030\030 \001(\005\022\014\n\004miss\030\031 \001(\005\022\020\n\010"
+  "critical\030\032 \001(\005\022\020\n\010model_id\030\033 \001(\005\022\020\n\010moun"
+  "t_id\030\034 \001(\005\022\026\n\016str_perception\030\035 \001(\005\022\026\n\016co"
+  "n_perception\030\036 \001(\005\022\026\n\016dex_perception\030\037 \001"
+  "(\005\022\026\n\016int_perception\030  \001(\005\022\034\n\024str_percep"
+  "tion_limit\030! \001(\005\022\034\n\024con_perception_limit"
+  "\030\" \001(\005\022\034\n\024dex_perception_limit\030# \001(\005\022\034\n\024"
+  "int_perception_limit\030$ \001(\005\022\020\n\010strength\030%"
+  " \001(\005\022\013\n\003con\030& \001(\005\022\013\n\003dex\030\' \001(\005\022\024\n\014intell"
+  "igence\030( \001(\005\022\021\n\tgrow_rate\030) \001(\005\022\024\n\014remai"
+  "n_point\030* \001(\005\022\026\n\016strength_point\030+ \001(\005\022\027\n"
+  "\017smartness_point\030, \001(\005\022\022\n\nmind_point\030- \001"
+  "(\005\022\032\n\022constitution_point\030. \001(\005\022\r\n\005index\030"
+  "/ \001(\005\022\023\n\013stall_order\0300 \001(\005\022\020\n\010pet_lock\0301"
+  " \001(\005\022\023\n\013unlock_time\0302 \001(\005\022\032\n\022current_hor"
+  "se_flag\0303 \001(\010\"\235\010\n\030ServerMsgDetailAttribP"
+  "et\022 \n\006skills\030\001 \003(\0132\020.base.HorseSkill\022\022\n\n"
+  "extra_data\030\002 \001(\t\022\033\n\005flags\030\003 \001(\0132\014.base.F"
+  "lag64\022\016\n\006map_id\030\004 \001(\005\022$\n\nhorse_guid\030\005 \001("
+  "\0132\020.base.SHorseGuid\022\023\n\013trade_index\030\006 \001(\005"
+  "\022\017\n\007data_id\030\007 \001(\005\022\014\n\004name\030\010 \001(\t\022\020\n\010nickn"
+  "ame\030\t \001(\t\022\017\n\007ai_type\030\n \001(\005\022\r\n\005level\030\013 \001("
+  "\005\022\013\n\003exp\030\014 \001(\005\022\n\n\002hp\030\r \001(\005\022\016\n\006hp_max\030\016 \001"
+  "(\005\022\023\n\013horse_state\030\017 \001(\005\022\022\n\ngeneration\030\020 "
+  "\001(\005\022\021\n\thappiness\030\021 \001(\005\022\021\n\tattr_near\030\022 \001("
+  "\005\022\020\n\010attr_far\030\023 \001(\005\022\022\n\nattr_magic\030\024 \001(\005\022"
+  "\020\n\010def_near\030\025 \001(\005\022\017\n\007def_far\030\026 \001(\005\022\021\n\tde"
+  "f_magic\030\027 \001(\005\022\013\n\003hit\030\030 \001(\005\022\014\n\004miss\030\031 \001(\005"
+  "\022\020\n\010critical\030\032 \001(\005\022\020\n\010model_id\030\033 \001(\005\022\020\n\010"
+  "mount_id\030\034 \001(\005\022\026\n\016str_perception\030\035 \001(\005\022\026"
+  "\n\016con_perception\030\036 \001(\005\022\026\n\016dex_perception"
+  "\030\037 \001(\005\022\026\n\016int_perception\030  \001(\005\022\034\n\024str_pe"
+  "rception_limit\030! \001(\005\022\034\n\024con_perception_l"
+  "imit\030\" \001(\005\022\034\n\024dex_perception_limit\030# \001(\005"
+  "\022\034\n\024int_perception_limit\030$ \001(\005\022\020\n\010streng"
+  "th\030% \001(\005\022\013\n\003con\030& \001(\005\022\013\n\003dex\030\' \001(\005\022\024\n\014in"
+  "telligence\030( \001(\005\022\021\n\tgrow_rate\030) \001(\005\022\024\n\014r"
+  "emain_point\030* \001(\005\022\026\n\016strength_point\030+ \001("
+  "\005\022\027\n\017smartness_point\030, \001(\005\022\022\n\nmind_point"
+  "\030- \001(\005\022\032\n\022constitution_point\030. \001(\005\022\r\n\005in"
+  "dex\030/ \001(\005\022\023\n\013stall_order\0300 \001(\005\022\020\n\010pet_lo"
+  "ck\0301 \001(\005\022\023\n\013unlock_time\0302 \001(\005\"\324\001\n\023Server"
+  "MsgDetailBuff\022\021\n\tobject_id\030\001 \001(\005\022\023\n\013rece"
+  "iver_id\030\002 \001(\005\022\021\n\tsender_id\030\003 \001(\005\022\016\n\006enab"
+  "le\030\004 \001(\010\022\020\n\010skill_id\030\005 \001(\005\022\n\n\002sn\030\006 \001(\005\022\017"
+  "\n\007buff_id\030\007 \001(\005\022\023\n\013continuance\030\010 \001(\005\022\022\n\n"
+  "delay_time\030\t \001(\005\022\032\n\022sender_logic_count\030\n"
+  " \001(\005\"I\n\030ServerMsgDetailEquipList\022\021\n\tobje"
+  "ct_id\030\001 \001(\005\022\032\n\005items\030\002 \003(\0132\013.base.SItem\""
+  "H\n\027ServerMsgDetailItemList\022\021\n\tobject_id\030"
+  "\001 \001(\005\022\032\n\005items\030\002 \003(\0132\013.base.SItem\"P\n\030Ser"
+  "verMsgDetailSkillList\022\021\n\tplayer_id\030\001 \001(\005"
+  "\022!\n\006skills\030\002 \003(\0132\021.base.PlayerSpell\"n\n\021S"
+  "erverMsgEnterMap\022\020\n\010scene_id\030\001 \001(\r\022\022\n\npo"
+  "sition_x\030\002 \001(\002\022\022\n\nposition_y\030\003 \001(\002\022\014\n\004gu"
+  "id\030\004 \001(\005\022\021\n\tobject_id\030\005 \001(\005\"]\n\021ServerMsg"
+  "ItemInfo\022\021\n\tbag_index\030\001 \001(\005\022\031\n\004item\030\002 \001("
+  "\0132\013.base.SItem\022\014\n\004null\030\003 \001(\010\022\014\n\004tips\030\004 \001"
+  "(\005\"S\n\034ServerMsgManipulatePetResult\022\016\n\006re"
+  "sult\030\001 \001(\005\022\021\n\tobject_id\030\002 \001(\005\022\020\n\010scene_i"
+  "d\030\003 \001(\005\"u\n\024ServerMsgModifyQuest\022\021\n\tplaye"
+  "r_id\030\001 \001(\005\022\020\n\010quest_id\030\002 \001(\005\022\014\n\004flag\030\003 \001"
+  "(\005\022\016\n\006flag32\030\004 \001(\r\022\032\n\005quest\030\005 \001(\0132\013.base"
+  ".Quest\"\336\004\n\031ServerMsgMonsterAttribute\022\017\n\007"
+  "refresh\030\001 \001(\005\022\033\n\005flags\030\002 \001(\0132\014.base.Flag"
+  "64\022\021\n\tobject_id\030\003 \001(\005\022\017\n\007data_id\030\004 \001(\r\022\r"
+  "\n\005level\030\005 \001(\005\022\022\n\nhp_percent\030\006 \001(\005\022\023\n\013ste"
+  "al_level\030\007 \001(\005\022\022\n\nmood_state\030\010 \001(\005\022\022\n\nmo"
+  "ve_speed\030\t \001(\002\022\024\n\014attack_speed\030\n \001(\002\022\"\n\t"
+  "camp_data\030\013 \001(\0132\017.base.SCampData\022\023\n\013port"
+  "rait_id\030\014 \001(\005\022\020\n\010model_id\030\r \001(\005\022\020\n\010mount"
+  "_id\030\016 \001(\005\022\017\n\007ai_type\030\017 \001(\005\022\014\n\004name\030\020 \001(\t"
+  "\022\025\n\rcountry_title\030\021 \001(\t\022\023\n\013guild_title\030\022"
+  " \001(\t\022\024\n\014normal_title\030\023 \001(\t\022\032\n\022country_ti"
+  "tle_type\030\024 \001(\005\022\030\n\020guild_title_type\030\025 \001(\005"
+  "\022\031\n\021normal_title_type\030\026 \001(\005\022\025\n\roccupant_"
+  "guid\030\027 \001(\r\022\020\n\010owner_id\030\030 \001(\005\022\021\n\ttarget_i"
+  "d\030\031 \001(\005\022\013\n\003dir\030\032 \001(\002\022\022\n\nctrl_state\030\033 \001(\005"
+  "\022\r\n\005scale\030\034 \001(\002\"\306\001\n\023ServerMsgNewBeastie\022"
+  "\021\n\tobject_id\030\001 \001(\r\022\014\n\004name\030\002 \001(\t\022\022\n\nposi"
+  "tion_x\030\003 \001(\002\022\022\n\nposition_z\030\004 \001(\002\022\013\n\003dir\030"
+  "\005 \001(\002\022\022\n\nmove_speed\030\006 \001(\002\022\016\n\006moving\030\007 \001("
+  "\010\022\021\n\thandle_id\030\010 \001(\005\022\020\n\010target_x\030\t \001(\002\022\020"
+  "\n\010target_z\030\n \001(\002\"\207\001\n\020ServerMsgNewItem\022\021\n"
+  "\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\022\022\n\nit"
+  "em_index\030\003 \001(\005\022\022\n\nitem_count\030\004 \001(\005\022\022\n\npo"
+  "sition_x\030\005 \001(\002\022\022\n\nposition_z\030\006 \001(\002\"\215\001\n\023S"
+  "erverMsgNewItemBox\022\021\n\tobject_id\030\001 \001(\005\022\014\n"
+  "\004type\030\002 \001(\005\022\020\n\010owner_id\030\003 \001(\r\022\020\n\010scene_i"
+  "d\030\004 \001(\005\022\030\n\003pos\030\005 \001(\0132\013.base.GLPos\022\027\n\017dro"
+  "p_monster_id\030\006 \001(\005\"\352\001\n\023ServerMsgNewMonst"
+  "er\022\021\n\tobject_id\030\001 \001(\r\022\014\n\004name\030\002 \001(\014\022\022\n\np"
+  "osition_x\030\003 \001(\002\022\022\n\nposition_z\030\004 \001(\002\022\013\n\003d"
+  "ir\030\005 \001(\002\022\022\n\nmove_speed\030\006 \001(\002\022\020\n\010horse_id"
+  "\030\007 \001(\002\022\021\n\tweapon_id\030\010 \001(\002\022\024\n\014monster_typ"
+  "e\030\t \001(\005\022\014\n\004guid\030\n \001(\r\022\017\n\007race_id\030\013 \001(\005\022\017"
+  "\n\007camp_id\030\014 \001(\005\"D\n\024ServerMsgNotifyEquip\022"
+  "\021\n\tbag_index\030\001 \001(\005\022\031\n\004item\030\002 \001(\0132\013.base."
+  "SItem\"b\n\026ServerMsgOperateResult\022\021\n\tplaye"
+  "r_id\030\001 \001(\005\022\016\n\006map_id\030\002 \001(\005\022\020\n\010res_type\030\003"
+  " \001(\005\022\023\n\013result_code\030\004 \001(\005\"A\n\027ServerMsgPi"
+  "ckItemResult\022\021\n\tobject_id\030\001 \001(\005\022\023\n\013resul"
+  "t_code\030\002 \001(\005\".\n\031ServerMsgQueryEventResul"
+  "t\022\021\n\tobject_id\030\001 \001(\r\"D\n\022ServerMsgQuestLi"
+  "st\022\021\n\tplayer_id\030\001 \001(\005\022\033\n\006quests\030\002 \003(\0132\013."
+  "base.Quest\"@\n\031ServerMsgQuestListRefresh\022"
+  "\021\n\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\"f\n\033"
+  "ServerMsgSkillSettingResult\022\021\n\tobject_id"
+  "\030\001 \001(\005\022%\n\007setting\030\002 \001(\0132\024.base.Player_Se"
+  "tting\022\r\n\005index\030\003 \001(\005\"\330\001\n\026ServerMsgScript"
+  "Command\022\016\n\006cmd_id\030\001 \001(\005\022%\n\007setting\030\002 \001(\013"
+  "2\024.base.Player_Setting\022\r\n\005index\030\003 \001(\005\0223\n"
+  "\016continue_param\030\004 \001(\0132\033.base.ScriptParam"
+  "_QuestInfo\022/\n\nquest_info\030\005 \001(\0132\033.base.Sc"
+  "riptParam_QuestInfo\022\022\n\nquest_tips\030\006 \001(\t\""
+  "o\n\025ServerMsgSkillUpgrade\022\021\n\tobject_id\030\001 "
+  "\001(\005\022\020\n\010skill_id\030\002 \001(\005\022\023\n\013skill_level\030\003 \001"
+  "(\005\022\016\n\006sucess\030\004 \001(\010\022\014\n\004type\030\005 \001(\005\"I\n\021Serv"
+  "erMsgSwapItem\022\016\n\006result\030\001 \001(\005\022\022\n\nsource_"
+  "pos\030\002 \001(\005\022\020\n\010dest_pos\030\003 \001(\005\"\227\001\n\036ServerMs"
+  "gTargetListAndHitFlags\022\021\n\tobject_id\030\001 \001("
+  "\005\022\023\n\013logic_count\030\002 \001(\005\022\020\n\010skill_id\030\003 \001(\005"
+  "\022\023\n\013target_list\030\004 \003(\005\022\022\n\nposition_x\030\005 \001("
+  "\002\022\022\n\nposition_z\030\006 \001(\002\"y\n\034ServerMsgTaskDo"
+  "wnEquipResult\022\016\n\006result\030\001 \001(\005\022\021\n\tplayer_"
+  "id\030\002 \001(\005\022\016\n\006map_id\030\003 \001(\005\022\023\n\013equip_point\030"
+  "\004 \001(\005\022\021\n\tbag_index\030\005 \001(\005\"Q\n\027ServerMsgUse"
+  "EquipResult\022\016\n\006result\030\001 \001(\005\022\023\n\013equip_poi"
+  "nt\030\002 \001(\005\022\021\n\tbag_index\030\003 \001(\005*\226\t\n\tMessageI"
+  "D\022\017\n\013SC_MSG_NONE\020\000\022\021\n\014DS_CHAR_DATA\020\210\'\022\021\n"
+  "\014SC_ENTER_MAP\020\220N\022\032\n\025SC_QUERY_EVENT_RESUL"
+  "T\020\370U\022\032\n\025SC_QUERY_QUEST_RESULT\020\371U\022\022\n\rSC_N"
+  "EWMONSTER\020\372U\022\026\n\021SC_CHARACTER_MOVE\020\373U\022\033\n\026"
+  "SC_TARGETLIST_HITFLAGS\020\374U\022\033\n\026SC_DETAIL_H"
+  "EALS_DAMAGE\020\375U\022\025\n\020SC_DELETE_OBJECT\020\376U\022\030\n"
+  "\023SC_MONSTER_ATTRBUTE\020\377U\022\017\n\nSC_NEWITEM\020\200V"
+  "\022\022\n\rSC_EQUIP_LIST\020\201V\022\030\n\023SC_PICK_ITEM_RES"
+  "ULT\020\202V\022\021\n\014SC_ITEM_INFO\020\203V\022\024\n\017SC_NOTIFY_E"
+  "QUIP\020\204V\022\021\n\014SC_SWAP_ITEM\020\205V\022\026\n\021SC_UNEQUIP"
+  "_RESULT\020\206V\022\027\n\022SC_USEEQUIP_RESULT\020\207V\022\022\n\rS"
+  "C_QUEST_LIST\020\210V\022\021\n\014SC_ADD_QUEST\020\211V\022\021\n\014SC"
+  "_DEL_QUEST\020\212V\022\017\n\nSC_COMMAND\020\213V\022\026\n\021SC_SCR"
+  "IPT_COMMAND\020\214V\022\014\n\007SC_CHAT\020\215V\022\035\n\030SC_MANIP"
+  "ULATE_PET_RESULT\020\216V\022\023\n\016SC_NEW_BEASTIE\020\217V"
+  "\022\027\n\022SC_COOLDOWN_UPDATE\020\220V\022\031\n\024SC_DETAIL_A"
+  "TTRIB_PET\020\221V\022\031\n\024SC_IMPACTLIST_UPDATE\020\222V\022"
+  "\026\n\021SC_CHAR_EQUIPMENT\020\223V\022\031\n\024SC_QUESTLIST_"
+  "REFRESH\020\224V\022\023\n\016SC_DETAIL_ATTR\020\225V\022\031\n\024SC_CH"
+  "AR_SKILL_GATHER\020\226V\022\030\n\023SC_CHAR_STOP_ACTIO"
+  "N\020\227V\022\025\n\020SC_SKILL_UPGRADE\020\230V\022\023\n\016SC_DETAIL"
+  "_BUFF\020\231V\022\025\n\020SC_SKILL_SETTING\020\232V\022\037\n\032SC_AD"
+  "D_SKILL_TO_SKILL_LIST\020\233V\022\023\n\016SC_NEW_ITEMB"
+  "OX\020\234V\022\033\n\026SC_DETAIL_ABILITY_INFO\020\235V\022\026\n\021SC"
+  "_ABILITY_RESULT\020\236V\022\026\n\021SC_OPERATE_RESULT\020"
+  "\237V\022\036\n\031SC_MESSAGE_ABILITY_ACTION\020\240V\022\027\n\022SC"
+  "_ABILITY_SUCCESS\020\241V\022\027\n\022SC_HUMAN_BASE_ATT"
+  "R\020\242V\022\031\n\024SC_DETAIL_EQUIP_LIST\020\243V\022\030\n\023SC_DE"
+  "TAIL_ITEM_LIST\020\244V\022\031\n\024SC_DETAIL_SKILL_LIS"
+  "T\020\245Vb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_server_5fmessage_2eproto_deps[1] = {
   &::descriptor_table_base_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_server_5fmessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_server_5fmessage_2eproto = {
-    false, false, 9628, descriptor_table_protodef_server_5fmessage_2eproto,
+    false, false, 10252, descriptor_table_protodef_server_5fmessage_2eproto,
     "server_message.proto",
     &descriptor_table_server_5fmessage_2eproto_once, descriptor_table_server_5fmessage_2eproto_deps, 1, 46,
     schemas, file_default_instances, TableStruct_server_5fmessage_2eproto::offsets,
@@ -3580,15 +3629,110 @@ void ServerMsgCharEquipment::InternalSwap(ServerMsgCharEquipment* other) {
 
 class ServerHumanBaseAttrib::_Internal {
  public:
-  static const ::base::Flag64& flags(const ServerHumanBaseAttrib* msg);
+  using HasBits = decltype(std::declval<ServerHumanBaseAttrib>()._impl_._has_bits_);
+  static void set_has_job(HasBits* has_bits) {
+    (*has_bits)[0] |= 64u;
+  }
+  static void set_has_country(HasBits* has_bits) {
+    (*has_bits)[0] |= 128u;
+  }
+  static void set_has_data_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 256u;
+  }
+  static void set_has_level(HasBits* has_bits) {
+    (*has_bits)[0] |= 512u;
+  }
+  static void set_has_hair_mesh_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 1024u;
+  }
+  static void set_has_face_mesh_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 2048u;
+  }
+  static void set_has_hp_percent(HasBits* has_bits) {
+    (*has_bits)[0] |= 4096u;
+  }
+  static void set_has_hp(HasBits* has_bits) {
+    (*has_bits)[0] |= 8192u;
+  }
+  static void set_has_hp_max(HasBits* has_bits) {
+    (*has_bits)[0] |= 16384u;
+  }
+  static void set_has_rage(HasBits* has_bits) {
+    (*has_bits)[0] |= 32768u;
+  }
+  static void set_has_max_rage(HasBits* has_bits) {
+    (*has_bits)[0] |= 65536u;
+  }
+  static void set_has_steal_level(HasBits* has_bits) {
+    (*has_bits)[0] |= 131072u;
+  }
+  static void set_has_mood_state(HasBits* has_bits) {
+    (*has_bits)[0] |= 262144u;
+  }
+  static void set_has_move_speed(HasBits* has_bits) {
+    (*has_bits)[0] |= 524288u;
+  }
+  static void set_has_attack_speed(HasBits* has_bits) {
+    (*has_bits)[0] |= 1048576u;
+  }
   static const ::base::SCampData& camp_data(const ServerHumanBaseAttrib* msg);
+  static void set_has_camp_data(HasBits* has_bits) {
+    (*has_bits)[0] |= 16u;
+  }
+  static void set_has_portrait_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 2097152u;
+  }
+  static void set_has_model_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 4194304u;
+  }
+  static void set_has_mount_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 8388608u;
+  }
+  static void set_has_name(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_country_title(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_guild_title(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static void set_has_normal_title(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+  static void set_has_country_title_type(HasBits* has_bits) {
+    (*has_bits)[0] |= 16777216u;
+  }
+  static void set_has_guild_title_type(HasBits* has_bits) {
+    (*has_bits)[0] |= 33554432u;
+  }
+  static void set_has_stall_is_open(HasBits* has_bits) {
+    (*has_bits)[0] |= 67108864u;
+  }
+  static void set_has_target_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 134217728u;
+  }
+  static void set_has_pk_value(HasBits* has_bits) {
+    (*has_bits)[0] |= 268435456u;
+  }
+  static void set_has_generation(HasBits* has_bits) {
+    (*has_bits)[0] |= 536870912u;
+  }
+  static void set_has_world_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 1073741824u;
+  }
+  static void set_has_inherence_exp(HasBits* has_bits) {
+    (*has_bits)[0] |= 2147483648u;
+  }
+  static void set_has_inherence_level(HasBits* has_bits) {
+    (*has_bits)[1] |= 1u;
+  }
   static const ::base::SHorseGuid& current_horse_guid(const ServerHumanBaseAttrib* msg);
+  static void set_has_current_horse_guid(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
-const ::base::Flag64&
-ServerHumanBaseAttrib::_Internal::flags(const ServerHumanBaseAttrib* msg) {
-  return *msg->_impl_.flags_;
-}
 const ::base::SCampData&
 ServerHumanBaseAttrib::_Internal::camp_data(const ServerHumanBaseAttrib* msg) {
   return *msg->_impl_.camp_data_;
@@ -3597,23 +3741,13 @@ const ::base::SHorseGuid&
 ServerHumanBaseAttrib::_Internal::current_horse_guid(const ServerHumanBaseAttrib* msg) {
   return *msg->_impl_.current_horse_guid_;
 }
-void ServerHumanBaseAttrib::clear_flags() {
-  if (GetArenaForAllocation() == nullptr && _impl_.flags_ != nullptr) {
-    delete _impl_.flags_;
-  }
-  _impl_.flags_ = nullptr;
-}
 void ServerHumanBaseAttrib::clear_camp_data() {
-  if (GetArenaForAllocation() == nullptr && _impl_.camp_data_ != nullptr) {
-    delete _impl_.camp_data_;
-  }
-  _impl_.camp_data_ = nullptr;
+  if (_impl_.camp_data_ != nullptr) _impl_.camp_data_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000010u;
 }
 void ServerHumanBaseAttrib::clear_current_horse_guid() {
-  if (GetArenaForAllocation() == nullptr && _impl_.current_horse_guid_ != nullptr) {
-    delete _impl_.current_horse_guid_;
-  }
-  _impl_.current_horse_guid_ = nullptr;
+  if (_impl_.current_horse_guid_ != nullptr) _impl_.current_horse_guid_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000020u;
 }
 ServerHumanBaseAttrib::ServerHumanBaseAttrib(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -3625,11 +3759,12 @@ ServerHumanBaseAttrib::ServerHumanBaseAttrib(const ServerHumanBaseAttrib& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ServerHumanBaseAttrib* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.name_){}
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.name_){}
     , decltype(_impl_.country_title_){}
     , decltype(_impl_.guild_title_){}
     , decltype(_impl_.normal_title_){}
-    , decltype(_impl_.flags_){nullptr}
     , decltype(_impl_.camp_data_){nullptr}
     , decltype(_impl_.current_horse_guid_){nullptr}
     , decltype(_impl_.player_id_){}
@@ -3659,15 +3794,14 @@ ServerHumanBaseAttrib::ServerHumanBaseAttrib(const ServerHumanBaseAttrib& from)
     , decltype(_impl_.generation_){}
     , decltype(_impl_.world_id_){}
     , decltype(_impl_.inherence_exp_){}
-    , decltype(_impl_.inherence_level_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
+    , decltype(_impl_.inherence_level_){}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   _impl_.name_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.name_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_name().empty()) {
+  if (from._internal_has_name()) {
     _this->_impl_.name_.Set(from._internal_name(), 
       _this->GetArenaForAllocation());
   }
@@ -3675,7 +3809,7 @@ ServerHumanBaseAttrib::ServerHumanBaseAttrib(const ServerHumanBaseAttrib& from)
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.country_title_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_country_title().empty()) {
+  if (from._internal_has_country_title()) {
     _this->_impl_.country_title_.Set(from._internal_country_title(), 
       _this->GetArenaForAllocation());
   }
@@ -3683,7 +3817,7 @@ ServerHumanBaseAttrib::ServerHumanBaseAttrib(const ServerHumanBaseAttrib& from)
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.guild_title_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_guild_title().empty()) {
+  if (from._internal_has_guild_title()) {
     _this->_impl_.guild_title_.Set(from._internal_guild_title(), 
       _this->GetArenaForAllocation());
   }
@@ -3691,12 +3825,9 @@ ServerHumanBaseAttrib::ServerHumanBaseAttrib(const ServerHumanBaseAttrib& from)
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.normal_title_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_normal_title().empty()) {
+  if (from._internal_has_normal_title()) {
     _this->_impl_.normal_title_.Set(from._internal_normal_title(), 
       _this->GetArenaForAllocation());
-  }
-  if (from._internal_has_flags()) {
-    _this->_impl_.flags_ = new ::base::Flag64(*from._impl_.flags_);
   }
   if (from._internal_has_camp_data()) {
     _this->_impl_.camp_data_ = new ::base::SCampData(*from._impl_.camp_data_);
@@ -3715,11 +3846,12 @@ inline void ServerHumanBaseAttrib::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.name_){}
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.name_){}
     , decltype(_impl_.country_title_){}
     , decltype(_impl_.guild_title_){}
     , decltype(_impl_.normal_title_){}
-    , decltype(_impl_.flags_){nullptr}
     , decltype(_impl_.camp_data_){nullptr}
     , decltype(_impl_.current_horse_guid_){nullptr}
     , decltype(_impl_.player_id_){0}
@@ -3750,7 +3882,6 @@ inline void ServerHumanBaseAttrib::SharedCtor(
     , decltype(_impl_.world_id_){0}
     , decltype(_impl_.inherence_exp_){0u}
     , decltype(_impl_.inherence_level_){0u}
-    , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.name_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -3785,7 +3916,6 @@ inline void ServerHumanBaseAttrib::SharedDtor() {
   _impl_.country_title_.Destroy();
   _impl_.guild_title_.Destroy();
   _impl_.normal_title_.Destroy();
-  if (this != internal_default_instance()) delete _impl_.flags_;
   if (this != internal_default_instance()) delete _impl_.camp_data_;
   if (this != internal_default_instance()) delete _impl_.current_horse_guid_;
 }
@@ -3800,25 +3930,52 @@ void ServerHumanBaseAttrib::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.name_.ClearToEmpty();
-  _impl_.country_title_.ClearToEmpty();
-  _impl_.guild_title_.ClearToEmpty();
-  _impl_.normal_title_.ClearToEmpty();
-  if (GetArenaForAllocation() == nullptr && _impl_.flags_ != nullptr) {
-    delete _impl_.flags_;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000003fu) {
+    if (cached_has_bits & 0x00000001u) {
+      _impl_.name_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _impl_.country_title_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _impl_.guild_title_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000008u) {
+      _impl_.normal_title_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000010u) {
+      GOOGLE_DCHECK(_impl_.camp_data_ != nullptr);
+      _impl_.camp_data_->Clear();
+    }
+    if (cached_has_bits & 0x00000020u) {
+      GOOGLE_DCHECK(_impl_.current_horse_guid_ != nullptr);
+      _impl_.current_horse_guid_->Clear();
+    }
   }
-  _impl_.flags_ = nullptr;
-  if (GetArenaForAllocation() == nullptr && _impl_.camp_data_ != nullptr) {
-    delete _impl_.camp_data_;
+  _impl_.player_id_ = 0;
+  if (cached_has_bits & 0x000000c0u) {
+    ::memset(&_impl_.job_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&_impl_.country_) -
+        reinterpret_cast<char*>(&_impl_.job_)) + sizeof(_impl_.country_));
   }
-  _impl_.camp_data_ = nullptr;
-  if (GetArenaForAllocation() == nullptr && _impl_.current_horse_guid_ != nullptr) {
-    delete _impl_.current_horse_guid_;
+  if (cached_has_bits & 0x0000ff00u) {
+    ::memset(&_impl_.data_id_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&_impl_.rage_) -
+        reinterpret_cast<char*>(&_impl_.data_id_)) + sizeof(_impl_.rage_));
   }
-  _impl_.current_horse_guid_ = nullptr;
-  ::memset(&_impl_.player_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.inherence_level_) -
-      reinterpret_cast<char*>(&_impl_.player_id_)) + sizeof(_impl_.inherence_level_));
+  if (cached_has_bits & 0x00ff0000u) {
+    ::memset(&_impl_.max_rage_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&_impl_.mount_id_) -
+        reinterpret_cast<char*>(&_impl_.max_rage_)) + sizeof(_impl_.mount_id_));
+  }
+  if (cached_has_bits & 0xff000000u) {
+    ::memset(&_impl_.country_title_type_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&_impl_.inherence_exp_) -
+        reinterpret_cast<char*>(&_impl_.country_title_type_)) + sizeof(_impl_.inherence_exp_));
+  }
+  _impl_.inherence_level_ = 0u;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3836,135 +3993,142 @@ const char* ServerHumanBaseAttrib::_InternalParse(const char* ptr, ::_pbi::Parse
         } else
           goto handle_unusual;
         continue;
-      // .base.Flag64 flags = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_flags(), ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // int32 job = 3;
+      // optional int32 job = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _Internal::set_has_job(&_impl_._has_bits_);
           _impl_.job_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 country = 4;
+      // optional int32 country = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _Internal::set_has_country(&_impl_._has_bits_);
           _impl_.country_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 data_id = 5;
+      // optional int32 data_id = 5;
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _Internal::set_has_data_id(&_impl_._has_bits_);
           _impl_.data_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 level = 6;
+      // optional int32 level = 6;
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          _Internal::set_has_level(&_impl_._has_bits_);
           _impl_.level_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 hair_mesh_id = 7;
+      // optional int32 hair_mesh_id = 7;
       case 7:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+          _Internal::set_has_hair_mesh_id(&_impl_._has_bits_);
           _impl_.hair_mesh_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 face_mesh_id = 8;
+      // optional int32 face_mesh_id = 8;
       case 8:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
+          _Internal::set_has_face_mesh_id(&_impl_._has_bits_);
           _impl_.face_mesh_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 hp_percent = 9;
+      // optional int32 hp_percent = 9;
       case 9:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 72)) {
+          _Internal::set_has_hp_percent(&_impl_._has_bits_);
           _impl_.hp_percent_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 hp = 10;
+      // optional int32 hp = 10;
       case 10:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 80)) {
+          _Internal::set_has_hp(&_impl_._has_bits_);
           _impl_.hp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 hp_max = 11;
+      // optional int32 hp_max = 11;
       case 11:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 88)) {
+          _Internal::set_has_hp_max(&_impl_._has_bits_);
           _impl_.hp_max_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 rage = 12;
+      // optional int32 rage = 12;
       case 12:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 96)) {
+          _Internal::set_has_rage(&_impl_._has_bits_);
           _impl_.rage_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 max_rage = 13;
+      // optional int32 max_rage = 13;
       case 13:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 104)) {
+          _Internal::set_has_max_rage(&_impl_._has_bits_);
           _impl_.max_rage_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 steal_level = 14;
+      // optional int32 steal_level = 14;
       case 14:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 112)) {
+          _Internal::set_has_steal_level(&_impl_._has_bits_);
           _impl_.steal_level_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 mood_state = 15;
+      // optional int32 mood_state = 15;
       case 15:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 120)) {
+          _Internal::set_has_mood_state(&_impl_._has_bits_);
           _impl_.mood_state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // float move_speed = 16;
+      // optional float move_speed = 16;
       case 16:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 133)) {
+          _Internal::set_has_move_speed(&_impl_._has_bits_);
           _impl_.move_speed_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
-      // float attack_speed = 17;
+      // optional float attack_speed = 17;
       case 17:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 141)) {
+          _Internal::set_has_attack_speed(&_impl_._has_bits_);
           _impl_.attack_speed_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
-      // .base.SCampData camp_data = 18;
+      // optional .base.SCampData camp_data = 18;
       case 18:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 146)) {
           ptr = ctx->ParseMessage(_internal_mutable_camp_data(), ptr);
@@ -3972,31 +4136,34 @@ const char* ServerHumanBaseAttrib::_InternalParse(const char* ptr, ::_pbi::Parse
         } else
           goto handle_unusual;
         continue;
-      // int32 portrait_id = 19;
+      // optional int32 portrait_id = 19;
       case 19:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 152)) {
+          _Internal::set_has_portrait_id(&_impl_._has_bits_);
           _impl_.portrait_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 model_id = 20;
+      // optional int32 model_id = 20;
       case 20:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 160)) {
+          _Internal::set_has_model_id(&_impl_._has_bits_);
           _impl_.model_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 mount_id = 21;
+      // optional int32 mount_id = 21;
       case 21:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 168)) {
+          _Internal::set_has_mount_id(&_impl_._has_bits_);
           _impl_.mount_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // string name = 22;
+      // optional string name = 22;
       case 22:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 178)) {
           auto str = _internal_mutable_name();
@@ -4006,7 +4173,7 @@ const char* ServerHumanBaseAttrib::_InternalParse(const char* ptr, ::_pbi::Parse
         } else
           goto handle_unusual;
         continue;
-      // string country_title = 23;
+      // optional string country_title = 23;
       case 23:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 186)) {
           auto str = _internal_mutable_country_title();
@@ -4016,7 +4183,7 @@ const char* ServerHumanBaseAttrib::_InternalParse(const char* ptr, ::_pbi::Parse
         } else
           goto handle_unusual;
         continue;
-      // string guild_title = 24;
+      // optional string guild_title = 24;
       case 24:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 194)) {
           auto str = _internal_mutable_guild_title();
@@ -4026,7 +4193,7 @@ const char* ServerHumanBaseAttrib::_InternalParse(const char* ptr, ::_pbi::Parse
         } else
           goto handle_unusual;
         continue;
-      // string normal_title = 25;
+      // optional string normal_title = 25;
       case 25:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 202)) {
           auto str = _internal_mutable_normal_title();
@@ -4036,79 +4203,88 @@ const char* ServerHumanBaseAttrib::_InternalParse(const char* ptr, ::_pbi::Parse
         } else
           goto handle_unusual;
         continue;
-      // int32 country_title_type = 26;
+      // optional int32 country_title_type = 26;
       case 26:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 208)) {
+          _Internal::set_has_country_title_type(&_impl_._has_bits_);
           _impl_.country_title_type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 guild_title_type = 27;
+      // optional int32 guild_title_type = 27;
       case 27:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 216)) {
+          _Internal::set_has_guild_title_type(&_impl_._has_bits_);
           _impl_.guild_title_type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 stall_is_open = 28;
+      // optional int32 stall_is_open = 28;
       case 28:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 224)) {
+          _Internal::set_has_stall_is_open(&_impl_._has_bits_);
           _impl_.stall_is_open_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 target_id = 29;
+      // optional int32 target_id = 29;
       case 29:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 232)) {
+          _Internal::set_has_target_id(&_impl_._has_bits_);
           _impl_.target_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 pk_value = 30;
+      // optional int32 pk_value = 30;
       case 30:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 240)) {
+          _Internal::set_has_pk_value(&_impl_._has_bits_);
           _impl_.pk_value_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 generation = 31;
+      // optional int32 generation = 31;
       case 31:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 248)) {
+          _Internal::set_has_generation(&_impl_._has_bits_);
           _impl_.generation_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 world_id = 32;
+      // optional int32 world_id = 32;
       case 32:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 0)) {
+          _Internal::set_has_world_id(&_impl_._has_bits_);
           _impl_.world_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // uint32 inherence_exp = 33;
+      // optional uint32 inherence_exp = 33;
       case 33:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _Internal::set_has_inherence_exp(&_impl_._has_bits_);
           _impl_.inherence_exp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // uint32 inherence_level = 34;
+      // optional uint32 inherence_level = 34;
       case 34:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _Internal::set_has_inherence_level(&_impl_._has_bits_);
           _impl_.inherence_level_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // .base.SHorseGuid current_horse_guid = 35;
+      // optional .base.SHorseGuid current_horse_guid = 35;
       case 35:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_current_horse_guid(), ptr);
@@ -4151,138 +4327,123 @@ uint8_t* ServerHumanBaseAttrib::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_player_id(), target);
   }
 
-  // .base.Flag64 flags = 2;
-  if (this->_internal_has_flags()) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, _Internal::flags(this),
-        _Internal::flags(this).GetCachedSize(), target, stream);
-  }
-
-  // int32 job = 3;
-  if (this->_internal_job() != 0) {
+  // optional int32 job = 3;
+  if (_internal_has_job()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_job(), target);
   }
 
-  // int32 country = 4;
-  if (this->_internal_country() != 0) {
+  // optional int32 country = 4;
+  if (_internal_has_country()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(4, this->_internal_country(), target);
   }
 
-  // int32 data_id = 5;
-  if (this->_internal_data_id() != 0) {
+  // optional int32 data_id = 5;
+  if (_internal_has_data_id()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(5, this->_internal_data_id(), target);
   }
 
-  // int32 level = 6;
-  if (this->_internal_level() != 0) {
+  // optional int32 level = 6;
+  if (_internal_has_level()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(6, this->_internal_level(), target);
   }
 
-  // int32 hair_mesh_id = 7;
-  if (this->_internal_hair_mesh_id() != 0) {
+  // optional int32 hair_mesh_id = 7;
+  if (_internal_has_hair_mesh_id()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(7, this->_internal_hair_mesh_id(), target);
   }
 
-  // int32 face_mesh_id = 8;
-  if (this->_internal_face_mesh_id() != 0) {
+  // optional int32 face_mesh_id = 8;
+  if (_internal_has_face_mesh_id()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(8, this->_internal_face_mesh_id(), target);
   }
 
-  // int32 hp_percent = 9;
-  if (this->_internal_hp_percent() != 0) {
+  // optional int32 hp_percent = 9;
+  if (_internal_has_hp_percent()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(9, this->_internal_hp_percent(), target);
   }
 
-  // int32 hp = 10;
-  if (this->_internal_hp() != 0) {
+  // optional int32 hp = 10;
+  if (_internal_has_hp()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(10, this->_internal_hp(), target);
   }
 
-  // int32 hp_max = 11;
-  if (this->_internal_hp_max() != 0) {
+  // optional int32 hp_max = 11;
+  if (_internal_has_hp_max()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(11, this->_internal_hp_max(), target);
   }
 
-  // int32 rage = 12;
-  if (this->_internal_rage() != 0) {
+  // optional int32 rage = 12;
+  if (_internal_has_rage()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(12, this->_internal_rage(), target);
   }
 
-  // int32 max_rage = 13;
-  if (this->_internal_max_rage() != 0) {
+  // optional int32 max_rage = 13;
+  if (_internal_has_max_rage()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(13, this->_internal_max_rage(), target);
   }
 
-  // int32 steal_level = 14;
-  if (this->_internal_steal_level() != 0) {
+  // optional int32 steal_level = 14;
+  if (_internal_has_steal_level()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(14, this->_internal_steal_level(), target);
   }
 
-  // int32 mood_state = 15;
-  if (this->_internal_mood_state() != 0) {
+  // optional int32 mood_state = 15;
+  if (_internal_has_mood_state()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(15, this->_internal_mood_state(), target);
   }
 
-  // float move_speed = 16;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_move_speed = this->_internal_move_speed();
-  uint32_t raw_move_speed;
-  memcpy(&raw_move_speed, &tmp_move_speed, sizeof(tmp_move_speed));
-  if (raw_move_speed != 0) {
+  // optional float move_speed = 16;
+  if (_internal_has_move_speed()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteFloatToArray(16, this->_internal_move_speed(), target);
   }
 
-  // float attack_speed = 17;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_attack_speed = this->_internal_attack_speed();
-  uint32_t raw_attack_speed;
-  memcpy(&raw_attack_speed, &tmp_attack_speed, sizeof(tmp_attack_speed));
-  if (raw_attack_speed != 0) {
+  // optional float attack_speed = 17;
+  if (_internal_has_attack_speed()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteFloatToArray(17, this->_internal_attack_speed(), target);
   }
 
-  // .base.SCampData camp_data = 18;
-  if (this->_internal_has_camp_data()) {
+  // optional .base.SCampData camp_data = 18;
+  if (_internal_has_camp_data()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(18, _Internal::camp_data(this),
         _Internal::camp_data(this).GetCachedSize(), target, stream);
   }
 
-  // int32 portrait_id = 19;
-  if (this->_internal_portrait_id() != 0) {
+  // optional int32 portrait_id = 19;
+  if (_internal_has_portrait_id()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(19, this->_internal_portrait_id(), target);
   }
 
-  // int32 model_id = 20;
-  if (this->_internal_model_id() != 0) {
+  // optional int32 model_id = 20;
+  if (_internal_has_model_id()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(20, this->_internal_model_id(), target);
   }
 
-  // int32 mount_id = 21;
-  if (this->_internal_mount_id() != 0) {
+  // optional int32 mount_id = 21;
+  if (_internal_has_mount_id()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(21, this->_internal_mount_id(), target);
   }
 
-  // string name = 22;
-  if (!this->_internal_name().empty()) {
+  // optional string name = 22;
+  if (_internal_has_name()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
@@ -4291,8 +4452,8 @@ uint8_t* ServerHumanBaseAttrib::_InternalSerialize(
         22, this->_internal_name(), target);
   }
 
-  // string country_title = 23;
-  if (!this->_internal_country_title().empty()) {
+  // optional string country_title = 23;
+  if (_internal_has_country_title()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_country_title().data(), static_cast<int>(this->_internal_country_title().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
@@ -4301,8 +4462,8 @@ uint8_t* ServerHumanBaseAttrib::_InternalSerialize(
         23, this->_internal_country_title(), target);
   }
 
-  // string guild_title = 24;
-  if (!this->_internal_guild_title().empty()) {
+  // optional string guild_title = 24;
+  if (_internal_has_guild_title()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_guild_title().data(), static_cast<int>(this->_internal_guild_title().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
@@ -4311,8 +4472,8 @@ uint8_t* ServerHumanBaseAttrib::_InternalSerialize(
         24, this->_internal_guild_title(), target);
   }
 
-  // string normal_title = 25;
-  if (!this->_internal_normal_title().empty()) {
+  // optional string normal_title = 25;
+  if (_internal_has_normal_title()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_normal_title().data(), static_cast<int>(this->_internal_normal_title().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
@@ -4321,62 +4482,62 @@ uint8_t* ServerHumanBaseAttrib::_InternalSerialize(
         25, this->_internal_normal_title(), target);
   }
 
-  // int32 country_title_type = 26;
-  if (this->_internal_country_title_type() != 0) {
+  // optional int32 country_title_type = 26;
+  if (_internal_has_country_title_type()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(26, this->_internal_country_title_type(), target);
   }
 
-  // int32 guild_title_type = 27;
-  if (this->_internal_guild_title_type() != 0) {
+  // optional int32 guild_title_type = 27;
+  if (_internal_has_guild_title_type()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(27, this->_internal_guild_title_type(), target);
   }
 
-  // int32 stall_is_open = 28;
-  if (this->_internal_stall_is_open() != 0) {
+  // optional int32 stall_is_open = 28;
+  if (_internal_has_stall_is_open()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(28, this->_internal_stall_is_open(), target);
   }
 
-  // int32 target_id = 29;
-  if (this->_internal_target_id() != 0) {
+  // optional int32 target_id = 29;
+  if (_internal_has_target_id()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(29, this->_internal_target_id(), target);
   }
 
-  // int32 pk_value = 30;
-  if (this->_internal_pk_value() != 0) {
+  // optional int32 pk_value = 30;
+  if (_internal_has_pk_value()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(30, this->_internal_pk_value(), target);
   }
 
-  // int32 generation = 31;
-  if (this->_internal_generation() != 0) {
+  // optional int32 generation = 31;
+  if (_internal_has_generation()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(31, this->_internal_generation(), target);
   }
 
-  // int32 world_id = 32;
-  if (this->_internal_world_id() != 0) {
+  // optional int32 world_id = 32;
+  if (_internal_has_world_id()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(32, this->_internal_world_id(), target);
   }
 
-  // uint32 inherence_exp = 33;
-  if (this->_internal_inherence_exp() != 0) {
+  // optional uint32 inherence_exp = 33;
+  if (_internal_has_inherence_exp()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteUInt32ToArray(33, this->_internal_inherence_exp(), target);
   }
 
-  // uint32 inherence_level = 34;
-  if (this->_internal_inherence_level() != 0) {
+  // optional uint32 inherence_level = 34;
+  if (_internal_has_inherence_level()) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteUInt32ToArray(34, this->_internal_inherence_level(), target);
   }
 
-  // .base.SHorseGuid current_horse_guid = 35;
-  if (this->_internal_has_current_horse_guid()) {
+  // optional .base.SHorseGuid current_horse_guid = 35;
+  if (_internal_has_current_horse_guid()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(35, _Internal::current_horse_guid(this),
         _Internal::current_horse_guid(this).GetCachedSize(), target, stream);
@@ -4398,222 +4559,219 @@ size_t ServerHumanBaseAttrib::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string name = 22;
-  if (!this->_internal_name().empty()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_name());
-  }
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000003fu) {
+    // optional string name = 22;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_name());
+    }
 
-  // string country_title = 23;
-  if (!this->_internal_country_title().empty()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_country_title());
-  }
+    // optional string country_title = 23;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_country_title());
+    }
 
-  // string guild_title = 24;
-  if (!this->_internal_guild_title().empty()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_guild_title());
-  }
+    // optional string guild_title = 24;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_guild_title());
+    }
 
-  // string normal_title = 25;
-  if (!this->_internal_normal_title().empty()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_normal_title());
-  }
+    // optional string normal_title = 25;
+    if (cached_has_bits & 0x00000008u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_normal_title());
+    }
 
-  // .base.Flag64 flags = 2;
-  if (this->_internal_has_flags()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.flags_);
-  }
+    // optional .base.SCampData camp_data = 18;
+    if (cached_has_bits & 0x00000010u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.camp_data_);
+    }
 
-  // .base.SCampData camp_data = 18;
-  if (this->_internal_has_camp_data()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.camp_data_);
-  }
+    // optional .base.SHorseGuid current_horse_guid = 35;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.current_horse_guid_);
+    }
 
-  // .base.SHorseGuid current_horse_guid = 35;
-  if (this->_internal_has_current_horse_guid()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.current_horse_guid_);
   }
-
   // int32 player_id = 1;
   if (this->_internal_player_id() != 0) {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_player_id());
   }
 
-  // int32 job = 3;
-  if (this->_internal_job() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_job());
-  }
+  if (cached_has_bits & 0x000000c0u) {
+    // optional int32 job = 3;
+    if (cached_has_bits & 0x00000040u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_job());
+    }
 
-  // int32 country = 4;
-  if (this->_internal_country() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_country());
-  }
+    // optional int32 country = 4;
+    if (cached_has_bits & 0x00000080u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_country());
+    }
 
-  // int32 data_id = 5;
-  if (this->_internal_data_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_data_id());
   }
+  if (cached_has_bits & 0x0000ff00u) {
+    // optional int32 data_id = 5;
+    if (cached_has_bits & 0x00000100u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_data_id());
+    }
 
-  // int32 level = 6;
-  if (this->_internal_level() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_level());
+    // optional int32 level = 6;
+    if (cached_has_bits & 0x00000200u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_level());
+    }
+
+    // optional int32 hair_mesh_id = 7;
+    if (cached_has_bits & 0x00000400u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hair_mesh_id());
+    }
+
+    // optional int32 face_mesh_id = 8;
+    if (cached_has_bits & 0x00000800u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_face_mesh_id());
+    }
+
+    // optional int32 hp_percent = 9;
+    if (cached_has_bits & 0x00001000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp_percent());
+    }
+
+    // optional int32 hp = 10;
+    if (cached_has_bits & 0x00002000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp());
+    }
+
+    // optional int32 hp_max = 11;
+    if (cached_has_bits & 0x00004000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp_max());
+    }
+
+    // optional int32 rage = 12;
+    if (cached_has_bits & 0x00008000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_rage());
+    }
+
   }
+  if (cached_has_bits & 0x00ff0000u) {
+    // optional int32 max_rage = 13;
+    if (cached_has_bits & 0x00010000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_max_rage());
+    }
 
-  // int32 hair_mesh_id = 7;
-  if (this->_internal_hair_mesh_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hair_mesh_id());
+    // optional int32 steal_level = 14;
+    if (cached_has_bits & 0x00020000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_steal_level());
+    }
+
+    // optional int32 mood_state = 15;
+    if (cached_has_bits & 0x00040000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_mood_state());
+    }
+
+    // optional float move_speed = 16;
+    if (cached_has_bits & 0x00080000u) {
+      total_size += 2 + 4;
+    }
+
+    // optional float attack_speed = 17;
+    if (cached_has_bits & 0x00100000u) {
+      total_size += 2 + 4;
+    }
+
+    // optional int32 portrait_id = 19;
+    if (cached_has_bits & 0x00200000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_portrait_id());
+    }
+
+    // optional int32 model_id = 20;
+    if (cached_has_bits & 0x00400000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_model_id());
+    }
+
+    // optional int32 mount_id = 21;
+    if (cached_has_bits & 0x00800000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_mount_id());
+    }
+
   }
+  if (cached_has_bits & 0xff000000u) {
+    // optional int32 country_title_type = 26;
+    if (cached_has_bits & 0x01000000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_country_title_type());
+    }
 
-  // int32 face_mesh_id = 8;
-  if (this->_internal_face_mesh_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_face_mesh_id());
+    // optional int32 guild_title_type = 27;
+    if (cached_has_bits & 0x02000000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_guild_title_type());
+    }
+
+    // optional int32 stall_is_open = 28;
+    if (cached_has_bits & 0x04000000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_stall_is_open());
+    }
+
+    // optional int32 target_id = 29;
+    if (cached_has_bits & 0x08000000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_target_id());
+    }
+
+    // optional int32 pk_value = 30;
+    if (cached_has_bits & 0x10000000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_pk_value());
+    }
+
+    // optional int32 generation = 31;
+    if (cached_has_bits & 0x20000000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_generation());
+    }
+
+    // optional int32 world_id = 32;
+    if (cached_has_bits & 0x40000000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_world_id());
+    }
+
+    // optional uint32 inherence_exp = 33;
+    if (cached_has_bits & 0x80000000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::UInt32Size(
+          this->_internal_inherence_exp());
+    }
+
   }
-
-  // int32 hp_percent = 9;
-  if (this->_internal_hp_percent() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp_percent());
-  }
-
-  // int32 hp = 10;
-  if (this->_internal_hp() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp());
-  }
-
-  // int32 hp_max = 11;
-  if (this->_internal_hp_max() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp_max());
-  }
-
-  // int32 rage = 12;
-  if (this->_internal_rage() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_rage());
-  }
-
-  // int32 max_rage = 13;
-  if (this->_internal_max_rage() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_max_rage());
-  }
-
-  // int32 steal_level = 14;
-  if (this->_internal_steal_level() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_steal_level());
-  }
-
-  // int32 mood_state = 15;
-  if (this->_internal_mood_state() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_mood_state());
-  }
-
-  // float move_speed = 16;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_move_speed = this->_internal_move_speed();
-  uint32_t raw_move_speed;
-  memcpy(&raw_move_speed, &tmp_move_speed, sizeof(tmp_move_speed));
-  if (raw_move_speed != 0) {
-    total_size += 2 + 4;
-  }
-
-  // float attack_speed = 17;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_attack_speed = this->_internal_attack_speed();
-  uint32_t raw_attack_speed;
-  memcpy(&raw_attack_speed, &tmp_attack_speed, sizeof(tmp_attack_speed));
-  if (raw_attack_speed != 0) {
-    total_size += 2 + 4;
-  }
-
-  // int32 portrait_id = 19;
-  if (this->_internal_portrait_id() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_portrait_id());
-  }
-
-  // int32 model_id = 20;
-  if (this->_internal_model_id() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_model_id());
-  }
-
-  // int32 mount_id = 21;
-  if (this->_internal_mount_id() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_mount_id());
-  }
-
-  // int32 country_title_type = 26;
-  if (this->_internal_country_title_type() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_country_title_type());
-  }
-
-  // int32 guild_title_type = 27;
-  if (this->_internal_guild_title_type() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_guild_title_type());
-  }
-
-  // int32 stall_is_open = 28;
-  if (this->_internal_stall_is_open() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_stall_is_open());
-  }
-
-  // int32 target_id = 29;
-  if (this->_internal_target_id() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_target_id());
-  }
-
-  // int32 pk_value = 30;
-  if (this->_internal_pk_value() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_pk_value());
-  }
-
-  // int32 generation = 31;
-  if (this->_internal_generation() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_generation());
-  }
-
-  // int32 world_id = 32;
-  if (this->_internal_world_id() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_world_id());
-  }
-
-  // uint32 inherence_exp = 33;
-  if (this->_internal_inherence_exp() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::UInt32Size(
-        this->_internal_inherence_exp());
-  }
-
-  // uint32 inherence_level = 34;
-  if (this->_internal_inherence_level() != 0) {
+  // optional uint32 inherence_level = 34;
+  cached_has_bits = _impl_._has_bits_[1];
+  if (cached_has_bits & 0x00000001u) {
     total_size += 2 +
       ::_pbi::WireFormatLite::UInt32Size(
         this->_internal_inherence_level());
@@ -4637,120 +4795,123 @@ void ServerHumanBaseAttrib::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, 
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_name().empty()) {
-    _this->_internal_set_name(from._internal_name());
-  }
-  if (!from._internal_country_title().empty()) {
-    _this->_internal_set_country_title(from._internal_country_title());
-  }
-  if (!from._internal_guild_title().empty()) {
-    _this->_internal_set_guild_title(from._internal_guild_title());
-  }
-  if (!from._internal_normal_title().empty()) {
-    _this->_internal_set_normal_title(from._internal_normal_title());
-  }
-  if (from._internal_has_flags()) {
-    _this->_internal_mutable_flags()->::base::Flag64::MergeFrom(
-        from._internal_flags());
-  }
-  if (from._internal_has_camp_data()) {
-    _this->_internal_mutable_camp_data()->::base::SCampData::MergeFrom(
-        from._internal_camp_data());
-  }
-  if (from._internal_has_current_horse_guid()) {
-    _this->_internal_mutable_current_horse_guid()->::base::SHorseGuid::MergeFrom(
-        from._internal_current_horse_guid());
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000003fu) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_internal_set_name(from._internal_name());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_internal_set_country_title(from._internal_country_title());
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _this->_internal_set_guild_title(from._internal_guild_title());
+    }
+    if (cached_has_bits & 0x00000008u) {
+      _this->_internal_set_normal_title(from._internal_normal_title());
+    }
+    if (cached_has_bits & 0x00000010u) {
+      _this->_internal_mutable_camp_data()->::base::SCampData::MergeFrom(
+          from._internal_camp_data());
+    }
+    if (cached_has_bits & 0x00000020u) {
+      _this->_internal_mutable_current_horse_guid()->::base::SHorseGuid::MergeFrom(
+          from._internal_current_horse_guid());
+    }
   }
   if (from._internal_player_id() != 0) {
     _this->_internal_set_player_id(from._internal_player_id());
   }
-  if (from._internal_job() != 0) {
-    _this->_internal_set_job(from._internal_job());
+  if (cached_has_bits & 0x000000c0u) {
+    if (cached_has_bits & 0x00000040u) {
+      _this->_impl_.job_ = from._impl_.job_;
+    }
+    if (cached_has_bits & 0x00000080u) {
+      _this->_impl_.country_ = from._impl_.country_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  if (from._internal_country() != 0) {
-    _this->_internal_set_country(from._internal_country());
+  if (cached_has_bits & 0x0000ff00u) {
+    if (cached_has_bits & 0x00000100u) {
+      _this->_impl_.data_id_ = from._impl_.data_id_;
+    }
+    if (cached_has_bits & 0x00000200u) {
+      _this->_impl_.level_ = from._impl_.level_;
+    }
+    if (cached_has_bits & 0x00000400u) {
+      _this->_impl_.hair_mesh_id_ = from._impl_.hair_mesh_id_;
+    }
+    if (cached_has_bits & 0x00000800u) {
+      _this->_impl_.face_mesh_id_ = from._impl_.face_mesh_id_;
+    }
+    if (cached_has_bits & 0x00001000u) {
+      _this->_impl_.hp_percent_ = from._impl_.hp_percent_;
+    }
+    if (cached_has_bits & 0x00002000u) {
+      _this->_impl_.hp_ = from._impl_.hp_;
+    }
+    if (cached_has_bits & 0x00004000u) {
+      _this->_impl_.hp_max_ = from._impl_.hp_max_;
+    }
+    if (cached_has_bits & 0x00008000u) {
+      _this->_impl_.rage_ = from._impl_.rage_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  if (from._internal_data_id() != 0) {
-    _this->_internal_set_data_id(from._internal_data_id());
+  if (cached_has_bits & 0x00ff0000u) {
+    if (cached_has_bits & 0x00010000u) {
+      _this->_impl_.max_rage_ = from._impl_.max_rage_;
+    }
+    if (cached_has_bits & 0x00020000u) {
+      _this->_impl_.steal_level_ = from._impl_.steal_level_;
+    }
+    if (cached_has_bits & 0x00040000u) {
+      _this->_impl_.mood_state_ = from._impl_.mood_state_;
+    }
+    if (cached_has_bits & 0x00080000u) {
+      _this->_impl_.move_speed_ = from._impl_.move_speed_;
+    }
+    if (cached_has_bits & 0x00100000u) {
+      _this->_impl_.attack_speed_ = from._impl_.attack_speed_;
+    }
+    if (cached_has_bits & 0x00200000u) {
+      _this->_impl_.portrait_id_ = from._impl_.portrait_id_;
+    }
+    if (cached_has_bits & 0x00400000u) {
+      _this->_impl_.model_id_ = from._impl_.model_id_;
+    }
+    if (cached_has_bits & 0x00800000u) {
+      _this->_impl_.mount_id_ = from._impl_.mount_id_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  if (from._internal_level() != 0) {
-    _this->_internal_set_level(from._internal_level());
+  if (cached_has_bits & 0xff000000u) {
+    if (cached_has_bits & 0x01000000u) {
+      _this->_impl_.country_title_type_ = from._impl_.country_title_type_;
+    }
+    if (cached_has_bits & 0x02000000u) {
+      _this->_impl_.guild_title_type_ = from._impl_.guild_title_type_;
+    }
+    if (cached_has_bits & 0x04000000u) {
+      _this->_impl_.stall_is_open_ = from._impl_.stall_is_open_;
+    }
+    if (cached_has_bits & 0x08000000u) {
+      _this->_impl_.target_id_ = from._impl_.target_id_;
+    }
+    if (cached_has_bits & 0x10000000u) {
+      _this->_impl_.pk_value_ = from._impl_.pk_value_;
+    }
+    if (cached_has_bits & 0x20000000u) {
+      _this->_impl_.generation_ = from._impl_.generation_;
+    }
+    if (cached_has_bits & 0x40000000u) {
+      _this->_impl_.world_id_ = from._impl_.world_id_;
+    }
+    if (cached_has_bits & 0x80000000u) {
+      _this->_impl_.inherence_exp_ = from._impl_.inherence_exp_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  if (from._internal_hair_mesh_id() != 0) {
-    _this->_internal_set_hair_mesh_id(from._internal_hair_mesh_id());
-  }
-  if (from._internal_face_mesh_id() != 0) {
-    _this->_internal_set_face_mesh_id(from._internal_face_mesh_id());
-  }
-  if (from._internal_hp_percent() != 0) {
-    _this->_internal_set_hp_percent(from._internal_hp_percent());
-  }
-  if (from._internal_hp() != 0) {
-    _this->_internal_set_hp(from._internal_hp());
-  }
-  if (from._internal_hp_max() != 0) {
-    _this->_internal_set_hp_max(from._internal_hp_max());
-  }
-  if (from._internal_rage() != 0) {
-    _this->_internal_set_rage(from._internal_rage());
-  }
-  if (from._internal_max_rage() != 0) {
-    _this->_internal_set_max_rage(from._internal_max_rage());
-  }
-  if (from._internal_steal_level() != 0) {
-    _this->_internal_set_steal_level(from._internal_steal_level());
-  }
-  if (from._internal_mood_state() != 0) {
-    _this->_internal_set_mood_state(from._internal_mood_state());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_move_speed = from._internal_move_speed();
-  uint32_t raw_move_speed;
-  memcpy(&raw_move_speed, &tmp_move_speed, sizeof(tmp_move_speed));
-  if (raw_move_speed != 0) {
-    _this->_internal_set_move_speed(from._internal_move_speed());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_attack_speed = from._internal_attack_speed();
-  uint32_t raw_attack_speed;
-  memcpy(&raw_attack_speed, &tmp_attack_speed, sizeof(tmp_attack_speed));
-  if (raw_attack_speed != 0) {
-    _this->_internal_set_attack_speed(from._internal_attack_speed());
-  }
-  if (from._internal_portrait_id() != 0) {
-    _this->_internal_set_portrait_id(from._internal_portrait_id());
-  }
-  if (from._internal_model_id() != 0) {
-    _this->_internal_set_model_id(from._internal_model_id());
-  }
-  if (from._internal_mount_id() != 0) {
-    _this->_internal_set_mount_id(from._internal_mount_id());
-  }
-  if (from._internal_country_title_type() != 0) {
-    _this->_internal_set_country_title_type(from._internal_country_title_type());
-  }
-  if (from._internal_guild_title_type() != 0) {
-    _this->_internal_set_guild_title_type(from._internal_guild_title_type());
-  }
-  if (from._internal_stall_is_open() != 0) {
-    _this->_internal_set_stall_is_open(from._internal_stall_is_open());
-  }
-  if (from._internal_target_id() != 0) {
-    _this->_internal_set_target_id(from._internal_target_id());
-  }
-  if (from._internal_pk_value() != 0) {
-    _this->_internal_set_pk_value(from._internal_pk_value());
-  }
-  if (from._internal_generation() != 0) {
-    _this->_internal_set_generation(from._internal_generation());
-  }
-  if (from._internal_world_id() != 0) {
-    _this->_internal_set_world_id(from._internal_world_id());
-  }
-  if (from._internal_inherence_exp() != 0) {
-    _this->_internal_set_inherence_exp(from._internal_inherence_exp());
-  }
-  if (from._internal_inherence_level() != 0) {
+  if (from._internal_has_inherence_level()) {
     _this->_internal_set_inherence_level(from._internal_inherence_level());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -4772,6 +4933,8 @@ void ServerHumanBaseAttrib::InternalSwap(ServerHumanBaseAttrib* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_._has_bits_[1], other->_impl_._has_bits_[1]);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.name_, lhs_arena,
       &other->_impl_.name_, rhs_arena
@@ -4791,9 +4954,9 @@ void ServerHumanBaseAttrib::InternalSwap(ServerHumanBaseAttrib* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ServerHumanBaseAttrib, _impl_.inherence_level_)
       + sizeof(ServerHumanBaseAttrib::_impl_.inherence_level_)
-      - PROTOBUF_FIELD_OFFSET(ServerHumanBaseAttrib, _impl_.flags_)>(
-          reinterpret_cast<char*>(&_impl_.flags_),
-          reinterpret_cast<char*>(&other->_impl_.flags_));
+      - PROTOBUF_FIELD_OFFSET(ServerHumanBaseAttrib, _impl_.camp_data_)>(
+          reinterpret_cast<char*>(&_impl_.camp_data_),
+          reinterpret_cast<char*>(&other->_impl_.camp_data_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerHumanBaseAttrib::GetMetadata() const {

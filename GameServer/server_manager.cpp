@@ -205,6 +205,7 @@ void run_game_server()
 
 	ServerManager::GetSingleton().init();
 
+	printf("server init sucessfully!!!\n");
 	ServerManager::GetSingleton().start(true);
 }
 
