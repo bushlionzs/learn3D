@@ -22,6 +22,12 @@ namespace Ogre {
         return mRenderableData;
     }
 
+
+    uint64_t Renderable::getSortValue()
+    {
+        return 0;
+    }
+
     const Ogre::Matrix4& Renderable::getModelMatrix()
     {
         return mWorld;

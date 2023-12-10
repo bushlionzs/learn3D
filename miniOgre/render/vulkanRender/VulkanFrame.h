@@ -8,20 +8,22 @@
 class VulkanFrame: public RenderFrame
 {
 public:
-	VulkanFrame(uint32_t index);
+	VulkanFrame(uint32_t frame_index);
 	~VulkanFrame();
 
 	void updateFrameConstantBuffer(
 		const FrameConstantBuffer& data,
-		uint32_t index = 0);
+		ICamera* cam);
 
 	uint32_t& getFrameIndex();
 
-	std::unique_ptr<VulkanUploadBuffer<FrameConstantBuffer>>&
+	/*std::unique_ptr<VulkanUploadBuffer<FrameConstantBuffer>>&
 		getFrameCB()
 	{
 		return mFrameCB;
-	}
+	}*/
+
+	void updateFrameDescriptor(VkDescriptorBufferInfo& frameDescriptor, ICamera* cam);
 
 	VkFence getFence()
 	{
@@ -46,4 +48,8 @@ private:
 	VkSemaphore mRenderFinishedSemaphore;
 
 	VulkanObjectPool _vulkanObjectPool;
+
+	std::unordered_map<ICamera*, int32_t> mCameraMap;
+
+	uint32_t mFreeIndex = 0;
 };

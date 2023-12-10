@@ -373,7 +373,7 @@ void VulkanRenderSystem::updateMainPassCB(ICamera* camera)
     }
 
 
-    mCurrentVulkanFrame->updateFrameConstantBuffer(mFrameConstantBuffer, 0);
+    mCurrentVulkanFrame->updateFrameConstantBuffer(mFrameConstantBuffer, camera);
 }
 
 

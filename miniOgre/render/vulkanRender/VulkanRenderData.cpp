@@ -49,7 +49,7 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
     VulkanObjectPool& pool = frame->getObjectPool();
     auto& current = _frameRenderableData[frame->getFrameIndex()];
     current.mObjectConstantBuffer.world = model.transpose();
-    current.mObjectConstantBuffer.projector = current.mObjectConstantBuffer.world.inverse();
+    current.mObjectConstantBuffer.projector = _r->getProjectorMatrix();
     current.mObjectConstantBuffer.worldViewProj = current.mObjectConstantBuffer.world * view * proj;
 
     pool.updateObject(
@@ -147,12 +147,9 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
     materialDescriptor.offset = materialInfo._offset;
     materialDescriptor.range = sizeof(MaterialConstantBuffer);
 
-    auto& frameCB = mEngine->_getCurrentFrame()->getFrameCB();
-
     VkDescriptorBufferInfo frameDescriptor = {};
-    frameDescriptor.buffer = frameCB->getVKBuffer();
-    frameDescriptor.offset = 0;
-    frameDescriptor.range = VK_WHOLE_SIZE;
+    mEngine->_getCurrentFrame()->updateFrameDescriptor(frameDescriptor, cam);
+    
 
 
 
