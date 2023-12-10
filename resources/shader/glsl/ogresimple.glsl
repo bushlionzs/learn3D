@@ -15,7 +15,7 @@ layout (location = 0) out vec2 outTexC;
 void main() {
     gl_Position = cbPerObject.gWorldViewProj * vec4(position, 1.0);
 	gl_Position.y = -gl_Position.y;
-	outTexC = texcoord;
+	outTexC = (cbMaterial.gTexTransform * vec4(texcoord, 0.0f, 1.0f)).xy;
 }
 #endif //VERTEX_SHADER
 

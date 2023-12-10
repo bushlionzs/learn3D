@@ -34,12 +34,14 @@ layout(location = 0) out vec4 outColor;
 void main() {
     vec2 ProjTex;
 	outColor = vec4(1.0f, 0.0f, 0.0f, 0.0f);
+
 	ProjTex.x =(ProjPos.x/ProjPos.w) * 0.5 + 0.5f;
 	ProjTex.y= (ProjPos.y/ProjPos.w) * 0.5 + 0.5f;
 	
-	if (clamp(ProjTex.x, 0.0, 1.0) == ProjTex.x&&clamp(ProjTex.y, 0.0, 1.0) == ProjTex.y)
+	if ((ProjTex.x>= 0.0 && ProjTex.x<=1.0) && (ProjTex.y>= 0.0 && ProjTex.y<=1.0))
 	{
-	    ProjTex = (cbMaterial.gTexTransform *vec4(ProjTex, 0.0f, 1.0f)).xy;
+	    vec4 tmp = cbMaterial.gTexTransform *vec4(ProjTex, 0.0f, 1.0f);
+		ProjTex = tmp.xy;
 		outColor = texture(gTextureArray[0], ProjTex);
 	}
 	

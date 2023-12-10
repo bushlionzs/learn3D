@@ -16,7 +16,7 @@ VertexOut VS(VertexIn vIn)
 	VertexOut vOut;
 	
 	vOut.PosH = mul(gWorldViewProj, float4(vIn.PosL, 1.0f));
-	vOut.oTexcoord_0 = vIn.iTexcoord_0;
+	vOut.oTexcoord_0 = mul(gTexTransform, float4(vIn.iTexcoord_0, 0.0f, 1.0f)).xy;
 	return vOut;
 }
 

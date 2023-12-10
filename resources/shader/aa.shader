@@ -317,7 +317,7 @@ shader projector
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader projector.glsl vs
-		frag_shader projector.glsl ps
+		vertex_shader projector.glsl main
+		frag_shader projector.glsl main
 	 }
 }
