@@ -339,8 +339,10 @@ void TextureUnit::addTime(float delta)
     {
         mU += mUMod * delta;
         mV += mVMod * delta;
-        mRecalcTexMatrix = true;
+        
     }
+
+    mRecalcTexMatrix = true;
 
     mCurrentRotate += mRotate * delta;
 }
