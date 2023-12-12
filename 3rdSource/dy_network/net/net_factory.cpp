@@ -119,10 +119,11 @@ NetHandle NetFactory::CreateQuicServer(INetSession* session,
     return handle;
 }
 
-void NetFactory::CloseNetHandle(const NetHandle& handle)
+void NetFactory::DisconnectHandle(const NetHandle& handle)
 {
-	NetManager::GetInstance()->CloseHandle(handle);
+    NetManager::GetInstance()->AccordClose(handle);
 }
+
 
 NetHandle NetFactory::CreateTcpServer( INetSession* session , const std::string& ip , uint16_t port )
 {

@@ -59,11 +59,7 @@ void NetManager::destroy()
 	{
 		if (m_connList.at(index).m_netHandle != INVALID_NET_HANDLE)
 		{
-		#ifdef _WIN32
 			AccordClose(m_connList.at(index).m_netHandle);
-		#else
-			UnrefHandle(m_connList.at(index).m_netHandle, true);
-		#endif 
 		}
 	}
 	m_freeIndexList.clear();
@@ -202,14 +198,6 @@ int32_t NetManager::Send(const NetHandle& handle)
 #endif
 }
 
-bool NetManager::CloseHandle(const NetHandle& handle)
-{
-#ifdef _WIN32
-    return AccordClose(handle);
-#else
-	return UnrefHandle(handle, true);
-#endif
-}
 
 uint32_t NetManager::GetLeftData(const NetHandle& handle)
 {
@@ -316,11 +304,10 @@ SockBase* NetManager::RefHandle(const NetHandle& handle)
 	return conn;
 }
 
-SockBase* NetManager::UnrefHandle(const NetHandle& handle, bool destroy)
+SockBase* NetManager::UnrefHandle(const NetHandle& handle)
 {
     uint32_t idx = handle % NET_MUTEX_COUNT;
     SockBase* conn = NULL;
-    bool need_del = false;
     {
         ScopedLock<PlatformMutex> lock(m_mutex[idx]);
         uint32_t index = GETSOCKETINDEX(handle);
@@ -334,13 +321,11 @@ SockBase* NetManager::UnrefHandle(const NetHandle& handle, bool destroy)
 
         if (conn == nullptr)
         {
-            WIN_ASSERT(false);
             return nullptr;
         }
 
         if (m_connList.at(index).m_netHandle != handle)
         {
-            WIN_ASSERT(false);
             return nullptr;
         }
 
@@ -351,18 +336,9 @@ SockBase* NetManager::UnrefHandle(const NetHandle& handle, bool destroy)
             releaseIndex(index);
             m_connList.at(index).m_netHandle = INVALID_NET_HANDLE;
             m_connList.at(index).m_pSock = NULL;
-            need_del = true;
         }
 
         int ret = conn->unref();
-
-        if (ret > 0)
-        {
-            if (destroy || need_del)
-            {
-                conn->DelayCloseSocket();
-            }
-        }
     }
     
 	return conn;
@@ -389,13 +365,11 @@ void NetManager::ReleaseHandle(SockBase* sock)
 
         if (conn == NULL)
         {
-            WIN_ASSERT(false);
             return;
         }
 
         if (m_connList.at(index).m_netHandle != handle)
         {
-            WIN_ASSERT(false);
             return;
         }
 
@@ -414,7 +388,6 @@ void NetManager::ReleaseHandle(SockBase* sock)
 
 bool NetManager::AccordClose(const NetHandle& handle)
 {
-#ifdef _WIN32
     uint32_t idx = handle % NET_MUTEX_COUNT;
     SockBase* conn = NULL;
     {
@@ -439,7 +412,6 @@ bool NetManager::AccordClose(const NetHandle& handle)
 
         conn->DelayCloseSocket();
     }
-#endif
     return true;
 }
 

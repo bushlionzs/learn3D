@@ -41,7 +41,7 @@ public:
     void update_socket_addrs(void *buffer);
 	bool DestroySocket(int magic = 0);
 	bool DelayCloseSocket();
-	void DelayDelete();
+	void deleleSelf();
 	bool DelaySendData();
 	bool DelayRecvData();
 	bool DelaySSL();

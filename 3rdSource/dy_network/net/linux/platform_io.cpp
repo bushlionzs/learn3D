@@ -306,11 +306,6 @@ void PlatformIOThread::RunEvent()
     
     for(auto& itor:_event_list_dummy)
     {
-		if(itor._event == EVENT_DELAY_CLOSE)
-		{
-			delete itor._self;
-			continue;
-		}
         itor._self->OnEvent(&_io_thread_data, itor._event, nullptr);
         itor._self->unref();
     }

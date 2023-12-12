@@ -43,14 +43,13 @@ public:
 
     int32_t SendData(const NetHandle& handle, const uint8_t* data, uint32_t size, SndData* param);
     int32_t Send(const NetHandle& handle);
-    bool CloseHandle(const NetHandle& handle);
 
     uint32_t GetLeftData(const NetHandle& handle);
 
     bool InitializeConnection(const NetHandle& handle);
     bool InitializeQuicConnection(const NetHandle& handle);
     SockBase* RefHandle(const NetHandle& handle);
-    SockBase* UnrefHandle(const NetHandle& handle, bool destroy = false);
+    SockBase* UnrefHandle(const NetHandle& handle);
 
     void ReleaseHandle(SockBase* sock);
     bool AccordClose(const NetHandle& handle);

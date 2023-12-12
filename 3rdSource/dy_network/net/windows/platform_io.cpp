@@ -92,11 +92,6 @@ void PlatformIOThread::RunIO()
 
 	SockBase* sock = nullptr;
     _last_tick_count = get_tick_count();
-    int32_t duration = INFINITE;
-    if (g_param._is_delay_send)
-    {
-        duration = g_param._delay_time_duration;
-    }
 	try
 	{
 		while (_run)

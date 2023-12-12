@@ -30,7 +30,8 @@ public:
                             const std::string& ip, 
                             uint16_t port, 
                             const std::shared_ptr<QuicConfig>& quic_cfg);
-	void CloseNetHandle(const NetHandle& handle);
+	
+	void DisconnectHandle(const NetHandle& handle);
 	NetHandle CreateTcpServer(INetSession* session, const std::string& ip, uint16_t port);
 	int32_t SendData(const NetHandle& handle, const uint8_t* data,  uint32_t size, SndData* param = nullptr);
 	NetHandle CreateTcpServer(INetSession* session , const SessionData& sessionData);

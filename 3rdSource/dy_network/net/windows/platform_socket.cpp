@@ -458,7 +458,7 @@ bool PlatformSocket::DelayCloseSocket()
 	return true;
 }
 
-void PlatformSocket::DelayDelete()
+void PlatformSocket::deleleSelf()
 {
 	delete this;
 }

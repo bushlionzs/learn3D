@@ -16,7 +16,7 @@ int32_t SockBase::unref()
 
     if (ref == 0)
     {
-        DelayDelete();
+        deleleSelf();
     }
     else if (ref < 0)
     {

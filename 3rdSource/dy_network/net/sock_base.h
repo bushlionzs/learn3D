@@ -91,7 +91,7 @@ public:
 	virtual void set_keepalive(){}
     virtual uint64_t udp_send_buffer_msg_count() const { return 0; }
     virtual bool DelayCloseSocket() { return true; }
-    virtual void DelayDelete() {}
+    virtual void deleleSelf() {}
     virtual bool DelaySSL() { return true; }
     bool ssl_connect(struct IOThredData* io_thread_data) { return true; }
     int32_t ref();

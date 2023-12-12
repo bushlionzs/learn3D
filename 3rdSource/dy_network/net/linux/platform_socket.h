@@ -36,7 +36,7 @@ public:
     bool AcceptSocket( PlatformSocket* server);
     bool DestroySocket(int magic = 0);
     bool DelayCloseSocket();
-	void DelayDelete();
+	void deleleSelf();
     bool DelaySendData();
     bool DelayRecvData();
     bool OnConnected();
@@ -75,7 +75,7 @@ public:
 
     virtual bool Recv(struct IOThredData* io_thread_data){return false;}
     bool RecvUdp(struct IOThredData* io_thread_data, INetBuffer* recv_buf);
-    int32_t RecvTcp(struct IOThredData* io_thread_data, INetBuffer* recv_buf, uint32_t limit);
+    int32_t RecvTcp(struct IOThredData* io_thread_data, INetBuffer* recv_buf, uint32_t& limit);
     bool RecvRaw();
     virtual bool conn_reusing(){ return true;}
 

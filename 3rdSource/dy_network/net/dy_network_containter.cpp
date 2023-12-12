@@ -105,6 +105,36 @@ bool DyNetworkContaintor::init(struct NetLibParam* param)
         g_param._net_lib_buffer_block_size = 16 * 1024;
     }
 
+    if (g_param._timer_thread_count < 1)
+    {
+        g_param._timer_thread_count = 1;
+    }
+
+    if (g_param._timer_thread_count > 4)
+    {
+        g_param._timer_thread_count = 4;
+    }
+
+    if (g_param._max_connection_cnt < 1000)
+    {
+        g_param._max_connection_cnt = 1000;
+    }
+
+    if (g_param._max_connection_cnt > 200000)
+    {
+        g_param._max_connection_cnt = 200000;
+    }
+
+    if (g_param._http_client_thread_count > 4)
+    {
+        g_param._http_client_thread_count = 4;
+    }
+
+    if (g_param._http_client_thread_count < 1)
+    {
+        g_param._http_client_thread_count = 1;
+    }
+
     if (nullptr == _net_factory)
     {
         _net_factory = new NetFactory;
@@ -123,20 +153,6 @@ bool DyNetworkContaintor::init(struct NetLibParam* param)
     if (nullptr == _platform_io)
     {
         _platform_io = new PlatformIO();
-    }
-
-    if (g_param._is_async_send)
-    {
-        if (nullptr == _asyn_module)
-        {
-            _asyn_module = create_platform_module(g_param._async_io_thread_count, "asyn_io");
-
-            for (uint32_t i = 0; i < g_param._async_io_thread_count; i++)
-            {
-                _asyn_module->attach_module(i, async_init, async_entry, NULL);
-            }
-            _asyn_module->run_module();
-        }
     }
 
     net_lib_stat_init();

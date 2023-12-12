@@ -480,12 +480,13 @@ bool PlatformSocket::DelayCloseSocket()
     return true;
 }
 
-void PlatformSocket::DelayDelete()
+void PlatformSocket::deleleSelf()
 {
-	IOEvent ev;
-	ev._event = EVENT_DELAY_CLOSE;
-	ev._self = this;
-	PlatformIO::GetInstance()->PostEvent(_handle, ev);
+	delete this;
+	//IOEvent ev;
+	//ev._event = EVENT_DELAY_CLOSE;
+	//ev._self = this;
+	//PlatformIO::GetInstance()->PostEvent(_handle, ev);
 }
 
 bool PlatformSocket::DelaySendData()
@@ -789,7 +790,7 @@ bool PlatformSocket::RecvUdp(struct IOThredData* io_thread_data, INetBuffer* rec
 }
 
 
-int32_t PlatformSocket::RecvTcp(struct IOThredData* io_thread_data, INetBuffer* recv_buf, uint32_t limit)
+int32_t PlatformSocket::RecvTcp(struct IOThredData* io_thread_data, INetBuffer* recv_buf, uint32_t& limit)
 {
     if (m_socketFd < 0)
     {

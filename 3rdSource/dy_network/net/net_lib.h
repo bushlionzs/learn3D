@@ -6,7 +6,7 @@
 #include <net_factory.h>
 #include <netlib_error.h>
 
-bool netlib_init(struct NetLibParam* param = NULL);
+bool netlib_init(struct NetLibParam* param = nullptr);
 void netlib_destroy();
 
 

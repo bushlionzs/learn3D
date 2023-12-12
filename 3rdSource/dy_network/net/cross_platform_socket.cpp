@@ -518,7 +518,18 @@ bool TcpSocket::Recv(struct IOThredData* io_thread_data)
             return true;
         }
     }
+    uint32_t limit_bak = limit;
 	int32_t ret = PlatformSocket::RecvTcp(io_thread_data, m_recvBuffer, limit);
+
+#ifndef _WIN32
+    if (_limiter)
+    {
+        if (limit_bak > limit)
+        {
+            _limiter->release_tokens(limit_bak - limit);
+        }
+    }
+#endif
 
     if (2 == ret)
     {
