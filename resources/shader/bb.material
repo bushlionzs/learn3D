@@ -62,8 +62,9 @@ material myrect
 			texture_unit
 			{
 				texture awesomeface.png
-				scroll_anim 0 -0.9
-				//tex_address_mode clamp
+				//scroll_anim 0 -0.9
+				rotate_anim 1.2
+				tex_address_mode clamp
 			}
 		}
 	}
