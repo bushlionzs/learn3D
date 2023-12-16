@@ -601,7 +601,7 @@ bool DNSClient::send_ip4_request(uint16_t id, DNSReqPolicy req_policy, DNSCtx& c
     );
     if (rv == DNS_HANDLE_ERROR)
     {
-        NetFactory::GetInstance()->CloseNetHandle(_udp_handle.ip4);
+        NetFactory::GetInstance()->DisconnectHandle(_udp_handle.ip4);
         _udp_handle.ip4 = INVALID_NET_HANDLE;
     }
     return (rv == DNS_SEND_SUCCESSFUL);
@@ -624,7 +624,7 @@ bool DNSClient::send_ip6_request(uint16_t id, DNSReqPolicy req_policy, DNSCtx& c
     );
     if (rv == DNS_HANDLE_ERROR)
     {
-        NetFactory::GetInstance()->CloseNetHandle(_udp_handle.ip6);
+        NetFactory::GetInstance()->DisconnectHandle(_udp_handle.ip6);
         _udp_handle.ip6 = INVALID_NET_HANDLE;
     }
     return (rv == DNS_SEND_SUCCESSFUL);

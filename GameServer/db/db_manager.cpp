@@ -35,13 +35,9 @@ uint32_t db_entry_func(uint32_t moduleid,
 
 bool DBManager::initialize()
 {
-    mConnection = new CMySQLConnection;
+    mConnection = CMySQLConnection::createConnection("127.0.0.1", 3306, "khan", "root", "123456");
 
-    mConnection->SetConnectionString("127.0.0.1", 3306, "khan", "root", "123456");
-
-    bool ret = mConnection->Connect();
-    const char* szerror = mConnection->GetLastErrorInfo();
-    mRecordSet = new CMySQLRecordSet;
+    bool ret = mConnection->connect();
 
     m_module = create_platform_module(1, "db_module");
     m_module->attach_module(0, db_init_func, db_entry_func, nullptr);
@@ -77,15 +73,14 @@ void DBManager::runDBTask(DBTask* task)
     mSql = task->get_sql();
     if (!mSql.empty())
     {
-        mRecordSet->Clear();
-        int ret = mConnection->ExecuteEx(mSql.c_str(), *mRecordSet);
+        int ret = mConnection->execute(mSql.c_str());
         if (ret == CMySQLConnection::Failed)
         {
-            task->failed(mConnection->GetLastError());
+            task->failed(mConnection->getLastError());
         }
         else
         {
-            task->success(mRecordSet);
+            task->success(mConnection->getRecordSet());
         }
     }
     else

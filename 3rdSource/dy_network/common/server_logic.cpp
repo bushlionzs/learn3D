@@ -94,7 +94,7 @@ void ServerLogic::OnAccept(NetHandle h, const session_info_t& data, void* pNetTh
     {
         WARNING_LOG("client is forbidden, client ip:%s, client port: %d, server port: %d",
             data.peer_ip, data.peer_port, data.local_port);
-        NetFactory::GetInstance()->CloseNetHandle(h);
+        NetFactory::GetInstance()->DisconnectHandle(h);
     }
 }
 
@@ -164,7 +164,7 @@ int ServerLogic::process_websocket_handshake(NetHandle handle, websocket_http_he
 {
     if (SERVER_SUCCESS != websocket_handshake(handle, ws_header))
     {
-        NetFactory::GetInstance()->CloseNetHandle(handle);
+        NetFactory::GetInstance()->DisconnectHandle(handle);
         return SERVER_SUCCESS;
     } 
 
@@ -210,8 +210,6 @@ int ServerLogic::init()
     nlp._ssl_crt_file_name = get_ssl_crt_file_name();
     nlp._ssl_key_file_name = get_ssl_key_file_name();
     nlp._io_thread_count   = get_network_io_thread_count();
-    nlp._is_delay_send     = is_delay_send();
-    nlp._is_async_send     = is_async_send();
     nlp._async_io_thread_count = get_async_io_thread_count();
     nlp._delay_time_duration = get_delay_time_duration();
     nlp._http_client_thread_count = get_http_client_thread_count();
@@ -403,7 +401,7 @@ int ServerLogic::connect_server(const std::string& ip, uint16_t port, void* para
         std::map<std::string, NetHandle>::iterator client_it = _client_map.find(ip_port);
         if ((client_it != _client_map.end()) && (client_it->second != INVALID_NET_HANDLE))
         {
-            NetFactory::GetInstance()->CloseNetHandle(client_it->second);
+            NetFactory::GetInstance()->DisconnectHandle(client_it->second);
         }
         _client_map[ip_port] = h;
     }
@@ -423,7 +421,7 @@ int ServerLogic::disconnect_server(const std::string& ip, uint16_t port)
     if (client_iter != _client_map.end())
     {
         // 关闭连接
-        NetFactory::GetInstance()->CloseNetHandle(client_iter->second);
+        NetFactory::GetInstance()->DisconnectHandle(client_iter->second);
         // 删除连接句柄
         _client_map.erase(client_iter);
     }
@@ -440,7 +438,7 @@ int ServerLogic::disconnect_server(const std::string& ip_port)
     if (client_iter != _client_map.end())
     {
         // 关闭连接
-        NetFactory::GetInstance()->CloseNetHandle(client_iter->second);
+        NetFactory::GetInstance()->DisconnectHandle(client_iter->second);
         // 删除连接句柄
         _client_map.erase(client_iter);
     }

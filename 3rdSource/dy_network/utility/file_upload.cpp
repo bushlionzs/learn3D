@@ -141,7 +141,7 @@ void on_connected()
 
         if (_upload_file == nullptr)
         {
-            NetFactory::GetInstance()->CloseNetHandle(_upload_handle);
+            NetFactory::GetInstance()->DisconnectHandle(_upload_handle);
             return;
         }
 
@@ -235,7 +235,7 @@ void terminate()
     
     if (_upload_handle != INVALID_NET_HANDLE)
     {
-        NetFactory::GetInstance()->CloseNetHandle(_upload_handle);
+        NetFactory::GetInstance()->DisconnectHandle(_upload_handle);
         _upload_handle = INVALID_NET_HANDLE;
     }
 }

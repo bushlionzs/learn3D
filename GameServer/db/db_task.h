@@ -1,7 +1,7 @@
 #pragma once
 
 #include <net_handle.h>
-class CMySQLRecordSet;
+class IRecordSet;
 struct CHARDBNODE;
 
 class DBTask
@@ -14,7 +14,7 @@ public:
 
     virtual void failed(int32_t errcode)  {}
 
-    virtual void success(CMySQLRecordSet* recordset) {}
+    virtual void success(IRecordSet* recordset) {}
 };
 
 class CharListTask : public DBTask
@@ -26,7 +26,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mAccount;
 };
@@ -40,7 +40,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mGuid;
 
@@ -56,7 +56,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mGuid;
     int32_t mdbversion;
@@ -73,7 +73,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mGuid;
     int32_t mdbversion;
@@ -88,7 +88,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mGuid;
     int32_t mdbversion;
@@ -103,7 +103,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mGuid;
     int32_t mdbversion;
@@ -118,7 +118,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mGuid;
     int32_t mdbversion;
@@ -134,7 +134,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mGuid;
     int32_t mdbversion;
@@ -150,7 +150,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mGuid;
     int32_t mdbversion;
@@ -166,7 +166,7 @@ public:
     virtual std::string get_sql();
 
     virtual void failed(int32_t errcode);
-    virtual void success(CMySQLRecordSet* recordset);
+    virtual void success(IRecordSet* recordset);
 private:
     std::string mGuid;
     int32_t mdbversion;

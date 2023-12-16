@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "mysql_db.h"
 
-//#pragma comment(lib, "libmysql.lib")
-
 
 CMySQLConnection::CMySQLConnection(void)
 {
@@ -32,14 +30,8 @@ void   CMySQLConnection::SetConnectionString(const char* pszServerAddr, int nSer
     m_nServerPort = nServerPort ;
 }
 
-BOOL  CMySQLConnection::Connect(const char* pszServerAddr, int nServerPort, 
-                                     const char* pszDBName, const char* pszUserID, const char* pszPassword)
-{
-    SetConnectionString(pszServerAddr, nServerPort, pszDBName, pszUserID, pszPassword);
-    return Connect();
-}
 
-BOOL  CMySQLConnection::Connect()
+bool  CMySQLConnection::connect()
 {
     if (m_myConnection == NULL)
     {
@@ -68,7 +60,7 @@ void  CMySQLConnection::Close()
     m_bConnected   = FALSE;
 }
 
-BOOL  CMySQLConnection::IsConnected()
+bool  CMySQLConnection::isConnected()
 {
     if(!m_bConnected)
     {
@@ -77,58 +69,15 @@ BOOL  CMySQLConnection::IsConnected()
     return (mysql_ping(m_myConnection)==0);
 }
 
-BOOL  CMySQLConnection::Execute(const char* pszSQL)
-{
-    return (0 == mysql_query(m_myConnection, pszSQL));
-}
 
-BOOL  CMySQLConnection::Execute(const char* pszSQL, CMySQLRecordSet& rcdSet)
+bool  CMySQLConnection::execute(const char* sql)
 {
-    if (0 != mysql_query(m_myConnection, pszSQL))
+    if (0 != mysql_query(m_myConnection, sql))
         return FALSE;
-    if (rcdSet.m_res)
-        mysql_free_result(rcdSet.m_res); 
-    rcdSet.m_res = mysql_store_result(m_myConnection);
-    return (rcdSet.m_res != NULL);
+    if (mRecordSet.m_res)
+        mysql_free_result(mRecordSet.m_res);
+    mRecordSet.m_res = mysql_store_result(m_myConnection);
+    return (mRecordSet.m_res != NULL);
 }
 
-int  CMySQLConnection::ExecuteEx(const char* pszSQL, CMySQLRecordSet& rcdSet)
-{
-    
-    if (0 != mysql_query(m_myConnection, pszSQL))
-        return Failed;
-    if (rcdSet.m_res)
-        mysql_free_result(rcdSet.m_res); 
-    rcdSet.m_res = mysql_store_result(m_myConnection);
-    if(rcdSet.m_res != NULL)
-    {
-        return HasRecordSet;       ///Rescord Set
-    }
-    
-    if(!mysql_field_count(m_myConnection))
-    {
-        return  NoRecordSet;       ///NO Rescord Set
-    }
-    return  Failed;
-    
-}
-
-int   CMySQLConnection::ExecuteEx(const char* pszSQL, int nLength,CMySQLRecordSet& rcdSet)
-{
-    if (0 != mysql_real_query(m_myConnection, pszSQL,nLength))
-        return Failed;
-    if (rcdSet.m_res)
-        mysql_free_result(rcdSet.m_res); 
-    rcdSet.m_res = mysql_store_result(m_myConnection);
-    if(rcdSet.m_res != NULL)
-    {
-        return HasRecordSet;       ///Rescord Set
-    }
-
-    if(!mysql_field_count(m_myConnection))
-    {
-        return  NoRecordSet;       ///NO Rescord Set
-    }
-    return  Failed;
-}
 

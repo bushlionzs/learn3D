@@ -7,8 +7,7 @@ class DBTask;
 #include "GameSingleton.h"
 #include "platform_common.h"
 
-class CMySQLConnection;
-class CMySQLRecordSet;
+class IDBConnect;
 
 class DBManager : public GameSingleton<DBManager>
 {
@@ -31,8 +30,7 @@ private:
 
     std::string mSql;
 
-    CMySQLConnection* mConnection = nullptr;
-    CMySQLRecordSet* mRecordSet = nullptr;
+    IDBConnect* mConnection = nullptr;
 
     IPlatformModule* m_module = nullptr;
 };

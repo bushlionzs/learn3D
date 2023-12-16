@@ -116,7 +116,7 @@ uint32_t serverlogic_entry(
             memcpy(&sit, msg, msg_size);
         }
         server->OnClose(handle, sit, pNetThreadData);
-        NetFactory::GetInstance()->CloseNetHandle(handle);
+        NetFactory::GetInstance()->DisconnectHandle(handle);
     }
     break;
     case NetMsg_Session_Release:
@@ -142,7 +142,7 @@ uint32_t serverlogic_entry(
     case NetMsg_WebSocket_Exception:
 	{
 		NetHandle handle = (NetHandle)param;
-		NetFactory::GetInstance()->CloseNetHandle(handle);
+		NetFactory::GetInstance()->DisconnectHandle(handle);
 	}
 	break;
 	}

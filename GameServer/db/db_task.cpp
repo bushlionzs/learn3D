@@ -40,9 +40,9 @@ void CharListTask::failed(int32_t errcode)
 
 }
 
-void CharListTask::success(CMySQLRecordSet* recordset)
+void CharListTask::success(IRecordSet* recordset)
 {
-    int32_t size = recordset->GetRecordCount();
+    int32_t size = recordset->getRecordCount();
 }
 
 CharDataTask::CharDataTask(std::string& guid, NetHandle h)
@@ -77,36 +77,36 @@ void CharDataTask::failed(int32_t errcode)
 }
 
 
-int32_t db_get_property_int(CMySQLRecordSet* recordset, int index)
+int32_t db_get_property_int(IRecordSet* recordset, int index)
 {
-	return atoi(recordset->GetFieldValue(index));
+	return atoi(recordset->getFieldValue(index));
 }
 
-uint32_t db_get_property_uint(CMySQLRecordSet* recordset, int index)
+uint32_t db_get_property_uint(IRecordSet* recordset, int index)
 {
-	const char* data = recordset->GetFieldValue(index);
+	const char* data = recordset->getFieldValue(index);
 	return StrToUINT64(data);
 }
 
-uint64_t db_get_property_uint64(CMySQLRecordSet* recordset, int index)
+uint64_t db_get_property_uint64(IRecordSet* recordset, int index)
 {
-	return StrToUINT64(recordset->GetFieldValue(index));
+	return StrToUINT64(recordset->getFieldValue(index));
 }
 
-const char* db_get_property_string(CMySQLRecordSet* recordset, int index)
+const char* db_get_property_string(IRecordSet* recordset, int index)
 {
-	return recordset->GetFieldValue(index);
+	return recordset->getFieldValue(index);
 }
 
-void copy_text(char* dst, uint32_t size, CMySQLRecordSet* recordset, int index)
+void copy_text(char* dst, uint32_t size, IRecordSet* recordset, int index)
 {
-	strncpy(dst, recordset->GetFieldValue(index), size);
+	strncpy(dst, recordset->getFieldValue(index), size);
 }
 
-void CharDataTask::success(CMySQLRecordSet* recordset)
+void CharDataTask::success(IRecordSet* recordset)
 {
 
-	if (recordset->GetRecordCount() != 1)
+	if (recordset->getRecordCount() != 1)
 	{
 		failed(-1);
 		return;
@@ -219,9 +219,9 @@ void CharDataTask::success(CMySQLRecordSet* recordset)
 		DB_LPETGUID,
 		//DB_TranPos,
 	};
-	recordset->GetRecord();
+	recordset->getNextRecord();
 
-	int fieldcount = recordset->GetFieldCount();
+	int fieldcount = recordset->getFieldCount();
 	for (int32 i = 0; i < 1; i++)
 	{
 		
@@ -437,7 +437,7 @@ void CharItemTask::failed(int32_t errcode)
 
 }
 
-void CharItemTask::success(CMySQLRecordSet* recordset)
+void CharItemTask::success(IRecordSet* recordset)
 {
 	enum
 	{
@@ -455,11 +455,11 @@ void CharItemTask::success(CMySQLRecordSet* recordset)
 		DB_UnLockTime,
 	};
 
-	int32_t count = recordset->GetRecordCount();
+	int32_t count = recordset->getRecordCount();
 
 	for (int32_t i = 0; i < count; i++)
 	{
-		recordset->GetRecord();
+		recordset->getNextRecord();
 		uint32_t	CharGuid = db_get_property_uint(recordset, DB_CharGuid);
 		uint16	ItemPos = db_get_property_uint(recordset, DB_ItemPos);
 
@@ -475,7 +475,7 @@ void CharItemTask::success(CMySQLRecordSet* recordset)
 		{
 			int kk = 0;
 		}
-		const char* attr = recordset->GetFieldValue(DB_VarAttr);
+		const char* attr = recordset->getFieldValue(DB_VarAttr);
 
 		char	szVarAttr[256] = { 0 };
 		uint32_t size = strlen(attr);
@@ -522,7 +522,7 @@ void CharSkillTask::failed(int32_t errcode)
 
 }
 
-void CharSkillTask::success(CMySQLRecordSet* recordset)
+void CharSkillTask::success(IRecordSet* recordset)
 {
 	enum 
 	{ 
@@ -532,12 +532,12 @@ void CharSkillTask::success(CMySQLRecordSet* recordset)
 		DB_SkillLevel 
 	};
 
-	int32_t count = recordset->GetRecordCount();
+	int32_t count = recordset->getRecordCount();
 
 	mCharDBNode->m_Skill.m_Count = count;
 	for (int32_t i = 0; i < count; i++)
 	{
-		recordset->GetRecord();
+		recordset->getNextRecord();
 		uint32_t	CharGuid = db_get_property_uint(recordset, DB_CharGuid);
 		int16_t	SkillID = db_get_property_uint(recordset, DB_SkillID);
 		int32_t	SkillState = db_get_property_int(recordset, DB_SkillState);
@@ -575,7 +575,7 @@ void CharAbilityTask::failed(int32_t errcode)
 
 }
 
-void CharAbilityTask::success(CMySQLRecordSet* recordset)
+void CharAbilityTask::success(IRecordSet* recordset)
 {
 	enum 
 	{ 
@@ -585,11 +585,11 @@ void CharAbilityTask::success(CMySQLRecordSet* recordset)
 		DB_ABExp, 
 	};
 
-	int32_t count = recordset->GetRecordCount();
+	int32_t count = recordset->getRecordCount();
 
 	for (int32_t i = 0; i < count; i++)
 	{
-		recordset->GetRecord();
+		recordset->getNextRecord();
 		uint32_t	CharGuid = db_get_property_uint(recordset, DB_CharGuid);
 		uint32_t	AbilityID = db_get_property_uint(recordset, DB_ABID);
 		uint32_t	AbilityLvl = db_get_property_int(recordset, DB_ABLvl);
@@ -628,7 +628,7 @@ void CharPrescriptionTask::failed(int32_t errcode)
 
 }
 
-void CharPrescriptionTask::success(CMySQLRecordSet* recordset)
+void CharPrescriptionTask::success(IRecordSet* recordset)
 {
 	enum
 	{
@@ -636,11 +636,11 @@ void CharPrescriptionTask::success(CMySQLRecordSet* recordset)
 		CHARDB_PresData,
 	};
 
-	int32_t count = recordset->GetRecordCount();
+	int32_t count = recordset->getRecordCount();
 
 	for (int32_t i = 0; i < 1; i++)
 	{
-		recordset->GetRecord();
+		recordset->getNextRecord();
 		uint32_t	CharGuid = db_get_property_uint(recordset, CHARDB_CharGuid);
 		
 		const char* prescription = db_get_property_string(recordset, CHARDB_PresData);
@@ -677,7 +677,7 @@ void CharQuestTask::failed(int32_t errcode)
 
 }
 
-void CharQuestTask::success(CMySQLRecordSet* recordset)
+void CharQuestTask::success(IRecordSet* recordset)
 {
 	enum
 	{
@@ -695,11 +695,11 @@ void CharQuestTask::success(CMySQLRecordSet* recordset)
 		DB_TP8,
 	};
 
-	int32_t count = recordset->GetRecordCount();
+	int32_t count = recordset->getRecordCount();
 
 	for (int32_t i = 0; i < count; i++)
 	{
-		recordset->GetRecord();
+		recordset->getNextRecord();
 		mCharDBNode->m_QuestDB.m_aQuest[i].m_idQuest = db_get_property_uint(recordset, DB_TaskID);
 		mCharDBNode->m_QuestDB.m_aQuest[i].m_idScript = db_get_property_uint(recordset, DB_ScriptID);
 		mCharDBNode->m_QuestDB.m_aQuest[i].m_yFlags = db_get_property_uint(recordset, DB_Flag);
@@ -751,10 +751,9 @@ void CharQuestDataTask::failed(int32_t errcode)
 
 }
 
-void CharQuestDataTask::success(CMySQLRecordSet* recordset)
+void CharQuestDataTask::success(IRecordSet* recordset)
 {
-	
-	recordset->GetRecord();
+	recordset->getNextRecord();
 
 	enum { 
 		CHARDB_CharGuid = 0, 
@@ -812,7 +811,7 @@ void CharDataExTask::failed(int32_t errcode)
 
 }
 
-void CharDataExTask::success(CMySQLRecordSet* recordset)
+void CharDataExTask::success(IRecordSet* recordset)
 {
 
 }
@@ -847,7 +846,7 @@ void CharHorseTask::failed(int32_t errcode)
 
 }
 
-void CharHorseTask::success(CMySQLRecordSet* recordset)
+void CharHorseTask::success(IRecordSet* recordset)
 {
 	enum
 	{
@@ -888,7 +887,7 @@ void CharHorseTask::success(CMySQLRecordSet* recordset)
 		DB_UnLockTime,
 	};
 
-	int32_t horse_count = recordset->GetRecordCount();
+	int32_t horse_count = recordset->getRecordCount();
 
 
 	mCharDBNode->m_PetList.Clear();
@@ -896,7 +895,7 @@ void CharHorseTask::success(CMySQLRecordSet* recordset)
 
 	for (int32_t i = 0; i < horse_count; i++)
 	{
-		recordset->GetRecord();
+		recordset->getNextRecord();
 		int32	iStallOrder = db_get_property_int(recordset, DB_Stallorder);
 
 		int index = i;

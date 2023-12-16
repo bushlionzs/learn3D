@@ -757,7 +757,7 @@ int close_net_handle()
 		    set_http_client_state(HttpClientState_Close);
 		}
 
-        NetFactory::GetInstance()->CloseNetHandle(_http_handle_bak);
+        NetFactory::GetInstance()->DisconnectHandle(_http_handle_bak);
     }
     return 0;
 }
@@ -812,6 +812,7 @@ int process_network_message(uint32_t msg_id, const uint8_t* data, uint32_t size)
         DEBUG_LOG("[handle:%" PRIu64 ",identity:%d,this:%p,session:%p,state:%d,_http_ref:%d]NetMsg_Close", 
             _http_handle_bak, _http_client_identity, this, _http_session, _http_client_state, _http_ref);
         internal_close();
+        NetManager::GetInstance()->UnrefHandle(_http_handle_bak);
         break;
     case NetMsg_Session_Release:
         internal_release(data, size);

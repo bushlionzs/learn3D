@@ -164,7 +164,7 @@ public:
 			_ns._upload_success = true;
 		}
 
-		NetFactory::GetInstance()->CloseNetHandle(h);	
+		NetFactory::GetInstance()->DisconnectHandle(h);
 	}
 
 	void finish()

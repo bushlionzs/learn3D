@@ -2,58 +2,55 @@
 #pragma once
 
 #include <mysql.h>
-
-
-
-/**
-@brief 封装MySQL的记录集
-*
-*	封装MySQL的记录集，不可由多个线程同时操作本对象实例
-*/
-
-    class CMySQLRecordSet
+#include "record_set.h"
+    class CMySQLRecordSet: public IRecordSet
     {
         friend class CMySQLConnection;
     public:
-        ///构造函数
+ 
         CMySQLRecordSet(): m_res(NULL), m_row(NULL)
         {
         }
         
-        ///析构函数
         ~CMySQLRecordSet()
         {
-            Clear();
+            clear();
         }
         
-        void Clear()
+        virtual void clear() override
         {
             if (m_res)
                 mysql_free_result(m_res);
             m_res = nullptr;
         }
-        ///获取记录个数
-        unsigned int GetRecordCount() { return (m_res ? (unsigned int)mysql_num_rows(m_res) : 0); }
+     
+        virtual uint32_t getRecordCount() override
+        { 
+            return (m_res ? (unsigned int)mysql_num_rows(m_res) : 0); 
+        }
         
-        ///获取字段个数
-        unsigned int GetFieldCount() { return (m_res ? (unsigned int)mysql_num_fields(m_res) : 0); }
+     
+        virtual uint32_t getFieldCount() override
+        { 
+            return (m_res ? (unsigned int)mysql_num_fields(m_res) : 0); 
+        }
         
         
-        ///获取下一个记录行
-        BOOL GetRecord()
+
+        virtual bool getNextRecord() override
         {
-            if (m_res == NULL)
-                return FALSE;
+            if (m_res == nullptr)
+                return false;
             m_row = mysql_fetch_row(m_res);
-            return (m_row != NULL);
+            return (m_row != nullptr);
         }
         
         ///获取当前记录行中某一个字段的值
-        const char* GetFieldValue(unsigned int nIndex)
+        const char* getFieldValue(unsigned int nIndex)
         {
             if (m_row == NULL)
                 return NULL;
-            if (nIndex >= GetFieldCount())
+            if (nIndex >= getFieldCount())
                 return NULL;
             return m_row[nIndex];
         }
@@ -62,42 +59,32 @@
         MYSQL_ROW   m_row;        
     };
     
-/**
-@brief 封装MySQL的连接
-*
-*	封装MySQL的连接，不可由多个线程同时操作本对象实例
-*/
     
-    class CMySQLConnection
+    class CMySQLConnection: public IDBConnect
     {
     public:
-        ///定义ExecuteEx的返回值
+        static CMySQLConnection* createConnection(const char* pszServerAddr, int nServerPort,
+            const char* pszDBName, const char* pszUserID, const char* pszPassword)
+        {
+            CMySQLConnection* conn = new CMySQLConnection;
+            conn->SetConnectionString(pszServerAddr, nServerPort, pszDBName, pszUserID, pszPassword);
+            return conn;
+        }
         typedef enum {Failed, NoRecordSet, HasRecordSet} EExecResult;
 
-        ///构造函数
         CMySQLConnection(void);
 
-        ///析构函数
         ~CMySQLConnection(void);
         
-        ///设置连接信息
         void SetConnectionString(const char* pszServerAddr, int nServerPort, 
             const char* pszDBName, const char* pszUserID, const char* pszPassword);
         
-        ///打开连接
-        BOOL Connect(const char* pszServerAddr, int nServerPort, 
-            const char* pszDBName, const char* pszUserID, const char* pszPassword);
+        virtual bool connect() override;
         
-        ///打开连接，在设置连接信息后调用
-        BOOL Connect();
-        
-        ///关闭连接
         void Close();
+
+        virtual bool isConnected() override;
         
-        ///是否已连接
-        BOOL IsConnected();
-        
-        ///转义字符串，使之可用于MYSQL查询
         char* EscapeString(const char* pszSrc, int nSize, char* pszDest)
         {		
             if (m_myConnection)
@@ -109,16 +96,13 @@
                 return NULL;
         }
         
-        ///返回受到最后一个UPDATE、DELETE或INSERT查询影响(变化)的行数
         unsigned int GetAffectedRows() { return (unsigned int)mysql_affected_rows(m_myConnection); }
         
-        ///转义字符串，使之可用于MYSQL查询
         char* EscapeString(const char* pszSrc, char* pszDest)
         {
             return EscapeString(pszSrc, (int)strlen(pszSrc), pszDest);
         }
 
-        ///转义字符串，使之可用于MYSQL查询，主要用在转意2进制数据
         size_t EscapeStringEx(const char* pszSrc, int nSize, char* pszDest)
         {
             if (m_myConnection)
@@ -131,19 +115,10 @@
             }
         }
         
-        ///无差别执行SQL语句，通过返回值判断具体效果
-        int  ExecuteEx(const char* pszSQL, CMySQLRecordSet& rcdSet);
-        ///无差别执行SQL语句，通过返回值判断具体效果(支持二进制代码数据)
-        int  ExecuteEx(const char* pszSQL, int nLength,CMySQLRecordSet& rcdSet);
-
-        ///执行一条SQL语句，不返回记录集
-        BOOL Execute(const char* pszSQL);
         
-        ///执行一条SQL语句，返回记录集
-        BOOL Execute(const char* pszSQL, CMySQLRecordSet& rcdSet);
+        virtual bool execute(const char* sql) override;
         
-        ///获取上一次错误号
-        DWORD GetLastError() 
+        virtual uint32_t getLastError() override
         { 
             if(m_myConnection!=NULL)
             {
@@ -152,7 +127,6 @@
             return  0;
         }
         
-        ///获取上一次错误描述
         const char* GetLastErrorInfo()
         { 
             if(m_myConnection!=NULL)
@@ -160,6 +134,11 @@
                 return mysql_error(m_myConnection);
             }
             return NULL;
+        }
+
+        virtual IRecordSet* getRecordSet()
+        {
+            return &mRecordSet;
         }
         
     private:
@@ -172,4 +151,6 @@
         int     m_nServerPort;
         MYSQL*  m_myConnection;
         BOOL    m_bConnected;
+
+        CMySQLRecordSet mRecordSet;
     };
