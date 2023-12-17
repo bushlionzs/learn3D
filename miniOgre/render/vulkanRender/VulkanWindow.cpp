@@ -70,12 +70,12 @@ bool VulkanWindow::requiresTextureFlipping() const
 
 void VulkanWindow::preRender(VkCommandBuffer commandBuffer)
 {
-    VkViewport viewport = vks::initializers::viewport((float)mWidth, (float)mHeight, 0.0f, 1.0f);
+   /* VkViewport viewport = vks::initializers::viewport((float)mWidth, (float)mHeight, 0.0f, 1.0f);
 
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
     VkRect2D scissor = vks::initializers::rect2D(mWidth, mHeight, 0, 0);
-    vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+    vkCmdSetScissor(commandBuffer, 0, 1, &scissor);*/
 }
 
 VkFramebuffer VulkanWindow::getFrameBuffer(uint32_t index)

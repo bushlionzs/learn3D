@@ -1258,11 +1258,11 @@ void VulkanHelper::_resetCommandBuffer(uint32_t frame_index)
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkResetCommandBuffer!");
     }
 
-    VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
+   /* VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
     if (vkBeginCommandBuffer(mMainCommandBuffer[frame_index], &cmdBufInfo) != VK_SUCCESS)
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkBeginCommandBuffer!");
-    }
+    }*/
 
     /*for (uint32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
     {
