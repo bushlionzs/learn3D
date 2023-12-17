@@ -21,7 +21,7 @@ bool Sqlite3Connect::init(const char* dbname)
     return true;
 }
 
-int  Sqlite3Connect::execute(const char* sql)
+bool  Sqlite3Connect::execute(const char* sql)
 {
     char** result;
     int nrow = 0;      
@@ -31,10 +31,10 @@ int  Sqlite3Connect::execute(const char* sql)
 
     if (r != SQLITE_OK)
     {
-        return -1;
+        return false;
     }
 
     _record_set.reset_data(result, nrow, ncolumn);
-    return r;
+    return true;
 }
 

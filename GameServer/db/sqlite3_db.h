@@ -61,22 +61,29 @@ private:
     uint32_t _current_row = 0;
 };
 
-class Sqlite3Connect
+class Sqlite3Connect: public IDBConnect
 {
 public:
+    static Sqlite3Connect* createConnection(const char* dbname)
+    {
+        Sqlite3Connect* conn = new Sqlite3Connect;
+        conn->init(dbname);
+        return conn;
+    }
+
     Sqlite3Connect();
     ~Sqlite3Connect();
 
     bool init(const char* dbname);
 
-    int  execute(const char* sql);
+    virtual bool  execute(const char* sql) override;
 
     virtual bool isConnected()
     {
         return  _db != nullptr;
     }
 
-    IRecordSet* getRecordSet()
+    virtual IRecordSet* getRecordSet() override
     {
         return &_record_set;
     }

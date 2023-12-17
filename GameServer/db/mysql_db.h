@@ -136,8 +136,9 @@
             return NULL;
         }
 
-        virtual IRecordSet* getRecordSet()
+        virtual IRecordSet* getRecordSet() override
         {
+
             return &mRecordSet;
         }
         

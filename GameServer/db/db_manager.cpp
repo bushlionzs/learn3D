@@ -2,6 +2,7 @@
 #include "db_manager.h"
 #include "db_task.h"
 #include "mysql_db.h"
+#include "sqlite3_db.h"
 
 template<>
 DBManager* GameSingleton<DBManager>::m_sSingleton = NULL;
@@ -35,8 +36,9 @@ uint32_t db_entry_func(uint32_t moduleid,
 
 bool DBManager::initialize()
 {
-    mConnection = CMySQLConnection::createConnection("127.0.0.1", 3306, "khan", "root", "123456");
+    //mConnection = CMySQLConnection::createConnection("127.0.0.1", 3306, "khan", "root", "123456");
 
+    mConnection = Sqlite3Connect::createConnection("../ServerConfig/test.sqlite3");
     bool ret = mConnection->connect();
 
     m_module = create_platform_module(1, "db_module");

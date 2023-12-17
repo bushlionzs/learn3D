@@ -35,7 +35,7 @@ public:
         return false;
     }
 
-    IRecordSet* getRecordSet()
+    virtual IRecordSet* getRecordSet()
     {
         return nullptr;
     }
