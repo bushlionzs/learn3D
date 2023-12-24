@@ -37,6 +37,11 @@ public:
 	//camp
 	eRELATION GetCampType(
 		KObject* pObj_A, KObject* pObj_B);
+
+	const std::vector<KItem*>& getUserBag()
+	{
+		return m_vUserBag;
+	}
 private:
 	/* 玩家装备实例数组 */
 	std::vector<KItem*> m_vUserEquip;

@@ -22,6 +22,7 @@ namespace MyGUI
 		mBlendState.destFactorAlpha = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
 		mMaterial->setBlendState(mBlendState);
 		mMaterial->setWriteDepth(false);
+		mMaterial->setDepthTest(false);
 		mMaterial->setCullMode(Ogre::CULL_NONE);
 	}
 

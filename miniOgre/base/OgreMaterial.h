@@ -81,6 +81,15 @@ namespace Ogre {
             return mMaterialName;
         }
 
+        bool isDepthTest()
+        {
+            return mDepthTest;
+        }
+
+        void setDepthTest(bool test)
+        {
+            mDepthTest = test;
+        }
         bool isWriteDepth()
         {
             return mWriteDepth;
@@ -151,6 +160,8 @@ namespace Ogre {
         bool mLoad = false;
 
         bool mWriteDepth = true;
+
+        bool mDepthTest = true;
 
         String mVideoName;
         Ogre::ColourBlendState mBlendState;

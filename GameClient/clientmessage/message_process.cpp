@@ -14,6 +14,7 @@
 #include "Enum.h"
 #include "KNpc.h"
 #include "command/command.h"
+#include "UIManager.h"
 
 
 void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
@@ -290,7 +291,27 @@ void sc_detail_equip(NetHandle h, const char* msg, uint32_t msg_size)
 
 void sc_detail_item(NetHandle h, const char* msg, uint32_t msg_size)
 {
+	servermessage::ServerMsgDetailItemList dummy;
+	bool b = dummy.ParseFromArray(msg, msg_size);
 
+	auto& items = dummy.items();
+	for (auto& item : items)
+	{
+		auto item_index = item.item_index();
+		auto item_pos = item.item_pos();
+		
+
+		KItem* pItemObj = KItemManager::GetSingleton().CreateNewItem(item_index);
+
+		SItem itemInfo;
+		itemInfo.m_ItemIndex = item_index;
+
+		pItemObj->setIdTable(item_index);
+
+		GameDataManager::GetSingleton().UserBag_SetItem(item_pos, pItemObj);
+	}
+
+	UIManager::GetSingleton().updateWindow(GameUI_Package);
 }
 
 void sc_detail_skill(NetHandle h, const char* msg, uint32_t msg_size)

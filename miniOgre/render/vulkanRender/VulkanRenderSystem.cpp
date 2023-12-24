@@ -282,6 +282,17 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
     }
     uint32_t size = (uint32_t)objs.size();
 
+    if (size < 30)
+    {
+        for (auto r : objs)
+        {
+            VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
+            VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
+            rd->render(mCurrentVulkanFrame, commandBuffer);
+        }
+        return;
+    }
+
     uint32_t every = size / VULKAN_COMMAND_THREAD;
 
     uint32_t left = size - every * VULKAN_COMMAND_THREAD;

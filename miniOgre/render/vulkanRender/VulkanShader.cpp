@@ -163,7 +163,7 @@ VkPipeline VulkanShader::getVKPipeline(Ogre::Renderable* r)
 
     VkPipelineDepthStencilStateCreateInfo depthStencilState =
         vks::initializers::pipelineDepthStencilStateCreateInfo(
-            VK_TRUE,
+            mat->isDepthTest(),
             mat->isWriteDepth(),
             VK_COMPARE_OP_LESS_OR_EQUAL);
 

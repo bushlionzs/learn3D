@@ -16,14 +16,41 @@ UIManager::~UIManager()
 
 }
 
-bool UIManager::showWindow(uint32_t winId, bool show)
+bool UIManager::showWindow(uint32_t winId)
 {
 	auto itor = mWindowMap.find(winId);
 	if (itor != mWindowMap.end())
 	{
 		MyGUI::Widget*  widget = itor->second->getView();
-		widget->setVisible(show);
+		
+		widget->setVisible(!widget->isVisible());
 		return true;
+	}
+
+	UIBase* base = nullptr;
+	switch (winId)
+	{
+	case GameUI_SelfEquip:
+		base = new SelfEquipWindow();
+		break;
+	case GameUI_Package:
+		base= new PackageWindow();
+		break;
+	default:
+		assert(false);
+		break;
+	}
+
+	mWindowMap[winId] = base;
+	return true;
+}
+
+void UIManager::updateWindow(uint32_t winId)
+{
+	auto itor = mWindowMap.find(winId);
+	if (itor != mWindowMap.end())
+	{
+		itor->second->update();
 	}
 
 	UIBase* base = nullptr;
@@ -41,6 +68,6 @@ bool UIManager::showWindow(uint32_t winId, bool show)
 	}
 
 	mWindowMap[winId] = base;
-	return true;
+	base->update();
 }
 

@@ -2795,8 +2795,9 @@ void Player::updateBag()
 			{
 				auto* base_item = dummy.add_items();
 				int32_t index = container->ConIndex2BagIndex(i);
-				base_item->set_item_index(index);
+				base_item->set_item_pos(index);
 				SItem* itemData = pItem->GetItemData();
+				base_item->set_item_index(itemData->m_ItemIndex);
 				base_item->set_ns_bind(itemData->m_nsBind);
 				base_item->set_creator(itemData->m_Creator);
 				base_item->set_term_endtime(itemData->m_TermEndTime);

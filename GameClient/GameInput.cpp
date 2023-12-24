@@ -21,10 +21,10 @@ void GameInput::input(KeyCode _key)
 {
 	if (_key == KeyCode::C)
 	{
-		UIManager::GetSingleton().showWindow(GameUI_SelfEquip, true);
+		UIManager::GetSingleton().showWindow(GameUI_SelfEquip);
 	}
 	else if (_key == KeyCode::B)
 	{
-		UIManager::GetSingleton().showWindow(GameUI_Package, true);
+		UIManager::GetSingleton().showWindow(GameUI_Package);
 	}
 }

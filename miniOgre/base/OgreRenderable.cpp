@@ -6,6 +6,8 @@ namespace Ogre {
     Renderable::Renderable()
     {
         mWorld = Ogre::Matrix4::IDENTITY;
+
+        mSortValue = 1000000;
     }
 
     Renderable::~Renderable()

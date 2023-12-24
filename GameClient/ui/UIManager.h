@@ -10,8 +10,8 @@ public:
 	UIManager();
 	~UIManager();
 
-	bool showWindow(uint32_t winId, bool show);
-
+	bool showWindow(uint32_t winId);
+	void updateWindow(uint32_t winId);
 private:
 	std::unordered_map<uint32_t, UIBase*> mWindowMap;
 };

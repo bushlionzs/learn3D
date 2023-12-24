@@ -10,4 +10,5 @@ class UIBase
 {
 public:
 	virtual MyGUI::Widget* getView() = 0;
+	virtual void update() {}
 };

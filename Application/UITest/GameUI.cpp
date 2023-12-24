@@ -13,7 +13,7 @@
 #include "OgreRenderTexture.h"
 #include "OgreCamera.h"
 #include "role.h"
-#include "MyTestWindow.h"
+#include "PackageWindow.h"
 
 GameUI::GameUI()
 {
@@ -30,7 +30,7 @@ bool GameUI::appInit()
 	ApplicationBase::appInit();
 
 
-	MyTestWindow* test = new MyTestWindow;
+	PackageWindow* test = new PackageWindow;
 	test->getView()->setPosition(300, 100);
 	mViewport->setAutoUpdated(false);
 

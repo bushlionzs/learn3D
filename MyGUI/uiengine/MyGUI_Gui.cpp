@@ -91,7 +91,7 @@ namespace MyGUI
 		mSkinManager->initialise();
 		mFontManager->initialise();
 		mControllerManager->initialise();
-		//mPointerManager->initialise();
+		mPointerManager->initialise();
 		mClipboardManager->initialise();
 		mLayoutManager->initialise();
 		mDynLibManager->initialise();
