@@ -8502,22 +8502,22 @@ class ServerMsgNewMonster final :
   void _internal_set_move_speed(float value);
   public:
 
-  // float horse_id = 7;
+  // int32 horse_id = 7;
   void clear_horse_id();
-  float horse_id() const;
-  void set_horse_id(float value);
+  int32_t horse_id() const;
+  void set_horse_id(int32_t value);
   private:
-  float _internal_horse_id() const;
-  void _internal_set_horse_id(float value);
+  int32_t _internal_horse_id() const;
+  void _internal_set_horse_id(int32_t value);
   public:
 
-  // float weapon_id = 8;
+  // int32 weapon_id = 8;
   void clear_weapon_id();
-  float weapon_id() const;
-  void set_weapon_id(float value);
+  int32_t weapon_id() const;
+  void set_weapon_id(int32_t value);
   private:
-  float _internal_weapon_id() const;
-  void _internal_set_weapon_id(float value);
+  int32_t _internal_weapon_id() const;
+  void _internal_set_weapon_id(int32_t value);
   public:
 
   // int32 monster_type = 9;
@@ -8570,8 +8570,8 @@ class ServerMsgNewMonster final :
     float position_z_;
     float dir_;
     float move_speed_;
-    float horse_id_;
-    float weapon_id_;
+    int32_t horse_id_;
+    int32_t weapon_id_;
     int32_t monster_type_;
     uint32_t guid_;
     int32_t race_id_;
@@ -19035,42 +19035,42 @@ inline void ServerMsgNewMonster::set_move_speed(float value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewMonster.move_speed)
 }
 
-// float horse_id = 7;
+// int32 horse_id = 7;
 inline void ServerMsgNewMonster::clear_horse_id() {
   _impl_.horse_id_ = 0;
 }
-inline float ServerMsgNewMonster::_internal_horse_id() const {
+inline int32_t ServerMsgNewMonster::_internal_horse_id() const {
   return _impl_.horse_id_;
 }
-inline float ServerMsgNewMonster::horse_id() const {
+inline int32_t ServerMsgNewMonster::horse_id() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerMsgNewMonster.horse_id)
   return _internal_horse_id();
 }
-inline void ServerMsgNewMonster::_internal_set_horse_id(float value) {
+inline void ServerMsgNewMonster::_internal_set_horse_id(int32_t value) {
   
   _impl_.horse_id_ = value;
 }
-inline void ServerMsgNewMonster::set_horse_id(float value) {
+inline void ServerMsgNewMonster::set_horse_id(int32_t value) {
   _internal_set_horse_id(value);
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewMonster.horse_id)
 }
 
-// float weapon_id = 8;
+// int32 weapon_id = 8;
 inline void ServerMsgNewMonster::clear_weapon_id() {
   _impl_.weapon_id_ = 0;
 }
-inline float ServerMsgNewMonster::_internal_weapon_id() const {
+inline int32_t ServerMsgNewMonster::_internal_weapon_id() const {
   return _impl_.weapon_id_;
 }
-inline float ServerMsgNewMonster::weapon_id() const {
+inline int32_t ServerMsgNewMonster::weapon_id() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerMsgNewMonster.weapon_id)
   return _internal_weapon_id();
 }
-inline void ServerMsgNewMonster::_internal_set_weapon_id(float value) {
+inline void ServerMsgNewMonster::_internal_set_weapon_id(int32_t value) {
   
   _impl_.weapon_id_ = value;
 }
-inline void ServerMsgNewMonster::set_weapon_id(float value) {
+inline void ServerMsgNewMonster::set_weapon_id(int32_t value) {
   _internal_set_weapon_id(value);
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewMonster.weapon_id)
 }

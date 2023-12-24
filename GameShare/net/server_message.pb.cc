@@ -1881,7 +1881,7 @@ const char descriptor_table_protodef_server_5fmessage_2eproto[] PROTOBUF_SECTION
   "er\022\021\n\tobject_id\030\001 \001(\r\022\014\n\004name\030\002 \001(\014\022\022\n\np"
   "osition_x\030\003 \001(\002\022\022\n\nposition_z\030\004 \001(\002\022\013\n\003d"
   "ir\030\005 \001(\002\022\022\n\nmove_speed\030\006 \001(\002\022\020\n\010horse_id"
-  "\030\007 \001(\002\022\021\n\tweapon_id\030\010 \001(\002\022\024\n\014monster_typ"
+  "\030\007 \001(\005\022\021\n\tweapon_id\030\010 \001(\005\022\024\n\014monster_typ"
   "e\030\t \001(\005\022\014\n\004guid\030\n \001(\r\022\017\n\007race_id\030\013 \001(\005\022\017"
   "\n\007camp_id\030\014 \001(\005\"D\n\024ServerMsgNotifyEquip\022"
   "\021\n\tbag_index\030\001 \001(\005\022\031\n\004item\030\002 \001(\0132\013.base."
@@ -15813,19 +15813,19 @@ const char* ServerMsgNewMonster::_InternalParse(const char* ptr, ::_pbi::ParseCo
         } else
           goto handle_unusual;
         continue;
-      // float horse_id = 7;
+      // int32 horse_id = 7;
       case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 61)) {
-          _impl_.horse_id_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+          _impl_.horse_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // float weapon_id = 8;
+      // int32 weapon_id = 8;
       case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 69)) {
-          _impl_.weapon_id_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
+          _impl_.weapon_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -15942,24 +15942,16 @@ uint8_t* ServerMsgNewMonster::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteFloatToArray(6, this->_internal_move_speed(), target);
   }
 
-  // float horse_id = 7;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_horse_id = this->_internal_horse_id();
-  uint32_t raw_horse_id;
-  memcpy(&raw_horse_id, &tmp_horse_id, sizeof(tmp_horse_id));
-  if (raw_horse_id != 0) {
+  // int32 horse_id = 7;
+  if (this->_internal_horse_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(7, this->_internal_horse_id(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(7, this->_internal_horse_id(), target);
   }
 
-  // float weapon_id = 8;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_weapon_id = this->_internal_weapon_id();
-  uint32_t raw_weapon_id;
-  memcpy(&raw_weapon_id, &tmp_weapon_id, sizeof(tmp_weapon_id));
-  if (raw_weapon_id != 0) {
+  // int32 weapon_id = 8;
+  if (this->_internal_weapon_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(8, this->_internal_weapon_id(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(8, this->_internal_weapon_id(), target);
   }
 
   // int32 monster_type = 9;
@@ -16050,22 +16042,14 @@ size_t ServerMsgNewMonster::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // float horse_id = 7;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_horse_id = this->_internal_horse_id();
-  uint32_t raw_horse_id;
-  memcpy(&raw_horse_id, &tmp_horse_id, sizeof(tmp_horse_id));
-  if (raw_horse_id != 0) {
-    total_size += 1 + 4;
+  // int32 horse_id = 7;
+  if (this->_internal_horse_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_horse_id());
   }
 
-  // float weapon_id = 8;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_weapon_id = this->_internal_weapon_id();
-  uint32_t raw_weapon_id;
-  memcpy(&raw_weapon_id, &tmp_weapon_id, sizeof(tmp_weapon_id));
-  if (raw_weapon_id != 0) {
-    total_size += 1 + 4;
+  // int32 weapon_id = 8;
+  if (this->_internal_weapon_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_weapon_id());
   }
 
   // int32 monster_type = 9;
@@ -16140,18 +16124,10 @@ void ServerMsgNewMonster::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, co
   if (raw_move_speed != 0) {
     _this->_internal_set_move_speed(from._internal_move_speed());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_horse_id = from._internal_horse_id();
-  uint32_t raw_horse_id;
-  memcpy(&raw_horse_id, &tmp_horse_id, sizeof(tmp_horse_id));
-  if (raw_horse_id != 0) {
+  if (from._internal_horse_id() != 0) {
     _this->_internal_set_horse_id(from._internal_horse_id());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_weapon_id = from._internal_weapon_id();
-  uint32_t raw_weapon_id;
-  memcpy(&raw_weapon_id, &tmp_weapon_id, sizeof(tmp_weapon_id));
-  if (raw_weapon_id != 0) {
+  if (from._internal_weapon_id() != 0) {
     _this->_internal_set_weapon_id(from._internal_weapon_id());
   }
   if (from._internal_monster_type() != 0) {

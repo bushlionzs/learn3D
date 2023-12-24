@@ -87,12 +87,9 @@ void KCharacter::setPosition(
 
 	EngineManager::getSingleton().setMyPosition(fvEnginePosition);
 
-	if (mMountObj)
+	if (mMountEntity)
 	{
-		((Orphigine::SkeletonMeshActor*)mMountObj.get())->setPosition(fvEnginePosition);
-
-		((Orphigine::SkeletonMeshActor*)mMountObj.get())->getLogicModel();
-		((Orphigine::SkeletonMeshActor*)mMountObj.get())->setVisible(true);
+		mMountEntity->setEntityPosition(fvEnginePosition);
 	}
 }
 
@@ -110,10 +107,9 @@ Ogre::Real KCharacter::getDirection()
 void KCharacter::setDirection(float dir)
 {
 	mMainEntity->setDirection(dir);
-	if (mMountObj)
+	if (mMountEntity)
 	{
-		Ogre::Quaternion qu(Ogre::Radian(dir), Ogre::Vector3::UNIT_Y);
-		((Orphigine::SkeletonMeshActor*)mMountObj.get())->setOrientation(qu);
+		mMountEntity->setDirection(dir);
 	}
 	
 }
@@ -191,7 +187,7 @@ void KCharacter::ChangeAction(int32 nActionType, FLOAT fDegree, int32 nActionID,
 	//change mount action
 	
 
-	if (mMountObj)
+	if (mMountEntity)
 	{
 		float fMountDegree = fDegree;
 		if (INVALID_ID != nActionID)
@@ -203,11 +199,38 @@ void KCharacter::ChangeAction(int32 nActionType, FLOAT fDegree, int32 nActionID,
 				fMountDegree = pActionSet->nMonitoringDegree;
 			}
 		}
-		((Orphigine::SkeletonMeshActor*)mMountObj.get())->setAdvancedAnimationSystemMonitoringDegree(
-			Orphigine::SkeletonMeshComponent::AdvancedAnimationSystemMonitoringDegree(nActionType), fDegree);
+
+		mMountEntity->setAnimationDegree(nActionType, fCharDegree);
 
 	}
 	
+}
+
+
+BOOL KCharacter::ChangeMountAction(int32 nActionType, FLOAT fDegree, int32 nActionID)
+{
+	if (!mMountEntity || NULL == m_pMountActionSet)
+		return FALSE;
+
+	if (NULL == GetActionSetData())
+		return FALSE;
+
+
+	FLOAT fMountDegree = fDegree;
+	if (INVALID_ID != nActionID)
+	{
+		const _TABLE_CHARACTER_ACTION_SET* pActionSet =
+			(const _TABLE_CHARACTER_ACTION_SET*)(m_pMountActionSet->Search_Index_EQU(nActionID));
+		if (pActionSet)
+		{
+			fMountDegree = pActionSet->nMonitoringDegree;
+		}
+	}
+	
+	mMountEntity->setAnimationDegree(nActionType, fMountDegree);
+
+	return TRUE;
+
 }
 
 LPCSTR KCharacter::getCharActionNameByActionSetID(int32_t nActionSetID, int32_t nWeaponType, BOOL* pbHideWeapon, int32_t* pnAppointedWeaponID)
@@ -398,9 +421,9 @@ void KCharacter::ChangeActionSpeed(FLOAT fSpeed)
 	}
 
 	// 坐骑
-	if (mMountObj)
+	if (mMountEntity)
 	{
-		mMountObj->ChangeModelActionRate(fSpeed);
+		mMountEntity->ChangeModelActionRate(fSpeed);
 	}
 }
 
@@ -436,96 +459,6 @@ bool KCharacter::startMood()
 	return true;
 }
 
-void KCharacter::createMount()
-{
-	//mMountObj = Orphigine::ActorFactoryManager::getSingleton().createInstance("SkeletonMeshActor");
-	
-	int32_t mountId = 5;
-
-	const CGameTable* pCharMountTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MOUNT);
-	if (nullptr == pCharMountTable)
-	{
-		return;
-	}
-
-	const _TABLE_CHARACTER_MOUNT* pMount = (const _TABLE_CHARACTER_MOUNT*)(pCharMountTable->GetFieldDataByIndex(mountId));
-	if (nullptr == pMount)
-		return;
-
-	// 模型表
-	const CGameTable* pCharModelTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MODEL);
-	if (nullptr == pCharModelTable)
-	{
-		return;
-	}
-
-	const _TABLE_CHARACTER_MODEL* pMountModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(pMount->m_nModelID));
-
-
-	/*mMountObj->createRenderInstance();
-
-	int32_t nObjID = 105;
-	((Orphigine::SkeletonMeshActor*)mMountObj.get())->setSkeletonMeshActorTypeandId((Orphigine::SkeletonMeshActor::TypeEnum)0, nObjID);
-	*/
-	String mountModelName = pMountModel->m_pszModelName;
-	mMountObj->setModelName(mountModelName);
-	//
-
-
-	if (pMountModel != NULL && strlen(pMountModel->m_pszActionSetName_None) > 0)
-	{
-		m_pMountActionSet = GetActionSetData()->GetActionSetFile(pMountModel->m_pszActionSetName_None);
-		if (NULL == m_pMountActionSet)
-		{
-			OGRE_EXCEPT(0);
-		}
-	}
-	else
-	{
-		OGRE_EXCEPT(0);
-	}
-
-	const _TABLE_CHARACTER_MODEL* pCharModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(0));
-	if (NULL == pCharModel)
-	{
-		OGRE_EXCEPT(0);
-		return;
-	}
-
-	LPCSTR pszActionSetFileName = nullptr;
-	//update charactor action
-	// int32 nCharActionIndex = pMount->m_nCharActionIndex; // 人物骑乘时的动作组,对应char_model.tab的mount0~19
-	int32 nCharActionIndex = pMount->m_nCharActionIndex;
-	if (nCharActionIndex >= 0 && nCharActionIndex < MAX_MOUNT_NUMBER)
-	{
-		if (strlen(pCharModel->m_apszActionSetName_Mount[nCharActionIndex]) > 0)
-		{
-			pszActionSetFileName = pCharModel->m_apszActionSetName_Mount[nCharActionIndex];
-		}
-		else
-		{
-			pszActionSetFileName = pCharModel->m_pszActionSetName_None;
-
-			//KLThrow("pszActionSetFileName Error! nCharActionIndex=%d, m_nCurrMountModelID=%d ", nCharActionIndex, m_nCurrMountModelID );
-		}
-	}
-
-	if (pszActionSetFileName && '\0' != pszActionSetFileName[0])
-	{
-		m_pCharActionSet = GetActionSetData()->GetActionSetFile(pszActionSetFileName);
-		if (nullptr == m_pCharActionSet)
-		{
-			OGRE_EXCEPT(0);
-		}
-	}
-	//attach
-	auto locator = GetMountLocatorName(LOCATOR_MOUNT_BACK);
-	((Orphigine::SkeletonMeshActor*)mMountObj.get())->attachModelObj(
-		locator, mMainEntity->getSkeletonMeshActor());
-
-
-	ChangeAction(CA_RIDING, 1.0f);
-}
 
 
 
@@ -761,6 +694,109 @@ void KCharacter::createCharRenderInterface(void)
 
 }
 
+GameEntity* KCharacter::CreateMountRenderInterface(int32 nMountID)
+{
+
+	if (!mMountEntity)
+	{
+		mMountEntity = std::make_shared<GameEntity>();
+	}
+
+	const CGameTable* pCharMountTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MOUNT);
+	if (nullptr == pCharMountTable)
+	{
+		return nullptr;
+	}
+
+	const _TABLE_CHARACTER_MOUNT* pMount = (const _TABLE_CHARACTER_MOUNT*)(pCharMountTable->GetFieldDataByIndex(nMountID));
+	if (nullptr == pMount)
+		return nullptr;
+
+	// 模型表
+	const CGameTable* pCharModelTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MODEL);
+	if (nullptr == pCharModelTable)
+	{
+		return nullptr;
+	}
+
+	const _TABLE_CHARACTER_MODEL* pMountModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(pMount->m_nModelID));
+
+	String mountModelName = pMountModel->m_pszModelName;
+	mMountEntity->setModelName(mountModelName);
+	//
+	mMountEntity->SetModelType(CHAR_MODEL_MOUNT);
+
+	if (pMountModel != NULL && strlen(pMountModel->m_pszActionSetName_None) > 0)
+	{
+		m_pMountActionSet = GetActionSetData()->GetActionSetFile(pMountModel->m_pszActionSetName_None);
+		if (NULL == m_pMountActionSet)
+		{
+			OGRE_EXCEPT(0);
+		}
+	}
+	else
+	{
+		OGRE_EXCEPT(0);
+	}
+
+	const _TABLE_CHARACTER_MODEL* pCharModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(0));
+	if (NULL == pCharModel)
+	{
+		OGRE_EXCEPT(0);
+		return nullptr;
+	}
+
+	LPCSTR pszActionSetFileName = nullptr;
+	//update charactor action
+	// int32 nCharActionIndex = pMount->m_nCharActionIndex; // 人物骑乘时的动作组,对应char_model.tab的mount0~19
+	int32 nCharActionIndex = pMount->m_nCharActionIndex;
+	if (nCharActionIndex >= 0 && nCharActionIndex < MAX_MOUNT_NUMBER)
+	{
+		if (strlen(pCharModel->m_apszActionSetName_Mount[nCharActionIndex]) > 0)
+		{
+			pszActionSetFileName = pCharModel->m_apszActionSetName_Mount[nCharActionIndex];
+		}
+		else
+		{
+			pszActionSetFileName = pCharModel->m_pszActionSetName_None;
+
+			//KLThrow("pszActionSetFileName Error! nCharActionIndex=%d, m_nCurrMountModelID=%d ", nCharActionIndex, m_nCurrMountModelID );
+		}
+	}
+
+	if (pszActionSetFileName && '\0' != pszActionSetFileName[0])
+	{
+		m_pCharActionSet = GetActionSetData()->GetActionSetFile(pszActionSetFileName);
+		if (nullptr == m_pCharActionSet)
+		{
+			OGRE_EXCEPT(0);
+		}
+	}
+	//attach
+	auto locator = GetMountLocatorName(LOCATOR_MOUNT_BACK);
+	mMountEntity->getSkeletonMeshActor()->attachModelObj(
+		locator, mMainEntity->getSkeletonMeshActor());
+	mMountEntity->SetVisible(true);
+	ChangeAction(CA_RIDING, 1.0f);
+
+	return mMountEntity.get();
+}
+
+
+BOOL			KCharacter::Mounting(GameEntity* mountInterface, int32 nMountID)
+{
+	UpdateModel_MountActionSet();
+
+	ChangeMountAction(CA_ATTACK, 0.0f, -1);
+	ChangeMountAction(CA_GUARD, 0.0f, BASE_ACTION_F_IDLE);
+
+	return TRUE;
+}
+
+void KCharacter::Dismount()
+{
+
+}
 KCharatcterBaseData* KCharacter::GetCharacterData(void)
 {
 	if(nullptr == m_pCharacterData)
@@ -1078,12 +1114,12 @@ void KCharacter::UpdateMountModel(void)
 	if (NULL == pCharMount)
 	{
 		// 下马
-		//Dismount();
+		Dismount();
 	}
 	else
 	{
 		// 上马
-		//Mounting(CreateMountRenderInterface(nMountID), nMountID);
+		Mounting(CreateMountRenderInterface(nMountID), nMountID);
 	}
 
 	UpdateModel_State();
@@ -1519,7 +1555,7 @@ bool	KCharacter::SetMountActionSlot(
 		LPCTSTR lpszCharActionName = GetMountActionNameByActionSetID(nActionID);
 		if (lpszCharActionName)
 		{
-			mMountObj->Actor_SetActionSlot(pInfo->szNodeName, lpszCharActionName, bLoop, fRate, bBlendIn, bBlendOut);
+			mMountEntity->Actor_SetActionSlot(pInfo->szNodeName, lpszCharActionName, bLoop, fRate, bBlendIn, bBlendOut);
 			return TRUE;
 		}
 	}
@@ -1803,9 +1839,9 @@ void KCharacter::RefreshAnimation()
 void KCharacter::UpdateModel_Scale()
 {
 	FLOAT fScale = GetCharacterData()->Get_CharScale();
-	if (mMountObj)
+	if (mMountEntity)
 	{
-		mMountObj->SetScaleFactor(fScale);
+		mMountEntity->SetScaleFactor(fScale);
 	}
 	else
 	{

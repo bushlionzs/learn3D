@@ -506,8 +506,8 @@ message ServerMsgNewMonster
 	float position_z = 4;
 	float dir = 5;
 	float move_speed = 6;
-	float horse_id = 7;
-	float weapon_id = 8;
+	int32 horse_id = 7;
+	int32 weapon_id = 8;
 	int32 monster_type = 9;
 	uint32 guid = 10;
 	int32 race_id = 11;

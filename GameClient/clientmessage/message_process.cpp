@@ -348,9 +348,15 @@ void sc_new_monster(NetHandle h, const char* msg, uint32_t msg_size)
 	KCharatcterBaseData* pCharacterData = pNPC->GetCharacterData();
 
 
-	printf("create monster :%s\n", dummy.name().c_str());
+	printf("create monster :%s, horse_id:%d\n", dummy.name().c_str(), dummy.horse_id());
 
-	pCharacterData->Set_MountID(dummy.horse_id());
+	int32_t horse_id = dummy.horse_id();
+
+	if (horse_id >= 0)
+	{
+		int kk = 0;
+	}
+	pCharacterData->Set_MountID(horse_id);
 
 	pCharacterData->Set_MonstWeapon(dummy.weapon_id());
 

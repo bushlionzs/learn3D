@@ -24,7 +24,7 @@ class GameEntity;
 class KCharacter: public KObject
 {
 protected:
-	std::shared_ptr<GameEntity>     mMountObj;
+	std::shared_ptr<GameEntity>     mMountEntity;
 	Ogre::Vector3 mGamePosition;
 	Ogre::Real  mDirection = 0.0f;
 	Orphigine::SkeletonMeshComponent::AASAnimEndCallback* callback = nullptr;
@@ -51,8 +51,7 @@ protected:
 	const TAB::TABFile* m_pMountActionSet = nullptr;
 	const TAB::TABFile* m_pWeaponActionSet;
 
-	
-	std::shared_ptr<GameEntity> mMountEntity;
+
 
 	std::string mModelName;
 	std::string mMountModelName;
@@ -136,6 +135,8 @@ public:
 
 	
 	void ChangeAction(int32 nActionType, FLOAT fDegree, int32 nActionID = INVALID_ID, FLOAT fSpeed = 1.0f, BOOL bShowWeapon = TRUE);
+
+	BOOL ChangeMountAction(int32 nActionType, FLOAT fDegree, int32 nActionID);
 	LPCSTR getCharActionNameByActionSetID(int32_t nActionSetID, int32_t nWeaponType, BOOL* pbHideWeapon, int32_t* pnAppointedWeaponID);
 	eWEAPON_TYPE getMainWeaponType();
 	void onAnimationEnd(const char* animName, const char* parentNodeType, const char* parentNodeName);
@@ -168,7 +169,6 @@ public:
 
 	bool startMood();
 
-	void createMount();
 
 	void setMountId(int32_t mountId);
 
@@ -420,8 +420,11 @@ protected:
 	void UpdateModel_MountActionSet(void);
 	
 	virtual void createCharRenderInterface(void);
-
+	virtual GameEntity* CreateMountRenderInterface(int32 nMountID);
 	//
-	
+	// 上马
+	virtual BOOL			Mounting(GameEntity* mountInterface, int32 nMountID);
+	// 下马
+	virtual void			Dismount();
 	
 };

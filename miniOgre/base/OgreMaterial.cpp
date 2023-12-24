@@ -61,10 +61,7 @@ void Material::load()
         VideoManager::getSingleton()._playVideoMaterial(mMaterialName);
     }
     
-    if (mMaterialName == "Terrain/TwoLayerLightmap")
-    {
-        int kk = 0;
-    }
+
     for (auto& it : mTextureUnits)
     {
         if(!it->isLoaded())
