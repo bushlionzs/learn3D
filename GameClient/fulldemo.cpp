@@ -7,6 +7,8 @@
 #include "net_context.h"
 #include "message_process.h"
 #include "server_message.pb.h"
+#include "GameMouseCursor.h"
+#include "application_window.h"
 
 FullDemo::FullDemo()
 {
@@ -32,6 +34,12 @@ bool FullDemo::appInit()
 
 	mGameWorld = new GameWorld(mGameCamera);
 	mGameWorld->gameWorldInit();
+
+	new CGameMouseCursor;
+
+	CGameMouseCursor::GetSingleton().Initialize(mApplicationWindow->getWnd());
+
+	CGameMouseCursor::GetSingleton().SetCursor(CURSOR_NORMAL);
 	return true;
 }
 

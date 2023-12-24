@@ -13,6 +13,9 @@
 #include "GameInput.h"
 #include "UIManager.h"
 #include "data/GameDataManager.h"
+#include "DirectlyEffectMgr.h"
+#include "KTable.h"
+#include "GameMouseCursor.h"
 
 GameWorld::GameWorld(GameCamera* gameCamera)
 {
@@ -58,20 +61,10 @@ bool GameWorld::gameWorldInit()
 
 	mGameCamera->setDistance(1200.0f);
 	mGameCamera->setHeight(200.0f);
-	
-	/*Ogre::Vector3 mPosition;
-	mPosition.x = 174;
-	mPosition.y = 0;
-	mPosition.z = 47;
-
-	mPlayer = new KPlayer();
-	mPlayer->setRaceId(11970);
-
-	GameSceneManager::getSingletonPtr()->loadScene(87);
-	mPlayer->setPosition(mPosition);*/
 
 	InputManager::getSingleton().addListener(this);
 
+	
 
 	NOTICE_LOG("load world successfully.")
 	return true;
@@ -86,6 +79,12 @@ void GameWorld::injectMouseWheel(int _absz)
 {
    
 }
+
+void GameWorld::injectMouseCursor()
+{
+	CGameMouseCursor::GetSingleton().OnCursor();
+}
+
 void GameWorld::injectMouseMove(int _absx, int _absy, int _absz)
 {
     

@@ -51,6 +51,7 @@ namespace Ogre {
 
         if (!stream)
         {
+            assert(false);
             return false;
         }
         uint32_t nrComponents = 0;

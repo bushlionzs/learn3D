@@ -106,10 +106,14 @@ LRESULT CALLBACK InputManager::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 		DragFinish(hDrop);
 		return 0;
 	}
-
+	else if (WM_SETCURSOR == uMsg)
+	{
+		InputManager::getSingleton().onMouseCursor();
+		return TRUE;
+	}
 	else if (WM_CLOSE == uMsg)
 	{
-		if (!InputManager::getSingleton().onWinodwClose((size_t)hWnd))
+		if (!InputManager::getSingleton().onWindowClose((size_t)hWnd))
 			return 0;
 	}
 	else if ((uMsg >= WM_MOUSEFIRST) && (uMsg <= __WM_REALMOUSELAST))
@@ -292,6 +296,14 @@ void InputManager::setInputViewSize(int _width, int _height)
 {
 	mWidth = _width;
 	mHeight = _height;
+}
+
+void InputManager::onMouseCursor()
+{
+	for (auto listener : listeners)
+	{
+		listener->injectMouseCursor();
+	}
 }
 
 void InputManager::setMousePosition(int _x, int _y)

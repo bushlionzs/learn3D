@@ -32,6 +32,7 @@ protected:
 	PathComponent* mPathComponent;
 
 	Orphigine::Impact* mProjectorEffect = nullptr;
+	
 	Ogre::SceneNode* mMouseNode = nullptr;
 
 	Ogre::String mWeaponname;

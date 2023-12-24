@@ -16,7 +16,7 @@
 
 class PathComponent;
 class PlayerLogicModelHaveCreateCallback;
-
+class CDirectlyEffectMgr;
 class GameEntity;
 
 class KPlayer: public KCharacter
@@ -88,4 +88,8 @@ private:
 	// ÎäÆ÷¶¯×÷Ãû
 	String	m_strWeaponActorFile_Down;
 	String	m_strWeaponActorFile_Up;
+
+	std::vector<Orphigine::Impact*> mPathEffect;
+
+	CDirectlyEffectMgr* mDirectlyImpact = nullptr;
 };

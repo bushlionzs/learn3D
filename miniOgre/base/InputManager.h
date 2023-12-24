@@ -253,6 +253,7 @@ public:
     virtual void injectMouseRelease(int _absx, int _absy, OIS::MouseButtonID _id) {}
     virtual void injectKeyPress(KeyCode _key, uint32_t _text) {}
     virtual void injectKeyRelease(KeyCode _key) {}
+    virtual void injectMouseCursor() {}
 };
 
 
@@ -277,7 +278,8 @@ public:
 	virtual void injectKeyRelease(KeyCode _key);
 
 	virtual void onFileDrop(const std::wstring& _filename) { }
-	virtual bool onWinodwClose(size_t _handle) { return true; }
+	virtual bool onWindowClose(size_t _handle) { return true; }
+    virtual void onMouseCursor();
 
 	void setMousePosition(int _x, int _y);
 	void updateCursorPosition();

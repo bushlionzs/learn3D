@@ -23,6 +23,9 @@ public:
 	void updateToFaceDir(float deltatime);
 
 	void calculateNodePos(const Ogre::Vector2& fvPosition, FLOAT fModifyHeight);
+
+	float calculateHeight(const Ogre::Vector2& fvPosition);
+	std::vector<Ogre::Vector3> calPathEffect();
 private:
 	Ogre::Real getFaceDir();
 	void setFaceDir(Ogre::Real dir);

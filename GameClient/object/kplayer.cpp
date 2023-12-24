@@ -24,6 +24,8 @@
 #include "GameEntity.h"
 #include "KItemEquip.h"
 #include "KItemManager.h"
+#include "KObjectManager.h"
+#include "DirectlyEffectMgr.h"
 
 class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -40,11 +42,21 @@ KPlayer::KPlayer()
 	//mousetarget
 
 	mMouseNode = EngineManager::getSingleton().getBaseSceneNode()->createChildSceneNode("mouse");
-	Ogre::String effectName = "reachable_projector";
-	mProjectorEffect = Orphigine::ImpactManager::getSingleton().createEffect(effectName, 0);
-	mProjectorEffect->createSceneNode(mMouseNode);
+	
+	if (mProjectorEffect == nullptr)
+	{
+		Ogre::String effectName = "reachable_projector";
+		mProjectorEffect = Orphigine::ImpactManager::getSingleton().createEffect(effectName, 1);
+		mProjectorEffect->createSceneNode(mMouseNode);
+		mProjectorEffect->setVisible(true);
+	}
 
 	mObjectType = ObjectType_PlayerOfMe;
+
+	mDirectlyImpact = new CDirectlyEffectMgr;
+	mDirectlyImpact->Init(GAME_TABLE_MANAGER_PTR->GetTable(TABLE_DIRECTLY_IMPACT)->GetTableFile());
+
+	
 }
 
 void CalculateNodePos(const Ogre::Vector3& fvPosition, FLOAT fModifyHeight, Ogre::Vector3& outPos)
@@ -99,13 +111,45 @@ void KPlayer::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 			fvSource, GAT_GAME, fvTarget);
 
 		
-
+		
+		{
+			//test path
+			Ogre::Vector2 fvMyPos(191.731522, 179.000549);
+			Ogre::Vector2 fvTargetPos(145.000000, 203.000000);
+			mPathComponent->moveTo(fvMyPos, fvTargetPos);
+		}
 		Ogre::Vector2 fvMyPos(mGamePosition.x, mGamePosition.z);
 		Ogre::Vector2 fvTargetPos(fvTarget.x, fvTarget.z);
-
+		//fvTargetPos.x = 145;
+		//fvTargetPos.y = 203;
 		mPathComponent->moveTo(fvMyPos, fvTargetPos);
 
 		Ogre::Vector3 fvEnginePosition;
+		const _DBC_DIRECT_EFFECT* pImpact = CDirectlyEffectMgr::GetMe()->GetConstDirectlyImpact(IMPACTTYPE_PATH_LINE);
+		//create effect path
+
+		std::vector<Ogre::Vector3> pathlist = mPathComponent->calPathEffect();
+		
+		/*if (!pathlist.empty())
+		{
+			mPathEffect.clear();
+			Ogre::String effectName = "reachable_projector";
+			for (auto& pos : pathlist)
+			{
+				Orphigine::Impact* impact = Orphigine::ImpactManager::getSingleton().createEffect(effectName, 1);
+				mPathEffect.push_back(impact);
+
+				auto* node = impact->createSceneNode();
+				EngineManager::getSingleton().positionAxisTrans(GAT_GAME,
+					pos, GAT_ENGINE, fvEnginePosition);
+				node->setPosition(fvEnginePosition);
+				node->updatechildren();
+				impact->setVisible(true);
+			}
+		}*/
+
+		
+
 		EngineManager::getSingleton().positionAxisTrans(GAT_GAME,
 			fvTarget, GAT_ENGINE, fvEnginePosition);
 		Ogre::Vector3 modifyPosition;

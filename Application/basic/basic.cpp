@@ -61,14 +61,14 @@ void Basic::base1()
 
 	
 	
-	auto mesh = MeshManager::getSingletonPtr()->createRect(
+	/*auto mesh = MeshManager::getSingletonPtr()->createRect(
 		"myrect",
 		leftop, leftbottom, righttop, rightbottom, normal);
 	Entity* rect = mSceneManager->createEntity("rect", mesh);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
-	rectnode->attachObject(rect);
+	rectnode->attachObject(rect);*/
 
-	mSceneManager->setSkyBox(true, "SkyLan", 50000);
+	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
 
 	mGameCamera->setDistance(6.0f);
 	mGameCamera->setMoveSpeed(25.0f);
