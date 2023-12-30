@@ -125,7 +125,7 @@ void Dx11RenderSystem::render(Renderable* r, RenderListType t)
 	renderImpl(mDx11Pass);
 }
 
-void Dx11RenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
+void Dx11RenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread)
 {
 	for (auto r : objs)
 	{

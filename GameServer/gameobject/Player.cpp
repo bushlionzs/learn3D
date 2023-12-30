@@ -3727,19 +3727,19 @@ void Player::SendMsg_RefeshAttribToMyself(void)
 	
 	if (CheckRefeshBase(mSCCharHumanBaseAttrib))
 	{
-		updateAttr();
+		//updateAttr();
 	}
 
 
 	if (CheckRefeshEquip(mSCCharEquipment))
 	{
-		updateEquip();
+		//updateEquip();
 	}
 
 
 	if (CheckRefeshQuest(mSCQuestListRefresh))
 	{
-		updateQuest();
+		//updateQuest();
 	}
 }
 

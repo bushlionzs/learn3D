@@ -2,7 +2,7 @@
 #include "camera_impl.h"
 #include "OgreMoveObject.h"
 #include "OgreCommon.h"
-#include "OgreFrustum.h"
+
 #include "OgreBase.h"
 namespace Ogre {
     class Camera: public MoveObject, public ICamera
@@ -59,6 +59,10 @@ namespace Ogre {
         void setFarClipDistance(float zfar);
         void setPolygonMode(PolygonMode sd);
         void setProjectionType(Ogre::ProjectionType pt);
+        virtual Ogre::ProjectionType getProjectionType() override
+        {
+            return mCameraImpl->getProjectionType();
+        }
         void setOrthoWindow(float w, float h);
 
         bool isReflected();

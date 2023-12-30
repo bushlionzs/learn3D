@@ -42,6 +42,11 @@ public:
 	{
 		return m_vUserBag;
 	}
+
+	const std::vector<KItem*>& getUserEquip()
+	{
+		return m_vUserEquip;
+	}
 private:
 	/* 玩家装备实例数组 */
 	std::vector<KItem*> m_vUserEquip;

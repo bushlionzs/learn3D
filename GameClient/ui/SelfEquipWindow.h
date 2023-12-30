@@ -34,12 +34,19 @@ public:
 		int _top,
 		MyGUI::MouseButton _id);
 	void setModelTexture(const String& name);
+
+	void update();
+
+private:
+	void createImageBox(uint32_t pos);
 private:
 	MyGUI::ImageBox* mImageEquip;
-	MyGUI::ImageBox* mImageClothes;
 	MyGUI::ImageBox* mImageClose;
 	MyGUI::ImageBox* mImageHelp;
 	MyGUI::ImageBox* mImageModel;
+
+	std::vector< MyGUI::ImageBox*> mEquips;
+	std::vector< MyGUI::IntCoord> mEquipCoords;
 	ToolTip* mToolTip;
 
 	bool mDragging = false;

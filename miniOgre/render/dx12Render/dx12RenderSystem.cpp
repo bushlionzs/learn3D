@@ -163,7 +163,7 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	renderImpl(&mCurrentPass);
 }
 
-void Dx12RenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
+void Dx12RenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread)
 {
 	for (auto r : objs)
 	{

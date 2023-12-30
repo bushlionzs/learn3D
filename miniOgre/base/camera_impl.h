@@ -46,6 +46,10 @@ public:
     void setNearClipDistance(float znear);
     void setFarClipDistance(float zfar);
     void setProjectionType(Ogre::ProjectionType pt);
+    Ogre::ProjectionType getProjectionType()
+    {
+        return mProjectType;
+    }
     void setOrthoWindow(float w, float h);
 
     bool isReflected();

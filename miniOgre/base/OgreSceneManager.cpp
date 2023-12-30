@@ -73,6 +73,13 @@ namespace Ogre {
 
         mRenderSystem->_setViewport(camera, vp);
 
+        bool multithread = true;
+
+        if (camera->getProjectionType() == Ogre::PT_ORTHOGRAPHIC)
+        {
+            multithread = false;
+        }
+
         mRoot->traverse(mEngineRenderList, camera);
 
         if (mCurrentViewport->getClearEveryFrame())
@@ -91,25 +98,12 @@ namespace Ogre {
             }
             );
 
-            int kk = 0;
-            //for (auto r : mEngineRenderList.mOpaqueList)
-            //{
-            //    /*kk++;
-            //    if (kk > 1000)
-            //        break;*/
-            //    mRenderSystem->render(r, RenderListType_Opaque);
-            //}
-
             if(!mEngineRenderList.mOpaqueList.empty())
-                mRenderSystem->multiRender(mEngineRenderList.mOpaqueList);
+                mRenderSystem->multiRender(mEngineRenderList.mOpaqueList, multithread);
 
             if (!mEngineRenderList.mTransparentList.empty())
-                mRenderSystem->multiRender(mEngineRenderList.mTransparentList);
+                mRenderSystem->multiRender(mEngineRenderList.mTransparentList, multithread);
 
-            /*for (auto r : mEngineRenderList.mTransparentList)
-            {
-                mRenderSystem->render(r, RenderListType_Transparent);
-            }*/
         }
     }
 

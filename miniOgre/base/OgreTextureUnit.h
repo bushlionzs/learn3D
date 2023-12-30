@@ -61,7 +61,7 @@ struct TextureEffect {
 class TextureUnit
 {
 public:
-    TextureUnit();
+    TextureUnit(Ogre::Material* owner);
     ~TextureUnit();
 
     void setTexture(std::shared_ptr<ITexture> tex);
@@ -80,7 +80,7 @@ public:
     ITexture* getRaw();
     TextureProperty* getTextureProperty();
 
-    std::shared_ptr<TextureUnit> clone();
+    std::shared_ptr<TextureUnit> clone(Ogre::Material* owner);
 
     void setColourOperationEx(
         LayerBlendOperationEx op,
@@ -145,4 +145,6 @@ private:
 
     //
     EffectMap mEffects;
+
+    Ogre::Material* mOwner;
 };

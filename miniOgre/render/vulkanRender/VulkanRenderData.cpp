@@ -77,10 +77,25 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
         (const char*)&current.mMaterialConstantBuffer, 
         sizeof(current.mMaterialConstantBuffer));
 
+    VkDescriptorBufferInfo frameDescriptor = {};
+    mEngine->_getCurrentFrame()->updateFrameDescriptor(frameDescriptor, cam);
+    
+    if (mat->isChanged())
+    {
+        mat->setChanged(false);
+
+        for (uint32_t i = 0; i < VULKAN_FRAME_RESOURCE_COUNT; i++)
+        {
+            auto& current = _frameRenderableData[i];
+            current.mDescriptorSetUpdate = false;
+        }
+    }
+
     if (current.mDescriptorSetUpdate)
     {
         return;
     }
+
     current.mDescriptorSetUpdate = true;
 
     auto texs = mat->getAllTexureUnit();
@@ -147,8 +162,7 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
     materialDescriptor.offset = materialInfo._offset;
     materialDescriptor.range = sizeof(MaterialConstantBuffer);
 
-    VkDescriptorBufferInfo frameDescriptor = {};
-    mEngine->_getCurrentFrame()->updateFrameDescriptor(frameDescriptor, cam);
+   
     
 
 

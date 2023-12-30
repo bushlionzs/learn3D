@@ -3,10 +3,7 @@
 
 #include <MyGUI.h>
 #include "BaseLayout/BaseLayout.h"
-struct ItemData
-{
-	String _itemname;
-};
+#include "application_util.h"
 
 class ToolTip :
 	public wraps::BaseLayout
@@ -14,16 +11,18 @@ class ToolTip :
 public:
 	ToolTip();
 
-	void show(ItemData* _data);
+	void show(uint32_t id);
 	void hide();
 	void move(const MyGUI::IntPoint& _point);
 
 private:
 	MyGUI::TextBox* mTextName;
-	MyGUI::TextBox* mTextLevel;
+	MyGUI::TextBox* mTextDesc;
 	MyGUI::ImageBox* mImageInfo;
 
 	int mOffsetHeight;
+
+	ItemData mItemData;
 };
 
 

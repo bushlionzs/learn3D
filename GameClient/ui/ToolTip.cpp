@@ -1,30 +1,36 @@
 #include "OgreHeader.h"
 #include "ToolTip.h"
+#include "application_util.h"
 
 
 ToolTip::ToolTip() :
 	BaseLayout("equiptip.layout")
 {
 	assignWidget(mTextName, "itemname");
-	assignWidget(mTextLevel, "level");
+	assignWidget(mTextDesc, "desc");
 	assignWidget(mImageInfo, "show");
 
 	const MyGUI::IntCoord& coord = MyGUI::IntCoord();
 	mOffsetHeight = mMainWidget->getHeight() - coord.height;
 }
 
-void ToolTip::show(ItemData* _data)
+void ToolTip::show(uint32_t id)
 {
-	if (_data == nullptr)
-		return;
 
-	mTextLevel->setCaption("level");
-	mTextName->setCaption(_data->_itemname.c_str());
+	if (!getItemInfo(id, mItemData))
+	{
+		return;
+	}
+	mTextName->setCaption("aaaaaaaaaaa");
+	mTextDesc->setCaption(mItemData.desc);
+	
+	setImageInfoFromIcon(mImageInfo, id);
 
 	const MyGUI::IntSize& text_size = MyGUI::IntSize();
 	mMainWidget->setSize(mMainWidget->getWidth(), mOffsetHeight + text_size.height);
 
 	mMainWidget->setVisible(true);
+
 }
 
 void ToolTip::hide()

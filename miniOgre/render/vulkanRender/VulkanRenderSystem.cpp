@@ -273,7 +273,7 @@ struct ParallelTaskSet : public enki::IPinnedTask
     VulkanFrame* _frame;
 };
 
-void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
+void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread)
 {
     for (auto r : objs)
     {
@@ -282,7 +282,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs)
     }
     uint32_t size = (uint32_t)objs.size();
 
-    if (size < 30)
+    if (!multithread)
     {
         for (auto r : objs)
         {

@@ -134,6 +134,16 @@ namespace Ogre {
         void setVideoName(const String& videoName);
         bool _isVideo();
         String getVideoName();
+
+        bool isChanged()
+        {
+            return mChanged;
+        }
+
+        void setChanged(bool changed)
+        {
+            mChanged = changed;
+        }
     private:
         std::string mMaterialName;
         Ogre::Vector4 mAmbient;
@@ -167,5 +177,7 @@ namespace Ogre {
         Ogre::ColourBlendState mBlendState;
 
         Ogre::CullingMode mCullingMode = CULL_CLOCKWISE;
+
+        bool mChanged = true;
     };
 }

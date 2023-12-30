@@ -24,6 +24,7 @@ namespace MyGUI
 		mMaterial->setWriteDepth(false);
 		mMaterial->setDepthTest(false);
 		mMaterial->setCullMode(Ogre::CULL_NONE);
+		mTexture = nullptr;
 	}
 
 	MyGUIRender::~MyGUIRender()
@@ -33,10 +34,16 @@ namespace MyGUI
 
 	void MyGUIRender::update(OgreVertexBuffer* vertexBuffer, OgreTexture* tex)
 	{
+		if (mTexture == tex)
+		{
+			return;
+		}
 		auto unit = mMaterial->getTextureUnit(0);
+	
 		unit->setTexture(tex->getOgreTexture());
 		mVertexBuffer = vertexBuffer;
 		mTexture = tex;
+		mMaterial->setChanged(true);
 	}
 
 	VertexData* MyGUIRender::getVertexData()

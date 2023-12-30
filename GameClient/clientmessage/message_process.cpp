@@ -253,7 +253,8 @@ void sc_detail_equip(NetHandle h, const char* msg, uint32_t msg_size)
 	for (auto i = 0; i < items.size(); i++)
 	{
 		auto& item = items[i];
-		KItem* pItemObj = KItemManager::GetSingleton().CreateNewItem(item.item_index());
+		auto item_index = item.item_index();
+		KItem* pItemObj = KItemManager::GetSingleton().CreateNewItem(item_index);
 		pItemObj->SetGUID(
 			item.item_guid().world(),
 			item.item_guid().server(),
@@ -285,8 +286,9 @@ void sc_detail_equip(NetHandle h, const char* msg, uint32_t msg_size)
 			(PLAYER_EQUIP)pos, pItemObj, true);
 	}
 
-	//ACTION_SYS_PTR->UserEquip_Update();
 	pPlayer->UpdateBodyPartModel();
+
+	UIManager::GetSingleton().updateWindow(GameUI_SelfEquip);
 }
 
 void sc_detail_item(NetHandle h, const char* msg, uint32_t msg_size)

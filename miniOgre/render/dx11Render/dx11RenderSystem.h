@@ -25,7 +25,7 @@ public:
     virtual void ready();
     virtual void preRender();
     virtual void render(Renderable* r, RenderListType t);
-    virtual void multiRender(std::vector<Ogre::Renderable*>& objs);
+    virtual void multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread);
     virtual void postRender();
     virtual ITexture* createTextureFromFile(const std::string& name, TextureProperty* texProperty);
     virtual Shader* createShader(ShaderInfo& sinfo);

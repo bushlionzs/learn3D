@@ -2,29 +2,22 @@
 #include "SelfEquipWindow.h"
 #include "CEGUIResourceManager.h"
 #include "application_util.h"
-
-
+#include "GameDataManager.h"
+#include "KItem.h"
 
 SelfEquipWindow::SelfEquipWindow() :
 	BaseLayout("selfequip.layout")
 {
 	assignWidget(mImageEquip, "equip");
-	assignWidget(mImageClothes, "clothes");
 	assignWidget(mImageClose, "close");
 	assignWidget(mImageHelp, "help");
 	assignWidget(mImageModel, "model");
-	//mImageModel->setImageTexture("awesomeface.png");
 	String imagesetname = "UI_MainBoard_2";
 	String imagename = "UI_MainBoard_2_Selfequip_Board";
 	setImageInfo(mImageEquip, imagesetname, imagename);
 
 	mImageEquip->setItemSelect(0);
 
-	imagesetname = "test";
-	imagename = "aa";
-
-	setImageInfo(mImageClothes, imagesetname, imagename);
-	mImageClothes->setItemSelect(0);
 
 	imagesetname = "UI_duihua_1";
 	imagename = "UI_duihua_1_close_normal";
@@ -38,10 +31,22 @@ SelfEquipWindow::SelfEquipWindow() :
 	setImageInfo(mImageHelp, imagesetname, imagename);
 	mImageHelp->setItemSelect(0);
 
+	mEquips.resize(HEQUIP_NUMBER);
+	mEquipCoords.resize(HEQUIP_NUMBER);
 
-	mImageClothes->setNeedToolTip(true);
-	mImageClothes->eventToolTip += MyGUI::newDelegate(this, &SelfEquipWindow::notifyToolTip);
+	auto right = 300;
 
+	mEquipCoords[HEQUIP_MAINHAND] = { 39, 106, 32, 32 };
+	mEquipCoords[HEQUIP_ASSIHAND] = { right, 106, 32, 32 };
+	mEquipCoords[HEQUIP_HEAD] = {39, 148, 32, 32};
+	mEquipCoords[HEQUIP_NECK] = { right, 148, 32, 32};
+	mEquipCoords[HEQUIP_SHOULDER] = {39, 356, 32, 32};
+	mEquipCoords[HEQUIP_BACK] = { 39, 189, 32, 32 };
+	mEquipCoords[HEQUIP_WRIST] = { right, 148, 32, 32 };
+	mEquipCoords[HEQUIP_FEET] = { right, 315, 32, 32};
+
+	mEquipCoords[HEQUIP_RING1] = { right, 231, 32, 32 };
+	mEquipCoords[HEQUIP_RING1] = { right, 273, 32, 32 };
 
 	mToolTip = new ToolTip();
 	mToolTip->hide();
@@ -100,16 +105,16 @@ void SelfEquipWindow::onWindowMouseButtonReleased(
 
 void SelfEquipWindow::notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo& _info)
 {
-	ItemData item;
-	item._itemname = "none";
-	if (_sender == mImageClothes)
-	{
-		item._itemname = "clothes";
-	}
-
 	if (_info.type == MyGUI::ToolTipInfo::Show)
 	{
-		mToolTip->show(&item);
+		uint32_t* value = _sender->getUserData<uint32_t>();
+		ItemData itemdata;
+
+		auto& equips = GameDataManager::GetSingleton().getUserEquip();
+
+		KItem* item = equips[*value];
+		auto id = item->GetIdTable();
+		mToolTip->show(id);
 		mToolTip->move(_info.point);
 	}
 	else if (_info.type == MyGUI::ToolTipInfo::Hide)
@@ -133,4 +138,42 @@ MyGUI::Widget* SelfEquipWindow::getView()
 void SelfEquipWindow::setModelTexture(const String& name)
 {
 	mImageModel->setImageTexture(name);
+}
+
+void SelfEquipWindow::update()
+{
+	auto& equips = GameDataManager::GetSingleton().getUserEquip();
+
+
+	for (int32_t i = 0; i < HEQUIP_NUMBER; i++)
+	{
+		KItem* item = equips[i];
+
+		if (item)
+		{
+			createImageBox(i);
+			auto id = item->GetIdTable();
+			setImageInfoFromIcon(mEquips[i], id);
+		}
+		else
+		{
+			setImageInfoFromIcon(mEquips[i], -1);
+		}
+	}
+	
+}
+
+void SelfEquipWindow::createImageBox(uint32_t pos)
+{
+	if (mEquips[pos])
+		return;
+
+	auto imagebox = mImageEquip->createWidget<MyGUI::ImageBox>("ImageBox", mEquipCoords[pos], MyGUI::Align::Stretch, "");
+
+	imagebox->setNeedToolTip(true);
+	imagebox->eventToolTip += MyGUI::newDelegate(this, &SelfEquipWindow::notifyToolTip);
+	imagebox->setVisible(true);
+	imagebox->setUserData(pos);
+	
+	mEquips[pos] = imagebox;
 }

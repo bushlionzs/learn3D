@@ -42,7 +42,7 @@ public:
     virtual void frameEnd() = 0;
     virtual void update(Renderable* r) {}
     virtual void render(Ogre::Renderable* r, RenderListType t) = 0;
-    virtual void multiRender(std::vector<Ogre::Renderable*>& objs) {}
+    virtual void multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread = true) {}
     virtual Ogre::ITexture* createTextureFromFile(
         const std::string& name,
         Ogre::TextureProperty* texProperty);

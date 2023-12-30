@@ -233,6 +233,7 @@ namespace MyGUI
 		{
 			OgreVertexBuffer* vb = (OgreVertexBuffer*)_buffer;
 			vb->getRenderOperation()->vertexData->vertexCount = _count;
+			itor->second->update(vb, (OgreTexture*)_texture);
 			mRenderables.push_back(itor->second);
 		}
 	}

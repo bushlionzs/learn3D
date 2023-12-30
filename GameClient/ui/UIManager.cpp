@@ -51,6 +51,7 @@ void UIManager::updateWindow(uint32_t winId)
 	if (itor != mWindowMap.end())
 	{
 		itor->second->update();
+		return;
 	}
 
 	UIBase* base = nullptr;

@@ -21,7 +21,7 @@ Material::~Material()
 
 uint32_t Material::addTexture(const std::string& name, Ogre::TextureProperty* texProperty)
 {
-    std::shared_ptr<TextureUnit> tu(new TextureUnit);
+    std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
 
     tu->setTexture(name, texProperty);
 
@@ -31,7 +31,7 @@ uint32_t Material::addTexture(const std::string& name, Ogre::TextureProperty* te
 
 uint32_t Material::addAnimTexture(const std::vector<String>& namelist, float duration)
 {
-    std::shared_ptr<TextureUnit> tu(new TextureUnit);
+    std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
 
     tu->setAnimtexture(namelist, duration);
 
@@ -42,7 +42,7 @@ uint32_t Material::addAnimTexture(const std::vector<String>& namelist, float dur
 
 uint32_t Material::addTexture(const Ogre::TexturePtr& tex)
 {
-    std::shared_ptr<TextureUnit> tu(new TextureUnit);
+    std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
     tu->setTexture(tex);
     mTextureUnits.push_back(tu);
     return mTextureUnits.size() - 1;
@@ -222,7 +222,7 @@ Material& Material::operator=(const Material& rhs)
     mCullingMode = rhs.mCullingMode;
     for (auto tu : rhs.mTextureUnits)
     {
-        mTextureUnits.push_back(tu->clone());
+        mTextureUnits.push_back(tu->clone(this));
     }
     return *this;
 }

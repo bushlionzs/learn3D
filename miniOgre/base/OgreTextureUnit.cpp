@@ -2,14 +2,14 @@
 #include "OgreTextureUnit.h"
 #include "OgreTextureManager.h"
 #include "OgreControllerManager.h"
-
+#include "OgreMaterial.h"
 
 void TextureAnimationControllerValue::setValue(Ogre::Real value)
 {
     mTexUnit->addTime(value);
 }
 
-TextureUnit::TextureUnit():
+TextureUnit::TextureUnit(Ogre::Material* owner):
     mRotate(0),
     mCurrentRotate(0),
     mUMod(0.0f),
@@ -19,7 +19,7 @@ TextureUnit::TextureUnit():
     mUScale(1.0f),
     mVScale(1.0f)
 {
-    
+    mOwner = owner;
 }
 
 
@@ -164,9 +164,9 @@ TextureProperty* TextureUnit::getTextureProperty()
     return &mTextureProperty;
 }
 
-std::shared_ptr<TextureUnit> TextureUnit::clone()
+std::shared_ptr<TextureUnit> TextureUnit::clone(Ogre::Material* owner)
 {
-    std::shared_ptr<TextureUnit> tu = std::make_shared<TextureUnit>();
+    std::shared_ptr<TextureUnit> tu = std::make_shared<TextureUnit>(owner);
 
     tu->mNameList = mNameList;
     tu->mTextureProperty = mTextureProperty;
@@ -332,7 +332,10 @@ void TextureUnit::addTime(float delta)
             {
                 mAnimAccumulate -= mAnimDuration;
             }
+
+            mOwner->setChanged(true);
         }
+
     }
 
     if (mUseScroll)

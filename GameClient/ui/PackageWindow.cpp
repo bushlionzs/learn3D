@@ -53,20 +53,6 @@ PackageWindow::PackageWindow() :
 	_focus_box->setItemSelect(0);
 	_focus_box->setVisible(false);
 
-	/*updateItem(0, 0, 10010070);
-	updateItem(0, 1, 10010070);
-	updateItem(0, 5, 10010070);
-
-	updateItem(1, 0, 10010070);
-	updateItem(1, 1, 10010070);
-	updateItem(1, 5, 10010070);
-
-	updateItem(3, 4, 10010070);
-	updateItem(4, 4, 10010070);
-	updateItem(5, 4, 10010070);
-	updateItem(5, 5, 10010070);
-	setItemFocus(5, 4);*/
-
 	mImageBackgroud->eventMouseButtonPressed += MyGUI::newDelegate(this, &PackageWindow::onWindowMouseButtonPressed);
 	mImageBackgroud->eventMouseDrag += MyGUI::newDelegate(this, &PackageWindow::onWindowMouseDrag);
 	mImageBackgroud->eventMouseButtonReleased += MyGUI::newDelegate(this, &PackageWindow::onWindowMouseButtonReleased);
@@ -74,13 +60,11 @@ PackageWindow::PackageWindow() :
 
 void PackageWindow::notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo& _info)
 {
-	ItemData item;
-	item._itemname = "none";
-
+	
 
 	if (_info.type == MyGUI::ToolTipInfo::Show)
 	{
-		mToolTip->show(&item);
+		mToolTip->show(0);
 		mToolTip->move(_info.point);
 	}
 	else if (_info.type == MyGUI::ToolTipInfo::Hide)
