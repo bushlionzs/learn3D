@@ -208,7 +208,7 @@ namespace MyGUI
 		texProperty._width = _width;
 		texProperty._height = _height;
 		texProperty._tex_format = mPixelFormat;
-		texProperty._tex_usage = mUsage;
+		texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
 		mTexture = Ogre::TextureManager::getSingleton().createManual(
 			mName,
 			texProperty);

@@ -10,10 +10,10 @@
 #include "MyGUI_Prerequest.h"
 #include "MyGUI_ITexture.h"
 #include "MyGUI_IFont.h"
-
+#define MYGUI_USE_FREETYPE
 #ifdef MYGUI_USE_FREETYPE
-#	include <ft2build.h>
-#	include FT_FREETYPE_H
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #ifdef MYGUI_MSDF_FONTS
 namespace msdfgen

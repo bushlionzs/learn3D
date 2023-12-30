@@ -68,7 +68,7 @@ namespace Ogre {
 
 	void ITexture::loadImpl()
 	{
-		if (mUsage & TU_RENDERTARGET)
+		if ((mUsage & TU_RENDERTARGET) || mUsage == TU_DYNAMIC_WRITE_ONLY)
 		{
 			mFormat = mTextureProperty._tex_format;
 			createInternalResources();

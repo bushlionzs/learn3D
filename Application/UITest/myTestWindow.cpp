@@ -7,28 +7,17 @@
 MyTestWindow::MyTestWindow() :
 	BaseLayout("test.layout")
 {
-	auto obj = new PackageBox(mMainWidget);
+	MyGUI::TextBox* bb;
+	assignWidget(bb, "text");
+	MyGUI::IntCoord aa;
+	aa.left = 50;
+	aa.top = 50;
+	aa.width = 100;
+	aa.height = 50;
+	auto texbox = mMainWidget->createWidget<MyGUI::TextBox>("TextBox", aa, MyGUI::Align::Default, "aabb");
 
-	MyGUI::IntCoord pos;
-	pos.left = 0;
-	pos.top = 0;
-	pos.width = 296;
-	pos.height = 407;
-	obj->init(6, 6, pos);
-
-	obj->updateItem(0, 0, 10010070);
-	obj->updateItem(0, 1, 10010070);
-	obj->updateItem(0, 5, 10010070);
-
-	obj->updateItem(1, 0, 10010070);
-	obj->updateItem(1, 1, 10010070);
-	obj->updateItem(1, 5, 10010070);
-
-	obj->updateItem(3, 4, 10010070);
-	obj->updateItem(4, 4, 10010070);
-	obj->updateItem(5, 4, 10010070);
-	obj->updateItem(5, 5, 10010070);
-	obj->setItemFocus(5, 4);
+	texbox->setCaption(L"我是中国人");
+	texbox->setVisible(true);
 }
 
 MyTestWindow::~MyTestWindow()

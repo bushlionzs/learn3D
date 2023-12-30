@@ -4943,7 +4943,7 @@ material 魔法摊
 	{
 		pass
 		{
-		    shader ogresimple
+		    shader add
 			
 			texture_unit
 			{
@@ -8940,6 +8940,12 @@ material 成2马_01红
       set $tex_template tga_成2马_01红.dds 
 }
 
+material 成2马_02红  : premierBaseTemplate
+{
+    material_parent premierBaseTemplate
+    set $tex_template tga_成2马_02红.dds
+}
+
 material 成2熊
 {
     material_parent premierBaseTemplate
@@ -9447,6 +9453,29 @@ material Game/ReachAble
 				tex_address_mode clamp
 				rotate_anim 1.2
 				filtering none
+			}
+
+		}
+	}
+}
+
+material 地图箭头_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_check on
+			depth_write off
+			depth_bias 0
+			cull_hardware none
+			shader ogreparticle
+			texture_unit
+			{
+				texture jpg_kl_0013.dds
+				tex_address_mode clamp
 			}
 
 		}

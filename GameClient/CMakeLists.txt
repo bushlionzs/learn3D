@@ -68,7 +68,7 @@ target_include_directories(${PROJECT_NAME}
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre MyGUI Middle
-GameShare stormlib mariadbclient luaplus dy_network libprotobuf libprotobuf-lite OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
+GameShare stormlib mariadbclient luaplus freetype zlibstatic dy_network libprotobuf libprotobuf-lite OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
 vulkan-1
 avcodec

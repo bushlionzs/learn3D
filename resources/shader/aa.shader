@@ -130,8 +130,8 @@ shader add
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader add.vert.glsl main
-		frag_shader add.frag.glsl main
+		vertex_shader blend.vert.glsl main
+		frag_shader blend.frag.glsl main
 	 }
 }
 

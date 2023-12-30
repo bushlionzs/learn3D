@@ -214,6 +214,234 @@
 	
 </Imageset>
 
+<Imageset Name="CJSH_item_xiangzi_2" Imagefile="Icons/cjsh_item_xiangzi_2.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_item_xiangzi_2_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_2_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="CJSH_quest_gaoshi_1" Imagefile="Icons/cjsh_quest_gaoshi_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_quest_gaoshi_1_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_quest_gaoshi_1_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="CJSH_item_hongyao_1" Imagefile="Icons/cjsh_item_hongyao_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_item_hongyao_1_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_hongyao_1_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="CJSH_equip_shoutao_1" Imagefile="Icons/cjsh_equip_shoutao_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_equip_shoutao_1_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shoutao_1_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="HAN2_Equip_jiachuan_4" Imagefile="Icons/han2_equip_jiachuan_4.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="HAN2_Equip_jiachuan_4_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="HAN2_Equip_jiachuan_4_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="CJSH_item_baoshi_3" Imagefile="Icons/cjsh_item_baoshi_3.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_item_baoshi_3_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_baoshi_3_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="CJSH_equip_dao_2" Imagefile="Icons/cjsh_equip_dao_2.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_equip_dao_2_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_dao_2_16" XPos="192" YPos="192" Width="64" Height="64" /> 
+</Imageset>
+
+<Imageset Name="Han2_equip_pifeng_1" Imagefile="Icons/han2_equip_pifeng_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="Han2_equip_pifeng_1_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="Han2_equip_pifeng_1_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="CJSH_equip_shangyi_1" Imagefile="Icons/cjsh_equip_shangyi_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_equip_shangyi_1_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_shangyi_1_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="CJSH_equip_xianglian_1" Imagefile="Icons/cjsh_equip_xianglian_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_equip_xianglian_1_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xianglian_1_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="CJSH_equip_xie_1" Imagefile="Icons/cjsh_equip_xie_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_equip_xie_1_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_equip_xie_1_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
+<Imageset Name="CJSH_item_xiangzi_1" Imagefile="Icons/CJSH_item_xiangzi_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+	<Image Name="CJSH_item_xiangzi_1_1" XPos="0" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_2" XPos="64" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_3" XPos="128" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_4" XPos="192" YPos="0" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_5" XPos="0" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_6" XPos="64" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_7" XPos="128" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_8" XPos="192" YPos="64" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_9" XPos="0" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_10" XPos="64" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_11" XPos="128" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_12" XPos="192" YPos="128" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_13" XPos="0" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_14" XPos="64" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_15" XPos="128" YPos="192" Width="64" Height="64" />
+	<Image Name="CJSH_item_xiangzi_1_16" XPos="192" YPos="192" Width="64" Height="64" />
+</Imageset>
+
 <Imageset Name="test" Imagefile="awesomeface.png">
 <Image Name="aa" XPos="0" YPos="0" Width="512" Height="512" />
 </Imageset>

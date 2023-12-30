@@ -263,8 +263,7 @@ if (NOT FT_DISABLE_PNG)
 endif ()
 
 set(ZLIB_FOUND ON)
-set(ZLIB_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/third_party/zlib)
-set(ZLIB_LIBRARIES ${CMAKE_SOURCE_DIR}/third_party/opencv/x64/$<IF:$<CONFIG:Debug>,debug,release>/zlib$<$<CONFIG:Debug>:d>.lib)
+set(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRECTORIES})
 
 if (NOT FT_DISABLE_BZIP2)
   # Genuine BZip2 does not provide bzip2.pc, but some platforms have it.
@@ -497,11 +496,7 @@ endif ()
 set(PKG_CONFIG_REQUIRED_PRIVATE "")
 set(PKG_CONFIG_LIBS_PRIVATE "")
 
-if (ZLIB_FOUND)
-  target_link_libraries(freetype PRIVATE ${ZLIB_LIBRARIES})
-  target_include_directories(freetype PRIVATE ${ZLIB_INCLUDE_DIRS})
-  list(APPEND PKG_CONFIG_REQUIRED_PRIVATE "zlib")
-endif ()
+
 if (BZIP2_FOUND)
   target_link_libraries(freetype PRIVATE ${BZIP2_LIBRARIES})
   target_include_directories(freetype PRIVATE ${BZIP2_INCLUDE_DIR}) # not BZIP2_INCLUDE_DIRS

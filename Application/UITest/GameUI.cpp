@@ -14,6 +14,7 @@
 #include "OgreCamera.h"
 #include "role.h"
 #include "PackageWindow.h"
+#include "mytestWindow.h"
 
 GameUI::GameUI()
 {
@@ -30,7 +31,7 @@ bool GameUI::appInit()
 	ApplicationBase::appInit();
 
 
-	PackageWindow* test = new PackageWindow;
+	auto test = new MyTestWindow;
 	test->getView()->setPosition(300, 100);
 	mViewport->setAutoUpdated(false);
 

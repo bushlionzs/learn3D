@@ -11,13 +11,13 @@
 #include "MyGUI_RenderManager.h"
 #include "MyGUI_Bitwise.h"
 #include "platform_log.h"
-
+#define MYGUI_USE_FREETYPE
 #ifdef MYGUI_USE_FREETYPE
 
-#	include FT_GLYPH_H
-#	include FT_TRUETYPE_TABLES_H
-#	include FT_BITMAP_H
-#	include FT_WINFONTS_H
+#include FT_GLYPH_H
+#include FT_TRUETYPE_TABLES_H
+#include FT_BITMAP_H
+#include FT_WINFONTS_H
 
 #ifdef MYGUI_MSDF_FONTS
 #include "msdfgen/msdfgen.h"
@@ -25,6 +25,7 @@
 #endif
 
 #endif // MYGUI_USE_FREETYPE
+
 
 namespace MyGUI
 {
