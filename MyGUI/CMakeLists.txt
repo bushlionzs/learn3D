@@ -55,6 +55,7 @@ target_include_directories(${MYGUI_LIB_NAME}
 	${GAMEUTIL_INC}
 	${ROOT_INC}/3rd
 	${ROOT_INC}/3rdSource/OIS/includes
+	${ROOT_INC}/3rdSource/freetype-2.12.0/include
 	${DYNETWORK_INCLUDE_HEADERS}
 )
 

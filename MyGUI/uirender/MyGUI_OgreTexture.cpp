@@ -135,6 +135,11 @@ namespace MyGUI
 		return mTexture->getBuffer()->isLocked();
 	}
 
+	void OgreTexture::uploadData()
+	{
+		mTexture->getBuffer()->uploadData();
+	}
+
 	Ogre::TextureUsage OgreTexture::convertUsage(TextureUsage _usage)
 	{
 		if (_usage == TextureUsage::Default)

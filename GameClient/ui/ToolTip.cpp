@@ -12,6 +12,8 @@ ToolTip::ToolTip() :
 
 	const MyGUI::IntCoord& coord = MyGUI::IntCoord();
 	mOffsetHeight = mMainWidget->getHeight() - coord.height;
+
+	
 }
 
 void ToolTip::show(uint32_t id)
@@ -21,14 +23,14 @@ void ToolTip::show(uint32_t id)
 	{
 		return;
 	}
-	mTextName->setCaption("aaaaaaaaaaa");
-	mTextDesc->setCaption(mItemData.desc);
+//	mTextName->setCaption("aaaaaaaaaaa");
+//	mTextDesc->setCaption(mItemData.desc);
 	
 	setImageInfoFromIcon(mImageInfo, id);
 
-	const MyGUI::IntSize& text_size = MyGUI::IntSize();
-	mMainWidget->setSize(mMainWidget->getWidth(), mOffsetHeight + text_size.height);
-
+	/*const MyGUI::IntSize& text_size = MyGUI::IntSize();
+	mMainWidget->setSize(mMainWidget->getWidth(), mOffsetHeight + text_size.height);*/
+	mTextName->setVisible(true);
 	mMainWidget->setVisible(true);
 
 }

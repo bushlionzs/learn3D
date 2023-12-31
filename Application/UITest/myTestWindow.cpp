@@ -5,19 +5,19 @@
 #include "PackageBox.h"
 
 MyTestWindow::MyTestWindow() :
-	BaseLayout("test.layout")
+	BaseLayout("equiptip.layout")
 {
-	MyGUI::TextBox* bb;
-	assignWidget(bb, "text");
+	//MyGUI::TextBox* bb;
+	//assignWidget(bb, "text");
 	MyGUI::IntCoord aa;
 	aa.left = 50;
 	aa.top = 50;
 	aa.width = 100;
 	aa.height = 50;
-	auto texbox = mMainWidget->createWidget<MyGUI::TextBox>("TextBox", aa, MyGUI::Align::Default, "aabb");
+	/*auto texbox = mMainWidget->createWidget<MyGUI::TextBox>("TextBox", aa, MyGUI::Align::Default, "aabb");
 
-	texbox->setCaption(L"我是中国人");
-	texbox->setVisible(true);
+	texbox->setCaption("BBBBBBBBBBBBBBBBBBBBBBB");
+	texbox->setVisible(true);*/
 }
 
 MyTestWindow::~MyTestWindow()

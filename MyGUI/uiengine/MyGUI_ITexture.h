@@ -43,6 +43,7 @@ namespace MyGUI
 		virtual void* lock(TextureUsage _access) = 0;
 		virtual void unlock() = 0;
 		virtual bool isLocked() const = 0;
+		virtual void uploadData() {}
 
 		virtual int getWidth() const = 0;
 		virtual int getHeight() const = 0;

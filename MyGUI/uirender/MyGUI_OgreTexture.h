@@ -43,6 +43,8 @@ namespace MyGUI
 		void unlock() override;
 		bool isLocked() const override;
 
+		virtual void uploadData() override;
+
 		int getWidth() const override;
 		int getHeight() const override;
 

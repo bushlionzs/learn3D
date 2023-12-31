@@ -777,6 +777,9 @@ namespace MyGUI
 
 			mTexture->unlock();
 
+
+			mTexture->uploadData();
+
 			MYGUI_LOG(Info, "ResourceTrueTypeFont: Font '" << getResourceName() << "' using texture size " << texWidth << " x " << texHeight << ".");
 			MYGUI_LOG(Info, "ResourceTrueTypeFont: Font '" << getResourceName() << "' using real height " << mDefaultHeight << " pixels.");
 		}

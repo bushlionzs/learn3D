@@ -141,9 +141,10 @@ void ApplicationBase::ShowFrameFrequency()
 
 
 		char buffer[256];
-		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, triangle:%d", 
+		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, triangle:%d, batch:%d", 
 			mRenderSystem->getRenderSystemName().c_str(),
-			mLastFPS, mRenderSystem->getTriangleCount());
+			mLastFPS, mRenderSystem->getTriangleCount(),
+			mRenderSystem->getBatchCount());
 		::SetWindowText(mApplicationWindow->getWnd(), buffer);
 	}
 
