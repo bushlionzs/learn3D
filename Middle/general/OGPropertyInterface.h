@@ -25,13 +25,13 @@ namespace Orphigine
         String description;
         String type;
         String defaultValue;
-        uint flags;
+        uint32 flags;
 
         PropertyDef(const String& name,
                     const String& description,
                     const String& type,
                     const String& defaultValue = BLANKSTRING,
-                    uint flags = 0)
+                    uint32 flags = 0)
             : name(name)
             , description(description)
             , type(type)
@@ -161,7 +161,7 @@ namespace Orphigine
                             const String& description,
                             const String& type,
                             PropertyCommand* propertyCmd,
-                            uint flags = 0);
+            uint32 flags = 0);
 
     public:
         /** Virtual desctructor, see Effective C++ */
@@ -294,7 +294,7 @@ namespace Orphigine
         @returns
             The bit masks of PropertyFlags, zero if not found
         */
-        virtual uint getPropertyFlags(const String& name) const;
+        virtual uint32 getPropertyFlags(const String& name) const;
 
         /** Method for copying this object's properties to another object.
         @remarks

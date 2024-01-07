@@ -547,7 +547,7 @@ namespace Orphigine
 	{
 		AdvancedAnimationSystemSerializer tmpSerializer;
 
-		Ogre::StringStream msg;
+		std::stringstream msg;
 		msg<<"AdvancedAnimationSystem loading :"<<mName;
 
 		DataStreamPtr tmpStream = Ogre::ResourceManager::getSingleton().openResource(mName, mGroup);

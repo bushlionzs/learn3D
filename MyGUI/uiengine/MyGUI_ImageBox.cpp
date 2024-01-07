@@ -16,7 +16,7 @@
 namespace MyGUI
 {
 
-	const size_t IMAGE_MAX_INDEX = 256;
+	const size_t IMAGE_MAX_INDEX = 128;
 
 	ImageBox::ImageBox() :
 		mIndexSelect(ITEM_NONE),

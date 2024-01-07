@@ -52,7 +52,7 @@ namespace Ogre {
     template<typename T>
     String StringConverter::_toString(T val, uint16 width, char fill, std::ios::fmtflags flags)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream.width(width);
         stream.fill(fill);
         if (flags & std::ios::basefield) {
@@ -71,7 +71,7 @@ namespace Ogre {
     String StringConverter::toString(float val, unsigned short precision,
                                      unsigned short width, char fill, std::ios::fmtflags flags)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream.precision(precision);
         stream.width(width);
         stream.fill(fill);
@@ -85,7 +85,7 @@ namespace Ogre {
     String StringConverter::toString(double val, unsigned short precision,
                                      unsigned short width, char fill, std::ios::fmtflags flags)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream.precision(precision);
         stream.width(width);
         stream.fill(fill);
@@ -99,28 +99,28 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     String StringConverter::toString(const Vector2& val)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream << val.x << " " << val.y;
         return stream.str();
     }
     //-----------------------------------------------------------------------
     String StringConverter::toString(const Vector3& val)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream << val.x << " " << val.y << " " << val.z;
         return stream.str();
     }
     //-----------------------------------------------------------------------
     String StringConverter::toString(const Vector4& val)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream << val.x << " " << val.y << " " << val.z << " " << val.w;
         return stream.str();
     }
     //-----------------------------------------------------------------------
     String StringConverter::toString(const Matrix3& val)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream << val[0][0] << " "
             << val[0][1] << " "             
             << val[0][2] << " "             
@@ -159,7 +159,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     String StringConverter::toString(const Matrix4& val)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream << val[0][0] << " "
             << val[0][1] << " "             
             << val[0][2] << " "             
@@ -181,21 +181,21 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     String StringConverter::toString(const Quaternion& val)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream  << val.w << " " << val.x << " " << val.y << " " << val.z;
         return stream.str();
     }
     //-----------------------------------------------------------------------
     String StringConverter::toString(const ColourValue& val)
     {
-        StringStream stream;
+        std::stringstream stream;
         stream << val.r << " " << val.g << " " << val.b << " " << val.a;
         return stream.str();
     }
     //-----------------------------------------------------------------------
     String StringConverter::toString(const StringVector& val)
     {
-        StringStream stream;
+        std::stringstream stream;
         StringVector::const_iterator i, iend, ibegin;
         ibegin = val.begin();
         iend = val.end();
@@ -355,7 +355,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     String StringConverter::toString(StereoModeType val)
     {
-		StringStream stream;
+        std::stringstream stream;
 		switch (val)
 		{
 		case SMT_NONE:

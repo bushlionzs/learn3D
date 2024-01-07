@@ -44,7 +44,7 @@ namespace Ogre {
 				msTextureRotateCmd[i].mIndex	= i;
 				msTimeCmd[i].mIndex		= i;
 
-				Ogre::StringStream stage;
+				std::stringstream stage;
 				stage << i;
 				String	rotate_title	= String("rotate") + stage.str();
 				String	time_title		= String("time") + stage.str();

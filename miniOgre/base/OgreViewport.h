@@ -345,7 +345,7 @@ namespace Ogre {
         /** Gets a per-viewport visibility mask.
         @see Viewport::setVisibilityMask
         */
-        uint getVisibilityMask(void) const { return mVisibilityMask; }
+        uint32 getVisibilityMask(void) const { return mVisibilityMask; }
 
         /** Convert oriented input point coordinates to screen coordinates. */
         void pointOrientedToScreen(const Vector2 &v, int orientationMode, Vector2 &outv);

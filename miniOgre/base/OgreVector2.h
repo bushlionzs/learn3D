@@ -553,14 +553,14 @@ namespace Ogre
         */
         inline Ogre::Radian angleBetween(const Ogre::Vector2& other) const
         {       
-            Ogre::Real lenProduct = length() * other.length();
+            float lenProduct = length() * other.length();
             // Divide by zero check
             if(lenProduct < 1e-6f)
                 lenProduct = 1e-6f;
         
-            Ogre::Real f = dotProduct(other) / lenProduct;
+            float f = dotProduct(other) / lenProduct;
     
-            f = Ogre::Math::Clamp(f, (Ogre::Real)-1.0, (Ogre::Real)1.0);
+            f = Ogre::Math::Clamp(f, (float)-1.0, (float)1.0);
             return Ogre::Math::ACos(f);
         }
 

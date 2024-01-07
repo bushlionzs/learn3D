@@ -29,7 +29,6 @@ THE SOFTWARE.
 #ifndef __Polygon_H__
 #define __Polygon_H__
 
-#include "OgrePrerequisites.h"
 #include "OgreVector3.h"
 
 

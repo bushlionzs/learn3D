@@ -81,7 +81,7 @@ namespace Ogre {
 		size_t numSubEntities = getNumSubEntities( );
 		mMaterialBackupList.resize( numSubEntities );
 
-		for ( uint i = 0; i < numSubEntities; ++i )
+		for (uint32 i = 0; i < numSubEntities; ++i )
 		{
 			SubEntity* subEntity = getSubEntity( i );
 			const MaterialPtr& material = subEntity->getMaterial( );
@@ -96,7 +96,7 @@ namespace Ogre {
 
 		bool deriveSucceed = true;
 
-		for ( uint i = 0; i < numSubEntities; ++i )
+		for (uint32 i = 0; i < numSubEntities; ++i )
 		{
 			SubEntity* subEntity = getSubEntity( i );
 			const MaterialPtr& material = subEntity->getMaterial( );
@@ -118,7 +118,7 @@ namespace Ogre {
 		if ( deriveSucceed )
 			return;
 
-		for ( uint i = 0; i < numSubEntities; ++i )
+		for (uint32 i = 0; i < numSubEntities; ++i )
 		{
 			SubEntity* subEntity = getSubEntity( i );
 			const MaterialPtr& material = mMaterialBackupList[i];
@@ -135,7 +135,7 @@ namespace Ogre {
 
 		size_t numSubEntities = getNumSubEntities();
 
-		for ( uint i = 0; i < numSubEntities; ++i )
+		for (uint32 i = 0; i < numSubEntities; ++i )
 		{
 			SubEntity* subEntity = getSubEntity(i);
 

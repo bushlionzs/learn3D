@@ -140,7 +140,7 @@ namespace Orphigine
 		static String HAIR_MESH_NAME;
 
 		/// addEffect时返回的特效句柄
-		typedef uint EffectHandle;
+		typedef uint32 EffectHandle;
 
 		/// 获取locator信息时的标志
 		enum GetTransformInfoType

@@ -44,7 +44,7 @@ namespace Ogre {
 				msTextureScaleCmd[i].mIndex	= i;
 				msTimeCmd[i].mIndex		= i;
 
-				Ogre::StringStream stage;
+				std::stringstream stage;
 				stage << i;
 				String	scale_title	= String("scale") + stage.str();
 				String	time_title		= String("time") + stage.str();

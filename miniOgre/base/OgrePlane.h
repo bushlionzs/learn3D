@@ -162,7 +162,7 @@ namespace Ogre {
          friend std::ostream& operator<< (std::ostream& o, const Plane& p);
     };
 
-    typedef vector<Plane>::type PlaneList;
+    //typedef vector<Plane>::type PlaneList;
     /** @} */
     /** @} */
 

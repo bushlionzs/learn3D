@@ -162,7 +162,7 @@ namespace Orphigine {
 
         //-----------------------------------------------------------------------
         /** Overridden - see Renderable. */
-        const Ogre::PlaneList& getClipPlanes(void) const
+        const std::vector<Ogre::Plane>& getClipPlanes(void) const
         {
               return mParent->mClipPlanes;
         }

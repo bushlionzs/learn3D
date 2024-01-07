@@ -47,7 +47,7 @@ createPureColourMaterial(const ColourValue& colour)
 {
     RGBA rgba = colour.getAsRGBA();
 
-    Ogre::StringStream str;
+    std::stringstream str;
     str << "PureColour" << std::hex << std::setfill('0') << std::setw(8) << rgba;
     String name = str.str();
 
@@ -73,7 +73,7 @@ createColourMaterial(const ColourValue& colour)
 
     RGBA rgba = colour.getAsRGBA();
 
-    Ogre::StringStream str;
+    std::stringstream str;
     str << "Colour_" << std::hex << std::setfill('0') << std::setw(8) << rgba;
     String name = str.str();
 
@@ -99,7 +99,7 @@ createColourMaterial(const ColourValue& colour, const ColourValue& specular, Rea
     RGBA rgbaSpecular = specular.getAsRGBA();
 
 
-    Ogre::StringStream str;
+    std::stringstream str;
     str << "Colour_" << std::hex << std::setfill('0')
         << std::setw(8) << rgba
         << std::setw(0) << '_'
@@ -286,14 +286,9 @@ getAnimationStateSafely(AnimationStateSet* animationStateSet, const String& name
 {
     if (animationStateSet)
     {
-#if ((OGRE_VERSION_MAJOR << 16) | (OGRE_VERSION_MINOR << 8) | OGRE_VERSION_PATCH) >= 0x010100
         if (animationStateSet->hasAnimationState(name))
             return animationStateSet->getAnimationState(name);
-#else
-        AnimationStateSet::iterator it = animationStateSet->find(name);
-        if (it != animationStateSet->end())
-            return &it->second;
-#endif
+
     }
 
     return NULL;

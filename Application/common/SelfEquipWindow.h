@@ -36,7 +36,6 @@ public:
 	void setModelTexture(const String& name);
 private:
 	MyGUI::ImageBox* mImageEquip;
-	MyGUI::ImageBox* mImageClothes;
 	MyGUI::ImageBox* mImageClose;
 	MyGUI::ImageBox* mImageHelp;
 	MyGUI::ImageBox* mImageModel;

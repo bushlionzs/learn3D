@@ -1597,12 +1597,12 @@ namespace Ogre {
         mTextureCoords.resize((size_t)stacks * slices);
         unsigned int coordIndex = 0;
         //  spread the U and V coordinates across the rects
-        for (uint v = 0; v < stacks; ++v) {
+        for (uint32 v = 0; v < stacks; ++v) {
             //  (float)X / X is guaranteed to be == 1.0f for X up to 8 million, so
             //  our range of 1..256 is quite enough to guarantee perfect coverage.
             float top = (float)v / (float)stacks;
             float bottom = ((float)v + 1) / (float)stacks;
-            for (uint u = 0; u < slices; ++u) {
+            for (uint32 u = 0; u < slices; ++u) {
                 Ogre::FloatRect& r = mTextureCoords[coordIndex];
                 r.left = (float)u / (float)slices;
                 r.bottom = bottom;

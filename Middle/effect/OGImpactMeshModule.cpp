@@ -103,11 +103,8 @@ namespace Orphigine	{
 			String meshName = mEntity->getMesh()->getName();
 
 			mBasicNode->detachObject(mEntity->getName());
-#if ((OGRE_VERSION_MAJOR << 16) | (OGRE_VERSION_MINOR << 8) | OGRE_VERSION_PATCH) >= 0x010100
 			creator->destroyMovableObject(mEntity);
-#else
-			creator->removeEntity(mEntity->getName());
-#endif
+
 			mEntity = NULL;
 
 		}

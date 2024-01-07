@@ -39,6 +39,26 @@ PackageWindow::PackageWindow() :
 	back._item_image->setVisible(true);
 	setImageInfoFromIcon(back._item_image, 10010070);
 	back._item_image->setItemSelect(0);
+	back._item_image->setNeedToolTip(true);
+	back._item_image->eventToolTip += MyGUI::newDelegate(this, &PackageWindow::notifyToolTip);
+
+
+
+	coord.left = 80;
+	coord.width = 32;
+	coord.top = 48;
+	coord.height = 32;
+	auto* imagebox = mImageBackgroudCover->createWidget<MyGUI::ImageBox>("ImageBox", coord, MyGUI::Align::Stretch, "aabb");
+	imagebox->setVisible(true);
+
+	imagebox->setDepth(100);
+	setImageInfoFromIcon(imagebox, 10010070);
+
+
+
+	
+
+	
 
 	mImageBackgroud->eventMouseButtonPressed += MyGUI::newDelegate(this, &PackageWindow::onWindowMouseButtonPressed);
 	mImageBackgroud->eventMouseDrag += MyGUI::newDelegate(this, &PackageWindow::onWindowMouseDrag);
@@ -47,13 +67,9 @@ PackageWindow::PackageWindow() :
 
 void PackageWindow::notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo& _info)
 {
-	ItemData item;
-	item._itemname = "none";
-
-
 	if (_info.type == MyGUI::ToolTipInfo::Show)
 	{
-		mToolTip->show(&item);
+		mToolTip->show(10010070, mMainWidget);
 		mToolTip->move(_info.point);
 	}
 	else if (_info.type == MyGUI::ToolTipInfo::Hide)

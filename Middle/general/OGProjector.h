@@ -30,7 +30,7 @@ namespace Orphigine {
         size_t mVertexLimit;
         Ogre::HardwareVertexBufferSharedPtr mVertexBuffer;
         std::vector<Ogre::Vector3> mTempPositions;
-        Ogre::PlaneList mClipPlanes;
+        std::vector<Ogre::Plane> mClipPlanes;
         Ogre::Camera* mCurrentCamera;
         Ogre::MaterialPtr mPatchMaterial;
         String mPatchMaterialName;

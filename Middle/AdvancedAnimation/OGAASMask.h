@@ -1,7 +1,6 @@
 #ifndef OGAASMask_h__
 #define OGAASMask_h__
 
-#include "OgrePrerequisites.h"
 
 namespace Orphigine
 {

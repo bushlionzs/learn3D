@@ -27,7 +27,6 @@ THE SOFTWARE.
 */
 #include "OgreHeader.h"
 
-#include "OgrePrerequisites.h"
 #include "OgreAlignedAllocator.h"
 
 #include "OgreBitwise.h"

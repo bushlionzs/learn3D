@@ -1118,7 +1118,7 @@ namespace Orphigine
 				size_t numRenderables = mLiquidRenderables.size();
 				mMaterialBackupList.resize(numRenderables);
 
-				for (uint i = 0; i < numRenderables; ++i)
+				for (uint32 i = 0; i < numRenderables; ++i)
 				{
 					GeneralRenderable* pRenderable = mLiquidRenderables[i];
 					const Ogre::MaterialPtr& material = pRenderable->getMaterial();

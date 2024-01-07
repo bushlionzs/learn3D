@@ -4,7 +4,6 @@
 #include "OgreVector3.h"
 #include "OgreStringInterface.h"
 #include "OgreDataStream.h"
-#include "OgrePrerequisites.h"
 
 class btCollisionShape;
 

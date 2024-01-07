@@ -9,7 +9,7 @@ public:
 	virtual void appUpdate(float delta);
 	virtual bool isUseMyGUI()
 	{
-		return false;
+		return true;
 	}
 	EngineType getEngineType();
 };

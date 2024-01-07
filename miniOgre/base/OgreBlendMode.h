@@ -28,7 +28,6 @@ THE SOFTWARE.
 #ifndef __BLENDMODE_H__
 #define __BLENDMODE_H__
 
-#include "OgrePrerequisites.h"
 #include "OgreColourValue.h"
 
 namespace Ogre {

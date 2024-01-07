@@ -26,7 +26,6 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 #include "OgreHeader.h"
-#include "OgrePrerequisites.h"
 #include "OgreCommon.h"
 #include "OgreString.h"
 

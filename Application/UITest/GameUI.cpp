@@ -15,6 +15,7 @@
 #include "role.h"
 #include "PackageWindow.h"
 #include "mytestWindow.h"
+#include "mainMenuWindow.h"
 
 GameUI::GameUI()
 {
@@ -32,7 +33,7 @@ bool GameUI::appInit()
 
 
 	auto test = new MyTestWindow;
-	test->getView()->setPosition(300, 100);
+	test->getView()->setPosition(10, 100);
 	mViewport->setAutoUpdated(false);
 
 	auto vp = MyGUIManager::getSingleton().getViewport();
@@ -41,6 +42,8 @@ bool GameUI::appInit()
 	Ogre::ColourValue color(0.678431392f, 0.847058892f, 0.901960850f, 1.000000000f);
 	vp->setBackgroundColour(color);
 
+
+	
 	return true;
 }
 
@@ -56,6 +59,6 @@ void GameUI::appUpdate(float delta)
 
 EngineType GameUI::getEngineType()
 {
-	return EngineType_Dx12;
+	return EngineType_Vulkan;
 	return EngineType_Dx11;
 }

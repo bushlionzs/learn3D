@@ -75,7 +75,7 @@ namespace Orphigine	{
 				msScaleCmd[i].mIndex	= i;
 				msScaleTimeCmd[i].mIndex		= i;
 
-				Ogre::StringStream stage;
+				std::stringstream stage;
 				stage << i;
 				String	scale_title	= String("Scale") + stage.str();
 				String	time_title		= String("ScaleTime") + stage.str();
@@ -95,7 +95,7 @@ namespace Orphigine	{
 				msColourCmd[i].mIndex	= i;
 				msColourTimeCmd[i].mIndex		= i;
 
-				Ogre::StringStream stage;
+				std::stringstream stage;
 				stage << i;
 				String	colour_title	= String("Colour") + stage.str();
 				String	time_title		= String("ColourTime") + stage.str();

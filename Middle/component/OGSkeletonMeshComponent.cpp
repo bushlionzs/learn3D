@@ -159,7 +159,7 @@ namespace Orphigine
 		mEntity = entity;
 		size_t numSubEntities = mEntity->getNumSubEntities();
 		mSubEntityMaterialIndices.resize(numSubEntities);
-		for (uint i = 0; i < numSubEntities; ++i)
+		for (uint32 i = 0; i < numSubEntities; ++i)
 		{
 			Ogre::SubEntity* subEntity = mEntity->getSubEntity(i);
 			const Ogre::MaterialPtr& material = subEntity->getMaterial();
@@ -185,7 +185,7 @@ namespace Orphigine
 		{
 			// Complete opaque, just as origin
 			mEntity->setVisible(true);
-			for (uint i = 0; i < numSubEntities; ++i)
+			for (uint32 i = 0; i < numSubEntities; ++i)
 			{
 				Ogre::SubEntity* subEntity = mEntity->getSubEntity(i);
 				subEntity->setMaterialName(mMaterialInstances[mSubEntityMaterialIndices[i]]->mClonedOriginMat->getName());
@@ -204,7 +204,7 @@ namespace Orphigine
 
 			// Applies derived transparency material to sub-entities.
 			mEntity->setVisible(true);
-			for (uint i = 0; i < numSubEntities; ++i)
+			for (uint32 i = 0; i < numSubEntities; ++i)
 			{
 				Ogre::SubEntity* subEntity = mEntity->getSubEntity(i);
 				subEntity->setMaterialName(mMaterialInstances[mSubEntityMaterialIndices[i]]->mClonedDeriveMat->getName());//¸üÐÂ²ÄÖÊ
@@ -3071,7 +3071,7 @@ namespace Orphigine
 			{
 				Ogre::StringVector matNames = Ogre::StringUtil::split(matName, ";");
 				assert (matName.size() > 1);				
-				for( uint i=0; i<entity->getNumSubEntities(); ++i )
+				for(uint32 i=0; i<entity->getNumSubEntities(); ++i )
 				{
 					Ogre::SubEntity* subEntity = entity->getSubEntity(i);
 					assert (subEntity);
@@ -4025,7 +4025,7 @@ namespace Orphigine
 	Ogre::SceneNode* SkeletonMeshComponent::_createLocatorSceneNode(const Ogre::Vector3& offsetPos, 
 		const Ogre::Quaternion& offsetOri)
 	{
-		static uint count = 0;
+		static uint32 count = 0;
 		String name = Ogre::StringUtil::format("Locator_%.5d", count++);
 		Ogre::SceneNode* locatorNode = mModelSceneNode->createChildSceneNode(name);
 		return locatorNode;

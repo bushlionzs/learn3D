@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include "OgreCamera.h"
 namespace Ogre {
 
-    uint SimpleRenderable::msGenNameCount = 0;
+    uint32 SimpleRenderable::msGenNameCount = 0;
 
     SimpleRenderable::SimpleRenderable()
     : MoveObject(std::string("SimpleRenderable"))
@@ -43,7 +43,7 @@ namespace Ogre {
 
     {
         // Generate name
-        StringStream name;
+        std::stringstream name;
         name << "SimpleRenderable" << msGenNameCount++;
         mName = name.str();
     }

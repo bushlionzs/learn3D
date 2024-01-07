@@ -23,8 +23,8 @@ void ToolTip::show(uint32_t id)
 	{
 		return;
 	}
-//	mTextName->setCaption("aaaaaaaaaaa");
-//	mTextDesc->setCaption(mItemData.desc);
+	mTextName->setCaption(mItemData.title);
+	mTextDesc->setCaption(mItemData.desc);
 	
 	setImageInfoFromIcon(mImageInfo, id);
 

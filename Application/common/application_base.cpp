@@ -37,7 +37,9 @@ EngineType ApplicationBase::getEngineType()
 bool ApplicationBase::appInit()
 {
 	mApplicationWindow = new ApplicationWindow;
-	mApplicationWindow->createWindow(1024, 768);
+	int width = 1280;
+	int height = 768;
+	mApplicationWindow->createWindow(width, height);
 	if (!InputManager::getSingletonPtr())
 	{
 		new InputManager();
@@ -61,10 +63,10 @@ bool ApplicationBase::appInit()
 	Ogre::NameValuePairList params;
 	params["externalWindowHandle"] = Ogre::StringConverter::toString((uint64_t)wnd);
 	params["backGroundColor"] = Ogre::StringConverter::toString(color);
-	mRenderWindow = mRenderSystem->createRenderWindow("", 1024, 768, &params);
+	mRenderWindow = mRenderSystem->createRenderWindow("", width, height, &params);
 
 	
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("../../resources"), "sujian", true);
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources"), "sujian", true);
 	addCustomDirectory();
 	ResourceManager::getSingletonPtr()->loadAllResource();
 	

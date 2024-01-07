@@ -27,7 +27,6 @@ THE SOFTWARE.
 */
 
 #include "OgreHeader.h"
-#include "OgrePrerequisites.h"
 #include "OgreMemoryNedPooling.h"
 
 //#include "OgreMemoryTracker.h"

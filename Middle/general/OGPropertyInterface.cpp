@@ -9,7 +9,7 @@ namespace Orphigine
                                            const String& description,
                                            const String& type,
                                            PropertyCommand* propertyCmd,
-                                           uint flags)
+                                           uint32 flags)
     {
         getPropertyDictionary()->addProperty(
             PropertyDef(name,
@@ -150,7 +150,7 @@ namespace Orphigine
         return BLANKSTRING;
     }
     //-----------------------------------------------------------------------
-    uint PropertyInterface::getPropertyFlags(const String& name) const
+    uint32 PropertyInterface::getPropertyFlags(const String& name) const
     {
         // Get dictionary
         const PropertyDictionary* dict = getPropertyDictionary();

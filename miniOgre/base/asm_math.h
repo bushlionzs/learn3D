@@ -1,7 +1,6 @@
 #ifndef __asm_math_H__
 #define __asm_math_H__
 
-#include "OgrePrerequisites.h"
 
 #if  OGRE_COMPILER == OGRE_COMPILER_MSVC
 #  pragma warning (push)

@@ -28,7 +28,6 @@ THE SOFTWARE.
 #ifndef __ParticleEmitter_H__
 #define __ParticleEmitter_H__
 
-#include "OgrePrerequisites.h"
 #include "OgreColourValue.h"
 #include "OgreParticle.h"
 #include "OgreParticleSystem.h"

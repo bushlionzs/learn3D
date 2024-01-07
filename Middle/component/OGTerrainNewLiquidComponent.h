@@ -222,7 +222,7 @@ namespace Orphigine
 		Ogre::MaterialPtr				mHighMaterial;
 
 		LiquidRenderLevelEnum			mCurrentMaterialType;
-		Ogre::uchar						mNumMaterials;
+		uint32_t						mNumMaterials;
 
 		typedef std::vector<Ogre::MaterialPtr > SMMaterialList;
 		SMMaterialList					mMaterialBackupList;

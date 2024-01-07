@@ -6,7 +6,6 @@
 #include "OGNavigate.h"
 #include "OGNavigateAStarNode.h"
 
-#include <OgrePrerequisites.h>
 #include <OgreSimpleRenderable.h>
 #include <OgreHardwareVertexBuffer.h>
 

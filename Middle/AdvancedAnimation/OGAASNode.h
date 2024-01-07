@@ -5,7 +5,6 @@
 #include "OGAdvancedAnimationSystemSerializer.h"
 
 #include "OgreSerializer.h"
-#include "OgrePrerequisites.h"
 #include "OgreStringInterface.h"
 
 #include <map>

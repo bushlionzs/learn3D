@@ -186,10 +186,11 @@ namespace Ogre
 
 #include "OgreMemoryAllocatedObject.h"
 #include "OgreMemorySTLAllocator.h"
-
+#define OGRE_MEMORY_ALLOCATOR_NEDPOOLING 2
+#define OGRE_MEMORY_ALLOCATOR_NED 3
 #if OGRE_MEMORY_ALLOCATOR == OGRE_MEMORY_ALLOCATOR_NEDPOOLING
 
-#  include "OgreMemoryNedPooling.h"
+#include "OgreMemoryNedPooling.h"
 namespace Ogre
 {
     // configure default allocators based on the options above

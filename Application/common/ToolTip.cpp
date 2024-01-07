@@ -1,30 +1,52 @@
 #include "OgreHeader.h"
 #include "ToolTip.h"
+#include "application_util.h"
+#include "platform_file.h"
 
 
 ToolTip::ToolTip() :
 	BaseLayout("equiptip.layout")
 {
 	assignWidget(mTextName, "itemname");
-	assignWidget(mTextLevel, "level");
+	assignWidget(mTextDesc, "desc");
 	assignWidget(mImageInfo, "show");
 
 	const MyGUI::IntCoord& coord = MyGUI::IntCoord();
 	mOffsetHeight = mMainWidget->getHeight() - coord.height;
+
+
 }
 
-void ToolTip::show(ItemData* _data)
+void ToolTip::show(uint32_t id, MyGUI::Widget* parent)
 {
-	if (_data == nullptr)
+
+	if (!getItemInfo(id, mItemData))
+	{
 		return;
+	}
 
-	mTextLevel->setCaption("level");
-	mTextName->setCaption(_data->_itemname.c_str());
+	MyGUI::Colour color;
+	color.red = 1.0f;
+	color.green = 0.0f;
+	color.blue = 0.0f;
+	color.alpha = 1.0f;
+	mTextName->setColour(color);
 
-	const MyGUI::IntSize& text_size = MyGUI::IntSize();
-	mMainWidget->setSize(mMainWidget->getWidth(), mOffsetHeight + text_size.height);
+	std::string aa = "#ff0000aaaaaaaaa\n#00ff00bbbbbbb";
+	mTextName->setCaptionWithReplacing(aa);
+
+	
+	
+	mTextDesc->setColour(color);
+	mTextDesc->setCaptionWithReplacing(aa);
+
+	setImageInfoFromIcon(mImageInfo, id);
 
 	mMainWidget->setVisible(true);
+
+	mMainWidget->setDepth(0);
+
+	mMainWidget->attachToWidget(parent);
 }
 
 void ToolTip::hide()
@@ -38,18 +60,15 @@ void ToolTip::move(const MyGUI::IntPoint& _point)
 
 	MyGUI::IntPoint point = MyGUI::InputManager::getInstance().getMousePosition() + offset;
 
-	const MyGUI::IntSize& size = mMainWidget->getSize();
-	const MyGUI::IntSize& view_size = mMainWidget->getParentSize();
 
-	if ((point.left + size.width) > view_size.width)
-	{
-		point.left -= offset.left + offset.left + size.width;
-	}
-	if ((point.top + size.height) > view_size.height)
-	{
-		point.top -= offset.top + offset.top + size.height;
-	}
+	auto* parent = mMainWidget->getParent();
 
-	mMainWidget->setPosition(point);
+	if (parent)
+	{
+		auto pos = parent->getPosition();
+		point -= pos;
+		mMainWidget->setPosition(point);
+	}
+	
 }
 

@@ -243,9 +243,9 @@ namespace Ogre {
          * 
          * @overload
          */
-        uint getCustomAttribute(const String& name)
+        uint32 getCustomAttribute(const String& name)
         {
-            uint ret = 0;
+            uint32 ret = 0;
             getCustomAttribute(name, &ret);
             return ret;
         }
@@ -350,7 +350,7 @@ namespace Ogre {
 
         /** Indicates whether multisampling is performed on rendering and at what level.
         */
-        virtual uint getFSAA() const { return mFSAA; }
+        virtual uint32 getFSAA() const { return mFSAA; }
 
         /// RenderSystem specific FSAA option. See @ref RenderSystem::_createRenderWindow for details.
         virtual const String& getFSAAHint() const { return mFSAAHint; }
@@ -361,7 +361,7 @@ namespace Ogre {
             @param fsaa The number of samples
             @param fsaaHint @copybrief getFSAAHint
         */
-        virtual void setFSAA(uint fsaa, const String& fsaaHint) { }
+        virtual void setFSAA(uint32 fsaa, const String& fsaaHint) { }
 
         /** Method for manual management of rendering : fires 'preRenderTargetUpdate'
             and initialises statistics etc.
@@ -451,7 +451,7 @@ namespace Ogre {
         // Hardware sRGB gamma conversion done on write?
         bool mHwGamma;
         // FSAA performed?
-        uint mFSAA;
+        uint32 mFSAA;
         String mFSAAHint;
 		bool mStereoEnabled;
 

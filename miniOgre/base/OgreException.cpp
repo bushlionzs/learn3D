@@ -46,7 +46,7 @@ namespace Ogre {
         source( src ),
         file( fil )
     {
-        StringStream ss;
+        std::stringstream ss;
 
         ss << typeName << ": "
            << description

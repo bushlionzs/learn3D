@@ -83,10 +83,10 @@ bool CEGUIResourceManager::load(const std::string& name)
 				item._size.width = Ogre::StringConverter::parseInt(value);
 				value = child->Attribute("Height");
 				item._size.height = Ogre::StringConverter::parseInt(value);
-				item._coord.width = item._coord.left + item._size.width;
-				item._coord.height = item._coord.top + item._size.height;
-				//item._coord.width = item._size.width;
-				//item._coord.height = item._size.height;
+				//item._coord.width = item._coord.left + item._size.width;
+				//item._coord.height = item._coord.top + item._size.height;
+				item._coord.width = item._size.width;
+				item._coord.height = item._size.height;
 				imageset->_imageMap.emplace(Name, item);
 				child = child->NextSiblingElement();
 

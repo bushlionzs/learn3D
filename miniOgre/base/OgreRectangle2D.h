@@ -28,7 +28,6 @@ THE SOFTWARE.
 #ifndef _Rectangle2D_H__
 #define _Rectangle2D_H__
 
-#include "OgrePrerequisites.h"
 
 #include "OgreSimpleRenderable.h"
 

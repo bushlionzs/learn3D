@@ -42,7 +42,7 @@ namespace MyGUI
 
 	void OgreTexture::saveToFile(const std::string& _filename)
 	{
-		Ogre::uchar* readrefdata = static_cast<Ogre::uchar*>(lock(TextureUsage::Read));
+		uchar* readrefdata = static_cast<uchar*>(lock(TextureUsage::Read));
 
 		Ogre::CImage img;
 		img = img.loadDynamicImage(readrefdata, mTexture->getWidth(), mTexture->getHeight(), mTexture->getFormat());

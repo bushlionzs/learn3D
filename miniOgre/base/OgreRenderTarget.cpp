@@ -218,7 +218,7 @@ namespace Ogre {
 
         if (it != mViewportList.end())
         {
-            StringStream str;
+            std::stringstream str;
             str << "Can't create another viewport for "
                 << mName << " with Z-order " << ZOrder
                 << " because a viewport exists with this Z-order already.";
@@ -483,7 +483,7 @@ namespace Ogre {
         time_t ctTime; time(&ctTime);
         pTime = localtime( &ctTime );
         // use ISO 8601 order
-        StringStream oss;
+        std::stringstream oss;
         oss << filenamePrefix
             << std::put_time(pTime, "%Y%m%d_%H%M%S")
             << std::setw(3) << std::setfill('0') << (mTimer->getMilliseconds() % 1000)

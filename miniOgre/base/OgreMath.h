@@ -1,6 +1,6 @@
 #ifndef __Math_H__
 #define __Math_H__
-#include "OgrePrerequisites.h"
+//#include "OgrePrerequisites.h"
 namespace Ogre
 {
     class Radian
@@ -309,10 +309,10 @@ namespace Ogre
         static bool intersects(const Plane& plane, const AxisAlignedBox& box);
 
         static std::pair<bool, Real> intersects(
-            const Ray& ray, const Ogre::vector<Plane>::type& planeList, 
+            const Ray& ray, const std::vector<Plane>& planeList, 
             bool normalIsOutside);
         static std::pair<bool, Real> intersects(
-            const Ray& ray, const Ogre::list<Plane>::type& planeList,
+            const Ray& ray, const std::list<Plane>& planeList,
             bool normalIsOutside);
 
         static bool intersects(const Sphere& sphere, const Plane& plane);

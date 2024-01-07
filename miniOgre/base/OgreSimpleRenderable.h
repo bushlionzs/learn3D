@@ -28,7 +28,6 @@ THE SOFTWARE.
 #ifndef __SimpleRenderable_H__
 #define __SimpleRenderable_H__
 
-#include "OgrePrerequisites.h"
 
 #include "OgreMoveObject.h"
 #include "OgreRenderable.h"
@@ -62,7 +61,7 @@ namespace Ogre {
         Camera *mCamera;
 
         /// Static member used to automatically generate names for SimpleRendaerable objects.
-        static uint msGenNameCount;
+        static uint32 msGenNameCount;
 
     public:
         /// Constructor

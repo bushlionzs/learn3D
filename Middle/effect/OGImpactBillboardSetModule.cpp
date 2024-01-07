@@ -91,7 +91,7 @@ namespace Orphigine
 			{
 				msBillboardScaleCmd[i].mIndex	= i;
 
-				Ogre::StringStream stage;
+				std::stringstream stage;
 				stage << i;
 				String	colour_title	= String("BillboardScale") + stage.str();
 				String	colour_descr	= String("Stage ") + stage.str() +

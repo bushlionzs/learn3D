@@ -6,7 +6,6 @@
 #include "OgreStringInterface.h"
 #include "OgreVector3.h"
 #include "OgreQuaternion.h"
-#include "OgrePrerequisites.h"
 #include "OgreMoveObject.h"
 #include "OgreAxisAlignedBox.h"
 

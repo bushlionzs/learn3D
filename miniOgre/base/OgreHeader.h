@@ -125,9 +125,11 @@ namespace Ogre
         AT_FROZE,
         AT_DISABLE,
     };
+    typedef float Real;
+    typedef std::string String;
 }
 
-#define DECL_MALLOC __declspec(restrict) __declspec(noalias)
+#define DECL_MALLOC 
 #define OGRE_ARCHITECTURE_64 2
 #define OGRE_ARCH_TYPE OGRE_ARCHITECTURE_64
 #define OGRE_MEMORY_ALLOCATOR_STD 1
@@ -137,6 +139,7 @@ namespace Ogre
 #define OGRE_SIMD_ALIGNMENT  16
 #define RESTRICT_ALIAS __restrict
 
+#include "OgreMemoryAllocatorConfig.h"
 #include "OgreMath.h"
 #include "OgreVector2.h"
 #include "OgreVector3.h"

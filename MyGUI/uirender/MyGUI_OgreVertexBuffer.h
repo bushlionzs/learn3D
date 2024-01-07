@@ -10,7 +10,6 @@
 #include "MyGUI_Prerequest.h"
 #include "MyGUI_IVertexBuffer.h"
 
-#include <OgrePrerequisites.h>
 #include <OgreRenderOperation.h>
 #include <OgreHardwareVertexBuffer.h>
 

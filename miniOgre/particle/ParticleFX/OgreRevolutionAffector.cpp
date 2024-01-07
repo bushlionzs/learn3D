@@ -107,7 +107,7 @@ namespace Ogre {
 				msRadiusIncrementAdjustCmd[i].mIndex	= i;
 				msTimeCmd[i].mIndex		= i;
 
-				Ogre::StringStream stage;
+				std::stringstream stage;
 				stage << i;
 				String	speed_title	= String("radius_increment_scale") + stage.str();
 				String	time_title		= String("time") + stage.str();

@@ -744,18 +744,18 @@ namespace Ogre {
         }
     };
     typedef HashedVector<LightClosest> LightList;
-    typedef vector<LightClosest>::type LightClosestVec;
+    typedef std::vector<LightClosest> LightClosestVec;
     typedef std::vector<LightClosest> LightClosestArray;
 
 
-    typedef map<String, bool>::type UnaryOptionList;
-    typedef map<String, String>::type BinaryOptionList;
+    typedef std::map<String, bool> UnaryOptionList;
+    typedef std::map<String, String> BinaryOptionList;
 
     /// Name / value parameter pair (first = name, second = value)
-    typedef map<String, String>::type NameValuePairList;
+    typedef std::map<String, String> NameValuePairList;
 
     /// Alias / Texture name pair (first = alias, second = texture name)
-    typedef map<String, String>::type AliasTextureNamePairList;
+    typedef std::map<String, String> AliasTextureNamePairList;
 
         template< typename T > struct TRect
         {
@@ -968,10 +968,10 @@ namespace Ogre {
     };
 
     /// Render window creation parameters container.
-    typedef vector<RenderWindowDescription>::type RenderWindowDescriptionList;
+    typedef std::vector<RenderWindowDescription> RenderWindowDescriptionList;
 
     /// Render window container.
-    typedef vector<RenderWindow*>::type RenderWindowList;
+    typedef std::vector<RenderWindow*> RenderWindowList;
 
     /** @} */
     /** @} */
