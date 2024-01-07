@@ -2,7 +2,7 @@
 <MyGUI type="Resource" version="1.1">
 	<Resource type="ResourceTrueTypeFont" name="font_Simhei">
 		<Property key="Source" value="simhei.ttf"/>
-		<Property key="Size" value="25"/>
+		<Property key="Size" value="50"/>
         <Property key="Resolution" value="50"/>
         <Property key="Antialias" value="false"/>
         <Property key="TabWidth" value="8"/>

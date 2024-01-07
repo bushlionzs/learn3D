@@ -1,9 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <MyGUI type="Layout" version="3.2.0">
-    <Widget type="Widget" skin="PanelEmpty" position="0 0 285 280" layer="Main" name="_Main">
-        <Widget type="TextBox" skin="TextBox" position="75 15 110 30" name="itemname"/>
+    <Widget type="Widget" skin="PanelSkin" position="0 0 285 280" layer="Main" name="_Main">
+        <Widget type="TextBox" skin="TextBox" position="75 15 110 30" name="itemname">
+            <Property key="Caption" value="aaaaaaaaa"/>
+        </Widget>
         <Widget type="ImageBox" skin="ImageBox" position="25 80 64 64" name="show"/>
-        <Widget type="TextBox" skin="TextBox" position="120 75 110 85" name="desc"/>
+        <Widget type="TextBox" skin="TextBox" position="120 75 110 85" name="desc">
+            <Property key="Caption" value="bbbbbbbbb"/>
+        </Widget>
     </Widget>
     <CodeGeneratorSettings/>
 </MyGUI>

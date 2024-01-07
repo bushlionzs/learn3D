@@ -423,7 +423,7 @@
 	<Image Name="CJSH_equip_xie_1_16" XPos="192" YPos="192" Width="64" Height="64" />
 </Imageset>
 
-<Imageset Name="CJSH_item_xiangzi_1" Imagefile="Icons/CJSH_item_xiangzi_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+<Imageset Name="CJSH_item_xiangzi_1" Imagefile="Icons/cjsh_item_xiangzi_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
 	<Image Name="CJSH_item_xiangzi_1_1" XPos="0" YPos="0" Width="64" Height="64" />
 	<Image Name="CJSH_item_xiangzi_1_2" XPos="64" YPos="0" Width="64" Height="64" />
 	<Image Name="CJSH_item_xiangzi_1_3" XPos="128" YPos="0" Width="64" Height="64" />
@@ -442,6 +442,522 @@
 	<Image Name="CJSH_item_xiangzi_1_16" XPos="192" YPos="192" Width="64" Height="64" />
 </Imageset>
 
+<Imageset Name="UI_MainUI_1" Imagefile="ui_mainui_1.dds" NativeHorzRes="1024" NativeVertRes="768" AutoScaled="true">
+
+	<Image Name="UI_MainUI_1_Playerbak_1" XPos="9" YPos="7" Width="211" Height="78" />
+	<Image Name="UI_MainUI_1_Playerbak_2" XPos="255" YPos="7" Width="211" Height="78" />
+	<Image Name="UI_MainUI_1_Partybak_1" XPos="7" YPos="179" Width="129" Height="44" />
+	<Image Name="UI_MainUI_1_Partybak_2" XPos="7" YPos="229" Width="129" Height="44" />
+
+	<Image Name="UI_MainUI_1_Player_HP" XPos="3" YPos="107" Width="131" Height="9" />
+	<Image Name="UI_MainUI_1_Player_MP_1" XPos="3" YPos="120" Width="131" Height="9" />
+	<Image Name="UI_MainUI_1_Player_MP_2" XPos="3" YPos="133" Width="131" Height="9" />
+	<Image Name="UI_MainUI_1_Player_MP_3" XPos="3" YPos="146" Width="131" Height="9" />
+	<Image Name="UI_MainUI_1_Player_MP_4" XPos="3" YPos="159" Width="131" Height="9" />
+	<Image Name="UI_MainUI_1_Player_Bulletbak" XPos="211" YPos="101" Width="13" Height="13" />
+	<Image Name="UI_MainUI_1_Player_Bullet" XPos="194" YPos="103" Width="9" Height="9" />
+
+	<Image Name="UI_MainUI_1_Party_HP" XPos="11" YPos="279" Width="80" Height="5" />
+	<Image Name="UI_MainUI_1_Party_MP_1" XPos="11" YPos="289" Width="80" Height="5" />
+	<Image Name="UI_MainUI_1_Party_MP_2" XPos="11" YPos="299" Width="80" Height="5" />
+	<Image Name="UI_MainUI_1_Party_MP_3" XPos="11" YPos="309" Width="80" Height="5" />
+	<Image Name="UI_MainUI_1_Party_MP_4" XPos="11" YPos="319" Width="80" Height="5" />
+	<Image Name="UI_MainUI_1_Party_Bulletbak" XPos="18" YPos="332" Width="9" Height="9" />
+	<Image Name="UI_MainUI_1_Party_Bullet" XPos="9" YPos="334" Width="5" Height="5" />
+
+	<Image Name="UI_MainUI_1_Petbak" XPos="13" YPos="352" Width="122" Height="17" />
+	<Image Name="UI_MainUI_1_Pet_HP" XPos="148" YPos="356" Width="58" Height="7" />
+
+	<Image Name="UI_MainUI_1_Offline" XPos="135" YPos="281" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Death" XPos="102" YPos="281" Width="30" Height="30" />
+
+	<Image Name="UI_MainUI_1_Pet_Defend_Normal" XPos="7" YPos="576" Width="22" Height="22" />
+	<Image Name="UI_MainUI_1_Pet_Defend_Hover" XPos="34" YPos="576" Width="22" Height="22" />
+	<Image Name="UI_MainUI_1_Pet_Defend_Pushed" XPos="61" YPos="576" Width="22" Height="22" />
+
+	<Image Name="UI_MainUI_1_Pet_Attack_Normal" XPos="7" YPos="600" Width="22" Height="22" />
+	<Image Name="UI_MainUI_1_Pet_Attack_Hover" XPos="34" YPos="600" Width="22" Height="22" />
+	<Image Name="UI_MainUI_1_Pet_Attack_Pushed" XPos="61" YPos="600" Width="22" Height="22" />
+
+	<Image Name="UI_MainUI_1_chattab_1_Normal" XPos="11" YPos="383" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_1_Pushed" XPos="37" YPos="383" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_1_Hover" XPos="63" YPos="383" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_1_Disabled" XPos="88" YPos="383" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chattab_2_Normal" XPos="11" YPos="406" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_2_Pushed" XPos="37" YPos="406" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_2_Hover" XPos="63" YPos="406" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_2_Disabled" XPos="88" YPos="406" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chattab_3_Normal" XPos="11" YPos="429" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_3_Pushed" XPos="37" YPos="429" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_3_Hover" XPos="63" YPos="429" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_3_Disabled" XPos="88" YPos="429" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chattab_4_Normal" XPos="11" YPos="452" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_4_Pushed" XPos="37" YPos="452" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_4_Hover" XPos="63" YPos="452" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_4_Disabled" XPos="88" YPos="452" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chattab_5_Normal" XPos="11" YPos="475" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_5_Pushed" XPos="37" YPos="475" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_5_Hover" XPos="63" YPos="475" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_5_Disabled" XPos="88" YPos="475" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chattab_6_Normal" XPos="11" YPos="498" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_6_Pushed" XPos="37" YPos="498" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_6_Hover" XPos="63" YPos="498" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_6_Disabled" XPos="88" YPos="498" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chattab_7_Normal" XPos="11" YPos="522" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_7_Pushed" XPos="37" YPos="522" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_7_Hover" XPos="63" YPos="522" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_7_Disabled" XPos="88" YPos="522" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chattab_8_Normal" XPos="11" YPos="545" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_8_Pushed" XPos="37" YPos="545" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_8_Hover" XPos="63" YPos="545" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_8_Disabled" XPos="88" YPos="545" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chattab_9_Normal" XPos="114" YPos="545" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_9_Pushed" XPos="140" YPos="545" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_9_Hover" XPos="166" YPos="545" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_9_Disabled" XPos="191" YPos="545" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chattab_10_Normal" XPos="114" YPos="522" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_10_Pushed" XPos="140" YPos="522" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_10_Hover" XPos="166" YPos="522" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chattab_10_Disabled" XPos="191" YPos="522" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chat_hide_Normal" XPos="11" YPos="662" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chat_hide_Pushed" XPos="37" YPos="662" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chat_hide_Hover" XPos="63" YPos="662" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chat_hide_Disabled" XPos="88" YPos="662" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_chat_show_Normal" XPos="114" YPos="662" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chat_show_Pushed" XPos="140" YPos="662" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chat_show_Hover" XPos="166" YPos="662" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_chat_show_Disabled" XPos="191" YPos="662" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_savebtn_Normal" XPos="114" YPos="383" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_savebtn_Hover" XPos="140" YPos="383" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_savebtn_Pushed" XPos="166" YPos="383" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_savebtn_Disabled" XPos="191" YPos="383" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_actbtn_Normal" XPos="114" YPos="406" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_actbtn_Hover" XPos="140" YPos="406" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_actbtn_Pushed" XPos="166" YPos="406" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_actbtn_Disabled" XPos="191" YPos="406" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_colorbtn_Normal" XPos="114" YPos="429" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_colorbtn_Hover" XPos="140" YPos="429" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_colorbtn_Pushed" XPos="166" YPos="429" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_colorbtn_Disabled" XPos="191" YPos="429" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_deletebtn_Normal" XPos="114" YPos="452" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_deletebtn_Hover" XPos="140" YPos="452" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_deletebtn_Pushed" XPos="166" YPos="452" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_deletebtn_Disabled" XPos="191" YPos="452" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_notebtn_Normal" XPos="114" YPos="475" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_notebtn_Hover" XPos="140" YPos="475" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_notebtn_Pushed" XPos="166" YPos="475" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_notebtn_Disabled" XPos="191" YPos="475" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_filterbtn_Normal" XPos="114" YPos="498" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_filterbtn_Hover" XPos="140" YPos="498" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_filterbtn_Pushed" XPos="166" YPos="498" Width="19" Height="19" />
+	<Image Name="UI_MainUI_1_filterbtn_Disabled" XPos="191" YPos="498" Width="19" Height="19" />
+
+	<Image Name="UI_MainUI_1_SafeTime_Normal" XPos="217" YPos="323" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_SafeTime_Hover" XPos="248" YPos="323" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_SafeTime_Pushed" XPos="279" YPos="323" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_SceneMap_Normal" XPos="315" YPos="324" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_SceneMap_Hover" XPos="346" YPos="324" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_SceneMap_Pushed" XPos="377" YPos="324" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Safeguard_Normal" XPos="217" YPos="357" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Safeguard_Hover" XPos="248" YPos="357" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Safeguard_Pushed" XPos="279" YPos="357" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_WorldMap_Normal" XPos="315" YPos="358" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_WorldMap_Hover" XPos="346" YPos="358" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_WorldMap_Pushed" XPos="377" YPos="358" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_ViewOn_Normal" XPos="217" YPos="392" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_ViewOn_Hover" XPos="248" YPos="392" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_ViewOn_Pushed" XPos="279" YPos="392" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Walk_Normal" XPos="315" YPos="393" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Walk_Hover" XPos="346" YPos="393" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Walk_Pushed" XPos="377" YPos="393" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_ViewOff_Normal" XPos="217" YPos="426" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_ViewOff_Hover" XPos="248" YPos="426" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_ViewOff_Pushed" XPos="279" YPos="426" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Run_Normal" XPos="315" YPos="427" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Run_Hover" XPos="346" YPos="427" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Run_Pushed" XPos="377" YPos="427" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_NeiGua_Normal" XPos="217" YPos="461" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_NeiGua_Hover" XPos="248" YPos="461" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_NeiGua_Pushed" XPos="279" YPos="461" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Continue_Patch_Normal" XPos="315" YPos="462" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Continue_Patch_Hover" XPos="346" YPos="462" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Continue_Patch_Pushed" XPos="377" YPos="462" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Toplist_Normal" XPos="217" YPos="495" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Toplist_Hover" XPos="248" YPos="495" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Toplist_Pushed" XPos="279" YPos="495" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_ShowShortcut_Normal" XPos="315" YPos="496" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_ShowShortcut_Hover" XPos="346" YPos="496" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_ShowShortcut_Pushed" XPos="377" YPos="496" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Daytips_Normal" XPos="217" YPos="530" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Daytips_Hover" XPos="248" YPos="530" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Daytips_Pushed" XPos="279" YPos="530" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_HideShortcut_Normal" XPos="315" YPos="531" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_HideShortcut_Hover" XPos="346" YPos="531" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_HideShortcut_Pushed" XPos="377" YPos="531" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Find_Team_Normal" XPos="217" YPos="564" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Find_Team_Hover" XPos="248" YPos="564" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Find_Team_Pushed" XPos="279" YPos="564" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Motion_Normal" XPos="315" YPos="565" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Motion_Hover" XPos="346" YPos="565" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Motion_Pushed" XPos="377" YPos="565" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Protect_Normal" XPos="111" YPos="581" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Protect_Hover" XPos="142" YPos="581" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Protect_Pushed" XPos="173" YPos="581" Width="27" Height="27" />
+	
+	<Image Name="UI_MainUI_1_F12_Normal" XPos="566" YPos="302" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_F12_Hover" XPos="597" YPos="302" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_F12_Pushed" XPos="629" YPos="302" Width="27" Height="27" />
+	
+	<Image Name="UI_MainUI_1_F121_Normal" XPos="676" YPos="302" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_F121_Hover" XPos="707" YPos="302" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_F121_Pushed" XPos="739" YPos="302" Width="27" Height="27" />
+	
+	<Image Name="UI_MainUI_1_Keyboard_Normal" XPos="441" YPos="512" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Keyboard_Hover" XPos="472" YPos="512" Width="27" Height="27" />
+	<Image Name="UI_MainUI_1_Keyboard_Pushed" XPos="503" YPos="512" Width="27" Height="27" />
+
+	<Image Name="UI_MainUI_1_Ibshop_Normal" XPos="102" YPos="626" Width="32" Height="33" />
+	<Image Name="UI_MainUI_1_Ibshop_Hover" XPos="140" YPos="626" Width="32" Height="33" />
+	<Image Name="UI_MainUI_1_Ibshop_Pushed" XPos="179" YPos="626" Width="32" Height="33" />
+	<Image Name="UI_MainUI_1_Ibshop_Disabled" XPos="218" YPos="626" Width="32" Height="33" />
+	
+	<Image Name="UI_MainUI_1_Safeset_Normal" XPos="856" YPos="13" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Safeset_Hover" XPos="894" YPos="13" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Safeset_Pushed" XPos="933" YPos="13" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Safeset_Disabled" XPos="972" YPos="13" Width="30" Height="30" />
+	
+	<Image Name="UI_MainUI_1_WorldDirectory_Normal" XPos="856" YPos="48" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_WorldDirectory_Hover" XPos="894" YPos="48" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_WorldDirectory_Pushed" XPos="933" YPos="48" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_WorldDirectory_Disabled" XPos="972" YPos="48" Width="30" Height="30" />
+
+	<Image Name="UI_MainUI_1_Minimap_Board" XPos="359" YPos="121" Width="157" Height="179" />
+
+	<Image Name="UI_MainUI_1_Minimap_NetStatus_1" XPos="525" YPos="134" Width="8" Height="8" />
+	<Image Name="UI_MainUI_1_Minimap_NetStatus_2" XPos="538" YPos="134" Width="8" Height="8" />
+	<Image Name="UI_MainUI_1_Minimap_NetStatus_3" XPos="551" YPos="134" Width="8" Height="8" />
+	<Image Name="UI_MainUI_1_Minimap_NetStatus_4" XPos="564" YPos="134" Width="8" Height="8" />
+	<Image Name="UI_MainUI_1_Minimap_NetStatus_5" XPos="578" YPos="134" Width="8" Height="8" />
+	
+	<Image Name="UI_MainUI_1_Minimapbtn_1_Normal" XPos="198" YPos="128" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_1_Hover" XPos="236" YPos="128" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_1_Pushed" XPos="275" YPos="128" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_1_Disabled" XPos="314" YPos="128" Width="32" Height="32" />
+
+	<Image Name="UI_MainUI_1_Minimapbtn_2_Normal" XPos="198" YPos="165" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_2_Hover" XPos="236" YPos="165" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_2_Pushed" XPos="275" YPos="165" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_2_Disabled" XPos="314" YPos="165" Width="32" Height="32" />
+
+	<Image Name="UI_MainUI_1_Minimapbtn_3_Normal" XPos="198" YPos="202" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_3_Hover" XPos="236" YPos="202" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_3_Pushed" XPos="275" YPos="202" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_3_Disabled" XPos="314" YPos="202" Width="32" Height="32" />
+
+	<Image Name="UI_MainUI_1_Minimapbtn_4_Normal" XPos="198" YPos="239" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_4_Hover" XPos="236" YPos="239" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_4_Pushed" XPos="275" YPos="239" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_4_Disabled" XPos="314" YPos="239" Width="32" Height="32" />
+
+	<Image Name="UI_MainUI_1_Minimapbtn_5_Normal" XPos="198" YPos="278" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_5_Hover" XPos="236" YPos="278" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_5_Pushed" XPos="275" YPos="278" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_Minimapbtn_5_Disabled" XPos="314" YPos="278" Width="32" Height="32" />
+
+	<Image Name="UI_MainUI_1_Job_0" XPos="534" YPos="14" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_1" XPos="646" YPos="14" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_2" XPos="684" YPos="14" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_3" XPos="608" YPos="14" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_4" XPos="571" YPos="14" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_5" XPos="497" YPos="14" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_6" XPos="534" YPos="50" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_7" XPos="646" YPos="50" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_8" XPos="684" YPos="50" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_9" XPos="608" YPos="50" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_10" XPos="571" YPos="50" Width="30" Height="30" />
+	<Image Name="UI_MainUI_1_Job_11" XPos="497" YPos="50" Width="30" Height="30" />
+
+	<Image Name="UI_MainUI_1_PVP_Status_1" XPos="740" YPos="15" Width="29" Height="27" />
+	<Image Name="UI_MainUI_1_PVP_Status_2" XPos="777" YPos="15" Width="29" Height="27" />
+	<Image Name="UI_MainUI_1_PVP_Status_3" XPos="814" YPos="15" Width="29" Height="27" />
+
+	<Image Name="UI_MainUI_1_Team_Leader" XPos="743" YPos="60" Width="15" Height="12" />
+
+	<Image Name="UI_MainUI_1_exp_bak" XPos="1" YPos="985" Width="1022" Height="11" />
+	<Image Name="UI_MainUI_1_exp_bar_1" XPos="8" YPos="998" Width="1008" Height="5" />
+	<Image Name="UI_MainUI_1_exp_bar_2" XPos="8" YPos="968" Width="1008" Height="5" />
+	<Image Name="UI_MainUI_1_exp_bar_3" XPos="8" YPos="977" Width="1008" Height="5" />
+	<Image Name="UI_MainUI_1_exp_cover" XPos="1" YPos="1011" Width="1022" Height="7" />
+	
+	<Image Name="UI_MainUI_1_chat_upright_normal" XPos="789" YPos="60" Width="11" Height="11" />
+	<Image Name="UI_MainUI_1_chat_upright_hover" XPos="818" YPos="60" Width="11" Height="11" />
+	<Image Name="UI_MainUI_1_chat_upright_pushed" XPos="818" YPos="60" Width="11" Height="11" />
+	<Image Name="UI_MainUI_1_chat_upright_disabled" XPos="830" YPos="60" Width="11" Height="11" />
+
+	<Image Name="UI_MainUI_1_chat_scroll_normal" XPos="411" YPos="390" Width="19" Height="28" />
+	<Image Name="UI_MainUI_1_chat_scroll_hover" XPos="442" YPos="390" Width="19" Height="28" />	
+	<Image Name="UI_MainUI_1_chat_scroll_pushed" XPos="473" YPos="390" Width="19" Height="28" />
+	<Image Name="UI_MainUI_1_chat_scroll_disabled" XPos="504" YPos="390" Width="19" Height="28" />
+				
+	<Image Name="UI_MainUI_1_chat_down_normal" XPos="411" YPos="365" Width="19" Height="18" />
+	<Image Name="UI_MainUI_1_chat_down_hover" XPos="442" YPos="365" Width="19" Height="18" />
+	<Image Name="UI_MainUI_1_chat_down_pushed" XPos="473" YPos="365" Width="19" Height="18" />
+	<Image Name="UI_MainUI_1_chat_down_disabled" XPos="504" YPos="365" Width="19" Height="18" />
+
+	<Image Name="UI_MainUI_1_chat_up_normal" XPos="411" YPos="340" Width="19" Height="18" />
+	<Image Name="UI_MainUI_1_chat_up_hover" XPos="442" YPos="340" Width="19" Height="18" />
+	<Image Name="UI_MainUI_1_chat_up_pushed" XPos="473" YPos="340" Width="19" Height="18" />
+	<Image Name="UI_MainUI_1_chat_up_disabled" XPos="504" YPos="340" Width="19" Height="18" />
+
+	<Image Name="UI_MainUI_1_chat_bottom_normal" XPos="411" YPos="426" Width="19" Height="18" />
+	<Image Name="UI_MainUI_1_chat_bottom_hover" XPos="442" YPos="426" Width="19" Height="18" />
+	<Image Name="UI_MainUI_1_chat_bottom_pushed" XPos="473" YPos="426" Width="19" Height="18" />
+	<Image Name="UI_MainUI_1_chat_bottom_disabled" XPos="504" YPos="426" Width="19" Height="18" />
+	
+	<Image Name="UI_MainUI_1_chat_enter_normal" XPos="270" YPos="608" Width="24" Height="24" />
+	<Image Name="UI_MainUI_1_chat_enter_hover" XPos="300" YPos="608" Width="24" Height="24" />
+	<Image Name="UI_MainUI_1_chat_enter_pushed" XPos="330" YPos="608" Width="24" Height="24" />
+	<Image Name="UI_MainUI_1_chat_enter_disabled" XPos="360" YPos="608" Width="24" Height="24" />
+	
+	<Image Name="UI_MainUI_1_chat_face_normal" XPos="270" YPos="639" Width="24" Height="24" />
+	<Image Name="UI_MainUI_1_chat_face_hover" XPos="300" YPos="639" Width="24" Height="24" />
+	<Image Name="UI_MainUI_1_chat_face_pushed" XPos="330" YPos="639" Width="24" Height="24" />
+	<Image Name="UI_MainUI_1_chat_face_disabled" XPos="360" YPos="639" Width="24" Height="24" />
+	
+	<Image Name="UI_MainUI_1_chat_channel_1_normal" XPos="411" YPos="546" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_1_hover" XPos="460" YPos="546" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_1_pushed" XPos="509" YPos="546" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_1_disabled" XPos="558" YPos="546" Width="43" Height="22" />
+	
+	<Image Name="UI_MainUI_1_chat_channel_2_normal" XPos="411" YPos="575" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_2_hover" XPos="460" YPos="575" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_2_pushed" XPos="509" YPos="575" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_2_disabled" XPos="558" YPos="575" Width="43" Height="22" />
+	
+	<Image Name="UI_MainUI_1_chat_channel_3_normal" XPos="411" YPos="605" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_3_hover" XPos="460" YPos="605" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_3_pushed" XPos="509" YPos="605" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_3_disabled" XPos="558" YPos="605" Width="43" Height="22" />
+	
+	<Image Name="UI_MainUI_1_chat_channel_4_normal" XPos="411" YPos="636" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_4_hover" XPos="460" YPos="636" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_4_pushed" XPos="509" YPos="636" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_4_disabled" XPos="558" YPos="636" Width="43" Height="22" />
+	
+	<Image Name="UI_MainUI_1_chat_channel_5_normal" XPos="411" YPos="666" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_5_hover" XPos="460" YPos="666" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_5_pushed" XPos="509" YPos="666" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_5_disabled" XPos="558" YPos="666" Width="43" Height="22" />
+	
+	<Image Name="UI_MainUI_1_chat_channel_6_normal" XPos="411" YPos="696" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_6_hover" XPos="460" YPos="696" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_6_pushed" XPos="509" YPos="696" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_6_disabled" XPos="558" YPos="696" Width="43" Height="22" />
+	
+	<Image Name="UI_MainUI_1_chat_channel_7_normal" XPos="411" YPos="726" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_7_hover" XPos="460" YPos="726" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_7_pushed" XPos="509" YPos="726" Width="43" Height="22" />
+	<Image Name="UI_MainUI_1_chat_channel_7_disabled" XPos="558" YPos="726" Width="43" Height="22" />
+
+	<Image Name="UI_MainUI_1_chat_scrollbak" XPos="598" YPos="110" Width="19" Height="110" />
+	<Image Name="UI_MainUI_1_chat_scrollbak_up" XPos="598" YPos="110" Width="19" Height="20" />
+	<Image Name="UI_MainUI_1_chat_scrollbak_middle" XPos="598" YPos="130" Width="19" Height="30" />
+	<Image Name="UI_MainUI_1_chat_scrollbak_down" XPos="598" YPos="200" Width="19" Height="20" />
+	
+	<Image Name="UI_MainUI_1_chat_input" XPos="599" YPos="263" Width="392" Height="26" />
+	<Image Name="UI_MainUI_1_chat_input_left" XPos="599" YPos="263" Width="20" Height="26" />
+	<Image Name="UI_MainUI_1_chat_input_middle" XPos="619" YPos="263" Width="30" Height="26" />
+	<Image Name="UI_MainUI_1_chat_input_right" XPos="971" YPos="263" Width="20" Height="26" />
+	
+	<Image Name="UI_MainUI_1_chatbak" XPos="630" YPos="110" Width="366" Height="139" />
+
+	<Image Name="UI_MainUI_1_Mainbtn_1_Normal" XPos="0" YPos="788" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_1_Hover" XPos="0" YPos="688" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_1_Pushed" XPos="0" YPos="738" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_1_Normal_2" XPos="0" YPos="838" Width="50" Height="50" />
+	
+	<Image Name="UI_MainUI_1_Mainbtn_2_Normal" XPos="51" YPos="788" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_2_Hover" XPos="51" YPos="688" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_2_Pushed" XPos="51" YPos="738" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_2_Normal_2" XPos="51" YPos="838" Width="50" Height="50" />
+	
+	<Image Name="UI_MainUI_1_Mainbtn_3_Normal" XPos="102" YPos="788" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_3_Hover" XPos="102" YPos="688" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_3_Pushed" XPos="102" YPos="738" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_3_Normal_2" XPos="102" YPos="838" Width="50" Height="50" />
+	
+	<Image Name="UI_MainUI_1_Mainbtn_4_Normal" XPos="153" YPos="788" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_4_Hover" XPos="153" YPos="688" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_4_Pushed" XPos="153" YPos="738" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_4_Normal_2" XPos="153" YPos="838" Width="50" Height="50" />
+	
+	<Image Name="UI_MainUI_1_Mainbtn_5_Normal" XPos="204" YPos="788" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_5_Hover" XPos="204" YPos="688" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_5_Pushed" XPos="204" YPos="738" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_5_Normal_2" XPos="204" YPos="838" Width="50" Height="50" />
+	
+	<Image Name="UI_MainUI_1_Mainbtn_6_Normal" XPos="255" YPos="788" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_6_Hover" XPos="255" YPos="688" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_6_Pushed" XPos="255" YPos="738" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_6_Normal_2" XPos="255" YPos="838" Width="50" Height="50" />
+	
+	<Image Name="UI_MainUI_1_Mainbtn_7_Normal" XPos="306" YPos="788" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_7_Hover" XPos="306" YPos="688" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_7_Pushed" XPos="306" YPos="738" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_7_Normal_2" XPos="306" YPos="838" Width="50" Height="50" />
+	
+	<Image Name="UI_MainUI_1_Mainbtn_8_Normal" XPos="357" YPos="788" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_8_Hover" XPos="357" YPos="688" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_8_Pushed" XPos="357" YPos="738" Width="50" Height="50" />
+	<Image Name="UI_MainUI_1_Mainbtn_8_Normal_2" XPos="357" YPos="838" Width="50" Height="50" />
+
+	<Image Name="UI_MainUI_1_Skill_Bak" XPos="567" YPos="341" Width="253" Height="48" />
+	<Image Name="UI_MainUI_1_Horse_Bak" XPos="561" YPos="406" Width="58" Height="57" />
+	<Image Name="UI_MainUI_1_Page_Bak" XPos="412" YPos="518" Width="18" Height="14" />
+
+	<Image Name="UI_MainUI_1_Skill_Page_Down_Normal" XPos="411" YPos="459" Width="19" Height="17" />
+	<Image Name="UI_MainUI_1_Skill_Page_Down_Hover" XPos="442" YPos="459" Width="19" Height="17" />
+	<Image Name="UI_MainUI_1_Skill_Page_Down_Pushed" XPos="473" YPos="459" Width="19" Height="17" />
+	<Image Name="UI_MainUI_1_Skill_Page_Down_Disabled" XPos="504" YPos="459" Width="19" Height="17" />
+
+	<Image Name="UI_MainUI_1_Skill_Page_Up_Normal" XPos="411" YPos="488" Width="19" Height="17" />
+	<Image Name="UI_MainUI_1_Skill_Page_Up_Hover" XPos="442" YPos="488" Width="19" Height="17" />
+	<Image Name="UI_MainUI_1_Skill_Page_Up_Pushed" XPos="473" YPos="488" Width="19" Height="17" />
+	<Image Name="UI_MainUI_1_Skill_Page_Up_Disabled" XPos="504" YPos="488" Width="19" Height="17" />
+
+	<Image Name="UI_MainUI_1_Mission_Right_Normal" XPos="622" YPos="547" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Right_Hover" XPos="648" YPos="547" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Right_Pushed" XPos="674" YPos="547" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Right_Disabled" XPos="699" YPos="547" Width="20" Height="19" />
+
+	<Image Name="UI_MainUI_1_Mission_Left_Normal" XPos="622" YPos="575" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Left_Hover" XPos="648" YPos="575" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Left_Pushed" XPos="674" YPos="575" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Left_Disabled" XPos="699" YPos="575" Width="20" Height="19" />
+
+	<Image Name="UI_MainUI_1_Mission_Close_Normal" XPos="622" YPos="603" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Close_Hover" XPos="648" YPos="603" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Close_Pushed" XPos="674" YPos="603" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Close_Disabled" XPos="699" YPos="603" Width="20" Height="19" />
+
+	<Image Name="UI_MainUI_1_Mission_Plus_Normal" XPos="622" YPos="632" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Plus_Hover" XPos="648" YPos="632" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Plus_Pushed" XPos="674" YPos="632" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Plus_Disabled" XPos="699" YPos="632" Width="20" Height="19" />
+
+	<Image Name="UI_MainUI_1_Mission_Minus_Normal" XPos="622" YPos="661" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Minus_Hover" XPos="648" YPos="661" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Minus_Pushed" XPos="674" YPos="661" Width="20" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Minus_Disabled" XPos="699" YPos="661" Width="20" Height="19" />
+
+	<Image Name="UI_MainUI_1_Mission_Frame_1" XPos="735" YPos="549" Width="81" Height="19" />
+	<Image Name="UI_MainUI_1_Mission_Frame_2" XPos="735" YPos="579" Width="81" Height="19" />
+
+	<Image Name="UI_MainUI_1_Listupbotton_Normal" XPos="431" YPos="766" Width="17" Height="15" />
+	<Image Name="UI_MainUI_1_Listupbotton_Hover" XPos="463" YPos="766" Width="17" Height="15" />
+	<Image Name="UI_MainUI_1_Listupbotton_Pushed" XPos="495" YPos="766" Width="17" Height="15" />
+	<Image Name="UI_MainUI_1_Listupbotton_Disabled" XPos="527" YPos="766" Width="17" Height="15" />
+
+	<Image Name="UI_MainUI_1_Listdownbotton_Normal" XPos="431" YPos="792" Width="17" Height="15" />
+	<Image Name="UI_MainUI_1_Listdownbotton_Hover" XPos="463" YPos="792" Width="17" Height="15" />
+	<Image Name="UI_MainUI_1_Listdownbotton_Pushed" XPos="495" YPos="792" Width="17" Height="15" />
+	<Image Name="UI_MainUI_1_Listdownbotton_Disabled" XPos="527" YPos="792" Width="17" Height="15" />
+
+	<Image Name="UI_MainUI_1_Listdragbotton_Normal" XPos="431" YPos="817" Width="17" Height="24" />
+	<Image Name="UI_MainUI_1_Listdragbotton_Hover" XPos="463" YPos="817" Width="17" Height="24" />
+	<Image Name="UI_MainUI_1_Listdragbotton_Pushed" XPos="495" YPos="817" Width="17" Height="24" />
+	<Image Name="UI_MainUI_1_Listdragbotton_Disabled" XPos="527" YPos="817" Width="17" Height="24" />
+
+	<Image Name="UI_MainUI_1_ListbackTop" XPos="561" YPos="763" Width="17" Height="20" />
+	<Image Name="UI_MainUI_1_ListbackMid" XPos="561" YPos="800" Width="17" Height="20" />
+	<Image Name="UI_MainUI_1_ListbackEnd" XPos="561" YPos="853" Width="17" Height="20" />
+
+	<Image Name="UI_MainUI_1_Mounting_Normal" XPos="625" YPos="698" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Mounting_Hover" XPos="670" YPos="698" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Mounting_Pushed" XPos="716" YPos="698" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Mounting_Disabled" XPos="761" YPos="698" Width="34" Height="34" />
+
+	<Image Name="UI_MainUI_1_Horse_Health_1_Normal" XPos="625" YPos="742" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_1_Hover" XPos="671" YPos="742" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_1_Pushed" XPos="716" YPos="742" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_1_Disabled" XPos="761" YPos="742" Width="34" Height="34" />
+
+	<Image Name="UI_MainUI_1_Horse_Health_2_Normal" XPos="625" YPos="786" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_2_Hover" XPos="671" YPos="786" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_2_Pushed" XPos="716" YPos="786" Width="34" Height="34" />
+
+	<Image Name="UI_MainUI_1_Horse_Health_3_Normal" XPos="625" YPos="830" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_3_Hover" XPos="671" YPos="830" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_3_Pushed" XPos="716" YPos="830" Width="34" Height="34" />
+
+	<Image Name="UI_MainUI_1_Horse_Health_4_Normal" XPos="625" YPos="874" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_4_Hover" XPos="671" YPos="874" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_4_Pushed" XPos="716" YPos="874" Width="34" Height="34" />
+
+	<Image Name="UI_MainUI_1_Horse_Health_5_Normal" XPos="625" YPos="919" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_5_Hover" XPos="671" YPos="919" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Health_5_Pushed" XPos="716" YPos="919" Width="34" Height="34" />
+
+	<Image Name="UI_MainUI_1_Horse_Bloodbak_Normal" XPos="837" YPos="413" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Bloodbak_Hover" XPos="883" YPos="413" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Bloodbak_Pushed" XPos="928" YPos="413" Width="34" Height="34" />
+
+	<Image Name="UI_MainUI_1_Horse_Blood_Normal" XPos="837" YPos="462" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Blood_Hover" XPos="883" YPos="462" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Blood_Pushed" XPos="928" YPos="462" Width="34" Height="34" />
+
+	<Image Name="UI_MainUI_1_Horse_Dead_Normal" XPos="837" YPos="507" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Dead_Hover" XPos="883" YPos="507" Width="34" Height="34" />
+	<Image Name="UI_MainUI_1_Horse_Dead_Pushed" XPos="928" YPos="507" Width="34" Height="34" />
+	
+	<Image Name="UI_MainUI_1_selected" XPos="839" YPos="564" Width="45" Height="44" />
+
+	<Image Name="UI_MainUI_1_Singer_Text" XPos="425" YPos="852" Width="121" Height="13" />
+
+	<Image Name="UI_MainUI_1_GMbtn_Normal" XPos="428" YPos="899" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_GMbtn_Hover" XPos="466" YPos="899" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_GMbtn_Pushed" XPos="505" YPos="899" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_GMbtn_Disabled" XPos="544" YPos="899" Width="32" Height="32" />
+
+	<Image Name="UI_MainUI_1_colorset_Normal" XPos="259" YPos="900" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_colorset_Hover" XPos="297" YPos="900" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_colorset_Pushed" XPos="336" YPos="900" Width="32" Height="32" />
+	<Image Name="UI_MainUI_1_colorset_Disabled" XPos="375" YPos="900" Width="32" Height="32" />
+
+</Imageset>
 <Imageset Name="test" Imagefile="awesomeface.png">
 <Image Name="aa" XPos="0" YPos="0" Width="512" Height="512" />
 </Imageset>

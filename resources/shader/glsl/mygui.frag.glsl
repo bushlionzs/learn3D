@@ -8,5 +8,5 @@ layout (location = 1) in vec2 inTexC;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    outColor = texture(gTextureArray[0], inTexC) * inColor;
+    outColor = texture(gTextureArray[0], inTexC)* inColor;
 }
