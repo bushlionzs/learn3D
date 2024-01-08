@@ -8,6 +8,7 @@
 #include <string_util.h>
 #include <OgreTextureManager.h>
 #include <OgreDataStream.h>
+#include <OgreMemoryStream.h>
 #include <OgreResourceManager.h>
 
 namespace CEGUI
@@ -55,7 +56,7 @@ void OgreCEGUITexture::loadFromFile(const String& filename, const String& resour
             {
                 orpGroup = resourceGroup;
             }
-			d_ogre_texture = TextureManager::getSingleton().load(filename.c_str(), orpGroup.c_str(), TEX_TYPE_2D, 0, 1.0f);
+			d_ogre_texture = TextureManager::getSingleton().load(filename.c_str(), nullptr);
 			d_isLinked = false;
 		}
 	}
@@ -96,19 +97,14 @@ void OgreCEGUITexture::loadFromMemory(const void* buffPtr, uint buffWidth, uint 
 	
     uint32 bytesize = ((buffWidth * sizeof(uint32)) * buffHeight);
 
-#if OGRE_ENDIAN == OGRE_ENDIAN_BIG
-    uint32* swappedBuffer = new uint32[bytesize/4];
-    memcpy(swappedBuffer, buffPtr, bytesize);
 
-    for (int i=0; i < bytesize/4; i++)
-        byteSwap(swappedBuffer[i]);
+	DataStreamPtr odc(new Ogre::MemoryDataStream((const char*)(buffPtr), bytesize));
 
-    DataStreamPtr odc(new MemoryDataStream(static_cast<void*>(swappedBuffer), bytesize, false));
-#else
-	DataStreamPtr odc(new Ogre::MemoryDataStream(const_cast<void*>(buffPtr), bytesize, false));
-#endif
-	
-	d_ogre_texture = TextureManager::getSingleton().loadRawData(getUniqueName(), "General", odc, buffWidth, buffHeight, PF_A8R8G8B8, TEX_TYPE_2D, 0, 1.0f);
+	TextureProperty property;
+	property._width = buffWidth;
+	property._height = buffHeight;
+	property._tex_format = PF_A8R8G8B8;
+	d_ogre_texture = TextureManager::getSingleton().loadRawData(getUniqueName(),  odc, property);
 
 	
 	if (d_ogre_texture)
@@ -131,10 +127,13 @@ void OgreCEGUITexture::loadFromMemoryLA(const void* buffPtr, uint buffWidth, uin
 	freeOgreTexture();
 	
 	uint32 bytesize = ((buffWidth * sizeof(uint8) * 2) * buffHeight);
-	DataStreamPtr odc(new MemoryDataStream(const_cast<void*>(buffPtr), bytesize, false));
+	DataStreamPtr odc(new MemoryDataStream((const char*)(buffPtr), bytesize));
 
-	
-	d_ogre_texture = TextureManager::getSingleton().loadRawData(getUniqueName(), "General", odc, buffWidth, buffHeight, PF_BYTE_LA, TEX_TYPE_2D, 0, 1.0f);
+	TextureProperty property;
+	property._width = buffWidth;
+	property._height = buffHeight;
+	property._tex_format = PF_A8R8G8B8;
+	d_ogre_texture = TextureManager::getSingleton().loadRawData(getUniqueName(), odc, property);
 
 	
 	if (d_ogre_texture)
@@ -154,7 +153,12 @@ void OgreCEGUITexture::setOgreTextureSize(uint size)
 	using namespace Ogre;
 	freeOgreTexture();
 
-	d_ogre_texture = TextureManager::getSingleton().createManual(getUniqueName(), "General", TEX_TYPE_2D, size, size, 0, PF_A8R8G8B8, TU_DEFAULT);
+	TextureProperty property;
+	property._width = size;
+	property._height = size;
+	property._tex_format = PF_A8R8G8B8;
+
+	d_ogre_texture = TextureManager::getSingleton().createManual(getUniqueName(), property);
 
 	
 	if (d_ogre_texture)

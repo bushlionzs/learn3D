@@ -121,6 +121,12 @@ namespace Ogre {
             return mTextureProperty._depth;
         }
 
+        uint32_t getSize()
+        {
+            return PixelUtil::getMemorySize(mTextureProperty._width, mTextureProperty._height,
+                mTextureProperty._depth, mTextureProperty._tex_format);
+        }
+
         Ogre::PixelFormat getFormat()
         {
             return mTextureProperty._tex_format;
@@ -169,6 +175,8 @@ namespace Ogre {
         void loadImage(const CImage& img);
         void _loadImages(const std::vector<const CImage*>& images);
         virtual void unload();
+
+        void loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format);
     protected:
         String mName;
         TextureProperty mTextureProperty;

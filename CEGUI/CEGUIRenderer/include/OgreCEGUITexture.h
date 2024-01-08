@@ -1,6 +1,6 @@
 #ifndef _OgreCEGUITexture_h_
 #define _OgreCEGUITexture_h_
-
+#include <OgreHeader.h>
 #include <CEGUIBase.h>
 #include <CEGUIRenderer.h>
 #include <CEGUITexture.h>

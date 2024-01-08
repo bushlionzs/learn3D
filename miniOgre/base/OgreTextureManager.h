@@ -28,6 +28,8 @@ namespace Ogre {
 
         virtual TexturePtr createManual(const String& name, TextureProperty& texProperty);
 
+        virtual TexturePtr loadRawData(const String& name, DataStreamPtr& stream, TextureProperty& texProperty);
+
         virtual bool isFormatSupported(Ogre::TextureType ttype, Ogre::PixelFormat format, int usage);
 
         bool unloadUnreferencedResource(const String& name);

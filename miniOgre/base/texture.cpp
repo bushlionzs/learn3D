@@ -274,4 +274,11 @@ namespace Ogre {
 	{
 		assert(false);
 	}
+
+	void ITexture::loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format)
+	{
+		CImage img;
+		img.loadRawData(stream, uWidth, uHeight, format);
+		loadImage(img);
+	}
 }

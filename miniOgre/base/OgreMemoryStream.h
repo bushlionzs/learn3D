@@ -8,6 +8,7 @@ namespace Ogre {
     {
     public:
         MemoryDataStream(ResourceInfo* res);
+        MemoryDataStream(const char* data, uint32_t size);
         ~MemoryDataStream();
 
         virtual void seek(int64_t pos);

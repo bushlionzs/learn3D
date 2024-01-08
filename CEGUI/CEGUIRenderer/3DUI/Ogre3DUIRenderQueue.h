@@ -23,7 +23,7 @@ namespace CEGUI
 		Ogre3DUIRenderQueue();
 		virtual ~Ogre3DUIRenderQueue();
 		void clear(bool destroyPassMaps = false);
-		virtual void addRenderable(Ogre::Renderable* pRend, uint32_t groupID, Ogre::ushort priority);
+		virtual void addRenderable(Ogre::Renderable* pRend, uint32_t groupID, uint32_t priority);
 		virtual void addRenderable(Ogre::Renderable* pRend, uint32_t groupId);
 		virtual void addRenderable(Ogre::Renderable* pRend);
 		void setQueueGroupVector(RenderableList *l);

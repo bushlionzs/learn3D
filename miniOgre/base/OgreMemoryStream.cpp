@@ -37,6 +37,14 @@ namespace Ogre {
         }
     }
 
+    MemoryDataStream::MemoryDataStream(const char* data, uint32_t size)
+        :DataStream("")
+    {
+        mMem.assign(data, size);
+        mSize = size;
+        mFirst = mMem.data();
+        mEnd = mFirst + mSize;
+    }
 
     MemoryDataStream::~MemoryDataStream()
     {

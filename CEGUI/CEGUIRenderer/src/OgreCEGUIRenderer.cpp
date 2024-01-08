@@ -1,6 +1,6 @@
 
 
-
+#include <OgreHeader.h>
 #include <CEGUIImagesetManager.h>
 #include <CEGUIImageset.h>
 #include <CEGUIImage.h>
@@ -11,15 +11,16 @@
 #include "OgreCEGUITexture.h"
 #include "OgreCEGUIResourceProvider.h"
 
-#include <OgreRenderSystem.h>
+#include <RenderSystem.h>
 #include <OgreRoot.h>
 #include <OgreHardwareBufferManager.h>
 #include <OgreRenderTarget.h>
 #include <OgreTextureManager.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreViewPort.h>
+#include <OgreRenderOperation.h>
 #include "Ogre3DUIWindow.h"
-
+#include <OgreResourceManager.h>
 
 #include <OgreEntity.h>
 #include <OgreParticleSystem.h>
@@ -218,12 +219,12 @@ void destroyQuadRenderOp(Ogre::RenderOperation &d_render_op,
 {
     delete d_render_op.vertexData;
     d_render_op.vertexData = 0;
-    d_buffer.setNull();
+    d_buffer.reset();
 }
 
 void resizeQuadRenderOp(Ogre::RenderOperation &d_render_op, Ogre::HardwareVertexBufferSharedPtr &d_buffer,size_t requestedSize)
 {	
-	size_t size = d_buffer->getNumVertices();
+	size_t size = d_buffer->getNumVerts();
 	if(size < requestedSize)
 	{
 		while(size < requestedSize)
@@ -263,7 +264,7 @@ void create3DRenderOp(Ogre::RenderOperation &d_render_op,
 
 void resize3DRenderOp(Ogre::RenderOperation &d_render_op, Ogre::HardwareVertexBufferSharedPtr &d_buffer,size_t requestedSize)
 {	
-	size_t size = d_buffer->getNumVertices();
+	size_t size = d_buffer->getNumVerts();
 	if(size < requestedSize)
 	{
 		while(size < requestedSize)
@@ -273,12 +274,12 @@ void resize3DRenderOp(Ogre::RenderOperation &d_render_op, Ogre::HardwareVertexBu
 	}
 }
 
-OgreCEGUIRenderer::OgreCEGUIRenderer(Ogre::RenderTarget* target, Ogre::uint8 queue_id, bool post_queue, uint max_quads)
+OgreCEGUIRenderer::OgreCEGUIRenderer(Ogre::RenderTarget* target, uint32_t queue_id, bool post_queue, uint max_quads)
 {
 	constructor_impl(target, queue_id, post_queue, max_quads);
 }
 
-OgreCEGUIRenderer::OgreCEGUIRenderer(Ogre::RenderTarget* target, Ogre::uint8 queue_id, bool post_queue, uint max_quads, Ogre::SceneManager* scene_manager)
+OgreCEGUIRenderer::OgreCEGUIRenderer(Ogre::RenderTarget* target, uint32_t queue_id, bool post_queue, uint max_quads, Ogre::SceneManager* scene_manager)
 {
 	constructor_impl(target, queue_id, post_queue, max_quads);
 	
@@ -475,7 +476,7 @@ void OgreCEGUIRenderer::addMinimapQuad(const Rect& alpha_rect, const Rect& tex_r
 void OgreCEGUIRenderer::createMinimapMaterial()
 {
 	mMinimapMaterial = Ogre::MaterialManager::getSingleton().getByName(MINIMAPTATERIALNAME.c_str());
-	if(mMinimapMaterial.isNull())
+	if(!mMinimapMaterial)
 	{
 		Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("BaseWhiteNoLighting");
 		mMinimapMaterial = material->clone(MINIMAPTATERIALNAME.c_str());
@@ -1106,13 +1107,13 @@ void OgreCEGUIRenderer::initMinimapRender(const String&backgroundname, const Str
 		Ogre::TextureManager& textureManager = Ogre::TextureManager::getSingleton();
 		Ogre::TexturePtr ogreTexture = (Ogre::TexturePtr)textureManager.getByName(alphaname.c_str());
 
-		if (!ogreTexture.isNull())
+		if (ogreTexture)
 		{
 			d_pAlphaTexture = ogreTexture;
 		}
 		else
 		{
-			d_pAlphaTexture = Ogre::TextureManager::getSingleton().load(alphaname.c_str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, 0, 1.0f);
+			d_pAlphaTexture = Ogre::TextureManager::getSingleton().load(alphaname.c_str(), Ogre::ResourceManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, 0, 1.0f);
 		}
 
 	}
@@ -1413,7 +1414,7 @@ void OgreCEGUIRenderer::setTargetSceneManager(Ogre::SceneManager* scene_manager)
 	}
 }
 
-void OgreCEGUIRenderer::setTargetRenderQueue(Ogre::uint8 queue_id, bool post_queue)
+void OgreCEGUIRenderer::setTargetRenderQueue(uint32_t queue_id, bool post_queue)
 {
 	d_queue_id		= queue_id;
 	d_post_queue	= post_queue;
@@ -1425,7 +1426,7 @@ void OgreCEGUIRenderer::setTargetRenderQueue(Ogre::uint8 queue_id, bool post_que
 	}
 }
 
-void OgreCEGUIRenderer::constructor_impl(Ogre::RenderTarget* target, Ogre::uint8 queue_id, bool post_queue, uint max_quads)
+void OgreCEGUIRenderer::constructor_impl(Ogre::RenderTarget* target, uint32_t queue_id, bool post_queue, uint max_quads)
 {
 	using namespace Ogre;
 	
@@ -1514,7 +1515,7 @@ Texture* OgreCEGUIRenderer::createTexture(Ogre::TexturePtr& texture)
 {
 	OgreCEGUITexture* t = (OgreCEGUITexture*)createTexture();
 
-	if (!texture.isNull())
+	if (texture)
 	{
 		t->setOgreTexture(texture);
 	}
@@ -1550,7 +1551,7 @@ void OgreCEGUIRenderer::setRenderDisable( bool bDisable )
 	d_renderDisable = bDisable;
 }
 
-void CEGUIRQListener::renderQueueStarted(Ogre::uint8 id, const Ogre::String& invocation, 
+void CEGUIRQListener::renderQueueStarted(uint32_t id, const Ogre::String& invocation, 
 										 bool& skipThisQueue)
 {
 	try
@@ -1569,7 +1570,7 @@ void CEGUIRQListener::renderQueueStarted(Ogre::uint8 id, const Ogre::String& inv
 	}
 }
 
-void CEGUIRQListener::renderQueueEnded(Ogre::uint8 id, const Ogre::String& invocation, bool& repeatThisQueue)
+void CEGUIRQListener::renderQueueEnded(uint32_t id, const Ogre::String& invocation, bool& repeatThisQueue)
 {
 	try
 	{

@@ -12,6 +12,8 @@ namespace Ogre {
     class ResourceManager : public Ogre::Singleton<ResourceManager>
     {
     public:
+
+        static const String DEFAULT_RESOURCE_GROUP_NAME;
         ResourceManager();
         ~ResourceManager();
 

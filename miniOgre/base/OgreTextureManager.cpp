@@ -98,6 +98,29 @@ namespace Ogre {
         return tex;
     }
 
+    TexturePtr TextureManager::loadRawData(const String& name, DataStreamPtr& stream, TextureProperty& texProperty)
+    {
+        auto it = mTexMap.find(name);
+        if (it != mTexMap.end())
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "duplicated texture name");
+        }
+
+        ITexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, &texProperty);
+
+        if (tmp == nullptr)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to create texture");
+        }
+
+        tmp->loadRawData(stream, texProperty._width, texProperty._height, texProperty._tex_format);
+        std::shared_ptr<ITexture> tex(tmp);
+
+        mTexMap[name] = tex;
+
+        return tex;
+    }
+
     bool TextureManager::isFormatSupported(Ogre::TextureType ttype, Ogre::PixelFormat format, int usage)
     {
         return true;

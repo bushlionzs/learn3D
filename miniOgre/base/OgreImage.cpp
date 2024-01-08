@@ -127,6 +127,23 @@ namespace Ogre {
         return true;
     }
 
+    bool CImage::loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format)
+    {
+        const char* data = stream->getStreamData();
+        uint32_t size = stream->getStreamLength();
+
+        mImageData = (unsigned char*)malloc(size);
+        memcpy(mImageData, data, size);
+        mFormat = format;
+
+        mWidth = uWidth;
+        mHeight = uHeight;
+        mDepth = 1;
+        mNumMipmaps = 1;
+
+        return true;
+    }
+
     int CImage::getWidth() const
     {
         return mWidth;
