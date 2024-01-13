@@ -7,7 +7,7 @@
 #define _CEGUIConfig_h_
 
 
-
+#include <OgreHeader.h>
 
 
 

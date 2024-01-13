@@ -78,8 +78,8 @@ void OgreCEGUITexture::loadFromFile(const String& filename, const String& resour
 
 void _byteSwap(unsigned char* b, int n)
 {
-    register int i = 0;
-    register int j = n-1;
+    int i = 0;
+    int j = n-1;
     while (i<j)
     {
         std::swap(b[i], b[j]);

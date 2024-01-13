@@ -196,6 +196,17 @@ namespace Ogre {
         return newObj;
     }
 
+    bool SceneManager::hasMovableObject(const String& name,
+        const String& typeName)
+    {
+        auto itor = mMoveObjectMap.find(name);
+        if (itor != mMoveObjectMap.end())
+        {
+            return true;
+        }
+        return false;
+    }
+
     void SceneManager::destroySceneNode(SceneNode* sn)
     {
         String& name = sn->getName();

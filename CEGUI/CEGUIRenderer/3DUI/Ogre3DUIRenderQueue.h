@@ -4,7 +4,7 @@
 #define __Ogre3DUIRenderQueue_H__
 
 #include "OgreRenderable.h"
-
+#include <vector>
 
 namespace CEGUI 
 {
@@ -17,7 +17,7 @@ namespace CEGUI
 			RenderablePass(Ogre::Renderable* rend) :renderable(rend){}
 		};
 
-		typedef std::vector<RenderablePass> RenderableList;
+		typedef std::vector<Renderable*> RenderableList;
 
 	public:
 		Ogre3DUIRenderQueue();
@@ -28,7 +28,7 @@ namespace CEGUI
 		virtual void addRenderable(Ogre::Renderable* pRend);
 		void setQueueGroupVector(RenderableList *l);
 	private:
-		RenderableList *mRenderableList;
+		RenderableList mRenderables;
 	};
 }
 

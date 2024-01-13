@@ -13,6 +13,7 @@ add_subdirectory(3rdSource/OIS OIS)
 add_subdirectory(3rdSource/LuaPlus luaplus)
 add_subdirectory(3rdSource/stormlib stormlib)
 add_subdirectory(3rdSource/bullet3 bullet3)
+add_subdirectory(3rdSource/expat expat)
 
 set_property(TARGET zlibstatic PROPERTY FOLDER third_party)
 set_property(TARGET crypto PROPERTY FOLDER third_party)

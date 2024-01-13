@@ -1,3 +1,4 @@
+#include <OgreHeader.h>
 #include "Ogre3DUIWindow.h"
 
 

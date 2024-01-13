@@ -1,9 +1,8 @@
 
-
+#include <OgreHeader.h>
 #include "OgreCEGUIResourceProvider.h"
 
 #include <CEGUIExceptions.h>
-#include <ku.h>
 #include <OgreRoot.h>
 #include <OgreResourceManager.h>
 
@@ -23,7 +22,7 @@ namespace CEGUI
         else
             orpGroup = resourceGroup;
 
-        Ogre::DataStreamPtr input = 
+        auto input = 
             Ogre::ResourceManager::getSingleton().openResource(filename.c_str(), orpGroup.c_str());
 
 		if (!input)
@@ -32,31 +31,13 @@ namespace CEGUI
                 "OgreCEGUIResourceProvider::loadRawDataContainer - Unable to open resource file '" + filename + (utf8*)"' in resource group '" + orpGroup + (utf8*)"'.");
         }
 
-		Ogre::String buf = input->getName();
+		auto& buf = input->getName();
 		size_t buffsz = buf.length();
 		unsigned char* mem = NULL;
-		if(1==Ogre::Root::getSingleton().getVersionType())
-		{
-			
-			size_t pos = filename.find(".xml");
-			if( pos != std::string::npos)
-			{
-				mem = new unsigned char[buffsz+1];			
-				ku::CKU clientUtil;				
-				clientUtil.FileConversion(buf.c_str(),(char*)(mem),buffsz);
-				mem[buffsz] = 0;
-			}	
-			else
-			{
-				mem = new unsigned char[buffsz];	
-                memcpy(mem, buf.c_str(), buffsz);		
-			}
-		}
-		else
-		{
-			mem = new unsigned char[buffsz];	
-			memcpy(mem, buf.c_str(), buffsz);	
-		}       
+		
+		mem = new unsigned char[buffsz];	
+		memcpy(mem, buf.c_str(), buffsz);	
+		      
         output.setData(mem);
         output.setSize(buffsz);
     }

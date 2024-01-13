@@ -52,7 +52,8 @@ namespace Ogre {
             const String& templateName);
         MoveObject* createMovableObject(const String& name,
             const String& typeName, const NameValuePairList* params);
-
+        bool hasMovableObject(const String& name,
+            const String& typeName);
         virtual void destroySceneNode(SceneNode* sn);
 
 

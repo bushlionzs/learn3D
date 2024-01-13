@@ -27,6 +27,9 @@
 
 #include <OgreCamera.h>
 #include "CEGUIPropertyHelper.h"
+#include <vertex_declaration.h>
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
 #include <Windows.h>
 
 
@@ -47,147 +50,6 @@ const size_t OGRE3DWINDOWVISIBLAFLAG = 1 << 2;
 
 static Ogre3DUIWindowFactory g3DFactory;
 
-template<typename T>
-struct MemoryAllocator
-{
-	typedef typename T element;
-
-public:
-	MemoryAllocator()
-	{
-		mCurrentPosition = 0;
-		
-		mContainer.reserve(8);
-	}
-	~MemoryAllocator()
-	{
-		elementContainer::iterator it = mContainer.begin();
-		while(it != mContainer.end())
-		{
-			delete (*it);
-            it++;
-		}
-		mContainer.clear();
-	}
-	void reserveSize(size_t num)
-	{
-		mContainer.reserve(num);
-	}
-public:
-	element* getElement()
-	{
-		if(mCurrentPosition < mContainer.size())
-		{
-			element* temp = mContainer.at(mCurrentPosition);
-			temp->init();
-			mCurrentPosition++;
-			return temp;
-		}
-		else
-		{
-			element* temp = new element();
-			mContainer.push_back(temp);
-			mCurrentPosition++;
-			return temp;
-		}
-	}
-	void startNewFrame()
-	{
-		mCurrentPosition = 0;
-	}
-private:
-	typedef std::vector<element *> elementContainer;
-	elementContainer mContainer;
-	size_t  mCurrentPosition;
-};
-
-static MemoryAllocator<OgreCEGUIRenderer::RenderAsserts> gRenderAssertsAlloctor;
-
-template<typename Type>
-struct FakeVector
-{
-	typedef typename Type value_type;
-	typedef value_type* value_pointer;
-
-	FakeVector()
-	{
-		mPosition = 0;
-		mCurrentPosition = 0;
-		
-		mDefaultSize = 2000;
-		mContainer = new value_pointer[mDefaultSize];
-		::memset(mContainer,0x00,sizeof(value_pointer) * mDefaultSize);
-	}
-	~FakeVector()
-	{
-		if(mContainer)
-			delete []mContainer;
-		mContainer = 0;
-	}
-	int insert(const value_pointer& pointer)
-	{
-		if(mPosition >= mDefaultSize)
-		{
-			
-			value_pointer *tempc = new value_pointer[mDefaultSize*2];
-			::memset(tempc,0x00,sizeof(value_pointer) * mDefaultSize);
-			::memcpy(tempc,mContainer,sizeof(value_pointer) * mDefaultSize);
-			delete []mContainer;
-			mDefaultSize = mDefaultSize*2;
-			mContainer = tempc;
-		}
-		mContainer[mPosition] = pointer;
-		mPosition++;
-
-		return mPosition;
-	}
-	void clear()
-	{
-		mPosition = 0;
-		mCurrentPosition = 0;
-	}
-	void sort()
-	{
-		if(mPosition)
-			::qsort(mContainer,mPosition,sizeof(value_pointer),this->compare);
-	}
-
-	value_pointer getElement()
-	{
-		if(mCurrentPosition < mPosition)
-		{
-			return mContainer[mCurrentPosition++];
-		}
-		return 0;
-	}
-
-	value_pointer getElement(size_t nPos)
-	{
-		if(nPos < mPosition)
-		{
-			return mContainer[nPos];
-		}
-		return 0;
-	}
-
-	size_t getElementNumber()
-	{
-		return mPosition;
-	}
-	value_pointer* getContainer()
-	{
-		return mContainer;
-	}
-
-private:
-	size_t mPosition;
-	size_t mDefaultSize;
-	value_pointer *mContainer;
-	size_t mCurrentPosition;
-};
-
-typedef FakeVector<OgreCEGUIRenderer::RenderAsserts> RenderAssertsFakeVector;
-static RenderAssertsFakeVector gRenderAssertsFakeVector;
 
 
 void createQuadRenderOp(Ogre::RenderOperation &d_render_op, 
@@ -198,15 +60,15 @@ void createQuadRenderOp(Ogre::RenderOperation &d_render_op,
 	d_render_op.vertexData->vertexStart = 0;
 	VertexDeclaration* vd = d_render_op.vertexData->vertexDeclaration;
 	size_t vd_offset = 0;
-	vd->addElement(0, vd_offset, VET_FLOAT3, VES_POSITION);
+	vd->addElement(0, 0, vd_offset, VET_FLOAT3, VES_POSITION);
 	vd_offset += VertexElement::getTypeSize(VET_FLOAT3);
-	vd->addElement(0, vd_offset, VET_COLOUR, VES_DIFFUSE);
+	vd->addElement(0, 0, vd_offset, VET_COLOUR, VES_DIFFUSE);
 	vd_offset += VertexElement::getTypeSize(VET_COLOUR);
-	vd->addElement(0, vd_offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+	vd->addElement(0, 0, vd_offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 	d_buffer = HardwareBufferManager::getSingleton().createVertexBuffer(vd->getVertexSize(0), nVerts,  
-        HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE, false);
+        HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
 
-	d_render_op.vertexData->vertexBufferBinding->setBinding(0, d_buffer);
+	d_render_op.vertexData->setBinding(0, d_buffer);
 	d_render_op.operationType = RenderOperation::OT_TRIANGLE_LIST;
 	d_render_op.useIndexes = false;
 
@@ -244,17 +106,17 @@ void create3DRenderOp(Ogre::RenderOperation &d_render_op,
 
 	VertexDeclaration* vd = d_render_op.vertexData->vertexDeclaration;
 	size_t vd_offset = 0;
-	vd->addElement(0, vd_offset, VET_FLOAT3, VES_POSITION);
+	vd->addElement(0, 0, vd_offset, VET_FLOAT3, VES_POSITION);
 	vd_offset += VertexElement::getTypeSize(VET_FLOAT3);
 	
-	vd->addElement(0, vd_offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,0);
+	vd->addElement(0, 0, vd_offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 	vd_offset += VertexElement::getTypeSize(VET_FLOAT2);
-	vd->addElement(0, vd_offset, VET_FLOAT2, VES_TEXTURE_COORDINATES,1);
+	vd->addElement(0, 1, vd_offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 	
 	d_buffer = HardwareBufferManager::getSingleton().createVertexBuffer(vd->getVertexSize(0), nquads,  
-		HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE, false);
+		HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
 	
-	d_render_op.vertexData->vertexBufferBinding->setBinding(0, d_buffer);
+	d_render_op.vertexData->setBinding(0, d_buffer);
 	
 	d_render_op.operationType = RenderOperation::OT_TRIANGLE_LIST;
 	d_render_op.useIndexes = false;
@@ -286,13 +148,9 @@ OgreCEGUIRenderer::OgreCEGUIRenderer(Ogre::RenderTarget* target, uint32_t queue_
 	Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("BaseWhiteNoLighting");
 	
 	mGuiMaterial = material->clone("Gui_Default_Render");
-	Ogre::Pass* pass = mGuiMaterial->getTechnique(0)->getPass(0);
-	Ogre::TextureUnitState *unitState = pass->createTextureUnitState();
-	unitState->setName("Gui_Default_Render_Pass0_Tex0");
-	unitState->setTextureName("");
-	unitState->setTextureCoordSet(0);
-	unitState->setTextureFiltering(Ogre::FO_LINEAR, Ogre::FO_LINEAR, Ogre::FO_POINT);
-	unitState->setTextureAddressingMode(d_uvwAddressMode);
+
+	mGuiMaterial->addTexture("Gui_Default_Render_Pass0_Tex0");
+	
 	mGuiMaterial->load();
 		
 	setTargetSceneManager(scene_manager);
@@ -308,8 +166,7 @@ OgreCEGUIRenderer::~OgreCEGUIRenderer(void)
 		delete d_ourlistener;
 	}
 	
-	destroyQuadRenderOp(d_render_op, d_buffer);
-    destroyQuadRenderOp(d_direct_render_op, d_direct_buffer);
+
 	destroyMinimapRender();
 	destroyAllTextures();
 }
@@ -317,72 +174,65 @@ OgreCEGUIRenderer::~OgreCEGUIRenderer(void)
 unsigned long OgreCEGUIRenderer::addQuad(const Rect& dest_rect, float z, const Imageset* tex, const Rect& texture_rect, const ColourRect& colours,
 										 QuadSplitMode quad_split_mode, void* pUserData, bool isActiveHyperLink)
 {
-	if (!d_queueing)
+	RenderAsserts* renderquad = new RenderAsserts;
+	renderquad->mType = RT_COMMON;
+	renderquad->z				= -1 + z;
+	QuadInfo *quad = &(renderquad->mCommonQuadInfo);
+		
+	quad->z = -1 + z;
+		
+	quad->position.d_left	= dest_rect.d_left;
+	quad->position.d_right	= dest_rect.d_right;
+	quad->position.d_top	= d_display_area.getHeight() - dest_rect.d_top;
+	quad->position.d_bottom	= d_display_area.getHeight() - dest_rect.d_bottom;
+	quad->position.offset(d_texelOffset);
+		
+	quad->position.d_left	/= (d_display_area.getWidth() * 0.5f);
+	quad->position.d_right	/= (d_display_area.getWidth() * 0.5f);
+	quad->position.d_top	/= (d_display_area.getHeight() * 0.5f);
+	quad->position.d_bottom	/= (d_display_area.getHeight() * 0.5f);
+	quad->position.offset(Point(-1.0f, -1.0f));
+
+	quad->texture		= tex;
+	quad->texPosition	= texture_rect;
+		
+	quad->topLeftCol	= colourToOgre(colours.d_bottom_left);
+	quad->topRightCol	= colourToOgre(colours.d_bottom_right);
+	quad->bottomLeftCol	= colourToOgre(colours.d_top_left);
+	quad->bottomRightCol= colourToOgre(colours.d_top_right);
+
+	mCommonElementVertexNumber += VERTEX_PER_QUAD;
+
+	mQuads.push_back(renderquad);
+	int ret = mQuads.size() - 1;
+	quad->runtimeId = ret;
+
+	DWORD dwHyperLinkColorActive = 0;
+	if( pUserData )
 	{
-		renderQuadDirect(dest_rect, z, tex->getTexture(), texture_rect, colours, quad_split_mode);
-		return 0;
+		dwHyperLinkColorActive = static_cast<Window*>(pUserData)->getHyperLinkColorActive();
+		static_cast<Window*>(pUserData) ->setCacheRenderInfo( quad );
 	}
-	else
+
+	if( isActiveHyperLink )
 	{
-		RenderAsserts *renderquad = gRenderAssertsAlloctor.getElement();
-		renderquad->mType = RT_COMMON;
-		renderquad->z				= -1 + z;
-		QuadInfo *quad = &(renderquad->mCommonQuadInfo);
-		
-		quad->z = -1 + z;
-		
-		quad->position.d_left	= dest_rect.d_left;
-		quad->position.d_right	= dest_rect.d_right;
-		quad->position.d_top	= d_display_area.getHeight() - dest_rect.d_top;
-		quad->position.d_bottom	= d_display_area.getHeight() - dest_rect.d_bottom;
-		quad->position.offset(d_texelOffset);
-		
-		quad->position.d_left	/= (d_display_area.getWidth() * 0.5f);
-		quad->position.d_right	/= (d_display_area.getWidth() * 0.5f);
-		quad->position.d_top	/= (d_display_area.getHeight() * 0.5f);
-		quad->position.d_bottom	/= (d_display_area.getHeight() * 0.5f);
-		quad->position.offset(Point(-1.0f, -1.0f));
+		utf32 curValue = utf32(dwHyperLinkColorActive);//0xffb642f3
+		CEGUI::colour hyperColor = curValue;
+		ColourRect col(hyperColor);
 
-		quad->texture		= tex;
-		quad->texPosition	= texture_rect;
-		
-		quad->topLeftCol	= colourToOgre(colours.d_bottom_left);
-		quad->topRightCol	= colourToOgre(colours.d_bottom_right);
-		quad->bottomLeftCol	= colourToOgre(colours.d_top_left);
-		quad->bottomRightCol= colourToOgre(colours.d_top_right);
-
-		mCommonElementVertexNumber += VERTEX_PER_QUAD;
-
-		int ret = gRenderAssertsFakeVector.insert(renderquad);
-		quad->runtimeId = ret;
-
-		DWORD dwHyperLinkColorActive = 0;
-		if( pUserData )
-		{
-			dwHyperLinkColorActive = static_cast<Window*>(pUserData)->getHyperLinkColorActive();
-			static_cast<Window*>(pUserData) ->setCacheRenderInfo( quad );
-		}
-
-		if( isActiveHyperLink )
-		{
-			utf32 curValue = utf32(dwHyperLinkColorActive);//0xffb642f3
-			CEGUI::colour hyperColor = curValue;
-			ColourRect col(hyperColor);
-
-			quad->topLeftCol	= colourToOgre(col.d_bottom_left);
-			quad->topRightCol	= colourToOgre(col.d_bottom_right);
-			quad->bottomLeftCol	= colourToOgre(col.d_top_left);
-			quad->bottomRightCol= colourToOgre(col.d_top_right);
-		}
-
-		return ret;
+		quad->topLeftCol	= colourToOgre(col.d_bottom_left);
+		quad->topRightCol	= colourToOgre(col.d_bottom_right);
+		quad->bottomLeftCol	= colourToOgre(col.d_top_left);
+		quad->bottomRightCol= colourToOgre(col.d_top_right);
 	}
+
+	return ret;
 }
 
 unsigned long OgreCEGUIRenderer::addTriangle(const Point* pt, const Point* uv, const Imageset* tex, 
 									const colour& diffuse, float z)
 {
-	RenderAsserts* pRenderAsserts = gRenderAssertsAlloctor.getElement();
+	RenderAsserts* pRenderAsserts = new RenderAsserts;
 	pRenderAsserts->mType = RT_TRI;
 	pRenderAsserts->z = -1 + z;
 
@@ -407,12 +257,13 @@ unsigned long OgreCEGUIRenderer::addTriangle(const Point* pt, const Point* uv, c
 
 	mCommonElementVertexNumber += VERTEX_PER_TRIANGLE;
 
-	return gRenderAssertsFakeVector.insert(pRenderAsserts);
+	mQuads.push_back(pRenderAsserts);
+	return mQuads.size() - 1;
 }
 
 unsigned long OgreCEGUIRenderer::addQuad(const void* quad)
 {
-	RenderAsserts *renderquad = gRenderAssertsAlloctor.getElement();
+	RenderAsserts *renderquad = new RenderAsserts;
 	QuadInfo* quadInfo =  (QuadInfo*)quad;
 	renderquad->mCommonQuadInfo = *quadInfo;
 	if( quadInfo->isHyperLinkActive )
@@ -431,12 +282,13 @@ unsigned long OgreCEGUIRenderer::addQuad(const void* quad)
 
 	mCommonElementVertexNumber += VERTEX_PER_QUAD;
 
-	return gRenderAssertsFakeVector.insert(renderquad);
+	mQuads.push_back(renderquad);
+	return mQuads.size() - 1;
 }
 
 void OgreCEGUIRenderer::add3DWindow(float z, Window *w)
 {
-	RenderAsserts *renderquad = gRenderAssertsAlloctor.getElement();
+	RenderAsserts *renderquad = new RenderAsserts;
 	renderquad->z				= -1 + z;
 	UI3DWindowInfo *info = &(renderquad->m3DWindowInfo);
 	info->mWindow = reinterpret_cast<Ogre3DUIWindow*>(w);
@@ -444,13 +296,13 @@ void OgreCEGUIRenderer::add3DWindow(float z, Window *w)
 		renderquad->mType = RT_SCENE;
 	else if(info->mWindow->get3DUIGeometryType() == "node")
 		renderquad->mType = RT_NODE;
-	gRenderAssertsFakeVector.insert(renderquad);
+	mQuads.push_back(renderquad);
 }
 
 void OgreCEGUIRenderer::addMinimapQuad(const Rect& alpha_rect, const Rect& tex_rect,
 									   const Rect& vertex_rect,const Texture* tex, float z)
 {	
-	RenderAsserts *renderquad = gRenderAssertsAlloctor.getElement();
+	RenderAsserts *renderquad = new RenderAsserts;
 	renderquad->mType = RT_MINIMAP;
 	renderquad->z				= -1 + z;
 	
@@ -470,7 +322,7 @@ void OgreCEGUIRenderer::addMinimapQuad(const Rect& alpha_rect, const Rect& tex_r
 	info->texture = static_cast<const OgreCEGUITexture*>(tex);
 
 	mMinimapElementNumber++;
-	gRenderAssertsFakeVector.insert(renderquad);
+	mQuads.push_back(renderquad);
 }
 
 void OgreCEGUIRenderer::createMinimapMaterial()
@@ -482,34 +334,17 @@ void OgreCEGUIRenderer::createMinimapMaterial()
 		mMinimapMaterial = material->clone(MINIMAPTATERIALNAME.c_str());
 	}
 
-	Ogre::Pass *pass = mMinimapMaterial->getTechnique(0)->getPass(0);
-	pass->removeAllTextureUnitStates();
-	Ogre::TextureUnitState *unitState = pass->createTextureUnitState();
-	unitState->setName(MINIMAPBASETEXTURENAME.c_str());
-	unitState->setTextureName(d_pAlphaTexture->getName());
-	unitState->setTextureCoordSet(0);
-	unitState->setTextureFiltering(Ogre::FO_LINEAR, Ogre::FO_LINEAR, Ogre::FO_POINT);
-	unitState->setTextureAddressingMode(d_uvwAddressMode);
 
-	unitState = pass->createTextureUnitState();
-	unitState->setName(MINIMAPALPHATEXTURENAME.c_str());
-	unitState->setTextureName(d_pAlphaTexture->getName());
-	unitState->setTextureCoordSet(1);	
-	unitState->setTextureFiltering(Ogre::FO_LINEAR, Ogre::FO_LINEAR, Ogre::FO_POINT);
-	unitState->setTextureAddressingMode(d_uvwAddressMode);
+	mMinimapMaterial->addTexture(MINIMAPBASETEXTURENAME.c_str());
+	mMinimapMaterial->addTexture(MINIMAPALPHATEXTURENAME.c_str());
 
-	pass->setLightingEnabled(false);
-	pass->setDepthWriteEnabled(false);
-	pass->setDepthCheckEnabled(false);
-	pass->setCullingMode(Ogre::CULL_NONE);
-	pass->setFog(false);
-	pass->setSceneBlending(Ogre::SBF_SOURCE_ALPHA, Ogre::SBF_ONE_MINUS_SOURCE_ALPHA);
+
 	mMinimapMaterial->touch();
 }
 
 void OgreCEGUIRenderer::adjustQuad(unsigned long id, const Imageset* tex, const Rect& texture_rect, const ColourRect& colours)
 {
-	RenderAsserts* renderquad = gRenderAssertsFakeVector.getElement(id);
+	RenderAsserts* renderquad = mQuads[id];
 	if( renderquad == NULL )
 		return;
 
@@ -530,35 +365,25 @@ void OgreCEGUIRenderer::doRender(bool redraw)
 		&& d_render_sys->_getViewport()->getTarget() == d_render_target &&
 		!d_renderDisable )
 	{
-		UI_TRY
+
 		if(redraw)
 		{
 			preparePrimitiveForRender();
 		}
 
-		UI_CATCH( "preparePrimitiveForRender --OgreCEGUIRenderer::doRender" )
-		UI_TRY
-		if(!mRenderableList.empty())
-		{
-			d_render_sys->clearFrameBuffer(Ogre::FBT_DEPTH);
-		}
-		UI_CATCH( "clearFrameBuffer --OgreCEGUIRenderer::doRender" )
 
-		UI_TRY
 		initRenderStates();
-		UI_CATCH( "initRenderStates --OgreCEGUIRenderer::doRender" )
-		size_t elementnumber = gRenderAssertsFakeVector.getElementNumber();
-		RenderAsserts **renderassert = gRenderAssertsFakeVector.getContainer();
+
+		size_t elementnumber = mQuads.size();
+		RenderAsserts **renderassert = mQuads.data();
 
 		for(size_t i=0; i<elementnumber; i++)
 		{
 			RenderAsserts* tempAssert = renderassert[i];
-			UI_TRY
 			switch(tempAssert->mType)
 			{
 			case RT_SCENE:
 				{
-					UI_TRY
 					UI3DWindowInfo *info = &(tempAssert->m3DWindowInfo);
 					Ogre3DUIWindow *window = info->mWindow;
 					if(!window->getLogicModelObjPointer() || !window->getCameraPointer())
@@ -571,89 +396,18 @@ void OgreCEGUIRenderer::doRender(bool redraw)
 			
 					info->mCamera->setAspectRatio(target.getWidth()/target.getHeight());
 					
-					Ogre::AutoParamDataSource & autoParamDataSource = d_sceneMngr->getAutpParamDataSource();
-					UI_TRY
 					
-					autoParamDataSource.setCurrentCamera(info->mCamera);
-					autoParamDataSource.setCurrentRenderTarget(d_render_sys->_getViewport()->getTarget());
-					UI_CATCH( "autoParamDataSource Set --OgreCEGUIRenderer::doRender" )
-					
-					d_render_sys->_setRealViewport(target.d_left,target.d_top,target.getWidth(),target.getHeight());
-					d_render_sys->_setViewMatrix(info->mCamera->getViewMatrix());
-					d_render_sys->_setProjectionMatrix(info->mCamera->getProjectionMatrixRS());
-					d_sceneMngr->_findVisibleObjects(info->mCamera,false);
-
 					for(size_t i = startindex; i<endindex; i++)
 					{
-						Ogre3DUIRenderQueue::RenderablePass t = mRenderableList[i];
-						if (t.renderable == NULL)
-							continue;
-
-						static Ogre::RenderOperation ro;
-						static Ogre::Matrix4 worldmatrix[256];
-						unsigned int numMatrices = 0;
-						
-						UI_TRY
-						d_sceneMngr->_setPass(t.pass);
-
-						t.renderable->getRenderOperation(ro);
-						ro.srcRenderable = t.renderable;
-						UI_CATCH( "RT_SCENE---11 --OgreCEGUIRenderer::doRender" )
-
-						UI_TRY
-						t.renderable->getWorldTransforms(worldmatrix);
-						numMatrices = t.renderable->getNumWorldTransforms();
-						UI_CATCH( "RT_SCENE---12 --OgreCEGUIRenderer::doRender" )
-
-						UI_TRY
-						if (numMatrices > 1) 
-						{
-							d_render_sys->_setWorldMatrices(worldmatrix, numMatrices);
-						}
-						else 
-						{
-							d_render_sys->_setWorldMatrix(*worldmatrix);
-						}
-						UI_CATCH( "RT_SCENE---13 --OgreCEGUIRenderer::doRender" )
-
-						UI_TRY
-						
-						if (t.pass->isProgrammable())
-						{					
-							autoParamDataSource.setCurrentRenderable(ro.srcRenderable);							
-							autoParamDataSource.setWorldMatrices(worldmatrix, numMatrices);							
-							t.pass->_updateAutoParamsNoLights(autoParamDataSource);		
-
-							if (t.pass->hasVertexProgram())
-							{
-								d_render_sys->bindGpuProgramParameters(Ogre::GPT_VERTEX_PROGRAM, 
-									t.pass->getVertexProgramParameters());
-							}
-							if (t.pass->hasFragmentProgram())
-							{
-								d_render_sys->bindGpuProgramParameters(Ogre::GPT_FRAGMENT_PROGRAM, 
-									t.pass->getFragmentProgramParameters());
-							}
-						}
-						d_render_sys->setCurrentPassIterationCount(t.pass->getPassIterationCount());
-						UI_CATCH( "RT_SCENE---2 --OgreCEGUIRenderer::doRender" )
-
-						UI_TRY
-						d_render_sys->_render(ro);
-						UI_CATCH( "RT_SCENE---3 --OgreCEGUIRenderer::doRender" )
+						auto r = mRenderableList[i];	
+						d_render_sys->render(r, RenderListType_Opaque);
 					}
 
-					d_render_sys->clearFrameBuffer(Ogre::FBT_DEPTH);	
-					d_render_sys->_setRealViewport(0.0f,0.0f,0.0f,0.0f);
-
 					initRenderStates();
-					UI_CATCH( "RT_SCENE --OgreCEGUIRenderer::doRender" )
 				}	
 				break;
 			case RT_NODE:
 				{
-					UI_TRY
-					
 					size_t startindex = tempAssert->mStartIndex;
 					size_t endindex = tempAssert->mEndIndex;
 
@@ -687,32 +441,22 @@ void OgreCEGUIRenderer::doRender(bool redraw)
 					worldmatrix.setScale(Ogre::Vector3(xscale,yscale,zscale));
 					worldmatrix.setTrans(Ogre::Vector3(xtrans,ytrans,0.0f));
 
-					d_render_sys->_setWorldMatrix(worldmatrix);
-					d_render_sys->_setViewMatrix(Ogre::Matrix4::IDENTITY);
-					d_render_sys->_setProjectionMatrix(Ogre::Matrix4::IDENTITY);
 
-					UI_TRY
+
+
 					for(size_t i = startindex; i<endindex; i++)
 					{
 						Ogre3DUIRenderQueue::RenderablePass t = mRenderableList[i];
 						if (t.renderable == NULL)
 							continue;
-						static Ogre::RenderOperation ro;
-						t.renderable->getRenderOperation(ro);
-						ro.srcRenderable = t.renderable;
-						t.pass->setDepthCheckEnabled(false);
-						t.pass->setDepthWriteEnabled(false);
-						d_sceneMngr->_setPass(t.pass);
-						d_render_sys->_render(ro);
+		
 					}		
-					UI_CATCH( "RenderOperation _render --OgreCEGUIRenderer::doRender" )
+	
 					initRenderStates();
-					UI_CATCH( "RT_NODE --OgreCEGUIRenderer::doRender" )
 				}
 				break;
 			case RT_COMMON:
 				{
-					UI_TRY
 					d_render_op.vertexData->vertexStart = tempAssert->mStartIndex;
 					size_t j = i+1;
 					while(j < elementnumber  
@@ -725,24 +469,13 @@ void OgreCEGUIRenderer::doRender(bool redraw)
 
 					const OgreCEGUITexture* currTexture = (const OgreCEGUITexture*)renderassert[i]->mCommonQuadInfo.texture->getTexture();
 					
-					Ogre::Pass* pass = mGuiMaterial->getTechnique(0)->getPass(0);
-					
-					pass->getTextureUnitState(0)->setTextureName(currTexture->getOgreTexture()->getName());
-					
-					initRenderStates();
-					
-					d_render_sys->_setTexture(0, true, currTexture->getOgreTexture());
-					
-					d_render_sys->_applyCurrentPass(pass);
-
-					d_render_sys->_render(d_render_op);
-					UI_CATCH( "RT_COMMON --OgreCEGUIRenderer::doRender" )
+				
 				}
 				break;
 
 			case RT_TRI:
 				{
-					UI_TRY
+
 					d_render_op.vertexData->vertexStart = tempAssert->mStartIndex;
 					size_t j = i+1;
 					while(j < elementnumber  
@@ -755,35 +488,12 @@ void OgreCEGUIRenderer::doRender(bool redraw)
 
 					const OgreCEGUITexture* currTexture = (const OgreCEGUITexture*)renderassert[i]->mTriangleInfo.texture->getTexture();
 					
-					Ogre::Pass* pass = mGuiMaterial->getTechnique(0)->getPass(0);
-					
-					pass->getTextureUnitState(0)->setTextureName(currTexture->getOgreTexture()->getName());
-					
-					initRenderStates();
-					
-					d_render_sys->_setTexture(0, true, currTexture->getOgreTexture());
-					
-					d_render_sys->_applyCurrentPass(pass);
-
-					d_render_sys->_render(d_render_op);
-					UI_CATCH( "RT_TRI --OgreCEGUIRenderer::doRender" )
 				}
 				break;
 			case RT_MINIMAP:
 				{
-					UI_TRY
-					d_render_sys->_setWorldMatrix(Ogre::Matrix4::IDENTITY);
-					d_render_sys->_setViewMatrix(Ogre::Matrix4::IDENTITY);
-					d_render_sys->_setProjectionMatrix(Ogre::Matrix4::IDENTITY);
 
-					Ogre::TextureUnitState *unitstate = mMinimapMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(MINIMAPBASETEXTURENAME.c_str());
-					unitstate ->setTextureName(tempAssert->mMinimapQuad3DInfo.texture->getOgreTexture()->getName());
-					d_3D_render_op.vertexData->vertexStart = tempAssert->mStartIndex;
-					d_3D_render_op.vertexData->vertexCount = tempAssert->mEndIndex - tempAssert->mStartIndex;
-					d_sceneMngr->_setPass(mMinimapMaterial->getTechnique(0)->getPass(0));
-					d_render_sys->_render(d_3D_render_op);
 					initRenderStates();
-					UI_CATCH( "RT_MINIMAP --OgreCEGUIRenderer::doRender" )
 				}
 				break;
 			case RT_CUSTOM:
@@ -791,23 +501,18 @@ void OgreCEGUIRenderer::doRender(bool redraw)
 			default:
 				break;
 			}
-			UI_CATCH( "tempAssert --OgreCEGUIRenderer::doRender" )
 		}
 	}
 }
 
 void OgreCEGUIRenderer::preparePrimitiveForRender()
 {
-	UI_TRY
 	if(mMinimapElementNumber)
 		resize3DRenderOp(d_3D_render_op,d_3D_buffer,mMinimapElementNumber*VERTEX_PER_QUAD);
-	UI_CATCH( "resize3DRenderOp --OgreCEGUIRenderer::preparePrimitiveForRender" )
-	UI_TRY
 	if(mCommonElementVertexNumber)
 		resizeQuadRenderOp(d_render_op,d_buffer,mCommonElementVertexNumber);
-	UI_CATCH( "resizeQuadRenderOp --OgreCEGUIRenderer::preparePrimitiveForRender" )
-	size_t elementnumber = gRenderAssertsFakeVector.getElementNumber();
-	RenderAsserts **renderassert = gRenderAssertsFakeVector.getContainer();
+	size_t elementnumber = mQuads.size();
+	RenderAsserts **renderassert = mQuads.data();
 
 	size_t customindex = 0;
 	float *custommen = (float *)d_3D_buffer->lock(Ogre::HardwareVertexBuffer::HBL_DISCARD);
@@ -1083,9 +788,9 @@ void OgreCEGUIRenderer::preparePrimitiveForRender()
 						break;
 					}
 				}
-				Ogre::MovableObject *object = d_sceneMngr->getMovableObject(objectname.c_str(), movabletype.c_str());
+				Ogre::MoveObject*object = d_sceneMngr->createMovableObject(objectname.c_str(), movabletype.c_str(), nullptr);
 				tempasserts->mStartIndex = mRenderableList.size();
-				object->_updateRenderQueue(&mOgre3DUIRenderQueue);
+				//object->_updateRenderQueue(&mOgre3DUIRenderQueue);
 				tempasserts->mEndIndex = mRenderableList.size();
 				info->mAABBBox = object->getBoundingBox();
 				UI_CATCH( "RT_NODE --OgreCEGUIRenderer::preparePrimitiveForRender" )
@@ -1113,7 +818,7 @@ void OgreCEGUIRenderer::initMinimapRender(const String&backgroundname, const Str
 		}
 		else
 		{
-			d_pAlphaTexture = Ogre::TextureManager::getSingleton().load(alphaname.c_str(), Ogre::ResourceManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D, 0, 1.0f);
+			d_pAlphaTexture = Ogre::TextureManager::getSingleton().load(alphaname.c_str(), nullptr);
 		}
 
 	}
@@ -1127,7 +832,7 @@ void OgreCEGUIRenderer::initMinimapRender(const String&backgroundname, const Str
 
 void OgreCEGUIRenderer::destroyMinimapRender(void)
 {
-	 destroyQuadRenderOp(d_3D_render_op, d_3D_buffer);
+	 
 
 }
 
@@ -1164,7 +869,7 @@ void OgreCEGUIRenderer::init3DRender()
 void OgreCEGUIRenderer::destroy3DRender()
 {
 	
-	destroyQuadRenderOp(d_3D_render_op,d_3D_buffer);
+	
 }
 void OgreCEGUIRenderer::restore3DRenderState()
 {
@@ -1178,8 +883,6 @@ void OgreCEGUIRenderer::clearRenderList(void)
 	mOgre3DUIWindowMap.clear();
 	mRenderAssertsMap.clear();
 	mRenderableList.clear();
-	gRenderAssertsFakeVector.clear();
-	gRenderAssertsAlloctor.startNewFrame();
 	mCommonElementVertexNumber = 0;
 	mMinimapElementNumber = 0;
 }
@@ -1228,34 +931,6 @@ void OgreCEGUIRenderer::destroyAllTextures(void)
 
 void OgreCEGUIRenderer::initRenderStates(void)
 {
-	using namespace Ogre;
-	
-	d_render_sys->_setWorldMatrix(Matrix4::IDENTITY);
-	d_render_sys->_setViewMatrix(Matrix4::IDENTITY);
-	d_render_sys->_setProjectionMatrix(Matrix4::IDENTITY);
-	
-	d_render_sys->setLightingEnabled(false);
-	d_render_sys->_setDepthBufferParams(false, false);
-	d_render_sys->_setCullingMode(CULL_NONE);
-	d_render_sys->_setFog(FOG_NONE);
-	d_render_sys->_setColourBufferWriteEnabled(true, true, true, true);
-	d_render_sys->unbindGpuProgram(GPT_FRAGMENT_PROGRAM);
-	d_render_sys->unbindGpuProgram(GPT_VERTEX_PROGRAM);
-	d_render_sys->setShadingType(SO_GOURAUD);
-	d_render_sys->_setPolygonMode(PM_SOLID);
-	
-	d_render_sys->_setTextureCoordCalculation(0, TEXCALC_NONE);
-	d_render_sys->_setTextureCoordSet(0, 0);
-	d_render_sys->_setTextureUnitFiltering(0, FO_LINEAR, FO_LINEAR, FO_POINT);
-	d_render_sys->_setTextureAddressingMode(0, d_uvwAddressMode);
-	d_render_sys->_setTextureMatrix(0, Matrix4::IDENTITY);
-	d_render_sys->_setAlphaRejectSettings(CMPF_ALWAYS_PASS, 0);
-	d_render_sys->_setTextureBlendMode(0, d_colourBlendMode);
-	d_render_sys->_setTextureBlendMode(0, d_alphaBlendMode);
-	d_render_sys->_disableTextureUnitsFrom(1);
-
-	
-	d_render_sys->_setSceneBlending(SBF_SOURCE_ALPHA, SBF_ONE_MINUS_SOURCE_ALPHA);
 }
 
 void OgreCEGUIRenderer::sortQuads(void)
@@ -1266,132 +941,13 @@ void OgreCEGUIRenderer::sortQuads(void)
 	}
 }
 
-void OgreCEGUIRenderer::renderQuadDirect(const Rect& dest_rect, float z, const Texture* tex, const Rect& texture_rect, const ColourRect& colours, QuadSplitMode quad_split_mode)
-{
-	if (d_render_sys->_getViewport()->getOverlaysEnabled() &&
-		d_render_sys->_getViewport()->getTarget() == d_render_target)
-	{
-		z = -1 + z;
 
-		Rect final_rect;
-		
-		final_rect.d_left	= dest_rect.d_left;
-		final_rect.d_right	= dest_rect.d_right;
-		final_rect.d_top	= d_display_area.getHeight() - dest_rect.d_top;
-		final_rect.d_bottom	= d_display_area.getHeight() - dest_rect.d_bottom;
-		final_rect.offset(d_texelOffset);
-
-		
-		final_rect.d_left	/= (d_display_area.getWidth() * 0.5f);
-		final_rect.d_right	/= (d_display_area.getWidth() * 0.5f);
-		final_rect.d_top	/= (d_display_area.getHeight() * 0.5f);
-		final_rect.d_bottom	/= (d_display_area.getHeight() * 0.5f);
-		final_rect.offset(Point(-1.0f, -1.0f));
-
-		
-        uint32 topLeftCol	= colourToOgre(colours.d_bottom_left);
-        uint32 topRightCol	= colourToOgre(colours.d_bottom_right);
-        uint32 bottomLeftCol	= colourToOgre(colours.d_top_left);
-        uint32 bottomRightCol= colourToOgre(colours.d_top_right);
-
-		QuadVertex*	buffmem = (QuadVertex*)d_direct_buffer->lock(Ogre::HardwareVertexBuffer::HBL_DISCARD);
-
-		
-		buffmem->x	= final_rect.d_left;
-		buffmem->y	= final_rect. d_bottom;
-		buffmem->z	= z;
-		buffmem->diffuse = topLeftCol;
-		buffmem->tu1	= texture_rect.d_left;
-		buffmem->tv1	= texture_rect.d_bottom;
-		++buffmem;
-		
-		if (quad_split_mode == TopLeftToBottomRight)
-		{
-			buffmem->x	= final_rect.d_right;
-			buffmem->y = final_rect.d_bottom;
-			buffmem->z	= z;
-			buffmem->diffuse = topRightCol;
-			buffmem->tu1	= texture_rect.d_right;
-			buffmem->tv1	= texture_rect.d_bottom;
-			++buffmem;
-		}
-		
-		else
-		{
-			buffmem->x	= final_rect.d_right;
-			buffmem->y = final_rect.d_top;
-			buffmem->z	= z;
-			buffmem->diffuse = bottomRightCol;
-			buffmem->tu1	= texture_rect.d_right;
-			buffmem->tv1	= texture_rect.d_top;
-			++buffmem;
-		}
-
-		
-		buffmem->x	= final_rect.d_left;
-		buffmem->y	= final_rect.d_top;
-		buffmem->z	= z;
-		buffmem->diffuse = bottomLeftCol;
-		buffmem->tu1	= texture_rect.d_left;
-		buffmem->tv1	= texture_rect.d_top;
-		++buffmem;
-
-		
-		buffmem->x	= final_rect.d_right;
-		buffmem->y	= final_rect.d_bottom;
-		buffmem->z	= z;
-		buffmem->diffuse = topRightCol;
-		buffmem->tu1	= texture_rect.d_right;
-		buffmem->tv1	= texture_rect.d_bottom;
-		++buffmem;
-
-		
-		buffmem->x	= final_rect.d_right;
-		buffmem->y	= final_rect.d_top;
-		buffmem->z	= z;
-		buffmem->diffuse = bottomRightCol;
-		buffmem->tu1	= texture_rect.d_right;
-		buffmem->tv1	= texture_rect.d_top;
-		++buffmem;
-
-		
-		
-		
-		if (quad_split_mode == TopLeftToBottomRight)
-		{
-			buffmem->x	= final_rect.d_left;
-			buffmem->y = final_rect.d_top;
-			buffmem->z	= z;
-			buffmem->diffuse = bottomLeftCol;
-			buffmem->tu1	= texture_rect.d_left;
-			buffmem->tv1	= texture_rect.d_top;
-		}
-		
-		else
-		{
-			buffmem->x	= final_rect.d_left;
-			buffmem->y = final_rect.d_bottom;
-			buffmem->z	= z;
-			buffmem->diffuse = topLeftCol;
-			buffmem->tu1	= texture_rect.d_left;
-			buffmem->tv1	= texture_rect.d_bottom;
-		}
-
-		d_direct_buffer->unlock();
-   
-        initRenderStates();
-		d_render_sys->_setTexture(0, true, static_cast<const OgreCEGUITexture*>(tex)->getOgreTexture());
-		d_direct_render_op.vertexData->vertexCount = VERTEX_PER_QUAD;
-		d_render_sys->_render(d_direct_render_op);
-	}
-}
 
 uint32 OgreCEGUIRenderer::colourToOgre(const colour& col) const
 {
 	Ogre::ColourValue cv(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha());
 
-    uint32 final;
-	d_render_sys->convertColourValue(cv, &final);
+    uint32 final = cv.getAsBYTE();
 
 	return final;
 }
@@ -1400,15 +956,14 @@ void OgreCEGUIRenderer::setTargetSceneManager(Ogre::SceneManager* scene_manager)
 {	
 	if (d_sceneMngr != NULL)
 	{
-		d_sceneMngr->removeRenderQueueListener(d_ourlistener);
 		d_sceneMngr = NULL;
 	}
 	
 	if (scene_manager != NULL)
 	{
 		d_sceneMngr = scene_manager;
-		d_sceneMngr->addRenderQueueListener(d_ourlistener);
-		mOgre3DUINode = d_sceneMngr->getRootSceneNode()->createChildSceneNode("CEGUINode");
+
+		mOgre3DUINode = d_sceneMngr->getRoot()->createChildSceneNode("CEGUINode");
 
 		m3DUIObjectCamera = d_sceneMngr->createCamera("Iam3dUI");
 	}
@@ -1460,7 +1015,7 @@ void OgreCEGUIRenderer::constructor_impl(Ogre::RenderTarget* target, uint32_t qu
 	d_old_display_area.d_top = 0;
 
 	
-	d_texelOffset = Point((float)d_render_sys->getHorizontalTexelOffset(), -(float)d_render_sys->getVerticalTexelOffset());
+	d_texelOffset = Point((float)0.0f, -(float)0.0f);
 
 	d_ourlistener = new CEGUIRQListener(this, queue_id, post_queue);
 
@@ -1474,10 +1029,6 @@ void OgreCEGUIRenderer::constructor_impl(Ogre::RenderTarget* target, uint32_t qu
 	d_alphaBlendMode.source1	= Ogre::LBS_TEXTURE;
 	d_alphaBlendMode.source2	= Ogre::LBS_DIFFUSE;
 	d_alphaBlendMode.operation	= Ogre::LBX_MODULATE;
-
-	d_uvwAddressMode.u = Ogre::TextureUnitState::TAM_CLAMP;
-	d_uvwAddressMode.v = Ogre::TextureUnitState::TAM_CLAMP;
-	d_uvwAddressMode.w = Ogre::TextureUnitState::TAM_CLAMP;
 
 	d_uid_counter = 0;
 	d_renderDisable = false;

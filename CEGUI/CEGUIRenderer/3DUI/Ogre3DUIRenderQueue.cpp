@@ -1,9 +1,7 @@
-
+#include <OgreHeader.h>
 #include "Ogre3DUIRenderQueue.h"
 #include "OgreRenderable.h"
 #include "OgreMaterial.h"
-#include "OgreTechnique.h"
-#include "OgrePass.h"
 #include "OgreMaterialManager.h"
 
 
@@ -14,42 +12,19 @@ namespace CEGUI
 
 	Ogre3DUIRenderQueue::Ogre3DUIRenderQueue()
 	{
-		mRenderableList = 0;
 	}
 	Ogre3DUIRenderQueue::~Ogre3DUIRenderQueue()
 	{
 	}
-	void Ogre3DUIRenderQueue::addRenderable(Renderable* rend, uint8 groupID, ushort priority)
+	void Ogre3DUIRenderQueue::addRenderable(Renderable* r, uint32_t groupID, uint32_t priority)
 	{
-		Technique* pTech;
-
-		if (!rend->getMaterial().isNull())
-			rend->getMaterial()->touch();
-
-		if(rend->getMaterial().isNull() || !rend->getTechnique())
-		{
-			MaterialPtr baseWhite = MaterialManager::getSingleton().getByName("BaseWhite");
-			pTech = baseWhite->getTechnique(0);
-		}
-		else
-		{
-			pTech = rend->getTechnique();
-		}
-		
-		assert(mRenderableList);
-
-		Technique::PassIterator p = pTech->getPassIterator();
-		while (p.hasMoreElements())
-		{
-			Pass* pass = p.getNext();
-			mRenderableList->push_back(RenderablePass(rend, pass));
-		}
+		mRenderables.push_back(r);
 		
 	}
 	void Ogre3DUIRenderQueue::clear(bool destroyPassMaps)
 	{
 	}
-	void Ogre3DUIRenderQueue::addRenderable(Renderable* pRend, uint8 groupID)
+	void Ogre3DUIRenderQueue::addRenderable(Renderable* pRend, uint32_t groupID)
 	{
 		addRenderable(pRend,0,0);
 	}
@@ -59,7 +34,7 @@ namespace CEGUI
 	}
 	void Ogre3DUIRenderQueue::setQueueGroupVector(RenderableList *l)
 	{
-		mRenderableList = l;
+		
 	}
 }
 

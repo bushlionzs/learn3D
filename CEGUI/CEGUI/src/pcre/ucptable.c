@@ -1,4 +1,4 @@
-
+#include "ucpinternal.h"
 
 static cnode ucp_table[] = {
   { 0x9a00, 0x2f1f, 0xe000 },

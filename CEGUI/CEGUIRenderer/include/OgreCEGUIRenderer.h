@@ -9,6 +9,7 @@
 #include <OgreMaterialManager.h>
 #include <OgreRoot.h>
 #include <renderSystem.h>
+#include <OgreRenderOperation.h>
 
 namespace CEGUI
 {
@@ -248,7 +249,8 @@ private:
 	RenderSystem*			d_render_sys;		
 	Ogre::RenderTarget*			d_render_target;	
 	uint32_t				d_queue_id;			
-	//Ogre::RenderOperation		d_render_op;		
+	Ogre::RenderOperation		d_render_op;
+	Ogre::RenderOperation		d_direct_render_op;
 	Ogre::HardwareVertexBufferSharedPtr	d_buffer;	
     size_t d_underused_framecount;                  	
 	Ogre::HardwareVertexBufferSharedPtr	d_direct_buffer;	
@@ -281,125 +283,9 @@ private:
 	Ogre::MaterialPtr mMinimapMaterial;
 
 	
-	//Ogre::RenderOperation		d_3D_render_op;
+	Ogre::RenderOperation		d_3D_render_op;
 	Ogre::HardwareVertexBufferSharedPtr	 d_3D_buffer;
 	Ogre::Camera *m3DUIObjectCamera;
-
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-
-	
-	
-	
-	
-
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
-	
 	
 	typedef std::multimap<float, Ogre3DUIWindow*>Ogre3DUIWindowMap;
 	Ogre3DUIWindowMap mOgre3DUIWindowMap;
@@ -418,6 +304,7 @@ private:
 	
 	Ogre::MaterialPtr mGuiMaterial;
 	
+	std::vector<RenderAsserts*> mQuads;
 };
 
 } 
