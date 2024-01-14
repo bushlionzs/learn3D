@@ -16,6 +16,7 @@
 
 namespace Ogre {
     template<> ResourceManager* Ogre::Singleton<ResourceManager>::msSingleton = 0;
+    const String ResourceManager::DEFAULT_RESOURCE_GROUP_NAME;
     ResourceManager::ResourceManager()
     {
         registerMeshSerializer();

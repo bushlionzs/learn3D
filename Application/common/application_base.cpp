@@ -13,6 +13,7 @@
 #include "MyGUIManager.h"
 #include "OgreViewport.h"
 #include "GameTableManager.h"
+#include "CEGUIManager.h"
 
 ApplicationBase::ApplicationBase()
 {
@@ -93,7 +94,8 @@ bool ApplicationBase::appInit()
 
 			CGameTableManager::GetSingleton().Initialize();
 		}
-
+		new CEGUIManager;
+		CEGUIManager::getSingleton()._initialise(mRenderWindow);
 		new MyGUIManager;
 		MyGUIManager::getSingleton()._initialise(mRenderWindow);
 	}

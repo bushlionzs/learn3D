@@ -6,7 +6,7 @@ set(CEGUI_INC)
 if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-add_definitions(-DWIN32_LEAN_AND_MEAN)
+add_definitions(-D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 endif()
 
 
@@ -36,7 +36,7 @@ macro(add_subdir)
     unset(SRC_FILES)
 endmacro()
 
-
+add_subdir(.)
 add_subdir(CEGUI/expatParser)
 add_subdir(CEGUI/src)
 add_subdir(CEGUI/include)
