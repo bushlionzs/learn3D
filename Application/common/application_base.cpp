@@ -88,6 +88,8 @@ bool ApplicationBase::appInit()
 
 	if (isUseMyGUI())
 	{
+		/*ShowCursor(FALSE);
+		SetCursor(NULL);*/
 		if (!CGameTableManager::GetSingletonPtr())
 		{
 			new CGameTableManager;
@@ -96,8 +98,8 @@ bool ApplicationBase::appInit()
 		}
 		new CEGUIManager;
 		CEGUIManager::getSingleton()._initialise(mRenderWindow);
-		new MyGUIManager;
-		MyGUIManager::getSingleton()._initialise(mRenderWindow);
+		/*new MyGUIManager;
+		MyGUIManager::getSingleton()._initialise(mRenderWindow);*/
 	}
 	
 

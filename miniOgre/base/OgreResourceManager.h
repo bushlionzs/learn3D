@@ -1,7 +1,7 @@
 #pragma once
 
 #include "OgreSingleton.h"
-#include "texture.h"
+#include "OgreTexture.h"
 
 class ModelLoader;
 

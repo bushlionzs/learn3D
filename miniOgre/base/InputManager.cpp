@@ -106,11 +106,6 @@ LRESULT CALLBACK InputManager::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 		DragFinish(hDrop);
 		return 0;
 	}
-	else if (WM_SETCURSOR == uMsg)
-	{
-		InputManager::getSingleton().onMouseCursor();
-		return TRUE;
-	}
 	else if (WM_CLOSE == uMsg)
 	{
 		if (!InputManager::getSingleton().onWindowClose((size_t)hWnd))

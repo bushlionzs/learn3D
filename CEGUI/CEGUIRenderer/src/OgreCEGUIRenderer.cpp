@@ -145,11 +145,11 @@ OgreCEGUIRenderer::OgreCEGUIRenderer(Ogre::RenderTarget* target, uint32_t queue_
 {
 	constructor_impl(target, queue_id, post_queue, max_quads);
 	
-	Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("BaseWhiteNoLighting");
+	Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getDefaultMaterial();
 	
 	mGuiMaterial = material->clone("Gui_Default_Render");
 
-	mGuiMaterial->addTexture("Gui_Default_Render_Pass0_Tex0");
+	mGuiMaterial->addTexture("white1x1.dds");
 	
 	mGuiMaterial->load();
 		

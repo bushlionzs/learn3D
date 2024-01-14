@@ -46,6 +46,10 @@ namespace Ogre {
             blp = true;
         }
 
+        if (name == "mousecursor.png")
+        {
+            int kk = 0;
+        }
         std::shared_ptr<DataStream> stream 
             = ResourceManager::getSingleton().openResource(name);
 

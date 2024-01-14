@@ -31,15 +31,15 @@ namespace CEGUI
                 "OgreCEGUIResourceProvider::loadRawDataContainer - Unable to open resource file '" + filename + (utf8*)"' in resource group '" + orpGroup + (utf8*)"'.");
         }
 
-		auto& buf = input->getName();
-		size_t buffsz = buf.length();
+        const char* data = input->getStreamData();
+        auto size = input->getStreamLength();
 		unsigned char* mem = NULL;
 		
-		mem = new unsigned char[buffsz];	
-		memcpy(mem, buf.c_str(), buffsz);	
+		mem = new unsigned char[size];
+		memcpy(mem, data, size);
 		      
         output.setData(mem);
-        output.setSize(buffsz);
+        output.setSize(size);
     }
 	
 	void OgreCEGUIResourceProvider::unloadRawDataContainer(RawDataContainer& data)

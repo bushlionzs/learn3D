@@ -42,7 +42,8 @@ Scheme::Scheme(const String& filename, const String& resourceGroup)
     
 	try
 	{
-        System::getSingleton().getXMLParser()->parseXMLFile(handler, filename, GUISchemeSchemaName, resourceGroup);
+		auto parser = System::getSingleton().getXMLParser();
+		parser->parseXMLFile(handler, filename, GUISchemeSchemaName, resourceGroup);
 	}
 	catch(...)
 	{

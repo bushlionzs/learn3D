@@ -151,6 +151,7 @@ namespace Ogre
 #include "OgrePlane.h"
 #include "OgreSphere.h"
 #include "OgreRay.h"
+#include "OgreMemoryStream.h"
 #include "platform_log.h"
 
 
