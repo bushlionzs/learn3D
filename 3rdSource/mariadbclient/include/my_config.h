@@ -275,6 +275,6 @@
  */
 #define HAVE_THREADS 1
 /* #undef SHAREDIR */
-#define DEFAULT_CHARSET_HOME "D:/workspace/cpp/learn3D/install"
+#define DEFAULT_CHARSET_HOME "C:/learn3D/install"
 #define PLUGINDIR "/lib/plugin"
 

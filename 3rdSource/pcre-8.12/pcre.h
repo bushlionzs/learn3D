@@ -148,7 +148,7 @@ extern int   pcre_callout(pcre_callout_block *);
 
 
 
- pcre * pcre_compile(const char*, int, const char**,
+extern pcre *pcre_compile(const char *, int, const char **,
               int *, const unsigned char *);
 extern int  pcre_config(int, void *);
 extern int  pcre_copy_named_substring(const pcre *, const char *,
