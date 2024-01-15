@@ -12,7 +12,7 @@
 #include "MyGUI_RenderFormat.h"
 
 #include <OgreResource.h>
-#include <texture.h>
+#include <OgreTexture.h>
 #include <OgrePixelFormat.h>
 
 namespace MyGUI

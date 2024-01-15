@@ -1,6 +1,6 @@
 #pragma once
 
-#include "texture.h"
+#include "OgreTexture.h"
 #include "engine_struct.h"
 #include "OgreBlendMode.h"
 #include "OgreController.h"

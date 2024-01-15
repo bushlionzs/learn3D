@@ -4,7 +4,7 @@
 #include "engine_struct.h"
 #include "OgreBlendMode.h"
 #include "OgreCommon.h"
-#include "texture.h"
+#include "OgreTexture.h"
 class TextureUnit;
 
 class MaterialInfo

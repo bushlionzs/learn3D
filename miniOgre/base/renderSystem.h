@@ -2,7 +2,7 @@
 
 #include "shader.h"
 #include "engine_struct.h"
-#include "texture.h"
+#include "OgreTexture.h"
 
 class GraphicsCommandList;
 class RenderableData;

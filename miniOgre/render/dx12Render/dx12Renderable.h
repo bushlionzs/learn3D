@@ -2,7 +2,7 @@
 #include <d3dutil.h>
 #include "shader.h"
 #include "UploadBuffer.h"
-#include "texture.h"
+#include "OgreTexture.h"
 #include "renderHelper.h"
 class Dx12RenderSystem;
 class Dx12Shader;

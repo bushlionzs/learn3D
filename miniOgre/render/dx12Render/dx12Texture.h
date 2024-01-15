@@ -1,6 +1,6 @@
 #pragma once
 
-#include "texture.h"
+#include "OgreTexture.h"
 #include "d3dutil.h"
 #include "engine_struct.h"
 class Dx12RenderSystem;

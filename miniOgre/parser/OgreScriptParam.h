@@ -1,7 +1,7 @@
 #pragma once
 #include "OgreStringInterface.h"
 #include "shader.h"
-#include "texture.h"
+#include "OgreTexture.h"
 #include "OgreBlendMode.h"
 
 class MaterialScriptParser;

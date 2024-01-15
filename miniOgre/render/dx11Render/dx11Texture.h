@@ -1,6 +1,6 @@
 #pragma once
 
-#include "texture.h"
+#include "OgreTexture.h"
 #include <d3d11_1.h>
 
 class Dx11RenderSystem;

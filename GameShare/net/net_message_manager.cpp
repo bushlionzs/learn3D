@@ -6,8 +6,8 @@
 #include "net_header.h"
 #include "platform_log.h"
 #include "net_factory.h"
-#include "db/db_manager.h"
-#include "db/db_task.h"
+//#include "db/db_manager.h"
+//#include "db/db_task.h"
 
 template<>
 NetMessageManager* GameSingleton<NetMessageManager>::m_sSingleton = NULL;

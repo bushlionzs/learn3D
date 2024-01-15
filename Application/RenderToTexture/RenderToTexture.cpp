@@ -4,7 +4,7 @@
 #include "myutils.h"
 #include "OgreResourceManager.h"
 #include "OgreTextureManager.h"
-#include "texture.h"
+#include "OgreTexture.h"
 #include "OgreRenderTexture.h"
 #include "OgreMaterialManager.h"
 #include "OgreRoot.h"

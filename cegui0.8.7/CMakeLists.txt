@@ -95,6 +95,7 @@ target_include_directories(${CEGUI_LIB_NAME}
 	${ROOT_INC}/3rd
 	${ROOT_INC}/3rdSource/pcre-8.12
 	${ROOT_INC}/3rdSource/expat/lib
+	${ROOT_INC}/3rdSource/libiconv-1.14
 	${ROOT_INC}/3rdSource/OIS/includes
 	${ROOT_INC}/3rdSource/freetype-2.12.0/include
 	${DYNETWORK_INCLUDE_HEADERS}

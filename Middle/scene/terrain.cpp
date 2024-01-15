@@ -4,7 +4,7 @@
 #include "terrain_info.h"
 #include "OgreMaterialManager.h"
 #include "OgreImage.h"
-#include "texture.h"
+#include "OgreTexture.h"
 #include "OgreTextureUnit.h"
 #include "OgreTextureManager.h"
 #include "index_data.h"

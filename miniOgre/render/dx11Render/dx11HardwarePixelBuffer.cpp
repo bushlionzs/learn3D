@@ -1,6 +1,6 @@
 #include "OgreHeader.h"
 #include "dx11HardwarePixelBuffer.h"
-#include "texture.h"
+#include "OgreTexture.h"
 #include "OgreStringConverter.h"
 #include "dx11Texture.h"
 #include "dx11RenderSystem.h"
