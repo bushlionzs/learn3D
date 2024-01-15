@@ -88,7 +88,7 @@ uint FactoryModule::unregisterAllFactories()
 }
 
 //----------------------------------------------------------------------------//
-#if defined(CEGUI_STATIC) && defined(CEGUI_BUILD_STATIC_FACTORY_MODULE)
+#if defined(CEGUI_STATIC)
 extern "C"
 {
     CEGUI::FactoryModule& getWindowFactoryModule() 

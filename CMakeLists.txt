@@ -43,13 +43,7 @@ set_property(TARGET runtests_cxx PROPERTY FOLDER third_party)
 set_property(TARGET xmlwf PROPERTY FOLDER third_party)
 set_property(TARGET iconv PROPERTY FOLDER third_party)
 set_property(TARGET pcre PROPERTY FOLDER third_party)
-set_property(TARGET pcre_scanner_unittest PROPERTY FOLDER third_party)
-set_property(TARGET pcre_stringpiece_unittest PROPERTY FOLDER third_party)
-set_property(TARGET pcrecpp PROPERTY FOLDER third_party)
-set_property(TARGET pcrecpp_unittest PROPERTY FOLDER third_party)
-set_property(TARGET pcregrep PROPERTY FOLDER third_party)
-set_property(TARGET pcreposix PROPERTY FOLDER third_party)
-set_property(TARGET pcretest PROPERTY FOLDER third_party)
+
 
 
 set_property(TARGET Bullet2FileLoader PROPERTY FOLDER third_party/bullet3)

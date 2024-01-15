@@ -32,12 +32,7 @@
 #include <RenderSystem.h>
 #include <OgreQuaternion.h>
 #include <OgreHardwareBufferManager.h>
-
-#ifdef CEGUI_USE_OGRE_HLMS
-#include <OgreHlmsSamplerblock.h>
-#include <OgreRenderTarget.h>
-#include <OgreViewport.h>
-#endif
+#include <vertex_declaration.h>
 
 // Start of CEGUI namespace section
 namespace CEGUI
@@ -83,8 +78,7 @@ static void initialiseRenderOp(
     // create hardware vertex buffer
     vb = HardwareBufferManager::getSingleton().createVertexBuffer(
             vd->getVertexSize(0), count,
-            HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE,
-            false);
+            HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
 
     // bind vertex buffer
     rop.vertexData->setBinding(0, vb);
@@ -142,16 +136,6 @@ void OgreGeometryBuffer::draw() const
     d_owner.setupRenderingBlendMode(d_blendMode);
     d_owner.updateShaderParams();
 
-#ifdef CEGUI_USE_OGRE_HLMS
-    Ogre::Viewport* previousViewport = d_renderSystem._getViewport();
-    Ogre::Viewport* currentViewport = d_owner.getOgreRenderTarget()->getViewport(0);
-
-    Rectf previousClipRect;
-    previousClipRect.left(currentViewport->getScissorLeft());
-    previousClipRect.top(currentViewport->getScissorTop());
-    previousClipRect.right(currentViewport->getScissorWidth());
-    previousClipRect.bottom(currentViewport->getScissorHeight());
-#endif
 
     const int pass_count = d_effect ? d_effect->getPassCount() : 1;
     for (int pass = 0; pass < pass_count; ++pass)
@@ -166,48 +150,17 @@ void OgreGeometryBuffer::draw() const
         for ( ; i != d_batches.end(); ++i)
         {
             // Set up clipping for this buffer
-#ifdef CEGUI_USE_OGRE_HLMS
-            if (i->clip)
-            {
-                int actualWidth = currentViewport->getActualWidth();
-                int actualHeight = currentViewport->getActualHeight();
-                float scissorsLeft = d_clipRect.left() / actualWidth;
-                float scissorsTop = d_clipRect.top() / actualHeight;
-                float scissorsWidth = (d_clipRect.right() - d_clipRect.left()) / actualWidth;
-                float scissorsHeight = (d_clipRect.bottom() - d_clipRect.top()) / actualHeight;
-                currentViewport->setScissors(scissorsLeft, scissorsTop, scissorsWidth, scissorsHeight);
-            }
-            else
-            {
-                currentViewport->setScissors(previousClipRect.left(), previousClipRect.top(),
-                                                previousClipRect.right(), previousClipRect.bottom());
-            }
-            
-            d_renderSystem._setViewport(currentViewport);
-#else
-            d_renderSystem.setScissorTest(
-                i->clip, d_clipRect.left(), d_clipRect.top(),
-                         d_clipRect.right(), d_clipRect.bottom());
-#endif
+
 
             d_renderOp.vertexData->vertexStart = pos;
             d_renderOp.vertexData->vertexCount = i->vertexCount;
-#ifdef CEGUI_USE_OGRE_HLMS
-            d_renderSystem._setTexture(0, true, i->texture.get());
-#else
-            d_renderSystem._setTexture(0, true, i->texture);
-#endif
+
             initialiseTextureStates();
-            d_renderSystem._render(d_renderOp);
+   
             pos += i->vertexCount;
         }
     }
 
-#ifdef CEGUI_USE_OGRE_HLMS
-    currentViewport->setScissors(previousClipRect.left(), previousClipRect.top(),
-                                    previousClipRect.right(), previousClipRect.bottom());
-    d_renderSystem._setViewport(previousViewport);
-#endif
 
     // clean up RenderEffect
     if (d_effect)
@@ -343,7 +296,9 @@ Ogre::RGBA OgreGeometryBuffer::colourToOgre(const Colour& col) const
                           col.getAlpha());
 
     uint32 final ;
-   // d_renderSystem.convertColourValue(ocv, &final); zhousha
+    
+    Ogre::ColourValue v(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha());
+    final = v.getAsBYTE();
 
     return final;
 }

@@ -8,6 +8,7 @@ add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D__WINDOWS__)
 add_definitions(-D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
+add_definitions(-DCEGUI_STATIC)
 endif()
 
 
@@ -69,6 +70,7 @@ target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
 MyGUI CEGUI expat Middle stormlib OIS GameShare freetype zlibstatic dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
+pcre
 vulkan-1
 avcodec
 avdevice
@@ -84,4 +86,5 @@ d3d12
 d3d11
 D3DCompiler
 Shlwapi
-winmm)
+winmm
+dbghelp)
