@@ -79,7 +79,7 @@ RegexMatcher::MatchState PCRERegexMatcher::getMatchStateOfString(
     if (!d_regex)
         CEGUI_THROW(InvalidRequestException(
             "Attempt to use invalid RegEx '" + d_string + "'."));
-
+    assert(false);
     return MS_VALID;
 }
 

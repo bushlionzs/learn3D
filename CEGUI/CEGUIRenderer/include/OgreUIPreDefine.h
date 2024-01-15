@@ -1,7 +1,0 @@
-#ifndef _OGREUIPREDEFINE_H
-#define _OGREUIPREDEFINE_H
-
-#define OGRE_GUIRENDERER_API
-
-
-#endif
