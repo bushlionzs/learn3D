@@ -618,7 +618,7 @@ void System::outputLogHeader()
     l.logEvent("---- Version: " + getVerboseVersion() + " ----");
     l.logEvent("---- Renderer module is: " + d_renderer->getIdentifierString() + " ----");
     l.logEvent("---- XML Parser module is: " + d_xmlParser->getIdentifierString() + " ----");
-    l.logEvent("---- Image Codec module is: " + d_imageCodec->getIdentifierString() + " ----");
+    //l.logEvent("---- Image Codec module is: " + d_imageCodec->getIdentifierString() + " ----");
     l.logEvent(d_scriptModule ? "---- Scripting module is: " + d_scriptModule->getIdentifierString() + " ----" : "---- Scripting module is: None ----");
     l.logEvent("********************************************************************************");
     l.logEvent("* -------- END OF ESSENTIAL SECTION TO BE POSTED ON THE FORUM         -------- *");

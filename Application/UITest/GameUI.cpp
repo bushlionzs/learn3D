@@ -24,6 +24,8 @@
 #include <CEGUI/Window.h>
 #include <CEGUI/widgets/PushButton.h>
 #include <CEGUI/ImageManager.h>
+#include <DefaultWindow.h>
+#include <FrameWindow.h>
 
 using namespace CEGUI;
 
@@ -42,19 +44,44 @@ bool GameUI::appInit()
 	ApplicationBase::appInit();
 
 
-	// load windows look
-	SchemeManager::getSingleton().createFromFile("WindowsLook.scheme");
+	WindowManager& winMgr = WindowManager::getSingleton();
+	auto& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+	auto* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
 
-	// load font and setup default if not loaded via scheme
-	Font& defaultFont = FontManager::getSingleton().createFromFile("DejaVuSans-12.font");
-	
+	context.setRootWindow(root);
 
-	// set up defaults
-	//guiContext->getMouseCursor().setDefaultImage("WindowsLook/MouseArrow");
+    FrameWindow* wnd = (FrameWindow*)winMgr.createWindow("TaharezLook/FrameWindow", "Demo Window");
 
-	// load the drive icons imageset
-	ImageManager::getSingleton().loadImageset("DriveIcons.imageset");
+    // Here we attach the newly created FrameWindow to the previously created
+    // DefaultWindow which we will be using as the root of the displayed gui.
+    root->addChild(wnd);
 
+    // Windows are in Relative metrics mode by default.  This means that we can
+    // specify sizes and positions without having to know the exact pixel size
+    // of the elements in advance.  The relative metrics mode co-ordinates are
+    // relative to the parent of the window where the co-ordinates are being set.
+    // This means that if 0.5f is specified as the width for a window, that window
+    // will be half as its parent window.
+    //
+    // Here we set the FrameWindow so that it is half the size of the display,
+    // and centered within the display.
+    wnd->setPosition(UVector2(cegui_reldim(0.25f), cegui_reldim(0.25f)));
+    wnd->setSize(USize(cegui_reldim(0.5f), cegui_reldim(0.5f)));
+
+    // now we set the maximum and minum sizes for the new window.  These are
+    // specified using relative co-ordinates, but the important thing to note
+    // is that these settings are aways relative to the display rather than the
+    // parent window.
+    //
+    // here we set a maximum size for the FrameWindow which is equal to the size
+    // of the display, and a minimum size of one tenth of the display.
+    wnd->setMaxSize(USize(cegui_reldim(1.0f), cegui_reldim(1.0f)));
+    wnd->setMinSize(USize(cegui_reldim(0.1f), cegui_reldim(0.1f)));
+
+    // As a final step in the initialisation of our sample window, we set the window's
+    // text to "Hello World!", so that this text will appear as the caption in the
+    // FrameWindow's titlebar.
+    wnd->setText("Hello World!");
 	return true;
 }
 

@@ -6,8 +6,18 @@
 #include "OgreSceneNode.h"
 #include "OgreRenderWindow.h"
 #include "OgreViewport.h"
-//#include "System.h"
+#include <CEGUI/System.h>
+#include <CEGUI/WindowManager.h>
+#include <CEGUI/FontManager.h>
+#include <CEGUI/SchemeManager.h>
+#include <CEGUI/System.h>
+//#include <CEGUI/ImagesetManager.h>
+#include <CEGUI/Window.h>
+#include <CEGUI/widgets/PushButton.h>
+#include <CEGUI/ImageManager.h>
+#include "Renderer.h"
 
+using namespace CEGUI;
 template<> CEGUIManager* Ogre::Singleton<CEGUIManager>::msSingleton = 0;
 
 CEGUIManager::CEGUIManager()
@@ -22,7 +32,7 @@ CEGUIManager::~CEGUIManager()
 
 bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 {
-	/*NOTICE_LOG("CEGUI initialise begin");
+	NOTICE_LOG("CEGUI initialise begin");
 	mRenderWindow = window;
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(std::string("cegui"));
 
@@ -44,19 +54,24 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 
 	Ogre::Root::getSingleton().addFrameListener(this);
 
-	m_pCEGUIRender = new CEGUI::OgreCEGUIRenderer
-	(
-		(Ogre::RenderTarget*)mRenderWindow,
-		0,
-		false,
-		0,
-		mSceneManager
-	);
+	CEGUI::OgreRenderer& render = CEGUI::OgreRenderer::create();
 
-	new CEGUI::System(m_pCEGUIRender);
+	CEGUI::System::create(render, nullptr, 0, nullptr, 0,
+		"");
+
+	auto& rt = render.getDefaultRenderTarget();
+	auto& context = CEGUI::System::getSingleton().createGUIContext(rt);
+
+	CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
+
+	context.getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
 
 
-	NOTICE_LOG("CEGUI initialise end");*/
+	Font& defaultFont = FontManager::getSingleton().createFromFile("DejaVuSans-12.font");
+	// Set default font for the gui context
+	context.setDefaultFont(&defaultFont);
+
+	NOTICE_LOG("CEGUI initialise end");
 	return true;
 }
 

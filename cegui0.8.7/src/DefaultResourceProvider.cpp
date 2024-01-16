@@ -26,7 +26,8 @@
  ***************************************************************************/
 #include "CEGUI/DefaultResourceProvider.h"
 #include "CEGUI/Exceptions.h"
-
+#include <OgreHeader.h>
+#include <OgreResourceManager.h>
 #include <stdio.h>
 
 #if defined(__WIN32__) || defined(_WIN32)
@@ -54,16 +55,17 @@ void DefaultResourceProvider::loadRawDataContainer(const String& filename,
         CEGUI_THROW(InvalidRequestException(
             "Filename supplied for data loading must be valid"));
 
-    const String final_filename(getFinalFilename(filename, resourceGroup));
+    std::string name = filename.c_str();
 
-#if defined(__WIN32__) || defined(_WIN32)
-    FILE* file = _wfopen(System::getStringTranscoder().stringToStdWString(final_filename).c_str(), L"rb");
-#else
-    FILE* file = fopen(final_filename.c_str(), "rb");
-#endif
+    ResourceInfo* res = Ogre::ResourceManager::getSingleton().getResource(name);
 
+    std::string& fullname = res->_fullname;
+
+    FILE* file = fopen(fullname.c_str(), "rb");
+
+    
     if (file == 0)
-        CEGUI_THROW(FileIOException(final_filename + " does not exist"));
+        CEGUI_THROW(FileIOException(fullname + " does not exist"));
 
     fseek(file, 0, SEEK_END);
     const size_t size = ftell(file);
@@ -79,7 +81,7 @@ void DefaultResourceProvider::loadRawDataContainer(const String& filename,
         CEGUI_DELETE_ARRAY_PT(buffer, unsigned char, size, BufferAllocator);
 
         CEGUI_THROW(FileIOException(
-            "A problem occurred while reading file: " + final_filename));
+            "A problem occurred while reading file: " + fullname));
     }
 
     output.setData(buffer);

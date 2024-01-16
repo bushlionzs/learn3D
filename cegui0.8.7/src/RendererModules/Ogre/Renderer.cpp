@@ -417,7 +417,8 @@ void OgreRenderer::destroyOgreResourceProvider(OgreResourceProvider& rp)
 //----------------------------------------------------------------------------//
 OgreImageCodec& OgreRenderer::createOgreImageCodec()
 {
-    return *CEGUI_NEW_AO OgreImageCodec();
+    OgreImageCodec* codec = nullptr;
+    return *codec;
 }
 
 //----------------------------------------------------------------------------//

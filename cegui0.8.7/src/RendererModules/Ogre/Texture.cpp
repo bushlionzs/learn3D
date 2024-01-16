@@ -31,6 +31,7 @@
 #include "CEGUI/RendererModules/Ogre/ImageCodec.h"
 #include <OgreTextureManager.h>
 #include <OgreHardwarePixelBuffer.h>
+#include <OgreRoot.h>
 
 // Start of CEGUI namespace section
 namespace CEGUI
@@ -169,33 +170,7 @@ void OgreTexture::loadFromFile(const String& filename,
         CEGUI_THROW(RendererException(
             "CEGUI::System object has not been created!"));
 
-    // load file to memory via resource provider
-    RawDataContainer texFile;
-    sys->getResourceProvider()->loadRawDataContainer(filename, texFile,
-                                                     resourceGroup);
-
-    ImageCodec& ic(sys->getImageCodec());
-
-    // if we're using the integrated Ogre codec, set the file-type hint string
-    if (ic.getIdentifierString().substr(0, 14)  == "OgreImageCodec")
-    {
-        String type;
-        String::size_type i = filename.find_last_of(".");
-        if (i != String::npos && filename.length() - i > 1)
-            type = filename.substr(i+1);
-        static_cast<OgreImageCodec&>(ic).setImageFileDataType(type);
-    }
-
-    Texture* res = sys->getImageCodec().load(texFile, this);
-
-    // unload file data buffer
-    sys->getResourceProvider()->unloadRawDataContainer(texFile);
-
-    // throw exception if data was load loaded to texture.
-    if (!res)
-        CEGUI_THROW(RendererException(
-            sys->getImageCodec().getIdentifierString() +
-            " failed to load image '" + filename + "'."));
+    d_texture = TextureManager::getSingleton().getByName(filename.c_str());
 }
 
 //----------------------------------------------------------------------------//
