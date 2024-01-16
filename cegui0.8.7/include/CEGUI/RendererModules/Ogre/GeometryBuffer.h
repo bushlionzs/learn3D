@@ -36,7 +36,8 @@
 #include <OgreColourValue.h>
 #include <OgreRenderOperation.h>
 #include <OgreTexture.h>
-
+#include <OgreRenderable.h>
+#include <ogre>
 #include <utility>
 #include <vector>
 
@@ -50,7 +51,7 @@ class RenderSystem;
 namespace CEGUI
 {
 //! Implementation of CEGUI::GeometryBuffer for the Ogre engine
-class OGRE_GUIRENDERER_API OgreGeometryBuffer : public GeometryBuffer
+class OGRE_GUIRENDERER_API OgreGeometryBuffer : public GeometryBuffer, public Ogre::Renderable
 {
 public:
     //! Constructor
@@ -62,6 +63,11 @@ public:
     const Ogre::Matrix4& getMatrix() const;
 
     // implement CEGUI::GeometryBuffer interface.
+    virtual VertexData* getVertexData();
+    virtual IndexData* getIndexData();
+    virtual IndexDataView* getIndexView();
+
+    virtual const Ogre::Matrix4& getModelMatrix();
     virtual void draw() const;
     virtual void setTranslation(const Vector3f& v);
     virtual void setRotation(const Quaternion& r);
@@ -150,6 +156,7 @@ protected:
     typedef std::vector<OgreVertex> VertexList;
     //! container where added geometry is stored.
     VertexList d_vertices;
+
 };
 
 

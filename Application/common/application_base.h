@@ -23,6 +23,11 @@ public:
 	{
 		return true;
 	}
+
+	virtual bool isUseCEGUI()
+	{
+		return false;
+	}
 	virtual void addCustomDirectory() {}
 private:
 	virtual bool frameStarted(const FrameEvent& evt);

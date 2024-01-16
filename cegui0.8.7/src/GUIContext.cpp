@@ -24,6 +24,7 @@
  *   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  *   OTHER DEALINGS IN THE SOFTWARE.
  ***************************************************************************/
+
 #include "CEGUI/GUIContext.h"
 #include "CEGUI/RenderTarget.h"
 #include "CEGUI/RenderingWindow.h"
@@ -279,6 +280,9 @@ bool GUIContext::isDirty() const
 }
 
 //----------------------------------------------------------------------------//
+
+
+
 void GUIContext::draw()
 {
     if (d_isDirty)

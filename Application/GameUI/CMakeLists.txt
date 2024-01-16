@@ -65,8 +65,9 @@ target_include_directories(${PROJECT_NAME}
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
-MyGUI Middle stormlib OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
+MyGUI CEGUI expat Middle stormlib OIS GameShare freetype zlibstatic dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
+pcre
 vulkan-1
 avcodec
 avdevice
@@ -82,4 +83,5 @@ d3d12
 d3d11
 D3DCompiler
 Shlwapi
-winmm)
+winmm
+dbghelp)

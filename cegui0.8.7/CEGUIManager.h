@@ -1,12 +1,14 @@
 #pragma once
 #include "OgreSingleton.h"
+#include "OgreMoveObject.h"
 #include "InputManager.h"
 #include "OgreFrameListener.h"
 
 
 class CEGUIManager : public Ogre::Singleton<CEGUIManager>,
 	public FrameListener,
-	public InputListener
+	public InputListener,
+	public Ogre::MoveObject
 {
 public:
 	CEGUIManager();
@@ -36,6 +38,8 @@ public:
 	{
 		return mRenderWindow;
 	}
+
+	const std::vector<Renderable*>& getRenderableList();
 private:
 
 	Ogre::Camera* mCamera;

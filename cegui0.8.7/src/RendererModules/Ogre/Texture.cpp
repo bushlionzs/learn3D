@@ -364,6 +364,9 @@ void OgreTexture::createEmptyOgreTexture()
 
     TextureProperty tex;
     tex._tex_format = Ogre::PF_A8B8G8R8;
+    tex._tex_usage = TU_DYNAMIC_WRITE_ONLY;
+    tex._width = 1;
+    tex._height = 1;
     d_texture = Ogre::TextureManager::getSingleton().createManual(
         getUniqueName(), tex
         );

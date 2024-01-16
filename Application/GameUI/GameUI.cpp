@@ -29,11 +29,10 @@ bool GameUI::appInit()
 {
 	ApplicationBase::appInit();
 
-	/*PackageWindow* selfEquipWindow = new PackageWindow;
-	selfEquipWindow->getView()->setPosition(300, 100);*/
+	SelfEquipWindow* selfEquipWindow = new SelfEquipWindow;
+	selfEquipWindow->getView()->setPosition(300, 100);
 
-	TestWindow* test = new TestWindow;
-	test->getView()->setPosition(300, 100);
+
 	mViewport->setAutoUpdated(false);
 
 	/*auto mesh = MeshManager::getSingleton().load("ninja.mesh");
@@ -56,35 +55,35 @@ bool GameUI::appInit()
 	vp->setBackgroundColour(color);
 
 
-	//mRole = new Role;
-	//mRole->createRoleData();
-	//auto rolepos = Ogre::Vector3(15.0, -90.0f, 0.0f);
-	//mRole->setPosition(rolepos);
-	//mRole->walk();
-	//
+	mRole = new Role;
+	mRole->createRoleData();
+	auto rolepos = Ogre::Vector3(15.0, -90.0f, 0.0f);
+	mRole->setPosition(rolepos);
+	mRole->walk();
+	
 
-	//TextureProperty texProperty;
-	//texProperty._tex_usage = TU_RENDERTARGET;
-	//texProperty._width = 512;
-	//texProperty._height = 512;
+	TextureProperty texProperty;
+	texProperty._tex_usage = TU_RENDERTARGET;
+	texProperty._width = 512;
+	texProperty._height = 512;
 
-	//texProperty._backgroudColor = color;
-	//texProperty._backgroudColor.a = 0.0f;
-	//TexturePtr renderTexture =
-	//	TextureManager::getSingleton().createManual("RenderToTexture", texProperty);
+	texProperty._backgroudColor = color;
+	texProperty._backgroudColor.a = 0.0f;
+	TexturePtr renderTexture =
+		TextureManager::getSingleton().createManual("RenderToTexture", texProperty);
 
-	//RenderTarget* textureTarget = renderTexture->getBuffer()->getRenderTarget(0);
+	RenderTarget* textureTarget = renderTexture->getBuffer()->getRenderTarget(0);
 
-	//Viewport* rv = textureTarget->addViewport(mGameCamera->getCamera());
-	//float width = 190.0f;
-	//float height = 330;
-	//mGameCamera->getCamera()->setAspectRatio(width / height);
-	//mGameCamera->setDistance(320);
-	////DirectX::XMVECTORF32 mClearColor = DirectX::Colors::Gold;
-	//rv->setBackgroundColour(texProperty._backgroudColor);
+	Viewport* rv = textureTarget->addViewport(mGameCamera->getCamera());
+	float width = 190.0f;
+	float height = 330;
+	mGameCamera->getCamera()->setAspectRatio(width / height);
+	mGameCamera->setDistance(320);
+	//DirectX::XMVECTORF32 mClearColor = DirectX::Colors::Gold;
+	rv->setBackgroundColour(texProperty._backgroudColor);
 
 
-	//selfEquipWindow->setModelTexture("RenderToTexture");
+	selfEquipWindow->setModelTexture("RenderToTexture");
 
 	return true;
 }
@@ -101,5 +100,6 @@ void GameUI::appUpdate(float delta)
 
 EngineType GameUI::getEngineType()
 {
+	//return EngineType_Vulkan;
 	return EngineType_Dx11;
 }

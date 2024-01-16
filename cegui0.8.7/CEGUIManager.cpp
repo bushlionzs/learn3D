@@ -75,6 +75,12 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 	return true;
 }
 
+const std::vector<Renderable*>& CEGUIManager::getRenderableList()
+{
+	mRenderables.clear();
+	return mRenderables;
+}
+
 void CEGUIManager::injectMouseMove(int _absx, int _absy, int _absz)
 {
 	

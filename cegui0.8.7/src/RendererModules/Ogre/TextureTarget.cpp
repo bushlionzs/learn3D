@@ -93,6 +93,8 @@ void OgreTextureTarget::declareRenderSize(const Sizef& sz)
     TextureProperty tex;
     tex._tex_format = Ogre::PF_A8R8G8B8;
     tex._tex_usage = Ogre::TU_RENDERTARGET;
+    tex._width = sz.d_width;
+    tex._height = sz.d_height;
     Ogre::TexturePtr rttTex = Ogre::TextureManager::getSingleton().createManual(
         OgreTexture::getUniqueName(),
         tex);

@@ -126,6 +126,26 @@ OgreGeometryBuffer::~OgreGeometryBuffer()
     cleanupRenderOp(d_renderOp, d_hwBuffer);
 }
 
+VertexData* OgreGeometryBuffer::getVertexData()
+{
+    return d_renderOp.vertexData;
+}
+
+IndexData* OgreGeometryBuffer::getIndexData()
+{
+    return nullptr;
+}
+
+IndexDataView* OgreGeometryBuffer::getIndexView()
+{
+    return nullptr;
+}
+
+const Ogre::Matrix4& OgreGeometryBuffer::getModelMatrix()
+{
+    return getMatrix();
+}
+
 //----------------------------------------------------------------------------//
 void OgreGeometryBuffer::draw() const
 {
@@ -155,7 +175,7 @@ void OgreGeometryBuffer::draw() const
             d_renderOp.vertexData->vertexStart = pos;
             d_renderOp.vertexData->vertexCount = i->vertexCount;
 
-            initialiseTextureStates();
+            i->texture;
    
             pos += i->vertexCount;
         }
