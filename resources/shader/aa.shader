@@ -32,6 +32,24 @@ shader mygui
 	 }
 }
 
+shader cegui
+{
+    shader_unit
+	 {
+		shader_type directx
+		vertex_shader cegui.hlsl VS
+		frag_shader cegui.hlsl PS
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader cegui.vert.glsl main
+		frag_shader cegui.frag.glsl main
+	 }
+}
+
+
 shader ogreparticle
 {
      shader_unit

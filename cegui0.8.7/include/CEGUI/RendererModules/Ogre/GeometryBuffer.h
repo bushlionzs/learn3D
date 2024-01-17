@@ -95,7 +95,7 @@ protected:
     struct OgreVertex
     {
         float x, y, z;
-        Ogre::RGBA diffuse;
+        float colour[4];
         float u, v;
     };
 

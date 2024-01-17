@@ -56,27 +56,7 @@ static void initialiseRenderOp(
     using namespace Ogre;
 
 
-    // basic initialisation of render op
-    rop.vertexData = OGRE_NEW VertexData();
-    rop.operationType = RenderOperation::OT_TRIANGLE_LIST;
-    rop.useIndexes = false;
-
-    // setup vertex declaration for format we will use
-    VertexDeclaration* vd = rop.vertexData->vertexDeclaration;
-    size_t vd_offset = 0;
-    vd->addElement(0, 0, vd_offset, VET_FLOAT3, VES_POSITION);
-    vd_offset += VertexElement::getTypeSize(VET_FLOAT3);
-    vd->addElement(0, 0, vd_offset, VET_COLOUR, VES_DIFFUSE);
-    vd_offset += VertexElement::getTypeSize(VET_COLOUR);
-    vd->addElement(0, 0, vd_offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
-
-    // create hardware vertex buffer
-    vb = HardwareBufferManager::getSingleton().createVertexBuffer(
-            vd->getVertexSize(0), count,
-            HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
-
-    // bind vertex buffer
-    rop.vertexData->setBinding(0, vb);
+    
 }
 
 //----------------------------------------------------------------------------//
@@ -112,7 +92,7 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
     mMaterial = std::make_shared<Ogre::Material>("CEGUI");
     mMaterial->addTexture("white1x1.dds", nullptr);
     ShaderInfo sInfo;
-    sInfo.shaderName = "mygui";
+    sInfo.shaderName = "cegui";
     mMaterial->addShader(sInfo);
     Ogre::ColourBlendState mBlendState;
     mBlendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
@@ -124,6 +104,31 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
     mMaterial->setDepthTest(false);
     mMaterial->setCullMode(Ogre::CULL_NONE);
     mMaterial->load();
+
+    // basic initialisation of render op
+    d_renderOp.vertexData = OGRE_NEW VertexData();
+    d_renderOp.operationType = RenderOperation::OT_TRIANGLE_LIST;
+    d_renderOp.useIndexes = false;
+
+    // setup vertex declaration for format we will use
+    VertexDeclaration* vd = d_renderOp.vertexData->vertexDeclaration;
+    size_t vd_offset = 0;
+    vd->addElement(0, 0, vd_offset, VET_FLOAT3, VES_POSITION);
+    vd_offset += VertexElement::getTypeSize(VET_FLOAT3);
+    
+    vd->addElement(0, 0, vd_offset, VET_FLOAT4, VES_DIFFUSE);
+    vd_offset += VertexElement::getTypeSize(VET_FLOAT4);
+    vd->addElement(0, 0, vd_offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+
+    auto vertexSize = vd->getVertexSize(0);
+
+    d_renderOp.vertexData->vertexSlotInfo.emplace_back();
+
+    auto& back = d_renderOp.vertexData->vertexSlotInfo.back();
+
+    back.mSlot = 0;
+    back.mVertexSize = vertexSize;
+    back.createBuffer(vertexSize, 128);
 }
 
 //----------------------------------------------------------------------------//
@@ -149,7 +154,8 @@ IndexDataView* OgreGeometryBuffer::getIndexView()
 
 const Ogre::Matrix4& OgreGeometryBuffer::getModelMatrix()
 {
-    return getMatrix();
+    static Ogre::Matrix4 aa = Ogre::Matrix4::IDENTITY;
+    return aa;
 }
 
 //----------------------------------------------------------------------------//
@@ -262,7 +268,10 @@ void OgreGeometryBuffer::appendGeometry(const Vertex* const vbuff,
         v.x       = vs.position.d_x + d_texelOffset.d_x;
         v.y       = vs.position.d_y + d_texelOffset.d_y;
         v.z       = vs.position.d_z;
-        v.diffuse = colourToOgre(vs.colour_val);
+        v.colour[0] = vs.colour_val.getRed();
+        v.colour[1] = vs.colour_val.getGreen();
+        v.colour[2] = vs.colour_val.getBlue();
+        v.colour[3] = vs.colour_val.getAlpha();
         v.u       = vs.tex_coords.d_x;
         v.v       = vs.tex_coords.d_y;
 
@@ -360,7 +369,8 @@ void OgreGeometryBuffer::updateMatrix() const
 void OgreGeometryBuffer::syncHardwareBuffer() const
 {
     // Reallocate h/w buffer as requied
-    size_t size = d_hwBuffer->getNumVerts();
+    auto hwBuffer = d_renderOp.vertexData->getBuffer(0);
+    size_t size = hwBuffer->getNumVerts();
     const size_t required_size = d_vertices.size();
     if(size < required_size)
     {
@@ -376,15 +386,11 @@ void OgreGeometryBuffer::syncHardwareBuffer() const
     // copy vertex data into hw buffer
     if (required_size > 0)
     {
-#ifdef CEGUI_USE_OGRE_HLMS
-        std::memcpy(d_hwBuffer->lock(Ogre::v1::HardwareVertexBuffer::HBL_DISCARD),
+        std::memcpy(hwBuffer->lock(Ogre::HardwareVertexBuffer::HBL_DISCARD),
                     &d_vertices[0], sizeof(OgreVertex) * d_vertices.size());
-#else
-        std::memcpy(d_hwBuffer->lock(Ogre::HardwareVertexBuffer::HBL_DISCARD),
-                    &d_vertices[0], sizeof(OgreVertex) * d_vertices.size());
-#endif
+        hwBuffer->unlock();
 
-        d_hwBuffer->unlock();
+        
     }
 
     d_sync = true;
