@@ -42,6 +42,18 @@ void TextureUnit::setTexture(std::shared_ptr<ITexture> tex)
     }
 }
 
+void TextureUnit::setTexture(uint32_t index, std::shared_ptr<ITexture> tex)
+{
+    if (index >= mTextures.size())
+    {
+        mTextures.push_back(tex);
+    }
+    else
+    {
+        mTextures[index] = tex;
+    }
+}
+
 void TextureUnit::setTexture(const std::string& name, Ogre::TextureProperty* texProperty)
 {
     mNameList.clear();

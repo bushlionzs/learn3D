@@ -37,13 +37,9 @@
 #include <OgreRenderOperation.h>
 #include <OgreTexture.h>
 #include <OgreRenderable.h>
-#include <ogre>
 #include <utility>
 #include <vector>
 
-#ifdef CEGUI_USE_OGRE_HLMS
-#include <OgreRenderable.h>
-#endif
 
 class RenderSystem;
 

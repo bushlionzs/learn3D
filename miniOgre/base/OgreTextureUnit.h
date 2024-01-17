@@ -65,6 +65,7 @@ public:
     ~TextureUnit();
 
     void setTexture(std::shared_ptr<ITexture> tex);
+    void setTexture(uint32_t index, std::shared_ptr<ITexture> tex);
     void setTexture(const std::string& name, Ogre::TextureProperty* texProperty);
     void setAnimtexture(const std::vector<String>& namelist, float duration);
     void setTextureUScale(float u);

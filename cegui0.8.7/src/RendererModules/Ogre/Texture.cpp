@@ -170,7 +170,7 @@ void OgreTexture::loadFromFile(const String& filename,
         CEGUI_THROW(RendererException(
             "CEGUI::System object has not been created!"));
 
-    d_texture = TextureManager::getSingleton().getByName(filename.c_str());
+    d_texture = TextureManager::getSingleton().load(filename.c_str(), nullptr);
 }
 
 //----------------------------------------------------------------------------//
@@ -189,8 +189,9 @@ void OgreTexture::loadFromMemory(const void* buffer, const Sizef& buffer_size,
     memcpy(bufferCopy, buffer, byte_size);
 
     const Ogre::PixelBox* pixelBox = new Ogre::PixelBox(buffer_size.d_width, buffer_size.d_height,
-                                                        1, toOgrePixelFormat(pixel_format), bufferCopy);
-    //d_texture->freeInternalResources();
+                                                       1, toOgrePixelFormat(pixel_format), bufferCopy);
+
+    d_texture->freeInternalResources();
     d_texture->setWidth(buffer_size.d_width);
     d_texture->setHeight(buffer_size.d_height);
    // d_texture->setDepth(1);zhousha

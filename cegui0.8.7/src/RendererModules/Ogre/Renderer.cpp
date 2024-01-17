@@ -479,6 +479,7 @@ void OgreRenderer::destroyAllGeometryBuffers()
 //----------------------------------------------------------------------------//
 TextureTarget* OgreRenderer::createTextureTarget()
 {
+    return nullptr; //zhousha
     TextureTarget* tt = CEGUI_NEW_AO OgreTextureTarget(*this, *d_pimpl->d_renderSystem);
     d_pimpl->d_textureTargets.push_back(tt);
     return tt;

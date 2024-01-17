@@ -48,19 +48,18 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 	mViewPort->setClearEveryFrame(false);
 
 
-
-
 	InputManager::getSingleton().addListener(this);
 
 	Ogre::Root::getSingleton().addFrameListener(this);
 
 	CEGUI::OgreRenderer& render = CEGUI::OgreRenderer::create();
 
-	CEGUI::System::create(render, nullptr, 0, nullptr, 0,
-		"");
+	CEGUI::System::create(render, nullptr, 0, nullptr, 0, "");
 
 	auto& rt = render.getDefaultRenderTarget();
 	auto& context = CEGUI::System::getSingleton().createGUIContext(rt);
+
+	mGUIContext = &context;
 
 	CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
 
@@ -71,14 +70,31 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 	// Set default font for the gui context
 	context.setDefaultFont(&defaultFont);
 
+	auto mNode = mSceneManager->getRoot()->createChildSceneNode("cegui");
+	mNode->attachObject(this);
+
 	NOTICE_LOG("CEGUI initialise end");
 	return true;
+}
+
+void CEGUIManager::addRenderable(Ogre::Renderable* r)
+{
+	mRenderables.push_back(r);
 }
 
 const std::vector<Renderable*>& CEGUIManager::getRenderableList()
 {
 	mRenderables.clear();
+	mGUIContext->draw();
+
 	return mRenderables;
+}
+
+const AxisAlignedBox& CEGUIManager::getBoundingBox(void) const
+{
+	static AxisAlignedBox box;
+	box.setInfinite();
+	return box;
 }
 
 void CEGUIManager::injectMouseMove(int _absx, int _absy, int _absz)

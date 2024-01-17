@@ -4,6 +4,10 @@
 #include "InputManager.h"
 #include "OgreFrameListener.h"
 
+namespace CEGUI
+{
+	class GUIContext;
+}
 
 class CEGUIManager : public Ogre::Singleton<CEGUIManager>,
 	public FrameListener,
@@ -39,7 +43,16 @@ public:
 		return mRenderWindow;
 	}
 
-	const std::vector<Renderable*>& getRenderableList();
+	CEGUI::GUIContext* getGUIContext()
+	{
+		return mGUIContext;
+	}
+
+	void addRenderable(Ogre::Renderable* r);
+
+	virtual const std::vector<Renderable*>& getRenderableList();
+
+	virtual const AxisAlignedBox& getBoundingBox(void) const;
 private:
 
 	Ogre::Camera* mCamera;
@@ -49,7 +62,8 @@ private:
 	Ogre::RenderWindow* mRenderWindow;
 	int32_t mOldAbsZ;
 
-	String mResourceFileName;
+	Ogre::String mResourceFileName;
 
+	CEGUI::GUIContext* mGUIContext = nullptr;
 
 };

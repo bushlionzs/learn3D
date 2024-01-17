@@ -33,6 +33,9 @@
 #include <OgreQuaternion.h>
 #include <OgreHardwareBufferManager.h>
 #include <vertex_declaration.h>
+#include <OgreMaterial.h>
+#include <OgreTextureUnit.h>
+#include <CEGUIManager.h>
 
 // Start of CEGUI namespace section
 namespace CEGUI
@@ -46,20 +49,12 @@ namespace CEGUI
 //----------------------------------------------------------------------------//
 // Helper to allocate a vertex buffer and initialse a Ogre::RenderOperation
 static void initialiseRenderOp(
-#ifdef CEGUI_USE_OGRE_HLMS
-    Ogre::v1::RenderOperation& rop,
-    Ogre::v1::HardwareVertexBufferSharedPtr& vb,
-#else
     Ogre::RenderOperation& rop,
     Ogre::HardwareVertexBufferSharedPtr& vb,
-#endif
     size_t count)
 {
     using namespace Ogre;
 
-#ifdef CEGUI_USE_OGRE_HLMS
-    using namespace Ogre::v1;
-#endif
 
     // basic initialisation of render op
     rop.vertexData = OGRE_NEW VertexData();
@@ -87,13 +82,8 @@ static void initialiseRenderOp(
 //----------------------------------------------------------------------------//
 // Helper to cleanup what initialiseRenderOp did.
 static void cleanupRenderOp(
-#ifdef CEGUI_USE_OGRE_HLMS
-        Ogre::v1::RenderOperation& rop,
-        Ogre::v1::HardwareVertexBufferSharedPtr& vb
-#else
         Ogre::RenderOperation& rop,
         Ogre::HardwareVertexBufferSharedPtr& vb
-#endif
     )
 {
     OGRE_DELETE rop.vertexData;
@@ -118,6 +108,22 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
     d_sync(false)
 {
     initialiseRenderOp(d_renderOp, d_hwBuffer, 64);
+
+    mMaterial = std::make_shared<Ogre::Material>("CEGUI");
+    mMaterial->addTexture("white1x1.dds", nullptr);
+    ShaderInfo sInfo;
+    sInfo.shaderName = "mygui";
+    mMaterial->addShader(sInfo);
+    Ogre::ColourBlendState mBlendState;
+    mBlendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
+    mBlendState.destFactor = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
+    mBlendState.sourceFactorAlpha = Ogre::SBF_SOURCE_ALPHA;
+    mBlendState.destFactorAlpha = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
+    mMaterial->setBlendState(mBlendState);
+    mMaterial->setWriteDepth(false);
+    mMaterial->setDepthTest(false);
+    mMaterial->setCullMode(Ogre::CULL_NONE);
+    mMaterial->load();
 }
 
 //----------------------------------------------------------------------------//
@@ -152,10 +158,6 @@ void OgreGeometryBuffer::draw() const
     if (!d_sync)
         syncHardwareBuffer();
 
-    d_owner.setWorldMatrix(getMatrix());
-    d_owner.setupRenderingBlendMode(d_blendMode);
-    d_owner.updateShaderParams();
-
 
     const int pass_count = d_effect ? d_effect->getPassCount() : 1;
     for (int pass = 0; pass < pass_count; ++pass)
@@ -176,7 +178,9 @@ void OgreGeometryBuffer::draw() const
             d_renderOp.vertexData->vertexCount = i->vertexCount;
 
             i->texture;
-   
+  
+            auto& tu = mMaterial->getTextureUnit(0);
+            tu->setTexture(0, i->texture);
             pos += i->vertexCount;
         }
     }
@@ -185,6 +189,12 @@ void OgreGeometryBuffer::draw() const
     // clean up RenderEffect
     if (d_effect)
         d_effect->performPostRenderFunctions();
+
+    if (d_renderOp.vertexData->vertexCount > 0)
+    {
+        CEGUIManager::getSingleton().addRenderable((Ogre::Renderable*)this);
+    }
+    
 }
 
 //----------------------------------------------------------------------------//

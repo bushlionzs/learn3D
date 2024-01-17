@@ -26,6 +26,7 @@
 #include <CEGUI/ImageManager.h>
 #include <DefaultWindow.h>
 #include <FrameWindow.h>
+#include <CEGUIManager.h>
 
 using namespace CEGUI;
 
@@ -45,10 +46,10 @@ bool GameUI::appInit()
 
 
 	WindowManager& winMgr = WindowManager::getSingleton();
-	auto& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    auto* context = CEGUIManager::getSingleton().getGUIContext();
 	auto* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
 
-	context.setRootWindow(root);
+	context->setRootWindow(root);
 
     FrameWindow* wnd = (FrameWindow*)winMgr.createWindow("TaharezLook/FrameWindow", "Demo Window");
 
