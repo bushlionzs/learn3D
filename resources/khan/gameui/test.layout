@@ -1,19 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <MyGUI type="Layout" version="3.2.0">
-    <Widget type="Widget" skin="PanelEmpty" position="310 60 440 390" layer="Main" name="_Main">
-        <Widget type="TextBox" skin="TextBox" position="45 65 240 70" name="text">
-            <Property key="Caption" value="aaaaaaaaaaaaaaaa"/>
-        </Widget>
-        <Widget type="Button" skin="Button" position="285 20 105 35" name="btn"/>
-        <Widget type="Button" skin="Button" position="30 20 95 30" name="pig"/>
-        <Widget type="EditBox" skin="EditBox" position="10 165 425 130" name="edit">
-            <Property key="FontName" value="Default"/>
-            <Property key="TextAlign" value="Left Top"/>
-            <Property key="Caption" value="aaaa"/>
-            <Property key="MultiLine" value="true"/>
-            <Property key="FontHeight" value="30"/>
-            <Property key="TextShadow" value="true"/>
-        </Widget>
-    </Widget>
+    <Widget type="Widget" skin="PanelSkin" position="400 155 335 240" layer="Main" name="_Main"/>
     <CodeGeneratorSettings/>
 </MyGUI>

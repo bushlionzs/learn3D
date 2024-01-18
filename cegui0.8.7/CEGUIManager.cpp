@@ -39,7 +39,12 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 	mCamera = mSceneManager->createCamera("cegui_camera");
 
 	mCamera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
-	mCamera->setOrthoWindow(2, 2);
+	auto width = window->getWidth();
+	auto height = window->getHeight();
+
+	
+
+	mCamera->setOrthoWindow(width, height);
 	Ogre::Vector3 eyePos = Ogre::Vector3(0, 0, 10);
 	mCamera->updateCamera(eyePos, Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_Y);
 
@@ -55,6 +60,9 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 	CEGUI::OgreRenderer& render = CEGUI::OgreRenderer::create();
 
 	CEGUI::System::create(render, nullptr, 0, nullptr, 0, "");
+
+	CEGUI::System::getSingleton().notifyDisplaySizeChanged(
+		CEGUI::Sizef((float)width, (float)height));
 
 	auto& rt = render.getDefaultRenderTarget();
 	auto& context = CEGUI::System::getSingleton().createGUIContext(rt);
@@ -99,18 +107,24 @@ const AxisAlignedBox& CEGUIManager::getBoundingBox(void) const
 
 void CEGUIManager::injectMouseMove(int _absx, int _absy, int _absz)
 {
-	
+	mGUIContext->injectMousePosition(_absx, _absy);
 }
 
 void CEGUIManager::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 {
-	
+	CEGUI::MouseButton dummy;
+	dummy = (CEGUI::MouseButton)_id;
+	//mGUIContext->injectMousePosition(_absx, _absy);
+	mGUIContext->injectMouseButtonDown(dummy);
 
 }
 
 void CEGUIManager::injectMouseRelease(int _absx, int _absy, OIS::MouseButtonID _id)
 {
-	
+	CEGUI::MouseButton dummy;
+	dummy = (CEGUI::MouseButton)_id;
+	//mGUIContext->injectMousePosition(_absx, _absy);
+	mGUIContext->injectMouseButtonUp(dummy);
 }
 
 void CEGUIManager::injectKeyPress(KeyCode _key, uint32_t _text)

@@ -82,7 +82,7 @@ bool GameUI::appInit()
     // As a final step in the initialisation of our sample window, we set the window's
     // text to "Hello World!", so that this text will appear as the caption in the
     // FrameWindow's titlebar.
-    wnd->setText("Hello World!");
+    wnd->setText("aaaaaaa!");
 	return true;
 }
 

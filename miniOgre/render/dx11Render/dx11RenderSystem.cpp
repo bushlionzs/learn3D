@@ -272,7 +272,7 @@ void Dx11RenderSystem::renderImpl(Dx11Pass& pass)
 	{
 		mDx11Context->DrawInstanced(
 			vertexData->vertexCount,
-			1, 0, 0);
+			1, vertexData->vertexStart, 0);
 		mTriangleCount += vertexData->vertexCount / 3;
 	}
 	mBatchCount++;

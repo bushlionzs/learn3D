@@ -18,6 +18,7 @@ VertexOut VS(VertexIn vIn)
 	VertexOut vOut;
 	
 	vOut.PosH = mul(gWorldViewProj, float4(vIn.PosL, 1.0f));
+	//vOut.PosH.y = -vOut.PosH.y;
 	vOut.oColor = vIn.ColorL;
 	vOut.oTexcoord_0 = vIn.iTexcoord_0;
 	return vOut;
@@ -26,8 +27,6 @@ VertexOut VS(VertexIn vIn)
 float4 PS(VertexOut pin) : SV_Target
 {
 	float4 color	=	gTextureArray[0].Sample(gsamLinearWrap, pin.oTexcoord_0) * pin.oColor;
-	
-	clip(color.a - 0.5f);
 	
 	return color;
 }

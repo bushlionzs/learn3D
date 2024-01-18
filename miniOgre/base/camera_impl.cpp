@@ -252,8 +252,13 @@ const Ogre::Matrix4& CameraImpl::getProjectMatrix()
             Real right = mOrthoWidth / 2.0f;
             Real top = mOrthoHeight / 2.0f;
             Real bottom = -mOrthoHeight/2.0f;
+
+            left = 0.0f;
+            top = 0.0f;
+            right = mOrthoWidth;
+            bottom = mOrthoHeight;
             mProjectMatrix =
-                Ogre::Math::makeOrthoLH(left, right, bottom, top, mNear, 1000);
+                Ogre::Math::makeOrthoLH(left, right, bottom, top, mNear, mFar);
         }
         else
         {

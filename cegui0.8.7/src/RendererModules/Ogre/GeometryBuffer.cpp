@@ -99,6 +99,11 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
     mBlendState.destFactor = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
     mBlendState.sourceFactorAlpha = Ogre::SBF_SOURCE_ALPHA;
     mBlendState.destFactorAlpha = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
+
+    mBlendState.sourceFactor = Ogre::SBF_SOURCE_ALPHA;
+    mBlendState.destFactor = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
+    mBlendState.sourceFactorAlpha = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
+    mBlendState.destFactorAlpha = Ogre::SBF_ONE;
     mMaterial->setBlendState(mBlendState);
     mMaterial->setWriteDepth(false);
     mMaterial->setDepthTest(false);
@@ -154,6 +159,7 @@ IndexDataView* OgreGeometryBuffer::getIndexView()
 
 const Ogre::Matrix4& OgreGeometryBuffer::getModelMatrix()
 {
+    return this->getMatrix();
     static Ogre::Matrix4 aa = Ogre::Matrix4::IDENTITY;
     return aa;
 }
@@ -196,7 +202,7 @@ void OgreGeometryBuffer::draw() const
     if (d_effect)
         d_effect->performPostRenderFunctions();
 
-    if (d_renderOp.vertexData->vertexCount > 0)
+    if (d_renderOp.vertexData->vertexCount)
     {
         CEGUIManager::getSingleton().addRenderable((Ogre::Renderable*)this);
     }

@@ -29,11 +29,27 @@ bool GameUI::appInit()
 {
 	ApplicationBase::appInit();
 
+	TestWindow* test = new TestWindow();
+	test->getView()->setPosition(300, 100);
+	test->getView()->setVisible(true);
+
+	
+
+	mViewport->setAutoUpdated(false);
+
+	{
+		auto vp = MyGUIManager::getSingleton().getViewport();
+
+		vp->setClearEveryFrame(true);
+		Ogre::ColourValue color(0.678431392f, 0.847058892f, 0.901960850f, 1.000000000f);
+		vp->setBackgroundColour(color);
+	}
+	
+	return true;
+
 	SelfEquipWindow* selfEquipWindow = new SelfEquipWindow;
 	selfEquipWindow->getView()->setPosition(300, 100);
 
-
-	mViewport->setAutoUpdated(false);
 
 	/*auto mesh = MeshManager::getSingleton().load("ninja.mesh");
 	Entity* cylinder = mSceneManager->createEntity("cylinder", mesh);
