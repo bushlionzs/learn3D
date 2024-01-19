@@ -171,6 +171,11 @@ void OgreTexture::loadFromFile(const String& filename,
             "CEGUI::System object has not been created!"));
 
     d_texture = TextureManager::getSingleton().load(filename.c_str(), nullptr);
+    d_size.d_width = d_texture->getWidth();
+    d_size.d_height = d_texture->getHeight();
+    d_dataSize = d_size;
+
+    updateCachedScaleValues();
 }
 
 //----------------------------------------------------------------------------//

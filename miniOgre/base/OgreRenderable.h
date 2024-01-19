@@ -43,6 +43,11 @@ namespace Ogre {
             return nullptr;
         }
 
+        virtual RawDataView* getRawDataView()
+        {
+            return nullptr;
+        }
+
         virtual RawData* getShaderConstantData(uint32_t index)
         {
             return nullptr;

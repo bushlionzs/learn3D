@@ -45,6 +45,13 @@ public:
     uint32_t mBaseVertexLocation;
 };
 
+class RawDataView
+{
+public:
+    uint32_t mVertexStart;
+    uint32_t mVertexCount;
+};
+
 typedef struct VertexBoneAssignment_s
 {
     unsigned int vertexIndex;

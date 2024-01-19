@@ -46,6 +46,29 @@ class RenderSystem;
 // Start of CEGUI namespace section
 namespace CEGUI
 {
+class OgreGeometryBuffer;
+class CEGUIRenderable : public Ogre::Renderable
+{
+public:
+    CEGUIRenderable(OgreGeometryBuffer* owner);
+    ~CEGUIRenderable() {}
+
+    virtual VertexData* getVertexData();
+
+    virtual RawDataView* getRawDataView()
+    {
+        return &_rd_view;
+    }
+    virtual const Ogre::Matrix4& getModelMatrix();
+
+
+    void updateRenderable(uint32_t vertexStart, uint32_t vertexCount, const Ogre::TexturePtr& tex);
+private:
+    OgreGeometryBuffer* _owner;
+
+    RawDataView _rd_view;
+};
+
 //! Implementation of CEGUI::GeometryBuffer for the Ogre engine
 class OGRE_GUIRENDERER_API OgreGeometryBuffer : public GeometryBuffer, public Ogre::Renderable
 {
@@ -90,6 +113,8 @@ protected:
     void syncHardwareBuffer() const;
     //! set up texture related states
     void initialiseTextureStates() const;
+
+    void updateRenderable(uint32_t index, uint32_t vertexStart, uint32_t vertexCount, const Ogre::TexturePtr& tex) const;
 
     //! vertex structure used internally and also by Ogre.
     struct OgreVertex
@@ -152,6 +177,8 @@ protected:
     typedef std::vector<OgreVertex> VertexList;
     //! container where added geometry is stored.
     VertexList d_vertices;
+
+    mutable std::vector<CEGUIRenderable*> d_Renderables;
 
 };
 
