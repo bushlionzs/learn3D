@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<Imageset version="2" name="UI_MainBoard_3" imagefile="ui_mainboard_3.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true">
+
+	<Image name="UI_MainBoard_3_Common_Board" xpos="1" ypos="1" width="375" height="546" />
+	<Image name="UI_MainBoard_3_Selfattrib_Cover" xpos="384" ypos="1" width="295" height="433" />
+	<Image name="UI_MainBoard_3_Selfcoin_Cover" xpos="692" ypos="1" width="295" height="433" />
+	<Image name="UI_MainBoard_3_Ride_Cover" xpos="616" ypos="565" width="292" height="446" />
+	<Image name="UI_MainBoard_3_Packet_Cover" xpos="0" ypos="565" width="296" height="407" />
+	<Image name="UI_MainBoard_3_Store_Cover" xpos="7" ypos="565" width="280" height="272" />
+	<Image name="UI_MainBoard_3_Targetequip_Cover" xpos="692" ypos="449" width="298" height="96" />
+
+	<Image name="UI_MainBoard_3_Packet_Active_Cover1" xpos="319" ypos="569" width="268" height="39" />
+	<Image name="UI_MainBoard_3_Packet_Active_Cover2" xpos="319" ypos="614" width="268" height="39" />
+	<Image name="UI_MainBoard_3_Packet_Active_Cover3" xpos="319" ypos="659" width="268" height="39" />
+	<Image name="UI_MainBoard_3_Packet_Active_Cover4" xpos="319" ypos="704" width="268" height="39" />
+	<Image name="UI_MainBoard_3_Packet_Active_Cover5" xpos="319" ypos="749" width="268" height="39" />
+	<Image name="UI_MainBoard_3_Packet_Active_Cover6" xpos="319" ypos="794" width="268" height="39" />
+
+	<Image name="UI_MainBoard_3_Gift_Back" xpos="408" ypos="457" width="271" height="22" />
+	<Image name="UI_MainBoard_3_Gift_Bar" xpos="418" ypos="492" width="248" height="11" />
+	<Image name="UI_MainBoard_3_Gift_Cover" xpos="464" ypos="512" width="4" height="15" />
+
+	<Image name="UI_MainBoard_3_Common_Button1_Normal" xpos="313" ypos="866" width="63" height="23" />
+	<Image name="UI_MainBoard_3_Common_Button1_Hover" xpos="313" ypos="893" width="63" height="23" />
+	<Image name="UI_MainBoard_3_Common_Button1_Pushed" xpos="313" ypos="920" width="63" height="23" />
+	<Image name="UI_MainBoard_3_Common_Button1_Disabled" xpos="313" ypos="949" width="63" height="23" />
+
+	<Image name="UI_MainBoard_3_Common_Button2_Normal" xpos="393" ypos="867" width="49" height="21" />
+	<Image name="UI_MainBoard_3_Common_Button2_Hover" xpos="393" ypos="892" width="49" height="21" />
+	<Image name="UI_MainBoard_3_Common_Button2_Pushed" xpos="393" ypos="917" width="49" height="21" />
+	<Image name="UI_MainBoard_3_Common_Button2_Disabled" xpos="393" ypos="943" width="49" height="21" />
+
+	<Image name="UI_MainBoard_3_Add_Button_Normal" xpos="458" ypos="867" width="21" height="21" />
+	<Image name="UI_MainBoard_3_Add_Button_Hover" xpos="458" ypos="892" width="21" height="21" />
+	<Image name="UI_MainBoard_3_Add_Button_Pushed" xpos="458" ypos="917" width="21" height="21" />
+	<Image name="UI_MainBoard_3_Add_Button_Disabled" xpos="458" ypos="943" width="21" height="21" />
+
+	<Image name="UI_MainBoard_3_Sub_Button_Normal" xpos="489" ypos="867" width="21" height="21" />
+	<Image name="UI_MainBoard_3_Sub_Button_Hover" xpos="489" ypos="892" width="21" height="21" />
+	<Image name="UI_MainBoard_3_Sub_Button_Pushed" xpos="489" ypos="917" width="21" height="21" />
+	<Image name="UI_MainBoard_3_Sub_Button_Disabled" xpos="489" ypos="943" width="21" height="21" />
+
+	<Image name="UI_MainBoard_3_Ride_Skill_Cover" xpos="519" ypos="866" width="38" height="38" />
+
+</Imageset>

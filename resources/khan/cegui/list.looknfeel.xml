@@ -1,0 +1,1356 @@
+﻿<?xml version="1.0" ?>
+<Falagard version="7">
+	<!--
+    ***************************************************
+        KylinUI/ListHeaderSegment
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ListHeaderSegment">
+		<Property name="SizingCursorImage" value="set:CJSH_icons_1 image:CJSH_icons_1_mullist_lr" />
+		<Property name="MovingCursorImage" value="set:CJSH_icons_1 image:CJSH_icons_1_mullist_move" />
+		<ImagerySection name="segment_normal">
+			<Colours topLeft="FFDDDDDD" topRight="FFDDDDDD" bottomLeft="FFDDDDDD" bottomRight="FFDDDDDD" />
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_midn" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_barn" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="segment_hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_midn" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_baro" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="splitter_normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_midn" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="splitter_hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_mido" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="ascend_icon">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="3" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="3" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_up" dimension="Width" />
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_up" dimension="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_up" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="descend_icon">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="3" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="3" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_down" dimension="Width" />
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_down" dimension="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_down" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_up" dimension="Width">
+							<DimOperator op="Add">
+								<AbsoluteDim value="5" />
+							</DimOperator>
+						</ImageDim>
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormat type="CentreAligned" />
+				<HorzFormat type="CentreAligned" />
+			</TextComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="segment_normal" />
+				<Section section="splitter_normal" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="segment_hover" />
+				<Section section="splitter_normal" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="SplitterHover">
+			<Layer>
+				<Section section="segment_normal" />
+				<Section section="splitter_hover" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DragGhost" clipped="false">
+			<Layer priority="1">
+				<Section section="segment_normal">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+				<Section section="splitter_normal">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+				<Section section="label">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="AscendingSortIcon">
+			<Layer>
+				<Section section="ascend_icon" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DescendingSortIcon">
+			<Layer>
+				<Section section="descend_icon" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="GhostAscendingSortIcon" clipped="false">
+			<Layer priority="1">
+				<Section section="ascend_icon">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="GhostDescendingSortIcon" clipped="false">
+			<Layer priority="1">
+				<Section section="descend_icon">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="segment_normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="splitter_normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/ListHeader
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ListHeader">
+		<Property name="SegmentWidgetType" value="KylinUI/ListHeaderSegment" />
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/Listbox
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Listbox">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="6" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="2" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listupbotton_Normal" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset="-2" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="165" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="66" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="66" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listupbotton_Normal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" offset="0" type="Height" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/Listbox_Debug
+    ***************************************************
+    --> 	
+	<WidgetLook name="KylinUI/Listbox_Debug">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="6" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1"  type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1"  type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="165" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="66" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="165" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="165" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="66" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="66" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="165" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="66" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="12" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" offset="-12" type="Height" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+    ***************************************************
+        TaharezLook/NewListHeader
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/NewListHeader">
+		<Property name="SegmentWidgetType" value="KylinUI/NewListHeaderSegment" />
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/NewListHeaderSegment
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/NewListHeaderSegment">
+	<!--<Property name="SizingCursorImage" value="set:CJSH_icons_1 image:CJSH_icons_1_mullist_lr" />
+		<Property name="MovingCursorImage" value="set:CJSH_icons_1 image:CJSH_icons_1_mullist_move" /> -->
+		<ImagerySection name="segment_normal">
+			<Colours topLeft="FFDDDDDD" topRight="FFDDDDDD" bottomLeft="FFDDDDDD" bottomRight="FFDDDDDD" />
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="UI_Board_1" image="UI_W1_H1" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			<!--<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_barn" />-->
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="segment_hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="UI_Board_1" image="UI_W1_H1" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<!--<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_barn" />-->
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="splitter_normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<!--<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_barn" />-->
+				<VertFormat type="Stretched" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="splitter_hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<!--<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_barn" />-->
+				<VertFormat type="Stretched" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="ascend_icon">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="3" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="3" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_up" dimension="Width" />
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_up" dimension="Height" />
+					</Dim>
+				</Area>
+				<!--<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_barn" />-->
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="descend_icon">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="3" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="3" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_down" dimension="Width" />
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_mullist_down" dimension="Height" />
+					</Dim>
+				</Area>
+				<!--<Image imageset="KHan_MainUI_15" image="KHan_MainUI_15_mullist_barn" />-->
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<HorzFormat type="CentreAligned" />
+				<VertFormat type="CentreAligned" />				
+			</TextComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="segment_normal" />
+				<Section section="splitter_normal" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="segment_hover" />
+				<Section section="splitter_normal" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="SplitterHover">
+			<Layer>
+				<Section section="segment_normal" />
+				<Section section="splitter_hover" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DragGhost" clipped="false">
+			<Layer priority="1">
+				<Section section="segment_normal">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+				<Section section="splitter_normal">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+				<Section section="label">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="AscendingSortIcon">
+			<Layer>
+				<Section section="ascend_icon" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DescendingSortIcon">
+			<Layer>
+				<Section section="descend_icon" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="GhostAscendingSortIcon" clipped="false">
+			<Layer priority="1">
+				<Section section="ascend_icon">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="GhostDescendingSortIcon" clipped="false">
+			<Layer priority="1">
+				<Section section="descend_icon">
+					<Colours topLeft="90FFFFFF" topRight="90FFFFFF" bottomLeft="90FFFFFF" bottomRight="90FFFFFF" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="segment_normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="splitter_normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/MultiColumnList
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/MultiColumnList">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="165" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="165" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="66" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="MultiListLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="TaharezLook" image="MultiListRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="MultiListLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="TaharezLook" image="MultiListBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="MultiListLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/ListHeader" nameSuffix="__auto_listheader__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" offset="0" type="RightEdge" />
+				</Dim>
+				<Dim type="Height">
+					<FontDim type="LineSpacing">
+						<DimOperator op="Multiply">
+							<AbsoluteDim value="1.5" />
+						</DimOperator>
+					</FontDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/VerticalScrollbar2" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listupbotton_Normal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="2" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset="0" type="BottomEdge" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook> 
+
+	<!--
+    ***************************************************
+        KylinUI/SeverMultiColumnList
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/SeverMultiColumnList">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="165" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="165" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="66" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="MultiListLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="TaharezLook" image="MultiListRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="MultiListLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="TaharezLook" image="MultiListBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="MultiListLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/ListHeader" nameSuffix="__auto_listheader__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" offset="0" type="RightEdge" />
+				</Dim>
+				<Dim type="Height">
+					<FontDim type="LineSpacing">
+						<DimOperator op="Multiply">
+							<AbsoluteDim value="1.5" />
+						</DimOperator>
+					</FontDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/SeverVerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_upnormal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset="0" type="BottomEdge" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook> 
+
+	<!--
+    ***************************************************
+        KylinUI/NewMultiColumnList
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/NewMultiColumnList">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="165" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="165" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="66" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="MultiListLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="TaharezLook" image="MultiListRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="MultiListLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+					<!--	<DimOperator op="add">
+							<AbsoluteDim value="5" />
+						</DimOperator>					
+					</WidgetDim>-->
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset="0" type="BottomEdge" />
+					
+					<!--<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="TaharezLook" image="MultiListBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>-->
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="MultiListLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/NewListHeader" nameSuffix="__auto_listheader__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" offset="0" type="RightEdge" />
+				</Dim>
+				<Dim type="Height">
+					<FontDim type="LineSpacing">
+						<DimOperator op="Multiply">
+							<AbsoluteDim value="1.5" />
+						</DimOperator>
+					</FontDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/VerticalScrollbar_New" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_listheader__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_upnormal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset="0" type="BottomEdge" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook> 
+
+
+
+
+		<!--
+    ***************************************************
+        KylinUI/TripListbox
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/TripListbox">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" offset="-20" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1"  type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="1" offset="-20" type="LeftEdge" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/TripVerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="20" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1"  type="BottomEdge" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+</Falagard>

@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<Imageset version="2" name="UI_duihua_1" imagefile="ui_duihua_1.dds" nativeHorzRes="1024" nativeVertRes="1024" autoScaled="vertical">
+	
+	<Image name="UI_duihua_1_board_1" xPos="0" yPos="7" width="369" height="533" />
+	<Image name="UI_duihua_1_board_2" xPos="372" yPos="7" width="369" height="533" />
+	
+	<Image name="UI_duihua_1_close_normal" xPos="750" yPos="16" width="29" height="28" />
+	<Image name="UI_duihua_1_close_hover" xPos="790" yPos="16" width="29" height="28" />
+	<Image name="UI_duihua_1_close_pushed" xPos="830" yPos="16" width="29" height="28" />
+	
+	<Image name="UI_duihua_1_help_normal" xPos="756" yPos="53" width="18" height="26" />
+	<Image name="UI_duihua_1_help_hover" xPos="796" yPos="53" width="18" height="26" />
+	<Image name="UI_duihua_1_help_pushed" xPos="836" yPos="53" width="18" height="26" />
+	
+	<Image name="UI_duihua_1_sure_normal" xPos="748" yPos="104" width="90" height="24" />
+	<Image name="UI_duihua_1_sure_hover" xPos="748" yPos="134" width="90" height="24" />
+	<Image name="UI_duihua_1_sure_pushed" xPos="748" yPos="164" width="90" height="24" />
+	<Image name="UI_duihua_1_sure_dissable" xPos="748" yPos="195" width="90" height="24" />
+	
+	<Image name="UI_duihua_1_cancle_normal" xPos="852" yPos="104" width="90" height="24" />
+	<Image name="UI_duihua_1_cancle_hover" xPos="852" yPos="134" width="90" height="24" />
+	<Image name="UI_duihua_1_cancle_pushed" xPos="852" yPos="164" width="90" height="24" />
+	<Image name="UI_duihua_1_cancle_dissable" xPos="852" yPos="195" width="90" height="24" />	
+
+	<Image name="UI_duihua_1_choose_disable" xPos="877" yPos="14" width="22" height="22" />
+	<Image name="UI_duihua_1_choose_enable" xPos="908" yPos="14" width="22" height="22" />
+
+	<Image name="UI_duihua_1_jiangli_weiwang" xPos="961" yPos="10" width="19" height="18" />
+	<Image name="UI_duihua_1_jiangli_exp" xPos="955" yPos="35" width="27" height="13" />
+	<Image name="UI_duihua_1_jiangli_money" xPos="959" yPos="53" width="19" height="20" />
+
+	<Image name="UI_duihua_1_zhuanzhi_bak" xPos="17" yPos="615" width="314" height="123" />
+	<Image name="UI_duihua_1_line" xPos="17" yPos="789" width="346" height="8" />
+
+	<Image name="UI_duihua_1_pattern" xPos="398" yPos="621" width="311" height="120" />
+
+	<Image name="UI_duihua_1_property_bak1" xPos="459" yPos="843" width="147" height="146" />
+	<Image name="UI_duihua_1_property_bak2" xPos="729" yPos="542" width="294" height="95" />
+	<Image name="UI_duihua_1_property_bak3" xPos="729" yPos="675" width="294" height="114" />
+	<Image name="UI_duihua_1_property_bak4" xPos="730" yPos="826" width="294" height="135" />
+
+	<Image name="UI_duihua_1_silver_money" xPos="46" yPos="826" width="30" height="26" />
+
+	<Image name="UI_duihua_1_number_bak" xPos="753" yPos="244" width="54" height="54" />
+	<Image name="UI_duihua_1_number_x" xPos="825" yPos="250" width="16" height="20" />
+	<Image name="UI_duihua_1_number_1" xPos="852" yPos="241" width="22" height="30" />
+	<Image name="UI_duihua_1_number_2" xPos="884" yPos="241" width="22" height="30" />
+	<Image name="UI_duihua_1_number_3" xPos="914" yPos="241" width="22" height="30" />
+	<Image name="UI_duihua_1_number_4" xPos="945" yPos="241" width="22" height="30" />
+	<Image name="UI_duihua_1_number_5" xPos="975" yPos="241" width="22" height="30" />
+	<Image name="UI_duihua_1_number_6" xPos="914" yPos="281" width="22" height="30" />
+	<Image name="UI_duihua_1_number_7" xPos="944" yPos="281" width="22" height="30" />
+	<Image name="UI_duihua_1_number_8" xPos="854" yPos="281" width="22" height="30" />
+	<Image name="UI_duihua_1_number_9" xPos="884" yPos="281" width="22" height="30" />
+	<Image name="UI_duihua_1_number_0" xPos="974" yPos="281" width="22" height="30" />
+
+	<Image name="UI_duihua_1_equip_bak1" xPos="110" yPos="825" width="55" height="54" />
+	<Image name="UI_duihua_1_equip_bak2" xPos="198" yPos="825" width="73" height="75" />
+	<Image name="UI_duihua_1_equip_bak3" xPos="136" yPos="929" width="55" height="54" />
+	<Image name="UI_duihua_1_equip_bak4" xPos="269" yPos="934" width="73" height="75" />
+	<Image name="UI_duihua_1_equip_bak5" xPos="196" yPos="929" width="55" height="54" />
+	<Image name="UI_duihua_1_equip_bak6" xPos="353" yPos="934" width="73" height="75" />
+
+	<Image name="UI_duihua_1_hole_bak1" xPos="23" yPos="909" width="42" height="43" />
+	<Image name="UI_duihua_1_hole_bak2" xPos="78" yPos="909" width="42" height="43" />
+
+	<Image name="UI_duihua_1_textbak" xPos="398" yPos="781" width="167" height="24" />
+	<Image name="UI_duihua_1_job_1" xPos="320" yPos="836" width="95" height="87" />
+
+</Imageset>

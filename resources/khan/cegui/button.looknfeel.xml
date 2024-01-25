@@ -1,0 +1,3514 @@
+﻿<?xml version="1.0" ?>
+<Falagard version="7">	
+	<!--
+    ***************************************************
+        KylinUI/Button_1
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Button_1">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+    ***************************************************
+        KylinUI/Button_2
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Button_2">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+    ***************************************************
+        KylinUI/Button_3
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Button_3">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+
+	<!--
+    ***************************************************
+        KylinUI/Button_5
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Button_5">
+		<PropertyDefinition name="NormalTextColour" initialValue="FFFFFFFF" redrawOnWrite="true" />
+        <PropertyDefinition name="HoverTextColour" initialValue="FFCA3192D" redrawOnWrite="true" />
+        <PropertyDefinition name="PushedTextColour" initialValue="FFF8AF44" redrawOnWrite="true" />
+        <PropertyDefinition name="DisabledTextColour" initialValue="FF888888" redrawOnWrite="true" />
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+
+	<!--
+    ***************************************************
+        KylinUI/Button_6
+    ***************************************************
+    -->	
+  <WidgetLook name="KylinUI/Button_6">
+    <PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+    <PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+    <ImagerySection name="label">
+      <TextComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="1" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="1" type="Height" />
+          </Dim>
+        </Area>
+        <VertFormatProperty name="VertLabelFormatting" />
+        <HorzFormatProperty name="HorzLabelFormatting" />
+      </TextComponent>
+    </ImagerySection>
+    <ImagerySection name="normal">
+      <FrameComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="1" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="1" type="Height" />
+          </Dim>
+        </Area>
+        <Image type="LeftEdge" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_n_left" />
+        <Image type="RightEdge" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_n_right" />
+        <Image type="Background" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_n_mid" />
+      </FrameComponent>
+    </ImagerySection>
+    <ImagerySection name="hover">
+      <FrameComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="1" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="1" type="Height" />
+          </Dim>
+        </Area>
+        <Image type="LeftEdge" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_o_left" />
+        <Image type="RightEdge" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_o_right" />
+        <Image type="Background" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_o_mid" />
+      </FrameComponent>
+    </ImagerySection>
+    <ImagerySection name="pushed">
+      <FrameComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="1" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="1" type="Height" />
+          </Dim>
+        </Area>
+        <Image type="LeftEdge" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_c_left" />
+        <Image type="RightEdge" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_c_right" />
+        <Image type="Background" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_c_mid" />
+      </FrameComponent>
+    </ImagerySection>
+    <ImagerySection name="disabled">
+      <FrameComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="1" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="1" type="Height" />
+          </Dim>
+        </Area>
+        <Image type="LeftEdge" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_d_left" />
+        <Image type="RightEdge" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_d_right" />
+        <Image type="Background" imageset="KHan_MainUI_10" image="KHan_MainUI_10_putongbutton_d_mid" />
+      </FrameComponent>
+    </ImagerySection>
+    <StateImagery name="Normal">
+      <Layer>
+        <Section section="normal" />
+        <Section section="label">
+          <Colours topLeft="FFFDEB78" topRight="FFFDEB78" bottomLeft="FFFDEB78" bottomRight="FFFDEB78" />
+        </Section>
+       </Layer>
+    </StateImagery>
+    <StateImagery name="Hover">
+      <Layer>
+        <Section section="hover" />
+        <Section section="label">
+
+          <Colours topLeft="FFFFFF00" topRight="FFFFFF00" bottomLeft="FFFFFF00" bottomRight="FFFFFF00" />
+
+        </Section>
+      </Layer>
+    </StateImagery>
+    <StateImagery name="Pushed">
+      <Layer>
+        <Section section="pushed" />
+        <Section section="label">
+          <Colours topLeft="FF968B47" topRight="FF968B47" bottomLeft="FF968B47" bottomRight="FF968B47" />
+        </Section>
+      </Layer>
+    </StateImagery>
+    <StateImagery name="Disabled">
+      <Layer>
+        <Section section="disabled" />
+        <Section section="label">
+          <Colours topLeft="FFBBBBBB" topRight="FFBBBBBB" bottomLeft="FFBBBBBB" bottomRight="FFBBBBBB" />
+        </Section>
+      </Layer>
+    </StateImagery>
+  </WidgetLook>
+   
+
+	<!--
+    ***************************************************
+        KylinUI/Button_8
+    ***************************************************
+    -->	
+  <WidgetLook name="KylinUI/Button_8">
+    <PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+    <PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+    <ImagerySection name="label">
+      <TextComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="0.836734694" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="0.8" type="Height" />
+          </Dim>
+        </Area>
+        <VertFormatProperty name="VertLabelFormatting" />
+        <HorzFormatProperty name="HorzLabelFormatting" />
+      </TextComponent>
+    </ImagerySection>
+    <ImagerySection name="normal">
+      <FrameComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="1" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="1" type="Height" />
+          </Dim>
+        </Area>
+         <Image type="Background" imageset="Khan_logon_back_2" image="Khan_logon_back_2_buttonflag_n" />
+      </FrameComponent>
+    </ImagerySection>
+    <ImagerySection name="hover">
+      <FrameComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="1" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="1" type="Height" />
+          </Dim>
+        </Area>
+        <Image type="Background" imageset="Khan_logon_back_2" image="Khan_logon_back_2_buttonflag_o" />
+      </FrameComponent>
+    </ImagerySection>
+    <ImagerySection name="pushed">
+      <FrameComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="1" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="1" type="Height" />
+          </Dim>
+        </Area>
+        <Image type="Background" imageset="Khan_logon_back_2" image="Khan_logon_back_2_buttonflag_c" />
+      </FrameComponent>
+    </ImagerySection>
+    <ImagerySection name="disabled">
+      <FrameComponent>
+        <Area>
+          <Dim type="LeftEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="TopEdge">
+            <AbsoluteDim value="0" />
+          </Dim>
+          <Dim type="Width">
+            <UnifiedDim scale="1" type="Width" />
+          </Dim>
+          <Dim type="Height">
+            <UnifiedDim scale="1" type="Height" />
+          </Dim>
+        </Area>
+      </FrameComponent>
+    </ImagerySection>
+    <StateImagery name="Normal">
+      <Layer>
+        <Section section="normal" />
+        <Section section="label">
+          <Colours topLeft="FF907E63" topRight="FF907E63" bottomLeft="FF907E63" bottomRight="FF907E63" />
+        </Section>
+       </Layer>
+    </StateImagery>
+    <StateImagery name="Hover">
+      <Layer>
+        <Section section="hover" />
+        <Section section="label">
+
+          <Colours topLeft="FF000000" topRight="FF000000" bottomLeft="FF000000" bottomRight="FF000000" />
+
+        </Section>
+      </Layer>
+    </StateImagery>
+    <StateImagery name="Pushed">
+      <Layer>
+        <Section section="pushed" />
+        <Section section="label">
+          <Colours topLeft="FF000000" topRight="FF000000" bottomLeft="FF000000" bottomRight="FF000000" />
+        </Section>
+      </Layer>
+    </StateImagery>
+    <StateImagery name="Disabled">
+      <Layer>
+        <Section section="disabled" />
+        <Section section="label">
+          <Colours topLeft="FFC0C0C0" topRight="FFC0C0C0" bottomLeft="FFC0C0C0" bottomRight="FFC0C0C0" />
+        </Section>
+      </Layer>
+    </StateImagery>
+  </WidgetLook>
+
+
+
+	<!--
+    ***************************************************
+        KylinUI/Button_Text
+    ***************************************************
+    -->	
+	<WidgetLook name="KylinUI/Button_Text">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="NormalTextColour" initialValue="FFFF0000" />
+		<PropertyDefinition name="HoverTextColour" initialValue="FFFF00FF" />
+		<PropertyDefinition name="PushedTextColour" initialValue="FFFFFF00" />
+		<PropertyDefinition name="DisabledTextColour" initialValue="FF7F7F7F" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/QuestButton_1
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_1">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/QuestButton_2
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_2">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/QuestButton_3
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_3">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_3_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_3_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_3_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_3_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/QuestButton_4
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_4">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_4_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_4_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_4_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_4_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+		<!--
+    ***************************************************
+        KylinUI/QuestButton_5
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_5">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_1_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_1_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_1_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_1_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+		<!--
+    ***************************************************
+        KylinUI/QuestButton_6
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_6">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_2_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_2_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_2_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_2_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+		<!--
+    ***************************************************
+        KylinUI/QuestButton_7
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_7">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_3_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_3_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_3_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_3_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+		<!--
+    ***************************************************
+        KylinUI/QuestButton_8
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_8">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_4_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_4_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_4_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_4_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+		<!--
+    ***************************************************
+        KylinUI/QuestButton_9
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_9">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_5_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_5_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_5_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_5_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+		<!--
+    ***************************************************
+        KylinUI/QuestButton_10
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_10">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_6_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_6_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_6_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_6_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+		<!--
+    ***************************************************
+        KylinUI/QuestButton_11
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_11">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_7_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_7_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_7_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_7_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+		<!--
+    ***************************************************
+        KylinUI/QuestButton_12
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_12">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_8_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_8_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_8_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>                                                    
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_8_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/QuestButton_13
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_13">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_1" image="CHJS_NPC_button_1_9_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/QuestButton_14
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_14">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_10_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_10_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_10_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_10_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/QuestButton_15
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_15">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_1_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_1_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_1_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_1_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+		<!--
+    ***************************************************
+        KylinUI/QuestButton_16
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_16">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_2_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_2_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_2_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_2_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+			<!--
+    ***************************************************
+        KylinUI/QuestButton_17
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/QuestButton_17">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="LeftAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_5_nl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_5_ol" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_5_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CHJS_NPC_button_2" image="CHJS_NPC_button_2_5_cl" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+				<Section section="label">
+					<ColourProperty name="DisabledTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/ActionButton
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ActionButton">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="DragThreshold" initialValue="8.0" />
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_action_1" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="default">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_action_3" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_action_1" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_cooldown_1" image="CoolDown00" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Defaulted">
+			<Layer>
+				<Section section="default" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/ActionButton
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ActionButton2">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="DragThreshold" initialValue="8.0" />
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>				
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="default">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_action_3" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_action_2" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_cooldown_1" image="CoolDown00" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Defaulted">
+			<Layer>
+				<Section section="default" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+		<!--
+    ***************************************************
+        KylinUI/ActionButton3
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ActionButton3">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="DragThreshold" initialValue="8.0" />
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_Notice_6" image="UI_Notice_6_hover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="default">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_Notice_6" image="UI_Notice_6_hover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_Notice_6" image="UI_Notice_6_hover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_cooldown_1" image="CoolDown00" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Defaulted">
+			<Layer>
+				<Section section="default" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+			<!--
+    ***************************************************
+        KylinUI/ActionButton4
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ActionButton4">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="DragThreshold" initialValue="8.0" />
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="default">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Defaulted">
+			<Layer>
+				<Section section="default" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+</Falagard>

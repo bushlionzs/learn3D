@@ -1,0 +1,445 @@
+﻿<?xml version="1.0" ?>
+<Falagard version="7">
+		<!--
+    ***************************************************
+        KylinUI/ComboDropList
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ComboDropList">
+		<NamedArea name="ItemRenderingArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="5" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="3" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="3" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="3" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="3" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="3" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="3" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="3" />
+								</DimOperator>
+							</WidgetDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="5" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="3" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width">
+								<DimOperator op="Add">
+									<AbsoluteDim value="3" />
+								</DimOperator>
+							</WidgetDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="ItemRenderingAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="3" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="3" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width">
+								<DimOperator op="Add">
+									<AbsoluteDim value="3" />
+								</DimOperator>
+							</WidgetDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="3" />
+								</DimOperator>
+							</WidgetDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="1.0" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Common_1" image="UI_Common_1_combolistbtn_normal" dimension="Width">
+								<DimOperator op="Add">
+									<AbsoluteDim value="2" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator> 
+					</UnifiedDim>
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_Common_1" image="UI_Common_1_combolistbtn_normal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1"  type="Height" />
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<!--Image type="TopLeftCorner" imageset="KHan_Frame_1" image="KHan_Frame_1_frameback_frame_5_topleft" />
+				<Image type="TopRightCorner" imageset="KHan_Frame_1" image="KHan_Frame_1_frameback_frame_5_topright" />
+				<Image type="BottomLeftCorner" imageset="KHan_Frame_1" image="KHan_Frame_1_frameback_frame_5_buttonleft" />
+				<Image type="BottomRightCorner" imageset="KHan_Frame_1" image="KHan_Frame_1_frameback_frame_5_buttonright" />
+				<Image type="LeftEdge" imageset="KHan_Frame_1" image="KHan_Frame_1_frameback_frame_5_midleft" />
+				<Image type="RightEdge" imageset="KHan_Frame_1" image="KHan_Frame_1_frameback_frame_5_midright" />
+				<Image type="TopEdge" imageset="KHan_Frame_1" image="KHan_Frame_1_frameback_frame_5_topmid" />
+				<Image type="BottomEdge" imageset="KHan_Frame_1" image="KHan_Frame_1_frameback_frame_5_buttonmid" /-->
+				<Image type="Background" imageset="KHan_Frame_1" image="KHan_Frame_1_frameback_frame_5_midmid" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        TaharezLook/ComboEditbox
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ComboEditbox">
+		<Property name="SelectedTextColour" value="FFFFFFFF" />
+		<NamedArea name="TextArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="5" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0" type="TopEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="3" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="container_normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="selection"></ImagerySection>
+		<ImagerySection name="Carat"></ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="container_normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ReadOnly">
+			<Layer>
+				<Section section="container_normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="container_normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ActiveSelection">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="InactiveSelection">
+			<Layer />
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        TaharezLook/Combobox
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Combobox">
+		<Property name="RiseOnClick" value="False" />
+		<Child type="KylinUI/ComboEditbox" nameSuffix="__auto_editbox__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0" type="TopEdge" />
+				</Dim>
+				<Dim type="Width">		
+					<UnifiedDim scale="1.0" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Personal_3" image="UI_Personal_3_smallcombolistbtn_normal" dimension="Width">
+								<DimOperator op="Add">
+									<AbsoluteDim value="2" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator> 
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1"  type="Height" />
+				</Dim>	
+			</Area>
+		</Child>
+		<Child type="KylinUI/ComboDropList" nameSuffix="__auto_droplist__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_editbox__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1" type="Width" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_button__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.5" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Personal_3" image="UI_Personal_3_smallcombolistbtn_half" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator> 
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_Personal_3" image="UI_Personal_3_smallcombolistbtn_normal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Personal_3" image="UI_Personal_3_smallcombolistbtn_normal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim> 
+			</Area>
+			<HorzAlignment type="RightAligned" />
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="NormalImage" value="set:UI_Personal_3 image:UI_Personal_3_smallcombolistbtn_normal" />
+			<Property name="HoverImage" value="set:UI_Personal_3 image:UI_Personal_3_smallcombolistbtn_hover" />
+			<Property name="PushedImage" value="set:UI_Personal_3 image:UI_Personal_3_smallcombolistbtn_pushed" />
+		</Child>
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+	</WidgetLook>
+	
+		<!--
+    ***************************************************
+        TaharezLook/CoutCombobox
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/CoutCombobox">
+		<Property name="RiseOnClick" value="False" />
+		<Child type="KylinUI/ComboEditbox" nameSuffix="__auto_editbox__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0" type="TopEdge" />
+				</Dim>
+				<Dim type="Width">		
+					<UnifiedDim scale="1.0" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Common_1" image="UI_Common_1_combolistbtn_normal" dimension="Width">
+								<DimOperator op="Add">
+									<AbsoluteDim value="2" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator> 
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1"  type="Height" />
+				</Dim>	
+			</Area>
+		</Child>
+		<Child type="KylinUI/ComboDropList" nameSuffix="__auto_droplist__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<WidgetDim widget="__auto_editbox__" dimension="BottomEdge" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1" type="Width" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_button__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="1.0" type="LeftEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Common_1" image="UI_Common_1_combolistbtn_normal" dimension="Width">
+								<DimOperator op="Add">
+									<AbsoluteDim value="2" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator> 
+					</UnifiedDim>
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.5" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Common_1" image="UI_Common_1_combolistbtn_half" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator> 
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_Common_1" image="UI_Common_1_combolistbtn_normal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Common_1" image="UI_Common_1_combolistbtn_normal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim> 
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="NormalImage" value="set:UI_Common_10 image:UI_Common_10_coutlist_nomal" />
+			<Property name="HoverImage" value="set:UI_Common_10 image:UI_Common_10_coutlist_hover" />
+			<Property name="PushedImage" value="set:UI_Common_10 image:UI_Common_10_coutlist_pushed" />
+		</Child>
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+	</WidgetLook>
+	
+</Falagard>

@@ -1,0 +1,2531 @@
+﻿<?xml version="1.0" ?>
+<Falagard version="7">
+	<!--
+    ***************************************************
+        KylinUI/HorizontalScrollbarThumb
+    ***************************************************
+    -->
+    <WidgetLook name="KylinUI/HorizontalScrollbarThumb">
+        <Property name="HorzFree" value="True" />
+        <ImagerySection name="normal">
+            <FrameComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+                </Area>
+                <Image type="LeftEdge" imageset="TaharezLook" image="MiniHorzScrollThumbLeftNormal" />
+                <Image type="RightEdge" imageset="TaharezLook" image="MiniHorzScrollThumbRightNormal" />
+                <Image type="Background" imageset="TaharezLook" image="MiniHorzScrollThumbMiddleNormal" />
+            </FrameComponent>
+        </ImagerySection>
+        <ImagerySection name="hover">
+            <FrameComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+                </Area>
+                <Image type="LeftEdge" imageset="TaharezLook" image="MiniHorzScrollThumbLeftHover" />
+                <Image type="RightEdge" imageset="TaharezLook" image="MiniHorzScrollThumbRightHover" />
+                <Image type="Background" imageset="TaharezLook" image="MiniHorzScrollThumbMiddleHover" />
+            </FrameComponent>
+        </ImagerySection>
+        <StateImagery name="Normal">
+            <Layer>
+                <Section section="normal" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="Hover">
+            <Layer>
+                <Section section="hover" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="Pushed">
+            <Layer>
+                <Section section="normal" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="Disabled">
+            <Layer>
+                <Section section="normal">
+                    <Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+                </Section>
+            </Layer>
+        </StateImagery>
+    </WidgetLook>
+    
+    <!--
+    ***************************************************
+        KylinUI/HorizontalScrollbar
+    ***************************************************
+    -->
+    <WidgetLook name="KylinUI/HorizontalScrollbar">
+        <NamedArea name="ThumbTrackArea">
+            <Area>
+                <Dim type="LeftEdge" ><ImageDim imageset="TaharezLook" image="MiniHorzScrollLeftNormal" dimension="Width" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="RightEdge" >
+                    <UnifiedDim scale="1.0" type="RightEdge">
+                        <DimOperator op="Subtract">
+                            <ImageDim imageset="TaharezLook" image="MiniHorzScrollRightNormal" dimension="Width" />
+                        </DimOperator>
+                    </UnifiedDim>
+                </Dim>
+                <Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+            </Area>
+        </NamedArea>
+        <Child  type="KylinUI/Button_2" nameSuffix="__auto_incbtn__">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="Width" ><ImageDim imageset="TaharezLook" image="MiniHorzScrollRightNormal" dimension="Width" /></Dim>
+                <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+            </Area>
+            <HorzAlignment type="RightAligned" />
+            <Property name="UseStandardImagery" value="False" />
+            <Property name="NormalImage" value="set:TaharezLook image:MiniHorzScrollRightNormal" />
+            <Property name="HoverImage" value="set:TaharezLook image:MiniHorzScrollRightHover" />
+            <Property name="PushedImage" value="set:TaharezLook image:MiniHorzScrollRightNormal" />
+        </Child>
+        <Child  type="KylinUI/Button_2" nameSuffix="__auto_decbtn__">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="Width" ><ImageDim imageset="TaharezLook" image="MiniHorzScrollLeftNormal" dimension="Width" /></Dim>
+                <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+            </Area>
+            <Property name="UseStandardImagery" value="False" />
+            <Property name="NormalImage" value="set:TaharezLook image:MiniHorzScrollLeftNormal" />
+            <Property name="HoverImage" value="set:TaharezLook image:MiniHorzScrollLeftHover" />
+            <Property name="PushedImage" value="set:TaharezLook image:MiniHorzScrollLeftNormal" />
+        </Child>
+        <Child  type="KylinUI/HorizontalScrollbarThumb" nameSuffix="__auto_thumb__">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="Width" ><UnifiedDim scale="0.1" type="Width" /></Dim>
+                <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+            </Area>
+        </Child>
+        <ImagerySection name="main">
+            <ImageryComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><ImageDim imageset="TaharezLook" image="MiniHorzScrollLeftNormal" dimension="Width" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="RightEdge" >
+                        <UnifiedDim scale="1.0" type="RightEdge">
+                            <DimOperator op="Subtract">
+                                <ImageDim imageset="TaharezLook" image="MiniHorzScrollRightNormal" dimension="Width" />
+                            </DimOperator>
+                        </UnifiedDim>
+                    </Dim>
+                    <Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+                </Area>
+                <Image imageset="TaharezLook" image="MiniHorzScrollBarSegment" />
+                <VertFormat type="CentreAligned" />
+                <HorzFormat type="Stretched" />
+            </ImageryComponent>
+        </ImagerySection>
+        <StateImagery name="Enabled">
+            <Layer>
+                <Section section="main" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="Disabled">
+            <Layer>
+                <Section section="main">
+                    <Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+                </Section>
+            </Layer>
+        </StateImagery>
+    </WidgetLook>
+    
+	<!--
+    ***************************************************
+        KylinUI/VerticalScrollbarThumb
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/VerticalScrollbarThumb">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_Listdragbotton_Normal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_Listdragbotton_Hover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_Listdragbotton_Pushed" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_Listdragbotton_Disabled" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+	
+	<!--
+    ***************************************************
+        KylinUI/VerticalScrollbar
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/VerticalScrollbar">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listupbotton_Normal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="1" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">				
+					<UnifiedDim scale="1.0" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listdownbotton_Normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listdownbotton_Normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listdownbotton_Normal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listdownbotton_Normal" />
+			<Property name="HoverImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listdownbotton_Hover" />
+			<Property name="PushedImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listdownbotton_Pushed" />
+		</Child>
+		<Child type="KylinUI/Button_1" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listupbotton_Normal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listupbotton_Normal" />
+			<Property name="HoverImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listupbotton_Hover" />
+			<Property name="PushedImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listupbotton_Pushed" />
+		</Child>
+		<Child type="KylinUI/VerticalScrollbarThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listdragbotton_Normal" dimension="Height" />
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listupbotton_Normal" dimension="Height">
+							<DimOperator op="Add">
+								<AbsoluteDim value="0" />
+							</DimOperator>
+						</ImageDim>						
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1.0" type="RightEdge" />
+					</Dim>
+					<Dim type="BottomEdge">				
+						<UnifiedDim scale="1.0" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listdownbotton_Normal" dimension="Height">
+									<DimOperator op="Add">
+										<AbsoluteDim value="0" />
+									</DimOperator>
+								</ImageDim>
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="UI_MainUI_1" image="UI_MainUI_1_ListbackMid" />
+				<Image type="TopEdge" imageset="UI_MainUI_1" image="UI_MainUI_1_ListbackTop" />
+				<Image type="BottomEdge" imageset="UI_MainUI_1" image="UI_MainUI_1_ListbackEnd" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Stretched" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+    
+	<!--
+    ***************************************************
+        KylinUI/VerticalScrollbar2Thumb
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/VerticalScrollbar2Thumb">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainBoard_1" image="UI_MainBoard_1_Thumbbtn_Normal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainBoard_1" image="UI_MainBoard_1_Thumbbtn_Hover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainBoard_1" image="UI_MainBoard_1_Thumbbtn_Pushed" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainBoard_1" image="UI_MainBoard_1_Thumbbtn_Disabled" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+	
+	<!--
+    ***************************************************
+        KylinUI/VerticalScrollbar2
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/VerticalScrollbar2">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="UI_MainBoard_1" image="UI_MainBoard_1_upbtn_Normal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="1" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">				
+					<UnifiedDim scale="1.0" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainBoard_1" image="UI_MainBoard_1_downbtn_Normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainBoard_1" image="UI_MainBoard_1_downbtn_Normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainBoard_1" image="UI_MainBoard_1_downbtn_Normal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_downbtn_Normal" />
+			<Property name="HoverImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_downbtn_Hover" />
+			<Property name="PushedImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_downbtn_Pushed" />
+		</Child>
+		<Child type="KylinUI/Button_1" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainBoard_1" image="UI_MainBoard_1_upbtn_Normal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_upbtn_Normal" />
+			<Property name="HoverImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_upbtn_Hover" />
+			<Property name="PushedImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_upbtn_Pushed" />
+		</Child>
+		<Child type="KylinUI/VerticalScrollbar2Thumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainBoard_1" image="UI_MainBoard_1_Thumbbtn_Normal" dimension="Height" />
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="UI_MainBoard_1" image="UI_MainBoard_1_upbtn_Normal" dimension="Height">
+							<DimOperator op="Add">
+								<AbsoluteDim value="0" />
+							</DimOperator>
+						</ImageDim>						
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1.0" type="RightEdge" />
+					</Dim>
+					<Dim type="BottomEdge">				
+						<UnifiedDim scale="1.0" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="UI_MainBoard_1" image="UI_MainBoard_1_downbtn_Normal" dimension="Height">
+									<DimOperator op="Add">
+										<AbsoluteDim value="0" />
+									</DimOperator>
+								</ImageDim>
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="UI_MainBoard_1" image="UI_MainBoard_1_Scrollbar_Mid" />
+				<Image type="TopEdge" imageset="UI_MainBoard_1" image="UI_MainBoard_1_Scrollbar_Top" />
+				<Image type="BottomEdge" imageset="UI_MainBoard_1" image="UI_MainBoard_1_Scrollbar_End" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Stretched" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+		<!--
+    ***************************************************
+        KylinUI/SeverVerticalScrollbarThumb
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/SeverVerticalScrollbarThumb">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Board_34" image="UI_Board_34_scroll_draghover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Board_34" image="UI_Board_34_scroll_dragpushed" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Board_34" image="UI_Board_34_scroll_dragpushed" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+	
+	<!--
+    ***************************************************
+        KylinUI/SeverVerticalScrollbar
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/SeverVerticalScrollbar">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_upnormal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="1" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">				
+					<UnifiedDim scale="1.0" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_downnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_downnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1"  type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_downnormal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_Board_34 image:UI_Board_34_scroll_downnormal" />
+			<Property name="HoverImage" value="set:UI_Board_34 image:UI_Board_34_scroll_downhover" />
+			<Property name="PushedImage" value="set:UI_Board_34 image:UI_Board_34_scroll_downpushed" />
+		</Child>
+		<Child type="KylinUI/Button_1" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0"  type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_upnormal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_Board_34 image:UI_Board_34_scroll_upnormal" />
+			<Property name="HoverImage" value="set:UI_Board_34 image:UI_Board_34_scroll_uphover" />
+			<Property name="PushedImage" value="set:UI_Board_34 image:UI_Board_34_scroll_uppushed" />
+		</Child>
+		<Child type="KylinUI/SeverVerticalScrollbarThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_dragnormal" dimension="Height" />
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_upnormal" dimension="Height">
+							<DimOperator op="Add">
+								<AbsoluteDim value="0" />
+							</DimOperator>
+						</ImageDim>						
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1.0" type="RightEdge" />
+					</Dim>
+					<Dim type="BottomEdge">				
+						<UnifiedDim scale="1.0" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_downnormal" dimension="Height">
+									<DimOperator op="Add">
+										<AbsoluteDim value="0" />
+									</DimOperator>
+								</ImageDim>
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="UI_Board_34" image="UI_Board_34_scrollbar_middle" />
+				<Image type="TopEdge" imageset="UI_Board_34" image="UI_Board_34_scrollbar_top" />
+				<Image type="BottomEdge" imageset="UI_Board_34" image="UI_Board_34_scrollbar_Bottom" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Stretched" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/VerticalScrollbarThumb_New
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/VerticalScrollbarThumb_New">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_2" image="UI_Common_2_miniscroll_draghover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragpushed" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragdisabled" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/VerticalScrollbar_New
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/VerticalScrollbar_New">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_upnormal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="1" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">				
+					<UnifiedDim scale="1.0" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_upnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_downnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1"  type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_downnormal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_Common_2 image:UI_Common_2_miniscroll_downnormal" />
+			<Property name="HoverImage" value="set:UI_Common_2 image:UI_Common_2_miniscroll_downhover" />
+			<Property name="PushedImage" value="set:UI_Common_2 image:UI_Common_2_miniscroll_downpushed" />
+		</Child>
+		<Child type="KylinUI/Button_1" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0"  type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_upnormal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_Common_2 image:UI_Common_2_miniscroll_upnormal" />
+			<Property name="HoverImage" value="set:UI_Common_2 image:UI_Common_2_miniscroll_uphover" />
+			<Property name="PushedImage" value="set:UI_Common_2 image:UI_Common_2_miniscroll_uppushed" />
+		</Child>
+		<Child type="KylinUI/VerticalScrollbarThumb_New" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_dragnormal" dimension="Height" />
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_upnormal" dimension="Height">
+							<DimOperator op="Add">
+								<AbsoluteDim value="0" />
+							</DimOperator>
+						</ImageDim>						
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1.0" type="RightEdge" />
+					</Dim>
+					<Dim type="BottomEdge">				
+						<UnifiedDim scale="1.0" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="UI_Common_2" image="UI_Common_2_miniscroll_downnormal" dimension="Height">
+									<DimOperator op="Add">
+										<AbsoluteDim value="0" />
+									</DimOperator>
+								</ImageDim>
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="UI_Common_2" image="UI_Common_2_miniscrollbar_middle" />
+				<Image type="TopEdge" imageset="UI_Common_2" image="UI_Common_2_miniscrollbar_top" />
+				<Image type="BottomEdge" imageset="UI_Common_2" image="UI_Common_2_miniscrollbar_Bottom" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Stretched" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+	<!--
+    ***************************************************
+        KylinUI/ChatHistoryVerticalScrollbarThumb
+    ***************************************************
+    --> 	
+	<WidgetLook name="KylinUI/ChatHistoryVerticalScrollbarThumb">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_1" image="KHan_Frame_1_huadong_n" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="Hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_1" image="KHan_Frame_1_huadong_o" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="Pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_1" image="KHan_Frame_1_huadong_c" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="Disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_1" image="KHan_Frame_1_huadong_d" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+
+    <!--
+    ***************************************************
+        KylinUI/ChatHistoryVerticalScrollbar
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ChatHistoryVerticalScrollbar">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" offset="18" type="TopEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="0.5" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1.0" offset="-20" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" offset="-20" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.5" offset="0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="18" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barbotton_n" />
+			<Property name="HoverImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barbotton_o" />
+			<Property name="PushedImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barbotton_c" />
+			<Property name="DisabledImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barbotton_d" />
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.5" offset="0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="18" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barup_n" />
+			<Property name="HoverImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barup_o" />
+			<Property name="PushedImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barup_c" />
+			<Property name="DisabledImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barup_d" />
+		</Child>
+		<Child type="KylinUI/ChatHistoryVerticalScrollbarThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.5" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="18" />
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<UnifiedDim scale="0.0" offset="18" type="TopEdge" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="0.5" type="Width" />
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1.0" offset="-18" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+		<!--
+    ***************************************************
+        KylinUI/Slider
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Slider">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0"  type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1.0" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/SliderThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_Common_2" image="UI_Common_2_sliderbtn_normal" dimension="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Common_2" image="UI_Common_2_sliderbtn_normal" dimension="Height" />
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1.0" type="RightEdge" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="BottomEdge" />
+					</Dim>
+				</Area>
+				<!--<Image type="LeftEdge" imageset="KHan_Frame_1" image="KHan_Frame_1_huadong_left" /> 				
+				<Image type="RightEdge" imageset="KHan_Frame_1" image="KHan_Frame_1_huadong_right" />-->
+				<Image type="Background" imageset="UI_Common_2" image="UI_Common_2_sliderbak_normal" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        TaharezLook/SliderThumb
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/SliderThumb">
+		<Property name="HorzFree" value="True" />
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_2" image="UI_Common_2_sliderbtn_normal" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_2" image="UI_Common_2_sliderbtn_hover" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_2" image="UI_Common_2_sliderbtn_pushed" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="disable">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_2" image="UI_Common_2_sliderbtn_disable" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disable" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+<!--
+    ***************************************************
+        KylinUI/CJSHChatHistoryVerticalScrollbarThumb
+    ***************************************************
+    --> 	
+	<WidgetLook name="KylinUI/CJSHChatHistoryVerticalScrollbarThumb">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<UnifiedDim scale="0" type="LeftEdge" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scroll_normal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<UnifiedDim scale="0" type="LeftEdge" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scroll_hover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<UnifiedDim scale="0" type="LeftEdge" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scroll_pushed" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<UnifiedDim scale="0" type="LeftEdge" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scroll_disabled" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled">
+						<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>	
+
+		 <!--
+    ***************************************************
+        KylinUI/CJSHChatHistoryVerticalScrollbar
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/CJSHChatHistoryVerticalScrollbar">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1.0" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1.0" type="TopEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" offset="0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_down_normal" />
+			<Property name="HoverImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_down_hover" />
+			<Property name="PushedImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_down_pushed" />
+			<Property name="DisabledImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_down_disabled" />
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" offset="0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_up_normal" />
+			<Property name="HoverImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_up_hover" />
+			<Property name="PushedImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_up_pushed" />
+			<Property name="DisabledImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_up_disabled" />
+		</Child>
+		<Child type="KylinUI/StaticImage" nameSuffix="__auto_bak_up__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" offset="0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scrollbak_up" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+			</Area>
+			<Property name="RiseOnClick" value="False" />
+			<Property name="Image" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_scrollbak_up" />
+		</Child>
+		<Child type="KylinUI/StaticImage" nameSuffix="__auto_bak_middle__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+						<DimOperator op="Add">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scrollbak_up" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" offset="0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1.0" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+										<DimOperator op="Add">
+											<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scrollbak_up" dimension="Height">
+												<DimOperator op="Add">
+													<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scrollbak_down" dimension="Height">
+														<DimOperator op="Add">
+															<AbsoluteDim value="0" />
+														</DimOperator>
+													</ImageDim>
+												</DimOperator>
+											</ImageDim>
+										</DimOperator>
+									</ImageDim>
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+			<Property name="RiseOnClick" value="False" />
+			<Property name="Image" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_scrollbak_middle" />
+		</Child>
+		<Child type="KylinUI/StaticImage" nameSuffix="__auto_bak_down__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1.0" type="TopEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scrollbak_down" dimension="Height">
+										<DimOperator op="Add">
+											<AbsoluteDim value="0" />
+										</DimOperator>
+									</ImageDim>
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" offset="0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scrollbak_down" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+			</Area>
+			<Property name="RiseOnClick" value="False" />
+			<Property name="Image" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_scrollbak_down" />
+		</Child>
+		<Child type="KylinUI/CJSHChatHistoryVerticalScrollbarThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_scroll_normal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<UnifiedDim scale="0.0" offset="20" type="TopEdge" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="0.5" type="Width" />
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1.0" offset="-20" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+		<!--
+    ***************************************************
+        KylinUI/TripVerticalScrollbar
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/TripVerticalScrollbar">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0" offset="15" type="TopEdge" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1.0" offset="-15" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1.0" offset="-15" type="TopEdge" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="17" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="15" />
+				</Dim>
+			</Area>
+			
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listdownbotton_Normal" />
+			<Property name="HoverImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listdownbotton_Hover" />
+			<Property name="PushedImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listdownbotton_Pushed" />
+		</Child>
+		<Child type="KylinUI/Button_1" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0" type="TopEdge" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="15" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="15" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listupbotton_Normal" />
+			<Property name="HoverImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listupbotton_Hover" />
+			<Property name="PushedImage" value="set:UI_MainUI_1 image:UI_MainUI_1_Listupbotton_Pushed" />
+		</Child>
+		<Child type="KylinUI/TripVerticalScrollbarThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="24" />
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<UnifiedDim scale="0" offset="15" type="TopEdge" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1.0" type="RightEdge" />
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1" offset="-15" type="BottomEdge" />
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="UI_MainUI_1" image="UI_MainUI_1_ListbackMid" />
+				<Image type="TopEdge" imageset="UI_MainUI_1" image="UI_MainUI_1_ListbackTop" />
+				<Image type="BottomEdge" imageset="UI_MainUI_1" image="UI_MainUI_1_ListbackEnd" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Stretched" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+		<!--
+    ***************************************************
+        KylinUI/TripVerticalScrollbarThumb
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/TripVerticalScrollbarThumb">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<AbsoluteDim value="17" />
+					</Dim>
+					<Dim type="Height">
+						<AbsoluteDim value="24" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_Listdragbotton_Normal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<AbsoluteDim value="17" />
+					</Dim>
+					<Dim type="Height">
+						<AbsoluteDim value="24" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_Listdragbotton_Hover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<AbsoluteDim value="17" />
+					</Dim>
+					<Dim type="Height">
+						<AbsoluteDim value="24" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_Listdragbotton_Pushed" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<AbsoluteDim value="17" />
+					</Dim>
+					<Dim type="Height">
+						<AbsoluteDim value="24" />
+					</Dim>
+				</Area>
+				<Image imageset="UI_MainUI_1" image="UI_MainUI_1_Listdragbotton_Disabled" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		<!--
+    ***************************************************
+        KylinUI/PaneVerticalScrollbarThumb
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/PaneVerticalScrollbarThumb">
+		<Property name="VertFree" value="True" />
+		<ImagerySection name="normal">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_1" image="UI_Common_1_scroll_minihover" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_1" image="UI_Common_1_scroll_minipushed" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection> 
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" dimension="Width">
+						</ImageDim>
+					</Dim>
+					<Dim type="Height">
+						<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" dimension="Height">
+						</ImageDim>
+					</Dim>
+				</Area>
+				<Image imageset="UI_Common_1" image="UI_Common_1_scroll_minipushed" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+	<!--
+    ***************************************************
+        KylinUI/PaneVerticalScrollbar
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/PaneVerticalScrollbar">
+		<Property name="VerticalScrollbar" value="True" />
+		<NamedArea name="ThumbTrackArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_upnormal" dimension="Height">
+						<DimOperator op="Add">
+							<AbsoluteDim value="1" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">				
+					<UnifiedDim scale="1.0" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_downnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_incbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_downnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1"  type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_downnormal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_Common_1 image:UI_Common_1_scroll_downnormal" />
+			<Property name="HoverImage" value="set:UI_Common_1 image:UI_Common_1_scroll_downhover" />
+			<Property name="PushedImage" value="set:UI_Common_1 image:UI_Common_1_scroll_downpushed" />
+		</Child>
+		<Child type="KylinUI/Button_1" nameSuffix="__auto_decbtn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0"  type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_upnormal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:UI_Common_1 image:UI_Common_1_scroll_upnormal" />
+			<Property name="HoverImage" value="set:UI_Common_1 image:UI_Common_1_scroll_uphover" />
+			<Property name="PushedImage" value="set:UI_Common_1 image:UI_Common_1_scroll_uppushed" />
+		</Child>
+		<Child type="KylinUI/PaneVerticalScrollbarThumb" nameSuffix="__auto_thumb__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_minidragnormal" dimension="Height" />
+				</Dim>
+			</Area>
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_upnormal" dimension="Height">
+							<DimOperator op="Add">
+								<AbsoluteDim value="0" />
+							</DimOperator>
+						</ImageDim>						
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1.0" type="RightEdge" />
+					</Dim>
+					<Dim type="BottomEdge">				
+						<UnifiedDim scale="1.0" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_downnormal" dimension="Height">
+									<DimOperator op="Add">
+										<AbsoluteDim value="0" />
+									</DimOperator>
+								</ImageDim>
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="UI_Common_1" image="UI_Common_1_scrollbar_minimiddle" />
+				<Image type="TopEdge" imageset="UI_Common_1" image="UI_Common_1_scrollbar_minitop" />
+				<Image type="BottomEdge" imageset="UI_Common_1" image="UI_Common_1_scrollbar_miniBottom" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Stretched" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	
+</Falagard>
+
+
+
+
+
+

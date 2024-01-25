@@ -1,0 +1,3 @@
+<Imageset autoScaled="vertical" imagefile="MouseCursor.png" name="MouseCursor" nativeHorzRes="1280" nativeVertRes="720" version="2">
+    <Image height="32" name="Normal" width="32" xPos="0" yPos="0" />
+</Imageset>

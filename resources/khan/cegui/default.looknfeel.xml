@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" ?>
+<Falagard version="7">
+	<!--
+    ***************************************************
+        KylinUI/StaticShared
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/StaticShared">
+		<ImagerySection name="HelpFrame_Frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topleft" />
+				<Image type="TopRightCorner" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topright" />
+				<Image type="BottomLeftCorner" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonleft" />
+				<Image type="BottomRightCorner" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonright" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="HelpFrame_BackGround">
+			<!-- Background -->
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topleft" dimension="Width" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topmid" dimension="Height" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topright" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonmid" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_midmid" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</ImageryComponent>
+			<!-- Top -->
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topleft" dimension="Width" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topright" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="BottomEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topmid" dimension="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topmid" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</ImageryComponent>
+			<!-- Left -->
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topmid" dimension="Height" />
+					</Dim>
+					<Dim type="RightEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topleft" dimension="Width" />
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonmid" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topleft" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</ImageryComponent>
+			<!-- Right -->
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topright" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topmid" dimension="Height" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge" />
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonmid" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_midright" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</ImageryComponent>
+			<!-- Bottom -->
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topleft" dimension="Width" />
+					</Dim>
+					<Dim type="TopEdge">
+						<UnifiedDim scale="1" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topmid" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topright" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1" type="BottomEdge" />
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonmid" />
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="Taharez_frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topleft" />
+				<Image type="TopRightCorner" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topright" />
+				<Image type="BottomLeftCorner" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonleft" />
+				<Image type="BottomRightCorner" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonright" />
+				<Image type="LeftEdge" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_midleft" />
+				<Image type="RightEdge" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_midright" />
+				<Image type="TopEdge" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topmid" />
+				<Image type="BottomEdge" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonmid" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="Taharez_background">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_midleft" dimension="Width" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_topmid" dimension="Height" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_midright" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_buttonmid" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Image imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_midmid" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/StaticImage
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/StaticImage">
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+		<StateImagery name="EnabledFrame" />
+		<StateImagery name="DisabledFrame" />
+		<StateImagery name="EnabledBackground" />
+		<StateImagery name="DisabledBackground" />
+	</WidgetLook>	
+</Falagard>

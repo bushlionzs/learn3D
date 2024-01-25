@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" ?>
+<Falagard version="7">
+	<!--
+    ***************************************************
+        KylinUI/StaticText
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/StaticText">
+		<Property name="BackgroundEnabled" value="True" />
+		<Property name="FrameEnabled" value="True" />
+		<NamedArea name="TextRenderArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" offset ="-4" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset ="-4" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="TextRenderAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" offset ="-4" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset ="-4" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="TextRenderAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" offset ="-4" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset ="-4" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="TextRenderAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" offset ="-4" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset ="-4" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/ChatHistoryVerticalScrollbar" nameSuffix="__auto_hscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="16" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="12" />
+				</Dim>
+			</Area>
+			<VertAlignment type="BottomAligned" />
+		</Child>
+		<Child type="KylinUI/ChatHistoryVerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="13" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" offset="-17" type="Height" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+		<StateImagery name="EnabledFrame" />
+		<StateImagery name="DisabledFrame" />
+		<StateImagery name="EnabledBackground" />
+		<StateImagery name="DisabledBackground" />
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/StaticText2
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/StaticText2">
+		<Property name="BackgroundEnabled" value="True" />
+		<Property name="FrameEnabled" value="True" />
+		<NamedArea name="TextRenderArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="TextRenderAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="StaticLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="TaharezLook" image="StaticTop" dimension="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="TaharezLook" image="StaticRight" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="TextRenderAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="StaticLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="TaharezLook" image="StaticTop" dimension="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="TaharezLook" image="StaticBottom" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="TextRenderAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="TaharezLook" image="StaticLeft" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="TaharezLook" image="StaticTop" dimension="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="15" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" type="Height" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+		<StateImagery name="EnabledFrame">
+			<Layer>
+				<Section look="KylinUI/StaticShared" section="Taharez_frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledFrame">
+			<Layer></Layer>
+		</StateImagery>
+		<StateImagery name="EnabledBackground">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="DisabledBackground">
+			<Layer></Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+	<!--
+    ***************************************************
+        KylinUI/StaticText3
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/StaticText3">
+		<Property name="BackgroundEnabled" value="True" />
+		<Property name="FrameEnabled" value="True" />
+		<NamedArea name="TextRenderArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="4" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" offset ="-4" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" offset ="-4" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="TextRenderAreaHScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="TextRenderAreaVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="TextRenderAreaHVScroll">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_vscrollbar__" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<WidgetDim widget="__auto_hscrollbar__" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/ChatHistoryVerticalScrollbar" nameSuffix="__auto_hscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="16" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="12" />
+				</Dim>
+			</Area>
+			<VertAlignment type="BottomAligned" />
+		</Child>
+		<Child type="KylinUI/ChatHistoryVerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="13" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" offset="-17" type="Height" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+		<StateImagery name="EnabledFrame">
+			<Layer>
+		
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledFrame">
+			<Layer></Layer>
+		</StateImagery>
+		<StateImagery name="EnabledBackground">
+			<Layer>
+	
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledBackground">
+			<Layer></Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/SimpleText
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/SimpleText"></WidgetLook>
+	
+</Falagard>

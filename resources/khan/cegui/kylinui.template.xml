@@ -1,0 +1,180 @@
+<?xml version="1.0" ?>
+<GUIScheme version="5" name="KylinUI">
+	<WindowSet Filename="CEGUIFalagardEx" />
+	<LookNFeel filename="common.looknfeel.xml" />
+
+	
+	<Font name="simhei11" filename="simhei11.font" type="FreeType" />
+	<Font name="simhei10" filename="simhei10.font" type="FreeType" />
+	<Font name="simhei8" filename="simhei8.font" type="FreeType" />
+	<Font name="simhei9" filename="simhei9.font" type="FreeType" />
+	<Font name="simhei12" filename="simhei12.font" type="FreeType" />
+	<Font name="simhei14" filename="simhei14.font" type="FreeType" />
+  	<Font name="simhei24" filename="simhei24.font" type="FreeType" />
+	
+	<!-- #b blink time in seconds -->
+	<!--
+	<FontBlinkTime Seconds="0.8" />
+	-->
+	
+	<!--
+	***************************
+		TaharezLook
+	***************************
+	-->
+	<Imageset Name="TaharezLook" filename="taharezlook.imageset.xml" />
+	<Imageset Name="Common" filename="common.imageset.xml" />
+	
+	<FalagardMapping WindowType="KylinUI/RingProgress" TargetType="Falagard/RingProgress" LookNFeel="KylinUI/RingProgress" />
+	
+	<FalagardMapping WindowType="KylinUI/FrameWindow"  TargetType="Falagard/FrameWindow"  LookNFeel="KylinUI/FrameWindow" />
+
+	<FalagardMapping WindowType="KylinUI/ButtonSale" TargetType="Falagard/Button" LookNFeel="KylinUI/ButtonSale" />
+	<FalagardMapping WindowType="KylinUI/ButtonIBSale" TargetType="Falagard/Button" LookNFeel="KylinUI/ButtonIBSale" />
+	<FalagardMapping WindowType="KylinUI/ButtonDrop" TargetType="Falagard/Button" LookNFeel="KylinUI/ButtonDrop" />	
+	<FalagardMapping WindowType="KylinUI/Button_1" TargetType="Falagard/Button" LookNFeel="KylinUI/Button_1" />
+	<FalagardMapping WindowType="KylinUI/Button_2" TargetType="Falagard/Button" LookNFeel="KylinUI/Button_2" />
+
+	<FalagardMapping WindowType="KylinUI/Button_5" TargetType="Falagard/Button" LookNFeel="KylinUI/Button_5" />
+	<FalagardMapping WindowType="KylinUI/Button_6" TargetType="Falagard/Button" LookNFeel="KylinUI/Button_6" />
+
+	<FalagardMapping WindowType="KylinUI/Button_8" TargetType="Falagard/Button" LookNFeel="KylinUI/Button_8" />
+	<FalagardMapping WindowType="KylinUI/Button_Text" TargetType="Falagard/Button" LookNFeel="KylinUI/Button_Text" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_1" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_1" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_2" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_2" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_3" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_3" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_4" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_4" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_5" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_5" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_6" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_6" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_7" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_7" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_8" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_8" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_9" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_9" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_10" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_10" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_11" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_11" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_12" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_12" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_13" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_13" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_14" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_14" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_15" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_15" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_16" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_16" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_17" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_17" />
+	<FalagardMapping WindowType="KylinUI/QuestButton_18" TargetType="Falagard/Button" LookNFeel="KylinUI/QuestButton_18" />
+	
+	<FalagardMapping WindowType="KylinUI/ActionButton" TargetType="Falagard/ActionButton" LookNFeel="KylinUI/ActionButton" />
+	<FalagardMapping WindowType="KylinUI/ActionButton2" TargetType="Falagard/ActionButton" LookNFeel="KylinUI/ActionButton2" />
+	<FalagardMapping WindowType="KylinUI/Editbox_1" TargetType="Falagard/IMEEditBox" LookNFeel="KylinUI/Editbox_IME" />
+	<FalagardMapping WindowType="KylinUI/Editbox_2" TargetType="Falagard/IMEEditBox" LookNFeel="KylinUI/Editbox_IME" />
+	<FalagardMapping WindowType="KylinUI/Editbox_3" TargetType="Falagard/IMEEditBox" LookNFeel="KylinUI/Editbox_1" />
+	<FalagardMapping WindowType="KylinUI/Editbox_4" TargetType="Falagard/IMEEditBox" LookNFeel="KylinUI/Editbox_IME" />
+	<FalagardMapping WindowType="KylinUI/Editbox_5" TargetType="Falagard/IMEEditBox" LookNFeel="KylinUI/Editbox_5" />
+	<FalagardMapping WindowType="KylinUI/Editbox_6" TargetType="Falagard/IMEEditBox" LookNFeel="KylinUI/Editbox_6" />
+	<FalagardMapping WindowType="KylinUI/BeHitBoard" TargetType="Falagard/InjuryInfoBoard" LookNFeel="KylinUI/BeHitBoard" />
+	<FalagardMapping WindowType="KylinUI/IMEEditBox" TargetType="Falagard/IMEEditBox" LookNFeel="KylinUI/Editbox_IME" />
+	<FalagardMapping WindowType="KylinUI/ChatEditbox_IME" TargetType="Falagard/IMEEditBox" LookNFeel="KylinUI/ChatEditbox_IME" />
+	<FalagardMapping WindowType="KylinUI/MultiIMEEditBox" TargetType="Falagard/MultiIMEEditBox" LookNFeel="KylinUI/MultiEditbox_IME" />
+	<FalagardMapping WindowType="KylinUI/NoScrollMultiIMEEditBox" TargetType="Falagard/MultiIMEEditBox" LookNFeel="KylinUI/MultiEditbox_NEWIME" />
+	
+	<FalagardMapping WindowType="KylinUI/StaticText" TargetType="Falagard/StaticText" LookNFeel="KylinUI/StaticText" />
+	<FalagardMapping WindowType="KylinUI/StaticText2" TargetType="Falagard/StaticText" LookNFeel="KylinUI/StaticText2" />
+	<FalagardMapping WindowType="KylinUI/StaticText3" TargetType="Falagard/StaticText" LookNFeel="KylinUI/StaticText3" />
+	<FalagardMapping WindowType="KylinUI/StaticImage" TargetType="Falagard/StaticImage" LookNFeel="KylinUI/StaticImage" />
+	<FalagardMapping WindowType="KylinUI/SoftKeyWindow" TargetType="Falagard/SoftKeyWindow" LookNFeel="KylinUI/StaticImage" />
+
+	<FalagardMapping WindowType="KylinUI/VerticalScrollbar" TargetType="Falagard/Scrollbar" LookNFeel="KylinUI/VerticalScrollbar" />
+	<FalagardMapping WindowType="KylinUI/VerticalScrollbarThumb" TargetType="Falagard/Thumb" LookNFeel="KylinUI/VerticalScrollbarThumb" />
+
+	<FalagardMapping WindowType="KylinUI/VerticalScrollbar2" TargetType="Falagard/Scrollbar" LookNFeel="KylinUI/VerticalScrollbar2" />
+	<FalagardMapping WindowType="KylinUI/VerticalScrollbar2Thumb" TargetType="Falagard/Thumb" LookNFeel="KylinUI/VerticalScrollbar2Thumb" />
+	
+		<FalagardMapping WindowType="KylinUI/SeverVerticalScrollbar" TargetType="Falagard/Scrollbar" LookNFeel="KylinUI/SeverVerticalScrollbar" />
+	<FalagardMapping WindowType="KylinUI/SeverVerticalScrollbarThumb" TargetType="Falagard/Thumb" LookNFeel="KylinUI/SeverVerticalScrollbarThumb" />
+	
+	<FalagardMapping WindowType="KylinUI/VerticalScrollbar_New" TargetType="Falagard/Scrollbar" LookNFeel="KylinUI/VerticalScrollbar_New" />
+	<FalagardMapping WindowType="KylinUI/VerticalScrollbarThumb_New" TargetType="Falagard/Thumb" LookNFeel="KylinUI/VerticalScrollbarThumb_New" />
+	
+	<FalagardMapping WindowType="KylinUI/PaneVerticalScrollbar" TargetType="Falagard/Scrollbar" LookNFeel="KylinUI/PaneVerticalScrollbar" />
+	<FalagardMapping WindowType="KylinUI/PaneVerticalScrollbarThumb" TargetType="Falagard/Thumb" LookNFeel="KylinUI/PaneVerticalScrollbarThumb" />
+	
+
+
+	<FalagardMapping WindowType="KylinUI/HorizontalScrollbar" TargetType="Falagard/Scrollbar" LookNFeel="KylinUI/HorizontalScrollbar" />
+	<FalagardMapping WindowType="KylinUI/HorizontalScrollbarThumb" TargetType="Falagard/Thumb" LookNFeel="KylinUI/HorizontalScrollbarThumb" />	
+
+	<FalagardMapping WindowType="KylinUI/Button_MiniClose" TargetType="Falagard/SystemButton" LookNFeel="KylinUI/Button_MiniClose" />
+
+	<FalagardMapping WindowType="KylinUI/FrameWindow_HelpText" TargetType="Falagard/FrameWindow" LookNFeel="KylinUI/FrameWindow_HelpText" />
+	<FalagardMapping WindowType="KylinUI/Titlebar" TargetType="Falagard/Titlebar" LookNFeel="KylinUI/Titlebar" />
+	<FalagardMapping WindowType="KylinUI/Titlebar_2" TargetType="Falagard/Titlebar" LookNFeel="KylinUI/Titlebar_2" />
+	<FalagardMapping WindowType="KylinUI/SystemButton" TargetType="Falagard/SystemButton" LookNFeel="KylinUI/Button_1" />
+
+	<FalagardMapping WindowType="KylinUI/MenuItem" TargetType="Falagard/MenuItem" LookNFeel="KylinUI/MenuItem" />
+	<FalagardMapping WindowType="KylinUI/PopupMenu" TargetType="Falagard/PopupMenu" LookNFeel="KylinUI/PopupMenu" />
+	
+	<FalagardMapping WindowType="KylinUI/Tooltip" TargetType="Falagard/Tooltip" LookNFeel="KylinUI/Tooltip" />
+	<FalagardMapping WindowType="KylinUI/SuperTooltip" TargetType="Falagard/SuperTooltip" LookNFeel="KylinUI/SuperTooltip" />
+	<FalagardMapping WindowType="KylinUI/SuperTooltip/ResizeText" TargetType="Falagard/ExtendTooltip" LookNFeel="KylinUI/SuperTooltip/ResizeText" />
+
+	<FalagardMapping WindowType="KylinUI/ListHeader" TargetType="Falagard/ListHeader" LookNFeel="KylinUI/ListHeader" />
+	<FalagardMapping WindowType="KylinUI/ListHeaderSegment" TargetType="Falagard/ListHeaderSegment" LookNFeel="KylinUI/ListHeaderSegment" />
+	<FalagardMapping WindowType="KylinUI/NewListHeaderSegment" TargetType="Falagard/ListHeaderSegment" LookNFeel="KylinUI/NewListHeaderSegment" />
+	
+	
+	<FalagardMapping WindowType="KylinUI/Listbox" TargetType="Falagard/Listbox" LookNFeel="KylinUI/Listbox" />
+	<FalagardMapping WindowType="KylinUI/Listbox_Debug" TargetType="Falagard/Listbox" LookNFeel="KylinUI/Listbox_Debug" />
+	
+	<FalagardMapping WindowType="KylinUI/TripListbox" TargetType="Falagard/Listbox" LookNFeel="KylinUI/TripListbox" />
+	<FalagardMapping WindowType="KylinUI/TripVerticalScrollbar" TargetType="Falagard/Scrollbar" LookNFeel="KylinUI/TripVerticalScrollbar" />
+	<FalagardMapping WindowType="KylinUI/TripVerticalScrollbarThumb" TargetType="Falagard/Thumb" LookNFeel="KylinUI/TripVerticalScrollbarThumb" />
+	
+
+	<FalagardMapping WindowType="KylinUI/ComboDropList" TargetType="Falagard/ComboDropList" LookNFeel="KylinUI/ComboDropList" />
+	<FalagardMapping WindowType="KylinUI/ComboList" TargetType="Falagard/Combobox" LookNFeel="KylinUI/Combobox" />
+	<FalagardMapping WindowType="KylinUI/CoutComboList" TargetType="Falagard/Combobox" LookNFeel="KylinUI/CoutCombobox" />
+	<FalagardMapping WindowType="KylinUI/ComboEditbox" TargetType="Falagard/Editbox" LookNFeel="KylinUI/ComboEditbox" />
+	<FalagardMapping WindowType="KylinUI/Button_Combo" TargetType="Falagard/Button" LookNFeel="KylinUI/Button_2" />
+	
+
+	<FalagardMapping WindowType="KylinUI/Wealth" TargetType="Falagard/Wealth" LookNFeel="KylinUI/Wealth" />
+	<FalagardMapping WindowType="KylinUI/SimpleText" TargetType="Falagard/SimpleText" LookNFeel="KylinUI/SimpleText" />
+
+	<FalagardMapping WindowType="KylinUI/MeshWindow" TargetType="Falagard/ActorWindow" LookNFeel="KylinUI/MeshWindow" />
+	
+	<FalagardMapping WindowType="KylinUI/BoundWindow" TargetType="Falagard/BoundWindow" LookNFeel="KylinUI/BoundWindow" />
+	<FalagardMapping WindowType="KylinUI/DragTitle" TargetType="Falagard/DragTitle" LookNFeel="KylinUI/DragTitle" />
+
+	<FalagardMapping WindowType="KylinUI/SuperProgress" TargetType="Falagard/ExtendProgress" LookNFeel="KylinUI/ProgressBar_PlayerHP" />
+	<FalagardMapping WindowType="KylinUI/SceneMap" TargetType="Falagard/SceneMap" LookNFeel="KylinUI/StaticImage" />
+	<FalagardMapping WindowType="KylinUI/InfoList" TargetType="Falagard/InfoList" LookNFeel="KylinUI/Listbox_Debug" />
+	<FalagardMapping WindowType="KylinUI/Minimap" TargetType="Falagard/Radar" LookNFeel="KylinUI/StaticImage" />
+	<FalagardMapping WindowType="KylinUI/CreatureBoard" TargetType="Falagard/RoleInformationBoard" LookNFeel="KylinUI/CreatureBoard" />
+	<FalagardMapping WindowType="KylinUI/CreatureBoardItem" TargetType="Falagard/RoleInformationBoard" LookNFeel="KylinUI/CreatureBoardItem" />
+	<FalagardMapping WindowType="KylinUI/CreatureBoardNPC" TargetType="Falagard/RoleInformationBoard" LookNFeel="KylinUI/CreatureBoardNPC" />
+	<FalagardMapping WindowType="KylinUI/StopWatch" TargetType="Falagard/CountDownTimer" LookNFeel="KylinUI/StopWatch" />
+	
+	<FalagardMapping WindowType="KylinUI/Animate" TargetType="Falagard/KeyImageAnimation" LookNFeel="KylinUI/ActionButton" />
+	<FalagardMapping WindowType="KylinUI/NewAnimate" TargetType="Falagard/KeyImageAnimation" LookNFeel="KylinUI/ActionButton3" />
+	<FalagardMapping WindowType="KylinUI/NoHoverAnimate" TargetType="Falagard/KeyImageAnimation" LookNFeel="KylinUI/ActionButton4" />
+	<FalagardMapping WindowType="KylinUI/AnimateWindow" TargetType="Falagard/KeyImageAnimation" LookNFeel="KylinUI/Button_2" />
+
+	<FalagardMapping WindowType="KylinUI/SelfFitWindow" TargetType="Falagard/SelfAdaptation" LookNFeel="KylinUI/SelfFitWindow" />
+	<FalagardMapping WindowType="KylinUI/PaoPao" TargetType="Falagard/Balloon" LookNFeel="KylinUI/PaoPao" />
+	<FalagardMapping WindowType="KylinUI/MoodPaoPao" TargetType="Falagard/Balloon" LookNFeel="KylinUI/MoodPaoPao" />
+
+	<FalagardMapping WindowType="KylinUI/Slider" TargetType="Falagard/Slider" LookNFeel="KylinUI/Slider" />
+	<FalagardMapping WindowType="KylinUI/SliderThumb" TargetType="Falagard/Thumb" LookNFeel="KylinUI/SliderThumb" />
+
+	<FalagardMapping WindowType="KylinUI/ListHeaderSegment" TargetType="Falagard/ListHeaderSegment" LookNFeel="KylinUI/ListHeaderSegment" />
+	<FalagardMapping WindowType="KylinUI/MultiColumnList" TargetType="Falagard/MultiColumnList" LookNFeel="KylinUI/MultiColumnList" />
+	<FalagardMapping WindowType="KylinUI/SeverMultiColumnList" TargetType="Falagard/MultiColumnList" LookNFeel="KylinUI/SeverMultiColumnList" />
+	<FalagardMapping WindowType="KylinUI/NewMultiColumnList" TargetType="Falagard/MultiColumnList" LookNFeel="KylinUI/NewMultiColumnList" />
+	
+	<FalagardMapping WindowType="KylinUI/ListHeader" TargetType="Falagard/ListHeader" LookNFeel="KylinUI/ListHeader" />
+	<FalagardMapping WindowType="KylinUI/NewListHeader" TargetType="Falagard/ListHeader" LookNFeel="KylinUI/NewListHeader" />
+	
+	<FalagardMapping WindowType="KylinUI/SoftKeyWindow" TargetType="Falagard/SoftKeyWindow" LookNFeel="KylinUI/StaticImage" />
+	<FalagardMapping WindowType="KylinUI/ScrollablePane" TargetType="Falagard/ScrollablePane" LookNFeel="KylinUI/ScrollablePane" />
+	<FalagardMapping WindowType="KylinUI/3DDefaultWindow" TargetType="3D/DefaultWindow" LookNFeel="KylinUI/3DDefaultWindow" />
+	<FalagardMapping WindowType="KylinUI/TextScrollBar" TargetType="Falagard/TextScrollBar" LookNFeel="KylinUI/TextScrollBar" /> 
+	<FalagardMapping WindowType="KylinUI/EventTimer" TargetType="Falagard/EventTimer" LookNFeel="KylinUI/EventTimer" />
+	
+	<FalagardMapping WindowType="KylinUI/PartyMessageBox" TargetType="DefaultWindow" LookNFeel="KylinUI/PartyMessageBox" />
+</GUIScheme>

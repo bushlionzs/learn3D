@@ -1,0 +1,182 @@
+<?xml version="1.0" ?>
+<Imageset Name="Common" imagefile="common.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true" version="2">
+	<Image Name="Dummy" XPos="80" YPos="77" Width="4" Height="4" />
+
+	<Image Name="ButtonLeftNormal_1" XPos="0" YPos="0" Width="21" Height="22" />
+	<Image Name="ButtonMiddleNormal_1" XPos="21" YPos="0" Width="21" Height="22" />
+	<Image Name="ButtonRightNormal_1" XPos="42" YPos="0" Width="21" Height="22" />
+	
+	<Image Name="ButtonLeftHighlight_1" XPos="0" YPos="23" Width="21" Height="22" />
+	<Image Name="ButtonMiddleHighlight_1" XPos="21" YPos="23" Width="21" Height="22" />
+	<Image Name="ButtonRightHighlight_1" XPos="42" YPos="23" Width="21" Height="22" />
+	
+	<Image Name="ButtonLeftPushed_1" XPos="0" YPos="46" Width="21" Height="22" />
+	<Image Name="ButtonMiddlePushed_1" XPos="21" YPos="46" Width="21" Height="22" />
+	<Image Name="ButtonRightPushed_1" XPos="42" YPos="46" Width="21" Height="22" />
+
+	<Image Name="ButtonLeftDisable_1" XPos="0" YPos="69" Width="21" Height="22" />
+	<Image Name="ButtonMiddleDisable_1" XPos="21" YPos="69" Width="21" Height="22" />
+	<Image Name="ButtonRightDisable_1" XPos="42" YPos="69" Width="21" Height="22" />
+	
+	<Image Name="Button2_Normal" XPos="64" YPos="0" Width="32" Height="18" />
+	<Image Name="Button2_Hover" XPos="64" YPos="19" Width="32" Height="18" />
+	<Image Name="Button2_Pushed" XPos="64" YPos="38" Width="32" Height="18" />
+	<Image Name="Button2_Disable" XPos="64" YPos="57" Width="32" Height="18" />
+	
+	<Image Name="Help_Normal" XPos="0" YPos="92" Width="17" Height="17" />
+	<Image Name="Help_Pushed" XPos="0" YPos="128" Width="17" Height="17" />
+	<Image Name="Help_Hover" XPos="0" YPos="110" Width="17" Height="17" />
+	<Image Name="Help_Disable" XPos="0" YPos="146" Width="17" Height="17" />
+	<Image Name="Close_Normal" XPos="18" YPos="92" Width="17" Height="17" />
+	<Image Name="Close_Pushed" XPos="18" YPos="128" Width="17" Height="17" />
+	<Image Name="Close_Hover" XPos="18" YPos="110" Width="17" Height="17" />
+	<Image Name="Close_Disable" XPos="18" YPos="146" Width="17" Height="17" />
+	<Image Name="ModelLevorotation_Normal" XPos="36" YPos="92" Width="19" Height="17" />
+	<Image Name="ModelLevorotation_Hover" XPos="36" YPos="110" Width="19" Height="17" />
+	<Image Name="ModelLevorotation_Pushed" XPos="36" YPos="128" Width="19" Height="17" />
+	<Image Name="ModelLevorotation_Disable" XPos="36" YPos="146" Width="19" Height="17" />
+	<Image Name="ModelClockwise_Normal" XPos="56" YPos="92" Width="19" Height="17" />
+	<Image Name="ModelClockwise_Hover" XPos="56" YPos="110" Width="19" Height="17" />
+	<Image Name="ModelClockwise_Pushed" XPos="56" YPos="128" Width="19" Height="17" />
+	<Image Name="ModelClockwise_Disable" XPos="56" YPos="146" Width="19" Height="17" />
+	
+	<Image Name="Page_UP_Normal" XPos="76" YPos="92" Width="19" Height="17" />
+	<Image Name="Page_UP_Hover" XPos="76" YPos="110" Width="19" Height="17" />
+	<Image Name="Page_UP_Pushed" XPos="76" YPos="128" Width="19" Height="17" />
+	<Image Name="Page_UP_Disable" XPos="76" YPos="146" Width="19" Height="17" />
+	<Image Name="Page_Down_Normal" XPos="96" YPos="92" Width="19" Height="17" />
+	<Image Name="Page_Down_Hover" XPos="96" YPos="110" Width="19" Height="17" />
+	<Image Name="Page_Down_Pushed" XPos="96" YPos="128" Width="19" Height="17" />
+	<Image Name="Page_Down_Disable" XPos="96" YPos="146" Width="19" Height="17" />
+	
+	<Image Name="SearchesOnline_Normal" XPos="116" YPos="92" Width="19" Height="17" />
+	<Image Name="SearchesOnline_Hover" XPos="116" YPos="110" Width="19" Height="17" />
+	<Image Name="SearchesOnline_Pushed" XPos="116" YPos="128" Width="19" Height="17" />
+	<Image Name="SearchesOnline_Disable" XPos="116" YPos="146" Width="19" Height="17" />
+	
+	<Image Name="AddFirend_Normal" XPos="136" YPos="92" Width="19" Height="17" />
+	<Image Name="AddFirend_Hover" XPos="136" YPos="110" Width="19" Height="17" />
+	<Image Name="AddFirend_Pushed" XPos="136" YPos="128" Width="19" Height="17" />
+	<Image Name="AddFirend_Disable" XPos="136" YPos="146" Width="19" Height="17" />
+	
+	<Image Name="Left_ScrollBar_Up_Normal" XPos="156" YPos="92" Width="13" Height="17" />
+	<Image Name="Left_ScrollBar_Up_Hover" XPos="156" YPos="110" Width="13" Height="17" />
+	<Image Name="Left_ScrollBar_Up_Pushed" XPos="156" YPos="128" Width="13" Height="17" />
+	<Image Name="Left_ScrollBar_Up_Disable" XPos="156" YPos="146" Width="13" Height="17" />
+	
+	<Image Name="Left_ScrollBar_Down_Normal" XPos="170" YPos="92" Width="13" Height="17" />
+	<Image Name="Left_ScrollBar_Down_Hover" XPos="170" YPos="110" Width="13" Height="17" />
+	<Image Name="Left_ScrollBar_Down_Pushed" XPos="170" YPos="128" Width="13" Height="17" />
+	<Image Name="Left_ScrollBar_Down_Disable" XPos="170" YPos="146" Width="13" Height="17" />
+	
+	<Image Name="Left_ImmediacyScrollBar_Down_Normal" XPos="234" YPos="92" Width="13" Height="17" />
+	<Image Name="Left_ImmediacyScrollBar_Down_Hover" XPos="234" YPos="110" Width="13" Height="17" />
+	<Image Name="Left_ImmediacyScrollBar_Down_Pushed" XPos="234" YPos="128" Width="13" Height="17" />
+	<Image Name="Left_ImmediacyScrollBar_Down_Disable" XPos="234" YPos="146" Width="13" Height="17" />
+	
+	<Image Name="CommonFram_TopLeftFrame" XPos="116" YPos="0" Width="14" Height="14" />
+	<Image Name="CommonFram_TopRightFrame" XPos="149" YPos="0" Width="14" Height="14" />
+	<Image Name="CommonFram_BottomLeftFrame" XPos="116" YPos="33" Width="14" Height="14" />
+	<Image Name="CommonFram_BottomRightFrame" XPos="149" YPos="33" Width="14" Height="14" />
+	<Image Name="CommonFram_LeftFrame" XPos="116" YPos="17" Width="14" Height="13" />
+	<Image Name="CommonFram_RightFrame" XPos="149" YPos="17" Width="14" Height="13" />
+	<Image Name="CommonFram_TopFrame" XPos="133" YPos="0" Width="13" Height="14" />
+	<Image Name="CommonFram_BottomFrame" XPos="133" YPos="33" Width="13" Height="14" />
+	<Image Name="CommonFram_Center" XPos="133" YPos="17" Width="13" Height="13" />
+	
+	<Image Name="ComboList_Button_Normal" XPos="97" YPos="0" Width="18" Height="18" />
+	<Image Name="ComboList_Button_Hover" XPos="97" YPos="19" Width="18" Height="18" />
+	<Image Name="ComboList_Button_Pushed" XPos="97" YPos="38" Width="18" Height="18" />
+	<Image Name="ComboList_Button_Disable" XPos="97" YPos="57" Width="18" Height="18" />
+	<Image Name="ComboList_ListBackground_TopLeftFrame" XPos="116" YPos="48" Width="7" Height="7" />
+	<Image Name="ComboList_ListBackground_TopRightFrame" XPos="132" YPos="48" Width="7" Height="7" />
+	<Image Name="ComboList_ListBackground_BottomLeftFrame" XPos="116" YPos="64" Width="7" Height="7" />
+	<Image Name="ComboList_ListBackground_BottomRightFrame" XPos="132" YPos="64" Width="7" Height="7" />
+	<Image Name="ComboList_ListBackground_LeftFrame" XPos="116" YPos="56" Width="7" Height="7" />
+	<Image Name="ComboList_ListBackground_RightFrame" XPos="132" YPos="56" Width="7" Height="7" />
+	<Image Name="ComboList_ListBackground_TopFrame" XPos="124" YPos="48" Width="7" Height="7" />
+	<Image Name="ComboList_ListBackground_BottomFrame" XPos="124" YPos="64" Width="7" Height="7" />
+	<Image Name="ComboList_TargetBackground" XPos="0" YPos="189" Width="60" Height="18" />
+	
+	<Image Name="Controlbar_Left" XPos="64" YPos="83" Width="24" Height="8" />
+	<Image Name="Controlbar_Middle" XPos="89" YPos="83" Width="24" Height="8" />
+	<Image Name="Controlbar_Right" XPos="114" YPos="83" Width="24" Height="8" />
+	<Image Name="Controlbar_ControlUnit" XPos="138" YPos="78" Width="7" Height="13" />
+	
+	<Image Name="ScrollBar_Top" XPos="164" YPos="0" Width="20" Height="20" />
+	<Image Name="ScrollBar_Middle" XPos="207" YPos="0" Width="20" Height="20" />
+	<Image Name="ScrollBar_Bottom" XPos="185" YPos="0" Width="20" Height="20" />
+	<Image Name="ScrollBar_Up_Normal" XPos="198" YPos="92" Width="19" Height="17" />
+	<Image Name="ScrollBar_Up_Hover" XPos="198" YPos="110" Width="19" Height="17" />
+	<Image Name="ScrollBar_Up_Pushed" XPos="198" YPos="128" Width="19" Height="17" />
+	<Image Name="ScrollBar_Up_Disable" XPos="198" YPos="146" Width="19" Height="17" />
+	<Image Name="ScrollBar_Down_Normal" XPos="216" YPos="92" Width="19" Height="17" />
+	<Image Name="ScrollBar_Down_Hover" XPos="216" YPos="110" Width="19" Height="17" />
+	<Image Name="ScrollBar_Down_Pushed" XPos="216" YPos="128" Width="19" Height="17" />
+	<Image Name="ScrollBar_Down_Disable" XPos="216" YPos="146" Width="19" Height="17" />
+	<Image Name="Trajectory_Background" XPos="64" YPos="77" Width="11" Height="4" />
+	<Image Name="ScrollBar_Thumb_Normal" XPos="184" YPos="92" Width="13" Height="17" />
+	<Image Name="ScrollBar_Thumb_Hover" XPos="184" YPos="110" Width="13" Height="17" />
+	<Image Name="ScrollBar_Thumb_Pushed" XPos="184" YPos="128" Width="13" Height="17" />
+	<Image Name="ScrollBar_Thumb_Disable" XPos="184" YPos="146" Width="13" Height="17" />
+	
+	<Image Name="Text_Background" XPos="0" YPos="209" Width="124" Height="24" />
+	
+	<Image Name="Item_TopLeftFrame" XPos="146" YPos="56" Width="5" Height="5" />
+	<Image Name="Item_TopRightFrame" XPos="171" YPos="56" Width="10" Height="10" />
+	<Image Name="Item_BottomLeftFrame" XPos="146" YPos="81" Width="10" Height="10" />
+	<Image Name="Item_BottomRightFrame" XPos="171" YPos="81" Width="10" Height="10" />
+	<Image Name="Item_LeftFrame" XPos="146" YPos="69" Width="10" Height="9" />
+	<Image Name="Item_RightFrame" XPos="171" YPos="69" Width="10" Height="9" />
+	<Image Name="Item_TopFrame" XPos="159" YPos="56" Width="9" Height="10" />
+	<Image Name="Item_BottomFrame" XPos="159" YPos="81" Width="9" Height="10" /> 
+	<Image Name="Item_Center" XPos="159" YPos="69" Width="9" Height="9" />
+	
+	<Image Name="XinFa_TopLeftFrame" XPos="211" YPos="12" Width="9" Height="9" />
+	<Image Name="XinFa_TopRightFrame" XPos="234" YPos="12" Width="9" Height="9" />
+	<Image Name="XinFa_BottomLeftFrame" XPos="211" YPos="35" Width="9" Height="9" />
+	<Image Name="XinFa_BottomRightFrame" XPos="234" YPos="35" Width="9" Height="9" />
+	<Image Name="XinFa_LeftFrame" XPos="211" YPos="24" Width="2" Height="8" />
+	<Image Name="XinFa_RightFrame" XPos="241" YPos="24" Width="2" Height="8" />
+	<Image Name="XinFa_TopFrame" XPos="223" YPos="12" Width="8" Height="2" />
+	<Image Name="XinFa_BottomFrame" XPos="223" YPos="42" Width="8" Height="2" />
+	
+	<Image Name="Model_TopLeftFrame" XPos="182" YPos="56" Width="10" Height="10" />
+	<Image Name="Model_TopRightFrame" XPos="207" YPos="56" Width="10" Height="10" />
+	<Image Name="Model_BottomLeftFrame" XPos="182" YPos="81" Width="10" Height="10" />
+	<Image Name="Model_BottomRightFrame" XPos="207" YPos="81" Width="10" Height="10" />
+	<Image Name="Model_LeftFrame" XPos="182" YPos="69" Width="10" Height="9" />
+	<Image Name="Model_RightFrame" XPos="207" YPos="69" Width="10" Height="9" />
+	<Image Name="Model_TopFrame" XPos="195" YPos="56" Width="9" Height="10" />
+	<Image Name="Model_BottomFrame" XPos="195" YPos="81" Width="9" Height="10" />
+	<Image Name="Model_Center" XPos="195" YPos="69" Width="9" Height="9" />
+	
+	<Image Name="Shadow_Background" XPos="166" YPos="23" Width="14" Height="14" />
+	
+	<Image Name="Checkbox_Dot_Normal" XPos="211" YPos="0" Width="11" Height="11" />
+	<Image Name="Checkbox_Dot_Pushed" XPos="223" YPos="0" Width="11" Height="11" />
+	<Image Name="CheckBox_Option_Empty" XPos="133" YPos="187" Width="18" Height="18" />
+	<Image Name="CheckBox_Option_Confirm" XPos="133" YPos="206" Width="18" Height="18" />
+	
+	<Image Name="EditBoxCarat" XPos="184" YPos="23" Width="2" Height="14" />
+	<Image Name="HoverTextBak" XPos="195" YPos="26" Width="8" Height="8" />
+	<Image Name="Text_Target_Background" XPos="155" YPos="187" Width="100" Height="18" />
+	
+	<Image Name="EditBoxLeft" XPos="0" YPos="164" Width="23" Height="24" />
+	<Image Name="EditBoxRight" XPos="51" YPos="164" Width="23" Height="24" />
+	<Image Name="EditBoxMiddle" XPos="26" YPos="164" Width="22" Height="24" />
+	
+	<Image Name="IconBackground_Hover" XPos="75" YPos="164" Width="28" Height="18" />
+	<Image Name="IconBackground_Pushed" XPos="104" YPos="164" Width="28" Height="18" />
+	
+	<Image Name="PaoPao_TopLeft" XPos="152" YPos="206" Width="9" Height="9" />
+	<Image Name="PaoPao_TopRight" XPos="175" YPos="206" Width="9" Height="9" />
+	<Image Name="PaoPao_BottomLeft" XPos="152" YPos="229" Width="9" Height="17" />
+	<Image Name="PaoPao_BottomRight" XPos="175" YPos="229" Width="9" Height="17" />
+	<Image Name="PaoPao_Left" XPos="152" YPos="218" Width="9" Height="8" />
+	<Image Name="PaoPao_Right" XPos="175" YPos="218" Width="9" Height="8" />
+	<Image Name="PaoPao_Top" XPos="164" YPos="206" Width="8" Height="9" />
+	<Image Name="PaoPao_Bottom" XPos="164" YPos="229" Width="8" Height="17" />
+	<Image Name="PaoPao_Center" XPos="164" YPos="218" Width="8" Height="8" />
+	<Image Name="PaoPao_Cornu" XPos="181" YPos="164" Width="11" Height="10" />
+</Imageset>

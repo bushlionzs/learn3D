@@ -1,0 +1,3239 @@
+﻿<?xml version="1.0" ?>
+<Falagard version="7">
+	<!--
+    ***************************************************
+        KylinUI/RewardItem
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/RewardItem">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<ImagerySection name="pushed">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image name="UI_MainUI_1/UI_MainUI_1_selected" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="disabled">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image name="CJSH_icons_1/CJSH_icons_1_action_4" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="disabled" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+		<!--
+    ***************************************************
+        KylinUI/ButtonSale
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ButtonDrop">
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="Background" name="KHan_MainUI_9/KHan_MainUI_9_drop_1" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="Background" name="KHan_MainUI_9/KHan_MainUI_9_drop_1" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/ButtonSale
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ButtonSale">
+		<PropertyDefinition name="NormalTextColour" initialValue="FFFEAA73" redrawOnWrite="true" />
+    <PropertyDefinition name="HoverTextColour" initialValue="FFFEAA73" redrawOnWrite="true" />
+    <PropertyDefinition name="PushedTextColour" initialValue="FFFEAA73" redrawOnWrite="true" />
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="LeftEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_saleimage_nl" />
+				<Image type="RightEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_saleimage_nr" />
+				<Image type="Background" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_saleimage_nm" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="LeftEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_saleimage_ol"  />
+				<Image type="RightEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_saleimage_or"  />
+				<Image type="Background" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_saleimage_om" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="LeftEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_saleimage_ol"  />
+				<Image type="RightEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_saleimage_or"  />
+				<Image type="Background" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_saleimage_om" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+	<!--
+    ***************************************************
+        KylinUI/ButtonIBSale
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ButtonIBSale">
+		<PropertyDefinition name="NormalTextColour" initialValue="FFFFDE46" redrawOnWrite="true" />
+    <PropertyDefinition name="HoverTextColour" initialValue="FFFFDE46" redrawOnWrite="true" />
+    <PropertyDefinition name="PushedTextColour" initialValue="FFFFDE46" redrawOnWrite="true" />
+		<PropertyDefinition name="VertLabelFormatting" initialValue="CentreAligned" />
+		<PropertyDefinition name="HorzLabelFormatting" initialValue="CentreAligned" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertLabelFormatting" />
+				<HorzFormatProperty name="HorzLabelFormatting" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="LeftEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_ibsaleimage_nl"  />
+				<Image type="RightEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_ibsaleimage_nr"  />
+				<Image type="Background" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_ibsaleimage_nm"  />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="hover">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="LeftEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_ibsaleimage_ol"  />
+				<Image type="RightEdge" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_ibsaleimage_or"  />
+				<Image type="Background" name="CJSH_jiaoyi_Fram_1/CJSH_jiaoyi_Fram_1_ibsaleimage_om"  />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="pushed">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="LeftEdge" imageset="CJSH_jiaoyi_Fram_1" image="CJSH_jiaoyi_Fram_1_ibsaleimage_ol" />
+				<Image type="RightEdge" imageset="CJSH_jiaoyi_Fram_1" image="CJSH_jiaoyi_Fram_1_ibsaleimage_or" />
+				<Image type="Background" imageset="CJSH_jiaoyi_Fram_1" image="CJSH_jiaoyi_Fram_1_ibsaleimage_om" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Normal">
+			<Layer>
+				<Section section="normal" />
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Hover">
+			<Layer>
+				<Section section="hover" />
+				<Section section="label">
+					<ColourProperty name="HoverTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Pushed">
+			<Layer>
+				<Section section="pushed" />
+				<Section section="label">
+					<ColourProperty name="PushedTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="label">
+					<ColourProperty name="NormalTextColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/StopWatch
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/StopWatch">
+	</WidgetLook>
+    
+	<!--
+    ***************************************************
+        KylinUI/Titlebar
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Titlebar">
+		<Property name="CaptionColour" value="FFFFFFFF" />
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Tiled" />
+			</FrameComponent>
+		</ImagerySection>
+        <ImagerySection name="caption">
+            <TextComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><ImageDim imageset="TaharezLook" image="NewTitlebarLeft" dimension="Width" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1" offset="-75" type="Width" /></Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+                </Area>
+                <ColourProperty name="CaptionColour" />
+                <VertFormat type="CentreAligned" />
+            </TextComponent>
+        </ImagerySection>
+		<StateImagery name="Active">
+			<Layer>
+				<Section section="main" />
+				<Section section="caption" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Inactive">
+			<Layer>
+				<Section section="main" />
+				<Section section="caption" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="caption">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+
+
+	<!--
+    ***************************************************
+        KylinUI/Titlebar_2
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Titlebar_2">
+        <PropertyDefinition name="CaptionColour" initialValue="FFFFFFFF" redrawOnWrite="true" />
+        <ImagerySection name="main">
+            <ImageryComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+                </Area>
+                <Image imageset="TaharezLook" image="NewTitlebarLeft" />
+                <VertFormat type="Stretched" />
+            </ImageryComponent>
+            <ImageryComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="RightEdge" >
+                        <UnifiedDim scale="1" type="RightEdge">
+                            <DimOperator op="Subtract">
+                                <ImageDim imageset="TaharezLook" image="SysAreaRight" dimension="Width">
+                                    <DimOperator op="Add">
+                                        <ImageDim imageset="TaharezLook" image="SysAreaMiddle" dimension="Width" />
+                                    </DimOperator>
+                                </ImageDim>
+                            </DimOperator>
+                        </UnifiedDim>
+                    </Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+                </Area>
+                <Image imageset="TaharezLook" image="NewTitlebarRight" />
+                <VertFormat type="Stretched" />
+                <HorzFormat type="RightAligned" />
+            </ImageryComponent>
+            <ImageryComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="RightEdge" >
+                        <UnifiedDim scale="1" type="RightEdge">
+                            <DimOperator op="Subtract">
+                                <ImageDim imageset="TaharezLook" image="SysAreaRight" dimension="Width" />
+                            </DimOperator>
+                        </UnifiedDim>
+                    </Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+                </Area>
+                <Image imageset="TaharezLook" image="SysAreaMiddle" />
+                <VertFormat type="Stretched" />
+                <HorzFormat type="RightAligned" />
+            </ImageryComponent>
+            <ImageryComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1.0" type="Width" /></Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+                </Area>
+                <Image imageset="TaharezLook" image="SysAreaRight" />
+                <VertFormat type="Stretched" />
+                <HorzFormat type="RightAligned" />
+            </ImageryComponent>
+            <ImageryComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><ImageDim imageset="TaharezLook" image="NewTitlebarLeft" dimension="Width" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="RightEdge" >
+                        <UnifiedDim scale="1" type="RightEdge">
+                            <DimOperator op="Subtract">
+                                <ImageDim imageset="TaharezLook" image="SysAreaRight" dimension="Width">
+                                    <DimOperator op="Add">
+                                        <ImageDim imageset="TaharezLook" image="SysAreaMiddle" dimension="Width">
+                                            <DimOperator op="Add">
+                                                <ImageDim imageset="TaharezLook" image="NewTitlebarRight" dimension="Width" />
+                                            </DimOperator>
+                                        </ImageDim>
+                                    </DimOperator>
+                                </ImageDim>
+                            </DimOperator>
+                        </UnifiedDim>
+                    </Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1.0" type="Height" /></Dim>
+                </Area>
+                <Image imageset="TaharezLook" image="NewTitlebarMiddle" />
+                <VertFormat type="Stretched" />
+                <HorzFormat type="Stretched" />
+            </ImageryComponent>
+        </ImagerySection>
+        <ImagerySection name="caption">
+            <TextComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><ImageDim imageset="TaharezLook" image="NewTitlebarLeft" dimension="Width" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1" offset="-75" type="Width" /></Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+                </Area>
+                <ColourProperty name="CaptionColour" />
+                <VertFormat type="CentreAligned" />
+            </TextComponent>
+        </ImagerySection>
+        <StateImagery name="Active">
+            <Layer>
+                <Section section="main" />
+                <Section section="caption" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="Inactive">
+            <Layer>
+                <Section section="main" />
+                <Section section="caption" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="Disabled">
+            <Layer>
+                <Section section="main">
+                    <Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+                </Section>
+                <Section section="caption">
+                    <Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+                </Section>
+            </Layer>
+        </StateImagery>
+    </WidgetLook>
+
+	<!--
+    ***************************************************
+        KylinUI/FrameWindow
+    ***************************************************
+    -->
+    <WidgetLook name="KylinUI/FrameWindow">
+        <Property name="NSSizingCursorImage" value="set:TaharezLook image:MouseNoSoCursor" />
+        <Property name="EWSizingCursorImage" value="set:TaharezLook image:MouseEsWeCursor" />
+        <Property name="NWSESizingCursorImage" value="set:TaharezLook image:MouseNwSeCursor" />
+        <Property name="NESWSizingCursorImage" value="set:TaharezLook image:MouseNeSwCursor" />
+        <NamedArea name="ClientWithTitleWithFrame">
+            <Area>
+                <Dim type="LeftEdge" ><ImageDim imageset="TaharezLook" image="WindowTopLeft" dimension="Width" /></Dim>
+                <Dim type="TopEdge" ><WidgetDim widget="__auto_titlebar__" dimension="BottomEdge" /></Dim>
+                <Dim type="RightEdge" >
+                    <UnifiedDim scale="1" type="RightEdge">
+                        <DimOperator op="Subtract">
+                            <ImageDim imageset="TaharezLook" image="WindowTopRight" dimension="Width" />
+                        </DimOperator>
+                    </UnifiedDim>
+                </Dim>
+                <Dim type="BottomEdge" >
+                    <UnifiedDim scale="1" type="BottomEdge">
+                        <DimOperator op="Subtract">
+                            <ImageDim imageset="TaharezLook" image="WindowBottomEdge" dimension="Height" />
+                        </DimOperator>
+                    </UnifiedDim>
+                </Dim>
+            </Area>
+        </NamedArea>
+        <NamedArea name="ClientWithTitleNoFrame">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><WidgetDim widget="__auto_titlebar__" dimension="BottomEdge" /></Dim>
+                <Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+                <Dim type="BottomEdge" ><WidgetDim dimension="BottomEdge" /></Dim>
+            </Area>
+        </NamedArea>
+        <NamedArea name="ClientNoTitleWithFrame">
+            <Area>
+                <Dim type="LeftEdge" ><ImageDim imageset="TaharezLook" image="WindowTopLeft" dimension="Width" /></Dim>
+                <Dim type="TopEdge" ><ImageDim imageset="TaharezLook" image="WindowTopEdge" dimension="Height" /></Dim>
+                <Dim type="RightEdge" >
+                    <UnifiedDim scale="1" type="RightEdge">
+                        <DimOperator op="Subtract">
+                            <ImageDim imageset="TaharezLook" image="WindowTopRight" dimension="Width" />
+                        </DimOperator>
+                    </UnifiedDim>
+                </Dim>
+                <Dim type="BottomEdge" >
+                    <UnifiedDim scale="1" type="BottomEdge">
+                        <DimOperator op="Subtract">
+                            <ImageDim imageset="TaharezLook" image="WindowBottomEdge" dimension="Height" />
+                        </DimOperator>
+                    </UnifiedDim>
+                </Dim>
+            </Area>
+        </NamedArea>
+        <NamedArea name="ClientNoTitleNoFrame">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+                <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+            </Area>
+        </NamedArea>
+        <Child type="KylinUI/Titlebar_2" nameSuffix="__auto_titlebar__">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+                <Dim type="Height" ><FontDim type="LineSpacing" padding="8" /></Dim>
+            </Area>
+            <Property name="AlwaysOnTop" value="False" />
+        </Child>
+        <Child type="KylinUI/SystemButton" nameSuffix="__auto_closebutton__">
+            <Area>
+                <Dim type="LeftEdge" >
+                    <UnifiedDim scale="1" type="LeftEdge">
+                        <DimOperator op="Subtract">
+                            <ImageDim imageset="TaharezLook" image="SysAreaRight" dimension="Width">
+                                <DimOperator op="Add">
+                                    <ImageDim imageset="TaharezLook" image="SysAreaMiddle" dimension="Width" />
+                                </DimOperator>
+                            </ImageDim>
+                        </DimOperator>
+                    </UnifiedDim>
+                </Dim>
+                <Dim type="TopEdge" >
+                    <AbsoluteDim value="0.5">
+                        <DimOperator op="Multiply">
+                            <WidgetDim widget="__auto_titlebar__" dimension="Height">
+                                <DimOperator op="Subtract">
+                                    <ImageDim imageset="TaharezLook" image="NewCloseButtonNormal" dimension="Width" />
+                                </DimOperator>
+                            </WidgetDim>
+                        </DimOperator>
+                    </AbsoluteDim>
+                </Dim>
+                <Dim type="Width" ><ImageDim imageset="TaharezLook" image="NewCloseButtonNormal" dimension="Width" /></Dim>
+                <Dim type="Height" ><ImageDim imageset="TaharezLook" image="NewCloseButtonNormal" dimension="Width" /></Dim>
+            </Area>
+            <Property name="AlwaysOnTop" value="True" />
+            <Property name="NormalImage" value="set:TaharezLook image:NewCloseButtonNormal" />
+            <Property name="HoverImage" value="set:TaharezLook image:NewCloseButtonHover" />
+            <Property name="PushedImage" value="set:TaharezLook image:NewCloseButtonPressed" />
+        </Child>
+        <ImagerySection name="withtitle_frame">
+            <FrameComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><WidgetDim widget="__auto_titlebar__" dimension="BottomEdge" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+                    <Dim type="BottomEdge" ><UnifiedDim scale="1" type="BottomEdge" /></Dim>
+                </Area>
+                <Image type="BottomLeftCorner" imageset="TaharezLook" image="WindowBottomLeft" />
+                <Image type="BottomRightCorner" imageset="TaharezLook" image="WindowBottomRight" />
+                <Image type="LeftEdge" imageset="TaharezLook" image="WindowLeftEdge" />
+                <Image type="RightEdge" imageset="TaharezLook" image="WindowRightEdge" />
+                <Image type="BottomEdge" imageset="TaharezLook" image="WindowBottomEdge" />
+                <Image type="Background" imageset="TaharezLook" image="ClientBrush" />
+                <VertFormat type="Tiled" />
+                <HorzFormat type="Tiled" />
+            </FrameComponent>
+        </ImagerySection>
+        <ImagerySection name="notitle_frame">
+            <FrameComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+                </Area>
+                <Image type="TopLeftCorner" imageset="TaharezLook" image="WindowTopLeft" />
+                <Image type="TopRightCorner" imageset="TaharezLook" image="WindowTopRight" />
+                <Image type="BottomLeftCorner" imageset="TaharezLook" image="WindowBottomLeft" />
+                <Image type="BottomRightCorner" imageset="TaharezLook" image="WindowBottomRight" />
+                <Image type="LeftEdge" imageset="TaharezLook" image="WindowLeftEdge" />
+                <Image type="RightEdge" imageset="TaharezLook" image="WindowRightEdge" />
+                <Image type="BottomEdge" imageset="TaharezLook" image="WindowBottomEdge" />
+                <Image type="Background" imageset="TaharezLook" image="ClientBrush" />
+                <VertFormat type="Tiled" />
+                <HorzFormat type="Tiled" />
+            </FrameComponent>
+        </ImagerySection>
+        <ImagerySection name="withtitle_noframe_client_area">
+            <ImageryComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><WidgetDim widget="__auto_titlebar__" dimension="Height" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+                    <Dim type="BottomEdge" ><UnifiedDim scale="1" type="BottomEdge" /></Dim>
+                </Area>
+                <Image imageset="TaharezLook" image="ClientBrush" />
+                <VertFormat type="Tiled" />
+                <HorzFormat type="Tiled" />
+            </ImageryComponent>
+        </ImagerySection>
+        <ImagerySection name="notitle_noframe_client_area">
+            <ImageryComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1" type="Width" /></Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+                </Area>
+                <Image imageset="TaharezLook" image="ClientBrush" />
+                <VertFormat type="Tiled" />
+                <HorzFormat type="Tiled" />
+            </ImageryComponent>
+        </ImagerySection>
+        <StateImagery name="ActiveWithTitleWithFrame">
+            <Layer>
+                <Section section="withtitle_frame" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="InactiveWithTitleWithFrame">
+            <Layer>
+                <Section section="withtitle_frame" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="DisabledWithTitleWithFrame">
+            <Layer>
+                <Section section="withtitle_frame">
+                    <Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+                </Section>
+            </Layer>
+        </StateImagery>
+        <StateImagery name="ActiveWithTitleNoFrame">
+            <Layer>
+                <Section section="withtitle_noframe_client_area" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="InactiveWithTitleNoFrame">
+            <Layer>
+                <Section section="withtitle_noframe_client_area" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="DisabledWithTitleNoFrame">
+            <Layer>
+                <Section section="withtitle_noframe_client_area">
+                    <Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+                </Section>
+            </Layer>
+        </StateImagery>
+        <StateImagery name="ActiveNoTitleWithFrame">
+            <Layer>
+                <Section section="notitle_frame" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="InactiveNoTitleWithFrame">
+            <Layer>
+                <Section section="notitle_frame" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="DisabledNoTitleWithFrame">
+            <Layer>
+                <Section section="notitle_frame">
+                    <Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+                </Section>
+            </Layer>
+        </StateImagery>
+        <StateImagery name="ActiveNoTitleNoFrame">
+            <Layer>
+                <Section section="notitle_noframe_client_area" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="InactiveNoTitleNoFrame">
+            <Layer>
+                <Section section="notitle_noframe_client_area" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="DisabledNoTitleNoFrame">
+            <Layer>
+                <Section section="notitle_noframe_client_area">
+                    <Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+                </Section>
+            </Layer>
+        </StateImagery>
+    </WidgetLook> 
+	<!--
+    ***************************************************
+        KylinUI/FrameWindow_HelpText
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/FrameWindow_HelpText">
+		<Property name="NSSizingCursorImage" value="set:TaharezLook image:MouseNoSoCursor" />
+		<Property name="EWSizingCursorImage" value="set:TaharezLook image:MouseEsWeCursor" />
+		<Property name="NWSESizingCursorImage" value="set:TaharezLook image:MouseNwSeCursor" />
+		<Property name="NESWSizingCursorImage" value="set:TaharezLook image:MouseNeSwCursor" />
+		<NamedArea name="ClientWithTitleWithFrame">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/Titlebar" nameSuffix="__auto_titlebar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="0.5" type="Width">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="75" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="150" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="40" />
+				</Dim>
+			</Area>
+			<Property name="AlwaysOnTop" value="False" />
+		</Child>
+		<Child type="KylinUI/SystemButton" nameSuffix="__auto_closebutton__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="1" type="LeftEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="26" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="21" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_button_close_n" dimension="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="KHan_Frame_2" image="KHan_Frame_2_button_close_n" dimension="Width" />
+				</Dim>
+			</Area>
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:KHan_Frame_2 image:KHan_Frame_2_button_close_n" />
+			<Property name="HoverImage" value="set:KHan_Frame_2 image:KHan_Frame_2_button_close_o" />
+			<Property name="PushedImage" value="set:KHan_Frame_2 image:KHan_Frame_2_button_close_c" />
+		</Child>
+		<ImagerySection name="caption_title">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<UnifiedDim scale="0.5" type="Width">
+							<DimOperator op="Subtract">
+								<AbsoluteDim value="75" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<AbsoluteDim value="150" />
+					</Dim>
+					<Dim type="Height">
+						<AbsoluteDim value="40" />
+					</Dim>
+				</Area>
+				<VertFormat type="Tiled" />
+				<HorzFormat type="Tiled" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="ActiveWithTitleWithFrame">
+			<Layer>
+				<Section look="KylinUI/StaticShared" section="HelpFrame_BackGround" />
+				<Section look="KylinUI/StaticShared" section="HelpFrame_Frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="InactiveWithTitleWithFrame">
+			<Layer>
+				<Section look="KylinUI/StaticShared" section="HelpFrame_BackGround" />
+				<Section look="KylinUI/StaticShared" section="HelpFrame_Frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledWithTitleWithFrame">
+			<Layer>
+				<Section look="KylinUI/StaticShared" section="HelpFrame_BackGround" />
+				<Section look="KylinUI/StaticShared" section="HelpFrame_Frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ActiveNoTitleWithFrame">
+			<Layer>
+				<Section look="KylinUI/StaticShared" section="HelpFrame_BackGround" />
+				<Section look="KylinUI/StaticShared" section="HelpFrame_Frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="InactiveNoTitleWithFrame">
+			<Layer>
+				<Section look="KylinUI/StaticShared" section="HelpFrame_BackGround" />
+				<Section look="KylinUI/StaticShared" section="HelpFrame_Frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledNoTitleWithFrame">
+			<Layer>
+				<Section look="KylinUI/StaticShared" section="HelpFrame_BackGround" />
+				<Section look="KylinUI/StaticShared" section="HelpFrame_Frame" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/ProgressBar_PlayerHP
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ProgressBar_PlayerHP">
+		<NamedArea name="ProgressArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" type="Height" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<StateImagery name="Enabled">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="EnabledProgress">
+			<Layer />
+		</StateImagery>
+		<StateImagery name="DisabledProgress">
+			<Layer />
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/MenuItem
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/MenuItem">
+		<Property name="SpecialModal" value="True" />
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge"><AbsoluteDim value="5" /></Dim>
+					<Dim type="TopEdge"><AbsoluteDim value="5" /></Dim>
+					<Dim type="RightEdge"><UnifiedDim scale="1" offset="-5" type="RightEdge" />	</Dim>
+					<Dim type="BottomEdge">	<UnifiedDim scale="1" offset="-5" type="BottomEdge" /></Dim>
+				</Area>
+				<VertFormat type="CentreAligned" />
+				<HorzFormat type="LeftAligned" />
+			</TextComponent>
+		</ImagerySection>
+		<ImagerySection name="frame">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_hovertextbak" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="popup_arrow_right">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_hovertextbak" />
+				<VertFormat type="CentreAligned" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="popup_arrow_left">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_hovertextbak" />
+				<VertFormat type="CentreAligned" />
+				<HorzFormat type="RightAligned" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="EnabledNormal">
+			<Layer>
+				<Section section="label"/>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="EnabledHover">
+			<Layer>
+				<Section section="frame">
+					<Colours topLeft="FF316AC5" topRight="FF316AC5" bottomLeft="FF316AC5" bottomRight="FF316AC5" />
+				</Section>
+				<Section section="label"/>
+					
+			</Layer>
+		</StateImagery>
+		<StateImagery name="EnabledPushed">
+			<Layer>
+				<Section section="frame">
+					<Colours topLeft="FF316AC5" topRight="FF316AC5" bottomLeft="FF316AC5" bottomRight="FF316AC5" />
+				</Section>
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="EnabledPopupOpen">
+			<Layer>
+				<Section section="frame" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledNormal">
+			<Layer>
+				<Section section="frame">
+					<Colours topLeft="FF606060" topRight="FF606060" bottomLeft="FF606060" bottomRight="FF606060" />
+				</Section>
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledHover">
+			<Layer>
+				<Section section="frame" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledPushed">
+			<Layer>
+				<Section section="frame" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="DisabledPopupOpen">
+			<Layer>
+				<Section section="frame" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="PopupClosedIcon">
+			<Layer>
+				<Section section="popup_arrow_right" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="PopupOpenIcon">
+			<Layer>
+				<Section section="popup_arrow_left" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/PopMenu
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/PopupMenu">
+		<NamedArea name="ItemRenderArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_4" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_2" dimension="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_6" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_8" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_1" />
+				<Image type="TopRightCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_3" />
+				<Image type="BottomLeftCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_7" />
+				<Image type="BottomRightCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_9" />
+				<Image type="LeftEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_4" />
+				<Image type="RightEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_6" />
+				<Image type="TopEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_2" />
+				<Image type="BottomEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_8" />
+				<Image type="Background" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_5" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="frame" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="frame">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        WoWLoop/SuperTooltip
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/SuperTooltip">
+		<!-- Just for store border size. It's fake!! -->
+		<NamedArea name="DynamicPartBorderSize">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="14" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="14" />
+						<DimOperator op="Multiply">
+							<AbsoluteDim value="0.5" />
+						</DimOperator>
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="14" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="14" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_5" />
+				<Image type="TopLeftCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" />
+				<Image type="TopRightCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_3" />
+				<Image type="BottomLeftCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_7" />
+				<Image type="BottomRightCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_9" />
+				<Image type="LeftEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_4" />
+				<Image type="RightEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_6" />
+				<Image type="TopEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_2" />
+				<Image type="BottomEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_8" />
+			</FrameComponent>
+		</ImagerySection>
+		<StateImagery name="Frame">
+			<Layer />
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/SuperTooltip/ResizeText
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/SuperTooltip/ResizeText"></WidgetLook>
+	<!--
+    ***************************************************
+        TaharezLook/Tooltip
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Tooltip">
+		<NamedArea name="TextArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" dimension="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_5" />
+				<Image type="TopLeftCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" />
+				<Image type="TopRightCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_3" />
+				<Image type="BottomLeftCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_7" />
+				<Image type="BottomRightCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_9" />
+				<Image type="LeftEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_4" />
+				<Image type="RightEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_6" />
+				<Image type="TopEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_2" />
+				<Image type="BottomEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_8" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" dimension="Width" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" dimension="Height" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_tip1_1" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Colours topLeft="FFffff00" topRight="FFffff00" bottomLeft="FFffff00" bottomRight="FFffff00" />
+				<VertFormat type="VertCentred" />
+				<HorzFormat type="WordWrapLeftAligned" />
+			</TextComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/ConsoleOutput
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ConsoleOutput">
+		<Property name="SelectionBrushImage" value="set:TaharezLook image:MultiLineEditboxSelectionBrush" />
+		<NamedArea name="TextArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="5" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="5" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="5" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="5" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="12" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" offset="-12" type="Height" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_midmid" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="Carat">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="TaharezLook" image="EditBoxCarat" dimension="Width" />
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1.0" type="BottomEdge" />
+					</Dim>
+				</Area>
+				<Image imageset="TaharezLook" image="EditBoxCarat" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ReadOnly">
+			<Layer>
+				<Section section="main" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/ConsoleInput
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ConsoleInput">
+		<NamedArea name="TextArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="5" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="5" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" offset="-1" type="RightEdge" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1.0" offset="-1" type="BottomEdge" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="container_normal">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="Background" imageset="KHan_Frame_2" image="KHan_Frame_2_frameback_frame_1_midmid" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="selection">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1.0" type="RightEdge" />
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1.0" type="BottomEdge" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_hovertextbak" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<ImagerySection name="Carat">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_editboxcarat" dimension="Width" />
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1.0" type="BottomEdge" />
+					</Dim>
+				</Area>
+				<Image imageset="CJSH_icons_1" image="CJSH_icons_1_editboxcarat" />
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Stretched" />
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="container_normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ReadOnly">
+			<Layer>
+				<Section section="container_normal" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="container_normal">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="ActiveSelection">
+			<Layer>
+				<Section section="selection">
+					<ColourProperty name="ActiveSelectionColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+		<StateImagery name="InactiveSelection">
+			<Layer>
+				<Section section="selection">
+					<ColourProperty name="InactiveSelectionColour" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/Wealth
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Wealth">
+		<Property name="GoldIcon" value="set:KHan_MainUI_15 image:KHan_MainUI_15_money_gold" />
+		<Property name="SilverIcon" value="set:KHan_MainUI_15 image:KHan_MainUI_15_money_silver" />
+		<Property name="CopperIcon" value="set:KHan_MainUI_15 image:KHan_MainUI_15_money_copperCoin" />
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/ComplexWindow/ParentWindow
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ComplexWindow/ParentWindow"></WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/ComplexWindow
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ComplexWindow">
+		<NamedArea name="ItemIconSize">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="Width" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="Height" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<Child type="KylinUI/ComplexWindow/ParentWindow" nameSuffix="__auto_parent__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">		
+					<!--<UnifiedDim scale="1.0" offset="-23" type="Width" />		-->
+					<UnifiedDim scale="1.0" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listdownbotton_Normal" dimension="Width">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator> 
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" offset="0" type="Height" />
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/VerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_Listupbotton_Normal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" offset="0" type="Height" />
+				</Dim>
+			</Area>
+			<HorzAlignment type="RightAligned" />
+		</Child>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/BoundWindow
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/BoundWindow"></WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/DragTitle
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/DragTitle"></WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/MeshWindow
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/MeshWindow"></WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/BeHitBoard
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/BeHitBoard">
+		<Property name="Font" value="simhei10" />
+		<Property name="VertFormatting" value="TopAligned" />
+	</WidgetLook>
+
+    <!--
+    ***************************************************
+        KylinUI/ScrollablePane
+    ***************************************************
+    -->
+    <WidgetLook name="KylinUI/ScrollablePane">
+        <NamedArea name="ViewableArea">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="RightEdge" ><UnifiedDim scale="1.0" type="RightEdge" /></Dim>
+                <Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+            </Area>
+        </NamedArea>
+        <NamedArea name="ViewableAreaHScroll">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="RightEdge" ><UnifiedDim scale="1.0" type="RightEdge" /></Dim>
+                <Dim type="BottomEdge" ><UnifiedDim scale="1.0" offset="-16" type="BottomEdge" /></Dim>
+            </Area>
+        </NamedArea>
+        <NamedArea name="ViewableAreaVScroll">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="RightEdge" >
+                	<UnifiedDim scale="1.0" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_downnormal" dimension="Width">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+                </Dim>
+                <Dim type="BottomEdge" ><UnifiedDim scale="1.0" type="BottomEdge" /></Dim>
+            </Area>
+        </NamedArea>
+        <NamedArea name="ViewableAreaHVScroll">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="RightEdge" ><UnifiedDim scale="1.0" offset="-16" type="RightEdge" /></Dim>
+                <Dim type="BottomEdge" ><UnifiedDim scale="1.0" offset="-16" type="BottomEdge" /></Dim>
+            </Area>
+        </NamedArea>
+        <Child  type="KylinUI/HorizontalScrollbar" nameSuffix="__auto_hscrollbar__">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="Width" ><UnifiedDim scale="0"  type="Width" /></Dim>
+                <Dim type="Height" ><AbsoluteDim value="0" /></Dim>
+            </Area>
+            <VertAlignment type="BottomAligned" />
+        </Child>
+        <Child  type="KylinUI/PaneVerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+            <Area>
+                <Dim type="LeftEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                <Dim type="Width" >
+                	<ImageDim imageset="UI_Common_1" image="UI_Common_1_scroll_downnormal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="0" />
+						</DimOperator>
+					</ImageDim>
+                </Dim>
+                <Dim type="Height" ><UnifiedDim scale="1"  type="Height" /></Dim>
+            </Area>
+            <HorzAlignment type="RightAligned" />
+        </Child>
+        <StateImagery name="Enabled" />
+        <StateImagery name="Disabled" />
+    </WidgetLook>
+
+
+	<!--
+    ***************************************************
+        KylinUI/ChatBoard
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ChatBoard">
+		
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/ChatHistory/ParentWindow
+    ***************************************************
+    -->
+	
+	<WidgetLook name="KylinUI/ChatHistory/ParentWindow"></WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/ChatHistory
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ChatHistory">
+		<Child type="KylinUI/ChatHistory/ParentWindow" nameSuffix="__auto_parent__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="0.0" offset="25" type="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" offset="3" type="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" offset="-3" type="Width" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1.0" type="Height">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="3" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/ChatHistoryVerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="22" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" offset="-18" type="Height" />
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/Button_1" nameSuffix="__auto_toend_btn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" offset="-22" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<AbsoluteDim value="11" />
+				</Dim>
+				<Dim type="Height">
+					<AbsoluteDim value="11" />
+				</Dim>
+			</Area>
+			<Property name="UseStandardImagery" value="False" />
+			<Property name="NormalImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barbotton_n" />
+			<Property name="HoverImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barbotton_o" />
+			<Property name="PushedImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barbotton_c" />
+			<Property name="DisabledImage" value="set:KHan_MainUI_2 image:KHan_MainUI_2_barbotton_d" />
+		</Child>
+	</WidgetLook>
+	
+		<!--
+    ***************************************************
+        KylinUI/CJSHChatHistory
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/CJSHChatHistory">
+		<Child type="KylinUI/ChatHistory/ParentWindow" nameSuffix="__auto_parent__">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Width">
+						<DimOperator op="Add">
+							<AbsoluteDim value="2" />
+						</DimOperator>
+					</ImageDim>
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" offset="2" type="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1.0" offset="-2" type="Width" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1.0" type="Height">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="2" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/CJSHChatHistoryVerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="0.0" offset="0" type="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" offset="0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_toend_btn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="0.0" offset="0" type="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="NormalImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_bottom_normal" />
+			<Property name="HoverImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_bottom_hover" />
+			<Property name="PushedImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_bottom_pushed" />
+			<Property name="DisabledImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_bottom_disabled" />
+		</Child>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/CJSHChatHistory2
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/CJSHChatHistory2">
+		<Child type="KylinUI/ChatHistory/ParentWindow" nameSuffix="__auto_parent__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="0.0" offset="2" type="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" offset="2" type="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="2" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1.0" type="Height">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="2" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/CJSHChatHistoryVerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="1" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" offset="0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_toend_btn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="1" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_MainUI_1" image="UI_MainUI_1_chat_bottom_normal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="NormalImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_bottom_normal" />
+			<Property name="HoverImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_bottom_hover" />
+			<Property name="PushedImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_bottom_pushed" />
+			<Property name="DisabledImage" value="set:UI_MainUI_1 image:UI_MainUI_1_chat_bottom_disabled" />
+		</Child>
+	</WidgetLook>
+		<!--
+    ***************************************************
+        KylinUI/Infokeeper
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/Infokeeper">
+		<Child type="KylinUI/ChatHistory/ParentWindow" nameSuffix="__auto_parent__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="0.0" offset="2" type="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" offset="2" type="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_bottomnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="2" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1.0" type="Height">
+						<DimOperator op="Subtract">
+							<AbsoluteDim value="2" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/SeverVerticalScrollbar" nameSuffix="__auto_vscrollbar__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="1" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_bottomnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" offset="0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_bottomnormal" dimension="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_bottomnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_toend_btn__">
+			<Area>
+				<Dim type="LeftEdge">
+					<UnifiedDim scale="1" type="Width">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_bottomnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="1" type="Height">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_bottomnormal" dimension="Height">
+								<DimOperator op="Add">
+									<AbsoluteDim value="0" />
+								</DimOperator>
+							</ImageDim>
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="Width">
+					<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_bottomnormal" dimension="Width" />
+				</Dim>
+				<Dim type="Height">
+					<ImageDim imageset="UI_Board_34" image="UI_Board_34_scroll_bottomnormal" dimension="Height" />
+				</Dim>
+			</Area>
+			<Property name="NormalImage" value="set:UI_Board_34 image:UI_Board_34_scroll_bottomnormal" />
+			<Property name="HoverImage" value="set:UI_Board_34 image:UI_Board_34_scroll_bottomhover" />
+			<Property name="PushedImage" value="set:UI_Board_34 image:UI_Board_34_scroll_bottompushed" />
+			<Property name="DisabledImage" value="set:UI_Board_34 image:UI_Board_34_scroll_bottomdisable" />
+		</Child>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/ChatChannel
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/ChatChannel">
+		<NamedArea name="ItemSize">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<AbsoluteDim value="53" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<AbsoluteDim value="22" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<NamedArea name="IconSize">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="RightEdge">
+					<AbsoluteDim value="53" />
+				</Dim>
+				<Dim type="BottomEdge">
+					<AbsoluteDim value="22" />
+				</Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="frame">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				
+			</ImageryComponent>
+		</ImagerySection>
+		<StateImagery name="Frame">
+			<Layer>
+				<Section section="frame" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/CreatureBoard
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/CreatureBoard">
+		<Property name="RiseOnClick" value="False" />
+		<Property name="MouseHollow" value="True" />
+		<Property name="ClippedByParent" value="False" />
+		<Property name="Visible" value="False" />
+		<Child type="KylinUI/SelfFitWindow" nameSuffix="__auto_playername__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.666666" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="Visible" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="Font" value="simhei11" />
+			<Property name="FitPosition" value="0, 0" />
+		</Child>
+		<Child type="KylinUI/SelfFitWindow" nameSuffix="__auto_playercountrytitle__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="Visible" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="Font" value="simhei11" />
+		</Child>
+		<Child type="KylinUI/SelfFitWindow" nameSuffix="__auto_playerguildtitle__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="Visible" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="Font" value="simhei11" />
+		</Child>
+		<Child type="KylinUI/SelfFitWindow" nameSuffix="__auto_playertitle__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="Visible" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="Font" value="simhei11" />
+		</Child>
+
+
+		<Child type="KylinUI/StaticImage" nameSuffix="__auto_playerpktag__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.05" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.06" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="MouseHollow" value="True" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+		</Child>
+		
+<!--		
+		<Child type="KylinUI/StaticImage" nameSuffix="__auto_playerhplevel__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.10" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.01" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="MouseHollow" value="True" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+		</Child>
+		
+		<Child type="KylinUI/SuperProgress" nameSuffix="__auto_playerhp__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.10" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.01" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="CurrentProgress" value="1.0" />
+			<Property name="ProgressImage" value="set: image:" />
+			<Property name="EffectColor" value="tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF" />
+			<Property name="EffectColorLevel" value="index:0 tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF" />
+			<Property name="MoveSpeed" value="1000" />
+		</Child>
+		
+		<Child type="KylinUI/SelfFitWindow" nameSuffix="__auto_playerleveltext__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.666666" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="Visible" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="FitPosition" value="0, 0" />
+		</Child>
+		<Child type="KylinUI/StaticImage" nameSuffix="__auto_playerlevelico__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="MouseHollow" value="True" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+		</Child>
+-->
+
+<!-- 
+		<Child type="KylinUI/StaticImage" nameSuffix="__auto_countryflag__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="MouseHollow" value="True" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="Image" value="set:blood image:blood_xinyue" />
+		</Child>
+-->
+		
+		<Child type="KylinUI/StaticImage" nameSuffix="__auto_leaderflag__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.001" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.001" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="MouseHollow" value="True" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="Image" value="set:CJSH_icons_1 image:CJSH_icons_1_team_caption" />
+		</Child>
+
+
+<!-- 帮会权限标记
+		<Child type="KylinUI/StaticImage" nameSuffix="__auto_bangpaiflag__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="MouseHollow" value="True" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="Image" value="set:CJSH_icons_1 image:CJSH_icons_1_team_caption" />
+		</Child>
+-->		
+		<Child type="KylinUI/ButtonSale" nameSuffix="__auto_salessign__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.001" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.001" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="HookMode" value="Bottom" />
+		</Child>
+	
+		<Child type="KylinUI/ButtonIBSale" nameSuffix="__auto_IBsalessign__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.001" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.001" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="HookMode" value="Bottom" />
+		</Child>
+		
+	<Child type="KylinUI/ButtonDrop" nameSuffix="__auto_dropsign__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.001" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.001" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="HookMode" value="Bottom" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="Font" value="simhei11" />
+		</Child>
+			
+		<Child type="KylinUI/PaoPao" nameSuffix="__auto_paopao__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.3333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="RiseOnClick" value="True" />
+			<Property name="MouseHollow" value="False" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="HorzFormatting" value="WordWrapLeftAligned" />
+			<Property name="VertFormatting" value="WordWrapLeftAligned" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="MaxWidth" value="200" />
+			<Property name="Life" value="7" />
+			<Property name="FadeInTime" value="1" />
+			<Property name="FadeOutTime" value="2" />
+			<Property name="ArrowImage" value="set:CJSH_icons_1 image:CJSH_icons_1_paopao_10" />
+		</Child>
+		
+		<Child type="KylinUI/MoodPaoPao" nameSuffix="__auto_mood__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.3333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="RiseOnClick" value="True" />
+			<Property name="MouseHollow" value="False" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="HorzFormatting" value="WordWrapLeftAligned" />
+			<Property name="VertFormatting" value="WordWrapLeftAligned" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="MaxWidth" value="200" />
+			<Property name="Life" value="7" />
+			<Property name="FadeInTime" value="1" />
+			<Property name="FadeOutTime" value="2" />
+
+		</Child>
+		
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/CreatureBoardItem
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/CreatureBoardItem">
+		<Property name="RiseOnClick" value="False" />
+		<Property name="MouseHollow" value="True" />
+		<Property name="ClippedByParent" value="False" />
+		<Property name="Visible" value="False" />
+		<Child type="KylinUI/SelfFitWindow" nameSuffix="__item__auto_playername__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.666666" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="Visible" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="Font" value="simhei11" />
+			<Property name="FitPosition" value="0, 0" />
+		</Child>
+		<Child type="KylinUI/ButtonDrop" nameSuffix="__item__auto_dropsign__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.001" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.001" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="HookMode" value="Bottom" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="Font" value="simhei11" />
+		</Child>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/CreatureBoardNPC
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/CreatureBoardNPC">
+		<Property name="RiseOnClick" value="False" />
+		<Property name="MouseHollow" value="True" />
+		<Property name="ClippedByParent" value="False" />
+		<Property name="Visible" value="False" />
+		<Child type="KylinUI/SelfFitWindow" nameSuffix="__npc__auto_playername__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.666666" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="Visible" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="Font" value="simhei11" />
+			<Property name="FitPosition" value="0, 0" />
+		</Child>
+		<Child type="KylinUI/SelfFitWindow" nameSuffix="__npc__auto_playertitle__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="Visible" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="Font" value="simhei11" />
+		</Child>
+		<Child type="KylinUI/StaticImage" nameSuffix="__npc__auto_playerpktag__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.05" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.06" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="MouseHollow" value="True" />
+			<Property name="RiseOnClick" value="True" />
+			<Property name="ClippedByParent" value="False" />
+		</Child>
+		<Child type="KylinUI/PaoPao" nameSuffix="__npc__auto_paopao__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.0" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="1.0" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.3333333" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="RiseOnClick" value="True" />
+			<Property name="MouseHollow" value="False" />
+			<Property name="ClippedByParent" value="False" />
+			<Property name="HorzFormatting" value="WordWrapLeftAligned" />
+			<Property name="VertFormatting" value="WordWrapLeftAligned" />
+			<Property name="FitType" value="Bottom" />
+			<Property name="MaxWidth" value="200" />
+			<Property name="Life" value="7" />
+			<Property name="FadeInTime" value="1" />
+			<Property name="FadeOutTime" value="2" />
+			<Property name="ArrowImage" value="set:CJSH_icons_1 image:CJSH_icons_1_paopao_10" />
+		</Child>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/PaoPao
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/PaoPao">
+		<Property name="RiseOnClick" value="False" />
+		<Property name="MouseHollow" value="True" />
+		<Property name="ClippedByParent" value="False" />
+		<NamedArea name="TextArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_4" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_2" dimension="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_6" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_8" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" offset="-7" type="Height" />
+					</Dim>
+				</Area>
+				<Image type="TopLeftCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_1" />
+				<Image type="TopRightCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_3" />
+				<Image type="BottomLeftCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_7" />
+				<Image type="BottomRightCorner" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_9" />
+				<Image type="LeftEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_4" />
+				<Image type="RightEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_6" />
+				<Image type="TopEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_2" />
+				<Image type="BottomEdge" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_8" />
+				<Image type="Background" imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_5" />
+			</FrameComponent>
+		</ImagerySection>
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_4" dimension="Width" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_2" dimension="Height" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_2" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_8" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Colours topLeft="FFFFFFFF" topRight="FFFFFFFF" bottomLeft="FFFFFFFF" bottomRight="FFFFFFFF" />
+				<HorzFormat type="WordWrapLeftAligned" />
+			</TextComponent>
+		</ImagerySection>
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	<!--
+    ***************************************************
+        KylinUI/MoodPaoPao
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/MoodPaoPao">
+		<Property name="RiseOnClick" value="False" />
+		<Property name="MouseHollow" value="True" />
+		<Property name="ClippedByParent" value="False" />
+		
+		<NamedArea name="TextArea">
+			<Area>
+				<Dim type="LeftEdge">
+					<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_4" dimension="Width" />
+				</Dim>
+				<Dim type="TopEdge">
+					<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_2" dimension="Height" />
+				</Dim>
+				<Dim type="RightEdge">
+					<UnifiedDim scale="1" type="RightEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_6" dimension="Width" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+				<Dim type="BottomEdge">
+					<UnifiedDim scale="1" type="BottomEdge">
+						<DimOperator op="Subtract">
+							<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_8" dimension="Height" />
+						</DimOperator>
+					</UnifiedDim>
+				</Dim>
+			</Area>
+		</NamedArea>
+		
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" offset="-7" type="Height" />
+					</Dim>
+				</Area>		
+			</FrameComponent>
+		</ImagerySection>
+	
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_4" dimension="Width" />
+					</Dim>
+					<Dim type="TopEdge">
+						<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_2" dimension="Height" />
+					</Dim>
+					<Dim type="RightEdge">
+						<UnifiedDim scale="1" type="RightEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_2" dimension="Width" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+					<Dim type="BottomEdge">
+						<UnifiedDim scale="1" type="BottomEdge">
+							<DimOperator op="Subtract">
+								<ImageDim imageset="CJSH_icons_1" image="CJSH_icons_1_paopao_8" dimension="Height" />
+							</DimOperator>
+						</UnifiedDim>
+					</Dim>
+				</Area>
+				<Colours topLeft="FFFFFFFF" topRight="FFFFFFFF" bottomLeft="FFFFFFFF" bottomRight="FFFFFFFF" />
+				<HorzFormat type="WordWrapLeftAligned" />
+			</TextComponent>
+		</ImagerySection>
+
+		<StateImagery name="Enabled">
+			<Layer>
+				<Section section="main" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main" />
+				<Section section="label" />
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
+	
+	<!--
+    ***************************************************
+        KylinUI/SelfFitWindow
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/SelfFitWindow">
+		<Property name="RiseOnClick" value="False" />
+		<Property name="MouseHollow" value="True" />
+		<Property name="ClippedByParent" value="False" />
+	</WidgetLook>
+	<!--
+    ***************************************************
+        KylinUI/3DDefaultWindow
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/3DDefaultWindow">
+	</WidgetLook>
+	
+	
+	<!--
+    ***************************************************
+        KylinUI/TextScrollBar    水平滚动条
+    ***************************************************
+    --> 
+     <WidgetLook name="KylinUI/TextScrollBar">
+	</WidgetLook>
+    <!--
+    ***************************************************
+        KylinUI/EventTimer    带事件触发的倒计时
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/EventTimer">
+	</WidgetLook>
+	
+	<!--
+	***************************************************
+				KylinUI/PartyMessageBox 活动界面
+	***************************************************
+	 -->
+	<WidgetLook name="KylinUI/PartyMessageBox">
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_MessageBox_Title_Close__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="188" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.700000" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.243750" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.175000" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="NormalImage" value="set:UI_duihua_1 image:UI_duihua_1_close_normal" />
+			<Property name="HoverImage" value="set:UI_duihua_1 image:UI_duihua_1_close_hover" />
+			<Property name="PushedImage" value="set:UI_duihua_1 image:UI_duihua_1_close_pushed" />
+			<Property name="AlwaysOnTop" value="True" />
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_MessageBox_Title_help__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="188" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.700000" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.243750" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.175000" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="NormalImage" value="set:UI_duihua_1 image:UI_duihua_1_help_normal" />
+			<Property name="HoverImage" value="set:UI_duihua_1 image:UI_duihua_1_help_hover" />
+			<Property name="PushedImage" value="set:UI_duihua_1 image:UI_duihua_1_help_pushed" />
+			<Property name="AlwaysOnTop" value="True" />
+		</Child>
+		<Child type="KylinUI/SimpleText" nameSuffix="__auto_MessageBoxTitleText__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="65" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.25" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.5" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.2" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="HorzFormatting" value="WordWrapLeftAligned" />
+			<Property name="VertFormatting" value="TopAligned" />
+			<Property name="TextColor" value="FFFF0000" />
+			<Property name="RiseOnClick" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="MouseLButtonHollow" value="True" />
+			<Property name="MouseRButtonHollow" value="True" />
+			<Property name="MouseMoveHollow" value="True" />
+		</Child>
+		<Child type="KylinUI/SimpleText" nameSuffix="__auto_MessageBoxTimeText__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="225" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.274775" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.125" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.108108" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="VertFormatting" value="VertCentred" />
+			<Property name="TextColor" value="FFFF0000" />
+			<Property name="RiseOnClick" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="MouseLButtonHollow" value="True" />
+			<Property name="MouseRButtonHollow" value="True" />
+			<Property name="MouseMoveHollow" value="True" />
+			
+		</Child>
+		<Child type="KylinUI/StaticImage" nameSuffix="__MessageBox_Frame_1__" >
+			<!--Comment	""	-->
+			<!--	Left=0, Top=32, Right=320, Bottom=160	-->
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="0" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.202703" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.972222" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.797297" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="Image" value="set:UI_MainBoard_7 image:UI_MainBoard_7_System_Board_1" />
+			<Property name="RiseOnClick" value="False" />
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_OKsign__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="55" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.700000" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.243750" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.175000" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="NormalImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_Team_Button_Normal" />
+			<Property name="HoverImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_Team_Button_Hover" />
+			<Property name="PushedImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_Team_Button_Pushed" />
+			<Property name="DisabledImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_Team_Button_Disabled" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="Text" value="确定" />
+			
+		</Child>
+		<Child type="KylinUI/Button_2" nameSuffix="__auto_Cancelsign__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="188" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.700000" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.243750" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.175000" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="NormalImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_Team_Button_Normal" />
+			<Property name="HoverImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_Team_Button_Hover" />
+			<Property name="PushedImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_Team_Button_Pushed" />
+			<Property name="DisabledImage" value="set:UI_MainBoard_1 image:UI_MainBoard_1_Team_Button_Disabled" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="Text" value="取消" />
+			
+		</Child>
+		<Child type="KylinUI/SimpleText" nameSuffix="__auto_MessageBoxText__">
+			<Area>
+				<Dim type="LeftEdge">
+					<AbsoluteDim value="40" />
+				</Dim>
+				<Dim type="TopEdge">
+					<UnifiedDim scale="0.312500" type="Height" />
+				</Dim>
+				<Dim type="Width">
+					<UnifiedDim scale="0.550000" type="Width" />
+				</Dim>
+				<Dim type="Height">
+					<UnifiedDim scale="0.400000" type="Height" />
+				</Dim>
+			</Area>
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="HorzFormatting" value="WordWrapLeftAligned" />
+			<Property name="VertFormatting" value="TopAligned" />
+			<Property name="TextColor" value="FFFFFFFF" />
+			<Property name="RiseOnClick" value="False" />
+			<Property name="MouseHollow" value="True" />
+			<Property name="MouseLButtonHollow" value="True" />
+			<Property name="MouseRButtonHollow" value="True" />
+			<Property name="MouseMoveHollow" value="True" />
+			
+		</Child>
+		
+	</WidgetLook>
+	
+    <!--
+    ***************************************************
+        KylinUI/RingProgress
+    ***************************************************
+    -->
+	<WidgetLook name="KylinUI/RingProgress">
+		<StateImagery name="Enabled" />
+		<StateImagery name="Disabled" />
+	</WidgetLook>	
+	
+</Falagard>
