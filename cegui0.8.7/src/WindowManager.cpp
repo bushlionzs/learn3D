@@ -283,16 +283,16 @@ Window* WindowManager::loadLayoutFromFile(const String& filename, const String& 
     GUILayout_xmlHandler handler(callback, userdata);
 
 	// do parse (which uses handler to create actual data)
-	CEGUI_TRY
+	//CEGUI_TRY
 	{
         System::getSingleton().getXMLParser()->parseXMLFile(handler,
             filename, GUILayoutSchemaName, resourceGroup.empty() ? d_defaultResourceGroup : resourceGroup);
 	}
-	CEGUI_CATCH(...)
+	/*CEGUI_CATCH(...)
 	{
         Logger::getSingleton().logEvent("WindowManager::loadLayoutFromFile - loading of layout from file '" + filename +"' failed.", Errors);
         CEGUI_RETHROW;
-	}
+	}*/
 
     // log the completion of loading
     Logger::getSingleton().logEvent("---- Successfully completed loading of GUI layout from '" + filename + "' ----", Standard);

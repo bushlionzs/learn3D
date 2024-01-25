@@ -111,6 +111,11 @@ LRESULT CALLBACK InputManager::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 		if (!InputManager::getSingleton().onWindowClose((size_t)hWnd))
 			return 0;
 	}
+	else if (WM_SIZE == uMsg)
+	{
+		InputManager::getSingleton().mWidth = GET_LOWORD(lParam);
+		InputManager::getSingleton().mHeight = GET_HIWORD(lParam);
+	}
 	else if ((uMsg >= WM_MOUSEFIRST) && (uMsg <= __WM_REALMOUSELAST))
 	{
 		if (gUseMouseMessage)

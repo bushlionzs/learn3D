@@ -257,8 +257,12 @@ Image& ImageManager::get(const String& name) const
     ImageMap::const_iterator i = d_images.find(name);
     
     if (i == d_images.end())
+    {
+        std::string aa = name.c_str();
         CEGUI_THROW(UnknownObjectException(
             "Image not defined: " + name));
+    }
+        
 
     return *i->second.first;
 }
@@ -279,6 +283,7 @@ uint ImageManager::getImageCount() const
 void ImageManager::loadImageset(const String& filename,
                                 const String& resource_group)
 {
+    std::string aa = filename.c_str();
     System::getSingleton().getXMLParser()->parseXMLFile(
             *this, filename, ImagesetSchemaName,
             resource_group.empty() ? d_imagesetDefaultResourceGroup : resource_group);

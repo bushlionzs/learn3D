@@ -215,8 +215,10 @@ void GUILayout_xmlHandler::elementWindowStart(const XMLAttributes& attributes)
         attributes.getValueAsString(Window::WindowNameXMLAttributeName));
 
     // attempt to create window
-    CEGUI_TRY
+   // CEGUI_TRY
     {
+        std::string aa = windowType.c_str();
+        std::string bb = windowName.c_str();
         Window* wnd = WindowManager::getSingleton().createWindow(windowType, windowName);
 
         // add this window to the current parent (if any)
@@ -231,24 +233,24 @@ void GUILayout_xmlHandler::elementWindowStart(const XMLAttributes& attributes)
         // tell it that it is being initialised
         wnd->beginInitialisation();
     }
-    CEGUI_CATCH (AlreadyExistsException&)
-    {
-        // delete all windows created
-        cleanupLoadedWindows();
+    //CEGUI_CATCH (AlreadyExistsException&)
+    //{
+    //    // delete all windows created
+    //    cleanupLoadedWindows();
 
-        // signal error - with more info about what we have done.
-        CEGUI_THROW(InvalidRequestException(
-            "layout loading has been aborted since Window named '" + windowName + "' already exists."));
-    }
-    CEGUI_CATCH (UnknownObjectException&)
-    {
-        // delete all windows created
-        cleanupLoadedWindows();
+    //    // signal error - with more info about what we have done.
+    //    CEGUI_THROW(InvalidRequestException(
+    //        "layout loading has been aborted since Window named '" + windowName + "' already exists."));
+    //}
+    //CEGUI_CATCH (UnknownObjectException&)
+    //{
+    //    // delete all windows created
+    //    cleanupLoadedWindows();
 
-        // signal error - with more info about what we have done.
-        CEGUI_THROW(InvalidRequestException(
-            "layout loading has been aborted since no WindowFactory is available for '" + windowType + "' objects."));
-    }
+    //    // signal error - with more info about what we have done.
+    //    CEGUI_THROW(InvalidRequestException(
+    //        "layout loading has been aborted since no WindowFactory is available for '" + windowType + "' objects."));
+    //}
 }
 
 /*************************************************************************

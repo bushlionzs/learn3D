@@ -29,6 +29,7 @@
 #include <OgreHeader.h>
 #include <OgreResourceManager.h>
 #include <stdio.h>
+#include <string_util.h>
 
 #if defined(__WIN32__) || defined(_WIN32)
 #   include "CEGUI/System.h"
@@ -56,7 +57,7 @@ void DefaultResourceProvider::loadRawDataContainer(const String& filename,
             "Filename supplied for data loading must be valid"));
 
     std::string name = filename.c_str();
-
+    //dy::to_lower(name);
     ResourceInfo* res = Ogre::ResourceManager::getSingleton().getResource(name);
 
     std::string& fullname = res->_fullname;

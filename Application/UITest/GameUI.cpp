@@ -15,18 +15,8 @@
 #include "role.h"
 #include "PackageWindow.h"
 #include "mytestWindow.h"
-//#include "mainMenuWindow.h"
-#include <CEGUI/WindowManager.h>
-#include <CEGUI/FontManager.h>
-#include <CEGUI/SchemeManager.h>
-#include <CEGUI/System.h>
-//#include <CEGUI/ImagesetManager.h>
-#include <CEGUI/Window.h>
-#include <CEGUI/widgets/PushButton.h>
-#include <CEGUI/ImageManager.h>
-#include <DefaultWindow.h>
-#include <FrameWindow.h>
-#include <CEGUIManager.h>
+#include <CEGUI/InputEvent.h>
+#include <CEGUI/widgets/DragContainer.h>
 
 using namespace CEGUI;
 
@@ -44,12 +34,34 @@ bool GameUI::appInit()
 {
 	ApplicationBase::appInit();
 
+    //helloDemo();
+    PackageDemo();
+	return true;
+}
 
-	WindowManager& winMgr = WindowManager::getSingleton();
-    auto* context = CEGUIManager::getSingleton().getGUIContext();
-	auto* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+void GameUI::appUpdate(float delta)
+{
+	ApplicationBase::appUpdate(delta);
 
-	context->setRootWindow(root);
+	if (mAnimationState)
+	{
+		mAnimationState->addTime(delta);
+	}
+}
+
+EngineType GameUI::getEngineType()
+{
+	//return EngineType_Vulkan;
+	return EngineType_Dx11;
+}
+
+void GameUI::helloDemo()
+{
+    WindowManager& winMgr = WindowManager::getSingleton();
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+    auto* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+
+    mGUIContext->setRootWindow(root);
 
     FrameWindow* wnd = (FrameWindow*)winMgr.createWindow("TaharezLook/FrameWindow", "Demo Window");
 
@@ -83,21 +95,99 @@ bool GameUI::appInit()
     // text to "Hello World!", so that this text will appear as the caption in the
     // FrameWindow's titlebar.
     wnd->setText("Hello World!");
-	return true;
 }
 
-void GameUI::appUpdate(float delta)
+void GameUI::DragDropDemo()
 {
-	ApplicationBase::appUpdate(delta);
+    // load windows look
+    SchemeManager::getSingleton().createFromFile("WindowsLook.scheme");
 
-	if (mAnimationState)
-	{
-		mAnimationState->addTime(delta);
-	}
+    // load font and setup default if not loaded via scheme
+    Font& defaultFont = FontManager::getSingleton().createFromFile("DejaVuSans-12.font");
+
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+    // Set default font for the gui context
+    mGUIContext->setDefaultFont(&defaultFont);
+
+    // set up defaults
+    mGUIContext->getMouseCursor().setDefaultImage("WindowsLook/MouseArrow");
+
+    // load the drive icons imageset
+    ImageManager::getSingleton().loadImageset("DriveIcons.imageset");
+
+    // load the initial layout
+    mGUIContext->setRootWindow(
+        WindowManager::getSingleton().loadLayoutFromFile("DragDropDemo.layout"));
+
+    // setup events
+    subscribeEvents();
 }
 
-EngineType GameUI::getEngineType()
+void GameUI::subscribeEvents()
 {
-	//return EngineType_Vulkan;
-	return EngineType_Dx11;
+    using namespace CEGUI;
+
+    Window* root = mGUIContext->getRootWindow();
+
+  
+
+    /*
+     * Subscribe the same handler to each of the twelve slots
+     */
+    CEGUI::String base_name = "MainWindow/Slot";
+
+    for (int i = 1; i <= 12; ++i)
+    {
+        CEGUI_TRY
+        {
+            // get the window pointer for this slot
+            Window * wnd =
+                root->getChild(base_name + PropertyHelper<int>::toString(i));
+
+        // subscribe the handler.
+        wnd->subscribeEvent(
+            Window::EventDragDropItemDropped,
+            Event::Subscriber(&GameUI::handle_ItemDropped, this));
+        }
+            // if something goes wrong, log the issue but do not bomb!
+            CEGUI_CATCH(CEGUI::Exception&)
+        {}
+    }
+}
+
+bool GameUI::handle_ItemDropped(const CEGUI::EventArgs& args)
+{
+    using namespace CEGUI;
+
+    // cast the args to the 'real' type so we can get access to extra fields
+    const DragDropEventArgs& dd_args =
+        static_cast<const DragDropEventArgs&>(args);
+
+    if (!dd_args.window->getChildCount())
+    {
+        // add dragdrop item as child of target if target has no item already
+        dd_args.window->addChild(dd_args.dragDropItem);
+        // Now we must reset the item position from it's 'dropped' location,
+        // since we're now a child of an entirely different window
+        dd_args.dragDropItem->setPosition(
+            UVector2(UDim(0.05f, 0), UDim(0.05f, 0)));
+    }
+
+    return true;
+}
+
+void GameUI::PackageDemo()
+{
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+
+    ImageManager::getSingleton().loadImageset("ui_duihua_1.imageset.xml");
+    ImageManager::getSingleton().loadImageset("ui_mainboard_2.imageset.xml");
+    ImageManager::getSingleton().loadImageset("ui_mainboard_3.imageset.xml");
+
+    auto* root = WindowManager::getSingleton().loadLayoutFromFile("Package.Kylin.xml");
+    DefaultWindow* aa = (DefaultWindow*)root;
+    //aa->setProperty("BackgroundEnabled", "false");
+    //root->setWidth(CEGUI::UDim(504.0f, 0)); // 设置宽度为500像素
+    //root->setHeight(CEGUI::UDim(608.0f, 0)); // 设置高度为600像素
+    mGUIContext->setRootWindow(root);
 }

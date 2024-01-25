@@ -126,9 +126,6 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
     d_matrixValid(false),
     d_sync(false)
 {
-    initialiseRenderOp(d_renderOp, d_hwBuffer, 64);
-
-    
 
     // basic initialisation of render op
     d_renderOp.vertexData = OGRE_NEW VertexData();
@@ -159,7 +156,7 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
 //----------------------------------------------------------------------------//
 OgreGeometryBuffer::~OgreGeometryBuffer()
 {
-    cleanupRenderOp(d_renderOp, d_hwBuffer);
+  
 }
 
 VertexData* OgreGeometryBuffer::getVertexData()
@@ -309,6 +306,10 @@ void OgreGeometryBuffer::appendGeometry(const Vertex* const vbuff,
         d_vertices.push_back(v);
     }
 
+    if (d_vertices.size() == 54)
+    {
+        int kk = 0;
+    }
     d_sync = false;
 }
 
@@ -409,9 +410,6 @@ void OgreGeometryBuffer::syncHardwareBuffer() const
         while(size < required_size)
             size *= 2;
 
-        // Reallocate the buffer
-        cleanupRenderOp(d_renderOp, d_hwBuffer);
-        initialiseRenderOp(d_renderOp, d_hwBuffer, size);
     }
 
     // copy vertex data into hw buffer

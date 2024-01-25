@@ -318,7 +318,7 @@ namespace CEGUI
     {
         // find registered handler for this element.
         ElementStartHandlerMap::const_iterator iter = d_startHandlersMap.find(element);
-
+        std::string aa = element.c_str();
         // if a handler existed
         if (iter != d_startHandlersMap.end())
         {
@@ -655,6 +655,7 @@ namespace CEGUI
     {
         if (d_imagerycomponent)
         {
+  
             d_imagerycomponent->setImage(attributes.getValueAsString(NameAttribute));
             CEGUI_LOGINSANE("---------> Using image: " + attributes.getValueAsString(NameAttribute));
         }

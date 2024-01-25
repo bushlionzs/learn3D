@@ -79,22 +79,22 @@ namespace CEGUI
         RawDataContainer rawXMLData;
         System::getSingleton().getResourceProvider()->loadRawDataContainer(filename, rawXMLData, resourceGroup);
 
-        CEGUI_TRY
+        //CEGUI_TRY
         {
             // The actual parsing action (this is overridden and depends on the specific parser)
             parseXML(handler, rawXMLData, schemaName);
         }
-        CEGUI_CATCH (const Exception&)
-        {
-            // hint the related file name in the log
-            Logger::getSingleton().logEvent("The last thrown exception was related to XML file '" +
-                                            filename + "' from resource group '" + resourceGroup + "'.", Errors);
+        //CEGUI_CATCH (const Exception&)
+        //{
+        //    // hint the related file name in the log
+        //    Logger::getSingleton().logEvent("The last thrown exception was related to XML file '" +
+        //                                    filename + "' from resource group '" + resourceGroup + "'.", Errors);
 
-            // exception safety
-            System::getSingleton().getResourceProvider()->unloadRawDataContainer(rawXMLData);
+        //    // exception safety
+        //    System::getSingleton().getResourceProvider()->unloadRawDataContainer(rawXMLData);
 
-            CEGUI_RETHROW;
-        }
+        //    CEGUI_RETHROW;
+        //}
 
         // Release resource
         System::getSingleton().getResourceProvider()->unloadRawDataContainer(rawXMLData);

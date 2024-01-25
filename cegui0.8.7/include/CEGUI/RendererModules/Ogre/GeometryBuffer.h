@@ -164,8 +164,6 @@ protected:
 #else
     //! Render operation for this buffer.
     mutable Ogre::RenderOperation d_renderOp;
-    //! H/W buffer where the vertices are rendered from.
-    mutable Ogre::HardwareVertexBufferSharedPtr d_hwBuffer;
 #endif
     //! whether the h/w buffer is in sync with the added geometry
     mutable bool d_sync;

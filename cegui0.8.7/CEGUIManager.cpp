@@ -69,14 +69,18 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 
 	mGUIContext = &context;
 
-	CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
+	ImageManager::getSingleton().loadImageset("MouseCursor.imageset");
+	context.getMouseCursor().setDefaultImage("MouseCursor/Normal");
 
-	context.getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
+	if(1)
+	{
+		CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
+	}
 
 
-	Font& defaultFont = FontManager::getSingleton().createFromFile("DejaVuSans-12.font");
-	// Set default font for the gui context
-	context.setDefaultFont(&defaultFont);
+	//CEGUI::SchemeManager::getSingleton().createFromFile("kylinui.template.xml");
+
+	
 
 	auto mNode = mSceneManager->getRoot()->createChildSceneNode("cegui");
 	mNode->attachObject(this);

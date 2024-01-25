@@ -104,17 +104,17 @@ namespace CEGUI
         Falagard_xmlHandler handler(this);
 
         // perform parse of XML data
-        CEGUI_TRY
+       // CEGUI_TRY
         {
             System::getSingleton().getXMLParser()->parseXMLFile(
                 handler, filename, FalagardSchemaName,
                 resourceGroup.empty() ? d_defaultResourceGroup : resourceGroup);
         }
-        CEGUI_CATCH(...)
+      /*  CEGUI_CATCH(...)
         {
             Logger::getSingleton().logEvent("WidgetLookManager::parseLookNFeelSpecification - loading of look and feel data from file '" + filename +"' has failed.", Errors);
             CEGUI_RETHROW;
-        }
+        }*/
     }
     
     void WidgetLookManager::parseLookNFeelSpecificationFromString(const String& source)
