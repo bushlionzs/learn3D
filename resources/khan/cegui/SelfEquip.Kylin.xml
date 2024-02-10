@@ -1,0 +1,175 @@
+<?xml version="1.0" ?>
+<!--TimeStamp: 2010/ 5/24  5:55 with UIEditor-->
+<GUILayout version="4">
+	<Window type="DefaultWindow" name="Packet_Frame">
+		<!--Comment	""	-->
+		<!--	Left=520, Top=80, Right=1024, Bottom=688	-->
+		<Property name="Size" value="{{0.39375,0},{0.791667,0}}" />
+		<Property name="Position" value="{{0.0,0},{0.0,0}}" />
+		
+		<Window type="TaharezLook/Titlebar_2" name="Packet_PageHeader" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=139	-->
+			<Property name="Size" value="{{0.744048,0},{0.097039,0}}" />
+			<Property name="Position" value="{{0.255952,0},{0.000000,0}}" />
+			<Window type="TaharezLook/Button" name="Packet_Helper" >
+				<!--Comment	""	-->
+				<!--	Left=666, Top=110, Right=684, Bottom=136	-->
+				<Property name="Size" value="{{0.048000,0},{0.440678,0}}" />
+				<Property name="Position" value="{{0.045333,0},{0.508475,0}}" />
+				<Property name="NormalImage" value="UI_duihua_1/UI_duihua_1_help_normal" />
+				<Property name="HoverImage" value="UI_duihua_1/UI_duihua_1_help_hover" />
+				<Property name="PushedImage" value="UI_duihua_1/UI_duihua_1_help_pushed" />
+				<Property name="AlwaysOnTop" value="true" />
+			</Window>
+			<Window type="TaharezLook/Button" name="Packet_Close" >
+				<!--Comment	""	-->
+				<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
+				<Property name="Size" value="{{0.077333,0},{0.474576,0}}" />
+				<Property name="Position" value="{{0.904000,0},{0.491525,0}}" />
+				<Property name="NormalImage" value="UI_duihua_1/UI_duihua_1_close_normal" />
+				<Property name="HoverImage" value="UI_duihua_1/UI_duihua_1_close_hover" />
+				<Property name="PushedImage" value="UI_duihua_1/UI_duihua_1_close_pushed" />
+				<Property name="AlwaysOnTop" value="true" />
+			</Window>
+		</Window>
+		<Window type="TaharezLook/StaticImage" name="SelfEquip_Board_Background" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
+			<Property name="Size" value="{{0.744048,0},{0.898026,0}}" />
+			<Property name="Position" value="{{0.255952,0},{0.0,0}}" />			
+			<Property name="Image" value="UI_MainBoard_2/UI_MainBoard_2_Selfequip_Board" />
+			<Property name="BackgroundEnabled" value="false" />
+            <Property name="FrameEnabled" value="false" />
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_0" >
+				<!--Comment	""	-->
+				<!--	Left=39, Top=228, Right=71, Bottom=260	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.107,0},{0.270567,0}}" />
+				<Property name="TooltipText" value="头盔" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_1" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.81302,0},{0.650823,0}}" />
+				<Property name="TooltipText" value="徽章" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_2" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.81302,0},{0.270567,0}}" />
+				<Property name="TooltipText" value="项链" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_3" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.107,0},{0.193784,0}}" />
+				<Property name="TooltipText" value="主武器" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_4" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.81302,0},{0.422303,0}}" />
+				<Property name="TooltipText" value="戒指" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_5" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.107,0},{0.575868,0}}" />
+				<Property name="TooltipText" value="腰带" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_6" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.107,0},{0.422303,0}}" />
+				<Property name="TooltipText" value="手镯" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_7" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.107,0},{0.650823,0}}" />
+				<Property name="TooltipText" value="披风" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_8" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.107,0},{0.345521,0}}" />
+				<Property name="TooltipText" value="衣服" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_9" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.81302,0},{0.345521,0}}" />
+				<Property name="TooltipText" value="手套" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_10" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.81302,0},{0.193784,0}}" />
+				<Property name="TooltipText" value="副武器" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_11" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.81302,0},{0.499086,0}}" />
+				<Property name="TooltipText" value="戒指" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_12" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.81302,0},{0.575868,0}}" />
+				<Property name="TooltipText" value="鞋子" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="SelfEquip_13" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.107,0},{0.499086,0}}" />
+				<Property name="TooltipText" value="手镯" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+			</Window>
+			
+		</Window>
+		
+		
+		
+	</Window>
+</GUILayout>

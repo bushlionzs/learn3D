@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" ?>
+<!--TimeStamp: 2010/ 5/24  5:55 with UIEditor-->
+<GUILayout version="4">
+	<Window type="DefaultWindow" name="Packet_Frame">
+		<!--Comment	""	-->
+		<!--	Left=520, Top=80, Right=1024, Bottom=688	-->
+		<Property name="Size" value="{{0.39375,0},{0.791667,0}}" />
+		<Property name="Position" value="{{0.0,0},{0.0,0}}" />
+        <Window type="TaharezLook/StaticText" name="HoverText" >
+                <Property name="Text" value="aaaaaaaa" />
+				<Property name="Size" value="{{0.074419,0},{0.058501,0}}" />
+				<Property name="Position" value="{{0.090698,0},{0.270567,0}}" />
+                <Property name="TooltipText" value="我是中国人" />
+                <Property name="TooltipType" value="TaharezLook/Tooltip" />
+        </Window>		
+	</Window>
+</GUILayout>
