@@ -17,6 +17,8 @@
 #include "mytestWindow.h"
 #include <CEGUI/InputEvent.h>
 #include <CEGUI/widgets/DragContainer.h>
+#include <CEGUI/CEGUI.h>
+#include <platform_file.h>
 
 using namespace CEGUI;
 
@@ -34,8 +36,8 @@ bool GameUI::appInit()
 {
 	ApplicationBase::appInit();
 
-    //helloDemo();
-    PackageDemo();
+    //HelloDemo1();
+    SelfEquipDemo();
 	return true;
 }
 
@@ -47,6 +49,9 @@ void GameUI::appUpdate(float delta)
 	{
 		mAnimationState->addTime(delta);
 	}
+    auto& defautContext = CEGUI::System::getSingleton().getDefaultGUIContext();
+    //defautContext.injectTimePulse(delta);
+    mGUIContext->injectTimePulse(delta);
 }
 
 EngineType GameUI::getEngineType()
@@ -95,12 +100,35 @@ void GameUI::helloDemo()
     // text to "Hello World!", so that this text will appear as the caption in the
     // FrameWindow's titlebar.
     wnd->setText("Hello World!");
+
+}
+
+void GameUI::HelloDemo1()
+{
+    SchemeManager::getSingleton().createFromFile("AlfiskoSkin.scheme");
+    SchemeManager::getSingleton().createFromFile("WindowsLook.scheme");
+    SchemeManager::getSingleton().createFromFile("VanillaSkin.scheme");
+
+    FontManager& fontManager(FontManager::getSingleton());
+
+    // Set it as the default
+
+
+    WindowManager& winMgr = WindowManager::getSingleton();
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+    CEGUI::Font& font(fontManager.createFromFile("simhei24.font"));
+    mGUIContext->setDefaultFont(&font);
+    auto* root = WindowManager::getSingleton().loadLayoutFromFile("hello.xml");
+
+    mGUIContext->setRootWindow(root);
+
 }
 
 void GameUI::DragDropDemo()
 {
     // load windows look
     SchemeManager::getSingleton().createFromFile("WindowsLook.scheme");
+    
 
     // load font and setup default if not loaded via scheme
     Font& defaultFont = FontManager::getSingleton().createFromFile("DejaVuSans-12.font");
@@ -176,7 +204,7 @@ bool GameUI::handle_ItemDropped(const CEGUI::EventArgs& args)
     return true;
 }
 
-void GameUI::PackageDemo()
+void GameUI::SelfEquipDemo()
 {
     mGUIContext = CEGUIManager::getSingleton().getGUIContext();
 
@@ -184,7 +212,11 @@ void GameUI::PackageDemo()
     ImageManager::getSingleton().loadImageset("ui_mainboard_2.imageset.xml");
     ImageManager::getSingleton().loadImageset("ui_mainboard_3.imageset.xml");
 
-    auto* root = WindowManager::getSingleton().loadLayoutFromFile("Package.Kylin.xml");
+    auto* root = WindowManager::getSingleton().loadLayoutFromFile("SelfEquip.Kylin.xml");
+    FontManager& fontManager(FontManager::getSingleton());
+    CEGUI::Font& font(fontManager.createFromFile("simhei24.font"));
+    mGUIContext->setDefaultFont(&font);
+
     DefaultWindow* aa = (DefaultWindow*)root;
     //aa->setProperty("BackgroundEnabled", "false");
     //root->setWidth(CEGUI::UDim(504.0f, 0)); // ÉèÖÃ¿í¶ÈÎª500ÏñËØ

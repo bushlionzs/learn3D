@@ -32,11 +32,12 @@ public:
 	}
 private:
 	void helloDemo();
+	void HelloDemo1();
 	void DragDropDemo();
 	void subscribeEvents();
 	bool handle_ItemDropped(const CEGUI::EventArgs& args);
 
-	void PackageDemo();
+	void SelfEquipDemo();
 private:
 	AnimationState* mAnimationState = nullptr;
 	Role* mRole;
