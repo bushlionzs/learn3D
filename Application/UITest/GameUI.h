@@ -13,7 +13,7 @@
 #include <FrameWindow.h>
 #include <CEGUIManager.h>
 class Role;
-class GameUI : public ApplicationBase
+class GameUI : public ApplicationBase, public InputListener
 {
 public:
 	GameUI();
@@ -33,13 +33,24 @@ public:
 private:
 	void helloDemo();
 	void HelloDemo1();
+	void TooltipDemo();
 	void DragDropDemo();
 	void subscribeEvents();
 	bool handle_ItemDropped(const CEGUI::EventArgs& args);
-
+	bool handle_PackageItemDropped(const CEGUI::EventArgs& args);
+	bool handle_MouseEnter(const CEGUI::EventArgs& args);
+	bool handle_MouseLeave(const CEGUI::EventArgs& args);
+	bool handle_ButtonClick(const CEGUI::EventArgs& args);
+	virtual void injectKeyRelease(KeyCode _key);
 	void SelfEquipDemo();
+	void PackageDemo();
+	void MultiDemo();
+	void ToolTipDemo();
 private:
 	AnimationState* mAnimationState = nullptr;
 	Role* mRole;
 	CEGUI::GUIContext* mGUIContext = nullptr;
+
+	CEGUI::Window* mToolTip = nullptr;
+	CEGUI::Window* mSelfEquip = nullptr;
 };

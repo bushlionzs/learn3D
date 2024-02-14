@@ -43,6 +43,7 @@ set_property(TARGET runtests_cxx PROPERTY FOLDER third_party)
 set_property(TARGET xmlwf PROPERTY FOLDER third_party)
 set_property(TARGET iconv PROPERTY FOLDER third_party)
 set_property(TARGET pcre PROPERTY FOLDER third_party)
+set_property(TARGET pcreposix PROPERTY FOLDER third_party)
 
 
 

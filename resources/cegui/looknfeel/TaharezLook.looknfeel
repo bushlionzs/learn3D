@@ -66,6 +66,9 @@
         </ImagerySection>
         <ImagerySection name="normal">
             <FrameComponent>
+                <Image component="LeftEdge" name="TaharezLook/ButtonLeftNormal" />
+                <Image component="RightEdge" name="TaharezLook/ButtonRightNormal" />
+                <Image component="Background" name="TaharezLook/ButtonMiddleNormal" />
             </FrameComponent>
             <ImageryComponent>
                 <ImageProperty name="NormalImage" />
@@ -75,6 +78,9 @@
         </ImagerySection>
         <ImagerySection name="hover">
             <FrameComponent>
+                <Image component="LeftEdge" name="TaharezLook/ButtonLeftHighlight" />
+                <Image component="RightEdge" name="TaharezLook/ButtonRightHighlight" />
+                <Image component="Background" name="TaharezLook/ButtonMiddleHighlight" />
             </FrameComponent>
             <ImageryComponent>
                 <ImageProperty name="HoverImage" />
@@ -84,6 +90,9 @@
         </ImagerySection>
         <ImagerySection name="pushed">
             <FrameComponent>
+                <Image component="LeftEdge" name="TaharezLook/ButtonLeftPushed" />
+                <Image component="RightEdge" name="TaharezLook/ButtonRightPushed" />
+                <Image component="Background" name="TaharezLook/ButtonMiddlePushed" />
             </FrameComponent>
             <ImageryComponent>
                 <ImageProperty name="PushedImage" />
@@ -93,6 +102,9 @@
         </ImagerySection>
         <ImagerySection name="disabled">
             <FrameComponent>
+                <Image component="LeftEdge" name="TaharezLook/ButtonLeftNormal" />
+                <Image component="RightEdge" name="TaharezLook/ButtonRightNormal" />
+                <Image component="Background" name="TaharezLook/ButtonMiddleNormal" />
             </FrameComponent>
             <ImageryComponent>
                 <ImageProperty name="DisabledImage" />
@@ -451,6 +463,7 @@
         <Property name="Size" value="{{0, 256}, {0, 32}}" />
         <ImagerySection name="main">
             <ImageryComponent>
+                <Image name="TaharezLook/NewTitlebarLeft" />
                 <VertFormat type="Stretched" />
             </ImageryComponent>
             <ImageryComponent>
@@ -465,6 +478,7 @@
                         </OperatorDim>
                     </Dim>
                 </Area>
+                <Image name="TaharezLook/NewTitlebarRight" />
                 <VertFormat type="Stretched" />
                 <HorzFormat type="RightAligned" />
             </ImageryComponent>
@@ -477,10 +491,12 @@
                         </OperatorDim>
                     </Dim>
                 </Area>
+                <Image name="TaharezLook/SysAreaMiddle" />
                 <VertFormat type="Stretched" />
                 <HorzFormat type="RightAligned" />
             </ImageryComponent>
             <ImageryComponent>
+                <Image name="TaharezLook/SysAreaRight" />
                 <VertFormat type="Stretched" />
                 <HorzFormat type="RightAligned" />
             </ImageryComponent>
@@ -500,6 +516,7 @@
                         </OperatorDim>
                     </Dim>
                 </Area>
+                <Image name="TaharezLook/NewTitlebarMiddle" />
                 <VertFormat type="Stretched" />
                 <HorzFormat type="Stretched" />
             </ImageryComponent>
@@ -537,7 +554,71 @@
             </Layer>
         </StateImagery>
     </WidgetLook>
-
+	
+	<!--
+    ***************************************************
+        TaharezLook/Titlebar_2
+    ***************************************************
+    -->
+	
+	<WidgetLook name="TaharezLook/Titlebar_2">
+		<PropertyDefinition name="CaptionColour" value="FFFFFFFF" />
+		<ImagerySection name="main">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1.0" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1.0" type="Height" />
+					</Dim>
+				</Area>
+				<VertFormat type="Stretched" />
+				<HorzFormat type="Tiled" />
+			</FrameComponent>
+		</ImagerySection>
+        <ImagerySection name="caption">
+            <TextComponent>
+                <Area>
+                    <Dim type="LeftEdge" ><ImageDim imageset="TaharezLook" image="NewTitlebarLeft" dimension="Width" /></Dim>
+                    <Dim type="TopEdge" ><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width" ><UnifiedDim scale="1" offset="-75" type="Width" /></Dim>
+                    <Dim type="Height" ><UnifiedDim scale="1" type="Height" /></Dim>
+                </Area>
+                <ColourProperty name="CaptionColour" />
+                <VertFormat type="CentreAligned" />
+            </TextComponent>
+        </ImagerySection>
+		<StateImagery name="Active">
+			<Layer>
+				<Section section="main" />
+				<Section section="caption" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Inactive">
+			<Layer>
+				<Section section="main" />
+				<Section section="caption" />
+			</Layer>
+		</StateImagery>
+		<StateImagery name="Disabled">
+			<Layer>
+				<Section section="main">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+				<Section section="caption">
+					<Colours topLeft="FF7F7F7F" topRight="FF7F7F7F" bottomLeft="FF7F7F7F" bottomRight="FF7F7F7F" />
+				</Section>
+			</Layer>
+		</StateImagery>
+	</WidgetLook>
+	
     <!--
     ***************************************************
         TaharezLook/FrameWindow
@@ -2659,7 +2740,7 @@
     ***************************************************
     -->
     <WidgetLook name="TaharezLook/Tooltip">
-        <Property name="Alpha" value="0" />
+        <Property name="Alpha" value="1.0" />
         <Property name="Size" value="{{0, 128}, {0, 32}}" />
         <NamedArea name="TextArea">
             <Area>
@@ -4116,7 +4197,71 @@
         </StateImagery>
     </WidgetLook>
 
+<!--
+    ***************************************************
+        WoWLoop/SuperTooltip
+    ***************************************************
+    -->
+	<WidgetLook name="TaharezLook/SuperTooltip">
+		<!-- Just for store border size. It's fake!! -->
+		<NamedArea name="TextArea">
+            <Area>
+                <Dim type="LeftEdge" ><ImageDim name="TaharezLook/TooltipLeftEdge" dimension="Width" /></Dim>
+                <Dim type="TopEdge" ><ImageDim name="TaharezLook/TooltipTopEdge" dimension="Height" /></Dim>
+                <Dim type="RightEdge" >
+                    <OperatorDim op="Subtract">
+                        <UnifiedDim scale="1" type="RightEdge" />
+                        <ImageDim name="TaharezLook/TooltipRightEdge" dimension="Width" />
+                    </OperatorDim>
+                </Dim>
+                <Dim type="BottomEdge" >
+                    <OperatorDim op="Subtract">
+                        <UnifiedDim scale="1" type="BottomEdge" />
+                        <ImageDim name="TaharezLook/TooltipBottomEdge" dimension="Height" />
+                    </OperatorDim>
+                </Dim>
+            </Area>
+        </NamedArea>
+		<ImagerySection name="frame">
+			<FrameComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0" />
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width" />
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height" />
+					</Dim>
+				</Area>
+				<Image component="Background" name="CJSH_icons_1/CJSH_icons_1_tip1_5" />
+				<Image component="TopLeftCorner" name="CJSH_icons_1/CJSH_icons_1_tip1_1" />
+				<Image component="TopRightCorner" name="CJSH_icons_1/CJSH_icons_1_tip1_3" />
+				<Image component="BottomLeftCorner" name="CJSH_icons_1/CJSH_icons_1_tip1_7" />
+				<Image component="BottomRightCorner" name="CJSH_icons_1/CJSH_icons_1_tip1_9" />
+				<Image component="LeftEdge" name="CJSH_icons_1/CJSH_icons_1_tip1_4" />
+				<Image component="RightEdge" name="CJSH_icons_1/CJSH_icons_1_tip1_6" />
+				<Image component="TopEdge" name="CJSH_icons_1/CJSH_icons_1_tip1_2" />
+				<Image component="BottomEdge" name="CJSH_icons_1/CJSH_icons_1_tip1_8" />
+			</FrameComponent>
+		</ImagerySection>
 
+		<StateImagery name="Enabled">
+            <Layer>
+                <Section section="frame" />
+            </Layer>
+        </StateImagery>
+        <StateImagery name="Disabled">
+            <Layer>
+                <Section section="frame" />
+            </Layer>
+        </StateImagery>
+        
+	</WidgetLook>
 </Falagard>
 
 

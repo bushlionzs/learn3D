@@ -416,11 +416,12 @@ void WidgetLookFeel::clearNamedAreas()
 //---------------------------------------------------------------------------//
 const NamedArea& WidgetLookFeel::getNamedArea(const String& name) const
 {
+    std::string aa = name.c_str();
     NamedAreaList::const_iterator area = d_namedAreas.find(name);
 
     if (area != d_namedAreas.end())
         return (*area).second;
-
+    
     if (d_inheritedLookName.empty())
         CEGUI_THROW(UnknownObjectException("unknown named area: '" + name +
             "' in look '" + d_lookName + "'."));

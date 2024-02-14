@@ -150,7 +150,7 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
 
     back.mSlot = 0;
     back.mVertexSize = vertexSize;
-    back.createBuffer(vertexSize, 128);
+    back.createBuffer(vertexSize, 2048);
 }
 
 //----------------------------------------------------------------------------//
@@ -210,6 +210,11 @@ void OgreGeometryBuffer::draw() const
  
             updateRenderable(index++, pos, i->vertexCount, i->texture);
 
+
+            if (i->vertexCount == 54)
+            {
+                int kk = 0;
+            }
 
             pos += i->vertexCount;
             
@@ -300,16 +305,13 @@ void OgreGeometryBuffer::appendGeometry(const Vertex* const vbuff,
         v.colour[1] = vs.colour_val.getGreen();
         v.colour[2] = vs.colour_val.getBlue();
         v.colour[3] = vs.colour_val.getAlpha();
+
         v.u       = vs.tex_coords.d_x;
         v.v       = vs.tex_coords.d_y;
 
         d_vertices.push_back(v);
     }
 
-    if (d_vertices.size() == 54)
-    {
-        int kk = 0;
-    }
     d_sync = false;
 }
 

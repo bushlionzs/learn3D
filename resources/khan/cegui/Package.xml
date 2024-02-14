@@ -11,6 +11,7 @@
 			<!--	Left=649, Top=80, Right=1024, Bottom=139	-->
 			<Property name="Size" value="{{0.744048,0},{0.097039,0}}" />
 			<Property name="Position" value="{{0.255952,0},{0.000000,0}}" />
+			<Property name="Title" value="背包" />
 			<Window type="TaharezLook/Button" name="Packet_Helper" >
 				<!--Comment	""	-->
 				<!--	Left=666, Top=110, Right=684, Bottom=136	-->

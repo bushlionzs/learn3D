@@ -35,9 +35,10 @@ GameUI::~GameUI()
 bool GameUI::appInit()
 {
 	ApplicationBase::appInit();
-
+    InputManager::getSingletonPtr()->addListener(this);
     //HelloDemo1();
-    SelfEquipDemo();
+    PackageDemo();
+    //PackageDemo();
 	return true;
 }
 
@@ -122,6 +123,20 @@ void GameUI::HelloDemo1()
 
     mGUIContext->setRootWindow(root);
 
+
+
+}
+
+void GameUI::TooltipDemo()
+{
+    WindowManager& winMgr = WindowManager::getSingleton();
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+    auto* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+
+    mGUIContext->setRootWindow(root);
+
+    mToolTip = WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
+    root->addChild(mToolTip);
 }
 
 void GameUI::DragDropDemo()
@@ -208,18 +223,158 @@ void GameUI::SelfEquipDemo()
 {
     mGUIContext = CEGUIManager::getSingleton().getGUIContext();
 
-    ImageManager::getSingleton().loadImageset("ui_duihua_1.imageset.xml");
-    ImageManager::getSingleton().loadImageset("ui_mainboard_2.imageset.xml");
-    ImageManager::getSingleton().loadImageset("ui_mainboard_3.imageset.xml");
+    mSelfEquip = WindowManager::getSingleton().loadLayoutFromFile("SelfEquip.xml");
+    FontManager& fontManager(FontManager::getSingleton());
+    CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
+    
+    mGUIContext->setDefaultFont(&font);
 
-    auto* root = WindowManager::getSingleton().loadLayoutFromFile("SelfEquip.Kylin.xml");
+    //font.setProperty("TextColor", "FF0000");
+    DefaultWindow* aa = (DefaultWindow*)mSelfEquip;
+
+    mGUIContext->setRootWindow(mSelfEquip);
+
+    auto* button = mSelfEquip->getChildRecursive("Packet_Close");
+
+    mToolTip = WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
+
+
+    auto* wnd = mSelfEquip->getChildRecursive("SelfEquip_0");
+    
+    wnd->subscribeEvent(
+        Window::EventMouseEntersSurface,
+        Event::Subscriber(&GameUI::handle_MouseEnter, this));
+
+    wnd->subscribeEvent(
+        Window::EventMouseLeavesSurface,
+        Event::Subscriber(&GameUI::handle_MouseLeave, this));
+
+    auto* close = mSelfEquip->getChildRecursive("Packet_Close");
+    close->subscribeEvent(
+        Window::EventMouseClick,
+        Event::Subscriber(&GameUI::handle_ButtonClick, this));
+}
+
+bool GameUI::handle_ButtonClick(const CEGUI::EventArgs& args)
+{
+    mSelfEquip->hide();
+    return true;
+}
+
+void GameUI::injectKeyRelease(KeyCode _key)
+{
+    if (_key == KeyCode::B)
+    {
+        mSelfEquip->addChild(mToolTip);
+        mToolTip->show();
+    }
+    
+    if (_key == KeyCode::N)
+    {
+        mToolTip->hide();
+    }
+}
+
+void GameUI::PackageDemo()
+{
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+
+    
+    auto* root = WindowManager::getSingleton().loadLayoutFromFile("Package.xml");
     FontManager& fontManager(FontManager::getSingleton());
     CEGUI::Font& font(fontManager.createFromFile("simhei24.font"));
     mGUIContext->setDefaultFont(&font);
 
-    DefaultWindow* aa = (DefaultWindow*)root;
-    //aa->setProperty("BackgroundEnabled", "false");
-    //root->setWidth(CEGUI::UDim(504.0f, 0)); // 设置宽度为500像素
-    //root->setHeight(CEGUI::UDim(608.0f, 0)); // 设置高度为600像素
+
     mGUIContext->setRootWindow(root);
+
+    CEGUI::String base_name = "DragContainer";
+
+    Window* package = root->getChild("Packet_Background_Cover");
+
+    for (int i = 0; i < 36; ++i)
+    {
+
+        // get the window pointer for this slot
+        Window* wnd =
+            package->getChild(base_name + PropertyHelper<int>::toString(i));
+
+
+        wnd->subscribeEvent(
+            Window::EventDragDropItemDropped,
+            Event::Subscriber(&GameUI::handle_PackageItemDropped, this));
+    }
+}
+
+bool GameUI::handle_MouseEnter(const CEGUI::EventArgs& args)
+{
+    UVector2 pos(UDim(0.5f, 0), UDim(0.05f, 0));
+    mToolTip->setPosition(pos);
+    mToolTip->setProperty("AlwaysOnTop", "true");
+    mSelfEquip->addChild(mToolTip);
+    mToolTip->show();
+    return true;
+}
+
+bool GameUI::handle_MouseLeave(const CEGUI::EventArgs& args)
+{
+   
+    mToolTip->hide();
+
+    return true;
+}
+
+bool GameUI::handle_PackageItemDropped(const CEGUI::EventArgs& args)
+{
+    const DragDropEventArgs& dd_args =
+        static_cast<const DragDropEventArgs&>(args);
+    Window* current = dd_args.window;
+    Window* source = dd_args.dragDropItem;
+
+    CEGUI::Window* source_image = source->getChild("Image");
+    CEGUI::Window* current_image = current->getChild("Image");
+    CEGUI::String source_name = source_image->getProperty("Image");
+    CEGUI::String current_name = current_image->getProperty("Image");
+    current_image->setProperty("Image", source_name);
+    source_image->setProperty("Image", current_name);
+    return true;
+}
+
+void GameUI::MultiDemo()
+{
+    WindowManager& winMgr = WindowManager::getSingleton();
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+
+    auto* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+
+    mGUIContext->setRootWindow(root);
+
+    FontManager& fontManager(FontManager::getSingleton());
+    CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
+    mGUIContext->setDefaultFont(&font);
+
+
+    auto* package = WindowManager::getSingleton().loadLayoutFromFile("Package.xml");
+    root->addChild(package);
+
+    auto* selfEquip = WindowManager::getSingleton().loadLayoutFromFile("SelfEquip.Kylin.xml");
+    root->addChild(selfEquip);
+}
+
+void GameUI::ToolTipDemo()
+{
+    WindowManager& winMgr = WindowManager::getSingleton();
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+
+    auto* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+
+    mGUIContext->setRootWindow(root);
+
+    FontManager& fontManager(FontManager::getSingleton());
+    CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
+    mGUIContext->setDefaultFont(&font);
+
+    auto* tooltip = WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
+    root->addChild(tooltip);
+    tooltip->show();
 }

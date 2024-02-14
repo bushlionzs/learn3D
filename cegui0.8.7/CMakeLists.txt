@@ -8,6 +8,7 @@ add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
 add_definitions(-DCEGUI_STATIC)
+add_definitions(-DPCRE_STATIC)
 endif()
 
 

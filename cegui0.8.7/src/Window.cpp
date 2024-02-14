@@ -1019,6 +1019,10 @@ void Window::setRestoreOldCapture(bool setting)
 //----------------------------------------------------------------------------//
 void Window::setAlpha(const float alpha)
 {
+    if (alpha == 0.0f)
+    {
+        int kk = 0;
+    }
     // clamp this to the valid range [0.0, 1.0]
     float clampedAlpha = ceguimax(ceguimin(alpha, 1.0f), 0.0f);
 
@@ -1609,14 +1613,20 @@ void Window::update(float elapsed)
     fireEvent(EventUpdated,e,EventNamespace);
 
     // update child windows
-    for (size_t i = 0; i < getChildCount(); ++i)
+    auto count = getChildCount();
+    for (size_t i = 0; i < count; ++i)
     {
+        auto* wnd = getChildAtIdx(i);
         // update children based on their WindowUpdateMode setting.
-        if (getChildAtIdx(i)->d_updateMode == WUM_ALWAYS ||
-                (getChildAtIdx(i)->d_updateMode == WUM_VISIBLE &&
-                 getChildAtIdx(i)->isVisible()))
+        if (wnd->d_updateMode == WUM_ALWAYS ||
+                (wnd->d_updateMode == WUM_VISIBLE &&
+                 wnd->isVisible()))
         {
-            getChildAtIdx(i)->update(elapsed);
+            wnd->update(elapsed);
+        }
+        else
+        {
+            int kk = 0;
         }
     }
 }

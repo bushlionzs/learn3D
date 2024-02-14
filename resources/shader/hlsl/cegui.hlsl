@@ -18,7 +18,6 @@ VertexOut VS(VertexIn vIn)
 	VertexOut vOut;
 	
 	vOut.PosH = mul(gWorldViewProj, float4(vIn.PosL, 1.0f));
-	//vOut.PosH.y = -vOut.PosH.y;
 	vOut.oColor = vIn.ColorL;
 	vOut.oTexcoord_0 = vIn.iTexcoord_0;
 	return vOut;

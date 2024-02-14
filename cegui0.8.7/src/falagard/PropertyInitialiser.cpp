@@ -41,6 +41,7 @@ namespace CEGUI
     {
         CEGUI_TRY
         {
+            std::string aa = d_propertyName.c_str();
             target.setProperty(d_propertyName, d_propertyValue);
         }
         // allow 'missing' properties

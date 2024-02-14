@@ -350,7 +350,6 @@ namespace CEGUI
     {
         // base class processing
         Window::onTextChanged(e);
-
         // set size and position of the tooltip window to consider new text
         sizeSelf();
         positionSelf();

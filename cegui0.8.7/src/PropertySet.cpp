@@ -135,6 +135,13 @@ void PropertySet::setProperty(const String& name,const String& value)
 
 	if (pos == d_properties.end())
 	{
+		auto itor = d_properties.begin();
+
+		for (; itor != d_properties.end(); itor++)
+		{
+			std::string aa = itor->first.c_str();
+			aa = aa;
+		}
 		CEGUI_THROW(UnknownObjectException("There is no Property named '" + name + "' available in the set."));
 	}
 

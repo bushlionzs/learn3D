@@ -71,14 +71,16 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 
 	ImageManager::getSingleton().loadImageset("MouseCursor.imageset");
 	context.getMouseCursor().setDefaultImage("MouseCursor/Normal");
-
+	
 	if(1)
 	{
+		ImageManager::getSingleton().loadImageset("ui_duihua_1.imageset.xml");
+		ImageManager::getSingleton().loadImageset("ui_mainboard_2.imageset.xml");
+		ImageManager::getSingleton().loadImageset("ui_mainboard_3.imageset.xml");
+		ImageManager::getSingleton().loadImageset("DriveIcons.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_icons_1.imageset");
 		CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
 	}
-
-
-	//CEGUI::SchemeManager::getSingleton().createFromFile("kylinui.template.xml");
 
 	
 

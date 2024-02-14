@@ -85,7 +85,7 @@ CHECK_TYPE_SIZE("unsigned long long"    UNSIGNED_LONG_LONG)
 SET(BUILD_SHARED_LIBS OFF CACHE BOOL
     "Build shared libraries instead of static ones.")
 
-OPTION(PCRE_BUILD_PCRECPP "Build the PCRE C++ library (pcrecpp)." ON)
+OPTION(PCRE_BUILD_PCRECPP "Build the PCRE C++ library (pcrecpp)." OFF)
 
 SET(PCRE_EBCDIC OFF CACHE BOOL
     "Use EBCDIC coding instead of ASCII. (This is rarely used outside of mainframe systems)")
@@ -117,9 +117,9 @@ SET(PCRE_SUPPORT_UTF8 OFF CACHE BOOL
 SET(PCRE_SUPPORT_BSR_ANYCRLF OFF CACHE BOOL
     "ON=Backslash-R matches only LF CR and CRLF, OFF=Backslash-R matches all Unicode Linebreaks")
 
-OPTION(PCRE_SHOW_REPORT    "Show the final configuration report" ON)
-OPTION(PCRE_BUILD_PCREGREP "Build pcregrep" ON)
-OPTION(PCRE_BUILD_TESTS    "Build the tests" ON)
+OPTION(PCRE_SHOW_REPORT    "Show the final configuration report" OFF)
+OPTION(PCRE_BUILD_PCREGREP "Build pcregrep" OFF)
+OPTION(PCRE_BUILD_TESTS    "Build the tests" OFF)
 
 IF (PCRE_BUILD_TESTS)
   IF (NOT PCRE_BUILD_PCREGREP)
@@ -342,6 +342,7 @@ SET(PCRECPP_SOURCES
 # Build setup
 
 ADD_DEFINITIONS(-DHAVE_CONFIG_H)
+ADD_DEFINITIONS(-DSUPPORT_UTF8)
 
 IF(MSVC)
         ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
