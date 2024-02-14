@@ -2,7 +2,7 @@
 #include "db_task.h"
 #include "mysql_db.h"
 #include "db_manager.h"
-#include "net/messages/DSCharData.h"
+#include "DSCharData.h"
 #include "net/net_message_manager.h"
 #include "server_manager.h"
 DBTask::DBTask()

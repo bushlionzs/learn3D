@@ -1,17 +1,18 @@
 #include "stdafx.h"
 #include "CSQueryEvent.h"
-#include "server_manager.h"
-#include "script/LuaSystem.h"
+
 #include "ScriptDef.h"
-#include "map/game_map.h"
-#include "gameobject/Player.h"
-#include "item/ItemInstance.h"
-#include "map/map_manager.h"
-#include "gameobject/ObjectManager.h"
-#include "gameobject/Monster.h"
-#include "item/Item_Interface.h"
-#include "data/data_manager.h"
-#include "Share/tab/TabDefine_Map_Quest.h"
+//#include "map/game_map.h"
+//#include "gameobject/Player.h"
+//#include "item/ItemInstance.h"
+//#include "map/map_manager.h"
+//#include "gameobject/ObjectManager.h"
+//#include "gameobject/Monster.h"
+//#include "item/Item_Interface.h"
+//#include "data/data_manager.h"
+//#include "Share/tab/TabDefine_Map_Quest.h"
+//#include "server_manager.h"
+//#include "script/LuaSystem.h"
 
 CSQueryEvent::CSQueryEvent():
 	NetPacket(CS_QUERY_EVENT)
@@ -30,7 +31,7 @@ bool CSQueryEvent::process()
 
 	//luaSystem->RunScriptFunction(mMapId, SCENE_SCRIPTID, DEF_PROC_MAP_NPCDEFAULTQUESTEVENTLIST_FN);
 
-	GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapId);
+	/*GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapId);
 
 	Object* pObj = pMap->GetSpecificObjByID(mPlayerId);
 	if (pObj == NULL || pObj->GetObjType() != Object::OBJECT_CLASS_PLAYER)
@@ -92,7 +93,7 @@ bool CSQueryEvent::process()
 			(int32)mMapId,
 			(int32)mPlayerId,
 			(int32)mObjectId);
-	}
+	}*/
 
 	return true;
 }

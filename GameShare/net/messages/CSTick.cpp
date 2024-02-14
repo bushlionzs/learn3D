@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "CSTick.h"
-#include "map/map_manager.h"
-#include "map/game_map.h"
-#include "map/map_info.h"
-#include "gameobject/ObjectManager.h"
-#include "gameobject/Player.h"
-#include "gameobject/Behavior_Player.h"
+//#include "map/map_manager.h"
+//#include "map/game_map.h"
+//#include "map/map_info.h"
+//#include "gameobject/ObjectManager.h"
+//#include "gameobject/Player.h"
+//#include "gameobject/Behavior_Player.h"
 
 
 
@@ -22,7 +22,7 @@ CSTick::~CSTick()
 
 bool CSTick::process()
 {
-	GameMap* pScene = MapManager::GetSingletonPtr()->getMap(mMapId);
+	/*GameMap* pScene = MapManager::GetSingletonPtr()->getMap(mMapId);
 	if (NULL == pScene)
 	{
 		return false;
@@ -34,7 +34,7 @@ bool CSTick::process()
 	const GLPos* pos = pObj->GetGLPos();
 	
 	float d2 = (mPlayerPositionX - pos->m_fX) * (mPlayerPositionX - pos->m_fX) +
-		(mPlayerPositionZ - pos->m_fZ) * (mPlayerPositionZ - pos->m_fZ);
+		(mPlayerPositionZ - pos->m_fZ) * (mPlayerPositionZ - pos->m_fZ);*/
 
     return true;
 }

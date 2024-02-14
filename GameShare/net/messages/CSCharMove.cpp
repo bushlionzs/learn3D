@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "CSCharMove.h"
-#include "server_manager.h"
-#include "map/map_manager.h"
-#include "map/game_map.h"
-#include "map/map_info.h"
-#include "gameobject/ObjectManager.h"
-#include "gameobject/Player.h"
-#include "gameobject/Behavior_Player.h"
+//#include "server_manager.h"
+//#include "map/map_manager.h"
+//#include "map/game_map.h"
+//#include "map/map_info.h"
+//#include "gameobject/ObjectManager.h"
+//#include "gameobject/Player.h"
+//#include "gameobject/Behavior_Player.h"
 
 CSCharMove::CSCharMove():
 	NetPacket(CS_CHAR_MOVE)
@@ -21,7 +21,7 @@ CSCharMove::~CSCharMove()
 
 bool CSCharMove::process()
 {
-	GameMap* pScene = MapManager::GetSingletonPtr()->getMap(mMapID);
+	/*GameMap* pScene = MapManager::GetSingletonPtr()->getMap(mMapID);
 	if (NULL == pScene)
 	{
 		return false;
@@ -57,7 +57,7 @@ bool CSCharMove::process()
 	if (ORT_FAILED(oResult))
 	{
 		int kk = 0;
-	}
+	}*/
 
 	
 	return true;

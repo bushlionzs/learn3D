@@ -1,17 +1,18 @@
 #include "stdafx.h"
 #include "CSQuestSubmit.h"
-#include "server_manager.h"
-#include "script/LuaSystem.h"
 #include "ScriptDef.h"
-#include "map/game_map.h"
-#include "gameobject/Player.h"
-#include "item/ItemInstance.h"
-#include "map/map_manager.h"
-#include "gameobject/ObjectManager.h"
-#include "gameobject/Monster.h"
-#include "item/Item_Interface.h"
-#include "data/data_manager.h"
-#include "Share/tab/TabDefine_Map_Quest.h"
+//#include "server_manager.h"
+//#include "script/LuaSystem.h"
+//
+//#include "map/game_map.h"
+//#include "gameobject/Player.h"
+//#include "item/ItemInstance.h"
+//#include "map/map_manager.h"
+//#include "gameobject/ObjectManager.h"
+//#include "gameobject/Monster.h"
+//#include "item/Item_Interface.h"
+//#include "data/data_manager.h"
+//#include "Share/tab/TabDefine_Map_Quest.h"
 
 CSQuestSubmit::CSQuestSubmit()
     :NetPacket(CS_QUEST_SUBMIT)
@@ -26,124 +27,124 @@ CSQuestSubmit::~CSQuestSubmit()
 
 bool CSQuestSubmit::process()
 {
-	GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapId);
+	//GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapId);
 
-	Object* pObj = pMap->GetSpecificObjByID(mPlayerId);
-	if (pObj == NULL || pObj->GetObjType() != Object::OBJECT_CLASS_PLAYER)
-	{
-		return false;
-	}
+	//Object* pObj = pMap->GetSpecificObjByID(mPlayerId);
+	//if (pObj == NULL || pObj->GetObjType() != Object::OBJECT_CLASS_PLAYER)
+	//{
+	//	return false;
+	//}
 
-	Player* pPlayer = (Player*)pObj;
+	//Player* pPlayer = (Player*)pObj;
 
-	pObj = pMap->GetSpecificObjByID(mTargetId);
+	//pObj = pMap->GetSpecificObjByID(mTargetId);
 
-	if (pObj == NULL || pObj->GetObjType() != Object::OBJECT_CLASS_MONSTER)
-	{
-		return false;
-	}
+	//if (pObj == NULL || pObj->GetObjType() != Object::OBJECT_CLASS_MONSTER)
+	//{
+	//	return false;
+	//}
 
-	const SArchiveLoader_Quest* quest = pPlayer->GetQuestList();
+	//const SArchiveLoader_Quest* quest = pPlayer->GetQuestList();
 
-	quest->m_Count;
+	//quest->m_Count;
 
-	Monster* pMonster = (Monster*)pObj;
+	//Monster* pMonster = (Monster*)pObj;
 
-	NPC_QUEST* pQuest = DataManager::GetSingletonPtr()->getNpcQuest(pMonster->GetGUID());
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	//NPC_QUEST* pQuest = DataManager::GetSingletonPtr()->getNpcQuest(pMonster->GetGUID());
+	///*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	int32_t	bVerifyEvent = 0;
+	//int32_t	bVerifyEvent = 0;
 
-	if (pQuest)
-	{
-		for (int32 i = 0; i < pQuest->m_EventCount; i++)
-		{
-			if (pQuest->m_EventList[i] == mScriptId)
-			{
-				bVerifyEvent = 1;
-				break;
-			}
-		}
+	//if (pQuest)
+	//{
+	//	for (int32 i = 0; i < pQuest->m_EventCount; i++)
+	//	{
+	//		if (pQuest->m_EventList[i] == mScriptId)
+	//		{
+	//			bVerifyEvent = 1;
+	//			break;
+	//		}
+	//	}
 
-		if (bVerifyEvent == 0)
-		{
-			for (int32 i = 0; i < pQuest->m_QuestCount; i++)
-			{
-				if (pQuest->m_QuestList[i] == mScriptId)
-				{
-					bVerifyEvent = 2;
-					break;
-				}
-			}
-		}
-	}
+	//	if (bVerifyEvent == 0)
+	//	{
+	//		for (int32 i = 0; i < pQuest->m_QuestCount; i++)
+	//		{
+	//			if (pQuest->m_QuestList[i] == mScriptId)
+	//			{
+	//				bVerifyEvent = 2;
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
 
-	LuaSystem* luaSystem = ServerManager::GetSingletonPtr()->getLuaSystem();
-	if (bVerifyEvent == 1)
-	{
-		if (mScriptId <= 0)
-			return OR_OK;
+	//LuaSystem* luaSystem = ServerManager::GetSingletonPtr()->getLuaSystem();
+	//if (bVerifyEvent == 1)
+	//{
+	//	if (mScriptId <= 0)
+	//		return OR_OK;
 
-		luaSystem->RunScriptFunction
-		(
-			mMapId,
-			mScriptId,
-			DEF_PROC_QUEST_SUBMIT_FN,
-			mMapId,
-			mPlayerId,
-			mTargetId,
-			mRadioId,
-			-1
-		);
-		return OR_OK;
-	}
-	else if (bVerifyEvent == 2 || bVerifyEvent == 0)
-	{
-		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-		_QUEST_DATA_t* pData = DataManager::GetSingletonPtr()->getQuestByID(mScriptId);
-		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	//	luaSystem->RunScriptFunction
+	//	(
+	//		mMapId,
+	//		mScriptId,
+	//		DEF_PROC_QUEST_SUBMIT_FN,
+	//		mMapId,
+	//		mPlayerId,
+	//		mTargetId,
+	//		mRadioId,
+	//		-1
+	//	);
+	//	return OR_OK;
+	//}
+	//else if (bVerifyEvent == 2 || bVerifyEvent == 0)
+	//{
+	//	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	//	_QUEST_DATA_t* pData = DataManager::GetSingletonPtr()->getQuestByID(mScriptId);
+	//	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-		if (pData)
-		{
-			/*~~~~~~~~~~~~~~~~~~~~~~~~~*/
-			BOOL	bRunByScript = FALSE;
-			/*~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	//	if (pData)
+	//	{
+	//		/*~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	//		BOOL	bRunByScript = FALSE;
+	//		/*~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-			if (pData->nScriptID >= 100000)
-			{
-				luaSystem->RunScriptFunction
-					(
-						mMapId,
-						pData->nScriptID,
-						DEF_PROC_QUEST_SUBMIT_FN,
-						mMapId,
-						mPlayerId,
-						mTargetId,
-						mRadioId,
-						mScriptId
-					);
-					bRunByScript = TRUE;
+	//		if (pData->nScriptID >= 100000)
+	//		{
+	//			luaSystem->RunScriptFunction
+	//				(
+	//					mMapId,
+	//					pData->nScriptID,
+	//					DEF_PROC_QUEST_SUBMIT_FN,
+	//					mMapId,
+	//					mPlayerId,
+	//					mTargetId,
+	//					mRadioId,
+	//					mScriptId
+	//				);
+	//				bRunByScript = TRUE;
 
-			}
+	//		}
 
-			if (bRunByScript == FALSE)
-			{
-				luaSystem->RunScriptFunction
-				(
-					mMapId,
-					QUEST_SCRIPTID,
-					DEF_PROC_QUEST_SUBMIT_FN,
-					mMapId,
-					mPlayerId,
-					mTargetId,
-					mRadioId,
-					mScriptId
-				);
-			}
+	//		if (bRunByScript == FALSE)
+	//		{
+	//			luaSystem->RunScriptFunction
+	//			(
+	//				mMapId,
+	//				QUEST_SCRIPTID,
+	//				DEF_PROC_QUEST_SUBMIT_FN,
+	//				mMapId,
+	//				mPlayerId,
+	//				mTargetId,
+	//				mRadioId,
+	//				mScriptId
+	//			);
+	//		}
 
-			return OR_OK;
-		}
-	}
+	//		return OR_OK;
+	//	}
+	//}
 
     return true;
 }

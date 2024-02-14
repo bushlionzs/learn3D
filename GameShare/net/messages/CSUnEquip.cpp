@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "CSUnEquip.h"
-#include "item/Item_Base.h"
-#include "item/Item_Interface.h"
-#include "map/map_manager.h"
-#include "map/game_map.h"
-#include "gameobject/Player.h"
 #include "SCUnEquipResult.h"
+//#include "item/Item_Base.h"
+//#include "item/Item_Interface.h"
+//#include "map/map_manager.h"
+//#include "map/game_map.h"
+//#include "gameobject/Player.h"
+
 
 CSUnEquip::CSUnEquip()
     :NetPacket(CS_UNEQUIP)
@@ -20,7 +21,7 @@ CSUnEquip::~CSUnEquip()
 
 bool CSUnEquip::process()
 {
-    if (mEquipPoint < 0 || mEquipPoint >= HEQUIP_NUMBER)
+   /* if (mEquipPoint < 0 || mEquipPoint >= HEQUIP_NUMBER)
     {
         return false;
     }
@@ -106,7 +107,7 @@ bool CSUnEquip::process()
     packet->setEquipPoint(mEquipPoint);
     packet->setResult(UNEQUIP_SUCCESS);
 
-    //NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+    NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);*/
 
     return true;
 }

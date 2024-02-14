@@ -1,11 +1,11 @@
 #pragma once
 #include "stdafx.h"
 #include "CSCharUseSkill.h"
-#include "map/map_manager.h"
-#include "map/game_map.h"
-#include "gameobject/ObjectManager.h"
-#include "gameobject/Player.h"
-#include "gameobject/Behavior_Player.h"
+//#include "map/map_manager.h"
+//#include "map/game_map.h"
+//#include "gameobject/ObjectManager.h"
+//#include "gameobject/Player.h"
+//#include "gameobject/Behavior_Player.h"
 
 CSCharUseSkill::CSCharUseSkill():
 	NetPacket(CS_USE_SKILL)
@@ -20,7 +20,7 @@ CSCharUseSkill::~CSCharUseSkill()
 
 bool CSCharUseSkill::process()
 {
-	GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapID);
+	/*GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapID);
 
 	if (pMap == nullptr)
 	{
@@ -46,7 +46,7 @@ bool CSCharUseSkill::process()
 	if (ORT_FAILED(oResult))
 	{
 		return false;
-	}
+	}*/
 
 	
 

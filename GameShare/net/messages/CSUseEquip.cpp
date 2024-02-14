@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "CSUseEquip.h"
-#include "item/Item_Base.h"
-#include "item/Item_Interface.h"
-#include "map/map_manager.h"
-#include "map/game_map.h"
-#include "gameobject/Player.h"
 #include "SCUseEquipResult.h"
+//#include "item/Item_Base.h"
+//#include "item/Item_Interface.h"
+//#include "map/map_manager.h"
+//#include "map/game_map.h"
+//#include "gameobject/Player.h"
+
 
 
 CSUseEquip::CSUseEquip()
@@ -21,7 +22,7 @@ CSUseEquip::~CSUseEquip()
 
 bool CSUseEquip::process()
 {
-    GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapId);
+   /* GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapId);
     if (nullptr == pMap)
         return false;
 
@@ -141,7 +142,7 @@ bool CSUseEquip::process()
     packet->setBagIndex(mBagIndex);
     packet->setEquipPoint(clientEquipPoint);
 
-    //NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+    NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);*/
 
     return true;
 }

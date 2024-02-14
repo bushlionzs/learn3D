@@ -40,7 +40,7 @@ endmacro()
 add_subdir(.)
 add_subdir(dummy)
 add_subdir(net)
-#add_subdir(net/messages)
+add_subdir(net/messages)
 
 
 add_library(${GAMESHARE_LIB_NAME} STATIC ${GAMESHARE_SRC_LIST})

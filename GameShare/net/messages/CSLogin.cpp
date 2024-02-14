@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "CSLogin.h"
-#include "gameobject/Player.h"
-#include "map/game_map.h"
-#include "map/map_manager.h"
 #include "net/messages/SCEnterMap.h"
 #include "net/net_message_manager.h"
+//#include "gameobject/Player.h"
+//#include "map/game_map.h"
+//#include "map/map_manager.h"
 
 CSLogin::CSLogin():
 	NetPacket(CS_LOGIN)

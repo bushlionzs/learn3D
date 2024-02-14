@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SCCharMove.h"
-#include "server_manager.h"
+#include "Glpos.h"
 
 class CSCharMove : public NetPacket
 {

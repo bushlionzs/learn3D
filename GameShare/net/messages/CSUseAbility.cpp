@@ -1,14 +1,15 @@
 #pragma once
 #include "stdafx.h"
 #include "CSUseAbility.h"
-#include "map/map_manager.h"
-#include "map/game_map.h"
-#include "gameobject/ObjectManager.h"
-#include "gameobject/Player.h"
-#include "gameobject/Behavior_Player.h"
-#include "skill/Skill_Base.h"
-#include "skill/Skill_Manager.h"
 #include "net/messages/SCAbilityResult.h"
+//#include "map/map_manager.h"
+//#include "map/game_map.h"
+//#include "gameobject/ObjectManager.h"
+//#include "gameobject/Player.h"
+//#include "gameobject/Behavior_Player.h"
+//#include "skill/Skill_Base.h"
+//#include "skill/Skill_Manager.h"
+
 
 CSUseAbility::CSUseAbility():
 	NetPacket(CS_USE_ABILITY)
@@ -23,57 +24,57 @@ CSUseAbility::~CSUseAbility()
 
 bool CSUseAbility::process()
 {
-	BaseSkill* pSkill;
-	/*~~~~~~~~~~~~~~~~~~~~*/
+	//BaseSkill* pSkill;
+	///*~~~~~~~~~~~~~~~~~~~~*/
 
-	pSkill = g_pSkillManager->GetAbility(mAbilityId);
-	if (pSkill == NULL)
-	{
-		return false;
-	}
+	//pSkill = g_pSkillManager->GetAbility(mAbilityId);
+	//if (pSkill == NULL)
+	//{
+	//	return false;
+	//}
 
 
-	GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapId);
+	//GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mMapId);
 
-	if (pMap == nullptr)
-	{
-		return false;
-	}
+	//if (pMap == nullptr)
+	//{
+	//	return false;
+	//}
 
-	Player* pPlayer = pMap->getPlayer(mPlayerId);
+	//Player* pPlayer = pMap->getPlayer(mPlayerId);
 
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	SkillOpera* pAbilityOpera;
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	///*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	//SkillOpera* pAbilityOpera;
+	///*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	pAbilityOpera = pPlayer->GetAbilityOpera();
-	if (0 != pAbilityOpera->m_SkillID)
-	{
-		return false;
-	}
+	//pAbilityOpera = pPlayer->GetAbilityOpera();
+	//if (0 != pAbilityOpera->m_SkillID)
+	//{
+	//	return false;
+	//}
 
-	pPlayer->reset_AbilityOpera();
+	//pPlayer->reset_AbilityOpera();
 
-	pAbilityOpera->m_SkillID = mAbilityId;
-	pAbilityOpera->m_PresID = mPrescriptionId;
-	pAbilityOpera->m_Obj = mObjectGuid;
-	pAbilityOpera->m_nMaxTime = pSkill->GetOperationTime();
+	//pAbilityOpera->m_SkillID = mAbilityId;
+	//pAbilityOpera->m_PresID = mPrescriptionId;
+	//pAbilityOpera->m_Obj = mObjectGuid;
+	//pAbilityOpera->m_nMaxTime = pSkill->GetOperationTime();
 
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	OPT_RESULT res = pPlayer->GetHumanAI()->PushCmd_UseAbility();
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	///*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	//OPT_RESULT res = pPlayer->GetHumanAI()->PushCmd_UseAbility();
+	///*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	if (res == OR_OK)
-	{
-	}
+	//if (res == OR_OK)
+	//{
+	//}
 
-	/*~~~~~~~~~~~~~~~~*/
-	SCAbilityResult* packet = new SCAbilityResult;
-	/*~~~~~~~~~~~~~~~~*/
-	packet->setPlayerId(mPlayerId);
-	packet->setAbilityId(pAbilityOpera->m_SkillID);
-	packet->setPrescriptionId(pAbilityOpera->m_PresID);
-	packet->setResult(res);
+	///*~~~~~~~~~~~~~~~~*/
+	//SCAbilityResult* packet = new SCAbilityResult;
+	///*~~~~~~~~~~~~~~~~*/
+	//packet->setPlayerId(mPlayerId);
+	//packet->setAbilityId(pAbilityOpera->m_SkillID);
+	//packet->setPrescriptionId(pAbilityOpera->m_PresID);
+	//packet->setResult(res);
 	//NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
 	return true;
 }
