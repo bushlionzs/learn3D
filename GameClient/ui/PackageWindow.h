@@ -14,6 +14,8 @@ class PackageWindow :public UIBase
 public:
 	PackageWindow(CEGUI::Window* parent);
 	virtual void update() override;
+
+	bool handle_ButtonClick(const CEGUI::EventArgs& args);
 private:
 	bool updateItem(
 		uint32_t row,

@@ -19,7 +19,7 @@ public:
 
 	void update();
 
-
+	bool handle_ButtonClick(const CEGUI::EventArgs& args);
 private:
 	
 };

@@ -15,8 +15,19 @@ PackageWindow::PackageWindow(CEGUI::Window* parent)
 	_main_window = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("Package.xml");
 	parent->addChild(_main_window);
 	_main_window->setVisible(false);
+
+	auto* close = _main_window->getChildRecursive("Packet_Close");
+	close->subscribeEvent(
+		CEGUI::Window::EventMouseClick,
+		CEGUI::Event::Subscriber(&PackageWindow::handle_ButtonClick, this));
 }
 
+
+bool PackageWindow::handle_ButtonClick(const CEGUI::EventArgs& args)
+{
+	_main_window->hide();
+	return true;
+}
 
 bool PackageWindow::updateItem(
 	uint32_t row,
