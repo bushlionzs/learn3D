@@ -9,6 +9,8 @@
 #include "server_message.pb.h"
 #include "GameMouseCursor.h"
 #include "application_window.h"
+#include "CEGUIManager.h"
+#include <cegui/CEGUI.h>
 
 FullDemo::FullDemo()
 {
@@ -61,6 +63,7 @@ void FullDemo::appUpdate(float delta)
 
 	NetMessageManager::GetSingleton().processMessage();
 	mGameWorld->update(delta);
+	CEGUIManager::getSingleton().getGUIContext()->injectTimePulse(delta);
 }
 
 EngineType FullDemo::getEngineType()

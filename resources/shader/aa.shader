@@ -44,8 +44,8 @@ shader cegui
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader cegui.vert.glsl main
-		frag_shader cegui.frag.glsl main
+		vertex_shader cegui.glsl main
+		frag_shader cegui.glsl main
 	 }
 }
 

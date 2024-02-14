@@ -11,8 +11,7 @@
 			<!--	Left=649, Top=80, Right=1024, Bottom=139	-->
 			<Property name="Size" value="{{0.744048,0},{0.097039,0}}" />
 			<Property name="Position" value="{{0.255952,0},{0.000000,0}}" />
-			<Property name="Title" value="背包" />
-			<Window type="TaharezLook/Button" name="Packet_Helper" >
+			<Window type="TaharezLook/ImageButton" name="Packet_Helper" >
 				<!--Comment	""	-->
 				<!--	Left=666, Top=110, Right=684, Bottom=136	-->
 				<Property name="Size" value="{{0.048000,0},{0.440678,0}}" />
@@ -22,7 +21,7 @@
 				<Property name="PushedImage" value="UI_duihua_1/UI_duihua_1_help_pushed" />
 				<Property name="AlwaysOnTop" value="true" />
 			</Window>
-			<Window type="TaharezLook/Button" name="Packet_Close" >
+			<Window type="TaharezLook/ImageButton" name="Packet_Close" >
 				<!--Comment	""	-->
 				<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 				<Property name="Size" value="{{0.077333,0},{0.474576,0}}" />
@@ -61,7 +60,7 @@
                         <Property name="Image" value="DriveIcons/GlobalDrive" />
                         <Property name="MousePassThroughEnabled" value="True" />
                     </Window>
-					<Window type="TaharezLook/ImageButton" name="Button" >
+					<Window type="TaharezLook/ImageButton" name="Button0" >
 					<Property name="Area" value="{{0,0},{0,0},{1,0},{1,0}" />
 					<Property name="NormalImage" value="CJSH_icons_1/CJSH_icons_1_action_3" />
 					<Property name="HoverImage" value="CJSH_icons_1/CJSH_icons_1_action_1" />
@@ -80,10 +79,10 @@
                         <Property name="MousePassThroughEnabled" value="True" />
                     </Window>
 					
-					<Window type="TaharezLook/StaticImage" name="Button" >
+					<Window type="TaharezLook/ImageButton" name="Button" >
 					<Property name="Area" value="{{0,0},{0,0},{1,0},{1,0}" />
 					<Property name="NormalImage" value="CJSH_icons_1/CJSH_icons_1_action_3" />
-					<Property name="Image" value="CJSH_icons_1/CJSH_icons_1_action_1" />
+					<Property name="HoverImage" value="CJSH_icons_1/CJSH_icons_1_action_1" />
 					<Property name="PushedImage" value="CJSH_icons_1/CJSH_icons_1_action_1" />
 					<Property name="AlwaysOnTop" value="true" />
 					<Property name="MousePassThroughEnabled" value="True" />

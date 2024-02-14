@@ -37,7 +37,7 @@ bool GameUI::appInit()
 	ApplicationBase::appInit();
     InputManager::getSingletonPtr()->addListener(this);
     //HelloDemo1();
-    PackageDemo();
+    SelfEquipDemo();
     //PackageDemo();
 	return true;
 }
@@ -57,7 +57,7 @@ void GameUI::appUpdate(float delta)
 
 EngineType GameUI::getEngineType()
 {
-	//return EngineType_Vulkan;
+	return EngineType_Vulkan;
 	return EngineType_Dx11;
 }
 

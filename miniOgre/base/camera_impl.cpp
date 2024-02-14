@@ -6,7 +6,7 @@ CameraImpl::CameraImpl(Ogre::SceneManager* sceneMgr)
 {
 	mSceneManager = sceneMgr;
     mFovy = Ogre::Degree(45).valueRadians();
-    mAspectRation = (float)1024 / (float)768;
+    mAspectRation = (float)1280 / (float)768;
 
     mViewMatrix = Ogre::Matrix4::IDENTITY;
     mUpdate = true;

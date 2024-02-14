@@ -12,7 +12,7 @@ struct PackageItemInfo
 class PackageWindow :public UIBase
 {
 public:
-	PackageWindow();
+	PackageWindow(CEGUI::Window* parent);
 	virtual void update() override;
 private:
 	bool updateItem(

@@ -13,4 +13,5 @@ public:
 	void updateWindow(uint32_t winId);
 private:
 	std::unordered_map<uint32_t, UIBase*> mWindowMap;
+	CEGUI::Window* mRoot = nullptr; 
 };

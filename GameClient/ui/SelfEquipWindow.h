@@ -8,7 +8,7 @@
 class SelfEquipWindow :public UIBase
 {
 public:
-	SelfEquipWindow();
+	SelfEquipWindow(CEGUI::Window* parent);
 
 	void clearView();
 

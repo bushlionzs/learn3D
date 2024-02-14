@@ -10,9 +10,11 @@
 #define CELL_WIDTH  46
 #define CELL_HEIGHT 45
 
-PackageWindow::PackageWindow()
+PackageWindow::PackageWindow(CEGUI::Window* parent)
 {
 	_main_window = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("Package.xml");
+	parent->addChild(_main_window);
+	_main_window->setVisible(false);
 }
 
 
