@@ -1,25 +1,12 @@
 #include "OgreHeader.h"
 #include "application_util.h"
-#include "CEGUIResourceManager.h"
+
 #include "DefineItem.h"
 #include "GameTableData.h"
 #include "GameTableDefine.h"
 #include "GameTableManager.h"
 #include "KTable.h"
 
-void setImageInfo(
-	MyGUI::ImageBox* image,
-	const String& imagesetname,
-	const String& imagename)
-{
-	CEGUIImage& imageinfo =
-		CEGUIResourceManager::getSingleton().getImageInfo(imagesetname, imagename);
-
-	image->setImageInfo(
-		imageinfo._imagename,
-		imageinfo._coord,
-		imageinfo._size);
-}
 
 
 
@@ -279,31 +266,3 @@ bool getItemInfo(uint32_t id, ItemData& data)
 	return false;
 }
 
-void setImageInfoFromIcon(MyGUI::ImageBox* image, uint32_t item_id)
-{
-	if (image == nullptr)
-	{
-		return;
-	}
-
-	const char* icon = getItemIcon(item_id);
-	if (icon)
-	{
-		CEGUIImage& imageinfo = CEGUIResourceManager::getSingleton().getIconImageInfo(icon);
-		image->deleteAllItems();
-		image->setImageInfo(
-			imageinfo._imagename,
-			imageinfo._coord,
-			imageinfo._size);
-		image->setItemSelect(0);
-	}
-	else
-	{
-		CEGUIImage& imageinfo = CEGUIResourceManager::getSingleton().getIconImageInfo("");
-
-		image->setImageInfo(
-			imageinfo._imagename,
-			imageinfo._coord,
-			imageinfo._size);
-	}
-}

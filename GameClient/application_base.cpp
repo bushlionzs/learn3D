@@ -10,10 +10,10 @@
 #include "OgreRoot.h"
 #include "engine_manager.h"
 #include "OgreRenderWindow.h"
-#include "MyGUIManager.h"
 #include "OgreViewport.h"
 #include "GameTableManager.h"
 #include "engine_manager.h"
+#include "CEGUIManager.h"
 
 ApplicationBase::ApplicationBase()
 {
@@ -83,17 +83,12 @@ bool ApplicationBase::appInit()
 
 	Ogre::Root::getSingleton().addFrameListener(this);
 
-	if (isUseMyGUI())
+	if (isUseCEGUI())
 	{
-		if (!CGameTableManager::GetSingletonPtr())
-		{
-			new CGameTableManager;
-
-			CGameTableManager::GetSingleton().Initialize();
-		}
-
-		new MyGUIManager;
-		MyGUIManager::getSingleton()._initialise(mRenderWindow);
+		ShowCursor(FALSE);
+		SetCursor(NULL);
+		new CEGUIManager;
+		CEGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
 	
 

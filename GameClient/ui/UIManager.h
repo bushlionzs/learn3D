@@ -2,7 +2,6 @@
 
 #include "GameSingleton.h"
 #include "UIDefine.h"
-#include "BaseLayout/BaseLayout.h"
 
 class UIManager :public GameSingleton<UIManager>
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include <MyGUI.h>
+#include <CEGUI/CEGUI.h>
 enum
 {
 	GameUI_SelfEquip = 0,
@@ -9,6 +9,19 @@ enum
 class UIBase
 {
 public:
-	virtual MyGUI::Widget* getView() = 0;
+	UIBase()
+	{
+		_main_window = nullptr;
+	}
+	virtual ~UIBase()
+	{
+
+	}
+	virtual CEGUI::Window* getView()
+	{
+		return _main_window;
+	}
 	virtual void update() {}
+protected:
+	CEGUI::Window* _main_window;
 };

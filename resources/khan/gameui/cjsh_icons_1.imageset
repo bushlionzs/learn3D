@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<Imageset version="2" name="CJSH_icons_1" imagefile="cjsh_icons_1.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true">
+	<Image name="CJSH_icons_1_tip1_1" xPos="0" yPos="0" width="5" height="5" />
+	<Image name="CJSH_icons_1_tip1_2" xPos="5" yPos="0" width="5" height="5" />
+	<Image name="CJSH_icons_1_tip1_3" xPos="10" yPos="0" width="5" height="5" />
+	<Image name="CJSH_icons_1_tip1_4" xPos="0" yPos="5" width="5" height="5" />
+	<Image name="CJSH_icons_1_tip1_5" xPos="5" yPos="5" width="5" height="5" />
+	<Image name="CJSH_icons_1_tip1_6" xPos="10" yPos="5" width="5" height="5" />
+	<Image name="CJSH_icons_1_tip1_7" xPos="0" yPos="10" width="5" height="5" />
+	<Image name="CJSH_icons_1_tip1_8" xPos="5" yPos="10" width="5" height="5" />
+	<Image name="CJSH_icons_1_tip1_9" xPos="10" yPos="10" width="5" height="5" />	
+	
+	<Image name="CJSH_icons_1_paopao_1" xPos="16" yPos="0" width="9" height="9" />
+	<Image name="CJSH_icons_1_paopao_2" xPos="25" yPos="0" width="9" height="9" />
+	<Image name="CJSH_icons_1_paopao_3" xPos="34" yPos="0" width="9" height="9" />
+	<Image name="CJSH_icons_1_paopao_4" xPos="16" yPos="9" width="9" height="9" />
+	<Image name="CJSH_icons_1_paopao_5" xPos="25" yPos="9" width="9" height="9" />
+	<Image name="CJSH_icons_1_paopao_6" xPos="34" yPos="9" width="9" height="9" />
+	<Image name="CJSH_icons_1_paopao_7" xPos="16" yPos="18" width="9" height="13" />
+	<Image name="CJSH_icons_1_paopao_8" xPos="25" yPos="18" width="9" height="13" />
+	<Image name="CJSH_icons_1_paopao_9" xPos="34" yPos="18" width="9" height="13" />
+	<Image name="CJSH_icons_1_paopao_10" xPos="0" yPos="16" width="6" height="7" />
+	
+	<Image name="CJSH_icons_1_change_1" xPos="0" yPos="192" width="64" height="64" />
+	<Image name="CJSH_icons_1_change_2" xPos="64" yPos="192" width="64" height="64" />
+	<Image name="CJSH_icons_1_change_3" xPos="128" yPos="192" width="64" height="64" />
+	<Image name="CJSH_icons_1_change_4" xPos="192" yPos="192" width="64" height="64" />
+	<Image name="CJSH_icons_1_change_5" xPos="0" yPos="128" width="64" height="64" />
+	<Image name="CJSH_icons_1_change_6" xPos="64" yPos="128" width="64" height="64" />
+	<Image name="CJSH_icons_1_change_7" xPos="128" yPos="128" width="64" height="64" />
+	<Image name="CJSH_icons_1_change_8" xPos="192" yPos="128" width="64" height="64" />
+	<Image name="CJSH_icons_1_change_9" xPos="0" yPos="64" width="64" height="64" />
+	<Image name="CJSH_icons_1_change_10" xPos="64" yPos="64" width="64" height="64" />
+	
+	<Image name="CJSH_icons_1_action_1" xPos="128" yPos="0" width="64" height="64" />
+	<Image name="CJSH_icons_1_action_4" xPos="193" yPos="0" width="40" height="40" />
+	<Image name="CJSH_icons_1_action_3" xPos="128" yPos="64" width="64" height="64" />
+	<Image name="CJSH_icons_1_action_2" xPos="192" yPos="64" width="64" height="64" />	
+
+	<Image name="CJSH_icons_1_team_caption" xPos="44" yPos="0" width="26" height="27" />
+	<Image name="CJSH_icons_1_team_dead" xPos="71" yPos="0" width="26" height="27" />
+	<Image name="CJSH_icons_1_team_outline" xPos="98" yPos="0" width="26" height="27" />
+	<Image name="CJSH_icons_1_team_member" xPos="98" yPos="0" width="26" height="27" />
+	
+	<Image name="CJSH_icons_1_editboxcarat" xPos="0" yPos="32" width="2" height="14" />
+	<Image name="CJSH_icons_1_hovertextbak" xPos="4" yPos="32" width="8" height="8" />
+	
+	<Image name="CJSH_icons_1_captain" xPos="60" yPos="30" width="32" height="32" />
+	<Image name="CJSH_icons_1_teammate" xPos="92" yPos="30" width="32" height="32" />
+	
+	<Image name="CJSH_icons_1_mullist_lr" xPos="23" yPos="32" width="18" height="8" xOffset="-8" yOffset="-3"/>
+	<Image name="CJSH_icons_1_mullist_move" xPos="23" yPos="43" width="18" height="18" />
+	<Image name="CJSH_icons_1_mullist_up" xPos="46" yPos="32" width="10" height="10" />
+	<Image name="CJSH_icons_1_mullist_down" xPos="46" yPos="47" width="10" height="10" />
+	
+</Imageset>

@@ -61,15 +61,16 @@ target_include_directories(${PROJECT_NAME}
 	${GAMESHARE_INC}
 	${MIDDLE_INC}
 	${MINIOGRE_INC}
-	${MYGUI_INC}
+	${CEGUI_INC}
 	${ROOT_INC}/3rd/OIS/include
 )
 
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
-target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre MyGUI Middle
-GameShare stormlib mariadbclient luaplus freetype zlibstatic dy_network libprotobuf libprotobuf-lite OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
+target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre CEGUI expat Middle
+GameShare stormlib luaplus freetype zlibstatic dy_network libprotobuf libprotobuf-lite OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
+pcre
 vulkan-1
 avcodec
 avdevice
@@ -85,4 +86,5 @@ d3d12
 d3d11
 D3DCompiler
 Shlwapi
-winmm)
+winmm
+dbghelp)

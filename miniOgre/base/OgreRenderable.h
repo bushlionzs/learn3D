@@ -61,7 +61,6 @@ namespace Ogre {
         virtual uint64_t getSortValue();
 
         virtual const Ogre::Matrix4& getModelMatrix();
-        virtual Ogre::Vector3 getPosition() { return Ogre::Vector3(0.0f, 0.0f, 0.0f); }
 
         RenderableData* getRenderableData();
     protected:

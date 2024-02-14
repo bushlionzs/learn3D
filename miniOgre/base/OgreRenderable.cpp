@@ -34,4 +34,9 @@ namespace Ogre {
     {
         return mWorld;
     }
+
+    Ogre::Vector3 getPosition()
+    {
+        return Ogre::Vector3(0.0f, 0.0f, 0.0f);
+    }
 }

@@ -21,7 +21,7 @@ bool UIManager::showWindow(uint32_t winId)
 	auto itor = mWindowMap.find(winId);
 	if (itor != mWindowMap.end())
 	{
-		MyGUI::Widget*  widget = itor->second->getView();
+		CEGUI::Window*  widget = itor->second->getView();
 		
 		widget->setVisible(!widget->isVisible());
 		return true;

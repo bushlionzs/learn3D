@@ -13,7 +13,7 @@ public:
 	virtual EngineType getEngineType();
 	virtual bool isUseMyGUI()
 	{
-		return true;
+		return false;
 	}
 private:
 	void registerMessage();
