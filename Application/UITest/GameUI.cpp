@@ -37,7 +37,7 @@ bool GameUI::appInit()
 	ApplicationBase::appInit();
     InputManager::getSingletonPtr()->addListener(this);
     //HelloDemo1();
-    ToolTipDemo();
+    MainMenuDemo();
     //PackageDemo();
 	return true;
 }
@@ -375,4 +375,18 @@ void GameUI::ToolTipDemo()
     mGUIContext->setDefaultFont(&font);
 
     mToolTip = WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
+}
+
+void GameUI::MainMenuDemo()
+{
+    WindowManager& winMgr = WindowManager::getSingleton();
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+
+    mRoot = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+
+    mGUIContext->setRootWindow(mRoot);
+
+    auto* main =  WindowManager::getSingleton().loadLayoutFromFile("Main.xml");
+
+    mRoot->addChild(main);
 }

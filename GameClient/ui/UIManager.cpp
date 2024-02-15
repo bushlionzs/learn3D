@@ -2,6 +2,7 @@
 #include "UIManager.h"
 #include "SelfEquipWindow.h"
 #include "PackageWindow.h"
+#include "MainMenuWindow.h"
 #include <CEGUIManager.h>
 
 template<>
@@ -24,43 +25,26 @@ UIManager::~UIManager()
 
 bool UIManager::showWindow(uint32_t winId)
 {
-	
-	auto itor = mWindowMap.find(winId);
-	if (itor != mWindowMap.end())
-	{
-		CEGUI::Window*  widget = itor->second->getView();
-		
-		widget->setVisible(!widget->isVisible());
-		return true;
-	}
-
-	UIBase* base = nullptr;
-	switch (winId)
-	{
-	case GameUI_SelfEquip:
-		base = new SelfEquipWindow(mRoot);
-		break;
-	case GameUI_Package:
-		base= new PackageWindow(mRoot);
-		break;
-	default:
-		assert(false);
-		break;
-	}
-
-	mWindowMap[winId] = base;
+	UIBase* base = getWindow(winId);
+	CEGUI::Window* widget = base->getView();
+	widget->setVisible(!widget->isVisible());
 	return true;
 }
 
 void UIManager::updateWindow(uint32_t winId)
 {
+	UIBase* base = getWindow(winId);
+	base->update();
+	
+}
+
+UIBase* UIManager::getWindow(uint32_t winId)
+{
 	auto itor = mWindowMap.find(winId);
 	if (itor != mWindowMap.end())
 	{
-		itor->second->update();
-		return;
+		return itor->second;
 	}
-
 	UIBase* base = nullptr;
 	switch (winId)
 	{
@@ -70,12 +54,16 @@ void UIManager::updateWindow(uint32_t winId)
 	case GameUI_Package:
 		base = new PackageWindow(mRoot);
 		break;
+	case GameUI_MainMenu:
+		base = new MainMenuWindow(mRoot);
+		break;
 	default:
 		assert(false);
 		break;
 	}
 
 	mWindowMap[winId] = base;
-	base->update();
+
+	return base;
 }
 

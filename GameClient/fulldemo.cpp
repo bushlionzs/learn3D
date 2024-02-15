@@ -11,6 +11,7 @@
 #include "application_window.h"
 #include "CEGUIManager.h"
 #include <cegui/CEGUI.h>
+#include "UIManager.h"
 
 FullDemo::FullDemo()
 {
@@ -42,6 +43,7 @@ bool FullDemo::appInit()
 	CGameMouseCursor::GetSingleton().Initialize(mApplicationWindow->getWnd());
 
 	CGameMouseCursor::GetSingleton().SetCursor(CURSOR_NORMAL);
+	UIManager::GetSingleton().showWindow(GameUI_MainMenu);
 	return true;
 }
 

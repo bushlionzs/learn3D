@@ -4,6 +4,7 @@ enum
 {
 	GameUI_SelfEquip = 0,
 	GameUI_Package,
+	GameUI_MainMenu,
 };
 
 class UIBase
