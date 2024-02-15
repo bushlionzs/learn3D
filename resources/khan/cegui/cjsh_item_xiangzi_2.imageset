@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<Imageset version="2" name="CJSH_item_xiangzi_2" imagefile="cjsh_item_xiangzi_2.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true">
+	<Image name="CJSH_item_xiangzi_2_1" xPos="0" yPos="0" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_2" xPos="64" yPos="0" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_3" xPos="128" yPos="0" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_4" xPos="192" yPos="0" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_5" xPos="0" yPos="64" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_6" xPos="64" yPos="64" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_7" xPos="128" yPos="64" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_8" xPos="192" yPos="64" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_9" xPos="0" yPos="128" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_10" xPos="64" yPos="128" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_11" xPos="128" yPos="128" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_12" xPos="192" yPos="128" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_13" xPos="0" yPos="192" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_14" xPos="64" yPos="192" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_15" xPos="128" yPos="192" width="64" height="64" />
+	<Image name="CJSH_item_xiangzi_2_16" xPos="192" yPos="192" width="64" height="64" />
+</Imageset>
+
+
+

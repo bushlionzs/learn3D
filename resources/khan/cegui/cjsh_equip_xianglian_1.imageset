@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<Imageset version="2" name="CJSH_equip_xianglian_1" imagefile="cjsh_equip_xianglian_1.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true">
+	<Image name="CJSH_equip_xianglian_1_1" xPos="0" yPos="0" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_2" xPos="64" yPos="0" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_3" xPos="128" yPos="0" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_4" xPos="192" yPos="0" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_5" xPos="0" yPos="64" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_6" xPos="64" yPos="64" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_7" xPos="128" yPos="64" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_8" xPos="192" yPos="64" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_9" xPos="0" yPos="128" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_10" xPos="64" yPos="128" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_11" xPos="128" yPos="128" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_12" xPos="192" yPos="128" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_13" xPos="0" yPos="192" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_14" xPos="64" yPos="192" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_15" xPos="128" yPos="192" width="64" height="64" />
+	<Image name="CJSH_equip_xianglian_1_16" xPos="192" yPos="192" width="64" height="64" />
+</Imageset>

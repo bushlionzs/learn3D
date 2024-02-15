@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<Imageset version="2" name="CJSH_item_baoshi_3" imagefile="cjsh_item_baoshi_3.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true">
+	<Image name="CJSH_item_baoshi_3_1" xPos="0" yPos="0" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_2" xPos="64" yPos="0" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_3" xPos="128" yPos="0" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_4" xPos="192" yPos="0" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_5" xPos="0" yPos="64" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_6" xPos="64" yPos="64" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_7" xPos="128" yPos="64" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_8" xPos="192" yPos="64" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_9" xPos="0" yPos="128" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_10" xPos="64" yPos="128" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_11" xPos="128" yPos="128" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_12" xPos="192" yPos="128" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_13" xPos="0" yPos="192" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_14" xPos="64" yPos="192" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_15" xPos="128" yPos="192" width="64" height="64" />
+	<Image name="CJSH_item_baoshi_3_16" xPos="192" yPos="192" width="64" height="64" />
+</Imageset>
+
+
+

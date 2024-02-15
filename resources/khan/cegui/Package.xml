@@ -57,7 +57,7 @@
                     <Property name="Size" value="{{0.11,0},{0.079,0}}" />
                     <Window name="Image" type="TaharezLook/StaticImage">
                         <Property name="Area" value="{{0,0},{0,0},{1,0},{1,0}" />
-                        <Property name="Image" value="DriveIcons/GlobalDrive" />
+                        <Property name="Image" value="CJSH_item_xiangzi_2/CJSH_item_xiangzi_2_3" />
                         <Property name="MousePassThroughEnabled" value="True" />
                     </Window>
 					<Window type="TaharezLook/ImageButton" name="Button0" >

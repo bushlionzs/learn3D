@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<Imageset version="2" name="HAN2_Equip_jiachuan_4" imagefile="han2_equip_jiachuan_4.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true">
+	<Image name="HAN2_Equip_jiachuan_4_1" xPos="0" yPos="0" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_2" xPos="64" yPos="0" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_3" xPos="128" yPos="0" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_4" xPos="192" yPos="0" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_5" xPos="0" yPos="64" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_6" xPos="64" yPos="64" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_7" xPos="128" yPos="64" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_8" xPos="192" yPos="64" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_9" xPos="0" yPos="128" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_10" xPos="64" yPos="128" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_11" xPos="128" yPos="128" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_12" xPos="192" yPos="128" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_13" xPos="0" yPos="192" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_14" xPos="64" yPos="192" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_15" xPos="128" yPos="192" width="64" height="64" />
+	<Image name="HAN2_Equip_jiachuan_4_16" xPos="192" yPos="192" width="64" height="64" />
+</Imageset>
