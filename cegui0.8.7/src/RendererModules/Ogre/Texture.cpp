@@ -202,7 +202,7 @@ void OgreTexture::loadFromMemory(const void* buffer, const Sizef& buffer_size,
    // d_texture->setDepth(1);zhousha
     d_texture->createInternalResources();
     d_texture->getBuffer(0,0).get()->blitFromMemory(*pixelBox);
-
+    d_texture->postLoad();
     // throw exception if no texture was able to be created
     if (!d_texture)
         CEGUI_THROW(RendererException(

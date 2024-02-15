@@ -264,8 +264,18 @@ void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
     }
     else
     {
-        vkCmdDraw(cb, vertexData->vertexCount, 1, 0, 0);
-        mEngine->incrTriangleCount(vertexData->vertexCount / 3);
+        RawDataView* view = _r->getRawDataView();
+        if (view == nullptr)
+        {
+            vkCmdDraw(cb, vertexData->vertexCount, 1, 0, 0);
+            mEngine->incrTriangleCount(vertexData->vertexCount / 3);
+        }
+        else
+        {
+            vkCmdDraw(cb, view->mVertexCount, 1, view->mVertexStart, 0);
+            mEngine->incrTriangleCount(view->mVertexCount / 3);
+        }
+        
     }
 
     mEngine->incrBatchCount(1);

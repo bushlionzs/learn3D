@@ -4,12 +4,9 @@
 #include "GameDataManager.h"
 #include "KItem.h"
 #include <CEGUI/WindowManager.h>
+#include <CEGUIManager.h>
 
-#define ITEM_WIDTH 32
-#define ITEM_HEIGHT 32
-#define CELL_WIDTH  46
-#define CELL_HEIGHT 45
-
+#define ITEM_COUNT 36
 PackageWindow::PackageWindow(CEGUI::Window* parent)
 {
 	_main_window = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("Package.xml");
@@ -20,6 +17,18 @@ PackageWindow::PackageWindow(CEGUI::Window* parent)
 	close->subscribeEvent(
 		CEGUI::Window::EventMouseClick,
 		CEGUI::Event::Subscriber(&PackageWindow::handle_ButtonClick, this));
+	_package_item_list.resize(ITEM_COUNT);
+
+	CEGUI::Window* Packet_Background_Cover = _main_window->getChild("Packet_Background_Cover");
+	for (uint32_t i = 0; i < ITEM_COUNT; i++)
+	{
+		_package_item_list[i]._item_id = 0;
+		_package_item_list[i]._item_pos = i;
+		CEGUI::String name = "DragContainer" + std::to_string(i);
+		
+		CEGUI::Window* drag = Packet_Background_Cover->getChild(name);
+		_package_item_list[i]._item_image = drag->getChild("Image");
+	}
 }
 
 
@@ -30,10 +39,21 @@ bool PackageWindow::handle_ButtonClick(const CEGUI::EventArgs& args)
 }
 
 bool PackageWindow::updateItem(
-	uint32_t row,
-	uint32_t column,
+	uint32_t index,
 	uint32_t itemId)
 {
+	ItemData itemInfo;
+
+	if (getItemInfo(itemId, itemInfo))
+	{
+		const char* fullname = CEGUIManager::getSingleton().getFullIconName(itemInfo.icon);
+
+		_package_item_list[index]._item_image->setProperty("Image", fullname);
+	}
+	else
+	{
+		_package_item_list[index]._item_image->setProperty("Image", "");
+	}
 	
 	return true;
 }
@@ -43,17 +63,15 @@ void PackageWindow::update()
 {
 	const std::vector<KItem*>&  itemlist = GameDataManager::GetSingleton().getUserBag();
 
-	for (int32_t i = 0; i < itemlist.size(); i++)
+	for (int32_t i = 0; i < ITEM_COUNT; i++)
 	{
 		KItem* item = itemlist[i];
-		if (item == nullptr)
+		uint32_t item_id = 0;
+		if (item != nullptr)
 		{
-			continue;
+			item_id = item->GetIdTable();
 		}
-		int row = i / 6;
-		int col = i % 6;
-
-		updateItem(row, col, item->GetIdTable());
+		updateItem(i, item_id);
 	}
 }
 

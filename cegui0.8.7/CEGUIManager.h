@@ -53,6 +53,11 @@ public:
 	virtual const std::vector<Renderable*>& getRenderableList();
 
 	virtual const AxisAlignedBox& getBoundingBox(void) const;
+
+	const char* getFullIconName(const std::string& name);
+
+private:
+	void _icon_init();
 private:
 
 	Ogre::Camera* mCamera;
@@ -65,5 +70,8 @@ private:
 	Ogre::String mResourceFileName;
 
 	CEGUI::GUIContext* mGUIContext = nullptr;
+
+
+	std::map<Ogre::String, Ogre::String>	mIconsMap;
 
 };

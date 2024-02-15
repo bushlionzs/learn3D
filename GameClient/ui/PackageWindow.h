@@ -18,10 +18,10 @@ public:
 	bool handle_ButtonClick(const CEGUI::EventArgs& args);
 private:
 	bool updateItem(
-		uint32_t row,
-		uint32_t column,
+		uint32_t index,
 		uint32_t itemId);
-
+private:
+	std::vector<PackageItemInfo> _package_item_list;
 };
 
 

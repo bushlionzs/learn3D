@@ -17,6 +17,7 @@
 #include <CEGUI/ImageManager.h>
 #include "Renderer.h"
 
+
 using namespace CEGUI;
 template<> CEGUIManager* Ogre::Singleton<CEGUIManager>::msSingleton = 0;
 
@@ -79,7 +80,30 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 		ImageManager::getSingleton().loadImageset("ui_mainboard_3.imageset.xml");
 		ImageManager::getSingleton().loadImageset("DriveIcons.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_icons_1.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_item_xiangzi_2.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_quest_gaoshi_1.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_equip_dao_2.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_equip_pifeng_1.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_equip_shangyi_1.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_equip_xianglian_1.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_equip_xie_1.imageset");
+		ImageManager::getSingleton().loadImageset("ui_mainui_1.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_item_hongyao_1.imageset");
+
+		ImageManager::getSingleton().loadImageset("cjsh_equip_shoutao_1.imageset");
+		ImageManager::getSingleton().loadImageset("han2_equip_jiachuan_4.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_item_baoshi_3.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_item_xiangzi_1.imageset");
+		
+		
 		CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
+
+		_icon_init();
+
+		FontManager& fontManager(FontManager::getSingleton());
+		CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
+
+		mGUIContext->setDefaultFont(&font);
 	}
 
 	
@@ -109,6 +133,33 @@ const AxisAlignedBox& CEGUIManager::getBoundingBox(void) const
 	static AxisAlignedBox box;
 	box.setInfinite();
 	return box;
+}
+
+const char* CEGUIManager::getFullIconName(const std::string& name)
+{
+	auto itor = mIconsMap.find(name);
+	if (itor != mIconsMap.end())
+	{
+		return itor->second.c_str();
+	}
+
+	return nullptr;
+}
+
+void CEGUIManager::_icon_init()
+{
+	auto it = ImageManager::getSingleton().getIterator();
+	std::string fullname;
+	for (it.toStart(); !it.isAtEnd(); it++)
+	{
+		fullname = it.getCurrentKey().c_str();
+		auto pos = fullname.find_last_of('/');
+		if (pos != std::string::npos)
+		{
+			auto itor = mIconsMap.insert(std::make_pair(fullname.substr(pos + 1, fullname.size()), fullname));
+			assert(itor.second);
+		}
+	}
 }
 
 void CEGUIManager::injectMouseMove(int _absx, int _absy, int _absz)

@@ -37,7 +37,7 @@ bool GameUI::appInit()
 	ApplicationBase::appInit();
     InputManager::getSingletonPtr()->addListener(this);
     //HelloDemo1();
-    SelfEquipDemo();
+    ToolTipDemo();
     //PackageDemo();
 	return true;
 }
@@ -57,7 +57,7 @@ void GameUI::appUpdate(float delta)
 
 EngineType GameUI::getEngineType()
 {
-	return EngineType_Vulkan;
+	//return EngineType_Vulkan;
 	return EngineType_Dx11;
 }
 
@@ -265,7 +265,7 @@ void GameUI::injectKeyRelease(KeyCode _key)
 {
     if (_key == KeyCode::B)
     {
-        mSelfEquip->addChild(mToolTip);
+        mRoot->addChild(mToolTip);
         mToolTip->show();
     }
     
@@ -279,7 +279,7 @@ void GameUI::PackageDemo()
 {
     mGUIContext = CEGUIManager::getSingleton().getGUIContext();
 
-    
+    ImageManager::getSingleton().loadImageset("cjsh.imageset");
     auto* root = WindowManager::getSingleton().loadLayoutFromFile("Package.xml");
     FontManager& fontManager(FontManager::getSingleton());
     CEGUI::Font& font(fontManager.createFromFile("simhei24.font"));
@@ -366,15 +366,13 @@ void GameUI::ToolTipDemo()
     WindowManager& winMgr = WindowManager::getSingleton();
     mGUIContext = CEGUIManager::getSingleton().getGUIContext();
 
-    auto* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+    mRoot = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
 
-    mGUIContext->setRootWindow(root);
+    mGUIContext->setRootWindow(mRoot);
 
     FontManager& fontManager(FontManager::getSingleton());
     CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
     mGUIContext->setDefaultFont(&font);
 
-    auto* tooltip = WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
-    root->addChild(tooltip);
-    tooltip->show();
+    mToolTip = WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
 }

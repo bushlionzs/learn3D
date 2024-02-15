@@ -51,6 +51,7 @@ private:
 	Role* mRole;
 	CEGUI::GUIContext* mGUIContext = nullptr;
 
+	CEGUI::Window* mRoot = nullptr;
 	CEGUI::Window* mToolTip = nullptr;
 	CEGUI::Window* mSelfEquip = nullptr;
 };
