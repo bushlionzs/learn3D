@@ -27,4 +27,8 @@ void GameInput::input(KeyCode _key)
 	{
 		UIManager::GetSingleton().showWindow(GameUI_Package);
 	}
+	else if (_key == KeyCode::V)
+	{
+		UIManager::GetSingleton().showWindow(GameUI_Quest);
+	}
 }

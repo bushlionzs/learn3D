@@ -70,6 +70,9 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 
 	mGUIContext = &context;
 
+	mRoot = (CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "Root");
+	CEGUIManager::getSingleton().getGUIContext()->setRootWindow(mRoot);
+
 	ImageManager::getSingleton().loadImageset("MouseCursor.imageset");
 	context.getMouseCursor().setDefaultImage("MouseCursor/Normal");
 	
@@ -94,6 +97,8 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 		ImageManager::getSingleton().loadImageset("han2_equip_jiachuan_4.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_item_baoshi_3.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_item_xiangzi_1.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_npc_touxiang_8.imageset");
+		ImageManager::getSingleton().loadImageset("ui_mainboard_5.imageset");
 		
 		
 		CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
@@ -205,3 +210,18 @@ bool CEGUIManager::frameStarted(const FrameEvent& evt)
 	return true;
 }
 
+bool CEGUIManager::isMouseInGUI()
+{
+	CEGUI::Window* current = mGUIContext->getWindowContainingMouse();
+	if (current == nullptr)
+	{
+		return false;
+	}
+
+	std::string name = current->getName().c_str();
+	if (current == mRoot)
+	{
+		return false;
+	}
+	return true;
+}

@@ -101,6 +101,7 @@ void CalculateNodePos(const Ogre::Vector3& fvPosition, FLOAT fModifyHeight, Ogre
 	outPos.z = fvPosition.z;
 }
 
+
 void KPlayer::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 {
 	if (_id == OIS::MB_Left)
@@ -111,13 +112,6 @@ void KPlayer::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 			fvSource, GAT_GAME, fvTarget);
 
 		
-		
-		{
-			//test path
-			Ogre::Vector2 fvMyPos(191.731522, 179.000549);
-			Ogre::Vector2 fvTargetPos(145.000000, 203.000000);
-			mPathComponent->moveTo(fvMyPos, fvTargetPos);
-		}
 		Ogre::Vector2 fvMyPos(mGamePosition.x, mGamePosition.z);
 		Ogre::Vector2 fvTargetPos(fvTarget.x, fvTarget.z);
 		//fvTargetPos.x = 145;

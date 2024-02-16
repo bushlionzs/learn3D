@@ -3,7 +3,7 @@
 #include "OgreMoveObject.h"
 #include "InputManager.h"
 #include "OgreFrameListener.h"
-
+#include <CEGUI/CEGUI.h>
 namespace CEGUI
 {
 	class GUIContext;
@@ -56,6 +56,12 @@ public:
 
 	const char* getFullIconName(const std::string& name);
 
+	CEGUI::Window* getRootWindow()
+	{
+		return mRoot;
+	}
+	bool isMouseInGUI();
+
 private:
 	void _icon_init();
 private:
@@ -71,6 +77,7 @@ private:
 
 	CEGUI::GUIContext* mGUIContext = nullptr;
 
+	CEGUI::Window* mRoot = nullptr;
 
 	std::map<Ogre::String, Ogre::String>	mIconsMap;
 

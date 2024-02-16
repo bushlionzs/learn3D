@@ -386,7 +386,7 @@ void GameUI::MainMenuDemo()
 
     mGUIContext->setRootWindow(mRoot);
 
-    auto* main =  WindowManager::getSingleton().loadLayoutFromFile("Main.xml");
+    auto* main =  WindowManager::getSingleton().loadLayoutFromFile("quest.xml");
 
     mRoot->addChild(main);
 }

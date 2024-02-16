@@ -5,13 +5,13 @@
 		<!--Comment	""	-->
 		<!--	Left=520, Top=80, Right=1024, Bottom=688	-->
 		<Property name="Size" value="{{1.0,0},{1.0,0}}" />
-		<Property name="Position" value="{{0.08,0},{0.437,0}}" />
+		<Property name="Position" value="{{0.08,0},{0.9,0}}" />
 		
 	    <Window type="TaharezLook/StaticImage" name="left" >
 		<!--Comment	""	-->
 		<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
 		<Property name="Size" value="{{0.19765625,0},{0.0625,0}}" />
-		<Property name="Position" value="{{0.196875,0},{0.5,0}}" />			
+		<Property name="Position" value="{{0.196875,0},{0.038,0}}" />			
 		<Property name="Image" value="UI_MainUI_1/UI_MainUI_1_Skill_Bak" />
 		</Window>
 		
@@ -19,7 +19,7 @@
 		<!--Comment	""	-->
 		<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
 		<Property name="Size" value="{{0.0453125,0},{0.07421875,0}}" />
-		<Property name="Position" value="{{0.39296875,0},{0.49,0}}" />			
+		<Property name="Position" value="{{0.39296875,0},{0.026,0}}" />			
 		<Property name="Image" value="UI_MainUI_1/UI_MainUI_1_Horse_Bak" />
 		    <Window type="TaharezLook/StaticImage" name="horse" >
 			<!--Comment	""	-->
@@ -36,7 +36,7 @@
 		<!--Comment	""	-->
 		<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
 		<Property name="Size" value="{{0.19765625,0},{0.0625,0}}" />
-		<Property name="Position" value="{{0.4359375,0},{0.5,0}}" />			
+		<Property name="Position" value="{{0.4359375,0},{0.038,0}}" />			
 		<Property name="Image" value="UI_MainUI_1/UI_MainUI_1_Skill_Bak" />
 		</Window>
 		
@@ -44,7 +44,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.0390625,0},{0.06510416,0}}" />
-			<Property name="Position" value="{{0.0,0},{0.5,0}}" />
+			<Property name="Position" value="{{0.0,0},{0.032,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_1_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_1_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_1_Pushed" />
@@ -55,7 +55,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.0390625,0},{0.06510416,0}}" />
-			<Property name="Position" value="{{0.0390625,0},{0.5,0}}" />
+			<Property name="Position" value="{{0.0390625,0},{0.032,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_2_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_2_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_2_Pushed" />
@@ -66,7 +66,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.0390625,0},{0.06510416,0}}" />
-			<Property name="Position" value="{{0.078125,0},{0.5,0}}" />
+			<Property name="Position" value="{{0.078125,0},{0.032,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_3_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_3_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_3_Pushed" />
@@ -77,7 +77,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.0390625,0},{0.06510416,0}}" />
-			<Property name="Position" value="{{0.1171875,0},{0.5,0}}" />
+			<Property name="Position" value="{{0.1171875,0},{0.032,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_4_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_4_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_4_Pushed" />
@@ -88,7 +88,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.025,0},{0.0416667,0}}" />
-			<Property name="Position" value="{{0.16328125,0},{0.5182291,0}}" />
+			<Property name="Position" value="{{0.16328125,0},{0.048,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Minimapbtn_2_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Minimapbtn_2_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Minimapbtn_2_Pushed" />
@@ -99,7 +99,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.025,0},{0.0416667,0}}" />
-			<Property name="Position" value="{{0.640625,0},{0.5182291,0}}" />
+			<Property name="Position" value="{{0.640625,0},{0.048,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Minimapbtn_3_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Minimapbtn_3_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Minimapbtn_3_Pushed" />
@@ -110,7 +110,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.0390625,0},{0.06510416,0}}" />
-			<Property name="Position" value="{{0.67265625,0},{0.5,0}}" />
+			<Property name="Position" value="{{0.67265625,0},{0.032,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_5_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_5_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_5_Pushed" />
@@ -121,7 +121,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.0390625,0},{0.06510416,0}}" />
-			<Property name="Position" value="{{0.71171875,0},{0.5,0}}" />
+			<Property name="Position" value="{{0.71171875,0},{0.032,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_6_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_6_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_6_Pushed" />
@@ -132,7 +132,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.0390625,0},{0.06510416,0}}" />
-			<Property name="Position" value="{{0.75078125,0},{0.5,0}}" />
+			<Property name="Position" value="{{0.75078125,0},{0.032,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_7_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_7_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_7_Pushed" />
@@ -143,7 +143,7 @@
 			<!--Comment	""	-->
 			<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
 			<Property name="Size" value="{{0.0390625,0},{0.06510416,0}}" />
-			<Property name="Position" value="{{0.78984375,0},{0.5,0}}" />
+			<Property name="Position" value="{{0.78984375,0},{0.032,0}}" />
 			<Property name="NormalImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_8_Normal" />
 			<Property name="HoverImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_8_Hover" />
 			<Property name="PushedImage" value="UI_MainUI_1/UI_MainUI_1_Mainbtn_8_Pushed" />

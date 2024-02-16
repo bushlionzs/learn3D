@@ -34,6 +34,7 @@ public:
 		Real winx, Real winy,
 		std::vector<Orphigine::ActorPtr>& objects);
 private:
+	void loadPOVBinary(LPCTSTR szPOVFile);
 	void loadRegionBinary(LPCTSTR szRegionFile);
 	void registeAllRegion(void);
 	CMapZone* GetZone(int32_t nXPos, int32_t nZPos);

@@ -16,6 +16,7 @@
 #include "DirectlyEffectMgr.h"
 #include "KTable.h"
 #include "GameMouseCursor.h"
+#include <CEGUIManager.h>
 
 GameWorld::GameWorld(GameCamera* gameCamera)
 {
@@ -92,6 +93,10 @@ void GameWorld::injectMouseMove(int _absx, int _absy, int _absz)
 
 void GameWorld::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 {
+	if (CEGUIManager::getSingleton().isMouseInGUI())
+	{
+		return;
+	}
 	if (_id == OIS::MB_Left)
 	{
 		if (!mPlayer)

@@ -64,6 +64,9 @@ bool GameScene::load()
 
 	loadRegionBinary(strRegion.c_str());
 
+	String	strPov = baseName + ".pov";
+	loadPOVBinary(strPov.c_str());
+
 
 
 	Orphigine::PhyCollectionSerializer physicsSerializer;
@@ -86,6 +89,63 @@ bool GameScene::load()
 	
 
 	return true;
+}
+
+void GameScene::loadPOVBinary(LPCTSTR szPOVFile)
+{
+	if (!szPOVFile || szPOVFile[0] == '\0') return;
+	if (!m_neSpace) return;
+
+	const char* lpAddress = NULL;
+
+	auto stream = ResourceManager::getSingleton().openResource(szPOVFile);
+
+	DWORD	dwSize = stream->getStreamLength();
+
+	lpAddress = stream->getStreamData();
+
+	if (dwSize > 0)
+	{
+		const char* pPoint = lpAddress;
+
+		/* 遍历每个Region */
+		for (int32 i = 0; i < m_neSpace->getNumRegions(); i++)
+		{
+			Orphigine::NeRegion* tmpRegion = m_neSpace->getRegionByIndex(i);
+
+			/* 遍历每个Region中的可视点 */
+			for (int32 j = 0; j < tmpRegion->getNumPointsOfVisibility(); j++)
+			{
+				Orphigine::NeVisibilityPoints* tmpCurrentPOV = tmpRegion->getPointOfVisibility(j);
+
+				int32 tmpNumLinkedPOV;
+
+				memcpy(&tmpNumLinkedPOV, pPoint, sizeof(int32));
+				pPoint += sizeof(int32);
+
+				/* 遍历每个连接点 */
+				for (int32 m = 0; m < tmpNumLinkedPOV; m++)
+				{
+					int32 tmpBelongRegionID;
+
+					memcpy(&tmpBelongRegionID, pPoint, sizeof(int32));
+					pPoint += sizeof(int32);
+
+					int32 tmpLinkingPOVID;
+
+					memcpy(&tmpLinkingPOVID, pPoint, sizeof(int32));
+					pPoint += sizeof(int32);
+
+					Orphigine::NeRegion* tmpTargetRegion = m_neSpace->getRegionByID(tmpBelongRegionID);
+
+					const Orphigine::NeVisibilityPoints* tmpLinkingPOV = tmpTargetRegion->getPointOfVisibility(tmpLinkingPOVID);
+
+					tmpCurrentPOV->m_visibilityPointsList.push_back(tmpLinkingPOV);
+				}
+			}
+		}
+
+	}
 }
 
 

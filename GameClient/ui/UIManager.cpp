@@ -3,6 +3,7 @@
 #include "SelfEquipWindow.h"
 #include "PackageWindow.h"
 #include "MainMenuWindow.h"
+#include "QuestWindow.h"
 #include <CEGUIManager.h>
 
 template<>
@@ -10,8 +11,7 @@ UIManager* GameSingleton<UIManager>::m_sSingleton = nullptr;
 
 UIManager::UIManager()
 {
-	mRoot = (CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "Root");
-	CEGUIManager::getSingleton().getGUIContext()->setRootWindow(mRoot);
+	mRoot = CEGUIManager::getSingleton().getRootWindow();
 
 	CEGUI::FontManager& fontManager(CEGUI::FontManager::getSingleton());
 	CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
@@ -56,6 +56,9 @@ UIBase* UIManager::getWindow(uint32_t winId)
 		break;
 	case GameUI_MainMenu:
 		base = new MainMenuWindow(mRoot);
+		break;
+	case GameUI_Quest:
+		base = new QuestWindow(mRoot);
 		break;
 	default:
 		assert(false);
