@@ -6,6 +6,12 @@ namespace Orphigine
 {
     class Actor;
 };
+
+namespace Ogre
+{
+    class RaySceneQuery;
+};
+
 class Terrain;
 
 enum GAME_AXIS_TYPE
@@ -50,6 +56,7 @@ public:
         Ogre::Vector3& position, 
         Ogre::Vector3* normal = 0, 
         bool allowOutside = false) const;
+    Ogre::SceneNode* Find_HitOrphigineObject(int32 nX, int32 nY);
     Orphigine::Actor* getRegisterObject(Ogre::String& ObjName);
     bool registerObject(const Ogre::String& ObjName, Orphigine::Actor* pObj);
     void unregisterObject(const Ogre::String& ObjName);
@@ -69,4 +76,5 @@ private:
     Ogre::Viewport* mMainViewport = nullptr;
     Terrain* mTerrain;
     std::map<String, Orphigine::Actor*> mObjectMap;
+    
 };

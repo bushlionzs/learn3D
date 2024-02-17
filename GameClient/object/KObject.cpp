@@ -49,5 +49,5 @@ const Ogre::Vector3& KObject::getOrientation()
 
 GameEntity* KObject::createGameEntity(int32_t entityType)
 {
-	return new GameEntity;
+	return new GameEntity(this);
 }

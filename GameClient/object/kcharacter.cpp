@@ -65,7 +65,7 @@ bool KCharacter::initialize()
 	m_nCharActionState = CAHR_STATE_IDLE;
 
 	m_nJumpActionState = 0;
-	mMainEntity = std::make_shared<GameEntity>();
+	mMainEntity = std::make_shared<GameEntity>(this);
 	UpdateCharBaseData();
 	
 	return true;
@@ -699,7 +699,7 @@ GameEntity* KCharacter::CreateMountRenderInterface(int32 nMountID)
 
 	if (!mMountEntity)
 	{
-		mMountEntity = std::make_shared<GameEntity>();
+		mMountEntity = std::make_shared<GameEntity>(this);
 	}
 
 	const CGameTable* pCharMountTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MOUNT);

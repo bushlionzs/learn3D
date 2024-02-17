@@ -88,7 +88,18 @@ void GameWorld::injectMouseCursor()
 
 void GameWorld::injectMouseMove(int _absx, int _absy, int _absz)
 {
-    
+	KPlayer* pPlayer = KObjectManager::GetSingleton().getMySelf();
+	if (nullptr == pPlayer)
+	{
+		return;
+	}
+	Ogre::Vector3 fvMouseHitPlan;
+	KObject* pSelectObj = (KObject*)KObjectManager::GetSingleton().GetMouseOverObject(_absx, _absy, fvMouseHitPlan);
+
+	if (pSelectObj)
+	{
+		int kk = 0;
+	}
 }
 
 void GameWorld::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)

@@ -55,3 +55,9 @@ void KNpc::UpdateCharBaseData(void)
 	
 	}
 }
+
+void   KNpc::OnQueryRay(GameEntity* entity)
+{
+	entity->SetModel_RayQuery(true);
+	entity->SetRayQueryLevel(RL_CREATURE);
+}

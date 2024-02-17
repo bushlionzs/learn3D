@@ -1,6 +1,6 @@
 #include "OgreHeader.h"
 #include "OGActorProxy.h"
-
+#include "OgreMoveObject.h"
 
 namespace Orphigine
 {
@@ -42,6 +42,24 @@ namespace Orphigine
 		return mObject.lock();
 	}
 
-	
+	ActorPtr getObjectFromMovable(Ogre::MoveObject* movable)
+	{
+		assert(movable);
+		if (movable)
+		{
+			const Ogre::Any& any = movable->getUserAny();
+			if (any.type() == typeid(Ogre::UserDefinedObject*))
+			{
+				Ogre::UserDefinedObject* userObject = Ogre::any_cast<Ogre::UserDefinedObject*>(any);
+				if (userObject && userObject->getTypeID() == ActorProxy::msTypeID)
+				{
+					ActorProxy* proxy = static_cast<ActorProxy*>(userObject);
+					return proxy->getObject();
+				}
+			}
+		}
+
+		return ActorPtr();
+	}
 
 }

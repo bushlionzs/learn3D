@@ -15,11 +15,14 @@
 #include "CharacterCommon.h"
 
 
-GameEntity::GameEntity()
+GameEntity::GameEntity(KObject* owner)
 {
 	mOrphigineObj =
 		Orphigine::ActorFactoryManager::getSingleton().createInstance("SkeletonMeshActor");
 	mOrphigineObj->createRenderInstance();
+	mOrphigineObj->setData((uint64_t)this);
+
+	mOwner = owner;
 }
 
 GameEntity::~GameEntity()

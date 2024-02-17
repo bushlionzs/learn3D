@@ -94,6 +94,17 @@ namespace Ogre {
 
     }
 
+    uint32 MoveObject::getTypeFlags(void) const
+    {
+        if (mCreator)
+        {
+            return mCreator->getTypeFlags();
+        }
+        else
+        {
+            return 0xFFFFFFFF;
+        }
+    }
 
     const AxisAlignedBox& MoveObject::getWorldBoundingBox(bool derive) const
     {

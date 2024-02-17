@@ -19,6 +19,8 @@ public:
 
 	virtual int32 AnalyseCharModel(void)const;
 	virtual void UpdateCharBaseData(void);
+
+	virtual void   OnQueryRay(GameEntity* entity);
 private:
 	GUID_t m_GUIDServer;
 

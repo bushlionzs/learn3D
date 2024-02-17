@@ -3,6 +3,10 @@
 #include "GameSingleton.h"
 class KObject;
 class KPlayer;
+namespace Ogre
+{
+	class RaySceneQuery;
+}
 class KObjectManager :public GameSingleton<KObjectManager>
 {
 public:
@@ -18,10 +22,14 @@ public:
 
 	void update(float delta);
 
+	KObject* GetMouseOverObject(int32 nX, int32 nY, Ogre::Vector3& fvMouseHitPlan);
+	KObject* Find_HitOrphigineObject(int32 nX, int32 nY);
 private:
 	bool addObject(int64_t id, KObject* obj);
 private:
 	std::unordered_map<int64_t, KObject*> mObjectMap;
 
 	KObject* mPlayer;
+
+	Ogre::RaySceneQuery* mSceneQuery = nullptr;
 };

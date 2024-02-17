@@ -111,7 +111,7 @@ BOOL CMapCollisionManager::IsIntersection
 {
 	Ogre::Vector3 rayOrigin;
 
-	EngineManager().getSingleton().positionAxisTrans(GAT_SCENE, Ogre::Vector3(fOrigx, fOrigy, fOrigz), GAT_ENGINE, rayOrigin);
+	EngineManager::getSingleton().positionAxisTrans(GAT_SCENE, Ogre::Vector3(fOrigx, fOrigy, fOrigz), GAT_ENGINE, rayOrigin);
 
 	Ogre::Vector3	tmpStart = rayOrigin;
 	Ogre::Vector3	tmpDir = Ogre::Vector3(fDirx, fDiry, fDirz) * 30000.0f;
@@ -119,7 +119,7 @@ BOOL CMapCollisionManager::IsIntersection
 	bool			hasIntersection = true;
 	Ogre::Vector3			resultPosGameCoord;
 
-	EngineManager().getSingleton().positionAxisTrans
+	EngineManager::getSingleton().positionAxisTrans
 		(
 			GAT_ENGINE,
 			Ogre::Vector3(tmpResultPos.x, tmpResultPos.y, tmpResultPos.z),

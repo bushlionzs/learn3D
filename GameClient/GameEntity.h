@@ -4,6 +4,21 @@
 #include "OGSpell.h"
 #include "OGSkeletonMeshActor.h"
 
+enum RAYQUERY_LEVEL
+{
+	RL_ITEMBOX = 1,	/* 掉落包 1 */
+	RL_PLAYER_DEADBODY = 2,	/* 玩家尸体 2 */
+	RL_CREATURE = 3,	/* NPC & Monster 3 */
+	RL_TRIPPEROBJ = 4,	/* 资源 4 */
+	RL_PLAYEROTHER = 5,	/* 玩家 5 */
+	RL_PLAYERMYSLEF = 6,	/* 自己 6 */
+	RL_PET = 7,	/* 宠物 7 */
+	RL_CREATURE_DEADBODY = 8,	/* 怪物尸体 8 */
+	RL_PLATFORM = 9,	/* 操作平台 9 */
+	RL_UNKNOWN = 10,
+};
+
+class KObject;
 class GameEntity
 {
 public:
@@ -16,7 +31,7 @@ public:
 		WEAP_LEFT_SHIELD,				/* 左盾牌 */
 	};
 public:
-	GameEntity();
+	GameEntity(KObject* owner);
 	~GameEntity();
 
 	bool setModelName(const String& modelName);
@@ -113,6 +128,31 @@ public:
 
 	Orphigine::Spell* GetCurrentSkill();
 	void ChangeModelActionRate(FLOAT fRate);
+
+	void SetModel_RayQuery(BOOL bQuery)
+	{
+		mQuery = bQuery;
+	}
+	bool GetRayQuery(void)
+	{
+		return mQuery;
+	}
+
+	/* 鼠标选择级别 */
+	void			SetRayQueryLevel(RAYQUERY_LEVEL nLevel)
+	{
+		mQueryLevel = nLevel;
+	}
+
+	RAYQUERY_LEVEL	GetRayQueryLevel(void)
+	{
+		return mQueryLevel;
+	}
+
+	KObject* getOwner()
+	{
+		return mOwner;
+	}
 private:
 	Orphigine::ActorPtr		mOrphigineObj;
 	Ogre::Vector3 mEntityPosition;
@@ -130,4 +170,9 @@ private:
 
 	Ogre::Vector3	m_fvDefaultScale = Ogre::Vector3::UNIT_SCALE;
 	float m_fScale = 1.0f;
+
+	KObject* mOwner = nullptr;
+
+	bool mQuery = false;
+	RAYQUERY_LEVEL mQueryLevel = RL_UNKNOWN;
 };

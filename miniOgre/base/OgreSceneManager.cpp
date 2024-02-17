@@ -15,8 +15,52 @@
 #include "myutils.h"
 #include "OgreViewport.h"
 #include "OgreLight.h"
+#include "OgreSceneQuery.h"
 
 namespace Ogre {
+
+    class  DefaultRaySceneQuery : public RaySceneQuery
+    {
+    public:
+        DefaultRaySceneQuery(SceneManager* creator):RaySceneQuery(creator)
+        {
+
+        }
+        ~DefaultRaySceneQuery()
+        {
+
+        }
+
+        /** See RayScenQuery. */
+        void execute(RaySceneQueryListener* listener)
+        {
+            auto itor = mParentSceneMgr->getMoveObjectIterator();
+
+            auto end = mParentSceneMgr->getMoveObjectIteratorEnd();
+
+            for (; itor != end; itor++)
+            {
+                Ogre::MoveObject* a = itor->second;
+                if (!(a->getTypeFlags() & mQueryTypeMask))
+                    break;
+
+                if ((a->getQueryFlags() & mQueryMask) &&
+                    a->isVisible())
+                {
+                    // Do ray / box test
+                    std::pair<bool, Real> result =
+                        mRay.intersects(a->getWorldBoundingBox());
+
+                    if (result.first)
+                    {
+                        if (!listener->queryResult(a, result.second)) return;
+                    }
+                }
+            }
+          
+        }
+    };
+
     SceneManager::SceneManager()
     {
         mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
@@ -230,7 +274,10 @@ namespace Ogre {
     RaySceneQuery*
         SceneManager::createRayQuery(const Ray& ray, uint32 mask)
     {
-        return nullptr;
+        DefaultRaySceneQuery* q = OGRE_NEW DefaultRaySceneQuery(this);
+        q->setRay(ray);
+        q->setQueryMask(mask);
+        return q;
     }
 
     void SceneManager::destroyMovableObject(const String& name, const String& typeName)

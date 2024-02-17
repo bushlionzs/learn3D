@@ -20,6 +20,9 @@
 #include "OGBulletFlowSystemManager.h"
 #include "OGActorFactoryManager.h"
 #include "game_scene_manager.h"
+#include "OgreSceneQuery.h"
+#include "OGActorProxy.h"
+
 
 template<> EngineManager* Ogre::Singleton<EngineManager>::msSingleton = 0;
 
@@ -39,8 +42,7 @@ EngineManager::~EngineManager()
 
 bool EngineManager::initialise()
 {
-	new Ogre::Root;
-	Ogre::Root::getSingleton()._initialise();
+	
 	new Orphigine::SkeletonMeshComponentManager(nullptr);
 	Ogre::Root::getSingleton().addMovableObjectFactory(new Orphigine::ProjectorFactory);
 	new Orphigine::ActorFactoryManager;
@@ -54,6 +56,10 @@ bool EngineManager::initialise()
 	ResourceParserManager::getSingleton().registerParser(Orphigine::SkeletonMeshComponentManager::getSingletonPtr());
 	ResourceParserManager::getSingleton().registerParser(Orphigine::AdvancedAnimationSystemManager::getSingletonPtr());
 	ResourceParserManager::getSingleton().registerParser(new Orphigine::BulletFlowSystemManager);
+
+	mSceneManager = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("main"));
+	mMainCamera = mSceneManager->createCamera(MAIN_CAMERA);
+
 	return true;
 }
 
@@ -69,29 +75,16 @@ void EngineManager::setMyPosition(Ogre::Vector3& position)
 
 Ogre::SceneManager* EngineManager::getSceneManager()
 {
-	if (nullptr == mSceneManager)
-	{
-		mSceneManager = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("main"));
-	}
 	return mSceneManager;
 }
 
 Ogre::SceneNode* EngineManager::getBaseSceneNode()
 {
-	if (nullptr == mSceneManager)
-	{
-		mSceneManager = Ogre::Root::getSingletonPtr()->createSceneManger(MAIN_SCENE_MANAGER);
-	}
 	return mSceneManager->getRoot();
 }
 
 Ogre::Camera* EngineManager::getMainCamera()
 {
-	if (nullptr == mMainCamera)
-	{
-		mMainCamera = mSceneManager->createCamera(MAIN_CAMERA);
-	}
-	
 	return mMainCamera;
 }
 
@@ -135,6 +128,8 @@ bool EngineManager::getTerrainIntersects(Real winx, Real winy,
 	auto ray = mMainCamera->getCameraToViewportRay(screenX, screenY);
 	return getTerrainIntersects(ray, position, normal, allowOutside);
 }
+
+
 
 Orphigine::Actor* EngineManager::getRegisterObject(Ogre::String& ObjName)
 {

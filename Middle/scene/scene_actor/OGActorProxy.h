@@ -26,7 +26,7 @@ namespace Orphigine
 	protected:
 		ActorWeakPtr mObject;
 	};
-
+	ActorPtr _OrphigineExport getObjectFromMovable(Ogre::MoveObject* movable);
 }
 
 #endif // OGActorProxy_h__

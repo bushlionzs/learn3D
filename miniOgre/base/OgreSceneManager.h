@@ -134,6 +134,17 @@ namespace Ogre {
         {
             return mCurrentViewport;
         }
+
+        std::unordered_map<std::string, MoveObject*>::iterator getMoveObjectIterator()
+        {
+            return mMoveObjectMap.begin();
+        }
+
+        std::unordered_map<std::string, MoveObject*>::iterator getMoveObjectIteratorEnd()
+        {
+            return mMoveObjectMap.end();
+        }
+
     private:
         std::unordered_map<std::string, Camera*> mCameraMap;
         std::unordered_map<String, SceneNode*> mNamedNodes;

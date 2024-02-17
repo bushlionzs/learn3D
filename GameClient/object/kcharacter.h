@@ -427,4 +427,5 @@ protected:
 	// ÏÂÂí
 	virtual void			Dismount();
 	
+	virtual void   OnQueryRay(GameEntity* entity) {}
 };

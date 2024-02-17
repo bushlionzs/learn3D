@@ -3,6 +3,7 @@
 #include "OgreUserObjectBindings.h"
 #include "OgreAxisAlignedBox.h"
 namespace Ogre {
+    class MovableObjectFactory;
     class MoveObject
     {
     public:
@@ -56,25 +57,45 @@ namespace Ogre {
 
         virtual void _notifyMoved(void);
 
+        uint32 getTypeFlags(void) const;
+
         void addQueryFlags(uint32 flags) 
         { 
             mQueryFlags |= flags; 
+        }
+
+        uint32_t getQueryFlags()
+        {
+            return mQueryFlags;
         }
 
         virtual Real getBoundingRadius(void) const { return 0; }
         virtual const AxisAlignedBox& getBoundingBox(void) const = 0;
 
         virtual const AxisAlignedBox& getWorldBoundingBox(bool derive = false) const;
+
+        virtual void setUserAny(const Any& anything) { mUserAny = anything; }
+
+        /** Retrieves the custom user value associated with this object.
+        */
+        virtual const Any& getUserAny(void) const { return mUserAny; }
+
+        virtual void _notifyCreator(MovableObjectFactory* fact) 
+        { 
+            mCreator = fact; 
+        }
     protected:
         Node* mParent;
         SceneManager* mManager;
+        MovableObjectFactory* mCreator;
         std::string mName;
         Ogre::Matrix4 mWorld;
         Ogre::Matrix4 mLocal;
         Ogre::Vector3 mPosition;
         std::vector<Renderable*> mRenderables;
         UserObjectBindings mUserObjectBindings;
-        uint32 mQueryFlags;
+        uint32_t  mQueryFlags = 0;
+
         bool mVisible = true;
 
         String mObjectType;
@@ -82,6 +103,8 @@ namespace Ogre {
         mutable AxisAlignedBox mWorldAABB;
 
         bool mCastShadows = false;
+
+        Ogre::Any mUserAny;
     };
 
 

@@ -128,8 +128,8 @@ struct vector2
 struct fRay
 {
 public:
-	vector3 mOrigin;
-	vector3 mDirection;
+	Ogre::Vector3 mOrigin;
+	Ogre::Vector3 mDirection;
 };
 
 

@@ -412,7 +412,7 @@ namespace Ogre {
             execute is more lightweight and therefore more efficient than the version 
             which returns the results as a collection.
         */
-        virtual void execute(RaySceneQueryListener* listener) = 0;
+        virtual void execute(RaySceneQueryListener* listener) {}
 
         /** Gets the results of the last query that was run using this object, provided
             the query was executed using the collection-returning version of execute. 
