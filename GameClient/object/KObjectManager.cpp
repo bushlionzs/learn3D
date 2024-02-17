@@ -167,7 +167,7 @@ KObject* KObjectManager::Find_HitOrphigineObject(int32 nX, int32 nY)
 
 		Orphigine::ActorPtr	object = Orphigine::getObjectFromMovable(pMovable);
 
-		if (object && object->getData())
+		if (object)
 		{
 			GameEntity* pEntityNode = (GameEntity*)(object->getData());
 
@@ -194,7 +194,10 @@ KObject* KObjectManager::Find_HitOrphigineObject(int32 nX, int32 nY)
 			}
 
 			/* 如果已经有同级存在，按照摄像机远近排序 */
-			if (mapRayQuery.find(pEntityNode->GetRayQueryLevel()) != mapRayQuery.end()) continue;
+			if (mapRayQuery.find(pEntityNode->GetRayQueryLevel()) != mapRayQuery.end())
+			{
+				continue;
+			}
 
 			/* 放入查询队列 */
 			mapRayQuery.insert(std::make_pair(pEntityNode->GetRayQueryLevel(), pObject));

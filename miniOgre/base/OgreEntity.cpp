@@ -274,8 +274,7 @@ namespace Ogre {
             if (ni != params->end())
             {
                 // Get mesh (load if required)
-                pMesh = MeshManager::getSingleton().load(
-                    ni->second);
+                pMesh = MeshManager::getSingleton().load(ni->second);
             }
 
         }

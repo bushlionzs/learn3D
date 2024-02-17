@@ -44,6 +44,12 @@ namespace Ogre {
         mModel = Ogre::Matrix4::IDENTITY;
         mPosition = Ogre::Vector3::ZERO;
         mScale = Ogre::Vector3::UNIT_SCALE;
+
+        if (mName.empty())
+        {
+            static uint64_t msNextGeneratedNameExt = 0;
+            mName = "Unnamed_" + std::to_string(msNextGeneratedNameExt++);
+        }
     }
 
     Node::~Node()

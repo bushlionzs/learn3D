@@ -37,6 +37,7 @@ bool GameEntity::setModelName(const String& modelName)
 		return true;
 	mModelName = modelName;
 	mOrphigineObj->setProperty(FOBJ_ACTOR_FILE, modelName);
+	mOrphigineObj->setData((uint64_t)this);
 	//((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->setVisible(true);
 	return true;
 }

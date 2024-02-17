@@ -1319,7 +1319,7 @@ namespace Orphigine
 			i != mEntityMap.end(); ++i )
 		{
 			if (i->second.mEntity)
-				i->second.mEntity->getUserObjectBindings().setUserAny(anything);
+				i->second.mEntity->setUserAny(anything);
 		}
 
 		// locator上的model也要设置
@@ -1393,18 +1393,12 @@ namespace Orphigine
 	//-----------------------------------------------------------------------
 	Ogre::Entity* SkeletonMeshComponent::_createEntityImpl( const String& meshName )
 	{
-		auto mesh = MeshManager::getSingleton().load(meshName);
-
-		if (!mesh)
-		{
-			WARNING_LOG("fail to load mesh:%s", meshName.c_str());
-			return nullptr;
-		}
-
 		auto sceneMgr = EngineManager::getSingleton().getSceneManager();
-		auto entity = sceneMgr->createEntity(mName, mesh);
 
-		entity->getUserObjectBindings().setUserAny(getUserAny());
+		String entityName = mModelSceneNode->getName() + "_Entity" + "_" + meshName +
+			Ogre::StringConverter::toString(mCreatedEntityCount++);
+
+		auto entity = sceneMgr->createEntity(entityName, meshName);
 
 		if (mModelSceneNode == nullptr)
 		{
@@ -1412,7 +1406,6 @@ namespace Orphigine
 				EngineManager::getSingleton().getBaseSceneNode()->createChildSceneNode(mName);
 		}
 		mModelSceneNode->attachObject(entity);
-
 
 		entity->setVisible(true);
 
@@ -3726,7 +3719,7 @@ namespace Orphigine
 	void SkeletonMeshComponent::_createSkeletonEntity(const Ogre::SkeletonPtr& skeleton)
 	{
 		mSkeletonEntity = SkeletonMeshComponentManager::getSingleton()._createSkeletalEntity(skeleton);
-
+		mSkeletonEntity->setQueryFlags(0);
 		mModelSceneNode->attachObject(mSkeletonEntity);
 	}
 	//-----------------------------------------------------------------------

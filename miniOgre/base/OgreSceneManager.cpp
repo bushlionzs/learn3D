@@ -41,15 +41,23 @@ namespace Ogre {
             for (; itor != end; itor++)
             {
                 Ogre::MoveObject* a = itor->second;
+                const std::string& name = a->getName();
+
+                auto pos = name.find("ам");
+                if (pos != std::string::npos)
+                {
+                    int kk = 0;
+                }
                 if (!(a->getTypeFlags() & mQueryTypeMask))
                     break;
 
                 if ((a->getQueryFlags() & mQueryMask) &&
                     a->isVisible())
                 {
+                    
+
                     // Do ray / box test
-                    std::pair<bool, Real> result =
-                        mRay.intersects(a->getWorldBoundingBox());
+                    std::pair<bool, Real> result = mRay.intersects(a->getWorldBoundingBox());
 
                     if (result.first)
                     {
@@ -156,26 +164,36 @@ namespace Ogre {
         mRoot->update(timeSinceLastFrame);
     }
 
-    Entity* SceneManager::createEntity(const std::string& name, const std::string& meshName)
+    Entity* SceneManager::createEntity(const std::string& name, const std::string& meshName, bool suppressSkeletalAnimation)
     {
-        std::shared_ptr<Mesh> mesh = MeshManager::getSingleton().load(meshName);
+        NameValuePairList params;
+        params["mesh"] = meshName;
+        if (suppressSkeletalAnimation)
+            params["suppressSkeletalAnimation"] = "true";
+        return static_cast<Entity*>(
+            createMovableObject(name, EntityFactory::FACTORY_TYPE_NAME,
+                &params));
+    }
 
-        if (!mesh)
+    MoveObject* SceneManager::createMovableObject(const String& name,
+        const String& typeName, const NameValuePairList* params)
+    {
+
+        Ogre::MovableObjectFactory* factory =
+            Ogre::Root::getSingleton().getMovableObjectFactory(typeName);
+        // Check for duplicate names
+
+        auto itor = mMoveObjectMap.find(name);
+        if (itor != mMoveObjectMap.end())
         {
-            return nullptr;
+            OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "duplicate name");
         }
-
-        Entity* entity = new Entity(name, mesh);
-
-        return entity;
+        MoveObject* newObj = factory->createInstance(name, this, params);
+        if(factory->getType() == EntityFactory::FACTORY_TYPE_NAME)
+        mMoveObjectMap[name] = newObj;
+        return newObj;
     }
 
-    Entity* SceneManager::createEntity(const std::string& name, const MeshPtr& mesh)
-    {
-        Entity* entity = new Entity(name, mesh);
-
-        return entity;
-    }
 
     Entity* SceneManager::createWaterEntity(const std::string& name,
         int m, int n, float dx, float dt, float speed, float damping)
@@ -222,23 +240,7 @@ namespace Ogre {
                 &params));
     }
 
-    MoveObject* SceneManager::createMovableObject(const String& name,
-        const String& typeName, const NameValuePairList* params)
-    {
-
-        Ogre::MovableObjectFactory* factory =
-            Ogre::Root::getSingleton().getMovableObjectFactory(typeName);
-        // Check for duplicate names
-
-        auto itor = mMoveObjectMap.find(name);
-        if (itor != mMoveObjectMap.end())
-        {
-            OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "duplicate name");
-        }
-        MoveObject* newObj = factory->createInstance(name, this, params);
-        mMoveObjectMap[name] = newObj;
-        return newObj;
-    }
+    
 
     bool SceneManager::hasMovableObject(const String& name,
         const String& typeName)

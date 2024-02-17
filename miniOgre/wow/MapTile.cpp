@@ -413,7 +413,7 @@ void MapTile::createModel(const ENTRY_MDDF& entry)
     Ogre::SceneManager* sceneMgr = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
 
     std::string entryname = modelname + std::to_string(entry.uniqueID);
-    Entity* entity = sceneMgr->createEntity(entryname, mesh);
+    Entity* entity = sceneMgr->createEntity(entryname, modelname);
     SceneNode* root = sceneMgr->getRoot();
     SceneNode* node = root->createChildSceneNode(entryname);
     node->attachObject(entity);

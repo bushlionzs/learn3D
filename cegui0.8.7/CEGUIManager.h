@@ -9,6 +9,13 @@ namespace CEGUI
 	class GUIContext;
 }
 
+enum MouseType
+{
+	MouseType_Normal = 0,
+	MouseType_Attack = 1,
+	MouseType_Speak  = 2,
+};
+
 class CEGUIManager : public Ogre::Singleton<CEGUIManager>,
 	public FrameListener,
 	public InputListener,
@@ -62,6 +69,7 @@ public:
 	}
 	bool isMouseInGUI();
 
+	void ChangeMouseCursor(MouseType type);
 private:
 	void _icon_init();
 private:

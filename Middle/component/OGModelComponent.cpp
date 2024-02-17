@@ -439,7 +439,7 @@ namespace Orphigine
 		Ogre::MeshPtr mesh = loadMesh( meshName, BLANKSTRING, mResourceName, mResourceGroupName );
 
 		// Create the entity
-		Ogre::Entity* pEntity = mCreator->createEntity( mParent->getName() + "/" + mesh->getName(), mesh);
+		Ogre::Entity* pEntity = mCreator->createEntity( mParent->getName() + "/" + meshName, meshName);
 
 		mMovables.push_back( pEntity );
 		mMasterSubObjectMap[pMasterMovableObject].push_back( pEntity );

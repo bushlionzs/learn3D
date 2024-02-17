@@ -38,8 +38,8 @@ void SkyBoxRenderer::setSkyBox(bool enable, const String& materialName, Real dis
 
     SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-    Entity* entity = mSceneManager->createEntity("skybox", mesh);
-
+    Entity* entity = mSceneManager->createEntity("skybox", "skybox");
+    entity->setQueryFlags(0);
     root->attachObject(entity);
 }
 

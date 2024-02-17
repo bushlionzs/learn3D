@@ -63,7 +63,10 @@ namespace Ogre {
         { 
             mQueryFlags |= flags; 
         }
-
+        void setQueryFlags(uint32 flags)
+        {
+            mQueryFlags = flags;
+        }
         uint32_t getQueryFlags()
         {
             return mQueryFlags;
@@ -84,6 +87,10 @@ namespace Ogre {
         { 
             mCreator = fact; 
         }
+        virtual void _notifyManager(SceneManager* sceneMgr)
+        {
+            mManager = sceneMgr;
+        }
     protected:
         Node* mParent;
         SceneManager* mManager;
@@ -94,7 +101,7 @@ namespace Ogre {
         Ogre::Vector3 mPosition;
         std::vector<Renderable*> mRenderables;
         UserObjectBindings mUserObjectBindings;
-        uint32_t  mQueryFlags = 0;
+        uint32_t  mQueryFlags;
 
         bool mVisible = true;
 

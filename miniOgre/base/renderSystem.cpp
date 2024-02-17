@@ -17,7 +17,6 @@ RenderSystem::~RenderSystem()
 
 bool RenderSystem::engineInit()
 {
-    Ogre::Root::getSingletonPtr()->_initialise();
 
     return true;
 }

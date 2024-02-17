@@ -4,7 +4,7 @@
 
 class GameCamera;
 class KPlayer;
-
+class KObject;
 class GameWorld: public InputListener
 {
 public:
@@ -28,4 +28,6 @@ private:
 private:
 	GameCamera* mGameCamera;
 	KPlayer* mPlayer;
+	KObject* mLastSelectObj = nullptr;
+
 };

@@ -22,6 +22,7 @@
 #include "game_scene_manager.h"
 #include "OgreSceneQuery.h"
 #include "OGActorProxy.h"
+#include "OGStaticMeshComponent.h"
 
 
 template<> EngineManager* Ogre::Singleton<EngineManager>::msSingleton = 0;
@@ -60,6 +61,7 @@ bool EngineManager::initialise()
 	mSceneManager = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("main"));
 	mMainCamera = mSceneManager->createCamera(MAIN_CAMERA);
 
+	Ogre::Root::getSingleton().addMovableObjectFactory(new StaticMeshComponentFactory);
 	return true;
 }
 
@@ -123,9 +125,7 @@ bool EngineManager::getTerrainIntersects(Real winx, Real winy,
 	Ogre::Vector3& position, Ogre::Vector3* normal, bool allowOutside) const
 {
 	auto vp = mMainViewport;
-	float screenX = (winx - vp->getActualLeft()) / vp->getActualWidth();
-	float screenY = (winy - vp->getActualTop()) / vp->getActualHeight();
-	auto ray = mMainCamera->getCameraToViewportRay(screenX, screenY);
+	auto ray = mMainCamera->getCameraToViewportRay(winx, winy);
 	return getTerrainIntersects(ray, position, normal, allowOutside);
 }
 

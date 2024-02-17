@@ -93,12 +93,23 @@ void GameWorld::injectMouseMove(int _absx, int _absy, int _absz)
 	{
 		return;
 	}
+	/*_absx = 166;
+	_absy = 351;*/
 	Ogre::Vector3 fvMouseHitPlan;
 	KObject* pSelectObj = (KObject*)KObjectManager::GetSingleton().GetMouseOverObject(_absx, _absy, fvMouseHitPlan);
 
-	if (pSelectObj)
+	if (pSelectObj != mLastSelectObj)
 	{
-		int kk = 0;
+		if (pSelectObj == nullptr)
+		{
+			CEGUIManager::getSingleton().ChangeMouseCursor(MouseType_Normal);
+		}
+		else
+		{
+			CEGUIManager::getSingleton().ChangeMouseCursor(MouseType_Speak);
+		}
+
+		mLastSelectObj = pSelectObj;
 	}
 }
 

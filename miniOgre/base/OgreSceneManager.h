@@ -40,8 +40,7 @@ namespace Ogre {
         void _renderScene2(ICamera* camera, Ogre::Viewport* vp);
         void update(float timeSinceLastFrame);
 
-        Entity* createEntity(const std::string& name, const std::string& meshName);
-        Entity* createEntity(const std::string& name, const MeshPtr& mesh);
+        Entity* createEntity(const std::string& name, const std::string& meshName, bool suppressSkeletalAnimation = true);
         Entity* createWaterEntity(const std::string& name,
             int m, int n, float dx, float dt, float speed, float damping);
         SceneNode* getRoot();

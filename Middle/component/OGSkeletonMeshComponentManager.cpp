@@ -860,7 +860,7 @@ namespace Orphigine
 			auto sceneMgr = EngineManager::getSingletonPtr()->getSceneManager();
 			entity = sceneMgr->createEntity(
 				id,
-				mesh);
+				mesh->getName());
 		}
 
 		return entity;

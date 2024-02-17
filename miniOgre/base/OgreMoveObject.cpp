@@ -9,12 +9,14 @@ namespace Ogre {
         mName = name;
         mParent = nullptr;
         mWorldAABB.setNull();
+        mQueryFlags = 0xffffffff;
     }
 
     MoveObject::MoveObject()
     {
         mParent = nullptr;
         mWorldAABB.setNull();
+        mQueryFlags = 0xffffffff;
     }
 
     MoveObject::~MoveObject()
@@ -127,8 +129,8 @@ namespace Ogre {
         const NameValuePairList* params)
     {
         MoveObject* m = createInstanceImpl(name, params);
-        /*m->_notifyCreator(this);
-        m->_notifyManager(manager);*/
+        m->_notifyCreator(this);
+        m->_notifyManager(manager);
         return m;
     }
 

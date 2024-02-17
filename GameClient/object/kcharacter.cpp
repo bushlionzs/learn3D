@@ -692,6 +692,8 @@ void KCharacter::createCharRenderInterface(void)
 
 	mMainEntity->getLogicModel()->setAASAnimEndCallback(new PlayerAASAnimPlayCallback(this), (uint64_t)this);
 
+	OnQueryRay(mMainEntity.get());
+
 }
 
 GameEntity* KCharacter::CreateMountRenderInterface(int32 nMountID)
@@ -759,8 +761,6 @@ GameEntity* KCharacter::CreateMountRenderInterface(int32 nMountID)
 		else
 		{
 			pszActionSetFileName = pCharModel->m_pszActionSetName_None;
-
-			//KLThrow("pszActionSetFileName Error! nCharActionIndex=%d, m_nCurrMountModelID=%d ", nCharActionIndex, m_nCurrMountModelID );
 		}
 	}
 
@@ -778,6 +778,8 @@ GameEntity* KCharacter::CreateMountRenderInterface(int32 nMountID)
 		locator, mMainEntity->getSkeletonMeshActor());
 	mMountEntity->SetVisible(true);
 	ChangeAction(CA_RIDING, 1.0f);
+
+	OnQueryRay(mMountEntity.get());
 
 	return mMountEntity.get();
 }

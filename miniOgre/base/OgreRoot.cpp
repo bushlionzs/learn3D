@@ -19,6 +19,8 @@
 #include "VulkanRenderSystem.h"
 #include "VideoManager.h"
 #include "shaderManager.h"
+#include "OgreEntity.h"
+
 
 namespace Ogre {
 
@@ -61,6 +63,10 @@ namespace Ogre {
     {
         OgreParticleFx_init();
         ParticleSystemManager::getSingletonPtr()->_initialise();
+
+
+        addMovableObjectFactory(new EntityFactory());
+
     }
 
     RenderSystem* Root::createRenderEngine(
@@ -108,8 +114,8 @@ namespace Ogre {
 	void Root::addMovableObjectFactory(MovableObjectFactory* fact,
 		bool overrideExisting)
 	{
-        MovableObjectFactoryMap::iterator facti = mMovableObjectFactoryMap.find(
-            fact->getType());
+        auto& type = fact->getType();
+        MovableObjectFactoryMap::iterator facti = mMovableObjectFactoryMap.find(type);
         if (!overrideExisting && facti != mMovableObjectFactoryMap.end())
         {
             OGRE_EXCEPT(Exception::ERR_DUPLICATE_ITEM,

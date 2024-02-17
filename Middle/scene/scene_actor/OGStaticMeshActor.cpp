@@ -11,6 +11,7 @@
 #include "OgreStringConverter.h"
 #include "OgreControllerManager.h"
 #include "OgreAnimationState.h"
+#include "OGStaticMeshComponent.h"
 
 namespace Orphigine
 {
@@ -146,12 +147,16 @@ namespace Orphigine
 		{
 			return;
 		}
-
-		mEntity = mSceneManager->createEntity(mName, mesh);
-
 		auto root = mSceneManager->getRoot();
-
 		SceneNode* node = root->createChildSceneNode(mName);
+		mName = node->getName();
+		Ogre::SceneManager* creator = node->getCreator();
+		Ogre::NameValuePairList params;
+		params["mesh"] = mMeshName;
+		mEntity = static_cast<Ogre::StaticMeshComponent*>(
+			creator->createMovableObject(mName, Ogre::StaticMeshComponentFactory::FACTORY_TYPE_NAME, &params));
+		mEntity->setQueryFlags(0);
+		
 		node->attachObject(mEntity);
 		node->setPosition(mTransform.mPosition);
 		node->setOrientation(mTransform.mRotation);

@@ -48,7 +48,8 @@ namespace Orphigine
 		if (movable)
 		{
 			const Ogre::Any& any = movable->getUserAny();
-			if (any.type() == typeid(Ogre::UserDefinedObject*))
+			
+			if (any.has_value())
 			{
 				Ogre::UserDefinedObject* userObject = Ogre::any_cast<Ogre::UserDefinedObject*>(any);
 				if (userObject && userObject->getTypeID() == ActorProxy::msTypeID)

@@ -225,3 +225,21 @@ bool CEGUIManager::isMouseInGUI()
 	}
 	return true;
 }
+
+void CEGUIManager::ChangeMouseCursor(MouseType type)
+{
+	const char* cursor = "MouseCursor/Normal";
+	switch (type)
+	{
+	case MouseType_Normal:
+		cursor = "MouseCursor/Normal";
+		break;
+	case MouseType_Attack:
+		cursor = "MouseCursor/Attack";
+		break;
+	case MouseType_Speak:
+		cursor = "MouseCursor/Speak";
+		break;
+	}
+	mGUIContext->getMouseCursor().setImage(cursor);
+}

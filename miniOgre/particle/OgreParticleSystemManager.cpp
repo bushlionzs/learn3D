@@ -98,6 +98,7 @@ namespace Ogre {
     {
         //OGRE_LOCK_AUTO_MUTEX;
         mFactory = OGRE_NEW ParticleSystemFactory();
+        mFactory->_notifyTypeFlags(0);
         Root::getSingleton().addMovableObjectFactory(mFactory);
     }
     //-----------------------------------------------------------------------
