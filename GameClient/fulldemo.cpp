@@ -7,7 +7,6 @@
 #include "net_context.h"
 #include "message_process.h"
 #include "server_message.pb.h"
-#include "GameMouseCursor.h"
 #include "application_window.h"
 #include "CEGUIManager.h"
 #include <cegui/CEGUI.h>
@@ -38,11 +37,6 @@ bool FullDemo::appInit()
 	mGameWorld = new GameWorld(mGameCamera);
 	mGameWorld->gameWorldInit();
 
-	new CGameMouseCursor;
-
-	CGameMouseCursor::GetSingleton().Initialize(mApplicationWindow->getWnd());
-
-	CGameMouseCursor::GetSingleton().SetCursor(CURSOR_NORMAL);
 	UIManager::GetSingleton().showWindow(GameUI_MainMenu);
 	return true;
 }

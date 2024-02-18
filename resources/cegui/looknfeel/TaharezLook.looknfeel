@@ -7,11 +7,36 @@
     -->
     <WidgetLook name="TaharezLook/Label">
         <PropertyDefinition name="NormalTextColour" initialValue="FFFFFFFF" redrawOnWrite="true" type="Colour" />
-        <PropertyDefinition name="DisabledTextColour" initialValue="FFDDDDDD" redrawOnWrite="true" type="Colour" />
+        <PropertyDefinition name="DisabledTextColour" initialValue="FF0000FF" redrawOnWrite="true" type="Colour" />
         <PropertyDefinition name="VertFormatting" initialValue="CentreAligned" redrawOnWrite="true" type="VerticalTextFormatting" />
         <PropertyDefinition name="HorzFormatting" initialValue="CentreAligned" redrawOnWrite="true" type="HorizontalTextFormatting" />
         <Property name="Size" value="{{0, 128}, {0, 32}}" />
         <ImagerySection name="Label">
+		    <TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0"/>
+						<DimOperator op="Add">
+							<AbsoluteDim value="2"/>
+						</DimOperator>
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0"/>
+						<DimOperator op="Add">
+							<AbsoluteDim value="2"/>
+						</DimOperator>
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width"/>
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height"/>
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertFormatting"/>
+				<HorzFormatProperty name="HorzFormatting"/>
+				<ColourProperty name="DisabledTextColour"/>
+			</TextComponent>
             <TextComponent>
                 <Area>
 	            <Dim type="LeftEdge"><AbsoluteDim value="0" /></Dim>
@@ -21,6 +46,7 @@
                 </Area>
                 <VertFormatProperty name="VertFormatting" />
                 <HorzFormatProperty name="HorzFormatting" />
+				<ColourProperty name="NormalTextColour"/>
             </TextComponent>
         </ImagerySection>
         <StateImagery name="Enabled">
@@ -2130,8 +2156,9 @@
     <WidgetLook name="TaharezLook/StaticText">
         <PropertyDefinition name="FrameColours" initialValue="tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF" redrawOnWrite="true" type="ColourRect"/>
         <PropertyDefinition name="BackgroundColours" initialValue="tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF" redrawOnWrite="true" type="ColourRect"/>
-
-        <PropertyLinkDefinition name="HorzScrollPosition" widget="__auto_hscrollbar__" targetProperty="ScrollPosition" type="float" />
+        <PropertyDefinition name="NormalTextColour" initialValue="FFFFFFFF" redrawOnWrite="true" type="Colour" />
+        <PropertyDefinition name="DisabledTextColour" initialValue="FF0000FF" redrawOnWrite="true" type="Colour" />
+		<PropertyLinkDefinition name="HorzScrollPosition" widget="__auto_hscrollbar__" targetProperty="ScrollPosition" type="float" />
         <PropertyLinkDefinition name="HorzScrollPageSize" widget="__auto_hscrollbar__" targetProperty="PageSize" type="float" />
         <PropertyLinkDefinition name="HorzScrollDocumentSize" widget="__auto_hscrollbar__" targetProperty="DocumentSize" type="float" />
 
@@ -2139,9 +2166,49 @@
         <PropertyLinkDefinition name="VertScrollPageSize" widget="__auto_vscrollbar__" targetProperty="PageSize" type="float" />
         <PropertyLinkDefinition name="VertScrollDocumentSize" widget="__auto_vscrollbar__" targetProperty="DocumentSize" type="float" />
 
-        <Property name="FrameEnabled" value="true" />
-        <Property name="BackgroundEnabled" value="true" />
+        <Property name="FrameEnabled" value="false" />
+        <Property name="BackgroundEnabled" value="false" />
         <Property name="Size" value="{{0, 256}, {0, 128}}" />
+		<Property name="HorzFormatting" value="LeftAligned" />
+		<Property name="VertFormatting" value="TopAligned" />
+		<ImagerySection name="Labelxx">
+		    <TextComponent>
+				<Area>
+					<Dim type="LeftEdge">
+						<AbsoluteDim value="0"/>
+						<DimOperator op="Add">
+							<AbsoluteDim value="2"/>
+						</DimOperator>
+					</Dim>
+					<Dim type="TopEdge">
+						<AbsoluteDim value="0"/>
+						<DimOperator op="Add">
+							<AbsoluteDim value="2"/>
+						</DimOperator>
+					</Dim>
+					<Dim type="Width">
+						<UnifiedDim scale="1" type="Width"/>
+					</Dim>
+					<Dim type="Height">
+						<UnifiedDim scale="1" type="Height"/>
+					</Dim>
+				</Area>
+				<VertFormatProperty name="VertFormatting"/>
+				<HorzFormatProperty name="HorzFormatting"/>
+				<ColourProperty name="DisabledTextColour"/>
+			</TextComponent>
+            <TextComponent>
+                <Area>
+	            <Dim type="LeftEdge"><AbsoluteDim value="0" /></Dim>
+	            <Dim type="TopEdge"><AbsoluteDim value="0" /></Dim>
+	            <Dim type="Width"><UnifiedDim scale="1" type="Width" /></Dim>
+	            <Dim type="Height"><UnifiedDim scale="1" type="Height" /></Dim>
+                </Area>
+                <VertFormatProperty name="VertFormatting" />
+                <HorzFormatProperty name="HorzFormatting" />
+				<ColourProperty name="NormalTextColour"/>
+            </TextComponent>
+        </ImagerySection>
         <NamedArea name="WithFrameTextRenderArea">
             <Area>
                 <Dim type="LeftEdge" ><AbsoluteDim value="5" /></Dim>
@@ -2250,8 +2317,20 @@
             </Area>
             <HorzAlignment type="RightAligned" />
         </Child>
-        <StateImagery name="Enabled" />
-        <StateImagery name="Disabled" />
+        <StateImagery name="Enabled">
+            <Layer>
+                <Section section="Label">
+                    <ColourProperty name="NormalTextColour" />
+                </Section>
+            </Layer>
+        </StateImagery>
+        <StateImagery name="Disabled">
+            <Layer>
+                <Section section="Label">
+                    <ColourProperty name="DisabledTextColour" />
+                </Section>
+            </Layer>
+        </StateImagery>
         <StateImagery name="EnabledFrame">
             <Layer>
                 <Section look="TaharezLook/StaticShared" section="frame" />

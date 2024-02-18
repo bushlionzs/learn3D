@@ -250,6 +250,7 @@ float Font::drawText(GeometryBuffer& buffer, const String& text,
                     const ColourRect& colours, const float space_extra,
                     const float x_scale, const float y_scale) const
 {
+    std::string aa = text.c_str();
     const float base_y = position.d_y + getBaseline(y_scale);
     Vector2f glyph_pos(position);
 

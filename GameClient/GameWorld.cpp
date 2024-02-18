@@ -15,7 +15,6 @@
 #include "data/GameDataManager.h"
 #include "DirectlyEffectMgr.h"
 #include "KTable.h"
-#include "GameMouseCursor.h"
 #include <CEGUIManager.h>
 
 GameWorld::GameWorld(GameCamera* gameCamera)
@@ -83,7 +82,7 @@ void GameWorld::injectMouseWheel(int _absz)
 
 void GameWorld::injectMouseCursor()
 {
-	CGameMouseCursor::GetSingleton().OnCursor();
+	
 }
 
 void GameWorld::injectMouseMove(int _absx, int _absy, int _absz)

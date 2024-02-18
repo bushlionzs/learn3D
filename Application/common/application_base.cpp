@@ -48,10 +48,8 @@ bool ApplicationBase::appInit()
 	
 	HWND wnd = mApplicationWindow->getWnd();
 	InputManager::getSingletonPtr()->createInput((size_t)wnd);
-
-	new EngineManager;
-	EngineManager::getSingleton().initialise();
-
+	new Ogre::Root;
+	Ogre::Root::getSingleton()._initialise();
 
 	EngineType type = getEngineType();
 	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(wnd, type);
@@ -59,6 +57,12 @@ bool ApplicationBase::appInit()
 	{
 		return false;
 	}
+
+	new EngineManager;
+	EngineManager::getSingleton().initialise();
+
+
+	
 
 	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
 	Ogre::NameValuePairList params;

@@ -82,7 +82,7 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 		ImageManager::getSingleton().loadImageset("ui_mainboard_2.imageset.xml");
 		ImageManager::getSingleton().loadImageset("ui_mainboard_3.imageset.xml");
 		ImageManager::getSingleton().loadImageset("DriveIcons.imageset");
-		ImageManager::getSingleton().loadImageset("cjsh_icons_1.imageset");
+		/*ImageManager::getSingleton().loadImageset("cjsh_icons_1.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_item_xiangzi_2.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_quest_gaoshi_1.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_equip_dao_2.imageset");
@@ -98,7 +98,7 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 		ImageManager::getSingleton().loadImageset("cjsh_item_baoshi_3.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_item_xiangzi_1.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_npc_touxiang_8.imageset");
-		ImageManager::getSingleton().loadImageset("ui_mainboard_5.imageset");
+		ImageManager::getSingleton().loadImageset("ui_mainboard_5.imageset");*/
 		
 		
 		CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");

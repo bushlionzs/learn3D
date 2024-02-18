@@ -36,8 +36,8 @@ bool GameUI::appInit()
 {
 	ApplicationBase::appInit();
     InputManager::getSingletonPtr()->addListener(this);
-    //HelloDemo1();
-    MainMenuDemo();
+    HelloDemo1();
+    //MainMenuDemo();
     //PackageDemo();
 	return true;
 }
@@ -117,14 +117,25 @@ void GameUI::HelloDemo1()
 
     WindowManager& winMgr = WindowManager::getSingleton();
     mGUIContext = CEGUIManager::getSingleton().getGUIContext();
-    CEGUI::Font& font(fontManager.createFromFile("simhei24.font"));
+    CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
     mGUIContext->setDefaultFont(&font);
     auto* root = WindowManager::getSingleton().loadLayoutFromFile("hello.xml");
 
     mGUIContext->setRootWindow(root);
 
+    CEGUI::Window* textComponent =
+        (CEGUI::Window*)root->getChild("HoverText");
+    std::wstring text = L"积善科技 [underline = '...']some text [no_underline = '']that [window='horse']shows how nicely[colour = 'FFFF0000']CEGUI\ncan format strings.[colour = 'FF00FF00'] and this is just colour[colour = 'FF0000FF'] formatting!";
+    //text = L"积善科技[window='horse']";
+    std::string bb = unicode_to_utf8(text);
 
+    textComponent->setText((encoded_char*)bb.c_str());
 
+    /*CEGUI::Window* horse = root->getChildRecursive("horse");
+
+    horse->subscribeEvent(
+        Window::EventMouseClick,
+        Event::Subscriber(&GameUI::handle_ButtonClick, this));*/
 }
 
 void GameUI::TooltipDemo()
@@ -257,7 +268,6 @@ void GameUI::SelfEquipDemo()
 
 bool GameUI::handle_ButtonClick(const CEGUI::EventArgs& args)
 {
-    mSelfEquip->hide();
     return true;
 }
 
