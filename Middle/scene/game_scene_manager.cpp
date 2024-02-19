@@ -36,7 +36,7 @@ bool GameSceneManager::loadScene(int32_t sceneId)
 		(const _TABLE_SCENE_DEFINE*)pSceneTable->GetFieldDataByFirstColumn(_TABLE_SCENE_DEFINE::SCENE_SERVER_ID_COLUMN, (table_int_t)sceneId);
 	GameScene* scene = new GameScene(pSceneDef);
 	mSceneMap[sceneId] = scene;
-
+	mSceneId = sceneId;
 	scene->load();
 
 	mActiveScene = scene;

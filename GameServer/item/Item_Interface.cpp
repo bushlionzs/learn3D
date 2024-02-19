@@ -1357,7 +1357,7 @@ int32 ItemInterface::MoveItemToBag
 )
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	__GUARD__	KCheck(pLogParam);
+	__GUARD__
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	KCheck(pPlayer);

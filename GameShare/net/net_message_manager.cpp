@@ -23,7 +23,7 @@ NetMessageManager::~NetMessageManager()
 
 bool NetMessageManager::sendNetMessage(NetPacket*)
 {
-	assert(false);
+	//assert(false);
 	return false;
 }
 
@@ -49,6 +49,23 @@ bool NetMessageManager::sendNetMessage(NetHandle h, uint32_t msg_id, google::pro
 	InitNetHeader(msgdata, msg_id, msgdata.size());
 
 	int32_t ret = NetFactory::GetInstance()->SendData(h, (const uint8_t*)msgdata.data(), msgdata.size());
+
+	return true;
+}
+
+bool NetMessageManager::sendNetMessage(uint32_t msg_id, google::protobuf::Message* msg)
+{
+	std::string msgdata;
+	InitNetHeader(msgdata);
+	if (!msg->AppendToString(&msgdata))
+	{
+		WARNING_LOG("fail to create MsgLogin message");
+		return false;
+	}
+
+	InitNetHeader(msgdata, msg_id, msgdata.size());
+
+	int32_t ret = NetFactory::GetInstance()->SendData(mNetHandle, (const uint8_t*)msgdata.data(), msgdata.size());
 
 	return true;
 }

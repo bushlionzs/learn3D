@@ -13,3 +13,5 @@ void sc_enter_scene(NetHandle h, const char* msg, uint32_t msg_size);
 
 void sc_new_monster(NetHandle h, const char* msg, uint32_t msg_size);
 
+void sc_use_equip_result(NetHandle h, const char* msg, uint32_t msg_size);
+

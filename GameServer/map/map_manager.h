@@ -6,7 +6,7 @@ struct REGION_FILE
 {
 	char	m_szFileName[_MAX_PATH];
 	Region* m_pArea;
-	int32	m_Count;
+	int32_t	m_Count;
 
 	REGION_FILE()
 	{
@@ -22,7 +22,7 @@ struct GATHER_POINT_FILE
 {
 	char		m_szFileName[_MAX_PATH];
 	GATHER_POINT_LOAD* m_pGrowpoint;
-	int32		m_Count;
+	int32_t		m_Count;
 
 	GATHER_POINT_FILE()
 	{

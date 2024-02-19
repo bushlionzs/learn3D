@@ -2,7 +2,7 @@
 #include "client_message.pb.h"
 #include "net_message_manager.h"
 #include "net_factory.h"
-
+#include "net_message_manager.h"
 NetContext::NetContext()
 {
 
@@ -15,12 +15,13 @@ NetContext::~NetContext()
 
 void NetContext::OnConnected(NetHandle h, const session_info_t& data, void* pNetThreadData)
 {
+	NetMessageManager::GetSingleton().setDefaultNetHandle(h);
 	login();
 }
 
 void NetContext::OnClose(NetHandle h, const session_info_t& data, void* pNetThreadData)
 {
-
+	NetMessageManager::GetSingleton().setDefaultNetHandle(INVALID_NET_HANDLE);
 }
 
 

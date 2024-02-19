@@ -20,6 +20,7 @@ public:
 	void update();
 
 	bool handle_ButtonClick(const CEGUI::EventArgs& args);
+	bool handle_EquipClick(const CEGUI::EventArgs& args);
 private:
 	bool updateItem(
 		uint32_t index,

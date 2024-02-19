@@ -16,6 +16,7 @@ public:
 	virtual void update() override;
 
 	bool handle_ButtonClick(const CEGUI::EventArgs& args);
+	bool handle_PackageClick(const CEGUI::EventArgs& args);
 private:
 	bool updateItem(
 		uint32_t index,

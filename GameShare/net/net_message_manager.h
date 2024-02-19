@@ -16,11 +16,15 @@ public:
 	NetMessageManager();
 	~NetMessageManager();
 
+	void setDefaultNetHandle(NetHandle h)
+	{
+		mNetHandle = h;
+	}
 	bool sendNetMessage(NetPacket*);
 
 	bool sendNetMessage(NetHandle h, NetPacket* packet);
 	bool sendNetMessage(NetHandle h, uint32_t msg_id, google::protobuf::Message* msg);
-
+	bool sendNetMessage(uint32_t msg_id, google::protobuf::Message* msg);
 	void processMessage();
 	void processMessage(NetHandle h, const char* msg, uint32_t msg_size);
 
@@ -35,4 +39,6 @@ private:
 
 	
 	std::unordered_map<uint32_t, Handler> _handlers;
+
+	NetHandle mNetHandle;
 };

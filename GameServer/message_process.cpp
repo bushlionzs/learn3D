@@ -1,7 +1,16 @@
+#include "stdafx.h"
 #include "message_process.h"
-
+#include <map_manager.h>
+#include <game_map.h>
+#include <Item_Container.h>
+#include <Item_Interface.h>
+#include <Player.h>
 #include "db/db_manager.h"
 #include "db/db_task.h"
+#include "client_message.pb.h"
+#include "server_message.pb.h"
+#include <net_header.h>
+#include <net_message_manager.h>
 
 void cs_user_login(NetHandle h, const char* msg, uint32_t msg_size)
 {
@@ -80,9 +89,112 @@ void cs_tick(NetHandle h, const char* msg, uint32_t msg_size)
 
 }
 
+
+
 void cs_takedown_equip(NetHandle h, const char* msg, uint32_t msg_size)
 {
+    clientmessage::MsgTakeDownEquip dummy;
+    bool ret = dummy.ParseFromArray(msg + sizeof(NetHeader), msg_size - sizeof(NetHeader));
+    auto equip_point = dummy.equip_point();
+    if (equip_point < 0 || equip_point >= HEQUIP_NUMBER)
+    {
+        return;
+    }
+    PLAYER_EQUIP	equipPoint = (PLAYER_EQUIP)equip_point;
 
+    GameMap* pMap = MapManager::GetSingletonPtr()->getMap(dummy.map_id());
+    if (nullptr == pMap)
+    {
+        return;
+    }
+
+    Object* pObj = pMap->GetSpecificObjByID(dummy.player_id());
+
+    if (pObj == NULL || pObj->GetObjType() != Object::OBJECT_CLASS_PLAYER)
+    {
+        return;
+    }
+
+    Player* pPlayer = (Player*)pObj;
+
+    Item* pEquipItem = sItemInterface.GetEquip(pPlayer, equipPoint);
+
+    if (pEquipItem == nullptr)
+    {
+        return;
+    }
+
+    if (pEquipItem->IsFree())
+    {
+        return;
+    }
+
+    if (pEquipItem->IsLock())
+    {
+        return;
+    }
+
+    ItemContainer* pEquipContainer = pPlayer->GetEquipContain();
+
+    if (nullptr == pEquipContainer)
+    {
+        return;
+    }
+
+    auto bag_index = dummy.bag_index();
+
+    int32_t move_bag_index = -1;
+    if (bag_index >= 0)
+    {
+        ItemContainer* pBagContainer = sItemInterface.GetBagContainer(pPlayer, bag_index);
+
+        if (nullptr == pBagContainer)
+        {
+            return;
+        }
+
+        Item* pItem = pBagContainer->GetItem(pBagContainer->BagIndex2ConIndex(bag_index));
+
+        if (!pItem->IsFree())
+        {
+            return;
+        }
+
+        move_bag_index = sItemInterface.MoveItemBt2Containers
+        (
+            nullptr,
+            pPlayer,
+            pEquipContainer,
+            equipPoint,
+            pBagContainer,
+            pBagContainer->BagIndex2ConIndex(bag_index)
+        );
+    }
+    else
+    {
+        move_bag_index = sItemInterface.MoveItemToBag(nullptr, pPlayer, pEquipContainer, equipPoint);
+
+        if (move_bag_index < 0)
+        {
+            return;
+        }
+    }
+
+    servermessage::ServerMsgUseEquipResult packet;
+    packet.set_bag_index(move_bag_index);
+    packet.set_equip_point(equip_point);
+    packet.set_result(UNEQUIP_SUCCESS);
+    NetMessageManager::GetSingleton().sendNetMessage(pPlayer->GetConnector(), servermessage::SC_USEEQUIP_RESULT, &packet);
+
+    /*SCUnEquipResult* packet = new SCUnEquipResult;
+
+    packet->setBagIndex(mBagIndex);
+    packet->setEquipPoint(mEquipPoint);
+    packet->setResult(UNEQUIP_SUCCESS);
+
+    NetManager::GetSingletonPtr()->sendNetMessage(packet);*/
+
+    return;
 }
 
 void cs_use_ability(NetHandle h, const char* msg, uint32_t msg_size)
@@ -92,5 +204,133 @@ void cs_use_ability(NetHandle h, const char* msg, uint32_t msg_size)
 
 void cs_use_equip(NetHandle h, const char* msg, uint32_t msg_size)
 {
+    clientmessage::MsgUseEquip dummy;
 
+    bool ret = dummy.ParseFromArray(msg, msg_size);
+    GameMap* pMap = MapManager::GetSingletonPtr()->getMap(dummy.map_id());
+    if (nullptr == pMap)
+        return;
+
+    Object* pObj = pMap->GetSpecificObjByID(dummy.player_id());
+
+    if (pObj == nullptr || pObj->GetObjType() != Object::OBJECT_CLASS_PLAYER)
+    {
+        return;
+    }
+
+    Player* pPlayer = (Player*)pObj;
+
+    auto bag_index = dummy.bag_index();
+    ItemContainer* pBagContainer = sItemInterface.GetBagContainer(pPlayer, bag_index);
+
+    if (nullptr == pBagContainer)
+    {
+        return;
+    }
+
+
+    Item* pUseItem = pBagContainer->GetItem(pBagContainer->BagIndex2ConIndex(bag_index));
+
+    PLAYER_EQUIP clientEquipPoint;
+
+    int32_t itemclass = pUseItem->GetItemClass();
+    if (itemclass == ICLASS_EQUIP)
+    {
+        if (pUseItem->IsLock())
+        {
+            return;
+        }
+
+        if (pUseItem->IsOverTime())
+        {
+            return;
+        }
+
+        if (pUseItem->GetRequireLevel() > pPlayer->GetLevel())
+        {
+            return;
+        }
+
+        if (pUseItem->GetReqJob() != PROFESSION_NONE)
+        {
+            if (pUseItem->GetReqJob() != pPlayer->GetProfession())
+            {
+                return;
+            }
+        }
+
+
+        PLAYER_EQUIP	equipPoint = (PLAYER_EQUIP)pUseItem->GetEquipPoint();
+        ItemContainer* pEquipContainer = pPlayer->GetEquipContain();
+
+        
+        if (dummy.equip_point() == -1)
+        {
+            clientEquipPoint = equipPoint;
+        }
+        else
+        {
+            clientEquipPoint = (PLAYER_EQUIP)dummy.equip_point();
+        }
+
+
+        if (equipPoint != clientEquipPoint)
+        {
+            if (equipPoint == HEQUIP_RING1)
+            {
+                if (clientEquipPoint != HEQUIP_RING2)
+                {
+                    return;
+                }
+            }
+
+            if (equipPoint == HEQUIP_ADORN1)
+            {
+                if (clientEquipPoint != HEQUIP_ADORN2)
+                {
+                    return;
+                }
+            }
+        }
+
+        Item* pEquipItem = pEquipContainer->GetItem((uint32)clientEquipPoint);
+
+        if (nullptr == pEquipItem)
+        {
+            return;
+        }
+
+        if (pEquipItem->IsFree())
+        {
+            sItemInterface.MoveItemBt2Containers
+            (
+                nullptr,
+                pPlayer,
+                pBagContainer,
+                pBagContainer->BagIndex2ConIndex(bag_index),
+                pEquipContainer,
+                (uint32)equipPoint
+            );
+        }
+        else
+        {
+            sItemInterface.ExchangeItem
+            (
+                pBagContainer,
+                pBagContainer->BagIndex2ConIndex(bag_index),
+                pEquipContainer,
+                (uint32)equipPoint
+            );
+        }
+
+    }
+
+   /* SCUseEquipResult* packet = new SCUseEquipResult;
+    packet->setResult(USEEQUIP_SUCCESS);
+    packet->setBagIndex(mBagIndex);
+    packet->setEquipPoint(clientEquipPoint);
+
+    NetManager::GetSingletonPtr()->sendNetMessage(packet);*/
+
+    return;
 }

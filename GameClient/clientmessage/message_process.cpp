@@ -413,3 +413,32 @@ void sc_new_monster(NetHandle h, const char* msg, uint32_t msg_size)
 	cmdTemp.bParam[2] = FALSE;
 	pNPC->AddCommand(&cmdTemp);
 }
+
+void sc_use_equip_result(NetHandle h, const char* msg, uint32_t msg_size)
+{
+	servermessage::ServerMsgUseEquipResult dummy;
+	dummy.ParseFromArray(msg, msg_size);
+
+	auto equip_point = dummy.equip_point();
+	if (equip_point < 0 || equip_point >= HEQUIP_NUMBER)
+	{
+		return;
+	}
+	PLAYER_EQUIP	equipPoint = (PLAYER_EQUIP)equip_point;
+
+	auto& equips = GameDataManager::GetSingleton().getUserEquip();
+
+	KItem* pItem = equips[(uint32_t)equipPoint];
+	if (!pItem)
+	{
+		return;
+	}
+
+	auto bag_index = dummy.bag_index();
+	GameDataManager::GetSingleton().UserBag_SetItem(bag_index, pItem, TRUE);
+
+	GameDataManager::GetSingleton().UserEquip_SetItem(
+		(PLAYER_EQUIP)equipPoint, nullptr, false);
+	UIManager::GetSingleton().updateWindow(GameUI_SelfEquip);
+	UIManager::GetSingleton().updateWindow(GameUI_Package);
+}
