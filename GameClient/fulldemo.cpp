@@ -52,6 +52,7 @@ void FullDemo::registerMessage()
 	NetMessageManager::GetSingleton().registerMessage(servermessage::SC_DETAIL_SKILL_LIST, sc_detail_skill);
 	NetMessageManager::GetSingleton().registerMessage(servermessage::SC_NEWMONSTER, sc_new_monster);
 	NetMessageManager::GetSingleton().registerMessage(servermessage::SC_USEEQUIP_RESULT, sc_use_equip_result);
+	NetMessageManager::GetSingleton().registerMessage(servermessage::SC_UNEQUIP_RESULT, sc_unequip_result);
 }
 
 void FullDemo::appUpdate(float delta)

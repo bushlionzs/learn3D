@@ -106,6 +106,11 @@ void GameDataManager::UserBag_SetItem(
 	m_vUserBag[nBagIndex] = pItem;
 }
 
+KItem* GameDataManager::UserBag_GetItem(int32_t nBagIndex)
+{
+	return m_vUserBag[nBagIndex];
+}
+
 void GameDataManager::SetMyDefaultSkillID(int32_t skillId)
 {
 

@@ -1388,7 +1388,10 @@ namespace Orphigine
 	//-----------------------------------------------------------------------
 	void SkeletonMeshComponent::_destroyEntityImpl(Ogre::Entity* entity)
 	{
-			
+		String entityName = entity->getName();
+		entity->getParentSceneNode()->detachObject(entity);
+		auto sceneMgr = EngineManager::getSingleton().getSceneManager();
+		sceneMgr->destroyEntity(entityName);
 	}
 	//-----------------------------------------------------------------------
 	Ogre::Entity* SkeletonMeshComponent::_createEntityImpl( const String& meshName )

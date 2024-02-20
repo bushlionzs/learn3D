@@ -194,7 +194,20 @@ namespace Ogre {
 
     void SceneNode::detachObject(MoveObject* obj)
     {
-        
+        int i = 0;
+        for (; i < mMoveObjects.size(); i++)
+        {
+            if (mMoveObjects[i] == obj)
+            {
+                break;
+            }
+        }
+
+        if (i < mMoveObjects.size())
+        {
+            std::swap(mMoveObjects[i], mMoveObjects.back());
+            mMoveObjects.pop_back();
+        }
     }
 
     MoveObject* SceneNode::detachObject(const String& name)

@@ -23,7 +23,7 @@ public:
 		KItem* pItem,
 		bool bClearOld = true,
 		bool reCalulate = false);
-
+	KItem* UserBag_GetItem(int32_t nBagIndex);
 	//skill
 
 	void SetMyDefaultSkillID(int32_t skillId);

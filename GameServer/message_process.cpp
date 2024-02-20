@@ -180,11 +180,11 @@ void cs_takedown_equip(NetHandle h, const char* msg, uint32_t msg_size)
         }
     }
 
-    servermessage::ServerMsgUseEquipResult packet;
+    servermessage::ServerMsgTaskDownEquipResult packet;
     packet.set_bag_index(move_bag_index);
     packet.set_equip_point(equip_point);
     packet.set_result(UNEQUIP_SUCCESS);
-    NetMessageManager::GetSingleton().sendNetMessage(pPlayer->GetConnector(), servermessage::SC_USEEQUIP_RESULT, &packet);
+    NetMessageManager::GetSingleton().sendNetMessage(pPlayer->GetConnector(), servermessage::SC_UNEQUIP_RESULT, &packet);
 
     /*SCUnEquipResult* packet = new SCUnEquipResult;
 
@@ -206,7 +206,7 @@ void cs_use_equip(NetHandle h, const char* msg, uint32_t msg_size)
 {
     clientmessage::MsgUseEquip dummy;
 
-    bool ret = dummy.ParseFromArray(msg, msg_size);
+    bool ret = dummy.ParseFromArray(msg + sizeof(NetHeader), msg_size - sizeof(NetHeader));
     GameMap* pMap = MapManager::GetSingletonPtr()->getMap(dummy.map_id());
     if (nullptr == pMap)
         return;
@@ -324,6 +324,12 @@ void cs_use_equip(NetHandle h, const char* msg, uint32_t msg_size)
         }
 
     }
+
+    servermessage::ServerMsgUseEquipResult packet;
+    packet.set_bag_index(bag_index);
+    packet.set_equip_point(clientEquipPoint);
+    packet.set_result(USEEQUIP_SUCCESS);
+    NetMessageManager::GetSingleton().sendNetMessage(pPlayer->GetConnector(), servermessage::SC_USEEQUIP_RESULT, &packet);
 
    /* SCUseEquipResult* packet = new SCUseEquipResult;
     packet->setResult(USEEQUIP_SUCCESS);

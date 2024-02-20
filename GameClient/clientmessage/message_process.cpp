@@ -414,9 +414,9 @@ void sc_new_monster(NetHandle h, const char* msg, uint32_t msg_size)
 	pNPC->AddCommand(&cmdTemp);
 }
 
-void sc_use_equip_result(NetHandle h, const char* msg, uint32_t msg_size)
+void sc_unequip_result(NetHandle h, const char* msg, uint32_t msg_size)
 {
-	servermessage::ServerMsgUseEquipResult dummy;
+	servermessage::ServerMsgTaskDownEquipResult dummy;
 	dummy.ParseFromArray(msg, msg_size);
 
 	auto equip_point = dummy.equip_point();
@@ -439,6 +439,54 @@ void sc_use_equip_result(NetHandle h, const char* msg, uint32_t msg_size)
 
 	GameDataManager::GetSingleton().UserEquip_SetItem(
 		(PLAYER_EQUIP)equipPoint, nullptr, false);
+	UIManager::GetSingleton().updateWindow(GameUI_SelfEquip);
+	UIManager::GetSingleton().updateWindow(GameUI_Package);
+
+
+	KPlayer * pPlayer = KObjectManager::GetSingleton().getMySelf();
+
+	if (nullptr == pPlayer)
+	{
+		return;
+	}
+	pPlayer->GetCharacterData()->Set_Equip(equipPoint, -1);
+	pPlayer->UpdateBodyPartModel();
+}
+
+void sc_use_equip_result(NetHandle h, const char* msg, uint32_t msg_size)
+{
+	servermessage::ServerMsgUseEquipResult dummy;
+	dummy.ParseFromArray(msg, msg_size);
+
+	auto equip_point = dummy.equip_point();
+	if (equip_point < 0 || equip_point >= HEQUIP_NUMBER)
+	{
+		return;
+	}
+	
+	auto bag_index = dummy.bag_index();
+	KItem* pItemAtBag = GameDataManager::GetSingleton().UserBag_GetItem(bag_index);
+	if (!pItemAtBag)
+	{
+		return;
+	}
+
+
+
+
+	KPlayer* pPlayer = KObjectManager::GetSingleton().getMySelf();
+
+	if (nullptr == pPlayer)
+	{
+		return;
+	}
+	pPlayer->GetCharacterData()->Set_Equip((PLAYER_EQUIP)equip_point, pItemAtBag->GetIdTable());
+	pPlayer->UpdateBodyPartModel();
+
+	GameDataManager::GetSingleton().UserBag_SetItem(bag_index, nullptr, false);
+
+	GameDataManager::GetSingleton().UserEquip_SetItem(
+		(PLAYER_EQUIP)equip_point, pItemAtBag, false);
 	UIManager::GetSingleton().updateWindow(GameUI_SelfEquip);
 	UIManager::GetSingleton().updateWindow(GameUI_Package);
 }

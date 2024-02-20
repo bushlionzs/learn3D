@@ -34,8 +34,8 @@ PackageWindow::PackageWindow(CEGUI::Window* parent)
 		
 		CEGUI::Window* drag = Packet_Background_Cover->getChild(name);
 		_package_item_list[i]._item_image = drag->getChild("Image");
-		_package_item_list[i]._item_image->setUserData((void*)i);
-		_package_item_list[i]._item_image->subscribeEvent(
+		drag->setUserData((void*)i);
+		drag->subscribeEvent(
 			CEGUI::Window::EventMouseClick,
 			CEGUI::Event::Subscriber(&PackageWindow::handle_PackageClick, this));
 	}
@@ -87,7 +87,8 @@ bool PackageWindow::updateItem(
 	{
 		_package_item_list[index]._item_image->setProperty("Image", "");
 	}
-	
+	_package_item_list[index]._item_id = itemId;
+
 	return true;
 }
 

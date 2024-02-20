@@ -1477,7 +1477,6 @@ int32 ItemInterface::MoveItemBt2Containers
 	uint32			uDstSlot
 )
 {
-	KCheck(pLogParam);
 	KCheck(pPlayer);
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
