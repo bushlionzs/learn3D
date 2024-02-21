@@ -36,8 +36,8 @@ bool GameUI::appInit()
 {
 	ApplicationBase::appInit();
     InputManager::getSingletonPtr()->addListener(this);
-    HelloDemo1();
-    //MainMenuDemo();
+    //HelloDemo1();
+    SelfEquipDemo();
     //PackageDemo();
 	return true;
 }
@@ -264,6 +264,46 @@ void GameUI::SelfEquipDemo()
     close->subscribeEvent(
         Window::EventMouseClick,
         Event::Subscriber(&GameUI::handle_ButtonClick, this));
+
+    auto vp = CEGUIManager::getSingleton().getViewport();
+
+    vp->setClearEveryFrame(true);
+    Ogre::ColourValue color(0.678431392f, 0.847058892f, 0.901960850f, 1.000000000f);
+    vp->setBackgroundColour(color);
+
+
+    mRole = new Role;
+    mRole->createRoleData();
+    auto rolepos = Ogre::Vector3(15.0, -90.0f, 0.0f);
+    mRole->setPosition(rolepos);
+    mRole->walk();
+
+
+    TextureProperty texProperty;
+    texProperty._tex_usage = TU_RENDERTARGET;
+    texProperty._width = 512;
+    texProperty._height = 512;
+
+    texProperty._backgroudColor = color;
+    texProperty._backgroudColor.a = 0.0f;
+    TexturePtr renderTexture =
+        TextureManager::getSingleton().createManual("RenderToTexture", texProperty);
+
+    Ogre::RenderTarget* textureTarget = renderTexture->getBuffer()->getRenderTarget(0);
+    CEGUI::Window* backgroud = mSelfEquip->getChildRecursive("background");
+    auto kk = backgroud->getSize();
+    Viewport* rv = textureTarget->addViewport(mGameCamera->getCamera());
+    float width = 350;
+    float height = 512;
+    mGameCamera->getCamera()->setAspectRatio(width / height);
+    mGameCamera->setDistance(280);
+    //DirectX::XMVECTORF32 mClearColor = DirectX::Colors::Gold;
+    rv->setBackgroundColour(texProperty._backgroudColor);
+
+    
+    
+    ImageManager::getSingleton().addRenderTarget("RenderToTexture");
+    backgroud->setProperty("Image", "RenderToTexture");
 }
 
 bool GameUI::handle_ButtonClick(const CEGUI::EventArgs& args)

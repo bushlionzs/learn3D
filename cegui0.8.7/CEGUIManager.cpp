@@ -99,7 +99,7 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 		ImageManager::getSingleton().loadImageset("cjsh_item_xiangzi_1.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_npc_touxiang_8.imageset");
 		ImageManager::getSingleton().loadImageset("ui_mainboard_5.imageset");
-		
+		ImageManager::getSingleton().loadImageset("test.imageset");
 		
 		CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
 

@@ -24,6 +24,7 @@
  *   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  *   OTHER DEALINGS IN THE SOFTWARE.
  ***************************************************************************/
+#include "OgreHeader.h"
 #include "CEGUI/ImageManager.h"
 #include "CEGUI/Logger.h"
 #include "CEGUI/Exceptions.h"
@@ -328,6 +329,16 @@ void ImageManager::addFromImageFile(const String& name, const String& filename,
     image.setArea(rect);
 }
 
+
+
+void ImageManager::addRenderTarget(const String& name)
+{
+    Texture* tex = &System::getSingleton().getRenderer()->createRenderTexture(name);
+    BasicImage& image = static_cast<BasicImage&>(create("BasicImage", name));
+    image.setTexture(tex);
+    const Rectf rect(Vector2f(0.0f, 0.0f), tex->getOriginalDataSize());
+    image.setArea(rect);
+}
 //----------------------------------------------------------------------------//
 void ImageManager::notifyDisplaySizeChanged(const Sizef& size)
 {

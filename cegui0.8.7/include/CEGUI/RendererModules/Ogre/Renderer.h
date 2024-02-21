@@ -402,6 +402,7 @@ public:
                            const String& filename,
                            const String& resourceGroup);
     Texture& createTexture(const String& name, const Sizef& size);
+    Texture& createRenderTexture(const String& name);
     void destroyTexture(Texture& texture);
     void destroyTexture(const String& name);
     void destroyAllTextures();

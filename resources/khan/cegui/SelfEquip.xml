@@ -41,6 +41,16 @@
 			<Property name="Image" value="UI_MainBoard_2/UI_MainBoard_2_Selfequip_Board" />
 			<Property name="BackgroundEnabled" value="false" />
             <Property name="FrameEnabled" value="false" />
+			<Window type="TaharezLook/StaticImage" name="background" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.55,0},{0.5,0}}" />
+				<Property name="Position" value="{{0.22,0},{0.2,0}}" />
+				<Property name="Image" value="test/test" />
+				<Property name="BackgroundEnabled" value="true" />
+                <Property name="FrameEnabled" value="true" />
+			</Window>
+			
 			<Window type="TaharezLook/StaticImage" name="SelfEquip_2" >
 				<!--Comment	""	-->
 				<!--	Left=39, Top=228, Right=71, Bottom=260	-->

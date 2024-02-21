@@ -152,6 +152,8 @@ public:
                           const String& filename,
                           const String& resource_group = "");
 
+    void addRenderTarget(const String& name);
+
     /*!
     \brief
         Notify the ImageManager that the display size may have changed.

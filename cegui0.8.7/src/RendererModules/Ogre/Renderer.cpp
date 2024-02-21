@@ -25,6 +25,7 @@
  *   OTHER DEALINGS IN THE SOFTWARE.
  ***************************************************************************/
 #include <OgreHeader.h>
+#include <OgreTextureManager.h>
 #include "CEGUI/RendererModules/Ogre/Renderer.h"
 #include "CEGUI/RendererModules/Ogre/GeometryBuffer.h"
 #include "CEGUI/RendererModules/Ogre/TextureTarget.h"
@@ -544,6 +545,15 @@ Texture& OgreRenderer::createTexture(const String& name, const Sizef& size)
     logTextureCreation(name);
 
     return *t;
+}
+
+Texture& OgreRenderer::createRenderTexture(const String& name)
+{
+    throwIfNameExists(name);
+    Ogre::String tmp = name.c_str();
+    Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().getByName(tmp);
+
+    return createTexture(name, tex, false);
 }
 
 //----------------------------------------------------------------------------//

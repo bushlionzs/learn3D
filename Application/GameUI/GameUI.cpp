@@ -29,11 +29,11 @@ bool GameUI::appInit()
 {
 	ApplicationBase::appInit();
 
-	TestWindow* test = new TestWindow();
-	test->getView()->setPosition(300, 100);
-	test->getView()->setVisible(true);
+	//TestWindow* test = new TestWindow();
+	//test->getView()->setPosition(300, 100);
+	//test->getView()->setVisible(true);
 
-	
+	//
 
 	mViewport->setAutoUpdated(false);
 
@@ -45,11 +45,11 @@ bool GameUI::appInit()
 		vp->setBackgroundColour(color);
 	}
 	
-	return true;
 
 	SelfEquipWindow* selfEquipWindow = new SelfEquipWindow;
 	selfEquipWindow->getView()->setPosition(300, 100);
-
+	selfEquipWindow->getView()->setVisible(true);
+	//return true;
 
 	/*auto mesh = MeshManager::getSingleton().load("ninja.mesh");
 	Entity* cylinder = mSceneManager->createEntity("cylinder", mesh);
@@ -116,6 +116,6 @@ void GameUI::appUpdate(float delta)
 
 EngineType GameUI::getEngineType()
 {
-	//return EngineType_Vulkan;
+	return EngineType_Vulkan;
 	return EngineType_Dx11;
 }

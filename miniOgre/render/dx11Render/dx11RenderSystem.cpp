@@ -271,10 +271,21 @@ void Dx11RenderSystem::renderImpl(Dx11Pass& pass)
 	else
 	{
 		RawDataView* view = pass._render->getRawDataView();
-		mDx11Context->DrawInstanced(
-			view->mVertexCount,
-			1, view->mVertexStart, 0);
-		mTriangleCount += view->mVertexCount / 3;
+		if (view)
+		{
+			mDx11Context->DrawInstanced(
+				view->mVertexCount,
+				1, view->mVertexStart, 0);
+			mTriangleCount += view->mVertexCount / 3;
+		}
+		else
+		{
+			mDx11Context->DrawInstanced(
+				vertexData->vertexCount,
+				1, vertexData->vertexStart, 0);
+			mTriangleCount += vertexData->vertexCount / 3;
+		}
+		
 	}
 	mBatchCount++;
 }

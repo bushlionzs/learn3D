@@ -230,7 +230,7 @@ public:
           already exists within the system.
     */
     virtual Texture& createTexture(const String& name, const Sizef& size) = 0;
-
+    virtual Texture& createRenderTexture(const String& name) = 0;
     /*!
     \brief
         Destroy a Texture object that was previously created by calling the
