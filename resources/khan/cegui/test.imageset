@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<Imageset version="2" name="test" imagefile="awesomeface.png" nativeHorzRes="512" nativeVertRes="512" autoScaled="true">
+<Image name="test" xPos="0" yPos="0" width="512" height="512" />
+</Imageset>
