@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" ?>
+<Imageset version="2" name="CJSH_NPC_touxiang_8" imagefile="cjsh_npc_touxiang_8.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true">
+	<Image name="CJSH_NPC_touxiang_8_1" xPos="0" yPos="0" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_2" xPos="64" yPos="0" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_3" xPos="128" yPos="0" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_4" xPos="192" yPos="0" width="64" height="64" />
+	
+	<Image name="CJSH_NPC_touxiang_8_5" xPos="0" yPos="64" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_6" xPos="64" yPos="64" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_7" xPos="128" yPos="64" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_8" xPos="192" yPos="64" width="64" height="64" />
+	
+	<Image name="CJSH_NPC_touxiang_8_9" xPos="0" yPos="128" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_10" xPos="64" yPos="128" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_11" xPos="128" yPos="128" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_12" xPos="192" yPos="128" width="64" height="64" />
+	
+	<Image name="CJSH_NPC_touxiang_8_13" xPos="0" yPos="192" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_14" xPos="64" yPos="192" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_15" xPos="128" yPos="192" width="64" height="64" />
+	<Image name="CJSH_NPC_touxiang_8_16" xPos="192" yPos="192" width="64" height="64" />
+</Imageset>

@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<Imageset version="2" name="UI_MainBoard_5" imagefile="ui_mainboard_5.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true">
+
+	<Image name="UI_MainBoard_5_Quest_Log_Board" xPos="0" yPos="0" width="595" height="526" />
+	<Image name="UI_MainBoard_5_Quest_Log_Cover" xPos="605" yPos="0" width="276" height="474" />
+	<Image name="UI_MainBoard_5_Quest_Board" xPos="601" yPos="485" width="355" height="529" />
+	<Image name="UI_MainBoard_5_Life_Cover" xPos="0" yPos="546" width="595" height="478" />
+
+	<Image name="UI_MainBoard_5_Mission_Checkbox1_Normal" xPos="907" yPos="139" width="99" height="28" />
+	<Image name="UI_MainBoard_5_Mission_Checkbox1_Hover" xPos="908" yPos="177" width="99" height="28" />
+	<Image name="UI_MainBoard_5_Mission_Checkbox1_Pushed" xPos="907" yPos="216" width="99" height="28" />
+
+	<Image name="UI_MainBoard_5_Mission_Checkbox2_Normal" xPos="907" yPos="264" width="99" height="28" />
+	<Image name="UI_MainBoard_5_Mission_Checkbox2_Hover" xPos="908" yPos="302" width="99" height="28" />
+	<Image name="UI_MainBoard_5_Mission_Checkbox2_Pushed" xPos="907" yPos="341" width="99" height="28" />
+
+	<Image name="UI_MainBoard_5_Closebtn_Normal" xPos="907" yPos="398" width="29" height="28" />
+	<Image name="UI_MainBoard_5_Closebtn_Hover" xPos="947" yPos="398" width="29" height="28" />
+	<Image name="UI_MainBoard_5_Closebtn_Pushed" xPos="987" yPos="398" width="29" height="28" />
+
+	<Image name="UI_MainBoard_5_Helpbtn_Normal" xPos="914" yPos="435" width="18" height="26" />
+	<Image name="UI_MainBoard_5_Helpbtn_Hover" xPos="954" yPos="435" width="18" height="26" />
+	<Image name="UI_MainBoard_5_Helpbtn_Pushed" xPos="994" yPos="435" width="18" height="26" />
+
+	<Image name="UI_MainBoard_5_Questbtn_Normal" xPos="890" yPos="9" width="87" height="24" />
+	<Image name="UI_MainBoard_5_Questbtn_Hover" xPos="890" yPos="40" width="87" height="24" />
+	<Image name="UI_MainBoard_5_Questbtn_Pushed" xPos="890" yPos="71" width="87" height="24" />
+	<Image name="UI_MainBoard_5_Questbtn_Disabled" xPos="890" yPos="102" width="87" height="24" />
+
+</Imageset>
