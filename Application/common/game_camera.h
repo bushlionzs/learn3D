@@ -35,8 +35,6 @@ private:
     int32_t mMouseDeltaX = 0;
     int32_t mMouseDeltaY = 0;
 
-    HWND m_hWnd = 0;
-
 
     bool mEditMode = true;
 
@@ -46,9 +44,9 @@ private:
     Real mSpeed = 500.0f;
 
 public:
-    GameCamera(Camera* camera, SceneManager* sceneMgr, HWND hwnd);
+    GameCamera(Camera* camera, SceneManager* sceneMgr);
 
-    String getCameraString();
+    Ogre::String getCameraString();
     Camera* getCamera()
     {
         return mCamera;

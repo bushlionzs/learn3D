@@ -10,6 +10,19 @@
 #include "game_scene_manager.h"
 #include "game_scene.h"
 #include "net_message_manager.h"
+#include "role.h"
+#include <OgreRoot.h>
+#include "OgreTextureManager.h"
+#include "OgreMaterialManager.h"
+#include "OgreRenderTexture.h"
+#include <OgreTexture.h>
+#include <OgreRenderTarget.h>
+#include <OgreViewport.h>
+#include <CEGUI/InputEvent.h>
+#include <CEGUI/widgets/DragContainer.h>
+#include <CEGUI/CEGUI.h>
+#include "game_camera.h"
+#include <CEGUI/ImageManager.h>
 
 SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 {
@@ -47,6 +60,46 @@ SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 				CEGUI::Event::Subscriber(&SelfEquipWindow::handle_EquipClick, this));
 		}
 	}
+
+	SceneManager* sceneMgr = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("SelfEquip"));
+	Ogre::Camera* cam = sceneMgr->createCamera("SelfEquip");
+	auto mRole = new Role(sceneMgr);
+	mRole->createRoleData();
+	auto rolepos = Ogre::Vector3(0.0, -100.0f, 0.0f);
+	mRole->setPosition(rolepos);
+	mRole->walk();
+
+	CEGUI::Window* backgroud = SelfEquip_Board_Background->getChildRecursive("background");
+	float width = 206;
+	float height = 300;
+
+	TextureProperty texProperty;
+	texProperty._tex_usage = TU_RENDERTARGET;
+	texProperty._width = width;
+	texProperty._height = height;
+
+
+	texProperty._backgroudColor.a = 0.0f;
+	TexturePtr renderTexture =
+		TextureManager::getSingleton().createManual("RenderToTexture", texProperty);
+
+	Ogre::RenderTarget* textureTarget = renderTexture->getBuffer()->getRenderTarget(0);
+
+	Viewport* rv = textureTarget->addViewport(cam);
+
+	cam->setAspectRatio(width / height);
+
+	auto camera = new GameCamera(cam, sceneMgr);
+	camera->setDistance(270);
+
+	camera->update(0.0f);
+	//DirectX::XMVECTORF32 mClearColor = DirectX::Colors::Gold;
+	rv->setBackgroundColour(texProperty._backgroudColor);
+
+
+
+	CEGUI::ImageManager::getSingleton().addRenderTarget("RenderToTexture");
+	backgroud->setProperty("Image", "RenderToTexture");
 }
 
 bool SelfEquipWindow::handle_ButtonClick(const CEGUI::EventArgs& args)

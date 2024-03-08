@@ -58,6 +58,7 @@ namespace Orphigine
 		virtual bool			saveToBinaryFile(Serializer* pSerializer);
 		virtual std::size_t		calcSerializedSize();
 
+		virtual void OnSceneManagerChagned();
 
 		void setLogicModelName(const String& modelName);
 		void setLogicModelName1(const String& modelName);

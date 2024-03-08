@@ -4,7 +4,7 @@
 class Role
 {
 public:
-	Role();
+	Role(SceneManager* sceneMgr);
 	~Role();
 
 	void createRoleData();
@@ -18,4 +18,5 @@ public:
 	void walk();
 private:
 	Orphigine::ActorPtr object;
+	SceneManager* mSceneManager;
 };

@@ -5,13 +5,12 @@
 #include "OgreSceneNOde.h"
 #include "engine_manager.h"
 
-GameCamera::GameCamera(Camera* camera, SceneManager* sceneMgr, HWND hwnd)
+GameCamera::GameCamera(Camera* camera, SceneManager* sceneMgr)
 {
     mCameraRelPosition = Ogre::Vector3::ZERO;
     mCamera = camera;
     mSceneMgr = sceneMgr;
 
-    m_hWnd = hwnd;
 
     mCameraNode = mSceneMgr->getRoot()->createChildSceneNode(std::string("playerCamera"));
     mCameraSubNode = mCameraNode->createChildSceneNode(std::string("CameraSubNode"));

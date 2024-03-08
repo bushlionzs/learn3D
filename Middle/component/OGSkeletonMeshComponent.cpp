@@ -3202,7 +3202,7 @@ namespace Orphigine
 	void SkeletonMeshComponent::setPosition(Ogre::Vector3& pos)
 	{
 		mModelPosition = pos;
-		if (mOrigParentNode == mModelSceneNode->getParent())
+		//if (mOrigParentNode == mModelSceneNode->getParent())
 		{
 			mModelSceneNode->setPosition(mModelPosition);
 			mModelSceneNode->updatechildren();

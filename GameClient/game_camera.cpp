@@ -5,13 +5,12 @@
 #include "OgreSceneNOde.h"
 #include "engine_manager.h"
 
-GameCamera::GameCamera(Camera* camera, SceneManager* sceneMgr, HWND hwnd)
+GameCamera::GameCamera(Camera* camera, SceneManager* sceneMgr)
 {
     mCameraRelPosition = Ogre::Vector3::ZERO;
     mCamera = camera;
     mSceneMgr = sceneMgr;
 
-    m_hWnd = hwnd;
 
     mCameraNode = mSceneMgr->getRoot()->createChildSceneNode(std::string("playerCamera"));
     mCameraSubNode = mCameraNode->createChildSceneNode(std::string("CameraSubNode"));
@@ -220,7 +219,16 @@ bool GameCamera::update(float delta)
         mCameraNode->resetOrientation();
         mCameraSubNode->resetOrientation();
         {
-            Ogre::Vector3 playerPos = EngineManager::getSingletonPtr()->getMyPosition();
+            Ogre::Vector3 playerPos;
+
+            if (mSceneMgr == EngineManager::getSingleton().getSceneManager())
+            {
+                playerPos = EngineManager::getSingletonPtr()->getMyPosition();
+            }
+            else
+            {
+                playerPos = Ogre::Vector3::ZERO;
+            }
             //playerPos = Vector3(6550, -568.960022, -5300.00000);
             mCameraNode->setPosition(playerPos);
             mCameraSubNode->setPosition(mCameraRelPosition);

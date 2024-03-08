@@ -55,4 +55,6 @@ private:
 	CEGUI::Window* mRoot = nullptr;
 	CEGUI::Window* mToolTip = nullptr;
 	CEGUI::Window* mSelfEquip = nullptr;
+
+	GameCamera* mUICamera = nullptr;
 };

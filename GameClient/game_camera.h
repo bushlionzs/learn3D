@@ -46,7 +46,7 @@ private:
     Real mSpeed = 500.0f;
 
 public:
-    GameCamera(Camera* camera, SceneManager* sceneMgr, HWND hwnd);
+    GameCamera(Camera* camera, SceneManager* sceneMgr);
 
     String getCameraString();
     Camera* getCamera()

@@ -81,7 +81,7 @@ bool ApplicationBase::appInit()
 	mViewport->setBackgroundColour(color);
 	mViewport->setClearEveryFrame(true);
 	EngineManager::getSingleton().setViewPort(mViewport);
-	mGameCamera = new GameCamera(camera, mSceneManager, mApplicationWindow->getWnd());
+	mGameCamera = new GameCamera(camera, mSceneManager);
 
 	InputManager::getSingletonPtr()->addListener(mGameCamera);
 

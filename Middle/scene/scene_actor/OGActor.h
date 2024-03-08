@@ -37,6 +37,7 @@ namespace Orphigine
 		virtual void destroyRenderInstanceFromLoadThread(void){}; 
 		virtual bool loadFromStream(Serializer* pSerializer, std::shared_ptr<DataStream>& stream, int32_t version)=0;
 		virtual std::size_t	calcSerializedSize()=0;
+		virtual void OnSceneManagerChagned() {}
 
 		const String& getName(void) const
 		{
@@ -53,6 +54,8 @@ namespace Orphigine
 		{
 			return std::pair<bool, Real>(false, 0.0f);
 		}
+
+		void setSceneManager(SceneManager* sceneManager);
 	};
 
 	typedef std::shared_ptr<Actor> ActorPtr;

@@ -4,9 +4,9 @@
 #include "OGSkeletonMeshActor.h"
 #include "OGActorFactoryManager.h"
 
-Role::Role()
+Role::Role(SceneManager* sceneMgr)
 {
-
+	mSceneManager = sceneMgr;
 }
 
 Role::~Role()
@@ -52,6 +52,12 @@ void Role::createRoleData()
 	{
 		model->setWeaponTypeName("Falchion");
 	}
+
+	if (mSceneManager)
+	{
+		object->setSceneManager(mSceneManager);
+	}
+	
 }
 
 void Role::setPosition(Ogre::Vector3& position)

@@ -19,6 +19,7 @@
 #include <CEGUI/widgets/DragContainer.h>
 #include <CEGUI/CEGUI.h>
 #include <platform_file.h>
+#include <OgreRoot.h>
 
 using namespace CEGUI;
 
@@ -271,32 +272,40 @@ void GameUI::SelfEquipDemo()
     Ogre::ColourValue color(0.678431392f, 0.847058892f, 0.901960850f, 1.000000000f);
     vp->setBackgroundColour(color);
 
-
-    mRole = new Role;
+    SceneManager* sceneMgr = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("SelfEquip"));
+    Camera* cam = sceneMgr->createCamera("SelfEquip");
+    mRole = new Role(sceneMgr);
     mRole->createRoleData();
-    auto rolepos = Ogre::Vector3(15.0, -90.0f, 0.0f);
+    auto rolepos = Ogre::Vector3(0.0, -100.0f, 0.0f);
     mRole->setPosition(rolepos);
     mRole->walk();
 
+    CEGUI::Window* backgroud = mSelfEquip->getChildRecursive("background");
+    auto w = backgroud->getWidth();
+    float width = 206;
+    float height = 300;
 
     TextureProperty texProperty;
     texProperty._tex_usage = TU_RENDERTARGET;
-    texProperty._width = 512;
-    texProperty._height = 512;
+    texProperty._width = width;
+    texProperty._height = height;
 
-    texProperty._backgroudColor = color;
+    //texProperty._backgroudColor = color;
     texProperty._backgroudColor.a = 0.0f;
     TexturePtr renderTexture =
         TextureManager::getSingleton().createManual("RenderToTexture", texProperty);
 
     Ogre::RenderTarget* textureTarget = renderTexture->getBuffer()->getRenderTarget(0);
-    CEGUI::Window* backgroud = mSelfEquip->getChildRecursive("background");
+    
     auto kk = backgroud->getSize();
-    Viewport* rv = textureTarget->addViewport(mGameCamera->getCamera());
-    float width = 512;
-    float height = 512;
-    mGameCamera->getCamera()->setAspectRatio(width / height);
-    mGameCamera->setDistance(280);
+    Viewport* rv = textureTarget->addViewport(cam);
+    
+    cam->setAspectRatio(width / height);
+
+    mUICamera = new GameCamera(cam, sceneMgr);
+    mUICamera->setDistance(270);
+
+    mUICamera->update(0.0f);
     //DirectX::XMVECTORF32 mClearColor = DirectX::Colors::Gold;
     rv->setBackgroundColour(texProperty._backgroudColor);
 

@@ -25,6 +25,13 @@ namespace Orphigine
 	{
 		mData = data;
 	}
+
+	void Actor::setSceneManager(SceneManager* sceneManager)
+	{
+		mSceneManager = sceneManager;
+		OnSceneManagerChagned();
+	}
+
 	//-----------------------------------------------------------------------
 	void Actor::queryReferenceResources(ResourceCollection* resourceCollection)
 	{
