@@ -25,8 +25,9 @@ public:
 
 	virtual bool requiresTextureFlipping() const;
 
-	virtual void preRender(VkCommandBuffer commandBuffer);
+	virtual void preRender(VulkanFrame* frame, const ColourValue& colour);
 
+	void start();
 	VkFramebuffer getFrameBuffer(uint32_t index);
 
 	virtual uint32_t getTargetWidth();
@@ -56,4 +57,6 @@ private:
 	
 
 	uint32_t mFrameIndex = 0;
+
+	bool mHaveRenderPass = false;
 };

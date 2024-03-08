@@ -122,7 +122,7 @@ bool CPlatformFileSystem::InitFileSystem()
     
         m_strProcessName = buffer;
 
-        printf("bin dir:%s, process name:%s\n", m_strProcessDirectory.c_str(), m_strProcessName.c_str());
+       // printf("bin dir:%s, process name:%s\n", m_strProcessDirectory.c_str(), m_strProcessName.c_str());
 		
         return true;
 	}

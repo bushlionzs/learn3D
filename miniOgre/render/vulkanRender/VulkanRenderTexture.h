@@ -21,7 +21,9 @@ public:
 
 	virtual bool requiresTextureFlipping() const;
 
-	virtual void preRender(VkCommandBuffer commandBuffer);
+	virtual void preRender(VulkanFrame* frame, const ColourValue& colour);
+
+	virtual bool offset() { return true; }
 
 	virtual void swapBuffers();
 	virtual VkFramebuffer getFrameBuffer(uint32_t index);

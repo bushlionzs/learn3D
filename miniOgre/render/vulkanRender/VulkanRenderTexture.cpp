@@ -33,35 +33,76 @@ bool VulkanRenderTexture::requiresTextureFlipping() const
 	return false;
 }
 
-void VulkanRenderTexture::preRender(VkCommandBuffer commandBuffer)
+void VulkanRenderTexture::preRender(VulkanFrame* frame, const ColourValue& colour)
 {
-	auto currentFrame = VulkanHelper::getSingleton()._getRenderSystem()->_getCurrentFrame();
-	VkCommandBuffer pCommandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(currentFrame->getFrameIndex());
-	VkViewport viewport = vks::initializers::viewport((float)mWidth, (float)mHeight, 0.0f, 1.0f);
+	auto width = getTargetWidth();
+	auto height = getTargetHeight();
+	
 
-	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+	auto frame_index = frame->getFrameIndex();
 
-	VkRect2D scissor = vks::initializers::rect2D(mWidth, mHeight, 0, 0);
-	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
+	auto renderPass = VulkanHelper::getSingleton()._getRenderPass();
+
+	
+
+	auto framebuffer = getFrameBuffer(frame_index);
+
+	VkViewport viewport = vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
+	VkRect2D scissor = vks::initializers::rect2D(width, height, 0, 0);
+
+	VkClearValue clearValues[2];
+	memcpy(clearValues[0].color.float32, colour.ptr(), sizeof(ColourValue));
+	clearValues[1].depthStencil = { 1.0f, 0 };
+
+
+
+	VkRenderPassBeginInfo renderPassBeginInfo =
+		vks::initializers::renderPassBeginInfo();
+	renderPassBeginInfo.renderPass = renderPass;
+	renderPassBeginInfo.renderArea.offset.x = 0;
+	renderPassBeginInfo.renderArea.offset.y = 0;
+	renderPassBeginInfo.renderArea.extent.width = width;
+	renderPassBeginInfo.renderArea.extent.height = height;
+	renderPassBeginInfo.clearValueCount = 2;
+	renderPassBeginInfo.pClearValues = clearValues;
+	renderPassBeginInfo.framebuffer = framebuffer;
+
+
+	/*VkCommandBuffer copyCmd = VulkanHelper::getSingleton().createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+	 vks::tools::setImageLayout(
+		 copyCmd,
+			mParentTexture->getImage(),
+			VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		 VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });*/
+
+	VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frame_index);
+	
+	
 	VkImageSubresourceRange subresourceRange = {};
 	subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	subresourceRange.baseMipLevel = 0;
 	subresourceRange.levelCount = 1;
 	subresourceRange.layerCount = 1;
-
 	vks::tools::setImageLayout(
-		pCommandBuffer,
+		commandBuffer,
 		mParentTexture->getImage(),
 		VK_IMAGE_LAYOUT_UNDEFINED,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		subresourceRange);
+
+	vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+	
 }
 
 void VulkanRenderTexture::swapBuffers()
 {
 	auto currentFrame = VulkanHelper::getSingleton()._getRenderSystem()->_getCurrentFrame();
 	VkCommandBuffer pCommandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(currentFrame->getFrameIndex());
+	
 	vkCmdEndRenderPass(pCommandBuffer);
 
 	VkImageSubresourceRange subresourceRange = {};
@@ -76,6 +117,8 @@ void VulkanRenderTexture::swapBuffers()
 		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		subresourceRange);
+
+	
 }
 
 VkFramebuffer VulkanRenderTexture::getFrameBuffer(uint32_t index)

@@ -57,7 +57,7 @@ void GameUI::appUpdate(float delta)
 
 EngineType GameUI::getEngineType()
 {
-	//return EngineType_Vulkan;
+	return EngineType_Vulkan;
 	return EngineType_Dx11;
 }
 
@@ -293,7 +293,7 @@ void GameUI::SelfEquipDemo()
     CEGUI::Window* backgroud = mSelfEquip->getChildRecursive("background");
     auto kk = backgroud->getSize();
     Viewport* rv = textureTarget->addViewport(mGameCamera->getCamera());
-    float width = 350;
+    float width = 512;
     float height = 512;
     mGameCamera->getCamera()->setAspectRatio(width / height);
     mGameCamera->setDistance(280);

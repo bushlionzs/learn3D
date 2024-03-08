@@ -1,5 +1,6 @@
 #pragma once
 #include "VulkanCommon.h"
+class VulkanFrame;
 class VulkanRenderTarget
 {
 public:
@@ -8,7 +9,9 @@ public:
 	);
 	~VulkanRenderTarget();
 
-	virtual void preRender(VkCommandBuffer commandBuffer) = 0;
+	virtual void preRender(VulkanFrame* frame, const ColourValue& colour) = 0;
+
+	virtual bool offset() { return false; }
 
 	virtual VkFramebuffer getFrameBuffer(uint32_t index) = 0;
 

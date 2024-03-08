@@ -7,6 +7,7 @@ if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D__WINDOWS__)
+add_definitions(-DCEGUI_STATIC)
 endif()
 
 
@@ -64,9 +65,10 @@ target_include_directories(${PROJECT_NAME}
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 
-target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
-MyGUI Middle stormlib luaplus OIS GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody  
+target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre CEGUI expat
+MyGUI Middle stormlib luaplus freetype OIS GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody  
 tinyxmld
+pcre
 vulkan-1
 avcodec
 avdevice
@@ -82,5 +84,6 @@ d3d12
 d3d11
 D3DCompiler
 Shlwapi
-winmm)
+winmm
+dbghelp)
 

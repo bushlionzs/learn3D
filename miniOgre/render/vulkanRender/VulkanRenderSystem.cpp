@@ -68,9 +68,48 @@ void VulkanRenderSystem::frameStart()
     mBatchCount = 0;
 
     mCurrentVulkanFrame = mRenderWindow->getNextFrame();
-
+    mRenderWindow->start();
 
     VulkanHelper::getSingleton()._resetCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
+
+    static std::vector<VkCommandBuffer>  cmdlist;
+    VulkanHelper::getSingleton().fillCommandBufferList(cmdlist, mCurrentVulkanFrame->getFrameIndex(), true);
+
+    VkCommandBufferBeginInfo cmdBeginInfo{};
+    cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+    auto framebuffer = mRenderWindow->getFrameBuffer(mCurrentVulkanFrame->getFrameIndex());
+    auto renderPass = VulkanHelper::getSingleton()._getRenderPass();
+    VkCommandBufferInheritanceInfo inheritanceInfo = vks::initializers::commandBufferInheritanceInfo();
+    inheritanceInfo.renderPass = renderPass;
+    // Secondary command buffer also use the currently active framebuffer
+    inheritanceInfo.framebuffer = framebuffer;
+
+
+
+    VkCommandBufferBeginInfo secondBufferBeginInfo = vks::initializers::commandBufferBeginInfo();
+    secondBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+    secondBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
+
+
+    auto result = vkBeginCommandBuffer(cmdlist[0], &secondBufferBeginInfo);
+
+    if (result != VK_SUCCESS)
+    {
+        throw std::runtime_error("vkBeginCommandBuffer failed");
+    }
+
+    for (int32_t i = 1; i < cmdlist.size(); i++)
+    {
+        auto* commandBuffer = cmdlist.at(i);
+        auto result = vkBeginCommandBuffer(commandBuffer, &secondBufferBeginInfo);
+
+        if (result != VK_SUCCESS)
+        {
+            throw std::runtime_error("vkBeginCommandBuffer failed");
+        }
+
+    }
 }
 
 void VulkanRenderSystem::frameEnd()
@@ -130,9 +169,7 @@ void VulkanRenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
     target = vp->getTarget();
     updateMainPassCB(cam);
     mActiveVulkanRenderTarget = dynamic_cast<VulkanRenderTarget*>(target);
-    auto frame_index = mCurrentVulkanFrame->getFrameIndex();
-    auto* vkbuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frame_index);
-    mActiveVulkanRenderTarget->preRender(vkbuffer);
+    
 }
 
 EngineType VulkanRenderSystem::getRenderType()
@@ -144,70 +181,8 @@ void VulkanRenderSystem::clearFrameBuffer(uint32 buffers,
     const ColourValue& colour,
     float depth, uint16 stencil)
 {
-    auto frame_index = mCurrentVulkanFrame->getFrameIndex();
-    VkCommandBuffer pCommandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(
-        frame_index);
 
-    auto renderPass = VulkanHelper::getSingleton()._getRenderPass();
-
-    auto width = mActiveVulkanRenderTarget->getTargetWidth();
-    auto height = mActiveVulkanRenderTarget->getTargetHeight();
-
-    auto framebuffer = mActiveVulkanRenderTarget->getFrameBuffer(
-        mCurrentVulkanFrame->getFrameIndex());
-
-    VkCommandBufferInheritanceInfo inheritanceInfo = vks::initializers::commandBufferInheritanceInfo();
-    inheritanceInfo.renderPass = renderPass;
-    // Secondary command buffer also use the currently active framebuffer
-    inheritanceInfo.framebuffer = framebuffer;
-
-
-
-    VkCommandBufferBeginInfo commandBufferBeginInfo = vks::initializers::commandBufferBeginInfo();
-    commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
-    commandBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
-    VkViewport viewport = vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
-    VkRect2D scissor = vks::initializers::rect2D(width, height, 0, 0);
-
-
-    static std::vector<VkCommandBuffer>  cmdlist;
-    VulkanHelper::getSingleton().fillCommandBufferList(cmdlist, frame_index, true);
-
-    for (auto commandBuffer : cmdlist)
-    {
-        VK_CHECK_RESULT(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo));
-
-        vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
-        vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-    }
-
-
-    VkClearValue clearValues[2];
-    memcpy(clearValues[0].color.float32, colour.ptr(), sizeof(ColourValue));
-    clearValues[1].depthStencil = { 1.0f, 0 };
-
-    
-
-    VkRenderPassBeginInfo renderPassBeginInfo = 
-        vks::initializers::renderPassBeginInfo();
-    renderPassBeginInfo.renderPass = renderPass;
-    renderPassBeginInfo.renderArea.offset.x = 0;
-    renderPassBeginInfo.renderArea.offset.y = 0;
-    renderPassBeginInfo.renderArea.extent.width = width;
-    renderPassBeginInfo.renderArea.extent.height = height;
-    renderPassBeginInfo.clearValueCount = 2;
-    renderPassBeginInfo.pClearValues = clearValues;
-
-    
-    renderPassBeginInfo.framebuffer = framebuffer;
-        
-
-    vkCmdBeginRenderPass(pCommandBuffer, &renderPassBeginInfo,
-        VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
-
-    
-
-    
+    mActiveVulkanRenderTarget->preRender(mCurrentVulkanFrame, colour);
 }
 
 Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
@@ -282,12 +257,24 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     }
     uint32_t size = (uint32_t)objs.size();
 
+    if(mActiveVulkanRenderTarget->offset())
+    {
+        for (auto r : objs)
+        {
+            VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
+            // VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
+            VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
+            rd->render(mCurrentVulkanFrame, commandBuffer);
+        }
+        return;
+    }
     if (!multithread)
     {
         for (auto r : objs)
         {
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
             VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
+           // VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
             rd->render(mCurrentVulkanFrame, commandBuffer);
         }
         return;

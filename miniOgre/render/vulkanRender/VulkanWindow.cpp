@@ -68,14 +68,81 @@ bool VulkanWindow::requiresTextureFlipping() const
     return false;
 }
 
-void VulkanWindow::preRender(VkCommandBuffer commandBuffer)
+void VulkanWindow::start()
 {
-   /* VkViewport viewport = vks::initializers::viewport((float)mWidth, (float)mHeight, 0.0f, 1.0f);
+    mHaveRenderPass = false;
+}
+void VulkanWindow::preRender(VulkanFrame* frame, const ColourValue& colour)
+{
+    auto width = mWidth;
+    auto height = mHeight;
 
-    vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
-    VkRect2D scissor = vks::initializers::rect2D(mWidth, mHeight, 0, 0);
-    vkCmdSetScissor(commandBuffer, 0, 1, &scissor);*/
+    auto frame_index = frame->getFrameIndex();
+
+    auto renderPass = VulkanHelper::getSingleton()._getRenderPass();
+
+
+
+    auto framebuffer = getFrameBuffer(frame_index);
+
+    VkCommandBufferInheritanceInfo inheritanceInfo = vks::initializers::commandBufferInheritanceInfo();
+    inheritanceInfo.renderPass = renderPass;
+    // Secondary command buffer also use the currently active framebuffer
+    inheritanceInfo.framebuffer = framebuffer;
+
+
+
+    VkCommandBufferBeginInfo commandBufferBeginInfo = vks::initializers::commandBufferBeginInfo();
+    commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+    commandBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
+    VkViewport viewport = vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
+    VkRect2D scissor = vks::initializers::rect2D(width, height, 0, 0);
+
+    VkClearValue clearValues[2];
+    memcpy(clearValues[0].color.float32, colour.ptr(), sizeof(ColourValue));
+    clearValues[1].depthStencil = { 1.0f, 0 };
+
+
+
+    VkRenderPassBeginInfo renderPassBeginInfo =
+        vks::initializers::renderPassBeginInfo();
+    renderPassBeginInfo.renderPass = renderPass;
+    renderPassBeginInfo.renderArea.offset.x = 0;
+    renderPassBeginInfo.renderArea.offset.y = 0;
+    renderPassBeginInfo.renderArea.extent.width = width;
+    renderPassBeginInfo.renderArea.extent.height = height;
+    renderPassBeginInfo.clearValueCount = 2;
+    renderPassBeginInfo.pClearValues = clearValues;
+    renderPassBeginInfo.framebuffer = framebuffer;
+
+    VkImageSubresourceRange subresourceRange = {};
+    subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    subresourceRange.baseMipLevel = 0;
+    subresourceRange.levelCount = 1;
+    subresourceRange.layerCount = 1;
+
+    static std::vector<VkCommandBuffer>  cmdlist;
+    VulkanHelper::getSingleton().fillCommandBufferList(cmdlist, frame_index, true);
+
+
+    for (int32_t i = 1; i < cmdlist.size(); i++)
+    {
+        auto* commandBuffer = cmdlist.at(i);
+
+        vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+        vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+    }
+
+    if (!mHaveRenderPass)
+    {
+        //vkCmdSetViewport(cmdlist[0], 0, 1, &viewport);
+        //vkCmdSetScissor(cmdlist[0], 0, 1, &scissor);
+        vkCmdBeginRenderPass(cmdlist[0], &renderPassBeginInfo,
+            VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+        
+        mHaveRenderPass = true;
+    }
 }
 
 VkFramebuffer VulkanWindow::getFrameBuffer(uint32_t index)
@@ -178,6 +245,7 @@ void VulkanWindow::setupDepthStencil()
 
 void VulkanWindow::swapBuffers()
 {
+    mHaveRenderPass = false;
     auto currentFrame = VulkanHelper::getSingleton()._getRenderSystem()->_getCurrentFrame();
     
     auto frame_index = currentFrame->getFrameIndex();

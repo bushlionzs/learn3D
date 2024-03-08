@@ -41,6 +41,7 @@ public:
     VkInstance _getVKInstance();
     VkPhysicalDeviceProperties& _getVkPhysicalDeviceProperties();
 
+    VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, bool begin);
     VkCommandBuffer beginSingleTimeCommands();
     void endSingleTimeCommands(VkCommandBuffer commandBuffer);
     void copyBuffer(
