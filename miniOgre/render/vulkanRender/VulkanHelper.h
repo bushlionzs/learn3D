@@ -3,6 +3,7 @@
 
 #include "OgreSingleton.h"
 #include "VulkanCommon.h"
+#include "OgreCommon.h"
 
 
 #define VULKAN_FRAME_RESOURCE_COUNT 3
@@ -40,7 +41,10 @@ public:
     VkDevice _getVkDevice();
     VkInstance _getVKInstance();
     VkPhysicalDeviceProperties& _getVkPhysicalDeviceProperties();
-
+    VkPhysicalDeviceFeatures& _getVkPhysicalDeviceFeatures()
+    {
+        return mDeviceFeatures;
+    }
     VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, bool begin);
     VkCommandBuffer beginSingleTimeCommands();
     void endSingleTimeCommands(VkCommandBuffer commandBuffer);
@@ -93,6 +97,8 @@ public:
         return mSwapChainImageFormat;
     }
     void loadDefaultResources();
+
+    VkSampler getSampler(Ogre::TextureAddressingMode mode);
     std::shared_ptr<ITexture>& getDefaultTexture();
 private:
     bool isDeviceSuitable(VkPhysicalDevice device);
@@ -112,6 +118,7 @@ private:
     void createPipelineCache();
     void setupDescriptorSetLayout();
     void createRenderPass();
+    void createSamples();
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(
         const std::vector<VkSurfaceFormatKHR>& availableFormats);
     VkPresentModeKHR chooseSwapPresentMode(
@@ -134,6 +141,7 @@ private:
 
     VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
     VkPhysicalDeviceProperties mPhysicalDeviceProperties;
+    VkPhysicalDeviceFeatures mDeviceFeatures;
     VkPhysicalDeviceMemoryProperties mPhysicalMemoryProperties;
     VkDevice mVKDevice;
 
@@ -172,4 +180,6 @@ private:
     //default texture
 
     std::shared_ptr<ITexture> mDefaultTexture;
+
+    std::vector<VkSampler> mSamplers;
 };

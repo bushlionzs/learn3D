@@ -57,7 +57,7 @@ void VulkanHelper::_initialise()
     createRenderPass();
     createPipelineCache();
     setupDescriptorSetLayout();
-    
+    createSamples();
     
 }
 
@@ -157,6 +157,7 @@ void VulkanHelper::createInstance()
     createInfo.ppEnabledExtensionNames = extensions.data();
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+    mEnableValidationLayers = false;
     if (mEnableValidationLayers)
     {
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
@@ -398,7 +399,7 @@ void VulkanHelper::pickPhysicalDevice()
 
 
     vkGetPhysicalDeviceProperties(mPhysicalDevice, &mPhysicalDeviceProperties);
-
+    vkGetPhysicalDeviceFeatures(mPhysicalDevice, &mDeviceFeatures);
     vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mPhysicalMemoryProperties);
 }
 
@@ -887,6 +888,98 @@ void VulkanHelper::createRenderPass()
     {
         throw std::runtime_error("failed to create render pass!");
     }
+}
+
+
+void VulkanHelper::createSamples()
+{
+
+    VkSampler samplerStatePointWrap;
+    VkSampler samplerStatePointClamp;
+    VkSampler samplerStateLinearWrap;
+    VkSampler samplerStateLinearClamp;
+    VkSampler samplerStateAnisotropicWrap;
+    VkSampler samplerStateAnisotropicClamp;
+
+    VkSamplerCreateInfo samplerInfo = {};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerInfo.magFilter = VK_FILTER_LINEAR;
+    samplerInfo.minFilter = VK_FILTER_LINEAR;
+
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.mipLodBias = 0.0f;
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = FLT_MAX;
+    samplerInfo.compareEnable = VK_TRUE;
+    samplerInfo.compareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
+
+
+    VkPhysicalDeviceProperties& properties = _getVkPhysicalDeviceProperties();
+    VkPhysicalDeviceFeatures& features = _getVkPhysicalDeviceFeatures();
+    if (features.samplerAnisotropy)
+    {
+        samplerInfo.anisotropyEnable = VK_TRUE;
+        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+    }
+    else
+    {
+        samplerInfo.maxAnisotropy = 1.0;
+        samplerInfo.anisotropyEnable = VK_FALSE;
+    }
+
+    if (vkCreateSampler(mVKDevice, &samplerInfo, nullptr, &samplerStateAnisotropicWrap) != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create texture sampler!");
+    }
+
+
+
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+    samplerInfo.magFilter = VK_FILTER_LINEAR;
+    samplerInfo.minFilter = VK_FILTER_LINEAR;
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.mipLodBias = 0.0f;
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = FLT_MAX;
+    samplerInfo.compareEnable = VK_TRUE;
+    samplerInfo.compareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
+
+
+
+    if (features.samplerAnisotropy)
+    {
+        samplerInfo.anisotropyEnable = VK_TRUE;
+        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+    }
+    else
+    {
+        samplerInfo.maxAnisotropy = 1.0;
+        samplerInfo.anisotropyEnable = VK_FALSE;
+    }
+
+    if (vkCreateSampler(mVKDevice, &samplerInfo, nullptr, &samplerStateAnisotropicClamp) != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create texture sampler!");
+    }
+    mSamplers = { samplerStateAnisotropicWrap, samplerStateAnisotropicClamp};
+
+}
+
+VkSampler VulkanHelper::getSampler(Ogre::TextureAddressingMode mode)
+{
+    if (mode == TAM_CLAMP)
+    {
+        return mSamplers[1];
+    }
+    return mSamplers[0];
 }
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback
