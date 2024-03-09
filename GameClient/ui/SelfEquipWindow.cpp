@@ -23,6 +23,7 @@
 #include <CEGUI/CEGUI.h>
 #include "game_camera.h"
 #include <CEGUI/ImageManager.h>
+#include "GameDataCharacter.h"
 
 SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 {
@@ -63,11 +64,9 @@ SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 
 	SceneManager* sceneMgr = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("SelfEquip"));
 	Ogre::Camera* cam = sceneMgr->createCamera("SelfEquip");
-	auto mRole = new Role(sceneMgr);
-	mRole->createRoleData();
-	auto rolepos = Ogre::Vector3(0.0, -100.0f, 0.0f);
-	mRole->setPosition(rolepos);
-	mRole->walk();
+	_role = new Role(sceneMgr);
+	_role->createRoleData();
+
 
 	CEGUI::Window* backgroud = SelfEquip_Board_Background->getChildRecursive("background");
 	float width = 206;
@@ -134,17 +133,41 @@ void SelfEquipWindow::update()
 {
 	auto& equips = GameDataManager::GetSingleton().getUserEquip();
 
-
-	for (int32_t i = 0; i < HEQUIP_NUMBER; i++)
+	KPlayer* myself = KObjectManager::GetSingleton().getMySelf();
+	if (myself)
 	{
-		KItem* item = equips[i];
-		uint32_t item_id = 0;
-		if (item)
+		KCharatcterBaseData* pMyselfData = myself->GetCharacterData();
+		KPlayer* pPlayer = _role->getPlayer();
+		KCharatcterBaseData* pCharacterData = pPlayer->GetCharacterData();
+		pCharacterData->SetProfession(pMyselfData->GetProfession());
+		pCharacterData->Set_RaceID(pMyselfData->Get_RaceID());
+
+		pCharacterData->Set_FaceMesh(pMyselfData->Get_FaceMesh());
+
+		pCharacterData->Set_HairMesh(pMyselfData->Get_HairMesh());
+
+		pPlayer->UpdateModel_Visible();
+		for (int32_t i = 0; i < HEQUIP_NUMBER; i++)
 		{
-			item_id = item->GetIdTable();
+			KItem* item = equips[i];
+			uint32_t item_id = 0;
+			if (item)
+			{
+				item_id = item->GetIdTable();
+			}
+			updateItem(i, item_id);
+			if (item)
+			{
+				auto pos = item->getPosIndex();
+				pCharacterData->Set_Equip((PLAYER_EQUIP)pos, item_id);
+			}
+			
 		}
-		updateItem(i, item_id);
+
+		pPlayer->UpdateBodyPartModel();
 	}
+	
+	_role->updateRole();
 }
 
 bool SelfEquipWindow::updateItem(
@@ -164,6 +187,10 @@ bool SelfEquipWindow::updateItem(
 		if(_equips[index])
 		_equips[index]->setProperty("Image", "");
 	}
+
+	
+
+
 
 	return true;
 }

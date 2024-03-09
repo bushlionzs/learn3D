@@ -54,8 +54,6 @@ namespace Ogre {
         VertexData* mVertexData;
         IndexData* mIndexData;
 
-        String mName;
-
         AxisAlignedBox mAABB;
     };
 }

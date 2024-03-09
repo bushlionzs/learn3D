@@ -274,7 +274,7 @@ namespace Orphigine
 
 	void SkeletonMeshActor::OnSceneManagerChagned()
 	{
-		mLogicModel->setParentSceneNode(mSceneManager->getRoot());
+		mLogicModel->setParentSceneNode(mSceneManager->getRoot(), true);
 	}
 	//-----------------------------------------------------------------------
 	void SkeletonMeshActor::createRenderInstance()

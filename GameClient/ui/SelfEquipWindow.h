@@ -4,7 +4,7 @@
 #include <CEGUI/CEGUI.h>
 #include "ToolTip.h"
 #include "UIDefine.h"
-
+class Role;
 class SelfEquipWindow :public UIBase
 {
 public:
@@ -27,6 +27,7 @@ private:
 		uint32_t itemId);
 private:
 	std::vector<CEGUI::Window*> _equips;
+	Role* _role;
 };
 
 

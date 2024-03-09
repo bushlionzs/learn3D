@@ -47,7 +47,7 @@
 #include "engine_manager.h"
 #include "OgreSceneManager.h"
 #include "OGEffectActor.h"
-
+#include "engine_manager.h"
 #include <iomanip>
 
 #define EFFECT_RESTRICT 1 //是否限制effect的数量
@@ -318,8 +318,7 @@ namespace Orphigine
 	//-----------------------------------------------------------------------
 	SkeletonMeshComponent::~SkeletonMeshComponent()
 	{
-		try
-		{
+	
 			AttachedModelOriginSceneNodes::iterator it, next;
 			
 			for (it = mAttachedModelOriginSceneNodes.begin(); it != mAttachedModelOriginSceneNodes.end(); it = next)
@@ -333,118 +332,53 @@ namespace Orphigine
 			{
 				mAttachParent->detachModel(this);
 			}
-		}
 		
-		catch(...) 
-		{
-			
-		}
-		try
-		{
+		
+
 			if (mWorldBoundingBox)
 			{
 				delete mWorldBoundingBox;
 				mWorldBoundingBox=NULL;
 			}
-		}
+
 		
-		catch(...) 
-		{
-			WARNING_LOG("delete mWorldBoundingBox Failed.--SkeletonMeshComponent::~LogicModell");
-		}
-		try
-		{
+
 
 			if (mExternalBoundingBox)
 			{
 				delete mExternalBoundingBox;
 				mExternalBoundingBox=NULL;
 			}
-		}
-		catch( const std::exception& e )
-		{
-			Ogre::String strCPPException = e.what();
-			Ogre::String Msg = "delete mExternalBoundingBox Failed:" + strCPPException + "--SkeletonMeshComponent::~SkeletonMeshComponent";
-		}
-		catch(...) 
-		{
-			WARNING_LOG("delete mExternalBoundingBox Failed.--SkeletonMeshComponent::~SkeletonMeshComponent");
-		}
-		try
-		{
+
+
 			if (mFullBoundingBox)
 			{
 				delete mFullBoundingBox;
 				mFullBoundingBox=NULL;
 			}
-		}
-		catch( const std::exception& e )
-		{
-			Ogre::String strCPPException = e.what();
-			Ogre::String Msg = "delete mFullBoundingBox Failed:" + strCPPException + "--SkeletonMeshComponent::~SkeletonMeshComponent";
-		}
-		catch(...) 
-		{
+
+	
 		
-		}		
-		try
-		{
-			// 先删除挂在自己身上的model（如武器等）
 			mLocatorMap.clear();
 
 			mShadowUncastableMeshs.clear();
 
 			mAttribMap.clear();
-		}
+
+
+		_delAllProjector();
+
 		
-		catch(...) 
-		{
-			WARNING_LOG("LocatorMap clear Failed.--SkeletonMeshComponent::~SkeletonMeshComponent");
-		}
-		try
-		{
-			_delAllProjector();
-		}
+		destroyEntities();
 	
-		catch(...) 
-		{
-			
-		}
-		try
-		{
-			destroyEntities();
-		}
-		catch( const std::exception& e )
-		{
-			Ogre::String strCPPException = e.what();
-			Ogre::String Msg = "destroyEntities Failed:" + strCPPException + "--SkeletonMeshComponent::~SkeletonMeshComponent";
+
+		_delSkeletonEntity();
 		
-		}
-		catch(...) 
-		{
-			
-		}
-		try
-		{
-			_delSkeletonEntity();
-		}
-		catch( const std::exception& e )
-		{
-			Ogre::String strCPPException = e.what();
-			Ogre::String Msg = "_delSkeletonEntity Failed:" + strCPPException + "--SkeletonMeshComponent::~SkeletonMeshComponent";
-			
-		}
 	
-		try
-		{
-			destroySceneNode();
-		}
-		catch( const std::exception& e )
-		{
-			Ogre::String strCPPException = e.what();
-			Ogre::String Msg = "destroySceneNode Failed:" + strCPPException + "--SkeletonMeshComponent::~SkeletonMeshComponent";
-			
-		}
+	
+	
+		destroySceneNode();
+
 		
 		
 		{
@@ -457,16 +391,9 @@ namespace Orphigine
 		}
 		
 
-		try
-		{
-			_deleteAdvancedAnimationSystemInstance();
-		}
-	
-		catch(...) 
-		{
-			WARNING_LOG("_deleteAdvancedAnimationSystemInstance Failed.--SkeletonMeshComponent::~SkeletonMeshComponent");
-		}
-		//卸载继承的材质
+
+		_deleteAdvancedAnimationSystemInstance();
+
 		
 		{
 			destroyDerivedMaterial( );
@@ -1308,7 +1235,44 @@ namespace Orphigine
 	//-----------------------------------------------------------------------
 	void SkeletonMeshComponent::destroyEntities(void)
 	{
+		for (EntityMap::iterator i = mEntityMap.begin();
+			i != mEntityMap.end(); ++i)
+		{
+			EntityValue& tempValue = i->second;
+			const String& meshName = tempValue.mMeshName;
+			const String& materialName = tempValue.mMaterialName;
+
+			Ogre::Entity* workingEntity = tempValue.mEntity;
+			if (workingEntity)
+			{
+				Ogre::SceneNode* parentNode = workingEntity->getParentSceneNode();
+				if (parentNode)
+				{
+					parentNode->detachObject(workingEntity->getName());
+				}
+				auto* mgr = EngineManager::getSingleton().getSceneManager();
 		
+				mgr->destroyEntity(workingEntity->getName());
+
+
+				if (tempValue.mTransparentor)
+				{
+					delete tempValue.mTransparentor;
+					tempValue.mTransparentor = NULL;
+				}
+
+
+	
+				_clearEntityColorMaterials(tempValue);
+
+
+				destroyDerivedMaterial();
+
+
+
+			}
+		}
+		mEntityMap.clear();
 	}
 	//-----------------------------------------------------------------------
 	void SkeletonMeshComponent::setUserAny(const Ogre::Any& anything)
@@ -1354,7 +1318,7 @@ namespace Orphigine
 		return !mUserAny.has_value() ? 0 : Ogre::any_cast<Ogre::UserDefinedObject*>(mUserAny);
 	}
 	//-----------------------------------------------------------------------
-	void SkeletonMeshComponent::setParentSceneNode( Ogre::Node* parentNode )
+	void SkeletonMeshComponent::setParentSceneNode(Ogre::Node* parentNode, bool changeOrignal)
 	{
 		if (mModelSceneNode && mModelSceneNode->getParent())
 		{
@@ -1369,6 +1333,11 @@ namespace Orphigine
 		}
 
 		mParentNode = parentNode;
+
+		if (changeOrignal)
+		{
+			mOrigParentNode = mParentNode;
+		}
 	}
 	//-----------------------------------------------------------------------
 	void SkeletonMeshComponent::destroySceneNode(void)
@@ -1401,7 +1370,15 @@ namespace Orphigine
 		String entityName = mModelSceneNode->getName() + "_Entity" + "_" + meshName +
 			Ogre::StringConverter::toString(mCreatedEntityCount++);
 
+		if (meshName == "成2熊.mesh")
+		{
+			int kk = 0;
+		}
 		auto entity = sceneMgr->createEntity(entityName, meshName);
+
+		const Ogre::MeshPtr& originMesh = entity->getMesh();
+
+		const Ogre::SkeletonPtr& originSke = originMesh->getSkeleton();
 
 		if (mModelSceneNode == nullptr)
 		{
@@ -1416,9 +1393,7 @@ namespace Orphigine
 		{
 			if (nullptr == mSkeletonEntity)
 			{
-				const Ogre::MeshPtr& originMesh = entity->getMesh();
-
-				const Ogre::SkeletonPtr& originSke = originMesh->getSkeleton();
+				
 
 				_createSkeletonEntity(originSke);
 			}
@@ -3202,7 +3177,7 @@ namespace Orphigine
 	void SkeletonMeshComponent::setPosition(Ogre::Vector3& pos)
 	{
 		mModelPosition = pos;
-		//if (mOrigParentNode == mModelSceneNode->getParent())
+		if (mOrigParentNode == mModelSceneNode->getParent())
 		{
 			mModelSceneNode->setPosition(mModelPosition);
 			mModelSceneNode->updatechildren();
@@ -3971,8 +3946,8 @@ namespace Orphigine
 			Animation* ani = mSkeletonEntity->getSkeleton()->getAnimation(animName);
 			if (nullptr == ani)
 			{
-				mSkeletonEntity->getSkeleton()->addLinkedSkeletonAnimationSource(
-					SkeletonMeshComponentManager::getSingleton().getSkeletonFromAnimationName(mName, animName));
+				const std::string& name = SkeletonMeshComponentManager::getSingleton().getSkeletonFromAnimationName(mName, animName);
+				mSkeletonEntity->getSkeleton()->addLinkedSkeletonAnimationSource(name);
 
 			}
 			

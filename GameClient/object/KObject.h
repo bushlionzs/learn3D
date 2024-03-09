@@ -60,6 +60,16 @@ public:
 	{
 		m_nActionLogicCount = -1;
 	}
+
+	GameEntity* getMainEntity()
+	{
+		return mMainEntity.get();
+	}
+
+	GameEntity* getHorseEntity()
+	{
+		return mHorseEntity.get();
+	}
 public:
 	virtual void update(float delta) {}
 protected:

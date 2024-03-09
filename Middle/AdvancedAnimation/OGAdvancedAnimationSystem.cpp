@@ -631,7 +631,7 @@ namespace Orphigine
 		return m_equitationDegree;
 	}
 
-	void AdvancedAnimationSystem::setEquitationDegree( Real val )
+	void AdvancedAnimationSystem::setEquitationDegree(Real val)
 	{
 		m_equitationDegree = val;
 	}
@@ -641,7 +641,7 @@ namespace Orphigine
 		return m_guardDegree;
 	}
 
-	void AdvancedAnimationSystem::setGuardDegree( Real val )
+	void AdvancedAnimationSystem::setGuardDegree(Real val)
 	{
 		m_guardDegree = val;
 	}
@@ -651,12 +651,12 @@ namespace Orphigine
 		return m_weaponTypeName;
 	}
 
-	void AdvancedAnimationSystem::setWeaponTypeName( const String& val )
+	void AdvancedAnimationSystem::setWeaponTypeName(const String& val)
 	{
 		m_weaponTypeName = val;
 	}
 
-	void AdvancedAnimationSystem::onAnimationEnd( AASAnimSequenceNode* animSequenceNode )
+	void AdvancedAnimationSystem::onAnimationEnd(AASAnimSequenceNode* animSequenceNode)
 	{
 		assert(animSequenceNode && "AdvancedAnimationSystem::onAnimationEnd");
 
@@ -665,12 +665,12 @@ namespace Orphigine
 		int tmpAnimationID = animSequenceNode->getAnimationID();
 		AASAnimation* tmpAnimation = getAnimation(tmpAnimationID);
 
-		if(tmpInputNode && tmpAnimation)
-			m_parent->handleAASAnimEndEvent(tmpAnimation->getAnimationName().c_str(),tmpInputNode->getType().c_str(),tmpInputNode->getName().c_str());
-		
+		if (tmpInputNode && tmpAnimation)
+			m_parent->handleAASAnimEndEvent(tmpAnimation->getAnimationName().c_str(), tmpInputNode->getType().c_str(), tmpInputNode->getName().c_str());
+
 	}
 
-	void AdvancedAnimationSystem::onAnimationPlay( AASAnimSequenceNode* animSequenceNode )
+	void AdvancedAnimationSystem::onAnimationPlay(AASAnimSequenceNode* animSequenceNode)
 	{
 		assert(animSequenceNode && "AdvancedAnimationSystem::onAnimationPlay");
 
@@ -680,11 +680,11 @@ namespace Orphigine
 		int tmpAnimationID = animSequenceNode->getAnimationID();
 		AASAnimation* tmpAnimation = getAnimation(tmpAnimationID);
 
-		if(tmpInputNode && tmpAnimation)
-			m_parent->handleAASAnimPlayEvent(tmpAnimation->getAnimationName().c_str(),tmpInputNode->getType().c_str(),animSequenceNode->getHandle());
+		if (tmpInputNode && tmpAnimation)
+			m_parent->handleAASAnimPlayEvent(tmpAnimation->getAnimationName().c_str(), tmpInputNode->getType().c_str(), animSequenceNode->getHandle());
 	}
 
-	Ogre::AnimationState* AdvancedAnimationSystem::getAnimationState( const String& name )
+	Ogre::AnimationState* AdvancedAnimationSystem::getAnimationState(const String& name)
 	{
 
 		SkeletonMeshComponent* tmpLogicModel = m_parent;
@@ -698,10 +698,10 @@ namespace Orphigine
 		{
 			tmpAnimState = tmpLogicModel->_getAnimationState(name);
 		}
-		
+
 		catch (...)
 		{
-			
+
 		}
 		return tmpAnimState;
 	}
@@ -710,14 +710,14 @@ namespace Orphigine
 	{
 		unsigned int numAnimationState = m_parent->getSkeletonAnimationCount();
 
-		for (unsigned int i = 0;i < numAnimationState;i ++)
+		for (unsigned int i = 0; i < numAnimationState; i++)
 		{
 			Ogre::Animation* animation = m_parent->getSkeletonAnimation(i);
 			_addAnimation(animation->getName());
 		}
 	}
 
-	void AdvancedAnimationSystem::_addAnimation( const String& animName )
+	void AdvancedAnimationSystem::_addAnimation(const String& animName)
 	{
 		if (NULL == m_parent)
 			return;
@@ -726,6 +726,10 @@ namespace Orphigine
 
 		tmpAnimState = getAnimationState(animName);
 
+		if(animName == "ÐÝÏÐ_01" || animName == "Õ¾Á¢_01")
+		{
+			int kk = 0;
+		}
 		if (tmpAnimState == nullptr)
 		{
 			int kk = 0;

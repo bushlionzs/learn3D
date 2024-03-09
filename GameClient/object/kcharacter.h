@@ -24,8 +24,8 @@ class GameEntity;
 class KCharacter: public KObject
 {
 protected:
-	std::shared_ptr<GameEntity>     mMountEntity;
 	Ogre::Vector3 mGamePosition;
+	Ogre::Vector3 mEnginePosition;
 	Ogre::Real  mDirection = 0.0f;
 	Orphigine::SkeletonMeshComponent::AASAnimEndCallback* callback = nullptr;
 
@@ -128,6 +128,7 @@ public:
 	KCharacter();
 
 	const Ogre::Vector3& getPosition();
+	const Ogre::Vector3& getEnginePosition();
 	void setPosition(const Ogre::Vector3& position, bool useTerrainHeight = true);
 
 	Ogre::Real getDirection();

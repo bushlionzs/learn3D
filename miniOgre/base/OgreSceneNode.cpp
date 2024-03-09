@@ -32,24 +32,24 @@ namespace Ogre {
             return;
 
         bool useShadow = cam->getCameraType() == CameraType_Light;
-        for (auto it : mMoveObjects)
+        for (auto& pair : mObjectsByName)
         {
-            if (useShadow && !it->getCastShadows())
+            if (useShadow && !pair.second->getCastShadows())
             {
                 continue;
             }
             if (!useShadow)
             {
-                it->_notifyCurrentCamera(cam);
+                pair.second->_notifyCurrentCamera(cam);
             }
             
-            const AxisAlignedBox& box = it->getWorldBoundingBox(true);
+            const AxisAlignedBox& box = pair.second->getWorldBoundingBox(true);
             if (!cam->isVisible(box))
             {
                 continue;
             }
-            const std::vector<Renderable*>& rs = it->getRenderableList();
-            if (it->isTransparent())
+            const std::vector<Renderable*>& rs = pair.second->getRenderableList();
+            if (pair.second->isTransparent())
             {
                 for (auto r : rs)
                 {
@@ -89,13 +89,9 @@ namespace Ogre {
 
     void SceneNode::update(float timeSinceLastFrame)
     {
-        if (mName == "effect")
+        for (auto& pair : mObjectsByName)
         {
-            int kk = 0;
-        }
-        for (auto o : mMoveObjects)
-        {
-            o->update(timeSinceLastFrame);
+            pair.second->update(timeSinceLastFrame);
         }
         for (auto child : mChildren)
         {
@@ -105,8 +101,15 @@ namespace Ogre {
 
     void SceneNode::attachObject(MoveObject* obj)
     {
-        mMoveObjects.push_back(obj);
         obj->_notifyAttached(this);
+
+        std::pair<ObjectMap::iterator, bool> insresult =
+            mObjectsByName.insert(ObjectMap::value_type(obj->getName(), obj));
+        assert(insresult.second && "Object was not attached because an object of the "
+            "same name was already attached to this node.");
+
+        // Make sure bounds get updated (must go right to the top)
+        needUpdate();
     }
 
 
@@ -194,25 +197,25 @@ namespace Ogre {
 
     void SceneNode::detachObject(MoveObject* obj)
     {
-        int i = 0;
-        for (; i < mMoveObjects.size(); i++)
-        {
-            if (mMoveObjects[i] == obj)
-            {
-                break;
-            }
-        }
-
-        if (i < mMoveObjects.size())
-        {
-            std::swap(mMoveObjects[i], mMoveObjects.back());
-            mMoveObjects.pop_back();
-        }
+        const std::string& name = obj->getName();
+        detachObject(name);
     }
 
     MoveObject* SceneNode::detachObject(const String& name)
     {
-        return nullptr;
+        ObjectMap::iterator it = mObjectsByName.find(name);
+        if (it == mObjectsByName.end())
+        {
+            OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND, "Object " + name + " is not attached "
+                "to this node.", "SceneNode::detachObject");
+        }
+        MoveObject* ret = it->second;
+        mObjectsByName.erase(it);
+        ret->_notifyAttached((SceneNode*)0);
+        // Make sure bounds get updated (must go right to the top)
+        needUpdate();
+
+        return ret;
     }
 
     size_t SceneNode::numAttachedObjects(void) const

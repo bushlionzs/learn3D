@@ -57,6 +57,7 @@
 				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
 				<Property name="Position" value="{{0.107,0},{0.270567,0}}" />
 				<Property name="TooltipText" value="头盔" />
+				<Property name="TooltipType" value="TaharezLook/Tooltip" />
 			</Window>
 			
 			<Window type="TaharezLook/StaticImage" name="SelfEquip_15" >

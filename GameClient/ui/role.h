@@ -1,22 +1,22 @@
 #pragma once
-#include "OGActor.h"
-#include "OGSkeletonMeshComponent.h"
+
+class KPlayer;
+
 class Role
 {
 public:
-	Role(SceneManager* sceneMgr);
+	Role(Ogre::SceneManager* sceneMgr);
 	~Role();
 
 	void createRoleData();
 
-	void setPosition(Ogre::Vector3& position);
+	void updateRole();
 
-	void ChangeAction(
-		Orphigine::SkeletonMeshComponent::AdvancedAnimationSystemMonitoringDegree action,
-		float fDegree);
-
-	void walk();
+	KPlayer* getPlayer()
+	{
+		return mPlayer;
+	}
 private:
-	Orphigine::ActorPtr object;
-	SceneManager* mSceneManager;
+	KPlayer* mPlayer;
+	Ogre::SceneManager* mSceneManager;
 };

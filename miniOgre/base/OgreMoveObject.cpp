@@ -26,8 +26,9 @@ namespace Ogre {
 
     void MoveObject::_notifyAttached(Node* parent, bool isTagPoint)
     {
-        assert(!mParent);
+        assert(!mParent || !parent);
         mParent = parent;
+        
     }
 
     void MoveObject::_notifyCurrentCamera(ICamera* cam)

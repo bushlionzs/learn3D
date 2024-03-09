@@ -53,8 +53,7 @@ bool GameEntity::changeAttributes(
 void GameEntity::setWeapon(const String& weaponName)
 {
 	Orphigine::SkeletonMeshActor* actor = ((Orphigine::SkeletonMeshActor*)mOrphigineObj.get());
-	Orphigine::SkeletonMeshComponent* model = actor->getLogicModel();
-	model->setWeaponTypeName(weaponName);
+	actor->setWeaponTypeName(weaponName);
 }
 
 const Ogre::Vector3& GameEntity::getEntityPosition()
@@ -228,8 +227,7 @@ void GameEntity::Weapon_SetAasAnim(int32 eWeqaponType)
 	case WEAPON_TYPE_HOLD:		break;
 	};
 
-	
-	((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->setWeaponTypeName(str.c_str());
+	setWeapon(str);
 
 }
 

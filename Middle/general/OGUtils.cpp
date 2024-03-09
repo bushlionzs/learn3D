@@ -203,7 +203,7 @@ findAllAttachedObjects(SceneNode* sn, ObjectList& objects)
 
     for (auto it = objs.begin(); it != objs.end(); it++)
     {
-        addAttachedObject(*it, objects);
+        addAttachedObject(it->second, objects);
     }
 
     const Ogre::SceneNode::ChildNodeMap& childs = sn->getChildren();
@@ -592,15 +592,33 @@ Ogre::MeshPtr
 createNullMeshForSkeleton(const String& meshName,
     const Ogre::SkeletonPtr& skeleton)
 {
-    return Ogre::MeshPtr();
+    MeshManager& mm = MeshManager::getSingleton();
+
+    MeshPtr mesh = mm.getByName(meshName);
+    if (!mesh)
+    {
+        if (meshName == skeleton->getName())
+        {
+            mesh = mm.createManual(meshName);
+        }
+        else
+        {
+            mesh = mm.createManual(meshName);
+        }
+
+        mesh->load();
+    }
+
+    return mesh;
 }
 
 Ogre::MeshPtr
 createNullMeshForSkeleton(const Ogre::SkeletonPtr& skeleton)
 {
-    auto mesh =  MeshManager::getSingleton().createManual(skeleton->getName());
+    auto mesh = MeshManager::getSingleton().createManual(skeleton->getName());
 
     mesh->setSkeletonName(skeleton->getName());
+
     return mesh;
 }
 

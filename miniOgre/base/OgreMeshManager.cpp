@@ -58,7 +58,7 @@ std::shared_ptr<Mesh> MeshManager::createManual(const std::string& name)
 	auto it = mMeshMap.find(name);
 	if (it != mMeshMap.end())
 	{
-		assert(false);
+		return it->second;
 	}
 
 	std::shared_ptr<Mesh> m = std::make_shared<Mesh>(name);

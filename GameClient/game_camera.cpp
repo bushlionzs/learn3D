@@ -4,6 +4,8 @@
 #include "OgreSceneManager.h"
 #include "OgreSceneNOde.h"
 #include "engine_manager.h"
+#include "KObjectManager.h"
+#include "kplayer.h"
 
 GameCamera::GameCamera(Camera* camera, SceneManager* sceneMgr)
 {
@@ -223,7 +225,15 @@ bool GameCamera::update(float delta)
 
             if (mSceneMgr == EngineManager::getSingleton().getSceneManager())
             {
-                playerPos = EngineManager::getSingletonPtr()->getMyPosition();
+                KPlayer* myself = KObjectManager::GetSingleton().getMySelf();
+                if (myself)
+                {
+                    playerPos = myself->getEnginePosition();
+                }
+                else
+                {
+                    playerPos = Ogre::Vector3::ZERO;
+                }
             }
             else
             {

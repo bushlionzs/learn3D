@@ -508,7 +508,7 @@ namespace Orphigine
 		void setUserObject(Ogre::UserDefinedObject* obj);
 		Ogre::UserDefinedObject* getUserObject(void) const;
 
-		void setParentSceneNode( Ogre::Node* parentNode );		
+		void setParentSceneNode(Ogre::Node* parentNode, bool changeOrignal = false);		
 		Ogre::SceneNode* getSceneNode(void)
 		{
 			return mModelSceneNode;

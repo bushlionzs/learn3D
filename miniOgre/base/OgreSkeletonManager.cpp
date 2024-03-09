@@ -35,12 +35,13 @@ namespace Ogre {
 		std::shared_ptr<DataStream> stream =
 			ResourceManager::getSingletonPtr()->openResource(name);
 
-		Skeleton* skeleton = new Skeleton(name);
+		std::shared_ptr<Skeleton> skeleton = std::make_shared<Skeleton>(name);
 
+		mSkeletonMap[name] = skeleton;
 		OgreSkeletonSerializerImpl serializer;
 
-		serializer.importSkeleton(stream, skeleton);
-		return std::shared_ptr<Skeleton>(skeleton);
+		serializer.importSkeleton(stream, skeleton.get());
+		return skeleton;
 	}
 
 	std::shared_ptr<Skeleton> SkeletonManager::create(const std::string& name)

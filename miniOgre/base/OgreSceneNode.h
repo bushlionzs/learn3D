@@ -18,7 +18,7 @@ namespace Ogre {
     class SceneNode :public Node
     {
     public:
-        typedef std::vector<MoveObject*> ObjectMap;
+        typedef std::unordered_map<std::string, MoveObject*> ObjectMap;
         SceneNode(SceneManager* creator, const String& name);
         ~SceneNode();
 
@@ -59,7 +59,6 @@ namespace Ogre {
         void lookAt(const Vector3& targetPoint, TransformSpace relativeTo,
             const Vector3& localDirectionVector = Vector3::NEGATIVE_UNIT_Z);
     private:
-        std::vector<MoveObject*> mMoveObjects;
         SceneManager* mCreator;
         ObjectMap mObjectsByName;
 

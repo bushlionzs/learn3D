@@ -77,19 +77,15 @@ void KCharacter::setPosition(
 {
 	mGamePosition = position;
 	
-	Ogre::Vector3 fvEnginePosition;
 	EngineManager::getSingleton().positionAxisTrans(GAT_GAME, mGamePosition,
-		GAT_ENGINE, fvEnginePosition, useTerrainHeight);
+		GAT_ENGINE, mEnginePosition, useTerrainHeight);
 
 	if(mMainEntity)
-		mMainEntity->setEntityPosition(fvEnginePosition);
-	
+		mMainEntity->setEntityPosition(mEnginePosition);
 
-	EngineManager::getSingleton().setMyPosition(fvEnginePosition);
-
-	if (mMountEntity)
+	if (mHorseEntity)
 	{
-		mMountEntity->setEntityPosition(fvEnginePosition);
+		mHorseEntity->setEntityPosition(mEnginePosition);
 	}
 }
 
@@ -97,6 +93,11 @@ void KCharacter::setPosition(
 const Ogre::Vector3& KCharacter::getPosition()
 {
 	return mGamePosition;
+}
+
+const Ogre::Vector3& KCharacter::getEnginePosition()
+{
+	return mEnginePosition;
 }
 
 Ogre::Real KCharacter::getDirection()
@@ -107,9 +108,9 @@ Ogre::Real KCharacter::getDirection()
 void KCharacter::setDirection(float dir)
 {
 	mMainEntity->setDirection(dir);
-	if (mMountEntity)
+	if (mHorseEntity)
 	{
-		mMountEntity->setDirection(dir);
+		mHorseEntity->setDirection(dir);
 	}
 	
 }
@@ -187,7 +188,7 @@ void KCharacter::ChangeAction(int32 nActionType, FLOAT fDegree, int32 nActionID,
 	//change mount action
 	
 
-	if (mMountEntity)
+	if (mHorseEntity)
 	{
 		float fMountDegree = fDegree;
 		if (INVALID_ID != nActionID)
@@ -200,7 +201,7 @@ void KCharacter::ChangeAction(int32 nActionType, FLOAT fDegree, int32 nActionID,
 			}
 		}
 
-		mMountEntity->setAnimationDegree(nActionType, fCharDegree);
+		mHorseEntity->setAnimationDegree(nActionType, fCharDegree);
 
 	}
 	
@@ -209,7 +210,7 @@ void KCharacter::ChangeAction(int32 nActionType, FLOAT fDegree, int32 nActionID,
 
 BOOL KCharacter::ChangeMountAction(int32 nActionType, FLOAT fDegree, int32 nActionID)
 {
-	if (!mMountEntity || NULL == m_pMountActionSet)
+	if (!mHorseEntity || NULL == m_pMountActionSet)
 		return FALSE;
 
 	if (NULL == GetActionSetData())
@@ -227,7 +228,7 @@ BOOL KCharacter::ChangeMountAction(int32 nActionType, FLOAT fDegree, int32 nActi
 		}
 	}
 	
-	mMountEntity->setAnimationDegree(nActionType, fMountDegree);
+	mHorseEntity->setAnimationDegree(nActionType, fMountDegree);
 
 	return TRUE;
 
@@ -421,9 +422,9 @@ void KCharacter::ChangeActionSpeed(FLOAT fSpeed)
 	}
 
 	// 坐骑
-	if (mMountEntity)
+	if (mHorseEntity)
 	{
-		mMountEntity->ChangeModelActionRate(fSpeed);
+		mHorseEntity->ChangeModelActionRate(fSpeed);
 	}
 }
 
@@ -683,7 +684,7 @@ void KCharacter::createCharRenderInterface(void)
 
 	if (mWeaponname.empty())
 	{
-		mWeaponname = "Falchion";
+		mWeaponname = "Unarmed";
 	}
 	// 设置相关武器动作
 	mMainEntity->setWeapon(mWeaponname);
@@ -699,9 +700,9 @@ void KCharacter::createCharRenderInterface(void)
 GameEntity* KCharacter::CreateMountRenderInterface(int32 nMountID)
 {
 
-	if (!mMountEntity)
+	if (!mHorseEntity)
 	{
-		mMountEntity = std::make_shared<GameEntity>(this);
+		mHorseEntity = std::make_shared<GameEntity>(this);
 	}
 
 	const CGameTable* pCharMountTable = GAME_TABLE_MANAGER_PTR->GetTable(TABLE_CHARACTER_MOUNT);
@@ -724,9 +725,9 @@ GameEntity* KCharacter::CreateMountRenderInterface(int32 nMountID)
 	const _TABLE_CHARACTER_MODEL* pMountModel = (const _TABLE_CHARACTER_MODEL*)(pCharModelTable->GetFieldDataByIndex(pMount->m_nModelID));
 
 	String mountModelName = pMountModel->m_pszModelName;
-	mMountEntity->setModelName(mountModelName);
+	mHorseEntity->setModelName(mountModelName);
 	//
-	mMountEntity->SetModelType(CHAR_MODEL_MOUNT);
+	mHorseEntity->SetModelType(CHAR_MODEL_MOUNT);
 
 	if (pMountModel != NULL && strlen(pMountModel->m_pszActionSetName_None) > 0)
 	{
@@ -774,14 +775,14 @@ GameEntity* KCharacter::CreateMountRenderInterface(int32 nMountID)
 	}
 	//attach
 	auto locator = GetMountLocatorName(LOCATOR_MOUNT_BACK);
-	mMountEntity->getSkeletonMeshActor()->attachModelObj(
+	mHorseEntity->getSkeletonMeshActor()->attachModelObj(
 		locator, mMainEntity->getSkeletonMeshActor());
-	mMountEntity->SetVisible(true);
+	mHorseEntity->SetVisible(true);
 	ChangeAction(CA_RIDING, 1.0f);
 
-	OnQueryRay(mMountEntity.get());
+	OnQueryRay(mHorseEntity.get());
 
-	return mMountEntity.get();
+	return mHorseEntity.get();
 }
 
 
@@ -979,7 +980,7 @@ bool KCharacter::IsCanUpdateMountByModelID()
 
 bool KCharacter::UpdateMountingState()
 {
-		if (mMountEntity && mMainEntity)
+		if (mHorseEntity && mMainEntity)
 		{
 			// 是否被绑定
 			if (m_nAttachID != INVALID_ID)
@@ -995,8 +996,8 @@ bool KCharacter::UpdateMountingState()
 			//KObject::SetModel_Scale(1.f);
 
 			// 绑定
-			mMountEntity->Detach_Object(mMainEntity.get());
-			mMountEntity->Attach_Object(mMainEntity.get(), GetMountLocatorName(LOCATOR_MOUNT_BACK));
+			mHorseEntity->Detach_Object(mMainEntity.get());
+			mHorseEntity->Attach_Object(mMainEntity.get(), GetMountLocatorName(LOCATOR_MOUNT_BACK));
 
 			// 人物的动作
 			UpdateModel_CharActionSet();
@@ -1557,7 +1558,7 @@ bool	KCharacter::SetMountActionSlot(
 		LPCTSTR lpszCharActionName = GetMountActionNameByActionSetID(nActionID);
 		if (lpszCharActionName)
 		{
-			mMountEntity->Actor_SetActionSlot(pInfo->szNodeName, lpszCharActionName, bLoop, fRate, bBlendIn, bBlendOut);
+			mHorseEntity->Actor_SetActionSlot(pInfo->szNodeName, lpszCharActionName, bLoop, fRate, bBlendIn, bBlendOut);
 			return TRUE;
 		}
 	}
@@ -1841,9 +1842,9 @@ void KCharacter::RefreshAnimation()
 void KCharacter::UpdateModel_Scale()
 {
 	FLOAT fScale = GetCharacterData()->Get_CharScale();
-	if (mMountEntity)
+	if (mHorseEntity)
 	{
-		mMountEntity->SetScaleFactor(fScale);
+		mHorseEntity->SetScaleFactor(fScale);
 	}
 	else
 	{

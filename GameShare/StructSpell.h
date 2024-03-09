@@ -848,6 +848,8 @@ struct _Monster_Pet_DB_Struct
 	int32_t		m_nCtrlState;
 
 	int32_t		m_aSkillList[MONSTER_PET_MAX_SKILL];
+
+
 	_OWN_EFFECT	m_aImpactList[MONSTER_PET_MAX_IMPACT];
 	
 	void Clear()

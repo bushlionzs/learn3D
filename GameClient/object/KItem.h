@@ -33,6 +33,11 @@ public:
 		m_nPosIndex = nPosIndex;
 	}
 
+	int32_t getPosIndex()
+	{
+		return m_nPosIndex;
+	}
+
 	void SetGUID(USHORT idWorld, USHORT idServer, uint32 idSerial);
 
 	int32_t GetIdTable(void) const
