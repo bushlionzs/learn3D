@@ -81,8 +81,15 @@ namespace CEGUI
     {
         _rd_view.mVertexStart = vertexStart;
         _rd_view.mVertexCount = vertexCount;
+        
         auto& tu = mMaterial->getTextureUnit(0);
-        tu->setTexture(0, tex);
+        Ogre::TexturePtr src = tu->getTexture();
+        if (src.get() != tex.get())
+        {
+            tu->setTexture(0, tex);
+            mMaterial->setChanged(true);
+        }
+        
     }
 
 //----------------------------------------------------------------------------//

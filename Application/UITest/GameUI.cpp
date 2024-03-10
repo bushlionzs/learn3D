@@ -20,11 +20,13 @@
 #include <CEGUI/CEGUI.h>
 #include <platform_file.h>
 #include <OgreRoot.h>
-
+#include "application_util.h"
+#include "GameTableManager.h"
 using namespace CEGUI;
 
 GameUI::GameUI()
 {
+   
 
 }
 
@@ -37,8 +39,12 @@ bool GameUI::appInit()
 {
 	ApplicationBase::appInit();
     InputManager::getSingletonPtr()->addListener(this);
-    //HelloDemo1();
-    SelfEquipDemo();
+    
+
+    new CGameTableManager;
+    CGameTableManager::GetSingleton().Initialize();
+    HelloDemo1();
+    //SelfEquipDemo();
     //PackageDemo();
 	return true;
 }
@@ -105,6 +111,34 @@ void GameUI::helloDemo()
 
 }
 
+void GameUI::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
+{
+    auto* root = mGUIContext->getRootWindow();
+    CEGUI::Window* wnd = root->getChild("test");
+
+
+    static uint32_t itemId = 10010020;
+    if (itemId == 10010020)
+    {
+        itemId = 10010010;
+    }
+    else
+    {
+        itemId = 10010020;
+    }
+    GameItemData itemInfo;
+    if (getItemInfo(itemId, itemInfo))
+    {
+        const char* fullname = CEGUIManager::getSingleton().getFullIconName(itemInfo.icon);
+        wnd->setProperty("Image", fullname);
+    }
+    else
+    {
+        wnd->setProperty("Image", "");
+    }
+    
+}
+
 void GameUI::HelloDemo1()
 {
     SchemeManager::getSingleton().createFromFile("AlfiskoSkin.scheme");
@@ -124,19 +158,8 @@ void GameUI::HelloDemo1()
 
     mGUIContext->setRootWindow(root);
 
-    CEGUI::Window* textComponent =
-        (CEGUI::Window*)root->getChild("HoverText");
-    std::wstring text = L"积善科技 [underline = '...']some text [no_underline = '']that [window='horse']shows how nicely[colour = 'FFFF0000']CEGUI\ncan format strings.[colour = 'FF00FF00'] and this is just colour[colour = 'FF0000FF'] formatting!";
-    //text = L"积善科技[window='horse']";
-    std::string bb = unicode_to_utf8(text);
-
-    textComponent->setText((encoded_char*)bb.c_str());
-
-    /*CEGUI::Window* horse = root->getChildRecursive("horse");
-
-    horse->subscribeEvent(
-        Window::EventMouseClick,
-        Event::Subscriber(&GameUI::handle_ButtonClick, this));*/
+   
+    
 }
 
 void GameUI::TooltipDemo()
@@ -317,6 +340,28 @@ void GameUI::SelfEquipDemo()
 
 bool GameUI::handle_ButtonClick(const CEGUI::EventArgs& args)
 {
+    CEGUI::Window* wnd = mSelfEquip->getChildRecursive("SelfEquip_0");
+
+    GameItemData itemInfo;
+    static uint32_t itemId = 10010020;
+    if (itemId == 10010020)
+    {
+        itemId = 10010010;
+    }
+    else
+    {
+        itemId = 10010020;
+    }
+
+    if (getItemInfo(itemId, itemInfo))
+    {
+        const char* fullname = CEGUIManager::getSingleton().getFullIconName(itemInfo.icon);
+        wnd->setProperty("Image", fullname);
+    }
+    else
+    {
+        wnd->setProperty("Image", "");
+    }
     return true;
 }
 

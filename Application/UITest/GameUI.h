@@ -32,6 +32,7 @@ public:
 	}
 private:
 	void helloDemo();
+	virtual void injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id);
 	void HelloDemo1();
 	void TooltipDemo();
 	void DragDropDemo();

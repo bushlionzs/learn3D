@@ -61,7 +61,7 @@ void FullDemo::appUpdate(float delta)
 
 	NetMessageManager::GetSingleton().processMessage();
 	mGameWorld->update(delta);
-	CEGUIManager::getSingleton().getGUIContext()->injectTimePulse(delta);
+	//CEGUIManager::getSingleton().getGUIContext()->injectTimePulse(delta);
 }
 
 EngineType FullDemo::getEngineType()
