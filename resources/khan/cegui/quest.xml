@@ -1,0 +1,92 @@
+<?xml version="1.0" ?>
+<!--TimeStamp: 2010/ 5/24  5:55 with UIEditor-->
+<GUILayout version="4">
+	<Window type="DefaultWindow" name="quest">
+		<!--Comment	""	-->
+		<!--	Left=0, Top=45, Right=369, Bottom=723	-->
+		<Property name="Size" value="{{0.28828125,0},{0.8828125,0}}" />
+		<Property name="Position" value="{{0.0,0},{0.05859375,0}}" />
+		
+	    <Window type="TaharezLook/StaticImage" name="Quest_touxiang_background" >
+			<!--Comment	""	-->
+			<!--	Left=245, Top=97, Right=329, Bottom=179	-->
+			<Property name="Size" value="{{0.227642,0},{0.8828125,0}}" />
+			<Property name="Position" value="{{0.663957,0},{0.8828125,0}}" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="Visible" value="False" />
+		</Window>
+		
+		<Window type="TaharezLook/ImageButton" name="Quest_Help" >
+			<!--Comment	""	-->
+			<!--	Left=14, Top=121, Right=32, Bottom=147	-->
+			<Property name="Size" value="{{0.048780,0},{0.038348,0}}" />
+			<Property name="Position" value="{{0.037940,0},{0.112094,0}}" />
+			<Property name="NormalImage" value="UI_MainBoard_5/UI_MainBoard_5_Helpbtn_Normal" />
+			<Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Helpbtn_Hover" />
+			<Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Helpbtn_Pushed" />
+			<Property name="AlwaysOnTop" value="True" />
+		</Window>
+		<Window type="TaharezLook/ImageButton" name="Quest_Close" >
+			<!--Comment	""	-->
+			<!--	Left=315, Top=119, Right=344, Bottom=147	-->
+			<Property name="Size" value="{{0.048780,0},{0.041298,0}}" />
+			<Property name="Position" value="{{0.853659,0},{0.109145,0}}" />
+			<Property name="NormalImage" value="UI_MainBoard_5/UI_MainBoard_5_Closebtn_Normal" />
+			<Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Closebtn_Hover" />
+			<Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Closebtn_Pushed" />
+			<Property name="AlwaysOnTop" value="True" />
+		</Window>
+		<Window type="TaharezLook/StaticImage" name="Quest_touxiang" >
+			<!--Comment	""	-->
+			<!--	Left=46, Top=85, Right=110, Bottom=149	-->
+			<Property name="Size" value="{{0.173442,0},{0.094395,0}}" />
+			<Property name="Position" value="{{0.124661,0},{0.058997,0}}" />
+			<Property name="Image" value="CJSH_NPC_touxiang_8/CJSH_NPC_touxiang_8_5" />
+			<Property name="AlwaysOnTop" value="True" />
+		</Window>
+		
+		<Window type="TaharezLook/StaticImage" name="Quest_Background_Frame_1" >
+			<!--Comment	""	-->
+			<!--	Left=0, Top=108, Right=355, Bottom=637	-->
+			<Property name="Size" value="{{0.962060,0},{0.780236,0}}" />
+			<Property name="Position" value="{{0.0,0},{0.092920,0}}" />
+			<Property name="Image" value="UI_MainBoard_5/UI_MainBoard_5_Quest_Board" />
+		</Window>
+		
+		<Window type="TaharezLook/Button" name="Quest_Button_Refuse" >
+			<!--Comment	"Refuse"	-->
+			<!--	Left=216, Top=571, Right=303, Bottom=595	-->
+			<Property name="Size" value="{{0.235772,0},{0.035398,0}}" />
+			<Property name="Position" value="{{0.585366,0},{0.775811,0}}" />
+			<Property name="NormalImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Normal" />
+			<Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Hover" />
+			<Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Pushed" />
+			<Property name="DisabledImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Disabled" />
+			<Property name="Text" value="取消" />
+			<Property name="AlwaysOnTop" value="True" />
+		</Window>
+		<Window type="TaharezLook/Button" name="Quest_Button_Accept" >
+			<!--Comment	"Accept"	-->
+			<!--	Left=53, Top=571, Right=140, Bottom=595	-->
+			<Property name="Size" value="{{0.235772,0},{0.035398,0}}" />
+			<Property name="Position" value="{{0.143631,0},{0.775811,0}}" />
+			<Property name="NormalImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Normal" />
+			<Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Hover" />
+			<Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Pushed" />
+			<Property name="DisabledImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Disabled" />
+			<Property name="Text" value="确定" />
+			<Property name="AlwaysOnTop" value="True" />
+		</Window>
+		<Window type="TaharezLook/StaticText" name="Quest_NPCname" >
+			<!--Comment	""	-->
+			<!--	Left=100, Top=116, Right=236, Bottom=148	-->
+			<Property name="Size" value="{{0.368564,0},{0.047198,0}}" />
+			<Property name="Position" value="{{0.291003,0},{0.104720,0}}" />
+			<Property name="HorzFormatting" value="HorzCentred" />
+			<Property name="VertFormatting" value="VertCentred" />
+			<Property name="TextColours" value="FF780000" />
+			<Property name="Text" value="金虎" />
+			<Property name="AlwaysOnTop" value="True" />
+		</Window>
+	</Window>
+</GUILayout>
