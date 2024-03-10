@@ -13,19 +13,10 @@ Role::~Role()
 
 }
 
-void Role::createRoleData()
-{
-	auto player = new KPlayer();
-	player->initialize();
-	
-	mPlayer = player;
-
-	
-}
 
 void Role::updateRole()
 {
-	if (mSceneManager)
+	/*if (mSceneManager)
 	{
 		GameEntity* main = mPlayer->getMainEntity();
 		Orphigine::SkeletonMeshActor* actor = main->getSkeletonMeshActor();
@@ -33,7 +24,7 @@ void Role::updateRole()
 		actor->setPosition(pos);
 		actor->setSceneManager(mSceneManager);
 		
-	}
+	}*/
 }
 
 

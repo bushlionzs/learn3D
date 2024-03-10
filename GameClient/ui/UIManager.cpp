@@ -5,7 +5,7 @@
 #include "MainMenuWindow.h"
 #include "QuestWindow.h"
 #include <CEGUIManager.h>
-
+#include "kplayer.h"
 template<>
 UIManager* GameSingleton<UIManager>::m_sSingleton = nullptr;
 
@@ -16,6 +16,8 @@ UIManager::UIManager()
 	CEGUI::FontManager& fontManager(CEGUI::FontManager::getSingleton());
 	CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
 	CEGUIManager::getSingleton().getGUIContext()->setDefaultFont(&font);
+	mPlayer = nullptr;
+	
 }
 
 UIManager::~UIManager()
@@ -40,6 +42,12 @@ void UIManager::updateWindow(uint32_t winId)
 
 UIBase* UIManager::getWindow(uint32_t winId)
 {
+	if (mPlayer == nullptr)
+	{
+		mPlayer = new KPlayer();
+		mPlayer->initialize();
+	}
+	
 	auto itor = mWindowMap.find(winId);
 	if (itor != mWindowMap.end())
 	{

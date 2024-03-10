@@ -24,18 +24,29 @@
 #include "game_camera.h"
 #include <CEGUI/ImageManager.h>
 #include "GameDataCharacter.h"
-
+#include "UIManager.h"
 SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 {
 	_main_window = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("SelfEquip.xml");
 	parent->addChild(_main_window);
 	_main_window->setVisible(false);
-	auto* close = _main_window->getChildRecursive("Packet_Close");
-	close->subscribeEvent(
+	_close = _main_window->getChildRecursive("Packet_Close");
+	_close->subscribeEvent(
 		CEGUI::Window::EventMouseClick,
 		CEGUI::Event::Subscriber(&SelfEquipWindow::handle_ButtonClick, this));
 
 	CEGUI::Window* SelfEquip_Board_Background = _main_window->getChild("SelfEquip_Board_Background");
+
+	_turn_left = SelfEquip_Board_Background->getChild("SelfEquip_Model_TurnLeft");
+	_turn_right = SelfEquip_Board_Background->getChild("SelfEquip_Model_TurnRight");
+
+	_turn_left->subscribeEvent(
+		CEGUI::Window::EventMouseClick,
+		CEGUI::Event::Subscriber(&SelfEquipWindow::handle_ButtonClick, this));
+
+	_turn_right->subscribeEvent(
+		CEGUI::Window::EventMouseClick,
+		CEGUI::Event::Subscriber(&SelfEquipWindow::handle_ButtonClick, this));
 
 	_equips.resize(HEQUIP_NUMBER);
 
@@ -62,10 +73,9 @@ SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 		}
 	}
 
-	SceneManager* sceneMgr = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("SelfEquip"));
-	Ogre::Camera* cam = sceneMgr->createCamera("SelfEquip");
-	_role = new Role(sceneMgr);
-	_role->createRoleData();
+	_sceneMgr = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("SelfEquip"));
+	Ogre::Camera* cam = _sceneMgr->createCamera("SelfEquip");
+
 
 
 	CEGUI::Window* backgroud = SelfEquip_Board_Background->getChildRecursive("background");
@@ -88,7 +98,7 @@ SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 
 	cam->setAspectRatio(width / height);
 
-	auto camera = new GameCamera(cam, sceneMgr);
+	auto camera = new GameCamera(cam, _sceneMgr);
 	camera->setDistance(270);
 
 	camera->update(0.0f);
@@ -103,7 +113,28 @@ SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 
 bool SelfEquipWindow::handle_ButtonClick(const CEGUI::EventArgs& args)
 {
-	_main_window->hide();
+	const CEGUI::MouseEventArgs& dd_args =
+		static_cast<const CEGUI::MouseEventArgs&>(args);
+
+	CEGUI::Window* current = dd_args.window;
+	if (current == _close)
+	{
+		_main_window->hide();
+	}
+	else if (current == _turn_left)
+	{
+		mDir -= 0.1f;
+		KPlayer* player = UIManager::GetSingleton().getUIPlayer();
+		player->getMainEntity()->setDirection(mDir);
+
+
+	}
+	else if (current == _turn_right)
+	{
+		mDir += 0.1f;
+		KPlayer* player = UIManager::GetSingleton().getUIPlayer();
+		player->getMainEntity()->setDirection(mDir);
+	}
 	return true;
 }
 
@@ -137,16 +168,7 @@ void SelfEquipWindow::update()
 	if (myself)
 	{
 		KCharatcterBaseData* pMyselfData = myself->GetCharacterData();
-		KPlayer* pPlayer = _role->getPlayer();
-		KCharatcterBaseData* pCharacterData = pPlayer->GetCharacterData();
-		pCharacterData->SetProfession(pMyselfData->GetProfession());
-		pCharacterData->Set_RaceID(pMyselfData->Get_RaceID());
 
-		pCharacterData->Set_FaceMesh(pMyselfData->Get_FaceMesh());
-
-		pCharacterData->Set_HairMesh(pMyselfData->Get_HairMesh());
-
-		pPlayer->UpdateModel_Visible();
 		for (int32_t i = 0; i < HEQUIP_NUMBER; i++)
 		{
 			KItem* item = equips[i];
@@ -155,19 +177,18 @@ void SelfEquipWindow::update()
 			{
 				item_id = item->GetIdTable();
 			}
-			updateItem(i, item_id);
-			if (item)
-			{
-				auto pos = item->getPosIndex();
-				pCharacterData->Set_Equip((PLAYER_EQUIP)pos, item_id);
-			}
-			
-		}
 
-		pPlayer->UpdateBodyPartModel();
+			
+			updateItem(i, item_id);
+
+		}
 	}
-	
-	_role->updateRole();
+	KPlayer* uiPlayer = UIManager::GetSingleton().getUIPlayer();
+	GameEntity* main = uiPlayer->getMainEntity();
+	Orphigine::SkeletonMeshActor* actor = main->getSkeletonMeshActor();
+	Ogre::Vector3 pos = Ogre::Vector3(10.0, -100.0f, 0.0f);
+	actor->setPosition(pos);
+	actor->setSceneManager(_sceneMgr);
 }
 
 bool SelfEquipWindow::updateItem(
@@ -175,7 +196,11 @@ bool SelfEquipWindow::updateItem(
 	uint32_t itemId)
 {
 	ItemData itemInfo;
-
+	if (index == 0)
+	{
+		//item_id = 10010010;
+		itemId = itemId;
+	}
 	if (getItemInfo(itemId, itemInfo))
 	{
 		const char* fullname = CEGUIManager::getSingleton().getFullIconName(itemInfo.icon);

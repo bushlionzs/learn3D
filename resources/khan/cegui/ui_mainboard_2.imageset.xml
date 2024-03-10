@@ -1,25 +1,25 @@
 <?xml version="1.0" ?>
 <Imageset version="2" name="UI_MainBoard_2" imagefile="ui_mainboard_2.dds" nativeHorzRes="1024" nativeVertRes="768" autoScaled="true">
 
-	<Image name="UI_MainBoard_2_Selfequip_Board" XPos="1" YPos="1" width="375" height="546" />
-	<Image name="UI_MainBoard_2_Other_Board" XPos="645" YPos="4" width="375" height="546" />
-	<Image name="UI_MainBoard_2_Equip_Cover_Left" XPos="386" YPos="244" width="58" height="321" />
-	<Image name="UI_MainBoard_2_Equip_Cover_Right" XPos="461" YPos="244" width="58" height="321" />
-	<Image name="UI_MainBoard_2_Ride_Train_Cover" XPos="605" YPos="569" width="293" height="435" />
+	<Image name="UI_MainBoard_2_Selfequip_Board" xPos="1" yPos="1" width="375" height="546" />
+	<Image name="UI_MainBoard_2_Other_Board" xPos="645" yPos="4" width="375" height="546" />
+	<Image name="UI_MainBoard_2_Equip_Cover_Left" xPos="386" yPos="244" width="58" height="321" />
+	<Image name="UI_MainBoard_2_Equip_Cover_Right" xPos="461" yPos="244" width="58" height="321" />
+	<Image name="UI_MainBoard_2_Ride_Train_Cover" xPos="605" yPos="569" width="293" height="435" />
 
-	<Image name="UI_MainBoard_2_Title_Cover" XPos="303" YPos="570" width="293" height="418" />
-	<Image name="UI_MainBoard_2_Data_Cover" XPos="1" YPos="570" width="294" height="395" />
+	<Image name="UI_MainBoard_2_Title_Cover" xPos="303" yPos="570" width="293" height="418" />
+	<Image name="UI_MainBoard_2_Data_Cover" xPos="1" yPos="570" width="294" height="395" />
 
-	<Image name="UI_MainBoard_2_Turn_Left_Normal" XPos="921" YPos="687" width="35" height="31" />
-	<Image name="UI_MainBoard_2_Turn_Left_Hover" XPos="921" YPos="651" width="35" height="31" />
-	<Image name="UI_MainBoard_2_Turn_Left_Pushed" XPos="921" YPos="686" width="35" height="31" />
+	<Image name="UI_MainBoard_2_Turn_Left_Normal" xPos="921" yPos="687" width="35" height="31" />
+	<Image name="UI_MainBoard_2_Turn_Left_Hover" xPos="921" yPos="651" width="35" height="31" />
+	<Image name="UI_MainBoard_2_Turn_Left_Pushed" xPos="921" yPos="686" width="35" height="31" />
 
-	<Image name="UI_MainBoard_2_Turn_Right_Normal" XPos="922" YPos="610" width="34" height="31" />
-	<Image name="UI_MainBoard_2_Turn_Right_Hover" XPos="922" YPos="574" width="34" height="31" />
-	<Image name="UI_MainBoard_2_Turn_Right_Pushed" XPos="922" YPos="609" width="34" height="31" />
+	<Image name="UI_MainBoard_2_Turn_Right_Normal" xPos="922" yPos="610" width="34" height="31" />
+	<Image name="UI_MainBoard_2_Turn_Right_Hover" xPos="922" yPos="574" width="34" height="31" />
+	<Image name="UI_MainBoard_2_Turn_Right_Pushed" xPos="922" yPos="609" width="34" height="31" />
 
-	<Image name="UI_MainBoard_2_Turn_Selectbox_bak" XPos="383" YPos="59" width="154" height="28" />
+	<Image name="UI_MainBoard_2_Turn_Selectbox_bak" xPos="383" yPos="59" width="154" height="28" />
 
-	<Image name="UI_MainBoard_2_line" XPos="25" YPos="429" width="327" height="4" />
+	<Image name="UI_MainBoard_2_line" xPos="25" yPos="429" width="327" height="4" />
 
 </Imageset>

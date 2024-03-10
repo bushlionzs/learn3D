@@ -52,10 +52,12 @@ void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 	
 	KCharatcterBaseData* pCharacterData = pCharObj->GetCharacterData();
 
-
+	KPlayer* uiPlayer = UIManager::GetSingleton().getUIPlayer();
+	KCharatcterBaseData* pUICharacterData = uiPlayer->GetCharacterData();
 	if (dummy.has_job())
 	{
 		pCharacterData->SetProfession(dummy.job());
+		pUICharacterData->SetProfession(dummy.job());
 	}
 	
 	if (dummy.has_country())
@@ -165,11 +167,13 @@ void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 	if (dummy.has_face_mesh_id())
 	{
 		pCharacterData->Set_FaceMesh(dummy.face_mesh_id());
+		pUICharacterData->Set_FaceMesh(dummy.face_mesh_id());
 	}
 
 	if (dummy.has_hair_mesh_id())
 	{
 		pCharacterData->Set_HairMesh(dummy.hair_mesh_id());
+		pUICharacterData->Set_HairMesh(dummy.hair_mesh_id());
 	}
 	
 	/* 选择的目标 */
@@ -196,12 +200,14 @@ void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 	if (dummy.has_data_id())
 	{
 		pCharacterData->Set_RaceID(dummy.data_id());
+		pUICharacterData->Set_RaceID(dummy.data_id());
 	}
 	
 	/* 座骑ID, 要在人物之后创建 */
 	if (dummy.has_mount_id())
 	{
 		pCharacterData->Set_MountID(dummy.mount_id());
+		pUICharacterData->Set_MountID(dummy.mount_id());
 	}
 	
 	if (dummy.has_current_horse_guid())
@@ -249,6 +255,9 @@ void sc_detail_equip(NetHandle h, const char* msg, uint32_t msg_size)
 	}
 	KCharatcterBaseData* pCharacterData = pPlayer->GetCharacterData();
 
+	KPlayer* uiPlayer = UIManager::GetSingleton().getUIPlayer();
+	KCharatcterBaseData* pUICharacterData = uiPlayer->GetCharacterData();
+
 	auto& items = dummy.items();
 	for (auto i = 0; i < items.size(); i++)
 	{
@@ -281,13 +290,13 @@ void sc_detail_equip(NetHandle h, const char* msg, uint32_t msg_size)
 		pItemObj->SetPosIndex(pos);
 
 		pCharacterData->Set_Equip((PLAYER_EQUIP)pos, pItemObj->GetIdTable());
-
+		pUICharacterData->Set_Equip((PLAYER_EQUIP)pos, pItemObj->GetIdTable());
 		GameDataManager::GetSingleton().UserEquip_SetItem(
 			(PLAYER_EQUIP)pos, pItemObj, true);
 	}
 
 	pPlayer->UpdateBodyPartModel();
-
+	uiPlayer->UpdateBodyPartModel();
 	UIManager::GetSingleton().updateWindow(GameUI_SelfEquip);
 }
 
@@ -451,6 +460,11 @@ void sc_unequip_result(NetHandle h, const char* msg, uint32_t msg_size)
 	}
 	pPlayer->GetCharacterData()->Set_Equip(equipPoint, -1);
 	pPlayer->UpdateBodyPartModel();
+
+	KPlayer* uiPlayer = UIManager::GetSingleton().getUIPlayer();
+	KCharatcterBaseData* pUICharacterData = uiPlayer->GetCharacterData();
+	pUICharacterData->Set_Equip(equipPoint, -1);
+	uiPlayer->UpdateBodyPartModel();
 }
 
 void sc_use_equip_result(NetHandle h, const char* msg, uint32_t msg_size)
@@ -482,6 +496,11 @@ void sc_use_equip_result(NetHandle h, const char* msg, uint32_t msg_size)
 	}
 	pPlayer->GetCharacterData()->Set_Equip((PLAYER_EQUIP)equip_point, pItemAtBag->GetIdTable());
 	pPlayer->UpdateBodyPartModel();
+
+	KPlayer* uiPlayer = UIManager::GetSingleton().getUIPlayer();
+	KCharatcterBaseData* pUICharacterData = uiPlayer->GetCharacterData();
+	pUICharacterData->Set_Equip((PLAYER_EQUIP)equip_point, pItemAtBag->GetIdTable());
+	uiPlayer->UpdateBodyPartModel();
 
 	GameDataManager::GetSingleton().UserBag_SetItem(bag_index, nullptr, false);
 

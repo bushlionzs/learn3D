@@ -177,6 +177,26 @@
                 <Property name="TooltipType" value="TaharezLook/Tooltip" />
 			</Window>
 			
+			<Window type="TaharezLook/ImageButton" name="SelfEquip_Model_TurnLeft" >
+				<!--Comment	""	-->
+				<!--	Left=266, Top=443, Right=301, Bottom=474	-->
+				<Property name="Size" value="{{0.081395,0},{0.056673,0}}" />
+				<Property name="Position" value="{{0.72,0},{0.663620,0}}" />
+				<Property name="NormalImage" value="UI_MainBoard_2/UI_MainBoard_2_Turn_Left_Normal" />
+				<Property name="HoverImage" value="UI_MainBoard_2/UI_MainBoard_2_Turn_Left_Hover" />
+				<Property name="PushedImage" value="UI_MainBoard_2/UI_MainBoard_2_Turn_Left_Pushed" />
+				<Property name="AlwaysOnTop" value="True" />
+			</Window>
+			<Window type="TaharezLook/ImageButton" name="SelfEquip_Model_TurnRight" >
+				<!--Comment	""	-->
+				<!--	Left=81, Top=443, Right=115, Bottom=474	-->
+				<Property name="Size" value="{{0.079070,0},{0.056673,0}}" />
+				<Property name="Position" value="{{0.21,0},{0.663620,0}}" />
+				<Property name="NormalImage" value="UI_MainBoard_2/UI_MainBoard_2_Turn_Right_Normal" />
+				<Property name="HoverImage" value="UI_MainBoard_2/UI_MainBoard_2_Turn_Right_Hover" />
+				<Property name="PushedImage" value="UI_MainBoard_2/UI_MainBoard_2_Turn_Right_Pushed" />
+				<Property name="AlwaysOnTop" value="True" />
+			</Window>
 		</Window>
 		
 		

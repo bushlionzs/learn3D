@@ -12,11 +12,6 @@ public:
 
 	void updateRole();
 
-	KPlayer* getPlayer()
-	{
-		return mPlayer;
-	}
 private:
-	KPlayer* mPlayer;
 	Ogre::SceneManager* mSceneManager;
 };

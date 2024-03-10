@@ -99,12 +99,18 @@ void PackageWindow::update()
 
 	for (int32_t i = 0; i < ITEM_COUNT; i++)
 	{
+		
 		KItem* item = itemlist[i];
 		uint32_t item_id = 0;
 		if (item != nullptr)
 		{
 			item_id = item->GetIdTable();
+			if (i == 5)
+			{
+				int kk = 0;
+			}
 		}
+		
 		updateItem(i, item_id);
 	}
 }

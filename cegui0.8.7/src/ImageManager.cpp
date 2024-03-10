@@ -257,6 +257,7 @@ Image& ImageManager::get(const String& name) const
 {
     ImageMap::const_iterator i = d_images.find(name);
     
+    std::string aa = name.c_str();
     if (i == d_images.end())
     {
         std::string aa = name.c_str();

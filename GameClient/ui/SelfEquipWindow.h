@@ -27,7 +27,13 @@ private:
 		uint32_t itemId);
 private:
 	std::vector<CEGUI::Window*> _equips;
-	Role* _role;
+
+	Ogre::SceneManager* _sceneMgr;
+
+	CEGUI::Window* _turn_left = nullptr;
+	CEGUI::Window* _turn_right = nullptr;
+	CEGUI::Window* _close = nullptr;
+	float mDir = 0.0f;
 };
 
 

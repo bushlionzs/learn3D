@@ -28,8 +28,12 @@ namespace Orphigine
 
 	void Actor::setSceneManager(SceneManager* sceneManager)
 	{
-		mSceneManager = sceneManager;
-		OnSceneManagerChagned();
+		if (mSceneManager != sceneManager)
+		{
+			mSceneManager = sceneManager;
+			OnSceneManagerChagned();
+		}
+		
 	}
 
 	//-----------------------------------------------------------------------
