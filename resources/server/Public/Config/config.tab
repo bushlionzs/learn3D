@@ -1,9 +1,0 @@
-STRING	INT	STRING
-Section	Value	Desc
-LevelOfCreateGuild	30	创建帮会要求的等级
-LevelOfJoinGuild	20	加入帮会要求的等级
-MoneyOfCreateGuild	0	创建帮会要求的金钱
-MoneyTypeOfCreateGuild	0	建帮金钱类型
-MoneyTypeOfApplyKing	0	当国王金钱类型
-MoneyTypeOfDonate	0	捐赠金钱类型
-MoneyTypeOfGuileLevelup	0	帮会升级金钱类型

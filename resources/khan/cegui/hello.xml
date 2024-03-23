@@ -4,15 +4,11 @@
 	<Window type="DefaultWindow" name="Packet_Frame">
 		<!--Comment	""	-->
 		<!--	Left=520, Top=80, Right=1024, Bottom=688	-->
-        <Window type="TaharezLook/StaticText" name="HoverText" >
-		     <Window type="TaharezLook/Label" name="horse" >
-                 <Property name="Text" value="积善科技" />
-				 <Property name="HorzFormatting" value="LeftAligned" />
-                 <Property name="VertFormatting" value="BottomAligned" />
-             </Window>
-			<Property name="Text" value="中华人民共和国" />
-			<Property name="Size" value="{{0.5,0},{0.2,0}}" />
-			<Property name="Position" value="{{0.1,0},{0.1,0}}" />
-        </Window>		
+        <Window type="TaharezLook/StaticImage" name="test" >
+				<!--Comment	""	-->
+				<!--	Left=305, Top=436, Right=337, Bottom=468	-->
+				<Property name="Size" value="{{0.0853333,0},{0.058608,0}}" />
+				<Property name="Position" value="{{0.107,0},{0.193784,0}}" />
+		</Window>		
 	</Window>
 </GUILayout>
