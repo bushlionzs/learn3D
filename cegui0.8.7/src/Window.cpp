@@ -1617,16 +1617,16 @@ void Window::update(float elapsed)
     for (size_t i = 0; i < count; ++i)
     {
         auto* wnd = getChildAtIdx(i);
+        if (wnd == nullptr)
+        {
+            break;
+        }
         // update children based on their WindowUpdateMode setting.
         if (wnd->d_updateMode == WUM_ALWAYS ||
                 (wnd->d_updateMode == WUM_VISIBLE &&
                  wnd->isVisible()))
         {
             wnd->update(elapsed);
-        }
-        else
-        {
-            int kk = 0;
         }
     }
 }

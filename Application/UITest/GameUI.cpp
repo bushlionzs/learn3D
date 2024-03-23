@@ -43,8 +43,8 @@ bool GameUI::appInit()
 
     new CGameTableManager;
     CGameTableManager::GetSingleton().Initialize();
-    HelloDemo1();
-    //SelfEquipDemo();
+    //HelloDemo1();
+    SelfEquipDemo();
     //PackageDemo();
 	return true;
 }
@@ -113,29 +113,29 @@ void GameUI::helloDemo()
 
 void GameUI::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 {
-    auto* root = mGUIContext->getRootWindow();
-    CEGUI::Window* wnd = root->getChild("test");
+    //auto* root = mGUIContext->getRootWindow();
+    //CEGUI::Window* wnd = root->getChild("test");
 
 
-    static uint32_t itemId = 10010020;
-    if (itemId == 10010020)
-    {
-        itemId = 10010010;
-    }
-    else
-    {
-        itemId = 10010020;
-    }
-    GameItemData itemInfo;
-    if (getItemInfo(itemId, itemInfo))
-    {
-        const char* fullname = CEGUIManager::getSingleton().getFullIconName(itemInfo.icon);
-        wnd->setProperty("Image", fullname);
-    }
-    else
-    {
-        wnd->setProperty("Image", "");
-    }
+    //static uint32_t itemId = 10010020;
+    //if (itemId == 10010020)
+    //{
+    //    itemId = 10010010;
+    //}
+    //else
+    //{
+    //    itemId = 10010020;
+    //}
+    //GameItemData itemInfo;
+    //if (getItemInfo(itemId, itemInfo))
+    //{
+    //    const char* fullname = CEGUIManager::getSingleton().getFullIconName(itemInfo.icon);
+    //    wnd->setProperty("Image", fullname);
+    //}
+    //else
+    //{
+    //    wnd->setProperty("Image", "");
+    //}
     
 }
 

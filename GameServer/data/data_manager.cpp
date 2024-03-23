@@ -51,7 +51,7 @@ bool DataManager::loadMonsterData()
 {
 	std::string dir = CPlatformFileSystem::GetInstance()->GetProcessDirectory();
 
-	std::string monster_filename = dir + "\\..\\public\\config\\mon_attr_ex.tab";
+	std::string monster_filename = dir + "\\..\\..\\server_resources\\public\\config\\mon_attr_ex.tab";
 
 		enum MonsterAttrData
 	{

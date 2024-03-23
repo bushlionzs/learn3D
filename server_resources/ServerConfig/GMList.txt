@@ -1,0 +1,3 @@
+STRING	STRING	INT	STRING
+用户名	密码	权限等级	允许IP
+test01	kylin001	1	192.168.1.30

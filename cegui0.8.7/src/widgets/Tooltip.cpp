@@ -249,6 +249,7 @@ namespace CEGUI
         else if ((d_displayTime > 0) && ((d_elapsed += elapsed) >= d_displayTime))
         {
             // display time is up, switch states
+            hide();
             switchToInactiveState();
         }
     }

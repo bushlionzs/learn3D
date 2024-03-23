@@ -920,6 +920,10 @@ public:
     */
     inline Element* getChildElementAtIdx(size_t idx) const
     {
+        if (idx >= d_children.size())
+        {
+            return nullptr;
+        }
         return d_children[idx];
     }
 

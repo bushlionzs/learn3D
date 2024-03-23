@@ -19,7 +19,7 @@ using namespace			TAB;
 
 SkillManager			*g_pSkillManager = NULL;
 
-const char *SkillManager::	m_VigorExpTablePath = "../Public/Config/AbilityLevelUp/";
+const char *SkillManager::	m_VigorExpTablePath = "../../server_resources/Public/Config/AbilityLevelUp/";
 const char *SkillManager::	m_VigorExpTableName[SkillManager::EXP_TABLE_NUM] =
 {
 	"zhiyao.tab",

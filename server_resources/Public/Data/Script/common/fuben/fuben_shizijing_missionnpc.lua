@@ -1,0 +1,272 @@
+----创建十字井任务NPC
+--
+--x700011_g_MissionName="定点创建十字井任务NPC任务"
+--
+--
+----脚本号
+--x700011_g_ScriptId = 700011
+--
+------------------------------------ enter day and time --------------------------
+--x700011_g_EnterTime					=	{                       --活动时间段
+--											{min=4*60+0,  max=5*60+0},
+--											{min=13*60+0, max=14*60+0},
+--											{min=21*60+0, max=22*60+0}
+--										}
+--
+--x700011_g_EnterDay					=	{0,1,2,3,4,5,6};
+--
+------------------------------------ enter day and time end --------------------------
+--
+--x700011_g_SceneNpcType = 25070
+--x700011_g_SceneNpcGuid = 137715
+--x700011_g_SceneNpc_FaceDir =0
+--
+--x700011_g_DelTime		= 300*1000
+--x700011_g_CreateTime	=	30*1000
+--
+--x700011_g_SceneNpcCount = 1
+--x700011_g_ScenePosCount = 9
+--x700011_g_ScenePos =    {
+--                            {x=118,z=172},
+--                            {x=414,z=134},
+--                            {x=379,z=297},
+--                            {x=347,z=465},
+--                            {x=212,z=407},
+--                            {x=114,z=406},
+--                            {x=82 ,z=308},
+--                            {x=266,z=388},
+--                            {x=298,z=350}
+--                           
+--                        }
+--
+--
+--
+--x700011_g_EnterFubenTimes   = 0
+--x700011_g_MaxEnterTeam		= 10	
+--
+--function x700011_OnTimerDoingStart( sceneId, actId, Param1, Param2, Param3, Param4,Param5 )
+--
+--	
+--	if x700011_CheckDay(sceneId)<=0 then
+--		return
+--	end
+--
+--	local strFmt = "探宝任务开始了"
+--	local msg = format(strFmt)
+--	--LuaAllScenceM2Wrold (sceneId, msg, 4, 1)
+--	x700011_MsgToCountry(sceneId, msg, 4, 1);
+--
+--    x700011_CreateEnterNpc( sceneId,actId)
+--
+--end
+--
+--function x700011_CreateEnterNpc( sceneId,actId)
+--	if sceneId == 50 or sceneId == 150 or sceneId == 250 or sceneId == 350 then
+--
+--
+--        local Randed={}
+--
+--		local x =0;
+--		local z =0;
+--
+--        for i=1,x700011_g_SceneNpcCount do
+--
+--            local posindex = random(1,x700011_g_ScenePosCount)
+--
+--            while 1 do
+--
+--                local bRanded = 0
+--                for j,item in Randed do
+--                    if item == posindex then
+--                        posindex = random(1,x700011_g_ScenePosCount)
+--                        bRanded = 1
+--                    end
+--                end
+--
+--                if bRanded == 0 then
+--                    Randed[i] = posindex --记录已经随机过的
+--                    break
+--                end
+--            end
+--
+--
+--            -- 开始创建NPC
+--            local pos = x700011_g_ScenePos[posindex]
+--            CreateMonster( sceneId,x700011_g_SceneNpcType,pos.x,pos.z,3,0,-1,x700011_g_SceneNpcGuid,-1,-1,x700011_g_SceneNpc_FaceDir)
+--			x = pos.x
+--			z = pos.z
+--        end
+--
+--		local strFmt = "探宝任务入口出现，抓紧时间到王城(%d,%d) 处探宝吧"
+--		local msg = format(strFmt,x,z )
+--		--LuaAllScenceM2Wrold (sceneId, msg, 0, 1)
+--		x700011_MsgToCountry(sceneId, msg, 0, 1);
+--
+--		SetSystemTimerTick( sceneId, x700011_g_ScriptId, "OnDelTimer", actId, x700011_g_DelTime  ) 
+--
+--		x700011_g_EnterFubenTimes = 0
+--   end
+--end
+--
+--
+--
+----活动的Tick
+--function x700011_OnDelTimer( sceneId, actId, uTime )
+--
+--	if x700011_CheckTime(sceneId)<=0 then
+--		return
+--	end
+--
+--
+--	if sceneId == 50 or sceneId == 150 or sceneId == 250 or sceneId == 350 then
+--		local iRet = x700011_OnDelAllNpc( sceneId)
+--
+--		
+--		SetSystemTimerTick( sceneId, x700011_g_ScriptId, "OnCreateTimer", actId, x700011_g_CreateTime  ) --1分钟后开始
+--		
+--	else
+--		return
+--	end
+--
+--
+--end
+--
+--
+--function x700011_OnCreateTimer( sceneId, actId, uTime )
+--
+--	if x700011_CheckTime(sceneId)<=0 then
+--		return
+--	end
+--
+--	if sceneId == 50 or sceneId == 150 or sceneId == 250 or sceneId == 350 then
+--		 x700011_CreateEnterNpc( sceneId,actId)
+--	else
+--		return
+--	end
+--end
+--
+--
+--function x700011_OnDelAllNpc( sceneId, strTeamName)
+--
+--    if sceneId == 50 or sceneId == 150 or sceneId == 250 or sceneId == 350 then
+--
+--        -- 做x700011_g_SceneNpcCount次循环以删除创建的NPC
+--        for i=1,x700011_g_SceneNpcCount do
+--
+--            local objid = FindMonsterByGUID( sceneId,x700011_g_SceneNpcGuid)
+--			
+--
+--			if objid>=0 then
+--				
+--				DeleteMonster( sceneId,objid )
+--			else
+--				return 0;
+--			end
+--            
+--
+--        end
+--
+--		local strFmt = "探宝任务入口消失了，%d秒后重新出现"
+--		local msg = format(strFmt,x700011_g_CreateTime/1000 )
+--
+--		if strTeamName~=nil then
+--			strFmt = strTeamName.."的队伍最后进入了宝藏，探宝入口消失了"
+--			msg = strFmt
+--		end
+--		--LuaAllScenceM2Wrold (sceneId, msg, 0, 1)
+--		x700011_MsgToCountry(sceneId, msg, 0, 1);
+--
+--		return 1;
+--    end
+--
+--	return 0;
+--end
+
+
+
+-------------------------------------------------------------------------------------
+-- For Selete Fuben
+--------------------------------------------------------------------------------------
+x700011_g_ScriptId = 700011
+x700011_g_FubenCount =3
+x700011_g_FubenId	={700019,700020,700025}
+
+
+
+function x700011_ProcEnumEvent(sceneId, selfId, targetId, MissionId)
+
+--	if x700011_g_EnterFubenTimes>= x700011_g_MaxEnterTeam then
+--		return
+--	end
+
+	local iRandom = random(1,x700011_g_FubenCount)
+	CallScriptFunction( FUBEN_COMMON_SCRIPT, "ProcEnumEvent", sceneId, selfId, targetId, MissionId,x700011_g_FubenId[iRandom] ) ;
+
+end
+
+
+function x700011_OnEnterFuben(sceneId, selfId,nScriptId)
+--	local strTeamName = GetName( sceneId,selfId)
+--
+--	x700011_g_EnterFubenTimes = x700011_g_EnterFubenTimes+1
+--
+--	if strTeamName~=nil then
+--		strFmt = strTeamName.."的队伍抢在了前头进入了宝藏"
+--		msg = strFmt
+--	end
+--	--LuaAllScenceM2Wrold (sceneId, msg, 0, 1)
+--	x700011_MsgToCountry(sceneId, msg, 0, 1);
+--
+--
+--	if x700011_g_EnterFubenTimes>= x700011_g_MaxEnterTeam then
+--	x700011_OnDelAllNpc( sceneId, strTeamName)
+--	end
+end
+
+
+
+
+
+--function x700011_CheckDay(sceneId)
+--	local weekDay = GetWeek()
+--	for i, item in x700011_g_EnterDay do
+--		if weekDay==item then
+--			
+--			
+--			return 1;
+--			
+--		end
+--	end
+--
+--	return 0;
+--end
+--
+--function x700011_CheckTime(sceneId)
+--	local hour,minute,sec =GetHourMinSec();
+--	local nowtime = hour*60+minute
+--	
+--	for i, item in x700011_g_EnterTime do
+--		if nowtime >= item.min and nowtime <= item.max then
+--			
+--			
+--			return 1;
+--			
+--		end
+--	end
+--	
+--	return 0
+--end
+--
+--function x700011_MsgToCountry(sceneId, msg, nParam1, nParam2)
+--	if sceneId==50 then
+--		LuaAllScenceM2Country(sceneId, msg, 0, nParam1, nParam2)
+--	elseif sceneId==150 then
+--		LuaAllScenceM2Country(sceneId, msg, 1, nParam1, nParam2)
+--	elseif sceneId==250 then
+--		LuaAllScenceM2Country(sceneId, msg, 2, nParam1, nParam2)
+--	elseif sceneId==350 then
+--		LuaAllScenceM2Country(sceneId, msg, 3, nParam1, nParam2)
+--	end
+--
+--end
+

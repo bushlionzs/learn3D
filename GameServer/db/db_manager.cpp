@@ -38,7 +38,7 @@ bool DBManager::initialize()
 {
     //mConnection = CMySQLConnection::createConnection("127.0.0.1", 3306, "khan", "root", "123456");
 
-    mConnection = Sqlite3Connect::createConnection("../ServerConfig/test.sqlite3");
+    mConnection = Sqlite3Connect::createConnection("../../server_resources/ServerConfig/test.sqlite3");
     bool ret = mConnection->connect();
 
     m_module = create_platform_module(1, "db_module");

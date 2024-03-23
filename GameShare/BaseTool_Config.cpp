@@ -33,8 +33,6 @@ Configer::~Configer()
 
 BOOL Configer::Open(const char* filename)
 {
-	__GUARD__
-
 	m_pBuf = new char[CONFIGER_BUF_SIZE];
 	m_nBufMaxLen += CONFIGER_BUF_SIZE; 
 
@@ -84,8 +82,6 @@ BOOL Configer::Open(const char* filename)
 	}
 
 	return TRUE;
-	__UNGUARD__
-	return FALSE;
 }
 
 void Configer::Close()

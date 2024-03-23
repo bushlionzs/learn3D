@@ -90,7 +90,7 @@ GameMap* MapManager::getMap(uint32_t map_id)
 
 bool MapManager::loadSceneConfig()
 {
-	std::string mapfilename = "../ServerConfig/mapdefines.tab";
+	std::string mapfilename = "../../server_resources/ServerConfig/mapdefines.tab";
 
 	TAB::TABFile ThirdFile(0);
 	bool ret = ThirdFile.OpenFromTXT(mapfilename.c_str());
@@ -166,17 +166,17 @@ bool MapManager::loadSceneConfig()
 
 		temp = CPlatformFileSystem::get_filename(mapconfig[i].m_szFileName, true);
 
-		snprintf(mapconfig[i].m_szNavFileName, sizeof(mapconfig[i].m_szNavFileName), "%s\\..\\map\\%s\\%s.nav",
+		snprintf(mapconfig[i].m_szNavFileName, sizeof(mapconfig[i].m_szNavFileName), "%s\\..\\..\\server_resources\\map\\%s\\%s.nav",
 			workDir.c_str(), temp.c_str(), temp.c_str());
-		snprintf(mapconfig[i].m_szMonsterFileName, sizeof(mapconfig[i].m_szMonsterFileName), "%s\\..\\map\\%s\\%s_monster.tab",
+		snprintf(mapconfig[i].m_szMonsterFileName, sizeof(mapconfig[i].m_szMonsterFileName), "%s\\..\\..\\server_resources\\map\\%s\\%s_monster.tab",
 				workDir.c_str(), temp.c_str(), temp.c_str());
-		snprintf(mapconfig[i].m_szSceneConfigName, sizeof(mapconfig[i].m_szSceneConfigName), "%s\\..\\map\\%s\\%s.scn",
+		snprintf(mapconfig[i].m_szSceneConfigName, sizeof(mapconfig[i].m_szSceneConfigName), "%s\\..\\..\\server_resources\\map\\%s\\%s.scn",
 			workDir.c_str(), temp.c_str(), temp.c_str());
-		snprintf(mapconfig[i].m_szPatrolPointName, sizeof(mapconfig[i].m_szPatrolPointName), "%s\\..\\map\\%s\\%s_patrolpoint.ini",
+		snprintf(mapconfig[i].m_szPatrolPointName, sizeof(mapconfig[i].m_szPatrolPointName), "%s\\..\\..\\server_resources\\map\\%s\\%s_patrolpoint.ini",
 			workDir.c_str(), temp.c_str(), temp.c_str());
-		snprintf(mapconfig[i].m_szGrowPointDataName, sizeof(mapconfig[i].m_szGrowPointDataName), "%s\\..\\map\\%s\\%s_growpoint.txt",
+		snprintf(mapconfig[i].m_szGrowPointDataName, sizeof(mapconfig[i].m_szGrowPointDataName), "%s\\..\\..\\server_resources\\map\\%s\\%s_growpoint.txt",
 			workDir.c_str(), temp.c_str(), temp.c_str());
-		snprintf(mapconfig[i].m_szGrowPointSetupName, sizeof(mapconfig[i].m_szGrowPointSetupName), "%s\\..\\map\\%s\\%s_growpointsetup.txt",
+		snprintf(mapconfig[i].m_szGrowPointSetupName, sizeof(mapconfig[i].m_szGrowPointSetupName), "%s\\..\\..\\server_resources\\map\\%s\\%s_growpointsetup.txt",
 			workDir.c_str(), temp.c_str(), temp.c_str());
 	}
 

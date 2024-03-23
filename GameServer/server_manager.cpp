@@ -52,7 +52,7 @@ void ServerManager::OnPreInit()
 
 	mQuestTable->Init();
 
-	const std::string scriptname = "..\\Public\\Data\\MyScript.tab";
+	const std::string scriptname = "..\\..\\server_resources\\Public\\Data\\MyScript.tab";
 	BOOL load = g_ScriptFileMgr.Init(scriptname.c_str(), false);
 	ScriptCache* cache = g_ScriptFileMgr.GetFileData(200001);
 	if (cache)

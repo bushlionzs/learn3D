@@ -1,0 +1,13 @@
+function x305061_OnTimerDoingStart( sceneId, actId, Param1, Param2, Param3, Param4,Param5 )
+	RecycleGrowPointByType(sceneId, 700, -1)
+	RecycleGrowPointByType(sceneId, 701, -1)
+	RecycleGrowPointByType(sceneId, 702, -1)
+	RecycleGrowPointByType(sceneId, 703, -1)
+	RecycleGrowPointByType(sceneId, 704, -1)
+	RecycleGrowPointByType(sceneId, 705, -1)
+	RecycleGrowPointByType(sceneId, 706, -1)
+	RecycleGrowPointByType(sceneId, 707, -1)
+	RecycleGrowPointByType(sceneId, 708, -1)
+	RecycleGrowPointByType(sceneId, 709, -1)
+	RecycleGrowPointByType(sceneId, 710, -1)
+end
