@@ -1,0 +1,103 @@
+
+x300175_g_scriptId  = 300175
+x300175_g_Impact1   = -1--效果ID，先无视好了
+x300175_g_Impact2   = -1 --不用
+x300175_g_FarScriptId	= 300160
+x300175_g_BuffId        = 7645
+
+
+--**********************************
+--事件交互入口
+--**********************************
+function x300175_ProcEventEntry( sceneId, selfId, bagIndex )
+-- 不需要这个接口，但要保留空函数
+end
+
+--**********************************
+--这个物品的使用过程是否类似于技能：
+--系统会在执行开始时检测这个函数的返回值，如果返回失败则忽略后面的类似技能的执行。
+--返回1：技能类似的物品，可以继续类似技能的执行；返回0：忽略后面的操作。
+--**********************************
+function x300175_IsSkillLikeScript( sceneId, selfId)
+	return 1; --这个脚本需要动作支持
+end
+
+--**********************************
+--直接取消效果：
+--系统会直接调用这个接口，并根据这个函数的返回值确定以后的流程是否执行。
+--返回1：已经取消对应效果，不再执行后续操作；返回0：没有检测到相关效果，继续执行。
+--**********************************
+function x300175_CancelImpacts( sceneId, selfId )
+	return 0; --不需要这个接口，但要保留空函数,并且始终返回0。
+end
+
+--**********************************
+--条件检测入口：
+--系统会在技能检测的时间点调用这个接口，并根据这个函数的返回值确定以后的流程是否执行。
+--返回1：条件检测通过，可以继续执行；返回0：条件检测失败，中断后续执行。
+--**********************************
+function x300175_OnConditionCheck( sceneId, selfId )
+    -- if sceneId ~= 14 then
+        -- BeginQuestEvent( sceneId);
+        -- AddQuestText( sceneId, "只能在大都美丽会内使用哈瓦那雪茄" );
+        -- EndQuestEvent( sceneId);
+        -- DispatchQuestTips( sceneId, selfId);
+        -- return 0
+    -- else
+        -- Buff剩余时间如果大于2小时50分就禁止继续使用
+        if GetImpactContinuanceByDataIndex( sceneId, selfId, x300175_g_BuffId) - GetImpactContinuanceElapsed( sceneId, selfId, x300175_g_BuffId) > 35400000 then
+            Msg2Player( sceneId, selfId, "已经达到累加上限，不能继续使用哈瓦那雪茄", 8, 3)
+            return 0
+        end
+        if IsHaveSpecificImpact( sceneId, selfId, 7665) == 1 then
+            Msg2Player( sceneId, selfId, "您身上有相同类型的状态，请等精品哈瓦那雪茄消失后再使用！", 8, 3)
+            return 0
+        end
+        -- if IsHaveSpecificImpact( sceneId, selfId, 7646) == 0 then
+            -- Msg2Player( sceneId, selfId, "您身上需要有基础奖励才能使用哈瓦那雪茄！", 8, 3)
+			-- Msg2Player( sceneId, selfId, "您身上需要有基础奖励才能使用哈瓦那雪茄，您可以在酒保或兔侍女处花费少量银卡（现银）领取基础奖励！", 8, 2)
+            -- return 0
+        -- end
+
+        return 1
+    -- end
+end
+--**********************************
+--消耗检测及处理入口：
+--系统会在技能消耗的时间点调用这个接口，并根据这个函数的返回值确定以后的流程是否执行。
+--返回1：消耗处理通过，可以继续执行；返回0：消耗检测失败，中断后续执行。
+--注意：这不光负责消耗的检测也负责消耗的执行。
+--**********************************
+function x300175_OnDeplete( sceneId, selfId )
+ 	if DepletingUsedItem(sceneId, selfId) == 1 then
+ 		CallScriptFunction(x300175_g_FarScriptId, "OnUseItem", sceneId, selfId, x300175_g_BuffId)
+		return 1;
+	end
+	
+	return 0;
+	
+end
+
+--**********************************
+--只会执行一次入口：
+--聚气和瞬发技能会在消耗完成后调用这个接口（聚气结束并且各种条件都满足的时候），而引导
+--技能也会在消耗完成后调用这个接口（技能的一开始，消耗成功执行之后）。
+--返回1：处理成功；返回0：处理失败。
+--注：这里是技能生效一次的入口
+--**********************************
+function x300175_OnActivateOnce( sceneId, selfId )
+	if(-1~=x300175_g_Impact1) then
+		SendSpecificImpactToUnit(sceneId, selfId, selfId, selfId, x300175_g_Impact1, 0);
+	end
+	return 1;
+end
+
+--**********************************
+--引导心跳处理入口：
+--引导技能会在每次心跳结束时调用这个接口。
+--返回：1继续下次心跳；0：中断引导。
+--注：这里是技能生效一次的入口
+--**********************************
+function x300175_OnActivateEachTick( sceneId, selfId)
+	return 1; --不是引导性脚本, 只保留空函数.
+end

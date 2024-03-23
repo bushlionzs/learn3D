@@ -1,0 +1,7 @@
+[System]
+navmapname=yewai_conglingmuchang/yewai_conglingmuchang.nav
+monsterfile=yewai_conglingmuchang/yewai_conglingmuchang_monster.tab
+patrolpoint=yewai_conglingmuchang/yewai_conglingmuchang_patrolpoint.ini
+growpointdata=yewai_conglingmuchang/yewai_conglingmuchang_growpoint.txt
+growpointsetup=yewai_conglingmuchang/yewai_conglingmuchang_growpointsetup.txt
+eventfile=yewai_conglingmuchang/yewai_conglingmuchang_area.ini

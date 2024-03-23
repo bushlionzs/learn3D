@@ -1,0 +1,16 @@
+INT	INT	STRING	INT	INT	INT	FLOAT	INT	INT	STRING	STRING	INT	STRING	INT	STRING
+ID	所需等级	名称	最高等级	操作时间基数	工具ID	辅助平台的有效距离	辅助平台ID	操作动作ID (必须是表情的动作)	技能升级和消耗表	图标	对应动作表现工具编号（Itemvisuallocator)	技能说明	是否有合成界面	进度条显示的字
+1	-1	中原草药术	1	5000	-1	2	-1	151	zhiyao.tab	CJSH_skill_shenghuo_2	-1	中原草药术	1	操作中
+2	-1	印度珠宝术	1	5000	-1	2	-1	151	yindu_zhubao.tab	CJSH_skill_shenghuo_1	-1	印度珠宝术	1	操作中
+3	-1	罗马铸甲术	1	5000	-1	2	-1	151	zhuzao.tab	CJSH_Add_1_2	-1	罗马铸甲术	1	操作中
+4	-1	中原草药术(废弃)	1	5000	-1	2	-1	151	zhongyuan_caoyao.tab	CJSH_skill_shenghuo_2	-1	中原草药术	1	操作中
+5	-1	阿拉伯医术(废弃)	1	5000	-1	2	-1	151	alabo_yishu.tab	CJSH_Add_1_5	-1	阿拉伯医术	1	操作中
+6	-1	突厥锻造术	1	5000	-1	2	-1	151	tujue_duanzao.tab	CJSH_Add_1_3	-1	突厥锻造术	1	操作中
+7	-1	波斯工艺术	1	5000	-1	2	-1	151	bosi_gongyi.tab	CJSH_Add_1_4	-1	波斯工艺术	1	操作中
+8	-1	印度珠宝术(废弃)	1	5000	-1	2	-1	151	gongyi.tab	CJSH_skill_shenghuo_1	-1	印度珠宝术	1	操作中
+9	-1	罗马工程术(废弃)	1	5000	-1	2	-1	151	luoma_gongcheng.tab	CJSH_Add_1_2	-1	罗马工程术	1	操作中
+10	-1	蒙古驯马术	1	5000	-1	2	-1	151	xiyu_bianzhi.tab	CJSH_Add_1_1	-1	蒙古驯马术	1	操作中
+11	-1	采集草药	1	5000	-1	2	-1	151	caiji_caoyao.tab	CJSH_Add_1_8	-1	采集草药	-1	操作中
+12	-1	采集矿石	1	5000	-1	2	-1	151	caiji_kuangshi.tab	CJSH_Add_1_10	-1	采集矿石	-1	操作中
+13	-1	捕捉	1	5000	-1	2	-1	151	buzhuo_kunchong.tab	CJSH_Add_1_9	-1	捕捉	-1	操作中
+26	-1	采集	1	5000	-1	2	-1	151	assistant.tab	CJSH_skill_shenghuo_2	-1	测试生活技能，目前还只用于采集任务	-1	操作中
