@@ -36,6 +36,7 @@
 #include "platform_common.h"
 #include "platform_file_system.h"
 #include "platform_file.h"
+#include "string_util.h"
 #include "platform_log.h"
 #include "platform_util.h"
 #include "platform_mutex.h"
@@ -271,7 +272,7 @@ public:
         {
             _log_dir += "\\";
         }
-        _log_dir = utf8_to_ansi(_log_dir);
+        _log_dir = dy::utf8_to_acsi(_log_dir);
 #else
             if (_log_dir[_log_dir.size() - 1] != '/')
             {

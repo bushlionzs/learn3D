@@ -1,22 +1,107 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--TimeStamp: 2010/ 5/24  5:55 with UIEditor-->
 <GUILayout version="4">
 	<Window type="TaharezLook/Tooltip2" name="SuperToolTip">
 		<!--Comment	""	-->
 		<!--	Left=520, Top=80, Right=1024, Bottom=688	-->
-		<Property name="Size" value="{{0.4,0},{0.5,0}}" />
-		<Property name="Position" value="{{0.0,0},{0.0,0}}" />
+		<Property name="Size" value="{{0.3,0},{0.5,0}}" />
+		<Property name="Position" value="{{0.3,0},{0.3,0}}" />
 		
 	
-		<Window type="TaharezLook/StaticText" name="Background" >
+		<Window type="TaharezLook/StaticText" name="Title" >
 			<!--Comment	""	-->
 			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
-			<Property name="Size" value="{{1.0,0},{1.0,0}}" />
-			<Property name="Position" value="{{0.0,0},{0.0,0}}" />			
-			<Property name="Text" value="我是中国人" />
+			<Property name="Size" value="{{0.8,0},{0.2,0}}" />
+			<Property name="Position" value="{{0.3,0},{0.02,0}}" />		
+            <Property name="TextColours" value="FFFF0000" />			
+			<Property name="Text" value="草原短柄刀 +3" />
+			<Property name="FrameEnabled" value="false" />
+            <Property name="BackgroundEnabled" value="false" />
+			<Property name="HorzFormatting" value="LeftAligned" />
+		    <Property name="VertFormatting" value="TopAligned" />
 		</Window>
 		
+		<Window type="TaharezLook/StaticImage" name="ItemPicture" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
+			<Property name="Size" value="{{0.2,0},{0.2,0}}" />
+			<Property name="Position" value="{{0.1,0},{0.1,0}}" />			
+			<Property name="Image" value="UI_MainBoard_3/UI_MainBoard_3_Packet_Cover" />
+		</Window>
 		
+		<Window type="TaharezLook/StaticText" name="ItemProperty" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
+			<Property name="Size" value="{{0.8,0},{0.2,0}}" />
+			<Property name="Position" value="{{0.32,0},{0.1,0}}" />	
+            <Property name="TextColours" value="FF00FF00" />			
+			<Property name="Text" value="等级: 10
+			职业: 武士
+			耐久: 44/62" />
+			<Property name="FrameEnabled" value="false" />
+            <Property name="BackgroundEnabled" value="false" />
+			<Property name="HorzFormatting" value="LeftAligned" />
+		    <Property name="VertFormatting" value="TopAligned" />
+		</Window>
 		
+		<Window type="TaharezLook/StaticText" name="ItemName" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
+			<Property name="Size" value="{{0.1,0},{0.1,0}}" />
+			<Property name="Position" value="{{0.15,0},{0.35,0}}" />	
+            <Property name="TextColours" value="FF00FF00" />			
+			<Property name="Text" value="刀" />
+			<Property name="FrameEnabled" value="false" />
+            <Property name="BackgroundEnabled" value="false" />
+		    <Property name="HorzFormatting" value="LeftAligned" />
+		    <Property name="VertFormatting" value="TopAligned" />
+		</Window>
+		
+		<Window type="TaharezLook/StaticText" name="ItemBind" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
+			<Property name="Size" value="{{0.2,0},{0.2,0}}" />
+			<Property name="Position" value="{{0.35,0},{0.35,0}}" />	
+            <Property name="TextColours" value="FF00FF00" />			
+			<Property name="Text" value="已绑定" />
+			<Property name="FrameEnabled" value="false" />
+            <Property name="BackgroundEnabled" value="false" />
+			<Property name="HorzFormatting" value="LeftAligned" />
+		    <Property name="VertFormatting" value="TopAligned" />
+		</Window>
+		
+		<Window type="TaharezLook/StaticImage" name="StarProperty" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
+			<Property name="Size" value="{{0.2,0},{0.1,0}}" />
+			<Property name="Position" value="{{0.05,0},{0.45,0}}" />			
+			<Property name="Image" value="UI_MainBoard_3/UI_MainBoard_3_Packet_Cover" />
+		</Window>
+		
+		<Window type="TaharezLook/StaticText" name="ExpandProperty" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
+			<Property name="Size" value="{{0.8,0},{0.2,0}}" />
+			<Property name="Position" value="{{0.05,0},{0.6,0}}" />			
+			<Property name="Text" value="近攻攻击+29" />
+			<Property name="TextColours" value="FF00FF00" />
+			<Property name="FrameEnabled" value="false" />
+            <Property name="BackgroundEnabled" value="false" />
+			<Property name="HorzFormatting" value="LeftAligned" />
+		    <Property name="VertFormatting" value="TopAligned" />
+		</Window>
+		
+		<Window type="TaharezLook/StaticText" name="ItemPlace" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
+			<Property name="Size" value="{{0.8,0},{0.2,0}}" />
+			<Property name="Position" value="{{0.05,0},{0.7,0}}" />			
+			<Property name="Text" value="产地: 蒙古" />
+			<Property name="TextColours" value="FF00FF00" />
+			<Property name="FrameEnabled" value="false" />
+            <Property name="BackgroundEnabled" value="false" />
+			<Property name="HorzFormatting" value="LeftAligned" />
+		    <Property name="VertFormatting" value="TopAligned" />
+		</Window>
 	</Window>
 </GUILayout>

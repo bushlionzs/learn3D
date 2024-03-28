@@ -25,6 +25,9 @@
 #include <CEGUI/ImageManager.h>
 #include "GameDataCharacter.h"
 #include "UIManager.h"
+#include "GameToolTip.h"
+
+
 SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 {
 	_main_window = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("SelfEquip.xml");
@@ -50,6 +53,7 @@ SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 
 	_equips.resize(HEQUIP_NUMBER);
 
+	auto* tip = CEGUIManager::getSingleton().getToolTip();
 	for (int32_t i = 0; i < HEQUIP_NUMBER; i++)
 	{
 		CEGUI::Window* equip = nullptr;
@@ -66,7 +70,8 @@ SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 
 		if (equip)
 		{
-			equip->setUserData((void*)i);
+			equip->setTooltip((CEGUI::Tooltip*)tip->getView());
+			equip->setUserData((void*)(i+1));
 			equip->subscribeEvent(
 				CEGUI::Window::EventMouseClick,
 				CEGUI::Event::Subscriber(&SelfEquipWindow::handle_EquipClick, this));
@@ -78,9 +83,11 @@ SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 			equip->subscribeEvent(
 				CEGUI::Window::EventMouseLeavesArea,
 				CEGUI::Event::Subscriber(&SelfEquipWindow::handle_MouseLeave, this));
+
 		}
 	}
 
+	
 	_sceneMgr = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("SelfEquip"));
 	Ogre::Camera* cam = _sceneMgr->createCamera("SelfEquip");
 
@@ -170,6 +177,17 @@ bool SelfEquipWindow::handle_EquipClick(const CEGUI::EventArgs& args)
 
 bool SelfEquipWindow::handle_MouseEnter(const CEGUI::EventArgs& args)
 {
+	const CEGUI::MouseEventArgs& dd_args =
+		static_cast<const CEGUI::MouseEventArgs&>(args);
+	int32_t value = (int32_t)dd_args.window->getUserData();
+	value -= 1;
+
+	if (value >= 0)
+	{
+		GameToolTip* tip = CEGUIManager::getSingleton().getToolTip();
+		auto& equips = GameDataManager::GetSingleton().getUserEquip();
+		tip->update(equips[value]);
+	}
 	return true;
 }
 

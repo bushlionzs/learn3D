@@ -300,7 +300,7 @@ void GameUI::SelfEquipDemo()
     }
     
 
-   // mToolTip->subscribeEvent(Tooltip::EventTooltipActive, &GameUI::handle_ToolTip, this);
+    mToolTip->subscribeEvent(Tooltip::EventTooltipActive, &GameUI::handle_ToolTip, this);
 
 
     auto* close = mSelfEquip->getChildRecursive("Packet_Close");

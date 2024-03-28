@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdio>
 #include <string>
 #include <memory>
 #include <vector>
@@ -31,4 +32,15 @@ namespace dy
 	void split_string(const char* str, char sep, std::vector<std::string>& strlist);
 
 	uint64_t StrToUINT64(const char* szBuff);
+
+#ifdef _WIN32
+	std::wstring acsi_to_widebyte(const std::string& assic);
+	std::wstring utf8_to_unicode(const std::string& utf8string);
+	std::string utf8_to_acsi(const std::string& utf8string);
+	std::string unicode_to_acsi(const wchar_t* name);
+	std::string unicode_to_utf8(const std::wstring& strUnicode);
+	std::string acsi_to_utf8(const std::string& strAssic);
+	bool is_str_utf8(const char* str);
+	bool is_str_gbk(const char* str);
+#endif
 }

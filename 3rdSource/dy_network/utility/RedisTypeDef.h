@@ -110,7 +110,6 @@
 	#endif
 	
 	#define getch				_getch
-	#define snprintf			_snprintf
 	#define sleep(s)			Sleep((s)*1000)
 	#define localtime_r(a,b)	localtime_s(b,a)
 

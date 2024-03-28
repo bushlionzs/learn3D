@@ -6,6 +6,8 @@
 #include "QuestWindow.h"
 #include <CEGUIManager.h>
 #include "kplayer.h"
+#include "GameToolTip.h"
+
 template<>
 UIManager* GameSingleton<UIManager>::m_sSingleton = nullptr;
 
@@ -27,6 +29,12 @@ UIManager::~UIManager()
 
 bool UIManager::showWindow(uint32_t winId)
 {
+	auto* tip = CEGUIManager::getSingleton().getToolTip();
+	if (tip == nullptr)
+	{
+		tip = new GameToolTip();
+		CEGUIManager::getSingleton().setToolTip(tip);
+	}
 	UIBase* base = getWindow(winId);
 	CEGUI::Window* widget = base->getView();
 	widget->setVisible(!widget->isVisible());
