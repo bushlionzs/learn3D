@@ -1,4 +1,5 @@
 #include "OgreHeader.h"
+#include "string_util.h"
 #include "KItemEquip.h"
 #include "Basics.h"
 #include "SplitStringLevelOne.h"
@@ -312,4 +313,42 @@ void KItemEquip::CalcEquipBaseAttrByAddStar()
 			m_theBaseDef.m_Base.m_nBase_Def_Magic = m_theBaseDef.pDefineEquip->nBaseDefMagic;
 		}
 	}
+}
+
+const char* getProfessionDesc(int profession)
+{
+	switch (profession)
+	{
+	case 0:
+		return "武士";
+	case 1:
+		return "武士";
+	default:
+		return "不限";
+	}
+}
+std::string KItemEquip::getBasePropertyString()
+{
+	return dy::str_format("等级: %d\n职业: %s\n耐久:", GetItemLevel(), getProfessionDesc(GetItemProfession()));
+
+}
+
+int32 KItemEquip::GetItemProfession()
+{
+	if (m_theBaseDef.pDefineEquip)
+	{
+		return m_theBaseDef.pDefineEquip->nProfessionalReq;
+	}
+
+	return -1;
+}
+
+int32 KItemEquip::GetItemLevel()
+{
+	if (m_pExtraDefine)
+	{
+		return m_pExtraDefine->m_nLevelNeed;
+	}
+
+	return -1;
 }

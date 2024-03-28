@@ -58,6 +58,13 @@ public:
 	{
 		m_nNum = num;
 	}
+
+	virtual std::string getBasePropertyString() { return std::string(); }
+
+	virtual int32 GetItemProfession() { return -1; }
+
+	virtual int32 GetItemLevel() { return 0; }
+
 private:
 	int32_t mRuleId;
 
@@ -68,4 +75,5 @@ private:
 	int32_t m_idTable = -1;
 
 	int32_t m_nNum = 1;
+
 };

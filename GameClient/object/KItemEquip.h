@@ -199,6 +199,12 @@ public:
 	int32_t GetStartLevel();
 	PLAYER_EQUIP GetEquipPoint();
 	void CalcEquipBaseAttrByAddStar();
+
+	virtual std::string getBasePropertyString();
+
+	virtual int32 GetItemProfession();
+
+	virtual int32 GetItemLevel();
 private:
 	/* 区分普通装备和高级装备 */
 	EQUIP_ENUM m_eEquipStyle;

@@ -2768,6 +2768,9 @@ void Player::updateEquip()
 		{
 			equip->add_params(itemData->m_Param[i]);
 		}
+
+		base::SEquipInfo* equipInfo = equip->mutable_equip_info();
+		equipInfo->set_equip_level(itemData->m_Equip.m_Level);
 	}
 
 	NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_DETAIL_EQUIP_LIST, &dummy);

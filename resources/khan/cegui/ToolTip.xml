@@ -24,7 +24,7 @@
 		<Window type="TaharezLook/StaticImage" name="ItemPicture" >
 			<!--Comment	""	-->
 			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
-			<Property name="Size" value="{{0.2,0},{0.2,0}}" />
+			<Property name="Size" value="{{0.3,0},{0.2,0}}" />
 			<Property name="Position" value="{{0.1,0},{0.1,0}}" />			
 			<Property name="Image" value="UI_MainBoard_3/UI_MainBoard_3_Packet_Cover" />
 		</Window>
@@ -33,7 +33,7 @@
 			<!--Comment	""	-->
 			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
 			<Property name="Size" value="{{0.8,0},{0.2,0}}" />
-			<Property name="Position" value="{{0.32,0},{0.1,0}}" />	
+			<Property name="Position" value="{{0.41,0},{0.1,0}}" />	
             <Property name="TextColours" value="FF00FF00" />			
 			<Property name="Text" value="等级: 10
 			职业: 武士
@@ -47,7 +47,7 @@
 		<Window type="TaharezLook/StaticText" name="ItemName" >
 			<!--Comment	""	-->
 			<!--	Left=649, Top=80, Right=1024, Bottom=626	-->
-			<Property name="Size" value="{{0.1,0},{0.1,0}}" />
+			<Property name="Size" value="{{0.2,0},{0.1,0}}" />
 			<Property name="Position" value="{{0.15,0},{0.35,0}}" />	
             <Property name="TextColours" value="FF00FF00" />			
 			<Property name="Text" value="刀" />
