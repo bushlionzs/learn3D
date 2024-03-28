@@ -102,6 +102,7 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 		ImageManager::getSingleton().loadImageset("test.imageset");
 		
 		CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
+		CEGUI::SchemeManager::getSingleton().createFromFile("VanillaSkin.scheme");
 
 		_icon_init();
 
@@ -115,6 +116,7 @@ bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
 
 	auto mNode = mSceneManager->getRoot()->createChildSceneNode("cegui");
 	mNode->attachObject(this);
+
 
 	NOTICE_LOG("CEGUI initialise end");
 	return true;
@@ -162,7 +164,7 @@ void CEGUIManager::_icon_init()
 		if (pos != std::string::npos)
 		{
 			auto itor = mIconsMap.insert(std::make_pair(fullname.substr(pos + 1, fullname.size()), fullname));
-			assert(itor.second);
+			//assert(itor.second);
 		}
 	}
 }

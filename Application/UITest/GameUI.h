@@ -39,6 +39,7 @@ private:
 	void subscribeEvents();
 	bool handle_ItemDropped(const CEGUI::EventArgs& args);
 	bool handle_PackageItemDropped(const CEGUI::EventArgs& args);
+	bool handle_ToolTip(const CEGUI::EventArgs& args);
 	bool handle_MouseEnter(const CEGUI::EventArgs& args);
 	bool handle_MouseLeave(const CEGUI::EventArgs& args);
 	bool handle_ButtonClick(const CEGUI::EventArgs& args);
@@ -54,7 +55,7 @@ private:
 	CEGUI::GUIContext* mGUIContext = nullptr;
 
 	CEGUI::Window* mRoot = nullptr;
-	CEGUI::Window* mToolTip = nullptr;
+	CEGUI::Tooltip* mToolTip = nullptr;
 	CEGUI::Window* mSelfEquip = nullptr;
 
 	GameCamera* mUICamera = nullptr;

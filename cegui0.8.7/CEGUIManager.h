@@ -16,6 +16,8 @@ enum MouseType
 	MouseType_Speak  = 2,
 };
 
+class GameToolTip;
+
 class CEGUIManager : public Ogre::Singleton<CEGUIManager>,
 	public FrameListener,
 	public InputListener,
@@ -67,6 +69,16 @@ public:
 	{
 		return mRoot;
 	}
+
+	void setToolTip(GameToolTip* tip)
+	{
+		mToolTip = tip;
+	}
+
+	GameToolTip* getToolTip()
+	{
+		return mToolTip;
+	}
 	bool isMouseInGUI();
 
 	void ChangeMouseCursor(MouseType type);
@@ -89,4 +101,5 @@ private:
 
 	std::map<Ogre::String, Ogre::String>	mIconsMap;
 
+	GameToolTip* mToolTip = nullptr;
 };

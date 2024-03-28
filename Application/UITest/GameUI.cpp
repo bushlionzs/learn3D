@@ -18,10 +18,13 @@
 #include <CEGUI/InputEvent.h>
 #include <CEGUI/widgets/DragContainer.h>
 #include <CEGUI/CEGUI.h>
+
 #include <platform_file.h>
 #include <OgreRoot.h>
 #include "application_util.h"
 #include "GameTableManager.h"
+#include "ToolTip.h"
+
 using namespace CEGUI;
 
 GameUI::GameUI()
@@ -40,10 +43,11 @@ bool GameUI::appInit()
 	ApplicationBase::appInit();
     InputManager::getSingletonPtr()->addListener(this);
     
-
+    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
     new CGameTableManager;
     CGameTableManager::GetSingleton().Initialize();
     //HelloDemo1();
+    //ToolTipDemo();
     SelfEquipDemo();
     //PackageDemo();
 	return true;
@@ -170,7 +174,7 @@ void GameUI::TooltipDemo()
 
     mGUIContext->setRootWindow(root);
 
-    mToolTip = WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
+    mToolTip = (CEGUI::Tooltip*)WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
     root->addChild(mToolTip);
 }
 
@@ -266,23 +270,38 @@ void GameUI::SelfEquipDemo()
 
     //font.setProperty("TextColor", "FF0000");
     DefaultWindow* aa = (DefaultWindow*)mSelfEquip;
-
-    mGUIContext->setRootWindow(mSelfEquip);
-
+    WindowManager& winMgr = WindowManager::getSingleton();
+    mRoot = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+    mGUIContext->setRootWindow(mRoot);
+    mRoot->addChild(mSelfEquip);
     auto* button = mSelfEquip->getChildRecursive("Packet_Close");
 
-    mToolTip = WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
+    mToolTip = (CEGUI::Tooltip*)WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
+    std::string name = "SelfEquip_";
+    for (int i = 0; i < 20; i++)
+    {
+        std::string fullname = name + std::to_string(i);
+        CEGUI::Window* wnd = nullptr;
+        try
+        {
+            wnd = mSelfEquip->getChildRecursive(fullname);
+            if (wnd)
+            {
+                wnd->setTooltip(mToolTip);
+                wnd->setUserData((void*)(i + 1));
+                wnd->subscribeEvent(Tooltip::EventTooltipActive, &GameUI::handle_ToolTip, this);
+            }
+                
+        }
+        catch (...)
+        {
 
-
-    auto* wnd = mSelfEquip->getChildRecursive("SelfEquip_0");
+        }
+    }
     
-    wnd->subscribeEvent(
-        Window::EventMouseEntersSurface,
-        Event::Subscriber(&GameUI::handle_MouseEnter, this));
 
-    wnd->subscribeEvent(
-        Window::EventMouseLeavesSurface,
-        Event::Subscriber(&GameUI::handle_MouseLeave, this));
+   // mToolTip->subscribeEvent(Tooltip::EventTooltipActive, &GameUI::handle_ToolTip, this);
+
 
     auto* close = mSelfEquip->getChildRecursive("Packet_Close");
     close->subscribeEvent(
@@ -410,20 +429,21 @@ void GameUI::PackageDemo()
     }
 }
 
+bool GameUI::handle_ToolTip(const CEGUI::EventArgs& args)
+{
+
+    CEGUI::Window* wnd = mToolTip->getParent();
+    void* data = wnd->getUserData();
+    mToolTip->setSize(USize(cegui_absdim(300), cegui_absdim(400)));
+    return true;
+}
 bool GameUI::handle_MouseEnter(const CEGUI::EventArgs& args)
 {
-    UVector2 pos(UDim(0.5f, 0), UDim(0.05f, 0));
-    mToolTip->setPosition(pos);
-    mToolTip->setProperty("AlwaysOnTop", "true");
-    mSelfEquip->addChild(mToolTip);
-    mToolTip->show();
     return true;
 }
 
 bool GameUI::handle_MouseLeave(const CEGUI::EventArgs& args)
 {
-   
-    mToolTip->hide();
 
     return true;
 }
@@ -467,18 +487,11 @@ void GameUI::MultiDemo()
 
 void GameUI::ToolTipDemo()
 {
-    WindowManager& winMgr = WindowManager::getSingleton();
-    mGUIContext = CEGUIManager::getSingleton().getGUIContext();
+   
+    
+    auto aa = new ToolTip;
 
-    mRoot = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
-
-    mGUIContext->setRootWindow(mRoot);
-
-    FontManager& fontManager(FontManager::getSingleton());
-    CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
-    mGUIContext->setDefaultFont(&font);
-
-    mToolTip = WindowManager::getSingleton().loadLayoutFromFile("ToolTip.xml");
+    aa->show(0);
 }
 
 void GameUI::MainMenuDemo()
@@ -493,4 +506,6 @@ void GameUI::MainMenuDemo()
     auto* main =  WindowManager::getSingleton().loadLayoutFromFile("quest.xml");
 
     mRoot->addChild(main);
+
+    
 }

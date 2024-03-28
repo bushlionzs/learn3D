@@ -681,7 +681,7 @@ OgreRenderer::OgreRenderer() :
     checkOgreInitialised();
 
     // get auto created window
-    Ogre::RenderWindow* rwnd = CEGUIManager::getSingleton().getRenderWindows();
+    Ogre::RenderWindow* rwnd =  CEGUIManager::getSingleton().getRenderWindows();
     if (!rwnd)
         CEGUI_THROW(RendererException(
             "Ogre was not initialised to automatically create a window, you "

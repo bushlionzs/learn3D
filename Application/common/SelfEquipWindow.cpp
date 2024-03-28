@@ -97,7 +97,6 @@ void SelfEquipWindow::notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTip
 	if (_info.type == MyGUI::ToolTipInfo::Show)
 	{
 		mToolTip->show(10010070);
-		mToolTip->move(_info.point);
 	}
 	else if (_info.type == MyGUI::ToolTipInfo::Hide)
 	{

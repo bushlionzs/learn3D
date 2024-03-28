@@ -70,6 +70,14 @@ SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)
 			equip->subscribeEvent(
 				CEGUI::Window::EventMouseClick,
 				CEGUI::Event::Subscriber(&SelfEquipWindow::handle_EquipClick, this));
+
+			equip->subscribeEvent(
+				CEGUI::Window::EventMouseEntersArea,
+				CEGUI::Event::Subscriber(&SelfEquipWindow::handle_MouseEnter, this));
+
+			equip->subscribeEvent(
+				CEGUI::Window::EventMouseLeavesArea,
+				CEGUI::Event::Subscriber(&SelfEquipWindow::handle_MouseLeave, this));
 		}
 	}
 
@@ -157,6 +165,17 @@ bool SelfEquipWindow::handle_EquipClick(const CEGUI::EventArgs& args)
 
 		NetMessageManager::GetSingleton().sendNetMessage(clientmessage::CS_UNEQUIP, &msg);
 	}
+	return true;
+}
+
+bool SelfEquipWindow::handle_MouseEnter(const CEGUI::EventArgs& args)
+{
+	return true;
+}
+
+bool SelfEquipWindow::handle_MouseLeave(const CEGUI::EventArgs& args)
+{
+
 	return true;
 }
 
