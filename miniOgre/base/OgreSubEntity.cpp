@@ -37,9 +37,9 @@ namespace Ogre {
         return mSubMesh->getIndexView();
     }
 
-    RawData* SubEntity::getShaderConstantData(uint32_t index)
+    RawData* SubEntity::getSkinnedData(uint32_t dummy)
     {
-        return mParentEntity->getShaderConstantData(index);
+        return mParentEntity->getSkinnedData(dummy);
     }
 
     const std::shared_ptr<Material>& SubEntity::getMaterial()

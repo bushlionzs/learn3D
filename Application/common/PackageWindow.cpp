@@ -19,9 +19,6 @@ PackageWindow::PackageWindow() :
 	mImageBackgroudCover->setItemSelect(0);
 
 
-	mToolTip = new ToolTip();
-	mToolTip->hide();
-
 	mItemList.emplace_back();
 
 	auto& back = mItemList.back();
@@ -67,14 +64,7 @@ PackageWindow::PackageWindow() :
 
 void PackageWindow::notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo& _info)
 {
-	if (_info.type == MyGUI::ToolTipInfo::Show)
-	{
-		
-	}
-	else if (_info.type == MyGUI::ToolTipInfo::Hide)
-	{
-		mToolTip->hide();
-	}
+
 	
 }
 

@@ -229,7 +229,7 @@ namespace Ogre {
 		b->scale(ti.scale);
 	}
 
-	RawData* SkeletonInstance::getShaderConstantData(uint32_t index)
+	RawData* SkeletonInstance::getSkinnedData(uint32_t dummy)
 	{
 		if (mOgre)
 			mRawData.mData = (const char*)mBoneTransformsOgre.data();

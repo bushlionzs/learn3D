@@ -30,7 +30,7 @@ namespace Ogre {
         void setMirror(bool mirror);
 
         virtual void update(float delta);
-        RawData* getShaderConstantData(uint32_t index);
+        RawData* getSkinnedData(uint32_t dummy);
         VertexData* getVertexData();
         IndexData* getIndexData();
 

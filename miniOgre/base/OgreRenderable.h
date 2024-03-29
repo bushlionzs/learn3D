@@ -48,7 +48,7 @@ namespace Ogre {
             return nullptr;
         }
 
-        virtual RawData* getShaderConstantData(uint32_t index)
+        virtual RawData* getSkinnedData(uint32_t dummy = 0)
         {
             return nullptr;
         }

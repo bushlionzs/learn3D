@@ -18,7 +18,7 @@ namespace Ogre {
 
         virtual IndexDataView* getIndexView();
 
-        virtual RawData* getShaderConstantData(uint32_t index);
+        virtual RawData* getSkinnedData(uint32_t dummy);
 
         virtual const std::shared_ptr<Material>& getMaterial();
 

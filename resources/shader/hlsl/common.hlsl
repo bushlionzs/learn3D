@@ -72,14 +72,6 @@ cbuffer cbPass : register(b1)
 #ifdef PBR
 cbuffer pbrMaterial : register(b2)
 {
-	int mAlbedoIndex;
-    int mAmbientOcclusionIndex;
-    int mNormalMapIndex;
-    int mEmissiveIndex;
-    int mMetalRoughnessIndex;
-    int mBrdfLutIndex;
-    int mIBLDiffuseIndex;
-    int mIBLSpecularIndex;
     //some constance value;
     float2 u_MetallicRoughnessValues;
 	float u_OcclusionStrength;

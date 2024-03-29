@@ -3,7 +3,7 @@
 
 #include <MyGUI.h>
 #include "BaseLayout/BaseLayout.h"
-#include "ToolTip.h"
+
 
 
 class SelfEquipWindow :
@@ -39,7 +39,7 @@ private:
 	MyGUI::ImageBox* mImageClose;
 	MyGUI::ImageBox* mImageHelp;
 	MyGUI::ImageBox* mImageModel;
-	ToolTip* mToolTip;
+
 
 	bool mDragging = false;
 	MyGUI::IntPoint mDragOffset;

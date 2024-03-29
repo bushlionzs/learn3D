@@ -7,7 +7,7 @@
 
 
 #define VULKAN_FRAME_RESOURCE_COUNT 3
-#define VULKAN_TEXTURE_COUNT 4
+#define VULKAN_TEXTURE_COUNT 6
 #define VULKAN_COMMAND_THREAD 4
 
 struct SwapChainBuffer

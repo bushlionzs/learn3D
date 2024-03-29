@@ -155,9 +155,7 @@ struct VertexIn
 {
 	float3 PosL    : POSITION;
     float3 NormalL : NORMAL;
-#ifdef HAS_TANGENTS
 	float3 TangentL : TANGENT;
-#endif
 	float2 TexC    : TEXCOORD;
 };
 
@@ -167,9 +165,7 @@ struct VertexOut
 	float4 ShadowPosH : POSITION0;
     float3 PosW    : POSITION1;
     float3 NormalW : NORMAL;
-#ifdef HAS_TANGENTS
 	float3 TangentW : TANGENT;
-#endif
 	float2 v_UV    : TEXCOORD;
 };
 
@@ -182,9 +178,7 @@ VertexOut VS(VertexIn vIn)
     vOut.PosH = mul(gViewProj, posW);
     vOut.PosW = posW.xyz;
     vOut.NormalW = mul((float3x3) gWorld, vIn.NormalL);
-#ifdef HAS_TANGENTS
 	vOut.TangentW = mul((float3x3)gWorld, vIn.TangentL);
-#endif
     vOut.v_UV = vIn.TexC;
 	vOut.ShadowPosH = mul(gShadowTransform, posW);
 	
@@ -267,8 +261,9 @@ float4 PS(VertexOut pin) : SV_Target
     // Calculation of analytical lighting contribution
     float3 diffuseContrib = (1.0 - F) * diffuse(pbrInputs);
     float3 specContrib = F * G * D / (4.0 * pbrInputs.NdotL * pbrInputs.NdotV);
-    float3 color = pbrInputs.NdotL * u_LightColor * (diffuseContrib + specContrib);
-	
+	float3 middle = diffuseContrib + specContrib;
+    float3 color = pbrInputs.NdotL *  middle;
+	return float4(color, 1.0f);
     // Calculate lighting contribution from image based lighting source (IBL)
 #ifdef USE_IBL
 	float3 ibl = getIBLContribution(pbrInputs, n, reflection);

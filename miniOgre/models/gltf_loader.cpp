@@ -20,6 +20,7 @@ struct GltfVertex
 {
     Ogre::Vector3 Pos;
     Ogre::Vector3 Normal;
+    Ogre::Vector3 Tangent;
     Ogre::Vector2 TexC;
 };
 
@@ -88,17 +89,20 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             {
                 Vertex_Position = 0,
                 Vertex_Normal = 1,
-                Vertex_TextureCoord = 2,
-                Vertex_Weight = 3,
-                Vertex_Joint = 4
+                Vertex_Tangent = 2,
+                Vertex_TextureCoord = 3,
+                Vertex_Weight = 4,
+                Vertex_Joint = 5,
+                
             };
             slotMap["POSITION"] = Vertex_Position;
             slotMap["NORMAL"] = Vertex_Normal;
             slotMap["TEXCOORD_0"] = Vertex_TextureCoord;
             slotMap["WEIGHTS_0"] = Vertex_Weight;
             slotMap["JOINTS_0"] = Vertex_Joint;
+            slotMap["TANGENT"] = Vertex_Tangent;
 
-            std::vector<RawData> vertexData(5);
+            std::vector<RawData> vertexData(6);
             for (auto& itor : vertexData)
             {
                 itor.mData = nullptr;
@@ -189,13 +193,17 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
 
             float* gltfPosition = (float*)vertexData[Vertex_Position].mData;
             float* gltfNormal   = (float*)vertexData[Vertex_Normal].mData;
+            float* gltfTangent = (float*)vertexData[Vertex_Tangent].mData;
             float* gltfTexture  = (float*)vertexData[Vertex_TextureCoord].mData;
+            
             for (int32_t i = 0; i < positionCount; i++)
             {
                 mVertexBuffer[i].Pos = Ogre::Vector3(gltfPosition[0], gltfPosition[1], gltfPosition[2]);
                 mVertexBuffer[i].Normal = Ogre::Vector3(gltfNormal[0], gltfNormal[1], gltfNormal[2]);
+                mVertexBuffer[i].Tangent = Ogre::Vector3(gltfTangent[0], gltfTangent[1], gltfTangent[2]);
                 gltfPosition += 3;
                 gltfNormal += 3;
+                gltfTangent += 3;
                 if (gltfTexture)
                 {
                     mVertexBuffer[i].TexC = Ogre::Vector2(gltfTexture[0], gltfTexture[1]);
@@ -209,7 +217,8 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 mVertexBuffer.size() * sizeof(GltfVertex));
             vd->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
             vd->vertexDeclaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-            vd->vertexDeclaration->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+            vd->vertexDeclaration->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
+            vd->vertexDeclaration->addElement(0, 0, 36, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
             VertexBoneAssignment assignInfo;
             if (weightCount)
@@ -290,17 +299,72 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             indexData->createBuffer(4, indexData->mIndexCount);
             indexData->writeData((const char*)indices.data(), 4 * indexData->mIndexCount);
             
-            
+            ShaderInfo sinfo;
+            sinfo.shaderName = "pbr";
             
             const tinygltf::Material& tinyMat = model.materials[prim.material];
             
-            int32_t texIndex = tinyMat.pbrMetallicRoughness.baseColorTexture.index;
-            const tinygltf::Image& tinyImage = model.images[model.textures[texIndex].source];
-            ShaderInfo sinfo;
-            sinfo.shaderName = "basic";
+            
+            
+            
            // sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
-            auto mat = Ogre::MaterialManager::getSingletonPtr()->create(mesh.name);
-            mat->addTexture(tinyImage.uri);
+            std::shared_ptr<Material> mat = Ogre::MaterialManager::getSingletonPtr()->create(tinyMat.name, true);
+            TextureProperty tp;
+            int32_t baseColorIndex = tinyMat.pbrMetallicRoughness.baseColorTexture.index;
+            if (baseColorIndex >= 0)
+            {
+                const tinygltf::Image& baseColorImage = model.images[model.textures[baseColorIndex].source];
+                
+                tp._pbrType = TextureTypePbr_Albedo;
+                mat->addTexture(baseColorImage.uri, &tp);
+                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_BASECOLORMAP", "1"));
+            }
+            
+
+            int32_t occlusionIndex = tinyMat.occlusionTexture.index;
+            if (occlusionIndex >= 0)
+            {
+                const tinygltf::Image& occlusionImage = model.images[model.textures[occlusionIndex].source];
+                tp._pbrType = TextureTypePbr_AmbientOcclusion;
+                mat->addTexture(occlusionImage.uri, &tp);
+                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_OCCLUSIONMAP", "1"));
+            }
+            
+
+            int32_t normalIndex = tinyMat.normalTexture.index;
+            if (normalIndex >= 0)
+            {
+                const tinygltf::Image& normalImage = model.images[model.textures[normalIndex].source];
+                tp._pbrType = TextureTypePbr_NormalMap;
+                mat->addTexture(normalImage.uri, &tp);
+            }
+            
+
+            int32_t metallicRoughnessIndex = tinyMat.pbrMetallicRoughness.metallicRoughnessTexture.index;
+            if (metallicRoughnessIndex >= 0)
+            {
+                const tinygltf::Image& metallicRoughnessImage = model.images[model.textures[metallicRoughnessIndex].source];
+                tp._pbrType = TextureTypePbr_MetalRoughness;
+                mat->addTexture(metallicRoughnessImage.uri, &tp);
+                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_METALROUGHNESSMAP", "1"));
+            }
+            
+
+            int32_t emissiveIndex = tinyMat.emissiveTexture.index;
+            if (emissiveIndex >= 0)
+            {
+                const tinygltf::Image& emissiveImage = model.images[model.textures[emissiveIndex].source];
+                tp._pbrType = TextureTypePbr_Emissive;
+                mat->addTexture(emissiveImage.uri, &tp);
+                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_EMISSIVEMAP", "1"));
+            }
+
+            
+
+            
+
+            
+            sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("PBR", "1"));
             mat->addShader(sinfo);
 
             subMesh->addIndexs(indices.size(), 0, 0);

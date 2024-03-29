@@ -9,7 +9,7 @@ namespace Ogre {
 	public:
 		SkeletonInstance(std::shared_ptr<Skeleton>& skeleton);
 
-		RawData* getShaderConstantData(uint32_t index);
+		RawData* getSkinnedData(uint32_t dummy);
 
 		void resetBones();
 

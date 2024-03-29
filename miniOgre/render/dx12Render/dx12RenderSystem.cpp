@@ -148,7 +148,7 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	}
 	
 
-	RawData* rd = r->getShaderConstantData(2);
+	RawData* rd = r->getSkinnedData(2);
 	if (rd)
 	{
 		mCurrentPass.mDx12RenderableData->updateSkinedConstanctBuffer(rd);

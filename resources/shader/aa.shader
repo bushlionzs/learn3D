@@ -318,8 +318,8 @@ shader pbr
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader wowterrain.glsl vs
-		frag_shader wowterrain.glsl ps
+		vertex_shader pbr.glsl vs
+		frag_shader pbr.glsl ps
 	 }
 }
 

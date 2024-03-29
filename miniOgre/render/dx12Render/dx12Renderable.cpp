@@ -313,33 +313,6 @@ void Dx12RenderableData::buildCommonMaterial(Material* mat)
 //TextureType_IBL_Specular = 7
 void Dx12RenderableData::updatePbrTextureIndex(Ogre::TextureProperty* texProperty, uint32_t index)
 {
-	switch (texProperty->_pbrType)
-	{
-	case TextureTypePbr_Albedo:
-		mPbrMaterialConstanceBuffer.mAlbedoIndex = index;
-		break;
-	case TextureTypePbr_NormalMap:
-		mPbrMaterialConstanceBuffer.mNormalMapIndex = index;
-		break;
-	case TextureTypePbr_Emissive:
-		mPbrMaterialConstanceBuffer.mEmissiveIndex = index;
-		break;
-	case TextureTypePbr_MetalRoughness:
-		mPbrMaterialConstanceBuffer.mMetalRoughnessIndex = index;
-		break;
-	case TextureTypePbr_BRDF_LUT:
-		mPbrMaterialConstanceBuffer.mBrdfLutIndex = index;
-		break;
-	case TextureTypePbr_IBL_Diffuse:
-		mPbrMaterialConstanceBuffer.mIBLDiffuseIndex = index;
-		break;
-	case TextureTypePbr_IBL_Specular:
-		mPbrMaterialConstanceBuffer.mIBLSpecularIndex = index;
-		break;
-	default:
-		assert(false);
-		break;
-	}
 }
 
 int32_t Dx12RenderableData::getTexStartIndex()

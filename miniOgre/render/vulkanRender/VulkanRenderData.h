@@ -11,15 +11,15 @@ class VulkanFrameRenderableData
 public:
 	VulkanObjectDesc mObjectDesc;
 	VulkanObjectDesc mMaterialDesc;
+	VulkanObjectDesc mPBRMaterialDesc;
 	VulkanObjectDesc mSkinnedDesc;
 
 	ObjectConstantBuffer mObjectConstantBuffer;
 	MaterialConstantBuffer mMaterialConstantBuffer;
+	PbrMaterialConstanceBuffer mPBRMaterialConstantBuffer;
 	VkDescriptorSet mDescriptorSet;
 	bool mDescriptorSetUpdate = false;
 
-public:
-	void _initialise();
 };
 
 class VulkanRenderableData: public RenderableData

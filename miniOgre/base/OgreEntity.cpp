@@ -89,14 +89,14 @@ namespace Ogre {
         }
     }
 
-    RawData* Entity::getShaderConstantData(uint32_t index)
+    RawData* Entity::getSkinnedData(uint32_t dummy)
     {
         if (!mSkeletonInstance)
         {
             return nullptr;
         }
 
-        return mSkeletonInstance->getShaderConstantData(index);
+        return mSkeletonInstance->getSkinnedData(dummy);
     }
 
     VertexData* Entity::getVertexData()

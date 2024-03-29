@@ -37,8 +37,6 @@ SelfEquipWindow::SelfEquipWindow() :
 	mImageClose->eventToolTip += MyGUI::newDelegate(this, &SelfEquipWindow::notifyToolTip);
 
 
-	mToolTip = new ToolTip();
-	mToolTip->hide();
 
 	mImageEquip->eventMouseButtonPressed += MyGUI::newDelegate(this, &SelfEquipWindow::onWindowMouseButtonPressed);
 	mImageEquip->eventMouseDrag += MyGUI::newDelegate(this, &SelfEquipWindow::onWindowMouseDrag);
@@ -94,14 +92,7 @@ void SelfEquipWindow::onWindowMouseButtonReleased(
 
 void SelfEquipWindow::notifyToolTip(MyGUI::Widget* _sender, const MyGUI::ToolTipInfo& _info)
 {
-	if (_info.type == MyGUI::ToolTipInfo::Show)
-	{
-		mToolTip->show(10010070);
-	}
-	else if (_info.type == MyGUI::ToolTipInfo::Hide)
-	{
-		mToolTip->hide();
-	}
+
 
 }
 

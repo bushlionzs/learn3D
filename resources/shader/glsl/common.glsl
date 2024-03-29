@@ -46,7 +46,20 @@ layout(binding = 1) uniform CBPASS {
     vec4 gAmbientLight;
 	Light gLights[MaxLights];
 } cbPass;
-
+#ifdef PBR
+layout(binding = 2) uniform CBMATERIAL {
+    //some constance value;
+    vec2 u_MetallicRoughnessValues;
+	float u_OcclusionStrength;
+	float pad1;
+    vec3 u_EmissiveFactor;
+	float pad2;
+	vec4 u_BaseColorFactor;
+	vec4 u_ScaleIBLAmbient;
+    mat4 gTexScale;
+	mat4 gTexTransform;
+} pbrMaterial;
+#else
 layout(binding = 2) uniform CBMATERIAL {
     vec4   gDiffuseAlbedo;
     vec3   gFresnelR0;
@@ -58,7 +71,7 @@ layout(binding = 2) uniform CBMATERIAL {
 	uint   MatPad1;
 	uint   MatPad2;
 } cbMaterial;
-
+#endif// PBR
 #ifdef SKINNED
 layout(binding = 5) uniform CBSKINNED {
     mat4 gBoneTransforms[100];
@@ -66,4 +79,4 @@ layout(binding = 5) uniform CBSKINNED {
 #endif
 
 layout (binding = 3) uniform samplerCube gCubeMap;
-layout(binding = 4) uniform sampler2D gTextureArray[4];
+layout(binding = 4) uniform sampler2D gTextureArray[6];

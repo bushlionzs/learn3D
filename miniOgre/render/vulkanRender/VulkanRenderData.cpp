@@ -55,7 +55,7 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
     pool.updateObject(
         current.mObjectDesc, (const char*)&current.mObjectConstantBuffer, sizeof(current.mObjectConstantBuffer));
 
-    RawData* rd = _r->getShaderConstantData(2);
+    RawData* rd = _r->getSkinnedData(2);
     if (rd)
     {
         if (current.mSkinnedDesc._vkObjectIndex == 0)
@@ -72,10 +72,21 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
             unit->getTextureTransform().transpose();
     }
 
-    pool.updateObject(
-        current.mMaterialDesc, 
-        (const char*)&current.mMaterialConstantBuffer, 
-        sizeof(current.mMaterialConstantBuffer));
+    if (mat->isPbr())
+    {
+        pool.updateObject(
+            current.mPBRMaterialDesc,
+            (const char*)&current.mPBRMaterialConstantBuffer,
+            sizeof(current.mPBRMaterialConstantBuffer));
+    }
+    else
+    {
+        pool.updateObject(
+            current.mMaterialDesc,
+            (const char*)&current.mMaterialConstantBuffer,
+            sizeof(current.mMaterialConstantBuffer));
+    }
+    
 
     VkDescriptorBufferInfo frameDescriptor = {};
     mEngine->_getCurrentFrame()->updateFrameDescriptor(frameDescriptor, cam);
@@ -104,49 +115,87 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
 
     std::vector<VkDescriptorImageInfo> textureDescriptors3d;
 
-    textureDescriptors.reserve(VULKAN_TEXTURE_COUNT);
+    uint32_t tex_count = VULKAN_TEXTURE_COUNT;
 
 
-    for (int32_t i = 0; i < texs.size(); i++)
+    textureDescriptors.reserve(tex_count);
+
+    if (mat->isPbr())
     {
-        if (texs[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
-            continue;
-        VulkanTexture* tex = (VulkanTexture*)texs[i]->getRaw();
+        auto texs = mat->getAllTexureUnit();
+        textureDescriptors.resize(tex_count);
+        for (int32_t i = 0; i < texs.size(); i++)
+        {
+            VulkanTexture* tex = (VulkanTexture*)texs[i]->getRaw();
+            TextureProperty* tp = texs[i]->getTextureProperty();
+            uint32_t index = tp->_pbrType - TextureTypePbr_Albedo;
+            VkDescriptorImageInfo& textureDescriptor = textureDescriptors[index];
+            
+            textureDescriptor.imageView = tex->getImageView();
+            textureDescriptor.sampler = tex->getSampler();
+            textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        }
 
-        textureDescriptors.emplace_back();
-        VkDescriptorImageInfo& textureDescriptor = textureDescriptors.back();
-        textureDescriptor.imageView = tex->getImageView();
-        textureDescriptor.sampler = tex->getSampler();
-        textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    }
-
-    for (int32_t i = 0; i < texs.size(); i++)
-    {
-        if (texs[i]->getTextureProperty()->_texType != TEX_TYPE_CUBE_MAP)
-            continue;
-        VulkanTexture* tex = (VulkanTexture*)texs[i]->getRaw();
-
-        textureDescriptors3d.emplace_back();
-        VkDescriptorImageInfo& textureDescriptor = textureDescriptors3d.back();
-        textureDescriptor.imageView = tex->getImageView();
-        textureDescriptor.sampler = tex->getSampler();
-        textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    }
-
-    int32_t start = textureDescriptors.size();
-    if (start < VULKAN_TEXTURE_COUNT)
-    {
         auto defaultTex = VulkanHelper::getSingleton().getDefaultTexture();
         VulkanTexture* tex = (VulkanTexture*)defaultTex.get();
-        for (int32_t i = start; i < VULKAN_TEXTURE_COUNT; i++)
+        for (int32_t i = 0; i < textureDescriptors.size(); i++)
         {
+            VkDescriptorImageInfo& textureDescriptor = textureDescriptors[i];
+            if (textureDescriptor.imageView == nullptr)
+            {
+                textureDescriptor.imageView = tex->getImageView();
+                textureDescriptor.sampler = tex->getSampler();
+                textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            }
+        }
+
+    }
+    else
+    {
+        for (int32_t i = 0; i < texs.size(); i++)
+        {
+            if (texs[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
+                continue;
+            VulkanTexture* tex = (VulkanTexture*)texs[i]->getRaw();
+
             textureDescriptors.emplace_back();
             VkDescriptorImageInfo& textureDescriptor = textureDescriptors.back();
             textureDescriptor.imageView = tex->getImageView();
             textureDescriptor.sampler = tex->getSampler();
             textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         }
+
+        for (int32_t i = 0; i < texs.size(); i++)
+        {
+            if (texs[i]->getTextureProperty()->_texType != TEX_TYPE_CUBE_MAP)
+                continue;
+            VulkanTexture* tex = (VulkanTexture*)texs[i]->getRaw();
+
+            textureDescriptors3d.emplace_back();
+            VkDescriptorImageInfo& textureDescriptor = textureDescriptors3d.back();
+            textureDescriptor.imageView = tex->getImageView();
+            textureDescriptor.sampler = tex->getSampler();
+            textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        }
+
+        int32_t start = textureDescriptors.size();
+        if (start < tex_count)
+        {
+            auto defaultTex = VulkanHelper::getSingleton().getDefaultTexture();
+            VulkanTexture* tex = (VulkanTexture*)defaultTex.get();
+            for (int32_t i = start; i < tex_count; i++)
+            {
+                textureDescriptors.emplace_back();
+                VkDescriptorImageInfo& textureDescriptor = textureDescriptors.back();
+                textureDescriptor.imageView = tex->getImageView();
+                textureDescriptor.sampler = tex->getSampler();
+                textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            }
+        }
     }
+    
+
+    
 
     VkDescriptorBufferInfo bufferDescriptor = {};
 
@@ -157,16 +206,19 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
     bufferDescriptor.range = sizeof(ObjectConstantBuffer);
 
     VkDescriptorBufferInfo materialDescriptor = {};
-    auto materialInfo = pool.getObjectInfo(current.mMaterialDesc);
+    VulkanBufferInfo materialInfo;
+    if (mat->isPbr())
+    {
+        materialInfo = pool.getObjectInfo(current.mPBRMaterialDesc);
+    }
+    else
+    {
+        materialInfo = pool.getObjectInfo(current.mMaterialDesc);
+    }
+
     materialDescriptor.buffer = materialInfo._vulkanBuffer;
     materialDescriptor.offset = materialInfo._offset;
     materialDescriptor.range = sizeof(MaterialConstantBuffer);
-
-   
-    
-
-
-
 
     std::vector<VkWriteDescriptorSet> writeDescriptorSets =
     {
@@ -311,6 +363,7 @@ void VulkanRenderableData::buildInitData()
         VulkanObjectPool& pool = frame->getObjectPool();
         current.mObjectDesc = pool.allocObject(VulkanObject_ObjectCB);
         current.mMaterialDesc = pool.allocObject(VulkanObject_MaterialCB);
+        current.mPBRMaterialDesc = pool.allocObject(VulkanObject_PBRMaterialCB);
         current.mSkinnedDesc._vkObjectType = VulkanObject_SkinnedCB;
 
         auto result = vkAllocateDescriptorSets(mDevice, &allocInfo, &current.mDescriptorSet);

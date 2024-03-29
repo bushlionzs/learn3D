@@ -1,7 +1,6 @@
 #pragma once
 #include <MyGUI.h>
 #include "BaseLayout/BaseLayout.h"
-#include "ToolTip.h"
 
 struct PackageItemInfo
 {
@@ -42,7 +41,6 @@ private:
 	MyGUI::ImageBox* mImageBackgroud;
 	MyGUI::ImageBox* mImageBackgroudCover;
 	std::vector<PackageItemInfo> mItemList;
-	ToolTip* mToolTip;
 	bool mDragging = false;
 	MyGUI::IntPoint mDragOffset;
 };

@@ -77,7 +77,7 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 	
 	
 
-	RawData* rd = pass._render->getShaderConstantData(2);
+	RawData* rd = pass._render->getSkinnedData(2);
 	if (rd)
 	{
 		mSkinnedCB->CopyData(rd->mData, rd->mDataSize);
@@ -152,7 +152,7 @@ void Dx11RenderableData::applyMaterialTexture(Material* mat)
 			Dx11Texture* current = (Dx11Texture*)texs[i]->getRaw();
 			ID3D11ShaderResourceView* texView = current->getResourceView();
 
-			TextureProperty* tp = current->getTextureProperty();
+			TextureProperty* tp = texs[i]->getTextureProperty();
 
 			if (current->isCubeTexture())
 			{

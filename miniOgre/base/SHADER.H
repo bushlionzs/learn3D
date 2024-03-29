@@ -72,15 +72,6 @@ struct MaterialConstantBuffer
 
 struct PbrMaterialConstanceBuffer
 {
-    //image index
-    int32_t mAlbedoIndex = -1;
-    int32_t mAmbientOcclusionIndex = -1;
-    int32_t mNormalMapIndex = -1;
-    int32_t mEmissiveIndex = -1;
-    int32_t mMetalRoughnessIndex = -1;
-    int32_t mBrdfLutIndex = -1;
-    int32_t mIBLDiffuseIndex = -1;
-    int32_t mIBLSpecularIndex = -1;
     //some constance value;
     Ogre::Vector2 u_MetallicRoughnessValues = {1.0f, 1.0f};
     Real u_OcclusionStrength = 1.0f;
