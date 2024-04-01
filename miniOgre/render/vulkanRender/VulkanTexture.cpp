@@ -122,6 +122,10 @@ void VulkanTexture::postLoad()
         );
     }
 
+    if (mNeedMipmaps)
+    {
+        //generate mipmap
+    }
 }
 
 void VulkanTexture::createImage(
@@ -134,21 +138,30 @@ void VulkanTexture::createImage(
     VkImage& image,
     VkDeviceMemory& imageMemory)
 {
-    uint32_t numMips = mTextureProperty._numMipmaps + 1;
+    uint32_t mipLevels = mTextureProperty._numMipmaps + 1;
+
+    /*if (mTextureProperty._numMipmaps == 0)
+    {
+        auto current = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
+
+        if (current > mipLevels)
+        {
+            mNeedMipmaps = true;
+        }
+    }*/
+
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     imageInfo.imageType = VK_IMAGE_TYPE_2D;
     
-    imageInfo.extent.width = width;
-    imageInfo.extent.height = height;
-    imageInfo.extent.depth = 1;
-    imageInfo.mipLevels = numMips;
+    imageInfo.extent = { width, height, 1 };
+
+    imageInfo.mipLevels = mipLevels;
     imageInfo.arrayLayers = mFace;
     imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-        VK_IMAGE_USAGE_SAMPLED_BIT;
+    imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT  | VK_IMAGE_USAGE_SAMPLED_BIT;
 
     if (mUsage & Ogre::TU_RENDERTARGET)
     {

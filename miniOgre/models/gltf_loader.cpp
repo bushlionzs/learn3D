@@ -203,7 +203,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 mVertexBuffer[i].Tangent = Ogre::Vector3(gltfTangent[0], gltfTangent[1], gltfTangent[2]);
                 gltfPosition += 3;
                 gltfNormal += 3;
-                gltfTangent += 3;
+                gltfTangent += 4;
                 if (gltfTexture)
                 {
                     mVertexBuffer[i].TexC = Ogre::Vector2(gltfTexture[0], gltfTexture[1]);

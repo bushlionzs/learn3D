@@ -478,7 +478,7 @@ void VulkanHelper::createCommandPool()
     }
 
     
-
+#ifdef MULTI_RENDER
     mCommandPools.resize(VULKAN_COMMAND_THREAD * VULKAN_FRAME_RESOURCE_COUNT);
 
     for (uint32_t i = 0; i < mCommandPools.size(); i++)
@@ -495,7 +495,7 @@ void VulkanHelper::createCommandPool()
                 1);
         vkAllocateCommandBuffers(mVKDevice, &cmdBufAllocateInfo, &mCommandPools[i]._commandBuffer);
     }
-
+#endif
 
     
 
@@ -911,25 +911,14 @@ void VulkanHelper::createSamples()
     samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerInfo.mipLodBias = 0.0f;
-    samplerInfo.minLod = 0.0f;
-    samplerInfo.maxLod = FLT_MAX;
-    samplerInfo.compareEnable = VK_TRUE;
-    samplerInfo.compareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
+    samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
+    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+    samplerInfo.maxAnisotropy = 1.0;
+    samplerInfo.anisotropyEnable = VK_FALSE;
+    samplerInfo.maxLod = (float)1;
+    samplerInfo.maxAnisotropy = 8.0f;
+    samplerInfo.anisotropyEnable = VK_TRUE;
 
-
-    VkPhysicalDeviceProperties& properties = _getVkPhysicalDeviceProperties();
-    VkPhysicalDeviceFeatures& features = _getVkPhysicalDeviceFeatures();
-    if (features.samplerAnisotropy)
-    {
-        samplerInfo.anisotropyEnable = VK_TRUE;
-        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
-    }
-    else
-    {
-        samplerInfo.maxAnisotropy = 1.0;
-        samplerInfo.anisotropyEnable = VK_FALSE;
-    }
 
     if (vkCreateSampler(mVKDevice, &samplerInfo, nullptr, &samplerStateAnisotropicWrap) != VK_SUCCESS)
     {
@@ -951,19 +940,8 @@ void VulkanHelper::createSamples()
     samplerInfo.maxLod = FLT_MAX;
     samplerInfo.compareEnable = VK_TRUE;
     samplerInfo.compareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
-
-
-
-    if (features.samplerAnisotropy)
-    {
-        samplerInfo.anisotropyEnable = VK_TRUE;
-        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
-    }
-    else
-    {
-        samplerInfo.maxAnisotropy = 1.0;
-        samplerInfo.anisotropyEnable = VK_FALSE;
-    }
+    samplerInfo.maxAnisotropy = 8.0f;
+    samplerInfo.anisotropyEnable = VK_TRUE;
 
     if (vkCreateSampler(mVKDevice, &samplerInfo, nullptr, &samplerStateAnisotropicClamp) != VK_SUCCESS)
     {
@@ -1207,8 +1185,6 @@ void VulkanHelper::copyBufferToImage(
     VkImage image, 
     ITexture* tex)
 {
-
-    
     uint32_t mipLevels = tex->getSourceMipmaps() + 1;
     uint32_t face_count = tex->getFace();
     VkCommandBuffer commandBuffer = beginSingleTimeCommands();
@@ -1266,6 +1242,11 @@ void VulkanHelper::copyBufferToImage(
     endSingleTimeCommands(commandBuffer);
 }
 
+
+void VulkanHelper::generateMipmaps(VulkanTexture* tex)
+{
+
+}
 
 VulkanDepthStencil VulkanHelper::createDepthStencil(uint32_t width, uint32_t height)
 {
@@ -1406,6 +1387,7 @@ void VulkanHelper::_resetCommandBuffer(uint32_t frame_index)
 
 void VulkanHelper::_endCommandBuffer(uint32_t frame_index)
 {
+#ifdef MULTI_RENDER
     std::vector<VkCommandBuffer> commandBuffers;
     commandBuffers.reserve(VULKAN_COMMAND_THREAD);
     for (uint32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
@@ -1420,7 +1402,7 @@ void VulkanHelper::_endCommandBuffer(uint32_t frame_index)
     }
 
     vkCmdExecuteCommands(mMainCommandBuffer[frame_index], commandBuffers.size(), commandBuffers.data());
-
+#endif
     vkCmdEndRenderPass(mMainCommandBuffer[frame_index]);
     if (vkEndCommandBuffer(mMainCommandBuffer[frame_index]) != VK_SUCCESS)
     {
@@ -1436,11 +1418,13 @@ void VulkanHelper::fillCommandBufferList(
     cmdlist.clear();
     if(have_main)
         cmdlist.push_back(mMainCommandBuffer[frame_index]);
+#ifdef MULTI_RENDER
     for (uint32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
     {
         uint32_t start = frame_index * VULKAN_COMMAND_THREAD + i;
         cmdlist.push_back(mCommandPools[start]._commandBuffer);
     }
+#endif
 }
 
 VkCommandBuffer VulkanHelper::getMainCommandBuffer(uint32_t frame_index)

@@ -92,7 +92,7 @@ void VulkanRenderSystem::frameStart()
     secondBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
 
 
-    auto result = vkBeginCommandBuffer(cmdlist[0], &secondBufferBeginInfo);
+    auto result = vkBeginCommandBuffer(cmdlist[0], &cmdBeginInfo);
 
     if (result != VK_SUCCESS)
     {
@@ -250,6 +250,7 @@ struct ParallelTaskSet : public enki::IPinnedTask
 
 void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread)
 {
+    multithread = false;
     for (auto r : objs)
     {
         VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
@@ -273,8 +274,8 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
         for (auto r : objs)
         {
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-            VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
-           // VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
+            //VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
+            VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
             rd->render(mCurrentVulkanFrame, commandBuffer);
         }
         return;

@@ -18,6 +18,7 @@ struct SwapChainBuffer
 
 class VulkanRenderSystem;
 class VulkanFrame;
+class VulkanTexture;
 
 struct CommandHelper
 {
@@ -61,6 +62,7 @@ public:
         VkBuffer buffer,
         VkImage image,
         ITexture* tex);
+    void generateMipmaps(VulkanTexture* tex);
 
     VulkanDepthStencil createDepthStencil(uint32_t width, uint32_t height);
 

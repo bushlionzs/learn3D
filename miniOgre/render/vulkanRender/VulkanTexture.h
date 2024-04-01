@@ -30,7 +30,6 @@ public:
         return mTextureSampler;
     }
 
-    
 
     void updateTextureData();
     void* getVulkanBuffer(uint32_t offset);
@@ -68,4 +67,6 @@ private:
     VkSampler mTextureSampler;
 
     VkFormat mVulkanFormat;
+
+    bool mNeedMipmaps = false;
 };

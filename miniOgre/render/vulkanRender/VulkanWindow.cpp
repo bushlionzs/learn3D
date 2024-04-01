@@ -136,10 +136,10 @@ void VulkanWindow::preRender(VulkanFrame* frame, const ColourValue& colour)
 
     if (!mHaveRenderPass)
     {
-        //vkCmdSetViewport(cmdlist[0], 0, 1, &viewport);
-        //vkCmdSetScissor(cmdlist[0], 0, 1, &scissor);
+        vkCmdSetViewport(cmdlist[0], 0, 1, &viewport);
+        vkCmdSetScissor(cmdlist[0], 0, 1, &scissor);
         vkCmdBeginRenderPass(cmdlist[0], &renderPassBeginInfo,
-            VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+            VK_SUBPASS_CONTENTS_INLINE);
         
         mHaveRenderPass = true;
     }

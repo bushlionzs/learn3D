@@ -66,14 +66,20 @@ float4 SRGBtoLINEAR(float4 srgbIn)
 
 
 
-float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
+float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW, float3 worldPos, float2 uv)
 {
 	// Uncompress each component from [0,1] to [-1,1].
 	float3 normalT = 2.0f*normalMapSample - 1.0f;
+	
+	float3 q1 = ddx(worldPos);
+    float3 q2 = ddy(worldPos);
+    float2 st1 = ddx(uv);
+    float2 st2 = ddy(uv);
 
 	// Build orthonormal basis.
 	float3 N = unitNormalW;
 	float3 T = normalize(tangentW - dot(tangentW, N)*N);
+	//float3 T = normalize(q1 * st2.t - q2 * st1.t);
 	float3 B = cross(N, T);
 
 	float3x3 TBN = float3x3(T, B, N);
@@ -185,8 +191,8 @@ VertexOut VS(VertexIn vIn)
     return vOut;
 }
 
-float3 u_LightDirection = {100.0f, 100.0f, 100.0f};
-float3 u_LightColor = {1.0,1.0,1.0};
+
+
 float4 PS(VertexOut pin) : SV_Target
 {
     // Metallic and Roughness material properties are packed together
@@ -240,15 +246,16 @@ float4 PS(VertexOut pin) : SV_Target
 
     float3 normalColor = gTextureArray[normalMapIndex].Sample(gsamAnisotropicWrap, pin.v_UV);
 	
-    float3 n = NormalSampleToWorldSpace(normalColor, pin.NormalW, pin.TangentW);
+    float3 n = NormalSampleToWorldSpace(normalColor, pin.NormalW, pin.TangentW, pin.PosW, pin.v_UV);
     float3 v = normalize(gEyePosW - pin.PosW);        // Vector from surface point to camera
+	float3 u_LightDirection = {0.739942074, 0.642787576, 0.198266909};
     float3 l = normalize(u_LightDirection);             // Vector from surface point to light
     float3 h = normalize(l+v);                          // Half vector between both l and v
     float3 reflection = -normalize(reflect(v, n));
-    reflection.z *= -1.0;
+    reflection.y *= -1.0;
 
     pbrInputs.NdotL = clamp(dot(n, l), 0.001, 1.0);
-    pbrInputs.NdotV = abs(dot(n, v)) + 0.001;
+    pbrInputs.NdotV = clamp(abs(dot(n, v)), 0.001, 1.0);
     pbrInputs.NdotH = clamp(dot(n, h), 0.0, 1.0);
     pbrInputs.LdotH = clamp(dot(l, h), 0.0, 1.0);
     pbrInputs.VdotH = clamp(dot(v, h), 0.0, 1.0);
@@ -262,8 +269,8 @@ float4 PS(VertexOut pin) : SV_Target
     float3 diffuseContrib = (1.0 - F) * diffuse(pbrInputs);
     float3 specContrib = F * G * D / (4.0 * pbrInputs.NdotL * pbrInputs.NdotV);
 	float3 middle = diffuseContrib + specContrib;
-    float3 color = pbrInputs.NdotL *  middle;
-	return float4(color, 1.0f);
+	float3 u_LightColor = {1.0,1.0,1.0};
+    float3 color = pbrInputs.NdotL *  u_LightColor * middle;
     // Calculate lighting contribution from image based lighting source (IBL)
 #ifdef USE_IBL
 	float3 ibl = getIBLContribution(pbrInputs, n, reflection);
@@ -279,6 +286,6 @@ float4 PS(VertexOut pin) : SV_Target
 	float3 emissive = gTextureArray[emissiveIndex].Sample(gsamAnisotropicWrap, pin.v_UV).rgb * u_EmissiveFactor;
     color += emissive;
 #endif
-
+    //return float4(color, baseColor.a);
     return float4(pow(color,float3(1.0/2.2, 1.0/2.2, 1.0/2.2)), baseColor.a);
 }

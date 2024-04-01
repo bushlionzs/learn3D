@@ -65,6 +65,9 @@ void VulkanFrame::updateFrameDescriptor(VkDescriptorBufferInfo& frameDescriptor,
     if (itor == mCameraMap.end())
     {
         assert(false);
+    }
+    else
+    {
         index = itor->second;
     }
     frameDescriptor.buffer = mFrameCB->getVKBuffer();
