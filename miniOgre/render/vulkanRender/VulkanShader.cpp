@@ -170,9 +170,11 @@ VkPipeline VulkanShader::getVKPipeline(Ogre::Renderable* r)
     VkPipelineViewportStateCreateInfo viewportState =
         vks::initializers::pipelineViewportStateCreateInfo(1, 1, 0);
 
+    auto& settings = VulkanHelper::getSingleton().getVulkanSettings();
+
     VkPipelineMultisampleStateCreateInfo multisampleState =
         vks::initializers::pipelineMultisampleStateCreateInfo(
-            VK_SAMPLE_COUNT_1_BIT,
+            settings.sampleCount,
             0);
 
     std::vector<VkDynamicState> dynamicStateEnables = {

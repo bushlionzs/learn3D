@@ -16,6 +16,14 @@ struct SwapChainBuffer
     VkImageView _view;
 };
 
+struct VulkanSettings {
+    bool validation = false;
+    bool fullscreen = false;
+    bool vsync = false;
+    bool multiSampling = true;
+    VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_4_BIT;
+};
+
 class VulkanRenderSystem;
 class VulkanFrame;
 class VulkanTexture;
@@ -102,6 +110,11 @@ public:
 
     VkSampler getSampler(Ogre::TextureAddressingMode mode);
     std::shared_ptr<ITexture>& getDefaultTexture();
+
+    const VulkanSettings& getVulkanSettings()
+    {
+        return mSettings;
+    }
 private:
     bool isDeviceSuitable(VkPhysicalDevice device);
     
@@ -184,4 +197,6 @@ private:
     std::shared_ptr<ITexture> mDefaultTexture;
 
     std::vector<VkSampler> mSamplers;
+
+    VulkanSettings mSettings;
 };

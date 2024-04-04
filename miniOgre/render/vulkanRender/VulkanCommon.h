@@ -25,9 +25,23 @@ struct SwapChainSupportDetails
 
 struct VulkanDepthStencil
 {
-    VkImage _image;
-    VkDeviceMemory _mem;
-    VkImageView _view;
+    VkImage image;
+    VkDeviceMemory memory;
+    VkImageView view;
+};
+
+struct MultisampleTarget 
+{
+    struct {
+        VkImage image;
+        VkImageView view;
+        VkDeviceMemory memory;
+    } color;
+    struct {
+        VkImage image;
+        VkImageView view;
+        VkDeviceMemory memory;
+    } depth;
 };
 
 class VulkanShader;
@@ -35,3 +49,4 @@ class VulkanRenderableData;
 
 
 VkFormat getVKFormatFromType(VertexElementType type);
+

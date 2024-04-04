@@ -59,14 +59,14 @@ void Basic::base1()
 	Ogre::Vector3 rightbottom = Ogre::Vector3(aa, -aa, 0.0f);
 	Ogre::Vector3 normal = Ogre::Vector3(0.0f, 0.0f, 1.0f);
 
+	std::string meshName = "myrect";
 	
-	
-	/*auto mesh = MeshManager::getSingletonPtr()->createRect(
-		"myrect",
+	auto mesh = MeshManager::getSingletonPtr()->createRect(
+		meshName,
 		leftop, leftbottom, righttop, rightbottom, normal);
-	Entity* rect = mSceneManager->createEntity("rect", mesh);
+	Entity* rect = mSceneManager->createEntity("rect", meshName);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
-	rectnode->attachObject(rect);*/
+	rectnode->attachObject(rect);
 
 	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
 
@@ -77,19 +77,19 @@ void Basic::base1()
 void Basic::base2()
 {
 	std::string name = "Êé_·ðÉ½_·¿ÎÝ_13.mesh";
-	//name = "Â¥À¼ÕÊÅñ04.mesh";
+	name = "Â¥À¼ÕÊÅñ04.mesh";
 	auto mesh = MeshManager::getSingletonPtr()->load(name);
 
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-	Entity* sphere = mSceneManager->createEntity("sphere", mesh);
+	Entity* sphere = mSceneManager->createEntity("sphere", name);
 	SceneNode* spherenode = root->createChildSceneNode("sphere");
 
-	//spherenode->attachObject(sphere);
+	spherenode->attachObject(sphere);
 
 	mGameCamera->setDistance(2000.0f);
 
-	mSceneManager->setSkyBox(true, "SkyLan", 50000);
+	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
 }
 
 void Basic::base3()
@@ -97,29 +97,30 @@ void Basic::base3()
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 	auto mesh = MeshManager::getSingleton().createBox("box.mesh", 1, "mybox");
 
+	auto& meshName = mesh->getName();
 	{
-		auto entity = mSceneManager->createEntity("box1", mesh);
+		auto entity = mSceneManager->createEntity("box1", meshName);
 		SceneNode* node = root->createChildSceneNode("box1");
 		node->attachObject(entity);
 		node->setPosition(0.0f, 0.0f, -5.0f);
 	}
 
 	{
-		auto entity = mSceneManager->createEntity("box1", mesh);
+		auto entity = mSceneManager->createEntity("box1", meshName);
 		SceneNode* node = root->createChildSceneNode("box1");
 		node->attachObject(entity);
 		node->setPosition(0.0f, 0.0f, 5.0f);
 	}
 
 	{
-		auto entity = mSceneManager->createEntity("box1", mesh);
+		auto entity = mSceneManager->createEntity("box1", meshName);
 		SceneNode* node = root->createChildSceneNode("box1");
 		node->attachObject(entity);
 		node->setPosition(-5.0f, 0.0f, 0.0f);
 	}
 
 	{
-		auto entity = mSceneManager->createEntity("box1", mesh);
+		auto entity = mSceneManager->createEntity("box1", meshName);
 		SceneNode* node = root->createChildSceneNode("box1");
 		node->attachObject(entity);
 		node->setPosition(5.0f, 0.0f, 0.0f);

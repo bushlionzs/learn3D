@@ -4,6 +4,7 @@
 #include "StretchImage.h"
 #include "PackageBox.h"
 #include <platform_file.h>
+#include <string_util.h>
 #include "VideoManager.h"
 
 MyTestWindow::MyTestWindow() :
@@ -43,9 +44,9 @@ void MyTestWindow::show(uint32_t id)
 	{
 		return;
 	}
-	std::wstring aa = acsi_to_widebyte(mItemData.title.c_str());
+	std::wstring aa = dy::acsi_to_widebyte(mItemData.title.c_str());
 	mTextName->setCaption(aa);
-	aa = acsi_to_widebyte(mItemData.desc.c_str());
+	aa = dy::acsi_to_widebyte(mItemData.desc.c_str());
 	mTextDesc->setCaption(aa);
 
 	setImageInfoFromIcon(mImageInfo, id);

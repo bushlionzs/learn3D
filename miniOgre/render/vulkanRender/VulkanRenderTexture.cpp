@@ -131,7 +131,7 @@ VkFramebuffer VulkanRenderTexture::getFrameBuffer(uint32_t index)
 		);
 		VkImageView attachments[2];
 		attachments[0] = mParentTexture->getImageView();
-		attachments[1] = mDepthStencil._view;
+		attachments[1] = mDepthStencil.view;
 
 		
 		auto renderPass = VulkanHelper::getSingleton()._getRenderPass();

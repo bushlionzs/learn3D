@@ -59,4 +59,6 @@ private:
 	uint32_t mFrameIndex = 0;
 
 	bool mHaveRenderPass = false;
+
+	MultisampleTarget mMultisampleTarget;
 };

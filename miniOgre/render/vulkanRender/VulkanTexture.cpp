@@ -7,6 +7,7 @@
 #include "VulkanHelper.h"
 #include "VulkanHardwarePixelBuffer.h"
 #include "VulkanMappings.h"
+#include "VulkanTools.h"
 
 
 VulkanTexture::VulkanTexture(
@@ -196,12 +197,8 @@ void VulkanTexture::createImage(
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to allocate image memory!");
     }
 
-    VkResult result = vkBindImageMemory(device, image, imageMemory, 0);
+    VK_CHECK_RESULT(vkBindImageMemory(device, image, imageMemory, 0));
 
-    if (result != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "");
-    }
 }
 
 VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format) 
@@ -236,6 +233,7 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
 
 void VulkanTexture::createTextureSampler()
 {
+    mTextureProperty._tex_addr_mod = TAM_CLAMP;
     mTextureSampler = VulkanHelper::getSingleton().getSampler(mTextureProperty._tex_addr_mod);
 }
 
