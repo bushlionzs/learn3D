@@ -72,5 +72,5 @@ void VulkanFrame::updateFrameDescriptor(VkDescriptorBufferInfo& frameDescriptor,
     }
     frameDescriptor.buffer = mFrameCB->getVKBuffer();
     frameDescriptor.offset = mFrameCB->getObjectSize() * index;
-    frameDescriptor.range = VK_WHOLE_SIZE;
+    frameDescriptor.range = mFrameCB->getObjectSize();
 }

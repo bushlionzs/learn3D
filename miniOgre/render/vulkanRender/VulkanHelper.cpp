@@ -757,7 +757,7 @@ void VulkanHelper::setupDescriptorSetLayout()
         // Binding 1 :  Vertex shader uniform buffer
         vks::initializers::descriptorSetLayoutBinding(
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            VK_SHADER_STAGE_VERTEX_BIT,
+            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
             1),
         // Binding 2 :  Vertex shader uniform buffer
         vks::initializers::descriptorSetLayoutBinding(

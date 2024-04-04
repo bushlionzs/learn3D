@@ -34,7 +34,7 @@ bool gltfModel::appInit()
 	
 
 
-	mGameCamera->setDistance(1.5);
+	mGameCamera->setDistance(-1.5);
 	mGameCamera->setMoveSpeed(5.0f);
 
 	return true;
@@ -47,6 +47,6 @@ void gltfModel::appUpdate(float delta)
 
 EngineType gltfModel::getEngineType()
 {
-	return EngineType_Vulkan;
+	//return EngineType_Vulkan;
 	return EngineType_Dx11;
 }

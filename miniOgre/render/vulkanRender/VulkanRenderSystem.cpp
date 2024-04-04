@@ -349,7 +349,8 @@ void VulkanRenderSystem::updateMainPassCB(ICamera* camera)
     mFrameConstantBuffer.ViewProj = viewProj;
     mFrameConstantBuffer.InvViewProj = invViewProj;
     //mFrameConstantBuffer.ShadowTransform = mShadowTransform;
-    mFrameConstantBuffer.EyePosW = { camepos.x, camepos.y, camepos.z };
+    mFrameConstantBuffer.EyePosW = camepos;
+
 
     auto width = mRenderWindow->getWidth();
     auto height = mRenderWindow->getHeight();
