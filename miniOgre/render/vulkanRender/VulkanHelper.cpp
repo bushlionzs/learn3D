@@ -38,8 +38,8 @@ VulkanHelper::VulkanHelper(VulkanRenderSystem* rs, HWND wnd)
     mWidth = rt.right - rt.left;
     mHeight = rt.bottom - rt.top;
 
-    /*mSettings.multiSampling = false;
-    mSettings.sampleCount = VK_SAMPLE_COUNT_1_BIT;*/
+    mSettings.multiSampling = false;
+    mSettings.sampleCount = VK_SAMPLE_COUNT_1_BIT;
 }
 
 VulkanHelper::~VulkanHelper()
@@ -1001,7 +1001,7 @@ void VulkanHelper::createSamples()
     samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
     samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
     samplerInfo.maxAnisotropy = 1.0;
-    samplerInfo.maxLod = (float)1;
+    samplerInfo.maxLod = (float)FLT_MAX;
     samplerInfo.maxAnisotropy = 8.0f;
     samplerInfo.anisotropyEnable = VK_TRUE;
 
@@ -1165,23 +1165,24 @@ VkCommandBuffer VulkanHelper::createCommandBuffer(VkCommandBufferLevel level, bo
 
 VkCommandBuffer VulkanHelper::beginSingleTimeCommands()
 {
-    VkCommandBufferAllocateInfo allocInfo = {};
-    allocInfo.sType =
-        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool = mCommandPool[0];
-    allocInfo.commandBufferCount = 1;
+    if (mResourceCommandBuffer == VK_NULL_HANDLE)
+    {
+        VkCommandBufferAllocateInfo allocInfo = {};
+        allocInfo.sType =
+            VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandPool = mCommandPool[0];
+        allocInfo.commandBufferCount = 1;
 
-    VkCommandBuffer commandBuffer;
-    vkAllocateCommandBuffers(mVKDevice, &allocInfo, &commandBuffer);
+        vkAllocateCommandBuffers(mVKDevice, &allocInfo, &mResourceCommandBuffer);
+    }
 
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    vkBeginCommandBuffer(mResourceCommandBuffer, &beginInfo);
 
-    vkBeginCommandBuffer(commandBuffer, &beginInfo);
-
-    return commandBuffer;
+    return mResourceCommandBuffer;
 }
 
 
@@ -1195,8 +1196,6 @@ void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
 
     vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
     vkQueueWaitIdle(mGraphicsQueue);
-
-    vkFreeCommandBuffers(mVKDevice, mCommandPool[0], 1, &commandBuffer);
 }
 
 void VulkanHelper::copyBuffer(
@@ -1331,7 +1330,65 @@ void VulkanHelper::copyBufferToImage(
 
 void VulkanHelper::generateMipmaps(VulkanTexture* tex)
 {
+    VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
+    auto mipLevels = tex->getMipLevels();
+    uint32_t width = tex->getTextureProperty()->_width;
+    uint32_t height = tex->getTextureProperty()->_height;
+
+    VkImage image = tex->getImage();
+
+    for (uint32_t i = 1; i < mipLevels; i++) {
+        VkImageBlit imageBlit{};
+
+        imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        imageBlit.srcSubresource.layerCount = 1;
+        imageBlit.srcSubresource.mipLevel = i - 1;
+        imageBlit.srcOffsets[1].x = int32_t(width >> (i - 1));
+        imageBlit.srcOffsets[1].y = int32_t(height >> (i - 1));
+        imageBlit.srcOffsets[1].z = 1;
+
+        imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        imageBlit.dstSubresource.layerCount = 1;
+        imageBlit.dstSubresource.mipLevel = i;
+        imageBlit.dstOffsets[1].x = int32_t(width >> i);
+        imageBlit.dstOffsets[1].y = int32_t(height >> i);
+        imageBlit.dstOffsets[1].z = 1;
+
+        VkImageSubresourceRange mipSubRange = {};
+        mipSubRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        mipSubRange.baseMipLevel = i;
+        mipSubRange.levelCount = 1;
+        mipSubRange.layerCount = 1;
+
+        {
+            VkImageMemoryBarrier imageMemoryBarrier{};
+            imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+            imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            imageMemoryBarrier.srcAccessMask = 0;
+            imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            imageMemoryBarrier.image = image;
+            imageMemoryBarrier.subresourceRange = mipSubRange;
+            vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
+        }
+
+        vkCmdBlitImage(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageBlit, VK_FILTER_LINEAR);
+
+        {
+            VkImageMemoryBarrier imageMemoryBarrier{};
+            imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+            imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+            imageMemoryBarrier.image = image;
+            imageMemoryBarrier.subresourceRange = mipSubRange;
+            vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
+        }
+    }
+
+    endSingleTimeCommands(commandBuffer);
 }
 
 VulkanDepthStencil VulkanHelper::createDepthStencil(uint32_t width, uint32_t height)

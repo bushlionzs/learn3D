@@ -199,4 +199,7 @@ private:
     std::vector<VkSampler> mSamplers;
 
     VulkanSettings mSettings;
+
+    //
+    VkCommandBuffer mResourceCommandBuffer = VK_NULL_HANDLE;
 };

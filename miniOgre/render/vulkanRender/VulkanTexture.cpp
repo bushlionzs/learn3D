@@ -126,6 +126,7 @@ void VulkanTexture::postLoad()
     if (mNeedMipmaps)
     {
         //generate mipmap
+        VulkanHelper::getSingleton().generateMipmaps(this);
     }
 }
 
@@ -139,17 +140,18 @@ void VulkanTexture::createImage(
     VkImage& image,
     VkDeviceMemory& imageMemory)
 {
-    uint32_t mipLevels = mTextureProperty._numMipmaps + 1;
+    mMipLevels = mTextureProperty._numMipmaps + 1;
 
-    /*if (mTextureProperty._numMipmaps == 0)
+    if (mTextureProperty._numMipmaps == 0)
     {
         auto current = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
 
-        if (current > mipLevels)
+        if (current > mMipLevels)
         {
             mNeedMipmaps = true;
+            mMipLevels = current;
         }
-    }*/
+    }
 
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -157,7 +159,7 @@ void VulkanTexture::createImage(
     
     imageInfo.extent = { width, height, 1 };
 
-    imageInfo.mipLevels = mipLevels;
+    imageInfo.mipLevels = mMipLevels;
     imageInfo.arrayLayers = mFace;
     imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
@@ -219,9 +221,8 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     viewInfo.format = format;
     viewInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
-    uint32_t numMips = mTextureProperty._numMipmaps + 1;
 
-    viewInfo.subresourceRange.levelCount = numMips;
+    viewInfo.subresourceRange.levelCount = mMipLevels;
     viewInfo.subresourceRange.layerCount = mFace;
 
     VkImageView imageView;
@@ -234,7 +235,6 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
 
 void VulkanTexture::createTextureSampler()
 {
-    mTextureProperty._tex_addr_mod = TAM_CLAMP;
     mTextureSampler = VulkanHelper::getSingleton().getSampler(mTextureProperty._tex_addr_mod);
 }
 

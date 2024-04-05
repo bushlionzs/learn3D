@@ -36,4 +36,6 @@ private:
 	VkFramebuffer mFramebuffer;
 
 	VulkanDepthStencil mDepthStencil;
+
+	MultisampleTarget mMultisampleTarget;
 };

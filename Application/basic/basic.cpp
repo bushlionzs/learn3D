@@ -70,7 +70,7 @@ void Basic::base1()
 
 	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
 
-	mGameCamera->setDistance(6.0f);
+	mGameCamera->setDistance(3.0f);
 	mGameCamera->setMoveSpeed(25.0f);
 }
 
