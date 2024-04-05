@@ -74,10 +74,8 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
 
     if (mat->isPbr())
     {
-        pool.updateObject(
-            current.mPBRMaterialDesc,
-            (const char*)&current.mPBRMaterialConstantBuffer,
-            sizeof(current.mPBRMaterialConstantBuffer));
+        auto& matInfo = mat->getMatInfo();
+        pool.updateObject(current.mPBRMaterialDesc, (const char*)&matInfo, sizeof(matInfo));
     }
     else
     {

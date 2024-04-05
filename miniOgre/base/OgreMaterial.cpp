@@ -132,12 +132,12 @@ void Material::animation(Real u, Real v)
     mVFactor = v;
 }
 
-void Material::updateMatInfo(MaterialConstantBuffer& mcb)
+void Material::updateMatInfo(PbrMaterialConstanceBuffer& mcb)
 {
     mMatInfo = mcb;
 }
 
-const MaterialConstantBuffer& Material::getMatInfo()
+PbrMaterialConstanceBuffer& Material::getMatInfo()
 {
     return mMatInfo;
 }
@@ -164,17 +164,17 @@ void Material::update(Real delta)
 
 void Material::setFresnelR0(Ogre::Vector3& fresnelR0)
 {
-    mMatInfo.FresnelR0 = fresnelR0;
+    
 }
 
 void Material::setRoughness(Real roughness)
 {
-    mMatInfo.Roughness = roughness;
+    
 }
 
 void Material::setDiffuseAlbedo(Ogre::Vector4& diffuseAlbedo)
 {
-    mMatInfo.DiffuseAlbedo = diffuseAlbedo;
+    
 }
 
 bool Material::hasAnimation()

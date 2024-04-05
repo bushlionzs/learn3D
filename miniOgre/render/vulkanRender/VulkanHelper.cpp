@@ -38,8 +38,8 @@ VulkanHelper::VulkanHelper(VulkanRenderSystem* rs, HWND wnd)
     mWidth = rt.right - rt.left;
     mHeight = rt.bottom - rt.top;
 
-    mSettings.multiSampling = false;
-    mSettings.sampleCount = VK_SAMPLE_COUNT_1_BIT;
+   /* mSettings.multiSampling = false;
+    mSettings.sampleCount = VK_SAMPLE_COUNT_1_BIT;*/
 }
 
 VulkanHelper::~VulkanHelper()
@@ -999,7 +999,7 @@ void VulkanHelper::createSamples()
     samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
-    samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
     samplerInfo.maxAnisotropy = 1.0;
     samplerInfo.maxLod = (float)FLT_MAX;
     samplerInfo.maxAnisotropy = 8.0f;

@@ -23,8 +23,8 @@ bool gltfModel::appInit()
 	ApplicationBase::appInit();
 
 	std::string meshname = "FlightHelmet.gltf";
-	auto mesh =
-		MeshManager::getSingletonPtr()->load(meshname);
+	meshname = "Sponza.gltf";
+	auto mesh = MeshManager::getSingletonPtr()->load(meshname);
 
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
@@ -34,9 +34,10 @@ bool gltfModel::appInit()
 	
 
 
-	mGameCamera->setDistance(-1.5);
-	mGameCamera->setMoveSpeed(5.0f);
-
+	mGameCamera->setDistance(100);
+	mGameCamera->setHeight(2.0f);
+	mGameCamera->setMoveSpeed(200);
+	//glslangValidator  -V material_pbr.frag -o material_pbr.frag.spv
 	return true;
 }
 
@@ -47,6 +48,6 @@ void gltfModel::appUpdate(float delta)
 
 EngineType gltfModel::getEngineType()
 {
-	//return EngineType_Vulkan;
+	return EngineType_Vulkan;
 	return EngineType_Dx11;
 }

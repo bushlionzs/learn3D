@@ -44,8 +44,8 @@ namespace Ogre {
         void scale(Real u, Real v);
         void animation(Real u, Real v);
 
-        void updateMatInfo(MaterialConstantBuffer& mcb);
-        const MaterialConstantBuffer& getMatInfo();
+        void updateMatInfo(PbrMaterialConstanceBuffer& mcb);
+        PbrMaterialConstanceBuffer& getMatInfo();
         void update(Real delta);
         void setFresnelR0(Ogre::Vector3& fresnelR0);
         void setRoughness(Real roughness);
@@ -144,6 +144,8 @@ namespace Ogre {
         {
             mChanged = changed;
         }
+
+
     private:
         std::string mMaterialName;
         Ogre::Vector4 mAmbient;
@@ -163,7 +165,7 @@ namespace Ogre {
         std::shared_ptr<Shader> mShader;
 
         ShaderInfo mShaderInfo;
-        MaterialConstantBuffer mMatInfo;
+        PbrMaterialConstanceBuffer mMatInfo;
 
         bool mPbr;
 

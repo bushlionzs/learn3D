@@ -20,7 +20,7 @@ struct GltfVertex
 {
     Ogre::Vector3 Pos;
     Ogre::Vector3 Normal;
-    Ogre::Vector3 Tangent;
+    Ogre::Vector4 Tangent;
     Ogre::Vector2 TexC;
 };
 
@@ -28,6 +28,7 @@ struct GltfSkinnedVertex
 {
     Ogre::Vector3 Pos;
     Ogre::Vector3 Normal;
+    Ogre::Vector4 Tangent;
     Ogre::Vector2 TexC;
     Ogre::Vector3 BoneWeights;
     uint32_t BoneIndices[4];
@@ -79,6 +80,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
 		{
             
 			const tinygltf::Accessor& accessor = model.accessors[prim.indices];
+
 			
 			const tinygltf::BufferView& bView = model.bufferViews[accessor.bufferView];
 
@@ -187,6 +189,35 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             }
 
             auto subMesh = pMesh->addSubMesh(false, false);
+
+            std::vector<uint32_t> indices(accessor.count);
+
+
+            int32_t stride = GetStrideFromFormat(accessor.type, accessor.componentType);
+            const char* start = (const char*)buffer.data.data() + bView.byteOffset + accessor.byteOffset;
+            if (stride == 2)
+            {
+                for (int32_t i = 0; i < accessor.count; i++)
+                {
+                    uint16_t* data = (uint16_t*)(start + i * stride);
+                    indices[i] = *data;
+                }
+            }
+            else
+            {
+                for (int32_t i = 0; i < accessor.count; i++)
+                {
+                    uint32_t* data = (uint32_t*)(start + i * stride);
+                    indices[i] = *data;
+                }
+            }
+            IndexData* indexData = subMesh->getIndexData();
+            indexData->mIndexCount = accessor.count;
+
+
+            indexData->createBuffer(4, indexData->mIndexCount);
+            indexData->writeData((const char*)indices.data(), 4 * indexData->mIndexCount);
+
             VertexData* vd = subMesh->getVertexData();
 
             std::vector<GltfVertex> mVertexBuffer(positionCount);
@@ -200,10 +231,17 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             {
                 mVertexBuffer[i].Pos = Ogre::Vector3(gltfPosition[0], gltfPosition[1], gltfPosition[2]);
                 mVertexBuffer[i].Normal = Ogre::Vector3(gltfNormal[0], gltfNormal[1], gltfNormal[2]);
-                mVertexBuffer[i].Tangent = Ogre::Vector3(gltfTangent[0], gltfTangent[1], gltfTangent[2]);
+                if (gltfTangent)
+                {
+                    mVertexBuffer[i].Tangent.x = gltfTangent[0];
+                    mVertexBuffer[i].Tangent.y = gltfTangent[1];
+                    mVertexBuffer[i].Tangent.z = gltfTangent[2];
+                    mVertexBuffer[i].Tangent.w = gltfTangent[3];
+                    gltfTangent += 4;
+                }
+                
                 gltfPosition += 3;
                 gltfNormal += 3;
-                gltfTangent += 4;
                 if (gltfTexture)
                 {
                     mVertexBuffer[i].TexC = Ogre::Vector2(gltfTexture[0], gltfTexture[1]);
@@ -217,8 +255,8 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 mVertexBuffer.size() * sizeof(GltfVertex));
             vd->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
             vd->vertexDeclaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-            vd->vertexDeclaration->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
-            vd->vertexDeclaration->addElement(0, 0, 36, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+            vd->vertexDeclaration->addElement(0, 0, 24, VET_FLOAT4, VES_TANGENT);
+            vd->vertexDeclaration->addElement(0, 0, 40, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
             VertexBoneAssignment assignInfo;
             if (weightCount)
@@ -272,32 +310,9 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 }
             }
             
-			std::vector<uint32_t> indices(accessor.count);
-
-			int32_t stride = GetStrideFromFormat(accessor.type, accessor.componentType);
-            const char* start = (const char*)buffer.data.data() + bView.byteOffset;
-            if (stride == 2)
-            {
-                
-                for (int32_t i = 0; i < accessor.count; i++)
-                {
-                    uint16_t* data = (uint16_t*)(start + i * stride);
-                    indices[i] = *data;
-                }
-            }
-            else
-            {
-                for (int32_t i = 0; i < accessor.count; i++)
-                {
-                    uint32_t* data = (uint32_t*)(start + i * stride);
-                    indices[i] = *data;
-                }
-            }
+			
             
-            IndexData* indexData = subMesh->getIndexData();
-            indexData->mIndexCount = accessor.count;
-            indexData->createBuffer(4, indexData->mIndexCount);
-            indexData->writeData((const char*)indices.data(), 4 * indexData->mIndexCount);
+            
             
             ShaderInfo sinfo;
             sinfo.shaderName = "pbr";
@@ -308,7 +323,19 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             
             
            // sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
-            std::shared_ptr<Material> mat = Ogre::MaterialManager::getSingletonPtr()->create(tinyMat.name, true);
+            std::shared_ptr<Material> mat = std::make_shared<Material>(tinyMat.name, true);
+
+            PbrMaterialConstanceBuffer& matInfo = mat->getMatInfo();
+            matInfo.u_BaseColorFactor.x = tinyMat.pbrMetallicRoughness.baseColorFactor[0];
+            matInfo.u_BaseColorFactor.y = tinyMat.pbrMetallicRoughness.baseColorFactor[1];
+            matInfo.u_BaseColorFactor.z = tinyMat.pbrMetallicRoughness.baseColorFactor[2];
+            matInfo.u_BaseColorFactor.w = tinyMat.pbrMetallicRoughness.baseColorFactor[3];
+            if (tinyMat.alphaMode == "MASK")
+            {
+                matInfo.alpha_mask = 1;
+                matInfo.alpha_mask_cutoff = tinyMat.alphaCutoff;
+            }
+            
             TextureProperty tp;
             int32_t baseColorIndex = tinyMat.pbrMetallicRoughness.baseColorTexture.index;
             if (baseColorIndex >= 0)
@@ -388,6 +415,10 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             position.z = node.translation[2];
 
             subMesh->setPosition(position);
+        }
+
+        if (!node.rotation.empty() == 4) {
+            
         }
         
     }

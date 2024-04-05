@@ -143,7 +143,7 @@ void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 		mObjectConstantBuffer.worldViewProj = model.transpose() * view * proj;
 	}
 
-	const MaterialConstantBuffer& mcb = pass->mMaterial->getMatInfo();
+	const PbrMaterialConstanceBuffer& mcb = pass->mMaterial->getMatInfo();
 
 	if (pass->mMaterial->isPbr())
 	{
