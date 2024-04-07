@@ -15,7 +15,7 @@ class MeshSerializerListener;
 class  GltfLoader : public ModelLoader
 {
 public:
-	GltfLoader();
+	GltfLoader(bool binary = false);
 	~GltfLoader();
 
 	virtual std::shared_ptr<Ogre::Mesh> loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream);
@@ -43,4 +43,5 @@ private:
 		int32_t frameId, Ogre::Quaternion& v);
 private:
 	std::unordered_map<uint32_t, Ogre::Bone*> mBoneMap;
+	bool mBinary;
 };

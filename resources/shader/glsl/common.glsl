@@ -51,9 +51,9 @@ layout(binding = 2) uniform CBMATERIAL {
     //some constance value;
     vec2 u_MetallicRoughnessValues;
 	float u_OcclusionStrength;
-	float pad1;
+	uint alpha_mask;
     vec3 u_EmissiveFactor;
-	float pad2;
+	float alpha_mask_cutoff;
 	vec4 u_BaseColorFactor;
 	vec4 u_ScaleIBLAmbient;
     mat4 gTexScale;

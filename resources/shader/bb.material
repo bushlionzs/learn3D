@@ -61,9 +61,9 @@ material myrect
 			shader ogresimple
 			texture_unit
 			{
-				texture awesomeface.png
+				texture 6772804448157695701.jpg
 				//scroll_anim 0 -0.9
-				rotate_anim 1.2
+				//rotate_anim 1.2
 				tex_address_mode clamp
 			}
 		}
@@ -137,6 +137,8 @@ material BaseWhite
 		}
 	}
 }
+
+
 
 material mysphere
 {
@@ -329,6 +331,36 @@ pbrmaterial DamagedHelmet
 	metallic_roughness_texture Default_metalRoughness.jpg
 	diffuse_texture studio_garden_diffuse.png cubic
 	specular_texture studio_garden.jpg cubic
+	brdflut_texture brdfLUT.png
+}
+
+pbrmaterial Wood
+{
+    cull_hardware none
+	shader_macro PBR MANUAL_SRGB SRGB_FAST_APPROXIMATION HAS_BASECOLORMAP HAS_METALROUGHNESSMAP HAS_OCCLUSIONMAP
+	shader pbr
+    basecolor_texture wood_albedo.dds
+	normal_texture wood_normal.dds
+	occlusion_texture wood_ao.dds
+	//emissive_texture  Default_emissive.jpg
+	metallic_roughness_texture wood_roughness.dds
+	//diffuse_texture studio_garden_diffuse.png cubic
+	//specular_texture studio_garden.jpg cubic
+	brdflut_texture brdfLUT.png
+}
+
+pbrmaterial Copper
+{
+    cull_hardware none
+	shader_macro PBR MANUAL_SRGB SRGB_FAST_APPROXIMATION HAS_BASECOLORMAP HAS_METALROUGHNESSMAP HAS_OCCLUSIONMAP
+	shader pbr
+    basecolor_texture copper_albedo.dds
+	normal_texture copper_normal.dds
+	occlusion_texture copper_ao.dds
+	//emissive_texture  Default_emissive.jpg
+	metallic_roughness_texture copper_roughness.dds
+	//diffuse_texture studio_garden_diffuse.png cubic
+	//specular_texture studio_garden.jpg cubic
 	brdflut_texture brdfLUT.png
 }
 

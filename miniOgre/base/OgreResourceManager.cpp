@@ -6,6 +6,7 @@
 #include "m3d_loader.h"
 #include "ogre_loader.h"
 #include "gltf_loader.h"
+#include "bin_loader.h"
 #include "M2Loader.h"
 #include "ResourceParserManager.h"
 #include "OgreScriptLoader.h"
@@ -162,8 +163,9 @@ namespace Ogre {
         mMeshMap[".m3d"] = new M3dLoader;
         mMeshMap[".mesh"] = new OgreMeshLoader;
         mMeshMap[".gltf"] = new GltfLoader;
-        mMeshMap[".glb"] = new GltfLoader;
+        mMeshMap[".glb"] = new GltfLoader(true);
         mMeshMap[".M2"] = new M2Loader;
+        mMeshMap[".bin"] = new BinLoader;
     }
 
     std::shared_ptr<DataStream> ResourceManager::openResource(

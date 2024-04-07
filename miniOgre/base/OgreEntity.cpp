@@ -12,6 +12,7 @@
 #include "OgreMeshManager.h"
 #include "OgreAnimationState.h"
 #include "OgreRoot.h"
+#include "OgreMaterialManager.h"
 
 namespace Ogre {
     Entity::Entity()
@@ -174,7 +175,12 @@ namespace Ogre {
 
     void Entity::setMaterialName(const std::string& name)
     {
+        auto mat = MaterialManager::getSingleton().getByName(name);
 
+        for (auto r : mSubEntityList)
+        {
+            r->setMaterial(mat);
+        }
     }
 
     const Entity::ChildObjectList& Entity::getAttachedObjects() const

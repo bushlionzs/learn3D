@@ -20,8 +20,8 @@ struct GltfVertex
 {
     Ogre::Vector3 Pos;
     Ogre::Vector3 Normal;
-    Ogre::Vector4 Tangent;
     Ogre::Vector2 TexC;
+    Ogre::Vector4 Tangent;
 };
 
 struct GltfSkinnedVertex
@@ -34,9 +34,9 @@ struct GltfSkinnedVertex
     uint32_t BoneIndices[4];
 };
 
-GltfLoader::GltfLoader()
+GltfLoader::GltfLoader(bool binary)
 {
-
+    mBinary = binary;
 }
 
 GltfLoader::~GltfLoader()
@@ -53,20 +53,34 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
 	std::string err;
 	std::string warn;
 
-
 	uint32_t size = stream->getStreamLength();
 
 	const char* data = stream->getStreamData();
 
 	std::string base_dir = stream->getBaseDir();
+    bool res = false;
 
-	bool res = loader.LoadASCIIFromString(
-		&model, 
-		&err, 
-		&warn, 
-		data,
-		size,
-		base_dir);
+    if (mBinary)
+    {
+        res = loader.LoadBinaryFromMemory(
+            &model,
+            &err,
+            &warn,
+            (const unsigned char*)data,
+            size,
+            base_dir);
+    }
+    else
+    {
+        res = loader.LoadASCIIFromString(
+            &model,
+            &err,
+            &warn,
+            data,
+            size,
+            base_dir);
+    }
+	
 
     
 	

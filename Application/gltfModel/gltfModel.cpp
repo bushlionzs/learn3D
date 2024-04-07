@@ -23,21 +23,25 @@ bool gltfModel::appInit()
 	ApplicationBase::appInit();
 
 	std::string meshname = "FlightHelmet.gltf";
-	meshname = "Sponza.gltf";
+	meshname = "matBall.bin";
 	auto mesh = MeshManager::getSingletonPtr()->load(meshname);
 
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
 	Entity* gltf = mSceneManager->createEntity("gltf", meshname);
+
+	gltf->setMaterialName("Copper");
 	SceneNode* gltfnode = root->createChildSceneNode("gltf");
 	gltfnode->attachObject(gltf);
 	
 
 
-	mGameCamera->setDistance(100);
-	mGameCamera->setHeight(2.0f);
+	mGameCamera->setDistance(10);
+	mGameCamera->setHeight(0.0f);
 	mGameCamera->setMoveSpeed(200);
 	//glslangValidator  -V material_pbr.frag -o material_pbr.frag.spv
+	//gltf-pipeline -i input.gltf -o output.glb
+
 	return true;
 }
 

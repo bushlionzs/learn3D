@@ -75,9 +75,9 @@ struct PbrMaterialConstanceBuffer
     //some constance value;
     Ogre::Vector2 u_MetallicRoughnessValues = {1.0f, 1.0f};
     Real u_OcclusionStrength = 1.0f;
-    Real Pad1;
+    uint32_t alpha_mask = 0;
     Ogre::Vector3 u_EmissiveFactor = { 1.0f, 1.0f, 1.0f };
-    Real Pad2;
+    float alpha_mask_cutoff = 0.0f;
     Ogre::Vector4 u_BaseColorFactor = { 1.0f, 1.0f, 1.0f, 1.0f };
     Ogre::Vector4 u_ScaleIBLAmbient = { 1.0f, 1.0f, 1.0f, 1.0f };
     Ogre::Matrix4 TexScale = Ogre::Matrix4::IDENTITY;
