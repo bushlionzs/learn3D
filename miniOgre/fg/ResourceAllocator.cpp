@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include "OgreHeader.h"
 #include "fg/ResourceAllocator.h"
 #include "fg/BackendUtils.h"
 #include "RenderSystem.h"

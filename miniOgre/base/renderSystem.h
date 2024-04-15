@@ -104,6 +104,9 @@ public:
     virtual void _swapAllRenderTargetBuffers();
 
     virtual void _resourceLoaded() {}
+
+    virtual void pushGroupMarker(const char* maker) {}
+    virtual void popGroupMarker() {}
 protected:
 	
     uint32_t mBatchCount = 0;
@@ -121,4 +124,6 @@ protected:
     Ogre::RenderTarget* mActiveRenderTarget;
 
     String mRenderSystemName;
+
+    utils::JobSystem mJobSystem;
 };
