@@ -6,6 +6,10 @@
 
 Material::Material(const std::string& name, bool pbr)
 {
+    if (name == "3low")
+    {
+        int kk = 0;
+    }
     mTransform = Ogre::Matrix4::IDENTITY;
 
     mMaterialName = name;

@@ -260,7 +260,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     for (auto r : objs)
     {
         VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-        if (rd->update(mCurrentVulkanFrame, nullptr))
+        if (rd->update(mCurrentVulkanFrame, mRootJob))
         {
             mRenderList.push_back(r);
         }

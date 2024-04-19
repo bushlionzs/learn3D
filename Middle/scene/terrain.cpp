@@ -379,7 +379,7 @@ const std::shared_ptr<Material>& Terrain::_getGridMaterial(
 			}
 
 		}
-		material->load();
+		material->preLoad();
 		//…Ë÷√ Ù–‘
 		_applySurfaceParams(material);
 

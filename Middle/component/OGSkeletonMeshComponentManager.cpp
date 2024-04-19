@@ -619,19 +619,24 @@ namespace Orphigine
 
 						for (size_t matNamesIndex = 0; matNamesIndex < matNames.size(); ++matNamesIndex)
 						{
-							const Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName(matNames[matNamesIndex]);
+							const Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName(matNames[matNamesIndex]);
 
-							if (material)
-								material->load();
+							if (mat)
+							{
+								mat->preLoad();
+							}
 						}
 					}
 					else
 					{
 						// 先检测是否有这个材质
-						const Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName(materialName);
+						const Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName(materialName);
 
-						if (material)
-							material->load();
+						if (mat)
+						{
+							mat->preLoad();
+						}
+							
 					}
 				}
 
@@ -656,11 +661,13 @@ namespace Orphigine
 
 								const String& subMatName = subMesh->getMaterialName();
 
-								const Ogre::MaterialPtr material = 
+								const Ogre::MaterialPtr mat = 
 									Ogre::MaterialManager::getSingleton().getByName(subMatName);
 
-								if (material)
-									material->load();
+								if (mat)
+								{
+									mat->preLoad();
+								}
 							}
 						}
 					}                

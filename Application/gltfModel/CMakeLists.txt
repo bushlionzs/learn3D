@@ -58,17 +58,18 @@ target_include_directories(${PROJECT_NAME}
 	${GAMESHARE_INC}
 	${MIDDLE_INC}
 	${MINIOGRE_INC}
-	${MYGUI_INC}
 	${ROOT_INC}/3rd/OIS/include
+	${ROOT_INC}/3rdSource/utils/include
 )
 
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
-MyGUI CEGUI expat Middle stormlib OIS freetype GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
+CEGUI expat Middle stormlib OIS freetype GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
 pcre
 vulkan-1
+utils
 avcodec
 avdevice
 avfilter

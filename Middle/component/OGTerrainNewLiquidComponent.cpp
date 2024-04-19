@@ -66,7 +66,7 @@ namespace Orphigine
 		texProperty._tex_format = Ogre::PF_X8R8G8B8;
 		texProperty._tex_usage = Ogre::TU_RENDERTARGET;
 
-		mReflectTexture->load();
+		mReflectTexture->load(nullptr);
 		mRenderTarget = mReflectTexture->getBuffer(0)->getRenderTarget();
 		//Ogre::Viewport* viewPort = mRenderTarget->addViewport( mReflectCamera);
 		Real aspectRatio = mCamera->getAspectRatio();
@@ -1286,7 +1286,7 @@ namespace Orphigine
 
 		createReflectRenderTexture();
 
-		mHighMaterial->touch();
+		mHighMaterial->preLoad();
 
 		mMaterial = mHighMaterial;
 		setUpdateFrequency(10.0f);
@@ -1297,7 +1297,7 @@ namespace Orphigine
 		mMiddleMaterial = srcMat->clone(mMiddleMaterialName);
 
 
-		mMiddleMaterial->touch();
+		mMiddleMaterial->preLoad();
 
 		mMaterial = mMiddleMaterial;
 	}
@@ -1306,7 +1306,7 @@ namespace Orphigine
 	{
 		mLowMaterial = srcMat->clone(mLowMaterialName);
 
-		mLowMaterial->touch();//这个很耗，考虑优化 [2009/06/09 dscky]
+		mLowMaterial->preLoad();
 		mMaterial = mLowMaterial;
 		setUpdateFrequency(0.0f);
 	}

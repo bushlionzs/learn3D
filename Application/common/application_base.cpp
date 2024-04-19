@@ -10,7 +10,6 @@
 #include "OgreRoot.h"
 #include "engine_manager.h"
 #include "OgreRenderWindow.h"
-#include "MyGUIManager.h"
 #include "OgreViewport.h"
 #include "GameTableManager.h"
 #include "CEGUIManager.h"
@@ -90,20 +89,7 @@ bool ApplicationBase::appInit()
 
 	Ogre::Root::getSingleton().addFrameListener(this);
 
-	if (isUseMyGUI())
-	{
-		
-		if (!CGameTableManager::GetSingletonPtr())
-		{
-			new CGameTableManager;
-
-			CGameTableManager::GetSingleton().Initialize();
-		}
-		
-		new MyGUIManager;
-		MyGUIManager::getSingleton()._initialise(mRenderWindow);
-	}
-	else if (isUseCEGUI())
+	if (isUseCEGUI())
 	{
 		ShowCursor(FALSE);
 		SetCursor(NULL);
@@ -156,9 +142,9 @@ void ApplicationBase::ShowFrameFrequency()
 
 
 		char buffer[256];
-		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, triangle:%d", 
+		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, triangle:%d,batch:%d", 
 			mRenderSystem->getRenderSystemName().c_str(),
-			mLastFPS, mRenderSystem->getTriangleCount());
+			mLastFPS, mRenderSystem->getTriangleCount(), mRenderSystem->getBatchCount());
 		::SetWindowText(mApplicationWindow->getWnd(), buffer);
 	}
 

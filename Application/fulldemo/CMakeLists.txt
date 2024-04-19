@@ -66,9 +66,10 @@ target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre CEGUI expat
-MyGUI Middle stormlib luaplus freetype OIS GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody  
+Middle stormlib luaplus freetype OIS GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody  
 tinyxmld
 pcre
+utils
 vulkan-1
 avcodec
 avdevice

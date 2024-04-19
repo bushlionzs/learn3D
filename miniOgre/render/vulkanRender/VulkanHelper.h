@@ -55,8 +55,8 @@ public:
         return mDeviceFeatures;
     }
     VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, bool begin);
-    VkCommandBuffer beginSingleTimeCommands();
-    void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+    VkCommandBuffer beginSingleTimeCommands(bool graphic = false);
+    void endSingleTimeCommands(VkCommandBuffer commandBuffer, bool graphic = false);
     void copyBuffer(
         VkBuffer srcBuffer,
         VkBuffer dstBuffer,

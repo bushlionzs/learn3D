@@ -64,7 +64,7 @@ namespace CEGUI
         mMaterial->setWriteDepth(false);
         mMaterial->setDepthTest(false);
         mMaterial->setCullMode(Ogre::CULL_NONE);
-        mMaterial->load();
+        mMaterial->preLoad();
     }
 
     VertexData* CEGUIRenderable::getVertexData()

@@ -1,6 +1,7 @@
 #include "glslUtil.h"
 #include <libshaderc_util/file_finder.h>
 #include <SPIRV_Cross/spirv_glsl.hpp>
+#include <mutex>
 
 static std::string getContentFromFile(const char* name)
 {
@@ -78,6 +79,8 @@ std::string getGlslKey(
 
 static std::unordered_map<std::string, std::string> gGlslCacheMap;
 
+static std::mutex gShaderMutex;
+
 bool glslCompileShader(
     std::string& result,
     std::string& shaderName,
@@ -90,13 +93,17 @@ bool glslCompileShader(
 
     std::string key = getGlslKey(shaderName, shaderMacros, kind);
 
-    auto itor = gGlslCacheMap.find(key);
-
-    if (itor != gGlslCacheMap.end())
     {
-        result = itor->second;
-        return true;
+        std::unique_lock<std::mutex> lck(gShaderMutex);
+        auto itor = gGlslCacheMap.find(key);
+
+        if (itor != gGlslCacheMap.end())
+        {
+            result = itor->second;
+            return true;
+        }
     }
+    
     shaderc::Compiler compiler;
     shaderc::CompileOptions options;
 
@@ -140,7 +147,16 @@ bool glslCompileShader(
     result.resize(aa.size() * sizeof(uint32_t));
     memcpy((void*)result.data(), aa.data(), aa.size() * sizeof(uint32_t));
 
-    gGlslCacheMap[key] = result;
+    
+    {
+        std::unique_lock<std::mutex> lck(gShaderMutex);
+        auto itor = gGlslCacheMap.find(key);
+        if (itor == gGlslCacheMap.end())
+        {
+            gGlslCacheMap[key] = result;
+        }
+    }
+    
 
     return true;
 }

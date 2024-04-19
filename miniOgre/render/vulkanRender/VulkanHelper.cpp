@@ -160,7 +160,7 @@ void VulkanHelper::createInstance()
     createInfo.ppEnabledExtensionNames = extensions.data();
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
-    mEnableValidationLayers = false;
+
     if (mEnableValidationLayers)
     {
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
@@ -404,6 +404,8 @@ void VulkanHelper::createLogicalDevice()
     transfer_queue_info.pQueuePriorities = queue_priority;
 
     VkPhysicalDeviceFeatures deviceFeatures{};
+
+    deviceFeatures.samplerAnisotropy = VK_TRUE;
 
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -1152,15 +1154,23 @@ VkCommandBuffer VulkanHelper::createCommandBuffer(VkCommandBufferLevel level, bo
     return cmdBuffer;
 }
 
-VkCommandBuffer VulkanHelper::beginSingleTimeCommands()
+VkCommandBuffer VulkanHelper::beginSingleTimeCommands(bool graphic)
 {
     VkCommandBuffer commandBuffer;
 
     VkCommandBufferAllocateInfo allocInfo = {};
-    allocInfo.sType =
-        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool = mTransferCommandPool;
+    if (graphic)
+    {
+        allocInfo.commandPool = mCommandPool[0];
+    }
+    else
+    {
+        allocInfo.commandPool = mTransferCommandPool;
+    }
+    
+   // 
     allocInfo.commandBufferCount = 1;
 
     vkAllocateCommandBuffers(mVKDevice, &allocInfo, &commandBuffer);
@@ -1168,14 +1178,14 @@ VkCommandBuffer VulkanHelper::beginSingleTimeCommands()
 
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    //beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
     return commandBuffer;
 }
 
 
-void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
+void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer, bool graphic)
 {
     vkEndCommandBuffer(commandBuffer);
     VkSubmitInfo submitInfo = {};
@@ -1183,8 +1193,27 @@ void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    VK_CHECK_RESULT(vkQueueSubmit(mTransferQueue, 1, &submitInfo, VK_NULL_HANDLE));
-    vkQueueWaitIdle(mTransferQueue);
+    if (graphic)
+    {
+        auto result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+
+        if (result != VK_SUCCESS)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkQueueSubmit!");
+        }
+        vkQueueWaitIdle(mGraphicsQueue);
+    }
+    else
+    {
+        auto result = vkQueueSubmit(mTransferQueue, 1, &submitInfo, VK_NULL_HANDLE);
+
+        if (result != VK_SUCCESS)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkQueueSubmit!");
+        }
+        vkQueueWaitIdle(mTransferQueue);
+    }
+    
 }
 
 void VulkanHelper::copyBuffer(
@@ -1306,12 +1335,25 @@ void VulkanHelper::copyBufferToImage(
     vkCmdCopyBufferToImage(commandBuffer, buffer, image,
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, (uint32_t)regions.size(), regions.data());
 
-    vks::tools::setImageLayout(
-        commandBuffer,
-        image,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-        subresourceRange);
+    if (mipLevels == 1)
+    {
+        vks::tools::setImageLayout(
+            commandBuffer,
+            image,
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+            subresourceRange);
+    }
+    else
+    {
+        vks::tools::setImageLayout(
+            commandBuffer,
+            image,
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+            subresourceRange);
+    }
+    
 
     endSingleTimeCommands(commandBuffer);
 }
@@ -1319,7 +1361,8 @@ void VulkanHelper::copyBufferToImage(
 
 void VulkanHelper::generateMipmaps(VulkanTexture* tex)
 {
-    VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+
+    VkCommandBuffer commandBuffer = beginSingleTimeCommands(true);
 
     auto mipLevels = tex->getMipLevels();
     uint32_t width = tex->getTextureProperty()->_width;
@@ -1377,7 +1420,26 @@ void VulkanHelper::generateMipmaps(VulkanTexture* tex)
         }
     }
 
-    endSingleTimeCommands(commandBuffer);
+    VkImageSubresourceRange subresourceRange = {};
+    subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    
+    subresourceRange.levelCount = 1;
+    subresourceRange.layerCount = 1;
+
+
+    for (uint32_t i = 0; i < mipLevels; i++)
+    {
+        subresourceRange.baseMipLevel = i;
+        vks::tools::setImageLayout(
+            commandBuffer,
+            image,
+            VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+            subresourceRange);
+    }
+    
+
+    endSingleTimeCommands(commandBuffer, true);
 }
 
 VulkanDepthStencil VulkanHelper::createDepthStencil(uint32_t width, uint32_t height)

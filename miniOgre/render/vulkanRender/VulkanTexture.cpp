@@ -219,14 +219,12 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     }
     
     viewInfo.format = format;
-    viewInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+    viewInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, mMipLevels, 0, mFace };
 
-
-    viewInfo.subresourceRange.levelCount = mMipLevels;
-    viewInfo.subresourceRange.layerCount = mFace;
 
     VkImageView imageView;
-    if (vkCreateImageView(mVKDevice, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+    if (vkCreateImageView(mVKDevice, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
+    {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create texture image view!");
     }
 

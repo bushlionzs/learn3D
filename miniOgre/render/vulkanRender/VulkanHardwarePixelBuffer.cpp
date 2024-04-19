@@ -60,7 +60,9 @@ void VulkanHardwarePixelBuffer::blitFromMemory(const PixelBox& src, const Box& d
 	}
 
 	void* data = mParentTexture->getVulkanBuffer(mOffset);
-	PixelBox dstBox = PixelBox(src.getWidth(), src.getHeight(),
+	auto width = src.getWidth();
+	auto height = src.getHeight();
+	PixelBox dstBox = PixelBox(width, height,
 		src.getDepth(), mFormat, data);
 	PixelUtil::bulkPixelConversion(src, dstBox);
 }

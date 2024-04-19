@@ -62,6 +62,7 @@ target_include_directories(${MIDDLE_LIB_NAME}
 	${ROOT_INC}/3rd
 	${ROOT_INC}/3rd/Opcode
 	${ROOT_INC}/3rd/bullet3/include
+	${ROOT_INC}/3rdSource/utils/include
 	${DYNETWORK_INCLUDE_HEADERS}
 )
 
