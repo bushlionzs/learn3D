@@ -174,7 +174,7 @@ void WaterEntity::buildHardBuffer()
     state.destFactorAlpha = Ogre::SBF_ONE_MINUS_SOURCE_ALPHA;
     mat->setBlendState(state);
     this->setMaterial(0, mat);
-    mat->load();
+    mat->load(nullptr);
 
     
 }

@@ -75,7 +75,8 @@ public:
     void setTextureVScroll(float v);
     void setTextureScroll(float u, float v);
     void setTextureRotate(const Ogre::Radian& angle);
-    void _load();
+    void preLoad();
+    void _load(utils::JobSystem::Job* job);
     void _unload();
     std::shared_ptr<ITexture> getTexture();
     ITexture* getRaw();

@@ -66,7 +66,7 @@ namespace Ogre {
             return false;
         }
 
-        mat->load();
+        mat->load(nullptr);
         mSubEntityList[index]->setMaterial(mat);
 
         return true;

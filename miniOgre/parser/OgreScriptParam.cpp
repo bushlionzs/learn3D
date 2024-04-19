@@ -723,6 +723,8 @@ void OgreMaterialParam::compile()
     {
         ShaderManager::getSingleton().addMacro(pair.first);
     }
+
+    mMaterial->preLoad();
 }
 
 void OgreMaterialParam::addParam(const std::string& key, const std::string& value)

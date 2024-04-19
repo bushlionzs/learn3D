@@ -106,7 +106,7 @@ void ResourceAllocator::terminate() noexcept {
     assert_invariant(!mInUseTextures.size());
     auto& textureCache = mTextureCache;
     for (auto it = textureCache.begin(); it != textureCache.end();) {
-        mBackend.destroyTexture(it->second.handle);
+        //mBackend.destroyTexture(it->second.handle);
         it = textureCache.erase(it);
     }
 }
@@ -115,12 +115,13 @@ RenderTargetHandle ResourceAllocator::createRenderTarget(const char* name,
         TargetBufferFlags targetBufferFlags, uint32_t width, uint32_t height,
         uint8_t samples, MRT color, TargetBufferInfo depth,
         TargetBufferInfo stencil) noexcept {
-    return mBackend.createRenderTarget(targetBufferFlags,
-            width, height, samples ? samples : 1u, color, depth, stencil);
+    return RenderTargetHandle();
+    /*return mBackend.createRenderTarget(targetBufferFlags,
+            width, height, samples ? samples : 1u, color, depth, stencil);*/
 }
 
 void ResourceAllocator::destroyRenderTarget(RenderTargetHandle h) noexcept {
-    mBackend.destroyRenderTarget(h);
+    //mBackend.destroyRenderTarget(h);
 }
 
 backend::TextureHandle ResourceAllocator::createTexture(const char* name,
@@ -149,25 +150,25 @@ backend::TextureHandle ResourceAllocator::createTexture(const char* name,
             textureCache.erase(it);
         } else {
             // we don't, allocate a new texture and populate the in-use list
-            if (swizzle == defaultSwizzle) {
+            /*if (swizzle == defaultSwizzle) {
                 handle = mBackend.createTexture(
                         target, levels, format, samples, width, height, depth, usage);
             } else {
                 handle = mBackend.createTextureSwizzled(
                         target, levels, format, samples, width, height, depth, usage,
                         swizzle[0], swizzle[1], swizzle[2], swizzle[3]);
-            }
+            }*/
         }
         mInUseTextures.emplace(handle, key);
     } else {
-        if (swizzle == defaultSwizzle) {
+       /* if (swizzle == defaultSwizzle) {
             handle = mBackend.createTexture(
                     target, levels, format, samples, width, height, depth, usage);
         } else {
             handle = mBackend.createTextureSwizzled(
                     target, levels, format, samples, width, height, depth, usage,
                     swizzle[0], swizzle[1], swizzle[2], swizzle[3]);
-        }
+        }*/
     }
     return handle;
 }
@@ -188,7 +189,7 @@ void ResourceAllocator::destroyTexture(TextureHandle h) noexcept {
         // remove it from the in-use list
         mInUseTextures.erase(it);
     } else {
-        mBackend.destroyTexture(h);
+        //mBackend.destroyTexture(h);
     }
 }
 
@@ -266,7 +267,7 @@ void ResourceAllocator::dump(bool brief) const noexcept {
 ResourceAllocator::CacheContainer::iterator ResourceAllocator::purge(
         ResourceAllocator::CacheContainer::iterator const& pos) {
     //slog.d << "purging " << pos->second.handle.getId() << ", age=" << pos->second.age << io::endl;
-    mBackend.destroyTexture(pos->second.handle);
+    //mBackend.destroyTexture(pos->second.handle);
     mCacheSize -= pos->second.size;
     return mTextureCache.erase(pos);
 }

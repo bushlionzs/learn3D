@@ -3,6 +3,7 @@
 #include "VulkanUploadBuffer.h"
 #include "VulkanObjectPool.h"
 #include "renderHelper.h"
+#include <utils/JobSystem.h>
 
 class VulkanRenderSystem;
 
@@ -28,12 +29,13 @@ public:
 	VulkanRenderableData(VulkanRenderSystem* engine, Ogre::Renderable* r);
 	~VulkanRenderableData();
 
-	void update(VulkanFrame* frame, VkCommandBuffer cb);
+	bool update(VulkanFrame* frame, utils::JobSystem::Job* job);
+	void updateImpl(VulkanFrame* frame);
 	void render(VulkanFrame* frame, VkCommandBuffer cb);
 
 	//VkPipelineLayout  getPipelineLayout();
 private:
-
+	
 	void buildInitData();
 private:
 	VulkanRenderSystem* mEngine;

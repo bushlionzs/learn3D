@@ -116,7 +116,7 @@ void Dx11RenderSystem::render(Renderable* r, RenderListType t)
 	mDx11Pass._render = r;
 	mDx11Pass._mat = r->getMaterial().get();
 
-	mDx11Pass._mat->load();
+	mDx11Pass._mat->load(nullptr);
 	
 
 	mDx11Pass._shader = (Dx11Shader*)mDx11Pass._mat->getShader().get();
@@ -141,12 +141,6 @@ void Dx11RenderSystem::postRender()
 ITexture* Dx11RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
 {
 	Dx11Texture* tex = new Dx11Texture(name, texProperty, this);
-
-	if (!tex->load())
-	{
-		delete tex;
-		return nullptr;
-	}
 
 	return tex;
 }

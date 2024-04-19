@@ -74,7 +74,7 @@ namespace Ogre {
         mAllDefaultRotation = true;
         setDefaultDimensions(100, 100);
         mMaterial = MaterialManager::getSingleton().getDefaultMaterial();
-        mMaterial->load();
+        mMaterial->load(nullptr);
         setTextureStacksAndSlices(1, 1);
     }
 
@@ -206,7 +206,7 @@ namespace Ogre {
         /* Ensure that the new material was loaded (will not load again if
            already loaded anyway)
         */
-        mMaterial->load();
+        mMaterial->load(nullptr);
     }
 
     //-----------------------------------------------------------------------
@@ -527,7 +527,7 @@ namespace Ogre {
         mMaterial = material;
 
         // Ensure new material loaded (will not load again if already loaded)
-        mMaterial->load();
+        mMaterial->load(nullptr);
     }
 
    

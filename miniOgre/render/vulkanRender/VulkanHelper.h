@@ -79,6 +79,8 @@ public:
         uint32_t typeFilter,
         VkMemoryPropertyFlags properties);
     VkQueue _getCommandQueue();
+    VkQueue _getTransferQueue();
+    void waitTransferQueue();
     VkRenderPass _getRenderPass();
     VkPhysicalDevice _getPhysicalDevice();
     VkPipelineLayout _getPipelineLayout();
@@ -119,7 +121,7 @@ private:
     bool isDeviceSuitable(VkPhysicalDevice device);
     
     bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+    void updateQueueFamilies(VkPhysicalDevice device);
     bool checkValidationLayerSupport();
     void createInstance();
     void createSurface();
@@ -168,9 +170,13 @@ private:
 
     VkPipelineCache mPipelineCache;
     VkQueue mGraphicsQueue;
+    VkQueue mTransferQueue;
+
+    uint32_t main_queue_index = UINT_MAX;
+    uint32_t transfer_queue_index = UINT_MAX;
 
     VkCommandPool mCommandPool[VULKAN_FRAME_RESOURCE_COUNT];
-
+    VkCommandPool mTransferCommandPool;
     VkCommandBuffer mMainCommandBuffer[VULKAN_FRAME_RESOURCE_COUNT];
     std::vector<CommandHelper> mCommandPools;
 

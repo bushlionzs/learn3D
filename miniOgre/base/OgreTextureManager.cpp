@@ -16,7 +16,10 @@ namespace Ogre {
 
     }
 
-    std::shared_ptr<ITexture> TextureManager::load(const std::string& name, TextureProperty* texProperty)
+    std::shared_ptr<ITexture> TextureManager::load(
+        const std::string& name, 
+        TextureProperty* texProperty,
+        bool read)
     {
         auto it = mTexMap.find(name);
         if (it != mTexMap.end())
@@ -31,6 +34,10 @@ namespace Ogre {
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to create texture");
         }
 
+        if (read)
+        {
+            tmp->load(nullptr);
+        }
         std::shared_ptr<ITexture> tex(tmp);
 
         mTexMap[name] = tex;

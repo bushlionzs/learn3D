@@ -362,7 +362,6 @@ void VulkanWindow::swapBuffers()
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = &mImageAvailableSemaphore;
 
-    static std::vector<VkCommandBuffer>  cmdlist;
     VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frame_index);
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;

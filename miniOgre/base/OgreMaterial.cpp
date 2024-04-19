@@ -48,12 +48,26 @@ uint32_t Material::addTexture(const Ogre::TexturePtr& tex)
     return mTextureUnits.size() - 1;
 }
 
-void Material::load()
+void Material::preLoad()
 {
     if (mLoad)
     {
         return;
     }
+    for (auto& it : mTextureUnits)
+    {
+        it->preLoad();
+    }
+}
+
+void Material::load(utils::JobSystem::Job* job)
+{
+    if (mLoad)
+    {
+        return;
+    }
+
+    mLoading = true;
 
     if (!mVideoName.empty())
     {
@@ -64,20 +78,34 @@ void Material::load()
 
     for (auto& it : mTextureUnits)
     {
-        if(!it->isLoaded())
-            it->_load();
+        if (!it->isLoaded())
+        {
+            it->_load(job);
+        }
+            
     }
     
     mShader = MaterialManager::getSingletonPtr()->buildShader(mShaderInfo);
 
     mShader->load();
 
+    mLoading = false;
     mLoad = true;
 }
 
 bool Material::isLoaded()
 {
     return mLoad;
+}
+
+bool Material::isLoading()
+{
+    return mLoading;
+}
+
+void Material::setLoading(bool loading)
+{
+    mLoading = true;
 }
 
 std::shared_ptr<Material> Material::clone(const String& name)

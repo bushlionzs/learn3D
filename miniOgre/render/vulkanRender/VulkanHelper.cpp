@@ -201,20 +201,7 @@ void VulkanHelper::createInstance()
 
 bool VulkanHelper::isDeviceSuitable(VkPhysicalDevice device)
 {
-    QueueFamilyIndices indices = findQueueFamilies(device);
-
-    bool extensionsSupported = checkDeviceExtensionSupport(device);
-
-    bool swapChainAdequate = false;
-    if (extensionsSupported)
-    {
-        SwapChainSupportDetails swapChainSupport = 
-            querySwapChainSupport(device);
-        swapChainAdequate = !swapChainSupport.formats.empty() &&
-            !swapChainSupport.presentModes.empty();
-    }
-
-    return indices.isComplete() && extensionsSupported && swapChainAdequate;
+    return true;
 }
 
 SwapChainSupportDetails VulkanHelper::querySwapChainSupport(
@@ -263,6 +250,7 @@ VkSwapchainKHR VulkanHelper::getSwapchain()
 void VulkanHelper::loadDefaultResources()
 {
     mDefaultTexture = TextureManager::getSingleton().load("white1x1.dds", nullptr);
+    mDefaultTexture->load(nullptr);
 }
 
 std::shared_ptr<ITexture>& VulkanHelper::getDefaultTexture()
@@ -291,44 +279,34 @@ bool VulkanHelper::checkDeviceExtensionSupport(VkPhysicalDevice device)
     return requiredExtensions.empty();
 }
 
-QueueFamilyIndices VulkanHelper::findQueueFamilies(VkPhysicalDevice device)
+void VulkanHelper::updateQueueFamilies(VkPhysicalDevice device)
 {
-    QueueFamilyIndices indices;
-
     uint32_t queueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(device,
-        &queueFamilyCount, nullptr);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
     std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(device,
-        &queueFamilyCount, queueFamilies.data());
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
     int i = 0;
     for (const auto& queueFamily : queueFamilies)
     {
-        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-        {
-            indices.graphicsFamily = i;
+        if (queueFamily.queueCount == 0) {
+            continue;
         }
 
-        VkBool32 presentSupport = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(device,
-            i, mSurface, &presentSupport);
-
-        if (presentSupport)
+        if ((queueFamily.queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT)) == (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT))
         {
-            indices.presentFamily = i;
+            main_queue_index = i;
         }
 
-        if (indices.isComplete())
+        if ((queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) == 0 && (queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT))
         {
-            break;
+            transfer_queue_index = i;
         }
 
         i++;
     }
 
-    return indices;
 }
 
 bool VulkanHelper::checkValidationLayerSupport()
@@ -408,28 +386,30 @@ void VulkanHelper::pickPhysicalDevice()
 
 void VulkanHelper::createLogicalDevice()
 {
-    QueueFamilyIndices indices = findQueueFamilies(mPhysicalDevice);
+    updateQueueFamilies(mPhysicalDevice);
 
-    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
+    const float queue_priority[] = { 1.0f };
+    VkDeviceQueueCreateInfo queue_info[2] = {};
 
-    float queuePriority = 1.0f;
-    for (uint32_t queueFamily : uniqueQueueFamilies) {
-        VkDeviceQueueCreateInfo queueCreateInfo{};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = queueFamily;
-        queueCreateInfo.queueCount = 1;
-        queueCreateInfo.pQueuePriorities = &queuePriority;
-        queueCreateInfos.push_back(queueCreateInfo);
-    }
+    VkDeviceQueueCreateInfo& main_queue = queue_info[0];
+    main_queue.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    main_queue.queueFamilyIndex = main_queue_index;
+    main_queue.queueCount = 1;
+    main_queue.pQueuePriorities = queue_priority;
+
+    VkDeviceQueueCreateInfo& transfer_queue_info = queue_info[1];
+    transfer_queue_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    transfer_queue_info.queueFamilyIndex = transfer_queue_index;
+    transfer_queue_info.queueCount = 1;
+    transfer_queue_info.pQueuePriorities = queue_priority;
 
     VkPhysicalDeviceFeatures deviceFeatures{};
 
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-    createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-    createInfo.pQueueCreateInfos = queueCreateInfos.data();
+    createInfo.queueCreateInfoCount = static_cast<uint32_t>(2);
+    createInfo.pQueueCreateInfos = queue_info;
 
     createInfo.pEnabledFeatures = &deviceFeatures;
 
@@ -451,16 +431,19 @@ void VulkanHelper::createLogicalDevice()
         throw std::runtime_error("failed to create logical device!");
     }
 
-    auto value = indices.graphicsFamily.value();
-    vkGetDeviceQueue(mVKDevice, value, 0, &mGraphicsQueue);
+    vkGetDeviceQueue(mVKDevice, main_queue_index, 0, &mGraphicsQueue);
+
+
+    vkGetDeviceQueue(mVKDevice, transfer_queue_index, 0, &mTransferQueue);
+    
 }
 
 void VulkanHelper::createCommandPool()
 {
-    QueueFamilyIndices queueFamilyIndices = findQueueFamilies(mPhysicalDevice);
+    updateQueueFamilies(mPhysicalDevice);
     VkCommandPoolCreateInfo cmdPoolInfo = {};
     cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    cmdPoolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+    cmdPoolInfo.queueFamilyIndex = main_queue_index;
     cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     
     
@@ -502,8 +485,14 @@ void VulkanHelper::createCommandPool()
 
     
 
+    cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    cmdPoolInfo.queueFamilyIndex = transfer_queue_index;
+    cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     
-    
+    if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &mTransferCommandPool) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to create command pool!");
+    }
 }
 
 void VulkanHelper::createDescriptorPool()
@@ -1165,24 +1154,24 @@ VkCommandBuffer VulkanHelper::createCommandBuffer(VkCommandBufferLevel level, bo
 
 VkCommandBuffer VulkanHelper::beginSingleTimeCommands()
 {
-    if (mResourceCommandBuffer == VK_NULL_HANDLE)
-    {
-        VkCommandBufferAllocateInfo allocInfo = {};
-        allocInfo.sType =
-            VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = mCommandPool[0];
-        allocInfo.commandBufferCount = 1;
+    VkCommandBuffer commandBuffer;
 
-        vkAllocateCommandBuffers(mVKDevice, &allocInfo, &mResourceCommandBuffer);
-    }
+    VkCommandBufferAllocateInfo allocInfo = {};
+    allocInfo.sType =
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool = mTransferCommandPool;
+    allocInfo.commandBufferCount = 1;
+
+    vkAllocateCommandBuffers(mVKDevice, &allocInfo, &commandBuffer);
+
 
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    vkBeginCommandBuffer(mResourceCommandBuffer, &beginInfo);
+    vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
-    return mResourceCommandBuffer;
+    return commandBuffer;
 }
 
 
@@ -1194,8 +1183,8 @@ void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-    vkQueueWaitIdle(mGraphicsQueue);
+    VK_CHECK_RESULT(vkQueueSubmit(mTransferQueue, 1, &submitInfo, VK_NULL_HANDLE));
+    vkQueueWaitIdle(mTransferQueue);
 }
 
 void VulkanHelper::copyBuffer(
@@ -1465,6 +1454,16 @@ int32_t VulkanHelper::_findMemoryType(
 VkQueue VulkanHelper::_getCommandQueue()
 {
     return mGraphicsQueue;
+}
+
+VkQueue VulkanHelper::_getTransferQueue()
+{
+    return mTransferQueue;
+}
+
+void VulkanHelper::waitTransferQueue()
+{
+    vkQueueWaitIdle(mTransferQueue);
 }
 
 VkRenderPass VulkanHelper::_getRenderPass()

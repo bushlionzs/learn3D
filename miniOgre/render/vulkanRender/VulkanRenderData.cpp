@@ -15,6 +15,8 @@
 #include "index_data.h"
 #include "vertex_declaration.h"
 #include "OgreHardwareIndexBuffer.h"
+#include "OgreRoot.h"
+#include <utils/JobSystem.h>
 
 VulkanRenderableData::VulkanRenderableData(VulkanRenderSystem* engine, Ogre::Renderable* r)
     :RenderableData(r)
@@ -29,17 +31,46 @@ VulkanRenderableData::~VulkanRenderableData()
 
 }
 
-void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
+bool VulkanRenderableData::update(VulkanFrame* frame, utils::JobSystem::Job* job)
 {
     auto mat = _r->getMaterial().get();
-
+    
     if (!mat->isLoaded())
     {
-        mat->load();
+        if (mat->isLoading())
+        {
+            return false;
+        }
+        if (job)
+        {
+            utils::JobSystem* js = Ogre::Root::getSingleton().getJobSystem();
+            utils::JobSystem::Job* sub = utils::jobs::createJob(*js, job, [mat] {
+                mat->load(nullptr);
+                }
+            );
+            
+            
+            mat->setLoading(true);
+            
 
-        VulkanShader* shader = (VulkanShader*)mat->getShader().get();
-        shader->getVKPipeline(_r);
+            js->runAndRetain(sub);
+            return false;
+        }
+        else
+        {
+            mat->load(nullptr);
+        }
     }
+
+    updateImpl(frame);
+    return true;
+}
+
+void VulkanRenderableData::updateImpl(VulkanFrame* frame)
+{
+    auto mat = _r->getMaterial().get();
+    VulkanShader* shader = (VulkanShader*)mat->getShader().get();
+    shader->getVKPipeline(_r);
 
     auto cam = mEngine->_getCamera();
     const Ogre::Matrix4& view = cam->getViewMatrix();
@@ -84,11 +115,11 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
             (const char*)&current.mMaterialConstantBuffer,
             sizeof(current.mMaterialConstantBuffer));
     }
-    
+
 
     VkDescriptorBufferInfo frameDescriptor = {};
     mEngine->_getCurrentFrame()->updateFrameDescriptor(frameDescriptor, cam);
-    
+
     if (mat->isChanged())
     {
         mat->setChanged(false);
@@ -128,7 +159,7 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
             TextureProperty* tp = texs[i]->getTextureProperty();
             uint32_t index = tp->_pbrType - TextureTypePbr_Albedo;
             VkDescriptorImageInfo& textureDescriptor = textureDescriptors[index];
-            
+
             textureDescriptor.imageView = tex->getImageView();
             textureDescriptor.sampler = tex->getSampler();
             textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -191,9 +222,9 @@ void VulkanRenderableData::update(VulkanFrame* frame, VkCommandBuffer cb)
             }
         }
     }
-    
 
-    
+
+
 
     VkDescriptorBufferInfo bufferDescriptor = {};
 

@@ -20,7 +20,7 @@
 #include "VideoManager.h"
 #include "shaderManager.h"
 #include "OgreEntity.h"
-
+#include <utils/JobSystem.h>
 
 namespace Ogre {
 
@@ -52,6 +52,9 @@ namespace Ogre {
 
         mEvt.timeSinceLastEvent = 0;
         mEvt.timeSinceLastFrame = 0;
+
+        mJobSystem = new utils::JobSystem(6, 1);
+        mJobSystem->adopt();
 	}
 
 	Root::~Root()

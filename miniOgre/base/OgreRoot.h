@@ -7,6 +7,12 @@
 class RenderSystem;
 #define MAIN_SCENE_MANAGER "__main__"
 #define MAIN_CAMERA "__main_camera__"
+
+namespace utils
+{
+	class JobSystem;
+}
+
 namespace Ogre {
 	class MovableObjectFactory;
 
@@ -50,6 +56,11 @@ namespace Ogre {
 		{
 			return mEvt;
 		}
+
+		utils::JobSystem* getJobSystem()
+		{
+			return mJobSystem;
+		}
 	private:
 		uint32_t _allocateNextMovableObjectTypeFlag(void);
 	private:
@@ -78,5 +89,7 @@ namespace Ogre {
 		RenderWindow* mAutoWindow = nullptr;
 
 		Ogre::FrameEvent mEvt;
+
+		utils::JobSystem* mJobSystem;
 	};
 }

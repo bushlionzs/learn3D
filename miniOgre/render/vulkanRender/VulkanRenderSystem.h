@@ -63,4 +63,8 @@ private:
     VulkanRenderTarget* mActiveVulkanRenderTarget;
 
     enki::TaskScheduler mTaskScheduler;
+
+    utils::JobSystem::Job* mRootJob;
+
+    std::vector<Ogre::Renderable*> mRenderList;
 };

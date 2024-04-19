@@ -13,6 +13,7 @@ namespace Ogre
 }
 
 
+
 typedef std::map< String, Ogre::RenderTarget* > RenderTargetMap;
 typedef std::multimap<uchar, Ogre::RenderTarget* > RenderTargetPriorityMap;
 
@@ -107,6 +108,8 @@ public:
 
     virtual void pushGroupMarker(const char* maker) {}
     virtual void popGroupMarker() {}
+
+    
 protected:
 	
     uint32_t mBatchCount = 0;
@@ -125,5 +128,5 @@ protected:
 
     String mRenderSystemName;
 
-    utils::JobSystem mJobSystem;
+    
 };

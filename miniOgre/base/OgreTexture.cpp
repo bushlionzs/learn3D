@@ -150,7 +150,7 @@ namespace Ogre {
 		_loadImages(imagePtrs);
 	}
 
-	bool ITexture::load()
+	bool ITexture::load(utils::JobSystem::Job* job)
 	{
 		if (mLoad)
 			return true;

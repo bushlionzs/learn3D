@@ -120,7 +120,7 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 		return;
 	}
 
-	mat->load();
+	mat->load(nullptr);
 
 	
 	const std::shared_ptr<Shader>& shader = mat->getShader();
@@ -175,7 +175,7 @@ ITexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, Textu
 {
 	Dx12Texture* tex = new Dx12Texture(name, texProperty, this);
 
-	if (!tex->load())
+	if (!tex->load(nullptr))
 	{
 		delete tex;
 		return nullptr;

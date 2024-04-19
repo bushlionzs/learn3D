@@ -41,6 +41,11 @@ VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
     mRenderSystemName = "Vulkan";
 
     new VulkanHelper(this, wnd);
+
+    utils::JobSystem* js = Ogre::Root::getSingleton().getJobSystem();
+    mRootJob = js->createJob();
+
+    mRenderList.reserve(10000);
 }
 
 VulkanRenderSystem::~VulkanRenderSystem()
@@ -140,8 +145,6 @@ ITexture* VulkanRenderSystem::createTextureFromFile(
     TextureProperty* texProperty)
 {
     auto tex =  new VulkanTexture(name, texProperty, this);
-
-    tex->load();
     return tex;
 }
 
@@ -251,16 +254,35 @@ struct ParallelTaskSet : public enki::IPinnedTask
 void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread)
 {
     multithread = false;
+
+    mRenderList.clear();
+    
     for (auto r : objs)
     {
         VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-        rd->update(mCurrentVulkanFrame, nullptr);
+        if (rd->update(mCurrentVulkanFrame, nullptr))
+        {
+            mRenderList.push_back(r);
+        }
     }
-    uint32_t size = (uint32_t)objs.size();
+
+    if (mRenderList.empty())
+    {
+        return;
+    }
+    
+    if (mRenderList.size() != objs.size())
+    {
+        utils::JobSystem* js = Ogre::Root::getSingleton().getJobSystem();
+        js->runAndWait(mRootJob);
+    }
+    
+    
+    uint32_t size = (uint32_t)mRenderList.size();
 
     if(mActiveVulkanRenderTarget->offset())
     {
-        for (auto r : objs)
+        for (auto r : mRenderList)
         {
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
             // VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
@@ -271,7 +293,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     }
     if (!multithread)
     {
-        for (auto r : objs)
+        for (auto r : mRenderList)
         {
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
             //VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());

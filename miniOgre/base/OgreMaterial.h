@@ -7,6 +7,8 @@
 #include "OgreTexture.h"
 class TextureUnit;
 
+
+
 class MaterialInfo
 {
 public:
@@ -28,8 +30,11 @@ namespace Ogre {
         uint32_t addTexture(const std::string& name, Ogre::TextureProperty* texProperty = nullptr);
         uint32_t addAnimTexture(const std::vector<String>& namelist, float duration);
         uint32_t addTexture(const Ogre::TexturePtr& tex);
-        void load();
+        void preLoad();
+        void load(utils::JobSystem::Job* job);
         bool isLoaded();
+        bool isLoading();
+        void setLoading(bool loading);
 
         std::shared_ptr<Material> clone(const String& name);
         std::shared_ptr<TextureUnit>& getTextureUnit(uint32_t index);
@@ -170,6 +175,8 @@ namespace Ogre {
         bool mPbr;
 
         bool mLoad = false;
+
+        bool mLoading = false;
 
         bool mWriteDepth = true;
 

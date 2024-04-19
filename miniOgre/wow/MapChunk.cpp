@@ -290,7 +290,7 @@ MapChunk::MapChunk(
   ShaderInfo info;
   info.shaderName = "wowterrain";
   mat->addShader(info);
-  mat->load();
+  mat->load(nullptr);
   renderable->setMaterial(mat);
   mRenderables.push_back(renderable);
 

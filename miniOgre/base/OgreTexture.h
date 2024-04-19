@@ -3,6 +3,8 @@
 #include "OgrePixelFormat.h"
 #include "OgreHardwarePixelBuffer.h"
 #include "OgreImage.h"
+#include <utils/JobSystem.h>
+
 namespace Ogre {
     enum TextureTypePbr
     {
@@ -168,7 +170,7 @@ namespace Ogre {
         virtual void createInternalResourcesImpl(void) = 0;
         virtual void freeInternalResourcesImpl(void) = 0;
         virtual void preLoad();
-        bool load();
+        bool load(utils::JobSystem::Job* job);
         void loadImpl();
         virtual void postLoad();
         uint32 getMaxMipmaps() const;

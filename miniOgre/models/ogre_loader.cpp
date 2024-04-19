@@ -5,6 +5,7 @@
 #include "OgreMesh.h"
 #include "OgreSubMesh.h"
 #include "OgreMaterialManager.h"
+#include "renderSystem.h"
 
 OgreMeshLoader::OgreMeshLoader()
 {

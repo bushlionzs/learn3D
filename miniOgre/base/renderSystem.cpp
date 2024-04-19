@@ -5,6 +5,7 @@
 #include "OgreRenderTarget.h"
 #include "OgreViewport.h"
 
+
 RenderSystem::RenderSystem()
 {
     

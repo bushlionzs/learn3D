@@ -13,7 +13,8 @@ namespace Ogre {
 
         std::shared_ptr<ITexture> load(
             const String& name, 
-            TextureProperty* texProperty);
+            TextureProperty* texProperty,
+            bool read = true);
         std::shared_ptr<ITexture> loadImage(
             const String& name, 
             const CImage& img,

@@ -15,6 +15,9 @@
 #include "animation_track.h"
 #include "gltf_helper.h"
 #include "OgreMatrix4.h"
+#include "renderSystem.h"
+#include "OgreRoot.h"
+#include <utils/JobSystem.h>
 
 struct GltfVertex
 {
@@ -80,9 +83,6 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             size,
             base_dir);
     }
-	
-
-    
 	
     auto pMesh = new Ogre::Mesh(stream->getName());
 
@@ -410,10 +410,11 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
 
             subMesh->addIndexs(indices.size(), 0, 0);
             subMesh->setMaterial(mat);
+            Ogre::Material* tmp = mat.get();
+            tmp->preLoad();
 		}
 	}
 
-    int32_t k = 0;
     Ogre::Vector3 position;
     for (auto& node : model.nodes)
     {

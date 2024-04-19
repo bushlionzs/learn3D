@@ -117,14 +117,20 @@ void TextureUnit::setTextureRotate(const Ogre::Radian& angle)
     mRecalcTexMatrix = true;
 }
 
-void TextureUnit::_load()
+void TextureUnit::preLoad()
 {
-    //_unload();
     mTextures.reserve(mNameList.size());
     for (auto& name : mNameList)
     {
-        auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty);
+        auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty, false);
         mTextures.push_back(tex);
+    }
+}
+void TextureUnit::_load(utils::JobSystem::Job* job)
+{
+    for (auto& tex : mTextures)
+    {
+        tex->load(job);
     }
     
     if (mUseAnimation || mUseScroll || mRotate != Ogre::Radian(0))
@@ -401,7 +407,7 @@ void TextureUnit::setAnimatedTextureName(
     // Load immediately if Material loaded
     if (isLoaded())
     {
-        _load();
+        _load(nullptr);
     }
 }
 
