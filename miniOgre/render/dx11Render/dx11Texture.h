@@ -5,7 +5,7 @@
 
 class Dx11RenderSystem;
 
-class Dx11Texture :public ITexture
+class Dx11Texture :public OgreTexture
 {
 public:
     Dx11Texture(

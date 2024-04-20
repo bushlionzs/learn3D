@@ -16,7 +16,7 @@ namespace Ogre {
 
     }
 
-    std::shared_ptr<ITexture> TextureManager::load(
+    std::shared_ptr<OgreTexture> TextureManager::load(
         const std::string& name, 
         TextureProperty* texProperty,
         bool read)
@@ -27,7 +27,7 @@ namespace Ogre {
             return it->second;
         }
 
-        ITexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, texProperty);
+        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, texProperty);
 
         if (tmp == nullptr)
         {
@@ -38,14 +38,14 @@ namespace Ogre {
         {
             tmp->load(nullptr);
         }
-        std::shared_ptr<ITexture> tex(tmp);
+        std::shared_ptr<OgreTexture> tex(tmp);
 
         mTexMap[name] = tex;
 
         return tex;
     }
 
-    std::shared_ptr<ITexture> TextureManager::loadImage(
+    std::shared_ptr<OgreTexture> TextureManager::loadImage(
         const String& name,
         const CImage& img,
         TextureType texType,
@@ -55,16 +55,16 @@ namespace Ogre {
         PixelFormat desiredFormat,
         bool hwGammaCorrection)
     {
-        ITexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, nullptr);
+        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, nullptr);
 
         tmp->setNumMipmaps(1000);
 
         tmp->loadImage(img);
 
-        return std::shared_ptr<ITexture>(tmp);
+        return std::shared_ptr<OgreTexture>(tmp);
     }
 
-    std::shared_ptr<ITexture> TextureManager::getByName(
+    std::shared_ptr<OgreTexture> TextureManager::getByName(
         const String& name,
         const String& group) const
     {
@@ -74,7 +74,7 @@ namespace Ogre {
             return it->second;
         }
 
-        return std::shared_ptr<ITexture>();
+        return std::shared_ptr<OgreTexture>();
     }
 
     void TextureManager::remove(const std::string& name)
@@ -90,7 +90,7 @@ namespace Ogre {
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "duplicated texture name");
         }
 
-        ITexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, &texProperty);
+        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, &texProperty);
 
         if (tmp == nullptr)
         {
@@ -98,7 +98,7 @@ namespace Ogre {
         }
 
         tmp->createInternalResources();
-        std::shared_ptr<ITexture> tex(tmp);
+        std::shared_ptr<OgreTexture> tex(tmp);
 
         mTexMap[name] = tex;
 
@@ -113,7 +113,7 @@ namespace Ogre {
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "duplicated texture name");
         }
 
-        ITexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, &texProperty);
+        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, &texProperty);
 
         if (tmp == nullptr)
         {
@@ -121,7 +121,7 @@ namespace Ogre {
         }
 
         tmp->loadRawData(stream, texProperty._width, texProperty._height, texProperty._tex_format);
-        std::shared_ptr<ITexture> tex(tmp);
+        std::shared_ptr<OgreTexture> tex(tmp);
 
         mTexMap[name] = tex;
 

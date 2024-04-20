@@ -6,7 +6,7 @@
 
 class VulkanRenderSystem;
 
-class VulkanTexture :public ITexture
+class VulkanTexture :public OgreTexture
 {
 public:
     VulkanTexture(

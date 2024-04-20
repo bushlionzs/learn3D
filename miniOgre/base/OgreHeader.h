@@ -90,7 +90,7 @@ namespace Ogre
     class ManualResourceLoader;
     class ResourceManager;
     class RibbonTrail;
-    class ITexture;
+    class OgreTexture;
     class RenderTarget;
     class Viewport;
     class RenderTargetListener;
@@ -108,7 +108,7 @@ namespace Ogre
     typedef std::shared_ptr<Ogre::Material> MaterialPtr;
     typedef std::shared_ptr<Ogre::Skeleton> SkeletonPtr;
     typedef std::shared_ptr<Ogre::Mesh> MeshPtr;
-    typedef std::shared_ptr<Ogre::ITexture> TexturePtr;
+    typedef std::shared_ptr<Ogre::OgreTexture> TexturePtr;
     typedef std::shared_ptr<MemoryDataStream> MemoryDataStreamPtr;
     typedef std::shared_ptr<Ogre::HardwareVertexBuffer> HardwareVertexBufferSharedPtr;
     typedef std::vector<std::string> StringVector;

@@ -15,7 +15,7 @@
 Dx12Texture::Dx12Texture(
     const std::string& name, 
     Ogre::TextureProperty* texProperty, 
-    Dx12RenderSystem* rs):ITexture(name, texProperty)
+    Dx12RenderSystem* rs):OgreTexture(name, texProperty)
 {
     mRenderSystem = rs;
 }

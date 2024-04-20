@@ -83,11 +83,11 @@ namespace Ogre {
         TextureAddressingMode  _tex_addr_mod = Ogre::TAM_WRAP;
     };
 
-    class ITexture
+    class OgreTexture
     {
     public:
-        ITexture(const String& name, TextureProperty* texProperty);
-        ~ITexture();
+        OgreTexture(const String& name, TextureProperty* texProperty);
+        ~OgreTexture();
         const String& getName()
         {
             return mName;

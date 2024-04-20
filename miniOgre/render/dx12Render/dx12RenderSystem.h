@@ -23,7 +23,7 @@ public:
     virtual void frameEnd();
     virtual void render(Ogre::Renderable* r, RenderListType t);
     virtual void multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread);
-    virtual Ogre::ITexture* createTextureFromFile(const std::string& name, Ogre::TextureProperty* texProperty);
+    virtual Ogre::OgreTexture* createTextureFromFile(const std::string& name, Ogre::TextureProperty* texProperty);
     virtual Shader* createShader(ShaderInfo& sinfo);
     RenderableData* createRenderableData(Ogre::Renderable* r);
     ID3D12GraphicsCommandList* getCommandList();

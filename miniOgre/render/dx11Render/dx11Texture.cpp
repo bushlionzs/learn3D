@@ -11,7 +11,7 @@
 Dx11Texture::Dx11Texture(
     const std::string& name, 
     TextureProperty* texProperty,
-    Dx11RenderSystem* rs):ITexture(name, texProperty)
+    Dx11RenderSystem* rs):OgreTexture(name, texProperty)
 {
     mName = name;
 

@@ -22,7 +22,7 @@ bool RenderSystem::engineInit()
     return true;
 }
 
-ITexture* RenderSystem::createTextureFromFile(
+OgreTexture* RenderSystem::createTextureFromFile(
     const std::string& name,
     Ogre::TextureProperty* texProperty)
 {

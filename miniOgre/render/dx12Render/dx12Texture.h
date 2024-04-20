@@ -5,7 +5,7 @@
 #include "engine_struct.h"
 class Dx12RenderSystem;
 class Dx12HardwarePixelBuffer;
-class Dx12Texture :public ITexture
+class Dx12Texture :public OgreTexture
 {
 public:
     Dx12Texture(

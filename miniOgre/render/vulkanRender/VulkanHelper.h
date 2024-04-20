@@ -66,10 +66,20 @@ public:
         VkFormat format,
         VkImageLayout oldLayout,
         VkImageLayout newLayout);
+    void insertImageMemoryBarrier(
+        VkCommandBuffer cmdbuffer,
+        VkImage image,
+        VkAccessFlags srcAccessMask,
+        VkAccessFlags dstAccessMask,
+        VkImageLayout oldImageLayout,
+        VkImageLayout newImageLayout,
+        VkPipelineStageFlags srcStageMask,
+        VkPipelineStageFlags dstStageMask,
+        VkImageSubresourceRange subresourceRange);
     void copyBufferToImage(
         VkBuffer buffer,
         VkImage image,
-        ITexture* tex);
+        OgreTexture* tex);
     void generateMipmaps(VulkanTexture* tex);
 
     VulkanDepthStencil createDepthStencil(uint32_t width, uint32_t height);
@@ -111,7 +121,7 @@ public:
     void loadDefaultResources();
 
     VkSampler getSampler(Ogre::TextureAddressingMode mode);
-    std::shared_ptr<ITexture>& getDefaultTexture();
+    std::shared_ptr<OgreTexture>& getDefaultTexture();
 
     const VulkanSettings& getVulkanSettings()
     {
@@ -200,7 +210,7 @@ private:
 
     //default texture
 
-    std::shared_ptr<ITexture> mDefaultTexture;
+    std::shared_ptr<OgreTexture> mDefaultTexture;
 
     std::vector<VkSampler> mSamplers;
 

@@ -5,7 +5,7 @@
 #include "OgreBitwise.h"
 
 namespace Ogre {
-	ITexture::ITexture(const String& name, TextureProperty* texProperty)
+	OgreTexture::OgreTexture(const String& name, TextureProperty* texProperty)
 	{
 		mName = name;
 		if (texProperty)
@@ -18,27 +18,27 @@ namespace Ogre {
 
 		mFace = 1;
 
-		mNumMipmaps = 100;
+		mNumMipmaps = 1;
 	}
 
-	ITexture::~ITexture()
+	OgreTexture::~OgreTexture()
 	{
 
 	}
 
-	TextureType ITexture::getTextureType()
+	TextureType OgreTexture::getTextureType()
 	{
 		return mTextureProperty._texType;
 	}
 
-	const HardwarePixelBufferPtr& ITexture::getBuffer(size_t face, size_t mipmap)
+	const HardwarePixelBufferPtr& OgreTexture::getBuffer(size_t face, size_t mipmap)
 	{
 		size_t idx = face * (mTextureProperty._numMipmaps + 1) + mipmap;
 		assert(idx < mSurfaceList.size());
 		return mSurfaceList[idx];
 	}
 
-	void ITexture::createInternalResources()
+	void OgreTexture::createInternalResources()
 	{
 		if (mInternalResourcesCreated)
 			return;
@@ -46,7 +46,7 @@ namespace Ogre {
 		mInternalResourcesCreated = true;
 	}
 
-	void ITexture::freeInternalResources(void)
+	void OgreTexture::freeInternalResources(void)
 	{
 		if (mInternalResourcesCreated)
 		{
@@ -56,17 +56,17 @@ namespace Ogre {
 		}
 	}
 
-	void ITexture::preLoad()
+	void OgreTexture::preLoad()
 	{
 		
 	}
 
-	void ITexture::postLoad()
+	void OgreTexture::postLoad()
 	{
 
 	}
 
-	void ITexture::loadImpl()
+	void OgreTexture::loadImpl()
 	{
 		if ((mUsage & TU_RENDERTARGET) || mUsage == TU_DYNAMIC_WRITE_ONLY)
 		{
@@ -150,7 +150,7 @@ namespace Ogre {
 		_loadImages(imagePtrs);
 	}
 
-	bool ITexture::load(utils::JobSystem::Job* job)
+	bool OgreTexture::load(utils::JobSystem::Job* job)
 	{
 		if (mLoad)
 			return true;
@@ -161,7 +161,7 @@ namespace Ogre {
 		return true;
 	}
 
-	uint32 ITexture::getMaxMipmaps() const
+	uint32 OgreTexture::getMaxMipmaps() const
 	{
 		// see ARB_texture_non_power_of_two
 		return Bitwise::mostSignificantBitSet(
@@ -169,12 +169,12 @@ namespace Ogre {
 				std::max(mTextureProperty._height, mTextureProperty._depth)));
 	}
 
-	void ITexture::loadImage(const CImage& img)
+	void OgreTexture::loadImage(const CImage& img)
 	{
 		_loadImages({ &img });
 	}
 
-	void ITexture::_loadImages(const std::vector<const CImage*>& images)
+	void OgreTexture::_loadImages(const std::vector<const CImage*>& images)
 	{
 		mSrcWidth = images[0]->getWidth();
 		mSrcHeight = images[0]->getHeight();
@@ -270,12 +270,12 @@ namespace Ogre {
 		}
 	}
 
-	void ITexture::unload()
+	void OgreTexture::unload()
 	{
 		assert(false);
 	}
 
-	void ITexture::loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format)
+	void OgreTexture::loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format)
 	{
 		CImage img;
 		img.loadRawData(stream, uWidth, uHeight, format);

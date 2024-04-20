@@ -171,7 +171,7 @@ void Dx12RenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool mu
 	}
 }
 
-ITexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
+OgreTexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
 {
 	Dx12Texture* tex = new Dx12Texture(name, texProperty, this);
 

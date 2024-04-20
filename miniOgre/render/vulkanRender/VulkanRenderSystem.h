@@ -25,7 +25,7 @@ public:
     virtual void postRender();
 
 
-    virtual ITexture* createTextureFromFile(
+    virtual OgreTexture* createTextureFromFile(
         const std::string& name,
         Ogre::TextureProperty* texProperty);
 

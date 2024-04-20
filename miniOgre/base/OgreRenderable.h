@@ -17,7 +17,7 @@ namespace Ogre {
         ~Renderable();
         virtual bool buildRenderable(RenderSystem* engine, SceneNode* node) { return false; }
         virtual void render(RenderSystem* engine) {}
-        virtual void addTexture(ITexture* tex) {}
+        virtual void addTexture(OgreTexture* tex) {}
         void setMaterial(std::shared_ptr<Material> mat)
         {
             mMaterial = mat;

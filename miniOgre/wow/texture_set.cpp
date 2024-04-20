@@ -69,7 +69,7 @@ TextureSet::TextureSet (
 }
 
 
-std::shared_ptr<ITexture> TextureSet::createAlphaMapTexture(const std::string& name)
+std::shared_ptr<OgreTexture> TextureSet::createAlphaMapTexture(const std::string& name)
 {
     TextureProperty texProperty;
     texProperty._width = 64;

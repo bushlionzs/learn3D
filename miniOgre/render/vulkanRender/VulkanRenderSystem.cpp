@@ -140,7 +140,7 @@ void VulkanRenderSystem::postRender()
 
 
 
-ITexture* VulkanRenderSystem::createTextureFromFile(
+OgreTexture* VulkanRenderSystem::createTextureFromFile(
     const std::string& name,
     TextureProperty* texProperty)
 {
@@ -260,7 +260,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     for (auto r : objs)
     {
         VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-        if (rd->update(mCurrentVulkanFrame, mRootJob))
+        if (rd->update(mCurrentVulkanFrame, nullptr))
         {
             mRenderList.push_back(r);
         }

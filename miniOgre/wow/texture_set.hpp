@@ -38,7 +38,7 @@ public:
       bool do_not_fix_alpha_map, 
       bool do_not_convert_alphamaps);
 
-  std::shared_ptr<ITexture> createAlphaMapTexture(const std::string& name);
+  std::shared_ptr<OgreTexture> createAlphaMapTexture(const std::string& name);
 
   Ogre::Vector2 anim_uv_offset(int id, int animtime) const;
 

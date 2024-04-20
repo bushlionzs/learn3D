@@ -30,7 +30,7 @@ TextureUnit::~TextureUnit()
         controllerManager.destroyController(mAnimController);
 }
 
-void TextureUnit::setTexture(std::shared_ptr<ITexture> tex)
+void TextureUnit::setTexture(std::shared_ptr<OgreTexture> tex)
 {
     if (mTextures.empty())
     {
@@ -42,7 +42,7 @@ void TextureUnit::setTexture(std::shared_ptr<ITexture> tex)
     }
 }
 
-void TextureUnit::setTexture(uint32_t index, std::shared_ptr<ITexture> tex)
+void TextureUnit::setTexture(uint32_t index, std::shared_ptr<OgreTexture> tex)
 {
     if (index >= mTextures.size())
     {
@@ -167,12 +167,12 @@ void TextureUnit::_unload()
     }
 }
 
-std::shared_ptr<ITexture> TextureUnit::getTexture()
+std::shared_ptr<OgreTexture> TextureUnit::getTexture()
 {
     return mTextures[mTextureIndex];
 }
 
-ITexture* TextureUnit::getRaw()
+OgreTexture* TextureUnit::getRaw()
 {
     return mTextures[mTextureIndex].get();
 }

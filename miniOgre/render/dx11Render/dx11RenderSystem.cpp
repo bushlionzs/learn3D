@@ -138,7 +138,7 @@ void Dx11RenderSystem::postRender()
 	
 }
 
-ITexture* Dx11RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
+OgreTexture* Dx11RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
 {
 	Dx11Texture* tex = new Dx11Texture(name, texProperty, this);
 

@@ -11,11 +11,11 @@ namespace Ogre {
         TextureManager();
         ~TextureManager();
 
-        std::shared_ptr<ITexture> load(
+        std::shared_ptr<OgreTexture> load(
             const String& name, 
             TextureProperty* texProperty,
             bool read = true);
-        std::shared_ptr<ITexture> loadImage(
+        std::shared_ptr<OgreTexture> loadImage(
             const String& name, 
             const CImage& img,
             TextureType texType = TEX_TYPE_2D,
@@ -25,7 +25,7 @@ namespace Ogre {
             PixelFormat desiredFormat = PF_UNKNOWN, 
             bool hwGammaCorrection = false);
         void remove(const std::string& name);
-        std::shared_ptr<ITexture> getByName(const String& name, const String& group = BLANKSTRING) const;
+        std::shared_ptr<OgreTexture> getByName(const String& name, const String& group = BLANKSTRING) const;
 
         virtual TexturePtr createManual(const String& name, TextureProperty& texProperty);
 
@@ -35,6 +35,6 @@ namespace Ogre {
 
         bool unloadUnreferencedResource(const String& name);
     private:
-        std::unordered_map<std::string, std::shared_ptr<ITexture>> mTexMap;
+        std::unordered_map<std::string, std::shared_ptr<OgreTexture>> mTexMap;
     };
 }

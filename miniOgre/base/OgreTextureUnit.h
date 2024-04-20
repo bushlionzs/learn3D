@@ -64,8 +64,8 @@ public:
     TextureUnit(Ogre::Material* owner);
     ~TextureUnit();
 
-    void setTexture(std::shared_ptr<ITexture> tex);
-    void setTexture(uint32_t index, std::shared_ptr<ITexture> tex);
+    void setTexture(std::shared_ptr<OgreTexture> tex);
+    void setTexture(uint32_t index, std::shared_ptr<OgreTexture> tex);
     void setTexture(const std::string& name, Ogre::TextureProperty* texProperty);
     void setAnimtexture(const std::vector<String>& namelist, float duration);
     void setTextureUScale(float u);
@@ -78,8 +78,8 @@ public:
     void preLoad();
     void _load(utils::JobSystem::Job* job);
     void _unload();
-    std::shared_ptr<ITexture> getTexture();
-    ITexture* getRaw();
+    std::shared_ptr<OgreTexture> getTexture();
+    OgreTexture* getRaw();
     TextureProperty* getTextureProperty();
 
     std::shared_ptr<TextureUnit> clone(Ogre::Material* owner);
