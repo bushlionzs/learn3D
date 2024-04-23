@@ -1,12 +1,12 @@
 #include "OgreHeader.h"
 #include "dx11Shader.h"
 #include "dx11RenderSystem.h"
-#include "vertex_declaration.h"
 #include "myutils.h"
 #include <d3dcompiler.h>
 #include "shaderManager.h"
 #include "dx11Helper.h"
 #include "OgreResourceManager.h"
+#include "OgreVertexDeclaration.h"
 
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 

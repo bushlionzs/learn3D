@@ -3,9 +3,10 @@
 #include "OgreSubMesh.h"
 #include "OgreHardwareBufferManager.h"
 #include "OgreMaterial.h"
-#include "vertex_data.h"
 #include "renderSystem.h"
-#include "vertex_declaration.h"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
+#include "OgreVertexDeclaration.h"
 #include "OgreSkeletonManager.h"
 #include "OgreSkeleton.h"
 

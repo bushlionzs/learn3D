@@ -1,7 +1,7 @@
 #pragma once
 
 #include "OgreSceneNode.h"
-#include "index_data.h"
+#include "OgreIndexData.h"
 class VertexData;
 class IndexData;
 

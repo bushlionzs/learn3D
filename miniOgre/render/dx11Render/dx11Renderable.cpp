@@ -10,7 +10,7 @@
 #include "OgreCamera.h"
 #include "OgreTextureUnit.h"
 #include <DirectXMath.h>
-#include "vertex_data.h"
+#include "OgreVertexData.h"
 #include "OgreHardwareVertexBuffer.h"
 #include "OgreD3D11Mappings.h"
 

@@ -7,8 +7,8 @@
 #include "dx11HardwareBufferManager.h"
 #include <DirectXColors.h>
 #include "OgreMoveObject.h"
-#include "vertex_data.h"
-#include "index_data.h"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
 #include "dx11Shader.h"
 #include "OgreCamera.h"
 #include "dx11Helper.h"

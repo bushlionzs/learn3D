@@ -1,10 +1,10 @@
 #include "OgreHeader.h"
 #include "bin_loader.h"
 #include "OgreMesh.h"
-#include "vertex_data.h"
-#include "index_data.h"
-#include "vertex_declaration.h"
-#include "SHADER.H"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
+#include "OgreVertexDeclaration.h"
+#include "shader.h"
 #include "OgreMaterial.h"
 
 enum

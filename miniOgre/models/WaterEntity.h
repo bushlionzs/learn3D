@@ -3,7 +3,7 @@
 #include "OgreEntity.h"
 #include "OgreSubEntity.h"
 #include "OgreSceneNode.h"
-#include "index_data.h"
+#include "OgreIndexData.h"
 
 class WaterSubEntity;
 class Waves;

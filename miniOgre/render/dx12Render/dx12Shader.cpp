@@ -1,7 +1,7 @@
 #include "OgreHeader.h"
 #include "dx12Shader.h"
 #include "dx12RenderSystem.h"
-#include "vertex_declaration.h"
+#include "OgreVertexDeclaration.h"
 #include "myutils.h"
 #include "d3dutil.h"
 #include <d3dcompiler.h>

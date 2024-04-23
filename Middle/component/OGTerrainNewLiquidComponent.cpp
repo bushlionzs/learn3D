@@ -24,9 +24,9 @@
 #include <OgreTextureManager.h>
 #include <OgreHardwarePixelBuffer.h>
 #include "OgreViewport.h"
-#include "vertex_data.h"
-#include "index_data.h"
-#include "vertex_declaration.h"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
+#include "OgreVertexDeclaration.h"
 #include "OgreTextureUnit.h"
 #include "OgreSerializer.h"
 #include "OgreHardwareBufferManager.h"

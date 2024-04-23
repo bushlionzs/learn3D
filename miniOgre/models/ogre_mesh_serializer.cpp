@@ -6,8 +6,9 @@
 #include "OgreMesh.h"
 #include "OgreMaterialManager.h"
 #include "OgreHardwareVertexBuffer.h"
-#include "vertex_declaration.h"
-#include "vertex_data.h"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
+#include "OgreVertexDeclaration.h"
 #include "OgreHardwareBufferManager.h"
 
 OgreMeshSerializerImpl::OgreMeshSerializerImpl()

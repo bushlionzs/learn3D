@@ -1,8 +1,8 @@
 #include "OgreHeader.h"
-#include "vertex_data.h"
+#include "OgreVertexData.h"
 #include "OgreHardwareBufferManager.h"
 #include "renderSystem.h"
-#include "vertex_declaration.h"
+#include "OgreVertexDeclaration.h"
 
 
 void VertexSlotInfo::createBuffer(uint32_t vertexSize, uint32_t vertexCount)

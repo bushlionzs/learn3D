@@ -3,9 +3,9 @@
 #include "VulkanShader.h"
 #include "VulkanTexture.h"
 #include "OgreRenderable.h"
-#include "vertex_data.h"
-#include "index_data.h"
-#include "vertex_declaration.h"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
+#include "OgreVertexDeclaration.h"
 #include "VulkanRenderData.h"
 #include "OgreMaterial.h"
 #include "OgreHardwareIndexBuffer.h"
@@ -227,6 +227,7 @@ struct ParallelTaskSet : public enki::IPinnedTask
         _frame = frame;
         _objs = objs;
     }
+
     ParallelTaskSet(uint32_t tdx):IPinnedTask(tdx)
     {
 

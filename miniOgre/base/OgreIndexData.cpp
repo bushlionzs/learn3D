@@ -1,5 +1,5 @@
 #include "OgreHeader.h"
-#include "index_data.h"
+#include "OgreIndexData.h"
 #include "OgreHardwareBuffer.h"
 #include "OgreHardwareBufferManager.h"
 #include "OgreHardwareIndexBuffer.h"

@@ -41,9 +41,6 @@ add_subdir(.)
 add_subdir(../common)
 
 
-
-
-
 add_executable(${PROJECT_NAME} ${GAMECLIENT_SRC_LIST})
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${ROOT_INC}/bin)

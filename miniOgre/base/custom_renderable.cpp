@@ -1,7 +1,7 @@
 #include "OgreHeader.h"
 #include "custom_renderable.h"
-#include "vertex_data.h"
-#include "index_data.h"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
 #include "engine_struct.h"
 CustomRenderable::CustomRenderable(VertexData* vertexData, IndexData* indexData)
 {

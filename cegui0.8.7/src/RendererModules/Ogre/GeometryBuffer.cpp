@@ -32,7 +32,7 @@
 #include <RenderSystem.h>
 #include <OgreQuaternion.h>
 #include <OgreHardwareBufferManager.h>
-#include <vertex_declaration.h>
+#include <OgreVertexDeclaration.h>
 #include <OgreMaterial.h>
 #include <OgreTextureUnit.h>
 #include <CEGUIManager.h>

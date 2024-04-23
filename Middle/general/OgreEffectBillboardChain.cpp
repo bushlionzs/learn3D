@@ -5,7 +5,7 @@
 #include "OgreNode.h"
 #include "OgreCamera.h"
 #include "OgreRoot.h"
-#include "vertex_declaration.h"
+#include "OgreVertexDeclaration.h"
 
 
 namespace Ogre {

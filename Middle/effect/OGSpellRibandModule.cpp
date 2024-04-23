@@ -8,7 +8,7 @@
 #include "OgreSceneNode.h"
 #include "engine_manager.h"
 #include "OgreSceneManager.h"
-#include "vertex_declaration.h"
+#include "OgreVertexDeclaration.h"
 #include <OgreHardwareBufferManager.h>
 
 namespace Orphigine	{

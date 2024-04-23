@@ -2,8 +2,8 @@
 #include "OgreSubEntity.h"
 #include "OgreSubMesh.h"
 #include "OgreEntity.h"
-#include "vertex_data.h"
-#include "index_data.h"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
 #include "OgreHardwareBufferManager.h"
 #include "renderSystem.h"
 namespace Ogre {

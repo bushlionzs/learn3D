@@ -1,5 +1,5 @@
 #include "OgreHeader.h"
-#include "vertex_declaration.h"
+#include "OgreVertexDeclaration.h"
 
 VertexDeclaration::VertexDeclaration()
 {

@@ -28,8 +28,8 @@ Copyright (c) 2000-2014 Torus Knot Software Ltd
 #ifndef _RenderOperation_H__
 #define _RenderOperation_H__
 
-#include "vertex_data.h"
-#include "index_data.h"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
 
 namespace Ogre {
 
