@@ -19,10 +19,11 @@
 #include "fg/PassNode.h"
 #include "fg/ResourceNode.h"
 #include "fg/DependencyGraph.h"
+#include "backend/CommandStream.h"
 
 
-#include <fg/DriverEnums.h>
-#include <fg/Handle.h>
+#include <backend/DriverEnums.h>
+#include <backend/Handle.h>
 
 #include <utils/Panic.h>
 #include <utils/Systrace.h>
@@ -177,7 +178,7 @@ FrameGraph& FrameGraph::compile() noexcept {
     return *this;
 }
 
-void FrameGraph::execute(RenderSystem& driver) noexcept {
+void FrameGraph::execute(backend::DriverApi& driver) noexcept {
 
     SYSTRACE_CALL();
 
@@ -424,7 +425,7 @@ FrameGraphHandle FrameGraph::forwardResourceInternal(FrameGraphHandle resourceHa
 
 FrameGraphId<FrameGraphTexture> FrameGraph::import(char const* name,
         FrameGraphRenderPass::ImportDescriptor const& desc,
-        backend::Handle<Ogre::RenderTarget> target) {
+        backend::Handle<backend::HwRenderTarget> target) {
     // create a resource that represents the imported render target
     VirtualResource* vresource =
             mArena.make<ImportedRenderTarget>(name,
@@ -461,7 +462,7 @@ bool FrameGraph::isAcyclic() const noexcept {
     return mGraph.isAcyclic();
 }
 
-void FrameGraph::export_graphviz(std::stringstream& out, char const* name) {
+void FrameGraph::export_graphviz(utils::io::ostream& out, char const* name) {
     mGraph.export_graphviz(out, name);
 }
 

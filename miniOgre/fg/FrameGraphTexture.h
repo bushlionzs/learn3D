@@ -19,8 +19,8 @@
 
 #include "fg/FrameGraphId.h"
 
-#include <fg/DriverEnums.h>
-#include <fg/Handle.h>
+#include <backend/DriverEnums.h>
+#include <backend/Handle.h>
 namespace Ogre
 {
     class ITexture;
@@ -42,7 +42,7 @@ namespace filament {
  *      void destroy(ResourceAllocatorInterface&) noexcept;
  */
 struct FrameGraphTexture {
-    backend::Handle<Ogre::ITexture> handle;
+    backend::Handle<backend::HwTexture> handle;
 
     /** describes a FrameGraphTexture resource */
     struct Descriptor {

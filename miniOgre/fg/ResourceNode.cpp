@@ -130,7 +130,7 @@ void ResourceNode::resolveResourceUsage(DependencyGraph& graph) noexcept {
     }
 }
 
-std::string ResourceNode::graphvizify() const noexcept {
+utils::CString ResourceNode::graphvizify() const noexcept {
 #ifndef NDEBUG
     std::string s;
     s.reserve(128);
@@ -162,13 +162,13 @@ std::string ResourceNode::graphvizify() const noexcept {
     s.append("]");
     s.shrink_to_fit();
 
-    return s;
+    return utils::CString{ s.c_str() };
 #else
-    return "";
+    return {};
 #endif
 }
 
-std::string ResourceNode::graphvizifyEdgeColor() const noexcept {
+utils::CString ResourceNode::graphvizifyEdgeColor() const noexcept {
     return "darkolivegreen";
 }
 

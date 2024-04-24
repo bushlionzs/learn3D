@@ -23,11 +23,7 @@
 #include <limits>
 #include <type_traits>
 #include <sstream>
-namespace Ogre
-{
-    class RenderTarget;
-    class ITexture;
-}
+
 namespace filament::backend {
 
 struct HwBufferObject;
@@ -40,6 +36,8 @@ struct HwStream;
 struct HwSwapChain;
 struct HwTimerQuery;
 struct HwVertexBuffer;
+struct HwTexture;
+struct HwRenderTarget;
 
 /*
  * A handle to a backend resource. HandleBase is for internal use only.
@@ -119,11 +117,11 @@ using FenceHandle           = Handle<HwFence>;
 using IndexBufferHandle     = Handle<HwIndexBuffer>;
 using ProgramHandle         = Handle<HwProgram>;
 using RenderPrimitiveHandle = Handle<HwRenderPrimitive>;
-using RenderTargetHandle    = Handle<Ogre::RenderTarget>;
+using RenderTargetHandle    = Handle<HwRenderTarget>;
 using SamplerGroupHandle    = Handle<HwSamplerGroup>;
 using StreamHandle          = Handle<HwStream>;
 using SwapChainHandle       = Handle<HwSwapChain>;
-using TextureHandle         = Handle<Ogre::ITexture>;
+using TextureHandle         = Handle<HwTexture>;
 using TimerQueryHandle      = Handle<HwTimerQuery>;
 using VertexBufferHandle    = Handle<HwVertexBuffer>;
 

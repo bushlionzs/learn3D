@@ -30,7 +30,7 @@ class FrameGraphPassExecutor {
     friend class RenderPassNode;
 
 protected:
-    virtual void execute(FrameGraphResources const& resources, RenderSystem& driver) noexcept = 0;
+    virtual void execute(FrameGraphResources const& resources, backend::DriverApi& driver) noexcept = 0;
 
 public:
     FrameGraphPassExecutor() noexcept = default;
@@ -60,7 +60,7 @@ class FrameGraphPass : public FrameGraphPassBase {
     template<typename, typename, typename, typename>
     friend class utils::Arena;
 
-    void execute(FrameGraphResources const&, RenderSystem&) noexcept override {}
+    void execute(FrameGraphResources const&, backend::DriverApi&) noexcept override {}
 
 protected:
     FrameGraphPass() = default;

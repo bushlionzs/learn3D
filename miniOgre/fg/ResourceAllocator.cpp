@@ -16,7 +16,7 @@
 #include "OgreHeader.h"
 #include "fg/ResourceAllocator.h"
 #include "fg/BackendUtils.h"
-#include "RenderSystem.h"
+#include "backend/CommandStream.h"
 
 
 #include <utils/FixedCapacityVector.h>
@@ -93,7 +93,7 @@ size_t ResourceAllocator::TextureKey::getSize() const noexcept {
     return size;
 }
 
-ResourceAllocator::ResourceAllocator(RenderSystem& driverApi) noexcept
+ResourceAllocator::ResourceAllocator(backend::DriverApi& driverApi) noexcept
         : mBackend(driverApi) {
 }
 
@@ -106,7 +106,7 @@ void ResourceAllocator::terminate() noexcept {
     assert_invariant(!mInUseTextures.size());
     auto& textureCache = mTextureCache;
     for (auto it = textureCache.begin(); it != textureCache.end();) {
-        //mBackend.destroyTexture(it->second.handle);
+        mBackend.destroyTexture(it->second.handle);
         it = textureCache.erase(it);
     }
 }

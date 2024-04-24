@@ -17,7 +17,7 @@
 #ifndef TNT_FILAMENT_BACKEND_PRIVATE_BACKENDUTILS_H
 #define TNT_FILAMENT_BACKEND_PRIVATE_BACKENDUTILS_H
 
-#include <fg/DriverEnums.h>
+#include <backend/DriverEnums.h>
 
 #include <string_view>
 

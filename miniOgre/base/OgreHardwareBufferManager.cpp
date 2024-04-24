@@ -1,6 +1,6 @@
 #include "OgreHeader.h"
 #include "OgreHardwareBufferManager.h"
-#include "vertex_declaration.h"
+#include "OgreVertexDeclaration.h"
 template<> Ogre::HardwareBufferManager* Ogre::Singleton<Ogre::HardwareBufferManager>::msSingleton = 0;
 
 namespace Ogre {

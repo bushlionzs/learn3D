@@ -28,8 +28,8 @@
 #include "fg/Resource.h"
 #include "fg/Utilities.h"
 
-#include <fg/DriverEnums.h>
-#include <fg/Handle.h>
+#include <backend/DriverEnums.h>
+#include <backend/Handle.h>
 
 #include <functional>
 
@@ -287,7 +287,7 @@ public:
      *
      * @param driver a reference to the backend to execute the commands
      */
-    void execute(RenderSystem& driver) noexcept;
+    void execute(backend::DriverApi& driver) noexcept;
 
     /**
      * Forwards a resource to another one which gets replaced.
@@ -376,7 +376,7 @@ public:
      */
     FrameGraphId<FrameGraphTexture> import(const char* name,
             FrameGraphRenderPass::ImportDescriptor const& desc,
-        backend::Handle<Ogre::RenderTarget> target);
+        backend::Handle<backend::HwRenderTarget> target);
 
 
     /**
@@ -423,7 +423,7 @@ public:
     bool isAcyclic() const noexcept;
 
     //! export a graphviz view of the graph
-    void export_graphviz(std::stringstream& out, const char* name = nullptr);
+    void export_graphviz(utils::io::ostream& out, const char* name = nullptr);
 
 private:
     friend class FrameGraphResources;

@@ -6,6 +6,7 @@ set(MINIOGRE_INC)
 if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+add_definitions(-DFILAMENT_DRIVER_SUPPORTS_VULKAN)
 endif()
 
 
@@ -49,6 +50,7 @@ add_subdir(render/dx12Render)
 add_subdir(render/vulkanRender)
 add_subdir(wow)
 add_subdir(fg)
+add_subdir(backend)
 
 
 
@@ -69,6 +71,7 @@ target_include_directories(${MINIOGRE_LIB_NAME}
 	${ROOT_INC}/3rd/ffmpeg/include
 	${ROOT_INC}/3rd/stormlib
 	${ROOT_INC}/3rdSource/utils/include
+	${ROOT_INC}/3rdSource/math/include
 	${DYNETWORK_INCLUDE_HEADERS}
 )
 

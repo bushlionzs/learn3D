@@ -107,8 +107,8 @@ private:
     DependencyGraph::Edge* mForwardedEdge = nullptr;
 
     // virtuals from DependencyGraph::Node
-    std::string graphvizify() const noexcept override;
-    std::string graphvizifyEdgeColor() const noexcept override;
+    utils::CString graphvizify() const noexcept override;
+    utils::CString graphvizifyEdgeColor() const noexcept override;
 };
 
 } // namespace filament

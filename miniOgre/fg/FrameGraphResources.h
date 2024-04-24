@@ -40,7 +40,7 @@ public:
     FrameGraphResources& operator=(FrameGraphResources const&) = delete;
 
     struct RenderPassInfo {
-        filament::backend::Handle<Ogre::RenderTarget> target;
+        filament::backend::Handle<backend::HwRenderTarget> target;
         filament::backend::RenderPassParams params;
     };
 
@@ -115,7 +115,7 @@ public:
      * @param handle to a FrameGraphTexture
      * @return backend concrete Texture handle
      */
-    backend::Handle<Ogre::ITexture> getTexture(FrameGraphId<FrameGraphTexture> handle) const {
+    backend::Handle<backend::HwTexture> getTexture(FrameGraphId<FrameGraphTexture> handle) const {
         return get(handle).handle;
     }
 

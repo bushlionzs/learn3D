@@ -17,10 +17,10 @@
 #ifndef TNT_FILAMENT_RESOURCEALLOCATOR_H
 #define TNT_FILAMENT_RESOURCEALLOCATOR_H
 
-#include <fg/DriverEnums.h>
-#include <fg/Handle.h>
-#include <fg/TargetBufferInfo.h>
-
+#include <backend/DriverEnums.h>
+#include <backend/Handle.h>
+#include <backend/TargetBufferInfo.h>
+#include <backend/DriverApiForward.h>
 
 #include <utils/Hash.h>
 
@@ -62,7 +62,7 @@ protected:
 
 class ResourceAllocator final : public ResourceAllocatorInterface {
 public:
-    explicit ResourceAllocator(RenderSystem& driverApi) noexcept;
+    explicit ResourceAllocator(backend::DriverApi& driverApi) noexcept;
     ~ResourceAllocator() noexcept override;
 
     void terminate() noexcept;
@@ -192,7 +192,7 @@ private:
 
     CacheContainer::iterator purge(CacheContainer::iterator const& pos);
 
-    RenderSystem& mBackend;
+    backend::DriverApi& mBackend;
     CacheContainer mTextureCache;
     InUseContainer mInUseTextures;
     size_t mAge = 0;

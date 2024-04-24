@@ -17,8 +17,8 @@
 #ifndef TNT_FILAMENT_BACKEND_TARGETBUFFERINFO_H
 #define TNT_FILAMENT_BACKEND_TARGETBUFFERINFO_H
 
-#include <fg/DriverEnums.h>
-#include <fg/Handle.h>
+#include <backend/DriverEnums.h>
+#include <backend/Handle.h>
 
 #include <stdint.h>
 
@@ -28,7 +28,7 @@ namespace filament::backend {
 
 struct TargetBufferInfo {
     // texture to be used as render target
-    Handle<Ogre::ITexture> handle;
+    Handle<HwTexture> handle;
 
     // level to be used
     uint8_t level = 0;
@@ -77,7 +77,7 @@ public:
     }
 
     // this is here for backward compatibility
-    MRT(Handle<Ogre::ITexture> handle, uint8_t level, uint16_t layer) noexcept
+    MRT(Handle<HwTexture> handle, uint8_t level, uint16_t layer) noexcept
             : mInfos{{ handle, level, layer }} {
     }
 };
