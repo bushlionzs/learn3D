@@ -160,7 +160,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
             uint32_t index = tp->_pbrType - TextureTypePbr_Albedo;
             VkDescriptorImageInfo& textureDescriptor = textureDescriptors[index];
 
-            textureDescriptor.imageView = tex->getImageView();
+            textureDescriptor.imageView = tex->getVkImageView();
             textureDescriptor.sampler = tex->getSampler();
             textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         }
@@ -172,7 +172,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
             VkDescriptorImageInfo& textureDescriptor = textureDescriptors[i];
             if (textureDescriptor.imageView == nullptr)
             {
-                textureDescriptor.imageView = tex->getImageView();
+                textureDescriptor.imageView = tex->getVkImageView();
                 textureDescriptor.sampler = tex->getSampler();
                 textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
             }
@@ -189,7 +189,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
 
             textureDescriptors.emplace_back();
             VkDescriptorImageInfo& textureDescriptor = textureDescriptors.back();
-            textureDescriptor.imageView = tex->getImageView();
+            textureDescriptor.imageView = tex->getVkImageView();
             textureDescriptor.sampler = tex->getSampler();
             textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         }
@@ -202,7 +202,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
 
             textureDescriptors3d.emplace_back();
             VkDescriptorImageInfo& textureDescriptor = textureDescriptors3d.back();
-            textureDescriptor.imageView = tex->getImageView();
+            textureDescriptor.imageView = tex->getVkImageView();
             textureDescriptor.sampler = tex->getSampler();
             textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         }
@@ -216,7 +216,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
             {
                 textureDescriptors.emplace_back();
                 VkDescriptorImageInfo& textureDescriptor = textureDescriptors.back();
-                textureDescriptor.imageView = tex->getImageView();
+                textureDescriptor.imageView = tex->getVkImageView();
                 textureDescriptor.sampler = tex->getSampler();
                 textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
             }

@@ -13,6 +13,11 @@ namespace utils
 	class JobSystem;
 }
 
+namespace filament
+{
+	class ResourceAllocator;
+}
+
 namespace Ogre {
 	class MovableObjectFactory;
 
@@ -91,5 +96,7 @@ namespace Ogre {
 		Ogre::FrameEvent mEvt;
 
 		utils::JobSystem* mJobSystem;
+
+		filament::ResourceAllocator* mResourceAllocator = nullptr;
 	};
 }

@@ -97,7 +97,7 @@ void VulkanRenderTexture::preRender(VulkanFrame* frame, const ColourValue& colou
 	subresourceRange.layerCount = 1;
 	vks::tools::setImageLayout(
 		commandBuffer,
-		mParentTexture->getImage(),
+		mParentTexture->getVkImage(),
 		VK_IMAGE_LAYOUT_UNDEFINED,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		subresourceRange);
@@ -125,7 +125,7 @@ void VulkanRenderTexture::swapBuffers()
 
 	vks::tools::setImageLayout(
 		pCommandBuffer,
-		mParentTexture->getImage(),
+		mParentTexture->getVkImage(),
 		VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		subresourceRange);
@@ -251,10 +251,10 @@ VkFramebuffer VulkanRenderTexture::getFrameBuffer(uint32_t index)
 	
 		if (settings.multiSampling)
 		{
-			attachments[1] = mParentTexture->getImageView();
+			attachments[1] = mParentTexture->getVkImageView();
 		}
 		else {
-			attachments[0] = mParentTexture->getImageView();
+			attachments[0] = mParentTexture->getVkImageView();
 		}
 
 		VK_CHECK_RESULT(vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &mFramebuffer));

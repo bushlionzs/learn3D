@@ -1389,7 +1389,7 @@ void VulkanHelper::generateMipmaps(VulkanTexture* tex)
     uint32_t width = tex->getTextureProperty()->_width;
     uint32_t height = tex->getTextureProperty()->_height;
 
-    VkImage image = tex->getImage();
+    VkImage image = tex->getVkImage();
 
     
 

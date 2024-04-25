@@ -26,8 +26,8 @@
 #include <backend/DriverEnums.h>
 #include <backend/CallbackHandler.h>
 
-#include "private/backend/Dispatcher.h"
-#include "private/backend/Driver.h"
+#include "backend/Dispatcher.h"
+#include "backend/Driver.h"
 
 #include <condition_variable>
 #include <memory>

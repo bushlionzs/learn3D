@@ -21,6 +21,7 @@
 #include "shaderManager.h"
 #include "OgreEntity.h"
 #include <utils/JobSystem.h>
+#include <fg/ResourceAllocator.h>
 
 namespace Ogre {
 
@@ -70,6 +71,8 @@ namespace Ogre {
 
         addMovableObjectFactory(new EntityFactory());
 
+
+       // mResourceAllocator = new filament::ResourceAllocator(driverApi);
     }
 
     RenderSystem* Root::createRenderEngine(

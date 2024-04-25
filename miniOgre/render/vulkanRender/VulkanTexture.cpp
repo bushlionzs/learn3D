@@ -14,7 +14,9 @@ VulkanTexture::VulkanTexture(
     const std::string& name,
     Ogre::TextureProperty* texProperty,
     VulkanRenderSystem* rs):
-    OgreTexture(name, texProperty)
+    OgreTexture(name, texProperty),
+    HwTexture(SamplerType::SAMPLER_2D, 1, 0, 0, 0, 1, TextureFormat::UNUSED, filament::backend::TextureUsage::NONE),
+    VulkanResource(VulkanResourceType::TEXTURE)
 {
     mLoad = false;
     mRenderSystem = rs;
@@ -22,6 +24,30 @@ VulkanTexture::VulkanTexture(
     mName = name;
     mVKDevice = VulkanHelper::getSingleton()._getVkDevice();
     mTextureImage = nullptr;
+}
+
+VulkanTexture::VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, VulkanContext const& context,
+    VmaAllocator allocator, VulkanCommands* commands, SamplerType target, uint8_t levels,
+    filament::backend::TextureFormat tformat, uint8_t samples, uint32_t w, uint32_t h, uint32_t depth,
+    filament::backend::TextureUsage tusage, VulkanStagePool& stagePool, bool heapAllocated,
+    VkComponentMapping swizzle)
+    :
+    OgreTexture("", nullptr),
+    HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
+    VulkanResource(VulkanResourceType::TEXTURE)
+{
+
+}
+
+VulkanTexture::VulkanTexture(VkDevice device, VmaAllocator allocator, filament::backend::VulkanCommands* commands, VkImage image,
+    VkFormat format, uint8_t samples, uint32_t width, uint32_t height, filament::backend::TextureUsage tusage,
+    filament::backend::VulkanStagePool& stagePool, bool heapAllocated)
+    :
+    OgreTexture("", nullptr),
+    HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
+    VulkanResource(VulkanResourceType::TEXTURE)
+{
+
 }
 
 VulkanTexture::~VulkanTexture()

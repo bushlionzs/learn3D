@@ -51,6 +51,7 @@ add_subdir(render/vulkanRender)
 add_subdir(wow)
 add_subdir(fg)
 add_subdir(backend)
+add_subdir(backend/vulkan)
 
 
 
@@ -72,6 +73,7 @@ target_include_directories(${MINIOGRE_LIB_NAME}
 	${ROOT_INC}/3rd/stormlib
 	${ROOT_INC}/3rdSource/utils/include
 	${ROOT_INC}/3rdSource/math/include
+	${ROOT_INC}/3rdSource/vkmemalloc/include
 	${DYNETWORK_INCLUDE_HEADERS}
 )
 

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "OgreHeader.h"
 #include "FrameGraph.h"
 #include "FrameGraphResources.h"
 #include "PassNode.h"

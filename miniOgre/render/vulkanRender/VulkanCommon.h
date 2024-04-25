@@ -5,6 +5,7 @@
 #include "OgreHardwareVertexBuffer.h"
 #include "engine_struct.h"
 #include "VulkanInitializers.hpp"
+#include <vk_mem_alloc.h>
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
