@@ -17,6 +17,7 @@
 #ifndef TNT_FILAMENT_BACKEND_VULKANDRIVER_H
 #define TNT_FILAMENT_BACKEND_VULKANDRIVER_H
 
+#include "VulkanMemory.h"
 #include "VulkanCommon.h"
 #include "VulkanContext.h"
 #include "VulkanResourceAllocator.h"

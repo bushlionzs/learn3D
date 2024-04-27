@@ -23,7 +23,6 @@
 #include <utils/CString.h>
 #include <utils/FixedCapacityVector.h>
 #include <utils/Panic.h>
-#include <vk_mem_alloc.h>
 
 #ifndef NDEBUG
 #include <set>  // For VulkanDriver::debugCommandBegin
@@ -81,7 +80,18 @@ VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevic
     return allocator;
 }
 
-
+VulkanTexture* createEmptyTexture(VkDevice device, VkPhysicalDevice physicalDevice,
+    VulkanContext const& context, VmaAllocator allocator, VulkanCommands* commands,
+    VulkanStagePool& stagePool) {
+    VulkanTexture* emptyTexture = new VulkanTexture(device, physicalDevice, context, allocator,
+        commands, SamplerType::SAMPLER_2D, 1, TextureFormat::RGBA8, 1, 1, 1, 1,
+        TextureUsage::DEFAULT | TextureUsage::COLOR_ATTACHMENT | TextureUsage::SUBPASS_INPUT,
+        stagePool, true /* heap allocated */);
+    uint32_t black = 0;
+    PixelBufferDescriptor pbd(&black, 4, PixelDataFormat::RGBA, PixelDataType::UBYTE);
+    emptyTexture->updateImage(pbd, 1, 1, 1, 0, 0, 0, 0);
+    return emptyTexture;
+}
 
 #if FVK_ENABLED(FVK_DEBUG_VALIDATION)
 VKAPI_ATTR VkBool32 VKAPI_CALL debugReportCallback(VkDebugReportFlagsEXT flags,
@@ -299,12 +309,12 @@ void VulkanDriver::createTextureSwizzledR(Handle<HwTexture> th, SamplerType targ
         TextureFormat format, uint8_t samples, uint32_t w, uint32_t h, uint32_t depth,
         TextureUsage usage,
         TextureSwizzle r, TextureSwizzle g, TextureSwizzle b, TextureSwizzle a) {
-    TextureSwizzle swizzleArray[] = {r, g, b, a};
-    const VkComponentMapping swizzleMap = getSwizzleMap(swizzleArray);
-    auto vktexture = mResourceAllocator.construct<VulkanTexture>(th, mPlatform->getDevice(),
-            mPlatform->getPhysicalDevice(), mContext, mAllocator, mCommands.get(), target, levels,
-            format, samples, w, h, depth, usage, mStagePool, false /*heap allocated */, swizzleMap);
-    mResourceManager.acquire(vktexture);
+    //TextureSwizzle swizzleArray[] = {r, g, b, a};
+    //const VkComponentMapping swizzleMap = getSwizzleMap(swizzleArray);
+    //auto vktexture = mResourceAllocator.construct<VulkanTexture>(th, mPlatform->getDevice(),
+    //        mPlatform->getPhysicalDevice(), mContext, mAllocator, mCommands.get(), target, levels,
+    //        format, samples, w, h, depth, usage, mStagePool, false /*heap allocated */, swizzleMap);
+    //mResourceManager.acquire(vktexture);
 }
 
 void VulkanDriver::importTextureR(Handle<HwTexture> th, intptr_t id,

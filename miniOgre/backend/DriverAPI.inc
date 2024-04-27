@@ -126,8 +126,7 @@
  * Driver API below...
  */
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
+
 
 DECL_DRIVER_API_0(tick)
 
@@ -486,7 +485,6 @@ DECL_DRIVER_API_N(dispatchCompute,
         math::uint3, workGroupCount)
 
 
-#pragma clang diagnostic pop
 
 #undef EXPAND
 

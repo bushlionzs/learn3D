@@ -23,7 +23,7 @@
 #include "fg/FrameGraphPass.h"
 #include "fg/FrameGraphRenderPass.h"
 #include "fg/FrameGraphTexture.h"
-
+#include "fg/Blackboard.h"
 #include "fg/DependencyGraph.h"
 #include "fg/Resource.h"
 #include "fg/Utilities.h"
@@ -225,6 +225,11 @@ public:
     FrameGraph& operator=(FrameGraph const&) = delete;
     ~FrameGraph() noexcept;
 
+    /** returns the default Blackboard */
+    Blackboard& getBlackboard() noexcept { return mBlackboard; }
+
+    /** returns the default Blackboard */
+    Blackboard const& getBlackboard() const noexcept { return mBlackboard; }
 
     /** Empty struct to use for passes with no data */
     struct Empty { };
@@ -510,6 +515,7 @@ private:
 
     void destroyInternal() noexcept;
 
+    Blackboard mBlackboard;
     ResourceAllocatorInterface& mResourceAllocator;
     LinearAllocatorArena mArena;
     DependencyGraph mGraph;

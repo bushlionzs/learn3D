@@ -19,12 +19,11 @@
 
 // This needs to be at the top
 #include "DriverBase.h"
-
+#include "VulkanTexture.h"
 #include "VulkanBuffer.h"
 #include "VulkanPipelineCache.h"
 #include "VulkanResources.h"
 #include "VulkanSwapChain.h"
-#include "VulkanTexture.h"
 #include "VulkanUtility.h"
 
 #include "backend/SamplerGroup.h"

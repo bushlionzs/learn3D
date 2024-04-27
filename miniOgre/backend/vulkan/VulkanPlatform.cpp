@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "OgreHeader.h"
+#include "VulkanPlatform.h"
 
-#include "backend/platforms/VulkanPlatform.h"
-
-#include "vulkan/platform/VulkanPlatformSwapChainImpl.h"
+#include "vulkan/VulkanPlatformSwapChainImpl.h"
 #include "vulkan/VulkanConstants.h"
 #include "vulkan/VulkanDriver.h"
 #include "vulkan/VulkanUtility.h"
 
-#include <bluevk/BlueVK.h>
 #include <utils/PrivateImplementation-impl.h>
 
 #define SWAPCHAIN_RET_FUNC(func, handle, ...)                                                      \
@@ -35,7 +34,6 @@
     }
 
 using namespace utils;
-using namespace bluevk;
 
 namespace filament::backend {
 
@@ -178,7 +176,7 @@ ExtensionSet getInstanceExtensions() {
     }
     return exts;
 }
-
+#define VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME "VK_KHR_portability_subset"
 ExtensionSet getDeviceExtensions(VkPhysicalDevice device) {
     std::string_view const TARGET_EXTS[] = {
             VK_EXT_DEBUG_MARKER_EXTENSION_NAME,
@@ -573,7 +571,6 @@ void VulkanPlatform::terminate() {
 // This is the main entry point for context creation.
 Driver* VulkanPlatform::createDriver(void* sharedContext,
         const Platform::DriverConfig& driverConfig) noexcept {
-    // Load Vulkan entry points.
     ASSERT_POSTCONDITION(bluevk::initialize(), "BlueVK is unable to load entry points.");
 
     if (sharedContext) {
