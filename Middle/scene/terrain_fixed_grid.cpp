@@ -1,8 +1,8 @@
 #include "OgreHeader.h"
 #include "terrain_fixed_grid.h"
-#include "vertex_data.h"
+#include "OgreVertexData.h"
 #include "terrain.h"
-#include "vertex_declaration.h"
+#include "OgreVertexDeclaration.h"
 #include "OgreHardwareVertexBuffer.h"
 #include "custom_renderable.h"
 

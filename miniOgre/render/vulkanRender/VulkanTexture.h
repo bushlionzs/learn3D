@@ -1,8 +1,9 @@
 #pragma once
 
-#include "OgreTexture.h"
-#include "engine_struct.h"
+
+//#include "engine_struct.h"
 #include "VulkanCommon.h"
+#include "OgreTexture.h"
 #include <backend/DriverEnums.h>
 #include <backend/DriverBase.h>
 #include <VulkanResources.h>
@@ -10,7 +11,7 @@
 #include <utils/RangeMap.h>
 
 namespace filament::backend {
-    class VulkanContext;
+    struct VulkanContext;
     class VulkanCommands;
     class VulkanStagePool;
 }
@@ -25,17 +26,17 @@ public:
         Ogre::TextureProperty* texProperty,
         VulkanRenderSystem* engine);
 
-    VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, filament::backend::VulkanContext const& context,
-        VmaAllocator allocator, filament::backend::VulkanCommands* commands, filament::backend::SamplerType target, uint8_t levels,
+    VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, VulkanContext const& context,
+        VmaAllocator allocator, VulkanCommands* commands, SamplerType target, uint8_t levels,
         filament::backend::TextureFormat tformat, uint8_t samples, uint32_t w, uint32_t h, uint32_t depth,
-        filament::backend::TextureUsage tusage, filament::backend::VulkanStagePool& stagePool, bool heapAllocated = false,
+        filament::backend::TextureUsage tusage, VulkanStagePool& stagePool, bool heapAllocated = false,
         VkComponentMapping swizzle = {});
 
     // Specialized constructor for internally created textures (e.g. from a swap chain)
    // The texture will never destroy the given VkImage, but it does manages its subresources.
-    VulkanTexture(VkDevice device, VmaAllocator allocator, filament::backend::VulkanCommands* commands, VkImage image,
+    VulkanTexture(VkDevice device, VmaAllocator allocator, VulkanCommands* commands, VkImage image,
         VkFormat format, uint8_t samples, uint32_t width, uint32_t height, filament::backend::TextureUsage tusage,
-        filament::backend::VulkanStagePool& stagePool, bool heapAllocated = false);
+        VulkanStagePool& stagePool, bool heapAllocated = false);
     ~VulkanTexture();
 
     VkImageView getVkImageView()

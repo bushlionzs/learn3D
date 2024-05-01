@@ -1,12 +1,16 @@
 #pragma once
-#include <vulkan/vulkan.h>
-#include <vulkan/vulkan_win32.h>
+//#include <vulkan/vulkan.h>
+//#include <vulkan/vulkan_beta.h>
+//#include <vulkan/vulkan_win32.h>
 #include <optional>
 #include "OgreHardwareVertexBuffer.h"
 #include "engine_struct.h"
+#include <bluevk/BlueVK.h>
 #include "VulkanInitializers.hpp"
+
 #include <vk_mem_alloc.h>
 
+using namespace bluevk;
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
     std::optional<uint32_t> presentFamily;

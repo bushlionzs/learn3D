@@ -7,7 +7,7 @@
 #include "OgreTexture.h"
 #include "OgreTextureUnit.h"
 #include "OgreTextureManager.h"
-#include "index_data.h"
+#include "OgreIndexData.h"
 #include "OgreHardwareBufferManager.h"
 #include "renderSystem.h"
 #include "terrain_fixed_grid.h"

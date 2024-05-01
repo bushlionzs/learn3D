@@ -8,19 +8,7 @@
 
 #include "VulkanTools.h"
 
-#if !(defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK))
-// iOS & macOS: VulkanExampleBase::getAssetPath() implemented externally to allow access to Objective-C components
-const std::string getAssetPath()
-{
-#if defined(VK_USE_PLATFORM_ANDROID_KHR)
-	return "";
-#elif defined(VK_EXAMPLE_DATA_DIR)
-	return VK_EXAMPLE_DATA_DIR;
-#else
-	return "./../data/";
-#endif
-}
-#endif
+
 
 namespace vks
 {

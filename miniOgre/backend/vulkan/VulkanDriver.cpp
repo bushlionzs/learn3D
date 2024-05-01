@@ -150,6 +150,18 @@ VulkanDriver::VulkanDriver(VulkanPlatform* platform, VulkanContext const& contex
     mPipelineCache(&mResourceAllocator),
     mIsSRGBSwapChainSupported(mPlatform->getCustomization().isSRGBSwapChainSupported)
 {
+    mCommands = std::make_unique<VulkanCommands>(mPlatform->getDevice(),
+        mPlatform->getGraphicsQueue(), mPlatform->getGraphicsQueueFamilyIndex(), &mContext,
+        &mResourceAllocator);
+
+    mStagePool.initialize(mAllocator, mCommands.get());
+    mFramebufferCache.initialize(mPlatform->getDevice());
+    mSamplerCache.initialize(mPlatform->getDevice());
+
+    mEmptyTexture.reset(createEmptyTexture(mPlatform->getDevice(), mPlatform->getPhysicalDevice(),
+        mContext, mAllocator, mCommands.get(), mStagePool));
+
+    mPipelineCache.setDummyTexture(mEmptyTexture->getVkImageView());
 }
 
 VulkanDriver::~VulkanDriver() noexcept = default;

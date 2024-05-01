@@ -20,6 +20,7 @@
 #include <backend/Renderer.h>
 #include <backend/Fence.h>
 #include <backend/SwapChain.h>
+#include <backend/view.h>
 #include <VulkanPlatform.h>
 #include <utils/compiler.h>
 #include <utils/debug.h>
@@ -478,6 +479,14 @@ namespace filament {
         return p;
     }
 
+    FView* FEngine::createView() noexcept {
+        FView* p = mHeapAllocator.make<FView>(*this);
+        if (p) {
+            mViews.insert(p);
+        }
+        return p;
+    }
+
     void* FEngine::streamAlloc(size_t size, size_t alignment) noexcept {
         // we allow this only for small allocations
         if (size > 65536) {
@@ -510,6 +519,12 @@ namespace filament {
             engine->shutdown();
             delete engine;
         }
+    }
+
+
+    bool FEngine::destroy(const FFence* p)
+    {
+        return true;
     }
 
     Engine::FeatureLevel FEngine::getSupportedFeatureLevel() const noexcept {

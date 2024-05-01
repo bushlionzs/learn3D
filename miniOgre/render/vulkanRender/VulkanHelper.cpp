@@ -6,6 +6,7 @@
 #include "OgreTextureManager.h"
 
 
+
 template<> VulkanHelper* Ogre::Singleton<VulkanHelper>::msSingleton = 0;
 
 static const std::vector<const char*> validationLayers = 

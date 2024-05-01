@@ -14,6 +14,8 @@
 #include "GameTableManager.h"
 #include "CEGUIManager.h"
 
+
+
 ApplicationBase::ApplicationBase()
 {
 }
@@ -98,6 +100,7 @@ bool ApplicationBase::appInit()
 	}
 	
 
+	
 	
 	return true;
 }

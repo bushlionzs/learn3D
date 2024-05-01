@@ -67,7 +67,7 @@ CEGUI expat Middle stormlib OIS freetype GameShare dy_network LinearMath BulletC
 tinyxmld
 pcre
 utils
-vulkan-1
+bluevk
 avcodec
 avdevice
 avfilter

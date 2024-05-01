@@ -414,23 +414,6 @@ void FRenderer::renderJob(ArenaScope& arena, FView& view) {
     JobSystem& js = engine.getJobSystem();
     FEngine::DriverApi& driver = engine.getDriverApi();
 
-
-    // DEBUG: driver commands must all happen from the same thread. Enforce that on debug builds.
-    driver.debugThreading();
-
-    const bool hasPostProcess = view.hasPostProcessPass();
-    bool hasScreenSpaceRefraction = false;
-    bool hasColorGrading = hasPostProcess;
-
-    
-    
-
-
-
-    
-
-   
-
     /*
      * Frame graph
      */

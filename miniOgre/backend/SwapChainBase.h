@@ -148,7 +148,7 @@ class Engine;
  *
  * @see Engine
  */
-class UTILS_PUBLIC SwapChain : public FilamentAPI {
+class  SwapChain : public FilamentAPI {
 public:
     using FrameScheduledCallback = backend::FrameScheduledCallback;
     using FrameCompletedCallback = utils::Invocable<void(SwapChain*)>;

@@ -7,6 +7,7 @@ if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-DFILAMENT_DRIVER_SUPPORTS_VULKAN)
+add_definitions(-DVK_NO_PROTOTYPES)
 endif()
 
 
@@ -74,6 +75,7 @@ target_include_directories(${MINIOGRE_LIB_NAME}
 	${ROOT_INC}/3rdSource/utils/include
 	${ROOT_INC}/3rdSource/math/include
 	${ROOT_INC}/3rdSource/vkmemalloc/include
+	${ROOT_INC}/3rdSource/bluevk/include
 	${DYNETWORK_INCLUDE_HEADERS}
 )
 

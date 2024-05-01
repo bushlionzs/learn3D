@@ -20,8 +20,6 @@
 #include "VideoManager.h"
 #include "shaderManager.h"
 #include "OgreEntity.h"
-#include <utils/JobSystem.h>
-#include <fg/ResourceAllocator.h>
 
 namespace Ogre {
 

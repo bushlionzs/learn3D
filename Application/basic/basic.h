@@ -21,8 +21,4 @@ private:
 	void base2();
 	void base3();
 
-	void initPhysics();
-private:
-	AnimationState* mAnimationState = nullptr;
-	Orphigine::Impact* mProjectorEffect;
 };

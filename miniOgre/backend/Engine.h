@@ -176,7 +176,7 @@ namespace filament {
         FFence* createFence() noexcept;
         FSwapChain* createSwapChain(void* nativeWindow, uint64_t flags) noexcept;
         FSwapChain* createSwapChain(uint32_t width, uint32_t height, uint64_t flags) noexcept;
-
+        FView* createView() noexcept;
 
         void flushAndWait();
 
@@ -308,6 +308,7 @@ namespace filament {
         ResourceList<FRenderer> mRenderers{ "Renderer" };
         ResourceList<FSwapChain> mSwapChains{ "SwapChain" };
         ResourceList<FFence> mFences{ "Fence" };
+        ResourceList<FView> mViews{ "View" };
 
         utils::Mutex mFenceListLock;
 

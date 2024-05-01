@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-#include "EngineBase.h"
-
-
-
+#include <backend/Engine.h>
+#include <backend/SwapChain.h>
 #include <backend/DriverEnums.h>
-
+#include <backend/Renderer.h>
+#include <backend/view.h>
 #include <utils/compiler.h>
 #include <utils/Panic.h>
 #include <utils/JobSystem.h>
@@ -55,11 +54,11 @@ void Engine::destroy(Engine** pEngine) {
 
 
 Renderer* Engine::createRenderer() noexcept {
-    return nullptr;
+    return downcast(this)->createRenderer();
 }
 
 View* Engine::createView() noexcept {
-    return nullptr;
+    return downcast(this)->createView();
 }
 
 Scene* Engine::createScene() noexcept {
@@ -83,7 +82,7 @@ Fence* Engine::createFence() noexcept {
 }
 
 SwapChain* Engine::createSwapChain(void* nativeWindow, uint64_t flags) noexcept {
-    return nullptr;
+    return downcast(this)->createSwapChain(nativeWindow, flags);
 }
 
 SwapChain* Engine::createSwapChain(uint32_t width, uint32_t height, uint64_t flags) noexcept {
@@ -221,11 +220,11 @@ bool Engine::isValid(const InstanceBuffer* p) {
 }
 
 void Engine::flushAndWait() {
-    
+    downcast(this)->flushAndWait();
 }
 
 void Engine::flush() {
-    
+    downcast(this)->flush();
 }
 
 utils::EntityManager& Engine::getEntityManager() noexcept {

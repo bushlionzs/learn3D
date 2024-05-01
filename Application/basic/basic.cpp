@@ -31,10 +31,6 @@ bool Basic::appInit()
 void Basic::appUpdate(float delta)
 {
 	ApplicationBase::appUpdate(delta);
-	if (mAnimationState)
-	{
-		mAnimationState->addTime(delta);
-	}
 }
 
 EngineType Basic::getEngineType()

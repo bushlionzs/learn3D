@@ -36,18 +36,22 @@ VulkanTexture::VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, V
     HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
     VulkanResource(VulkanResourceType::TEXTURE)
 {
-
+    mTextureProperty._width = w;
+    mTextureProperty._height = h;
+    mTextureProperty._depth = depth;
+    mTextureProperty._numMipmaps = levels;
+    createInternalResourcesImpl();
 }
 
-VulkanTexture::VulkanTexture(VkDevice device, VmaAllocator allocator, filament::backend::VulkanCommands* commands, VkImage image,
+VulkanTexture::VulkanTexture(VkDevice device, VmaAllocator allocator, VulkanCommands* commands, VkImage image,
     VkFormat format, uint8_t samples, uint32_t width, uint32_t height, filament::backend::TextureUsage tusage,
-    filament::backend::VulkanStagePool& stagePool, bool heapAllocated)
+    VulkanStagePool& stagePool, bool heapAllocated)
     :
     OgreTexture("", nullptr),
     HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
     VulkanResource(VulkanResourceType::TEXTURE)
 {
-
+    createInternalResourcesImpl();
 }
 
 VulkanTexture::~VulkanTexture()
@@ -266,6 +270,51 @@ void VulkanTexture::createTextureSampler()
     mTextureSampler = VulkanHelper::getSingleton().getSampler(mTextureProperty._tex_addr_mod);
 }
 
+
+void VulkanTexture::setPrimaryRange(uint32_t minMiplevel, uint32_t maxMiplevel)
+{
+
+}
+
+void VulkanTexture::updateImage(const PixelBufferDescriptor& data, uint32_t width, uint32_t height,
+    uint32_t depth, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t miplevel)
+{
+
+}
+
+VulkanLayout VulkanTexture::getPrimaryImageLayout() const
+{
+    return VulkanLayout::UNDEFINED;
+}
+void VulkanTexture::transitionLayout(VkCommandBuffer commands, const VkImageSubresourceRange& range, VulkanLayout newLayout)
+{
+
+}
+
+VkImageSubresourceRange VulkanTexture::getPrimaryViewRange() const
+{
+    return mPrimaryViewRange;
+}
+
+VkImageViewType VulkanTexture::getViewType() const
+{
+    return VK_IMAGE_VIEW_TYPE_2D;
+}
+
+VkImageView VulkanTexture::getViewForType(VkImageSubresourceRange const& range, VkImageViewType type)
+{
+    return mTextureImageView;
+}
+
+VkImageView VulkanTexture::getAttachmentView(VkImageSubresourceRange range)
+{
+    return mTextureImageView;
+}
+
+void VulkanTexture::setLayout(const VkImageSubresourceRange& range, VulkanLayout newLayout)
+{
+
+}
 
 void* VulkanTexture::getVulkanBuffer(uint32_t offset)
 {

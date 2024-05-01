@@ -176,7 +176,10 @@ public:
 
 
 
-    void setDynamicLightingOptions(float zLightNear, float zLightFar) noexcept;
+    void setDynamicLightingOptions(float zLightNear, float zLightFar) noexcept
+    {
+
+    }
 
     void setPostProcessingEnabled(bool enabled) noexcept {
         mHasPostProcessPass = enabled;

@@ -18,6 +18,8 @@ add_subdirectory(3rdSource/expat expat)
 add_subdirectory(3rdSource/pcre-8.12 pcre)
 add_subdirectory(3rdSource/libiconv-1.14 iconv)
 add_subdirectory(3rdSource/utils utils)
+add_subdirectory(3rdSource/bluevk bluevk)
+add_subdirectory(3rdSource/math math)
 
 set_property(TARGET zlibstatic PROPERTY FOLDER third_party)
 #set_property(TARGET crypto PROPERTY FOLDER third_party)
@@ -47,7 +49,8 @@ set_property(TARGET iconv PROPERTY FOLDER third_party)
 set_property(TARGET pcre PROPERTY FOLDER third_party)
 set_property(TARGET pcreposix PROPERTY FOLDER third_party)
 set_property(TARGET utils PROPERTY FOLDER third_party)
-
+set_property(TARGET bluevk PROPERTY FOLDER third_party)
+set_property(TARGET math PROPERTY FOLDER third_party)
 
 set_property(TARGET Bullet2FileLoader PROPERTY FOLDER third_party/bullet3)
 set_property(TARGET Bullet3Collision PROPERTY FOLDER third_party/bullet3)

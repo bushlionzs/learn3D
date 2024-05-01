@@ -7,8 +7,9 @@
 */
 
 #pragma once
+#include <bluevk/BlueVK.h>
 
-#include "vulkan/vulkan.h"
+
 #include "VulkanInitializers.hpp"
 
 #include <math.h>
@@ -31,7 +32,7 @@
 #include "VulkanAndroid.h"
 #include <android/asset_manager.h>
 #endif
-
+using namespace bluevk;
 // Custom define for better code readability
 #define VK_FLAGS_NONE 0
 // Default fence timeout in nanoseconds

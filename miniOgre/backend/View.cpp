@@ -156,6 +156,15 @@ void FView::executePickingQueries(backend::DriverApi& driver,
 }
 
 
+void FView::commitFrameHistory(FEngine& engine) noexcept
+{
+
+}
+
+void FView::drainFrameHistory(FEngine& engine) noexcept
+{
+
+}
 
 View::PickingQuery& FView::pick(uint32_t x, uint32_t y, backend::CallbackHandler* handler,
         View::PickingQueryResultCallback callback) noexcept {
