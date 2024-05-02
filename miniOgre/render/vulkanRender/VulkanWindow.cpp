@@ -180,7 +180,6 @@ VulkanFrame* VulkanWindow::getNextFrame()
 
     auto fence = frame->getFence();
 
-    auto result2 = vkGetFenceStatus(device, fence);
     VkResult result = vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
 
     if (result != VK_SUCCESS)

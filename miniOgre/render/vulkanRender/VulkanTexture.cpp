@@ -40,6 +40,8 @@ VulkanTexture::VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, V
     mTextureProperty._height = h;
     mTextureProperty._depth = depth;
     mTextureProperty._numMipmaps = levels;
+
+    mVKDevice = device;
     createInternalResourcesImpl();
 }
 
@@ -50,7 +52,14 @@ VulkanTexture::VulkanTexture(VkDevice device, VmaAllocator allocator, VulkanComm
     OgreTexture("", nullptr),
     HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
     VulkanResource(VulkanResourceType::TEXTURE)
+
 {
+    mTextureProperty._width = width;
+    mTextureProperty._height = height;
+    mTextureProperty._depth = depth;
+    mTextureProperty._numMipmaps = levels;
+
+    mVKDevice = device;
     createInternalResourcesImpl();
 }
 
@@ -102,8 +111,7 @@ void VulkanTexture::_createSurfaceList(void)
         mStagingBuffer,
         mStagingBufferMemory);
 
-    VkResult result = vkMapMemory(VulkanHelper::getSingleton()._getVkDevice(),
-        mStagingBufferMemory, 0, bufferSizeAll, 0, (void**)&mMappedMemory);
+    VkResult result = vkMapMemory(mVKDevice, mStagingBufferMemory, 0, bufferSizeAll, 0, (void**)&mMappedMemory);
 
     if (result != VK_SUCCESS)
     {
@@ -114,12 +122,12 @@ void VulkanTexture::_createSurfaceList(void)
 void VulkanTexture::createInternalResourcesImpl(void)
 {
     mFormat = VulkanMappings::_getClosestSupportedPF(mFormat);
-    
+
     mVulkanFormat = VulkanMappings::_getGammaFormat(VulkanMappings::_getPF(mFormat), false);
-    
+
     if (mUsage & Ogre::TU_RENDERTARGET)
     {
-        mVulkanFormat = VulkanHelper::getSingleton().getSwapChainImageFormat();
+        mVulkanFormat = VK_FORMAT_B8G8R8A8_UNORM;
     }
     createImage(
         getWidth(),
@@ -137,6 +145,7 @@ void VulkanTexture::createInternalResourcesImpl(void)
     _createSurfaceList();
 }
 
+
 void VulkanTexture::freeInternalResourcesImpl(void)
 {
 
@@ -144,9 +153,11 @@ void VulkanTexture::freeInternalResourcesImpl(void)
 
 void VulkanTexture::postLoad()
 {
+    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands(true);
     if (!mSurfaceList.empty())
     {
-        VulkanHelper::getSingleton().copyBufferToImage(
+        vks::tools::copyBufferToImage(
+            commandBuffer,
             mStagingBuffer,
             mTextureImage,
             this
@@ -156,8 +167,10 @@ void VulkanTexture::postLoad()
     if (mNeedMipmaps)
     {
         //generate mipmap
-        VulkanHelper::getSingleton().generateMipmaps(this);
+        vks::tools::generateMipmaps(commandBuffer, this);
     }
+
+    VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer, true);
 }
 
 void VulkanTexture::createImage(
@@ -213,28 +226,20 @@ void VulkanTexture::createImage(
         imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
     }
 
-    VkDevice device = VulkanHelper::getSingleton()._getVkDevice();
 
-    if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create image!");
-    }
+    VK_CHECK_RESULT(vkCreateImage(mVKDevice, &imageInfo, nullptr, &image));
 
     VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements(device, image, &memRequirements);
+    vkGetImageMemoryRequirements(mVKDevice, image, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = VulkanHelper::getSingleton()._findMemoryType(
-        memRequirements.memoryTypeBits, 
-        properties);
+    allocInfo.memoryTypeIndex = VulkanHelper::getSingleton()._findMemoryType(memRequirements.memoryTypeBits, properties);
 
-    if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to allocate image memory!");
-    }
+    VK_CHECK_RESULT(vkAllocateMemory(mVKDevice, &allocInfo, nullptr, &imageMemory));
 
-    VK_CHECK_RESULT(vkBindImageMemory(device, image, imageMemory, 0));
+    VK_CHECK_RESULT(vkBindImageMemory(mVKDevice, image, imageMemory, 0));
 
 }
 
@@ -323,9 +328,12 @@ void* VulkanTexture::getVulkanBuffer(uint32_t offset)
 
 void VulkanTexture::updateTextureData()
 {
-    VulkanHelper::getSingleton().copyBufferToImage(
+    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands(true);
+    vks::tools::copyBufferToImage(
+        commandBuffer,
         mStagingBuffer,
         mTextureImage,
         this
     );
+    VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer, true);
 }

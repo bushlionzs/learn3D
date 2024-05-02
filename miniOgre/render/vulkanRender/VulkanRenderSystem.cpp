@@ -58,7 +58,7 @@ bool VulkanRenderSystem::engineInit()
     RenderSystem::engineInit();
     new VulkanHardwareBufferManager(this);
     
-    VulkanHelper::getSingleton()._initialise();
+    VulkanHelper::getSingleton()._initialise(nullptr);
 
     enki::TaskSchedulerConfig config;
     config.numTaskThreadsToCreate = VULKAN_COMMAND_THREAD;
@@ -171,7 +171,7 @@ void VulkanRenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
     RenderTarget* target;
     target = vp->getTarget();
     updateMainPassCB(cam);
-    mActiveVulkanRenderTarget = dynamic_cast<VulkanRenderTarget*>(target);
+    mActiveVulkanRenderTarget = dynamic_cast<Ogre::VulkanRenderTarget*>(target);
     
 }
 

@@ -8,7 +8,7 @@
 
 #pragma once
 #include <bluevk/BlueVK.h>
-
+#include <VulkanContext.h>
 
 #include "VulkanInitializers.hpp"
 
@@ -61,7 +61,6 @@ using namespace bluevk;
 }
 #endif
 
-const std::string getAssetPath();
 
 namespace vks
 {
@@ -121,15 +120,28 @@ namespace vks
 		void exitFatal(const std::string& message, VkResult resultCode);
 
 		// Load a SPIR-V shader (binary)
-#if defined(__ANDROID__)
-		VkShaderModule loadShader(AAssetManager* assetManager, const char *fileName, VkDevice device);
-#else
+
 		VkShaderModule loadShader(const char *fileName, VkDevice device);
-#endif
 
 		/** @brief Checks if a file exists */
 		bool fileExists(const std::string &filename);
 
 		uint32_t alignedSize(uint32_t value, uint32_t alignment);
+
+		void createBuffer(
+			VkDevice mVKDevice,
+			filament::backend::VulkanContext& device,
+			VkDeviceSize size,
+			VkBufferUsageFlags usage,
+			VkMemoryPropertyFlags properties,
+			VkBuffer& buffer,
+			VkDeviceMemory& bufferMemory);
+
+		void copyBufferToImage(
+			VkCommandBuffer commandBuffer,
+			VkBuffer buffer,
+			VkImage image,
+			VulkanTexture* tex);
+		void generateMipmaps(VkCommandBuffer commandBuffer, VulkanTexture* tex);
 	}
 }

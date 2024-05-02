@@ -6,8 +6,9 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 */
 
+#include "OgreHeader.h"
 #include "VulkanTools.h"
-
+#include "VulkanTexture.h"
 
 
 namespace vks
@@ -312,36 +313,7 @@ namespace vks
 			exitFatal(message, (int32_t)resultCode);
 		}
 
-#if defined(__ANDROID__)
-		// Android shaders are stored as assets in the apk
-		// So they need to be loaded via the asset manager
-		VkShaderModule loadShader(AAssetManager* assetManager, const char *fileName, VkDevice device)
-		{
-			// Load shader from compressed asset
-			AAsset* asset = AAssetManager_open(assetManager, fileName, AASSET_MODE_STREAMING);
-			assert(asset);
-			size_t size = AAsset_getLength(asset);
-			assert(size > 0);
 
-			char *shaderCode = new char[size];
-			AAsset_read(asset, shaderCode, size);
-			AAsset_close(asset);
-
-			VkShaderModule shaderModule;
-			VkShaderModuleCreateInfo moduleCreateInfo;
-			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleCreateInfo.pNext = NULL;
-			moduleCreateInfo.codeSize = size;
-			moduleCreateInfo.pCode = (uint32_t*)shaderCode;
-			moduleCreateInfo.flags = 0;
-
-			VK_CHECK_RESULT(vkCreateShaderModule(device, &moduleCreateInfo, NULL, &shaderModule));
-
-			delete[] shaderCode;
-
-			return shaderModule;
-		}
-#else
 		VkShaderModule loadShader(const char *fileName, VkDevice device)
 		{
 			std::ifstream is(fileName, std::ios::binary | std::ios::in | std::ios::ate);
@@ -374,7 +346,6 @@ namespace vks
 				return VK_NULL_HANDLE;
 			}
 		}
-#endif
 
 		bool fileExists(const std::string &filename)
 		{
@@ -387,5 +358,182 @@ namespace vks
 	        return (value + alignment - 1) & ~(alignment - 1);
         }
 
+		void createBuffer(
+			VkDevice device,
+			filament::backend::VulkanContext& context,
+			VkDeviceSize size,
+			VkBufferUsageFlags usage,
+			VkMemoryPropertyFlags properties,
+			VkBuffer& buffer,
+			VkDeviceMemory& bufferMemory)
+		{
+			VkBufferCreateInfo bufferInfo = {};
+			bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+			bufferInfo.size = size;
+			bufferInfo.usage = usage;
+			bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+			if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+				throw std::runtime_error("failed to create buffer!");
+			}
+
+			VkMemoryRequirements memRequirements;
+			vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
+
+			VkMemoryAllocateInfo allocInfo = {};
+			allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+			allocInfo.allocationSize = memRequirements.size;
+			allocInfo.memoryTypeIndex = context.selectMemoryType(memRequirements.memoryTypeBits, properties);
+
+			if (vkAllocateMemory(device, &allocInfo,
+				nullptr, &bufferMemory) != VK_SUCCESS) {
+				throw std::runtime_error("failed to allocate buffer memory!");
+			}
+
+			vkBindBufferMemory(device, buffer, bufferMemory, 0);
+		}
+
+		void copyBufferToImage(
+			VkCommandBuffer commandBuffer,
+			VkBuffer buffer,
+			VkImage image,
+			VulkanTexture* tex)
+		{
+			uint32_t mipLevels = tex->getSourceMipmaps() + 1;
+			uint32_t face_count = tex->getFace();
+
+			std::vector<VkBufferImageCopy> regions;
+			regions.reserve(face_count * mipLevels);
+
+			uint32_t offset = 0;
+			for (uint32_t face = 0; face < face_count; face++)
+			{
+				uint32_t width = tex->getWidth();
+				uint32_t height = tex->getHeight();
+				for (uint32_t i = 0; i < mipLevels; i++)
+				{
+					VkBufferImageCopy bufferCopyRegion = {};
+					bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+					bufferCopyRegion.imageSubresource.mipLevel = i;
+					bufferCopyRegion.imageSubresource.baseArrayLayer = face;
+					bufferCopyRegion.imageSubresource.layerCount = 1;
+					bufferCopyRegion.imageExtent.width = width;
+					bufferCopyRegion.imageExtent.height = height;
+					bufferCopyRegion.imageExtent.depth = 1;
+					bufferCopyRegion.bufferOffset = offset;
+					regions.push_back(bufferCopyRegion);
+
+					if (width > 1)width /= 2;
+					if (height > 1)height /= 2;
+					offset += tex->getBuffer(face, i)->getSizeInBytes();
+				}
+			}
+
+
+			VkImageSubresourceRange subresourceRange = {};
+			subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			subresourceRange.baseMipLevel = 0;
+			subresourceRange.levelCount = mipLevels;
+			subresourceRange.layerCount = face_count;
+
+			vks::tools::setImageLayout(
+				commandBuffer,
+				image,
+				VK_IMAGE_LAYOUT_UNDEFINED,
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				subresourceRange);
+			vkCmdCopyBufferToImage(commandBuffer, buffer, image,
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, (uint32_t)regions.size(), regions.data());
+
+			insertImageMemoryBarrier(
+				commandBuffer,
+				image,
+				VK_ACCESS_TRANSFER_WRITE_BIT,
+				VK_ACCESS_TRANSFER_READ_BIT,
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+				VK_PIPELINE_STAGE_TRANSFER_BIT,
+				VK_PIPELINE_STAGE_TRANSFER_BIT,
+				subresourceRange);
+		}
+
+		void generateMipmaps(VkCommandBuffer commandBuffer, VulkanTexture* tex)
+		{
+			auto mipLevels = tex->getMipLevels();
+			uint32_t width = tex->getTextureProperty()->_width;
+			uint32_t height = tex->getTextureProperty()->_height;
+
+			VkImage image = tex->getVkImage();
+
+
+
+
+
+			for (uint32_t i = 1; i < mipLevels; i++) {
+				VkImageBlit imageBlit{};
+
+				imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				imageBlit.srcSubresource.layerCount = 1;
+				imageBlit.srcSubresource.mipLevel = i - 1;
+				imageBlit.srcOffsets[1].x = int32_t(width >> (i - 1));
+				imageBlit.srcOffsets[1].y = int32_t(height >> (i - 1));
+				imageBlit.srcOffsets[1].z = 1;
+
+				imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				imageBlit.dstSubresource.layerCount = 1;
+				imageBlit.dstSubresource.mipLevel = i;
+				imageBlit.dstOffsets[1].x = int32_t(width >> i);
+				imageBlit.dstOffsets[1].y = int32_t(height >> i);
+				imageBlit.dstOffsets[1].z = 1;
+
+				VkImageSubresourceRange mipSubRange = {};
+				mipSubRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				mipSubRange.baseMipLevel = i;
+				mipSubRange.levelCount = 1;
+				mipSubRange.layerCount = 1;
+
+				insertImageMemoryBarrier(
+					commandBuffer,
+					image,
+					0,
+					VK_ACCESS_TRANSFER_WRITE_BIT,
+					VK_IMAGE_LAYOUT_UNDEFINED,
+					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+					VK_PIPELINE_STAGE_TRANSFER_BIT,
+					VK_PIPELINE_STAGE_TRANSFER_BIT,
+					mipSubRange);
+
+
+				vkCmdBlitImage(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageBlit, VK_FILTER_LINEAR);
+
+				insertImageMemoryBarrier(
+					commandBuffer,
+					image,
+					VK_ACCESS_TRANSFER_WRITE_BIT,
+					VK_ACCESS_TRANSFER_READ_BIT,
+					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+					VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+					VK_PIPELINE_STAGE_TRANSFER_BIT,
+					VK_PIPELINE_STAGE_TRANSFER_BIT,
+					mipSubRange);
+			}
+
+			VkImageSubresourceRange subresourceRange = {};
+			subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			subresourceRange.layerCount = 1;
+			subresourceRange.levelCount = mipLevels;
+
+
+			insertImageMemoryBarrier(
+				commandBuffer,
+				image,
+				VK_ACCESS_TRANSFER_READ_BIT,
+				VK_ACCESS_SHADER_READ_BIT,
+				VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+				VK_PIPELINE_STAGE_TRANSFER_BIT,
+				VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+				subresourceRange);
+		}
 	}
 }

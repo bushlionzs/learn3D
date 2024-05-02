@@ -1,13 +1,14 @@
 #pragma once
 #include "renderSystem.h"
 #include "VulkanTexture.h"
+#include "VulkanRenderTarget.h"
 #include "VulkanUploadbuffer.h"
 #include "enkiTS/TaskScheduler.h"
 
 class VulkanGraphicsCommandList;
 class VulkanFrame;
 class VulkanWindow;
-class VulkanRenderTarget;
+
 
 class VulkanRenderSystem : public RenderSystem
 {
@@ -60,7 +61,7 @@ private:
 
     VulkanWindow* mRenderWindow;
 
-    VulkanRenderTarget* mActiveVulkanRenderTarget;
+    Ogre::VulkanRenderTarget* mActiveVulkanRenderTarget;
 
     enki::TaskScheduler mTaskScheduler;
 

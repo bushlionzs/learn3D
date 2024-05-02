@@ -4,7 +4,9 @@
 #include "OgreSingleton.h"
 #include "VulkanCommon.h"
 #include "OgreCommon.h"
+#include "VulkanPlatform.h"
 
+using namespace filament::backend;
 
 #define VULKAN_FRAME_RESOURCE_COUNT 3
 #define VULKAN_TEXTURE_COUNT 6
@@ -39,7 +41,7 @@ public:
 	VulkanHelper(VulkanRenderSystem* rs, HWND wnd);
 	~VulkanHelper();
 
-    void _initialise();
+    void _initialise(VulkanPlatform* platform);
     void _createBuffer(
         VkDeviceSize size,
         VkBufferUsageFlags usage,
@@ -57,10 +59,6 @@ public:
     VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, bool begin);
     VkCommandBuffer beginSingleTimeCommands(bool graphic = false);
     void endSingleTimeCommands(VkCommandBuffer commandBuffer, bool graphic = false);
-    void copyBuffer(
-        VkBuffer srcBuffer,
-        VkBuffer dstBuffer,
-        VkDeviceSize size);
     void transitionImageLayout(
         VkImage image,
         VkFormat format,
@@ -76,11 +74,6 @@ public:
         VkPipelineStageFlags srcStageMask,
         VkPipelineStageFlags dstStageMask,
         VkImageSubresourceRange subresourceRange);
-    void copyBufferToImage(
-        VkBuffer buffer,
-        VkImage image,
-        OgreTexture* tex);
-    void generateMipmaps(VulkanTexture* tex);
 
     VulkanDepthStencil createDepthStencil(uint32_t width, uint32_t height);
 
@@ -218,4 +211,6 @@ private:
 
     //
     VkCommandBuffer mResourceCommandBuffer = VK_NULL_HANDLE;
+
+    VulkanPlatform* mPlatform;
 };

@@ -8,7 +8,7 @@
 class VulkanFrame;
 
 class VulkanWindow : public Ogre::RenderWindow,
-	public VulkanRenderTarget
+	public Ogre::VulkanRenderTarget
 {
 public:
 	VulkanWindow();

@@ -38,9 +38,6 @@ VulkanHelper::VulkanHelper(VulkanRenderSystem* rs, HWND wnd)
 
     mWidth = rt.right - rt.left;
     mHeight = rt.bottom - rt.top;
-
-   /* mSettings.multiSampling = false;
-    mSettings.sampleCount = VK_SAMPLE_COUNT_1_BIT;*/
 }
 
 VulkanHelper::~VulkanHelper()
@@ -48,8 +45,9 @@ VulkanHelper::~VulkanHelper()
 
 }
 
-void VulkanHelper::_initialise()
+void VulkanHelper::_initialise(VulkanPlatform* platform)
 {
+    mPlatform = platform;
     createInstance();
     createSurface();
     pickPhysicalDevice();
@@ -339,14 +337,16 @@ bool VulkanHelper::checkValidationLayerSupport()
 
 void VulkanHelper::createSurface()
 {
+    auto instance = VulkanHelper::getSingleton()._getVKInstance();
+
+    bluevk::bindInstance(instance);
+    return;
     VkWin32SurfaceCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     createInfo.hwnd = mWnd;
     createInfo.hinstance = GetModuleHandle(nullptr);
 
-    auto instance = VulkanHelper::getSingleton()._getVKInstance();
-
-    bluevk::bindInstance(instance);
+    
 
     if (vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &mSurface) != VK_SUCCESS)
     {
@@ -358,30 +358,7 @@ void VulkanHelper::createSurface()
 
 void VulkanHelper::pickPhysicalDevice()
 {
-    uint32_t deviceCount = 0;
-    vkEnumeratePhysicalDevices(mVKInstance, &deviceCount, nullptr);
-
-    if (deviceCount == 0)
-    {
-        throw std::runtime_error("failed to find GPUs with Vulkan support!");
-    }
-
-    std::vector<VkPhysicalDevice> devices(deviceCount);
-    vkEnumeratePhysicalDevices(mVKInstance, &deviceCount, devices.data());
-
-    for (const auto& device : devices)
-    {
-        if (isDeviceSuitable(device))
-        {
-            mPhysicalDevice = device;
-            break;
-        }
-    }
-
-    if (mPhysicalDevice == VK_NULL_HANDLE)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to find a suitable GPU!");
-    }
+    mPhysicalDevice = mPlatform->getPhysicalDevice();
 
 
     vkGetPhysicalDeviceProperties(mPhysicalDevice, &mPhysicalDeviceProperties);
@@ -391,7 +368,10 @@ void VulkanHelper::pickPhysicalDevice()
 
 void VulkanHelper::createLogicalDevice()
 {
-    updateQueueFamilies(mPhysicalDevice);
+    mVKDevice = mPlatform->getDevice();
+    mGraphicsQueue = mPlatform->getGraphicsQueue();
+
+    /*updateQueueFamilies(mPhysicalDevice);
 
     const float queue_priority[] = { 1.0f };
     VkDeviceQueueCreateInfo queue_info[2] = {};
@@ -441,7 +421,7 @@ void VulkanHelper::createLogicalDevice()
     vkGetDeviceQueue(mVKDevice, main_queue_index, 0, &mGraphicsQueue);
 
 
-    vkGetDeviceQueue(mVKDevice, transfer_queue_index, 0, &mTransferQueue);
+    vkGetDeviceQueue(mVKDevice, transfer_queue_index, 0, &mTransferQueue);*/
     
 }
 
@@ -525,6 +505,7 @@ void VulkanHelper::createDescriptorPool()
 
 void VulkanHelper::setupSwapChain()
 {
+    return;
     VkSwapchainKHR oldSwapchain = mSwapChain;
 
     auto physicalDevice = VulkanHelper::getSingleton()._getPhysicalDevice();
@@ -1221,19 +1202,6 @@ void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer, bool gra
     
 }
 
-void VulkanHelper::copyBuffer(
-    VkBuffer srcBuffer,
-    VkBuffer dstBuffer,
-    VkDeviceSize size)
-{
-    VkCommandBuffer commandBuffer = beginSingleTimeCommands();
-
-    VkBufferCopy copyRegion = {};
-    copyRegion.size = size;
-    vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-    endSingleTimeCommands(commandBuffer);
-}
-
 void VulkanHelper::transitionImageLayout(
     VkImage image,
     VkFormat format,
@@ -1317,160 +1285,6 @@ void VulkanHelper::insertImageMemoryBarrier(
         1, &imageMemoryBarrier);
 }
 
-void VulkanHelper::copyBufferToImage(
-    VkBuffer buffer, 
-    VkImage image, 
-    OgreTexture* tex)
-{
-    uint32_t mipLevels = tex->getSourceMipmaps() + 1;
-    uint32_t face_count = tex->getFace();
-    VkCommandBuffer commandBuffer = beginSingleTimeCommands();
-
-    std::vector<VkBufferImageCopy> regions;
-    regions.reserve(face_count * mipLevels);
-
-    uint32_t offset = 0;
-    for (uint32_t face = 0; face < face_count; face++)
-    {
-        uint32_t width = tex->getWidth();
-        uint32_t height = tex->getHeight();
-        for (uint32_t i = 0; i < mipLevels; i++)
-        {
-            VkBufferImageCopy bufferCopyRegion = {};
-            bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            bufferCopyRegion.imageSubresource.mipLevel = i;
-            bufferCopyRegion.imageSubresource.baseArrayLayer = face;
-            bufferCopyRegion.imageSubresource.layerCount = 1;
-            bufferCopyRegion.imageExtent.width = width;
-            bufferCopyRegion.imageExtent.height = height;
-            bufferCopyRegion.imageExtent.depth = 1;
-            bufferCopyRegion.bufferOffset = offset;
-            regions.push_back(bufferCopyRegion);
-
-            if (width > 1)width /= 2;
-            if (height > 1)height /= 2;
-            offset += tex->getBuffer(face, i)->getSizeInBytes();
-        }
-    }
-
-
-    VkImageSubresourceRange subresourceRange = {};
-    subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    subresourceRange.baseMipLevel = 0;
-    subresourceRange.levelCount = mipLevels;
-    subresourceRange.layerCount = face_count;
-
-    vks::tools::setImageLayout(
-        commandBuffer,
-        image,
-        VK_IMAGE_LAYOUT_UNDEFINED,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        subresourceRange);
-    vkCmdCopyBufferToImage(commandBuffer, buffer, image,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, (uint32_t)regions.size(), regions.data());
-
-    insertImageMemoryBarrier(
-        commandBuffer,
-        image,
-        VK_ACCESS_TRANSFER_WRITE_BIT,
-        VK_ACCESS_TRANSFER_READ_BIT,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-        VK_PIPELINE_STAGE_TRANSFER_BIT,
-        VK_PIPELINE_STAGE_TRANSFER_BIT,
-        subresourceRange);
-    
- 
-    endSingleTimeCommands(commandBuffer);
-}
-
-
-void VulkanHelper::generateMipmaps(VulkanTexture* tex)
-{
-
-    VkCommandBuffer commandBuffer = beginSingleTimeCommands(true);
-
-    auto mipLevels = tex->getMipLevels();
-    uint32_t width = tex->getTextureProperty()->_width;
-    uint32_t height = tex->getTextureProperty()->_height;
-
-    VkImage image = tex->getVkImage();
-
-    
-
-    
-
-    for (uint32_t i = 1; i < mipLevels; i++) {
-        VkImageBlit imageBlit{};
-
-        imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        imageBlit.srcSubresource.layerCount = 1;
-        imageBlit.srcSubresource.mipLevel = i - 1;
-        imageBlit.srcOffsets[1].x = int32_t(width >> (i - 1));
-        imageBlit.srcOffsets[1].y = int32_t(height >> (i - 1));
-        imageBlit.srcOffsets[1].z = 1;
-
-        imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        imageBlit.dstSubresource.layerCount = 1;
-        imageBlit.dstSubresource.mipLevel = i;
-        imageBlit.dstOffsets[1].x = int32_t(width >> i);
-        imageBlit.dstOffsets[1].y = int32_t(height >> i);
-        imageBlit.dstOffsets[1].z = 1;
-
-        VkImageSubresourceRange mipSubRange = {};
-        mipSubRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        mipSubRange.baseMipLevel = i;
-        mipSubRange.levelCount = 1;
-        mipSubRange.layerCount = 1;
-
-        insertImageMemoryBarrier(
-            commandBuffer,
-            image,
-            0,
-            VK_ACCESS_TRANSFER_WRITE_BIT,
-            VK_IMAGE_LAYOUT_UNDEFINED,
-            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
-            mipSubRange);
-
-
-        vkCmdBlitImage(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageBlit, VK_FILTER_LINEAR);
-
-        insertImageMemoryBarrier(
-            commandBuffer,
-            image,
-            VK_ACCESS_TRANSFER_WRITE_BIT,
-            VK_ACCESS_TRANSFER_READ_BIT,
-            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-            VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
-            VK_PIPELINE_STAGE_TRANSFER_BIT,
-            mipSubRange);
-    }
-
-    VkImageSubresourceRange subresourceRange = {};
-    subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    subresourceRange.layerCount = 1;
-    subresourceRange.levelCount = mipLevels;
-    
-    
-    insertImageMemoryBarrier(
-        commandBuffer,
-        image,
-        VK_ACCESS_TRANSFER_READ_BIT,
-        VK_ACCESS_SHADER_READ_BIT,
-        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-        VK_PIPELINE_STAGE_TRANSFER_BIT,
-        VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-        subresourceRange);
-
-    
-    
-
-    endSingleTimeCommands(commandBuffer, true);
-}
 
 VulkanDepthStencil VulkanHelper::createDepthStencil(uint32_t width, uint32_t height)
 {
@@ -1584,28 +1398,6 @@ void VulkanHelper::_resetCommandBuffer(uint32_t frame_index)
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkResetCommandBuffer!");
     }
-
-   /* VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
-    if (vkBeginCommandBuffer(mMainCommandBuffer[frame_index], &cmdBufInfo) != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkBeginCommandBuffer!");
-    }*/
-
-    /*for (uint32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
-    {
-        uint32_t start = frame_index * VULKAN_COMMAND_THREAD + i;
-        VkCommandBuffer pCommandBuffer = mCommandPools[start]._commandBuffer;
-        if (vkResetCommandBuffer(pCommandBuffer, 0) != VK_SUCCESS)
-        {
-            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkResetCommandBuffer!");
-        }
-
-        VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
-        if (vkBeginCommandBuffer(pCommandBuffer, &cmdBufInfo) != VK_SUCCESS)
-        {
-            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkBeginCommandBuffer!");
-        }
-    }*/
 }
 
 void VulkanHelper::_endCommandBuffer(uint32_t frame_index)
