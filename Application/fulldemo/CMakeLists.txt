@@ -70,7 +70,7 @@ Middle stormlib luaplus freetype OIS GameShare dy_network LinearMath BulletColli
 tinyxmld
 pcre
 utils
-vulkan-1
+bluevk
 avcodec
 avdevice
 avfilter
