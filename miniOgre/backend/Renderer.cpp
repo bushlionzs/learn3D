@@ -17,6 +17,7 @@
 #include "backend/Renderer.h"
 
 #include "backend/CommandStream.h"
+#include "backend/RendererUtils.h"
 #include "ResourceAllocator.h"
 
 #include "backend/Engine.h"
@@ -54,6 +55,7 @@ using namespace backend;
 FRenderer::FRenderer(FEngine& engine) :
         mEngine(engine),
         mRenderTargetHandle(engine.getDefaultRenderTarget()),
+        mFrameInfoManager(engine.getDriverApi()),
         mHdrTranslucent(TextureFormat::RGBA16F),
         mHdrQualityMedium(TextureFormat::R11F_G11F_B10F),
         mHdrQualityHigh(TextureFormat::RGB16F),
@@ -214,13 +216,21 @@ bool FRenderer::beginFrame(FSwapChain* swapChain, uint64_t vsyncSteadyClockTimeN
         // This need to occur after the backend beginFrame() because some backends need to start
         // a command buffer before creating a fence.
 
-
+        mFrameInfoManager.beginFrame(driver, {
+                .historySize = mFrameRateOptions.history
+            }, mFrameId);
 
         // ask the engine to do what it needs to (e.g. updates light buffer, materials...)
         engine.prepare();
     };
 
 
+    if (mFrameSkipper.beginFrame(driver)) {
+        // if beginFrame() returns true, we are expecting a call to endFrame(),
+        // so do the beginFrame work right now, instead of requiring a call to render()
+        beginFrameInternal();
+        return true;
+    }
 
     // however, if we return false, the user is allowed to ignore us and render a frame anyway,
     // so we need to delay this work until that happens.
@@ -378,7 +388,7 @@ void FRenderer::render(FView const* view) {
         mBeginFrameInternal = {};
     }
 
-    if (UTILS_LIKELY(view && view->getScene())) {
+    if (UTILS_LIKELY(view)) {
         if (mViewRenderedCount) {
             // this is a good place to kick the GPU, since we've rendered a View before,
             // and we're about to render another one.
@@ -417,13 +427,79 @@ void FRenderer::renderJob(ArenaScope& arena, FView& view) {
     /*
      * Frame graph
      */
-
     FrameGraph fg(engine.getResourceAllocator());
+    filament::Viewport const& vp = view.getViewport();
+    const float4 clearColor = mClearOptions.clearColor;
+    const TargetBufferFlags clearFlags = mClearFlags;
+    const TargetBufferFlags discardStartFlags = mDiscardStartFlags;
+    const TargetBufferFlags keepOverrideStartFlags = TargetBufferFlags::ALL & ~discardStartFlags;
+    TargetBufferFlags keepOverrideEndFlags = TargetBufferFlags::NONE;
+
+    auto [viewRenderTarget, attachmentMask] = getRenderTarget(view);
+    FrameGraphId<FrameGraphTexture> const fgViewRenderTarget = fg.import("viewRenderTarget", {
+            .attachments = attachmentMask,
+            .viewport = vp,
+            .clearColor = clearColor,
+            .samples = 0,
+            .clearFlags = clearFlags,
+            .keepOverrideStart = keepOverrideStartFlags,
+            .keepOverrideEnd = keepOverrideEndFlags
+        }, viewRenderTarget);
+
+
+    // whether we're scaled at all
+    bool scaled = false;
+
+
+    // svp is the "rendering" viewport. That is the viewport after dynamic-resolution is applied
+    // as well as other adjustment, such as the guard band.
+    filament::Viewport svp = {
+            0, 0, // this is ignored
+            uint32_t(float(vp.width) * 1.0f),
+            uint32_t(float(vp.height) * 1.0f)
+    };
+    if (svp.empty()) {
+        return;
+    }
+
+    // xvp is the viewport relative to svp containing the "interesting" rendering
+    filament::Viewport xvp = svp;
+    const TextureFormat hdrFormat = getHdrFormat(view, true);
+    const uint8_t clearStencil = mClearOptions.clearStencil;
+
+    RendererUtils::ColorPassConfig config{
+            .physicalViewport = svp,
+            .logicalViewport = xvp,
+            .scale = {1.0f, 1.0f},
+            .hdrFormat = hdrFormat,
+            .msaa = 4,
+            .clearFlags = getClearFlags(),
+            .clearColor = clearColor,
+            .clearStencil = clearStencil,
+            .ssrLodOffset = 0.0f,
+            .hasContactShadows = false,
+            // at this point we don't know if we have refraction, but that's handled later
+            .hasScreenSpaceReflectionsOrRefractions = false,
+            .enabledStencilBuffer = view.isStencilBufferEnabled()
+    };
+
+    FrameGraphTexture::Descriptor colorBufferDesc = {
+            .width = config.physicalViewport.width,
+            .height = config.physicalViewport.height,
+            .format = config.hdrFormat
+    };
+    auto colorPassOutput = RendererUtils::colorPass(fg, "Color Pass", mEngine, view, colorBufferDesc, config);
+
+    FrameGraphId<FrameGraphTexture> input = colorPassOutput;
     auto& blackboard = fg.getBlackboard();
+
+    fg.forwardResource(fgViewRenderTarget, input);
+
+    fg.present(fgViewRenderTarget);
 
     fg.compile();
 
-    fg.export_graphviz(slog.d, view.getName());
+    //fg.export_graphviz(slog.d, view.getName());
 
     fg.execute(driver);
 

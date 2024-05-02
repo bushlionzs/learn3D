@@ -114,7 +114,7 @@ public:
 
 
     void prepareViewport(
-            const Viewport& physicalViewport,
+            const filament::Viewport& physicalViewport,
             const filament::Viewport& logicalViewport) const noexcept;
 
     
@@ -283,7 +283,8 @@ private:
 
     
 
-    Viewport mViewport;
+    filament::Viewport mViewport;
+
     bool mCulling = true;
     bool mFrontFaceWindingInverted = false;
 

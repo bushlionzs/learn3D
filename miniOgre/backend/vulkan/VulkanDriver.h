@@ -84,6 +84,8 @@ private:
     void collectGarbage();
 
     VulkanPlatform* mPlatform = nullptr;
+    std::unique_ptr<VulkanTimestamps> mTimestamps;
+
     std::unique_ptr<VulkanCommands> mCommands;
 
     std::unique_ptr<VulkanTexture> mEmptyTexture;

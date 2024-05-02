@@ -83,7 +83,7 @@ class FrameGraphPassConcrete : public FrameGraphPass<Data> {
             : mExecute(std::move(execute)) {
     }
 
-    void execute(FrameGraphResources const& resources, RenderSystem& driver) noexcept final {
+    void execute(FrameGraphResources const& resources, backend::DriverApi& driver) noexcept final {
         mExecute(resources, this->mData, driver);
     }
 

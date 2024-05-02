@@ -45,7 +45,7 @@ namespace filament {
 
         struct Descriptor {
             Attachments attachments{};
-            Viewport viewport{};
+            filament::Viewport viewport{};
             math::float4 clearColor{};
             uint8_t samples = 0; // # of samples (0 = unset, default)
             backend::TargetBufferFlags clearFlags{};
@@ -54,7 +54,7 @@ namespace filament {
 
         struct ImportDescriptor {
             backend::TargetBufferFlags attachments = backend::TargetBufferFlags::COLOR0;
-            Viewport viewport{};
+            filament::Viewport viewport{};
             math::float4 clearColor{};  // this overrides Descriptor::clearColor
             uint8_t samples = 0;        // # of samples (0 = unset, default)
             backend::TargetBufferFlags clearFlags{}; // this overrides Descriptor::clearFlags

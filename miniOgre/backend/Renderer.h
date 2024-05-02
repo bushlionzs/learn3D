@@ -25,6 +25,8 @@
 #include "backend/SwapChain.h"
 
 #include "backend/DriverApiForward.h"
+#include "backend/FrameSkipper.h"
+#include "backend/FrameInfo.h"
 
 #include <fg/FrameGraphId.h>
 #include <fg/FrameGraphTexture.h>
@@ -163,12 +165,15 @@ private:
 
     // keep a reference to our engine
     FEngine& mEngine;
-
+    FrameSkipper mFrameSkipper;
     backend::Handle<backend::HwRenderTarget> mRenderTargetHandle;
     FSwapChain* mSwapChain = nullptr;
     size_t mCommandsHighWatermark = 0;
     uint32_t mFrameId = 0;
     uint32_t mViewRenderedCount = 0;
+    FrameInfoManager mFrameInfoManager;
+
+
     backend::TextureFormat mHdrTranslucent;
     backend::TextureFormat mHdrQualityMedium;
     backend::TextureFormat mHdrQualityHigh;

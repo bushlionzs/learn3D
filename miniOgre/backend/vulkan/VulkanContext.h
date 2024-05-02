@@ -52,6 +52,31 @@ struct VulkanAttachment {
     VkImageSubresourceRange getSubresourceRange(VkImageAspectFlags aspect) const;
 };
 
+class VulkanTimestamps {
+public:
+    using QueryResult = std::array<uint64_t, 4>;
+
+    VulkanTimestamps(VkDevice device);
+    ~VulkanTimestamps();
+
+    // Not copy-able.
+    VulkanTimestamps(VulkanTimestamps const&) = delete;
+    VulkanTimestamps& operator=(VulkanTimestamps const&) = delete;
+
+    std::tuple<uint32_t, uint32_t> getNextQuery();
+    void clearQuery(uint32_t queryIndex);
+
+    void beginQuery(VulkanCommandBuffer const* commands, VulkanTimerQuery* query);
+    void endQuery(VulkanCommandBuffer const* commands, VulkanTimerQuery const* query);
+    QueryResult getResult(VulkanTimerQuery const* query);
+
+private:
+    VkDevice mDevice;
+    VkQueryPool mPool;
+    utils::bitset32 mUsed;
+    utils::Mutex mMutex;
+};
+
 struct VulkanRenderPass {
     VulkanRenderTarget* renderTarget;
     VkRenderPass renderPass;

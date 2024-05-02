@@ -16,6 +16,7 @@
 #include "OgreHeader.h"
 #include "VulkanDriver.h"
 #include "VulkanTexture.h"
+#include "VulkanHelper.h"
 #include "VulkanConstants.h"
 #include "VulkanPlatform.h"
 #include "CommandStreamDispatcher.h"
@@ -138,6 +139,7 @@ Dispatcher VulkanDriver::getDispatcher() const noexcept {
     return ConcreteDispatcher<VulkanDriver>::make();
 }
 
+
 VulkanDriver::VulkanDriver(VulkanPlatform* platform, VulkanContext const& context,
         Platform::DriverConfig const& driverConfig) noexcept
     :mPlatform(platform),
@@ -157,6 +159,12 @@ VulkanDriver::VulkanDriver(VulkanPlatform* platform, VulkanContext const& contex
     mStagePool.initialize(mAllocator, mCommands.get());
     mFramebufferCache.initialize(mPlatform->getDevice());
     mSamplerCache.initialize(mPlatform->getDevice());
+
+    new VulkanHelper(nullptr, 0);
+
+    VulkanHelper::getSingleton()._initialise(platform);
+
+    mTimestamps = std::make_unique<VulkanTimestamps>(mPlatform->getDevice());
 
     mEmptyTexture.reset(createEmptyTexture(mPlatform->getDevice(), mPlatform->getPhysicalDevice(),
         mContext, mAllocator, mCommands.get(), mStagePool));
@@ -526,11 +534,11 @@ Handle<HwSwapChain> VulkanDriver::createSwapChainHeadlessS() noexcept {
 
 Handle<HwTimerQuery> VulkanDriver::createTimerQueryS() noexcept {
     // The handle must be constructed here, as a synchronous call to getTimerQueryValue might happen
-    // before createTimerQueryR is executed.
-    Handle<HwTimerQuery> tqh;
-           /* = mResourceAllocator.initHandle<VulkanTimerQuery>(mTimestamps->getNextQuery());
+   // before createTimerQueryR is executed.
+    Handle<HwTimerQuery> tqh
+        = mResourceAllocator.initHandle<VulkanTimerQuery>(mTimestamps->getNextQuery());
     auto query = mResourceAllocator.handle_cast<VulkanTimerQuery*>(tqh);
-    mThreadSafeResourceManager.acquire(query);*/
+    mThreadSafeResourceManager.acquire(query);
     return tqh;
 }
 
@@ -835,32 +843,32 @@ void VulkanDriver::update3DImage(Handle<HwTexture> th, uint32_t level, uint32_t 
 void VulkanDriver::setupExternalImage(void* image) {
 }
 
-bool VulkanDriver::getTimerQueryValue(Handle<HwTimerQuery> tqh, uint64_t* elapsedTime) {
-    //VulkanTimerQuery* vtq = mResourceAllocator.handle_cast<VulkanTimerQuery*>(tqh);
-    //if (!vtq->isCompleted()) {
-    //    return false;
-    //}
+TimerQueryResult VulkanDriver::getTimerQueryValue(Handle<HwTimerQuery> tqh, uint64_t* elapsedTime) {
+    VulkanTimerQuery* vtq = mResourceAllocator.handle_cast<VulkanTimerQuery*>(tqh);
+    if (!vtq->isCompleted()) {
+        return TimerQueryResult::NOT_READY;
+    }
 
-    //auto results = mTimestamps->getResult(vtq);
-    //uint64_t timestamp0 = results[0];
-    //uint64_t available0 = results[1];
-    //uint64_t timestamp1 = results[2];
-    //uint64_t available1 = results[3];
+    auto results = mTimestamps->getResult(vtq);
+    uint64_t timestamp0 = results[0];
+    uint64_t available0 = results[1];
+    uint64_t timestamp1 = results[2];
+    uint64_t available1 = results[3];
 
-    //if (available0 == 0 || available1 == 0) {
-    //    return false;
-    //}
+    if (available0 == 0 || available1 == 0) {
+        return TimerQueryResult::NOT_READY;
+    }
 
-    //ASSERT_POSTCONDITION(timestamp1 >= timestamp0, "Timestamps are not monotonically increasing.");
+    ASSERT_POSTCONDITION(timestamp1 >= timestamp0, "Timestamps are not monotonically increasing.");
 
-    //// NOTE: MoltenVK currently writes system time so the following delta will always be zero.
-    //// However there are plans for implementing this properly. See the following GitHub ticket.
-    //// https://github.com/KhronosGroup/MoltenVK/issues/773
+    // NOTE: MoltenVK currently writes system time so the following delta will always be zero.
+    // However there are plans for implementing this properly. See the following GitHub ticket.
+    // https://github.com/KhronosGroup/MoltenVK/issues/773
 
-    //float const period = mContext.getPhysicalDeviceLimits().timestampPeriod;
-    //uint64_t delta = uint64_t(float(timestamp1 - timestamp0) * period);
-    //*elapsedTime = delta;
-    return true;
+    float const period = mContext.getPhysicalDeviceLimits().timestampPeriod;
+    uint64_t delta = uint64_t(float(timestamp1 - timestamp0) * period);
+    *elapsedTime = delta;
+    return TimerQueryResult::AVAILABLE;
 }
 
 void VulkanDriver::setExternalImage(Handle<HwTexture> th, void* image) {

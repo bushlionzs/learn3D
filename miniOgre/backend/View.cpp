@@ -95,11 +95,17 @@ void FView::setVisibleLayers(uint8_t select, uint8_t values) noexcept {
 
 
 
+void FView::prepareViewport(
+    const filament::Viewport& physicalViewport,
+    const filament::Viewport& logicalViewport) const noexcept
+{
+}
 
 
+void FView::commitUniforms(backend::DriverApi& driver) const noexcept
+{
 
-
-
+}
 
 
 
