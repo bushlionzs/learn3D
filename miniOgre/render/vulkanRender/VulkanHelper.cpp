@@ -345,11 +345,15 @@ void VulkanHelper::createSurface()
     createInfo.hinstance = GetModuleHandle(nullptr);
 
     auto instance = VulkanHelper::getSingleton()._getVKInstance();
-    if (vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr,
-        &mSurface) != VK_SUCCESS)
+
+    bluevk::bindInstance(instance);
+
+    if (vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &mSurface) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create window surface!");
     }
+
+    
 }
 
 void VulkanHelper::pickPhysicalDevice()

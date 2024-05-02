@@ -19,7 +19,8 @@ VulkanFrame::VulkanFrame(uint32_t frame_index)
     fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
     if (
         vkCreateFence(device, &fenceInfo, nullptr, &mFlightFence) != VK_SUCCESS ||
-        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mRenderFinishedSemaphore) != VK_SUCCESS)
+        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mRenderFinishedSemaphore) != VK_SUCCESS ||
+        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mImageAvailableSemaphore) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create synchronization objects for a frame!");
     }

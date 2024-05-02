@@ -13,7 +13,7 @@
 #include "OgreViewport.h"
 #include "GameTableManager.h"
 #include "CEGUIManager.h"
-
+#include "bluevk/BlueVK.h"
 
 
 ApplicationBase::ApplicationBase()
@@ -49,6 +49,9 @@ bool ApplicationBase::appInit()
 	
 	HWND wnd = mApplicationWindow->getWnd();
 	InputManager::getSingletonPtr()->createInput((size_t)wnd);
+
+	bluevk::initialize();
+	
 	new Ogre::Root;
 	Ogre::Root::getSingleton()._initialise();
 

@@ -53,7 +53,6 @@ private:
 
 	
 	std::vector<VkFramebuffer> mSwapChainFramebuffers;
-	VkSemaphore mImageAvailableSemaphore;
 	
 
 	uint32_t mFrameIndex = 0;
@@ -61,4 +60,6 @@ private:
 	bool mHaveRenderPass = false;
 
 	MultisampleTarget mMultisampleTarget;
+
+	uint32_t mImageIndex;
 };

@@ -23,9 +23,8 @@ bool SkeletonAnimation::appInit()
 	ApplicationBase::appInit();
 
 	
-
-	auto mesh = 
-		MeshManager::getSingletonPtr()->load(std::string("蒙古贵族女_03.mesh"));
+	std::string meshname = "蒙古贵族女_03.mesh";
+	auto mesh = MeshManager::getSingletonPtr()->load(meshname);
 
 	/*std::string name = "贵族女站立3.skeleton";
 	Skeleton* skeleton = new Skeleton("贵族女站立3.skeleton");
@@ -37,7 +36,7 @@ bool SkeletonAnimation::appInit()
 	mesh->applySkeleton(ss);*/
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-	Entity* gltf = mSceneManager->createEntity("gltf", mesh);
+	Entity* gltf = mSceneManager->createEntity("gltf", meshname);
 	SceneNode* gltfnode = root->createChildSceneNode("gltf");
 	gltfnode->updatechildren();
 	gltfnode->attachObject(gltf);

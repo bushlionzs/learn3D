@@ -176,28 +176,12 @@ VulkanFrame* VulkanWindow::getNextFrame()
     auto swapchain = VulkanHelper::getSingleton().getSwapchain();   
     auto device = VulkanHelper::getSingleton()._getVkDevice();
 
-    uint32_t index = 0xffffffff;
-
-    VkResult result = vkAcquireNextImageKHR(
-        device,
-        swapchain,
-        std::numeric_limits<uint64_t>::max(),
-        mImageAvailableSemaphore,
-        VK_NULL_HANDLE,
-        &index);
-    if (result != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkAcquireNextImageKHR error");
-    }
-    
-
-
-    auto frame =  VulkanHelper::getSingleton()._getFrame(index);
+    auto frame = VulkanHelper::getSingleton()._getFrame(mFrameIndex);
 
     auto fence = frame->getFence();
 
     auto result2 = vkGetFenceStatus(device, fence);
-    result = vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+    VkResult result = vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
 
     if (result != VK_SUCCESS)
     {
@@ -210,6 +194,20 @@ VulkanFrame* VulkanWindow::getNextFrame()
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkResetFences error");
     }
+
+    auto imageAvailableSemaphore = frame->getImageAvailableSemaphore();
+    result = vkAcquireNextImageKHR(
+        device,
+        swapchain,
+        std::numeric_limits<uint64_t>::max(),
+        imageAvailableSemaphore,
+        VK_NULL_HANDLE,
+        &mImageIndex);
+    if (result != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkAcquireNextImageKHR error");
+    }
+    
 
     return frame;
 }
@@ -359,14 +357,18 @@ void VulkanWindow::swapBuffers()
             VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
             VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
     };
+
+    auto imageAvailableSemaphore = currentFrame->getImageAvailableSemaphore();
+    auto renderFinshedSemaphore = currentFrame->getFinishedSemaphore();
+
     submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = &mImageAvailableSemaphore;
+    submitInfo.pWaitSemaphores = &imageAvailableSemaphore;
 
     VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frame_index);
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    auto renderFinshedSemaphore = currentFrame->getFinishedSemaphore();
+    
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = &renderFinshedSemaphore;
     submitInfo.pWaitDstStageMask = waitDestStageMasks;
@@ -397,7 +399,7 @@ void VulkanWindow::swapBuffers()
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = &swapchain;
 
-    presentInfo.pImageIndices = &currentFrame->getFrameIndex();
+    presentInfo.pImageIndices = &mImageIndex;
 
     result = vkQueuePresentKHR(queue, &presentInfo);
 
@@ -405,22 +407,16 @@ void VulkanWindow::swapBuffers()
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to present swap chain image!");
     }
+
+    mFrameIndex++;
+
+    mFrameIndex %= VULKAN_FRAME_RESOURCE_COUNT;
 }
 
 void VulkanWindow::createSyncObjects()
 {
     auto device = VulkanHelper::getSingleton()._getVkDevice();
 
-    VkSemaphoreCreateInfo semaphoreInfo{};
-    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-    VkFenceCreateInfo fenceInfo{};
-    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-    fenceInfo.flags = 0;
-    if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mImageAvailableSemaphore) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create synchronization objects for a frame!");
-    }
+    
 }
 

@@ -35,6 +35,11 @@ public:
 		return mRenderFinishedSemaphore;
 	}
 
+	VkSemaphore getImageAvailableSemaphore()
+	{
+		return mImageAvailableSemaphore;
+	}
+
 	VulkanObjectPool& getObjectPool()
 	{
 		return _vulkanObjectPool;
@@ -45,6 +50,7 @@ private:
 
 	
 	VkFence mFlightFence;
+	VkSemaphore mImageAvailableSemaphore;
 	VkSemaphore mRenderFinishedSemaphore;
 
 	VulkanObjectPool _vulkanObjectPool;

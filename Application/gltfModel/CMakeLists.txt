@@ -68,7 +68,7 @@ target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre
 CEGUI expat Middle stormlib OIS freetype GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
 pcre
-vulkan-1
+bluevk
 utils
 avcodec
 avdevice

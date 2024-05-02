@@ -22,7 +22,7 @@ bool gltfModel::appInit()
 {
 	ApplicationBase::appInit();
 
-	std::string meshname = "FlightHelmet.gltf";
+	std::string meshname = "ninja.mesh";
 	//meshname = "matBall.bin";
 	auto mesh = MeshManager::getSingletonPtr()->load(meshname);
 
@@ -36,7 +36,7 @@ bool gltfModel::appInit()
 	
 
 
-	mGameCamera->setDistance(2);
+	mGameCamera->setDistance(500);
 	mGameCamera->setHeight(0.0f);
 	mGameCamera->setMoveSpeed(10);
 	//glslangValidator  -V material_pbr.frag -o material_pbr.frag.spv
