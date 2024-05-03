@@ -269,6 +269,11 @@ public:
             UNLOCK_IF_NEEDED();
             return;
         }
+        if (resource->getType() == VulkanResourceType::TEXTURE)
+        {
+            printf("insert:%p,type:%d,id:%d\n", resource, resource->getType(), resource->getId());
+        }
+        
         mResources.insert(resource);
         UNLOCK_IF_NEEDED();
         resource->ref();

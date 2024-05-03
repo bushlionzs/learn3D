@@ -66,5 +66,6 @@ void SkeletonAnimation::appUpdate(float delta)
 
 EngineType SkeletonAnimation::getEngineType()
 {
+	//return EngineType_Dx11;
 	return EngineType_Vulkan;
 }

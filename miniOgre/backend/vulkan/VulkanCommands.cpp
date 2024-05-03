@@ -208,7 +208,7 @@ VulkanCommandBuffer& VulkanCommands::get() {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
             .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
     };
-    vkBeginCommandBuffer(currentbuf->buffer(), &binfo);
+    auto result = vkBeginCommandBuffer(currentbuf->buffer(), &binfo);
 
     // Notify the observer that a new command buffer has been activated.
     if (mObserver) {

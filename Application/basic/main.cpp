@@ -13,17 +13,17 @@ int main()
 	platform_log_init();
 
 	CoInitialize(NULL);
-	Basic app;
+	/*Basic app;
 	app.appInit();
-	app.run();
+	app.run();*/
 
-	/*SimpleApp app;
+	SimpleApp app;
 
 	auto setup = [&app](Engine* engine) {
 		};
 	auto cleanup = [&app](Engine* engine) {
 		};
-	app.run(setup, cleanup);*/
+	app.run(setup, cleanup);
 	return 0;
 }
 

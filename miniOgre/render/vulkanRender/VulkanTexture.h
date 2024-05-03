@@ -72,6 +72,8 @@ public:
         return mSidecarMSAA.get();
     }
 
+    VulkanLayout getLayout(uint32_t layer, uint32_t level) const;
+
     void setPrimaryRange(uint32_t minMiplevel, uint32_t maxMiplevel);
 
     void updateImage(const PixelBufferDescriptor& data, uint32_t width, uint32_t height,
@@ -125,7 +127,7 @@ private:
     VkImageView mTextureImageView;
     VkSampler mTextureSampler;
 
-    VkFormat mVulkanFormat;
+    VkFormat mVulkanFormat = VK_FORMAT_UNDEFINED;
 
     bool mNeedMipmaps = false;
     uint32_t mMipLevels = 1;

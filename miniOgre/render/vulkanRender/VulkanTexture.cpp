@@ -8,6 +8,8 @@
 #include "VulkanHardwarePixelBuffer.h"
 #include "VulkanMappings.h"
 #include "VulkanTools.h"
+#include "VulkanConstants.h"
+#include "VulkanUtility.h"
 
 
 VulkanTexture::VulkanTexture(
@@ -34,13 +36,13 @@ VulkanTexture::VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, V
     :
     OgreTexture("", nullptr),
     HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
-    VulkanResource(VulkanResourceType::TEXTURE)
+    VulkanResource(heapAllocated ? VulkanResourceType::HEAP_ALLOCATED : VulkanResourceType::TEXTURE)
 {
     mTextureProperty._width = w;
     mTextureProperty._height = h;
     mTextureProperty._depth = depth;
     mTextureProperty._numMipmaps = levels;
-
+    mVulkanFormat = filament::backend::getVkFormat(tformat);
     mVKDevice = device;
     createInternalResourcesImpl();
 }
@@ -51,13 +53,14 @@ VulkanTexture::VulkanTexture(VkDevice device, VmaAllocator allocator, VulkanComm
     :
     OgreTexture("", nullptr),
     HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
-    VulkanResource(VulkanResourceType::TEXTURE)
+    VulkanResource(heapAllocated ? VulkanResourceType::HEAP_ALLOCATED : VulkanResourceType::TEXTURE)
 
 {
     mTextureProperty._width = width;
     mTextureProperty._height = height;
     mTextureProperty._depth = depth;
     mTextureProperty._numMipmaps = levels;
+    mVulkanFormat = format;
 
     mVKDevice = device;
     createInternalResourcesImpl();
@@ -121,14 +124,20 @@ void VulkanTexture::_createSurfaceList(void)
 
 void VulkanTexture::createInternalResourcesImpl(void)
 {
-    mFormat = VulkanMappings::_getClosestSupportedPF(mFormat);
-
-    mVulkanFormat = VulkanMappings::_getGammaFormat(VulkanMappings::_getPF(mFormat), false);
-
-    if (mUsage & Ogre::TU_RENDERTARGET)
+    if (VK_FORMAT_UNDEFINED == mVulkanFormat)
     {
-        mVulkanFormat = VK_FORMAT_B8G8R8A8_UNORM;
+        mFormat = VulkanMappings::_getClosestSupportedPF(mFormat);
+
+        mVulkanFormat = VulkanMappings::_getGammaFormat(VulkanMappings::_getPF(mFormat), false);
+
+        if (mUsage & Ogre::TU_RENDERTARGET)
+        {
+            mVulkanFormat = VK_FORMAT_B8G8R8A8_UNORM;
+        }
     }
+    
+
+    
     createImage(
         getWidth(),
         getHeight(),
@@ -275,6 +284,15 @@ void VulkanTexture::createTextureSampler()
     mTextureSampler = VulkanHelper::getSingleton().getSampler(mTextureProperty._tex_addr_mod);
 }
 
+VulkanLayout VulkanTexture::getLayout(uint32_t layer, uint32_t level) const
+{
+    assert_invariant(level <= 0xffff && layer <= 0xffff);
+    const uint32_t key = (layer << 16) | level;
+    if (!mSubresourceLayouts.has(key)) {
+        return VulkanLayout::UNDEFINED;
+    }
+    return mSubresourceLayouts.get(key);
+}
 
 void VulkanTexture::setPrimaryRange(uint32_t minMiplevel, uint32_t maxMiplevel)
 {
@@ -291,9 +309,71 @@ VulkanLayout VulkanTexture::getPrimaryImageLayout() const
 {
     return VulkanLayout::UNDEFINED;
 }
-void VulkanTexture::transitionLayout(VkCommandBuffer commands, const VkImageSubresourceRange& range, VulkanLayout newLayout)
+void VulkanTexture::transitionLayout(VkCommandBuffer cmdbuf, const VkImageSubresourceRange& range, VulkanLayout newLayout)
 {
+    VulkanLayout const oldLayout = getLayout(range.baseArrayLayer, range.baseMipLevel);
 
+    uint32_t const firstLayer = range.baseArrayLayer;
+    uint32_t const lastLayer = firstLayer + range.layerCount;
+    uint32_t const firstLevel = range.baseMipLevel;
+    uint32_t const lastLevel = firstLevel + range.levelCount;
+
+    // If we are transitioning more than one layer/level (slice), we need to know whether they are
+    // all of the same layer.  If not, we need to transition slice-by-slice. Otherwise it would
+    // trigger the validation layer saying that the `oldLayout` provided is incorrect.
+    // TODO: transition by multiple slices with more sophiscated range finding.
+    bool transitionSliceBySlice = false;
+    for (uint32_t i = firstLayer; i < lastLayer; ++i) {
+        for (uint32_t j = firstLevel; j < lastLevel; ++j) {
+            if (oldLayout != getLayout(i, j)) {
+                transitionSliceBySlice = true;
+                break;
+            }
+        }
+    }
+
+#if FVK_ENABLED(FVK_DEBUG_LAYOUT_TRANSITION)
+    utils::slog.d << "transition texture=" << mTextureImage
+        << " (" << range.baseArrayLayer
+        << "," << range.baseMipLevel << ")"
+        << " count=(" << range.layerCount
+        << "," << range.levelCount << ")"
+        << " from=" << oldLayout << " to=" << newLayout
+        << " format=" << mVkFormat
+        << " depth=" << isVkDepthFormat(mVkFormat)
+        << " slice-by-slice=" << transitionSliceBySlice
+        << utils::io::endl;
+#endif
+
+    if (transitionSliceBySlice) {
+        for (uint32_t i = firstLayer; i < lastLayer; ++i) {
+            for (uint32_t j = firstLevel; j < lastLevel; ++j) {
+                VulkanLayout const layout = getLayout(i, j);
+                imgutil::transitionLayout(cmdbuf, {
+                        .image = mTextureImage,
+                        .oldLayout = layout,
+                        .newLayout = newLayout,
+                        .subresources = {
+                            .aspectMask = range.aspectMask,
+                            .baseMipLevel = j,
+                            .levelCount = 1,
+                            .baseArrayLayer = i,
+                            .layerCount = 1,
+                        },
+                    });
+            }
+        }
+    }
+    else {
+        imgutil::transitionLayout(cmdbuf, {
+            .image = mTextureImage,
+            .oldLayout = oldLayout,
+            .newLayout = newLayout,
+            .subresources = range,
+            });
+    }
+
+    setLayout(range, newLayout);
 }
 
 VkImageSubresourceRange VulkanTexture::getPrimaryViewRange() const
@@ -318,7 +398,28 @@ VkImageView VulkanTexture::getAttachmentView(VkImageSubresourceRange range)
 
 void VulkanTexture::setLayout(const VkImageSubresourceRange& range, VulkanLayout newLayout)
 {
+    uint32_t const firstLayer = range.baseArrayLayer;
+    uint32_t const lastLayer = firstLayer + range.layerCount;
+    uint32_t const firstLevel = range.baseMipLevel;
+    uint32_t const lastLevel = firstLevel + range.levelCount;
 
+    assert_invariant(firstLevel <= 0xffff && lastLevel <= 0xffff);
+    assert_invariant(firstLayer <= 0xffff && lastLayer <= 0xffff);
+
+    if (newLayout == VulkanLayout::UNDEFINED) {
+        for (uint32_t layer = firstLayer; layer < lastLayer; ++layer) {
+            uint32_t const first = (layer << 16) | firstLevel;
+            uint32_t const last = (layer << 16) | lastLevel;
+            mSubresourceLayouts.clear(first, last);
+        }
+    }
+    else {
+        for (uint32_t layer = firstLayer; layer < lastLayer; ++layer) {
+            uint32_t const first = (layer << 16) | firstLevel;
+            uint32_t const last = (layer << 16) | lastLevel;
+            mSubresourceLayouts.add(first, last, newLayout);
+        }
+    }
 }
 
 void* VulkanTexture::getVulkanBuffer(uint32_t offset)

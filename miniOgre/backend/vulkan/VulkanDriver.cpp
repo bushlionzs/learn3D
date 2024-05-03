@@ -133,7 +133,6 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugUtilsCallback(VkDebugUtilsMessageSeverityFla
 
 } // anonymous namespace
 
-using ImgUtil = VulkanImageUtility;
 
 Dispatcher VulkanDriver::getDispatcher() const noexcept {
     return ConcreteDispatcher<VulkanDriver>::make();
@@ -1229,7 +1228,7 @@ void VulkanDriver::nextSubpass(int) {
             VulkanAttachment subpassInput = renderTarget->getColor(i);
             VkDescriptorImageInfo info = {
                 .imageView = subpassInput.getImageView(VK_IMAGE_ASPECT_COLOR_BIT),
-                .imageLayout = ImgUtil::getVkLayout(subpassInput.getLayout()),
+                .imageLayout = imgutil::getVkLayout(subpassInput.getLayout()),
             };
             mPipelineCache.bindInputAttachment(i, info);
         }
@@ -1488,7 +1487,7 @@ void VulkanDriver::draw(PipelineState pipelineState, Handle<HwRenderPrimitive> r
         samplerInfo[binding] = {
             .sampler = vksampler,
             .imageView = imageView,
-            .imageLayout = ImgUtil::getVkLayout(texture->getPrimaryImageLayout())
+            .imageLayout = imgutil::getVkLayout(texture->getPrimaryImageLayout())
         };
         samplerTextures[binding] = texture;
     }
@@ -1552,13 +1551,13 @@ void VulkanDriver::dispatchCompute(Handle<HwProgram> program, math::uint3 workGr
 }
 
 void VulkanDriver::beginTimerQuery(Handle<HwTimerQuery> tqh) {
-    /*VulkanTimerQuery* vtq = mResourceAllocator.handle_cast<VulkanTimerQuery*>(tqh);
-    mTimestamps->beginQuery(&(mCommands->get()), vtq);*/
+    VulkanTimerQuery* vtq = mResourceAllocator.handle_cast<VulkanTimerQuery*>(tqh);
+    mTimestamps->beginQuery(&(mCommands->get()), vtq);
 }
 
 void VulkanDriver::endTimerQuery(Handle<HwTimerQuery> tqh) {
-    /*VulkanTimerQuery* vtq = mResourceAllocator.handle_cast<VulkanTimerQuery*>(tqh);
-    mTimestamps->endQuery(&(mCommands->get()), vtq);*/
+    VulkanTimerQuery* vtq = mResourceAllocator.handle_cast<VulkanTimerQuery*>(tqh);
+    mTimestamps->endQuery(&(mCommands->get()), vtq);
 }
 
 void VulkanDriver::debugCommandBegin(CommandStream* cmds, bool synchronous, const char* methodName) noexcept {

@@ -83,7 +83,7 @@ VulkanPipelineCache::VulkanPipelineCache(VulkanResourceAllocator* allocator)
     mDummyBufferWriteInfo.pBufferInfo = &mDummyBufferInfo;
     mDummyBufferWriteInfo.pTexelBufferView = nullptr;
 
-    mDummyTargetInfo.imageLayout = VulkanImageUtility::getVkLayout(VulkanLayout::READ_ONLY);
+    mDummyTargetInfo.imageLayout = imgutil::getVkLayout(VulkanLayout::READ_ONLY);
     mDummyTargetWriteInfo.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     mDummyTargetWriteInfo.pNext = nullptr;
     mDummyTargetWriteInfo.dstArrayElement = 0;
