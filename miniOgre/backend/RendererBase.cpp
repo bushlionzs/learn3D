@@ -40,8 +40,8 @@ bool Renderer::beginFrame(SwapChain* swapChain, uint64_t vsyncSteadyClockTimeNan
     return downcast(this)->beginFrame(downcast(swapChain), vsyncSteadyClockTimeNano);
 }
 
-void Renderer::copyFrame(SwapChain* dstSwapChain, filament::Viewport const& dstViewport,
-        filament::Viewport const& srcViewport, CopyFrameFlag flags) {
+void Renderer::copyFrame(SwapChain* dstSwapChain, backend::Viewport const& dstViewport,
+    backend::Viewport const& srcViewport, CopyFrameFlag flags) {
     downcast(this)->copyFrame(downcast(dstSwapChain), dstViewport, srcViewport, flags);
 }
 

@@ -96,8 +96,8 @@ public:
             backend::PixelBufferDescriptor&& buffer);
 
     // blits the current swapchain to another one
-    void copyFrame(FSwapChain* dstSwapChain, filament::Viewport const& dstViewport,
-        filament::Viewport const& srcViewport, CopyFrameFlag flags);
+    void copyFrame(FSwapChain* dstSwapChain, backend::Viewport const& dstViewport,
+        backend::Viewport const& srcViewport, CopyFrameFlag flags);
 
 
     void setDisplayInfo(DisplayInfo const& info) noexcept {

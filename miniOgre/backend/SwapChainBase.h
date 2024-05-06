@@ -262,7 +262,8 @@ public:
      *
      * @see PresentCallable
      */
-    void setFrameScheduledCallback(FrameScheduledCallback callback, void* user = nullptr);
+    void setFrameScheduledCallback(backend::CallbackHandler* UTILS_NULLABLE handler = nullptr,
+        FrameScheduledCallback&& callback = {});
 
     /**
      * FrameCompletedCallback is a callback function that notifies an application when a frame's
@@ -283,8 +284,8 @@ public:
      *
      * @see CallbackHandler
      */
-    void setFrameCompletedCallback(backend::CallbackHandler* handler = nullptr,
-            FrameCompletedCallback&& callback = {}) noexcept;
+    void setFrameCompletedCallback(backend::CallbackHandler* UTILS_NULLABLE handler = nullptr,
+        FrameCompletedCallback&& callback = {}) noexcept;
 
 
 protected:

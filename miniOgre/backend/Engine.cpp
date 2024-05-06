@@ -222,7 +222,7 @@ namespace filament {
         slog.i << "FEngine feature level: " << int(mActiveFeatureLevel) << io::endl;
 
 
-        mResourceAllocator = new ResourceAllocator(driverApi);
+        mResourceAllocator = new ResourceAllocator(mConfig, driverApi);
 
 
         // initialize the dummy textures so that their contents are not undefined
@@ -394,18 +394,9 @@ namespace filament {
             return 0;
         }
 
-        // Set thread affinity for the backend thread.
-        //  see https://developer.android.com/agi/sys-trace/threads-scheduling#cpu_core_affinity
-        // Certain backends already have some threads pinned, and we can't easily know on which core.
-        const bool disableThreadAffinity
-            = mDriver->isWorkaroundNeeded(Workaround::DISABLE_THREAD_AFFINITY);
-
         uint32_t const id = std::thread::hardware_concurrency() - 1;
         while (true) {
-            // looks like thread affinity needs to be reset regularly (on Android)
-            if (!disableThreadAffinity) {
-                JobSystem::setThreadAffinityById(id);
-            }
+
             if (!execute()) {
                 break;
             }
@@ -445,7 +436,10 @@ namespace filament {
         return p;
     }
 
-    
+    FTexture* FEngine::createTexture(const Texture::Builder& builder) noexcept
+    {
+        return nullptr;
+    }
 
     FFence* FEngine::createFence() noexcept {
         FFence* p = mHeapAllocator.make<FFence>(*this);

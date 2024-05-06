@@ -43,6 +43,7 @@ VulkanTexture::VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, V
     mTextureProperty._depth = depth;
     mTextureProperty._numMipmaps = levels;
     mVulkanFormat = filament::backend::getVkFormat(tformat);
+    mTextureUsage = tusage;
     mVKDevice = device;
     createInternalResourcesImpl();
 }
@@ -59,9 +60,9 @@ VulkanTexture::VulkanTexture(VkDevice device, VmaAllocator allocator, VulkanComm
     mTextureProperty._width = width;
     mTextureProperty._height = height;
     mTextureProperty._depth = depth;
-    mTextureProperty._numMipmaps = levels;
+    mTextureProperty._numMipmaps = 0;
     mVulkanFormat = format;
-
+    mTextureUsage = tusage;
     mVKDevice = device;
     createInternalResourcesImpl();
 }
@@ -139,8 +140,8 @@ void VulkanTexture::createInternalResourcesImpl(void)
 
     
     createImage(
-        getWidth(),
-        getHeight(),
+        mTextureProperty._width,
+        mTextureProperty._height,
         mVulkanFormat,
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -194,7 +195,7 @@ void VulkanTexture::createImage(
 {
     mMipLevels = mTextureProperty._numMipmaps + 1;
 
-    if (mTextureProperty._numMipmaps == 0)
+    /*if (mTextureProperty._numMipmaps == 0)
     {
         auto current = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
 
@@ -203,7 +204,7 @@ void VulkanTexture::createImage(
             mNeedMipmaps = true;
             mMipLevels = current;
         }
-    }
+    }*/
 
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -225,6 +226,17 @@ void VulkanTexture::createImage(
     
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+
+    if (mTextureUsage == filament::backend::TextureUsage::COLOR_ATTACHMENT)
+    {
+        imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    }
+
+    if (mTextureUsage == filament::backend::TextureUsage::DEPTH_ATTACHMENT)
+    {
+        imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    }
 
     if (mUsage & Ogre::TU_RENDERTARGET)
     {

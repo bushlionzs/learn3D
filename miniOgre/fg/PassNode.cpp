@@ -272,7 +272,7 @@ namespace filament {
                 name, targetBufferFlags,
                 backend.params.viewport.width,
                 backend.params.viewport.height,
-                descriptor.samples,
+                descriptor.samples, descriptor.layerCount,
                 colorInfo, info[0], info[1]);
         }
     }

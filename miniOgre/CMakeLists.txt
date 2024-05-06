@@ -53,7 +53,8 @@ add_subdir(wow)
 add_subdir(fg)
 add_subdir(backend)
 add_subdir(backend/vulkan)
-
+add_subdir(backend/vulkan/spirv)
+add_subdir(backend/vulkan/caching)
 
 
 add_library(${MINIOGRE_LIB_NAME} STATIC ${MINIOGRE_SRC_LIST})

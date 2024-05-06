@@ -35,6 +35,7 @@ struct HwSamplerGroup;
 struct HwStream;
 struct HwSwapChain;
 struct HwTimerQuery;
+struct HwVertexBufferInfo;
 struct HwVertexBuffer;
 struct HwTexture;
 struct HwRenderTarget;
@@ -124,7 +125,7 @@ using SwapChainHandle       = Handle<HwSwapChain>;
 using TextureHandle         = Handle<HwTexture>;
 using TimerQueryHandle      = Handle<HwTimerQuery>;
 using VertexBufferHandle    = Handle<HwVertexBuffer>;
-
+using VertexBufferInfoHandle = Handle<HwVertexBufferInfo>;
 } // namespace filament::backend
 
 #endif // TNT_FILAMENT_BACKEND_HANDLE_H

@@ -211,7 +211,11 @@ bool FRenderer::beginFrame(FSwapChain* swapChain, uint64_t vsyncSteadyClockTimeN
         FEngine& engine = mEngine;
         FEngine::DriverApi& driver = engine.getDriverApi();
 
-        driver.beginFrame(appVsync.time_since_epoch().count(), mFrameId);
+        driver.beginFrame(
+            appVsync.time_since_epoch().count(),
+            mDisplayInfo.refreshRate == 0.0 ? 0 : int64_t(
+                1'000'000'000.0 / mDisplayInfo.refreshRate),
+            mFrameId);
 
         // This need to occur after the backend beginFrame() because some backends need to start
         // a command buffer before creating a fence.
@@ -303,8 +307,8 @@ void FRenderer::readPixels(FRenderTarget* renderTarget,
  
 }
 
-void FRenderer::copyFrame(FSwapChain* dstSwapChain, filament::Viewport const& dstViewport,
-        filament::Viewport const& srcViewport, CopyFrameFlag flags) {
+void FRenderer::copyFrame(FSwapChain* dstSwapChain, backend::Viewport const& dstViewport,
+    backend::Viewport const& srcViewport, CopyFrameFlag flags) {
     SYSTRACE_CALL();
 
     assert_invariant(mSwapChain);
@@ -321,7 +325,7 @@ void FRenderer::copyFrame(FSwapChain* dstSwapChain, filament::Viewport const& ds
     RenderPassParams params = {};
     // Clear color to black if the CLEAR flag is set.
     if (flags & CLEAR) {
-        params.clearColor = {0.f, 0.f, 0.f, 1.f};
+        params.clearColor = { 0.f, 0.f, 0.f, 1.f };
         params.flags.clear = TargetBufferFlags::COLOR;
         params.flags.discardStart = TargetBufferFlags::ALL;
         params.flags.discardEnd = TargetBufferFlags::NONE;
@@ -329,18 +333,18 @@ void FRenderer::copyFrame(FSwapChain* dstSwapChain, filament::Viewport const& ds
         params.viewport.bottom = 0;
         params.viewport.width = std::numeric_limits<uint32_t>::max();
         params.viewport.height = std::numeric_limits<uint32_t>::max();
+        driver.beginRenderPass(mRenderTargetHandle, params);
+        driver.endRenderPass();
     }
-    driver.beginRenderPass(mRenderTargetHandle, params);
 
     // Verify that the source swap chain is readable.
     assert_invariant(mSwapChain->isReadable());
-    driver.blit(TargetBufferFlags::COLOR,
-            mRenderTargetHandle, dstViewport, mRenderTargetHandle, srcViewport, SamplerMagFilter::LINEAR);
+    driver.blitDEPRECATED(TargetBufferFlags::COLOR, mRenderTargetHandle,
+        dstViewport, mRenderTargetHandle, srcViewport, SamplerMagFilter::LINEAR);
+
     if (flags & SET_PRESENTATION_TIME) {
         // TODO: Implement this properly, see https://github.com/google/filament/issues/633
     }
-
-    driver.endRenderPass();
 
     if (flags & COMMIT) {
         dstSwapChain->commit(driver);
@@ -368,7 +372,11 @@ void FRenderer::renderStandaloneView(FView const* view) {
         engine.prepare();
 
         FEngine::DriverApi& driver = engine.getDriverApi();
-        driver.beginFrame(steady_clock::now().time_since_epoch().count(), mFrameId);
+        driver.beginFrame(
+            steady_clock::now().time_since_epoch().count(),
+            mDisplayInfo.refreshRate == 0.0 ? 0 : int64_t(
+                1'000'000'000.0 / mDisplayInfo.refreshRate),
+            mFrameId);
 
         renderInternal(view);
 
@@ -499,7 +507,7 @@ void FRenderer::renderJob(ArenaScope& arena, FView& view) {
 
     fg.compile();
 
-    //fg.export_graphviz(slog.d, view.getName());
+   // fg.export_graphviz(slog.d, view.getName());
 
     fg.execute(driver);
 

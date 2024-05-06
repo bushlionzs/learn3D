@@ -506,7 +506,7 @@ VkPhysicalDevice selectPhysicalDevice(VkInstance instance,
     return device;
 }
 
-VkFormatList findAttachmentDepthFormats(VkPhysicalDevice device) {
+VkFormatList findAttachmentDepthStencilFormats(VkPhysicalDevice device) {
     VkFormatFeatureFlags const features = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
     // The ordering here indicates the preference of choosing depth+stencil format.
@@ -518,7 +518,7 @@ VkFormatList findAttachmentDepthFormats(VkPhysicalDevice device) {
         VK_FORMAT_D24_UNORM_S8_UINT,
     };
     std::vector<VkFormat> selectedFormats;
-    for (VkFormat format: formats) {
+    for (VkFormat format : formats) {
         VkFormatProperties props;
         vkGetPhysicalDeviceFormatProperties(device, format, &props);
         if ((props.optimalTilingFeatures & features) == features) {
@@ -668,9 +668,9 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     context.mDebugMarkersSupported
             = deviceExts.find(VK_EXT_DEBUG_MARKER_EXTENSION_NAME) != deviceExts.end();
 
-    context.mDepthFormats = findAttachmentDepthFormats(mImpl->mPhysicalDevice);
+    context.mDepthStencilFormats = findAttachmentDepthStencilFormats(mImpl->mPhysicalDevice);
 
-    assert_invariant(context.mDepthFormats.size() > 0);
+    assert_invariant(context.mDepthStencilFormats.size() > 0);
 
 #if FVK_ENABLED(FVK_DEBUG_VALIDATION)
     printDepthFormats(mImpl->mPhysicalDevice);

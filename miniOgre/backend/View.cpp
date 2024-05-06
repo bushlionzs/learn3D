@@ -49,7 +49,7 @@ static constexpr float PID_CONTROLLER_Kd = 0.0f;
 FView::FView(FEngine& engine)
         :
           mFogEntity(engine.getEntityManager().create()),
-          mIsStereoSupported(engine.getDriverApi().isStereoSupported()) 
+          mIsStereoSupported(engine.getDriverApi().isStereoSupported(engine.getConfig().stereoscopicType))
 {
     DriverApi& driver = engine.getDriverApi();
 

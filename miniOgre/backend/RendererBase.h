@@ -353,8 +353,8 @@ public:
      * copyFrame() should be called after a frame is rendered using render()
      * but before endFrame() is called.
      */
-    void copyFrame(SwapChain* dstSwapChain, Viewport const& dstViewport,
-            Viewport const& srcViewport, uint32_t flags = 0);
+    void copyFrame(SwapChain* dstSwapChain, backend::Viewport const& dstViewport,
+        backend::Viewport const& srcViewport, uint32_t flags = 0);
 
     /**
      * Reads back the content of the SwapChain associated with this Renderer.

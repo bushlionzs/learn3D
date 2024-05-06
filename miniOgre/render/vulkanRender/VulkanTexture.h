@@ -72,6 +72,11 @@ public:
         return mSidecarMSAA.get();
     }
 
+    VkImageAspectFlags getImageAspect() const {
+        // Helper function in VulkanUtility
+        return filament::backend::getImageAspect(mVulkanFormat);
+    }
+
     VulkanLayout getLayout(uint32_t layer, uint32_t level) const;
 
     void setPrimaryRange(uint32_t minMiplevel, uint32_t maxMiplevel);
@@ -128,7 +133,7 @@ private:
     VkSampler mTextureSampler;
 
     VkFormat mVulkanFormat = VK_FORMAT_UNDEFINED;
-
+    filament::backend::TextureUsage mTextureUsage = filament::backend::TextureUsage::NONE;
     bool mNeedMipmaps = false;
     uint32_t mMipLevels = 1;
 

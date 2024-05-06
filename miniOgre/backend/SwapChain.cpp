@@ -22,20 +22,20 @@ namespace filament {
 
 FSwapChain::FSwapChain(FEngine& engine, void* nativeWindow, uint64_t flags)
         : mEngine(engine), mNativeWindow(nativeWindow), mConfigFlags(flags) {
-    mSwapChain = engine.getDriverApi().createSwapChain(nativeWindow, flags);
+    mHwSwapChain = engine.getDriverApi().createSwapChain(nativeWindow, flags);
 }
 
 FSwapChain::FSwapChain(FEngine& engine, uint32_t width, uint32_t height, uint64_t flags)
         : mEngine(engine), mConfigFlags(flags) {
-    mSwapChain = engine.getDriverApi().createSwapChainHeadless(width, height, flags);
+    mHwSwapChain = engine.getDriverApi().createSwapChainHeadless(width, height, flags);
 }
 
 void FSwapChain::terminate(FEngine& engine) noexcept {
-    engine.getDriverApi().destroySwapChain(mSwapChain);
+    engine.getDriverApi().destroySwapChain(mHwSwapChain);
 }
 
-void FSwapChain::setFrameScheduledCallback(FrameScheduledCallback callback, void* user) {
-    mEngine.getDriverApi().setFrameScheduledCallback(mSwapChain, callback, user);
+void FSwapChain::setFrameScheduledCallback(backend::CallbackHandler* handler, FrameScheduledCallback&& callback) {
+    mEngine.getDriverApi().setFrameScheduledCallback(mHwSwapChain, handler, std::move(callback));
 }
 
 void FSwapChain::setFrameCompletedCallback(backend::CallbackHandler* handler,
@@ -52,9 +52,9 @@ void FSwapChain::setFrameCompletedCallback(backend::CallbackHandler* handler,
     if (callback) {
         auto* const user = new(std::nothrow) Callback{ std::move(callback), this };
         mEngine.getDriverApi().setFrameCompletedCallback(
-                mSwapChain, handler, &Callback::func, static_cast<void*>(user));
+            mHwSwapChain, handler, &Callback::func, static_cast<void*>(user));
     } else {
-        mEngine.getDriverApi().setFrameCompletedCallback(mSwapChain, nullptr, nullptr, nullptr);
+        mEngine.getDriverApi().setFrameCompletedCallback(mHwSwapChain, nullptr, nullptr, nullptr);
     }
 }
 

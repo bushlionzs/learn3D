@@ -169,9 +169,9 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                 view.commitUniforms(driver);
 
                 // TODO: this should be a parameter of FrameGraphRenderPass::Descriptor
-                out.params.clearStencil = config.clearStencil;
-
-
+                out.params.clearStencil = 0.0f;
+                out.params.clearDepth = 1.0f;
+                out.params.flags.clear |= TargetBufferFlags::COLOR;
 
 
                 driver.beginRenderPass(out.target, out.params);

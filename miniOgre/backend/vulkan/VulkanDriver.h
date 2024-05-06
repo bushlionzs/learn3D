@@ -17,47 +17,94 @@
 #ifndef TNT_FILAMENT_BACKEND_VULKANDRIVER_H
 #define TNT_FILAMENT_BACKEND_VULKANDRIVER_H
 
-#include "VulkanMemory.h"
-#include "VulkanCommon.h"
+#include "VulkanConstants.h"
 #include "VulkanContext.h"
-#include "VulkanResourceAllocator.h"
-#include "VulkanStagePool.h"
-#include "VulkanResources.h"
-#include "VulkanPipelineCache.h"
-#include "VulkanSamplerCache.h"
 #include "VulkanFboCache.h"
+#include "VulkanHandles.h"
+#include "VulkanPipelineCache.h"
+#include "VulkanResourceAllocator.h"
+#include "VulkanSamplerCache.h"
+#include "VulkanStagePool.h"
+#include "VulkanUtility.h"
+#include "VulkanDescriptorSetManager.h"
+#include "VulkanPipelineLayoutCache.h"
+
 #include "DriverBase.h"
 #include "backend/Driver.h"
 
 #include <utils/Allocator.h>
 #include <utils/compiler.h>
-#include <utils/RangeMap.h>
 
 namespace filament::backend {
 
-class VulkanPlatform;
-struct VulkanSamplerGroup;
+    class VulkanPlatform;
+    struct VulkanSamplerGroup;
 
-class VulkanDriver final : public DriverBase {
-public:
-    static Driver* create(VulkanPlatform* platform, VulkanContext const& context,
+    // The maximum number of attachments for any renderpass (color + resolve + depth)
+    constexpr uint8_t MAX_RENDERTARGET_ATTACHMENT_TEXTURES =
+        MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT * 2 + 1;
+
+    // We need to store information about a render pass to enable better barriers at the end of a
+    // renderpass.
+    struct RenderPassFboBundle {
+        using AttachmentArray =
+            CappedArray<VulkanAttachment, MAX_RENDERTARGET_ATTACHMENT_TEXTURES>;
+
+        AttachmentArray attachments;
+        bool hasColorResolve = false;
+
+        void clear() {
+            attachments.clear();
+            hasColorResolve = false;
+        }
+    };
+
+    class VulkanDriver final : public DriverBase {
+    public:
+        static Driver* create(VulkanPlatform* platform, VulkanContext const& context,
             Platform::DriverConfig const& driverConfig) noexcept;
 
-private:
-    void debugCommandBegin(CommandStream* cmds, bool synchronous,
+#if FVK_ENABLED(FVK_DEBUG_DEBUG_UTILS)
+        // Encapsulates the VK_EXT_debug_utils extension.  In particular, we use
+        // vkSetDebugUtilsObjectNameEXT and vkCreateDebugUtilsMessengerEXT
+        class DebugUtils {
+        public:
+            static void setName(VkObjectType type, uint64_t handle, char const* name);
+
+        private:
+            static DebugUtils* get();
+
+            DebugUtils(VkInstance instance, VkDevice device, VulkanContext const* context);
+            ~DebugUtils();
+
+            VkInstance const mInstance;
+            VkDevice const mDevice;
+            bool const mEnabled;
+            VkDebugUtilsMessengerEXT mDebugMessenger = VK_NULL_HANDLE;
+
+            static DebugUtils* mSingleton;
+
+            friend class VulkanDriver;
+        };
+#endif // FVK_ENABLED(FVK_DEBUG_DEBUG_UTILS)
+
+    private:
+        static constexpr uint8_t MAX_SAMPLER_BINDING_COUNT = Program::SAMPLER_BINDING_COUNT;
+
+        void debugCommandBegin(CommandStream* cmds, bool synchronous,
             const char* methodName) noexcept override;
 
-    inline VulkanDriver(VulkanPlatform* platform, VulkanContext const& context,
+        inline VulkanDriver(VulkanPlatform* platform, VulkanContext const& context,
             Platform::DriverConfig const& driverConfig) noexcept;
 
-    ~VulkanDriver() noexcept override;
+        ~VulkanDriver() noexcept override;
 
-    Dispatcher getDispatcher() const noexcept final;
+        Dispatcher getDispatcher() const noexcept final;
 
-    ShaderModel getShaderModel() const noexcept final;
+        ShaderModel getShaderModel() const noexcept final;
 
-    template<typename T>
-    friend class ConcreteDispatcher;
+        template<typename T>
+        friend class ConcreteDispatcher;
 
 #define DECL_DRIVER_API(methodName, paramsDecl, params)                                            \
     UTILS_ALWAYS_INLINE inline void methodName(paramsDecl);
@@ -71,49 +118,48 @@ private:
 
 #include "backend/DriverAPI.inc"
 
-    VulkanDriver(VulkanDriver const&) = delete;
-    VulkanDriver& operator=(VulkanDriver const&) = delete;
+        VulkanDriver(VulkanDriver const&) = delete;
+        VulkanDriver& operator=(VulkanDriver const&) = delete;
 
-private:
-    inline void setRenderPrimitiveBuffer(Handle<HwRenderPrimitive> rph, Handle<HwVertexBuffer> vbh,
-            Handle<HwIndexBuffer> ibh);
+    private:
+        void collectGarbage();
 
-    inline void setRenderPrimitiveRange(Handle<HwRenderPrimitive> rph, PrimitiveType pt,
-            uint32_t offset, uint32_t minIndex, uint32_t maxIndex, uint32_t count);
+        VulkanPlatform* mPlatform = nullptr;
+        std::unique_ptr<VulkanTimestamps> mTimestamps;
 
-    void collectGarbage();
+        // Placeholder resources
+        VulkanTexture* mEmptyTexture;
+        VulkanBufferObject* mEmptyBufferObject;
 
-    VulkanPlatform* mPlatform = nullptr;
-    std::unique_ptr<VulkanTimestamps> mTimestamps;
+        VulkanSwapChain* mCurrentSwapChain = nullptr;
+        VulkanRenderTarget* mDefaultRenderTarget = nullptr;
+        VulkanRenderPass mCurrentRenderPass = {};
+        VmaAllocator mAllocator = VK_NULL_HANDLE;
+        VkDebugReportCallbackEXT mDebugCallback = VK_NULL_HANDLE;
 
-    std::unique_ptr<VulkanCommands> mCommands;
+        VulkanContext mContext = {};
+        VulkanResourceAllocator mResourceAllocator;
+        VulkanResourceManager mResourceManager;
 
-    std::unique_ptr<VulkanTexture> mEmptyTexture;
+        // Used for resources that are created synchronously and used and destroyed on the backend
+        // thread.
+        VulkanThreadSafeResourceManager mThreadSafeResourceManager;
 
-    VulkanSwapChain* mCurrentSwapChain = nullptr;
-    VulkanRenderTarget* mDefaultRenderTarget = nullptr;
-    VulkanRenderPass mCurrentRenderPass = {};
-    VmaAllocator mAllocator = VK_NULL_HANDLE;
-    VkDebugReportCallbackEXT mDebugCallback = VK_NULL_HANDLE;
-    VkDebugUtilsMessengerEXT mDebugMessenger = VK_NULL_HANDLE;
+        VulkanCommands mCommands;
+        VulkanPipelineLayoutCache mPipelineLayoutCache;
+        VulkanPipelineCache mPipelineCache;
+        VulkanStagePool mStagePool;
+        VulkanFboCache mFramebufferCache;
+        VulkanSamplerCache mSamplerCache;
+        VulkanSamplerGroup* mSamplerBindings[MAX_SAMPLER_BINDING_COUNT] = {};
+        VulkanDescriptorSetManager mDescriptorSetManager;
 
-    VulkanContext mContext = {};
+        VulkanDescriptorSetManager::GetPipelineLayoutFunction mGetPipelineFunction;
 
-    VulkanSamplerGroup* mSamplerBindings[VulkanPipelineCache::SAMPLER_BINDING_COUNT] = {};
+        RenderPassFboBundle mRenderPassFboInfo;
 
-    bool const mIsSRGBSwapChainSupported;
-
-    VulkanStagePool mStagePool;
-    VulkanFboCache mFramebufferCache;
-    VulkanSamplerCache mSamplerCache;
-    VulkanPipelineCache mPipelineCache;
-    VulkanResourceAllocator mResourceAllocator;
-    VulkanResourceManager mResourceManager;
-    // Used for resources that are created synchronously and used and destroyed on the backend thread.
-    VulkanThreadSafeResourceManager mThreadSafeResourceManager;
-
-    
-};
+        bool const mIsSRGBSwapChainSupported;
+    };
 
 } // namespace filament::backend
 

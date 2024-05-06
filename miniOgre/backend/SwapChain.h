@@ -39,11 +39,11 @@ public:
     void terminate(FEngine& engine) noexcept;
 
     void makeCurrent(backend::DriverApi& driverApi) noexcept {
-        driverApi.makeCurrent(mSwapChain, mSwapChain);
+        driverApi.makeCurrent(mHwSwapChain, mHwSwapChain);
     }
 
     void commit(backend::DriverApi& driverApi) noexcept {
-        driverApi.commit(mSwapChain);
+        driverApi.commit(mHwSwapChain);
     }
 
     void* getNativeWindow() const noexcept {
@@ -63,19 +63,22 @@ public:
     }
 
     backend::Handle<backend::HwSwapChain> getHwHandle() const noexcept {
-      return mSwapChain;
+      return mHwSwapChain;
     }
 
-    void setFrameScheduledCallback(FrameScheduledCallback callback, void* user);
+    void setFrameScheduledCallback(
+        backend::CallbackHandler* handler, FrameScheduledCallback&& callback);
+
 
     void setFrameCompletedCallback(backend::CallbackHandler* handler,
-                utils::Invocable<void(SwapChain*)>&& callback) noexcept;
+        utils::Invocable<void(SwapChain*)>&& callback) noexcept;
 
     static bool isSRGBSwapChainSupported(FEngine& engine) noexcept;
 
 private:
     FEngine& mEngine;
-    backend::Handle<backend::HwSwapChain> mSwapChain;
+    backend::Handle<backend::HwSwapChain> mHwSwapChain;
+    bool mFrameScheduledCallbackIsSet = false;
     void* mNativeWindow = nullptr;
     uint64_t mConfigFlags = 0;
 };

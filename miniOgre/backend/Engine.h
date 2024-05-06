@@ -23,9 +23,13 @@
 #include "Allocators.h"
 #include "backend/RendererBase.h"
 #include "backend/RenderTargetBase.h"
+#include "backend/VertexBuffer.h"
+#include "backend/BufferObject.h"
 #include "backend/CommandBufferQueue.h"
 #include "backend/CommandStream.h"
 #include "backend/DriverApi.h"
+#include "backend/HwVertexBufferInfoFactory.h"
+#include "backend/Texture.h"
 #include <utils/EntityManager.h>
 
 
@@ -67,7 +71,8 @@ namespace filament {
     class FView;
     class FRenderTarget;
     class ResourceAllocator;
-
+    class FVertexBuffer;
+    class FBufferObject;
     /*
      * Concrete implementation of the Engine interface. This keeps track of all hardware resources
      * for a given context.
@@ -129,10 +134,6 @@ namespace filament {
         }
 
 
-
-        bool isStereoSupported() const noexcept { return getDriver().isStereoSupported(); }
-
-
         utils::EntityManager& getEntityManager() noexcept {
             return mEntityManager;
         }
@@ -168,10 +169,11 @@ namespace filament {
         }
 
 
-
+        FBufferObject* createBufferObject(const BufferObject::Builder& builder) noexcept;
+        FVertexBuffer* createVertexBuffer(const VertexBuffer::Builder& builder) noexcept;
         FRenderer* createRenderer() noexcept;
         FRenderTarget* createRenderTarget(const RenderTarget::Builder& builder) noexcept;
-
+        FTexture* createTexture(const Texture::Builder& builder) noexcept;
 
         FFence* createFence() noexcept;
         FSwapChain* createSwapChain(void* nativeWindow, uint64_t flags) noexcept;
@@ -242,6 +244,10 @@ namespace filament {
             return mAutomaticInstancingEnabled;
         }
 
+        HwVertexBufferInfoFactory& getVertexBufferInfoFactory() noexcept {
+            return mHwVertexBufferInfoFactory;
+        }
+
         static constexpr const size_t MiB = 1024u * 1024u;
         size_t getMinCommandBufferSize() const noexcept { return mConfig.minCommandBufferSizeMB * MiB; }
         size_t getCommandBufferSize() const noexcept { return mConfig.commandBufferSizeMB * MiB; }
@@ -286,7 +292,7 @@ namespace filament {
         utils::EntityManager& mEntityManager;
 
         ResourceAllocator* mResourceAllocator = nullptr;
-
+        HwVertexBufferInfoFactory mHwVertexBufferInfoFactory;
 
         std::thread mDriverThread;
         backend::CommandBufferQueue mCommandBufferQueue;
