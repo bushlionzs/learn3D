@@ -18,6 +18,7 @@
 
 #include "backend/Engine.h"
 
+#include <utils/PrivateImplementation-impl.h>
 
 namespace filament {
 

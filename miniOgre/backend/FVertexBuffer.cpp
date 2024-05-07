@@ -20,7 +20,7 @@
 
 #include <backend/MaterialEnums.h>
 
-
+#include <utils/PrivateImplementation-impl.h>
 #include <backend/DriverEnums.h>
 #include <backend/BufferDescriptor.h>
 

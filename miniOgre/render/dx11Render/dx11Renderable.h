@@ -1,5 +1,5 @@
 #pragma once
-#include <d3d11_1.h>
+
 #include "OgreRenderable.h"
 #include "shader.h"
 #include "dx11UploadBuffer.h"

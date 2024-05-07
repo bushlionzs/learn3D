@@ -57,6 +57,8 @@ add_subdir(backend/vulkan/spirv)
 add_subdir(backend/vulkan/caching)
 
 
+
+
 add_library(${MINIOGRE_LIB_NAME} STATIC ${MINIOGRE_SRC_LIST})
 
 

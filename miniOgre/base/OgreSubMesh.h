@@ -115,6 +115,13 @@ namespace Ogre {
         {
             return mParent;
         }
+
+        void updateBuffer(VertexBuffer* vb, IndexBuffer* ib)
+        {
+            mVertexBuffer = vb;
+            mIndexBuffer = ib;
+        }
+
     private:
         VertexDeclaration* mVetexDeclaration;
         VertexData* mVertexData;
@@ -132,5 +139,8 @@ namespace Ogre {
 
         bool mSharedVertices = false;
         bool mSharedIndex = false;
+
+        VertexBuffer* mVertexBuffer = nullptr;
+        IndexBuffer* mIndexBuffer = nullptr;
     };
 }

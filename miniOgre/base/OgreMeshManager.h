@@ -21,6 +21,7 @@ namespace Ogre {
             int32_t edge_size,
             const std::string& matName);
         std::shared_ptr<Mesh> createRect(
+            filament::Engine* engine,
             const std::string& name,
             Ogre::Vector3& leftop,
             Ogre::Vector3& leftbottom,

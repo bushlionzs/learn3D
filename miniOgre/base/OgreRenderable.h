@@ -9,6 +9,14 @@ class IndexData;
 class IndexDataView;
 class RenderableData;
 
+namespace filament
+{
+    class VertexBuffer;
+    class IndexBuffer;
+}
+
+using namespace filament;
+
 namespace Ogre {
     class Renderable
     {
@@ -63,12 +71,23 @@ namespace Ogre {
         virtual const Ogre::Matrix4& getModelMatrix();
 
         RenderableData* getRenderableData();
+
+        void updateBuffer(VertexBuffer* vb, IndexBuffer* ib)
+        {
+            mVertexBuffer = vb;
+            mIndexBuffer = ib;
+        }
     protected:
         std::shared_ptr<Material> mMaterial;
         RenderableData* mRenderableData = nullptr;
 
+        VertexBuffer* mVertexBuffer = nullptr;
+        IndexBuffer* mIndexBuffer = nullptr;
+
         Ogre::Matrix4 mWorld;
 
         uint64_t mSortValue;
+
+
     };
 }

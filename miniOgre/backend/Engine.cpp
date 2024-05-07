@@ -21,6 +21,9 @@
 #include <backend/Fence.h>
 #include <backend/SwapChain.h>
 #include <backend/view.h>
+#include <backend/FVertexBuffer.h>
+#include <backend/FIndexBuffer.h>
+#include <backend/FBufferObject.h>
 #include <VulkanPlatform.h>
 #include <utils/compiler.h>
 #include <utils/debug.h>
@@ -419,9 +422,30 @@ namespace filament {
     /*
      * Object created from a Builder
      */
+    template<typename T, typename ... ARGS>
+    inline T* FEngine::create(ResourceList<T>& list,
+        typename T::Builder const& builder, ARGS&& ... args) noexcept {
+        T* p = mHeapAllocator.make<T>(*this, builder, std::forward<ARGS>(args)...);
+        if (UTILS_UNLIKELY(p)) { // this should never happen
+            list.insert(p);
+        }
+        return p;
+    }
 
+    FBufferObject* FEngine::createBufferObject(const BufferObject::Builder& builder) noexcept
+    {
+        return create(mBufferObjects, builder);
+    }
 
+    FVertexBuffer* FEngine::createVertexBuffer(const VertexBuffer::Builder& builder) noexcept
+    {
+        return create(mVertexBuffers, builder);
+    }
 
+    FIndexBuffer* FEngine::createIndexBuffer(const IndexBuffer::Builder& builder) noexcept
+    {
+        return create(mIndexBuffers, builder);
+    }
     
 
     /*

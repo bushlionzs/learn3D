@@ -138,7 +138,7 @@ namespace filament::backend {
     };
 
     enum class TimerQueryResult : int8_t {
-        ERROR = -1,     // an error occurred, result won't be available
+        FERROR = -1,     // an error occurred, result won't be available
         NOT_READY = 0,  // result to ready yet
         AVAILABLE = 1,  // result is available
     };
@@ -251,8 +251,8 @@ namespace filament::backend {
      * Specifies the mapping of the near and far clipping plane to window coordinates.
      */
     struct DepthRange {
-        float near = 0.0f;    //!< mapping of the near plane to window coordinates.
-        float far = 1.0f;     //!< mapping of the far plane to window coordinates.
+        float nearRange = 0.0f;    //!< mapping of the near plane to window coordinates.
+        float farRange = 1.0f;     //!< mapping of the far plane to window coordinates.
     };
 
     /**
@@ -260,7 +260,7 @@ namespace filament::backend {
      * @see Fence, Fence::wait()
      */
     enum class FenceStatus : int8_t {
-        ERROR = -1,                 //!< An error occurred. The Fence condition is not satisfied.
+        FERROR = -1,                 //!< An error occurred. The Fence condition is not satisfied.
         CONDITION_SATISFIED = 0,    //!< The Fence condition is satisfied.
         TIMEOUT_EXPIRED = 1,        //!< wait()'s timeout expired. The Fence condition is not satisfied.
     };
@@ -269,7 +269,7 @@ namespace filament::backend {
      * Status codes for sync objects
      */
     enum class SyncStatus : int8_t {
-        ERROR = -1,          //!< An error occurred. The Sync is not signaled.
+        FERROR = -1,          //!< An error occurred. The Sync is not signaled.
         SIGNALED = 0,        //!< The Sync is signaled.
         NOT_SIGNALED = 1,    //!< The Sync is not signaled yet
     };

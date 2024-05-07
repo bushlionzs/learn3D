@@ -64,9 +64,9 @@ enum class ShaderQuality : int8_t {
  */
 enum class BlendingMode : uint8_t {
     //! material is opaque
-    OPAQUE,
+    BLEND_OPAQUE,
     //! material is transparent and color is alpha-pre-multiplied, affects diffuse lighting only
-    TRANSPARENT,
+    BLEND_TRANSPARENT,
     //! material is additive (e.g.: hologram)
     ADD,
     //! material is masked (i.e. alpha tested)

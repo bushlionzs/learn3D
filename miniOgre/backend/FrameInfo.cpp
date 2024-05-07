@@ -59,7 +59,7 @@ void FrameInfoManager::beginFrame(DriverApi& driver,Config const& config, uint32
         case TimerQueryResult::NOT_READY:
             // nothing to do
             break;
-        case TimerQueryResult::ERROR:
+        case TimerQueryResult::FERROR:
             mLast = (mLast + 1) % POOL_COUNT;
             break;
         case TimerQueryResult::AVAILABLE:

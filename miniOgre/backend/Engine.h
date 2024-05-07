@@ -24,6 +24,7 @@
 #include "backend/RendererBase.h"
 #include "backend/RenderTargetBase.h"
 #include "backend/VertexBuffer.h"
+#include "backend/IndexBuffer.h"
 #include "backend/BufferObject.h"
 #include "backend/CommandBufferQueue.h"
 #include "backend/CommandStream.h"
@@ -72,6 +73,7 @@ namespace filament {
     class FRenderTarget;
     class ResourceAllocator;
     class FVertexBuffer;
+    class FIndexBuffer;
     class FBufferObject;
     /*
      * Concrete implementation of the Engine interface. This keeps track of all hardware resources
@@ -168,9 +170,12 @@ namespace filament {
             return mDefaultRenderTarget;
         }
 
+        template <typename T, typename ... ARGS>
+        T* create(ResourceList<T>& list, typename T::Builder const& builder, ARGS&& ... args) noexcept;
 
         FBufferObject* createBufferObject(const BufferObject::Builder& builder) noexcept;
         FVertexBuffer* createVertexBuffer(const VertexBuffer::Builder& builder) noexcept;
+        FIndexBuffer* createIndexBuffer(const IndexBuffer::Builder& builder) noexcept;
         FRenderer* createRenderer() noexcept;
         FRenderTarget* createRenderTarget(const RenderTarget::Builder& builder) noexcept;
         FTexture* createTexture(const Texture::Builder& builder) noexcept;
@@ -315,7 +320,9 @@ namespace filament {
         ResourceList<FSwapChain> mSwapChains{ "SwapChain" };
         ResourceList<FFence> mFences{ "Fence" };
         ResourceList<FView> mViews{ "View" };
-
+        ResourceList<FBufferObject> mBufferObjects{ "BufferObject" };
+        ResourceList<FVertexBuffer> mVertexBuffers{ "VertexBuffer" };
+        ResourceList<FIndexBuffer> mIndexBuffers{ "IndexBuffer" };
         utils::Mutex mFenceListLock;
 
         mutable utils::CountDownLatch mDriverBarrier;

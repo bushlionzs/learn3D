@@ -42,6 +42,15 @@ typedef std::string String;
 #include "OgreException.h"
 #define ReleaseCOM(x) { if(x){ x->Release(); x = 0; } }
 
+namespace filament
+{
+    class Engine;
+    class IndexBuffer;
+    class VertexBuffer;
+}
+
+using namespace filament;
+
 namespace Ogre
 {
     class Degree;

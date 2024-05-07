@@ -110,7 +110,7 @@ Fence::FenceStatus FFence::FenceSignal::wait(uint64_t timeout) noexcept {
     std::unique_lock<utils::Mutex> lock(FFence::sLock);
     while (mState == UNSIGNALED) {
         if (mState == DESTROYED) {
-            return FenceStatus::ERROR;
+            return FenceStatus::FERROR;
         }
         if (timeout == FENCE_WAIT_FOR_EVER) {
             FFence::sCondition.wait(lock);

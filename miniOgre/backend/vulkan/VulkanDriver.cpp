@@ -1367,8 +1367,8 @@ namespace filament::backend {
                 .y = (float)params.viewport.bottom,
                 .width = (float)params.viewport.width,
                 .height = (float)params.viewport.height,
-                .minDepth = params.depthRange.near,
-                .maxDepth = params.depthRange.far
+                .minDepth = params.depthRange.nearRange,
+                .maxDepth = params.depthRange.farRange
             };
 
             rt->transformClientRectToPlatform(&viewport);
