@@ -66,11 +66,7 @@ namespace Ogre {
         TU_DEFAULT = TU_AUTOMIPMAP | HBU_GPU_ONLY,
     };
 
-    enum class TextureState {
-        DECODING, // Texture has been pushed, mipmap levels are not yet complete.
-        READY,    // Mipmap levels are available but texture has not been popped yet.
-        POPPED,   // Client has popped the texture from the queue.
-    };
+    
 
     class TextureProperty
     {
@@ -204,7 +200,5 @@ namespace Ogre {
         bool mLoad = false;
 
         bool mInternalResourcesCreated = false;
-
-        TextureState mTextureState = TextureState::DECODING;
     };
 }

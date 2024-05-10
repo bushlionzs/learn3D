@@ -66,35 +66,66 @@ void Material::preLoad()
 
 void Material::load(utils::JobSystem::Job* job)
 {
-    if (mLoad)
+    if (job)
     {
-        return;
-    }
-
-    mLoading = true;
-
-    if (!mVideoName.empty())
-    {
-        
-        VideoManager::getSingleton()._playVideoMaterial(mMaterialName);
-    }
-    
-
-    for (auto& it : mTextureUnits)
-    {
-        if (!it->isLoaded())
+        if (mState > ResourceState::NONE)
         {
-            it->_load(job);
+            return;
         }
-            
+
+        mState = ResourceState::LOADING;
+    }
+    else
+    {
+        if (mLoad)
+        {
+            return;
+        }
+
+
+        if (!mVideoName.empty())
+        {
+
+            VideoManager::getSingleton()._playVideoMaterial(mMaterialName);
+        }
+
+
+        for (auto& it : mTextureUnits)
+        {
+            if (!it->isLoaded())
+            {
+                it->_load(job);
+            }
+        }
+
+        mShader = MaterialManager::getSingletonPtr()->buildShader(mShaderInfo);
+
+        mShader->load();
+
+        mLoad = true;
     }
     
-    mShader = MaterialManager::getSingletonPtr()->buildShader(mShaderInfo);
+}
 
-    mShader->load();
+void Material::updateResourceState()
+{
+    if (mState == ResourceState::LOADING)
+    {
+        bool ready = true;
+        for (auto& it : mTextureUnits)
+        {
+            it->updateResourceState();
+            if (it->getResourceState() != ResourceState::READY)
+            {
+                ready = false;
+            }
+        }
 
-    mLoading = false;
-    mLoad = true;
+        if (ready)
+        {
+            mState = ResourceState::READY;
+        }
+    }
 }
 
 bool Material::isLoaded()
@@ -102,15 +133,7 @@ bool Material::isLoaded()
     return mLoad;
 }
 
-bool Material::isLoading()
-{
-    return mLoading;
-}
 
-void Material::setLoading(bool loading)
-{
-    mLoading = true;
-}
 
 std::shared_ptr<Material> Material::clone(const String& name)
 {
@@ -221,10 +244,6 @@ Ogre::Vector2 Material::getTexAnimationOffset()
 
 void Material::setCullMode(Ogre::CullingMode mode)
 {
-    if (mMaterialName == "Game/ReachAble")
-    {
-        int kk = 0;
-    }
     mCullingMode = mode;
 }
 

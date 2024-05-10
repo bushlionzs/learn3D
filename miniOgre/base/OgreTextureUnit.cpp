@@ -119,30 +119,55 @@ void TextureUnit::setTextureRotate(const Ogre::Radian& angle)
 
 void TextureUnit::preLoad()
 {
-    mTextures.reserve(mNameList.size());
-    for (auto& name : mNameList)
-    {
-        auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty, false);
-        mTextures.push_back(tex);
-    }
+    
 }
 void TextureUnit::_load(utils::JobSystem::Job* job)
 {
-    for (auto& tex : mTextures)
+    if (job)
     {
-        tex->load(job);
+        if (mResourceState != ResourceState::NONE)
+        {
+            return;
+        }
+
+        mResourceState = ResourceState::LOADING;
+
+        mTextures.reserve(mNameList.size());
+        for (auto& name : mNameList)
+        {
+            auto [texture, cacheResult] = TextureManager::getSingletonPtr()->getOrCreateTexture(name);
+            mFTextures.push_back(texture);
+        }
+        
+
+    }
+    else
+    {
+        mTextures.reserve(mNameList.size());
+        for (auto& name : mNameList)
+        {
+            auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty, false);
+            mTextures.push_back(tex);
+        }
+
+
+        for (auto& tex : mTextures)
+        {
+            tex->load(job);
+        }
+
+        if (mUseAnimation || mUseScroll || mRotate != Ogre::Radian(0))
+        {
+            if (!mControllerOwner)
+                mControllerOwner = std::make_shared<TextureAnimationControllerValue>(this);
+            Ogre::ControllerManager& controllerManager = Ogre::ControllerManager::getSingleton();
+            mAnimController = controllerManager.createFrameTimePassthroughController(
+                mControllerOwner);
+        }
+
+        mLoad = true;
     }
     
-    if (mUseAnimation || mUseScroll || mRotate != Ogre::Radian(0))
-    {
-        if(!mControllerOwner)
-            mControllerOwner = std::make_shared<TextureAnimationControllerValue>(this);
-        Ogre::ControllerManager& controllerManager = Ogre::ControllerManager::getSingleton();
-        mAnimController = controllerManager.createFrameTimePassthroughController(
-            mControllerOwner);
-    }
-
-    mLoad = true;
 }
 
 void TextureUnit::_unload()
@@ -165,6 +190,27 @@ void TextureUnit::_unload()
         }
                 
     }
+}
+
+void TextureUnit::updateResourceState()
+{
+    if (mResourceState == ResourceState::LOADING)
+    {
+        bool ready = true;
+        for (auto tex : mFTextures)
+        {
+            if (!tex->isReady())
+            {
+                ready = false;
+            }
+        }
+
+        if (ready)
+        {
+            mResourceState = ResourceState::READY;
+        }
+    }
+    
 }
 
 std::shared_ptr<OgreTexture> TextureUnit::getTexture()
@@ -413,7 +459,7 @@ void TextureUnit::setAnimatedTextureName(
 
 bool TextureUnit::isLoaded()
 {
-    return mLoad;
+    return mResourceState == ResourceState::READY;
 }
 
 const Matrix4& TextureUnit::getTextureTransform() const

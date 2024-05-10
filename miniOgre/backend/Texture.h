@@ -25,6 +25,7 @@
 #include <backend/PixelBufferDescriptor.h>
 
 #include <utils/compiler.h>
+#include <utils/JobSystem.h>
 
 #include <utility>
 
@@ -37,6 +38,28 @@ class FTexture;
 
 class Engine;
 class Stream;
+
+class Texture;
+
+enum class ResourceState {
+    NONE,
+    LOADING, // resource is loading.
+    READY,    // resource is loaded completely.
+};
+
+enum class TextureState {
+    DECODING, // Texture has been pushed, mipmap levels are not yet complete.
+    READY,    // Mipmap levels are available but texture has not been popped yet.
+    POPPED,   // Client has popped the texture from the queue.
+};
+
+struct TextureInfo {
+    Texture* texture;
+    TextureState state;
+    std::atomic<intptr_t> decodedTexelsBaseMipmap;
+    std::vector<uint8_t> sourceBuffer;
+    utils::JobSystem::Job* decoderJob;
+};
 
 /**
  * Texture
@@ -504,7 +527,15 @@ public:
             PixelBufferDescriptor&& buffer, const FaceOffsets& faceOffsets,
             PrefilterOptions const* UTILS_NULLABLE options = nullptr);
 
+    bool isReady()
+    {
+        return mReady;
+    }
 
+    void setReady(bool ready)
+    {
+        mReady = ready;
+    }
     /** @deprecated */
     struct FaceOffsets {
         using size_type = size_t;
@@ -552,6 +583,8 @@ public:
 protected:
     // prevent heap allocation
     ~Texture() = default;
+
+    bool mReady = false;
 };
 
 } // namespace filament

@@ -5,6 +5,7 @@
 #include "OgreBlendMode.h"
 #include "OgreCommon.h"
 #include "OgreTexture.h"
+#include <backend/Texture.h>
 class TextureUnit;
 
 
@@ -33,8 +34,6 @@ namespace Ogre {
         void preLoad();
         void load(utils::JobSystem::Job* job);
         bool isLoaded();
-        bool isLoading();
-        void setLoading(bool loading);
 
         std::shared_ptr<Material> clone(const String& name);
         std::shared_ptr<TextureUnit>& getTextureUnit(uint32_t index);
@@ -150,6 +149,12 @@ namespace Ogre {
             mChanged = changed;
         }
 
+        ResourceState getResourceState()
+        {
+            return mState;
+        }
+
+        void updateResourceState();
 
     private:
         std::string mMaterialName;
@@ -176,8 +181,6 @@ namespace Ogre {
 
         bool mLoad = false;
 
-        bool mLoading = false;
-
         bool mWriteDepth = true;
 
         bool mDepthTest = true;
@@ -188,5 +191,7 @@ namespace Ogre {
         Ogre::CullingMode mCullingMode = CULL_CLOCKWISE;
 
         bool mChanged = true;
+
+        ResourceState mState = ResourceState::NONE;
     };
 }

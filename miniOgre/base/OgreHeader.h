@@ -47,6 +47,7 @@ namespace filament
     class Engine;
     class IndexBuffer;
     class VertexBuffer;
+    class Texture;
 }
 
 using namespace filament;

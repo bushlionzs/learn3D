@@ -14,7 +14,9 @@ namespace Ogre {
 	public:
 		CImage();
 		virtual ~CImage();
+		static bool loadImageInfo(const uint8_t* data, uint32_t byteCount, int* width, int* height, int* numComponents);
 		bool loadImage(const std::string& name);
+		bool loadImage(const uint8_t* data, uint32_t byteCount);
 		bool loadImage(DataStreamPtr& stream);
 		bool loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format);
 		unsigned char* getImageData();

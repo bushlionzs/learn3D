@@ -37,29 +37,7 @@ bool VulkanRenderableData::update(VulkanFrame* frame, utils::JobSystem::Job* job
     
     if (!mat->isLoaded())
     {
-        if (mat->isLoading())
-        {
-            return false;
-        }
-        if (job)
-        {
-            utils::JobSystem* js = Ogre::Root::getSingleton().getJobSystem();
-            utils::JobSystem::Job* sub = utils::jobs::createJob(*js, job, [mat] {
-                mat->load(nullptr);
-                }
-            );
-            
-            
-            mat->setLoading(true);
-            
-
-            js->runAndRetain(sub);
-            return false;
-        }
-        else
-        {
-            mat->load(nullptr);
-        }
+         mat->load(nullptr);
     }
 
     updateImpl(frame);

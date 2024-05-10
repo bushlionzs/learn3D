@@ -24,6 +24,7 @@
 #include <backend/FVertexBuffer.h>
 #include <backend/FIndexBuffer.h>
 #include <backend/FBufferObject.h>
+#include <backend/FTexture.h>
 #include <VulkanPlatform.h>
 #include <utils/compiler.h>
 #include <utils/debug.h>
@@ -462,7 +463,7 @@ namespace filament {
 
     FTexture* FEngine::createTexture(const Texture::Builder& builder) noexcept
     {
-        return nullptr;
+        return create(mTextures, builder);
     }
 
     FFence* FEngine::createFence() noexcept {

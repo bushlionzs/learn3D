@@ -29,6 +29,11 @@ namespace Ogre {
         freeMemory();
     }
 
+    bool CImage::loadImageInfo(const uint8_t* data, uint32_t byteCount, int* width, int* height, int* numComponents)
+    {
+        return stbi_info_from_memory(data, byteCount, width, height, numComponents);
+    }
+
     bool CImage::loadImage(const std::string& name)
     {
         const char* suffix = getSuffix(name);
@@ -130,6 +135,56 @@ namespace Ogre {
 
         return true;
     }
+
+    bool CImage::loadImage(DataStreamPtr& stream)
+    {
+        const uint8_t* data = (const uint8_t*)stream->getStreamData();
+        uint32_t size = stream->getStreamLength();
+        return loadImage(data, size);
+    }
+
+    bool CImage::loadImage(const uint8_t* data, uint32_t byteCount)
+    {
+        mFace = 1;
+        uint32_t nrComponents = 0;
+        auto imagedata = stbi_load_from_memory(data, byteCount,
+            (int*)&mWidth, (int*)&mHeight, (int*)&nrComponents, 0);
+
+        if (nullptr == imagedata)
+        {
+            return false;
+        }
+
+        mPixelSize = nrComponents;
+        if (nrComponents == 3)
+        {
+            mFormat = Ogre::PF_BYTE_RGB;
+        }
+        else if (nrComponents == 4)
+        {
+            mFormat = Ogre::PF_BYTE_RGBA;
+        }
+        else if (nrComponents == 2)
+        {
+            mFormat = Ogre::PF_BYTE_LA;
+        }
+        else if (nrComponents == 1)
+        {
+            mFormat = Ogre::PF_L8;
+        }
+
+        // mNumMipmaps = 0;
+        mImageData = (unsigned char*)imagedata;
+
+        mImageDataSize = calculateSize(
+            mNumMipmaps, mFace, mWidth, mHeight, mDepth, mFormat);
+
+        return true;
+    }
+
+
+    
+    
 
     bool CImage::loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format)
     {

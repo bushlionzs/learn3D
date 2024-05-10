@@ -4,6 +4,7 @@
 #include "engine_struct.h"
 #include "OgreBlendMode.h"
 #include "OgreController.h"
+#include <backend/Texture.h>
 class TextureUnit;
 class TextureAnimationControllerValue : public Ogre::ControllerValue<Real>
 {
@@ -78,6 +79,12 @@ public:
     void preLoad();
     void _load(utils::JobSystem::Job* job);
     void _unload();
+    ResourceState getResourceState()
+    {
+        return mResourceState;
+    }
+    void updateResourceState();
+
     std::shared_ptr<OgreTexture> getTexture();
     OgreTexture* getRaw();
     TextureProperty* getTextureProperty();
@@ -149,4 +156,9 @@ private:
     EffectMap mEffects;
 
     Ogre::Material* mOwner;
+
+
+    //
+    std::vector<Texture*> mFTextures;
+    ResourceState mResourceState = ResourceState::NONE;
 };
