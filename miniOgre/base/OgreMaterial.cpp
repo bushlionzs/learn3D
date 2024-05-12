@@ -3,368 +3,418 @@
 #include "OgreTextureUnit.h"
 #include "OgreMaterialManager.h"
 #include "VideoManager.h"
+#include "shaderManager.h"
+#include "OgreResourceManager.h"
+#include "glslUtil.h"
+#include <OgreRoot.h>
+#include <backend/Program.h>
+#include <backend/Engine.h>
+#include <backend/DriverEnums.h>
 
-Material::Material(const std::string& name, bool pbr)
-{
-    if (name == "3low")
+namespace Ogre {
+
+    Material::Material(const std::string& name, bool pbr)
     {
-        int kk = 0;
-    }
-    mTransform = Ogre::Matrix4::IDENTITY;
-
-    mMaterialName = name;
-
-    mPbr = pbr;
-}
-
-
-Material::~Material()
-{
-
-}
-
-uint32_t Material::addTexture(const std::string& name, Ogre::TextureProperty* texProperty)
-{
-    std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
-
-    tu->setTexture(name, texProperty);
-
-    mTextureUnits.push_back(tu);
-    return mTextureUnits.size() - 1;
-}
-
-uint32_t Material::addAnimTexture(const std::vector<String>& namelist, float duration)
-{
-    std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
-
-    tu->setAnimtexture(namelist, duration);
-
-    mTextureUnits.push_back(tu);
-
-    return mTextureUnits.size() - 1;
-}
-
-uint32_t Material::addTexture(const Ogre::TexturePtr& tex)
-{
-    std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
-    tu->setTexture(tex);
-    mTextureUnits.push_back(tu);
-    return mTextureUnits.size() - 1;
-}
-
-void Material::preLoad()
-{
-    if (mLoad)
-    {
-        return;
-    }
-    for (auto& it : mTextureUnits)
-    {
-        it->preLoad();
-    }
-}
-
-void Material::load(utils::JobSystem::Job* job)
-{
-    if (job)
-    {
-        if (mState > ResourceState::NONE)
+        if (name == "3low")
         {
-            return;
+            int kk = 0;
         }
+        mTransform = Ogre::Matrix4::IDENTITY;
 
-        mState = ResourceState::LOADING;
+        mMaterialName = name;
+
+        mPbr = pbr;
     }
-    else
+
+
+    Material::~Material()
+    {
+
+    }
+
+    uint32_t Material::addTexture(const std::string& name, Ogre::TextureProperty* texProperty)
+    {
+        std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
+
+        tu->setTexture(name, texProperty);
+
+        mTextureUnits.push_back(tu);
+        return mTextureUnits.size() - 1;
+    }
+
+    uint32_t Material::addAnimTexture(const std::vector<String>& namelist, float duration)
+    {
+        std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
+
+        tu->setAnimtexture(namelist, duration);
+
+        mTextureUnits.push_back(tu);
+
+        return mTextureUnits.size() - 1;
+    }
+
+    uint32_t Material::addTexture(const Ogre::TexturePtr& tex)
+    {
+        std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
+        tu->setTexture(tex);
+        mTextureUnits.push_back(tu);
+        return mTextureUnits.size() - 1;
+    }
+
+    void Material::preLoad()
     {
         if (mLoad)
         {
             return;
         }
-
-
-        if (!mVideoName.empty())
-        {
-
-            VideoManager::getSingleton()._playVideoMaterial(mMaterialName);
-        }
-
-
         for (auto& it : mTextureUnits)
         {
-            if (!it->isLoaded())
+            it->preLoad();
+        }
+    }
+
+    void Material::load(utils::JobSystem::Job* job)
+    {
+        if (job)
+        {
+            if (mState > ResourceState::NONE)
             {
-                it->_load(job);
+                return;
+            }
+
+            mState = ResourceState::LOADING;
+
+            auto* engine = Ogre::Root::getSingleton().getEngine();
+
+            backend::Program p;
+            Ogre::ShaderPrivateInfo* privateInfo =
+                ShaderManager::getSingleton().getShader(mShaderInfo.shaderName, EngineType_Vulkan);
+
+            String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
+            auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+
+            std::string vertexSpv;
+
+            glslCompileShader(
+                vertexSpv,
+                res->_fullname,
+                *vertexContent,
+                privateInfo->vertexShaderEntryPoint,
+                mShaderInfo.shaderMacros,
+                shaderc_glsl_vertex_shader);
+
+            p.shader(backend::ShaderStage::VERTEX, vertexSpv.data(), vertexSpv.size());
+
+            String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
+            res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+            std::string fragSpv;
+
+            glslCompileShader(
+                fragSpv,
+                res->_fullname,
+                *fragContent,
+                privateInfo->fragShaderEntryPoint,
+                mShaderInfo.shaderMacros,
+                shaderc_glsl_fragment_shader);
+
+            p.shader(backend::ShaderStage::FRAGMENT, fragSpv.data(), fragSpv.size());
+
+            p.shaderLanguage(backend::ShaderLanguage::SPIRV);
+
+
+            mProgram = engine->getDriverApi().createProgram(std::move(p));
+        }
+        else
+        {
+            if (mLoad)
+            {
+                return;
+            }
+
+
+            if (!mVideoName.empty())
+            {
+
+                VideoManager::getSingleton()._playVideoMaterial(mMaterialName);
+            }
+
+
+            for (auto& it : mTextureUnits)
+            {
+                if (!it->isLoaded())
+                {
+                    it->_load(job);
+                }
+            }
+
+            mShader = MaterialManager::getSingletonPtr()->buildShader(mShaderInfo);
+
+            mShader->load();
+
+            mLoad = true;
+        }
+
+    }
+
+    void Material::updateResourceState()
+    {
+        if (mState == ResourceState::LOADING)
+        {
+            bool ready = true;
+            for (auto& it : mTextureUnits)
+            {
+                it->updateResourceState();
+                if (it->getResourceState() != ResourceState::READY)
+                {
+                    ready = false;
+                }
+            }
+
+            if (ready)
+            {
+                mState = ResourceState::READY;
             }
         }
-
-        mShader = MaterialManager::getSingletonPtr()->buildShader(mShaderInfo);
-
-        mShader->load();
-
-        mLoad = true;
     }
-    
-}
 
-void Material::updateResourceState()
-{
-    if (mState == ResourceState::LOADING)
+    bool Material::isLoaded()
     {
-        bool ready = true;
-        for (auto& it : mTextureUnits)
+        return mLoad;
+    }
+
+
+
+    std::shared_ptr<Material> Material::clone(const String& name)
+    {
+        Material* mat = new Material(name);
+        *mat = *this;
+
+        return std::shared_ptr<Material>(mat);
+    }
+
+    std::shared_ptr<TextureUnit>& Material::getTextureUnit(uint32_t index)
+    {
+        return mTextureUnits[index];
+    }
+
+    std::shared_ptr<TextureUnit>& Material::getTextureUnit(const String& name)
+    {
+        assert(false);
+        return mTextureUnits[0];
+    }
+
+    int32_t Material::getTextureUnitCount()
+    {
+        return mTextureUnits.size();
+    }
+
+    std::vector<std::shared_ptr<TextureUnit>>& Material::getAllTexureUnit()
+    {
+        return mTextureUnits;
+    }
+
+    void Material::addShader(ShaderInfo& sinfo)
+    {
+        mShaderInfo = sinfo;
+
+    }
+
+    const std::shared_ptr<Shader>& Material::getShader() const
+    {
+        return mShader;
+    }
+
+    void Material::scale(Real u, Real v)
+    {
+        mMatInfo.TexScale = Ogre::Math::makeScaleMatrix(Ogre::Vector3(u, v, 0.0f));
+    }
+
+    void Material::animation(Real u, Real v)
+    {
+        mAnimation = true;
+        mUFactor = u;
+        mVFactor = v;
+    }
+
+    void Material::updateMatInfo(PbrMaterialConstanceBuffer& mcb)
+    {
+        mMatInfo = mcb;
+    }
+
+    PbrMaterialConstanceBuffer& Material::getMatInfo()
+    {
+        return mMatInfo;
+    }
+
+    void Material::update(Real delta)
+    {
+        if (!mAnimation)
+            return;
+        mUOffset += mUFactor * delta;
+        mVOffset += mVFactor * delta;
+
+        if (mUOffset >= 1.0f)
         {
-            it->updateResourceState();
-            if (it->getResourceState() != ResourceState::READY)
-            {
-                ready = false;
-            }
+            mUOffset -= 1.0f;
         }
 
-        if (ready)
+        if (mVOffset >= 1.0f)
         {
-            mState = ResourceState::READY;
+            mVOffset -= 1.0f;
         }
+
+        mMatInfo.TexTransform = Ogre::Math::makeTranslateMatrix(Ogre::Vector3(mUOffset, mVOffset, 0.0f)).transpose();
     }
-}
 
-bool Material::isLoaded()
-{
-    return mLoad;
-}
-
-
-
-std::shared_ptr<Material> Material::clone(const String& name)
-{
-    Material* mat = new Material(name);
-    *mat = *this;
-
-    return std::shared_ptr<Material>(mat);
-}
-
-std::shared_ptr<TextureUnit>& Material::getTextureUnit(uint32_t index)
-{
-    return mTextureUnits[index];
-}
-
-std::shared_ptr<TextureUnit>& Material::getTextureUnit(const String& name)
-{
-    assert(false);
-    return mTextureUnits[0];
-}
-
-int32_t Material::getTextureUnitCount()
-{
-    return mTextureUnits.size();
-}
-
-std::vector<std::shared_ptr<TextureUnit>>& Material::getAllTexureUnit() 
-{
-    return mTextureUnits;
-}
-
-void Material::addShader(ShaderInfo& sinfo)
-{
-    mShaderInfo = sinfo;
-    
-}
-
-const std::shared_ptr<Shader>& Material::getShader() const
-{
-    return mShader;
-}
-
-void Material::scale(Real u, Real v)
-{
-    mMatInfo.TexScale = Ogre::Math::makeScaleMatrix(Ogre::Vector3(u,v,0.0f));
-}
-
-void Material::animation(Real u, Real v)
-{
-    mAnimation = true;
-    mUFactor = u;
-    mVFactor = v;
-}
-
-void Material::updateMatInfo(PbrMaterialConstanceBuffer& mcb)
-{
-    mMatInfo = mcb;
-}
-
-PbrMaterialConstanceBuffer& Material::getMatInfo()
-{
-    return mMatInfo;
-}
-
-void Material::update(Real delta)
-{
-    if (!mAnimation)
-        return;
-    mUOffset += mUFactor * delta;
-    mVOffset += mVFactor * delta;
-
-    if (mUOffset >= 1.0f)
+    void Material::setFresnelR0(Ogre::Vector3& fresnelR0)
     {
-        mUOffset -= 1.0f;
+
     }
 
-    if (mVOffset >= 1.0f)
+    void Material::setRoughness(Real roughness)
     {
-        mVOffset -= 1.0f;
+
     }
 
-    mMatInfo.TexTransform = Ogre::Math::makeTranslateMatrix(Ogre::Vector3(mUOffset, mVOffset, 0.0f)).transpose();
-}
-
-void Material::setFresnelR0(Ogre::Vector3& fresnelR0)
-{
-    
-}
-
-void Material::setRoughness(Real roughness)
-{
-    
-}
-
-void Material::setDiffuseAlbedo(Ogre::Vector4& diffuseAlbedo)
-{
-    
-}
-
-bool Material::hasAnimation()
-{
-    return mAnimation;
-}
-
-Ogre::Vector2 Material::getTexAnimationOffset()
-{
-    return Ogre::Vector2(mUOffset, mVOffset);
-}
-
-void Material::setCullMode(Ogre::CullingMode mode)
-{
-    mCullingMode = mode;
-}
-
-Ogre::CullingMode Material::getCullMode()
-{
-    return mCullingMode;
-}
-
-Material& Material::operator=(const Material& rhs)
-{
-    mAmbient = rhs.mAmbient;
-    mDiffuse = rhs.mDiffuse;
-    mSpecular = rhs.mSpecular;
-    mReflect = rhs.mReflect;
-    mTransform = rhs.mTransform;
-    mAnimation = rhs.mAnimation;
-    mUOffset = rhs.mUOffset;
-    mVOffset = rhs.mVOffset;
-    mUFactor = rhs.mUFactor;
-    mVFactor = rhs.mVFactor;
-    mBlendState = rhs.mBlendState;
-    mShaderInfo = rhs.mShaderInfo;
-    mMatInfo = rhs.mMatInfo;
-    mPbr = rhs.mPbr;
-    mLoad = false;
-    mWriteDepth = rhs.mWriteDepth;
-    mCullingMode = rhs.mCullingMode;
-    for (auto tu : rhs.mTextureUnits)
+    void Material::setDiffuseAlbedo(Ogre::Vector4& diffuseAlbedo)
     {
-        mTextureUnits.push_back(tu->clone(this));
+
     }
-    return *this;
-}
 
-bool Material::isTransparent()
-{
-    return false;
-}
+    bool Material::hasAnimation()
+    {
+        return mAnimation;
+    }
 
-uint64_t Material::getHandle()
-{
-    return 0;
-}
+    Ogre::Vector2 Material::getTexAnimationOffset()
+    {
+        return Ogre::Vector2(mUOffset, mVOffset);
+    }
 
-void Material::setAmbient(float red, float green, float blue)
-{
+    void Material::setCullMode(Ogre::CullingMode mode)
+    {
+        mCullingMode = mode;
+    }
 
-}
+    Ogre::CullingMode Material::getCullMode()
+    {
+        return mCullingMode;
+    }
 
-void Material::setAmbient(const ColourValue& selfIllum)
-{
+    Material& Material::operator=(const Material& rhs)
+    {
+        mAmbient = rhs.mAmbient;
+        mDiffuse = rhs.mDiffuse;
+        mSpecular = rhs.mSpecular;
+        mReflect = rhs.mReflect;
+        mTransform = rhs.mTransform;
+        mAnimation = rhs.mAnimation;
+        mUOffset = rhs.mUOffset;
+        mVOffset = rhs.mVOffset;
+        mUFactor = rhs.mUFactor;
+        mVFactor = rhs.mVFactor;
+        mBlendState = rhs.mBlendState;
+        mShaderInfo = rhs.mShaderInfo;
+        mMatInfo = rhs.mMatInfo;
+        mPbr = rhs.mPbr;
+        mLoad = false;
+        mWriteDepth = rhs.mWriteDepth;
+        mCullingMode = rhs.mCullingMode;
+        for (auto tu : rhs.mTextureUnits)
+        {
+            mTextureUnits.push_back(tu->clone(this));
+        }
+        return *this;
+    }
 
-}
-void Material::setDiffuse(float red, float green, float blue, float alpha)
-{
+    bool Material::isTransparent()
+    {
+        return false;
+    }
 
-}
-void Material::setDiffuse(const ColourValue& selfIllum)
-{
+    uint64_t Material::getHandle()
+    {
+        return 0;
+    }
 
-}
-void Material::setSelfIllumination(float red, float green, float blue)
-{
+    void Material::setAmbient(float red, float green, float blue)
+    {
 
-}
-void Material::setSpecular(float red, float green, float blue, float alpha)
-{
+    }
 
-}
+    void Material::setAmbient(const ColourValue& selfIllum)
+    {
 
-/// @overload
-void Material::setSpecular(const ColourValue& specular)
-{
+    }
+    void Material::setDiffuse(float red, float green, float blue, float alpha)
+    {
 
-}
+    }
+    void Material::setDiffuse(const ColourValue& selfIllum)
+    {
 
-/// @overload
-void Material::setSelfIllumination(const ColourValue& selfIllum)
-{
+    }
+    void Material::setSelfIllumination(float red, float green, float blue)
+    {
 
-}
-const ColourValue& Material::getSelfIllumination()
-{
-    return ColourValue::Black;
-}
+    }
+    void Material::setSpecular(float red, float green, float blue, float alpha)
+    {
 
-void Material::setShininess(Real val)
-{
+    }
 
-}
+    /// @overload
+    void Material::setSpecular(const ColourValue& specular)
+    {
 
-void Material::setFog(
-    bool overrideScene,
-    FogMode mode ,
-    const ColourValue& colour,
-    Real expDensity , Real linearStart , Real linearEnd )
-{
+    }
 
-}
+    /// @overload
+    void Material::setSelfIllumination(const ColourValue& selfIllum)
+    {
 
-void Material::setSceneBlending(const SceneBlendType sbt)
-{
+    }
+    const ColourValue& Material::getSelfIllumination()
+    {
+        return ColourValue::Black;
+    }
 
-}
+    void Material::setShininess(Real val)
+    {
 
-void Material::touch()
-{
+    }
 
-}
+    void Material::setFog(
+        bool overrideScene,
+        FogMode mode,
+        const ColourValue& colour,
+        Real expDensity, Real linearStart, Real linearEnd)
+    {
 
-void Material::setVideoName(const String& videoName)
-{
-    mVideoName = videoName;
-}
+    }
 
-bool Material::_isVideo()
-{
-    return !mVideoName.empty();
-}
+    void Material::setSceneBlending(const SceneBlendType sbt)
+    {
 
-String Material::getVideoName()
-{
-    return mVideoName;
+    }
+
+    void Material::touch()
+    {
+
+    }
+
+    void Material::setVideoName(const String& videoName)
+    {
+        mVideoName = videoName;
+    }
+
+    bool Material::_isVideo()
+    {
+        return !mVideoName.empty();
+    }
+
+    String Material::getVideoName()
+    {
+        return mVideoName;
+    }
 }

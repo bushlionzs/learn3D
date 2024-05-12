@@ -42,8 +42,6 @@ VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
 
     new VulkanHelper(this, wnd);
 
-    utils::JobSystem* js = Ogre::Root::getSingleton().getJobSystem();
-    mRootJob = js->createJob();
 
     mRenderList.reserve(10000);
 }
@@ -272,11 +270,6 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
         return;
     }
     
-    if (mRenderList.size() != objs.size())
-    {
-        utils::JobSystem* js = Ogre::Root::getSingleton().getJobSystem();
-        js->runAndWait(mRootJob);
-    }
     
     
     uint32_t size = (uint32_t)mRenderList.size();

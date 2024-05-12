@@ -52,8 +52,6 @@ namespace Ogre {
         mEvt.timeSinceLastEvent = 0;
         mEvt.timeSinceLastFrame = 0;
 
-        mJobSystem = new utils::JobSystem(6, 1);
-        mJobSystem->adopt();
 	}
 
 	Root::~Root()
@@ -180,6 +178,12 @@ namespace Ogre {
         mSceneManagerMap[name] = current;
         return current;
     }
+
+    void Root::destroySceneManager(SceneManager* sceneMgr)
+    {
+
+    }
+
 
     SceneManager* Root::getSceneManager(const std::string& name)
     {

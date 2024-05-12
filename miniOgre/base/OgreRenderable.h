@@ -2,6 +2,7 @@
 
 
 #include "engine_struct.h"
+#include <backend/Handle.h>
 
 class RenderSystem;
 class VertexData;
@@ -77,13 +78,29 @@ namespace Ogre {
             mVertexBuffer = vb;
             mIndexBuffer = ib;
         }
+
+        VertexBuffer* getVertexBuffer()
+        {
+            return mVertexBuffer;
+        }
+
+        IndexBuffer* getIndexBuffer()
+        {
+            return mIndexBuffer;
+        }
+
+        backend::VertexBufferInfoHandle getVertexBufferInfoHandle()
+        {
+            return mVertexBufferInfoHandle;
+        }
+
     protected:
         std::shared_ptr<Material> mMaterial;
         RenderableData* mRenderableData = nullptr;
 
         VertexBuffer* mVertexBuffer = nullptr;
         IndexBuffer* mIndexBuffer = nullptr;
-
+        backend::VertexBufferInfoHandle mVertexBufferInfoHandle;
         Ogre::Matrix4 mWorld;
 
         uint64_t mSortValue;

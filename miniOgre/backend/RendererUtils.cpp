@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include "OgreHeader.h"
 #include "RendererUtils.h"
 
 #include "backend/Engine.h"
@@ -29,6 +29,11 @@
 #include <backend/DriverEnums.h>
 #include <backend/Handle.h>
 #include <backend/PixelBufferDescriptor.h>
+
+#include <OgreRoot.h>
+#include <OgreSceneManager.h>
+#include <OgreCamera.h>
+#include <OgreRenderable.h>
 
 #include <utils/BitmaskEnum.h>
 #include <utils/compiler.h>
@@ -175,7 +180,22 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
 
 
                 driver.beginRenderPass(out.target, out.params);
-                //passExecutor.execute(engine, resources.getPassName());
+                
+                {
+                    SceneManager* sm = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
+                    Ogre::Camera* cam = sm->getCamera(MAIN_CAMERA);
+                    static EngineRenderList engineRenerList;
+
+                    sm->getSceneRenderList(cam, engineRenerList);
+
+                    PipelineState pipeline;
+                    for (auto* r : engineRenerList.mOpaqueList)
+                    {
+                        pipeline.vertexBufferInfo = r->getVertexBufferInfoHandle();
+                        pipeline.primitiveType = PrimitiveType::TRIANGLES;
+                    }
+
+                }
                 driver.endRenderPass();
 
                 // color pass is typically heavy, and we don't have much CPU work left after

@@ -41,6 +41,7 @@ namespace Ogre {
 
 		SceneManager* createSceneManger(const std::string& name);
 		void destroySceneManager(SceneManager* sceneMgr);
+
 		SceneManager* getSceneManager(const std::string& name);
 		uint64_t getNextFrameNumber();
 		uint64_t getCurrentFPS();
@@ -62,9 +63,10 @@ namespace Ogre {
 			return mEvt;
 		}
 
-		utils::JobSystem* getJobSystem()
+
+		filament::Engine* getEngine()
 		{
-			return mJobSystem;
+			return mEngine;
 		}
 	private:
 		uint32_t _allocateNextMovableObjectTypeFlag(void);
@@ -95,8 +97,7 @@ namespace Ogre {
 
 		Ogre::FrameEvent mEvt;
 
-		utils::JobSystem* mJobSystem;
+		filament::Engine* mEngine;
 
-		filament::ResourceAllocator* mResourceAllocator = nullptr;
 	};
 }

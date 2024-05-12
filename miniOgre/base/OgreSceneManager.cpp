@@ -96,6 +96,17 @@ namespace Ogre {
         return camera;
     }
 
+    Camera* SceneManager::getCamera(const std::string& name)
+    {
+        auto itor = mCameraMap.find(name);
+        if (itor != mCameraMap.end())
+        {
+            return itor->second;
+        }
+
+        return nullptr;
+    }
+
     Camera* SceneManager::addShadowCamera(const std::string& name)
     {
         return nullptr;
@@ -157,6 +168,23 @@ namespace Ogre {
                 mRenderSystem->multiRender(mEngineRenderList.mTransparentList, multithread);
 
         }
+    }
+
+    void SceneManager::getSceneRenderList(ICamera* camera, EngineRenderList& renderList)
+    {
+        renderList.mOpaqueList.clear();
+        renderList.mTransparentList.clear();
+
+
+        mRoot->traverse(renderList, camera);
+
+        std::sort(mEngineRenderList.mOpaqueList.begin(), mEngineRenderList.mOpaqueList.end(),
+            [](Ogre::Renderable* a, Ogre::Renderable* b)
+            {
+                return a->getSortValue() < b->getSortValue();
+            }
+        );
+
     }
 
     void SceneManager::update(float timeSinceLastFrame)

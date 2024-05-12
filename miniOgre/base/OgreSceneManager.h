@@ -35,9 +35,11 @@ namespace Ogre {
         ~SceneManager();
 
         Camera* createCamera(const std::string& name);
+        Camera* getCamera(const std::string& name);
         Camera* addShadowCamera(const std::string& name);
         void _renderScene(Camera* camera, Ogre::Viewport* vp);
         void _renderScene2(ICamera* camera, Ogre::Viewport* vp);
+        void getSceneRenderList(ICamera* camera, EngineRenderList& renderList);
         void update(float timeSinceLastFrame);
 
         Entity* createEntity(const std::string& name, const std::string& meshName, bool suppressSkeletalAnimation = true);

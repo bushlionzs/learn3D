@@ -14,181 +14,155 @@
  * limitations under the License.
  */
 
-#include "backend/View.h"
-
-
-#include "ResourceAllocator.h"
-
-#include "backend/Engine.h"
-
-#include "backend/RenderTarget.h"
-#include "backend/Renderer.h"
-
-
-#include <utils/Profiler.h>
-#include <utils/Slice.h>
-#include <utils/Systrace.h>
-#include <utils/debug.h>
-#include <utils/Zip2Iterator.h>
-
-#include <math/scalar.h>
-#include <math/fast.h>
-
-#include <memory>
-
-using namespace utils;
+#include "backend/FView.h"
 
 namespace filament {
 
-using namespace backend;
-using namespace math;
-
-static constexpr float PID_CONTROLLER_Ki = 0.002f;
-static constexpr float PID_CONTROLLER_Kd = 0.0f;
-
-FView::FView(FEngine& engine)
-        :
-          mFogEntity(engine.getEntityManager().create()),
-          mIsStereoSupported(engine.getDriverApi().isStereoSupported(engine.getConfig().stereoscopicType))
-{
-    DriverApi& driver = engine.getDriverApi();
-
-    mIsDynamicResolutionSupported = driver.isFrameTimeSupported();
-
+void View::setScene(Scene* scene) {
+    
 }
 
-FView::~FView() noexcept = default;
-
-void FView::terminate(FEngine& engine) {
-    // Here we would cleanly free resources we've allocated, or we own (currently none).
-
-    while (mActivePickingQueriesList) {
-        FPickingQuery* const pQuery = mActivePickingQueriesList;
-        mActivePickingQueriesList = pQuery->next;
-        pQuery->callback(pQuery->result, pQuery);
-        FPickingQuery::put(pQuery);
-    }
-
-    DriverApi& driver = engine.getDriverApi();
-    driver.destroyBufferObject(mLightUbh);
-    driver.destroyBufferObject(mRenderableUbh);
-    drainFrameHistory(engine);
-
-
-    engine.getEntityManager().destroy(mFogEntity);
+Scene* View::getScene() noexcept {
+    return nullptr;
 }
 
-void FView::setViewport(filament::Viewport const& viewport) noexcept {
-    // catch the cases were user had an underflow and didn't catch it.
-    assert((int32_t)viewport.width > 0);
-    assert((int32_t)viewport.height > 0);
-    mViewport = viewport;
+
+void View::setCamera(Camera* camera) noexcept {
+    
 }
 
 
 
+void View::setViewport(filament::Viewport const& viewport) noexcept {
+    downcast(this)->setViewport(viewport);
+}
 
+filament::Viewport const& View::getViewport() const noexcept {
+    return downcast(this)->getViewport();
+}
 
-void FView::setVisibleLayers(uint8_t select, uint8_t values) noexcept {
-    mVisibleLayers = (mVisibleLayers & ~select) | (values & select);
+void View::setFrustumCullingEnabled(bool culling) noexcept {
+    downcast(this)->setFrustumCullingEnabled(culling);
+}
+
+bool View::isFrustumCullingEnabled() const noexcept {
+    return downcast(this)->isFrustumCullingEnabled();
 }
 
 
 
-void FView::prepareViewport(
-    const filament::Viewport& physicalViewport,
-    const filament::Viewport& logicalViewport) const noexcept
-{
+void View::setVisibleLayers(uint8_t select, uint8_t values) noexcept {
+    downcast(this)->setVisibleLayers(select, values);
+}
+
+void View::setName(const char* name) noexcept {
+    downcast(this)->setName(name);
+}
+
+const char* View::getName() const noexcept {
+    return downcast(this)->getName();
+}
+
+Camera const* View::getDirectionalLightCamera() const noexcept {
+    return downcast(this)->getDirectionalLightCamera();
+}
+
+void View::setShadowingEnabled(bool enabled) noexcept {
+    downcast(this)->setShadowingEnabled(enabled);
+}
+
+void View::setRenderTarget(RenderTarget* renderTarget) noexcept {
+    downcast(this)->setRenderTarget(downcast(renderTarget));
+}
+
+RenderTarget* View::getRenderTarget() const noexcept {
+    return downcast(this)->getRenderTarget();
+}
+
+void View::setSampleCount(uint8_t count) noexcept {
+    downcast(this)->setSampleCount(count);
+}
+
+uint8_t View::getSampleCount() const noexcept {
+    return downcast(this)->getSampleCount();
 }
 
 
-void FView::commitUniforms(backend::DriverApi& driver) const noexcept
-{
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void View::setFrontFaceWindingInverted(bool inverted) noexcept {
+    downcast(this)->setFrontFaceWindingInverted(inverted);
+}
+
+bool View::isFrontFaceWindingInverted() const noexcept {
+    return downcast(this)->isFrontFaceWindingInverted();
+}
+
+void View::setDynamicLightingOptions(float zLightNear, float zLightFar) noexcept {
+    downcast(this)->setDynamicLightingOptions(zLightNear, zLightFar);
 }
 
 
 
 
 
-void FView::executePickingQueries(backend::DriverApi& driver,
-        backend::RenderTargetHandle handle, float scale) noexcept {
 
-    while (mActivePickingQueriesList) {
-        FPickingQuery* const pQuery = mActivePickingQueriesList;
-        mActivePickingQueriesList = pQuery->next;
 
-        // adjust for dynamic resolution and structure buffer scale
-        const uint32_t x = uint32_t(float(pQuery->x) * (scale * mScale.x));
-        const uint32_t y = uint32_t(float(pQuery->y) * (scale * mScale.y));
+uint8_t View::getVisibleLayers() const noexcept {
+  return downcast(this)->getVisibleLayers();
+}
 
-        if (UTILS_UNLIKELY(driver.getFeatureLevel() == FeatureLevel::FEATURE_LEVEL_0)) {
-            driver.readPixels(handle, x, y, 1, 1, {
-                    &pQuery->result.reserved1, 4u, // 4
-                    backend::PixelDataFormat::RGBA, backend::PixelDataType::UBYTE,
-                    pQuery->handler, [](void*, size_t, void* user) {
-                        FPickingQuery* pQuery = static_cast<FPickingQuery*>(user);
-                        uint8_t const* const p =
-                                reinterpret_cast<uint8_t const *>(&pQuery->result.reserved1);
-                        uint32_t const r = p[0];
-                        uint32_t const g = p[1];
-                        uint32_t const b = p[2];
-                        uint32_t const a = p[3];
-                        int32_t const identity = int32_t(a << 16u | (b << 8u) | g);
-                        float const depth = float(r) / 255.0f;
-                        pQuery->result.renderable = Entity::import(identity);
-                        pQuery->result.depth = depth;
-                        pQuery->result.fragCoords = {
-                                pQuery->x, pQuery->y, float(1.0 - depth) };
-                        pQuery->callback(pQuery->result, pQuery);
-                        FPickingQuery::put(pQuery);
-                    }, pQuery
-            });
-        } else {
-            driver.readPixels(handle, x, y, 1, 1, {
-                    &pQuery->result.renderable, 4u * 4u, // 4*float
-                    backend::PixelDataFormat::RG, backend::PixelDataType::FLOAT,
-                    pQuery->handler, [](void*, size_t, void* user) {
-                        FPickingQuery* const pQuery = static_cast<FPickingQuery*>(user);
-                        // pQuery->result.renderable already contains the right value!
-                        pQuery->result.fragCoords = {
-                                pQuery->x, pQuery->y, float(1.0 - pQuery->result.depth) };
-                        pQuery->callback(pQuery->result, pQuery);
-                        FPickingQuery::put(pQuery);
-                    }, pQuery
-            });
-        }
-    }
+bool View::isShadowingEnabled() const noexcept {
+    return downcast(this)->isShadowingEnabled();
+}
+
+void View::setScreenSpaceRefractionEnabled(bool enabled) noexcept {
+    downcast(this)->setScreenSpaceRefractionEnabled(enabled);
+}
+
+bool View::isScreenSpaceRefractionEnabled() const noexcept {
+    return downcast(this)->isScreenSpaceRefractionEnabled();
+}
+
+void View::setStencilBufferEnabled(bool enabled) noexcept {
+    downcast(this)->setStencilBufferEnabled(enabled);
+}
+
+bool View::isStencilBufferEnabled() const noexcept {
+    return downcast(this)->isStencilBufferEnabled();
 }
 
 
-void FView::commitFrameHistory(FEngine& engine) noexcept
-{
 
-}
-
-void FView::drainFrameHistory(FEngine& engine) noexcept
-{
-
-}
-
-View::PickingQuery& FView::pick(uint32_t x, uint32_t y, backend::CallbackHandler* handler,
+View::PickingQuery& View::pick(uint32_t x, uint32_t y, backend::CallbackHandler* handler,
         View::PickingQueryResultCallback callback) noexcept {
-    FPickingQuery* pQuery = FPickingQuery::get(x, y, handler, callback);
-    pQuery->next = mActivePickingQueriesList;
-    mActivePickingQueriesList = pQuery;
-    return *pQuery;
+    return downcast(this)->pick(x, y, handler, callback);
 }
 
-
-void FView::setMaterialGlobal(uint32_t index, float4 const& value) {
-    ASSERT_PRECONDITION(index < 4, "material global variable index (%u) out of range", +index);
-    mMaterialGlobals[index] = value;
+void View::setMaterialGlobal(uint32_t index, math::float4 const& value) {
+    downcast(this)->setMaterialGlobal(index, value);
 }
 
-math::float4 FView::getMaterialGlobal(uint32_t index) const {
-    ASSERT_PRECONDITION(index < 4, "material global variable index (%u) out of range", +index);
-    return mMaterialGlobals[index];
+math::float4 View::getMaterialGlobal(uint32_t index) const {
+    return downcast(this)->getMaterialGlobal(index);
+}
+
+utils::Entity View::getFogEntity() const noexcept {
+    return downcast(this)->getFogEntity();
 }
 
 } // namespace filament

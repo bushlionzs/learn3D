@@ -6,6 +6,8 @@
 #include "OgreCommon.h"
 #include "OgreTexture.h"
 #include <backend/Texture.h>
+#include <backend/Handle.h>
+#include <backend/DriverEnums.h>
 class TextureUnit;
 
 
@@ -156,6 +158,12 @@ namespace Ogre {
 
         void updateResourceState();
 
+
+        backend::Handle<backend::HwProgram> getProgram()
+        {
+            return mProgram;
+        }
+
     private:
         std::string mMaterialName;
         Ogre::Vector4 mAmbient;
@@ -193,5 +201,7 @@ namespace Ogre {
         bool mChanged = true;
 
         ResourceState mState = ResourceState::NONE;
+
+        backend::Handle<backend::HwProgram> mProgram;
     };
 }
