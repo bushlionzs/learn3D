@@ -28,8 +28,8 @@
 #include "fg/Resource.h"
 #include "fg/Utilities.h"
 
-#include <backend/DriverEnums.h>
-#include <backend/Handle.h>
+#include <filament/DriverEnums.h>
+#include <filament/Handle.h>
 
 #include <functional>
 

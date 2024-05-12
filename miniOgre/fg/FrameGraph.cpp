@@ -17,11 +17,11 @@
 #include "fg/PassNode.h"
 #include "fg/ResourceNode.h"
 #include "fg/DependencyGraph.h"
-#include "backend/CommandStream.h"
+#include "filament/CommandStream.h"
 
 
-#include <backend/DriverEnums.h>
-#include <backend/Handle.h>
+#include <filament/DriverEnums.h>
+#include <filament/Handle.h>
 
 #include <utils/Panic.h>
 #include <utils/Systrace.h>

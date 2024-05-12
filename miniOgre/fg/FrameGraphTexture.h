@@ -19,8 +19,8 @@
 
 #include "fg/FrameGraphId.h"
 
-#include <backend/DriverEnums.h>
-#include <backend/Handle.h>
+#include <filament/DriverEnums.h>
+#include <filament/Handle.h>
 namespace Ogre
 {
     class ITexture;

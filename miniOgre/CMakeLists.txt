@@ -51,10 +51,10 @@ add_subdir(render/dx12Render)
 add_subdir(render/vulkanRender)
 add_subdir(wow)
 add_subdir(fg)
-add_subdir(backend)
-add_subdir(backend/vulkan)
-add_subdir(backend/vulkan/spirv)
-add_subdir(backend/vulkan/caching)
+add_subdir(filament)
+add_subdir(filament/vulkan)
+add_subdir(filament/vulkan/spirv)
+add_subdir(filament/vulkan/caching)
 
 
 

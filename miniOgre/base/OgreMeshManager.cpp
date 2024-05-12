@@ -13,9 +13,9 @@
 #include "renderSystem.h"
 #include "m3d_loader.h"
 #include "OgreMaterialManager.h"
-#include "backend/Engine.h"
-#include "backend/VertexBuffer.h"
-#include "backend/IndexBuffer.h"
+#include "filament/Engine.h"
+#include "filament/VertexBuffer.h"
+#include "filament/IndexBuffer.h"
 
 
 

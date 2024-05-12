@@ -21,7 +21,7 @@
 
 #include "ResourceAllocator.h"
 
-//#include <backend/Texture.h>
+#include <filament/Texture.h>
 
 #include <string>
 

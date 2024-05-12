@@ -3,9 +3,9 @@
 #include "renderSystem.h"
 #include "OgreRoot.h"
 #include "OgreResourceManager.h"
-#include <backend/Texture.h>
-#include <backend/DriverEnums.h>
-#include <backend/engine.h>
+#include <filament/Texture.h>
+#include <filament/DriverEnums.h>
+#include <filament/engine.h>
 #include <utils/JobSystem.h>
 
 

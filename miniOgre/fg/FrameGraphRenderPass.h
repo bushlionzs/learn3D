@@ -19,10 +19,10 @@
 
 #include "fg/FrameGraphTexture.h"
 
-#include <backend/DriverEnums.h>
-#include <backend/TargetBufferInfo.h>
+#include <filament/DriverEnums.h>
+#include <filament/TargetBufferInfo.h>
 
-#include <backend/Viewport.h>
+#include <filament/Viewport.h>
 
 namespace filament {
 

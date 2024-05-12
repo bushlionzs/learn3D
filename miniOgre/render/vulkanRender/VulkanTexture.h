@@ -4,8 +4,8 @@
 //#include "engine_struct.h"
 #include "VulkanCommon.h"
 #include "OgreTexture.h"
-#include <backend/DriverEnums.h>
-#include <backend/DriverBase.h>
+#include <filament/DriverEnums.h>
+#include <filament/DriverBase.h>
 #include <VulkanResources.h>
 #include <VulkanImageUtility.h>
 #include <utils/RangeMap.h>

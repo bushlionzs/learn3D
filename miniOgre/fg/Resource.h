@@ -21,7 +21,7 @@
 #include "fg/FrameGraphTexture.h"
 #include "fg/FrameGraphRenderPass.h"
 #include "fg/DependencyGraph.h"
-#include <backend/DriverBase.h>
+#include <filament/DriverBase.h>
 
 #include <utils/Panic.h>
 

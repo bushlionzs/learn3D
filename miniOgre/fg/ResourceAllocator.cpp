@@ -16,15 +16,15 @@
 
 #include "ResourceAllocator.h"
 
-#include <backend/Engine.h>
-#include <backend/FTexture.h>
+#include <filament/Engine.h>
+#include <filament/FTexture.h>
 
-#include <backend/DriverApiForward.h>
-#include <backend/Handle.h>
-#include <backend/TargetBufferInfo.h>
-#include <backend/DriverEnums.h>
+#include <filament/DriverApiForward.h>
+#include <filament/Handle.h>
+#include <filament/TargetBufferInfo.h>
+#include <filament/DriverEnums.h>
 
-#include "backend/DriverApi.h"
+#include "filament/DriverApi.h"
 
 #include <utils/compiler.h>
 #include <utils/debug.h>

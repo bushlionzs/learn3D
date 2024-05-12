@@ -2,7 +2,7 @@
 
 
 #include "engine_struct.h"
-#include <backend/Handle.h>
+#include <filament/Handle.h>
 
 class RenderSystem;
 class VertexData;

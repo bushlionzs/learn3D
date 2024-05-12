@@ -22,9 +22,9 @@
 #include "fg/FrameGraph.h"
 #include "fg/FrameGraphRenderPass.h"
 
-#include "backend/DriverApiForward.h"
+#include <filament/DriverApiForward.h>
 
-#include <backend/TargetBufferInfo.h>
+#include <filament/TargetBufferInfo.h>
 
 #include <unordered_set>
 

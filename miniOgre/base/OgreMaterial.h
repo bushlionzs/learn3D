@@ -5,9 +5,9 @@
 #include "OgreBlendMode.h"
 #include "OgreCommon.h"
 #include "OgreTexture.h"
-#include <backend/Texture.h>
-#include <backend/Handle.h>
-#include <backend/DriverEnums.h>
+#include <filament/Texture.h>
+#include <filament/Handle.h>
+#include <filament/DriverEnums.h>
 class TextureUnit;
 
 

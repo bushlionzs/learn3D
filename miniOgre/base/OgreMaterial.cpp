@@ -7,9 +7,9 @@
 #include "OgreResourceManager.h"
 #include "glslUtil.h"
 #include <OgreRoot.h>
-#include <backend/Program.h>
-#include <backend/Engine.h>
-#include <backend/DriverEnums.h>
+#include <filament/Program.h>
+#include <filament/FEngine.h>
+#include <filament/DriverEnums.h>
 
 namespace Ogre {
 

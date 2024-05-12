@@ -4,7 +4,7 @@
 #include "engine_struct.h"
 #include "OgreBlendMode.h"
 #include "OgreController.h"
-#include <backend/Texture.h>
+#include <filament/Texture.h>
 class TextureUnit;
 class TextureAnimationControllerValue : public Ogre::ControllerValue<Real>
 {
