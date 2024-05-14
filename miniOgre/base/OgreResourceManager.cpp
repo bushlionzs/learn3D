@@ -75,8 +75,6 @@ namespace Ogre {
         }
 
         ResourceParserManager::getSingleton().parserAll();
-
-        Ogre::Root::getSingleton().getRenderSystem()->_resourceLoaded();
     }
 
     ResourceInfo* ResourceManager::getResource(const std::string& name, const String& group)

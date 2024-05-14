@@ -31,6 +31,7 @@ static const std::vector<const char*> deviceExtensions = {
 
 VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
 {
+    bluevk::initialize();
 #ifdef _DEBUG
     mEnableValidationLayers = true;
 #else
@@ -54,7 +55,7 @@ VulkanRenderSystem::~VulkanRenderSystem()
 bool VulkanRenderSystem::engineInit()
 {
     RenderSystem::engineInit();
-    new VulkanHardwareBufferManager(this);
+    
     
     VulkanHelper::getSingleton()._initialise(nullptr);
 
@@ -166,7 +167,7 @@ void VulkanRenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
 {
     mViewport = vp;
     mCamera = cam;
-    RenderTarget* target;
+    Ogre::RenderTarget* target;
     target = vp->getTarget();
     updateMainPassCB(cam);
     mActiveVulkanRenderTarget = dynamic_cast<Ogre::VulkanRenderTarget*>(target);

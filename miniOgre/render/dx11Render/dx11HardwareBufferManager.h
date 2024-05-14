@@ -5,7 +5,7 @@
 class Dx11HardwareBufferManager : public HardwareBufferManager
 {
 public:
-    Dx11HardwareBufferManager(RenderSystem* engine);
+    Dx11HardwareBufferManager();
     virtual ~Dx11HardwareBufferManager();
     virtual std::shared_ptr<HardwareVertexBuffer>
         createVertexBuffer(size_t vertexSize, size_t numVerts, HardwareBuffer::Usage usage);

@@ -4,7 +4,7 @@
 class VulkanHardwareBufferManager : public HardwareBufferManager
 {
 public:
-    VulkanHardwareBufferManager(RenderSystem* engine);
+    VulkanHardwareBufferManager();
     virtual ~VulkanHardwareBufferManager();
 
     virtual std::shared_ptr<HardwareVertexBuffer>

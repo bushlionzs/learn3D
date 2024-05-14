@@ -500,7 +500,8 @@ DECL_DRIVER_API_N(bindPipeline,
         backend::PipelineState, state)
 
 DECL_DRIVER_API_N(bindRenderPrimitive,
-        backend::RenderPrimitiveHandle, rph)
+        backend::VertexBufferHandle, vbh,
+        backend::IndexBufferHandle, ibh)
 
 DECL_DRIVER_API_N(draw2,
         uint32_t, indexOffset,
@@ -509,7 +510,8 @@ DECL_DRIVER_API_N(draw2,
 
 DECL_DRIVER_API_N(draw,
         backend::PipelineState, state,
-        backend::RenderPrimitiveHandle, rph,
+        backend::VertexBufferHandle, vbh,
+        backend::IndexBufferHandle, ibh,
         uint32_t, indexOffset,
         uint32_t, indexCount,
         uint32_t, instanceCount)

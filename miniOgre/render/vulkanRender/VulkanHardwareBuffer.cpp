@@ -7,10 +7,8 @@ VulkanHardwareBuffer::VulkanHardwareBuffer(
     BufferType btype,
     size_t vertexSize,
     size_t numVerts,
-    HardwareBuffer::Usage usage,
-    VulkanRenderSystem* engine)
+    HardwareBuffer::Usage usage)
 {
-    mEngine = engine;
     mBufferType = btype;
     VkBufferCreateInfo bufferInfo = {};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

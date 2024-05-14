@@ -10,6 +10,7 @@
 #include <filament/Program.h>
 #include <filament/FEngine.h>
 #include <filament/DriverEnums.h>
+#include <filament/DriverBase.h>
 
 namespace Ogre {
 
@@ -84,6 +85,11 @@ namespace Ogre {
 
             mState = ResourceState::LOADING;
 
+            for (auto& it : mTextureUnits)
+            {
+                it->_load(job);
+            }
+
             auto* engine = Ogre::Root::getSingleton().getEngine();
 
             backend::Program p;
@@ -123,6 +129,8 @@ namespace Ogre {
 
 
             mProgram = engine->getDriverApi().createProgram(std::move(p));
+
+            mMaterialBuffer = engine->getDriverApi().createBufferObject(sizeof(MaterialConstantBuffer), backend::BufferObjectBinding::UNIFORM, backend::BufferUsage::DYNAMIC);
         }
         else
         {

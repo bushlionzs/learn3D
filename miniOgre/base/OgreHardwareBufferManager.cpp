@@ -5,9 +5,8 @@ template<> Ogre::HardwareBufferManager* Ogre::Singleton<Ogre::HardwareBufferMana
 
 namespace Ogre {
 
-    HardwareBufferManager::HardwareBufferManager(RenderSystem* rs)
+    HardwareBufferManager::HardwareBufferManager()
     {
-        mRenderSystem = rs;
     }
 
 

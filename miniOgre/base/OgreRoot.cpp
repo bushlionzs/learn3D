@@ -25,7 +25,8 @@ namespace Ogre {
 
 	template<> Root* Ogre::Singleton<Root>::msSingleton = 0;
 
-	Root::Root()
+	Root::Root(filament::Engine* engine)
+        :mEngine(engine)
 	{
         new ResourceParserManager;
         new ResourceManager;
@@ -67,8 +68,6 @@ namespace Ogre {
 
         addMovableObjectFactory(new EntityFactory());
 
-
-       // mResourceAllocator = new filament::ResourceAllocator(driverApi);
     }
 
     RenderSystem* Root::createRenderEngine(

@@ -6,7 +6,7 @@
 class Dx12HardwareBufferManager : public Ogre::HardwareBufferManager
 {
 public:
-    Dx12HardwareBufferManager(RenderSystem* engine);
+    Dx12HardwareBufferManager();
     virtual ~Dx12HardwareBufferManager();
 
     virtual std::shared_ptr<HardwareVertexBuffer>

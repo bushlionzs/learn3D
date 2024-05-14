@@ -115,7 +115,6 @@ private:
 // (we use this renaming because the macro-system doesn't deal well with "<" and ">")
 using BufferObjectHandle    = Handle<HwBufferObject>;
 using FenceHandle           = Handle<HwFence>;
-using IndexBufferHandle     = Handle<HwIndexBuffer>;
 using ProgramHandle         = Handle<HwProgram>;
 using RenderPrimitiveHandle = Handle<HwRenderPrimitive>;
 using RenderTargetHandle    = Handle<HwRenderTarget>;
@@ -125,6 +124,7 @@ using SwapChainHandle       = Handle<HwSwapChain>;
 using TextureHandle         = Handle<HwTexture>;
 using TimerQueryHandle      = Handle<HwTimerQuery>;
 using VertexBufferHandle    = Handle<HwVertexBuffer>;
+using IndexBufferHandle     = Handle<HwIndexBuffer>;
 using VertexBufferInfoHandle = Handle<HwVertexBufferInfo>;
 } // namespace filament::backend
 

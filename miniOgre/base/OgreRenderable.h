@@ -12,8 +12,8 @@ class RenderableData;
 
 namespace filament
 {
-    class VertexBuffer;
-    class IndexBuffer;
+    class FVertexBuffer;
+    class FIndexBuffer;
 }
 
 using namespace filament;
@@ -73,18 +73,14 @@ namespace Ogre {
 
         RenderableData* getRenderableData();
 
-        void updateBuffer(VertexBuffer* vb, IndexBuffer* ib)
-        {
-            mVertexBuffer = vb;
-            mIndexBuffer = ib;
-        }
+        void updateBuffer(FVertexBuffer* vb, FIndexBuffer* ib);
 
-        VertexBuffer* getVertexBuffer()
+        FVertexBuffer* getVertexBuffer()
         {
             return mVertexBuffer;
         }
 
-        IndexBuffer* getIndexBuffer()
+        FIndexBuffer* getIndexBuffer()
         {
             return mIndexBuffer;
         }
@@ -94,14 +90,20 @@ namespace Ogre {
             return mVertexBufferInfoHandle;
         }
 
+        backend::BufferObjectHandle getBufferObjectHandle()
+        {
+            return mRenderableObjectHandle;
+        }
+
     protected:
         std::shared_ptr<Material> mMaterial;
         RenderableData* mRenderableData = nullptr;
 
-        VertexBuffer* mVertexBuffer = nullptr;
-        IndexBuffer* mIndexBuffer = nullptr;
+        FVertexBuffer* mVertexBuffer = nullptr;
+        FIndexBuffer* mIndexBuffer = nullptr;
         backend::VertexBufferInfoHandle mVertexBufferInfoHandle;
-        Ogre::Matrix4 mWorld;
+        backend::BufferObjectHandle mRenderableObjectHandle;
+        Ogre::Matrix4 mModel;
 
         uint64_t mSortValue;
 

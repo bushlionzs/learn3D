@@ -13,6 +13,7 @@ namespace Ogre {
     template<> TextureManager* Ogre::Singleton<TextureManager>::msSingleton = 0;
     TextureManager::TextureManager()
     {
+        mEngine = Ogre::Root::getSingleton().getEngine();
     }
 
     TextureManager::~TextureManager()

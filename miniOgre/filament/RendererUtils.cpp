@@ -29,11 +29,14 @@
 #include <filament/DriverEnums.h>
 #include <filament/Handle.h>
 #include <filament/PixelBufferDescriptor.h>
+#include <filament/FVertexBuffer.h>
+#include <filament/FIndexBuffer.h>
 
 #include <OgreRoot.h>
 #include <OgreSceneManager.h>
 #include <OgreCamera.h>
 #include <OgreRenderable.h>
+#include <OgreMaterial.h>
 
 #include <utils/BitmaskEnum.h>
 #include <utils/compiler.h>
@@ -179,6 +182,8 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                 out.params.flags.clear |= TargetBufferFlags::COLOR;
 
 
+                
+
                 driver.beginRenderPass(out.target, out.params);
                 
                 {
@@ -189,11 +194,37 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                     sm->getSceneRenderList(cam, engineRenerList);
 
                     PipelineState pipeline;
+
+                    utils::JobSystem& js = engine.getJobSystem();
+
+                    utils::JobSystem::Job* rootJob = js.createJob();
+
                     for (auto* r : engineRenerList.mOpaqueList)
                     {
-                        pipeline.vertexBufferInfo = r->getVertexBufferInfoHandle();
-                        pipeline.primitiveType = PrimitiveType::TRIANGLES;
+                        auto* mat = r->getMaterial().get();
+                        if (mat->getResourceState() == ResourceState::READY)
+                        {
+                            pipeline.vertexBufferInfo = r->getVertexBufferInfoHandle();
+                            pipeline.primitiveType = PrimitiveType::TRIANGLES;
+                            pipeline.program = mat->getProgram();
+
+                            VertexBufferHandle vbh = r->getVertexBuffer()->getHwHandle();
+                            IndexBufferHandle ibh = r->getIndexBuffer()->getHwHandle();;
+
+                            driver.bindPipeline(pipeline);
+                            driver.bindRenderPrimitive(vbh, ibh);
+                            driver.draw2(0, r->getIndexBuffer()->getIndexCount(), 0);
+                        }
+                        else
+                        {
+                            mat->load(rootJob);
+
+                            mat->updateResourceState();
+                        }
                     }
+
+                    js.runAndRetain(rootJob);
+                    js.waitAndRelease(rootJob);
 
                 }
                 driver.endRenderPass();

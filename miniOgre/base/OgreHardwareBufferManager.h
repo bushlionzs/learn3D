@@ -10,7 +10,7 @@ namespace Ogre {
     class HardwareBufferManager : public Ogre::Singleton<HardwareBufferManager>
     {
     public:
-        HardwareBufferManager(RenderSystem* engine);
+        HardwareBufferManager();
         ~HardwareBufferManager();
 
 
@@ -27,6 +27,5 @@ namespace Ogre {
                 HardwareBuffer::Usage usage) = 0;
 
     protected:
-        RenderSystem* mRenderSystem;
     };
 }

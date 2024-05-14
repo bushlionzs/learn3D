@@ -4,12 +4,11 @@
 #include "dx11Helper.h"
 
 Dx11HardwareBuffer::Dx11HardwareBuffer(BufferType btype, size_t vertexSize, size_t numVerts, HardwareBuffer::Usage usage,
-    Dx11RenderSystem* rs, bool streamOut)
+    bool streamOut)
 {
     mBufferType = btype;
     mVertexSize = vertexSize;
     mNumVerts = numVerts;
-    mRenderSystem = rs;
     D3D11_BUFFER_DESC vbd;
     ZeroMemory(&vbd, sizeof(vbd));
     vbd.Usage = D3D11_USAGE_DYNAMIC;

@@ -8,7 +8,7 @@
 void VertexSlotInfo::createBuffer(uint32_t vertexSize, uint32_t vertexCount)
 {
     mVertexSize = vertexSize;
-    hardwareVertexBuffer = HardwareBufferManager::getSingletonPtr()->createVertexBuffer(
+    hardwareVertexBuffer = HardwareBufferManager::getSingleton().createVertexBuffer(
         vertexSize,
         vertexCount,
         5
@@ -24,7 +24,7 @@ void VertexSlotInfo::writeData(const char* data, uint32_t size)
 
 VertexData::VertexData()
 {
-    vertexDeclaration = HardwareBufferManager::getSingletonPtr()->createVertexDeclaration();
+    vertexDeclaration = new VertexDeclaration;
 }
 
 VertexData::~VertexData()

@@ -33,7 +33,7 @@ Dx11RenderSystem::~Dx11RenderSystem()
 bool Dx11RenderSystem::engineInit()
 {
 	RenderSystem::engineInit();
-	new Dx11HardwareBufferManager(this);
+	new Dx11HardwareBufferManager();
 
 
 	new DX11Helper(this);

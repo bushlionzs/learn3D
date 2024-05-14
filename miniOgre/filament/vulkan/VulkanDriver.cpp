@@ -29,6 +29,8 @@
 #include <utils/FixedCapacityVector.h>
 #include <utils/Panic.h>
 
+#include <VulkanHelper.h>
+
 #ifndef NDEBUG
 #include <set>  // For VulkanDriver::debugCommandBegin
 #endif
@@ -250,6 +252,8 @@ namespace filament::backend {
 
         mTimestamps = std::make_unique<VulkanTimestamps>(mPlatform->getDevice());
 
+        new VulkanHelper(nullptr, 0);
+        VulkanHelper::getSingleton()._initialise(mPlatform);
         mEmptyTexture = createEmptyTexture(mPlatform->getDevice(), mPlatform->getPhysicalDevice(),
             mContext, mAllocator, &mCommands, mStagePool);
         mEmptyBufferObject = createEmptyBufferObject(mAllocator, mStagePool, &mCommands);
@@ -1696,31 +1700,33 @@ namespace filament::backend {
         FVK_SYSTRACE_END();
     }
 
-    void VulkanDriver::bindRenderPrimitive(Handle<HwRenderPrimitive> rph) {
+    void VulkanDriver::bindRenderPrimitive(backend::VertexBufferHandle vbh, backend::IndexBufferHandle ibh) {
         FVK_SYSTRACE_CONTEXT();
         FVK_SYSTRACE_START("bindRenderPrimitive");
 
         VulkanCommandBuffer* commands = &mCommands.get();
         VkCommandBuffer cmdbuffer = commands->buffer();
-        const VulkanRenderPrimitive& prim = *mResourceAllocator.handle_cast<VulkanRenderPrimitive*>(rph);
-        commands->acquire(prim.indexBuffer);
-        commands->acquire(prim.vertexBuffer);
+
+        VulkanVertexBuffer* vb = mResourceAllocator.handle_cast<VulkanVertexBuffer*>(vbh);
+        VulkanIndexBuffer* ib = mResourceAllocator.handle_cast<VulkanIndexBuffer*>(ibh);
+        commands->acquire(ib);
+        commands->acquire(vb);
 
         // This *must* match the VulkanVertexBufferInfo that was bound in bindPipeline(). But we want
         // to allow to call this before bindPipeline(), so the validation can only happen in draw()
         VulkanVertexBufferInfo const* const vbi =
-            mResourceAllocator.handle_cast<VulkanVertexBufferInfo*>(prim.vertexBuffer->vbih);
+            mResourceAllocator.handle_cast<VulkanVertexBufferInfo*>(vb->vbih);
 
         uint32_t const bufferCount = vbi->getAttributeCount();
         VkDeviceSize const* offsets = vbi->getOffsets();
-        VkBuffer const* buffers = prim.vertexBuffer->getVkBuffers();
+        VkBuffer const* buffers = vb->getVkBuffers();
 
         // Next bind the vertex buffers and index buffer. One potential performance improvement is to
         // avoid rebinding these if they are already bound, but since we do not (yet) support subranges
         // it would be rare for a client to make consecutive draw calls with the same render primitive.
         vkCmdBindVertexBuffers(cmdbuffer, 0, bufferCount, buffers, offsets);
-        vkCmdBindIndexBuffer(cmdbuffer, prim.indexBuffer->buffer.getGpuBuffer(), 0,
-            prim.indexBuffer->indexType);
+        vkCmdBindIndexBuffer(cmdbuffer, ib->buffer.getGpuBuffer(), 0,
+            ib->indexType);
 
         FVK_SYSTRACE_END();
     }
@@ -1745,13 +1751,14 @@ namespace filament::backend {
         FVK_SYSTRACE_END();
     }
 
-    void VulkanDriver::draw(PipelineState state, Handle<HwRenderPrimitive> rph,
+    void VulkanDriver::draw(PipelineState state, backend::VertexBufferHandle vbh, backend::IndexBufferHandle ibh,
         uint32_t const indexOffset, uint32_t const indexCount, uint32_t const instanceCount) {
-        VulkanRenderPrimitive* const rp = mResourceAllocator.handle_cast<VulkanRenderPrimitive*>(rph);
-        state.primitiveType = rp->type;
-        state.vertexBufferInfo = rp->vertexBuffer->vbih;
+        VulkanVertexBuffer* vb = mResourceAllocator.handle_cast<VulkanVertexBuffer*>(vbh);
+        VulkanIndexBuffer* ib = mResourceAllocator.handle_cast<VulkanIndexBuffer*>(ibh);
+
+        state.vertexBufferInfo = vb->vbih;
         bindPipeline(state);
-        bindRenderPrimitive(rph);
+        bindRenderPrimitive(vbh, ibh);
         draw2(indexOffset, indexCount, instanceCount);
     }
 

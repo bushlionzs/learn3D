@@ -35,7 +35,7 @@ Dx12RenderSystem::~Dx12RenderSystem()
 bool Dx12RenderSystem::engineInit()
 {
 	RenderSystem::engineInit();
-	new Dx12HardwareBufferManager(this);
+	new Dx12HardwareBufferManager();
 
 	auto helper = new DX12Helper(this);
 	helper->createBaseInfo();

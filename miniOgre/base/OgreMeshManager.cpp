@@ -220,25 +220,6 @@ std::shared_ptr<Mesh> MeshManager::createRect(
 
 	static std::vector<uint32_t> indices32 = {0, 2, 1, 0, 3, 2};
 
-
-	auto vb = VertexBuffer::Builder()
-		.vertexCount(4)
-		.bufferCount(1)
-		.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 0)
-		.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 12)
-		.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 24)
-		.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT2, 0, 36)
-		.build(*engine);
-
-	vb->setBufferAt(*engine, 0, { vertices.data(), vertices.size() * sizeof(SVertexElement)});
-
-	auto ib = IndexBuffer::Builder()
-		.indexCount(6)
-		.bufferType(IndexBuffer::IndexType::UINT)
-		.build(*engine);
-
-	ib->setBuffer(*engine, { indices32.data(), indices32.size() * sizeof(uint32_t) });
-	
 	Mesh* pMesh = BuildHardBuffer(vertices, indices32);
 	auto mat = MaterialManager::getSingleton().getByName("myrect");
 
@@ -246,11 +227,35 @@ std::shared_ptr<Mesh> MeshManager::createRect(
 
 	subMesh->setMaterial(mat);
 
-	subMesh->updateBuffer(vb, ib);
-
 	std::shared_ptr<Mesh> p(pMesh);
 
 	mMeshMap[name] = p;
+
+
+	if (engine)
+	{
+		auto vb = VertexBuffer::Builder()
+			.vertexCount(4)
+			.bufferCount(1)
+			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 0)
+			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 12)
+			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 24)
+			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT2, 0, 36)
+			.build(*engine);
+
+		vb->setBufferAt(*engine, 0, { vertices.data(), vertices.size() * sizeof(SVertexElement) });
+
+		auto ib = IndexBuffer::Builder()
+			.indexCount(6)
+			.bufferType(IndexBuffer::IndexType::UINT)
+			.build(*engine);
+
+		ib->setBuffer(*engine, { indices32.data(), indices32.size() * sizeof(uint32_t) });
+
+		subMesh->updateBuffer(vb, ib);
+	}
+
+
 	return p;
 }
 

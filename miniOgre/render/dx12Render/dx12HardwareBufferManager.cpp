@@ -2,8 +2,7 @@
 #include "dx12HardwareBufferManager.h"
 #include "dx12HardwareBuffer.h"
 
-Dx12HardwareBufferManager::Dx12HardwareBufferManager(RenderSystem* engine)
-    :HardwareBufferManager(engine)
+Dx12HardwareBufferManager::Dx12HardwareBufferManager()
 {
 
 }

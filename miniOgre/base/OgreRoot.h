@@ -26,7 +26,7 @@ namespace Ogre {
 	public:
 		typedef std::map<String, MovableObjectFactory*> MovableObjectFactoryMap;
 	public:
-		Root();
+		Root(filament::Engine* engine = nullptr);
 		~Root();
 
 		void _initialise();

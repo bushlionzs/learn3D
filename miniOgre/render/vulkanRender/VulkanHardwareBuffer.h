@@ -11,8 +11,7 @@ public:
         BufferType btype, 
         size_t vertexSize, 
         size_t numVerts, 
-        HardwareBuffer::Usage usage,
-        VulkanRenderSystem* engine);
+        HardwareBuffer::Usage usage);
     virtual ~VulkanHardwareBuffer();
 
     virtual void* lockimpl(size_t offset, size_t length, LockOptions options);
@@ -20,8 +19,6 @@ public:
 
     virtual void bind(int32_t slot, void* cb) const override;
 private:
-    VulkanRenderSystem* mEngine;
-
     int32_t mVertexSize;
     int32_t mNumVerts;
     BufferType mBufferType;

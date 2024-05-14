@@ -19,6 +19,7 @@ public:
 	MaterialConstantBuffer mMaterialConstantBuffer;
 	PbrMaterialConstanceBuffer mPBRMaterialConstantBuffer;
 	VkDescriptorSet mDescriptorSet;
+	VkDescriptorSet mDescriptorSetSampler;
 	bool mDescriptorSetUpdate = false;
 
 };

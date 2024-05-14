@@ -249,11 +249,11 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
             &materialDescriptor),
         // Binding 4 : Fragment shader texture sampler
         vks::initializers::writeDescriptorSet(
-            current.mDescriptorSet,
+            current.mDescriptorSetSampler,
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            4,
+            0,
             textureDescriptors.data(),
-            std::min((uint32_t)VULKAN_TEXTURE_COUNT, (uint32_t)textureDescriptors.size()))
+            textureDescriptors.size())
     };
 
     if (current.mSkinnedDesc._vkObjectIndex > 0)
@@ -264,18 +264,18 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
         skinDescriptor.offset = skinnedInfo._offset;
         skinDescriptor.range = sizeof(SkinnedConstantBuffer);
 
-        // Binding 5 : Vertex shader uniform buffer
+        // Binding 3 : Vertex shader uniform buffer
         writeDescriptorSets.push_back(vks::initializers::writeDescriptorSet(
             current.mDescriptorSet,
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            5,
+            3,
             &skinDescriptor));
     }
 
     if (!textureDescriptors3d.empty())
     {
         writeDescriptorSets.push_back(vks::initializers::writeDescriptorSet(
-            current.mDescriptorSet,
+            current.mDescriptorSetSampler,
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             3,
             textureDescriptors3d.data(),
@@ -306,11 +306,13 @@ void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
     vertexData->bind(cb);
     VulkanFrameRenderableData& current = _frameRenderableData[frame->getFrameIndex()];
     
+    VkDescriptorSet ds[2] = {current.mDescriptorSet, current.mDescriptorSetSampler};
+
     auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout();
     vkCmdBindDescriptorSets(
         cb,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
-        pipelineLayout, 0, 1, &current.mDescriptorSet, 0, NULL);
+        pipelineLayout, 0, 2, &ds[0], 0, nullptr);
 
     if (indexData)
     {
@@ -341,22 +343,23 @@ void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
 }
 
 
-
-
-//VkPipelineLayout  VulkanRenderableData::getPipelineLayout()
-//{
-//    return VulkanHelper::getSingleton()._getPipelineLayout();
-//}
-
 void VulkanRenderableData::buildInitData()
 {
     auto descriptorPool = VulkanHelper::getSingleton()._getDescriptorPool();
-    auto descriptorSetLayout = VulkanHelper::getSingleton()._getDescriptorSetLayout();
+    auto descriptorSetLayout = VulkanHelper::getSingleton()._getDescriptorSetLayout(0);
 
     VkDescriptorSetAllocateInfo allocInfo =
         vks::initializers::descriptorSetAllocateInfo(
             descriptorPool,
             &descriptorSetLayout,
+            1);
+
+    auto descriptorSetLayoutSampler = VulkanHelper::getSingleton()._getDescriptorSetLayout(1);
+
+    VkDescriptorSetAllocateInfo allocInfoSampler =
+        vks::initializers::descriptorSetAllocateInfo(
+            descriptorPool,
+            &descriptorSetLayoutSampler,
             1);
 
     _frameRenderableData.resize(VULKAN_FRAME_RESOURCE_COUNT);
@@ -379,6 +382,11 @@ void VulkanRenderableData::buildInitData()
             throw std::runtime_error("failed to allocate descriptor set!");
         }
         
+        result = vkAllocateDescriptorSets(mDevice, &allocInfoSampler, &current.mDescriptorSetSampler);
+        if (result != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to allocate descriptor set!");
+        }
     }
     
 

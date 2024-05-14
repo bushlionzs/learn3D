@@ -3,8 +3,7 @@
 #include "VulkanHardwareBufferManager.h"
 #include "VulkanHardwareBuffer.h"
 
-VulkanHardwareBufferManager::VulkanHardwareBufferManager(RenderSystem* engine)
-    :HardwareBufferManager(engine)
+VulkanHardwareBufferManager::VulkanHardwareBufferManager()
 {
 
 }
@@ -26,8 +25,8 @@ VulkanHardwareBufferManager::VulkanHardwareBufferManager::createVertexBuffer
             HardwareBuffer::VERTEX_BUFFER, 
             vertexSize, 
             numVerts,
-            usage, 
-            (VulkanRenderSystem*)mRenderSystem);
+            usage 
+            );
 
     auto buf = std::make_shared<HardwareVertexBuffer>(vertexSize, numVerts, impl);
     return buf;
@@ -44,8 +43,8 @@ VulkanHardwareBufferManager::createIndexBuffer(
             HardwareBuffer::INDEX_BUFFER, 
             vertexSize,
             numIndexes,
-            usage, 
-            (VulkanRenderSystem*)mRenderSystem);
+            usage
+            );
 
     auto buf = std::make_shared<HardwareIndexBuffer>(impl);
     return buf;

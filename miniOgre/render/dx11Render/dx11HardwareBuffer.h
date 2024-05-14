@@ -9,8 +9,7 @@ class Dx11HardwareBuffer : public HardwareBuffer
 {
 
 public:
-    Dx11HardwareBuffer(BufferType btype, size_t vertexSize, size_t numVerts, HardwareBuffer::Usage usage,
-        Dx11RenderSystem* rs, bool streamOut);
+    Dx11HardwareBuffer(BufferType btype, size_t vertexSize, size_t numVerts, HardwareBuffer::Usage usage, bool streamOut);
     virtual ~Dx11HardwareBuffer();
 
     virtual void* lockimpl(size_t offset, size_t length, LockOptions options);

@@ -2,10 +2,12 @@
 #include "OgreRenderable.h"
 #include "renderSystem.h"
 #include "OgreRoot.h"
+#include <filament/Engine.h>
+#include <filament/DriverApi.h>
 namespace Ogre {
     Renderable::Renderable()
     {
-        mWorld = Ogre::Matrix4::IDENTITY;
+        mModel = Ogre::Matrix4::IDENTITY;
 
         mSortValue = 1000000;
     }
@@ -24,6 +26,20 @@ namespace Ogre {
         return mRenderableData;
     }
 
+    void Renderable::updateBuffer(FVertexBuffer* vb, FIndexBuffer* ib)
+    {
+        mVertexBuffer = vb;
+        mIndexBuffer = ib;
+
+        if (!mRenderableObjectHandle)
+        {
+            auto engine = Ogre::Root::getSingleton().getEngine();
+            mRenderableObjectHandle = engine->getDriverApi().createBufferObject(
+                sizeof(ObjectConstantBuffer),
+                backend::BufferObjectBinding::UNIFORM,
+                backend::BufferUsage::DYNAMIC);
+        }
+    }
 
     uint64_t Renderable::getSortValue()
     {
@@ -32,7 +48,7 @@ namespace Ogre {
 
     const Ogre::Matrix4& Renderable::getModelMatrix()
     {
-        return mWorld;
+        return mModel;
     }
 
     Ogre::Vector3 getPosition()

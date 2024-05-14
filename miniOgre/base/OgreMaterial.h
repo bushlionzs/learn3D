@@ -203,5 +203,6 @@ namespace Ogre {
         ResourceState mState = ResourceState::NONE;
 
         backend::Handle<backend::HwProgram> mProgram;
+        backend::BufferObjectHandle mMaterialBuffer;
     };
 }

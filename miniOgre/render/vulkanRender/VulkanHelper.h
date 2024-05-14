@@ -97,7 +97,7 @@ public:
         bool have_main = true);
     VulkanFrame* _getFrame(uint32_t index);
     VkDescriptorPool _getDescriptorPool();
-    VkDescriptorSetLayout _getDescriptorSetLayout();
+    VkDescriptorSetLayout _getDescriptorSetLayout(uint32_t index);
     VkSurfaceKHR _getSurface();
     VulkanRenderSystem* _getRenderSystem()
     {
@@ -167,8 +167,7 @@ private:
 
 
     VkDescriptorPool mDescriptorPool;
-    VkDescriptorSet mDescriptorSet;
-    VkDescriptorSetLayout mDescriptorSetLayout;
+    std::array<VkDescriptorSetLayout,2> mDescriptorSetLayout;
     VkPipelineLayout mPipelineLayout;
 
     VkPipelineCache mPipelineCache;
