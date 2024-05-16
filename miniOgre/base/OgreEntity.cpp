@@ -13,6 +13,9 @@
 #include "OgreAnimationState.h"
 #include "OgreRoot.h"
 #include "OgreMaterialManager.h"
+#include <filament/Engine.h>
+#include <filament/DriverApi.h>
+#include "OgreVertexDeclaration.h"
 
 namespace Ogre {
     Entity::Entity()
@@ -220,18 +223,32 @@ namespace Ogre {
         mMesh->_refreshAnimationState(mAnimationState);
     }
 
+    backend::ElementType translateElementType(VertexElementType type)
+    {
+        switch (type)
+        {
+        case VET_FLOAT3:
+            return backend::ElementType::FLOAT3;
+        case VET_FLOAT2:
+            return backend::ElementType::FLOAT2;
+        }
+        assert(false);
+
+        return backend::ElementType::BYTE;
+    }
     void Entity::buildSubEntityList(
         std::shared_ptr<Mesh>& mesh, 
         std::vector<Renderable*>* sublist)
     {
         int32_t numSubMeshes = mesh->getSubMeshCount();
+
+        auto* engine = Ogre::Root::getSingleton().getEngine();
+
         for (int32_t i = 0; i < numSubMeshes; ++i)
         {
             SubMesh* subMesh = mesh->getSubMesh(i);
             const std::string& name = subMesh->getMaterialName();
 
-            /*if (name != "RomanBath/Default_Grey")
-                continue;*/
             SubEntity* subEnt = createSubEntity(subMesh);
 
             Ogre::Vector3 position = subMesh->getPosition();
@@ -239,6 +256,35 @@ namespace Ogre {
             subEnt->setPosition(position);
 
             sublist->push_back(subEnt);
+
+            if (engine)
+            {
+                subEnt->updateBuffer(subMesh->getVertexBuffer(), subMesh->getIndexBuffer());
+
+                VertexData* vd = subMesh->getVertexData();
+
+
+                auto& elist = vd->vertexDeclaration->getElementList();
+
+                
+                backend::AttributeArray attrs;
+
+                uint32_t index = 0;
+                for (auto& e : elist)
+                {
+                    auto& entry = attrs[index];
+
+                    entry.buffer = e.getIndex();
+                    entry.offset = e.getOffset();
+                    entry.stride = e.getSize();
+                    entry.flags = 0;
+                    entry.type = translateElementType(e.getType());
+                }
+                auto bufferCount = vd->getBufferCount();
+                auto attrCount = elist.size();
+                auto vbh = engine->getDriverApi().createVertexBufferInfo(bufferCount, attrCount, attrs);
+                subEnt->setVertexBufferInfoHandle(vbh);
+            }
         }
 
         //skeleton

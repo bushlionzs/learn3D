@@ -8,6 +8,8 @@
 #include <filament/Texture.h>
 #include <filament/Handle.h>
 #include <filament/DriverEnums.h>
+#include <filament/SamplerGroup.h>
+
 class TextureUnit;
 
 
@@ -164,6 +166,16 @@ namespace Ogre {
             return mProgram;
         }
 
+        backend::BufferObjectHandle getMaterialBufferHandle()
+        {
+            return mMaterialBufferHandle;
+        }
+
+        backend::Handle<backend::HwSamplerGroup> getSamplerGroup()
+        {
+            return mSbHandle;
+        }
+
     private:
         std::string mMaterialName;
         Ogre::Vector4 mAmbient;
@@ -183,8 +195,8 @@ namespace Ogre {
         std::shared_ptr<Shader> mShader;
 
         ShaderInfo mShaderInfo;
-        PbrMaterialConstanceBuffer mMatInfo;
-
+        PbrMaterialConstanceBuffer mPbrMatInfo;
+        MaterialConstantBuffer mMatInfo;
         bool mPbr;
 
         bool mLoad = false;
@@ -203,6 +215,9 @@ namespace Ogre {
         ResourceState mState = ResourceState::NONE;
 
         backend::Handle<backend::HwProgram> mProgram;
-        backend::BufferObjectHandle mMaterialBuffer;
+        backend::BufferObjectHandle mMaterialBufferHandle;
+
+        backend::SamplerGroup mSamplerGroup;
+        backend::Handle<backend::HwSamplerGroup> mSbHandle;
     };
 }

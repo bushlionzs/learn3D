@@ -198,9 +198,12 @@ namespace Ogre {
         params["mesh"] = meshName;
         if (suppressSkeletalAnimation)
             params["suppressSkeletalAnimation"] = "true";
-        return static_cast<Entity*>(
+
+        Entity* entity = static_cast<Entity*>(
             createMovableObject(name, EntityFactory::FACTORY_TYPE_NAME,
                 &params));
+
+        return entity;
     }
 
     MoveObject* SceneManager::createMovableObject(const String& name,
@@ -217,8 +220,11 @@ namespace Ogre {
             OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "duplicate name");
         }
         MoveObject* newObj = factory->createInstance(name, this, params);
-        if(factory->getType() == EntityFactory::FACTORY_TYPE_NAME)
-        mMoveObjectMap[name] = newObj;
+        if (factory->getType() == EntityFactory::FACTORY_TYPE_NAME)
+        {
+            mMoveObjectMap[name] = newObj;
+        }
+        
         return newObj;
     }
 

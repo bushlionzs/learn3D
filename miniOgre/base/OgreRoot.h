@@ -4,14 +4,11 @@
 #include "OgreTimer.h"
 #include "engine_struct.h"
 #include "OgreFrameListener.h"
+#include <utils/JobSystem.h>
 class RenderSystem;
 #define MAIN_SCENE_MANAGER "__main__"
 #define MAIN_CAMERA "__main_camera__"
 
-namespace utils
-{
-	class JobSystem;
-}
 
 namespace filament
 {
@@ -68,6 +65,12 @@ namespace Ogre {
 		{
 			return mEngine;
 		}
+
+		utils::JobSystem::Job* getLoadJob()
+		{
+			return mLoadJob;
+		}
+
 	private:
 		uint32_t _allocateNextMovableObjectTypeFlag(void);
 	private:
@@ -98,6 +101,8 @@ namespace Ogre {
 		Ogre::FrameEvent mEvt;
 
 		filament::Engine* mEngine;
+
+		utils::JobSystem::Job* mLoadJob = nullptr;
 
 	};
 }

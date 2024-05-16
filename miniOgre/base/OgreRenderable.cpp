@@ -26,7 +26,7 @@ namespace Ogre {
         return mRenderableData;
     }
 
-    void Renderable::updateBuffer(FVertexBuffer* vb, FIndexBuffer* ib)
+    void Renderable::updateBuffer(VertexBuffer* vb, IndexBuffer* ib)
     {
         mVertexBuffer = vb;
         mIndexBuffer = ib;
@@ -38,6 +38,8 @@ namespace Ogre {
                 sizeof(ObjectConstantBuffer),
                 backend::BufferObjectBinding::UNIFORM,
                 backend::BufferUsage::DYNAMIC);
+
+            engine->getDriverApi().updateBufferObject(mRenderableObjectHandle, backend::BufferDescriptor(&mObjectBuffer, sizeof(mObjectBuffer)), 0);
         }
     }
 

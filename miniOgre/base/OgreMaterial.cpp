@@ -11,7 +11,7 @@
 #include <filament/FEngine.h>
 #include <filament/DriverEnums.h>
 #include <filament/DriverBase.h>
-
+#include <filament/FTexture.h>
 namespace Ogre {
 
     Material::Material(const std::string& name, bool pbr)
@@ -127,10 +127,37 @@ namespace Ogre {
 
             p.shaderLanguage(backend::ShaderLanguage::SPIRV);
 
+            utils::FixedCapacityVector<std::pair<utils::CString, uint8_t>>  uniformBlockBindings(4);
+
+            uniformBlockBindings[0] = {"ObjectUniforms", 0};
+            uniformBlockBindings[1] = { "FrameUniforms", 1 };
+            uniformBlockBindings[2] = { "MaterialUniforms", 2 };
+            uniformBlockBindings[3] = { "SkinnedUniforms", 3 };
+
+            std::array<backend::Program::Sampler, backend::MAX_SAMPLER_COUNT> samplers{};
+
+            samplers[0] = {"gTextureArray", 0};
+
+            p.setSamplerGroup(0, backend::ShaderStageFlags::FRAGMENT, samplers.data(), 1);
+
+            mSamplerGroup = backend::SamplerGroup(1);
+
+            mSbHandle = engine->getDriverApi().createSamplerGroup(
+                mSamplerGroup.getSize(), utils::FixedSizeString<32>(mMaterialName.c_str()));
+
+            backend::SamplerDescriptor sd;
+            FTexture* ftex = (FTexture*)mTextureUnits[0]->getFTexture();
+            sd.t = ftex->getHwHandle();
+            mSamplerGroup.setSampler(0, sd);
+
+            engine->getDriverApi().updateSamplerGroup(mSbHandle, mSamplerGroup.toBufferDescriptor(engine->getDriverApi()));
+            
 
             mProgram = engine->getDriverApi().createProgram(std::move(p));
 
-            mMaterialBuffer = engine->getDriverApi().createBufferObject(sizeof(MaterialConstantBuffer), backend::BufferObjectBinding::UNIFORM, backend::BufferUsage::DYNAMIC);
+            mMaterialBufferHandle = engine->getDriverApi().createBufferObject(sizeof(MaterialConstantBuffer), backend::BufferObjectBinding::UNIFORM, backend::BufferUsage::DYNAMIC);
+
+            engine->getDriverApi().updateBufferObject(mMaterialBufferHandle, backend::BufferDescriptor(&mMatInfo, sizeof(MaterialConstantBuffer)), 0);
         }
         else
         {
@@ -246,12 +273,12 @@ namespace Ogre {
 
     void Material::updateMatInfo(PbrMaterialConstanceBuffer& mcb)
     {
-        mMatInfo = mcb;
+        mPbrMatInfo = mcb;
     }
 
     PbrMaterialConstanceBuffer& Material::getMatInfo()
     {
-        return mMatInfo;
+        return mPbrMatInfo;
     }
 
     void Material::update(Real delta)

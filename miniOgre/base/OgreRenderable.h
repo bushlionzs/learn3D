@@ -2,6 +2,7 @@
 
 
 #include "engine_struct.h"
+#include "shader.h"
 #include <filament/Handle.h>
 
 class RenderSystem;
@@ -10,11 +11,6 @@ class IndexData;
 class IndexDataView;
 class RenderableData;
 
-namespace filament
-{
-    class FVertexBuffer;
-    class FIndexBuffer;
-}
 
 using namespace filament;
 
@@ -73,14 +69,14 @@ namespace Ogre {
 
         RenderableData* getRenderableData();
 
-        void updateBuffer(FVertexBuffer* vb, FIndexBuffer* ib);
+        void updateBuffer(VertexBuffer* vb, IndexBuffer* ib);
 
-        FVertexBuffer* getVertexBuffer()
+        VertexBuffer* getVertexBuffer()
         {
             return mVertexBuffer;
         }
 
-        FIndexBuffer* getIndexBuffer()
+        IndexBuffer* getIndexBuffer()
         {
             return mIndexBuffer;
         }
@@ -88,6 +84,11 @@ namespace Ogre {
         backend::VertexBufferInfoHandle getVertexBufferInfoHandle()
         {
             return mVertexBufferInfoHandle;
+        }
+
+        void setVertexBufferInfoHandle(backend::VertexBufferInfoHandle vbh)
+        {
+            mVertexBufferInfoHandle = vbh;
         }
 
         backend::BufferObjectHandle getBufferObjectHandle()
@@ -99,10 +100,11 @@ namespace Ogre {
         std::shared_ptr<Material> mMaterial;
         RenderableData* mRenderableData = nullptr;
 
-        FVertexBuffer* mVertexBuffer = nullptr;
-        FIndexBuffer* mIndexBuffer = nullptr;
+        VertexBuffer* mVertexBuffer = nullptr;
+        IndexBuffer* mIndexBuffer = nullptr;
         backend::VertexBufferInfoHandle mVertexBufferInfoHandle;
         backend::BufferObjectHandle mRenderableObjectHandle;
+        ObjectConstantBuffer mObjectBuffer;
         Ogre::Matrix4 mModel;
 
         uint64_t mSortValue;

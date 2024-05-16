@@ -122,6 +122,16 @@ namespace Ogre {
             mIndexBuffer = ib;
         }
 
+        VertexBuffer* getVertexBuffer()
+        {
+            return mVertexBuffer;
+        }
+
+        IndexBuffer* getIndexBuffer()
+        {
+            return mIndexBuffer;
+        }
+
     private:
         VertexDeclaration* mVetexDeclaration;
         VertexData* mVertexData;

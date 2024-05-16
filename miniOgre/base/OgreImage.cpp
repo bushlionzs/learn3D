@@ -34,6 +34,11 @@ namespace Ogre {
         return stbi_info_from_memory(data, byteCount, width, height, numComponents);
     }
 
+    void CImage::freeImageData(void* data)
+    {
+        stbi_image_free(data);
+    }
+
     bool CImage::loadImage(const std::string& name)
     {
         const char* suffix = getSuffix(name);
@@ -291,11 +296,6 @@ namespace Ogre {
 
     void CImage::CImage::freeMemory()
     {
-        if (mImageData)
-        {
-            delete mImageData;
-            mImageData = nullptr;
-        }
     }
 
     Ogre::ColourValue CImage::getColourAt(uint32 x, uint32 y, uint32 z) const

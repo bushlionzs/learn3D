@@ -20,6 +20,7 @@
 #include "VideoManager.h"
 #include "shaderManager.h"
 #include "OgreEntity.h"
+#include <filament/Engine.h>
 
 namespace Ogre {
 
@@ -67,6 +68,13 @@ namespace Ogre {
 
 
         addMovableObjectFactory(new EntityFactory());
+
+        if (mEngine)
+        {
+            auto& js = mEngine->getJobSystem();
+
+            mLoadJob = js.createJob();
+        }
 
     }
 

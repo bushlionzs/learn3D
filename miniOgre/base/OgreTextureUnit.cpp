@@ -218,6 +218,11 @@ std::shared_ptr<OgreTexture> TextureUnit::getTexture()
     return mTextures[mTextureIndex];
 }
 
+Texture* TextureUnit::getFTexture()
+{
+    return mFTextures[mTextureIndex];
+}
+
 OgreTexture* TextureUnit::getRaw()
 {
     return mTextures[mTextureIndex].get();

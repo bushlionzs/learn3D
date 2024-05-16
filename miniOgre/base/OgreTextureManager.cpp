@@ -218,7 +218,11 @@ namespace Ogre {
                 }
                 Texture::PixelBufferDescriptor pbd((uint8_t*)data,
                     texture->getWidth() * texture->getHeight() * 4, Texture::Format::RGBA,
-                    Texture::Type::UBYTE, [](void* mem, size_t, void*) { free(mem); });
+                    Texture::Type::UBYTE, [](void* mem, size_t, void*) 
+                    { 
+                        CImage::freeImageData(mem);
+                    }
+                );
                 texture->setImage(*mEngine, 0, std::move(pbd));
 
                 // Call generateMipmaps unconditionally to fulfill the promise of the TextureProvider

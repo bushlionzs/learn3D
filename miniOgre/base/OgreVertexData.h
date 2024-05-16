@@ -27,6 +27,8 @@ public:
     void setBinding(int32_t index, std::shared_ptr<Ogre::HardwareVertexBuffer>& buf);
 
     std::shared_ptr<Ogre::HardwareVertexBuffer> getBuffer(int32_t index) const;
+
+    uint32_t getBufferCount();
 public:
     uint32_t vertexStart = 0;
     uint32_t vertexCount = 0;

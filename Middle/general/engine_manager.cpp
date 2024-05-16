@@ -58,7 +58,7 @@ bool EngineManager::initialise()
 	ResourceParserManager::getSingleton().registerParser(Orphigine::AdvancedAnimationSystemManager::getSingletonPtr());
 	ResourceParserManager::getSingleton().registerParser(new Orphigine::BulletFlowSystemManager);
 
-	mSceneManager = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("main"));
+	mSceneManager = Ogre::Root::getSingletonPtr()->createSceneManger(MAIN_SCENE_MANAGER);
 	mMainCamera = mSceneManager->createCamera(MAIN_CAMERA);
 
 	Ogre::Root::getSingleton().addMovableObjectFactory(new StaticMeshComponentFactory);

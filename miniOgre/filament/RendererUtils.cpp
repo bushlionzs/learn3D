@@ -37,6 +37,8 @@
 #include <OgreCamera.h>
 #include <OgreRenderable.h>
 #include <OgreMaterial.h>
+#include <OgreTextureManager.h>
+#include <OgreTextureUnit.h>
 
 #include <utils/BitmaskEnum.h>
 #include <utils/compiler.h>
@@ -181,8 +183,51 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                 out.params.clearDepth = 1.0f;
                 out.params.flags.clear |= TargetBufferFlags::COLOR;
 
+                static backend::BufferObjectHandle frameHandle;
+                static FrameConstantBuffer frameBuffer;
+                if (!frameHandle)
+                {
+                    frameHandle = engine.getDriverApi().createBufferObject(sizeof(FrameConstantBuffer),
+                        backend::BufferObjectBinding::UNIFORM,
+                        backend::BufferUsage::DYNAMIC);
+                    SceneManager* sm = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
+                    Ogre::Camera* camera = sm->getCamera(MAIN_CAMERA);
+                    const Ogre::Matrix4& view = camera->getViewMatrix();
+                    const Ogre::Matrix4& proj = camera->getProjectMatrix();
+                    const Ogre::Vector3& camepos = camera->getDerivedPosition();
 
+                    Ogre::Matrix4 invView = view.inverse();
+                    Ogre::Matrix4 viewProj = view * proj;
+                    Ogre::Matrix4 invProj = proj.inverse();
+                    Ogre::Matrix4 invViewProj = viewProj.inverse();
+
+                    frameBuffer.Shadow = 0;
+
+
+                    frameBuffer.View = view;
+                    frameBuffer.InvView = invView;
+                    frameBuffer.Proj = proj;
+                    frameBuffer.InvProj = invProj;
+                    frameBuffer.ViewProj = viewProj;
+                    frameBuffer.InvViewProj = invViewProj;
+                    //mFrameConstantBuffer.ShadowTransform = mShadowTransform;
+                    frameBuffer.EyePosW = camepos;
+
+
+                    auto width = 1024;
+                    auto height = 768;
+                    frameBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
+                    frameBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
+                    frameBuffer.NearZ = 0.1f;
+                    frameBuffer.FarZ = 10000.0f;
+                    frameBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
+                    frameBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
+
+                }
+
+                engine.getDriverApi().bindUniformBuffer(1, frameHandle);
                 
+                Ogre::TextureManager::getSingleton().updateTextures();
 
                 driver.beginRenderPass(out.target, out.params);
                 
@@ -195,9 +240,11 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
 
                     PipelineState pipeline;
 
-                    utils::JobSystem& js = engine.getJobSystem();
 
-                    utils::JobSystem::Job* rootJob = js.createJob();
+
+                    utils::JobSystem::Job* loadJob = Ogre::Root::getSingleton().getLoadJob();;
+     
+                    auto& driveApi = engine.getDriverApi();
 
                     for (auto* r : engineRenerList.mOpaqueList)
                     {
@@ -207,24 +254,36 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                             pipeline.vertexBufferInfo = r->getVertexBufferInfoHandle();
                             pipeline.primitiveType = PrimitiveType::TRIANGLES;
                             pipeline.program = mat->getProgram();
+                            FVertexBuffer* vb = (FVertexBuffer*)r->getVertexBuffer();
+                            FIndexBuffer* ib = (FIndexBuffer*)r->getIndexBuffer();
+                            VertexBufferHandle vbh = vb->getHwHandle();
+                            IndexBufferHandle ibh = ib->getHwHandle();;
 
-                            VertexBufferHandle vbh = r->getVertexBuffer()->getHwHandle();
-                            IndexBufferHandle ibh = r->getIndexBuffer()->getHwHandle();;
+                           auto boh =  r->getBufferObjectHandle();
 
+                           driveApi.bindUniformBuffer(0, boh);
+
+                           auto mbh = mat->getMaterialBufferHandle();
+
+                           driveApi.bindUniformBuffer(2, boh);
+
+                           auto sbh = mat->getSamplerGroup();
+
+                           driveApi.bindSamplers(0, sbh);
+   
                             driver.bindPipeline(pipeline);
                             driver.bindRenderPrimitive(vbh, ibh);
-                            driver.draw2(0, r->getIndexBuffer()->getIndexCount(), 0);
+
+                            auto indexCount = r->getIndexBuffer()->getIndexCount();
+                            driver.draw2(0, indexCount, 0);
                         }
                         else
                         {
-                            mat->load(rootJob);
+                            mat->load(loadJob);
 
                             mat->updateResourceState();
                         }
                     }
-
-                    js.runAndRetain(rootJob);
-                    js.waitAndRelease(rootJob);
 
                 }
                 driver.endRenderPass();

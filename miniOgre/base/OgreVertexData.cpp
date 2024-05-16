@@ -123,3 +123,7 @@ std::shared_ptr<HardwareVertexBuffer> VertexData::getBuffer(int32_t index) const
     return std::shared_ptr<HardwareVertexBuffer>();
 }
 
+uint32_t VertexData::getBufferCount()
+{
+    return vertexSlotInfo.size();
+}

@@ -254,6 +254,10 @@ std::shared_ptr<Mesh> MeshManager::createRect(
 
 		subMesh->updateBuffer(vb, ib);
 	}
+	else
+	{
+
+	}
 
 
 	return p;
