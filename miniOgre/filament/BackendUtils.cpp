@@ -18,7 +18,7 @@
 
 
 #include <utils/CString.h>
-
+#include <filament/DataReshaper.h>
 #include <string_view>
 
 namespace filament::backend {
@@ -483,8 +483,56 @@ size_t getBlockHeight(TextureFormat format) noexcept {
 }
 
 bool reshape(const PixelBufferDescriptor& data, PixelBufferDescriptor& reshaped) {
-    assert(false);
-    return false;
+    // We only reshape 3 component pixel buffers: either RGB or RGB_INTEGER.
+    if (!(data.format == PixelDataFormat::RGB || data.format == PixelDataFormat::RGB_INTEGER)) {
+        return false;
+    }
+
+    const auto freeFunc = [](void* buffer,
+        UTILS_UNUSED size_t size, UTILS_UNUSED void* user) { free(buffer); };
+    const size_t reshapedSize = 4 * data.size / 3;
+    const PixelDataFormat reshapedFormat =
+        data.format == PixelDataFormat::RGB ? PixelDataFormat::RGBA : PixelDataFormat::RGBA_INTEGER;
+    switch (data.type) {
+    case PixelDataType::BYTE:
+    case PixelDataType::UBYTE: {
+        uint8_t* bytes = (uint8_t*)malloc(reshapedSize);
+        DataReshaper::reshape<uint8_t, 3, 4>(bytes, data.buffer, data.size);
+        PixelBufferDescriptor pbd(bytes, reshapedSize, reshapedFormat, data.type,
+            data.alignment, data.left, data.top, data.stride, freeFunc);
+        reshaped = std::move(pbd);
+        return true;
+    }
+    case PixelDataType::SHORT:
+    case PixelDataType::USHORT:
+    case PixelDataType::HALF: {
+        uint8_t* bytes = (uint8_t*)malloc(reshapedSize);
+        DataReshaper::reshape<uint16_t, 3, 4>(bytes, data.buffer, data.size);
+        PixelBufferDescriptor pbd(bytes, reshapedSize, reshapedFormat, data.type,
+            data.alignment, data.left, data.top, data.stride, freeFunc);
+        reshaped = std::move(pbd);
+        return true;
+    }
+    case PixelDataType::INT:
+    case PixelDataType::UINT: {
+        uint8_t* bytes = (uint8_t*)malloc(reshapedSize);
+        DataReshaper::reshape<uint32_t, 3, 4>(bytes, data.buffer, data.size);
+        PixelBufferDescriptor pbd(bytes, reshapedSize, reshapedFormat, data.type,
+            data.alignment, data.left, data.top, data.stride, freeFunc);
+        reshaped = std::move(pbd);
+        return true;
+    }
+    case PixelDataType::FLOAT: {
+        uint8_t* bytes = (uint8_t*)malloc(reshapedSize);
+        DataReshaper::reshape<float, 3, 4>(bytes, data.buffer, data.size);
+        PixelBufferDescriptor pbd(bytes, reshapedSize, reshapedFormat, data.type,
+            data.alignment, data.left, data.top, data.stride, freeFunc);
+        reshaped = std::move(pbd);
+        return true;
+    }
+    default:
+        return false;
+    }
 }
 
 } // namespace backend::filament

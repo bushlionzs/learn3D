@@ -10,6 +10,8 @@
 #include "VulkanTools.h"
 #include "VulkanConstants.h"
 #include "VulkanUtility.h"
+#include "VulkanStagePool.h"
+#include <filament/BackendUtils.h>
 
 
 VulkanTexture::VulkanTexture(
@@ -35,7 +37,10 @@ VulkanTexture::VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, V
     :
     OgreTexture("", nullptr),
     HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
-    VulkanResource(heapAllocated ? VulkanResourceType::HEAP_ALLOCATED : VulkanResourceType::TEXTURE)
+    VulkanResource(heapAllocated ? VulkanResourceType::HEAP_ALLOCATED : VulkanResourceType::TEXTURE),
+    mAllocator(allocator),
+    mCommands(commands),
+    mStagePool(&stagePool)
 {
     mTextureProperty._width = w;
     mTextureProperty._height = h;
@@ -53,7 +58,10 @@ VulkanTexture::VulkanTexture(VkDevice device, VmaAllocator allocator, VulkanComm
     :
     OgreTexture("", nullptr),
     HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
-    VulkanResource(heapAllocated ? VulkanResourceType::HEAP_ALLOCATED : VulkanResourceType::TEXTURE)
+    VulkanResource(heapAllocated ? VulkanResourceType::HEAP_ALLOCATED : VulkanResourceType::TEXTURE),
+    mAllocator(allocator),
+    mCommands(commands),
+    mStagePool(&stagePool)
 
 {
     mTextureProperty._width = width;
@@ -320,12 +328,95 @@ void VulkanTexture::setPrimaryRange(uint32_t minMiplevel, uint32_t maxMiplevel)
 void VulkanTexture::updateImage(const PixelBufferDescriptor& data, uint32_t width, uint32_t height,
     uint32_t depth, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t miplevel)
 {
+    assert_invariant(width <= this->width && height <= this->height);
+    assert_invariant(depth <= this->depth * ((target == SamplerType::SAMPLER_CUBEMAP ||
+        target == SamplerType::SAMPLER_CUBEMAP_ARRAY) ? 6 : 1));
 
+    const PixelBufferDescriptor* hostData = &data;
+    PixelBufferDescriptor reshapedData;
+
+    // First, reshape 3-component data into 4-component data. The fourth component is usually
+    // set to 1 (one exception is when type = HALF). In practice, alpha is just a dummy channel.
+    // Note that the reshaped data is freed at the end of this method due to the callback.
+    if (reshape(data, reshapedData)) {
+        hostData = &reshapedData;
+    }
+
+    // If format conversion is both required and supported, use vkCmdBlitImage.
+    const VkFormat hostFormat = backend::getVkFormat(hostData->format, hostData->type);
+    const VkFormat deviceFormat = getVkFormatLinear(mVulkanFormat);
+    if (hostFormat != deviceFormat && hostFormat != VK_FORMAT_UNDEFINED) {
+
+        return;
+    }
+
+    assert_invariant(hostData->size > 0 && "Data is empty");
+
+    // Otherwise, use vkCmdCopyBufferToImage.
+    void* mapped = nullptr;
+    VulkanStage const* stage = mStagePool->acquireStage(hostData->size);
+    assert_invariant(stage->memory);
+    vmaMapMemory(mAllocator, stage->memory, &mapped);
+    memcpy(mapped, hostData->buffer, hostData->size);
+    vmaUnmapMemory(mAllocator, stage->memory);
+    vmaFlushAllocation(mAllocator, stage->memory, 0, hostData->size);
+
+    VulkanCommandBuffer& commands = mCommands->get();
+    VkCommandBuffer const cmdbuf = commands.buffer();
+    commands.acquire(this);
+
+    VkBufferImageCopy copyRegion = {
+        .bufferOffset = {},
+        .bufferRowLength = {},
+        .bufferImageHeight = {},
+        .imageSubresource = {
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+            .mipLevel = miplevel,
+            .baseArrayLayer = 0,
+            .layerCount = 1
+        },
+        .imageOffset = { int32_t(xoffset), int32_t(yoffset), int32_t(zoffset) },
+        .imageExtent = { width, height, depth }
+    };
+
+    VkImageSubresourceRange transitionRange = {
+        .aspectMask = getImageAspect(),
+        .baseMipLevel = miplevel,
+        .levelCount = 1,
+        .baseArrayLayer = 0,
+        .layerCount = 1
+    };
+
+    // Vulkan specifies subregions for 3D textures differently than from 2D arrays.
+    if (target == SamplerType::SAMPLER_2D_ARRAY ||
+        target == SamplerType::SAMPLER_CUBEMAP ||
+        target == SamplerType::SAMPLER_CUBEMAP_ARRAY) {
+        copyRegion.imageOffset.z = 0;
+        copyRegion.imageExtent.depth = 1;
+        copyRegion.imageSubresource.baseArrayLayer = zoffset;
+        copyRegion.imageSubresource.layerCount = depth;
+        transitionRange.baseArrayLayer = zoffset;
+        transitionRange.layerCount = depth;
+    }
+
+    VulkanLayout const newLayout = VulkanLayout::TRANSFER_DST;
+    VulkanLayout nextLayout = getLayout(transitionRange.baseArrayLayer, miplevel);
+    VkImageLayout const newVkLayout = imgutil::getVkLayout(newLayout);
+
+    if (nextLayout == VulkanLayout::UNDEFINED) {
+        nextLayout = imgutil::getDefaultLayout(this->usage);
+    }
+
+    transitionLayout(cmdbuf, transitionRange, newLayout);
+
+    vkCmdCopyBufferToImage(cmdbuf, stage->buffer, mTextureImage, newVkLayout, 1, &copyRegion);
+
+    transitionLayout(cmdbuf, transitionRange, nextLayout);
 }
 
 VulkanLayout VulkanTexture::getPrimaryImageLayout() const
 {
-    return VulkanLayout::UNDEFINED;
+    return VulkanLayout::READ_ONLY;
 }
 void VulkanTexture::transitionLayout(VkCommandBuffer cmdbuf, const VkImageSubresourceRange& range, VulkanLayout newLayout)
 {

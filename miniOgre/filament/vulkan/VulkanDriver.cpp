@@ -1538,6 +1538,8 @@ namespace filament::backend {
 
     void VulkanDriver::bindSamplers(uint32_t index, Handle<HwSamplerGroup> sbh) {
         auto* hwsb = mResourceAllocator.handle_cast<VulkanSamplerGroup*>(sbh);
+        backend::SamplerDescriptor* sd = hwsb->sb->data();
+        auto* texture = mResourceAllocator.handle_cast<VulkanTexture*>(sd->t);
         mSamplerBindings[index] = hwsb;
     }
 

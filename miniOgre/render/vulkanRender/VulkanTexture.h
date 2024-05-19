@@ -154,4 +154,8 @@ private:
     // Track the range of subresources that define the "primary" image view, which is the special
     // image view that gets bound to an actual texture sampler.
     VkImageSubresourceRange mPrimaryViewRange;
+
+    VmaAllocator mAllocator;
+    VulkanCommands* mCommands;
+    VulkanStagePool* mStagePool = nullptr;
 };
