@@ -10,7 +10,6 @@ SVertexElement::SVertexElement()
 SVertexElement::SVertexElement(
     float px, float py, float pz,
     float nx, float ny, float nz,
-    float tx, float ty, float tz,
     float u, float v
 )
 {
@@ -20,9 +19,6 @@ SVertexElement::SVertexElement(
     mNormal.x = nx;
     mNormal.y = ny;
     mNormal.z = nz;
-    mTangent.x = tx;
-    mTangent.y = ty;
-    mTangent.z = tz;
     mUV.x = u;
     mUV.y = v;
 

@@ -24,6 +24,15 @@ struct VulkanSettings {
     bool vsync = false;
     bool multiSampling = true;
     VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_4_BIT;
+    VulkanSettings()
+    {
+        multiSampling = false;
+
+        if (!multiSampling)
+        {
+            sampleCount = VK_SAMPLE_COUNT_1_BIT;
+        }
+    }
 };
 
 class VulkanRenderSystem;

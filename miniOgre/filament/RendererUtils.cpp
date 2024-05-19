@@ -181,7 +181,7 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                 // TODO: this should be a parameter of FrameGraphRenderPass::Descriptor
                 out.params.clearStencil = 0.0f;
                 out.params.clearDepth = 1.0f;
-                out.params.flags.clear |= TargetBufferFlags::COLOR;
+                out.params.flags.clear = TargetBufferFlags::COLOR | TargetBufferFlags::DEPTH_AND_STENCIL;
 
                 static backend::BufferObjectHandle frameHandle;
                 static FrameConstantBuffer frameBuffer;
@@ -225,23 +225,44 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
 
                 }
 
-                engine.getDriverApi().bindUniformBuffer(1, frameHandle);
                 
+
+                engine.getDriverApi().updateBufferObject(frameHandle, backend::BufferDescriptor(&frameBuffer, sizeof(FrameConstantBuffer)), 0);
+                
+                engine.getDriverApi().bindUniformBuffer(1, frameHandle);
+
                 Ogre::TextureManager::getSingleton().updateTextures();
 
+                SceneManager* sm = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
+                Ogre::Camera* cam = sm->getCamera(MAIN_CAMERA);
+                static EngineRenderList engineRenerList;
+
+                sm->getSceneRenderList(cam, engineRenerList);
+                for (auto* r : engineRenerList.mOpaqueList)
+                {
+                    auto* mat = r->getMaterial().get();
+                    if (mat->getResourceState() == ResourceState::READY)
+                    {
+                        auto mbh = mat->getMaterialBufferHandle();
+
+                        r->updateBufferObject(cam);
+                    }
+                }
+
+                
+
                 driver.beginRenderPass(out.target, out.params);
+
                 
                 {
-                    SceneManager* sm = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
-                    Ogre::Camera* cam = sm->getCamera(MAIN_CAMERA);
-                    static EngineRenderList engineRenerList;
-
-                    sm->getSceneRenderList(cam, engineRenerList);
+                    
 
                     PipelineState pipeline;
 
-
-
+                    pipeline.rasterState.culling = backend::CullingMode::NONE;
+                    pipeline.rasterState.depthWrite = true;
+                    pipeline.rasterState.depthFunc = backend::SamplerCompareFunc::LE;
+                    pipeline.rasterState.colorWrite = true;
                     utils::JobSystem::Job* loadJob = Ogre::Root::getSingleton().getLoadJob();;
      
                     auto& driveApi = engine.getDriverApi();
@@ -251,7 +272,6 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                         auto* mat = r->getMaterial().get();
                         if (mat->getResourceState() == ResourceState::READY)
                         {
-                            pipeline.vertexBufferInfo = r->getVertexBufferInfoHandle();
                             pipeline.primitiveType = PrimitiveType::TRIANGLES;
                             pipeline.program = mat->getProgram();
                             FVertexBuffer* vb = (FVertexBuffer*)r->getVertexBuffer();
@@ -259,23 +279,29 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                             VertexBufferHandle vbh = vb->getHwHandle();
                             IndexBufferHandle ibh = ib->getHwHandle();;
 
-                           auto boh =  r->getBufferObjectHandle();
+                            pipeline.vertexBufferInfo = vb->getVertexBufferInfoHandle();
 
-                           driveApi.bindUniformBuffer(0, boh);
-
-                           auto mbh = mat->getMaterialBufferHandle();
-
-                           driveApi.bindUniformBuffer(2, boh);
-
+                           
                            auto sbh = mat->getSamplerGroup();
 
                            driveApi.bindSamplers(0, sbh);
    
+                            
+
+                           
+                            auto boh = r->getBufferObjectHandle();
+
+                            driveApi.bindUniformBuffer(0, boh);
+
+                            driveApi.bindUniformBuffer(2, boh);
+
                             driver.bindPipeline(pipeline);
                             driver.bindRenderPrimitive(vbh, ibh);
 
+
+
                             auto indexCount = r->getIndexBuffer()->getIndexCount();
-                            driver.draw2(0, indexCount, 0);
+                            driver.draw2(0, indexCount, 1);
                         }
                         else
                         {

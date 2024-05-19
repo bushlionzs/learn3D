@@ -7,14 +7,12 @@ public:
     SVertexElement(
         float px, float py, float pz,
         float nx, float ny, float nz,
-        float tx, float ty, float tz,
         float u, float v
     );
     ~SVertexElement();
 public:
     Ogre::Vector3 mPosition;
     Ogre::Vector3 mNormal;
-    Ogre::Vector3 mTangent;
     Ogre::Vector2 mUV;
 };
 

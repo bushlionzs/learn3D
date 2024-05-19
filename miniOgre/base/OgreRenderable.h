@@ -71,6 +71,8 @@ namespace Ogre {
 
         void updateBuffer(VertexBuffer* vb, IndexBuffer* ib);
 
+        void updateBufferObject(Ogre::Camera* cam);
+
         VertexBuffer* getVertexBuffer()
         {
             return mVertexBuffer;
@@ -79,16 +81,6 @@ namespace Ogre {
         IndexBuffer* getIndexBuffer()
         {
             return mIndexBuffer;
-        }
-
-        backend::VertexBufferInfoHandle getVertexBufferInfoHandle()
-        {
-            return mVertexBufferInfoHandle;
-        }
-
-        void setVertexBufferInfoHandle(backend::VertexBufferInfoHandle vbh)
-        {
-            mVertexBufferInfoHandle = vbh;
         }
 
         backend::BufferObjectHandle getBufferObjectHandle()
@@ -102,7 +94,6 @@ namespace Ogre {
 
         VertexBuffer* mVertexBuffer = nullptr;
         IndexBuffer* mIndexBuffer = nullptr;
-        backend::VertexBufferInfoHandle mVertexBufferInfoHandle;
         backend::BufferObjectHandle mRenderableObjectHandle;
         ObjectConstantBuffer mObjectBuffer;
         Ogre::Matrix4 mModel;

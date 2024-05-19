@@ -260,30 +260,6 @@ namespace Ogre {
             if (engine)
             {
                 subEnt->updateBuffer(subMesh->getVertexBuffer(), subMesh->getIndexBuffer());
-
-                VertexData* vd = subMesh->getVertexData();
-
-
-                auto& elist = vd->vertexDeclaration->getElementList();
-
-                
-                backend::AttributeArray attrs;
-
-                uint32_t index = 0;
-                for (auto& e : elist)
-                {
-                    auto& entry = attrs[index];
-
-                    entry.buffer = e.getIndex();
-                    entry.offset = e.getOffset();
-                    entry.stride = e.getSize();
-                    entry.flags = 0;
-                    entry.type = translateElementType(e.getType());
-                }
-                auto bufferCount = vd->getBufferCount();
-                auto attrCount = elist.size();
-                auto vbh = engine->getDriverApi().createVertexBufferInfo(bufferCount, attrCount, attrs);
-                subEnt->setVertexBufferInfoHandle(vbh);
             }
         }
 

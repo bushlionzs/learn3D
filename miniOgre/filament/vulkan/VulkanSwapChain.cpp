@@ -96,7 +96,7 @@ void VulkanSwapChain::present() {
                 .baseArrayLayer = 0,
                 .layerCount = 1,
         };
-        //mColors[mCurrentSwapIndex]->transitionLayout(cmdbuf, subresources, VulkanLayout::PRESENT);
+        mColors[mCurrentSwapIndex]->transitionLayout(cmdbuf, subresources, VulkanLayout::PRESENT);
     }
     mCommands->flush();
 

@@ -2,6 +2,7 @@
 #include "OgreRenderable.h"
 #include "renderSystem.h"
 #include "OgreRoot.h"
+#include <OgreCamera.h>
 #include <filament/Engine.h>
 #include <filament/DriverApi.h>
 namespace Ogre {
@@ -38,9 +39,22 @@ namespace Ogre {
                 sizeof(ObjectConstantBuffer),
                 backend::BufferObjectBinding::UNIFORM,
                 backend::BufferUsage::DYNAMIC);
-
-            engine->getDriverApi().updateBufferObject(mRenderableObjectHandle, backend::BufferDescriptor(&mObjectBuffer, sizeof(mObjectBuffer)), 0);
         }
+    }
+
+    void Renderable::updateBufferObject(Ogre::Camera* cam)
+    {
+        const Ogre::Matrix4& view = cam->getViewMatrix();
+        const Ogre::Matrix4& proj = cam->getProjectMatrix();
+        const Ogre::Matrix4& model = mModel;
+
+
+        mObjectBuffer.world = model.transpose();
+       // mObjectBuffer.projector = _r->getProjectorMatrix();
+        mObjectBuffer.worldViewProj = mObjectBuffer.world * view * proj;
+
+        auto engine = Ogre::Root::getSingleton().getEngine();
+        engine->getDriverApi().updateBufferObject(mRenderableObjectHandle, backend::BufferDescriptor(&mObjectBuffer, sizeof(mObjectBuffer)), 0);
     }
 
     uint64_t Renderable::getSortValue()

@@ -6,6 +6,8 @@
 #include <filament/Texture.h>
 #include <filament/DriverEnums.h>
 #include <filament/engine.h>
+#include <filament/FTexture.h>
+#include <filament/DriverApi.h>
 #include <utils/JobSystem.h>
 
 
@@ -99,6 +101,8 @@ namespace Ogre {
             .format(filament::backend::TextureFormat::RGBA8)
             .build(*mEngine);
 
+        FTexture* ftex = (FTexture*)texture;
+        mEngine->getDriverApi().updateTextureName(ftex->getHwHandle(), name.c_str(), name.size());
         info->texture = texture;
         info->state = TextureState::DECODING;
         info->sourceBuffer.assign(data, data + bytecount);

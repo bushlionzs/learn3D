@@ -37,6 +37,12 @@ public:
     VulkanTexture(VkDevice device, VmaAllocator allocator, VulkanCommands* commands, VkImage image,
         VkFormat format, uint8_t samples, uint32_t width, uint32_t height, filament::backend::TextureUsage tusage,
         VulkanStagePool& stagePool, bool heapAllocated = false);
+
+    void updateTextureName(const char* name, uint32_t size)
+    {
+        mName.assign(name, size);
+    }
+
     ~VulkanTexture();
 
     VkImageView getVkImageView()
@@ -126,7 +132,7 @@ private:
     VkDeviceMemory mStagingBufferMemory;
     char* mMappedMemory;
 
-    VkImage mTextureImage;
+    VkImage mTextureImage = VK_NULL_HANDLE;
     VkDeviceMemory mTextureImageMemory;
 
     VkImageView mTextureImageView;

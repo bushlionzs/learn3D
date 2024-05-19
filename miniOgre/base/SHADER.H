@@ -5,9 +5,9 @@
 
 struct ObjectConstantBuffer
 {
-    Ogre::Matrix4 world;
-    Ogre::Matrix4 projector;
-    Ogre::Matrix4 worldViewProj;
+    Ogre::Matrix4 world = Ogre::Matrix4::IDENTITY;
+    Ogre::Matrix4 projector = Ogre::Matrix4::IDENTITY;
+    Ogre::Matrix4 worldViewProj = Ogre::Matrix4::IDENTITY;
 };
 
 #define MaxLightsEachType 4

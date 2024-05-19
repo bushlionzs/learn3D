@@ -119,41 +119,41 @@ std::shared_ptr<Mesh> MeshManager::createBox(
 	float d2 = 0.5f * depth;
 	std::vector<SVertexElement> vertices;
 	// Fill in the front face vertex data
-	vertices.push_back(SVertexElement( -w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f ));
-	vertices.push_back(SVertexElement(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-	vertices.push_back(SVertexElement(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f));
-	vertices.push_back(SVertexElement(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f));
+	vertices.push_back(SVertexElement( -w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f ));
+	vertices.push_back(SVertexElement(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f,  0.0f, 0.0f));
+	vertices.push_back(SVertexElement(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f,  1.0f, 0.0f));
+	vertices.push_back(SVertexElement(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f,  1.0f, 1.0f));
 
 	// Fill in the back face vertex data.
-	vertices.push_back(SVertexElement(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f));
-	vertices.push_back(SVertexElement(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f));
-	vertices.push_back(SVertexElement(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-	vertices.push_back(SVertexElement(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f));
+	vertices.push_back(SVertexElement(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f));
+	vertices.push_back(SVertexElement(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f));
+	vertices.push_back(SVertexElement(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f));
+	vertices.push_back(SVertexElement(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f));
 
 	// Fill in the top face vertex data.
-	vertices.push_back(SVertexElement(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f));
-	vertices.push_back(SVertexElement(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-	vertices.push_back(SVertexElement(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f));
-	vertices.push_back(SVertexElement(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f));
+	vertices.push_back(SVertexElement(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f,  0.0f, 1.0f));
+	vertices.push_back(SVertexElement(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f));
+	vertices.push_back(SVertexElement(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f,  1.0f, 0.0f));
+	vertices.push_back(SVertexElement(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f,  1.0f, 1.0f));
 
 
 	// Fill in the bottom face vertex data
-	vertices.push_back(SVertexElement(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f));
-	vertices.push_back(SVertexElement(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f));
-	vertices.push_back(SVertexElement(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-	vertices.push_back(SVertexElement(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f));
+	vertices.push_back(SVertexElement(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f,  1.0f, 1.0f));
+	vertices.push_back(SVertexElement(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f,  0.0f, 1.0f));
+	vertices.push_back(SVertexElement(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f,  0.0f, 0.0f));
+	vertices.push_back(SVertexElement(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f,  1.0f, 0.0f));
 
 	// Fill in the left face vertex data
-	vertices.push_back(SVertexElement(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f ));
-	vertices.push_back(SVertexElement(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f ));
-	vertices.push_back(SVertexElement(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f ));
-	vertices.push_back(SVertexElement(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f ));
+	vertices.push_back(SVertexElement(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f,  0.0f, 1.0f ));
+	vertices.push_back(SVertexElement(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f,  0.0f, 0.0f ));
+	vertices.push_back(SVertexElement(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f,  1.0f, 0.0f ));
+	vertices.push_back(SVertexElement(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f,  1.0f, 1.0f ));
 
 	// Fill in the right face vertex data
-	vertices.push_back(SVertexElement(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f));
-	vertices.push_back(SVertexElement(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f));
-	vertices.push_back(SVertexElement(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f));
-	vertices.push_back(SVertexElement(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f));
+	vertices.push_back(SVertexElement(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f));
+	vertices.push_back(SVertexElement(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f));
+	vertices.push_back(SVertexElement(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f));
+	vertices.push_back(SVertexElement(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f,  1.0f, 1.0f));
 
 
 	std::vector<uint32_t> indices =
@@ -211,10 +211,10 @@ std::shared_ptr<Mesh> MeshManager::createRect(
 	static std::vector<SVertexElement> vertices;
 	if (vertices.empty())
 	{
-		vertices.push_back(SVertexElement(leftbottom.x, leftbottom.y, leftbottom.z, normal.x, normal.y, normal.z, 1.0f, 0.0f, 0.0f, 0.0f, tex));
-		vertices.push_back(SVertexElement(leftop.x, leftop.y, leftop.z, normal.x, normal.y, normal.z, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f));
-		vertices.push_back(SVertexElement(righttop.x, righttop.y, righttop.z, normal.x, normal.y, normal.z, 0.0f, 1.0f, 0.0f, tex, 0.0f));
-		vertices.push_back(SVertexElement(rightbottom.x, rightbottom.y, rightbottom.z, normal.x, normal.y, normal.z, 1.0f, 0.0f, 0.0f, tex, tex));
+		vertices.push_back(SVertexElement(leftbottom.x, leftbottom.y, leftbottom.z, normal.x, normal.y, normal.z,  0.0f, tex));
+		vertices.push_back(SVertexElement(leftop.x, leftop.y, leftop.z, normal.x, normal.y, normal.z,  0.0f, 0.0f));
+		vertices.push_back(SVertexElement(righttop.x, righttop.y, righttop.z, normal.x, normal.y, normal.z,  tex, 0.0f));
+		vertices.push_back(SVertexElement(rightbottom.x, rightbottom.y, rightbottom.z, normal.x, normal.y, normal.z,  tex, tex));
 	}
 	
 
@@ -234,13 +234,12 @@ std::shared_ptr<Mesh> MeshManager::createRect(
 
 	if (engine)
 	{
-		auto vb = VertexBuffer::Builder()
+		VertexBuffer* vb = VertexBuffer::Builder()
 			.vertexCount(4)
 			.bufferCount(1)
-			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 0)
-			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 12)
-			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 24)
-			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT2, 0, 36)
+			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 32)
+			.attribute(VertexAttribute::CUSTOM0, 0, VertexBuffer::AttributeType::FLOAT3, 12, 32)
+			.attribute(VertexAttribute::UV0, 0, VertexBuffer::AttributeType::FLOAT2, 24, 32)
 			.build(*engine);
 
 		vb->setBufferAt(*engine, 0, { vertices.data(), vertices.size() * sizeof(SVertexElement) });
@@ -303,7 +302,6 @@ std::shared_ptr<Mesh> MeshManager::createGround(
 	vertices.reserve(gridCount*4);
 	SVertexElement element;
 	element.mPosition = Ogre::Vector3(0.0f, 1.0f, 0.0f);
-	element.mTangent = Ogre::Vector3(1.0f, 0.0f, 0.0f);
 	element.mUV = Ogre::Vector2(0.0f, 0.0f);
 	for (int32_t i = 0; i < gridCount; i++)
 	{
@@ -399,7 +397,6 @@ std::shared_ptr<Mesh> MeshManager::createGrid(
 
 			vertices[i * n + j].mPosition = Ogre::Vector3(x, 0.0f, y);
 			vertices[i * n + j].mNormal = Ogre::Vector3(0.0f, 1.0f, 0.0f);
-			vertices[i * n + j].mTangent = Ogre::Vector3(1.0f, 0.0f, 0.0f);
 
 			// Stretch texture over grid.
 			vertices[i * n + j].mUV.x = j * du;
@@ -464,8 +461,8 @@ std::shared_ptr<Mesh> MeshManager::createGrid(
 std::shared_ptr<Mesh> MeshManager::CreateSphere(const std::string& name, float radius, uint32_t sliceCount, uint32_t stackCount)
 {
 	//topvertex
-	SVertexElement topvertex = SVertexElement(0.0f, +radius, 0.0f, 0.0f, +1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	SVertexElement bottomvertex = SVertexElement(0.0f, -radius, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f );
+	SVertexElement topvertex = SVertexElement(0.0f, +radius, 0.0f, 0.0f, +1.0f, 0.0f,  0.0f, 0.0f);
+	SVertexElement bottomvertex = SVertexElement(0.0f, -radius, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f );
 	std::vector<SVertexElement> vertices;
 	vertices.push_back(topvertex);
 
@@ -506,7 +503,7 @@ std::shared_ptr<Mesh> MeshManager::CreateSphere(const std::string& name, float r
 			DirectX::XMFLOAT2 TexC;
 			TexC.x = theta / DirectX::XM_2PI;
 			TexC.y = phi / DirectX::XM_PI;
-			vertices.push_back(SVertexElement(Position.x, Position.y, Position.z, Normal.x, Normal.y, Normal.z, TangentU.x, TangentU.y, TangentU.z, TexC.x, TexC.y));
+			vertices.push_back(SVertexElement(Position.x, Position.y, Position.z, Normal.x, Normal.y, Normal.z, TexC.x, TexC.y));
 		}
 	}
 
@@ -566,8 +563,8 @@ std::shared_ptr<Mesh> MeshManager::CreateSphereSky(
 {
 	//topvertex
 	std::vector<SVertexElement> vertices;
-	SVertexElement topvertex = SVertexElement(0.0f, +radius, 0.0f, 0.0f, +1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	SVertexElement bottomvertex = SVertexElement(0.0f, -radius, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	SVertexElement topvertex = SVertexElement(0.0f, +radius, 0.0f, 0.0f, +1.0f, 0.0f,  0.0f, 0.0f);
+	SVertexElement bottomvertex = SVertexElement(0.0f, -radius, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f);
 
 	vertices.push_back(topvertex);
 
@@ -608,7 +605,7 @@ std::shared_ptr<Mesh> MeshManager::CreateSphereSky(
 			DirectX::XMFLOAT2 TexC;
 			TexC.x = theta / DirectX::XM_2PI;
 			TexC.y = phi / DirectX::XM_PI;
-			vertices.push_back(SVertexElement(Position.x, Position.y, Position.z, Normal.x, Normal.y, Normal.z, TangentU.x, TangentU.y, TangentU.z, TexC.x, TexC.y));
+			vertices.push_back(SVertexElement(Position.x, Position.y, Position.z, Normal.x, Normal.y, Normal.z, TexC.x, TexC.y));
 		}
 	}
 
@@ -710,7 +707,7 @@ std::shared_ptr<Mesh> MeshManager::CreateCylinder(const std::string& name, float
 
 			Ogre::Vector3& Normal = N;
 
-			vertices.push_back( SVertexElement(Position.x, Position.y, Position.z, Normal.x, Normal.y, Normal.z, TangentU.x, TangentU.y, TangentU.z, TexC.x, TexC.y));
+			vertices.push_back( SVertexElement(Position.x, Position.y, Position.z, Normal.x, Normal.y, Normal.z, TexC.x, TexC.y));
 		}
 	}
 
@@ -801,9 +798,6 @@ std::shared_ptr<Mesh> MeshManager::CreateSkull(const std::string& name)
 			DirectX::XMStoreFloat3(&TangentU, T);
 		}
 
-		tmp.mTangent.x = TangentU.x;
-		tmp.mTangent.y = TangentU.y;
-		tmp.mTangent.z = TangentU.z;
 		vertices.push_back(tmp);
 	}
 
@@ -839,33 +833,33 @@ std::shared_ptr<Mesh> MeshManager::createSimpleRoom(const std::string& name)
 	std::array<SVertexElement, 20> vertices =
 	{
 		// Floor: Observe we tile texture coordinates.
-		SVertexElement(-3.5f, d, -10.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,0.0f, 4.0f), // 0 
-		SVertexElement(-3.5f, d,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,0.0f, 0.0f),
-		SVertexElement(7.5f, d,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,4.0f, 0.0f),
-		SVertexElement(7.5f, d, -10.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,4.0f, 4.0f),
+		SVertexElement(-3.5f, d, -10.0f, 0.0f, 1.0f, 0.0f,0.0f, 4.0f), // 0 
+		SVertexElement(-3.5f, d,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f),
+		SVertexElement(7.5f, d,   0.0f, 0.0f, 1.0f, 0.0f, 4.0f, 0.0f),
+		SVertexElement(7.5f, d, -10.0f, 0.0f, 1.0f, 0.0f, 4.0f, 4.0f),
 
 		// Wall: Observe we tile texture coordinates, and that we
 		// leave a gap in the middle for the mirror.
-		SVertexElement(-3.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,0.0f, 2.0f), // 4
-		SVertexElement(-3.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,0.0f, 0.0f),
-		SVertexElement(-2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,0.5f, 0.0f),
-		SVertexElement(-2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,0.5f, 2.0f),
+		SVertexElement(-3.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 2.0f), // 4
+		SVertexElement(-3.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
+		SVertexElement(-2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.5f, 0.0f),
+		SVertexElement(-2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.5f, 2.0f),
 
-		SVertexElement(2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,0.0f, 2.0f), // 8 
-		SVertexElement(2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,0.0f, 0.0f),
-		SVertexElement(7.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,2.0f, 0.0f),
-		SVertexElement(7.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,2.0f, 2.0f),
+		SVertexElement(2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 2.0f), // 8 
+		SVertexElement(2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
+		SVertexElement(7.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 0.0f),
+		SVertexElement(7.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 2.0f),
 
-		SVertexElement(-3.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,0.0f, 1.0f), // 12
-		SVertexElement(-3.5f, 6.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,0.0f, 0.0f),
-		SVertexElement(7.5f, 6.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,6.0f, 0.0f),
-		SVertexElement(7.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,6.0f, 1.0f),
+		SVertexElement(-3.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f), // 12
+		SVertexElement(-3.5f, 6.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f),
+		SVertexElement(7.5f, 6.0f, 0.0f, 0.0f, 0.0f, -1.0f, 6.0f, 0.0f),
+		SVertexElement(7.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 6.0f, 1.0f),
 
 		// Mirror
-		SVertexElement(-2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f), // 16
-		SVertexElement(-2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f),
-		SVertexElement(2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f),
-		SVertexElement(2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f)
+		SVertexElement(-2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,  0.0f, 1.0f), // 16
+		SVertexElement(-2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f,  0.0f, 0.0f),
+		SVertexElement(2.5f, 4.0f, 0.0f, 0.0f, 0.0f, -1.0f,  1.0f, 0.0f),
+		SVertexElement(2.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f)
 
 	};
 
@@ -964,11 +958,11 @@ void MeshManager::BuildCylinderTopCap(
 		float u = x / height + 0.5f;
 		float v = z / height + 0.5f;
 
-		vertices.push_back(SVertexElement(x, y, z, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, u, v));
+		vertices.push_back(SVertexElement(x, y, z, 0.0f, 1.0f, 0.0f,  u, v));
 	}
 
 	// Cap center vertex.
-	vertices.push_back(SVertexElement(0.0f, y, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f));
+	vertices.push_back(SVertexElement(0.0f, y, 0.0f, 0.0f, 1.0f, 0.0f,  0.5f, 0.5f));
 
 	// Index of center vertex.
 	uint32_t centerIndex = (uint32_t)vertices.size() - 1;
@@ -1005,11 +999,11 @@ void MeshManager::BuildCylinderBottomCap(
 		float u = x / height + 0.5f;
 		float v = z / height + 0.5f;
 
-		vertices.push_back(SVertexElement(x, y, z, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, u, v));
+		vertices.push_back(SVertexElement(x, y, z, 0.0f, -1.0f, 0.0f,  u, v));
 	}
 
 	// Cap center vertex.
-	vertices.push_back(SVertexElement(0.0f, y, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.5f, 0.5f));
+	vertices.push_back(SVertexElement(0.0f, y, 0.0f, 0.0f, -1.0f, 0.0f,  0.5f, 0.5f));
 
 	// Cache the index of center vertex.
 	uint32_t centerIndex = (uint32_t)vertices.size() - 1;
@@ -1049,8 +1043,7 @@ Mesh* MeshManager::BuildHardBuffer(
 	VertexDeclaration* declaration = vd->vertexDeclaration;
 	declaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
 	declaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-	declaration->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
-	declaration->addElement(0, 0, 36, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+	declaration->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
 	pMesh->buildHardBuffer();
 	return pMesh;

@@ -25,7 +25,6 @@ VulkanTexture::VulkanTexture(
 
     mName = name;
     mVKDevice = VulkanHelper::getSingleton()._getVkDevice();
-    mTextureImage = nullptr;
 }
 
 VulkanTexture::VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, VulkanContext const& context,
@@ -64,6 +63,7 @@ VulkanTexture::VulkanTexture(VkDevice device, VmaAllocator allocator, VulkanComm
     mVulkanFormat = format;
     mTextureUsage = tusage;
     mVKDevice = device;
+    mTextureImage = image;
     createInternalResourcesImpl();
 }
 
@@ -138,16 +138,19 @@ void VulkanTexture::createInternalResourcesImpl(void)
     }
     
 
+    if (mTextureImage == VK_NULL_HANDLE)
+    {
+        createImage(
+            mTextureProperty._width,
+            mTextureProperty._height,
+            mVulkanFormat,
+            VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+            mTextureImage,
+            mTextureImageMemory);
+    }
     
-    createImage(
-        mTextureProperty._width,
-        mTextureProperty._height,
-        mVulkanFormat,
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        mTextureImage,
-        mTextureImageMemory);
 
     mTextureImageView = createImageView(mTextureImage, mVulkanFormat);
     createTextureSampler();
@@ -230,7 +233,7 @@ void VulkanTexture::createImage(
 
     if (mTextureUsage == filament::backend::TextureUsage::COLOR_ATTACHMENT)
     {
-        imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        imageInfo.usage = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     }
 
     if (mTextureUsage == filament::backend::TextureUsage::DEPTH_ATTACHMENT)
@@ -281,7 +284,10 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     viewInfo.format = format;
     viewInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, mMipLevels, 0, mFace };
 
-
+    viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+    viewInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+    viewInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+    viewInfo.components.a = VK_COMPONENT_SWIZZLE_A;
     VkImageView imageView;
     if (vkCreateImageView(mVKDevice, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
     {

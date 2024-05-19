@@ -197,6 +197,8 @@ DECL_DRIVER_API_R_N(backend::TextureHandle, createTexture,
         uint32_t, depth,
         backend::TextureUsage, usage)
 
+
+
 DECL_DRIVER_API_R_N(backend::TextureHandle, createTextureSwizzled,
         backend::SamplerType, target,
         uint8_t, levels,
@@ -345,6 +347,11 @@ DECL_DRIVER_API_N(resetBufferObject,
 DECL_DRIVER_API_N(updateSamplerGroup,
         backend::SamplerGroupHandle, ubh,
         backend::BufferDescriptor&&, data)
+
+DECL_DRIVER_API_N(updateTextureName,
+        backend::TextureHandle, th,
+        const char*,  data,
+        uint32_t, size)
 
 DECL_DRIVER_API_N(setMinMaxLevels,
         backend::TextureHandle, th,

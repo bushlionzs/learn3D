@@ -522,6 +522,12 @@ namespace filament::backend {
         mResourceManager.acquire(vktexture);
     }
 
+    void VulkanDriver::updateTextureName(Handle<HwTexture> th, const char* data, uint32_t size)
+    {
+        auto vktexture = mResourceAllocator.handle_cast<VulkanTexture*>(th);
+        vktexture->updateTextureName(data, size);
+    }
+
     void VulkanDriver::createTextureSwizzledR(Handle<HwTexture> th, SamplerType target, uint8_t levels,
         TextureFormat format, uint8_t samples, uint32_t w, uint32_t h, uint32_t depth,
         TextureUsage usage,

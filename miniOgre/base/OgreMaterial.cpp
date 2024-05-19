@@ -134,6 +134,7 @@ namespace Ogre {
             uniformBlockBindings[2] = { "MaterialUniforms", 2 };
             uniformBlockBindings[3] = { "SkinnedUniforms", 3 };
 
+            p.uniformBlockBindings(uniformBlockBindings);
             std::array<backend::Program::Sampler, backend::MAX_SAMPLER_COUNT> samplers{};
 
             samplers[0] = {"gTextureArray", 0};
