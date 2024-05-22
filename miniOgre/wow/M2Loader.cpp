@@ -372,8 +372,9 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 		//skinned
 
 		VertexData* vd = mMesh->getVertexData();
-		vd->vertexCount = mHeader.nVertices;
-		vd->mBoneAssignments.reserve(mHeader.nVertices);
+		vd->setVertexCount(mHeader.nVertices);
+		std::vector<VertexBoneAssignment> boneAssignList;
+		boneAssignList.reserve(mHeader.nVertices);
 		VertexBoneAssignment tmp;
 		for (uint32_t i = 0; i < mHeader.nVertices; i++)
 		{
@@ -384,10 +385,13 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 				tmp.boneIndex = mOrigVertices[i].bones[j];
 				tmp.vertexIndex = i;
 				tmp.weight = (float)mOrigVertices[i].weights[j] / 255.0f;
-				vd->mBoneAssignments.push_back(tmp);
+				boneAssignList.push_back(tmp);
 			}
 		}
-		vd->buildHardBuffer();
+
+		vd->addBoneInfo(boneAssignList);
+
+
 	}
 }
 
@@ -588,15 +592,16 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 
 
 
-	vd->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-	vd->vertexDeclaration->addElement(0, 0, 20, VET_FLOAT3, VES_NORMAL);
-	vd->vertexDeclaration->addElement(0, 0, 32, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+	vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+	vd->addElement(0, 0, 20, VET_FLOAT3, VES_NORMAL);
+	vd->addElement(0, 0, 32, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
-	vd->vertexSlotInfo.emplace_back();
-	auto& back = vd->vertexSlotInfo.back();
+
 	auto vertexSize = sizeof(M2ModelVertex);
-	back.createBuffer(vertexSize, mHeader.nVertices);
-	back.writeData((const char*)mOrigVertices, vertexSize * mHeader.nVertices);
+
+	vd->addBindBuffer(0, vertexSize, mHeader.nVertices);
+	vd->writeBindBufferData(0, (const char*)mOrigVertices, vertexSize * mHeader.nVertices);
+	
 
 	IndexData* indexdata = mMesh->getIndexData();
 

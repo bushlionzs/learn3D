@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <OgreHeader.h>
 #include "filament/FTexture.h"
 #include "filament/FEngine.h"
 #include "filament/BackendUtils.h"
@@ -33,7 +33,7 @@
 #include <utils/debug.h>
 #include <utils/FixedCapacityVector.h>
 #include <utils/Panic.h>
-
+#include <OgreImage.h>
 #include <algorithm>
 #include <array>
 #include <type_traits>
@@ -67,6 +67,7 @@ namespace filament {
         uint8_t mLevels = 1;
         Sampler mTarget = Sampler::SAMPLER_2D;
         InternalFormat mFormat = InternalFormat::RGBA8;
+        ImageType mType = ImageType::ImageType_UnSupported;
         Usage mUsage = Usage::NONE;
         bool mTextureIsSwizzled = false;
         std::array<Swizzle, 4> mSwizzle = {
@@ -110,6 +111,11 @@ namespace filament {
 
     Texture::Builder& Texture::Builder::format(Texture::InternalFormat format) noexcept {
         mImpl->mFormat = format;
+        return *this;
+    }
+
+    Texture::Builder& Texture::Builder::imagetype(backend::ImageType imageType) noexcept {
+        mImpl->mType = imageType;
         return *this;
     }
 
@@ -214,6 +220,7 @@ namespace filament {
         mHeight = static_cast<uint32_t>(builder->mHeight);
         mDepth = static_cast<uint32_t>(builder->mDepth);
         mFormat = builder->mFormat;
+        mType = builder->mType;
         mUsage = builder->mUsage;
         mTarget = builder->mTarget;
         mLevelCount = builder->mLevels;

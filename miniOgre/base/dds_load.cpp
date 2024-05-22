@@ -486,7 +486,58 @@ DDSImage::~DDSImage()
     }
 }
 
-bool DDSImage::load(std::shared_ptr<DataStream>& stream)
+bool DDSImage::load_simple_info(const char* data, uint32_t size, ImageInfo& info)
+{
+    MemoryDataStream stream(data, size);
+
+    uint32_t fileType;
+    stream.read(&fileType, sizeof(uint32_t));
+    flipEndian(&fileType, sizeof(uint32_t));
+
+    if (FOURCC('D', 'D', 'S', ' ') != fileType)
+    {
+        return false;
+    }
+
+    DDSHeader header;
+    stream.read(&header, sizeof(DDSHeader));
+    flipEndian(&header, 4, sizeof(header) / 4);
+
+    info.width = header.width;
+    info.height = header.height;
+    // Pixel format
+    PixelFormat sourceFormat = PF_UNKNOWN;
+
+    if (header.pixelFormat.flags & DDPF_FOURCC)
+    {
+        // Check if we have an DX10 style extended header and read it. This is necessary for B6H and B7 formats
+        if (header.pixelFormat.fourCC == FOURCC('D', 'X', '1', '0'))
+        {
+            DDSExtendedHeader extHeader;
+            stream.read(&extHeader, sizeof(DDSExtendedHeader));
+
+            // Endian flip if required, all 32-bit values
+            flipEndian(&header, sizeof(DDSExtendedHeader));
+            sourceFormat = convertDXToOgreFormat(extHeader.dxgiFormat);
+        }
+        else
+        {
+            sourceFormat = convertFourCCFormat(header.pixelFormat.fourCC);
+        }
+    }
+    else
+    {
+        sourceFormat = convertPixelFormat(header.pixelFormat.rgbBits,
+            header.pixelFormat.redMask, header.pixelFormat.greenMask,
+            header.pixelFormat.blueMask,
+            header.pixelFormat.flags & DDPF_ALPHAPIXELS ?
+            header.pixelFormat.alphaMask : 0);
+    }
+    info.format = sourceFormat;
+    return true;
+}
+
+bool DDSImage::load(DataStream* stream)
 {
     uint32_t fileType;
     stream->read(&fileType, sizeof(uint32_t));
@@ -511,7 +562,7 @@ bool DDSImage::load(std::shared_ptr<DataStream>& stream)
     }
 
 
-    ImageData* imgData = new ImageData();
+    ImageInfo* imgData = new ImageInfo();
 
     mImageData = imgData;
 

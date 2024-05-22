@@ -105,7 +105,7 @@ VkPipeline VulkanShader::getVKPipeline(Ogre::Renderable* r)
 
     for (uint32_t binding = 0; binding < 10; binding++)
     {
-        int32_t stride = vertexData->vertexDeclaration->getVertexSize(binding);
+        int32_t stride = vertexData->getVertexDeclaration()->getVertexSize(binding);
 
         if (stride <= 0)
             continue;
@@ -117,7 +117,7 @@ VkPipeline VulkanShader::getVKPipeline(Ogre::Renderable* r)
 
 
 
-    auto attributeDescriptions = getAttributeDescriptions(vertexData->vertexDeclaration);
+    auto attributeDescriptions = getAttributeDescriptions(vertexData->getVertexDeclaration());
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = vertexInputBindings.size();

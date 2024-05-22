@@ -51,6 +51,9 @@ namespace Ogre {
 
     }
 
+
+    
+
     VertexData* SubMesh::getVertexData()
     {
         if (mSharedVertices)
@@ -118,14 +121,17 @@ namespace Ogre {
 
     void SubMesh::addBoneAssignment(const VertexBoneAssignment& vertBoneAssign)
     {
-        mVertexData->mBoneAssignments.push_back(vertBoneAssign);
+        mBoneAssignments.push_back(vertBoneAssign);
     }
 
-    void SubMesh::buildHardBuffer()
+    void SubMesh::prepare()
     {
-        if (mVertexData && mVertexData->vertexCount > 0)
+        if (mVertexData && mVertexData->getVertexCount() > 0)
         {
-            mVertexData->buildHardBuffer();
+            if (!mBoneAssignments.empty())
+            {
+                mVertexData->addBoneInfo(mBoneAssignments);
+            }
         }
     }
 

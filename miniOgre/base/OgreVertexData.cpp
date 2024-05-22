@@ -32,62 +32,67 @@ VertexData::~VertexData()
 
 }
 
-void VertexData::buildHardBuffer()
+void VertexData::updateFilamentVertexBuffer(VertexBuffer* vb, VertexData* vd)
 {
-    if (!mBoneAssignments.empty())
-    {
-        vertexSlotInfo.emplace_back();
 
-        int32_t bindIndex = -1;
-        for (auto& slotInfo : vertexSlotInfo)
-        {
-            if (bindIndex < slotInfo.mSlot)
-            {
-                bindIndex = slotInfo.mSlot;
-            }
-        }
-
-        bindIndex++;
-
-        VertexSlotInfo& slot = vertexSlotInfo.back();
-
-        
-
-        slot.mSlot = bindIndex;
-        slot.mVertexSize = sizeof(SkinnedData);
-        slot.createBuffer(sizeof(SkinnedData), vertexCount);
-
-        HardwareBufferLockGuard lockGuard(slot.hardwareVertexBuffer.get());
-        SkinnedData* skin = (SkinnedData*)lockGuard.data();
-        std::vector<uint32_t> vertexIndex(vertexCount);
-
-        SkinnedData tmp;
-        tmp.boneWeight[0] = 0.0f;
-        tmp.boneWeight[1] = 0.0f;
-        tmp.boneWeight[2] = 0.0f;
-        tmp.boneWeight[3] = 0.0f;
-        tmp.boneIndices[0] = 0;
-        tmp.boneIndices[1] = 0;
-        tmp.boneIndices[2] = 0;
-        tmp.boneIndices[3] = 0;
-        for (int32_t i = 0; i < vertexCount; i++)
-        {
-            memcpy(&skin[i], &tmp, sizeof(SkinnedData));
-        }
-
-        for (auto& assign : mBoneAssignments)
-        {
-            int32_t i = assign.vertexIndex;
-            int32_t wix = vertexIndex[i];
-            skin[i].boneWeight[wix] = assign.weight;
-            skin[i].boneIndices[wix] = assign.boneIndex;
-            vertexIndex[i]++;
-        }
-
-        vertexDeclaration->addElement(bindIndex, 0, 0, VET_FLOAT4, VES_BLEND_WEIGHTS);
-        vertexDeclaration->addElement(bindIndex, 0, 16, VET_UINT4, VES_BLEND_INDICES);
-    }
 }
+
+//void VertexData::buildHardBuffer()
+//{
+//    if (!mBoneAssignments.empty())
+//    {
+//        int32_t bindIndex = -1;
+//        for (auto& slotInfo : vertexSlotInfo)
+//        {
+//            if (bindIndex < slotInfo.mSlot)
+//            {
+//                bindIndex = slotInfo.mSlot;
+//            }
+//        }
+//
+//        bindIndex++;
+//
+//        VertexSlotInfo& slot = vertexSlotInfo[bindIndex];
+//
+//        
+//
+//        slot.mSlot = bindIndex;
+//        slot.mVertexSize = sizeof(SkinnedData);
+//        slot.createBuffer(sizeof(SkinnedData), mVertexCount);
+//
+//        HardwareBufferLockGuard lockGuard(slot.hardwareVertexBuffer.get());
+//        SkinnedData* skin = (SkinnedData*)lockGuard.data();
+//        std::vector<uint32_t> vertexIndex(mVertexCount);
+//
+//        SkinnedData tmp;
+//        tmp.boneWeight[0] = 0.0f;
+//        tmp.boneWeight[1] = 0.0f;
+//        tmp.boneWeight[2] = 0.0f;
+//        tmp.boneWeight[3] = 0.0f;
+//        tmp.boneIndices[0] = 0;
+//        tmp.boneIndices[1] = 0;
+//        tmp.boneIndices[2] = 0;
+//        tmp.boneIndices[3] = 0;
+//        for (int32_t i = 0; i < mVertexCount; i++)
+//        {
+//            memcpy(&skin[i], &tmp, sizeof(SkinnedData));
+//        }
+//
+//        for (auto& assign : mBoneAssignments)
+//        {
+//            int32_t i = assign.vertexIndex;
+//            int32_t wix = vertexIndex[i];
+//            skin[i].boneWeight[wix] = assign.weight;
+//            skin[i].boneIndices[wix] = assign.boneIndex;
+//            vertexIndex[i]++;
+//        }
+//
+//        vertexDeclaration->addElement(bindIndex, 0, 0, VET_FLOAT4, VES_BLEND_WEIGHTS);
+//        vertexDeclaration->addElement(bindIndex, 0, 16, VET_UINT4, VES_BLEND_INDICES);
+//    }
+//}
+
+
 
 
 void VertexData::bind(void* cb)
@@ -126,4 +131,91 @@ std::shared_ptr<HardwareVertexBuffer> VertexData::getBuffer(int32_t index) const
 uint32_t VertexData::getBufferCount()
 {
     return vertexSlotInfo.size();
+}
+
+void VertexData::setVertexCount(uint32_t vertexCount)
+{
+    mVertexCount = vertexCount;
+}
+
+uint32_t VertexData::getVertexCount() const
+{
+    return mVertexCount;
+}
+
+void VertexData::removeAllElements()
+{
+    vertexDeclaration->removeAllElements();
+}
+
+const VertexElement& VertexData::addElement(
+    int16_t source,
+    int16_t index,
+    int32_t offset,
+    VertexElementType theType,
+    VertexElementSemantic semantic)
+{
+    return vertexDeclaration->addElement(source, index, offset, theType, semantic);
+}
+
+void VertexData::addBindBuffer(uint32_t slot, uint32_t vertexSize, uint32_t vertexCount)
+{
+    vertexSlotInfo[slot].createBuffer(vertexSize, vertexCount);
+}
+
+void VertexData::addBoneInfo(std::vector<VertexBoneAssignment>& assignInfoList)
+{
+    uint32_t binding = 0;
+
+    for (auto i = 0; i < vertexSlotInfo.size(); i++)
+    {
+        if (vertexSlotInfo[i].mVertexSize == 0)
+        {
+            binding = i;
+            break;
+        }
+    }
+
+    auto& slot = vertexSlotInfo[binding];
+
+    slot.mVertexSize = sizeof(SkinnedData);
+    slot.createBuffer(sizeof(SkinnedData), mVertexCount);
+
+    vertexSlotInfo[binding].createBuffer(sizeof(SkinnedData), mVertexCount);
+
+    HardwareBufferLockGuard lockGuard(slot.hardwareVertexBuffer.get());
+    SkinnedData* skin = (SkinnedData*)lockGuard.data();
+    std::vector<uint32_t> vertexIndex(mVertexCount);
+
+    SkinnedData tmp;
+    tmp.boneWeight[0] = 0.0f;
+    tmp.boneWeight[1] = 0.0f;
+    tmp.boneWeight[2] = 0.0f;
+    tmp.boneWeight[3] = 0.0f;
+    tmp.boneIndices[0] = 0;
+    tmp.boneIndices[1] = 0;
+    tmp.boneIndices[2] = 0;
+    tmp.boneIndices[3] = 0;
+    for (int32_t i = 0; i < mVertexCount; i++)
+    {
+        memcpy(&skin[i], &tmp, sizeof(SkinnedData));
+    }
+
+    for (auto& assign : assignInfoList)
+    {
+        int32_t i = assign.vertexIndex;
+        int32_t wix = vertexIndex[i];
+        skin[i].boneWeight[wix] = assign.weight;
+        skin[i].boneIndices[wix] = assign.boneIndex;
+        vertexIndex[i]++;
+    }
+
+    vertexDeclaration->addElement(binding, 0, 0, VET_FLOAT4, VES_BLEND_WEIGHTS);
+    vertexDeclaration->addElement(binding, 0, 16, VET_UINT4, VES_BLEND_INDICES);
+
+}
+
+void VertexData::writeBindBufferData(uint32_t slot, const char* data, uint32_t size)
+{
+    vertexSlotInfo[slot].writeData(data, size);
 }

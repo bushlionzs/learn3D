@@ -150,7 +150,7 @@ namespace Ogre {
 
         if (mesh)
         {
-            mesh->buildHardBuffer();
+            mesh->prepare();
         }
 
         return mesh;

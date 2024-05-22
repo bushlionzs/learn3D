@@ -1,25 +1,7 @@
 #pragma once
 
 #include "OgrePixelFormat.h"
-class  ImageData
-{
-public:
-    ImageData() :
-        height(0), width(0), depth(1), size(0),
-        num_mipmaps(0), flags(0), format(PF_UNKNOWN)
-    {
-    }
-    uint32_t height;
-    uint32_t width;
-    uint32_t depth;
-    uint32_t face;
-    size_t size;
 
-    int32_t num_mipmaps;
-    uint32_t flags;
-
-    PixelFormat format;
-};
 
 class DDSImage
 {
@@ -27,7 +9,11 @@ public:
     DDSImage();
     ~DDSImage();
 
-    bool load(std::shared_ptr<DataStream>& stream);
+    static bool load_simple_info(
+        const char* data,
+        uint32_t size,
+        ImageInfo& info);
+    bool load(DataStream* stream);
 
     unsigned char* data()
     {
@@ -35,12 +21,12 @@ public:
     }
 
     
-    ImageData* getImageInfo()
+    ImageInfo* getImageInfo()
     {
         return mImageData;
     }
 private:
-    ImageData* mImageData;
+    ImageInfo* mImageData;
 
     char* mDDSData;
 };

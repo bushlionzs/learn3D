@@ -9,6 +9,7 @@
 #include "OgreVertexDeclaration.h"
 #include "OgreSkeletonManager.h"
 #include "OgreSkeleton.h"
+#include "OgreRoot.h"
 
 namespace Ogre {
     Mesh::Mesh(const std::string& name)
@@ -95,21 +96,24 @@ namespace Ogre {
 
     void Mesh::addBoneAssignment(const VertexBoneAssignment& vertBoneAssign)
     {
-        mVertexData->mBoneAssignments.push_back(vertBoneAssign);
+        mBoneAssignments.push_back(vertBoneAssign);
     }
 
-    void Mesh::buildHardBuffer()
+    void Mesh::prepare()
     {
-        if (mVertexData->vertexCount > 0)
+        auto engine = Ogre::Root::getSingleton().getEngine();
+        if (!mBoneAssignments.empty())
         {
-            mVertexData->buildHardBuffer();
+            mVertexData->addBoneInfo(mBoneAssignments);
         }
 
         for (auto sub : mSubMeshList)
         {
-            sub->buildHardBuffer();
+            sub->prepare();
         }
     }
+
+
 
     void Mesh::_setBounds(const AxisAlignedBox& bounds, bool pad)
     {

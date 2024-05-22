@@ -118,50 +118,47 @@ std::shared_ptr<Mesh> M3dLoader::loadMeshFromFile(std::shared_ptr<DataStream>& s
 	pMesh->applySkeleton(skeleton);
 
 	VertexData* vd = pMesh->getVertexData();
-	vd->vertexCount = vertices.size();
+	vd->setVertexCount(vertices.size());
 
-	vd->vertexSlotInfo.emplace_back();
-	VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-	slotInfo.mSlot = 0;
-
+	auto vertexSize = 0;
 	if (use_assign)
 	{
-		slotInfo.mVertexSize = sizeof(M3dVertex);
+		vertexSize = sizeof(M3dVertex);
 	}
 	else
 	{
-		slotInfo.mVertexSize = sizeof(M3dSkinnedVertex);
+		vertexSize = sizeof(M3dSkinnedVertex);
 	}
-	slotInfo.createBuffer(slotInfo.mVertexSize, vertices_.size());
-	slotInfo.writeData((const char*)vertices_.data(), vertices_.size() * slotInfo.mVertexSize);
+
+	vd->addBindBuffer(0, vertexSize, vertices_.size());
+	vd->writeBindBufferData(0, (const char*)vertices_.data(), vertices_.size() * vertexSize);
 	
 	
 
 	IndexData* indexData = pMesh->getIndexData();
 	indexData->mIndexCount = indices.size();
 	indexData->createBuffer(4, indices.size());
-	slotInfo.writeData((const char*)indices.data(), 4 * indices.size());
+	indexData->writeData((const char*)indices.data(), 4 * indices.size());
 
 
-	VertexDeclaration* declaration = vd->vertexDeclaration;
 
 	if (use_assign)
 	{
-		declaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-		declaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+		vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+		vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
 		//declaration->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
-		declaration->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+		vd->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 	}
 	else
 	{
-		declaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-		declaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+		vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+		vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
 		//declaration->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
-		declaration->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+		vd->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
 
-		declaration->addElement(0, 0, 32, VET_FLOAT3, VES_BLEND_WEIGHTS);
-		declaration->addElement(0, 0, 44, VET_UINT4, VES_BLEND_INDICES);
+		vd->addElement(0, 0, 32, VET_FLOAT3, VES_BLEND_WEIGHTS);
+		vd->addElement(0, 0, 44, VET_UINT4, VES_BLEND_INDICES);
 	}
 	
 

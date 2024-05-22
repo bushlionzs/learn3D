@@ -662,6 +662,27 @@ namespace Ogre {
     /** @} */
     /** @} */
 
+    class  ImageInfo
+    {
+    public:
+        ImageInfo() :
+            height(0), width(0), depth(1), size(0), face(1),
+            num_mipmaps(0), flags(0), format(PF_UNKNOWN)
+        {
+        }
+        uint32_t height;
+        uint32_t width;
+        uint32_t depth;
+        uint32_t face;
+        size_t size;
+
+        int32_t num_mipmaps;
+        uint32_t flags;
+
+        PixelFormat format;
+    };
+
+
 }
 
 

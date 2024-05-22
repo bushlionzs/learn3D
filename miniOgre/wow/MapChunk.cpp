@@ -252,15 +252,13 @@ MapChunk::MapChunk(
   //create renderable
   initStrip();
   VertexData* vd = new VertexData;
-  vd->vertexCount = mapbufsize;
-  vd->vertexSlotInfo.emplace_back();
-  auto& back = vd->vertexSlotInfo.back();
-  back.createBuffer(sizeof(WowTerrainVertex), mapbufsize);
-  vd->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-  vd->vertexDeclaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-  vd->vertexDeclaration->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
-  vd->vertexDeclaration->addElement(0, 0, 32, VET_FLOAT4, VES_COLOUR);
-  back.writeData((const char*)&mWowVertices[0], sizeof(WowTerrainVertex)* mapbufsize);
+  vd->setVertexCount(mapbufsize);
+  vd->addBindBuffer(0, sizeof(WowTerrainVertex), mapbufsize);
+  vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+  vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+  vd->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+  vd->addElement(0, 0, 32, VET_FLOAT4, VES_COLOUR);
+  vd->writeBindBufferData(0, (const char*)&mWowVertices[0], sizeof(WowTerrainVertex)* mapbufsize);
   IndexData* id = new IndexData;
   id->createBuffer(2, strip_with_holes.size());
   id->writeData((const char*)strip_with_holes.data(), 2 * strip_with_holes.size());

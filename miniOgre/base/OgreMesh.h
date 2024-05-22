@@ -27,17 +27,15 @@ namespace Ogre {
         IndexData* getIndexData();
 
         void addBoneAssignment(const VertexBoneAssignment& vertBoneAssign);
-        void buildHardBuffer();
 
+        void prepare();
         const std::string& getName()
         {
             return mName;
         }
 
         virtual void loadImpl(void) {}
-        /** Internal implementation of the 'unload' action; called regardless of
-            whether this resource is being loaded from a ManualResourceLoader.
-        */
+        
         virtual void unloadImpl(void) {}
 
         void _setBounds(const AxisAlignedBox& bounds, bool pad = true);
@@ -54,6 +52,10 @@ namespace Ogre {
         VertexData* mVertexData;
         IndexData* mIndexData;
 
+        VertexBuffer* mVertexBuffer = nullptr;
+
         AxisAlignedBox mAABB;
+
+        std::vector<VertexBoneAssignment> mBoneAssignments;
     };
 }

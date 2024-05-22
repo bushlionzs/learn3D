@@ -131,7 +131,7 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	mCurrentPass.mDx12RenderableData = (Dx12RenderableData*)r->getRenderableData();
 	mCurrentPass.mDx12RenderableData->updateCurrentFrame(mCurrentFrame->getFrameIndex());
 	VertexData* vertexData = r->getVertexData();
-	auto vd = vertexData->vertexDeclaration;
+	auto vd = vertexData->getVertexDeclaration();
 	
 
 	/*if (mCamera->getCameraType() == CameraType_Light)
@@ -313,7 +313,7 @@ void Dx12RenderSystem::renderImpl(Dx12Pass* pass)
 	ICamera* camera = mCamera;
 	VertexData* vertexData = pass->mRenderable->getVertexData();
 	IndexData* indexData = pass->mRenderable->getIndexData();
-	auto vd = vertexData->vertexDeclaration;
+	auto vd = vertexData->getVertexDeclaration();
 	pass->mShader->updateInputDesc(vd);
 	
 	auto commandlist = mCurrentFrame->getCommandList();
@@ -364,8 +364,8 @@ void Dx12RenderSystem::renderImpl(Dx12Pass* pass)
 	else
 	{
 		commandlist->DrawInstanced(
-			vertexData->vertexCount, 1, 0, 0);
-		mTriangleCount += vertexData->vertexCount / 3;
+			vertexData->getVertexCount(), 1, 0, 0);
+		mTriangleCount += vertexData->getVertexCount() / 3;
 	}
 	mBatchCount++;
 }

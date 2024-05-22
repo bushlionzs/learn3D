@@ -890,13 +890,9 @@ std::shared_ptr<Mesh> MeshManager::createSimpleRoom(const std::string& name)
 	IndexData* id = pMesh->getIndexData();
 	uint32_t size = vertices.size() * sizeof(SVertexElement);
 
-	vd->vertexSlotInfo.emplace_back();
-	VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-	slotInfo.mSlot = 0;
-	slotInfo.createBuffer(sizeof(SVertexElement), vertices.size());
-	slotInfo.writeData((const char*)vertices.data(), size);
-	vd->vertexCount = vertices.size();
-	slotInfo.mVertexSize = sizeof(SVertexElement);
+	vd->setVertexCount(vertices.size());
+	vd->addBindBuffer(0, sizeof(SVertexElement), vertices.size());
+	vd->writeBindBufferData(0, (const char*)vertices.data(), size);
 	id->createBuffer(4, indices.size());
 	id->writeData((const char*)indices.data(), indices.size() * 4);
 
@@ -904,11 +900,10 @@ std::shared_ptr<Mesh> MeshManager::createSimpleRoom(const std::string& name)
 
 	
 
-	declaration = vd->vertexDeclaration;
-	declaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-	declaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-	declaration->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
-	declaration->addElement(0, 0, 36, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+	vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+	vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+	vd->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
+	vd->addElement(0, 0, 36, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
 	SubMesh* floor = pMesh->addSubMesh(true, true);
 	floor->addIndexs(6, 0, 0);
@@ -927,7 +922,7 @@ std::shared_ptr<Mesh> MeshManager::createSimpleRoom(const std::string& name)
 	
 	std::shared_ptr<Mesh> p(pMesh);
 
-	p->buildHardBuffer();
+	p->prepare();
 	mMeshMap[name] = p;
 	return p;
 	
@@ -1026,12 +1021,10 @@ Mesh* MeshManager::BuildHardBuffer(
 	IndexData* id = pMesh->getIndexData();
 	uint32_t size = vertices.size() * sizeof(SVertexElement);
 	
-	vd->vertexSlotInfo.emplace_back();
-	VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-	slotInfo.mSlot = 0;
-	slotInfo.createBuffer(sizeof(SVertexElement), vertices.size());
-	slotInfo.writeData((const char*)vertices.data(), size);
-	vd->vertexCount = vertices.size();
+	vd->setVertexCount(vertices.size());
+
+	vd->addBindBuffer(0, sizeof(SVertexElement), vertices.size());
+	vd->writeBindBufferData(0, (const char*)vertices.data(), size);
 
 	id->mIndexCount = indices.size();
 	id->createBuffer(4, id->mIndexCount);
@@ -1040,12 +1033,12 @@ Mesh* MeshManager::BuildHardBuffer(
 
 	sub->addIndexs(indices.size(), 0, 0);
 
-	VertexDeclaration* declaration = vd->vertexDeclaration;
-	declaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-	declaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-	declaration->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
-	pMesh->buildHardBuffer();
+	vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+	vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+	vd->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+
+	pMesh->prepare();
 	return pMesh;
 }
 

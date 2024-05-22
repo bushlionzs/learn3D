@@ -184,17 +184,19 @@ void WowParticleSystem::init(
 	//create vertex buffer and index buffer
 
 	mVertexData.reset(new VertexData);
-	mVertexData->vertexCount = maxParticles;
-	mVertexData->vertexSlotInfo.emplace_back();
-	mVertexData->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-	mVertexData->vertexDeclaration->addElement(0, 0, 12, VET_FLOAT2, VES_TEXTURE_COORDINATES);
-	mVertexData->vertexDeclaration->addElement(0, 0, 20, VET_UBYTE4_NORM, VES_DIFFUSE);
-	auto& back = mVertexData->vertexSlotInfo.back();
+	mVertexData->setVertexCount(maxParticles);
+	
+	mVertexData->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+	mVertexData->addElement(0, 0, 12, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+	mVertexData->addElement(0, 0, 20, VET_UBYTE4_NORM, VES_DIFFUSE);
+
 	//position
 	//color
 	//texcoord
 	uint32_t vertexSize = 4*3 + 4*2 + 4;
-	back.createBuffer(vertexSize, maxParticles * 4);
+
+	mVertexData->addBindBuffer(0, vertexSize, maxParticles * 4);
+
 	mIndexDataView.reset(new IndexDataView);
 	mIndexDataView->mIndexCount = 0;
 	mIndexDataView->mBaseVertexLocation = 0;
@@ -394,8 +396,10 @@ void WowParticleSystem::update(float dt)
 	}
 
 	RGBA* pCol;
-	std::shared_ptr<Ogre::HardwareVertexBuffer>& buf = mVertexData->vertexSlotInfo.back().hardwareVertexBuffer;
-	float* lockPtr = reinterpret_cast<float*>(buf->lock());
+	
+	auto dataLock = mVertexData->getLock(0);
+
+	float* lockPtr = reinterpret_cast<float*>(dataLock.lock());
 	float* firstPtr = lockPtr;
 	for (auto it = particles.begin(); it != particles.end(); it++)
 	{
@@ -455,7 +459,7 @@ void WowParticleSystem::update(float dt)
 		*pCol++ = colour;
 		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
 	}
-	buf->unlock();
+	dataLock.unlock();
 }
 
 void WowParticleSystem::setup(size_t anim, size_t time)

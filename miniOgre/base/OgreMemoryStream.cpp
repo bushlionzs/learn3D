@@ -44,6 +44,7 @@ namespace Ogre {
         mSize = size;
         mFirst = mMem.data();
         mEnd = mFirst + mSize;
+        mCurrent = mFirst;
     }
 
     MemoryDataStream::~MemoryDataStream()

@@ -294,13 +294,13 @@ void VertexIndexToShape::addStaticVertexData(const VertexData* vertex_data)
 {
     if (!vertex_data)
         return;
-    if (vertex_data->vertexCount == 0)
+    if (vertex_data->getVertexCount() == 0)
         return;
 
     const VertexData* data = vertex_data;
 
     const unsigned int prev_size = mVertexCount;
-    mVertexCount += (unsigned int)data->vertexCount;
+    mVertexCount += (unsigned int)data->getVertexCount();
 
     Vector3* tmp_vert = new Vector3[mVertexCount];
     if (mVertexBuffer)
@@ -312,14 +312,14 @@ void VertexIndexToShape::addStaticVertexData(const VertexData* vertex_data)
 
     // Get the positional buffer element
     {
-        const VertexElement* posElem = data->vertexDeclaration->findElementBySemantic(VES_POSITION);
+        const VertexElement* posElem = data->getVertexDeclaration()->findElementBySemantic(VES_POSITION);
         HardwareVertexBufferSharedPtr vbuf = data->getBuffer(posElem->getSource());
         const unsigned int vSize = (unsigned int)vbuf->getVertexSize();
 
         unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(HardwareBuffer::HBL_READ_ONLY));
         float* pReal;
         Vector3* curVertices = &mVertexBuffer[prev_size];
-        const unsigned int vertexCount = (unsigned int)data->vertexCount;
+        const unsigned int vertexCount = (unsigned int)data->getVertexCount();
         for (unsigned int j = 0; j < vertexCount; ++j)
         {
             posElem->baseVertexPointerToElement(vertex, &pReal);

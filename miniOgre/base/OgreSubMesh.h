@@ -101,7 +101,7 @@ namespace Ogre {
         }
 
         void addBoneAssignment(const VertexBoneAssignment& vertBoneAssign);
-        void buildHardBuffer();
+        void prepare();
 
         void setPosition(Ogre::Vector3& pos);
         const Ogre::Vector3& getPosition();
@@ -152,5 +152,7 @@ namespace Ogre {
 
         VertexBuffer* mVertexBuffer = nullptr;
         IndexBuffer* mIndexBuffer = nullptr;
+
+        std::vector<VertexBoneAssignment> mBoneAssignments;
     };
 }

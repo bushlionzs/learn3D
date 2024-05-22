@@ -1,6 +1,6 @@
 #pragma once
 #include "OgrePixelFormat.h"
-
+#include <filament/DriverEnums.h>
 namespace Ogre {
 	enum ImageFlags
 	{
@@ -14,10 +14,15 @@ namespace Ogre {
 	public:
 		CImage();
 		virtual ~CImage();
-		static bool loadImageInfo(const uint8_t* data, uint32_t byteCount, int* width, int* height, int* numComponents);
+		static backend::ImageType getImageType(const std::string& name);
+		static bool loadImageInfo(
+			const uint8_t* data, 
+			uint32_t byteCount, 
+			ImageInfo& imageInfo,
+			backend::ImageType type);
 		static void freeImageData(void* data);
 		bool loadImage(const std::string& name);
-		bool loadImage(const uint8_t* data, uint32_t byteCount);
+		bool loadImage(const uint8_t* data, uint32_t byteCount, backend::ImageType type);
 		bool loadImage(DataStreamPtr& stream);
 		bool loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format);
 		unsigned char* getImageData();
@@ -42,13 +47,8 @@ namespace Ogre {
 			return loadDynamicImage(data, width, height, 1, format);
 		}
 
-		size_t calculateSize(
-			uint32 mipmaps,
-			uint32 faces,
-			uint32 width,
-			uint32 height,
-			uint32 depth,
-			PixelFormat format);
+		static size_t calculateSize(
+			Ogre::ImageInfo& info);
 
 		void save(const String& filename);
 	private:
@@ -56,14 +56,8 @@ namespace Ogre {
 		void convertRawData(void* from, void* to, size_t _size, int _format);
 		void freeMemory();
 	private:
-
-		uint32_t mWidth;
-		uint32_t mHeight;
-		uint32_t mDepth;
-		uint32_t mNumMipmaps;
-		uint32_t mFace;
+		ImageInfo mImageInfo;
 		int32_t mFlags;
-		Ogre::PixelFormat mFormat;
 		unsigned char* mImageData;
 		uint32_t mPixelSize;
 		uint32_t mImageDataSize;

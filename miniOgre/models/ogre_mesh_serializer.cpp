@@ -240,7 +240,7 @@ void OgreMeshSerializerImpl::readGeometry(
 {
     uint32_t vertexCount = 0;
     readInts(stream, &vertexCount, 1);
-    vd->vertexCount = vertexCount;
+    vd->setVertexCount(vertexCount);
     // Find optional geometry streams
     if (!stream->eof())
     {
@@ -338,7 +338,7 @@ void OgreMeshSerializerImpl::readGeometryVertexElement(
         return;
     }
 
-    vd->vertexDeclaration->addElement(source, index, offset, vType, vSemantic);
+    vd->addElement(source, index, offset, vType, vSemantic);
 }
 
 void OgreMeshSerializerImpl::readGeometryVertexBuffer(
@@ -364,11 +364,11 @@ void OgreMeshSerializerImpl::readGeometryVertexBuffer(
                 "MeshSerializerImpl::readGeometryVertexBuffer");
         }
         // Check that vertex size agrees
-        uint32_t vsize = vd->vertexDeclaration->getVertexSize(bindIndex);
+        uint32_t vsize = vd->getVertexDeclaration()->getVertexSize(bindIndex);
 
         if (vsize == 0)
         {
-            stream->seekRelative(vd->vertexCount * vertexSize);
+            stream->seekRelative(vd->getVertexCount() * vertexSize);
         }
         else
         {
@@ -378,21 +378,13 @@ void OgreMeshSerializerImpl::readGeometryVertexBuffer(
                     "MeshSerializerImpl::readGeometryVertexBuffer");
             }
 
-            vd->vertexSlotInfo.emplace_back();
-            VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-            slotInfo.mSlot = bindIndex;
-            slotInfo.mVertexSize = vertexSize;
-            slotInfo.createBuffer(vertexSize, vd->vertexCount);
-            void* data = slotInfo.hardwareVertexBuffer->lock();
-            stream->read((void*)data, vd->vertexCount * vertexSize);
-            Ogre::Vector3* tmp = (Ogre::Vector3*)data;
-            for (int32_t i = 0; i < vd->vertexCount; i++)
-            {
-                tmp = (Ogre::Vector3*)((char*)data + i * vertexSize);
+            const char* data = stream->getCurrentStreamData();
+            auto datasize = vd->getVertexCount() * vertexSize;
+       
+            vd->addBindBuffer(bindIndex, vertexSize, vd->getVertexCount());
+            vd->writeBindBufferData(bindIndex, data, datasize);
+            stream->skip(datasize);
 
-                int kk = 0;
-            }
-            slotInfo.hardwareVertexBuffer->unlock();
         }
         
     }

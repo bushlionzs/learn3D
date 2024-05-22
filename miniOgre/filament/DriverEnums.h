@@ -701,6 +701,14 @@ namespace filament::backend {
         CHANNEL_3
     };
 
+    enum class ImageType : uint8_t {
+        ImageType_UnSupported,
+        ImageType_PNG,
+        ImageType_JPG,
+        ImageType_DDS,
+        ImageType_BLP
+    };
+
     //! returns whether this format a depth format
     static constexpr bool isDepthFormat(TextureFormat format) noexcept {
         switch (format) {

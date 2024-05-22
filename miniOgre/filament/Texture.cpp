@@ -45,6 +45,10 @@ Texture::InternalFormat Texture::getFormat() const noexcept {
     return downcast(this)->getFormat();
 }
 
+backend::ImageType Texture::getImageType() const noexcept{
+    return downcast(this)->getImageType();
+}
+
 void Texture::setImage(Engine& engine, size_t level,
         uint32_t xoffset, uint32_t yoffset, uint32_t zoffset,
         uint32_t width, uint32_t height, uint32_t depth,

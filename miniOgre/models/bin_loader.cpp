@@ -416,24 +416,22 @@ std::shared_ptr<Ogre::Mesh> BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::Da
     subMesh->addIndexs(geom->mIndexCount, 0, 0);
     IndexData* indexData = subMesh->getIndexData();
     VertexData* vertexData = subMesh->getVertexData();
-    vertexData->vertexCount = geom->mVertexCount;
+    vertexData->setVertexCount(geom->mVertexCount);
     indexData->mIndexCount = geom->mIndexCount;
     indexData->createBuffer(indexStride, indexData->mIndexCount);
     indexData->writeData((const char*)geomData->pShadow->pIndices, indexStride * indexData->mIndexCount);
     uint32_t source = 0;
 
-    vertexData->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-    vertexData->vertexDeclaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-    vertexData->vertexDeclaration->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
-    
-    vertexData->vertexSlotInfo.emplace_back();
-    auto& back = vertexData->vertexSlotInfo.back();
-    back.mVertexSize = sizeof(BinVertex);
+    vertexData->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+    vertexData->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+    vertexData->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+   
 
-    back.createBuffer(back.mVertexSize, geom->mVertexCount);
+    uint32_t binding = 0;
+    vertexData->addBindBuffer(binding, sizeof(BinVertex), geom->mVertexCount);
 
-
-    BinVertex* vdata = (BinVertex*)back.hardwareVertexBuffer->lock();
+    std::vector<BinVertex> vertexList(geom->mVertexCount);
+    BinVertex* vdata = (BinVertex*)vertexList.data();
 
     float* position = (float*)geomData->pShadow->pAttributes[SEMANTIC_POSITION];
     uint32_t* normal = (uint32_t*)geomData->pShadow->pAttributes[SEMANTIC_NORMAL];
@@ -448,7 +446,7 @@ std::shared_ptr<Ogre::Mesh> BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::Da
         unpackHalf2x16(tex[i], vdata[i].TexC);
     }
 
-    back.hardwareVertexBuffer->unlock();
+    vertexData->writeBindBufferData(binding, data, sizeof(BinVertex) * geom->mVertexCount);
 
 
     AxisAlignedBox box;

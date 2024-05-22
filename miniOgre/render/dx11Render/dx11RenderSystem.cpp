@@ -244,7 +244,7 @@ void Dx11RenderSystem::renderImpl(Dx11Pass& pass)
 	IndexData* indexData = pass._render->getIndexData();
 
 	
-	auto vd = vertexData->vertexDeclaration;
+	auto vd = vertexData->getVertexDeclaration();
 	pass._shader->updateInputDesc(vd);
 
 
@@ -275,9 +275,9 @@ void Dx11RenderSystem::renderImpl(Dx11Pass& pass)
 		else
 		{
 			mDx11Context->DrawInstanced(
-				vertexData->vertexCount,
-				1, vertexData->vertexStart, 0);
-			mTriangleCount += vertexData->vertexCount / 3;
+				vertexData->getVertexCount(),
+				1, vertexData->getVertexStart(), 0);
+			mTriangleCount += vertexData->getVertexCount() / 3;
 		}
 		
 	}

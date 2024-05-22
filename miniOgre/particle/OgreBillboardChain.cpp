@@ -85,7 +85,6 @@ namespace Ogre {
 
         setupChainContainers();
 
-        mVertexData->vertexStart = 0;
         // index data set up later
         // set basic white material
         mMaterial = MaterialManager::getSingleton().getDefaultMaterial();
@@ -99,7 +98,7 @@ namespace Ogre {
     {
         // Allocate enough space for everything
         mChainElementList.resize(mChainCount * mMaxElementsPerChain);
-        mVertexData->vertexCount = mChainElementList.size() * 2;
+        mVertexData->setVertexCount(mChainElementList.size() * 2);
 
         // Configure chains
         mChainSegmentList.resize(mChainCount);
@@ -118,21 +117,20 @@ namespace Ogre {
     {
         if (mVertexDeclDirty)
         {
-            VertexDeclaration* decl = mVertexData->vertexDeclaration;
-            decl->removeAllElements();
+            mVertexData->removeAllElements();
 
             size_t offset = 0;
             // Add a description for the buffer of the positions of the vertices
-            offset += decl->addElement(0, 0, offset, VET_FLOAT3, VES_POSITION).getSize();
+            offset += mVertexData->addElement(0, 0, offset, VET_FLOAT3, VES_POSITION).getSize();
 
             if (mUseVertexColour)
             {
-                offset += decl->addElement(0, 0, offset, VET_UBYTE4_NORM, VES_DIFFUSE).getSize();
+                offset += mVertexData->addElement(0, 0, offset, VET_UBYTE4_NORM, VES_DIFFUSE).getSize();
             }
 
             if (mUseTexCoords)
             {
-                decl->addElement(0, 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+                mVertexData->addElement(0, 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
             }
 
             if (!mUseTexCoords && !mUseVertexColour)
@@ -148,11 +146,8 @@ namespace Ogre {
         setupVertexDeclaration();
         if (mBuffersNeedRecreating)
         {
-
-            mVertexData->vertexSlotInfo.emplace_back();
-            uint32_t vertexSize = mVertexData->vertexDeclaration->getVertexSize(0);
-            mVertexData->vertexSlotInfo.back().createBuffer(vertexSize, mVertexData->vertexCount);
-            mVertexData->buildHardBuffer();
+            uint32_t vertexSize = mVertexData->getVertexDeclaration()->getVertexSize(0);
+            mVertexData->addBindBuffer(0, vertexSize, mVertexData->getVertexCount());
             mIndexData->createBuffer(4, mChainCount * mMaxElementsPerChain * 6);
             
             // NB we don't set the indexCount on IndexData here since we will
@@ -433,7 +428,7 @@ namespace Ogre {
         if (!mVertexContentDirty && mVertexCameraUsed == cam)
             return;
 
-        auto& back = mVertexData->vertexSlotInfo.back();
+        auto back = mVertexData->getLock(0);
 
         const Vector3& camPos = cam->getDerivedPosition();
         Vector3 eyePos = mParent->convertWorldToLocalPosition(camPos);
@@ -460,9 +455,9 @@ namespace Ogre {
 
                     // Determine base pointer to vertex #1
 
-                    HardwareBufferLockGuard lockGuard(back.hardwareVertexBuffer.get());
-                    float* pFloat = reinterpret_cast<float*>(
-                        lockGuard.data());
+                     std::lock_guard<VertexData::VertexDataLock> lockGuard(back);
+
+                    float* pFloat = reinterpret_cast<float*>(back.data());
 
                     // Get index of next item
                     size_t nexte = e + 1;

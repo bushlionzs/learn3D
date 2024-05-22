@@ -263,17 +263,21 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                     gltfTexture += 2;
                 }
             }
-            vd->vertexCount = positionCount;
-            vd->vertexSlotInfo.emplace_back();
-            vd->vertexSlotInfo.back().createBuffer(sizeof(GltfVertex), mVertexBuffer.size());
-            vd->vertexSlotInfo.back().writeData((const char*)mVertexBuffer.data(),
-                mVertexBuffer.size() * sizeof(GltfVertex));
-            vd->vertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-            vd->vertexDeclaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-            vd->vertexDeclaration->addElement(0, 0, 24, VET_FLOAT4, VES_TANGENT);
-            vd->vertexDeclaration->addElement(0, 0, 40, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+            vd->setVertexCount(positionCount);
 
-            VertexBoneAssignment assignInfo;
+            uint32_t binding = 0;
+            vd->addBindBuffer(binding, sizeof(GltfVertex), mVertexBuffer.size());
+            vd->writeBindBufferData(binding, (const char*)mVertexBuffer.data(), mVertexBuffer.size() * sizeof(GltfVertex));
+
+            vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+            vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+            vd->addElement(0, 0, 24, VET_FLOAT4, VES_TANGENT);
+            vd->addElement(0, 0, 40, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+
+            std::vector<VertexBoneAssignment> assignInfoList;
+     
+            assignInfoList.reserve(10000);
+
             if (weightCount)
             {
                 float* gltfWeight = (float*)vertexData[Vertex_Weight].mData;
@@ -284,19 +288,41 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                     for (int32_t i = 0; i < weightCount; i++)
                     {
                         float totalweight = gltfWeight[0] + gltfWeight[1] + gltfWeight[2] + gltfWeight[3];
-                        assignInfo.vertexIndex = i;
-                        assignInfo.boneIndex = gltfJoint[0];
-                        assignInfo.weight = gltfWeight[0]/totalweight;
-                        vd->mBoneAssignments.push_back(assignInfo);
-                        assignInfo.boneIndex = gltfJoint[1];
-                        assignInfo.weight = gltfWeight[1] / totalweight;
-                        vd->mBoneAssignments.push_back(assignInfo);
-                        assignInfo.boneIndex = gltfJoint[2];
-                        assignInfo.weight = gltfWeight[2] / totalweight;
-                        vd->mBoneAssignments.push_back(assignInfo);
-                        assignInfo.boneIndex = gltfJoint[3];
-                        assignInfo.weight = gltfWeight[3] / totalweight;
-                        vd->mBoneAssignments.push_back(assignInfo);
+
+                        {
+                            VertexBoneAssignment& back = assignInfoList.emplace_back();
+
+                            back.vertexIndex = i;
+                            back.boneIndex = gltfJoint[0];
+                            back.weight = gltfWeight[0] / totalweight;
+                        }
+                        
+                        {
+                            VertexBoneAssignment& back = assignInfoList.emplace_back();
+
+                            back.vertexIndex = i;
+                            back.boneIndex = gltfJoint[1];
+                            back.weight = gltfWeight[1] / totalweight;
+                        }
+
+                        {
+                            VertexBoneAssignment& back = assignInfoList.emplace_back();
+
+                            back.vertexIndex = i;
+                            back.boneIndex = gltfJoint[2];
+                            back.weight = gltfWeight[2] / totalweight;
+                        }
+
+                        {
+                            VertexBoneAssignment& back = assignInfoList.emplace_back();
+
+                            back.vertexIndex = i;
+                            back.boneIndex = gltfJoint[3];
+                            back.weight = gltfWeight[3] / totalweight;
+                        }
+
+
+                        
                         gltfWeight += 4;
                         gltfJoint += 4;
                     }
@@ -306,19 +332,38 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                     uint32_t* gltfJoint = (uint32_t*)vertexData[Vertex_Joint].mData;
                     for (int32_t i = 0; i < weightCount; i++)
                     {
-                        assignInfo.vertexIndex = i;
-                        assignInfo.boneIndex = gltfJoint[0];
-                        assignInfo.weight = gltfWeight[0];
-                        vd->mBoneAssignments.push_back(assignInfo);
-                        assignInfo.boneIndex = gltfJoint[1];
-                        assignInfo.weight = gltfWeight[1];
-                        vd->mBoneAssignments.push_back(assignInfo);
-                        assignInfo.boneIndex = gltfJoint[2];
-                        assignInfo.weight = gltfWeight[2];
-                        vd->mBoneAssignments.push_back(assignInfo);
-                        assignInfo.boneIndex = gltfJoint[3];
-                        assignInfo.weight = gltfWeight[3];
-                        vd->mBoneAssignments.push_back(assignInfo);
+
+                        {
+                            VertexBoneAssignment& back = assignInfoList.emplace_back();
+
+                            back.vertexIndex = i;
+                            back.boneIndex = gltfJoint[0];
+                            back.weight = gltfWeight[0];
+                        }
+
+                        {
+                            VertexBoneAssignment& back = assignInfoList.emplace_back();
+
+                            back.vertexIndex = i;
+                            back.boneIndex = gltfJoint[1];
+                            back.weight = gltfWeight[1];
+                        }
+
+                        {
+                            VertexBoneAssignment& back = assignInfoList.emplace_back();
+
+                            back.vertexIndex = i;
+                            back.boneIndex = gltfJoint[2];
+                            back.weight = gltfWeight[2];
+                        }
+
+                        {
+                            VertexBoneAssignment& back = assignInfoList.emplace_back();
+
+                            back.vertexIndex = i;
+                            back.boneIndex = gltfJoint[3];
+                            back.weight = gltfWeight[3];
+                        }
                         gltfWeight += 4;
                         gltfJoint += 4;
                     }
@@ -326,7 +371,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             }
             
 			
-            
+            vd->addBoneInfo(assignInfoList);
             
             
             ShaderInfo sinfo;

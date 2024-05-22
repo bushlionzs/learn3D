@@ -57,6 +57,7 @@ struct TextureInfo {
     Texture* texture;
     TextureState state;
     std::atomic<intptr_t> decodedTexelsBaseMipmap;
+    uint32_t decodeDataSize;
     std::vector<uint8_t> sourceBuffer;
     utils::JobSystem::Job* decoderJob;
 };
@@ -200,6 +201,7 @@ public:
          */
         Builder& format(InternalFormat format) noexcept;
 
+        Builder& imagetype(backend::ImageType imageType) noexcept;
         /**
          * Specifies if the texture will be used as a render target attachment.
          *
@@ -319,6 +321,8 @@ public:
      * @return this texture InternalFormat as set by Builder::format().
      */
     InternalFormat getFormat() const noexcept;
+
+    backend::ImageType getImageType() const noexcept;
 
     /**
      * Updates a sub-image of a 3D texture or 2D texture array for a level. Cubemaps are treated

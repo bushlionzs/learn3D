@@ -23,6 +23,21 @@ namespace Ogre {
 
     }
 
+    backend::TextureFormat getFilamentTextureFormat(Ogre::PixelFormat format)
+    {
+        switch (format)
+        {
+        case Ogre::PF_BYTE_RGBA:
+            return filament::backend::TextureFormat::RGBA8;
+        case Ogre::PF_DXT1:
+            return filament::backend::TextureFormat::DXT1_RGBA;
+        case Ogre::PF_DXT5:
+            return filament::backend::TextureFormat::DXT5_RGBA;
+        default:
+            assert(false);
+            return filament::backend::TextureFormat::RGBA8;
+        }
+    }
     std::shared_ptr<OgreTexture> TextureManager::load(
         const std::string& name, 
         TextureProperty* texProperty,
@@ -91,14 +106,17 @@ namespace Ogre {
 
         TextureInfo* info = mTextureInfos.emplace_back(new TextureInfo).get();
 
-        int width, height, numComponents;
-        CImage::loadImageInfo(data, bytecount, &width, &height, &numComponents);
+        auto type = CImage::getImageType(name);
+        Ogre::ImageInfo imageInfo;
+        CImage::loadImageInfo(data, bytecount, imageInfo, type);
 
+        auto filamentFormat = getFilamentTextureFormat(imageInfo.format);
         Texture* texture = Texture::Builder()
-            .width(width)
-            .height(height)
+            .width(imageInfo.width)
+            .height(imageInfo.height)
             .levels(0xff)
-            .format(filament::backend::TextureFormat::RGBA8)
+            .imagetype(type)
+            .format(filamentFormat)
             .build(*mEngine);
 
         FTexture* ftex = (FTexture*)texture;
@@ -107,7 +125,7 @@ namespace Ogre {
         info->state = TextureState::DECODING;
         info->sourceBuffer.assign(data, data + bytecount);
         info->decodedTexelsBaseMipmap.store(DECODING_NOT_READY);
-
+        info->decodeDataSize = CImage::calculateSize(imageInfo);
         utils::JobSystem* js = &mEngine->getJobSystem();
         info->decoderJob = utils::jobs::createJob(*js, mDecoderRootJob, [info] {
             auto& source = info->sourceBuffer;
@@ -117,11 +135,12 @@ namespace Ogre {
             // std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 10000));
             CImage image;
 
-            image.loadImage(info->sourceBuffer.data(), info->sourceBuffer.size());
+            image.loadImage(info->sourceBuffer.data(), info->sourceBuffer.size(), info->texture->getImageType());
 
             auto texels = image.getImageData();
             source.clear();
             source.shrink_to_fit();
+            
             info->decodedTexelsBaseMipmap.store(texels ? intptr_t(texels) : DECODING_ERROR);
             });
 
@@ -221,8 +240,8 @@ namespace Ogre {
                     continue;
                 }
                 Texture::PixelBufferDescriptor pbd((uint8_t*)data,
-                    texture->getWidth() * texture->getHeight() * 4, Texture::Format::RGBA,
-                    Texture::Type::UBYTE, [](void* mem, size_t, void*) 
+                    info->decodeDataSize, Texture::Format::RGBA,
+                    Texture::Type::COMPRESSED, [](void* mem, size_t, void*)
                     { 
                         CImage::freeImageData(mem);
                     }
@@ -231,7 +250,7 @@ namespace Ogre {
 
                 // Call generateMipmaps unconditionally to fulfill the promise of the TextureProvider
                 // interface. Providers of hierarchical images (e.g. KTX) call this only if needed.
-                texture->generateMipmaps(*mEngine);
+                //texture->generateMipmaps(*mEngine);
 
                 texture->setReady(true);
                 info->state = TextureState::READY;

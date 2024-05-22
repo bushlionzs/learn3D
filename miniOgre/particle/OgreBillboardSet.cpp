@@ -317,7 +317,7 @@ namespace Ogre {
         // Init num visible
         mNumVisibleBillboards = 0;
 
-        auto& back = mVertexData->vertexSlotInfo.back();
+        auto back = mVertexData->getLock(0);
         // Lock the buffer
         if (numBillboards) // optimal lock
         {
@@ -328,20 +328,20 @@ namespace Ogre {
             if (mPointRendering)
             {
                 // just one vertex per billboard (this also excludes texcoords)
-                billboardSize = back.mVertexSize;
+                billboardSize = mVertexData->getVertexSize(0);
             }
             else
             {
                 // 4 corners
-                billboardSize = back.mVertexSize * 4;
+                billboardSize = mVertexData->getVertexSize(0) * 4;
             }
 
 
-            mLockPtr = reinterpret_cast<float*>(back.hardwareVertexBuffer->lock());
+            mLockPtr = reinterpret_cast<float*>(back.lock());
         }
         else // lock the entire thing
         {
-            mLockPtr = reinterpret_cast<float*>(back.hardwareVertexBuffer->lock());
+            mLockPtr = reinterpret_cast<float*>(back.lock());
         }
 
     }
@@ -449,7 +449,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void BillboardSet::endBillboards(void)
     {
-        mVertexData->vertexSlotInfo.back().hardwareVertexBuffer->unlock();
+        mVertexData->getLock(0).unlock();
     }
     //-----------------------------------------------------------------------
     void BillboardSet::setBounds(const AxisAlignedBox& box, Real radius)
@@ -600,30 +600,31 @@ namespace Ogre {
 
         mVertexData.reset(new VertexData());
         if (mPointRendering)
-            mVertexData->vertexCount = mPoolSize;
+            mVertexData->setVertexCount(mPoolSize);
         else
-            mVertexData->vertexCount = mPoolSize * 4;
+            mVertexData->setVertexCount(mPoolSize * 4);
 
-        mVertexData->vertexStart = 0;
+
 
         // Vertex declaration
-        VertexDeclaration* decl = mVertexData->vertexDeclaration;
+        VertexDeclaration* decl = mVertexData->getVertexDeclaration();
 
         size_t offset = 0;
-        offset += decl->addElement(0, 0, offset, VET_FLOAT3, VES_POSITION).getSize();
-        offset += decl->addElement(0, 0, offset, VET_UBYTE4_NORM, VES_DIFFUSE).getSize();
+        offset += mVertexData->addElement(0, 0, offset, VET_FLOAT3, VES_POSITION).getSize();
+        offset += mVertexData->addElement(0, 0, offset, VET_UBYTE4_NORM, VES_DIFFUSE).getSize();
         // Texture coords irrelevant when enabled point rendering (generated
         // in point sprite mode, and unused in standard point mode)
         if (!mPointRendering)
         {
-            decl->addElement(0, 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+            mVertexData->addElement(0, 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
         }
 
-        mVertexData->vertexSlotInfo.emplace_back();
 
-        auto& back = mVertexData->vertexSlotInfo.back();
-        back.mVertexSize = decl->getVertexSize(0);
-        back.createBuffer(back.mVertexSize, mVertexData->vertexCount);
+
+  
+        auto vertexSize = decl->getVertexSize(0);
+        
+        mVertexData->addBindBuffer(0, vertexSize, mVertexData->getVertexCount());
 
         if (!mPointRendering)
         {

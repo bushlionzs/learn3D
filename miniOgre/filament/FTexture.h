@@ -45,6 +45,7 @@ namespace filament {
         size_t getLevelCount() const noexcept { return mLevelCount; }
         Sampler getTarget() const noexcept { return mTarget; }
         InternalFormat getFormat() const noexcept { return mFormat; }
+        backend::ImageType getImageType() const noexcept{ return mType; }
         Usage getUsage() const noexcept { return mUsage; }
 
         void setImage(FEngine& engine, size_t level,
@@ -122,6 +123,7 @@ namespace filament {
         uint32_t mHeight = 1;
         uint32_t mDepth = 1;
         InternalFormat mFormat = InternalFormat::RGBA8;
+        backend::ImageType mType = backend::ImageType::ImageType_UnSupported;
         Sampler mTarget = Sampler::SAMPLER_2D;
         uint8_t mLevelCount = 1;
         uint8_t mSampleCount = 1;
