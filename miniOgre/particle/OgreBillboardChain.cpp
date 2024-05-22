@@ -428,7 +428,7 @@ namespace Ogre {
         if (!mVertexContentDirty && mVertexCameraUsed == cam)
             return;
 
-        auto back = mVertexData->getLock(0);
+        auto back = mVertexData->getBuffer(0);
 
         const Vector3& camPos = cam->getDerivedPosition();
         Vector3 eyePos = mParent->convertWorldToLocalPosition(camPos);
@@ -455,9 +455,9 @@ namespace Ogre {
 
                     // Determine base pointer to vertex #1
 
-                     std::lock_guard<VertexData::VertexDataLock> lockGuard(back);
+                    HardwareBufferLockGuard lockGuard(back);
 
-                    float* pFloat = reinterpret_cast<float*>(back.data());
+                    float* pFloat = reinterpret_cast<float*>(lockGuard.data());
 
                     // Get index of next item
                     size_t nexte = e + 1;

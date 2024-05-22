@@ -3,16 +3,29 @@
 #include "OgreHardwareBufferManager.h"
 #include "renderSystem.h"
 #include "OgreVertexDeclaration.h"
+#include "OgreRoot.h"
+#include "OgreMemoryBuffer.h"
 
 
 void VertexSlotInfo::createBuffer(uint32_t vertexSize, uint32_t vertexCount)
 {
     mVertexSize = vertexSize;
-    hardwareVertexBuffer = HardwareBufferManager::getSingleton().createVertexBuffer(
-        vertexSize,
-        vertexCount,
-        5
-    );
+
+    auto engine = Ogre::Root::getSingleton().getEngine();
+
+    if (engine)
+    {
+        hardwareVertexBuffer = std::make_shared<HardwareVertexBuffer>(vertexSize, vertexCount, new Ogre::MemoryBuffer(vertexSize, vertexCount));
+    }
+    else
+    {
+        hardwareVertexBuffer = HardwareBufferManager::getSingleton().createVertexBuffer(
+            vertexSize,
+            vertexCount,
+            5
+        );
+    }
+    
 }
 
 void VertexSlotInfo::writeData(const char* data, uint32_t size)
@@ -21,6 +34,7 @@ void VertexSlotInfo::writeData(const char* data, uint32_t size)
     memcpy(vdata, data, size);
     hardwareVertexBuffer->unlock();
 }
+
 
 VertexData::VertexData()
 {
@@ -37,100 +51,41 @@ void VertexData::updateFilamentVertexBuffer(VertexBuffer* vb, VertexData* vd)
 
 }
 
-//void VertexData::buildHardBuffer()
-//{
-//    if (!mBoneAssignments.empty())
-//    {
-//        int32_t bindIndex = -1;
-//        for (auto& slotInfo : vertexSlotInfo)
-//        {
-//            if (bindIndex < slotInfo.mSlot)
-//            {
-//                bindIndex = slotInfo.mSlot;
-//            }
-//        }
-//
-//        bindIndex++;
-//
-//        VertexSlotInfo& slot = vertexSlotInfo[bindIndex];
-//
-//        
-//
-//        slot.mSlot = bindIndex;
-//        slot.mVertexSize = sizeof(SkinnedData);
-//        slot.createBuffer(sizeof(SkinnedData), mVertexCount);
-//
-//        HardwareBufferLockGuard lockGuard(slot.hardwareVertexBuffer.get());
-//        SkinnedData* skin = (SkinnedData*)lockGuard.data();
-//        std::vector<uint32_t> vertexIndex(mVertexCount);
-//
-//        SkinnedData tmp;
-//        tmp.boneWeight[0] = 0.0f;
-//        tmp.boneWeight[1] = 0.0f;
-//        tmp.boneWeight[2] = 0.0f;
-//        tmp.boneWeight[3] = 0.0f;
-//        tmp.boneIndices[0] = 0;
-//        tmp.boneIndices[1] = 0;
-//        tmp.boneIndices[2] = 0;
-//        tmp.boneIndices[3] = 0;
-//        for (int32_t i = 0; i < mVertexCount; i++)
-//        {
-//            memcpy(&skin[i], &tmp, sizeof(SkinnedData));
-//        }
-//
-//        for (auto& assign : mBoneAssignments)
-//        {
-//            int32_t i = assign.vertexIndex;
-//            int32_t wix = vertexIndex[i];
-//            skin[i].boneWeight[wix] = assign.weight;
-//            skin[i].boneIndices[wix] = assign.boneIndex;
-//            vertexIndex[i]++;
-//        }
-//
-//        vertexDeclaration->addElement(bindIndex, 0, 0, VET_FLOAT4, VES_BLEND_WEIGHTS);
-//        vertexDeclaration->addElement(bindIndex, 0, 16, VET_UINT4, VES_BLEND_INDICES);
-//    }
-//}
-
-
-
-
 void VertexData::bind(void* cb)
 {
-    for (auto& slot : vertexSlotInfo)
+    for (auto i = 0; i < vertexSlotInfo.size(); i++)
     {
-        slot.hardwareVertexBuffer->bind(slot.mSlot, cb);
-    }
-}
-
-void VertexData::setBinding(int32_t index, std::shared_ptr<HardwareVertexBuffer>& buf)
-{
-    for (auto& slot : vertexSlotInfo)
-    {
-        if (slot.mSlot == index)
+        auto& slot = vertexSlotInfo[i];
+        if (slot.mVertexSize > 0)
         {
-            slot.hardwareVertexBuffer = buf;
-            break;
+            slot.hardwareVertexBuffer->bind(i, cb);
         }
     }
 }
 
-std::shared_ptr<HardwareVertexBuffer> VertexData::getBuffer(int32_t index) const
+HardwareBuffer* VertexData::getBuffer(int32_t index) const
 {
-    for (auto& slot : vertexSlotInfo)
+    if (vertexSlotInfo[index].mVertexSize > 0)
     {
-        if (slot.mSlot == index)
-        {
-            return slot.hardwareVertexBuffer;
-        }
+        return vertexSlotInfo[index].hardwareVertexBuffer.get();
     }
+    
 
-    return std::shared_ptr<HardwareVertexBuffer>();
+    return nullptr;
 }
 
 uint32_t VertexData::getBufferCount()
 {
-    return vertexSlotInfo.size();
+    uint32_t count = 0;
+
+    for (auto& slot : vertexSlotInfo)
+    {
+        if (slot.mVertexSize > 0)
+        {
+            count++;
+        }
+    }
+    return count;
 }
 
 void VertexData::setVertexCount(uint32_t vertexCount)
@@ -141,6 +96,11 @@ void VertexData::setVertexCount(uint32_t vertexCount)
 uint32_t VertexData::getVertexCount() const
 {
     return mVertexCount;
+}
+
+uint32_t VertexData::getVertexSize(uint32_t binding) const
+{
+    return vertexSlotInfo[binding].mVertexSize;
 }
 
 void VertexData::removeAllElements()
@@ -158,9 +118,22 @@ const VertexElement& VertexData::addElement(
     return vertexDeclaration->addElement(source, index, offset, theType, semantic);
 }
 
-void VertexData::addBindBuffer(uint32_t slot, uint32_t vertexSize, uint32_t vertexCount)
+int32_t VertexData::addBindBuffer(uint32_t vertexSize, uint32_t vertexCount)
 {
-    vertexSlotInfo[slot].createBuffer(vertexSize, vertexCount);
+    auto binding = getUnusedBinding();
+    assert(binding >= 0);
+    addBindBuffer(binding, vertexSize, vertexCount);
+    return binding;
+}
+
+void VertexData::addBindBuffer(uint32_t binding, uint32_t vertexSize, uint32_t vertexCount)
+{
+    vertexSlotInfo[binding].createBuffer(vertexSize, vertexCount);
+}
+
+void VertexData::updateBindBuffer(uint32_t binding, uint32_t vertexCount)
+{
+    vertexSlotInfo[binding].createBuffer(binding, vertexCount);
 }
 
 void VertexData::addBoneInfo(std::vector<VertexBoneAssignment>& assignInfoList)
@@ -219,3 +192,17 @@ void VertexData::writeBindBufferData(uint32_t slot, const char* data, uint32_t s
 {
     vertexSlotInfo[slot].writeData(data, size);
 }
+
+int32_t VertexData::getUnusedBinding()
+{
+    uint32_t binding = 0;
+    for (uint32_t i = 0; i < vertexSlotInfo.size(); i++)
+    {
+        if (vertexSlotInfo[i].mVertexSize == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+

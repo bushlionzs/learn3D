@@ -94,7 +94,7 @@ namespace Ogre {
         virtual void bind(int32_t slot, void* cb) const {};
 
         virtual void writeData(size_t offset, size_t length, const void* pSource,
-            bool discardWholeBuffer = false) {}
+        bool discardWholeBuffer = false) {}
 
         bool isLocked()
         {
@@ -110,10 +110,16 @@ namespace Ogre {
         {
             return mVertexSize;
         }
+
+        int32_t getNumVerts() const
+        {
+            return mNumVerts;
+        }
     protected:
         Usage mUsage;
         uint32_t mSizeInBytes = 0;
         int32_t mVertexSize = 0;
+        int32_t mNumVerts = 0;
         std::unique_ptr<HardwareBuffer> mShadowBuffer;
         bool mShadowUpdated = false;
         bool mIsLocked = false;

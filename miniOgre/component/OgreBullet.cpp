@@ -313,7 +313,7 @@ void VertexIndexToShape::addStaticVertexData(const VertexData* vertex_data)
     // Get the positional buffer element
     {
         const VertexElement* posElem = data->getVertexDeclaration()->findElementBySemantic(VES_POSITION);
-        HardwareVertexBufferSharedPtr vbuf = data->getBuffer(posElem->getSource());
+        auto vbuf = data->getBuffer(posElem->getSource());
         const unsigned int vSize = (unsigned int)vbuf->getVertexSize();
 
         unsigned char* vertex = static_cast<unsigned char*>(vbuf->lock(HardwareBuffer::HBL_READ_ONLY));

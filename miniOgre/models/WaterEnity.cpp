@@ -64,9 +64,7 @@ void WaterEntity::update(float delta)
 
     int32_t size = stride * vCount;
 
-    VertexSlotInfo& slotInfo = mVertexData->vertexSlotInfo.back();
-
-    slotInfo.writeData((const char*)mVertexs.data(), size);
+    mVertexData->writeBindBufferData(0, (const char*)mVertexs.data(), size);
 
 
     const std::shared_ptr<Material>& mat = mSubEntity->getMaterial();
@@ -77,16 +75,13 @@ void WaterEntity::buildHardBuffer()
 {
     int32_t vCount = mWave->VertexCount();
     
-
-    mVertexDeclaration = std::make_unique<VertexDeclaration>();
-
-    mVertexDeclaration->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-    mVertexDeclaration->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-    mVertexDeclaration->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
-    mVertexDeclaration->addElement(0, 0, 36, VET_FLOAT2, VES_TEXTURE_COORDINATES);
     VertexData* vd = new VertexData;
 
-    vd->vertexDeclaration = mVertexDeclaration.get();
+    vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+    vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+    vd->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
+    vd->addElement(0, 0, 36, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+    
     int32_t stride = sizeof(SVertexElement);
     
 
@@ -104,23 +99,15 @@ void WaterEntity::buildHardBuffer()
         v.mUV.y = 0.5f - v.mPosition.z / mWave->Depth();
     }
 
-    vd->vertexSlotInfo.emplace_back();
-    VertexSlotInfo& slotInfo = vd->vertexSlotInfo.back();
-    slotInfo.mSlot = 0;
-    vd->vertexCount = mVertexs.size();
-    slotInfo.mVertexSize = sizeof(SVertexElement);
 
+    vd->addBindBuffer(0, sizeof(SVertexElement), mVertexs.size());
 
-    slotInfo.hardwareVertexBuffer = HardwareBufferManager::getSingletonPtr()->createVertexBuffer(
-        stride,
-        vCount,
-        5
-    );
+    int32_t size = stride * vCount;
+
+    vd->writeBindBufferData(0, (const char*)mVertexs.data(), size);
 
     mVertexData = vd;
 
-    int32_t size = stride * vCount;
-    slotInfo.writeData((const char*)mVertexs.data(), size);
 
     std::vector<std::uint32_t> indices(3 * mWave->TriangleCount());
 

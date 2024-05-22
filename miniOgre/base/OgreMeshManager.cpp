@@ -208,7 +208,7 @@ std::shared_ptr<Mesh> MeshManager::createRect(
 	Ogre::Vector3& normal)
 {
 	float tex = 1.0f;
-	static std::vector<SVertexElement> vertices;
+	std::vector<SVertexElement> vertices;
 	if (vertices.empty())
 	{
 		vertices.push_back(SVertexElement(leftbottom.x, leftbottom.y, leftbottom.z, normal.x, normal.y, normal.z,  0.0f, tex));
@@ -218,7 +218,7 @@ std::shared_ptr<Mesh> MeshManager::createRect(
 	}
 	
 
-	static std::vector<uint32_t> indices32 = {0, 2, 1, 0, 3, 2};
+	std::vector<uint32_t> indices32 = {0, 2, 1, 0, 3, 2};
 
 	Mesh* pMesh = BuildHardBuffer(vertices, indices32);
 	auto mat = MaterialManager::getSingleton().getByName("myrect");
@@ -230,34 +230,6 @@ std::shared_ptr<Mesh> MeshManager::createRect(
 	std::shared_ptr<Mesh> p(pMesh);
 
 	mMeshMap[name] = p;
-
-
-	if (engine)
-	{
-		VertexBuffer* vb = VertexBuffer::Builder()
-			.vertexCount(4)
-			.bufferCount(1)
-			.attribute(VertexAttribute::POSITION, 0, VertexBuffer::AttributeType::FLOAT3, 0, 32)
-			.attribute(VertexAttribute::CUSTOM0, 0, VertexBuffer::AttributeType::FLOAT3, 12, 32)
-			.attribute(VertexAttribute::UV0, 0, VertexBuffer::AttributeType::FLOAT2, 24, 32)
-			.build(*engine);
-
-		vb->setBufferAt(*engine, 0, { vertices.data(), vertices.size() * sizeof(SVertexElement) });
-
-		auto ib = IndexBuffer::Builder()
-			.indexCount(6)
-			.bufferType(IndexBuffer::IndexType::UINT)
-			.build(*engine);
-
-		ib->setBuffer(*engine, { indices32.data(), indices32.size() * sizeof(uint32_t) });
-
-		subMesh->updateBuffer(vb, ib);
-	}
-	else
-	{
-
-	}
-
 
 	return p;
 }
@@ -1021,9 +993,11 @@ Mesh* MeshManager::BuildHardBuffer(
 	IndexData* id = pMesh->getIndexData();
 	uint32_t size = vertices.size() * sizeof(SVertexElement);
 	
-	vd->setVertexCount(vertices.size());
 
-	vd->addBindBuffer(0, sizeof(SVertexElement), vertices.size());
+	auto vertexCount = vertices.size();
+	vd->setVertexCount(vertexCount);
+
+	vd->addBindBuffer(0, sizeof(SVertexElement), vertexCount);
 	vd->writeBindBufferData(0, (const char*)vertices.data(), size);
 
 	id->mIndexCount = indices.size();

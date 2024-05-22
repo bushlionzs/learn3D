@@ -317,7 +317,7 @@ namespace Ogre {
         // Init num visible
         mNumVisibleBillboards = 0;
 
-        auto back = mVertexData->getLock(0);
+        auto back = mVertexData->getBuffer(0);
         // Lock the buffer
         if (numBillboards) // optimal lock
         {
@@ -337,11 +337,11 @@ namespace Ogre {
             }
 
 
-            mLockPtr = reinterpret_cast<float*>(back.lock());
+            mLockPtr = reinterpret_cast<float*>(back->lock());
         }
         else // lock the entire thing
         {
-            mLockPtr = reinterpret_cast<float*>(back.lock());
+            mLockPtr = reinterpret_cast<float*>(back->lock());
         }
 
     }
@@ -449,7 +449,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void BillboardSet::endBillboards(void)
     {
-        mVertexData->getLock(0).unlock();
+        mVertexData->getBuffer(0)->unlock();
     }
     //-----------------------------------------------------------------------
     void BillboardSet::setBounds(const AxisAlignedBox& box, Real radius)

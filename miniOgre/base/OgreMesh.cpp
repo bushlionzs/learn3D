@@ -10,6 +10,9 @@
 #include "OgreSkeletonManager.h"
 #include "OgreSkeleton.h"
 #include "OgreRoot.h"
+#include <filament/FVertexBuffer.h>
+#include <filament/FIndexBuffer.h>
+#include <filament/OgreFilamentUtils.h>
 
 namespace Ogre {
     Mesh::Mesh(const std::string& name)
@@ -101,12 +104,75 @@ namespace Ogre {
 
     void Mesh::prepare()
     {
-        auto engine = Ogre::Root::getSingleton().getEngine();
+        
         if (!mBoneAssignments.empty())
         {
             mVertexData->addBoneInfo(mBoneAssignments);
         }
 
+        if (mVertexData)
+        {
+            auto engine = Ogre::Root::getSingleton().getEngine();
+            if (engine)
+            {
+                VertexBuffer::Builder vBuilder;
+                auto vertexCount = mVertexData->getVertexCount();
+                auto bufferCount = mVertexData->getBufferCount();
+                vBuilder.vertexCount(vertexCount);
+                vBuilder.bufferCount(bufferCount);
+
+                VertexDeclaration* decl = mVertexData->getVertexDeclaration();
+
+                const VertexDeclaration::VertexElementList& elist = decl->getElementList();
+
+                for (auto& e : elist)
+                {
+                    auto bufferIndex = e.getIndex();
+                    auto stride = decl->getVertexSize(bufferIndex);
+                    auto offset = e.getOffset();
+                    auto attributeType = filament::mappingOgreVertexType(e.getType());
+                    auto attribute = filament::mappingOgreVertexAttribute(e.getSemantic());
+                    vBuilder.attribute(attribute, bufferIndex, attributeType, offset, stride);
+                }
+
+
+                mVertexBuffer = vBuilder.build(*engine);
+                for (auto i = 0; i < bufferCount; i++)
+                {
+                    auto buf = mVertexData->getBuffer(i);
+                    if (buf)
+                    {
+                        void* data = buf->lock();
+                        auto byteCount = buf->getSizeInBytes();
+                        mVertexBuffer->setBufferAt(*engine, 0, { data, byteCount });
+                    }
+                }
+
+                
+                if (mIndexData)
+                {
+                    auto buf = mIndexData->getIndexBuffer();
+
+                    auto indexCount = buf->getNumVerts();
+                    auto indexType = IndexBuffer::IndexType::USHORT;
+                    if (buf->getType() == HardwareIndexBuffer::IndexType::IT_32BIT)
+                    {
+                        indexType = IndexBuffer::IndexType::UINT;
+                    };
+
+                    mIndexBuffer = IndexBuffer::Builder()
+                        .indexCount(indexCount)
+                        .bufferType(indexType)
+                        .build(*engine);
+
+                    mIndexBuffer->setBuffer(*engine, { buf->lock(), buf->getSizeInBytes() });
+                }
+                
+
+            }
+        }
+        
+        
         for (auto sub : mSubMeshList)
         {
             sub->prepare();
