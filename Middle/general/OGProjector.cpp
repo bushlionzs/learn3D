@@ -47,14 +47,12 @@ namespace Orphigine {
             , mParent(parent)
         {
             mVertexData = new VertexData;
-            mVertexData->vertexCount = 6;
-            auto decl = mVertexData->vertexDeclaration;
-            decl->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-            decl->addElement(0, 0, 3 * sizeof(Real), VET_COLOUR, VES_DIFFUSE);
-            mVertexData->vertexSlotInfo.emplace_back();
+            mVertexData->setVertexCount(6);
+            auto decl = mVertexData->getVertexDeclaration();
+            mVertexData->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
+            mVertexData->addElement(0, 0, 3 * sizeof(Real), VET_COLOUR, VES_DIFFUSE);
 
-            auto& back = mVertexData->vertexSlotInfo.back();
-            back.createBuffer(16, mVertexData->vertexCount);
+            mVertexData->addBindBuffer(0, 16, 6);
             
         }
 
@@ -82,18 +80,20 @@ namespace Orphigine {
             const std::vector<Ogre::Vector3> mTempPositions,
             size_t vertexStart, size_t vertexCount, unsigned int mColour)
         {
-            auto& back = mVertexData->vertexSlotInfo.back();
             
-            uint32_t numVerts = back.hardwareVertexBuffer->getNumVerts();
+            
+            uint32_t numVerts = mVertexData->getVertexCount();
 
             if (numVerts < mTempPositions.size())
             {
-                back.createBuffer(back.mVertexSize, mTempPositions.size());
+                mVertexData->updateBindBuffer(0, mTempPositions.size());
             }
-            mVertexData->vertexStart = vertexStart;
-            mVertexData->vertexCount = vertexCount;
+            mVertexData->setVertexStart(vertexStart);
+            mVertexData->setVertexCount(vertexCount);
 
-            float* pFloat = static_cast<float*>(back.hardwareVertexBuffer->lock());
+          
+            auto buf = mVertexData->getBuffer(0);
+            float* pFloat = static_cast<float*>(buf->lock());
             for (uint32_t i = 0; i < mTempPositions.size(); i++)
             {
                 *pFloat++ = mTempPositions[i].x;
@@ -103,7 +103,7 @@ namespace Orphigine {
                 *pColour = mColour;
                 pFloat++;
             }
-            back.hardwareVertexBuffer->unlock();
+            buf->unlock();
         }
         virtual const std::shared_ptr<Material>& getMaterial() override
         {

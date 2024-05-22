@@ -24,7 +24,7 @@ namespace filament {
 		case VES_POSITION:
 			return filament::VertexAttribute::POSITION;
 		case VES_NORMAL:
-			return filament::VertexAttribute::CUSTOM0;
+			return filament::VertexAttribute::TANGENTS;
 		case VES_COLOUR:
 			return filament::VertexAttribute::COLOR;
 		case VES_TEXTURE_COORDINATES:

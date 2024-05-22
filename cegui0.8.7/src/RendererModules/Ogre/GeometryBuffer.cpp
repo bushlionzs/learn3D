@@ -140,7 +140,7 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
     d_renderOp.useIndexes = false;
 
     // setup vertex declaration for format we will use
-    VertexDeclaration* vd = d_renderOp.vertexData->vertexDeclaration;
+    VertexDeclaration* vd = d_renderOp.vertexData->getVertexDeclaration();
     size_t vd_offset = 0;
     vd->addElement(0, 0, vd_offset, VET_FLOAT3, VES_POSITION);
     vd_offset += VertexElement::getTypeSize(VET_FLOAT3);
@@ -151,13 +151,7 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
 
     auto vertexSize = vd->getVertexSize(0);
 
-    d_renderOp.vertexData->vertexSlotInfo.emplace_back();
-
-    auto& back = d_renderOp.vertexData->vertexSlotInfo.back();
-
-    back.mSlot = 0;
-    back.mVertexSize = vertexSize;
-    back.createBuffer(vertexSize, 2048);
+    d_renderOp.vertexData->addBindBuffer(0, vertexSize, 2048);
 }
 
 //----------------------------------------------------------------------------//
@@ -211,8 +205,8 @@ void OgreGeometryBuffer::draw() const
             // Set up clipping for this buffer
 
 
-            d_renderOp.vertexData->vertexStart = pos;
-            d_renderOp.vertexData->vertexCount = i->vertexCount;
+            d_renderOp.vertexData->setVertexStart(pos);
+            d_renderOp.vertexData->setVertexCount(i->vertexCount);
 
  
             updateRenderable(index++, pos, i->vertexCount, i->texture);

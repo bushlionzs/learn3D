@@ -149,6 +149,12 @@ namespace Ogre {
             backend::SamplerDescriptor sd;
             FTexture* ftex = (FTexture*)mTextureUnits[0]->getFTexture();
             sd.t = ftex->getHwHandle();
+            sd.s.filterMag = filament::backend::SamplerMagFilter::LINEAR;
+            sd.s.filterMin = filament::backend::SamplerMinFilter::LINEAR;
+            sd.s.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+            sd.s.wrapS = filament::backend::SamplerWrapMode::REPEAT;
+            sd.s.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+        
             mSamplerGroup.setSampler(0, sd);
 
             engine->getDriverApi().updateSamplerGroup(mSbHandle, mSamplerGroup.toBufferDescriptor(engine->getDriverApi()));

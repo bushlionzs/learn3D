@@ -21,10 +21,10 @@ namespace Orphigine {
                               const VertexData* vertexData)
     {
         const VertexElement* posElem = 
-            vertexData->vertexDeclaration->findElementBySemantic(VES_POSITION);
-        HardwareVertexBufferSharedPtr vbuf = vertexData->getBuffer(posElem->getSource());
+            vertexData->getVertexDeclaration()->findElementBySemantic(VES_POSITION);
+        auto vbuf = vertexData->getBuffer(posElem->getSource());
         size_t vertex_stride = vbuf->getVertexSize();
-        size_t vertexCount = vertexData->vertexCount;
+        size_t vertexCount = vertexData->getVertexCount();
 
         void* pBase = vbuf->lock(
             HardwareBuffer::HBL_READ_ONLY);
@@ -140,12 +140,12 @@ namespace Orphigine {
                     if (!added_shared_vertex)
                     {
                         added_shared_vertex = true;
-                        numVertices += subMesh->getParent()->getVertexData()->vertexCount;
+                        numVertices += subMesh->getParent()->getVertexData()->getVertexCount();
                     }
                 }
                 else
                 {
-                    numVertices += subMesh->getVertexData()->vertexCount;
+                    numVertices += subMesh->getVertexData()->getVertexCount();
                 }
 
         
@@ -253,12 +253,12 @@ namespace Orphigine {
                     if (!added_shared_vertex)
                     {
                         added_shared_vertex = true;
-                        numVertices += subMesh->getParent()->getVertexData()->vertexCount;
+                        numVertices += subMesh->getParent()->getVertexData()->getVertexCount();
                     }
                 }
                 else
                 {
-                    numVertices += subMesh->getVertexData()->vertexCount;
+                    numVertices += subMesh->getVertexData()->getVertexCount();
                 }
 
                 assert(subMesh->getIndexData()->mIndexCount >= 3);

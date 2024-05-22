@@ -170,7 +170,7 @@ namespace Ogre {
                     {
                         void* data = buf->lock();
                         auto byteCount = buf->getSizeInBytes();
-                        mVertexBuffer->setBufferAt(*engine, 0, { data, byteCount });
+                        vb->setBufferAt(*engine, 0, { data, byteCount });
                     }
                 }
 

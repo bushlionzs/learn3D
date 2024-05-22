@@ -117,10 +117,9 @@ namespace Ogre {
        if (mChainElementList.size() < 2)
           return;
 
-       HardwareVertexBufferSharedPtr pVertexBuffer =
-          mRenderOp.vertexData->getBuffer(0);
+       auto buf = mRenderOp.vertexData->getBuffer(0);
 
-       void* pBufferStart = pVertexBuffer->lock(HardwareBuffer::HBL_DISCARD);
+       void* pBufferStart = buf->lock(HardwareBuffer::HBL_DISCARD);
 
        // Here. we need to compute the position of the camera in the coordinate system of the billboard chain.
 
@@ -135,7 +134,7 @@ namespace Ogre {
            // 计算新的偏移量，因为每个循环是计算两个顶点，所以要乘以2
            void* pBase = static_cast<void*>(
               static_cast<char*>(pBufferStart) +
-              pVertexBuffer->getVertexSize() * i * 2);
+              buf->getVertexSize() * i * 2);
 
            Vector3 chainTangent;
            if (i == 0) chainTangent = mChainElementList[1].position - mChainElementList[0].position;
@@ -189,7 +188,7 @@ namespace Ogre {
            *pFloat++ = 1.0f;
        }
 
-       pVertexBuffer->unlock();
+       buf->unlock();
    }
 
    void EffectBillboardChain::_createBuffer(void)
@@ -202,12 +201,12 @@ namespace Ogre {
 
 	   mRenderOp.vertexData = new VertexData();
 	   mRenderOp.indexData = NULL;
-	   mRenderOp.vertexData->vertexCount = mCurrentNbChainElements * 2;
-	   mRenderOp.vertexData->vertexStart = 0;
+	   mRenderOp.vertexData->setVertexCount(mCurrentNbChainElements * 2);
+	
 	   mRenderOp.operationType = RenderOperation::OT_TRIANGLE_STRIP;
 	   mRenderOp.useIndexes = false;
 
-	   VertexDeclaration* decl = mRenderOp.vertexData->vertexDeclaration;
+	   VertexDeclaration* decl = mRenderOp.vertexData->getVertexDeclaration();
 
 	   // Add a description for the buffer of the positions of the vertices
        size_t offset = 0;

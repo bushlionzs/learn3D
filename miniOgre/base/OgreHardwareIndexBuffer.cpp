@@ -5,7 +5,9 @@ HardwareIndexBuffer::HardwareIndexBuffer(
     HardwareBuffer* delegate)
 {
     mDelegate.reset(delegate);
-
+    mSizeInBytes = mDelegate->getSizeInBytes();
+    mNumVerts = mDelegate->getNumVerts();
+    mVertexSize = mDelegate->getVertexSize();
 }
 
 HardwareIndexBuffer::~HardwareIndexBuffer()

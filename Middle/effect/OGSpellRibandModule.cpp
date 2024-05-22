@@ -301,9 +301,9 @@ namespace Orphigine	{
 
 			// set the vertex count that will be rendered
 			if (mUseInterpolation)
-				mRenderOp.vertexData->vertexCount = mPoints.size() * mInterpolationTimes;
+				mRenderOp.vertexData->setVertexCount(mPoints.size() * mInterpolationTimes);
 			else
-				mRenderOp.vertexData->vertexCount = mPoints.size();
+				mRenderOp.vertexData->setVertexCount(mPoints.size());
 
 			RenderSystem *pSys = Ogre::Root::getSingleton().getRenderSystem();
 
@@ -513,29 +513,26 @@ namespace Orphigine	{
 
 		mRenderOp.vertexData = new VertexData;
 
-		mRenderOp.vertexData->vertexCount = vertexCount;
-		mRenderOp.vertexData->vertexStart = 0;
+		mRenderOp.vertexData->setVertexCount(vertexCount);
+
 		// declaration
-		VertexDeclaration *decl = mRenderOp.vertexData->vertexDeclaration;
 
 		size_t offset = 0;
 
-		decl->addElement(0, 0, offset, VET_FLOAT3, VES_POSITION);
+		mRenderOp.vertexData->addElement(0, 0, offset, VET_FLOAT3, VES_POSITION);
 
 		offset += VertexElement::getTypeSize(VET_FLOAT3);
-		decl->addElement(0, 0, offset, VET_COLOUR, VES_DIFFUSE);
+		mRenderOp.vertexData->addElement(0, 0, offset, VET_COLOUR, VES_DIFFUSE);
 
 		offset += VertexElement::getTypeSize(VET_COLOUR);
-		decl->addElement(0, 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+		mRenderOp.vertexData->addElement(0, 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
 		// create the vertex buffer
-		vbuf = 
-			Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-			decl->getVertexSize(0),
-			mRenderOp.vertexData->vertexCount,
-			Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+	
 
-		mRenderOp.vertexData->setBinding(0, vbuf);
+
+		auto vertexSize = mRenderOp.vertexData->getVertexSize(0);
+		mRenderOp.vertexData->addBindBuffer(0, vertexSize, mRenderOp.vertexData->getVertexCount());
 
 		mBuffersCreated = true;
 	}

@@ -7,8 +7,8 @@ namespace Ogre
 	{
 		mVertexSize = vertexSize;
 		mNumVerts = numVerts;
-
-		mData = (char*)malloc(mVertexSize * mNumVerts);
+		mSizeInBytes = vertexSize * numVerts;
+		mData = (char*)malloc(mSizeInBytes);
 	}
 
 	MemoryBuffer::~MemoryBuffer()

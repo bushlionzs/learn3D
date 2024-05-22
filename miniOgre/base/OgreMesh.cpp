@@ -110,7 +110,7 @@ namespace Ogre {
             mVertexData->addBoneInfo(mBoneAssignments);
         }
 
-        if (mVertexData)
+        if (mVertexData && !mVertexData->empty())
         {
             auto engine = Ogre::Root::getSingleton().getEngine();
             if (engine)
@@ -165,7 +165,9 @@ namespace Ogre {
                         .bufferType(indexType)
                         .build(*engine);
 
-                    mIndexBuffer->setBuffer(*engine, { buf->lock(), buf->getSizeInBytes() });
+                    void* data = buf->lock();
+                    auto byteCount = buf->getSizeInBytes();
+                    mIndexBuffer->setBuffer(*engine, { data, buf->getSizeInBytes() });
                 }
                 
 

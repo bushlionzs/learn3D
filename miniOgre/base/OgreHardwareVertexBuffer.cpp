@@ -86,6 +86,7 @@ namespace Ogre {
     {
         mVertexSize = vertexSize;
         mNumVerts = numVerts;
+        mSizeInBytes = vertexSize * numVerts;
         mDelegate.reset(delegate);
     }
 

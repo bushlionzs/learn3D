@@ -97,14 +97,17 @@ bool TerrainFixedGrid::createGeometryData( )
 		//每层的格子数目(顶点数目)=根据材质来定的
 		for (auto im = tempMaterialBucketMap.begin(); im != tempMaterialBucketMap.end(); ++im )
 		{
-			mVertexDatas[im->second.layerIndex]->vertexCount += im->second.grids.size();
+			auto vertexCount = mVertexDatas[im->second.layerIndex]->getVertexCount();
+			mVertexDatas[im->second.layerIndex]->setVertexCount(vertexCount + im->second.grids.size());
 		}
 
 		// 创建顶点缓存
 		for ( size_t layerIndex = 0; layerIndex <VDI_LAYER_COUNT; ++layerIndex ) //根据层来创建vb
 		{
 			VertexData* vertexData = mVertexDatas[layerIndex];
-			vertexData->vertexCount *= 4;//顶点个数
+
+			auto vertexCount = vertexData->getVertexCount();
+			vertexData->setVertexCount(vertexCount * 4);//顶点个数
 
 			setVertexData(*vertexData, layerIndex, true );
 		}
@@ -117,10 +120,11 @@ bool TerrainFixedGrid::createGeometryData( )
 		{
 			pBuffer[i] = NULL;
 			VertexData* vertexData = mVertexDatas[i];
-			if (vertexData->vertexCount == 0)
+			if (vertexData->getVertexCount() == 0)
 				continue;
-			auto& back = vertexData->vertexSlotInfo.back();
-			pBuffer[i] = (float*)back.hardwareVertexBuffer->lock();
+
+			auto vb = vertexData->getBuffer(0);
+			pBuffer[i] = (float*)vb->lock();
 		}
 
 		const int lightmapGridXSize = pTerrain->getTerrainInfo()->mLightmapGridXSize;
@@ -210,10 +214,10 @@ bool TerrainFixedGrid::createGeometryData( )
 		for (size_t i = 0; i < VDI_LAYER_COUNT; ++i)
 		{
 			VertexData* vertexData = mVertexDatas[i];
-			if (vertexData->vertexCount == 0)
+			if (vertexData->getVertexCount() == 0)
 				continue;
-			auto& back = vertexData->vertexSlotInfo.back();
-			back.hardwareVertexBuffer->unlock();
+			auto vb = vertexData->getBuffer(0);
+			vb->unlock();
 		}
 		createGeometryFromData(tempMaterialBucketMap);
 
@@ -254,7 +258,7 @@ bool TerrainFixedGrid::createGeometryFromData(TempMaterialBucketMap& matMap)
 
 	for (int32_t i = 0; i < 2; i++)
 	{
-		mVertexDatas[i]->buildHardBuffer();
+		//mVertexDatas[i]->buildHardBuffer();
 	}
 
 	//每种材质创建一个renderable
@@ -331,19 +335,17 @@ void TerrainFixedGrid::setVertexData(
 {
 	static const unsigned short MAIN_BINDING = 0;
 
-	if ( vertexData.vertexCount == 0 )
+	if ( vertexData.getVertexCount() == 0)
 		return;
 
-	VertexDeclaration& vertexDeclaration = *vertexData.vertexDeclaration;
-	setVertexDeclaration( vertexDeclaration, textureLayerNumber );
+	VertexDeclaration* vertexDeclaration = vertexData.getVertexDeclaration();
 
-	vertexData.vertexStart = 0;
+	setVertexDeclaration(*vertexDeclaration, textureLayerNumber );
 
-	vertexData.vertexSlotInfo.emplace_back();
-	auto& back = vertexData.vertexSlotInfo.back();
-	back.mSlot = MAIN_BINDING;
-	back.mVertexSize = vertexDeclaration.getVertexSize( MAIN_BINDING );
-	back.createBuffer(back.mVertexSize, vertexData.vertexCount);
+	vertexData.setVertexStart(0);
+	auto vertexSize = vertexDeclaration->getVertexSize( MAIN_BINDING );
+
+	vertexData.addBindBuffer(MAIN_BINDING, vertexSize, vertexData.getVertexCount());
 }
 
 CustomRenderable* TerrainFixedGrid::addRenderable(

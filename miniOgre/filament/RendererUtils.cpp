@@ -243,7 +243,7 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                     auto* mat = r->getMaterial().get();
                     if (mat->getResourceState() == ResourceState::READY)
                     {
-                        auto mbh = mat->getMaterialBufferHandle();
+                        
 
                         r->updateBufferObject(cam);
                     }
@@ -293,7 +293,11 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
 
                             driveApi.bindUniformBuffer(0, boh);
 
-                            driveApi.bindUniformBuffer(2, boh);
+                            
+
+                            auto mbh = mat->getMaterialBufferHandle();
+
+                            driveApi.bindUniformBuffer(2, mbh);
 
                             driver.bindPipeline(pipeline);
                             driver.bindRenderPrimitive(vbh, ibh);

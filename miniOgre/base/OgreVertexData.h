@@ -23,7 +23,10 @@ public:
     ~VertexData();
     static void updateFilamentVertexBuffer(VertexBuffer* vb, VertexData* vd);
     void bind(void* cb);
-
+    bool empty()
+    {
+        return mVertexCount == 0;
+    }
     HardwareBuffer* getBuffer(int32_t index) const;
 
     uint32_t getBufferCount();

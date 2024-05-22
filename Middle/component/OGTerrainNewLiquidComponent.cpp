@@ -988,47 +988,38 @@ namespace Orphigine
 		mVertexData = new VertexData;
 	    VertexData* vertexData = mVertexData; // cache to register for optimise
 		//ÉùÃ÷
-		vertexData->vertexStart = 0;
-		vertexData->vertexCount = mVertexNum;
+	
+		vertexData->setVertexCount(mVertexNum);
 
-		VertexDeclaration* vdecl = vertexData->vertexDeclaration;
 
-		vdecl->addElement(VERTEXSTREAM_POSITION, 0, 0, VET_FLOAT3, VES_POSITION);
-		vdecl->addElement(VERTEXSTREAM_DIFFUSE, 0, 0, VET_COLOUR, VES_DIFFUSE);
-		vdecl->addElement(VERTEXSTREAM_TEXCOORD_1, 0, 0, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+		vertexData->addElement(VERTEXSTREAM_POSITION, 0, 0, VET_FLOAT3, VES_POSITION);
+		vertexData->addElement(VERTEXSTREAM_DIFFUSE, 0, 0, VET_COLOUR, VES_DIFFUSE);
+		vertexData->addElement(VERTEXSTREAM_TEXCOORD_1, 0, 0, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 		//Êý¾Ý
 		//mPositionVertexBuffer = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(VertexElement::getTypeSize(VET_FLOAT3), mVertexNum, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY);
 		//mPositionVertexBuffer->writeData(0, mVertexNum * VertexElement::getTypeSize(VET_FLOAT3), mTempPositionBuffer, true);
 		{
-			vertexData->vertexSlotInfo.emplace_back();
-			auto& back = vertexData->vertexSlotInfo.back();
-			back.mSlot = VERTEXSTREAM_POSITION;
-			back.createBuffer(VertexElement::getTypeSize(VET_FLOAT3), mVertexNum);
+
 			auto size = mVertexNum * VertexElement::getTypeSize(VET_FLOAT3);
-			Ogre::Vector3* tmp = (Ogre::Vector3*)mTempPositionBuffer;
-			back.writeData((const char*)mTempPositionBuffer, size);
+
+			vertexData->addBindBuffer(VERTEXSTREAM_POSITION, VertexElement::getTypeSize(VET_FLOAT3), mVertexNum);
+			vertexData->writeBindBufferData(VERTEXSTREAM_POSITION, (const char*)mTempPositionBuffer, size);
 		}
 		
 		//mColourVertexBuffer = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(VertexElement::getTypeSize(VET_COLOUR), mVertexNum, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY);
 		//mColourVertexBuffer->writeData(0, mVertexNum * VertexElement::getTypeSize(VET_COLOUR), mTempColourBuffer, true);
 		
 		{
-			vertexData->vertexSlotInfo.emplace_back();
-			auto& back = vertexData->vertexSlotInfo.back();
-			back.mSlot = VERTEXSTREAM_DIFFUSE;
-			back.createBuffer(VertexElement::getTypeSize(VET_COLOUR), mVertexNum);
 			auto size = mVertexNum * VertexElement::getTypeSize(VET_COLOUR);
-			back.writeData((const char*)mTempColourBuffer, size);
+			vertexData->addBindBuffer(VERTEXSTREAM_DIFFUSE, VertexElement::getTypeSize(VET_COLOUR), mVertexNum);
+			vertexData->writeBindBufferData(VERTEXSTREAM_DIFFUSE, (const char*)mTempColourBuffer, size);
 		}
 		//mTexcoordVertexBuffer = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(VertexElement::getTypeSize(VET_FLOAT2), mVertexNum, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY);
 		//mTexcoordVertexBuffer->writeData(0, mVertexNum * VertexElement::getTypeSize(VET_FLOAT2), mTempTexcoordBuffer, true);
 		{
-			vertexData->vertexSlotInfo.emplace_back();
-			auto& back = vertexData->vertexSlotInfo.back();
-			back.mSlot = VERTEXSTREAM_TEXCOORD_1;
-			back.createBuffer(VertexElement::getTypeSize(VET_FLOAT2), mVertexNum);
 			auto size = mVertexNum * VertexElement::getTypeSize(VET_FLOAT2);
-			back.writeData((const char*)mTempTexcoordBuffer, size);
+			vertexData->addBindBuffer(VERTEXSTREAM_TEXCOORD_1, VertexElement::getTypeSize(VET_FLOAT2), mVertexNum);
+			vertexData->writeBindBufferData(VERTEXSTREAM_TEXCOORD_1, (const char*)mTempTexcoordBuffer, size);
 		}
 
 		
