@@ -32,14 +32,16 @@ namespace Ogre {
         mVertexBuffer = vb;
         mIndexBuffer = ib;
 
+        auto engine = Ogre::Root::getSingleton().getEngine();
+
         if (!mRenderableObjectHandle)
         {
-            auto engine = Ogre::Root::getSingleton().getEngine();
             mRenderableObjectHandle = engine->getDriverApi().createBufferObject(
                 sizeof(ObjectConstantBuffer),
                 backend::BufferObjectBinding::UNIFORM,
                 backend::BufferUsage::DYNAMIC);
         }
+
     }
 
     void Renderable::updateBufferObject(Ogre::Camera* cam)
@@ -55,6 +57,19 @@ namespace Ogre {
 
         auto engine = Ogre::Root::getSingleton().getEngine();
         engine->getDriverApi().updateBufferObject(mRenderableObjectHandle, backend::BufferDescriptor(&mObjectBuffer, sizeof(mObjectBuffer)), 0);
+
+        if (RawData* rd = getSkinnedData())
+        {
+            
+            if (!mSkinnObjectHandle)
+            {
+                mSkinnObjectHandle = engine->getDriverApi().createBufferObject(
+                    sizeof(SkinnedConstantBuffer),
+                    backend::BufferObjectBinding::UNIFORM,
+                    backend::BufferUsage::DYNAMIC);
+            }
+            engine->getDriverApi().updateBufferObjectUnsynchronized(mSkinnObjectHandle, backend::BufferDescriptor(rd->mData, rd->mDataSize), 0);
+        }
     }
 
     uint64_t Renderable::getSortValue()

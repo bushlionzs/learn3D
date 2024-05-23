@@ -250,12 +250,17 @@ namespace Ogre {
 
         ControllerManager::getSingleton().updateAllControllers();
 
+        update(delta);
+        
+        return true;
+    }
+
+    void Root::update(float delta)
+    {
         for (auto& pair : mSceneManagerMap)
         {
             pair.second->update(delta);
         }
-        
-        return true;
     }
 
     bool Root::_fireFrameEnded()

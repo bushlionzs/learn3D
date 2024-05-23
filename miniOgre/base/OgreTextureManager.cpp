@@ -31,6 +31,8 @@ namespace Ogre {
             return filament::backend::TextureFormat::RGBA8;
         case Ogre::PF_DXT1:
             return filament::backend::TextureFormat::DXT1_RGBA;
+        case Ogre::PF_DXT3:
+            return filament::backend::TextureFormat::DXT3_RGBA;
         case Ogre::PF_DXT5:
             return filament::backend::TextureFormat::DXT5_RGBA;
         default:

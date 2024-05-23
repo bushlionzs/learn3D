@@ -83,9 +83,14 @@ namespace Ogre {
             return mIndexBuffer;
         }
 
-        backend::BufferObjectHandle getBufferObjectHandle()
+        backend::BufferObjectHandle getRenderableHandle()
         {
             return mRenderableObjectHandle;
+        }
+
+        backend::BufferObjectHandle getSkinnedHandle()
+        {
+            return mSkinnObjectHandle;
         }
 
     protected:
@@ -95,6 +100,7 @@ namespace Ogre {
         VertexBuffer* mVertexBuffer = nullptr;
         IndexBuffer* mIndexBuffer = nullptr;
         backend::BufferObjectHandle mRenderableObjectHandle;
+        backend::BufferObjectHandle mSkinnObjectHandle;
         ObjectConstantBuffer mObjectBuffer;
         Ogre::Matrix4 mModel;
 

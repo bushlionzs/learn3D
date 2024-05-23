@@ -180,7 +180,8 @@ namespace filament {
             }
             });
 
-        ASSERT_PRECONDITION(attributedBuffers.count() == mImpl->mBufferCount,
+        auto tmp = attributedBuffers.count();
+        ASSERT_PRECONDITION(tmp == mImpl->mBufferCount,
             "At least one buffer slot was never assigned to an attribute.");
 
         if (mImpl->mAdvancedSkinningEnabled) {

@@ -43,6 +43,7 @@ namespace Ogre {
 		uint64_t getNextFrameNumber();
 		uint64_t getCurrentFPS();
 		bool _fireFrameStarted();
+		void update(float delta);
 		bool _fireFrameEnded();
 		void addFrameListener(FrameListener* newListener);
 		void removeFrameListener(FrameListener* oldListener);

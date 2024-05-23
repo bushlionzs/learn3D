@@ -186,6 +186,9 @@ size_t Driver::getElementTypeSize(ElementType type) noexcept {
         case ElementType::USHORT4:  return sizeof(ushort4);
         case ElementType::INT:      return sizeof(int32_t);
         case ElementType::UINT:     return sizeof(uint32_t);
+        case ElementType::UINT2:     return sizeof(uint2);
+        case ElementType::UINT3:     return sizeof(uint3);
+        case ElementType::UINT4:     return sizeof(uint4);
         case ElementType::FLOAT:    return sizeof(float);
         case ElementType::FLOAT2:   return sizeof(float2);
         case ElementType::FLOAT3:   return sizeof(float3);
@@ -195,6 +198,7 @@ size_t Driver::getElementTypeSize(ElementType type) noexcept {
         case ElementType::HALF3:    return sizeof(half3);
         case ElementType::HALF4:    return sizeof(half4);
     }
+    assert(false);
 }
 
 // ------------------------------------------------------------------------------------------------

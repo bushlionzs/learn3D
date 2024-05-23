@@ -243,8 +243,6 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                     auto* mat = r->getMaterial().get();
                     if (mat->getResourceState() == ResourceState::READY)
                     {
-                        
-
                         r->updateBufferObject(cam);
                     }
                 }
@@ -282,22 +280,21 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                             pipeline.vertexBufferInfo = vb->getVertexBufferInfoHandle();
 
                            
-                           auto sbh = mat->getSamplerGroup();
-
-                           driveApi.bindSamplers(0, sbh);
-   
-                            
-
-                           
-                            auto boh = r->getBufferObjectHandle();
-
-                            driveApi.bindUniformBuffer(0, boh);
-
-                            
+                           auto sgh = mat->getSamplerGroup();
+                           driveApi.bindSamplers(0, sgh);
+                             
+                            auto rbh = r->getRenderableHandle();
+                            driveApi.bindUniformBuffer(0, rbh);
 
                             auto mbh = mat->getMaterialBufferHandle();
-
                             driveApi.bindUniformBuffer(2, mbh);
+
+                            auto sbh = r->getSkinnedHandle();
+                            if (sbh)
+                            {
+                                driveApi.bindUniformBuffer(3, sbh);
+                            }
+  
 
                             driver.bindPipeline(pipeline);
                             driver.bindRenderPrimitive(vbh, ibh);

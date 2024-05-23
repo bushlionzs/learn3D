@@ -11,6 +11,10 @@ namespace filament {
 			return backend::ElementType::FLOAT3;
 		case VET_FLOAT2:
 			return backend::ElementType::FLOAT2;
+		case VET_FLOAT4:
+			return backend::ElementType::FLOAT4;
+		case VET_UINT4:
+			return backend::ElementType::UINT4;
 		}
 
 		assert(false);
@@ -29,6 +33,10 @@ namespace filament {
 			return filament::VertexAttribute::COLOR;
 		case VES_TEXTURE_COORDINATES:
 			return filament::VertexAttribute::UV0;
+		case VES_BLEND_WEIGHTS:
+			return filament::VertexAttribute::BONE_WEIGHTS;
+		case VES_BLEND_INDICES:
+			return filament::VertexAttribute::BONE_INDICES;
 		}
 
 		assert(false);

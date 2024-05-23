@@ -84,9 +84,11 @@ namespace filament::backend {
         case ElementType::UBYTE4: return integer ? VK_FORMAT_R8G8B8A8_UINT : VK_FORMAT_R8G8B8A8_USCALED;
         case ElementType::SHORT4: return integer ? VK_FORMAT_R16G16B16A16_SINT : VK_FORMAT_R16G16B16A16_SSCALED;
         case ElementType::USHORT4: return integer ? VK_FORMAT_R16G16B16A16_UINT : VK_FORMAT_R16G16B16A16_USCALED;
+        case ElementType::UINT4: return VK_FORMAT_R32G32B32A32_UINT;
         case ElementType::HALF4: return VK_FORMAT_R16G16B16A16_SFLOAT;
         case ElementType::FLOAT4: return VK_FORMAT_R32G32B32A32_SFLOAT;
         }
+        assert(false);
         return VK_FORMAT_UNDEFINED;
     }
 

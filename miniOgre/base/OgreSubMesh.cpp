@@ -146,14 +146,14 @@ namespace Ogre {
                 auto bufferCount = mVertexData->getBufferCount();
                 vBuilder.vertexCount(mVertexData->getVertexCount());
                 vBuilder.bufferCount(bufferCount);
-
+                //vBuilder.advancedSkinning(true);
                 VertexDeclaration* decl = mVertexData->getVertexDeclaration();
 
                 const VertexDeclaration::VertexElementList& elist = decl->getElementList();
 
                 for (auto& e : elist)
                 {
-                    auto bufferIndex = e.getIndex();
+                    auto bufferIndex = e.getSource();
                     auto stride = decl->getVertexSize(bufferIndex);
                     auto offset = e.getOffset();
                     auto attributeType = filament::mappingOgreVertexType(e.getType());
@@ -170,7 +170,8 @@ namespace Ogre {
                     {
                         void* data = buf->lock();
                         auto byteCount = buf->getSizeInBytes();
-                        vb->setBufferAt(*engine, 0, { data, byteCount });
+                        Ogre::Vector3* tmp = (Ogre::Vector3*)data;
+                        vb->setBufferAt(*engine, i, { data, byteCount });
                     }
                 }
 
