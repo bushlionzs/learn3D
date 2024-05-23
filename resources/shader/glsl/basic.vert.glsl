@@ -5,10 +5,10 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
-layout (location = 2) in vec2 texcoord;
+layout (location = 3) in vec2 texcoord;
 #ifdef SKINNED
-    layout (location = 3) in vec3 bone_weights;
-	layout (location = 4) in uvec4 bone_indices;
+    layout (location = 6) in vec4 bone_weights;
+	layout (location = 5) in uvec4 bone_indices;
 #endif
 
 layout (location = 0) out vec4 outPosH;

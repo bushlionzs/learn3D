@@ -21,13 +21,13 @@ struct Light {
 
 #define MaxLights 16
 
-layout(binding = 0) uniform UniformBufferObject {
+layout(binding = 0, std140) uniform ObjectUniforms {
     mat4 gWorld;
     mat4 gProjector;
     mat4 gWorldViewProj;
 } cbPerObject;
 
-layout(binding = 1) uniform CBPASS {
+layout(binding = 1, std140) uniform FrameUniforms {
     mat4 gView;
     mat4 gInvView;
     mat4 gProj;
@@ -47,7 +47,7 @@ layout(binding = 1) uniform CBPASS {
 	Light gLights[MaxLights];
 } cbPass;
 #ifdef PBR
-layout(binding = 2) uniform CBMATERIAL {
+layout(binding = 2, std140) uniform MaterialUniforms {
     //some constance value;
     vec2 u_MetallicRoughnessValues;
 	float u_OcclusionStrength;
@@ -60,7 +60,7 @@ layout(binding = 2) uniform CBMATERIAL {
 	mat4 gTexTransform;
 } pbrMaterial;
 #else
-layout(binding = 2) uniform CBMATERIAL {
+layout(binding = 2, std140) uniform MaterialUniforms {
     vec4   gDiffuseAlbedo;
     vec3   gFresnelR0;
     float  gRoughness;
@@ -72,11 +72,11 @@ layout(binding = 2) uniform CBMATERIAL {
 	uint   MatPad2;
 } cbMaterial;
 #endif// PBR
-#ifdef SKINNED
-layout(binding = 5) uniform CBSKINNED {
+
+layout(binding = 3, std140) uniform SkinnedUniforms {
     mat4 gBoneTransforms[100];
 } cbSkinned;
-#endif
 
-layout (binding = 3) uniform samplerCube gCubeMap;
-layout(binding = 4) uniform sampler2D gTextureArray[6];
+
+layout(set=1, binding = 0) uniform sampler2D gTextureArray[6];
+layout (set=1, binding = 1) uniform samplerCube gCubeMap;
