@@ -48,7 +48,7 @@ namespace Ogre {
     {
         const Ogre::Matrix4& view = cam->getViewMatrix();
         const Ogre::Matrix4& proj = cam->getProjectMatrix();
-        const Ogre::Matrix4& model = mModel;
+        const Ogre::Matrix4& model = getModelMatrix();
 
 
         mObjectBuffer.world = model.transpose();

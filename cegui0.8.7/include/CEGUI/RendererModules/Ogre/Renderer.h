@@ -225,7 +225,7 @@ public:
         - false if ownership of \a tex remains with the client app, and so
         no attempt will be made to destroy \a tex when the Texture is destroyed.
     */
-    Texture& createTexture(const String& name, Ogre::TexturePtr& tex,
+    Texture& createTexture(const String& name, const String&filename,
                            bool take_ownership = false);
 
     //! set the render states for the specified BlendMode.

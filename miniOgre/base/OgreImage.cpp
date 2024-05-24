@@ -10,6 +10,7 @@
 #include "OgreResourceManager.h"
 #include "OgreMemoryStream.h"
 #include "OgreBlp.h"
+#include <platform_file.h>
 
 namespace Ogre {
 
@@ -94,6 +95,22 @@ namespace Ogre {
             break;
         }
         
+    }
+
+    bool CImage::loadImageInfo(
+        const std::string& name,
+        ImageInfo& imageInfo)
+    {
+
+        ResourceInfo*  res = ResourceManager::getSingleton().getResource(name);
+
+        std::string content;
+        get_file_content(res->_fullname.c_str(), content, 2048);
+
+        const char* data = content.c_str();
+        uint32_t byteCount = content.size();
+        backend::ImageType type = CImage::getImageType(name);
+        return CImage::loadImageInfo((const uint8_t*)data, byteCount, imageInfo, type);
     }
 
     void CImage::freeImageData(void* data)

@@ -27,7 +27,7 @@ public:
 	CEGUIManager();
 	~CEGUIManager();
 
-	bool _initialise(Ogre::RenderWindow* window);
+	bool _initialise(Ogre::RenderTarget* window);
 
 	virtual void injectMouseMove(int _absx, int _absy, int _absz);
 	virtual void injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id);
@@ -47,7 +47,7 @@ public:
 	}
 	virtual bool frameStarted(const FrameEvent& evt);
 
-	Ogre::RenderWindow* getRenderWindows()
+	Ogre::RenderTarget* getRenderWindows()
 	{
 		return mRenderWindow;
 	}
@@ -90,7 +90,7 @@ private:
 	Ogre::Viewport* mViewPort;
 	Ogre::SceneNode* mCameraNode;
 	Ogre::SceneManager* mSceneManager;
-	Ogre::RenderWindow* mRenderWindow;
+	Ogre::RenderTarget* mRenderWindow;
 	int32_t mOldAbsZ;
 
 	Ogre::String mResourceFileName;

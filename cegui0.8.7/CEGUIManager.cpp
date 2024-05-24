@@ -31,29 +31,29 @@ CEGUIManager::~CEGUIManager()
 
 }
 
-bool CEGUIManager::_initialise(Ogre::RenderWindow* window)
+bool CEGUIManager::_initialise(Ogre::RenderTarget* window)
 {
 	NOTICE_LOG("CEGUI initialise begin");
-	mRenderWindow = window;
+
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(std::string("cegui"));
 
 	mCamera = mSceneManager->createCamera("cegui_camera");
 
-	mCamera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
-	auto width = window->getWidth();
-	auto height = window->getHeight();
+	auto engine = Ogre::Root::getSingleton().getEngine();
 
 	
-
-	mCamera->setOrthoWindow(width, height);
-	Ogre::Vector3 eyePos = Ogre::Vector3(0, 0, 10);
-	mCamera->updateCamera(eyePos, Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_Y);
-
-
+	mRenderWindow = window;
+	auto width = mRenderWindow->getWidth();
+	auto height = mRenderWindow->getHeight();
 	mViewPort = mRenderWindow->addViewport(mCamera, 2);
 	mViewPort->setClearEveryFrame(false);
 
+	
 
+	mCamera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
+	mCamera->setOrthoWindow(width, height);
+	Ogre::Vector3 eyePos = Ogre::Vector3(0, 0, 10);
+	mCamera->updateCamera(eyePos, Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_Y);
 	InputManager::getSingleton().addListener(this);
 
 	Ogre::Root::getSingleton().addFrameListener(this);

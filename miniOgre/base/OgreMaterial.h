@@ -176,6 +176,11 @@ namespace Ogre {
             return mSbHandle;
         }
 
+        void setResourceState(ResourceState rs)
+        {
+            mState = rs;
+        }
+
     private:
         std::string mMaterialName;
         Ogre::Vector4 mAmbient;

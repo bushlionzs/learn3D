@@ -307,7 +307,7 @@ namespace Ogre {
             extract into, although you can use whatever format you like and the 
             results will be converted.
         */
-        virtual void copyContentsToMemory(const Box& src, const PixelBox &dst, FrameBuffer buffer = FB_AUTO) = 0;
+        virtual void copyContentsToMemory(const Box& src, const PixelBox& dst, FrameBuffer buffer = FB_AUTO) {};
 
         /** Suggests a pixel format to use for extracting the data in this target, 
             when calling copyContentsToMemory.
@@ -321,7 +321,7 @@ namespace Ogre {
             @return the name of the file used.*/
         virtual String writeContentsToTimestampedFile(const String& filenamePrefix, const String& filenameSuffix);
 
-        virtual bool requiresTextureFlipping() const = 0;
+        virtual bool requiresTextureFlipping() const { return false; }
 
         /** Utility method to notify a render target that a camera has been removed,
         in case it was referring to it as a viewer.

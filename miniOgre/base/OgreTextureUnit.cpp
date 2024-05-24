@@ -3,6 +3,7 @@
 #include "OgreTextureManager.h"
 #include "OgreControllerManager.h"
 #include "OgreMaterial.h"
+#include "OgreRoot.h"
 
 void TextureAnimationControllerValue::setValue(Ogre::Real value)
 {
@@ -52,6 +53,54 @@ void TextureUnit::setTexture(uint32_t index, std::shared_ptr<OgreTexture> tex)
     {
         mTextures[index] = tex;
     }
+}
+
+bool TextureUnit::updateTexture(uint32_t index, const std::string& texName)
+{
+    if (mNameList[index] != texName)
+    {
+        mNameList[index] = texName;
+
+        auto* engine = Ogre::Root::getSingleton().getEngine();
+
+        if (engine)
+        {
+            
+           auto [tex, result] = TextureManager::getSingleton().getOrCreateTexture(texName);
+
+           if (mResourceState == ResourceState::LOADING)
+           {
+               mFTextures[index] = tex;
+           }
+           else if (mResourceState == ResourceState::READY)
+           {
+               if (tex->isReady())
+               {
+                   mFTextures[index] = tex;
+               }
+               else
+               {
+                   mResourceState == ResourceState::LOADING;
+                   mOwner->setResourceState(ResourceState::LOADING);
+               }
+           }
+        }
+        else
+        {
+            if (mLoad)
+            {
+                mTextures[index] = TextureManager::getSingleton().load(texName, nullptr);
+            }
+            
+        }
+    }
+    else
+    {
+        int kk = 0;
+    }
+
+    return true;
+    
 }
 
 void TextureUnit::setTexture(const std::string& name, Ogre::TextureProperty* texProperty)

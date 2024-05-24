@@ -55,6 +55,13 @@ public:
 
     virtual VertexData* getVertexData();
 
+    virtual IndexData* getIndexData();
+
+    IndexDataView* getIndexView()
+    {
+        return &mIndexDataView;
+    }
+
     virtual RawDataView* getRawDataView()
     {
         return &_rd_view;
@@ -63,10 +70,14 @@ public:
 
 
     void updateRenderable(uint32_t vertexStart, uint32_t vertexCount, const Ogre::TexturePtr& tex);
+    void updateRenderable(uint32_t vertexStart, uint32_t vertexCount, const String& texName);
 private:
     OgreGeometryBuffer* _owner;
 
     RawDataView _rd_view;
+
+    IndexData* mIndexData;
+    IndexDataView mIndexDataView;
 };
 
 //! Implementation of CEGUI::GeometryBuffer for the Ogre engine
@@ -114,7 +125,7 @@ protected:
     //! set up texture related states
     void initialiseTextureStates() const;
 
-    void updateRenderable(uint32_t index, uint32_t vertexStart, uint32_t vertexCount, const Ogre::TexturePtr& tex) const;
+    void updateRenderable(uint32_t index, uint32_t vertexStart, uint32_t vertexCount, const String& name) const;
 
     //! vertex structure used internally and also by Ogre.
     struct OgreVertex
@@ -127,7 +138,7 @@ protected:
     //! type to track info for per-texture sub batches of geometry
     struct BatchInfo
     {
-        Ogre::TexturePtr texture;
+        String texName;
         uint vertexCount;
         bool clip;
     };

@@ -41,3 +41,27 @@ void IndexData::writeData(const char* data, uint32_t size)
     memcpy(indexdata, data, size);
     mIndexBuffer->unlock();
 }
+
+void IndexData::prepare()
+{
+    auto engine = Ogre::Root::getSingleton().getEngine();
+    if (engine)
+    {
+        auto buf = getIndexBuffer();
+
+        auto indexCount = buf->getNumVerts();
+        auto indexType = IndexBuffer::IndexType::USHORT;
+        if (buf->getType() == HardwareIndexBuffer::IndexType::IT_32BIT)
+        {
+            indexType = IndexBuffer::IndexType::UINT;
+        };
+
+        mFIndexBuffer = IndexBuffer::Builder()
+            .indexCount(indexCount)
+            .bufferType(indexType)
+            .build(*engine);
+
+        mFIndexBuffer->setBuffer(*engine, { buf->lock(), buf->getSizeInBytes() });
+    }
+    
+}

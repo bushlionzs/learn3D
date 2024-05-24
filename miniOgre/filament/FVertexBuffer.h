@@ -56,6 +56,11 @@ namespace filament {
 
         VertexBufferInfoHandle getVertexBufferInfoHandle() const { return mVertexBufferInfoHandle; }
 
+        BufferObjectHandle getBufferObjectHandle(uint8_t bufferIndex)
+        {
+            return mBufferObjects[bufferIndex];
+        }
+
         size_t getVertexCount() const noexcept;
 
         AttributeBitset getDeclaredAttributes() const noexcept {

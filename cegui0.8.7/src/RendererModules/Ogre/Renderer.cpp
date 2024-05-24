@@ -551,18 +551,17 @@ Texture& OgreRenderer::createRenderTexture(const String& name)
 {
     throwIfNameExists(name);
     Ogre::String tmp = name.c_str();
-    Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().getByName(tmp);
 
-    return createTexture(name, tex, false);
+    return createTexture(name, name, false);
 }
 
 //----------------------------------------------------------------------------//
-Texture& OgreRenderer::createTexture(const String& name, Ogre::TexturePtr& tex,
+Texture& OgreRenderer::createTexture(const String& name, const String& filename,
                                      bool take_ownership)
 {
     throwIfNameExists(name);
 
-    OgreTexture* t = CEGUI_NEW_AO OgreTexture(name, tex, take_ownership);
+    OgreTexture* t = CEGUI_NEW_AO OgreTexture(name, filename, take_ownership);
     d_pimpl->d_textures[name] = t;
 
     logTextureCreation(name);
@@ -681,7 +680,7 @@ OgreRenderer::OgreRenderer() :
     checkOgreInitialised();
 
     // get auto created window
-    Ogre::RenderWindow* rwnd =  CEGUIManager::getSingleton().getRenderWindows();
+    Ogre::RenderTarget* rwnd =  CEGUIManager::getSingleton().getRenderWindows();
     if (!rwnd)
         CEGUI_THROW(RendererException(
             "Ogre was not initialised to automatically create a window, you "

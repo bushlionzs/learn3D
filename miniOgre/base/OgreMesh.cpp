@@ -110,67 +110,17 @@ namespace Ogre {
             mVertexData->addBoneInfo(mBoneAssignments);
         }
 
+        auto engine = Ogre::Root::getSingleton().getEngine();
+        if (engine)
         if (mVertexData && !mVertexData->empty())
         {
-            auto engine = Ogre::Root::getSingleton().getEngine();
-            if (engine)
+            mVertexData->prepare();
+
+            mVertexBuffer = mVertexData->getVertexBuffer();    
+            if (mIndexData)
             {
-                VertexBuffer::Builder vBuilder;
-                auto vertexCount = mVertexData->getVertexCount();
-                auto bufferCount = mVertexData->getBufferCount();
-                vBuilder.vertexCount(vertexCount);
-                vBuilder.bufferCount(bufferCount);
-
-                VertexDeclaration* decl = mVertexData->getVertexDeclaration();
-
-                const VertexDeclaration::VertexElementList& elist = decl->getElementList();
-
-                for (auto& e : elist)
-                {
-                    auto bufferIndex = e.getIndex();
-                    auto stride = decl->getVertexSize(bufferIndex);
-                    auto offset = e.getOffset();
-                    auto attributeType = filament::mappingOgreVertexType(e.getType());
-                    auto attribute = filament::mappingOgreVertexAttribute(e.getSemantic());
-                    vBuilder.attribute(attribute, bufferIndex, attributeType, offset, stride);
-                }
-
-
-                mVertexBuffer = vBuilder.build(*engine);
-                for (auto i = 0; i < bufferCount; i++)
-                {
-                    auto buf = mVertexData->getBuffer(i);
-                    if (buf)
-                    {
-                        void* data = buf->lock();
-                        auto byteCount = buf->getSizeInBytes();
-                        mVertexBuffer->setBufferAt(*engine, 0, { data, byteCount });
-                    }
-                }
-
-                
-                if (mIndexData)
-                {
-                    auto buf = mIndexData->getIndexBuffer();
-
-                    auto indexCount = buf->getNumVerts();
-                    auto indexType = IndexBuffer::IndexType::USHORT;
-                    if (buf->getType() == HardwareIndexBuffer::IndexType::IT_32BIT)
-                    {
-                        indexType = IndexBuffer::IndexType::UINT;
-                    };
-
-                    mIndexBuffer = IndexBuffer::Builder()
-                        .indexCount(indexCount)
-                        .bufferType(indexType)
-                        .build(*engine);
-
-                    void* data = buf->lock();
-                    auto byteCount = buf->getSizeInBytes();
-                    mIndexBuffer->setBuffer(*engine, { data, buf->getSizeInBytes() });
-                }
-                
-
+                mIndexData->prepare();
+                mIndexBuffer = mIndexData->getFIndexBuffer();
             }
         }
         

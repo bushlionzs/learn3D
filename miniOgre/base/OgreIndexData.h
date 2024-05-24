@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filament/IndexBuffer.h>
 class HardwareIndexBuffer;
 
 
@@ -16,9 +17,14 @@ public:
 
     void createBuffer(uint32_t vertexSize, uint32_t indexCount);
     void writeData(const char* data, uint32_t size);
-
+    void prepare();
+    IndexBuffer* getFIndexBuffer()
+    {
+        return mFIndexBuffer;
+    }
 public:
     size_t mIndexStart = 0;
     size_t mIndexCount = 0;
     std::shared_ptr<HardwareIndexBuffer> mIndexBuffer;
+    IndexBuffer* mFIndexBuffer = nullptr;
 };

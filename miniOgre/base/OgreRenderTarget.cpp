@@ -44,6 +44,8 @@ namespace Ogre {
         , mAutoUpdate(true)
         , mHwGamma(false)
         , mFSAA(0)
+        ,mWidth(1024)
+        ,mHeight(768)
 #if OGRE_NO_QUAD_BUFFER_STEREO == 0
 		, mStereoEnabled(true)
 #else

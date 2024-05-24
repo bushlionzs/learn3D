@@ -20,6 +20,9 @@ namespace Ogre {
 			uint32_t byteCount, 
 			ImageInfo& imageInfo,
 			backend::ImageType type);
+		static bool loadImageInfo(
+			const std::string& name,
+			ImageInfo& imageInfo);
 		static void freeImageData(void* data);
 		bool loadImage(const std::string& name);
 		bool loadImage(const uint8_t* data, uint32_t byteCount, backend::ImageType type);

@@ -39,7 +39,6 @@
 #include <OgreMaterial.h>
 #include <OgreTextureManager.h>
 #include <OgreTextureUnit.h>
-
 #include <utils/BitmaskEnum.h>
 #include <utils/compiler.h>
 #include <utils/debug.h>
@@ -138,7 +137,7 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                 }
 
                 
-                data.color = builder.read(data.color, FrameGraphTexture::Usage::SUBPASS_INPUT);
+                //data.color = builder.read(data.color, FrameGraphTexture::Usage::SUBPASS_INPUT);
                 
 
                 // We set a "read" constraint on these attachments here because we need to preserve them
@@ -192,6 +191,9 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                         backend::BufferUsage::DYNAMIC);
                     SceneManager* sm = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
                     Ogre::Camera* camera = sm->getCamera(MAIN_CAMERA);
+
+                    sm = Ogre::Root::getSingleton().getSceneManager("cegui");
+                    camera = sm->getCamera("cegui_camera");
                     const Ogre::Matrix4& view = camera->getViewMatrix();
                     const Ogre::Matrix4& proj = camera->getProjectMatrix();
                     const Ogre::Vector3& camepos = camera->getDerivedPosition();
@@ -235,6 +237,10 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
 
                 SceneManager* sm = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
                 Ogre::Camera* cam = sm->getCamera(MAIN_CAMERA);
+
+                sm = Ogre::Root::getSingleton().getSceneManager("cegui");
+                cam = sm->getCamera("cegui_camera");
+
                 static EngineRenderList engineRenerList;
 
                 sm->getSceneRenderList(cam, engineRenerList);
@@ -300,9 +306,11 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                             driver.bindRenderPrimitive(vbh, ibh);
 
 
+                            IndexDataView* idv = r->getIndexView();
 
-                            auto indexCount = r->getIndexBuffer()->getIndexCount();
-                            driver.draw2(0, indexCount, 1);
+                            //auto indexCount = r->getIndexBuffer()->getIndexCount();
+
+                            driver.draw2(idv->mIndexLocation, idv->mIndexCount, 1);
                         }
                         else
                         {

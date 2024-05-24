@@ -64,12 +64,46 @@ namespace CEGUI
         mMaterial->setWriteDepth(false);
         mMaterial->setDepthTest(false);
         mMaterial->setCullMode(Ogre::CULL_NONE);
-        mMaterial->preLoad();
+        //mMaterial->load(nullptr);
+
+        VertexData* vd = _owner->getVertexData();
+        vd->prepare();
+
+        auto vb = vd->getVertexBuffer();
+
+        uint32_t indexCount = 2048;
+
+        std::vector<uint16_t> indexs(indexCount);
+
+        for (uint32_t i = 0; i < indexCount; i++)
+        {
+            indexs[i] = i;
+        }
+        mIndexData = new IndexData;
+        mIndexData->createBuffer(2, indexCount);
+        mIndexData->writeData((const char*)indexs.data(), indexs.size());
+        mIndexData->prepare();
+
+        mIndexDataView.mBaseVertexLocation = 0;
+
+        auto ib = mIndexData->getFIndexBuffer();
+
+        if (vb)
+        {
+            updateBuffer(vb, ib);
+        }
+        
     }
 
     VertexData* CEGUIRenderable::getVertexData()
     {
         return _owner->getVertexData();
+    }
+
+    IndexData* CEGUIRenderable::getIndexData()
+    {
+        //return nullptr;
+        return mIndexData;
     }
 
     const Ogre::Matrix4& CEGUIRenderable::getModelMatrix()
@@ -90,6 +124,22 @@ namespace CEGUI
             mMaterial->setChanged(true);
         }
         
+    }
+
+    void CEGUIRenderable::updateRenderable(uint32_t vertexStart, uint32_t vertexCount, const String& texName)
+    {
+        _rd_view.mVertexStart = vertexStart;
+        _rd_view.mVertexCount = vertexCount;
+
+        mIndexDataView.mIndexCount = vertexCount;
+        mIndexDataView.mIndexLocation = vertexStart;
+
+        auto& tu = mMaterial->getTextureUnit(0);
+
+        std::string tmp(texName.c_str());
+        tu->updateTexture(0, tmp);
+        mMaterial->setChanged(true);
+      
     }
 
 //----------------------------------------------------------------------------//
@@ -209,7 +259,7 @@ void OgreGeometryBuffer::draw() const
             d_renderOp.vertexData->setVertexCount(i->vertexCount);
 
  
-            updateRenderable(index++, pos, i->vertexCount, i->texture);
+            updateRenderable(index++, pos, i->vertexCount, i->texName);
 
 
             if (i->vertexCount == 54)
@@ -278,15 +328,15 @@ void OgreGeometryBuffer::appendGeometry(const Vertex* const vbuff,
                                         uint vertex_count)
 {
     // see if we should start a new batch
-    Ogre::TexturePtr t;
+    const char* current = "";
     if (d_activeTexture)
-        t = d_activeTexture->getOgreTexture();
+        current = d_activeTexture->getTextureFileName();
 
     if (d_batches.empty() ||
-        d_batches.back().texture != t ||
+        d_batches.back().texName != current ||
         d_batches.back().clip != d_clippingActive)
     {
-        const BatchInfo batch = {t, 0, d_clippingActive};
+        const BatchInfo batch = { current, 0, d_clippingActive};
         d_batches.push_back(batch);
     }
 
@@ -418,11 +468,11 @@ void OgreGeometryBuffer::syncHardwareBuffer() const
     // copy vertex data into hw buffer
     if (required_size > 0)
     {
-        std::memcpy(hwBuffer->lock(Ogre::HardwareVertexBuffer::HBL_DISCARD),
+        /*std::memcpy(hwBuffer->lock(Ogre::HardwareVertexBuffer::HBL_DISCARD),
                     &d_vertices[0], sizeof(OgreVertex) * d_vertices.size());
-        hwBuffer->unlock();
+        hwBuffer->unlock();*/
 
-        
+        d_renderOp.vertexData->writeBindBufferData(0, (const char*) & d_vertices[0], sizeof(OgreVertex) * d_vertices.size(), true);
     }
 
     d_sync = true;
@@ -443,7 +493,7 @@ void OgreGeometryBuffer::initialiseTextureStates() const
 
 }
 
-void OgreGeometryBuffer::updateRenderable(uint32_t index, uint32_t vertexStart, uint32_t vertexCount, const Ogre::TexturePtr& tex) const
+void OgreGeometryBuffer::updateRenderable(uint32_t index, uint32_t vertexStart, uint32_t vertexCount, const String& name) const
 {
     CEGUIRenderable* r = nullptr;
     if (index >= d_Renderables.size())
@@ -456,7 +506,7 @@ void OgreGeometryBuffer::updateRenderable(uint32_t index, uint32_t vertexStart, 
         r = d_Renderables[index];
     }
 
-    r->updateRenderable(vertexStart, vertexCount, tex);
+    r->updateRenderable(vertexStart, vertexCount, name);
 }
 
 //----------------------------------------------------------------------------//

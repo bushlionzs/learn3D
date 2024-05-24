@@ -32,6 +32,7 @@
 #include <OgreTextureManager.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreRoot.h>
+#include <OgreImage.h>
 
 // Start of CEGUI namespace section
 namespace CEGUI
@@ -81,7 +82,7 @@ OgreTexture::OgreTexture(const String& name) :
     d_texelScaling(0, 0),
     d_name(name)
 {
-    createEmptyOgreTexture();
+    d_tex_name = "white1x1.dds";
 }
 
 //----------------------------------------------------------------------------//
@@ -93,8 +94,15 @@ OgreTexture::OgreTexture(const String& name, const String& filename,
     d_texelScaling(0, 0),
     d_name(name)
 {
-    createEmptyOgreTexture();
-    loadFromFile(filename, resourceGroup);
+    d_tex_name = filename;
+    ImageInfo imageInfo;
+    CImage::loadImageInfo(std::string(filename.c_str()), imageInfo);
+
+    d_size.d_width = imageInfo.width;
+    d_size.d_height = imageInfo.height;
+    d_dataSize = d_size;
+
+    updateCachedScaleValues();
 }
 
 //----------------------------------------------------------------------------//
@@ -105,7 +113,7 @@ OgreTexture::OgreTexture(const String& name, const Sizef& sz) :
     d_texelScaling(0, 0),
     d_name(name)
 {
-    createEmptyOgreTexture();
+    d_tex_name = "white1x1.dds";
 
     // throw exception if no texture was able to be created
     if (!d_texture)
@@ -119,7 +127,7 @@ OgreTexture::OgreTexture(const String& name, const Sizef& sz) :
 }
 
 //----------------------------------------------------------------------------//
-OgreTexture::OgreTexture(const String& name, Ogre::TexturePtr& tex,
+OgreTexture::OgreTexture(const String& name, const String& filename,
                          bool take_ownership) :
     d_isLinked(false),
     d_size(0, 0),
@@ -127,7 +135,7 @@ OgreTexture::OgreTexture(const String& name, Ogre::TexturePtr& tex,
     d_texelScaling(0, 0),
     d_name(name)
 {
-    setOgreTexture(tex, take_ownership);
+    d_tex_name = filename;
 }
 
 //----------------------------------------------------------------------------//
@@ -363,20 +371,6 @@ Texture::PixelFormat OgreTexture::fromOgrePixelFormat(
     }
 }
 
-//----------------------------------------------------------------------------//
-void OgreTexture::createEmptyOgreTexture()
-{
-    // try to create a Ogre::Texture with given dimensions
-
-    TextureProperty tex;
-    tex._tex_format = Ogre::PF_A8B8G8R8;
-    tex._tex_usage = TU_DYNAMIC_WRITE_ONLY;
-    tex._width = 1;
-    tex._height = 1;
-    d_texture = Ogre::TextureManager::getSingleton().createManual(
-        getUniqueName(), tex
-        );
-}
 
 
 //----------------------------------------------------------------------------//

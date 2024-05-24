@@ -42,7 +42,10 @@ public:
     void setOgreTexture(Ogre::TexturePtr texture, bool take_ownership = false);
     //! Return Ogre::TexturePtr for the underlying Ogre texture.
     Ogre::TexturePtr getOgreTexture() const;
-
+    const char* getTextureFileName()
+    {
+        return d_tex_name.c_str();
+    }
     //! return a Ogre::string containing a unique name.
     static Ogre::String getUniqueName();
 
@@ -69,7 +72,7 @@ protected:
     friend Texture& OgreRenderer::createTexture(const String&, const String&,
                                                 const String&);
     friend Texture& OgreRenderer::createTexture(const String&, const Sizef&);
-    friend Texture& OgreRenderer::createTexture(const String&, Ogre::TexturePtr&,
+    friend Texture& OgreRenderer::createTexture(const String&, const String&,
                                                 bool);
     friend void OgreRenderer::destroyTexture(Texture&);
     friend void OgreRenderer::destroyTexture(const String&);
@@ -82,13 +85,11 @@ protected:
     //! construct texture with a specified initial size.
     OgreTexture(const String& name, const Sizef& sz);
     //! construct texture from existing Ogre texture.
-    OgreTexture(const String& name, Ogre::TexturePtr& tex, bool take_ownership);
+    OgreTexture(const String& name, const String& filename, bool take_ownership);
 
 
     //! destructor.
     virtual ~OgreTexture();
-    //! construct an empty texture
-    void createEmptyOgreTexture();
     //! release the underlying Ogre texture.
     void freeOgreTexture();
     //! updates cached scale value used to map pixels to texture co-ords.
@@ -108,6 +109,8 @@ protected:
     Vector2f d_texelScaling;
     //! Name this texture was created with.
     const String d_name;
+
+    String d_tex_name;
 };
 
 } // End of  CEGUI namespace section

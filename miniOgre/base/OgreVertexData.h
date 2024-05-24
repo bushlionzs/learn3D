@@ -65,13 +65,21 @@ public:
     void addBindBuffer(uint32_t binding, uint32_t vertexSize, uint32_t vertexCount);
     void updateBindBuffer(uint32_t binding, uint32_t vertexCount);
     void addBoneInfo(std::vector<VertexBoneAssignment>& assignInfoList);
-    void writeBindBufferData(uint32_t binding, const char* data, uint32_t size);
+    void writeBindBufferData(uint32_t binding, const char* data, uint32_t size, bool writeGPU = false);
 
     int32_t getUnusedBinding();
+
+    void prepare();
+    
+    VertexBuffer* getVertexBuffer()
+    {
+        return mVertexBuffer;
+    }
+
 private:
     uint32_t mVertexStart = 0;
     uint32_t mVertexCount = 0;
     VertexDeclaration* vertexDeclaration = nullptr;
     std::array<VertexSlotInfo, 5> vertexSlotInfo;
-
+    VertexBuffer* mVertexBuffer = nullptr;
 };
