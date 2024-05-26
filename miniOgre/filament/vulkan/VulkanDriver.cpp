@@ -1683,6 +1683,7 @@ namespace filament::backend {
             }
             VulkanTexture* texture = mResourceAllocator.handle_cast<VulkanTexture*>(boundSampler->t);
 
+
             // TODO: can this uninitialized check be checked in a higher layer?
             // This fallback path is very flaky because the dummy texture might not have
             // matching characteristics. (e.g. if the missing texture is a 3D texture)

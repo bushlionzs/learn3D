@@ -9,5 +9,5 @@ layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    outColor = texture(gTextureArray[0], outTexC);
+    outColor = texture(first, outTexC);
 }

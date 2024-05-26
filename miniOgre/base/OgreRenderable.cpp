@@ -33,15 +33,16 @@ namespace Ogre {
         mIndexBuffer = ib;
 
         auto engine = Ogre::Root::getSingleton().getEngine();
-
-        if (!mRenderableObjectHandle)
+        if (engine)
         {
-            mRenderableObjectHandle = engine->getDriverApi().createBufferObject(
-                sizeof(ObjectConstantBuffer),
-                backend::BufferObjectBinding::UNIFORM,
-                backend::BufferUsage::DYNAMIC);
+            if (!mRenderableObjectHandle)
+            {
+                mRenderableObjectHandle = engine->getDriverApi().createBufferObject(
+                    sizeof(ObjectConstantBuffer),
+                    backend::BufferObjectBinding::UNIFORM,
+                    backend::BufferUsage::DYNAMIC);
+            }
         }
-
     }
 
     void Renderable::updateBufferObject(Ogre::Camera* cam)

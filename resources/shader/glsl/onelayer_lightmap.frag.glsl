@@ -12,8 +12,8 @@ layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    vec4 basetex = texture(gTextureArray[0], outTexC);
-	vec4 basetex2 = texture(gTextureArray[1], outTexC2).rrrr;
+    vec4 basetex = texture(first, outTexC);
+	vec4 basetex2 = texture(second, outTexC2).rrrr;
 	
 	vec3 BlendColor = basetex2.rgb * basetex.rgb;
 	outColor =  vec4(BlendColor, 1.0);

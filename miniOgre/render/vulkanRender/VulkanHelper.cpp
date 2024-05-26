@@ -806,17 +806,26 @@ void VulkanHelper::setupDescriptorSetLayout()
     {
         std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings =
         {
-            // Binding 4 : Fragment shader image sampler
+            // Binding 0 : Fragment shader image sampler
             vks::initializers::descriptorSetLayoutBinding(
                 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                 VK_SHADER_STAGE_FRAGMENT_BIT,
-                0,
-                VULKAN_TEXTURE_COUNT),
-            // Binding 3 : Fragment shader image sampler
+                0),
+            // Binding 1 : Fragment shader image sampler
             vks::initializers::descriptorSetLayoutBinding(
                 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                 VK_SHADER_STAGE_FRAGMENT_BIT,
-                1)
+                1),
+            // Binding 1 : Fragment shader image sampler
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                2),
+            // Binding 1 : Fragment shader image sampler
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                3)
             
         };
 

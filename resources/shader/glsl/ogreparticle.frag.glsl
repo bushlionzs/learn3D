@@ -8,7 +8,7 @@ layout (location = 1) in vec2 inTexC;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    vec4 tex1 = texture(gTextureArray[0], inTexC);
+    vec4 tex1 = texture(first, inTexC);
 	if(tex1.a - 0.9 < 0)
 	{
 	    discard;

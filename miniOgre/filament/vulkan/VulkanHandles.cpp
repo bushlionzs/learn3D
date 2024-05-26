@@ -225,7 +225,8 @@ namespace filament::backend {
         for (uint8_t groupInd = 0; groupInd < Program::SAMPLER_BINDING_COUNT; groupInd++) {
             auto const& group = groupInfo[groupInd];
             auto const& samplers = group.samplers;
-            for (size_t i = 0; i < samplers.size(); ++i) {
+            auto samplerSize = samplers.size();
+            for (size_t i = 0; i < samplerSize; ++i) {
                 uint32_t const binding = samplers[i].binding;
                 bindingToSamplerIndex[binding] = (groupInd << 8) | (0xff & i);
                 assert_invariant(bindings.find(binding) == bindings.end());

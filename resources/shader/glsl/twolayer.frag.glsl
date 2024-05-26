@@ -10,8 +10,8 @@ layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    vec4 basetex = texture(gTextureArray[0], outTexC);
-	vec4 basetex2 = texture(gTextureArray[1], outTexC2);
+    vec4 basetex = texture(first, outTexC);
+	vec4 basetex2 = texture(second, outTexC2);
 	
 	vec3 TexColor = mix(basetex.rgb, basetex2.rgb, basetex.a);
 	outColor =  vec4(TexColor, 1.0);

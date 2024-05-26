@@ -120,9 +120,9 @@ layout (location = 7) in vec4 rotMatrix3;
 layout(location = 0) out vec4 outColor;
 void main()
 {
-	vec3 normal1 = 2.0 * texture(gTextureArray[0], oBumpCoord1).xyz - vec3(1.0);
-	vec3 normal2 = 2.0 * texture(gTextureArray[0], oBumpCoord2).xyz - vec3(1.0);
-	vec3 normal3 = 2.0 * texture(gTextureArray[0], oBumpCoord3).xyz - vec3(1.0);
+	vec3 normal1 = 2.0 * texture(first, oBumpCoord1).xyz - vec3(1.0);
+	vec3 normal2 = 2.0 * texture(first, oBumpCoord2).xyz - vec3(1.0);
+	vec3 normal3 = 2.0 * texture(first, oBumpCoord3).xyz - vec3(1.0);
 	vec3 adjustNormal = normalize(normal1 + normal1 + normal2);
 	
 	mat3 m;

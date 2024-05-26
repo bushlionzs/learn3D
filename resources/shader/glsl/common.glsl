@@ -78,5 +78,8 @@ layout(binding = 3, std140) uniform SkinnedUniforms {
 } cbSkinned;
 
 
-layout(set=1, binding = 0) uniform sampler2D gTextureArray[6];
-layout (set=1, binding = 1) uniform samplerCube gCubeMap;
+layout(set=1, binding = 0) uniform sampler2D first;
+layout (set=1, binding = 1) uniform sampler2D second;
+layout (set=1, binding = 2) uniform sampler2D third;
+
+layout (set=1, binding = 3) uniform samplerCube gCubeMap;

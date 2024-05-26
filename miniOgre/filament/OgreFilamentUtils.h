@@ -8,7 +8,7 @@ namespace filament {
 
 	backend::ElementType mappingOgreVertexType(VertexElementType type);
 
-	filament::VertexAttribute mappingOgreVertexAttribute(VertexElementSemantic semantic);
+	filament::VertexAttribute mappingOgreVertexAttribute(VertexElementSemantic semantic, uint32_t index = 0);
 
 	backend::TextureFormat mappingOgreTextureFormat(Ogre::PixelFormat format);
 }

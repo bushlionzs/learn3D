@@ -227,34 +227,49 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
     materialDescriptor.offset = materialInfo._offset;
     materialDescriptor.range = sizeof(MaterialConstantBuffer);
 
+    /*auto descriptorSet = _frameRenderableData[0].mDescriptorSet;
+    auto descriptorSetSampler = _frameRenderableData[0].mDescriptorSetSampler;*/
+
+    auto descriptorSet = current.mDescriptorSet;
+    auto descriptorSetSampler = current.mDescriptorSetSampler;
+
     std::vector<VkWriteDescriptorSet> writeDescriptorSets =
     {
         // Binding 0 : Vertex shader uniform buffer
         vks::initializers::writeDescriptorSet(
-            current.mDescriptorSet,
+            descriptorSet,
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             0,
             &bufferDescriptor),
         // Binding 1 : Vertex shader uniform buffer
         vks::initializers::writeDescriptorSet(
-            current.mDescriptorSet,
+            descriptorSet,
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             1,
             &frameDescriptor),
         //Bind 2:
         vks::initializers::writeDescriptorSet(
-            current.mDescriptorSet,
+            descriptorSet,
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             2,
-            &materialDescriptor),
-        // Binding 4 : Fragment shader texture sampler
-        vks::initializers::writeDescriptorSet(
-            current.mDescriptorSetSampler,
-            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            0,
-            textureDescriptors.data(),
-            textureDescriptors.size())
+            &materialDescriptor)
     };
+
+    if (!textureDescriptors.empty())
+    {
+        auto descriptor = textureDescriptors.data();
+
+        for (uint32_t i = 0; i < 3; i++)
+        {
+            writeDescriptorSets.push_back(vks::initializers::writeDescriptorSet(
+                descriptorSetSampler,
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                i,
+                descriptor + i,
+                1));
+        }
+        
+    }
 
     if (current.mSkinnedDesc._vkObjectIndex > 0)
     {
@@ -266,7 +281,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
 
         // Binding 3 : Vertex shader uniform buffer
         writeDescriptorSets.push_back(vks::initializers::writeDescriptorSet(
-            current.mDescriptorSet,
+            descriptorSet,
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             3,
             &skinDescriptor));
@@ -275,9 +290,9 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
     if (!textureDescriptors3d.empty())
     {
         writeDescriptorSets.push_back(vks::initializers::writeDescriptorSet(
-            current.mDescriptorSetSampler,
+            descriptorSetSampler,
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            1,
+            3,
             textureDescriptors3d.data(),
             textureDescriptors3d.size()));
     }

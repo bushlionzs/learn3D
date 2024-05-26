@@ -137,25 +137,31 @@ namespace Ogre {
             p.uniformBlockBindings(uniformBlockBindings);
             std::array<backend::Program::Sampler, backend::MAX_SAMPLER_COUNT> samplers{};
 
-            samplers[0] = {"gTextureArray", 0};
+            samplers[0] = {"first", 0};
+            samplers[1] = { "second", 1 };
+            samplers[2] = { "third", 2 };
 
-            p.setSamplerGroup(0, backend::ShaderStageFlags::FRAGMENT, samplers.data(), 1);
+            p.setSamplerGroup(0, backend::ShaderStageFlags::FRAGMENT, samplers.data(), mTextureUnits.size());
 
-            mSamplerGroup = backend::SamplerGroup(1);
+            mSamplerGroup = backend::SamplerGroup(mTextureUnits.size());
 
             mSbHandle = engine->getDriverApi().createSamplerGroup(
                 mSamplerGroup.getSize(), utils::FixedSizeString<32>(mMaterialName.c_str()));
 
-            backend::SamplerDescriptor sd;
-            FTexture* ftex = (FTexture*)mTextureUnits[0]->getFTexture();
-            sd.t = ftex->getHwHandle();
-            sd.s.filterMag = filament::backend::SamplerMagFilter::LINEAR;
-            sd.s.filterMin = filament::backend::SamplerMinFilter::LINEAR;
-            sd.s.wrapR = filament::backend::SamplerWrapMode::REPEAT;
-            sd.s.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-            sd.s.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-        
-            mSamplerGroup.setSampler(0, sd);
+            for (uint32_t i = 0; i < mTextureUnits.size(); i++)
+            {
+                backend::SamplerDescriptor sd;
+                FTexture* ftex = (FTexture*)mTextureUnits[i]->getFTexture();
+                sd.t = ftex->getHwHandle();
+                sd.s.filterMag = filament::backend::SamplerMagFilter::LINEAR;
+                sd.s.filterMin = filament::backend::SamplerMinFilter::LINEAR;
+                sd.s.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+                sd.s.wrapS = filament::backend::SamplerWrapMode::REPEAT;
+                sd.s.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+
+                mSamplerGroup.setSampler(i, sd);
+            }
+            
 
             engine->getDriverApi().updateSamplerGroup(mSbHandle, mSamplerGroup.toBufferDescriptor(engine->getDriverApi()));
             

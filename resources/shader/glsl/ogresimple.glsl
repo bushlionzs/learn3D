@@ -28,7 +28,7 @@ layout (location = 0) in vec2 outTexC;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-	outColor = texture(gTextureArray[0], outTexC);
+	outColor = texture(first, outTexC);
     //outColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	if(outColor.a < 0.5f)
 	{

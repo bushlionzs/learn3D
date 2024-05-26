@@ -5,7 +5,7 @@
 
 
 layout (location = 0) in vec3 position;
-layout (location = 1) in vec4 color_diffuse;
+layout (location = 2) in vec4 color_diffuse;
 
 
 layout (location = 0) out vec4 color;
@@ -42,7 +42,7 @@ void main() {
 	{
 	    vec4 tmp = cbMaterial.gTexTransform *vec4(ProjTex, 0.0f, 1.0f);
 		ProjTex = tmp.xy;
-		outColor = texture(gTextureArray[0], ProjTex);
+		outColor = texture(first, ProjTex);
 	}
 	
 	if(outColor.a < 0.5f)

@@ -24,7 +24,7 @@ namespace filament {
 		return backend::ElementType::FLOAT3;
 	}
 
-	filament::VertexAttribute mappingOgreVertexAttribute(VertexElementSemantic semantic)
+	filament::VertexAttribute mappingOgreVertexAttribute(VertexElementSemantic semantic, uint32_t index)
 	{
 		switch (semantic)
 		{
@@ -35,7 +35,21 @@ namespace filament {
 		case VES_COLOUR:
 			return filament::VertexAttribute::COLOR;
 		case VES_TEXTURE_COORDINATES:
-			return filament::VertexAttribute::UV0;
+		{
+			if (index == 0)
+			{
+				return filament::VertexAttribute::UV0;
+			}
+			else if (index == 1)
+			{
+				return filament::VertexAttribute::UV1;
+			}
+			else
+			{
+				return filament::VertexAttribute::CUSTOM0;
+			}
+		}
+			
 		case VES_BLEND_WEIGHTS:
 			return filament::VertexAttribute::BONE_WEIGHTS;
 		case VES_BLEND_INDICES:

@@ -58,14 +58,18 @@ material myrect
 		{
 			lighting off
 			cull_hardware none
-			shader ogresimple
+			shader ogreblend
 			texture_unit
 			{
-				//texture bricks.dds
-				texture aa.dds
+				texture bricks.dds
 				//texture awesomeface.png
 				//scroll_anim 0 -0.9
 				//rotate_anim 1.2
+				tex_address_mode clamp
+			}
+			texture_unit
+			{
+				texture awesomeface.png
 				tex_address_mode clamp
 			}
 		}
