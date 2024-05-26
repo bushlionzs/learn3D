@@ -8,6 +8,7 @@
 #include <filament/engine.h>
 #include <filament/FTexture.h>
 #include <filament/DriverApi.h>
+#include <filament/OgreFilamentUtils.h>
 #include <utils/JobSystem.h>
 
 
@@ -23,23 +24,7 @@ namespace Ogre {
 
     }
 
-    backend::TextureFormat getFilamentTextureFormat(Ogre::PixelFormat format)
-    {
-        switch (format)
-        {
-        case Ogre::PF_BYTE_RGBA:
-            return filament::backend::TextureFormat::RGBA8;
-        case Ogre::PF_DXT1:
-            return filament::backend::TextureFormat::DXT1_RGBA;
-        case Ogre::PF_DXT3:
-            return filament::backend::TextureFormat::DXT3_RGBA;
-        case Ogre::PF_DXT5:
-            return filament::backend::TextureFormat::DXT5_RGBA;
-        default:
-            assert(false);
-            return filament::backend::TextureFormat::RGBA8;
-        }
-    }
+    
     std::shared_ptr<OgreTexture> TextureManager::load(
         const std::string& name, 
         TextureProperty* texProperty,
@@ -88,6 +73,17 @@ namespace Ogre {
         return std::shared_ptr<OgreTexture>(tmp);
     }
 
+    bool TextureManager::addTexture(const String& name, Texture* tex)
+    {
+        if (auto iter = mTextureCache.find(name); iter != mTextureCache.end())
+        {
+            assert(false);
+            return false;
+        }
+        mTextureCache[name] = tex;
+        return true;
+    }
+
     std::pair<Texture*, CacheResult> TextureManager::getOrCreateTexture(const String& name)
     {
         if (auto iter = mTextureCache.find(name); iter != mTextureCache.end())
@@ -112,7 +108,7 @@ namespace Ogre {
         Ogre::ImageInfo imageInfo;
         CImage::loadImageInfo(data, bytecount, imageInfo, type);
 
-        auto filamentFormat = getFilamentTextureFormat(imageInfo.format);
+        auto filamentFormat = mappingOgreTextureFormat(imageInfo.format);
         Texture* texture = Texture::Builder()
             .width(imageInfo.width)
             .height(imageInfo.height)
@@ -147,6 +143,8 @@ namespace Ogre {
             });
 
         js->runAndRetain(info->decoderJob);
+
+        mTextureCache[name] = texture;
         return { texture, CacheResult::MISS };
     }
 
@@ -161,6 +159,32 @@ namespace Ogre {
         }
 
         return std::shared_ptr<OgreTexture>();
+    }
+
+    bool TextureManager::getImageInfo(const String& name, ImageInfo& info)
+    {
+        auto engine = Ogre::Root::getSingleton().getEngine();
+        if (engine)
+        {
+            if (auto iter = mTextureCache.find(name); iter != mTextureCache.end())
+            {
+                info.width = iter->second->getWidth();
+                info.height = iter->second->getHeight();
+                return true;
+            }
+            return false;
+        }
+        else
+        {
+            auto it = mTexMap.find(name);
+            if (it != mTexMap.end())
+            {
+                info.width = it->second->getWidth();
+                info.height = it->second->getHeight();
+                return true;
+            }
+            return false;
+        }
     }
 
     void TextureManager::remove(const std::string& name)

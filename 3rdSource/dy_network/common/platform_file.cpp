@@ -8,7 +8,7 @@
 #ifdef _WIN32
 #include <tchar.h>
 #endif
-bool get_file_content(const char* filename, std::string& content)
+bool get_file_content(const char* filename, std::string& content, uint32_t part)
 {
     FILE* fp = fopen(filename, "rb");
     if (NULL == fp)
@@ -22,6 +22,11 @@ bool get_file_content(const char* filename, std::string& content)
     {
         fclose(fp);
         return false;
+    }
+
+    if (part > 0)
+    {
+        size = std::min(size, part);
     }
     fseek(fp, 0, SEEK_SET);
     char* mem = (char*)malloc(size);

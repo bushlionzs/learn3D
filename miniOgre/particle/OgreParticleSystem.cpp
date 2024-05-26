@@ -1146,7 +1146,6 @@ namespace Ogre {
             mRenderer->_notifyParticleQuota(mParticlePool.size());
             mRenderer->_notifyAttached(mParent, false);
             mRenderer->_notifyDefaultDimensions(mDefaultWidth, mDefaultHeight);
-            mMaterial->load(nullptr);
             mRenderer->_setMaterial(mMaterial);
             mRenderer->setKeepParticlesInLocalSpace(mLocalSpace);
             mIsRendererConfigured = true;

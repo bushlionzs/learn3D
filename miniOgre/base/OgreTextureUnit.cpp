@@ -243,11 +243,14 @@ void TextureUnit::_unload()
 
 void TextureUnit::updateResourceState()
 {
+    
     if (mResourceState == ResourceState::LOADING)
     {
         bool ready = true;
-        for (auto tex : mFTextures)
+        for (auto i = 0; i < mFTextures.size(); i++)
         {
+            auto tex = mFTextures[i];
+            
             if (!tex->isReady())
             {
                 ready = false;

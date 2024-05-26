@@ -49,10 +49,8 @@ bool ApplicationBase::appInit()
 	
 	HWND wnd = mApplicationWindow->getWnd();
 	InputManager::getSingletonPtr()->createInput((size_t)wnd);
-
-	bluevk::initialize();
 	
-	new Ogre::Root;
+	new Ogre::Root();
 	Ogre::Root::getSingleton()._initialise();
 
 	EngineType type = getEngineType();

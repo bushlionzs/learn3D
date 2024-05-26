@@ -40,8 +40,11 @@ namespace Ogre {
             bool hwGammaCorrection = false);
 
         std::pair<Texture*, CacheResult> getOrCreateTexture(const String& name);
+        bool addTexture(const String& name, Texture* tex);
         void remove(const std::string& name);
         std::shared_ptr<OgreTexture> getByName(const String& name, const String& group = BLANKSTRING) const;
+
+        bool getImageInfo(const String& name, ImageInfo& info);
 
         virtual TexturePtr createManual(const String& name, TextureProperty& texProperty);
 

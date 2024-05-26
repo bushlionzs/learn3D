@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-bool get_file_content(const char* filename, std::string& content);
+bool get_file_content(const char* filename, std::string& content, uint32_t part = 0);
 bool save_file_content(const char* filename, const std::string& content);
 bool save_file_content(const char* filename, const char* data, uint32_t size);
 

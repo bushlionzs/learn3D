@@ -22,7 +22,7 @@
 #include "ResourceList.h"
 #include "Allocators.h"
 #include "filament/RendererBase.h"
-#include "filament/RenderTargetBase.h"
+#include "filament/RenderTarget.h"
 #include "filament/VertexBuffer.h"
 #include "filament/IndexBuffer.h"
 #include "filament/BufferObject.h"

@@ -277,7 +277,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
         writeDescriptorSets.push_back(vks::initializers::writeDescriptorSet(
             current.mDescriptorSetSampler,
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            3,
+            1,
             textureDescriptors3d.data(),
             textureDescriptors3d.size()));
     }

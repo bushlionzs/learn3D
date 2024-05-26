@@ -4,24 +4,22 @@
 #include "OgreParticleSystem.h"
 #include "myutils.h"
 #include "OgreResourceManager.h"
-#include "SelfEquipWindow.h"
-#include "PackageWindow.h"
+
 #include "OgreViewport.h"
-#include "MyGUIManager.h"
+
 #include "OgreTextureManager.h"
 #include "OgreMaterialManager.h"
 #include "OgreRenderTexture.h"
 #include "OgreCamera.h"
 #include "role.h"
-#include "PackageWindow.h"
-#include "mytestWindow.h"
+#include "application_util.h"
 #include <CEGUI/InputEvent.h>
 #include <CEGUI/widgets/DragContainer.h>
 #include <CEGUI/CEGUI.h>
 
 #include <platform_file.h>
 #include <OgreRoot.h>
-#include "application_util.h"
+
 #include "GameTableManager.h"
 #include "ToolTip.h"
 
@@ -361,7 +359,7 @@ bool GameUI::handle_ButtonClick(const CEGUI::EventArgs& args)
 {
     CEGUI::Window* wnd = mSelfEquip->getChildRecursive("SelfEquip_0");
 
-    GameItemData itemInfo;
+    ItemData itemInfo;
     static uint32_t itemId = 10010020;
     if (itemId == 10010020)
     {
@@ -402,7 +400,6 @@ void GameUI::PackageDemo()
 {
     mGUIContext = CEGUIManager::getSingleton().getGUIContext();
 
-    ImageManager::getSingleton().loadImageset("cjsh.imageset");
     auto* root = WindowManager::getSingleton().loadLayoutFromFile("Package.xml");
     FontManager& fontManager(FontManager::getSingleton());
     CEGUI::Font& font(fontManager.createFromFile("simhei24.font"));
@@ -487,11 +484,7 @@ void GameUI::MultiDemo()
 
 void GameUI::ToolTipDemo()
 {
-   
-    
-    auto aa = new ToolTip;
-
-    aa->show(0);
+  
 }
 
 void GameUI::MainMenuDemo()

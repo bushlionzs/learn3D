@@ -261,12 +261,7 @@ void OgreGeometryBuffer::draw() const
  
             updateRenderable(index++, pos, i->vertexCount, i->texName);
 
-
-            if (i->vertexCount == 54)
-            {
-                int kk = 0;
-            }
-
+            
             pos += i->vertexCount;
             
         }
@@ -504,6 +499,11 @@ void OgreGeometryBuffer::updateRenderable(uint32_t index, uint32_t vertexStart, 
     else
     {
         r = d_Renderables[index];
+    }
+
+    if (name == "RenderToTexture")
+    {
+        int kk = 0;
     }
 
     r->updateRenderable(vertexStart, vertexCount, name);

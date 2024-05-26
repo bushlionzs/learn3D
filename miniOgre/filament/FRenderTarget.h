@@ -21,7 +21,7 @@
 
 #include <filament/Handle.h>
 
-#include <filament/RenderTargetBase.h>
+#include <filament/RenderTarget.h>
 
 #include <utils/compiler.h>
 

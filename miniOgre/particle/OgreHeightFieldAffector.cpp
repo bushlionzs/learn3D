@@ -36,7 +36,7 @@ namespace Ogre
 		}
 
 		SceneManager* tmpManager = NULL;
-		tmpManager = Root::getSingleton().getSceneManager("OrphigineMainScene");
+		tmpManager = Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
 		if(NULL != tmpManager)
 			m_rayQuery = tmpManager->createRayQuery(Ray());
 	}

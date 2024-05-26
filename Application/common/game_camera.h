@@ -4,7 +4,7 @@
 class GameCamera: public InputListener
 {
 private:
-    Camera* mCamera = nullptr;
+    Ogre::Camera* mCamera = nullptr;
     SceneManager* mSceneMgr = nullptr;
 
     Real  mYaw = 0.0f;
@@ -44,10 +44,10 @@ private:
     Real mSpeed = 500.0f;
 
 public:
-    GameCamera(Camera* camera, SceneManager* sceneMgr);
+    GameCamera(Ogre::Camera* camera, SceneManager* sceneMgr);
 
     Ogre::String getCameraString();
-    Camera* getCamera()
+    Ogre::Camera* getCamera()
     {
         return mCamera;
     }

@@ -70,7 +70,7 @@ public:
     int32_t getUnusedBinding();
 
     void prepare();
-    
+    void upload(uint32_t binding, uint32_t vertexCount);
     VertexBuffer* getVertexBuffer()
     {
         return mVertexBuffer;

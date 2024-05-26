@@ -9,7 +9,7 @@ namespace Orphigine
 		, mData(0)
 	{
 
-		mSceneManager = Ogre::Root::getSingletonPtr()->getSceneManager(std::string("main"));
+		mSceneManager = Ogre::Root::getSingletonPtr()->getSceneManager(MAIN_SCENE_MANAGER);
 	}
 	//-----------------------------------------------------------------------
 	Actor::~Actor()

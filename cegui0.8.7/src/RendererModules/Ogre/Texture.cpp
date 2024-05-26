@@ -114,14 +114,11 @@ OgreTexture::OgreTexture(const String& name, const Sizef& sz) :
     d_name(name)
 {
     d_tex_name = "white1x1.dds";
+    std::string aa = name.c_str();
 
-    // throw exception if no texture was able to be created
-    if (!d_texture)
-        CEGUI_THROW(RendererException(
-            "Failed to create Texture object with spcecified size."));
     
-    d_size.d_width = d_texture->getWidth();
-    d_size.d_height = d_texture->getHeight();
+    d_size.d_width = sz.d_width;
+    d_size.d_height = sz.d_height;
     d_dataSize = sz;
     updateCachedScaleValues();
 }
@@ -136,6 +133,17 @@ OgreTexture::OgreTexture(const String& name, const String& filename,
     d_name(name)
 {
     d_tex_name = filename;
+
+    ImageInfo imageInfo;
+    bool b = Ogre::TextureManager::getSingleton().getImageInfo(filename.c_str(), imageInfo);
+    assert(b);
+
+    d_size.d_width = imageInfo.width;
+    d_size.d_height = imageInfo.height;
+    d_dataSize = d_size;
+
+    updateCachedScaleValues();
+
 }
 
 //----------------------------------------------------------------------------//
@@ -204,22 +212,29 @@ void OgreTexture::loadFromMemory(const void* buffer, const Sizef& buffer_size,
     const Ogre::PixelBox* pixelBox = new Ogre::PixelBox(buffer_size.d_width, buffer_size.d_height,
                                                        1, toOgrePixelFormat(pixel_format), bufferCopy);
 
-    d_texture->freeInternalResources();
-    d_texture->setWidth(buffer_size.d_width);
-    d_texture->setHeight(buffer_size.d_height);
-   // d_texture->setDepth(1);zhousha
-    d_texture->createInternalResources();
-    d_texture->getBuffer(0,0).get()->blitFromMemory(*pixelBox);
-    d_texture->postLoad();
-    // throw exception if no texture was able to be created
-    if (!d_texture)
-        CEGUI_THROW(RendererException(
-            "Failed to blit to Texture from memory."));
+    std::string name = d_tex_name.c_str();
 
-    d_size.d_width = d_texture->getWidth();
-    d_size.d_height = d_texture->getHeight();
-    d_dataSize = buffer_size;
-    updateCachedScaleValues();
+    auto tex = TextureManager::getSingleton().getByName(name);
+    if (tex)
+    {
+        tex->freeInternalResources();
+        tex->setWidth(buffer_size.d_width);
+        tex->setHeight(buffer_size.d_height);
+        tex->createInternalResources();
+        tex->getBuffer(0, 0).get()->blitFromMemory(*pixelBox);
+        tex->postLoad();
+        d_size.d_width = tex->getWidth();
+        d_size.d_height = tex->getHeight();
+        d_dataSize = buffer_size;
+        updateCachedScaleValues();
+    }
+
+    //// throw exception if no texture was able to be created
+    //if (!tex)
+    //    CEGUI_THROW(RendererException(
+    //        "Failed to blit to Texture from memory."));
+
+    
 }
 
 //----------------------------------------------------------------------------//

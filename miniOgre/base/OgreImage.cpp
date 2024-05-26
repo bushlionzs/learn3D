@@ -77,7 +77,7 @@ namespace Ogre {
             }
             else if (numComponents == 2)
             {
-                imageInfo.format = Ogre::PF_BYTE_LA;
+                imageInfo.format = Ogre::PF_BYTE_RGBA;
             }
             else if (numComponents == 1)
             {
@@ -135,10 +135,6 @@ namespace Ogre {
             blp = true;
         }
 
-        if (name == "mousecursor.png")
-        {
-            int kk = 0;
-        }
         std::shared_ptr<DataStream> stream 
             = ResourceManager::getSingleton().openResource(name);
 
@@ -190,7 +186,7 @@ namespace Ogre {
             }
             else if (nrComponents == 2)
             {
-                mImageInfo.format = Ogre::PF_BYTE_LA;
+                mImageInfo.format = Ogre::PF_BYTE_RGBA;
             }
             else if (nrComponents == 1)
             {
@@ -244,6 +240,17 @@ namespace Ogre {
             else if (nrComponents == 2)
             {
                 mImageInfo.format = Ogre::PF_BYTE_LA;
+                uint32_t size = calculateSize(mImageInfo);
+                stbi_uc* tmp = (stbi_uc*)malloc(size * 2);
+                for (uint32_t i = 0; i < size/2; i++)
+                {
+                    tmp[i*4] = tmp[i*4 + 1] = tmp[i*4 + 2] = imagedata[i*2];
+                    tmp[i*4 + 3] = imagedata[i*2 + 1];
+                }
+
+                free(imagedata);
+                imagedata = tmp;
+                mImageInfo.format = Ogre::PF_BYTE_RGBA;
             }
             else if (nrComponents == 1)
             {

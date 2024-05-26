@@ -841,7 +841,7 @@ bool Terrain::createTileRenderInstance(int32_t tileIndex)
 	int tileWidth = std::min(width - tileX, tileSize);
 	int tileHeight = std::min(height - tileZ, tileSize);
 
-	auto mgr = Ogre::Root::getSingletonPtr()->getSceneManager(std::string("main"));
+	auto mgr = Ogre::Root::getSingletonPtr()->getSceneManager(MAIN_SCENE_MANAGER);
 
 	TerrainFixedGrid* pTile = new TerrainFixedGrid(
 		mgr->getRoot(), 

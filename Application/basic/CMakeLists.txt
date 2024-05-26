@@ -7,6 +7,7 @@ if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D__WINDOWS__)
+add_definitions(-DCEGUI_STATIC)
 endif()
 
 

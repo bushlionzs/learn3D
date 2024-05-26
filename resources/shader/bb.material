@@ -61,7 +61,8 @@ material myrect
 			shader ogresimple
 			texture_unit
 			{
-				texture bricks.dds
+				//texture bricks.dds
+				texture aa.dds
 				//texture awesomeface.png
 				//scroll_anim 0 -0.9
 				//rotate_anim 1.2

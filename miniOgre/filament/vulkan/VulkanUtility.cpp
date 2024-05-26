@@ -28,6 +28,10 @@ namespace filament::backend {
 
     VkFormat getVkFormat(ElementType type, bool normalized, bool integer) {
         using ElementType = ElementType;
+        if (type == ElementType::UBYTE4)
+        {
+            normalized = true;
+        }
         if (normalized) {
             switch (type) {
                 // Single Component Types
@@ -110,6 +114,7 @@ namespace filament::backend {
         case TextureFormat::RG8_SNORM:         return VK_FORMAT_R8G8_SNORM;
         case TextureFormat::RG8UI:             return VK_FORMAT_R8G8_UINT;
         case TextureFormat::RG8I:              return VK_FORMAT_R8G8_SINT;
+        case TextureFormat::BYTE_LA:           return VK_FORMAT_R8G8B8A8_UNORM;
         case TextureFormat::RGB565:            return VK_FORMAT_R5G6B5_UNORM_PACK16;
         case TextureFormat::RGB5_A1:           return VK_FORMAT_R5G5B5A1_UNORM_PACK16;
         case TextureFormat::RGBA4:             return VK_FORMAT_R4G4B4A4_UNORM_PACK16;

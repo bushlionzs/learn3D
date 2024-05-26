@@ -263,4 +263,19 @@ void VertexData::prepare()
     }
 }
 
+void VertexData::upload(uint32_t binding, uint32_t vertexCount)
+{
+    auto engine = Ogre::Root::getSingleton().getEngine();
+    if (engine)
+    {
+        filament::FVertexBuffer* vb = (filament::FVertexBuffer*)mVertexBuffer;
+
+        auto buf = vertexSlotInfo[binding].hardwareVertexBuffer.get();
+        const char* data = (const char*)buf->lock();
+
+        auto byteCount = vertexCount * vertexSlotInfo[binding].mVertexSize;
+        engine->getDriverApi().updateBufferObjectUnsynchronized(vb->getBufferObjectHandle(binding), { data, byteCount }, 0);
+    }
+}
+
 

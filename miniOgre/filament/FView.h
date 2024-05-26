@@ -27,7 +27,7 @@
 
 
 #include <filament/DriverApi.h>
-#include <filament/RenderTarget.h>
+#include <filament/FRenderTarget.h>
 #include <filament/Handle.h>
 
 #include <utils/compiler.h>

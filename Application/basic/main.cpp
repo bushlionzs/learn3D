@@ -3,27 +3,39 @@
 #include "basic.h"
 #include "platform_log.h"
 #include "SimpleApp.h"
-#include <backend/Engine.h>
+#include <filament/Engine.h>
 
 using namespace filament;
 using namespace filament::backend;
-
+using namespace CEGUI;
 int main()
 {
 	platform_log_init();
 
-	CoInitialize(NULL);
-	/*Basic app;
-	app.appInit();
-	app.run();*/
+	bool use_filament = true;
 
-	SimpleApp app;
+	if (use_filament)
+	{
+		SimpleApp app;
+		auto setup = [&app](Engine* engine) {
+			engine->getJobSystem();
 
-	auto setup = [&app](Engine* engine) {
-		};
-	auto cleanup = [&app](Engine* engine) {
-		};
-	app.run(setup, cleanup);
+			};
+		auto cleanup = [&app](Engine* engine) {
+			};
+		app.run(setup, cleanup);
+	}
+	else
+	{
+		Basic app;
+		app.appInit();
+		app.run();
+	}
+	
+
+	
+
+	
 	return 0;
 }
 

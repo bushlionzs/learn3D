@@ -24,13 +24,18 @@ bool Basic::appInit()
 {
 	ApplicationBase::appInit();
 
-	base1();
+	base4();
 	return true;
 }
 
 void Basic::appUpdate(float delta)
 {
 	ApplicationBase::appUpdate(delta);
+
+	if (mAnimationState)
+	{
+		mAnimationState->addTime(delta);
+	}
 }
 
 EngineType Basic::getEngineType()
@@ -58,6 +63,7 @@ void Basic::base1()
 	std::string meshName = "myrect";
 	
 	auto mesh = MeshManager::getSingletonPtr()->createRect(
+		nullptr,
 		meshName,
 		leftop, leftbottom, righttop, rightbottom, normal);
 	Entity* rect = mSceneManager->createEntity("rect", meshName);
@@ -67,7 +73,7 @@ void Basic::base1()
 	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
 
 	mGameCamera->setDistance(3.0f);
-	mGameCamera->setMoveSpeed(25.0f);
+	mGameCamera->setMoveSpeed(5);
 }
 
 void Basic::base2()
@@ -125,5 +131,29 @@ void Basic::base3()
 
 	mGameCamera->setDistance(2.0f);
 
+	mGameCamera->setMoveSpeed(25.0f);
+}
+
+void Basic::base4()
+{
+	std::string meshname = "ÃÉ¹Å¹ó×åÅ®_03.mesh";
+	auto mesh = MeshManager::getSingletonPtr()->load(meshname);
+
+	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
+
+	Entity* gltf = mSceneManager->createEntity("gltf", meshname);
+	SceneNode* gltfnode = root->createChildSceneNode("gltf");
+	gltfnode->updatechildren();
+	gltfnode->attachObject(gltf);
+
+	mAnimationState = gltf->getAnimationState(std::string("ÐÝÏÐ04_02"));
+	if (mAnimationState)
+	{
+		mAnimationState->setEnabled(true);
+		mAnimationState->setLoop(true);
+	}
+
+	mGameCamera->setHeight(300.0f);
+	mGameCamera->setDistance(500);
 	mGameCamera->setMoveSpeed(25.0f);
 }

@@ -591,7 +591,7 @@ namespace filament::backend {
 
         // 16-bits per element
         R16F, R16UI, R16I,
-        RG8, RG8_SNORM, RG8UI, RG8I,
+        RG8, RG8_SNORM, RG8UI, RG8I,BYTE_LA,
         RGB565,
         RGB9_E5, // 9995 is actually 32 bpp but it's here for historical reasons.
         RGB5_A1,

@@ -15,6 +15,9 @@ namespace filament {
 			return backend::ElementType::FLOAT4;
 		case VET_UINT4:
 			return backend::ElementType::UINT4;
+		case VET_UBYTE4_NORM:
+			return backend::ElementType::UBYTE4;
+			break;
 		}
 
 		assert(false);
@@ -41,5 +44,25 @@ namespace filament {
 
 		assert(false);
 		return filament::VertexAttribute::POSITION;
+	}
+
+	backend::TextureFormat mappingOgreTextureFormat(Ogre::PixelFormat format)
+	{
+		switch (format)
+		{
+		case Ogre::PF_BYTE_RGBA:
+			return filament::backend::TextureFormat::RGBA8;
+		case Ogre::PF_DXT1:
+			return filament::backend::TextureFormat::DXT1_RGBA;
+		case Ogre::PF_DXT3:
+			return filament::backend::TextureFormat::DXT3_RGBA;
+		case Ogre::PF_DXT5:
+			return filament::backend::TextureFormat::DXT5_RGBA;
+		case Ogre::PF_BYTE_LA:
+			return filament::backend::TextureFormat::BYTE_LA;
+		default:
+			assert(false);
+			return filament::backend::TextureFormat::RGBA8;
+		}
 	}
 }

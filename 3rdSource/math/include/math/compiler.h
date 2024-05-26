@@ -29,9 +29,9 @@
 #undef min
 #endif
 
-#ifdef far
-#undef far
-#endif
+//#ifdef far
+//#undef far
+//#endif
 
 #ifdef near
 #undef near
