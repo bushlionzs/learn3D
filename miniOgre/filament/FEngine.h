@@ -323,6 +323,7 @@ namespace filament {
         ResourceList<FBufferObject> mBufferObjects{ "BufferObject" };
         ResourceList<FVertexBuffer> mVertexBuffers{ "VertexBuffer" };
         ResourceList<FIndexBuffer> mIndexBuffers{ "IndexBuffer" };
+        ResourceList<FRenderTarget> mTargets{ "Target" };
         ResourceList<FTexture> mTextures{ "Texture" };
         utils::Mutex mFenceListLock;
 

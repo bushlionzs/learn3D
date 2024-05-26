@@ -28,8 +28,8 @@ Engine* Renderer::getEngine() noexcept {
     return &downcast(this)->getEngine();
 }
 
-void Renderer::render(View const* view) {
-    downcast(this)->render(downcast(view));
+void Renderer::render(View const* view, PassCallback cb) {
+    downcast(this)->render(downcast(view), cb);
 }
 
 void Renderer::setPresentationTime(int64_t monotonic_clock_ns) {

@@ -20,7 +20,8 @@
 #define TNT_FILAMENT_RENDERER_H
 
 #include <filament/FilamentAPI.h>
-
+#include <fg/FrameGraphId.h>
+#include <fg/FrameGraphTexture.h>
 #include <utils/compiler.h>
 
 #include <filament/PresentCallable.h>
@@ -29,6 +30,7 @@
 #include <math/vec4.h>
 
 #include <stdint.h>
+#include <functional>
 
 namespace filament {
 
@@ -36,8 +38,12 @@ class Engine;
 class RenderTarget;
 class SwapChain;
 class View;
+class FView;
 class Viewport;
+class FrameGraph;
+class FrameGraphTexture;
 
+using PassCallback = std::function< FrameGraphId<FrameGraphTexture> (FrameGraph& fg, Engine& engine, FView& view)>;
 namespace backend {
 class PixelBufferDescriptor;
 } // namespace backend
@@ -203,6 +209,7 @@ public:
      */
     using CopyFrameFlag = uint32_t;
 
+    
     /**
      * Indicates that the dstSwapChain passed into copyFrame() should be
      * committed after the frame has been copied.
@@ -338,7 +345,7 @@ public:
      * beginFrame(), endFrame(), View
      *
      */
-    void render(View const* view);
+    void render(View const* view, PassCallback cb);
 
     /**
      * Copy the currently rendered view to the indicated swap chain, using the

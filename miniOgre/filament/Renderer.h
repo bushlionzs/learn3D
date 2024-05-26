@@ -84,7 +84,7 @@ public:
     void endFrame();
 
     // render a view. must be called between beginFrame/enfFrame.
-    void render(FView const* view);
+    void render(FView const* view, PassCallback cb);
 
     // read pixel from the current swapchain. must be called between beginFrame/enfFrame.
     void readPixels(uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height,
@@ -160,8 +160,8 @@ private:
         return mCommandsHighWatermark;
     }
 
-    void renderInternal(FView const* view);
-    void renderJob(ArenaScope& arena, FView& view);
+    void renderInternal(FView const* view, PassCallback cb);
+    void renderJob(ArenaScope& arena, FView& view, PassCallback cb);
 
     // keep a reference to our engine
     FEngine& mEngine;

@@ -35,7 +35,6 @@
 #include <math/fast.h>
 
 #include <memory>
-
 using namespace utils;
 
 namespace filament {
@@ -102,14 +101,19 @@ void FView::prepareViewport(
 }
 
 
-void FView::commitUniforms(backend::DriverApi& driver) const noexcept
+void FView::commitUniforms(backend::DriverApi& driver, const char* data, uint32_t byteCount)const noexcept
 {
+    if (!mFrameHandle)
+    {
+        mFrameHandle = driver.createBufferObject(byteCount,
+            backend::BufferObjectBinding::UNIFORM,
+            backend::BufferUsage::DYNAMIC);
+    }
 
+   
+    driver.updateBufferObjectUnsynchronized(mFrameHandle, backend::BufferDescriptor(data, byteCount), 0);
+    driver.bindUniformBuffer(1, mFrameHandle);
 }
-
-
-
-
 
 void FView::executePickingQueries(backend::DriverApi& driver,
         backend::RenderTargetHandle handle, float scale) noexcept {

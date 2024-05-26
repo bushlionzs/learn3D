@@ -25,6 +25,7 @@
 #include <filament/FIndexBuffer.h>
 #include <filament/FBufferObject.h>
 #include <filament/FTexture.h>
+#include <filament/RenderTarget.h>
 #include <VulkanPlatform.h>
 #include <utils/compiler.h>
 #include <utils/debug.h>
@@ -459,6 +460,11 @@ namespace filament {
             mRenderers.insert(p);
         }
         return p;
+    }
+
+    FRenderTarget* FEngine::createRenderTarget(const RenderTarget::Builder& builder) noexcept
+    {
+        return create(mTargets, builder);
     }
 
     FTexture* FEngine::createTexture(const Texture::Builder& builder) noexcept

@@ -378,13 +378,13 @@ void FRenderer::renderStandaloneView(FView const* view) {
                 1'000'000'000.0 / mDisplayInfo.refreshRate),
             mFrameId);
 
-        renderInternal(view);
+        renderInternal(view, nullptr);
 
         driver.endFrame(mFrameId);
     }
 }
 
-void FRenderer::render(FView const* view) {
+void FRenderer::render(FView const* view, PassCallback cb) {
     SYSTRACE_CALL();
 
     assert_invariant(mSwapChain);
@@ -402,12 +402,12 @@ void FRenderer::render(FView const* view) {
             // and we're about to render another one.
             mEngine.getDriverApi().flush();
         }
-        renderInternal(view);
+        renderInternal(view, cb);
         mViewRenderedCount++;
     }
 }
 
-void FRenderer::renderInternal(FView const* view) {
+void FRenderer::renderInternal(FView const* view, PassCallback cb) {
     // per-renderpass data
     ArenaScope rootArena(mPerRenderPassArena);
 
@@ -418,7 +418,7 @@ void FRenderer::renderInternal(FView const* view) {
     auto *rootJob = js.setRootJob(js.createJob());
 
     // execute the render pass
-    renderJob(rootArena, const_cast<FView&>(*view));
+    renderJob(rootArena, const_cast<FView&>(*view), cb);
 
     // make sure to flush the command buffer
     engine.flush();
@@ -427,7 +427,7 @@ void FRenderer::renderInternal(FView const* view) {
     js.runAndWait(rootJob);
 }
 
-void FRenderer::renderJob(ArenaScope& arena, FView& view) {
+void FRenderer::renderJob(ArenaScope& arena, FView& view, PassCallback cb) {
     FEngine& engine = mEngine;
     JobSystem& js = engine.getJobSystem();
     FEngine::DriverApi& driver = engine.getDriverApi();
@@ -496,8 +496,8 @@ void FRenderer::renderJob(ArenaScope& arena, FView& view) {
             .height = config.physicalViewport.height,
             .format = config.hdrFormat
     };
-    auto colorPassOutput = RendererUtils::colorPass(fg, "Color Pass", mEngine, view, colorBufferDesc, config);
-
+    //auto colorPassOutput = RendererUtils::colorPass(fg, "Color Pass", mEngine, view, colorBufferDesc, config);
+    auto colorPassOutput = cb(fg, mEngine, view);
     FrameGraphId<FrameGraphTexture> input = colorPassOutput;
     auto& blackboard = fg.getBlackboard();
 
@@ -507,7 +507,7 @@ void FRenderer::renderJob(ArenaScope& arena, FView& view) {
 
     fg.compile();
 
-   // fg.export_graphviz(slog.d, view.getName());
+    //fg.export_graphviz(slog.d, view.getName());
 
     fg.execute(driver);
 

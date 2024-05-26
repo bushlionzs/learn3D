@@ -175,25 +175,19 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                 view.prepareViewport(static_cast<filament::Viewport&>(out.params.viewport),
                         config.logicalViewport);
 
-                view.commitUniforms(driver);
+                
 
                 // TODO: this should be a parameter of FrameGraphRenderPass::Descriptor
                 out.params.clearStencil = 0.0f;
                 out.params.clearDepth = 1.0f;
                 out.params.flags.clear = TargetBufferFlags::COLOR | TargetBufferFlags::DEPTH_AND_STENCIL;
 
-                static backend::BufferObjectHandle frameHandle;
-                static FrameConstantBuffer frameBuffer;
-                if (!frameHandle)
+                FrameConstantBuffer frameBuffer;
+
                 {
-                    frameHandle = engine.getDriverApi().createBufferObject(sizeof(FrameConstantBuffer),
-                        backend::BufferObjectBinding::UNIFORM,
-                        backend::BufferUsage::DYNAMIC);
                     SceneManager* sm = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
                     Ogre::Camera* camera = sm->getCamera(MAIN_CAMERA);
 
-                    sm = Ogre::Root::getSingleton().getSceneManager("cegui");
-                    camera = sm->getCamera("cegui_camera");
                     const Ogre::Matrix4& view = camera->getViewMatrix();
                     const Ogre::Matrix4& proj = camera->getProjectMatrix();
                     const Ogre::Vector3& camepos = camera->getDerivedPosition();
@@ -228,18 +222,15 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                 }
 
                 
+                view.commitUniforms(driver, (const char*)& frameBuffer, sizeof(FrameConstantBuffer));
 
-                engine.getDriverApi().updateBufferObject(frameHandle, backend::BufferDescriptor(&frameBuffer, sizeof(FrameConstantBuffer)), 0);
                 
-                engine.getDriverApi().bindUniformBuffer(1, frameHandle);
-
-                Ogre::TextureManager::getSingleton().updateTextures();
 
                 SceneManager* sm = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
                 Ogre::Camera* cam = sm->getCamera(MAIN_CAMERA);
 
-                sm = Ogre::Root::getSingleton().getSceneManager("cegui");
-                cam = sm->getCamera("cegui_camera");
+                /*sm = Ogre::Root::getSingleton().getSceneManager("cegui");
+                cam = sm->getCamera("cegui_camera");*/
 
                 static EngineRenderList engineRenerList;
 

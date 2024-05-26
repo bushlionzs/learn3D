@@ -125,7 +125,7 @@ public:
     void prepareShadowMapping(bool highPrecision) const noexcept;
 
     void cleanupRenderPasses() const noexcept;
-    void commitUniforms(backend::DriverApi& driver) const noexcept;
+    void commitUniforms(backend::DriverApi& driver, const char* data, uint32_t byteCount) const noexcept;
     void commitFroxels(backend::DriverApi& driverApi) const noexcept;
 
 
@@ -278,6 +278,7 @@ private:
     backend::Handle<backend::HwBufferObject> mLightUbh;
     backend::Handle<backend::HwBufferObject> mRenderableUbh;
 
+    mutable backend::BufferObjectHandle mFrameHandle;
     FScene* mScene = nullptr;
     
 

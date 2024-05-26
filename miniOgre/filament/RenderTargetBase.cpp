@@ -16,7 +16,7 @@
 
 #include "filament/RenderTarget.h"
 
-//#include "details/Texture.h"
+#include "filament/Texture.h"
 
 namespace filament {
 

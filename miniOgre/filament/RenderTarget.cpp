@@ -18,11 +18,11 @@
 
 #include "filament/FEngine.h"
 
-
+#include "filament/FTexture.h"
 
 
 #include <utils/Panic.h>
-#include <filament/RenderTargetBase.h>
+
 
 
 namespace filament {
@@ -45,7 +45,7 @@ BuilderType::Builder& BuilderType::Builder::operator=(BuilderType::Builder const
 BuilderType::Builder& BuilderType::Builder::operator=(BuilderType::Builder&& rhs) noexcept = default;
 
 RenderTarget::Builder& RenderTarget::Builder::texture(AttachmentPoint pt, Texture* texture) noexcept {
-    //mImpl->mAttachments[(size_t)pt].texture = downcast(texture);
+    mImpl->mAttachments[(size_t)pt].texture = downcast(texture);
     return *this;
 }
 
