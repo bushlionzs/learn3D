@@ -35,3 +35,8 @@ const Ogre::Matrix4& CustomRenderable::getModelMatrix()
 {
     return mLocal;
 }
+
+void CustomRenderable::prepare()
+{
+    Renderable::prepare(mVertexData, mIndexData);
+}

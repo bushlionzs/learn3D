@@ -401,10 +401,7 @@ bool EngineManager::axisCheckValid(GAME_AXIS_TYPE typeSource, const Ogre::Vector
 
 	case GAT_SCREEN:
 	{
-		auto rs = Ogre::Root::getSingleton().getRenderSystem();
-
-		auto vp = rs->_getViewport();
-		auto rect = vp->getActualDimensions();
+		auto rect = Ogre::Root::getSingleton().getMainRect();
 
 		POINT pt;
 

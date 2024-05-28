@@ -615,6 +615,8 @@ void VulkanHelper::setupSwapChain()
         }
     }
 
+    swapchainPresentMode = VK_PRESENT_MODE_MAILBOX_KHR;
+
     uint32_t desiredNumberOfSwapchainImages = surfCaps.minImageCount + 1;
 
     if ((surfCaps.maxImageCount > 0) && (desiredNumberOfSwapchainImages > surfCaps.maxImageCount))

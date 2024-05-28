@@ -142,7 +142,8 @@ bool TerrainFixedGrid::createGeometryData( )
 			if ( pFloat == NULL )
 				continue;
 
-			
+			Ogre::Vector3 v;
+			std::pair<Real, Real> t;
 			for (auto igrid = mb->grids.begin(); igrid != mb->grids.end(); ++igrid )//遍历每个Grid
 			{
 				size_t grid = *igrid;
@@ -154,8 +155,7 @@ bool TerrainFixedGrid::createGeometryData( )
 				//每个Grid有4个顶点
 				for (size_t i = 0; i < 4; ++i)
 				{
-					Ogre::Vector3 v;
-					std::pair<Real, Real> t;
+					
 					TerrainInfo::AreaVertexEnum corner = corners[i];
 
 					// position
@@ -356,6 +356,7 @@ CustomRenderable* TerrainFixedGrid::addRenderable(
 	CustomRenderable* renderable = new CustomRenderable(&vertexData, mTerrain->getIndexData());
 	renderable->setMaterial(mat);
 	mRenderables.push_back( renderable );
+	renderable->prepare();
 	return renderable;
 }
 

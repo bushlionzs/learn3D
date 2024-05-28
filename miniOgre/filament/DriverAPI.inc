@@ -513,7 +513,8 @@ DECL_DRIVER_API_N(bindRenderPrimitive,
 DECL_DRIVER_API_N(draw2,
         uint32_t, indexOffset,
         uint32_t, indexCount,
-        uint32_t, instanceCount)
+        uint32_t, instanceCount,
+        uint32_t, vertexOffset)
 
 DECL_DRIVER_API_N(draw,
         backend::PipelineState, state,
@@ -521,7 +522,8 @@ DECL_DRIVER_API_N(draw,
         backend::IndexBufferHandle, ibh,
         uint32_t, indexOffset,
         uint32_t, indexCount,
-        uint32_t, instanceCount)
+        uint32_t, instanceCount,
+        uint32_t, vertexOffset)
 
 
 DECL_DRIVER_API_N(dispatchCompute,

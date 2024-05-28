@@ -93,6 +93,8 @@ namespace Ogre {
             return mSkinnObjectHandle;
         }
 
+        void prepare(VertexData* vd, IndexData* id);
+
     protected:
         std::shared_ptr<Material> mMaterial;
         RenderableData* mRenderableData = nullptr;

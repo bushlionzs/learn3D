@@ -151,8 +151,8 @@ VkPipeline VulkanShader::getVKPipeline(Ogre::Renderable* r)
         blendAttachmentState.srcColorBlendFactor = VulkanMappings::get(blendState.sourceFactor, false);
         blendAttachmentState.dstColorBlendFactor = VulkanMappings::get(blendState.destFactor, false);
         blendAttachmentState.colorBlendOp = VulkanMappings::get(blendState.operation);
-        blendAttachmentState.srcAlphaBlendFactor = VulkanMappings::get(blendState.sourceFactor, true);
-        blendAttachmentState.dstAlphaBlendFactor = VulkanMappings::get(blendState.destFactor, true);
+        blendAttachmentState.srcAlphaBlendFactor = VulkanMappings::get(blendState.sourceFactorAlpha, true);
+        blendAttachmentState.dstAlphaBlendFactor = VulkanMappings::get(blendState.destFactorAlpha, true);
         blendAttachmentState.alphaBlendOp = VulkanMappings::get(blendState.alphaOperation);
     }
 

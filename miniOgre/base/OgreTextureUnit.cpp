@@ -184,7 +184,7 @@ void TextureUnit::_load(utils::JobSystem::Job* job)
         mTextures.reserve(mNameList.size());
         for (auto& name : mNameList)
         {
-            auto [texture, cacheResult] = TextureManager::getSingletonPtr()->getOrCreateTexture(name);
+            auto [texture, cacheResult] = TextureManager::getSingletonPtr()->getOrCreateTexture(name, mTextureProperty._texType == TEX_TYPE_CUBE_MAP);
             mFTextures.push_back(texture);
         }
         

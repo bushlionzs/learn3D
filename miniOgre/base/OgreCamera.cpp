@@ -147,8 +147,8 @@ namespace Ogre {
 	Ray Camera::getCameraToViewportRay(Real screenX, Real screenY) const
 	{
 		Ray ray;
-		float width = mViewport->getActualWidth();
-		float height = mViewport->getActualHeight();
+		float width = 1024;
+		float height = 768;
 		float x = screenX/width;
 		float y = screenY/height;
 		getCameraToViewportRay(x, y, &ray);

@@ -223,7 +223,7 @@ int32_t VertexData::getUnusedBinding()
 void VertexData::prepare()
 {
     auto engine = Ogre::Root::getSingleton().getEngine();
-    if (engine)
+    if (engine && !mVertexBuffer)
     {
         VertexBuffer::Builder vBuilder;
 
@@ -241,7 +241,7 @@ void VertexData::prepare()
             auto stride = vertexDeclaration->getVertexSize(bufferIndex);
             auto offset = e.getOffset();
             auto attributeType = filament::mappingOgreVertexType(e.getType());
-            auto attribute = filament::mappingOgreVertexAttribute(e.getSemantic());
+            auto attribute = filament::mappingOgreVertexAttribute(e.getSemantic(), e.getIndex());
             vBuilder.attribute(attribute, bufferIndex, attributeType, offset, stride);
         }
 

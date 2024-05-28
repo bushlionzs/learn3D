@@ -22,9 +22,10 @@ namespace Ogre {
 			backend::ImageType type);
 		static bool loadImageInfo(
 			const std::string& name,
-			ImageInfo& imageInfo);
+			ImageInfo& imageInfo,
+			bool cube);
 		static void freeImageData(void* data);
-		bool loadImage(const std::string& name);
+		bool loadImage(const std::string& name, bool cube = false);
 		bool loadImage(const uint8_t* data, uint32_t byteCount, backend::ImageType type);
 		bool loadImage(DataStreamPtr& stream);
 		bool loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format);
@@ -50,14 +51,16 @@ namespace Ogre {
 			return loadDynamicImage(data, width, height, 1, format);
 		}
 
-		static size_t calculateSize(
-			Ogre::ImageInfo& info);
+		static size_t calculateSize(Ogre::ImageInfo& info);
+		static size_t calculateFaceSize(Ogre::ImageInfo& info);
 
 		void save(const String& filename);
 	private:
 		const uchar* getData(uint32 x = 0, uint32 y = 0, uint32 z = 0) const;
 		void convertRawData(void* from, void* to, size_t _size, int _format);
 		void freeMemory();
+
+
 	private:
 		ImageInfo mImageInfo;
 		int32_t mFlags;

@@ -2431,7 +2431,7 @@ material 灌木02
 	{
 		pass
 		{
-emissive 0.3 0.3 0.3 1
+            emissive 0.3 0.3 0.3 1
 			scene_blend alpha_blend
 			alpha_rejection greater 128
 

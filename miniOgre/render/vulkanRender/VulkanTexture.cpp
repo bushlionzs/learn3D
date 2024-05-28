@@ -36,7 +36,7 @@ VulkanTexture::VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, V
     VkComponentMapping swizzle)
     :
     OgreTexture("", nullptr),
-    HwTexture(SamplerType::SAMPLER_2D, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
+    HwTexture(target, 1, samples, width, height, 1, TextureFormat::UNUSED, tusage),
     VulkanResource(heapAllocated ? VulkanResourceType::HEAP_ALLOCATED : VulkanResourceType::TEXTURE),
     mAllocator(allocator),
     mCommands(commands),
@@ -45,7 +45,12 @@ VulkanTexture::VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, V
     mTextureProperty._width = w;
     mTextureProperty._height = h;
     mTextureProperty._depth = depth;
-    mTextureProperty._numMipmaps = levels;
+    mTextureProperty._numMipmaps = 0;
+    if (target == SamplerType::SAMPLER_CUBEMAP)
+    {
+        mTextureProperty._texType = TEX_TYPE_CUBE_MAP;
+        mFace = 6;
+    }
     mVulkanFormat = filament::backend::getVkFormat(tformat);
     mTextureUsage = tusage;
     mVKDevice = device;
@@ -206,7 +211,7 @@ void VulkanTexture::createImage(
 {
     mMipLevels = mTextureProperty._numMipmaps + 1;
 
-    /*if (mTextureProperty._numMipmaps == 0)
+    if (mTextureProperty._numMipmaps == 0)
     {
         auto current = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
 
@@ -215,7 +220,7 @@ void VulkanTexture::createImage(
             mNeedMipmaps = true;
             mMipLevels = current;
         }
-    }*/
+    }
 
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -365,53 +370,65 @@ void VulkanTexture::updateImage(const PixelBufferDescriptor& data, uint32_t widt
     VkCommandBuffer const cmdbuf = commands.buffer();
     commands.acquire(this);
 
-    VkBufferImageCopy copyRegion = {
-        .bufferOffset = {},
-        .bufferRowLength = {},
-        .bufferImageHeight = {},
-        .imageSubresource = {
-            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-            .mipLevel = miplevel,
-            .baseArrayLayer = 0,
-            .layerCount = 1
-        },
-        .imageOffset = { int32_t(xoffset), int32_t(yoffset), int32_t(zoffset) },
-        .imageExtent = { width, height, depth }
-    };
+    //VkBufferImageCopy copyRegion = {
+    //    .bufferOffset = {},
+    //    .bufferRowLength = {},
+    //    .bufferImageHeight = {},
+    //    .imageSubresource = {
+    //        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+    //        .mipLevel = miplevel,
+    //        .baseArrayLayer = 0,
+    //        .layerCount = 1
+    //    },
+    //    .imageOffset = { int32_t(xoffset), int32_t(yoffset), int32_t(zoffset) },
+    //    .imageExtent = { width, height, depth }
+    //};
 
-    VkImageSubresourceRange transitionRange = {
-        .aspectMask = getImageAspect(),
-        .baseMipLevel = miplevel,
-        .levelCount = 1,
-        .baseArrayLayer = 0,
-        .layerCount = 1
-    };
+    //VkImageSubresourceRange transitionRange = {
+    //    .aspectMask = getImageAspect(),
+    //    .baseMipLevel = miplevel,
+    //    .levelCount = 1,
+    //    .baseArrayLayer = 0,
+    //    .layerCount = 1
+    //};
 
-    // Vulkan specifies subregions for 3D textures differently than from 2D arrays.
-    if (target == SamplerType::SAMPLER_2D_ARRAY ||
-        target == SamplerType::SAMPLER_CUBEMAP ||
-        target == SamplerType::SAMPLER_CUBEMAP_ARRAY) {
-        copyRegion.imageOffset.z = 0;
-        copyRegion.imageExtent.depth = 1;
-        copyRegion.imageSubresource.baseArrayLayer = zoffset;
-        copyRegion.imageSubresource.layerCount = depth;
-        transitionRange.baseArrayLayer = zoffset;
-        transitionRange.layerCount = depth;
+    //// Vulkan specifies subregions for 3D textures differently than from 2D arrays.
+    //if (target == SamplerType::SAMPLER_2D_ARRAY ||
+    //    target == SamplerType::SAMPLER_CUBEMAP ||
+    //    target == SamplerType::SAMPLER_CUBEMAP_ARRAY) {
+    //    copyRegion.imageOffset.z = 0;
+    //    copyRegion.imageExtent.depth = 1;
+    //    copyRegion.imageSubresource.baseArrayLayer = zoffset;
+    //    copyRegion.imageSubresource.layerCount = depth;
+    //    transitionRange.baseArrayLayer = zoffset;
+    //    transitionRange.layerCount = depth;
+    //}
+
+    //VulkanLayout const newLayout = VulkanLayout::TRANSFER_DST;
+    //VulkanLayout nextLayout = getLayout(transitionRange.baseArrayLayer, miplevel);
+    //VkImageLayout const newVkLayout = imgutil::getVkLayout(newLayout);
+
+    //if (nextLayout == VulkanLayout::UNDEFINED) {
+    //    nextLayout = imgutil::getDefaultLayout(this->usage);
+    //}
+
+    //transitionLayout(cmdbuf, transitionRange, newLayout);
+
+    //vkCmdCopyBufferToImage(cmdbuf, stage->buffer, mTextureImage, newVkLayout, 1, &copyRegion);
+
+    //transitionLayout(cmdbuf, transitionRange, nextLayout);
+
+    vks::tools::copyBufferToImage(
+        cmdbuf,
+        stage->buffer,
+        mTextureImage,
+        this
+    );
+
+    if (mNeedMipmaps)
+    {
+        vks::tools::generateMipmaps(cmdbuf, this);
     }
-
-    VulkanLayout const newLayout = VulkanLayout::TRANSFER_DST;
-    VulkanLayout nextLayout = getLayout(transitionRange.baseArrayLayer, miplevel);
-    VkImageLayout const newVkLayout = imgutil::getVkLayout(newLayout);
-
-    if (nextLayout == VulkanLayout::UNDEFINED) {
-        nextLayout = imgutil::getDefaultLayout(this->usage);
-    }
-
-    transitionLayout(cmdbuf, transitionRange, newLayout);
-
-    vkCmdCopyBufferToImage(cmdbuf, stage->buffer, mTextureImage, newVkLayout, 1, &copyRegion);
-
-    transitionLayout(cmdbuf, transitionRange, nextLayout);
 }
 
 VulkanLayout VulkanTexture::getPrimaryImageLayout() const

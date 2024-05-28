@@ -784,6 +784,10 @@ namespace Ogre {
                 for (size_t x = src.left; x < src.right; x++)
                 {
                     unpackColour(&r, &g, &b, &a, src.format, srcptr);
+                    if (src.format == PF_BYTE_LA && srcptr[1] > 30)
+                    {
+                        int kk = 0;
+                    }
                     packColour(r, g, b, a, dst.format, dstptr);
                     srcptr += srcPixelSize;
                     dstptr += dstPixelSize;

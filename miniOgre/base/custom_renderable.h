@@ -12,6 +12,7 @@ public:
     virtual IndexData* getIndexData();
 	virtual IndexDataView* getIndexView();
 	const Ogre::Matrix4& getModelMatrix();
+	void prepare();
 private:
 	VertexData* mVertexData;
 	IndexData*  mIndexData;

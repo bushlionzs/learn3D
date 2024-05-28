@@ -164,20 +164,6 @@ void Terrain::_createAtlasPixmap(int32_t pixmapId)//创建纹理区域块id对应的册纹理
 	{
 		if (it->texName == textureName)
 		{
-			// 动态加载可能该纹理已经删除
-			// 如删除则创建并增加引用计数 by Nick
-			if (!it->texture)
-			{
-				Atlas& atlas = (Atlas&)*it;
-
-				//后台加载地形纹理 dscky edit//////////////////////////////////
-				//拆分贴图名，在OrphigineTexInfo.xml中以 文件夹名/贴图名.jpg进行配置，其中文件夹名为编辑器用贴图分类用，
-				//因为打包格式不需要相对路径，以当个文件名进行查找，所以在客户端读取时，将文件夹名剔除
-				std::string tmpCorrectedName, tmpPath;
-				
-				tmpCorrectedName = textureName;
-				atlas.texture = TextureManager::getSingleton().load(tmpCorrectedName, nullptr);
-			}
 			break;
 		}
 	}
@@ -195,16 +181,23 @@ void Terrain::_createAtlasPixmap(int32_t pixmapId)//创建纹理区域块id对应的册纹理
 	//Atlas不存在，创建
 	//查看创建册需要的纹理是否存在， If texture already loaded and is composited, use it without any modify.
 	//texture存在
-	auto texture = TextureManager::getSingleton().getByName(textureName);
-	if (texture &&
-		(texture->getWidth() > mAtlasPixmapSize || texture->getHeight() > mAtlasPixmapSize))
+
+	ImageInfo info;
+	bool have = TextureManager::getSingleton().getImageInfo(textureName, info);
+	if (!have)
+	{
+		WARNING_LOG("fail to load texture:%s", textureName.c_str());
+		return;
+	}
+
+	if (have &&
+		(info.width > mAtlasPixmapSize || info.height > mAtlasPixmapSize))
 	{
 		//创建并填充atlas
 		mAtlases.push_back(Atlas());//添加册
 		Atlas& atlas = mAtlases.back();//填充册
 
 		atlas.texName = textureName;
-		atlas.texture = texture;//只填充Texture，没填充image
 
 		// Fill up atlas pixmap info
 		//填充atlasPixmap，返回
@@ -225,28 +218,13 @@ void Terrain::_createAtlasPixmap(int32_t pixmapId)//创建纹理区域块id对应的册纹理
 	std::string tmpCorrectedName, tmpPath;
 	tmpCorrectedName = textureName;
 
-	CImage image;
-	if (!image.loadImage(tmpCorrectedName))
-	{
-		WARNING_LOG("fail to load texture:%s", tmpCorrectedName.c_str());
-		return;
-	}
-
-
-	//dscky edit 添加后台加载的兼容代码/////////////////////////////////////////////////////////////////
-	//image.load(tmpCorrectedName, BRUSH_RESOURCE_GROUP_NAME);//地形图片都从画刷资源组载入，brush组
-	// If the image is composited, use it without any modify.
-	if (image.getWidth() > mAtlasPixmapSize || image.getHeight() > mAtlasPixmapSize)//纹理尺寸大于64,大图片
+	if (info.width > mAtlasPixmapSize || info.height > mAtlasPixmapSize)//纹理尺寸大于64,大图片
 	{
 		//创建atlas
 		mAtlases.push_back(Atlas());//添加册
 		Atlas& atlas = mAtlases.back();//填充册
 
 		atlas.texName = textureName;
-		// re-use the loaded image avoid load it again
-		atlas.texture =
-			TextureManager::getSingleton()
-			.loadImage(textureName, image);//只填充Texture，没填充image
 
 		//填充atlasPixmap，并返回
 		size_t atlasId = mAtlases.size();
@@ -359,14 +337,14 @@ const std::shared_ptr<Material>& Terrain::_getGridMaterial(
 
 
 		{
-			const String& layer0 = mAtlases[textureIds[0] - 1].texture->getName();
+			const String& layer0 = mAtlases[textureIds[0] - 1].texName;
 
 			auto texUnit = material->getTextureUnit(0);
 			texUnit->setTexture(layer0, nullptr);
 			int index = 1;
 			if (textureIds[1] > 0)
 			{
-				const String& layer1 = mAtlases[textureIds[1] - 1].texture->getName();
+				const String& layer1 = mAtlases[textureIds[1] - 1].texName;
 				auto texUnit2 = material->getTextureUnit(1);
 				texUnit2->setTexture(layer1, nullptr);
 				index++;
@@ -471,9 +449,9 @@ String Terrain::getTerrainMaterialName(
 	if (!mTerrainInfo.mName.empty())
 		name += mTerrainInfo.mName;
 	name += "_TerrainMat";
-	name += "_" + mAtlases[textureIds[0] - 1].texture->getName();
+	name += "_" + mAtlases[textureIds[0] - 1].texName;
 	if (textureIds[1])
-		name += "_" + mAtlases[textureIds[1] - 1].texture->getName();
+		name += "_" + mAtlases[textureIds[1] - 1].texName;
 	if (depthBias)
 	{
 		char temp[256] = { 0,0 };
@@ -781,12 +759,7 @@ void Terrain::createLightmapTexture(int tileXIndex, int tileZIndex)//生成指定Til
 			if (mTerrainInfo.mLightmapType == "multiimage")
 			{
 				++itTex->second.refCount;
-				if (!itTex->second.texture)//但是被卸载了
-				{
-					itTex->second.texture = TextureManager::getSingleton().load(
-						lightmapName, nullptr);
-					//end
-				}
+				itTex->second.texName = lightmapName;
 			}
 
 			continue;
@@ -797,10 +770,7 @@ void Terrain::createLightmapTexture(int tileXIndex, int tileZIndex)//生成指定Til
 		// 动态加载
 		if (mTerrainInfo.mLightmapType == "multiimage")
 		{
-			
-			//lightmapItem.texture = Ogre::TextureManager::getSingleton().load(lightmapName,"Scene", Ogre::TEX_TYPE_2D, -1, 1.0f, false, Ogre::PF_L8);
-			lightmapItem.texture = TextureManager::getSingleton().load(
-				lightmapName, nullptr);
+			lightmapItem.texName = lightmapName;
 			//end
 			++lightmapItem.refCount;
 		}

@@ -277,8 +277,7 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
                             pipeline.vertexBufferInfo = vb->getVertexBufferInfoHandle();
 
                            
-                           auto sgh = mat->getSamplerGroup();
-                           driveApi.bindSamplers(0, sgh);
+                            mat->bindSamplerGroup();
                              
                             auto rbh = r->getRenderableHandle();
                             driveApi.bindUniformBuffer(0, rbh);
@@ -301,7 +300,7 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
 
                             //auto indexCount = r->getIndexBuffer()->getIndexCount();
 
-                            driver.draw2(idv->mIndexLocation, idv->mIndexCount, 1);
+                            driver.draw2(idv->mIndexLocation, idv->mIndexCount, 1, idv->mBaseVertexLocation);
                         }
                         else
                         {

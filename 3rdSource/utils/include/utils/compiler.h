@@ -131,7 +131,7 @@
 #      define UTILS_HAS_THREADING 0
 #   endif
 #else
-#   define UTILS_HAS_THREADING 1
+#   define UTILS_HAS_THREADING 0
 #endif
 
 #if __has_attribute(noinline)

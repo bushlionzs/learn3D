@@ -75,10 +75,10 @@ public:
 	struct Atlas//渲染册
 	{
 		std::shared_ptr<Ogre::CImage> image;	//图片，存在的话，则是对应的lightMap的image
-		std::shared_ptr<Ogre::OgreTexture> texture;		//纹理指针
+		//std::shared_ptr<Ogre::OgreTexture> texture;		//纹理指针
 		String texName;
 
-		Atlas(void) : image(), texture(), texName("") { }
+		Atlas(void) : image(), texName("") { }
 	};
 	struct AtlasAllocInfo//渲染册分配信息
 	{
@@ -87,10 +87,11 @@ public:
 	};
 	struct LightmapItem
 	{
-		std::shared_ptr<Ogre::OgreTexture> texture;	// 纹理指针
+		//std::shared_ptr<Ogre::OgreTexture> texture;	// 纹理指针
+		String texName;
 		int	refCount;				// 引用计数
 
-		LightmapItem(void) : refCount(), texture() { }
+		LightmapItem(void) : refCount(0) { }
 	};
 
 /////////////////////////

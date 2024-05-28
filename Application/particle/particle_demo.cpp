@@ -48,6 +48,7 @@ void ParticleDemo::appUpdate(float delta)
 
 EngineType ParticleDemo::getEngineType()
 {
+	//return EngineType_Dx11;
 	return EngineType_Vulkan;
 }
 

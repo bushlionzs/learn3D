@@ -84,29 +84,25 @@ namespace Ogre {
         return true;
     }
 
-    std::pair<Texture*, CacheResult> TextureManager::getOrCreateTexture(const String& name)
+    std::pair<Texture*, CacheResult> TextureManager::getOrCreateTexture(const String& name, bool cube)
     {
         if (auto iter = mTextureCache.find(name); iter != mTextureCache.end())
         {
             return { iter->second, CacheResult::FOUND };
         }
 
-        std::shared_ptr<DataStream> stream
-            = ResourceManager::getSingleton().openResource(name);
+        Ogre::ImageInfo imageInfo;
+        bool get = getImageInfo(name, imageInfo, cube);
+        assert(get);
 
-        if (!stream)
+        if (imageInfo.width > 2000)
         {
-            return { nullptr, CacheResult::NOT_EXIST };
+            int kk = 0;
         }
-
-        const uint8_t* data = (const uint8_t*)stream->getStreamData();
-        uint32_t bytecount = stream->getStreamLength();
-
         TextureInfo* info = mTextureInfos.emplace_back(new TextureInfo).get();
 
         auto type = CImage::getImageType(name);
-        Ogre::ImageInfo imageInfo;
-        CImage::loadImageInfo(data, bytecount, imageInfo, type);
+        
 
         auto filamentFormat = mappingOgreTextureFormat(imageInfo.format);
         Texture* texture = Texture::Builder()
@@ -115,30 +111,33 @@ namespace Ogre {
             .levels(0xff)
             .imagetype(type)
             .format(filamentFormat)
+            .sampler(cube? backend::SamplerType::SAMPLER_CUBEMAP: backend::SamplerType::SAMPLER_2D)
             .build(*mEngine);
 
         FTexture* ftex = (FTexture*)texture;
         mEngine->getDriverApi().updateTextureName(ftex->getHwHandle(), name.c_str(), name.size());
         info->texture = texture;
         info->state = TextureState::DECODING;
-        info->sourceBuffer.assign(data, data + bytecount);
+        info->textureName = name;
         info->decodedTexelsBaseMipmap.store(DECODING_NOT_READY);
-        info->decodeDataSize = CImage::calculateSize(imageInfo);
+        
         utils::JobSystem* js = &mEngine->getJobSystem();
-        info->decoderJob = utils::jobs::createJob(*js, mDecoderRootJob, [info] {
-            auto& source = info->sourceBuffer;
+        info->decoderJob = utils::jobs::createJob(*js, mDecoderRootJob, [info, cube] {
             int width, height, comp;
 
             // Test asynchronous loading by uncommenting this line.
             // std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 10000));
             CImage image;
 
-            image.loadImage(info->sourceBuffer.data(), info->sourceBuffer.size(), info->texture->getImageType());
+            //todo: Warning!!! loading image in multi-thread  could not be safe
+            image.loadImage(info->textureName, cube);
 
             auto texels = image.getImageData();
-            source.clear();
-            source.shrink_to_fit();
-            
+            info->decodeDataSize = image.getSize();
+            if (cube)
+            {
+                int kk = 0;
+            }
             info->decodedTexelsBaseMipmap.store(texels ? intptr_t(texels) : DECODING_ERROR);
             });
 
@@ -161,7 +160,7 @@ namespace Ogre {
         return std::shared_ptr<OgreTexture>();
     }
 
-    bool TextureManager::getImageInfo(const String& name, ImageInfo& info)
+    bool TextureManager::getImageInfo(const String& name, ImageInfo& info, bool cube)
     {
         auto engine = Ogre::Root::getSingleton().getEngine();
         if (engine)
@@ -172,7 +171,6 @@ namespace Ogre {
                 info.height = iter->second->getHeight();
                 return true;
             }
-            return false;
         }
         else
         {
@@ -183,8 +181,9 @@ namespace Ogre {
                 info.height = it->second->getHeight();
                 return true;
             }
-            return false;
         }
+
+        return CImage::loadImageInfo(name, info, cube);
     }
 
     void TextureManager::remove(const std::string& name)
@@ -251,50 +250,76 @@ namespace Ogre {
 
     void TextureManager::updateTextures()
     {
-        utils::JobSystem* js = &mEngine->getJobSystem();
-        for (auto& info : mTextureInfos) {
-            if (info->state != TextureState::DECODING) {
-                continue;
-            }
-            Texture* texture = info->texture;
-            if (intptr_t data = info->decodedTexelsBaseMipmap.load()) {
-                if (info->decoderJob) {
-                    js->waitAndRelease(info->decoderJob);
-                }
-                if (data == DECODING_ERROR) {
-                    info->state = TextureState::READY;
+        if (mEngine)
+        {
+            utils::JobSystem* js = &mEngine->getJobSystem();
+            for (auto& info : mTextureInfos) {
+                if (info->state != TextureState::DECODING) {
                     continue;
                 }
-                Texture::PixelBufferDescriptor pbd((uint8_t*)data,
-                    info->decodeDataSize, Texture::Format::RGBA,
-                    Texture::Type::COMPRESSED, [](void* mem, size_t, void*)
-                    { 
-                        CImage::freeImageData(mem);
+                Texture* texture = info->texture;
+                if (intptr_t data = info->decodedTexelsBaseMipmap.load()) {
+                    if (info->decoderJob) {
+                        js->waitAndRelease(info->decoderJob);
                     }
-                );
-                texture->setImage(*mEngine, 0, std::move(pbd));
+                    if (data == DECODING_ERROR) {
+                        info->state = TextureState::READY;
+                        continue;
+                    }
 
-                // Call generateMipmaps unconditionally to fulfill the promise of the TextureProvider
-                // interface. Providers of hierarchical images (e.g. KTX) call this only if needed.
-                //texture->generateMipmaps(*mEngine);
+                    auto format = Texture::Format::RGBA;
 
-                texture->setReady(true);
-                info->state = TextureState::READY;
+                    auto source_format = texture->getFormat();
+                    if (source_format == backend::TextureFormat::RGB8)
+                    {
+                        format = Texture::Format::RGB;
+                    }
+
+                    if (source_format == backend::TextureFormat::R8)
+                    {
+                        format = Texture::Format::R;
+                    }
+
+
+                    auto dataType = Texture::Type::UBYTE;
+
+                    if (texture->getImageType() == backend::ImageType::ImageType_DDS)
+                    {
+                        dataType = Texture::Type::COMPRESSED;
+                    }
+
+                    Texture::PixelBufferDescriptor pbd((uint8_t*)data,
+                        info->decodeDataSize, format,
+                        dataType, [](void* mem, size_t, void*)
+                        {
+                            CImage::freeImageData(mem);
+                        }
+                    );
+                    texture->setImage(*mEngine, 0, std::move(pbd));
+
+                    // Call generateMipmaps unconditionally to fulfill the promise of the TextureProvider
+                    // interface. Providers of hierarchical images (e.g. KTX) call this only if needed.
+                    //texture->generateMipmaps(*mEngine);
+
+                    texture->setReady(true);
+                    info->state = TextureState::READY;
+                }
+            }
+
+            while (!mTextureInfos.empty())
+            {
+                const auto& back = mTextureInfos.back();
+
+                if (back->state == TextureState::READY)
+                {
+                    mTextureInfos.pop_back();
+                }
+                else
+                {
+                    break;
+                }
             }
         }
-
-        while (!mTextureInfos.empty())
-        {
-            const auto& back = mTextureInfos.back();
-
-            if (back->state == TextureState::READY)
-            {
-                mTextureInfos.pop_back();
-            }
-            else
-            {
-                break;
-            }
-        }
+        
     }
 }

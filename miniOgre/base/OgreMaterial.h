@@ -171,10 +171,8 @@ namespace Ogre {
             return mMaterialBufferHandle;
         }
 
-        backend::Handle<backend::HwSamplerGroup> getSamplerGroup()
-        {
-            return mSbHandle;
-        }
+
+        void bindSamplerGroup();
 
         void setResourceState(ResourceState rs)
         {
@@ -222,7 +220,8 @@ namespace Ogre {
         backend::Handle<backend::HwProgram> mProgram;
         backend::BufferObjectHandle mMaterialBufferHandle;
 
-        backend::SamplerGroup mSamplerGroup;
-        backend::Handle<backend::HwSamplerGroup> mSbHandle;
+        
+        backend::Handle<backend::HwSamplerGroup> mSamplerHandle;
+        backend::Handle<backend::HwSamplerGroup> mSamplerCubeHandle;
     };
 }

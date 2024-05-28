@@ -45,7 +45,7 @@ void IndexData::writeData(const char* data, uint32_t size)
 void IndexData::prepare()
 {
     auto engine = Ogre::Root::getSingleton().getEngine();
-    if (engine)
+    if (engine && !mFIndexBuffer)
     {
         auto buf = getIndexBuffer();
 

@@ -2,14 +2,32 @@
 #include "application_base.h"
 #include "fulldemo.h"
 #include "platform_log.h"
+#include "SimpleApp.h"
 
 int main()
 {
 	platform_log_init();
-	CoInitialize(NULL);
-	FullDemo app;
-	app.appInit();
-	app.run();
+	
+	bool use_filament = false;
+
+	if (use_filament)
+	{
+		SimpleApp app;
+		auto setup = [&app](Engine* engine) {
+			engine->getJobSystem();
+
+			};
+		auto cleanup = [&app](Engine* engine) {
+			};
+		app.run(setup, cleanup);
+	}
+	else
+	{
+		FullDemo app;
+		app.appInit();
+		app.run();
+	}
+	
 
 	return 0;
 }

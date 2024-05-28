@@ -63,7 +63,7 @@ namespace filament::backend {
         using ShaderBlob = utils::FixedCapacityVector<uint8_t>;
         using ShaderSource = std::array<ShaderBlob, SHADER_TYPE_COUNT>;
 
-        Program() noexcept;
+        Program(const char* name) noexcept;
 
         Program(const Program& rhs) = delete;
         Program& operator=(const Program& rhs) = delete;

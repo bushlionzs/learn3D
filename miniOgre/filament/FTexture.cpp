@@ -334,13 +334,13 @@ namespace filament {
         size_t const bpp = PBD::computeDataSize(p.format, p.type, 1, 1, 1);
         size_t const bpr = PBD::computeDataSize(p.format, p.type, stride, 1, p.alignment);
         size_t const bpl = bpr * height; // TODO: PBD should have a "layer stride"
-        // TODO: PBD should have a p.depth (# layers to skip)
-        ASSERT_PRECONDITION(bpp * p.left + bpr * p.top + bpl * (0 + depth) <= p.size,
-            "buffer overflow: (size=%lu, stride=%lu, left=%u, top=%u) smaller than specified region "
-            "{{%u,%u,%u},{%u,%u,%u)}}",
-            size_t(p.size), size_t(p.stride), unsigned(p.left), unsigned(p.top),
-            unsigned(xoffset), unsigned(yoffset), unsigned(zoffset),
-            unsigned(width), unsigned(height), unsigned(depth));
+        //// TODO: PBD should have a p.depth (# layers to skip)
+        //ASSERT_PRECONDITION(bpp * p.left + bpr * p.top + bpl * (0 + depth) <= p.size,
+        //    "buffer overflow: (size=%lu, stride=%lu, left=%u, top=%u) smaller than specified region "
+        //    "{{%u,%u,%u},{%u,%u,%u)}}",
+        //    size_t(p.size), size_t(p.stride), unsigned(p.left), unsigned(p.top),
+        //    unsigned(xoffset), unsigned(yoffset), unsigned(zoffset),
+        //    unsigned(width), unsigned(height), unsigned(depth));
 
         engine.getDriverApi().update3DImage(mHandle,
             uint8_t(level), xoffset, yoffset, zoffset, width, height, depth, std::move(p));

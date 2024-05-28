@@ -96,7 +96,8 @@ OgreTexture::OgreTexture(const String& name, const String& filename,
 {
     d_tex_name = filename;
     ImageInfo imageInfo;
-    CImage::loadImageInfo(std::string(filename.c_str()), imageInfo);
+
+    TextureManager::getSingleton().getImageInfo(std::string(filename.c_str()), imageInfo, false);
 
     d_size.d_width = imageInfo.width;
     d_size.d_height = imageInfo.height;

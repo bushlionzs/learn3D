@@ -58,7 +58,7 @@ struct TextureInfo {
     TextureState state;
     std::atomic<intptr_t> decodedTexelsBaseMipmap;
     uint32_t decodeDataSize;
-    std::vector<uint8_t> sourceBuffer;
+    std::string textureName;
     utils::JobSystem::Job* decoderJob;
 };
 

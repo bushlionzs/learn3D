@@ -24,7 +24,7 @@ bool Basic::appInit()
 {
 	ApplicationBase::appInit();
 
-	base4();
+	base1();
 	return true;
 }
 

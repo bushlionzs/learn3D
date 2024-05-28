@@ -92,7 +92,7 @@ namespace Ogre {
 
             auto* engine = Ogre::Root::getSingleton().getEngine();
 
-            backend::Program p;
+            backend::Program p(mMaterialName.c_str());
             Ogre::ShaderPrivateInfo* privateInfo =
                 ShaderManager::getSingleton().getShader(mShaderInfo.shaderName, EngineType_Vulkan);
 
@@ -140,31 +140,95 @@ namespace Ogre {
             samplers[0] = {"first", 0};
             samplers[1] = { "second", 1 };
             samplers[2] = { "third", 2 };
+            samplers[3] = { "gCubeMap", 3 };
 
-            p.setSamplerGroup(0, backend::ShaderStageFlags::FRAGMENT, samplers.data(), mTextureUnits.size());
+            
 
-            mSamplerGroup = backend::SamplerGroup(mTextureUnits.size());
+            if (mMaterialName == "Â¥À¼µØ¹¬Ç½012")
+            {
+                int kk = 0;
+            }
 
-            mSbHandle = engine->getDriverApi().createSamplerGroup(
-                mSamplerGroup.getSize(), utils::FixedSizeString<32>(mMaterialName.c_str()));
-
+            uint32_t samplerCount = 0;
+            uint32_t samplerCubeCount = 0;
             for (uint32_t i = 0; i < mTextureUnits.size(); i++)
             {
-                backend::SamplerDescriptor sd;
-                FTexture* ftex = (FTexture*)mTextureUnits[i]->getFTexture();
-                sd.t = ftex->getHwHandle();
-                sd.s.filterMag = filament::backend::SamplerMagFilter::LINEAR;
-                sd.s.filterMin = filament::backend::SamplerMinFilter::LINEAR;
-                sd.s.wrapR = filament::backend::SamplerWrapMode::REPEAT;
-                sd.s.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-                sd.s.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+                if (mTextureUnits[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
+                {
+                    samplerCubeCount++;
+                }
+                else
+                {
+                    samplerCount++;
+                }
+            }
 
-                mSamplerGroup.setSampler(i, sd);
+            p.setSamplerGroup(0, backend::ShaderStageFlags::FRAGMENT, samplers.data(), samplerCount);
+
+            if (samplerCubeCount > 0)
+            {
+                p.setSamplerGroup(1, backend::ShaderStageFlags::FRAGMENT, samplers.data() + 3, 1);
             }
             
 
-            engine->getDriverApi().updateSamplerGroup(mSbHandle, mSamplerGroup.toBufferDescriptor(engine->getDriverApi()));
+            if (samplerCount > 0)
+            {
+                if (samplerCount == 3)
+                {
+                    int kk = 0;
+                }
+                mSamplerHandle = engine->getDriverApi().createSamplerGroup(
+                    samplerCount, utils::FixedSizeString<32>(mMaterialName.c_str()));
+
+                uint32_t index = 0;
+                backend::SamplerGroup sg(samplerCount);
+                for (uint32_t i = 0; i < mTextureUnits.size(); i++)
+                {
+                    backend::SamplerDescriptor sd;
+                    FTexture* ftex = (FTexture*)mTextureUnits[i]->getFTexture();
+                    sd.t = ftex->getHwHandle();
+                    sd.s.filterMag = filament::backend::SamplerMagFilter::LINEAR;
+                    sd.s.filterMin = filament::backend::SamplerMinFilter::LINEAR;
+                    sd.s.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+                    sd.s.wrapS = filament::backend::SamplerWrapMode::REPEAT;
+                    sd.s.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+                    if (mTextureUnits[i]->getTextureProperty()->_texType == TEX_TYPE_2D)
+                    {
+                        sg.setSampler(index++, sd);
+                    }
+
+                }
+
+                engine->getDriverApi().updateSamplerGroup(mSamplerHandle, sg.toBufferDescriptor(engine->getDriverApi()));
+            }
             
+
+            if (samplerCubeCount > 0)
+            {
+                mSamplerCubeHandle = engine->getDriverApi().createSamplerGroup(
+                    samplerCubeCount, utils::FixedSizeString<32>(mMaterialName.c_str()));
+
+                uint32_t index = 0;
+                backend::SamplerGroup sg(samplerCubeCount);
+                for (uint32_t i = 0; i < mTextureUnits.size(); i++)
+                {
+                    backend::SamplerDescriptor sd;
+                    FTexture* ftex = (FTexture*)mTextureUnits[i]->getFTexture();
+                    sd.t = ftex->getHwHandle();
+                    sd.s.filterMag = filament::backend::SamplerMagFilter::LINEAR;
+                    sd.s.filterMin = filament::backend::SamplerMinFilter::LINEAR;
+                    sd.s.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+                    sd.s.wrapS = filament::backend::SamplerWrapMode::REPEAT;
+                    sd.s.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+                    if (mTextureUnits[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
+                    {
+                        sg.setSampler(index++, sd);
+                    }
+
+                }
+
+                engine->getDriverApi().updateSamplerGroup(mSamplerCubeHandle, sg.toBufferDescriptor(engine->getDriverApi()));
+            }
 
             mProgram = engine->getDriverApi().createProgram(std::move(p));
 
@@ -202,6 +266,21 @@ namespace Ogre {
             mLoad = true;
         }
 
+    }
+
+
+    void Material::bindSamplerGroup()
+    {
+        auto* engine = Ogre::Root::getSingleton().getEngine();
+        if (mSamplerHandle)
+        {
+            engine->getDriverApi().bindSamplers(0, mSamplerHandle);
+        }
+
+        if (mSamplerCubeHandle)
+        {
+            engine->getDriverApi().bindSamplers(1, mSamplerCubeHandle);
+        }
     }
 
     void Material::updateResourceState()

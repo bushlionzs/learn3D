@@ -106,12 +106,22 @@ void FView::commitUniforms(backend::DriverApi& driver, const char* data, uint32_
     if (!mFrameHandle)
     {
         mFrameHandle = driver.createBufferObject(byteCount,
-            backend::BufferObjectBinding::UNIFORM,
+            backend::BufferObjectBinding::VERTEX,
             backend::BufferUsage::DYNAMIC);
     }
 
+    //static CircularBuffer dummy(1024 * 1024 * 100);
+    //static uint32_t i = 0;
+    //i++;
+    //if (i % 80000 == 0)
+    //{
+    //    dummy.circularize();
+    //}
+    //void* buffer = dummy.allocate(byteCount);
+    //memcpy(buffer, data, byteCount);
+
    
-    driver.updateBufferObjectUnsynchronized(mFrameHandle, backend::BufferDescriptor(data, byteCount), 0);
+    driver.updateBufferObject(mFrameHandle, backend::BufferDescriptor(data, byteCount), 0);
     driver.bindUniformBuffer(1, mFrameHandle);
 }
 

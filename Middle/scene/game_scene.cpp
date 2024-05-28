@@ -404,14 +404,17 @@ CMapCollisionManager& GameScene::getCollision()
 }
 #include "OgreCamera.h"
 #include "OgreViewport.h"
+#include "OgreRoot.h"
 bool GameScene::getIntersectObject(
 	Real winx, Real winy,
 	std::vector<Orphigine::ActorPtr>& objects)
 {
 	auto mainCamera = EngineManager::getSingleton().getMainCamera();
-	auto vp = EngineManager::getSingleton().getMainViewPort();
-	float screenX = (winx - vp->getActualLeft()) / vp->getActualWidth();
-	float screenY = (winy - vp->getActualTop()) / vp->getActualHeight();
+
+	auto rt = Ogre::Root::getSingleton().getMainRect();
+	
+	float screenX = (winx - rt.left) / rt.width();
+	float screenY = (winy - rt.top) / rt.height();
 	auto ray = mainCamera->getCameraToViewportRay(screenX, screenY);
 
 	std::map<uint64_t, Orphigine::ActorPtr> aa;

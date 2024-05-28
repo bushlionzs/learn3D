@@ -183,7 +183,7 @@ VkResult VulkanPlatformSurfaceSwapChain::create() {
 
     // Verify that our chosen present mode is supported. In practice all devices support the FIFO
     // mode, but we check for it anyway for completeness.  (and to avoid validation warnings)
-    VkPresentModeKHR const desiredPresentMode = VK_PRESENT_MODE_FIFO_KHR;
+    VkPresentModeKHR const desiredPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;// VK_PRESENT_MODE_FIFO_KHR;
     FixedCapacityVector<VkPresentModeKHR> presentModes
             = enumerate(vkGetPhysicalDeviceSurfacePresentModesKHR, mPhysicalDevice, mSurface);
     bool foundSuitablePresentMode = false;

@@ -3,6 +3,8 @@
 #include "renderSystem.h"
 #include "OgreRoot.h"
 #include <OgreCamera.h>
+#include <OgreVertexData.h>
+#include <OgreIndexData.h>
 #include <filament/Engine.h>
 #include <filament/DriverApi.h>
 namespace Ogre {
@@ -39,7 +41,7 @@ namespace Ogre {
             {
                 mRenderableObjectHandle = engine->getDriverApi().createBufferObject(
                     sizeof(ObjectConstantBuffer),
-                    backend::BufferObjectBinding::UNIFORM,
+                    backend::BufferObjectBinding::VERTEX,
                     backend::BufferUsage::DYNAMIC);
             }
         }
@@ -86,5 +88,13 @@ namespace Ogre {
     Ogre::Vector3 getPosition()
     {
         return Ogre::Vector3(0.0f, 0.0f, 0.0f);
+    }
+    void Renderable::prepare(VertexData* vd, IndexData* id)
+    {
+        vd->prepare();
+        id->prepare();
+        auto vb = vd->getVertexBuffer();
+        auto ib = id->getFIndexBuffer();
+        this->updateBuffer(vb, ib);
     }
 }

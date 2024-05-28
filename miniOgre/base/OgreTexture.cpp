@@ -85,11 +85,12 @@ namespace Ogre {
 		}
 
 
-		std::vector<std::string> names;
-		std::vector<CImage> images;
-		names.reserve(mFace);
+		CImage image;
 
-		if (cube)
+		image.loadImage(mName, cube);
+
+
+		/*if (cube)
 		{
 			std::string suffix = getSuffix(mName);
 			if (ResourceManager::getSingletonPtr()->hasResource(mName, BLANKSTRING))
@@ -138,16 +139,9 @@ namespace Ogre {
 		if (!b)
 		{
 			return;
-		}
+		}*/
 
-		std::vector<const CImage*> imagePtrs;
-		imagePtrs.resize(images.size());
-
-		for (int32_t i = 0; i < images.size(); i++)
-		{
-			imagePtrs[i] = &images[i];
-		}
-		_loadImages(imagePtrs);
+		_loadImages({&image});
 	}
 
 	bool OgreTexture::load(utils::JobSystem::Job* job)

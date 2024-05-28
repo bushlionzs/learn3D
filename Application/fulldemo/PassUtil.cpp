@@ -4,6 +4,7 @@
 #include <filament/FView.h>
 #include <filament/FVertexBuffer.h>
 #include <filament/FIndexBuffer.h>
+#include <filament/OgreFilamentUtils.h>
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
 #include <OgreRoot.h>
@@ -188,15 +189,40 @@ FrameGraphId<FrameGraphTexture> PassUtil::colorPass(
                     pipeline.rasterState.depthWrite = true;
                     pipeline.rasterState.depthFunc = backend::SamplerCompareFunc::LE;
                     pipeline.rasterState.colorWrite = true;
+         
                     utils::JobSystem::Job* loadJob = Ogre::Root::getSingleton().getLoadJob();;
 
                     auto& driveApi = engine.getDriverApi();
+
+                    std::sort(engineRenerList.mOpaqueList.begin(), engineRenerList.mOpaqueList.end(),
+                        [](Ogre::Renderable* a, Ogre::Renderable* b)
+                        {
+                            return a->getSortValue() < b->getSortValue();
+                        }
+                    );
 
                     for (auto* r : engineRenerList.mOpaqueList)
                     {
                         auto* mat = r->getMaterial().get();
                         if (mat->getResourceState() == ResourceState::READY)
                         {
+                            auto blendState = mat->getBlendState();
+                            if (blendState.blendingEnabled())
+                            {
+                                blendState.sourceFactor;
+                                blendState.operation;
+                                pipeline.rasterState.blendEquationRGB = filament::mappingOgreBlendOperation(blendState.operation);
+                                pipeline.rasterState.blendEquationAlpha = filament::mappingOgreBlendOperation(blendState.alphaOperation);
+                                pipeline.rasterState.blendFunctionSrcRGB = filament::mappingOgreBlendFactor(blendState.sourceFactor, false);
+                                pipeline.rasterState.blendFunctionSrcAlpha = filament::mappingOgreBlendFactor(blendState.sourceFactorAlpha, true);
+                                pipeline.rasterState.blendFunctionDstRGB = filament::mappingOgreBlendFactor(blendState.destFactor, false);
+                                pipeline.rasterState.blendFunctionDstAlpha = filament::mappingOgreBlendFactor(blendState.destFactorAlpha, true);
+                                
+                            }
+                            else
+                            {
+                                pipeline.rasterState.disableBlending();
+                            }
                             pipeline.primitiveType = PrimitiveType::TRIANGLES;
                             pipeline.program = mat->getProgram();
                             FVertexBuffer* vb = (FVertexBuffer*)r->getVertexBuffer();
@@ -227,7 +253,10 @@ FrameGraphId<FrameGraphTexture> PassUtil::colorPass(
 
                             IndexDataView* idv = r->getIndexView();
 
-                            //auto indexCount = r->getIndexBuffer()->getIndexCount();
+                            if (idv->mBaseVertexLocation > 0)
+                            {
+                                int kk = 0;
+                            }
 
                             driver.draw2(idv->mIndexLocation, idv->mIndexCount, 1, idv->mBaseVertexLocation);
                         }
@@ -425,6 +454,7 @@ FrameGraphId<FrameGraphTexture> PassUtil::renderTexturePass(
                             IndexBufferHandle ibh = ib->getHwHandle();;
 
                             pipeline.vertexBufferInfo = vb->getVertexBufferInfoHandle();
+
 
                             mat->bindSamplerGroup();
 

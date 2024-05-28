@@ -115,12 +115,6 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 	
 	setup(engine);
 
-	uint32_t fps = 0;
-
-	uint32_t last_time = get_tick_count();
-	Timer mTimer;
-
-	auto last = mTimer.getMicrosecondsCPU();
 	while (!mClosed)
 	{
 		while (true)
@@ -145,17 +139,8 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 			}
 		}
 		InputManager::getSingletonPtr()->captureInput();
-		auto current = mTimer.getMicrosecondsCPU();
-		float delta = (current - last) / 1000000.0f;
-		last = current;
-		
-		update(delta);
-		
+		update(0.0f);
 		mRenderer->beginFrame(mSwapChain);
-
-		
-
-		
 
 		auto passCallback = [width, height, this](FrameGraph& fg, Engine& engine, FView& view) -> FrameGraphId<FrameGraphTexture> {
 				FrameGraphTexture::Descriptor colorBufferDesc = {
@@ -198,18 +183,20 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 
 		mRenderer->render(mMainView, passCallback);
 		mRenderer->endFrame();
-
-		fps++;
-
-		uint32_t this_time = get_tick_count();
-
-		if (this_time >= last_time + 1000)
+		if (!UTILS_HAS_THREADING)
 		{
-			char buffer[128];
+			engine->execute();
+		}
+
+		static uint32_t lastfps = 0;
+		auto fps = Ogre::Root::getSingleton().getCurrentFPS();
+
+		if (fps != lastfps)
+		{
+			lastfps = fps;
+			char buffer[256];
 			snprintf(buffer, sizeof(buffer), "fps:%d", fps);
-			::SetWindowText(wnd, buffer);
-			last_time = this_time;
-			fps = 0;
+			::SetWindowText(mWindow->getWnd(), buffer);
 		}
 	}
 
@@ -237,13 +224,13 @@ void SimpleApp::example1()
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 
-	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
+	mSceneManager->setSkyBox(true, "SkyLan", 50000);
 
 	auto sub = rect->getSubEntity(0);
 	auto mat = sub->getMaterial();
 	auto tu = mat->getTextureUnit(0);
 
-	tu->updateTexture(0, "RenderToTexture");
+	//tu->updateTexture(0, "RenderToTexture");
 	mGameCamera->setDistance(3.0f);
 	mGameCamera->setMoveSpeed(5.0f);
 }
@@ -444,7 +431,7 @@ void SimpleApp::update(float delta)
 	{
 		mGUIContext->injectTimePulse(delta);
 	}
-	
+
 	Ogre::Root::getSingleton()._fireFrameStarted();
 	Ogre::TextureManager::getSingleton().updateTextures();
 }

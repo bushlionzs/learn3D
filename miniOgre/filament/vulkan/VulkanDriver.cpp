@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "OgreHeader.h"
+#include <OgreRoot.h>
 #include "VulkanDriver.h"
 
 #include "CommandStreamDispatcher.h"
@@ -390,7 +391,6 @@ namespace filament::backend {
     }
     void VulkanDriver::beginFrame(int64_t monotonic_clock_ns,
         int64_t refreshIntervalNs, uint32_t frameId) {
-        // Do nothing.
     }
 
     void VulkanDriver::setFrameScheduledCallback(Handle<HwSwapChain> sch,
@@ -1038,7 +1038,6 @@ namespace filament::backend {
         auto bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
         commands.acquire(bo);
         bo->buffer.loadFromCpu(commands.buffer(), bd.buffer, byteOffset, bd.size);
-
         scheduleDestroy(std::move(bd));
     }
 
@@ -1662,7 +1661,8 @@ namespace filament::backend {
 #if FVK_ENABLED_DEBUG_SAMPLER_NAME
         auto const& bindingToName = program->getBindingToName();
 #endif
-
+        std::vector<VulkanTexture*> helper;
+        helper.reserve(10);
         for (auto binding : program->getBindings()) {
             uint16_t const indexPair = bindingToSamplerIndex[binding];
             if (indexPair == 0xffff) {
@@ -1682,6 +1682,12 @@ namespace filament::backend {
                 continue;
             }
             VulkanTexture* texture = mResourceAllocator.handle_cast<VulkanTexture*>(boundSampler->t);
+            helper.push_back(texture);
+            if (texture == nullptr)
+            {
+                texture = mEmptyTexture;
+            }
+            
 
 
             // TODO: can this uninitialized check be checked in a higher layer?
@@ -1740,7 +1746,7 @@ namespace filament::backend {
         FVK_SYSTRACE_END();
     }
 
-    void VulkanDriver::draw2(uint32_t indexOffset, uint32_t indexCount, uint32_t instanceCount) {
+    void VulkanDriver::draw2(uint32_t indexOffset, uint32_t indexCount, uint32_t instanceCount, uint32_t vertexOffset) {
         FVK_SYSTRACE_CONTEXT();
         FVK_SYSTRACE_START("draw2");
 
@@ -1752,7 +1758,6 @@ namespace filament::backend {
 
         // Finally, make the actual draw call. TODO: support subranges
         const uint32_t firstIndex = indexOffset;
-        const int32_t vertexOffset = 0;
         const uint32_t firstInstId = 0;
 
         vkCmdDrawIndexed(cmdbuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstId);
@@ -1761,14 +1766,14 @@ namespace filament::backend {
     }
 
     void VulkanDriver::draw(PipelineState state, backend::VertexBufferHandle vbh, backend::IndexBufferHandle ibh,
-        uint32_t const indexOffset, uint32_t const indexCount, uint32_t const instanceCount) {
+        uint32_t const indexOffset, uint32_t const indexCount, uint32_t const instanceCount, uint32_t vertexOffset) {
         VulkanVertexBuffer* vb = mResourceAllocator.handle_cast<VulkanVertexBuffer*>(vbh);
         VulkanIndexBuffer* ib = mResourceAllocator.handle_cast<VulkanIndexBuffer*>(ibh);
 
         state.vertexBufferInfo = vb->vbih;
         bindPipeline(state);
         bindRenderPrimitive(vbh, ibh);
-        draw2(indexOffset, indexCount, instanceCount);
+        draw2(indexOffset, indexCount, instanceCount, vertexOffset);
     }
 
     void VulkanDriver::dispatchCompute(Handle<HwProgram> program, math::uint3 workGroupCount) {

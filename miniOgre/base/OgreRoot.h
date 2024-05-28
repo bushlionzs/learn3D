@@ -2,6 +2,7 @@
 
 #include "OgreSingleton.h"
 #include "OgreTimer.h"
+#include "OgreCommon.h"
 #include "engine_struct.h"
 #include "OgreFrameListener.h"
 #include <utils/JobSystem.h>
@@ -72,6 +73,11 @@ namespace Ogre {
 			return mLoadJob;
 		}
 
+		Rect& getMainRect()
+		{
+			return mActRect;
+		}
+
 	private:
 		uint32_t _allocateNextMovableObjectTypeFlag(void);
 	private:
@@ -104,6 +110,8 @@ namespace Ogre {
 		filament::Engine* mEngine;
 
 		utils::JobSystem::Job* mLoadJob = nullptr;
+
+		Rect mActRect = { 0,0,1280,768 };
 
 	};
 }

@@ -58,11 +58,12 @@ material myrect
 		{
 			lighting off
 			cull_hardware none
-			shader ogreblend
+			shader ogresimple
 			texture_unit
 			{
 				texture bricks.dds
-				//texture awesomeface.png
+				//texture cloudy_noon_bk.jpg
+				//texture Smoke15Frames.png
 				//scroll_anim 0 -0.9
 				//rotate_anim 1.2
 				tex_address_mode clamp
@@ -378,7 +379,7 @@ material Examples/Smoke
 		{
 			lighting off
 			cull_hardware none
-			scene_blend alpha_blend
+			//scene_blend alpha_blend
 			depth_write off
 			diffuse vertexcolour
 			

@@ -77,7 +77,7 @@ namespace Ogre {
             }
             else if (numComponents == 2)
             {
-                imageInfo.format = Ogre::PF_BYTE_RGBA;
+                imageInfo.format = Ogre::PF_BYTE_LA;
             }
             else if (numComponents == 1)
             {
@@ -99,10 +99,29 @@ namespace Ogre {
 
     bool CImage::loadImageInfo(
         const std::string& name,
-        ImageInfo& imageInfo)
+        ImageInfo& imageInfo,
+        bool cube)
     {
-
-        ResourceInfo*  res = ResourceManager::getSingleton().getResource(name);
+        ResourceInfo* res = nullptr;
+        if (cube)
+        {
+            std::string suffix = getSuffix(name);
+            if (suffix != ".dds")
+            {
+                std::string basename = removeSuffix(name);
+                std::string current = basename + "_rt" + suffix;
+                res = ResourceManager::getSingleton().getResource(current);
+            }
+            else
+            {
+                res = ResourceManager::getSingleton().getResource(name);
+            }
+        }
+        else
+        {
+            res = ResourceManager::getSingleton().getResource(name);
+        }
+        
 
         std::string content;
         get_file_content(res->_fullname.c_str(), content, 2048);
@@ -118,36 +137,20 @@ namespace Ogre {
         stbi_image_free(data);
     }
 
-    bool CImage::loadImage(const std::string& name)
+    bool CImage::loadImage(const std::string& name, bool cube)
     {
-        const char* suffix = getSuffix(name);
+        auto type = getImageType(name);
 
-        bool dds = false;
+        
 
-        bool blp = false;
-
-        if (strcmp(suffix, ".dds") == 0)
-        {
-            dds = true;
-        }
-        else if (strcmp(suffix, ".BLP") == 0)
-        {
-            blp = true;
-        }
-
-        std::shared_ptr<DataStream> stream 
-            = ResourceManager::getSingleton().openResource(name);
-
-        if (!stream)
-        {
-            assert(false);
-            return false;
-        }
+        
         uint32_t nrComponents = 0;
 
         unsigned char* data = nullptr;
-        if (dds)
+        if (type == backend::ImageType::ImageType_DDS)
         {
+            std::shared_ptr<DataStream> stream
+                = ResourceManager::getSingleton().openResource(name);
             DDSImage ddsload;
             if (ddsload.load(stream.get()))
             {
@@ -158,8 +161,10 @@ namespace Ogre {
                 mImageInfo = *imageData;
             }
         }
-        else if (blp)
+        else if (type == backend::ImageType::ImageType_BLP)
         {
+            std::shared_ptr<DataStream> stream
+                = ResourceManager::getSingleton().openResource(name);
             OgreBlpImage blpImage;
             blpImage.load(stream);
             data = blpImage.data();
@@ -169,29 +174,85 @@ namespace Ogre {
         }
         else
         {
-            mImageInfo.face = 1;
-            const stbi_uc* stream_data = (const stbi_uc*)stream->getStreamData();
-            uint32_t size = stream->getStreamLength();
-            data = stbi_load_from_memory(stream_data, size,
-                (int*)&mImageInfo.width, (int*)&mImageInfo.height, (int*)&nrComponents, 0);
+            mImageInfo.face = cube ? 6 : 1;
+            PixelFormat format[4] = { Ogre::PF_L8, Ogre::PF_BYTE_LA, Ogre::PF_BYTE_RGB, Ogre::PF_BYTE_RGBA };
+            if (cube)
+            {
+                auto getCubePicName = [&name](std::array<std::string, 6>& namelist)
+                    {
+                        std::string basename = removeSuffix(name);
+                        std::string suffix = getSuffix(name);
+                        const char* CUBEMAP_SUFFIXES[] = { "_rt", "_lf", "_up", "_dn", "_fr", "_bk" };
+                        for (uint32_t i = 0; i < 6; i++)
+                        {
+                            namelist[i] = basename + CUBEMAP_SUFFIXES[i] + suffix;
+                        }
+                    };
+                std::array<std::string, 6> namelist;
+                getCubePicName(namelist);
+
+                
+
+                
+
+                auto faceSize = 0; 
+
+                for (uint32_t i = 0; i < 6; i++)
+                {
+                    std::shared_ptr<DataStream> stream
+                        = ResourceManager::getSingleton().openResource(namelist[i]);
+
+                    const stbi_uc* stream_data = (const stbi_uc*)stream->getStreamData();
+                    uint32_t size = stream->getStreamLength();
+                    data = stbi_load_from_memory(stream_data, size,
+                        (int*)&mImageInfo.width, (int*)&mImageInfo.height, (int*)&nrComponents, 0);
+
+                    if (faceSize == 0)
+                    {
+                        mImageInfo.format = format[nrComponents - 1];
+                        faceSize = calculateFaceSize(mImageInfo);
+                        auto total = calculateSize(mImageInfo);
+
+                        mImageData = (unsigned char*)malloc(total);
+                    }
+                    memcpy(mImageData + i * faceSize, data, faceSize);
+                    free(data);
+                }
+
+                data = mImageData;
+            }
+            else
+            {
+                std::shared_ptr<DataStream> stream
+                    = ResourceManager::getSingleton().openResource(name);
+
+                const stbi_uc* stream_data = (const stbi_uc*)stream->getStreamData();
+                uint32_t size = stream->getStreamLength();
+                data = stbi_load_from_memory(stream_data, size,
+                    (int*)&mImageInfo.width, (int*)&mImageInfo.height, (int*)&nrComponents, 0);
+                mImageInfo.format = format[nrComponents - 1];
+
+                
+                if (nrComponents == 2)
+                {
+                   /* std::unordered_set<uint32_t> aa;
+                    for (uint32_t i = 0; i < mImageInfo.width * mImageInfo.height; i++)
+                    {
+                        auto color = data[i * 2];
+                        auto alpha = data[i * 2 + 1];
+                        if (alpha != 0)
+                        {
+                            aa.insert(alpha);
+                        }
+                    }*/
+                    int kk = 0;
+                }
+            }
+            
 
             mPixelSize = nrComponents;
-            if (nrComponents == 3)
-            {
-                mImageInfo.format = Ogre::PF_BYTE_RGB;
-            }
-            else if (nrComponents == 4)
-            {
-                mImageInfo.format = Ogre::PF_BYTE_RGBA;
-            }
-            else if (nrComponents == 2)
-            {
-                mImageInfo.format = Ogre::PF_BYTE_RGBA;
-            }
-            else if (nrComponents == 1)
-            {
-                mImageInfo.format = Ogre::PF_L8;
-            }
+            
+            
         }
 
 
@@ -199,6 +260,11 @@ namespace Ogre {
         mImageData = data;
 
         mImageDataSize = calculateSize(mImageInfo);
+
+        if (mImageInfo.format == PF_L8)
+        {
+            int kk = 0;
+        }
         
 
         return true;
@@ -240,17 +306,6 @@ namespace Ogre {
             else if (nrComponents == 2)
             {
                 mImageInfo.format = Ogre::PF_BYTE_LA;
-                uint32_t size = calculateSize(mImageInfo);
-                stbi_uc* tmp = (stbi_uc*)malloc(size * 2);
-                for (uint32_t i = 0; i < size/2; i++)
-                {
-                    tmp[i*4] = tmp[i*4 + 1] = tmp[i*4 + 2] = imagedata[i*2];
-                    tmp[i*4 + 3] = imagedata[i*2 + 1];
-                }
-
-                free(imagedata);
-                imagedata = tmp;
-                mImageInfo.format = Ogre::PF_BYTE_RGBA;
             }
             else if (nrComponents == 1)
             {
@@ -458,6 +513,11 @@ namespace Ogre {
             if (depth != 1) depth /= 2;
         }
         return size;
+    }
+
+    size_t CImage::calculateFaceSize(Ogre::ImageInfo& info)
+    {
+        return PixelUtil::getMemorySize(info.width, info.height, info.depth, info.format);
     }
 
     void CImage::save(const String& filename)
