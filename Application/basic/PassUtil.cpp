@@ -565,7 +565,7 @@ FrameGraphId<FrameGraphTexture> PassUtil::guiPass(
 
                 {
 
-
+                    static PipelineState pipelineLast;
                     PipelineState pipeline;
 
                     pipeline.rasterState.culling = backend::CullingMode::NONE;
@@ -604,7 +604,6 @@ FrameGraphId<FrameGraphTexture> PassUtil::guiPass(
                             {
                                 driveApi.bindUniformBuffer(3, sbh);
                             }
-
 
                             driver.bindPipeline(pipeline);
                             driver.bindRenderPrimitive(vbh, ibh);

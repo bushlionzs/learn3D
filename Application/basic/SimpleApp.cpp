@@ -111,7 +111,7 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 	}
 
 	
-	example6();
+	example1();
 	
 	setup(engine);
 

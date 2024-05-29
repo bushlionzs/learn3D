@@ -800,6 +800,8 @@ public:
             }
         }
 
+        static std::unordered_set<VkDescriptorSet> helper;
+        
         for (uint8_t i = 0; i < VulkanDescriptorSetLayout::UNIQUE_DESCRIPTOR_SET_COUNT; ++i) {
             if (!outLayouts[i]) {
                 continue;
@@ -810,6 +812,7 @@ public:
 
             auto const& [set, cached] = getSet(i, layout);
             VkDescriptorSet const vkSet = set->vkSet;
+            helper.insert(vkSet);
             commands->acquire(set);
             vkDescSets.push_back(vkSet);
 
