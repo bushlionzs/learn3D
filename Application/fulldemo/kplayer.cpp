@@ -106,29 +106,27 @@ bool KPlayer::initialize()
 	//mousetarget
 
 	mMouseNode = EngineManager::getSingleton().getBaseSceneNode()->createChildSceneNode("mouse");
-	/*Ogre::String effectName = "reachable_projector";
-	mProjectorEffect = Orphigine::ImpactManager::getSingleton().createEffect(effectName, 0);
-	mProjectorEffect->createSceneNode(mMouseNode);*/
-
-	/*auto mesh = MeshManager::getSingleton().load("sphere.mesh");
-
-	auto sceneMgr = EngineManager::getSingleton().getSceneManager();
-	Entity* sphere = sceneMgr->createEntity("sphere", mesh);
-
-	mMouseNode->attachObject(sphere);*/
 
 	auto pos = Ogre::Vector3(6550.f, -568.960022f, -5200.00000f);
 	mMouseNode->setPosition(pos);
+
+	if (mProjectorEffect == nullptr)
+	{
+		Ogre::String effectName = "reachable_projector";
+		mProjectorEffect = Orphigine::ImpactManager::getSingleton().createEffect(effectName, 1);
+		mProjectorEffect->createSceneNode(mMouseNode);
+		mProjectorEffect->setVisible(true);
+	}
 	return true;
 }
 
-void KPlayer::setGamePosition(Ogre::Vector3& position)
+void KPlayer::setGamePosition(Ogre::Vector3& position, bool useTerrainHeight)
 {
 	mGamePosition = position;
 
 	Ogre::Vector3 fvEnginePosition;
 	EngineManager::getSingleton().positionAxisTrans(GAT_GAME, mGamePosition,
-		GAT_ENGINE, fvEnginePosition);
+		GAT_ENGINE, fvEnginePosition, useTerrainHeight);
 
 	((Orphigine::SkeletonMeshActor*)mOrphigineObj.get())->setPosition(fvEnginePosition);
 
@@ -292,6 +290,8 @@ void KPlayer::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 
 		
 		mMouseNode->setPosition(fvEnginePosition);
+		mMouseNode->updatechildren();
+
 		ChangeAction(CA_MOVING, 0.0f);
 		ChangeAction(CA_JUMP, 0.0f);
 		ChangeAction(CA_MOVING, 1.0f);

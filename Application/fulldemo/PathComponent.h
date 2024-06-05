@@ -26,4 +26,5 @@ private:
 	void setFaceDir(Ogre::Real dir);
 private:
 	void calculateNodePos(const Ogre::Vector2& fvPosition, FLOAT fModifyHeight);
+	float calculateHeight(const Ogre::Vector2& fvPosition);
 };

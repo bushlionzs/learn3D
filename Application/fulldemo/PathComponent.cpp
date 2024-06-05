@@ -214,10 +214,18 @@ void PathComponent::setFaceDir(Ogre::Real dir)
 
 void PathComponent::calculateNodePos(const Ogre::Vector2 & fvPosition, FLOAT fModifyHeight)
 {
+	auto fRealHeight = calculateHeight(fvPosition);
+	Ogre::Vector3 position(fvPosition.x, fRealHeight + fModifyHeight, fvPosition.y);
+	mPlayer->setGamePosition(position, false);
+}
+
+float PathComponent::calculateHeight(const Ogre::Vector2& fvPosition)
+{
+
 	auto pActiveScene = GameSceneManager::getSingleton().GetActiveScene();
 
 
-		//当前位置
+	//当前位置
 	Ogre::Vector3	fvCurObjPos = mPlayer->getGamePosition();
 	FLOAT	fInAirHeight = fvCurObjPos.y;
 
@@ -251,10 +259,6 @@ void PathComponent::calculateNodePos(const Ogre::Vector2 & fvPosition, FLOAT fMo
 	{
 		fRealHeight = fvAtTerrain.y;
 	}
-
-	Ogre::Vector3 position(fvPosition.x, fRealHeight + fModifyHeight, fvPosition.y);
-	mPlayer->setGamePosition(position);
-	
-
+	return fRealHeight;
 }
 

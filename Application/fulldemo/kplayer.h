@@ -56,7 +56,7 @@ public:
 	KPlayer();
 
 	const Ogre::Vector3& getGamePosition();
-	void setGamePosition(Ogre::Vector3& position);
+	void setGamePosition(Ogre::Vector3& position, bool useTerrainHeight);
 
 	Ogre::Real getDirection();
 	void setDirection(float dir);

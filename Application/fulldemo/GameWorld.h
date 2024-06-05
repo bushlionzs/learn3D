@@ -1,6 +1,7 @@
 #pragma once
 
 #include "InputManager.h"
+#include <OGImpact.h>
 
 class GameCamera;
 class KPlayer;
@@ -26,4 +27,5 @@ private:
 private:
 	GameCamera* mGameCamera;
 	KPlayer* mPlayer;
+	
 };

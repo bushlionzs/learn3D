@@ -8,6 +8,7 @@
 #include "ActionSetManager.h"
 #include "kplayer.h"
 #include "game_scene.h"
+#include <OGImpactManager.h>
 
 GameWorld::GameWorld(GameCamera* gameCamera)
 {
@@ -59,7 +60,8 @@ bool GameWorld::gameWorldInit()
 	mPosition.z = 224;
 
 
-	mPlayer->setGamePosition(mPosition);
+	mPlayer->setGamePosition(mPosition, true);
+
 
 	InputManager::getSingleton().addListener(this);
 
