@@ -64,13 +64,13 @@ void GameCamera::injectMouseMove(int _absx, int _absy, int _absz)
 
     if (mMouseDeltaX != 0)
     {
-        mYaw += mMouseDeltaX * 0.15f;
+        mYaw -= mMouseDeltaX * 0.15f;
     }
 
 
     if (mMouseDeltaY != 0)
     {
-        mPitch += mMouseDeltaY * 0.15f;
+        mPitch -= mMouseDeltaY * 0.15f;
     }
 
     mMousePickX = _absx;
@@ -159,8 +159,17 @@ void GameCamera::injectKeyRelease(KeyCode _key)
     }
 }
 
+void test()
+{
+    Ogre::SceneNode node(nullptr, "aa");
+
+    node.pitch(Ogre::Degree(98.0f));
+    auto a = node.getOrientation();
+    int kk = 0;
+}
 bool GameCamera::update(float delta)
 {
+    test();
     if (mEditMode)
     {
         float sidesway = 0.0f;
@@ -220,17 +229,29 @@ bool GameCamera::update(float delta)
         mCameraSubNode->resetOrientation();
         {
             Ogre::Vector3 playerPos = EngineManager::getSingletonPtr()->getMyPosition();
-            //playerPos = Vector3(6550, -568.960022, -5300.00000);
             mCameraNode->setPosition(playerPos);
             mCameraSubNode->setPosition(mCameraRelPosition);
-
             mCameraNode->yaw(Ogre::Degree(mYaw));
 
             mCameraNode->pitch(Ogre::Degree(mPitch));
 
-            const Ogre::Vector3& realPos = mCameraSubNode->_getDerivedPosition();
+            Matrix3 rot;
+            const Quaternion& orientation = mCameraSubNode->_getDerivedOrientation();
+            const Vector3& position = mCameraSubNode->_getDerivedPosition();
+            orientation.ToRotationMatrix(rot);
 
-            mCamera->updateCamera(realPos, playerPos, Ogre::Vector3::UNIT_Y);
+            // Make the translation relative to new axes
+            Matrix3 rotT = rot.Transpose();
+            Vector3 trans = -rotT * position;
+
+            // Make final matrix
+            auto m = Matrix4::IDENTITY;
+            m = rotT; // fills upper 3x3
+            m[0][3] = trans.x;
+            m[1][3] = trans.y;
+            m[2][3] = trans.z;
+
+            mCamera->updateCamera(m.transpose());
         }
     }
 
@@ -243,6 +264,7 @@ bool GameCamera::update(float delta)
 Ogre::String GameCamera::getCameraString()
 {
     char buffer[256];
-    snprintf(buffer, sizeof(buffer), "x:%d,y:%d", mMousePickX, mMousePickY);
+    snprintf(buffer, sizeof(buffer), "x:%d,y:%d,yaw:%f,pitch:%f", 
+        mMousePickX, mMousePickY, mYaw, mPitch);
     return Ogre::String(buffer);
 }
