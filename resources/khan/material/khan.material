@@ -9389,13 +9389,88 @@ material 鹿长老_03
 		}
 
 	}
+}
 
+material npc_传送人楼兰_01
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3080.dds -1
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+
+	}
+
+}
+
+material npc_传送人楼兰_02
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3083.dds -1
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+	}
+}
+
+
+material npc_传送人楼兰_03
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			fog_override true none
+			shader ogreparticle
+			texture_unit
+			{
+				texture png_kl_3209.dds -1
+				tex_address_mode clamp
+				colour_op_ex modulate_x2 src_texture src_current
+				colour_op_multipass_fallback dest_colour zero
+			}
+		}
+	}
 }
 
 material 成2蒙古商人男_01  : premierBaseTemplate
 {
     material_parent premierBaseTemplate
     set $tex_template tga_成2蒙古商人男_01.dds 
+}
+
+material 传送人_楼兰_new  : premierBaseTemplate
+{
+      material_parent premierBaseTemplate
+      set $tex_template tga_传送人_楼兰_new.dds 
 }
 
 material WeaponTemplate

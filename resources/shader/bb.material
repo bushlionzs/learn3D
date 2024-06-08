@@ -61,18 +61,14 @@ material myrect
 			shader ogresimple
 			texture_unit
 			{
-				texture bricks.dds
+				texture aa.dds
 				//texture cloudy_noon_bk.jpg
 				//texture Smoke15Frames.png
 				//scroll_anim 0 -0.9
 				//rotate_anim 1.2
 				tex_address_mode clamp
 			}
-			texture_unit
-			{
-				texture awesomeface.png
-				tex_address_mode clamp
-			}
+
 		}
 	}
 }
