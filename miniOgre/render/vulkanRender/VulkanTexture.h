@@ -6,8 +6,8 @@
 #include "OgreTexture.h"
 #include <filament/DriverEnums.h>
 #include <filament/DriverBase.h>
-#include <VulkanResources.h>
-#include <VulkanImageUtility.h>
+#include <filament/vulkan/VulkanResources.h>
+#include <filament/vulkan/VulkanImageUtility.h>
 #include <utils/RangeMap.h>
 
 namespace filament::backend {

@@ -38,6 +38,8 @@ public:
         const Ogre::Vector3& eyePos,
         const Ogre::Vector3& targetPos,
         const Ogre::Vector3& up);
+    void updateView(
+        const Ogre::Matrix4& view);
     bool isVisible(const Ogre::Sphere& bound) const;
     bool isVisible(const Ogre::AxisAlignedBox& bound) const;
     bool isVisible(const Ogre::Vector3& position) const;

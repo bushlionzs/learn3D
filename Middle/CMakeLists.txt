@@ -55,9 +55,9 @@ add_library(${MIDDLE_LIB_NAME} STATIC ${MIDDLE_SRC_LIST})
 target_include_directories(${MIDDLE_LIB_NAME}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+	${GAMEUTIL_INC}
     ${MIDDLE_INC}
 	${MINIOGRE_INC}
-	${GAMEUTIL_INC}
 	${GAMESHARE_INC}
 	${ROOT_INC}/3rd
 	${ROOT_INC}/3rd/Opcode

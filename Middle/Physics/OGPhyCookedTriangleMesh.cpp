@@ -37,8 +37,17 @@ namespace Orphigine
 			return;
 		}
 		tmpSerializer.importCookedTriangleMesh(tmpStream,this);
+		//zhousha
+		if (m_triangleMesh == nullptr)
+		{
+			void* mem = btAlignedAlloc(sizeof(btOptimizedBvh), 16);
+			m_triangleMesh = new (mem) btOptimizedBvh();
 
-		
+			btVector3 bvhAabbMin, bvhAabbMax;
+			m_triangleMeshDesc->calculateAabbBruteForce(bvhAabbMin, bvhAabbMax);
+
+			m_triangleMesh->build(m_triangleMeshDesc, true, bvhAabbMin, bvhAabbMax);
+		}
 	}
 
 	void PhyCookedTriangleMesh::unloadImpl( void )

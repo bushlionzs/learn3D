@@ -38,7 +38,7 @@ EngineType ApplicationBase::getEngineType()
 
 bool ApplicationBase::appInit()
 {
-	mApplicationWindow = new ApplicationWindow;
+	mApplicationWindow = new ApplicationWindow(this);
 	int width = 1280;
 	int height = 768;
 	mApplicationWindow->createWindow(width, height);
@@ -52,7 +52,7 @@ bool ApplicationBase::appInit()
 	
 	new Ogre::Root();
 	Ogre::Root::getSingleton()._initialise();
-
+	Ogre::Root::getSingleton().updateMainRect({0, 0, width, height});
 	EngineType type = getEngineType();
 	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(wnd, type);
 	if (!mRenderSystem)
@@ -62,9 +62,6 @@ bool ApplicationBase::appInit()
 
 	new EngineManager;
 	EngineManager::getSingleton().initialise();
-
-
-	
 
 	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
 	Ogre::NameValuePairList params;
@@ -94,8 +91,8 @@ bool ApplicationBase::appInit()
 
 	if (isUseCEGUI())
 	{
-		ShowCursor(FALSE);
-		SetCursor(NULL);
+		/*ShowCursor(FALSE);
+		SetCursor(NULL);*/
 		new CEGUIManager;
 		CEGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
@@ -122,9 +119,15 @@ void ApplicationBase::run()
 		{
 			if (msg.message == WM_QUIT)
 				break;
+
+			if (msg.message == WM_SIZE)
+			{
+				int kk = 0;
+			}
+
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-
+			
 			if (msg.message == WM_QUIT)
 			{
 				break;
@@ -145,12 +148,28 @@ void ApplicationBase::ShowFrameFrequency()
 		mLastFPS = Ogre::Root::getSingletonPtr()->getCurrentFPS();
 
 
-		char buffer[256];
-		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, triangle:%d,batch:%d", 
+		char buffer[1024];
+		std::string str = mGameCamera->getCameraString();
+		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, triangle:%d,batch:%d, %s", 
 			mRenderSystem->getRenderSystemName().c_str(),
-			mLastFPS, mRenderSystem->getTriangleCount(), mRenderSystem->getBatchCount());
+			mLastFPS, mRenderSystem->getTriangleCount(), 
+			mRenderSystem->getBatchCount(),
+			str.c_str());
+
+		
 		::SetWindowText(mApplicationWindow->getWnd(), buffer);
 	}
+}
 
-	
+void ApplicationBase::OnSize(uint32_t width, uint32_t height)
+{
+	if (mRenderWindow)
+	{
+		auto w = mRenderWindow->getWidth();
+		auto h = mRenderWindow->getHeight();
+		if (w != width || h != height)
+		{
+			mRenderWindow->resize(width, height);
+		}
+	}
 }

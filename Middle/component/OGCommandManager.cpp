@@ -67,8 +67,7 @@ Command* CommandCache::popCommand()
 }
 bool CommandCache::clearCommand()
 {
-	try
-	{
+
 		while(!mCommandQueue.empty())
 		{
 			Command* pCommand=mCommandQueue.front();
@@ -76,15 +75,8 @@ bool CommandCache::clearCommand()
 				OGRE_DELETE pCommand;
 			mCommandQueue.pop_front();			
 		}
-	}
-	catch( const std::exception& e )
-	{
-		
-	}
-	catch(...) 
-	{
-		
-	}
+
+
 	return true;
 }
 unsigned int CommandCache::getCommandNum()
@@ -139,19 +131,11 @@ CommandResultEnum CommandCache::executeCommandCache(unsigned int exeComNum)
 	while(!mCommandQueue.empty())
 	{
 		Command* pCommand = 0;
-		try
-		{
 			pCommand = mCommandQueue.front();
-		}
-		catch(...)
-		{
-			WARNING_LOG("CommandCache::executeCommandCache Failed　1");
-			throw;
-		}
+
 		assert(pCommand);
 		std::string cmdString;
-		try
-		{
+		
 		    cmdString = pCommand->getCommandString();
 			result= pCommand->execute();
 			++executeIndex;
@@ -188,27 +172,13 @@ CommandResultEnum CommandCache::executeCommandCache(unsigned int exeComNum)
 			{
 				WARNING_LOG("Command Cache Id=%d command=%s execute Failed.", mCacheId, pCommand->getCommandString().c_str());
 			}
-		}
-		catch(...)
-		{
-			
-		}
-		try
-		{
+	
+	
 			OGRE_DELETE pCommand;
-		}
-		catch(...)
-		{
-		
-		}
-		try
-		{
+
+
 			mCommandQueue.pop_front();
-		}
-		catch(...)
-		{
-		
-		}
+
 		if(executeIndex>=exeComNum)//执行指定个数命令		
 			return result;					
 	}
@@ -231,16 +201,7 @@ bool CommandCacheManager::frameStarted(const Ogre::FrameEvent& evt)
 }
 bool CommandCacheManager::frameEnded(const Ogre::FrameEvent& evt)
 {
-	try
-	{
-		executeOneFrame();
-	}
-	catch(...)
-	{
-		WARNING_LOG("CommandCacheManager::frameEnded Failed --CommandCacheManager::frameEnded");
-		//OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR,"CommandCacheManager::frameEnded Failed!", "CommandCacheManager::frameEnded" );
-		throw;
-	}
+	executeOneFrame();
 	return true;
 }
 //实现函数

@@ -17,7 +17,7 @@
 #ifndef TNT_FILAMENT_BACKEND_VULKANBUFFER_H
 #define TNT_FILAMENT_BACKEND_VULKANBUFFER_H
 
-#include "VulkanCommon.h"
+#include <render/vulkanRender/VulkanCommon.h>
 #include "VulkanContext.h"
 #include "VulkanStagePool.h"
 

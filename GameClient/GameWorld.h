@@ -5,7 +5,8 @@
 class GameCamera;
 class KPlayer;
 class KObject;
-class GameWorld: public InputListener
+class GameInput;
+class GameWorld
 {
 public:
 	GameWorld(GameCamera* gameCamera);
@@ -14,20 +15,9 @@ public:
 	bool gameWorldInit();
 
 	void update(float delta);
-
-private:
-	virtual void injectMouseMove(int _absx, int _absy, int _absz);
-	virtual void injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id);
-	virtual void injectMouseRelease(int _absx, int _absy, OIS::MouseButtonID _id);
-	virtual void injectKeyPress(KeyCode _key, uint32_t _text);
-	virtual void injectKeyRelease(KeyCode _key);
-
-	virtual void injectMouseWheel(int _absz);
-
-	virtual void injectMouseCursor();
 private:
 	GameCamera* mGameCamera;
 	KPlayer* mPlayer;
 	KObject* mLastSelectObj = nullptr;
-
+	GameInput* mGameInput;
 };

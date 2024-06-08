@@ -41,10 +41,12 @@ endmacro()
 add_subdir(.)
 add_subdir(clientmessage)
 add_subdir(command)
+add_subdir(ai)
 add_subdir(data)
 add_subdir(dummy)
 add_subdir(object)
 add_subdir(ui)
+add_subdir(utils)
 
 
 add_executable(${PROJECT_NAME} ${GAMECLIENT_SRC_LIST})
@@ -72,7 +74,8 @@ target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre CEGUI expat Mid
 GameShare stormlib luaplus freetype zlibstatic dy_network libprotobuf libprotobuf-lite OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
 pcre
-vulkan-1
+utils
+bluevk
 avcodec
 avdevice
 avfilter

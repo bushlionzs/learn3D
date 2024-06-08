@@ -14,6 +14,7 @@
 #include "GameTableManager.h"
 #include "engine_manager.h"
 #include "CEGUIManager.h"
+#include "GameTime.h"
 
 ApplicationBase::ApplicationBase()
 {
@@ -38,7 +39,10 @@ EngineType ApplicationBase::getEngineType()
 bool ApplicationBase::appInit()
 {
 	mApplicationWindow = new ApplicationWindow;
-	mApplicationWindow->createWindow(1280, 768);
+
+	int width = 1280;
+	int height = 768;
+	mApplicationWindow->createWindow(width, height);
 	if (!InputManager::getSingletonPtr())
 	{
 		new InputManager();
@@ -49,6 +53,8 @@ bool ApplicationBase::appInit()
 	EngineType type = getEngineType();
 	new Ogre::Root;
 	Ogre::Root::getSingleton()._initialise();
+	Rect rt = { 0, 0, width, height };
+	Ogre::Root::getSingleton().updateMainRect(rt);
 	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(wnd, type);
 	if (!mRenderSystem)
 	{
@@ -58,6 +64,8 @@ bool ApplicationBase::appInit()
 	new EngineManager;
 	EngineManager::getSingleton().initialise();
 
+	new CGameTime;
+	CGameTime::getSingleton().Initialize();
 	
 	
 
@@ -89,8 +97,8 @@ bool ApplicationBase::appInit()
 
 	if (isUseCEGUI())
 	{
-		ShowCursor(FALSE);
-		SetCursor(NULL);
+		/*ShowCursor(FALSE);
+		SetCursor(NULL);*/
 		new CEGUIManager;
 		CEGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
@@ -104,6 +112,7 @@ void ApplicationBase::appUpdate(float delta)
 {
 	InputManager::getSingletonPtr()->captureInput();
 	mGameCamera->update(delta);
+	GAME_TIME.Update();
 }
 
 void ApplicationBase::run()

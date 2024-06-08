@@ -195,8 +195,6 @@ FLOAT CMapPath::fvDistancePow(Ogre::Vector2 fv1, Ogre::Vector2 fv2)
  */
 BOOL CMapPath::CreateMovePath(const Ogre::Vector2&fvCurrent, const Ogre::Vector2&fvTarget)
 {
-	KYLIN_TRY
-
 	/* 先清空路径. */
 	m_vPosStack.clear();
 
@@ -259,10 +257,6 @@ BOOL CMapPath::CreateMovePath(const Ogre::Vector2&fvCurrent, const Ogre::Vector2
 	}
 
 	return bRes;
-
-	KYLIN_CATCH("CreateMovePath");
-
-	return FALSE;
 }
 
 /*
@@ -292,7 +286,7 @@ bool CMapPath::IsPassRegion(
 	const Ogre::Vector2&fvTargetPos,
 	PassRegionInfo &outRegionData)
 {
-	KYLIN_TRY GameScene*pActiveScene = (GameScene*)GameSceneManager::getSingleton().GetActiveScene();
+	GameScene*pActiveScene = (GameScene*)GameSceneManager::getSingleton().GetActiveScene();
 
 	if(NULL == pActiveScene) return FALSE;
 
@@ -446,8 +440,6 @@ bool CMapPath::IsPassRegion(
 		outRegionData.fvVertexNormal.normalise();	/* 单位化, 取法线 */
 		return TRUE;
 	}
-
-	KYLIN_CATCH("IsPassRegion");
 	return FALSE;
 }
 
@@ -459,7 +451,7 @@ BOOL CMapPath::GetPathDirect(
 	const Ogre::Vector2&fvCurrent,
 	const Ogre::Vector2&fvTarget, BOOL bOffset, FLOAT fMinDist)
 {
-	KYLIN_TRY m_vPosStack.clear();
+	m_vPosStack.clear();
 
 	/* 移动距离过近 */
 	FLOAT fToTargetDist = fvCurrent.distance(fvTarget);
@@ -525,8 +517,6 @@ BOOL CMapPath::GetPathDirect(
 	newPathUnit.fvTarget = fvFinalPos;
 	m_vPosStack.push_back(newPathUnit);
 
-	KYLIN_CATCH("GetPathDirect");
-
 	return TRUE;
 }
 
@@ -552,7 +542,7 @@ BOOL CMapPath::GetRegionOffsetPos
 	Ogre::Vector2&fvOutPos
 )
 {
-	KYLIN_TRY FLOAT fToRegionDist = 1.f;
+	FLOAT fToRegionDist = 1.f;
 	FLOAT fMult = V2_Multiply(fvRegionPos1, fvCurrPos, fvRegionPos2);
 	FLOAT fRegionLength = fvRegionPos1.distance(fvRegionPos2);
 
@@ -593,9 +583,6 @@ BOOL CMapPath::GetRegionOffsetPos
 			return TRUE;
 		}
 	}
-
-	KYLIN_CATCH("GetRegionOffsetPos");
-
 	return FALSE;
 }
 

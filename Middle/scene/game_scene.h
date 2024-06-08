@@ -33,6 +33,8 @@ public:
 	bool getIntersectObject(
 		Real winx, Real winy,
 		std::vector<Orphigine::ActorPtr>& objects);
+
+	bool IsValidPosition(const Ogre::Vector2& fvPos);
 private:
 	void loadPOVBinary(LPCTSTR szPOVFile);
 	void loadRegionBinary(LPCTSTR szRegionFile);

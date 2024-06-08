@@ -23,7 +23,7 @@
 #include "VulkanBuffer.h"
 #include "VulkanResources.h"
 #include "VulkanSwapChain.h"
-#include "VulkanTexture.h"
+#include <render/vulkanRender/VulkanTexture.h>
 #include "VulkanUtility.h"
 
 #include "filament/SamplerGroup.h"

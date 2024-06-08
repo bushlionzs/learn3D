@@ -53,7 +53,7 @@ namespace Ogre {
 
         mEvt.timeSinceLastEvent = 0;
         mEvt.timeSinceLastFrame = 0;
-
+        mActRect = { 0,0,0,0 };
 	}
 
 	Root::~Root()

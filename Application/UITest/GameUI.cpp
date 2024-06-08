@@ -46,8 +46,8 @@ bool GameUI::appInit()
     CGameTableManager::GetSingleton().Initialize();
     //HelloDemo1();
     //ToolTipDemo();
-    SelfEquipDemo();
-    //PackageDemo();
+    //SelfEquipDemo();
+    PackageDemo();
 	return true;
 }
 

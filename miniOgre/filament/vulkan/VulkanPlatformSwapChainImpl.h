@@ -17,10 +17,10 @@
 #ifndef TNT_FILAMENT_BACKEND_VULKANSWAPCHAIN_IMPL_H
 #define TNT_FILAMENT_BACKEND_VULKANSWAPCHAIN_IMPL_H
 
-#include "VulkanCommon.h"
+#include <render/vulkanRender/VulkanCommon.h>
 #include "VulkanContext.h"
 
-#include <VulkanPlatform.h>
+#include <filament/vulkan/VulkanPlatform.h>
 
 
 #include <tuple>

@@ -22,15 +22,15 @@
 #include "VulkanCommands.h"
 #include "VulkanHandles.h"
 #include "VulkanMemory.h"
-#include "VulkanTexture.h"
-
-#include <VulkanPlatform.h>
+#include "render/vulkanRender/VulkanTexture.h"
+#include <render/vulkanRender/VulkanHelper.h>
+#include <filament/vulkan/VulkanPlatform.h>
 
 #include <utils/CString.h>
 #include <utils/FixedCapacityVector.h>
 #include <utils/Panic.h>
 
-#include <VulkanHelper.h>
+
 
 #ifndef NDEBUG
 #include <set>  // For VulkanDriver::debugCommandBegin

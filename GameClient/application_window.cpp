@@ -1,6 +1,11 @@
 #include "OgreHeader.h"
 #include "application_window.h"
 
+ApplicationWindow* app = nullptr;
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	return app->MessageHandler(hWnd, message, wParam, lParam);
+}
 
 ApplicationWindow::ApplicationWindow()
 {
@@ -29,7 +34,7 @@ bool ApplicationWindow::createWindow(int32_t width, int32_t height)
 
 	const char* windowName = "GraphicsStudy";
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	// Redraw On Size, And Own DC For Window.
-	wc.lpfnWndProc = (WNDPROC)DefWindowProc;					// WndProc Handles Messages
+	wc.lpfnWndProc = WndProc;					// WndProc Handles Messages
 	wc.cbClsExtra = 0;									// No Extra Window Data
 	wc.cbWndExtra = 0;									// No Extra Window Data
 	wc.hInstance = m_hInstance;							// Set The Instance
@@ -111,4 +116,51 @@ bool ApplicationWindow::createWindow(int32_t width, int32_t height)
 	SetFocus(mWnd);									// Sets Keyboard
 
 	return true;
+}
+
+LRESULT WINAPI ApplicationWindow::MessageHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_ACTIVATE:
+	{
+		return 0;
+	}
+	case WM_LBUTTONDOWN:
+		break;
+	case WM_LBUTTONUP:
+		break;
+	case WM_RBUTTONDOWN:
+		break;
+	case WM_RBUTTONUP:
+		break;
+	case WM_KEYDOWN:
+		break;
+	case WM_KEYUP:
+		break;
+	case WM_CLOSE:
+	{
+		PostQuitMessage(0);
+		return 0;
+	}
+	break;
+	case WM_SIZE:
+	{
+		int32_t width = LOWORD(wParam);
+		int32_t height = HIWORD(wParam);
+	}
+	break;
+	case WM_DESTROY:
+	{
+		PostQuitMessage(0);
+		return 0;
+	}
+	break;
+	case WM_CREATE:
+	{
+		return 0;
+	}
+	break;
+	}
+	return  DefWindowProc(hWnd, message, wParam, lParam);
 }

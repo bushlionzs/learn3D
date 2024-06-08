@@ -22,8 +22,8 @@
 #include "VulkanMemory.h"
 #include "VulkanUtility.h"
 #include "utils/Log.h"
-#include <VulkanSpirvUtils.h>
-#include <VulkanPlatform.h>
+#include <filament/vulkan/spirv/VulkanSpirvUtils.h>
+#include <filament/vulkan/VulkanPlatform.h>
 
 #include <utils/Panic.h>    // ASSERT_POSTCONDITION
 

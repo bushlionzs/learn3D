@@ -15,7 +15,7 @@
 #include "Basics.h"
 #include "command/KCharStruct.h"
 
-
+class KAI_Player;
 class PathComponent;
 class PlayerLogicModelHaveCreateCallback;
 class KCharatcterBaseData;
@@ -79,6 +79,9 @@ protected:
 	bool						m_bIsCharBaseLogicEnd;
 	bool						m_bIsCharActionLogicEnd;
 
+	/// AI对象
+	KAI_Player* m_pAI = nullptr;
+
 	/// 正在执行的逻辑状态
 	CHARATER_STATE_TYPE			m_nCharBaseState;
 	CHARATER_STATE_TYPE			m_nCharActionState;
@@ -97,7 +100,7 @@ protected:
 	ObjCommandList								m_listBaseStateCommand;
 	ObjCommandList								m_listActionStateCommand;
 
-	KCharCmdDate_Logic* m_pBaseLogicCommand;
+	KCharCmdDate_Logic* m_pBaseLogicCommand = nullptr;
 	KCharCmdDate_Logic* m_pActionLogicCommand;
 
 	CharStateData_Idle			m_StateDate_Idle;
@@ -118,12 +121,21 @@ protected:
 	// 特效速度
 	FLOAT m_fActionImpact_Speed;
 
-	FLOAT m_fRotationSpeed;
 	// 正在冲锋
 	bool m_bSkillTantivyFlag = false;
 
 	///// 当前逻揖执行的速度
 	float m_fLogic_Speed;
+
+	// 基本动作起始时间
+	uint64_t m_uBaseAnimStartTime;
+
+	// 行为动作起始时间
+	uint64_t m_uActionAnimStartTime;
+
+	// 朝向
+	FLOAT m_fToRotation = 0.0f;
+	FLOAT m_fRotationSpeed = 10.0f;
 public:
 	KCharacter();
 
@@ -134,6 +146,11 @@ public:
 	Ogre::Real getDirection();
 	void setDirection(float dir);
 
+
+	KAI_Player* getAI()
+	{
+		return m_pAI;
+	}
 	
 	void ChangeAction(int32 nActionType, FLOAT fDegree, int32 nActionID = INVALID_ID, FLOAT fSpeed = 1.0f, BOOL bShowWeapon = TRUE);
 
@@ -259,8 +276,14 @@ public:
 	bool BeginMove(bool bPlayMoveSound = true);
 	bool EndMove(void);
 	void ModifyMove(void);
+	bool IsCanJump();
 	bool DoJump(void);
 	bool IsJumping() const;
+	bool IsJumpMoving() const;
+
+	// 逐渐改变朝向
+	void toFaceDir(FLOAT fDir);
+
 	bool BeginJump();
 	bool EndJump();
 	bool BeginRiding(void);
@@ -343,6 +366,19 @@ public:
 	BOOL ProcessNextCommand(CHARATER_LOGIC_TYPE nLogicTag);
 	BOOL ProcessStateCommand(KCharCmdDate_Logic* pLogicCmd);
 
+	void SetLogicSpeed(FLOAT fSpeed)
+	{
+		if (fabsf(m_fLogic_Speed - fSpeed) > 0.1f)
+		{
+			m_fLogic_Speed = fSpeed;
+		}
+	}
+
+	FLOAT GetLogicSpeed(void) const 
+	{ 
+		return m_fLogic_Speed; 
+	}
+
 	bool IsEmpty_BaseStateCommand(void)
 	{
 		return m_listBaseStateCommand.empty();
@@ -352,6 +388,16 @@ public:
 		return m_listActionStateCommand.empty();
 	}
 
+	bool IsIdle(void) const;
+
+	bool IsMoving(void) const;
+
+	bool IsGather(void) const;
+
+	bool IsLead(void) const;
+
+	bool IsUseSkill(void) const;
+
 	bool IsLogicLocked();
 	void SetLogicLocked(BOOL bLock);
 
@@ -360,10 +406,11 @@ public:
 
 	void ShutDown_CharacterState(CHARATER_LOGIC_TYPE nLogicTag);
 	void Exit_CharacterState(CHARATER_LOGIC_TYPE nLogicTag);
+	void Active_CharacterState(CHARATER_STATE_TYPE eLogic, CHARATER_LOGIC_TYPE nLogicTag);
 
 	void SetActionLogicSpeed(FLOAT fSpeed);
 	FLOAT GetActionLogicSpeed() const;
-	void SetLogicSpeed(FLOAT fSpeed);
+
 	// 休闲
 	bool	EnterState_Idle(void);
 	// 动作
@@ -389,7 +436,14 @@ public:
 	void	RemoveAllEvent(void);
 	void	Update_Event(void);
 
-	
+	// 更新朝向
+	void Update_ToFaceDir(float deltatime);
+
+	virtual bool UpdateState_Idle(uint32 uElapseTime);
+	virtual bool UpdateState_Move(uint32 uElapseTime);
+	virtual bool UpdateState_Dead(uint32 uElapseTime);
+	virtual bool UpdateState_Stall(uint32 uElapseTime);
+
 	bool	ProcessEvent(const LogicEventData* pLogicEvent);
 	bool	ProcessEvent_Damage(const LogicEventData* pLogicEvent);
 
@@ -415,6 +469,9 @@ public:
 
 	virtual void UpdateEquip(PLAYER_EQUIP point) {}
 	virtual bool UpdateFashion() { return true; }
+
+	// 客气端的本地指令
+	eRUN_CMD_RESULT_CODE AddLocalCommand(const ObjectCmd* pCmd);
 protected:
 	void OnChangeOfMountId();
 	void UpdateModel_CharActionSet(void);
@@ -429,4 +486,6 @@ protected:
 	virtual void			Dismount();
 	
 	virtual void   OnQueryRay(GameEntity* entity) {}
+
+	
 };

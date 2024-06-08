@@ -33,8 +33,6 @@ void VulkanWindow::create(const String& name, unsigned int width, unsigned int h
 
     mWidth = width;
     mHeight = height;
-    createFramebuffers();
-    createSyncObjects();
     resize(width, height);
 }
 
@@ -45,13 +43,9 @@ void VulkanWindow::destroy()
 
 void VulkanWindow::resize(unsigned int width, unsigned int height)
 {
-	if (mWidth == width && mHeight == height)
-	{
-		return;
-	}
-
     mWidth = width;
     mHeight = height;
+    createFramebuffers();
 }
 
 void VulkanWindow::copyContentsToMemory(
@@ -414,8 +408,5 @@ void VulkanWindow::swapBuffers()
 
 void VulkanWindow::createSyncObjects()
 {
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
-
-    
 }
 

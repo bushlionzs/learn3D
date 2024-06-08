@@ -26,7 +26,7 @@
 #include <filament/FBufferObject.h>
 #include <filament/FTexture.h>
 #include <filament/RenderTarget.h>
-#include <VulkanPlatform.h>
+#include <filament/vulkan/VulkanPlatform.h>
 #include <utils/compiler.h>
 #include <utils/debug.h>
 #include <utils/Log.h>

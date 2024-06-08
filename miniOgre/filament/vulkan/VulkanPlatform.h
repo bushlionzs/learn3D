@@ -16,7 +16,7 @@
 
 #ifndef TNT_FILAMENT_BACKEND_PLATFORMS_VULKANPLATFORM_H
 #define TNT_FILAMENT_BACKEND_PLATFORMS_VULKANPLATFORM_H
-#include <VulkanCommon.h>
+#include <render/vulkanRender/VulkanCommon.h>
 #include <filament/Platform.h>
 #include <utils/CString.h>
 #include <utils/FixedCapacityVector.h>

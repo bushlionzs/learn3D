@@ -4,7 +4,7 @@
 #include "OgreSingleton.h"
 #include "VulkanCommon.h"
 #include "OgreCommon.h"
-#include "VulkanPlatform.h"
+#include <filament/vulkan/VulkanPlatform.h>
 
 using namespace filament::backend;
 

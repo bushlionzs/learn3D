@@ -245,11 +245,26 @@ bool GameCamera::update(float delta)
 
             mCameraNode->yaw(Ogre::Degree(mYaw));
 
+            
             mCameraNode->pitch(Ogre::Degree(mPitch));
 
-            const Ogre::Vector3& realPos = mCameraSubNode->_getDerivedPosition();
+            Matrix3 rot;
+            const Quaternion& orientation = mCameraSubNode->_getDerivedOrientation();
+            const Vector3& position = mCameraSubNode->_getDerivedPosition();
+            orientation.ToRotationMatrix(rot);
 
-            mCamera->updateCamera(realPos, playerPos, Ogre::Vector3::UNIT_Y);
+            // Make the translation relative to new axes
+            Matrix3 rotT = rot.Transpose();
+            Vector3 trans = -rotT * position;
+
+            // Make final matrix
+            auto m = Matrix4::IDENTITY;
+            m = rotT; // fills upper 3x3
+            m[0][3] = trans.x;
+            m[1][3] = trans.y;
+            m[2][3] = trans.z;
+
+            mCamera->updateCamera(m.transpose());
         }
     }
 

@@ -36,12 +36,8 @@ public:
 	VulkanFrame* getNextFrame();
 private:
 	void createFramebuffers();
-	void setupDepthStencil();
 	void createSyncObjects();
 	virtual void swapBuffers() override;
-	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 private:
 
 	const int SwapChainBufferCount = 3;

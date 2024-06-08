@@ -80,7 +80,7 @@ target_include_directories(${GAMESERVER_LIB_NAME}
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 target_link_libraries(${PROJECT_NAME} GameUtil   
-GameShare  mariadbclient luaplus dy_network libprotobuf libprotobuf-lite LinearMath BulletCollision BulletDynamics BulletSoftBody
+GameShare  OgreUtil mariadbclient luaplus dy_network libprotobuf libprotobuf-lite LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
 dxgi
 dxguid

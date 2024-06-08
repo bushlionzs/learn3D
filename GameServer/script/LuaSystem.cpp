@@ -171,7 +171,7 @@ void LuaSystem::Initialize(void)
 {
 	__GUARD__;
 
-	mScriptDirectory = "D:\\Khan2\\Bin\\Client\\Public\\Data\\Script\\";
+	mScriptDirectory = "../../server_resources/Public/Data/Script/";
 
 	m_LuaState->OpenLibs();
 	m_LuaState->AtPanic(LuaFunction_Panic);

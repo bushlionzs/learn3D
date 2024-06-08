@@ -47,6 +47,7 @@ namespace Ogre {
         
 
         void needUpdate();
+        void updateCamera(const Ogre::Matrix4& m);
         void updateCamera(
             const Ogre::Vector3& eyePos,
             const Ogre::Vector3& targetPos,

@@ -299,7 +299,11 @@ namespace Ogre {
 
     void Node::pitch(const Ogre::Radian& angle, TransformSpace relativeTo)
     {
-        rotate(Ogre::Quaternion(angle, Ogre::Vector3::UNIT_X), relativeTo);
+        Quaternion q;
+        q.FromAngleAxis(angle, Vector3::UNIT_X);
+        rotate(q, relativeTo);
+
+        //rotate(Ogre::Quaternion(angle, Ogre::Vector3::UNIT_X), relativeTo);
     }
 
     const Ogre::Quaternion& Node::_getDerivedOrientation(void) const

@@ -8,9 +8,10 @@
 #include "VulkanHardwarePixelBuffer.h"
 #include "VulkanMappings.h"
 #include "VulkanTools.h"
-#include "VulkanConstants.h"
-#include "VulkanUtility.h"
-#include "VulkanStagePool.h"
+#include "filament/vulkan/VulkanConstants.h"
+#include "filament/vulkan/VulkanUtility.h"
+#include "filament/vulkan/VulkanStagePool.h"
+#include "VulkanFrame.h"
 #include <filament/BackendUtils.h>
 
 
@@ -179,7 +180,20 @@ void VulkanTexture::freeInternalResourcesImpl(void)
 
 void VulkanTexture::postLoad()
 {
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands(true);
+    auto frameIndex = 0;
+    VulkanFrame* frame = nullptr;// mRenderSystem->_getCurrentFrame();
+    VkCommandBuffer commandBuffer = nullptr;
+    if (frame)
+    {
+        frameIndex = frame->getFrameIndex();
+        commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
+    }
+    else
+    {
+        commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands(true);
+    }
+    
+
     if (!mSurfaceList.empty())
     {
         vks::tools::copyBufferToImage(
@@ -196,7 +210,11 @@ void VulkanTexture::postLoad()
         vks::tools::generateMipmaps(commandBuffer, this);
     }
 
-    VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer, true);
+    if (!frame)
+    {
+        VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer, true);
+    }
+    
 }
 
 void VulkanTexture::createImage(

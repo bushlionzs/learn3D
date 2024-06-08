@@ -414,8 +414,6 @@ namespace Orphigine
 	//---------------------------------------------------------------------
 	void ImpactManager::removeEffect( Impact *effect, bool removeParentNode, bool removeNow )
 	{
-		try
-		{
 			assert (effect);
 
 			effect->setRemoveParentNode(removeParentNode);
@@ -447,18 +445,6 @@ namespace Orphigine
 				effect->shutdown();
 				effect->setDelayRemove(true);
 			}
-		}
-		catch( const std::exception& e )
-		{
-			Ogre::String strCPPException = e.what();
-			Ogre::String Msg = "EffectManager removeEffect Failed:" + strCPPException + "--EffectManager::removeEffect";
-			throw;
-		}
-		catch(...) 
-		{
-			//WARNING_LOG("EffectManager removeEffect Failed.--EffectManager::removeEffect");
-			throw;
-		}
 	}
 	//---------------------------------------------------------------------
 	Impact * ImpactManager::getFromFreeMap( const String &templateName )

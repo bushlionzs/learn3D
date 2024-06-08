@@ -8,7 +8,7 @@
 
 #pragma once
 #include <bluevk/BlueVK.h>
-#include <VulkanContext.h>
+#include <filament/vulkan/VulkanContext.h>
 
 #include "VulkanInitializers.hpp"
 

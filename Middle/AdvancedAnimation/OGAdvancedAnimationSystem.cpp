@@ -694,15 +694,9 @@ namespace Orphigine
 		assert(!name.empty() && "AnimationState名称不能为空 AdvancedAnimationSystem::getAnimationState");
 
 		Ogre::AnimationState* tmpAnimState = NULL;
-		try
-		{
-			tmpAnimState = tmpLogicModel->_getAnimationState(name);
-		}
+	
+		tmpAnimState = tmpLogicModel->_getAnimationState(name);
 
-		catch (...)
-		{
-
-		}
 		return tmpAnimState;
 	}
 

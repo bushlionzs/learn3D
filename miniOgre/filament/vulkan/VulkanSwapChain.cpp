@@ -15,7 +15,7 @@
  */
 #include "OgreHeader.h"
 #include "VulkanSwapChain.h"
-#include "VulkanTexture.h"
+#include <render/vulkanRender/VulkanTexture.h>
 #include "VulkanPlatform.h"
 #include "VulkanCommands.h"
 #include <utils/FixedCapacityVector.h>

@@ -4,7 +4,15 @@
 /* Run Command 的返回值 */
 enum eRUN_CMD_RESULT_CODE { RC_OK = 0, RC_ERROR, RC_SKIP, RC_WAIT,	   /* 等待 */ };
 
-enum GAME_CMD_TYPE { GCT_UNKOWN = -1, GCT_WORLD, GCT_OBJECT, GCT_AI, GCT_DPC, GCT_UI, GCT_MOUSE, };
+enum GAME_CMD_TYPE 
+{ 
+	GCT_UNKOWN = -1, 
+	GCT_WORLD, 
+	GCT_OBJECT, 
+	GCT_AI, 
+	GCT_DPC, 
+	GCT_UI, 
+	GCT_MOUSE, };
 
 #define MAX_OBJ_CMD_PARAM_NUM	(64)
 
@@ -16,7 +24,9 @@ enum GAME_CMD_TYPE { GCT_UNKOWN = -1, GCT_WORLD, GCT_OBJECT, GCT_AI, GCT_DPC, GC
 struct Command_Base
 {
 	/* 命令类型 */
+	uint32_t mCommandSize;
 	uint32_t	m_wID;
+	GAME_CMD_TYPE	m_eType;
 
 	/* 命令参数集合 */
 	union
@@ -30,8 +40,6 @@ struct Command_Base
 		unsigned __int64	u64Param[MAX_OBJ_CMD_PARAM_NUM / 2];
 		__int64				n64Param[MAX_OBJ_CMD_PARAM_NUM / 2];
 	};
-protected:
-	GAME_CMD_TYPE	m_eType;
 public:
 	Command_Base (void)
 	{

@@ -26,8 +26,8 @@
 #include "VulkanSamplerCache.h"
 #include "VulkanStagePool.h"
 #include "VulkanUtility.h"
-#include "VulkanDescriptorSetManager.h"
-#include "VulkanPipelineLayoutCache.h"
+#include "filament/vulkan/caching/VulkanDescriptorSetManager.h"
+#include "filament/vulkan/caching/VulkanPipelineLayoutCache.h"
 
 #include "DriverBase.h"
 #include "filament/Driver.h"

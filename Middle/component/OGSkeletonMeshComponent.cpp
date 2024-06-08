@@ -1481,8 +1481,7 @@ namespace Orphigine
 	//---------------------------------------------------------------------
 	void SkeletonMeshComponent::_updateRenderQueue( Real seconds )
 	{
-		try
-		{
+
 			// 根据当前地形来旋转物体
 			if ( (mPoseType != PT_NORMAL) && mGetHeightInWorld )
 			{
@@ -1495,27 +1494,14 @@ namespace Orphigine
 				}
 				tickSkelControl(seconds);
 			}
-		}
-		catch(...)
-		{
-			WARNING_LOG("SkeletonMeshComponent::_updateRenderQueue Failed 1, --SkeletonMeshComponent::_updateRenderQueue");
-			//OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR,"SkeletonMeshComponent::_updateRenderQueue Failed!", "SkeletonMeshComponent::_updateRenderQueue" );
-			throw;
-		}
+
 		
-		try
-		{
+
 			// 设置透明度
 
 			if (mNeedUpdateTransparency)
 				updateTransparency(seconds);
-		}
-		catch(...)
-		{
-			WARNING_LOG("SkeletonMeshComponent::_updateRenderQueue Failed 2, --SkeletonMeshComponent::_updateRenderQueue");
-			//OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR,"SkeletonMeshComponent::_updateRenderQueue Failed!", "SkeletonMeshComponent::_updateRenderQueue" );
-			throw;
-		}
+
 		
 
 		{
@@ -2044,19 +2030,13 @@ namespace Orphigine
 	void SkeletonMeshComponent::delAllEffect(void)
 	{
 #if EFFECT_RESTRICT
-		try
-		{
+
 			ImpactManager::getSingleton().removeCreateEffectReq(this);
-		}
+
 		
-		catch(...) 
-		{
-			
-		}
+
 		//end
 #endif
-		try
-		{
 			for ( CreatedEffectList::iterator i = mCreatedEffectList.begin();
 				i != mCreatedEffectList.end(); ++i )
 			{		
@@ -2070,15 +2050,6 @@ namespace Orphigine
 				}
 			}
 			mCreatedEffectList.clear();
-		}
-		catch( const std::exception& e )
-		{
-			
-		}
-		catch(...) 
-		{
-			
-		}
 	}
 	//-----------------------------------------------------------------------	
 	Impact* SkeletonMeshComponent::getEffect(SkeletonMeshComponent::EffectHandle handle)
@@ -2282,34 +2253,19 @@ namespace Orphigine
 	{
 		if (mCurrentSkill)
 		{
-			try
-			{
-
 				DestroySkillCallback* tmpCallback = SpellManager::getSingleton().getDestroySkillCallback();
 				if(NULL != tmpCallback)
 					tmpCallback->onDestroySkill(mCurrentSkill);
 				//需要删除声音
 				_muteCurrentSkillSound();
-			}
-			
-			catch(...) 
-			{
-				
-			}
-			try
-			{
+
 				ImpactManager::getSingleton().removeSkill(mCurrentSkill);
 				mCurrentSkill = NULL;
 
 				m_isAnimForCurrentSkillStart = false;
 				m_AnimationTimePosForCurrentSkill = 0.0f;
 				m_animStateForCurrentSkillCache = NULL;
-			}
-			
-			catch(...) 
-			{
-				
-			}
+
 		}
 
 		//	mSk.delCurrentSkill();
@@ -3703,8 +3659,6 @@ namespace Orphigine
 	//-----------------------------------------------------------------------
 	void SkeletonMeshComponent::_delSkeletonEntity(void)
 	{
-		try
-		{
 			if (mSkeletonEntity)
 			{
 				// Detach from parent scene node
@@ -3718,12 +3672,7 @@ namespace Orphigine
 				SkeletonMeshComponentManager::getSingleton()._destroySkeletalEntity(mSkeletonEntity);
 				mSkeletonEntity = 0;
 			}
-		}
 	
-		catch(...) 
-		{
-			
-		}
 	}
 	//-----------------------------------------------------------------------
 	void SkeletonMeshComponent::setSelected(bool selected)

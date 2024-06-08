@@ -11,6 +11,7 @@
 #include <algorithm>
 #include "platform_log.h"
 #include "luaplus.h"
+#include "OgreHeader.h"
 #include <google/protobuf/message.h>
 using namespace LuaPlus;
 #define Lua_CFunction				lua_CFunction

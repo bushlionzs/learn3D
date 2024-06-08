@@ -23,7 +23,7 @@
 
 #include "VulkanConstants.h"
 #include "VulkanHandles.h"
-#include "VulkanTexture.h"
+#include "render/vulkanRender/VulkanTexture.h"
 #include "VulkanUtility.h"
 
  // Vulkan functions often immediately dereference pointers, so it's fine to pass in a pointer

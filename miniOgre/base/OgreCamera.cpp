@@ -4,6 +4,7 @@
 #include "OgreNode.h"
 #include "OgreViewport.h"
 #include "OgreSceneManager.h"
+#include "OgreRoot.h"
 
 namespace Ogre {
 	// constructor with vectors
@@ -136,6 +137,11 @@ namespace Ogre {
 		mNeedUpdate = true;
 	}
 
+	void Camera::updateCamera(const Ogre::Matrix4& m)
+	{
+		mCameraImpl->updateView(m);
+	}
+
 	void Camera::updateCamera(
 		const Ogre::Vector3& eyePos,
 		const Ogre::Vector3& targetPos,
@@ -147,8 +153,9 @@ namespace Ogre {
 	Ray Camera::getCameraToViewportRay(Real screenX, Real screenY) const
 	{
 		Ray ray;
-		float width = 1024;
-		float height = 768;
+		auto rt = Ogre::Root::getSingleton().getMainRect();
+		float width = rt.width();
+		float height = rt.height();
 		float x = screenX/width;
 		float y = screenY/height;
 		getCameraToViewportRay(x, y, &ray);

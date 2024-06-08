@@ -25,7 +25,7 @@
 #include <CEGUI/ImageManager.h>
 #include "GameDataCharacter.h"
 #include "UIManager.h"
-//#include "GameToolTip.h"
+#include "GameToolTip.h"
 
 
 SelfEquipWindow::SelfEquipWindow(CEGUI::Window* parent)

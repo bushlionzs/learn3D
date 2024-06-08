@@ -29,6 +29,8 @@ public:
 		return false;
 	}
 	virtual void addCustomDirectory() {}
+
+	virtual void OnSize(uint32_t width, uint32_t height);
 private:
 	virtual bool frameStarted(const FrameEvent& evt);
 	void ShowFrameFrequency();

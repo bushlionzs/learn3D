@@ -161,6 +161,7 @@ typedef double float64;
 
 #include "DefineItem.h"
 #include "BaseTool.h"
+#include "KDefine.h"
 
 
 

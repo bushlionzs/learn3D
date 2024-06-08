@@ -12,6 +12,7 @@ public:
 	{
 		return mWnd;
 	}
+	LRESULT WINAPI MessageHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 private:
 	HWND mWnd;
 	HINSTANCE m_hInstance;

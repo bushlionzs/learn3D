@@ -57,7 +57,7 @@ private:
 
     FrameConstantBuffer mFrameConstantBuffer;
     
-    VulkanFrame* mCurrentVulkanFrame;
+    VulkanFrame* mCurrentVulkanFrame = nullptr;
 
     VulkanWindow* mRenderWindow;
 

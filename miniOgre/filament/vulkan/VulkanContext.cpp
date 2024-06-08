@@ -19,7 +19,7 @@
 #include "VulkanCommands.h"
 #include "VulkanHandles.h"
 #include "VulkanMemory.h"
-#include "VulkanTexture.h"
+#include "render/vulkanRender/VulkanTexture.h"
 #include "VulkanUtility.h"
 
 #include <filament/PixelBufferDescriptor.h>

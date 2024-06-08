@@ -26,6 +26,7 @@
 #include "KItemManager.h"
 #include "KObjectManager.h"
 #include "DirectlyEffectMgr.h"
+#include "AI_Player.h"
 
 class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -54,53 +55,12 @@ KPlayer::KPlayer()
 	mObjectType = ObjectType_PlayerOfMe;
 
 	mDirectlyImpact = new CDirectlyEffectMgr;
-	mDirectlyImpact->Init(GAME_TABLE_MANAGER_PTR->GetTable(TABLE_DIRECTLY_IMPACT)->GetTableFile());
+	mDirectlyImpact->Init(GAME_TABLE_MANAGER_PTR->GetTable(TABLE_DIRECTLY_IMPACT)->GetTableFile());	
+
+	m_pAI = new KAI_Player;
 
 	
 }
-
-void CalculateNodePos(const Ogre::Vector3& fvPosition, FLOAT fModifyHeight, Ogre::Vector3& outPos)
-{
-	GameScene* activeScene = GameSceneManager::getSingleton().GetActiveScene();
-
-		//当前位置
-	Ogre::Vector3	fvCurObjPos = fvPosition;
-	FLOAT	fInAirHeight = fvCurObjPos.y;
-
-	//---------------------------------------------------
-	//首先取得在地形上的高度
-
-	FLOAT fHeight = -FLT_MAX;
-
-
-	if (FALSE == activeScene->getCollision().Get3DMapHeight(fvPosition.x, fvCurObjPos.y, fvPosition.z, fHeight))
-	{
-		fHeight = fvPosition.y;
-	}
-	else
-	{
-		int kk = 0;
-	}
-
-
-	// 设置最终高度， 并且设置是否在行走面上的状态
-	FLOAT fRealHeight = 0.0f;
-
-
-	if (fHeight > fvPosition.y)
-	{
-		fRealHeight = fHeight;
-	}
-	else
-	{
-		fRealHeight = fvPosition.y;
-	}
-
-	outPos.x = fvPosition.x;
-	outPos.y = fRealHeight + fModifyHeight;
-	outPos.z = fvPosition.z;
-}
-
 
 void KPlayer::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 {
@@ -122,7 +82,7 @@ void KPlayer::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 		const _DBC_DIRECT_EFFECT* pImpact = CDirectlyEffectMgr::GetMe()->GetConstDirectlyImpact(IMPACTTYPE_PATH_LINE);
 		//create effect path
 
-		std::vector<Ogre::Vector3> pathlist = mPathComponent->calPathEffect();
+//		std::vector<Ogre::Vector3> pathlist = mPathComponent->calPathEffect();
 		
 		/*if (!pathlist.empty())
 		{
@@ -143,21 +103,46 @@ void KPlayer::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 		}*/
 
 		
-
-		EngineManager::getSingleton().positionAxisTrans(GAT_GAME,
-			fvTarget, GAT_ENGINE, fvEnginePosition);
-		Ogre::Vector3 modifyPosition;
-		CalculateNodePos(fvEnginePosition, 0.0f, modifyPosition);
-
-
-		mMouseNode->setPosition(fvEnginePosition);
-		mMouseNode->updatechildren();
+		updateMousePosition(fvTarget);
+		
 		ChangeAction(CA_MOVING, 0.0f);
 		ChangeAction(CA_JUMP, 0.0f);
 		ChangeAction(CA_MOVING, 1.0f);
 		ChangeAction(CA_WALK, 0.0f, BASE_ACTION_N_RUN);
+		
+
+		m_pAI->AddCommand_MoveTo(fvTargetPos.x, fvTargetPos.y, false, false, TRUE);
 	}
 
+}
+
+void KPlayer::updateMousePosition(const Ogre::Vector3& targetPos)
+{
+	Ogre::Vector3 fvEnginePosition;
+	EngineManager::getSingleton().positionAxisTrans(GAT_GAME,
+		targetPos, GAT_ENGINE, fvEnginePosition);
+	
+
+	GameScene* activeScene = GameSceneManager::getSingleton().GetActiveScene();
+
+
+	FLOAT fHeight = -FLT_MAX;
+
+
+	if (FALSE == activeScene->getCollision().Get3DMapHeight(fvEnginePosition.x, fvEnginePosition.y, fvEnginePosition.z, fHeight))
+	{
+		fHeight = fvEnginePosition.y;
+	}
+	
+	if (fHeight > fvEnginePosition.y)
+	{
+		fHeight *= 100.0f;
+		fvEnginePosition.y = fHeight;
+	}
+
+
+	mMouseNode->setPosition(fvEnginePosition);
+	mMouseNode->updatechildren();
 }
 
 void KPlayer::input(KeyCode _key)

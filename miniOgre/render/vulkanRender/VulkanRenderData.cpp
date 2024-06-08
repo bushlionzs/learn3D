@@ -185,7 +185,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
             textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         }
 
-        int32_t start = textureDescriptors.size();
+        /*int32_t start = textureDescriptors.size();
         if (start < tex_count)
         {
             auto defaultTex = VulkanHelper::getSingleton().getDefaultTexture();
@@ -198,7 +198,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
                 textureDescriptor.sampler = tex->getSampler();
                 textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
             }
-        }
+        }*/
     }
 
 
@@ -259,7 +259,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
     {
         auto descriptor = textureDescriptors.data();
 
-        for (uint32_t i = 0; i < 3; i++)
+        for (uint32_t i = 0; i < textureDescriptors.size(); i++)
         {
             writeDescriptorSets.push_back(vks::initializers::writeDescriptorSet(
                 descriptorSetSampler,

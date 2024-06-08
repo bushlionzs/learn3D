@@ -62,8 +62,9 @@ bool GameWorld::gameWorldInit()
 	mGameCamera->setDistance(1200.0f);
 	mGameCamera->setHeight(200.0f);
 
-	InputManager::getSingleton().addListener(this);
+	mGameInput = new GameInput;
 
+	mGameInput->init();
 	
 
 	NOTICE_LOG("load world successfully.")
@@ -73,88 +74,4 @@ bool GameWorld::gameWorldInit()
 void GameWorld::update(float delta)
 {
 	KObjectManager::GetSingleton().update(delta);
-}
-
-void GameWorld::injectMouseWheel(int _absz)
-{
-   
-}
-
-void GameWorld::injectMouseCursor()
-{
-	
-}
-
-void GameWorld::injectMouseMove(int _absx, int _absy, int _absz)
-{
-	KPlayer* pPlayer = KObjectManager::GetSingleton().getMySelf();
-	if (nullptr == pPlayer)
-	{
-		return;
-	}
-	/*_absx = 166;
-	_absy = 351;*/
-	Ogre::Vector3 fvMouseHitPlan;
-	KObject* pSelectObj = (KObject*)KObjectManager::GetSingleton().GetMouseOverObject(_absx, _absy, fvMouseHitPlan);
-
-	if (pSelectObj != mLastSelectObj)
-	{
-		if (pSelectObj == nullptr)
-		{
-			CEGUIManager::getSingleton().ChangeMouseCursor(MouseType_Normal);
-		}
-		else
-		{
-			CEGUIManager::getSingleton().ChangeMouseCursor(MouseType_Speak);
-		}
-
-		mLastSelectObj = pSelectObj;
-	}
-}
-
-void GameWorld::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
-{
-	if (CEGUIManager::getSingleton().isMouseInGUI())
-	{
-		return;
-	}
-	if (_id == OIS::MB_Left)
-	{
-		if (!mPlayer)
-		{
-			mPlayer = KObjectManager::GetSingleton().getMySelf();
-		}
-
-		if(mPlayer)
-			mPlayer->injectMousePress(_absx, _absy, _id);
-	}
-
-	if (_id == OIS::MB_Right)
-	{
-		auto scene = GameSceneManager::getSingleton().GetActiveScene();
-
-		std::vector<Orphigine::ActorPtr> objects;
-		scene->getIntersectObject(_absx, _absy, objects);
-		if (!objects.empty())
-		{
-			int kk = 0;
-		}
-	}
-}
-
-void GameWorld::injectMouseRelease(int _absx, int _absy, OIS::MouseButtonID _id)
-{
-
-}
-
-void GameWorld::injectKeyPress(KeyCode _key, uint32_t _text)
-{
-	mPlayer->input(_key);
-
-	GameInput::GetSingleton().input(_key);
-}
-
-void GameWorld::injectKeyRelease(KeyCode _key)
-{
-    
 }

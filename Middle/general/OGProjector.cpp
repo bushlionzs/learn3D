@@ -39,7 +39,9 @@ namespace Orphigine {
 
     public:
         VertexData* mVertexData = nullptr;
+        IndexData* mIndexData = nullptr;
         Ogre::Matrix4 mProjectorMatrix;
+        IndexDataView mIndexDataView;
     public:
 
         ProjectorRenderable(Projector* parent)
@@ -47,13 +49,24 @@ namespace Orphigine {
             , mParent(parent)
         {
             mVertexData = new VertexData;
-            mVertexData->setVertexCount(6);
+
+            auto vertexCount = 24;
+            mVertexData->setVertexCount(vertexCount);
             auto decl = mVertexData->getVertexDeclaration();
             mVertexData->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
             mVertexData->addElement(0, 0, 3 * sizeof(Real), VET_COLOUR, VES_DIFFUSE);
 
-            mVertexData->addBindBuffer(0, 16, 6);
-            
+            mVertexData->addBindBuffer(0, 16, vertexCount);
+
+            mIndexData = new IndexData;
+            mIndexData->createBuffer(16, vertexCount);
+
+            std::vector<uint16_t> indexData(vertexCount);
+            for (uint32_t i = 0; i < vertexCount; i++)
+            {
+                indexData[i] = i;
+            }
+            mIndexData->writeData((const char*)indexData.data(), vertexCount * 2);
         }
 
         virtual VertexData* getVertexData()
@@ -68,7 +81,7 @@ namespace Orphigine {
 
         virtual IndexDataView* getIndexView()
         {
-            return nullptr;
+            return &mIndexDataView;
         }
 
         virtual uint64_t getSortValue()
@@ -86,7 +99,8 @@ namespace Orphigine {
 
             if (numVerts < mTempPositions.size())
             {
-                mVertexData->updateBindBuffer(0, mTempPositions.size());
+                auto vertexSize = mVertexData->getVertexSize(0);
+                mVertexData->addBindBuffer(0, vertexSize, mTempPositions.size());
             }
             mVertexData->setVertexStart(vertexStart);
             mVertexData->setVertexCount(vertexCount);
@@ -104,6 +118,16 @@ namespace Orphigine {
                 pFloat++;
             }
             buf->unlock();
+
+            mVertexData->prepare();
+            mIndexData->prepare();
+
+            auto vb = mVertexData->getVertexBuffer();
+            auto ib = mIndexData->getFIndexBuffer();
+            this->updateBuffer(vb, ib);
+            mIndexDataView.mIndexCount = mTempPositions.size();
+            mIndexDataView.mIndexLocation = 0;
+            mIndexDataView.mBaseVertexLocation = 0;
         }
         virtual const std::shared_ptr<Material>& getMaterial() override
         {

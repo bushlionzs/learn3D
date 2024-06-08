@@ -18,7 +18,7 @@ public:
 	}
 private:
 	std::map<int32_t, GameScene*> mSceneMap;
-	GameScene* mActiveScene;
+	GameScene* mActiveScene = nullptr;
 	uint32_t mSceneId;
 };
 

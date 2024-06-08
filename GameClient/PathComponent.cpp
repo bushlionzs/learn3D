@@ -246,6 +246,10 @@ float PathComponent::calculateHeight(const Ogre::Vector2& fvPosition)
 	{
 		fHeight = -FLT_MAX;
 	}
+	else
+	{
+		int kk = 0;
+	}
 
 	// 设置最终高度， 并且设置是否在行走面上的状态
 	FLOAT fRealHeight = 0.0f;

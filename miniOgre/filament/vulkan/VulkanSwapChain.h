@@ -16,7 +16,7 @@
 
 #ifndef TNT_FILAMENT_BACKEND_VULKANSWAPCHAIN_H
 #define TNT_FILAMENT_BACKEND_VULKANSWAPCHAIN_H
-#include "VulkanCommon.h"
+#include <render/vulkanRender/VulkanCommon.h>
 #include "DriverBase.h"
 
 #include "VulkanContext.h"

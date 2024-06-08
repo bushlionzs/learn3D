@@ -22,8 +22,11 @@
 #include "data/GameDataCharacter.h"
 #include "KObjectManager.h"
 #include "command/command.h"
+#include "AI_Player.h"
 #include "DirectlyEffectMgr.h"
 #include "OgreRoot.h"
+#include "GameTime.h"
+#include "GameMath.h"
 
 class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
@@ -385,6 +388,51 @@ bool KCharacter::actorSetActionSlot
 void KCharacter::update(float deltatime)
 {
 	mPathComponent->update(deltatime);
+
+	ProcessBaseStateCommand();
+	ProcessActionStateCommand();
+
+	uint32 uElapseTime = (uint32)(GAME_TIME_PTR->GetDeltaTime());
+	uElapseTime = (uint32)((FLOAT)uElapseTime * GetLogicSpeed());
+
+	//chunlin added, 2009.1.20
+	//使用平均时间，避免delta time的波动导致人物每帧的位移不均匀而产生抖动
+	uint32 uAverageTime = (uint32)(GAME_TIME_PTR->GetAverageTime());
+	uAverageTime = (uint32)((FLOAT)uAverageTime * GetLogicSpeed());
+	//end
+
+	// 基础逻辑
+	if (FALSE == IsStopped_CharacterState(CHAR_LOGIC_BASE))
+	{
+		BOOL bResult = FALSE;
+
+		switch (GetCharacterState(CHAR_LOGIC_BASE))
+		{
+		case CAHR_STATE_IDLE:
+			bResult = UpdateState_Idle(uElapseTime);
+			break;
+		case CAHR_STATE_MOVE:
+			bResult = UpdateState_Move(uAverageTime);
+			break;
+		case CAHR_STATE_DEAD:
+			bResult = UpdateState_Dead(uElapseTime);
+			break;
+		case CAHR_STATE_STALL:
+			bResult = UpdateState_Stall(uElapseTime);
+			break;
+		default:
+			bResult = FALSE;
+			break;
+		};
+
+		if (FALSE == bResult)
+		{
+			ShutDown_CharacterState(CHAR_LOGIC_BASE);
+			EnterState_Idle();
+		}
+	}
+
+	
 }
 
 bool KCharacter::startSkill()
@@ -1387,6 +1435,11 @@ void KCharacter::ModifyMove(void)
 	}
 }
 
+bool KCharacter::IsCanJump()
+{
+	return true;
+}
+
 bool KCharacter::DoJump(void)
 {
 	if (IsDie())
@@ -1411,6 +1464,35 @@ bool KCharacter::DoJump(void)
 bool KCharacter::IsJumping() const
 {
 	return m_bInAir;
+}
+
+bool KCharacter::IsJumpMoving() const
+{
+	return false;
+}
+
+void KCharacter::toFaceDir(FLOAT fDir)
+{
+	FLOAT fToDir = fDir;
+	if (fToDir < 0.f)
+	{
+		fToDir = KLU_PI * 2.f + fDir;
+	}
+	if (fabs(fToDir - m_fToRotation) > 0.01f)
+	{
+		FLOAT fAddDir = fabs(fToDir - getDirection());
+
+		if (fAddDir >= KLU_PI)
+		{
+			fAddDir = KLU_PI * 2.f - fAddDir;
+		}
+		m_fRotationSpeed = fAddDir / KLU_PI * KLU_PI / 150.f;
+		if (m_fRotationSpeed < 0.f)
+			m_fRotationSpeed = fabs(m_fRotationSpeed);
+	}
+
+	m_fToRotation = fToDir;
+	CGameMath::KLU_IsNan(m_fToRotation);
 }
 
 bool KCharacter::BeginJump()
@@ -2381,7 +2463,46 @@ bool	KCharacter::EnterState_Action(KCharCmdDate_Logic* pLogicCommand)
 // 移动
 bool	KCharacter::EnterState_Move(KCharCmdDate_Logic* pLogicCommand)
 {
-	return true;
+	// 执行条件判断
+	if (pLogicCommand == NULL)
+		return FALSE;
+	if (pLogicCommand->GetCmdType() != OBJ_CMD_MOVE)
+		return FALSE;
+
+	KCharCmdDate_Move* pMoveCommand = (KCharCmdDate_Move*)pLogicCommand;
+	if (pMoveCommand->GetNodeCount() <= 0)
+		return FALSE;
+
+	if (GetCharacterState(CHAR_LOGIC_BASE) == CAHR_STATE_DEAD)
+		return FALSE;
+
+	// 设置移动为当前逻辑命令
+	SetBaseStateCommand(pLogicCommand);
+	SetBaseLogicCount(pLogicCommand->GetLogicCount());
+
+
+	// 保存数据（移动节点表）
+	const GLPos* pNodeList = pMoveCommand->GetNodeList();
+	m_StateDate_Move.m_nCurrentNodeIndex = 0;
+	
+	m_StateDate_Move.m_posSaveStart = GLPos(getPosition().x, getPosition().z);
+	m_StateDate_Move.m_posSaveTarget = pNodeList[0];
+
+	
+
+	if (FALSE == IsMoving())
+	{
+		// 设置逻辑状态
+		Active_CharacterState(CAHR_STATE_MOVE, CHAR_LOGIC_BASE);
+		BeginMove(TRUE);
+	}
+
+	// 跳跃
+	if (pMoveCommand->IsJumpMove())
+	{
+		DoJump();
+	}
+	return TRUE;
 }
 
 // 法术聚气
@@ -2752,6 +2873,31 @@ BOOL KCharacter::ProcessStateCommand(KCharCmdDate_Logic* pLogicCmd)
 	return bResult;
 }
 
+bool KCharacter::IsIdle(void) const
+{
+	return false;
+}
+
+bool KCharacter::IsMoving(void) const
+{
+	return false;
+}
+
+bool KCharacter::IsGather(void) const
+{
+	return false;
+}
+
+bool KCharacter::IsLead(void) const
+{
+	return false;
+}
+
+bool KCharacter::IsUseSkill(void) const
+{
+	return true;
+}
+
 bool KCharacter::IsLogicLocked()
 {
 	if (TRUE == m_bLogic_Locked)
@@ -2879,6 +3025,24 @@ void KCharacter::Exit_CharacterState(CHARATER_LOGIC_TYPE nLogicTag)
 	}
 }
 
+
+void KCharacter::Active_CharacterState(CHARATER_STATE_TYPE eLogic, CHARATER_LOGIC_TYPE nLogicTag)
+{
+	// 设置某逻辑状态的开始
+	if (CHAR_LOGIC_BASE == nLogicTag)
+	{
+		m_bIsCharBaseLogicEnd = FALSE;
+		m_nCharBaseState = eLogic;
+		m_uBaseAnimStartTime = GAME_TIME_PTR->GetTimeNow();
+	}
+	else
+	{
+		m_bIsCharActionLogicEnd = FALSE;
+		m_nCharActionState = eLogic;
+		m_uActionAnimStartTime = GAME_TIME_PTR->GetTimeNow();
+	}
+}
+
 // --------------------------------------------------------------------------
 void KCharacter::SetActionLogicSpeed(FLOAT fSpeed)
 {
@@ -2892,14 +3056,6 @@ void KCharacter::SetActionLogicSpeed(FLOAT fSpeed)
 FLOAT KCharacter::GetActionLogicSpeed() const
 {
 	return m_fActionLogic_Speed;
-}
-
-void KCharacter::SetLogicSpeed(FLOAT fSpeed)
-{
-	if (fabsf(m_fLogic_Speed - fSpeed) > 0.1f)
-	{
-		m_fLogic_Speed = fSpeed;
-	}
 }
 
 void	KCharacter::AddEvent(const LogicEventData* pLogicEvent)
@@ -2920,6 +3076,176 @@ void	KCharacter::RemoveAllEvent(void)
 void	KCharacter::Update_Event(void)
 {
 
+}
+
+void KCharacter::Update_ToFaceDir(float deltatime)
+{
+	FLOAT fDir = getDirection();
+	if (m_fToRotation != fDir)
+	{
+		FLOAT fCha = m_fToRotation - fDir;
+		if (fabs(fCha) < 0.01f) // 小于1度
+		{
+			setDirection(m_fToRotation);
+			return;
+		}
+
+		FLOAT fDirAdd = deltatime * m_fRotationSpeed;
+
+		if (fDirAdd > fabs(fCha))
+			fDirAdd = fabs(fCha);
+
+		BOOL bTurnLeft = TRUE;
+		if (fCha < -KLU_PI || (fCha > 0 && fCha < KLU_PI))
+		{
+			bTurnLeft = FALSE;
+		}
+		if (FALSE == bTurnLeft)
+		{
+			fDir += fDirAdd;
+			if (fDir > KLU_PI * 2.f)
+			{
+				fDir -= KLU_PI * 2.f;
+				if (fDir > m_fToRotation)
+				{
+					fDir = m_fToRotation;
+				}
+			}
+		}
+		else
+		{
+			fDir -= fDirAdd;
+			if (fDir < 0.f)
+			{
+				fDir += KLU_PI * 2.f;
+				if (fDir < m_fToRotation)
+				{
+					fDir = m_fToRotation;
+				}
+			}
+		}
+		setDirection(fDir);
+	}
+}
+
+bool KCharacter::UpdateState_Idle(uint32 uElapseTime)
+{
+	m_StateDate_Idle.m_uStartTime += uElapseTime;
+	return true;
+}
+
+bool KCharacter::UpdateState_Move(uint32 uElapseTime)
+{
+	KCharCmdDate_Move* pMoveCommand = (KCharCmdDate_Move*)GetBaseStateCommand();
+	if (!pMoveCommand || pMoveCommand->GetNodeCount() <= 0)
+	{
+		return FALSE;
+	}
+
+	const GLPos* paPos = pMoveCommand->GetNodeList();
+
+	vector2 fvStartPos2D(m_StateDate_Move.m_posSaveStart.m_fX, m_StateDate_Move.m_posSaveStart.m_fZ);
+	vector2 fvCurrentPos2D(getPosition().x, getPosition().z);
+	vector2 fvTargetPos2D(paPos[m_StateDate_Move.m_nCurrentNodeIndex].m_fX, paPos[m_StateDate_Move.m_nCurrentNodeIndex].m_fZ);
+
+	// 当前位置与当前的目标路径点路径长度的平方
+	FLOAT fDistToTarget = fvCurrentPos2D.distance(fvTargetPos2D);
+	//CGameMath::KLU_GetDist(fvCurrentPos2D, fvTargetPos2D);
+
+	// 这一帧可移动的路径长度
+	FLOAT fElapseTime = (FLOAT)uElapseTime * 0.001f;
+	FLOAT fSpeed = GetCharacterData()->Get_MoveSpeed();
+
+
+	FLOAT fMoveDist = fSpeed * fElapseTime;
+
+	if (fMoveDist < 0.000001f)
+		return TRUE;
+
+	BOOL bStopMove = FALSE;
+	vector2 fvSetToPos = fvCurrentPos2D;
+	FLOAT fSetToDir = getDirection();
+
+	while (TRUE)
+	{
+		if (fMoveDist >= fDistToTarget)
+		{
+			m_StateDate_Move.m_nCurrentNodeIndex++;
+			if (m_StateDate_Move.m_nCurrentNodeIndex >= pMoveCommand->GetNodeCount())
+			{
+				// 走到了
+				bStopMove = TRUE;
+				fvSetToPos = fvTargetPos2D;
+				if (fvCurrentPos2D != fvTargetPos2D)// 原地, 不改变朝向
+				{
+					fSetToDir = CGameMath::KLU_GetYAngle(fvCurrentPos2D, fvTargetPos2D);
+				}
+				break;
+			}
+			else
+			{
+				// 改变m_StateDate_Move中的各个值
+				fMoveDist -= fDistToTarget;
+				fvStartPos2D = fvTargetPos2D;
+				fvCurrentPos2D = fvTargetPos2D;
+				fvTargetPos2D = vector2(paPos[m_StateDate_Move.m_nCurrentNodeIndex].m_fX, paPos[m_StateDate_Move.m_nCurrentNodeIndex].m_fZ);
+
+				m_StateDate_Move.m_posSaveStart.m_fX = fvStartPos2D.x;
+				m_StateDate_Move.m_posSaveStart.m_fZ = fvStartPos2D.y;
+				m_StateDate_Move.m_posSaveTarget.m_fX = fvTargetPos2D.x;
+				m_StateDate_Move.m_posSaveTarget.m_fZ = fvTargetPos2D.y;
+
+				fDistToTarget = CGameMath::KLU_GetDist(fvCurrentPos2D, fvTargetPos2D);
+
+				// 走一点发一点
+				if (m_pAI)
+				{
+					m_pAI->SendMoveNode(m_StateDate_Move.m_nCurrentNodeIndex, GLPos(fvCurrentPos2D.x, fvCurrentPos2D.y));
+				}
+			}
+		}
+		else
+		{
+			if (0.f == fDistToTarget)
+				break;
+
+			FLOAT fDistX = (fMoveDist * (fvTargetPos2D.x - fvCurrentPos2D.x)) / fDistToTarget;
+			FLOAT fDistZ = (fMoveDist * (fvTargetPos2D.y - fvCurrentPos2D.y)) / fDistToTarget;
+
+			fvSetToPos.x = fvCurrentPos2D.x + fDistX;
+			fvSetToPos.y = fvCurrentPos2D.y + fDistZ;
+
+			fSetToDir = CGameMath::KLU_GetYAngle(fvCurrentPos2D, fvTargetPos2D);
+
+			break;
+		}
+	}
+
+	calculateNodePos(fvSetToPos, 0.0f);
+
+	toFaceDir(fSetToDir);
+
+	Update_ToFaceDir(uElapseTime);
+
+	if (bStopMove)
+	{
+		return FALSE;
+	}
+	else
+	{
+		//UpdateWalkSound();
+	}
+	return true;
+}
+
+bool KCharacter::UpdateState_Dead(uint32 uElapseTime)
+{
+	return true;
+}
+
+bool KCharacter::UpdateState_Stall(uint32 uElapseTime)
+{
+	return true;
 }
 
 bool	KCharacter::ProcessEvent(const LogicEventData* pLogicEvent)
@@ -2969,4 +3295,10 @@ bool KCharacter::AddBindEffect(const STRING& strEffect, const STRING& strBindLoc
 bool KCharacter::AddMountEffect(const STRING& strEffect, const STRING& strBindLocat)
 {
 	return true;
+}
+
+eRUN_CMD_RESULT_CODE KCharacter::AddLocalCommand(const ObjectCmd* pCmd)
+{
+	assert(false);
+	return RC_OK;
 }

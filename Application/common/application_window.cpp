@@ -1,10 +1,23 @@
 #include "OgreHeader.h"
 #include "application_window.h"
+#include "application_base.h"
 
-
-ApplicationWindow::ApplicationWindow()
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	ApplicationWindow* wnd = (ApplicationWindow*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	if (wnd)
+	{
+		return wnd->MessageHandler(hWnd, message, wParam, lParam);
+	}
+	else
+	{
+		return ::DefWindowProc(hWnd, message, wParam, lParam);
+	}
+}
 
+ApplicationWindow::ApplicationWindow(ApplicationBase* app)
+{
+	mApp = app;
 }
 
 ApplicationWindow::~ApplicationWindow()
@@ -29,7 +42,7 @@ bool ApplicationWindow::createWindow(int32_t width, int32_t height)
 
 	const char* windowName = "GraphicsStudy";
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	// Redraw On Size, And Own DC For Window.
-	wc.lpfnWndProc = (WNDPROC)DefWindowProc;					// WndProc Handles Messages
+	wc.lpfnWndProc = WndProc;					// WndProc Handles Messages
 	wc.cbClsExtra = 0;									// No Extra Window Data
 	wc.cbWndExtra = 0;									// No Extra Window Data
 	wc.hInstance = m_hInstance;							// Set The Instance
@@ -80,7 +93,7 @@ bool ApplicationWindow::createWindow(int32_t width, int32_t height)
 	{
 		dwExStyle = WS_EX_APPWINDOW;								// Window Extended Style
 		dwStyle = WS_POPUP;										// Windows Style
-	//	ShowCursor(FALSE);										// Hide Mouse Pointer
+		//	ShowCursor(FALSE);										// Hide Mouse Pointer
 	}
 	else
 	{
@@ -105,10 +118,61 @@ bool ApplicationWindow::createWindow(int32_t width, int32_t height)
 		NULL,								// No Menu
 		m_hInstance,						// Instance
 		NULL);
-
+	::SetWindowLongPtr(mWnd, GWLP_USERDATA, (LONG_PTR)this);
 	ShowWindow(mWnd, SW_SHOW);						// Show The Window
 	SetForegroundWindow(mWnd);						// Slightly Higher Priority
 	SetFocus(mWnd);									// Sets Keyboard
 
 	return true;
+}
+
+LRESULT WINAPI ApplicationWindow::MessageHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_ACTIVATE:
+	{
+		return 0;
+	}
+	case WM_LBUTTONDOWN:
+		break;
+	case WM_LBUTTONUP:
+		break;
+	case WM_RBUTTONDOWN:
+		break;
+	case WM_RBUTTONUP:
+		break;
+	case WM_KEYDOWN:
+		break;
+	case WM_KEYUP:
+		break;
+	case WM_CLOSE:
+	{
+		PostQuitMessage(0);
+		return 0;
+	}
+	break;
+	case WM_SIZE:
+	{
+		int32_t width = LOWORD(lParam);
+		int32_t height = HIWORD(lParam);
+		if (mApp)
+		{
+			mApp->OnSize(width, height);
+		}
+	}
+	break;
+	case WM_DESTROY:
+	{
+		PostQuitMessage(0);
+		return 0;
+	}
+	break;
+	case WM_CREATE:
+	{
+		return 0;
+	}
+	break;
+	}
+	return  DefWindowProc(hWnd, message, wParam, lParam);
 }

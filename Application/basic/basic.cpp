@@ -24,7 +24,7 @@ bool Basic::appInit()
 {
 	ApplicationBase::appInit();
 
-	base1();
+	base2();
 	return true;
 }
 
@@ -68,9 +68,9 @@ void Basic::base1()
 		leftop, leftbottom, righttop, rightbottom, normal);
 	Entity* rect = mSceneManager->createEntity("rect", meshName);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
-	rectnode->attachObject(rect);
+	//rectnode->attachObject(rect);
 
-	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
+	mSceneManager->setSkyBox(true, "SkyLan", 50000);
 
 	mGameCamera->setDistance(3.0f);
 	mGameCamera->setMoveSpeed(5);

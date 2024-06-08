@@ -482,8 +482,8 @@ void CharMoveState::BroatMoveMessage(const GLPos* pTargetPos, const GLPos* stopP
 	target->set_fz(pTargetPos->m_fZ);
 
 	base::GLPos* stop = dummy.mutable_stop_pos();
-	target->set_fx(stopPos->m_fX);
-	target->set_fz(stopPos->m_fZ);
+	stop->set_fx(stopPos->m_fX);
+	stop->set_fz(stopPos->m_fZ);
     m_pOnwer->GetMap()->broadCast(servermessage::SC_CHARACTER_MOVE, dummy, m_pOnwer);
 }
 

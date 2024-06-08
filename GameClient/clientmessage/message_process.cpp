@@ -15,6 +15,7 @@
 #include "KNpc.h"
 #include "command/command.h"
 #include "UIManager.h"
+#include "game_scene.h"
 
 
 void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
@@ -342,8 +343,8 @@ void sc_enter_scene(NetHandle h, const char* msg, uint32_t msg_size)
 	mPosition.y = 0;
 	mPosition.z = dummy.position_y();
 
-
-	KPlayer* pPlayer = (KPlayer*)KObjectManager::GetSingleton().createPlayer(dummy.object_id());
+	auto playerId = dummy.object_id();
+	KPlayer* pPlayer = (KPlayer*)KObjectManager::GetSingleton().createPlayer(playerId);
 	pPlayer->setPosition(mPosition);
 }
 
@@ -508,4 +509,94 @@ void sc_use_equip_result(NetHandle h, const char* msg, uint32_t msg_size)
 		(PLAYER_EQUIP)equip_point, pItemAtBag, false);
 	UIManager::GetSingleton().updateWindow(GameUI_SelfEquip);
 	UIManager::GetSingleton().updateWindow(GameUI_Package);
+}
+
+void sc_char_move(NetHandle h, const char* msg, uint32_t msg_size)
+{
+	GameScene* pScene = (GameScene*)(GameSceneManager::getSingleton().GetActiveScene());
+	if (NULL == pScene)
+	{
+		return;
+	}
+
+	servermessage::ServerMsgCharMove dummy;
+
+	bool b = dummy.ParseFromArray(msg, msg_size);
+	assert(b);
+
+	/* 检查位置是否合法 */
+	auto fx = dummy.target_pos().fx();
+	auto fz = dummy.target_pos().fz();
+	vector2 vTargetPos = vector2(fx, fz);
+	if (NULL == pScene->IsValidPosition(vTargetPos))
+	{
+		return;
+	}
+	auto object_id = dummy.object_id();
+	KObject* pObj = (KObject*)KObjectManager::GetSingleton().getObject(object_id);
+	if (pObj == NULL)
+	{
+		return;
+	}
+
+	KCharacter* pCharObj = (KCharacter*)pObj;
+
+	if (pCharObj->GetCharacterType() == CHAR_BASE_TYPE_ME)
+	{
+		return;
+	}
+	auto pos = pCharObj->getPosition();
+	/* 停止信息 */
+	if (dummy.has_stop_pos())
+	{
+		ObjectCmd	cmdTemp;
+
+		cmdTemp.m_wID = OBJ_CMD_STOP_MOVE;
+		cmdTemp.nParam[0] = dummy.handle_id() - 1;
+		cmdTemp.nParam[1] = 0;
+
+		auto & stoppos = dummy.stop_pos();
+		cmdTemp.fParam[2] = stoppos.fx();
+		cmdTemp.fParam[3] = stoppos.fz();
+		cmdTemp.nParam[4] = FALSE;
+
+		pCharObj->AddCommand(&cmdTemp);
+	}
+
+	/* 移动信息 */
+	if (dummy.has_target_pos())
+	{
+		/* 立即瞬移到位置 */
+		if (false)
+		{
+			/* 停止移动 */
+
+			pCharObj->StopMove();
+
+			/* 设置位置 */
+			ObjectCmd	cmdTemp;
+			cmdTemp.m_wID = OBJ_CMD_TELEPORT;
+			cmdTemp.fParam[0] = fx;
+			cmdTemp.fParam[1] = fz;
+			pCharObj->AddCommand(&cmdTemp);
+		}
+
+		/* 移动到位置 */
+		else
+		{
+			
+			ObjectCmd	cmdTemp;
+			cmdTemp.m_wID = OBJ_CMD_MOVE;
+			cmdTemp.uParam[0] = 0;
+			cmdTemp.nParam[1] = dummy.handle_id();
+			cmdTemp.nParam[2] = 1;
+			GLPos targetPos;
+			targetPos.m_fX = fx;
+			targetPos.m_fZ = fz;
+			cmdTemp.pParam[3] = &targetPos;
+			cmdTemp.bParam[4] = TRUE;
+			pCharObj->AddCommand(&cmdTemp);
+		}
+	}
+	return;
 }

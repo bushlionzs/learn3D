@@ -460,70 +460,89 @@ namespace vks
 		void generateMipmaps(VkCommandBuffer commandBuffer, VulkanTexture* tex)
 		{
 			auto mipLevels = tex->getMipLevels();
-			uint32_t width = tex->getTextureProperty()->_width;
-			uint32_t height = tex->getTextureProperty()->_height;
+			uint32_t face_count = tex->getFace();
+			
 
 			VkImage image = tex->getVkImage();
 
-
-
-
-
-			for (uint32_t i = 1; i < mipLevels; i++) {
-				VkImageBlit imageBlit{};
-
-				imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-				imageBlit.srcSubresource.layerCount = 1;
-				imageBlit.srcSubresource.mipLevel = i - 1;
-				imageBlit.srcOffsets[1].x = int32_t(width >> (i - 1));
-				imageBlit.srcOffsets[1].y = int32_t(height >> (i - 1));
-				imageBlit.srcOffsets[1].z = 1;
-
-				imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-				imageBlit.dstSubresource.layerCount = 1;
-				imageBlit.dstSubresource.mipLevel = i;
-				imageBlit.dstOffsets[1].x = int32_t(width >> i);
-				imageBlit.dstOffsets[1].y = int32_t(height >> i);
-				imageBlit.dstOffsets[1].z = 1;
-
-				VkImageSubresourceRange mipSubRange = {};
-				mipSubRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-				mipSubRange.baseMipLevel = i;
-				mipSubRange.levelCount = 1;
-				mipSubRange.layerCount = 1;
-
-				insertImageMemoryBarrier(
-					commandBuffer,
-					image,
-					0,
-					VK_ACCESS_TRANSFER_WRITE_BIT,
-					VK_IMAGE_LAYOUT_UNDEFINED,
-					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-					VK_PIPELINE_STAGE_TRANSFER_BIT,
-					VK_PIPELINE_STAGE_TRANSFER_BIT,
-					mipSubRange);
-
-
-				vkCmdBlitImage(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageBlit, VK_FILTER_LINEAR);
-
-				insertImageMemoryBarrier(
-					commandBuffer,
-					image,
-					VK_ACCESS_TRANSFER_WRITE_BIT,
-					VK_ACCESS_TRANSFER_READ_BIT,
-					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-					VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-					VK_PIPELINE_STAGE_TRANSFER_BIT,
-					VK_PIPELINE_STAGE_TRANSFER_BIT,
-					mipSubRange);
-			}
-
 			VkImageSubresourceRange subresourceRange = {};
 			subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			subresourceRange.layerCount = 1;
+			subresourceRange.layerCount = face_count;
+			subresourceRange.baseArrayLayer = 0;
+			subresourceRange.baseMipLevel = 0;
+			subresourceRange.levelCount = 1;
+			insertImageMemoryBarrier(
+				commandBuffer,
+				image,
+				VK_ACCESS_TRANSFER_READ_BIT,
+				VK_ACCESS_SHADER_READ_BIT,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+				VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+				VK_PIPELINE_STAGE_TRANSFER_BIT,
+				VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+				subresourceRange);
+
+			for (auto face = 0; face < face_count; face++)
+			{
+				uint32_t width = tex->getTextureProperty()->_width;
+				uint32_t height = tex->getTextureProperty()->_height;
+				
+
+				for (uint32_t i = 1; i < mipLevels; i++) {
+					VkImageBlit imageBlit{};
+					VkImageSubresourceRange mipSubRange = {};
+					mipSubRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+					mipSubRange.baseMipLevel = i;
+					mipSubRange.levelCount = 1;
+					mipSubRange.layerCount = 1;
+					mipSubRange.baseArrayLayer = face;
+
+					insertImageMemoryBarrier(
+						commandBuffer,
+						image,
+						0,
+						VK_ACCESS_TRANSFER_WRITE_BIT,
+						VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+						VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+						VK_PIPELINE_STAGE_TRANSFER_BIT,
+						VK_PIPELINE_STAGE_TRANSFER_BIT,
+						mipSubRange);
+
+					imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+					imageBlit.srcSubresource.layerCount = 1;
+					imageBlit.srcSubresource.mipLevel = i - 1;
+					imageBlit.srcSubresource.baseArrayLayer = face;
+					imageBlit.srcOffsets[1].x = int32_t(width >> (i - 1));
+					imageBlit.srcOffsets[1].y = int32_t(height >> (i - 1));
+					imageBlit.srcOffsets[1].z = 1;
+
+					imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+					imageBlit.dstSubresource.layerCount = 1;
+					imageBlit.dstSubresource.mipLevel = i;
+					imageBlit.dstSubresource.baseArrayLayer = face;
+					imageBlit.dstOffsets[1].x = int32_t(width >> i);
+					imageBlit.dstOffsets[1].y = int32_t(height >> i);
+					imageBlit.dstOffsets[1].z = 1;
+
+					vkCmdBlitImage(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageBlit, VK_FILTER_LINEAR);
+
+					insertImageMemoryBarrier(
+						commandBuffer,
+						image,
+						VK_ACCESS_TRANSFER_WRITE_BIT,
+						VK_ACCESS_TRANSFER_READ_BIT,
+						VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+						VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+						VK_PIPELINE_STAGE_TRANSFER_BIT,
+						VK_PIPELINE_STAGE_TRANSFER_BIT,
+						mipSubRange);
+				}
+			}
+
+			subresourceRange.baseMipLevel = 0;
 			subresourceRange.levelCount = mipLevels;
-
-
+			subresourceRange.baseArrayLayer = 0;
+			subresourceRange.layerCount = face_count;
 			insertImageMemoryBarrier(
 				commandBuffer,
 				image,
@@ -536,4 +555,5 @@ namespace vks
 				subresourceRange);
 		}
 	}
+
 }

@@ -18,6 +18,7 @@ class PathComponent;
 class PlayerLogicModelHaveCreateCallback;
 class CDirectlyEffectMgr;
 class GameEntity;
+class KAI_Player;
 
 class KPlayer: public KCharacter
 {
@@ -63,6 +64,8 @@ private:
 	void DelEquipEffect(PLAYER_EQUIP nPart);
 
 	void UnEquipItem(PLAYER_EQUIP nPart, bool bUseDefaultEquip = true);
+
+	void updateMousePosition(const Ogre::Vector3& targetPos);
 public:
 	virtual void UpdateCharBaseData(void);
 	virtual void UpdateModel_WeaponActionSet(void);

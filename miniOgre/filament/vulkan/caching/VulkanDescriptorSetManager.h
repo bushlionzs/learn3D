@@ -17,9 +17,9 @@
 #ifndef TNT_FILAMENT_BACKEND_CACHING_VULKANDESCRIPTORSETMANAGER_H
 #define TNT_FILAMENT_BACKEND_CACHING_VULKANDESCRIPTORSETMANAGER_H
 
-#include <VulkanResourceAllocator.h>
-#include <VulkanTexture.h>
-#include <VulkanUtility.h>
+#include <filament/vulkan/VulkanResourceAllocator.h>
+#include <render/vulkanRender/VulkanTexture.h>
+#include <filament/vulkan/VulkanUtility.h>
 
 #include <filament/DriverEnums.h>
 #include <filament/Program.h>

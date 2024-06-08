@@ -162,7 +162,7 @@ void VulkanHelper::createInstance()
     createInfo.ppEnabledExtensionNames = extensions.data();
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
-    mEnableValidationLayers = false;
+    //mEnableValidationLayers = false;
     if (mEnableValidationLayers)
     {
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
@@ -1104,6 +1104,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback
     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
     void* pUserData)
 {
+
     std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
     return VK_FALSE;

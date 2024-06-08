@@ -73,11 +73,15 @@ namespace Ogre {
 			return mLoadJob;
 		}
 
-		Rect& getMainRect()
+		const  Rect& getMainRect()
 		{
 			return mActRect;
 		}
 
+		void updateMainRect(const Rect& rt)
+		{
+			mActRect = rt;
+		}
 	private:
 		uint32_t _allocateNextMovableObjectTypeFlag(void);
 	private:
@@ -111,7 +115,7 @@ namespace Ogre {
 
 		utils::JobSystem::Job* mLoadJob = nullptr;
 
-		Rect mActRect = { 0,0,1280,768 };
+		Rect mActRect;
 
 	};
 }

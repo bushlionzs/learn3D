@@ -8,6 +8,7 @@
 #include "OgreSceneQuery.h"
 #include "GameEntity.h"
 #include "OGActorProxy.h"
+#include "AI_Player.h"
 
 template<>
 KObjectManager* GameSingleton<KObjectManager>::m_sSingleton = NULL;
@@ -29,8 +30,9 @@ KObject* KObjectManager::createPlayer(int64_t id)
 	auto player = new KPlayer();
 	addObject(id, player);
 	player->initialize();
+	player->setId(id);
+	player->getAI()->ConnectObj(id);
 	mPlayer = player;
-	mPlayer->setId(id);
 	
 	return player;
 }

@@ -435,15 +435,35 @@ bool GameScene::getIntersectObject(
 	return true;
 }
 
+bool GameScene::IsValidPosition(const Ogre::Vector2& fvPos)
+{
+	if (NULL == mSceneDefine)
+	{
+		return false;
+	}
+
+	if (fvPos.x < 0.0f || fvPos.x >(FLOAT) (mSceneDefine->nXSize))
+	{
+		return false;
+	}
+
+	if (fvPos.y < 0.0f || fvPos.y >(FLOAT) (mSceneDefine->nZSize))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 void GameScene::loadImpl()
 {
 	mTerrain->buildTerrain();
 	EngineManager::getSingleton().setTerrain(mTerrain.get());
 
-	uint32_t count = 2000;
+	uint32_t count = 7;
 
 	count = std::min(count, (uint32_t)mActors.size());
-	for (int32_t i = 0; i < count; i++)
+	for (int32_t i = 0; i < mActors.size(); i++)
 	{
 		mActors[i]->createRenderInstance();
 	}
