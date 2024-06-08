@@ -4204,7 +4204,7 @@ namespace Orphigine
 		{
 			AdvancedAnimationSystemPtr tmpResourcePtr = AdvancedAnimationSystemManager::getSingleton().
 				getAnimationSystem(m_advancedAnimationSystemName);
-		
+			assert(tmpResourcePtr);
 			m_advancedAnimationSystem = new AdvancedAnimationSystemInstance(tmpResourcePtr);
 			m_advancedAnimationSystem->setParent(this);
 			m_advancedAnimationSystem->load();

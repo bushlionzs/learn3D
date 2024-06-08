@@ -48,7 +48,7 @@ class KAI_Player :
  */
 public:
 	/* 逻辑桢 */
-	virtual KHAN_RETURN_RESULT	Update(void);
+	virtual KHAN_RETURN_RESULT	Update(float deltatime);
 
 	/* 重置 */
 	virtual void				Reset(void);
@@ -77,7 +77,7 @@ protected:
 	void	Update_KeyMove(void);
 	void	Update_PathEffect();
 	void	Update_Connect();
-
+	void    updateTick(float deltatime);
 /*
  -----------------------------------------------------------------------------------------------------------------------
     指令
@@ -370,6 +370,8 @@ protected:
 	/* 当前移动路径的标示 */
 	int32 m_nCurrPathIndex;
 
+
+	float mTickDuration = 0.0f;
 /*
  -----------------------------------------------------------------------------------------------------------------------
  -----------------------------------------------------------------------------------------------------------------------

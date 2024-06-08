@@ -36,9 +36,9 @@ struct Command_Base
 		uint32_t				uParam[MAX_OBJ_CMD_PARAM_NUM];
 		int32_t					nParam[MAX_OBJ_CMD_PARAM_NUM];
 		float				fParam[MAX_OBJ_CMD_PARAM_NUM];
-		bool				bParam[MAX_OBJ_CMD_PARAM_NUM];
-		unsigned __int64	u64Param[MAX_OBJ_CMD_PARAM_NUM / 2];
-		__int64				n64Param[MAX_OBJ_CMD_PARAM_NUM / 2];
+		BOOL				bParam[MAX_OBJ_CMD_PARAM_NUM];
+		uint64_t	        u64Param[MAX_OBJ_CMD_PARAM_NUM / 2];
+		int64_t				n64Param[MAX_OBJ_CMD_PARAM_NUM / 2];
 	};
 public:
 	Command_Base (void)

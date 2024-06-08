@@ -76,7 +76,7 @@ void KPlayer::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 		Ogre::Vector2 fvTargetPos(fvTarget.x, fvTarget.z);
 		//fvTargetPos.x = 145;
 		//fvTargetPos.y = 203;
-		mPathComponent->moveTo(fvMyPos, fvTargetPos);
+		//mPathComponent->moveTo(fvMyPos, fvTargetPos);
 
 		Ogre::Vector3 fvEnginePosition;
 		const _DBC_DIRECT_EFFECT* pImpact = CDirectlyEffectMgr::GetMe()->GetConstDirectlyImpact(IMPACTTYPE_PATH_LINE);
@@ -1358,6 +1358,8 @@ int32 KPlayer::AnalyseCharModel(void)const
 
 void KPlayer::update(float deltatime)
 {
-	mPathComponent->update(deltatime);
+	//mPathComponent->update(deltatime);
+	KCharacter::update(deltatime);
+	m_pAI->Update(deltatime);
 }
 

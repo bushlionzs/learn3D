@@ -353,6 +353,8 @@ public:
 	eRUN_CMD_RESULT_CODE HandleCommand(const ObjectCmd* pCmd);
 	KCharCmdDate_Logic* FindBaseStateCommand(int32 nLogicCount);
 	KCharCmdDate_Logic* FindActionStateCommand(int32 nLogicCount);
+	// Çå¿ÕÁÐ±í
+	virtual bool RemoveAllCommand(CHARATER_LOGIC_TYPE nLogicTag);
 	KCharCmdDate_Logic* GetBaseStateCommand(void);
 	void SetBaseStateCommand(KCharCmdDate_Logic* pLogicCommand);
 	KCharCmdDate_Logic* GetActionStateCommand(void);

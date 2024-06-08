@@ -524,7 +524,7 @@ BOOL		GameMap::ObjGrid_Changed(Object* pObj, GridID_t idNew, GridID_t idOld)
 			Object* pFindObj;
 			uchar	i;
 			/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+			auto playerHandle = pPlayer->GetConnector();
 			for (i = 0; i < listObj.m_Count; i++)
 			{
 				pFindObj = listObj.m_aObj[i];
@@ -536,7 +536,7 @@ BOOL		GameMap::ObjGrid_Changed(Object* pObj, GridID_t idNew, GridID_t idOld)
 
 					if (pPacket != NULL)
 					{
-						NetMessageManager::GetSingletonPtr()->sendNetMessage(pPacket);
+						NetMessageManager::GetSingletonPtr()->sendNetMessage(playerHandle, pPacket);
 
 						pFindObj->DestroyNewObjMsg(pPacket);
 					}

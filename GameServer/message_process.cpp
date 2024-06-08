@@ -5,6 +5,10 @@
 #include <Item_Container.h>
 #include <Item_Interface.h>
 #include <Player.h>
+#include <game_map.h>
+#include <map_info.h>
+#include <Behavior_Player.h>
+#include <ObjectManager.h>
 #include "db/db_manager.h"
 #include "db/db_task.h"
 #include "client_message.pb.h"
@@ -21,6 +25,47 @@ void cs_user_login(NetHandle h, const char* msg, uint32_t msg_size)
 
 void cs_char_move(NetHandle h, const char* msg, uint32_t msg_size)
 {
+    clientmessage::MsgCharMove dummy;
+    bool b = dummy.ParseFromArray(msg + sizeof(NetHeader), msg_size - sizeof(NetHeader));
+    assert(b);
+
+    auto mapId = dummy.map_id();
+    GameMap* pScene = MapManager::GetSingletonPtr()->getMap(mapId);
+    if (NULL == pScene)
+    {
+        return;
+    }
+
+    GLPos targetPos(dummy.target_x(), dummy.target_y());
+    if (!pScene->GetMapInfo()->IsCanGo(targetPos))
+    {
+        return;
+    }
+
+    ObjectManager* objectManager = pScene->GetObjManager();
+    auto objectId = dummy.object_id();
+    Object* pObj = objectManager->GetObj(objectId);
+    if (pObj == NULL || pObj->GetObjType() != Object::OBJECT_CLASS_PLAYER)
+    {
+        return;
+    }
+
+    Player* pPlayer = (Player*)pObj;
+    GLPos worldPos(dummy.world_x(), dummy.world_y());
+    OPT_RESULT oResult = pPlayer->GetHumanAI()->PushCmd_Move
+    (
+        dummy.handle_id(),
+        1,
+        &targetPos,
+        dummy.stop_logic_count(),
+        &worldPos,
+        objectId
+    );
+
+    if (ORT_FAILED(oResult))
+    {
+        int kk = 0;
+    }
 
 }
 
@@ -86,7 +131,28 @@ void cs_swap_item(NetHandle h, const char* msg, uint32_t msg_size)
 
 void cs_tick(NetHandle h, const char* msg, uint32_t msg_size)
 {
+    clientmessage::MsgTick dummy;
+    bool b = dummy.ParseFromArray(msg + sizeof(NetHeader), msg_size - sizeof(NetHeader));
+    assert(b);
 
+    auto mapId = dummy.map_id();
+    GameMap* pScene = MapManager::GetSingletonPtr()->getMap(mapId);
+    if (NULL == pScene)
+    {
+        return;
+    }
+
+
+    ObjectManager* objectManager = pScene->GetObjManager();
+    auto playerId = dummy.player_id();
+    Object* pObj = objectManager->GetObj(playerId);
+
+    const GLPos* pos = pObj->GetGLPos();
+
+    auto playerX = dummy.player_pos_x();
+    auto playerY = dummy.player_pos_y();
+
+    int kk = 0;
 }
 
 

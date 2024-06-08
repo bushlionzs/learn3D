@@ -2597,6 +2597,47 @@ KCharCmdDate_Logic* KCharacter::FindActionStateCommand(int32 nLogicCount)
 	return NULL;
 }
 
+bool KCharacter::RemoveAllCommand(CHARATER_LOGIC_TYPE nLogicTag)
+{
+	ObjCommandList::iterator itCur, itEnd;
+	KCharCmdDate_Logic* pCommand;
+
+	// 根据不同的逻辑来清不同的列表
+
+	// 基础逻辑
+	if (CHAR_LOGIC_BASE == nLogicTag)
+	{
+		itCur = m_listBaseStateCommand.begin();
+		itEnd = m_listBaseStateCommand.end();
+
+		while (itCur != itEnd)
+		{
+			pCommand = *itCur;
+			itCur++;
+			DelObjectCmd(pCommand);
+		}
+
+		m_listBaseStateCommand.erase(m_listBaseStateCommand.begin(), m_listBaseStateCommand.end());
+	}
+	// 行为逻辑
+	else	// CHAR_LOGIC_ACTION
+	{
+		itCur = m_listActionStateCommand.begin();
+		itEnd = m_listActionStateCommand.end();
+
+		while (itCur != itEnd)
+		{
+			pCommand = *itCur;
+			itCur++;
+			DelObjectCmd(pCommand);
+		}
+
+		m_listActionStateCommand.erase(m_listActionStateCommand.begin(), m_listActionStateCommand.end());
+	}
+
+	return TRUE;
+}
+
 KCharCmdDate_Logic* KCharacter::GetBaseStateCommand(void)
 {
 	return m_pBaseLogicCommand;
@@ -3299,6 +3340,25 @@ bool KCharacter::AddMountEffect(const STRING& strEffect, const STRING& strBindLo
 
 eRUN_CMD_RESULT_CODE KCharacter::AddLocalCommand(const ObjectCmd* pCmd)
 {
-	assert(false);
-	return RC_OK;
+	if (pCmd)
+	{
+		RemoveAllCommand(CHAR_LOGIC_BASE);
+
+		if (OBJ_CMD_MOVE == pCmd->m_wID && IsMoving())
+		{
+			SetBaseStateCommand(NULL);
+			m_nCharBaseState = CAHR_STATE_INVAILD;
+			m_bIsCharBaseLogicEnd = TRUE;
+		}
+		else
+		{
+			ShutDown_CharacterState(CHAR_LOGIC_BASE);
+		}
+
+		if (AddCommand(pCmd))
+		{
+			return RC_OK;
+		}
+	}
+	return RC_ERROR;
 }

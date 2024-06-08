@@ -6,7 +6,7 @@
 
 int main()
 {
-	platform_log_init();
+	platform_log_init(nullptr, "GameClient");
 	platform_timer_init();
 	CoInitialize(NULL);
 	FullDemo app;

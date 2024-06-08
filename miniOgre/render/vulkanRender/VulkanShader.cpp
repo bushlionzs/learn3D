@@ -226,7 +226,9 @@ std::vector<VkVertexInputAttributeDescription> VulkanShader::getAttributeDescrip
     for (auto& input : mInputDesc)
     {
         bool find = false;
-        for (auto elem : vd->getElementList())
+
+        auto& elementlist = vd->getElementList();
+        for (auto elem : elementlist)
         {
             if (input._name == VulkanMappings::getSemanticName(elem.getSemantic()) &&
                 input._index == elem.getIndex())

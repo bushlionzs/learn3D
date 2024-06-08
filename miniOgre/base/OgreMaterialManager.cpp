@@ -55,6 +55,8 @@ namespace Ogre {
 		{
 			return it->second;
 		}
+
+		WARNING_LOG("fail to load material:%s", name.c_str());
 		return std::shared_ptr<Material>();
 	}
 

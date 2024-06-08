@@ -88,7 +88,7 @@ void KAI_Player::Reset(void)
 }
 /* --------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------- */
-KHAN_RETURN_RESULT KAI_Player::Update( void )
+KHAN_RETURN_RESULT KAI_Player::Update(float deltatime)
 {
 	// Obj连接
 	Update_Connect();
@@ -102,6 +102,8 @@ KHAN_RETURN_RESULT KAI_Player::Update( void )
 	// 更新路线特效
 	Update_PathEffect();
 
+
+	updateTick(deltatime);
 	return KAI::Update();
 }
 
@@ -1012,8 +1014,6 @@ BOOL KAI_Player::Do_Move(const GLPos *pNodeList, uint32 nNodeNum, BOOL bDirectMo
 -------------------------------------------------------------------------------------------- */
 BOOL KAI_Player::Do_StopMove()
 {
-	KYLIN_TRY
-
 	if (NULL == GetCharacter())
 	{
 		return FALSE;
@@ -1023,9 +1023,10 @@ BOOL KAI_Player::Do_StopMove()
 		return FALSE;
 	}
 
+	auto logicCount = GetMoveLogicCount();
 	ObjectCmd cmdTemp;
 	cmdTemp.m_wID		= OBJ_CMD_STOP_MOVE;
-	cmdTemp.nParam[0]	= GetMoveLogicCount();
+	cmdTemp.nParam[0]	= logicCount;
 	cmdTemp.nParam[1]	= 0;
 	cmdTemp.fParam[2]	= GetCharacter()->getPosition().x;
 	cmdTemp.fParam[3]	= GetCharacter()->getPosition().z;
@@ -1036,11 +1037,7 @@ BOOL KAI_Player::Do_StopMove()
 		return FALSE;
 	}
 
- 	SendStopMoveMessage(GetMoveLogicCount(), GLPos(GetCharacter()->getPosition().x, GetCharacter()->getPosition().z));
-
-
-	KYLIN_CATCH( "Do_StopMove" );
-
+ 	SendStopMoveMessage(logicCount, GLPos(GetCharacter()->getPosition().x, GetCharacter()->getPosition().z));
 	return TRUE;
 }
 
@@ -1131,8 +1128,10 @@ void KAI_Player::SendMoveMessage( int32 nStopLogicCount, const GLPos& currPos,
 
 	auto myself = KObjectManager::GetSingleton().getMySelf();
 	auto mapId = GameSceneManager::getSingleton().getActiveSceneId();
+	auto objectId = myself->getId();
 	clientmessage::MsgCharMove msg;
-	msg.set_object_id(myself->getId());
+	msg.set_handle_id(nLogicCount);
+	msg.set_object_id(objectId);
 	msg.set_map_id(mapId);
 	msg.set_stop_logic_count(nStopLogicCount);
 	msg.set_world_x(currPos.m_fX);
@@ -1512,7 +1511,7 @@ void KAI_Player::ConnectObj(int32 nObjID)
 	{
 		ConnectObj((KCharacter*)pObj);
 	}
-	// 角色尚未创建, 先解除当前连接, 并备份目标
+	// 角色尚未创建, 先解除当前连接, 并备份目标~
 	else if (NULL == pObj)
 	{
 		DisconnectObj();
@@ -1547,6 +1546,28 @@ void KAI_Player::ConnectObj(KCharacter* pCharacter)
 -------------------------------------------------------------------------------------------- */
 void KAI_Player::Update_Connect()
 {
+	
+}
+
+void    KAI_Player::updateTick(float deltatime)
+{
+	mTickDuration += deltatime;
+	if (mTickDuration >= 5)
+	{
+		auto myself = KObjectManager::GetSingleton().getMySelf();
+		auto mapId = GameSceneManager::getSingleton().getActiveSceneId();
+		auto objectId = myself->getId();
+		clientmessage::MsgTick msg;
+		msg.set_player_id(objectId);
+		msg.set_map_id(mapId);
+		auto& pos = myself->getPosition();
+		msg.set_player_pos_x(pos.x);
+		msg.set_player_pos_y(pos.z);
+		msg.set_position_x(0);
+		msg.set_position_z(0);
+		NetMessageManager::GetSingleton().sendNetMessage(clientmessage::CS_TICK, &msg);
+		mTickDuration = 0.0f;
+	}
 	
 }
 /* --------------------------------------------------------------------------------------------

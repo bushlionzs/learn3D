@@ -1,10 +1,13 @@
 #include "OgreHeader.h"
 #include "KObject.h"
 #include "GameEntity.h"
+#include "Basics.h"
 
 KObject::KObject()
 {
 	mObjectType = ObjectType_None;
+	m_nBaseLogicCount = INVALID_ID;
+	m_nActionLogicCount = INVALID_ID;
 }
 
 KObject::~KObject()

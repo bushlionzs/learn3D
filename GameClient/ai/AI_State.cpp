@@ -390,15 +390,6 @@ OPT_RESULT KAIState_Move::MoveTo(const MoveToParam& param)
 	}
 	else
 	{
-		{
-			//test path
-			Ogre::Vector2 fvMyPos(191.731522, 179.000549);
-			Ogre::Vector2 fvTargetPos(145.000000, 203.000000);
-			pathFind.MoveTo(fvMyPos, fvTargetPos, 0.0, false);
-			const GLPos* glpos = pathFind.GetFinalPath();
-			int32_t count = pathFind.GetFinalPathCount();
-			count = count;
-		}
 		// ¼ÆËãÂ·¾¶	
 		if (FALSE == pathFind.MoveTo(fvMyPos, fvTargetPos, param.fModifyDist, param.bDirectMove))
 		{
