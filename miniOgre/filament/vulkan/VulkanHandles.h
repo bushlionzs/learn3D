@@ -20,7 +20,7 @@
  // This needs to be at the top
 #include "DriverBase.h"
 
-#include "VulkanBuffer.h"
+#include "FVulkanBuffer.h"
 #include "VulkanResources.h"
 #include "VulkanSwapChain.h"
 #include <render/vulkanRender/VulkanTexture.h>
@@ -373,7 +373,7 @@ namespace filament::backend {
             buffer(allocator, stagePool, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, elementSize* indexCount),
             indexType(elementSize == 2 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32) {}
 
-        VulkanBuffer buffer;
+        FVulkanBuffer buffer;
         const VkIndexType indexType;
     };
 
@@ -381,7 +381,7 @@ namespace filament::backend {
         VulkanBufferObject(VmaAllocator allocator, VulkanStagePool& stagePool, uint32_t byteCount,
             BufferObjectBinding bindingType);
 
-        VulkanBuffer buffer;
+        FVulkanBuffer buffer;
         const BufferObjectBinding bindingType;
     };
 

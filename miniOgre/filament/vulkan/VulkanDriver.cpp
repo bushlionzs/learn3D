@@ -18,7 +18,7 @@
 #include "VulkanDriver.h"
 
 #include "CommandStreamDispatcher.h"
-#include "VulkanBuffer.h"
+#include "FVulkanBuffer.h"
 #include "VulkanCommands.h"
 #include "VulkanHandles.h"
 #include "VulkanMemory.h"

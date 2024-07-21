@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "OgreHeader.h"
-#include "VulkanBuffer.h"
+#include "FVulkanBuffer.h"
 #include "VulkanMemory.h"
 
 #include <utils/Panic.h>
@@ -22,7 +22,7 @@
 
 namespace filament::backend {
 
-VulkanBuffer::VulkanBuffer(VmaAllocator allocator, VulkanStagePool& stagePool,
+    FVulkanBuffer::FVulkanBuffer(VmaAllocator allocator, VulkanStagePool& stagePool,
         VkBufferUsageFlags usage, uint32_t numBytes)
     : mAllocator(allocator),
       mStagePool(stagePool),
@@ -43,11 +43,11 @@ VulkanBuffer::VulkanBuffer(VmaAllocator allocator, VulkanStagePool& stagePool,
     vmaCreateBuffer(mAllocator, &bufferInfo, &allocInfo, &mGpuBuffer, &mGpuMemory, nullptr);
 }
 
-VulkanBuffer::~VulkanBuffer() {
+    FVulkanBuffer::~FVulkanBuffer() {
     vmaDestroyBuffer(mAllocator, mGpuBuffer, mGpuMemory);
 }
 
-void VulkanBuffer::loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint32_t byteOffset,
+void FVulkanBuffer::loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint32_t byteOffset,
         uint32_t numBytes) const {
     assert_invariant(byteOffset == 0);
     VulkanStage const* stage = mStagePool.acquireStage(numBytes);
