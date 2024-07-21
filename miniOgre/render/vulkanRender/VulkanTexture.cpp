@@ -175,7 +175,23 @@ void VulkanTexture::createInternalResourcesImpl(void)
 
 void VulkanTexture::freeInternalResourcesImpl(void)
 {
+    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    if (mTextureImageView)
+    {
+        vkDestroyImageView(device, mTextureImageView, nullptr);
+        mTextureImageView = VK_NULL_HANDLE;
+    }
 
+    if (mTextureImage)
+    {
+        vkDestroyImage(device, mTextureImage, nullptr);
+        mTextureImage = VK_NULL_HANDLE;
+    }
+
+    if (mTextureImageMemory)
+    {
+        vkFreeMemory(device, mTextureImageMemory, nullptr);
+    }
 }
 
 void VulkanTexture::postLoad()
@@ -190,7 +206,7 @@ void VulkanTexture::postLoad()
     }
     else
     {
-        commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands(true);
+        commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands();
     }
     
 
@@ -207,12 +223,12 @@ void VulkanTexture::postLoad()
     if (mNeedMipmaps)
     {
         //generate mipmap
-        vks::tools::generateMipmaps(commandBuffer, this);
+        //vks::tools::generateMipmaps(commandBuffer, this);
     }
 
     if (!frame)
     {
-        VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer, true);
+        VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer);
     }
     
 }
@@ -573,12 +589,12 @@ void* VulkanTexture::getVulkanBuffer(uint32_t offset)
 
 void VulkanTexture::updateTextureData()
 {
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands(true);
+    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands();
     vks::tools::copyBufferToImage(
         commandBuffer,
         mStagingBuffer,
         mTextureImage,
         this
     );
-    VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer, true);
+    VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer);
 }

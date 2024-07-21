@@ -11,6 +11,7 @@ using namespace filament::backend;
 #define VULKAN_FRAME_RESOURCE_COUNT 3
 #define VULKAN_TEXTURE_COUNT 6
 #define VULKAN_COMMAND_THREAD 4
+#define RAYTRACEING
 
 struct SwapChainBuffer
 {
@@ -38,12 +39,29 @@ struct VulkanSettings {
 class VulkanRenderSystem;
 class VulkanFrame;
 class VulkanTexture;
-
+class VulkanBuffer;
 struct CommandHelper
 {
     VkCommandPool _commandPool;
     VkCommandBuffer _commandBuffer;
 };
+
+// Holds data for a ray tracing scratch buffer that is used as a temporary storage
+struct RayTracingScratchBuffer
+{
+    uint64_t deviceAddress = 0;
+    VkBuffer handle = VK_NULL_HANDLE;
+    VkDeviceMemory memory = VK_NULL_HANDLE;
+};
+
+// Ray tracing acceleration structure
+struct AccelerationStructure {
+    VkAccelerationStructureKHR handle;
+    uint64_t deviceAddress = 0;
+    VkDeviceMemory memory;
+    VkBuffer buffer;
+};
+
 class VulkanHelper : public Ogre::Singleton<VulkanHelper>
 {
 public:
@@ -57,6 +75,12 @@ public:
         VkMemoryPropertyFlags properties,
         VkBuffer& buffer,
         VkDeviceMemory& bufferMemory);
+    VkResult createBuffer(
+        VkBufferUsageFlags usageFlags,
+        VkMemoryPropertyFlags memoryPropertyFlags,
+        VulkanBuffer* buffer,
+        VkDeviceSize size,
+        void* data);
 
     VkDevice _getVkDevice();
     VkInstance _getVKInstance();
@@ -66,8 +90,8 @@ public:
         return mDeviceFeatures;
     }
     VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, bool begin);
-    VkCommandBuffer beginSingleTimeCommands(bool graphic = false);
-    void endSingleTimeCommands(VkCommandBuffer commandBuffer, bool graphic = false);
+    VkCommandBuffer beginSingleTimeCommands();
+    void endSingleTimeCommands(VkCommandBuffer commandBuffer);
     void transitionImageLayout(
         VkImage image,
         VkFormat format,
@@ -158,6 +182,12 @@ private:
     void populateDebugMessengerCreateInfo(
         VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     void setupDebugMessenger();
+
+    void rayTracingInit();
+    void createBottomLevelAccelerationStructure();
+    void createTopLevelAccelerationStructure();
+    void createStorageImage();
+    void createShaderBindingTable();
 private:
 	VulkanRenderSystem* mVulkanRenderSystem;
     bool mEnableValidationLayers;
@@ -187,7 +217,7 @@ private:
     uint32_t transfer_queue_index = UINT_MAX;
 
     VkCommandPool mCommandPool[VULKAN_FRAME_RESOURCE_COUNT];
-    VkCommandPool mTransferCommandPool;
+    VkCommandPool mSingleCommandPool;
     VkCommandBuffer mMainCommandBuffer[VULKAN_FRAME_RESOURCE_COUNT];
     std::vector<CommandHelper> mCommandPools;
 
@@ -221,4 +251,16 @@ private:
     VkCommandBuffer mResourceCommandBuffer = VK_NULL_HANDLE;
 
     VulkanPlatform* mPlatform;
+
+    //
+
+    VkPhysicalDeviceRayTracingPipelinePropertiesKHR  rayTracingPipelineProperties{};
+    VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
+
+    VkPhysicalDeviceBufferDeviceAddressFeatures enabledBufferDeviceAddresFeatures{};
+    VkPhysicalDeviceRayTracingPipelineFeaturesKHR enabledRayTracingPipelineFeatures{};
+    VkPhysicalDeviceAccelerationStructureFeaturesKHR enabledAccelerationStructureFeatures{};
+
+    AccelerationStructure bottomLevelAS{};
+    AccelerationStructure topLevelAS{};
 };

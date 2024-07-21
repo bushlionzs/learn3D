@@ -6,6 +6,7 @@
 #include <utils/JobSystem.h>
 
 class VulkanRenderSystem;
+class VulkanRayTracingContext;
 
 class VulkanFrameRenderableData
 {
@@ -24,17 +25,45 @@ public:
 
 };
 
+
+
+
+
 class VulkanRenderableData: public RenderableData
 {
 public:
-	VulkanRenderableData(VulkanRenderSystem* engine, Ogre::Renderable* r);
+	VulkanRenderableData(VulkanRenderSystem* engine, Ogre::Renderable* r, VulkanRayTracingContext* context);
 	~VulkanRenderableData();
 
 	bool update(VulkanFrame* frame, utils::JobSystem::Job* job);
 	void updateImpl(VulkanFrame* frame);
 	void render(VulkanFrame* frame, VkCommandBuffer cb);
 
-	//VkPipelineLayout  getPipelineLayout();
+	int32_t getTransformSlot()
+	{
+		return mTransformSlot;
+	}
+
+	int32_t getGeometrySlot()
+	{
+		return mGeometrySlot;
+	}
+
+	GeometryNode& getGeometryNode()
+	{
+		return mGeometryNode;
+	}
+
+	VkAccelerationStructureGeometryKHR& getGeometryKHR()
+	{
+		return mGeometry;
+	}
+
+	VkAccelerationStructureBuildRangeInfoKHR& getBuildRangeInfo()
+	{
+		return mBuildRangeInfo;
+	}
+
 private:
 	
 	void buildInitData();
@@ -45,4 +74,15 @@ private:
 	
 
 	bool mUpdate = false;
+
+	GeometryNode mGeometryNode;
+
+	VulkanRayTracingContext* mRayTracingContext;
+
+	VkAccelerationStructureGeometryKHR mGeometry;
+
+	VkAccelerationStructureBuildRangeInfoKHR mBuildRangeInfo;
+
+	int32_t mTransformSlot = -1;
+	int32_t mGeometrySlot = -1;
 };

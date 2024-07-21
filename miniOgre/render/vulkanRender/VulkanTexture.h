@@ -128,8 +128,8 @@ private:
     VulkanRenderSystem* mRenderSystem;
     VkDevice mVKDevice;
 
-    VkBuffer mStagingBuffer;
-    VkDeviceMemory mStagingBufferMemory;
+    VkBuffer mStagingBuffer = VK_NULL_HANDLE;
+    VkDeviceMemory mStagingBufferMemory = VK_NULL_HANDLE;
     char* mMappedMemory;
 
     VkImage mTextureImage = VK_NULL_HANDLE;

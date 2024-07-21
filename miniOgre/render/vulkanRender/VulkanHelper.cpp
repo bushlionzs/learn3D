@@ -5,6 +5,7 @@
 #include "VulkanFrame.h"
 #include "OgreTextureManager.h"
 #include "VulkanHardwareBufferManager.h"
+#include "VulkanBuffer.h"
 
 
 
@@ -22,11 +23,18 @@ static const std::vector<const char*> deviceExtensions =
 
 static std::vector<const char*> getRequiredExtensions()
 {
-    std::vector<const char*> aa = { 
+    std::vector<const char*> deviceExtensions = {
         "VK_KHR_surface", 
         "VK_KHR_win32_surface",
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
-    return aa;
+
+#ifdef RAYTRACEING
+    deviceExtensions.emplace_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+    deviceExtensions.emplace_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
+    deviceExtensions.emplace_back(VK_KHR_RAY_QUERY_EXTENSION_NAME);
+    deviceExtensions.emplace_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
+#endif
+    return deviceExtensions;
 }
 
 VulkanHelper::VulkanHelper(VulkanRenderSystem* rs, HWND wnd)
@@ -100,6 +108,58 @@ void VulkanHelper::_createBuffer(
     }
 
     vkBindBufferMemory(mVKDevice, buffer, bufferMemory, 0);
+}
+
+
+VkResult VulkanHelper::createBuffer(
+    VkBufferUsageFlags usageFlags,
+    VkMemoryPropertyFlags memoryPropertyFlags,
+    VulkanBuffer* buffer,
+    VkDeviceSize size,
+    void* data)
+{
+    VkBufferCreateInfo bufferInfo = {};
+    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferInfo.size = size;
+    bufferInfo.usage = usageFlags;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    if (vkCreateBuffer(mVKDevice, &bufferInfo, nullptr, &buffer->buffer) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create buffer!");
+    }
+
+    VkMemoryRequirements memRequirements;
+    vkGetBufferMemoryRequirements(mVKDevice, buffer->buffer, &memRequirements);
+
+    VkMemoryAllocateInfo allocInfo = {};
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize = memRequirements.size;
+    allocInfo.memoryTypeIndex =
+        _findMemoryType(
+            memRequirements.memoryTypeBits,
+            memoryPropertyFlags);
+
+    if (vkAllocateMemory(mVKDevice, &allocInfo,
+        nullptr, &buffer->memory) != VK_SUCCESS) {
+        throw std::runtime_error("failed to allocate buffer memory!");
+    }
+
+    buffer->usageFlags = usageFlags;
+    buffer->memoryPropertyFlags = memoryPropertyFlags;
+
+    
+
+    if (data)
+    {
+        VK_CHECK_RESULT(buffer->map());
+        memcpy(buffer->mapped, data, size);
+        if ((memoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) == 0)
+            buffer->flush();
+
+        buffer->unmap();
+    }
+
+    return buffer->bind();
 }
 
 VkDevice VulkanHelper::_getVkDevice()
@@ -516,10 +576,10 @@ void VulkanHelper::createCommandPool()
     
 
     cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    cmdPoolInfo.queueFamilyIndex = transfer_queue_index;
+    cmdPoolInfo.queueFamilyIndex = main_queue_index;
     cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     
-    if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &mTransferCommandPool) != VK_SUCCESS)
+    if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &mSingleCommandPool) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create command pool!");
     }
@@ -1201,6 +1261,40 @@ void VulkanHelper::setupDebugMessenger()
     }
 }
 
+
+void VulkanHelper::rayTracingInit()
+{
+    // Get ray tracing pipeline properties, which will be used later on in the sample
+    rayTracingPipelineProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
+    VkPhysicalDeviceProperties2 deviceProperties2{};
+    deviceProperties2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+    deviceProperties2.pNext = &rayTracingPipelineProperties;
+    vkGetPhysicalDeviceProperties2(mPhysicalDevice, &deviceProperties2);
+
+    // Get acceleration structure properties, which will be used later on in the sample
+    accelerationStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+    VkPhysicalDeviceFeatures2 deviceFeatures2{};
+    deviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+    deviceFeatures2.pNext = &accelerationStructureFeatures;
+    vkGetPhysicalDeviceFeatures2(mPhysicalDevice, &deviceFeatures2);
+}
+
+void VulkanHelper::createBottomLevelAccelerationStructure()
+{
+}
+
+void VulkanHelper::createTopLevelAccelerationStructure()
+{
+}
+
+void VulkanHelper::createStorageImage()
+{
+}
+
+void VulkanHelper::createShaderBindingTable()
+{
+}
+
 VkCommandBuffer VulkanHelper::createCommandBuffer(VkCommandBufferLevel level, bool begin)
 {
     VkCommandBufferAllocateInfo cmdBufAllocateInfo = vks::initializers::commandBufferAllocateInfo(mCommandPool[0], level, 1);
@@ -1215,21 +1309,14 @@ VkCommandBuffer VulkanHelper::createCommandBuffer(VkCommandBufferLevel level, bo
     return cmdBuffer;
 }
 
-VkCommandBuffer VulkanHelper::beginSingleTimeCommands(bool graphic)
+VkCommandBuffer VulkanHelper::beginSingleTimeCommands()
 {
     VkCommandBuffer commandBuffer;
 
     VkCommandBufferAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    if (graphic)
-    {
-        allocInfo.commandPool = mCommandPool[0];
-    }
-    else
-    {
-        allocInfo.commandPool = mTransferCommandPool;
-    }
+    allocInfo.commandPool = mSingleCommandPool;
     
    // 
     allocInfo.commandBufferCount = 1;
@@ -1246,7 +1333,7 @@ VkCommandBuffer VulkanHelper::beginSingleTimeCommands(bool graphic)
 }
 
 
-void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer, bool graphic)
+void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
 {
     vkEndCommandBuffer(commandBuffer);
     VkSubmitInfo submitInfo = {};
@@ -1254,26 +1341,15 @@ void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer, bool gra
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    if (graphic)
-    {
-        auto result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+  
+    auto result = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
 
-        if (result != VK_SUCCESS)
-        {
-            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkQueueSubmit!");
-        }
-        vkQueueWaitIdle(mGraphicsQueue);
-    }
-    else
+    if (result != VK_SUCCESS)
     {
-        auto result = vkQueueSubmit(mTransferQueue, 1, &submitInfo, VK_NULL_HANDLE);
-
-        if (result != VK_SUCCESS)
-        {
-            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkQueueSubmit!");
-        }
-        vkQueueWaitIdle(mTransferQueue);
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkQueueSubmit!");
     }
+    vkQueueWaitIdle(mGraphicsQueue);
+
     
 }
 

@@ -20,6 +20,7 @@
 #include "VulkanRenderTarget.h"
 #include "OgreSceneManager.h"
 #include "OgreRoot.h"
+#include "VulkanRaytracing.h"
 
 static const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
@@ -43,8 +44,8 @@ VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
 
     new VulkanHelper(this, wnd);
 
-
-    mRenderList.reserve(10000);
+    mRenderList.reserve(3000);
+    
 }
 
 VulkanRenderSystem::~VulkanRenderSystem()
@@ -62,6 +63,11 @@ bool VulkanRenderSystem::engineInit()
     enki::TaskSchedulerConfig config;
     config.numTaskThreadsToCreate = VULKAN_COMMAND_THREAD;
     mTaskScheduler.Initialize(config);
+
+    mRayTracingContext = new VulkanRayTracingContext;
+
+    mRayTracingContext->init();
+
     return true;
 }
 
@@ -160,7 +166,7 @@ void VulkanRenderSystem::ready()
 
 RenderableData* VulkanRenderSystem::createRenderableData(Ogre::Renderable* r)
 {
-    return new VulkanRenderableData(this, r);
+    return new VulkanRenderableData(this, r, mRayTracingContext);
 }
 
 void VulkanRenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
@@ -270,7 +276,10 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     {
         return;
     }
-    
+#ifdef RAYTRACEING
+    rayTracingRender(mRenderList);
+    return;
+#endif
     
     
     uint32_t size = (uint32_t)mRenderList.size();
@@ -343,6 +352,11 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     {
         mTaskScheduler.WaitforTask(tasklist[i]);
     }
+}
+
+void VulkanRenderSystem::rayTracingRender(std::vector<Ogre::Renderable*>& objs)
+{
+    mRayTracingContext->updateRayTracing(objs);
 }
 
 void VulkanRenderSystem::updateMainPassCB(ICamera* camera)

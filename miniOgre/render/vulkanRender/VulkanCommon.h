@@ -35,6 +35,22 @@ struct VulkanDepthStencil
     VkImageView view;
 };
 
+struct VulkanImage
+{
+    VkDeviceMemory memory = VK_NULL_HANDLE;
+    VkImage image = VK_NULL_HANDLE;
+    VkImageView view = VK_NULL_HANDLE;
+    VkFormat format;
+};
+
+struct GeometryNode {
+    VkDeviceOrHostAddressConstKHR vertexBufferDeviceAddress;
+    VkDeviceOrHostAddressConstKHR indexBufferDeviceAddress;
+    VkDeviceOrHostAddressConstKHR transformBufferDeviceAddress;
+    int32_t textureIndexBaseColor;
+    int32_t textureIndexOcclusion;
+};
+
 struct MultisampleTarget 
 {
     struct {

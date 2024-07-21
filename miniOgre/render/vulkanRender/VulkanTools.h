@@ -9,7 +9,7 @@
 #pragma once
 #include <bluevk/BlueVK.h>
 #include <filament/vulkan/VulkanContext.h>
-
+#include "VulkanCommon.h"
 #include "VulkanInitializers.hpp"
 
 #include <math.h>
@@ -61,6 +61,7 @@ using namespace bluevk;
 }
 #endif
 
+class VulkanBuffer;
 
 namespace vks
 {
@@ -128,14 +129,9 @@ namespace vks
 
 		uint32_t alignedSize(uint32_t value, uint32_t alignment);
 
-		void createBuffer(
-			VkDevice mVKDevice,
-			filament::backend::VulkanContext& device,
-			VkDeviceSize size,
-			VkBufferUsageFlags usage,
-			VkMemoryPropertyFlags properties,
-			VkBuffer& buffer,
-			VkDeviceMemory& bufferMemory);
+		uint64_t getBufferDeviceAddress(VkDevice device, VkBuffer buffer);
+
+		uint64_t getBufferDeviceAddress(VulkanBuffer* buffer);
 
 		void copyBufferToImage(
 			VkCommandBuffer commandBuffer,
@@ -143,5 +139,7 @@ namespace vks
 			VkImage image,
 			VulkanTexture* tex);
 		void generateMipmaps(VkCommandBuffer commandBuffer, VulkanTexture* tex);
+
+		void createVulkanImage(VkFormat format, VkExtent3D extent, VulkanImage& result);
 	}
 }

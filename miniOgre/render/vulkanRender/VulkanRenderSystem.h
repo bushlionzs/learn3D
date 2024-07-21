@@ -8,6 +8,8 @@
 class VulkanGraphicsCommandList;
 class VulkanFrame;
 class VulkanWindow;
+class VulkanRayTracingContext;
+
 
 
 class VulkanRenderSystem : public RenderSystem
@@ -23,6 +25,7 @@ public:
     virtual void update(Renderable* r);
     virtual void render(Renderable* r, RenderListType t);
     virtual void multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread);
+    void rayTracingRender(std::vector<Ogre::Renderable*>& objs);
     virtual void postRender();
 
 
@@ -68,4 +71,6 @@ private:
     utils::JobSystem::Job* mRootJob;
 
     std::vector<Ogre::Renderable*> mRenderList;
+
+    VulkanRayTracingContext* mRayTracingContext;
 };

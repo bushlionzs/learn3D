@@ -16,13 +16,23 @@
 #include "OgreVertexDeclaration.h"
 #include "OgreHardwareIndexBuffer.h"
 #include "OgreRoot.h"
+#include "VulkanHardwareBuffer.h"
+#include "VulkanRaytracing.h"
+#include "VulkanTools.h"
 #include <utils/JobSystem.h>
 
-VulkanRenderableData::VulkanRenderableData(VulkanRenderSystem* engine, Ogre::Renderable* r)
+
+
+VulkanRenderableData::VulkanRenderableData(
+    VulkanRenderSystem* engine, 
+    Ogre::Renderable* r,
+    VulkanRayTracingContext* context)
     :RenderableData(r)
 {
 	mEngine = engine;
     mDevice = VulkanHelper::getSingleton()._getVkDevice();
+
+    mRayTracingContext = context;
 	buildInitData();
 }
 
@@ -358,6 +368,8 @@ void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
 }
 
 
+
+
 void VulkanRenderableData::buildInitData()
 {
     auto descriptorPool = VulkanHelper::getSingleton()._getDescriptorPool();
@@ -405,8 +417,40 @@ void VulkanRenderableData::buildInitData()
     }
     
 
-    
+    if (mRayTracingContext)
+    {
+        VertexData* vb = _r->getVertexData();
+        IndexData* ib = _r->getIndexData();
 
-    
+        VulkanHardwareBuffer* vulkanBuffer = (VulkanHardwareBuffer*)vb->getBuffer(0);
+        VulkanHardwareBuffer* vulkanIndexBuffer = (VulkanHardwareBuffer*)ib;
+        mGeometryNode.vertexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanBuffer->getVKBuffer());// +primitive->firstVertex * sizeof(vkglTF::Vertex);
+        mGeometryNode.indexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanIndexBuffer->getVKBuffer())
+            + ib->mIndexStart * ib->mIndexBuffer->getIndexSize();
+        mTransformSlot = mRayTracingContext->allocGeometrySlot(mGeometryNode);
+        mGeometryNode.transformBufferDeviceAddress.deviceAddress =
+            vks::tools::getBufferDeviceAddress(mDevice, mRayTracingContext->getTransformBuffer())
+            + mTransformSlot * sizeof(VkTransformMatrixKHR);
+
+        mGeometry = {};
+        mGeometry.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
+        mGeometry.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
+        mGeometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
+        mGeometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
+        mGeometry.geometry.triangles.vertexData = mGeometryNode.vertexBufferDeviceAddress;
+        mGeometry.geometry.triangles.maxVertex = vb->getVertexCount();
+        mGeometry.geometry.triangles.vertexStride = vb->getVertexSize(0);
+        mGeometry.geometry.triangles.indexType = ib->mIndexBuffer->getIndexSize() == 4?VK_INDEX_TYPE_UINT32:VK_INDEX_TYPE_UINT16;
+        mGeometry.geometry.triangles.indexData = mGeometryNode.indexBufferDeviceAddress;
+        mGeometry.geometry.triangles.transformData = mGeometryNode.transformBufferDeviceAddress;
+
+        VkTransformMatrixKHR tmp;
+        mTransformSlot = mRayTracingContext->allocTransformSlot(tmp);
+
+        mBuildRangeInfo.firstVertex = vb->getVertexStart();
+        mBuildRangeInfo.primitiveOffset = 0;
+        mBuildRangeInfo.primitiveCount = ib->mIndexCount / 3;
+        mBuildRangeInfo.transformOffset = 0;
+    }
 }
 
