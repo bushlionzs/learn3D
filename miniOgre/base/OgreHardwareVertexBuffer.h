@@ -161,6 +161,11 @@ namespace Ogre {
         {
             return mVertexSize;
         }
+
+        HardwareBuffer* getHardwareBuffer()
+        {
+            return mDelegate.get();
+        }
     private:
         std::unique_ptr<HardwareBuffer> mDelegate;
         

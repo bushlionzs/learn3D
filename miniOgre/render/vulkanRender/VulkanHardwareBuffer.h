@@ -24,12 +24,10 @@ public:
         return mVkBuffer;
     }
 private:
-    int32_t mVertexSize;
-    int32_t mNumVerts;
-    BufferType mBufferType;
+    BufferType mBufferType = VERTEX_BUFFER;
 
-    VkBuffer mVkBuffer;
-    VkDeviceMemory mVertexBufferMemory;
+    VkBuffer mVkBuffer = VK_NULL_HANDLE;
+    VkDeviceMemory mVertexBufferMemory = VK_NULL_HANDLE;
     VkMemoryRequirements mMemRequirements;
     VkPhysicalDeviceMemoryProperties mMemProperties;
 

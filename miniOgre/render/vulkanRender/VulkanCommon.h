@@ -47,8 +47,7 @@ struct GeometryNode {
     VkDeviceOrHostAddressConstKHR vertexBufferDeviceAddress;
     VkDeviceOrHostAddressConstKHR indexBufferDeviceAddress;
     VkDeviceOrHostAddressConstKHR transformBufferDeviceAddress;
-    int32_t textureIndexBaseColor;
-    int32_t textureIndexOcclusion;
+    int32_t textureIndex[3];
 };
 
 struct MultisampleTarget 

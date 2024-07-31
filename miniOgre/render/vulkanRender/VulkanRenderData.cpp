@@ -417,20 +417,34 @@ void VulkanRenderableData::buildInitData()
     }
     
 
+    
+}
+
+bool VulkanRenderableData::updateRayTracingData()
+{
+    
+    if (mRayTracingUpdate)
+    {
+        const Ogre::Matrix4& m = _r->getModelMatrix();
+        mRayTracingContext->updateTransform(mGeometrySlot, m);
+        return false;
+    }
+
+    mRayTracingUpdate = true;
     if (mRayTracingContext)
     {
         VertexData* vb = _r->getVertexData();
         IndexData* ib = _r->getIndexData();
-
-        VulkanHardwareBuffer* vulkanBuffer = (VulkanHardwareBuffer*)vb->getBuffer(0);
+     
+        VulkanHardwareBuffer* vulkanBuffer = (VulkanHardwareBuffer*)((HardwareVertexBuffer*)vb->getBuffer(0))->getHardwareBuffer();
         VulkanHardwareBuffer* vulkanIndexBuffer = (VulkanHardwareBuffer*)ib;
         mGeometryNode.vertexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanBuffer->getVKBuffer());// +primitive->firstVertex * sizeof(vkglTF::Vertex);
         mGeometryNode.indexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanIndexBuffer->getVKBuffer())
             + ib->mIndexStart * ib->mIndexBuffer->getIndexSize();
-        mTransformSlot = mRayTracingContext->allocGeometrySlot(mGeometryNode);
+        mGeometrySlot = mRayTracingContext->allocGeometrySlot(mGeometryNode);
         mGeometryNode.transformBufferDeviceAddress.deviceAddress =
             vks::tools::getBufferDeviceAddress(mDevice, mRayTracingContext->getTransformBuffer())
-            + mTransformSlot * sizeof(VkTransformMatrixKHR);
+            + mGeometrySlot * sizeof(VkTransformMatrixKHR);
 
         mGeometry = {};
         mGeometry.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
@@ -440,17 +454,41 @@ void VulkanRenderableData::buildInitData()
         mGeometry.geometry.triangles.vertexData = mGeometryNode.vertexBufferDeviceAddress;
         mGeometry.geometry.triangles.maxVertex = vb->getVertexCount();
         mGeometry.geometry.triangles.vertexStride = vb->getVertexSize(0);
-        mGeometry.geometry.triangles.indexType = ib->mIndexBuffer->getIndexSize() == 4?VK_INDEX_TYPE_UINT32:VK_INDEX_TYPE_UINT16;
+        mGeometry.geometry.triangles.indexType = ib->mIndexBuffer->getIndexSize() == 4 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
         mGeometry.geometry.triangles.indexData = mGeometryNode.indexBufferDeviceAddress;
         mGeometry.geometry.triangles.transformData = mGeometryNode.transformBufferDeviceAddress;
 
+        auto mat = _r->getMaterial().get();
+        auto texs = mat->getAllTexureUnit();
+
+        for (int32_t i = 0; i < texs.size(); i++)
+        {
+            VulkanTexture* tex = (VulkanTexture*)texs[i]->getRaw();
+
+            int32_t slot = tex->getSlot();
+
+            if (slot == -1)
+            {
+                slot = mRayTracingContext->allocTextureSlot(tex);
+            }
+
+            mGeometryNode.textureIndex[i] = slot;
+            
+        }
+
+        
+
         VkTransformMatrixKHR tmp;
-        mTransformSlot = mRayTracingContext->allocTransformSlot(tmp);
 
         mBuildRangeInfo.firstVertex = vb->getVertexStart();
         mBuildRangeInfo.primitiveOffset = 0;
         mBuildRangeInfo.primitiveCount = ib->mIndexCount / 3;
         mBuildRangeInfo.transformOffset = 0;
+
+        const Ogre::Matrix4& m = _r->getModelMatrix();
+        mRayTracingContext->updateTransform(mGeometrySlot, m);
     }
+
+    return true;
 }
 

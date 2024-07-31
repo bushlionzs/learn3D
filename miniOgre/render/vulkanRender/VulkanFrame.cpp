@@ -54,7 +54,7 @@ void VulkanFrame::updateFrameConstantBuffer(
     mFrameCB->CopyData(const_index, data);
 }
 
-uint32_t& VulkanFrame::getFrameIndex()
+uint32_t VulkanFrame::getFrameIndex()
 {
     return mFrameIndex;
 }

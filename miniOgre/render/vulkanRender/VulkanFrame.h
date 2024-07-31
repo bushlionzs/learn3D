@@ -15,7 +15,7 @@ public:
 		const FrameConstantBuffer& data,
 		ICamera* cam);
 
-	uint32_t& getFrameIndex();
+	uint32_t getFrameIndex();
 
 	/*std::unique_ptr<VulkanUploadBuffer<FrameConstantBuffer>>&
 		getFrameCB()

@@ -39,10 +39,7 @@ public:
 	void updateImpl(VulkanFrame* frame);
 	void render(VulkanFrame* frame, VkCommandBuffer cb);
 
-	int32_t getTransformSlot()
-	{
-		return mTransformSlot;
-	}
+	bool updateRayTracingData();
 
 	int32_t getGeometrySlot()
 	{
@@ -83,6 +80,7 @@ private:
 
 	VkAccelerationStructureBuildRangeInfoKHR mBuildRangeInfo;
 
-	int32_t mTransformSlot = -1;
 	int32_t mGeometrySlot = -1;
+
+	bool mRayTracingUpdate = false;
 };

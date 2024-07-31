@@ -105,6 +105,17 @@ public:
 
     void updateTextureData();
     void* getVulkanBuffer(uint32_t offset);
+
+
+    int32_t getSlot()
+    {
+        return mSlot;
+    }
+
+    void setSlot(int32_t slot)
+    {
+        mSlot = slot;
+    }
 private:
     void _createSurfaceList(void);
     virtual void createInternalResourcesImpl(void);
@@ -158,4 +169,6 @@ private:
     VmaAllocator mAllocator;
     VulkanCommands* mCommands;
     VulkanStagePool* mStagePool = nullptr;
+
+    int32_t mSlot = -1;
 };

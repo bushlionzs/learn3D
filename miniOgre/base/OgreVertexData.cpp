@@ -71,9 +71,10 @@ void VertexData::bind(void* cb)
 
 HardwareBuffer* VertexData::getBuffer(int32_t index) const
 {
-    if (vertexSlotInfo[index].mVertexSize > 0)
+    const VertexSlotInfo* slot = vertexSlotInfo.data();
+    if (slot[index].mVertexSize > 0)
     {
-        return vertexSlotInfo[index].hardwareVertexBuffer.get();
+        return slot[index].hardwareVertexBuffer.get();
     }
     
 

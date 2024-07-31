@@ -2,10 +2,13 @@
 
 #include "VulkanCommon.h"
 #include "VulkanUploadbuffer.h"
-
+#include "VulkanBuffer.h"
 class VulkanTexture;
 
-
+class ShaderBindingTable : public VulkanBuffer {
+public:
+	VkStridedDeviceAddressRegionKHR stridedDeviceAddressRegion{};
+};
 
 class VulkanRayTracingContext
 {
@@ -17,20 +20,27 @@ public:
 		VkDeviceMemory memory = VK_NULL_HANDLE;
 	};
 
+	struct ShaderBindingTables {
+		ShaderBindingTable raygen;
+		ShaderBindingTable miss;
+		ShaderBindingTable hit;
+	} shaderBindingTables;
+
 	// Holds information for a storage image that the ray tracing shaders output to
 	struct StorageImage {
 		VkDeviceMemory memory = VK_NULL_HANDLE;
 		VkImage image = VK_NULL_HANDLE;
 		VkImageView view = VK_NULL_HANDLE;
 		VkFormat format;
-	} storageImage;
+	};
 public:
 	void init();
 	int32_t allocGeometrySlot(GeometryNode& geometry);
-	int32_t allocTransformSlot(VkTransformMatrixKHR& transform);
+	void updateTransform(int32_t index, const Ogre::Matrix4& m);
 	int32_t allocTextureSlot(VulkanTexture* texture);
 	VkBuffer getTransformBuffer();
 
+	void render(std::vector<Ogre::Renderable*>& renderList);
 	void updateRayTracing(std::vector<Ogre::Renderable*>& renderList);
 private:
 	ScratchBuffer createScratchBuffer(VkDeviceSize size);
@@ -41,22 +51,29 @@ private:
 	void deleteAccelerationStructure(AccelerationStructure& accelerationStructure);
 	void createBottomLevelAccelerationStructure(std::vector<Ogre::Renderable*>& renderList);
 	void createTopLevelAccelerationStructure();
+	void prepare();
 	void createStorageImage();
 	void createUniformBuffer();
 	void createRayTracingPipeline();
 	void createShaderBindingTables();
+	void createShaderBindingTable(ShaderBindingTable& shaderBindingTable, uint32_t handleCount);
+	VkStridedDeviceAddressRegionKHR getSbtEntryStridedDeviceAddressRegion(VkBuffer buffer, uint32_t handleCount);
 	void createDescriptorSets();
+	void updateDescriptorSets();
 	void buildCommandBuffers();
+	VkPipelineShaderStageCreateInfo loadShader(std::string fileName, VkShaderStageFlagBits stage);
+
 private:
-	uint32_t mMaxCount = 10000;
+	uint32_t mMaxObjectCount = 10000;
 
 	std::vector<VkTransformMatrixKHR> mTransformMatrices;
-	VulkanUploadBuffer<VkTransformMatrixKHR>* mVulkanTransformBuffer;
+	VulkanBuffer transformBuffer;
+	VulkanBuffer uniformBuffer;
 	
 	std::vector<GeometryNode> mGeometryNodes;
 	std::vector<VkAccelerationStructureBuildRangeInfoKHR> mBuildRangeInfos;
 	std::vector<VkAccelerationStructureBuildRangeInfoKHR*> mBuildRangePointerInfos;
-	VulkanUploadBuffer<GeometryNode>* mVulkanGeometryBuffer;
+	VulkanBuffer geometryNodesBuffer;
 	std::vector<VkAccelerationStructureGeometryKHR> mGeometries;
 	std::vector<uint32_t> maxPrimitiveCounts;
 	
@@ -68,6 +85,7 @@ private:
 
 	StorageImage mStorageImage;
 
+	VulkanTexture* mDefaultTexture = nullptr;
 	std::vector<VulkanTexture*> mTextures;
 	bool mChange = true;
 	VkDevice mVKDevice;
@@ -78,4 +96,15 @@ private:
 	VkDescriptorSetLayout descriptorSetLayout{ VK_NULL_HANDLE };
 
 	std::vector<VkRayTracingShaderGroupCreateInfoKHR> shaderGroups{};
+	std::vector<VkShaderModule> shaderModules;
+
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR  rayTracingPipelineProperties{};
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
+
+	VkDescriptorPool descriptorPool{ VK_NULL_HANDLE };
+
+	VulkanRenderSystem* mVulkanRenderSystem = nullptr;
+	bool mInit = false;
+
+	void* deviceCreatepNextChain = nullptr;
 };

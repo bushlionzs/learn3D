@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "OgreHeader.h"
-#include <VulkanPlatform.h>
+#include <vulkan/VulkanPlatform.h>
 
 #include "vulkan/VulkanConstants.h"
 //#include "vulkan/VulkanDriverFactory.h"

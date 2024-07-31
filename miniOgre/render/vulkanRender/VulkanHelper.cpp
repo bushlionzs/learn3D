@@ -18,23 +18,25 @@ static const std::vector<const char*> validationLayers =
 
 static const std::vector<const char*> deviceExtensions = 
 {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+    VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
+    VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
+    VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME,
+    VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+    VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
+    VK_KHR_SPIRV_1_4_EXTENSION_NAME,
+    VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME,
+    VK_KHR_MAINTENANCE3_EXTENSION_NAME,
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
 static std::vector<const char*> getRequiredExtensions()
 {
-    std::vector<const char*> deviceExtensions = {
+    std::vector<const char*> instanceExtensions = {
         "VK_KHR_surface", 
         "VK_KHR_win32_surface",
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
 
-#ifdef RAYTRACEING
-    deviceExtensions.emplace_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
-    deviceExtensions.emplace_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
-    deviceExtensions.emplace_back(VK_KHR_RAY_QUERY_EXTENSION_NAME);
-    deviceExtensions.emplace_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
-#endif
-    return deviceExtensions;
+    return instanceExtensions;
 }
 
 VulkanHelper::VulkanHelper(VulkanRenderSystem* rs, HWND wnd)
@@ -146,7 +148,7 @@ VkResult VulkanHelper::createBuffer(
 
     buffer->usageFlags = usageFlags;
     buffer->memoryPropertyFlags = memoryPropertyFlags;
-
+    buffer->device = mVKDevice;
     
 
     if (data)
@@ -211,7 +213,7 @@ void VulkanHelper::createInstance()
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.pEngineName = "No Engine";
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.apiVersion = VK_API_VERSION_1_0;
+    appInfo.apiVersion = VK_API_VERSION_1_1;
 
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -359,12 +361,9 @@ void VulkanHelper::updateQueueFamilies(VkPhysicalDevice device)
         if ((queueFamily.queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT)) == (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT))
         {
             main_queue_index = i;
+            break;
         }
 
-        if ((queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) == 0 && (queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT))
-        {
-            transfer_queue_index = i;
-        }
 
         i++;
     }
@@ -482,20 +481,14 @@ void VulkanHelper::createLogicalDevice()
         main_queue.queueCount = 1;
         main_queue.pQueuePriorities = queue_priority;
 
-        VkDeviceQueueCreateInfo& transfer_queue_info = queue_info[1];
-        transfer_queue_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        transfer_queue_info.queueFamilyIndex = transfer_queue_index;
-        transfer_queue_info.queueCount = 1;
-        transfer_queue_info.pQueuePriorities = queue_priority;
-
-        VkPhysicalDeviceFeatures deviceFeatures{};
-
+       
+        deviceFeatures.shaderInt64 = VK_TRUE;
         deviceFeatures.samplerAnisotropy = VK_TRUE;
 
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-        createInfo.queueCreateInfoCount = static_cast<uint32_t>(2);
+        createInfo.queueCreateInfoCount = 1;
         createInfo.pQueueCreateInfos = queue_info;
 
         createInfo.pEnabledFeatures = &deviceFeatures;
@@ -503,6 +496,37 @@ void VulkanHelper::createLogicalDevice()
         createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
         createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
+        {
+            enabledBufferDeviceAddresFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+            enabledBufferDeviceAddresFeatures.bufferDeviceAddress = VK_TRUE;
+
+            enabledRayTracingPipelineFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
+            enabledRayTracingPipelineFeatures.rayTracingPipeline = VK_TRUE;
+            enabledRayTracingPipelineFeatures.pNext = &enabledBufferDeviceAddresFeatures;
+
+            enabledAccelerationStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+            enabledAccelerationStructureFeatures.accelerationStructure = VK_TRUE;
+            enabledAccelerationStructureFeatures.pNext = &enabledRayTracingPipelineFeatures;
+
+            physicalDeviceDescriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+            physicalDeviceDescriptorIndexingFeatures.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
+            physicalDeviceDescriptorIndexingFeatures.runtimeDescriptorArray = VK_TRUE;
+            physicalDeviceDescriptorIndexingFeatures.descriptorBindingVariableDescriptorCount = VK_TRUE;
+            physicalDeviceDescriptorIndexingFeatures.pNext = &enabledAccelerationStructureFeatures;
+
+            deviceCreatepNextChain = &physicalDeviceDescriptorIndexingFeatures;
+        }
+        VkPhysicalDeviceFeatures2 physicalDeviceFeatures2{};
+
+        if (deviceCreatepNextChain)
+        {
+            physicalDeviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+            physicalDeviceFeatures2.features = deviceFeatures;
+            physicalDeviceFeatures2.pNext = deviceCreatepNextChain;
+            createInfo.pEnabledFeatures = nullptr;
+            createInfo.pNext = &physicalDeviceFeatures2;
+        }
+        mEnableValidationLayers = false;
         if (mEnableValidationLayers)
         {
             createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
@@ -520,8 +544,6 @@ void VulkanHelper::createLogicalDevice()
 
         vkGetDeviceQueue(mVKDevice, main_queue_index, 0, &mGraphicsQueue);
 
-
-        vkGetDeviceQueue(mVKDevice, transfer_queue_index, 0, &mTransferQueue);
     }
 
     
@@ -1262,23 +1284,6 @@ void VulkanHelper::setupDebugMessenger()
 }
 
 
-void VulkanHelper::rayTracingInit()
-{
-    // Get ray tracing pipeline properties, which will be used later on in the sample
-    rayTracingPipelineProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
-    VkPhysicalDeviceProperties2 deviceProperties2{};
-    deviceProperties2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-    deviceProperties2.pNext = &rayTracingPipelineProperties;
-    vkGetPhysicalDeviceProperties2(mPhysicalDevice, &deviceProperties2);
-
-    // Get acceleration structure properties, which will be used later on in the sample
-    accelerationStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
-    VkPhysicalDeviceFeatures2 deviceFeatures2{};
-    deviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-    deviceFeatures2.pNext = &accelerationStructureFeatures;
-    vkGetPhysicalDeviceFeatures2(mPhysicalDevice, &deviceFeatures2);
-}
-
 void VulkanHelper::createBottomLevelAccelerationStructure()
 {
 }
@@ -1513,15 +1518,6 @@ VkQueue VulkanHelper::_getCommandQueue()
     return mGraphicsQueue;
 }
 
-VkQueue VulkanHelper::_getTransferQueue()
-{
-    return mTransferQueue;
-}
-
-void VulkanHelper::waitTransferQueue()
-{
-    vkQueueWaitIdle(mTransferQueue);
-}
 
 VkRenderPass VulkanHelper::_getRenderPass()
 {

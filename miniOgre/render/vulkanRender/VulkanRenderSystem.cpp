@@ -66,7 +66,7 @@ bool VulkanRenderSystem::engineInit()
 
     mRayTracingContext = new VulkanRayTracingContext;
 
-    mRayTracingContext->init();
+    
 
     return true;
 }
@@ -74,6 +74,7 @@ bool VulkanRenderSystem::engineInit()
 
 void VulkanRenderSystem::frameStart()
 {
+    mRayTracingContext->init();
     mTriangleCount = 0;
     mBatchCount = 0;
 
@@ -356,7 +357,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
 
 void VulkanRenderSystem::rayTracingRender(std::vector<Ogre::Renderable*>& objs)
 {
-    mRayTracingContext->updateRayTracing(objs);
+    mRayTracingContext->render(objs);
 }
 
 void VulkanRenderSystem::updateMainPassCB(ICamera* camera)

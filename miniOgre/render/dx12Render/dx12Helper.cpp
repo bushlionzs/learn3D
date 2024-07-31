@@ -33,7 +33,7 @@ void DX12Helper::createBaseInfo()
 	// Try to create hardware device.
 	HRESULT hardwareResult = D3D12CreateDevice(
 		nullptr,             // default adapter
-		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_12_0,
 		IID_PPV_ARGS(&mDx12Device));
 
 	// Fallback to WARP device.

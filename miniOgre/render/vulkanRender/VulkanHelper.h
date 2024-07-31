@@ -11,7 +11,7 @@ using namespace filament::backend;
 #define VULKAN_FRAME_RESOURCE_COUNT 3
 #define VULKAN_TEXTURE_COUNT 6
 #define VULKAN_COMMAND_THREAD 4
-#define RAYTRACEING
+#define RAYTRACEING 1
 
 struct SwapChainBuffer
 {
@@ -115,8 +115,6 @@ public:
         uint32_t typeFilter,
         VkMemoryPropertyFlags properties);
     VkQueue _getCommandQueue();
-    VkQueue _getTransferQueue();
-    void waitTransferQueue();
     VkRenderPass _getRenderPass();
     VkPhysicalDevice _getPhysicalDevice();
     VkPipelineLayout _getPipelineLayout();
@@ -183,7 +181,6 @@ private:
         VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     void setupDebugMessenger();
 
-    void rayTracingInit();
     void createBottomLevelAccelerationStructure();
     void createTopLevelAccelerationStructure();
     void createStorageImage();
@@ -202,7 +199,7 @@ private:
     VkPhysicalDeviceProperties mPhysicalDeviceProperties;
     VkPhysicalDeviceFeatures mDeviceFeatures;
     VkPhysicalDeviceMemoryProperties mPhysicalMemoryProperties;
-    VkDevice mVKDevice;
+    VkDevice mVKDevice = VK_NULL_HANDLE;
 
 
     VkDescriptorPool mDescriptorPool;
@@ -211,10 +208,8 @@ private:
 
     VkPipelineCache mPipelineCache;
     VkQueue mGraphicsQueue;
-    VkQueue mTransferQueue;
 
     uint32_t main_queue_index = UINT_MAX;
-    uint32_t transfer_queue_index = UINT_MAX;
 
     VkCommandPool mCommandPool[VULKAN_FRAME_RESOURCE_COUNT];
     VkCommandPool mSingleCommandPool;
@@ -252,15 +247,11 @@ private:
 
     VulkanPlatform* mPlatform;
 
-    //
-
-    VkPhysicalDeviceRayTracingPipelinePropertiesKHR  rayTracingPipelineProperties{};
-    VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures{};
-
+    void* deviceCreatepNextChain = nullptr;
+    VkPhysicalDeviceFeatures deviceFeatures{};
+    VkPhysicalDeviceDescriptorIndexingFeaturesEXT physicalDeviceDescriptorIndexingFeatures{};
+    // Enabled features and properties
     VkPhysicalDeviceBufferDeviceAddressFeatures enabledBufferDeviceAddresFeatures{};
     VkPhysicalDeviceRayTracingPipelineFeaturesKHR enabledRayTracingPipelineFeatures{};
     VkPhysicalDeviceAccelerationStructureFeaturesKHR enabledAccelerationStructureFeatures{};
-
-    AccelerationStructure bottomLevelAS{};
-    AccelerationStructure topLevelAS{};
 };

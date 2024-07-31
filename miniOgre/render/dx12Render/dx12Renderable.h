@@ -1,5 +1,5 @@
 #pragma once
-#include <d3dutil.h>
+#include "d3dutil.h"
 #include "shader.h"
 #include "UploadBuffer.h"
 #include "OgreTexture.h"
