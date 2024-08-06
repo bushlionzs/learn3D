@@ -11,7 +11,7 @@ using namespace filament::backend;
 #define VULKAN_FRAME_RESOURCE_COUNT 3
 #define VULKAN_TEXTURE_COUNT 6
 #define VULKAN_COMMAND_THREAD 4
-#define RAYTRACEING 1
+
 
 struct SwapChainBuffer
 {
@@ -24,6 +24,7 @@ struct VulkanSettings {
     bool fullscreen = false;
     bool vsync = false;
     bool multiSampling = true;
+    bool rayTraceing = true;
     VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_4_BIT;
     VulkanSettings()
     {
@@ -146,6 +147,11 @@ public:
 
     VkSampler getSampler(Ogre::TextureAddressingMode mode);
     std::shared_ptr<OgreTexture>& getDefaultTexture();
+
+    bool haveRayTracing()
+    {
+        return mSettings.rayTraceing;
+    }
 
     const VulkanSettings& getVulkanSettings()
     {

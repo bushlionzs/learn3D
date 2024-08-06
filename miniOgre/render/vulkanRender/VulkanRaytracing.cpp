@@ -11,6 +11,7 @@
 #include "OgreTextureUnit.h"
 #include "VulkanRenderSystem.h"
 #include "VulkanFrame.h"
+#include "OgreBase.h"
 
 void VulkanRayTracingContext::init()
 {
@@ -23,17 +24,30 @@ void VulkanRayTracingContext::init()
     mMaxObjectCount = 100;
     mTransformMatrices.resize(mMaxObjectCount);
 
-    VulkanHelper::getSingleton().createBuffer(
-        VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        &uniformBuffer,
-        mMaxObjectCount * sizeof(VkTransformMatrixKHR),
-        nullptr);
+    
+
+    for (auto i = 0; i < 1; i++)
+    {
+        mTransformMatrices[i] = {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f
+        };
+    }
+
+    
     VulkanHelper::getSingleton().createBuffer(
         VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
         &geometryNodesBuffer,
         mMaxObjectCount * sizeof(GeometryNode),
+        nullptr);
+
+    VulkanHelper::getSingleton().createBuffer(
+        VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        &transformBuffer,
+        mMaxObjectCount * sizeof(VkTransformMatrixKHR),
         nullptr);
     mVKDevice = VulkanHelper::getSingletonPtr()->_getVkDevice();
 
@@ -42,6 +56,11 @@ void VulkanRayTracingContext::init()
     mBuildRangePointerInfos.reserve(mMaxObjectCount);
     mTransformMatrices.reserve(mMaxObjectCount);
     maxPrimitiveCounts.reserve(mMaxObjectCount);
+
+    transformBuffer.map();
+    transformBuffer.copyTo(mTransformMatrices.data(),
+        mTransformMatrices.size() * sizeof(VkTransformMatrixKHR));
+    transformBuffer.unmap();
 
 
     uint32_t maxTextureCount = 100;
@@ -68,7 +87,6 @@ int32_t VulkanRayTracingContext::allocGeometrySlot(GeometryNode& geometry)
 {
     mGeometryNodes.push_back(geometry);
     mBuildRangeInfos.emplace_back();
-    mTransformMatrices.emplace_back();
     return mGeometryNodes.size() - 1;
 }
 
@@ -78,7 +96,7 @@ void VulkanRayTracingContext::updateTransform(int32_t index, const Ogre::Matrix4
     char* dst = (char*)&tmp;
     for (auto i = 0; i < 3; i++)
     {
-        const Real* src = m[0];
+        const Real* src = m[i];
         memcpy(dst, src, sizeof(float) * 4);
         dst += sizeof(float) * 4;
     }
@@ -102,24 +120,23 @@ int32_t VulkanRayTracingContext::allocTextureSlot(VulkanTexture* texture)
 
 VkBuffer VulkanRayTracingContext::getTransformBuffer()
 {
-    return uniformBuffer.buffer;
+    return transformBuffer.buffer;
 }
 
-void VulkanRayTracingContext::render(std::vector<Ogre::Renderable*>& renderList)
+void VulkanRayTracingContext::render(std::vector<Ogre::Renderable*>& renderList, ICamera* cam)
 {
-    updateRayTracing(renderList);
-
-
     VulkanFrame* frame = mVulkanRenderSystem->_getCurrentFrame();
 
     uint32_t frameIndex = frame->getFrameIndex();
+    updateUniformBuffer(cam, frameIndex);
+    updateRayTracing(renderList, frameIndex);
 
     VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
 
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline);
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipelineLayout,
-        0, 1, &descriptorSet, 0, 0);
+        0, 1, &descriptorSet[frameIndex], 0, 0);
 
     auto rt = Ogre::Root::getSingleton().getMainRect();
 
@@ -180,7 +197,7 @@ void VulkanRayTracingContext::render(std::vector<Ogre::Renderable*>& renderList)
         subresourceRange);
 }
 
-void VulkanRayTracingContext::updateRayTracing(std::vector<Ogre::Renderable*>& renderList)
+void VulkanRayTracingContext::updateRayTracing(std::vector<Ogre::Renderable*>& renderList, uint32_t frameIndex)
 {
     bool object_change = false;
     bool tex_change = false;
@@ -211,13 +228,23 @@ void VulkanRayTracingContext::updateRayTracing(std::vector<Ogre::Renderable*>& r
     }
 
     transformBuffer.map();
-    transformBuffer.copyTo(mTransformMatrices.data(),
+    char buffer[1024] = { 0 };
+    transformBuffer.copyTo(buffer,
         mTransformMatrices.size() * sizeof(VkTransformMatrixKHR));
     transformBuffer.unmap();
     
-    updateDescriptorSets();
+    updateDescriptorSets(frameIndex);
 }
 
+void VulkanRayTracingContext::updateUniformBuffer(ICamera* cam, uint32_t frameIndex)
+{
+    
+    const Ogre::Matrix4& view = cam->getViewMatrix();
+    const Ogre::Matrix4& proj = cam->getProjectMatrix();
+    uniformData.viewInverse = view.inverse();
+    uniformData.projInverse = proj.inverse();
+    memcpy(uniformBuffer.mapped, &uniformData, sizeof(uniformData));
+}
 
 VulkanRayTracingContext::ScratchBuffer VulkanRayTracingContext::createScratchBuffer(VkDeviceSize size)
 {
@@ -293,20 +320,31 @@ void VulkanRayTracingContext::deleteAccelerationStructure(AccelerationStructure&
 
 void VulkanRayTracingContext::createBottomLevelAccelerationStructure(std::vector<Ogre::Renderable*>& renderList)
 {
+    mBuildRangeInfos.clear();
+    
+    maxPrimitiveCounts.clear();
+    mGeometries.clear();
+    mGeometryNodes.clear();
+
+    uint64_t maxPrimCount = 0;
     for (auto r : renderList)
     {
         VulkanRenderableData* vrd = (VulkanRenderableData*)r->getRenderableData();
-    }
-
-
-    mBuildRangePointerInfos.clear();
-    maxPrimitiveCounts.clear();
-
-    uint64_t maxPrimCount = 0;
-    for (auto& rangeInfo : mBuildRangeInfos) {
-        mBuildRangePointerInfos.push_back(&rangeInfo);
+        auto& rangeInfo = vrd->getBuildRangeInfo();
+        auto& geometry = vrd->getGeometryKHR();
+        auto& geometryNode = vrd->getGeometryNode();
+        mBuildRangeInfos.push_back(rangeInfo);
+        mGeometries.push_back(geometry);
+        mGeometryNodes.push_back(geometryNode);
         maxPrimitiveCounts.push_back(rangeInfo.primitiveCount);
         maxPrimCount += rangeInfo.primitiveCount;
+    }
+
+    mBuildRangePointerInfos.clear();
+
+    for (auto& rangeInfo : mBuildRangeInfos)
+    {
+        mBuildRangePointerInfos.push_back(&rangeInfo);
     }
 
     VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo{};
@@ -529,48 +567,52 @@ void VulkanRayTracingContext::createStorageImage()
 
 void VulkanRayTracingContext::createUniformBuffer()
 {
+    VulkanHelper::getSingleton().createBuffer(
+        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        &uniformBuffer,
+        sizeof(uniformData),
+        nullptr);
 
+    uniformBuffer.map();
 }
 
 void VulkanRayTracingContext::createRayTracingPipeline()
 {
-    uint32_t imageCount{ 0 };
-    imageCount = static_cast<uint32_t>(mTextures.size());
+    VkDescriptorSetLayoutBinding accelerationStructureLayoutBinding{};
+    accelerationStructureLayoutBinding.binding = 0;
+    accelerationStructureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR;
+    accelerationStructureLayoutBinding.descriptorCount = 1;
+    accelerationStructureLayoutBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
 
-    std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings = {
-        // Binding 0: Top level acceleration structure
-        vks::initializers::descriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR, 0),
-        // Binding 1: Ray tracing result image
-        vks::initializers::descriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR, 1),
-        // Binding 2: Uniform buffer
-        vks::initializers::descriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR, 2),
-        // Binding 3: Texture image
-        vks::initializers::descriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR, 3),
-        // Binding 4: Geometry node information SSBO
-        vks::initializers::descriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR, 4),
-        // Binding 5: All images used by the glTF model
-        vks::initializers::descriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR, 5, imageCount)
-    };
+    VkDescriptorSetLayoutBinding resultImageLayoutBinding{};
+    resultImageLayoutBinding.binding = 1;
+    resultImageLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+    resultImageLayoutBinding.descriptorCount = 1;
+    resultImageLayoutBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
 
-    // Unbound set
-    VkDescriptorSetLayoutBindingFlagsCreateInfoEXT setLayoutBindingFlags{};
-    setLayoutBindingFlags.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
-    setLayoutBindingFlags.bindingCount = 6;
-    std::vector<VkDescriptorBindingFlagsEXT> descriptorBindingFlags = {
-        0,
-        0,
-        0,
-        0,
-        0,
-        VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT
-    };
-    setLayoutBindingFlags.pBindingFlags = descriptorBindingFlags.data();
+    VkDescriptorSetLayoutBinding uniformBufferBinding{};
+    uniformBufferBinding.binding = 2;
+    uniformBufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uniformBufferBinding.descriptorCount = 1;
+    uniformBufferBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
 
-    VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCI = vks::initializers::descriptorSetLayoutCreateInfo(setLayoutBindings);
-    descriptorSetLayoutCI.pNext = &setLayoutBindingFlags;
-    VK_CHECK_RESULT(vkCreateDescriptorSetLayout(mVKDevice, &descriptorSetLayoutCI, nullptr, &descriptorSetLayout));
+    std::vector<VkDescriptorSetLayoutBinding> bindings({
+        accelerationStructureLayoutBinding,
+        resultImageLayoutBinding,
+        uniformBufferBinding
+        });
 
-    VkPipelineLayoutCreateInfo pipelineLayoutCI = vks::initializers::pipelineLayoutCreateInfo(&descriptorSetLayout, 1);
+    VkDescriptorSetLayoutCreateInfo descriptorSetlayoutCI{};
+    descriptorSetlayoutCI.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    descriptorSetlayoutCI.bindingCount = static_cast<uint32_t>(bindings.size());
+    descriptorSetlayoutCI.pBindings = bindings.data();
+    VK_CHECK_RESULT(vkCreateDescriptorSetLayout(mVKDevice, &descriptorSetlayoutCI, nullptr, &descriptorSetLayout));
+
+    VkPipelineLayoutCreateInfo pipelineLayoutCI{};
+    pipelineLayoutCI.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    pipelineLayoutCI.setLayoutCount = 1;
+    pipelineLayoutCI.pSetLayouts = &descriptorSetLayout;
     VK_CHECK_RESULT(vkCreatePipelineLayout(mVKDevice, &pipelineLayoutCI, nullptr, &pipelineLayout));
 
     /*
@@ -602,10 +644,6 @@ void VulkanRayTracingContext::createRayTracingPipeline()
         shaderGroup.anyHitShader = VK_SHADER_UNUSED_KHR;
         shaderGroup.intersectionShader = VK_SHADER_UNUSED_KHR;
         shaderGroups.push_back(shaderGroup);
-        // Second shader for shadows
-        shaderStages.push_back(loadShader("shadow.rmiss.spv", VK_SHADER_STAGE_MISS_BIT_KHR));
-        shaderGroup.generalShader = static_cast<uint32_t>(shaderStages.size()) - 1;
-        shaderGroups.push_back(shaderGroup);
     }
 
     // Closest hit group for doing texture lookups
@@ -617,9 +655,7 @@ void VulkanRayTracingContext::createRayTracingPipeline()
         shaderGroup.generalShader = VK_SHADER_UNUSED_KHR;
         shaderGroup.closestHitShader = static_cast<uint32_t>(shaderStages.size()) - 1;
         shaderGroup.intersectionShader = VK_SHADER_UNUSED_KHR;
-        // This group also uses an anyhit shader for doing transparency (see anyhit.rahit for details)
-        shaderStages.push_back(loadShader("anyhit.rahit.spv", VK_SHADER_STAGE_ANY_HIT_BIT_KHR));
-        shaderGroup.anyHitShader = static_cast<uint32_t>(shaderStages.size()) - 1;
+        shaderGroup.anyHitShader = VK_SHADER_UNUSED_KHR;
         shaderGroups.push_back(shaderGroup);
     }
 
@@ -648,14 +684,14 @@ void VulkanRayTracingContext::createShaderBindingTables()
     VK_CHECK_RESULT(vkGetRayTracingShaderGroupHandlesKHR(mVKDevice, pipeline, 0, groupCount, sbtSize, shaderHandleStorage.data()));
 
     createShaderBindingTable(shaderBindingTables.raygen, 1);
-    createShaderBindingTable(shaderBindingTables.miss, 2);
+    createShaderBindingTable(shaderBindingTables.miss, 1);
     createShaderBindingTable(shaderBindingTables.hit, 1);
 
     // Copy handles
     memcpy(shaderBindingTables.raygen.mapped, shaderHandleStorage.data(), handleSize);
     // We are using two miss shaders, so we need to get two handles for the miss shader binding table
-    memcpy(shaderBindingTables.miss.mapped, shaderHandleStorage.data() + handleSizeAligned, handleSize * 2);
-    memcpy(shaderBindingTables.hit.mapped, shaderHandleStorage.data() + handleSizeAligned * 3, handleSize);
+    memcpy(shaderBindingTables.miss.mapped, shaderHandleStorage.data() + handleSizeAligned, handleSize);
+    memcpy(shaderBindingTables.hit.mapped, shaderHandleStorage.data() + handleSizeAligned * 2, handleSize);
 }
 
 void VulkanRayTracingContext::createShaderBindingTable(ShaderBindingTable& shaderBindingTable, uint32_t handleCount)
@@ -689,28 +725,19 @@ void VulkanRayTracingContext::createDescriptorSets()
     std::vector<VkDescriptorPoolSize> poolSizes = {
         { VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, 1 },
         { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1 },
-        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 },
-        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1 },
-        { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1 },
-        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, imageCount }
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 }
     };
-    VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = vks::initializers::descriptorPoolCreateInfo(poolSizes, 1);
+    VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = vks::initializers::descriptorPoolCreateInfo(poolSizes, VULKAN_FRAME_RESOURCE_COUNT);
     VK_CHECK_RESULT(vkCreateDescriptorPool(mVKDevice, &descriptorPoolCreateInfo, nullptr, &descriptorPool));
 
-    VkDescriptorSetVariableDescriptorCountAllocateInfoEXT variableDescriptorCountAllocInfo{};
-    uint32_t variableDescCounts[] = { imageCount };
-    variableDescriptorCountAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT;
-    variableDescriptorCountAllocInfo.descriptorSetCount = 1;
-    variableDescriptorCountAllocInfo.pDescriptorCounts = variableDescCounts;
-
     VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = vks::initializers::descriptorSetAllocateInfo(descriptorPool, &descriptorSetLayout, 1);
-    descriptorSetAllocateInfo.pNext = &variableDescriptorCountAllocInfo;
-    VK_CHECK_RESULT(vkAllocateDescriptorSets(mVKDevice, &descriptorSetAllocateInfo, &descriptorSet));
-
-    
+    for (auto i = 0; i < VULKAN_FRAME_RESOURCE_COUNT; i++)
+    {
+        VK_CHECK_RESULT(vkAllocateDescriptorSets(mVKDevice, &descriptorSetAllocateInfo, &descriptorSet[i]));
+    }
 }
 
-void VulkanRayTracingContext::updateDescriptorSets()
+void VulkanRayTracingContext::updateDescriptorSets(uint32_t frameIndex)
 {
     uint32_t imageCount = static_cast<uint32_t>(mTextures.size());
     VkWriteDescriptorSetAccelerationStructureKHR descriptorAccelerationStructureInfo = vks::initializers::writeDescriptorSetAccelerationStructureKHR();
@@ -721,7 +748,7 @@ void VulkanRayTracingContext::updateDescriptorSets()
     accelerationStructureWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     // The specialized acceleration structure descriptor has to be chained
     accelerationStructureWrite.pNext = &descriptorAccelerationStructureInfo;
-    accelerationStructureWrite.dstSet = descriptorSet;
+    accelerationStructureWrite.dstSet = descriptorSet[frameIndex];
     accelerationStructureWrite.dstBinding = 0;
     accelerationStructureWrite.descriptorCount = 1;
     accelerationStructureWrite.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR;
@@ -732,11 +759,9 @@ void VulkanRayTracingContext::updateDescriptorSets()
         // Binding 0: Top level acceleration structure
         accelerationStructureWrite,
         // Binding 1: Ray tracing result image
-        vks::initializers::writeDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1, &storageImageDescriptor),
+        vks::initializers::writeDescriptorSet(descriptorSet[frameIndex], VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1, &storageImageDescriptor),
         // Binding 2: Uniform data
-        vks::initializers::writeDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2, &uniformBuffer.descriptor),
-        // Binding 4: Geometry node information SSBO
-        vks::initializers::writeDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 4, &geometryNodesBuffer.descriptor),
+        vks::initializers::writeDescriptorSet(descriptorSet[frameIndex], VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2, &uniformBuffer.descriptor),
     };
 
     // Image descriptors for the image array
@@ -754,9 +779,9 @@ void VulkanRayTracingContext::updateDescriptorSets()
     writeDescriptorImgArray.dstBinding = 5;
     writeDescriptorImgArray.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     writeDescriptorImgArray.descriptorCount = imageCount;
-    writeDescriptorImgArray.dstSet = descriptorSet;
+    writeDescriptorImgArray.dstSet = descriptorSet[frameIndex];
     writeDescriptorImgArray.pImageInfo = textureDescriptors.data();
-    writeDescriptorSets.push_back(writeDescriptorImgArray);
+    //writeDescriptorSets.push_back(writeDescriptorImgArray);
 
     vkUpdateDescriptorSets(mVKDevice, static_cast<uint32_t>(writeDescriptorSets.size()), writeDescriptorSets.data(), 0, VK_NULL_HANDLE);
 }

@@ -74,7 +74,11 @@ bool VulkanRenderSystem::engineInit()
 
 void VulkanRenderSystem::frameStart()
 {
-    mRayTracingContext->init();
+    if (VulkanHelper::getSingleton().haveRayTracing())
+    {
+        mRayTracingContext->init();
+    }
+    
     mTriangleCount = 0;
     mBatchCount = 0;
 
@@ -277,10 +281,12 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     {
         return;
     }
-#ifdef RAYTRACEING
-    rayTracingRender(mRenderList);
-    return;
-#endif
+
+    if (VulkanHelper::getSingleton().haveRayTracing())
+    {
+        rayTracingRender(mRenderList);
+        return;
+    }
     
     
     uint32_t size = (uint32_t)mRenderList.size();
@@ -357,7 +363,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
 
 void VulkanRenderSystem::rayTracingRender(std::vector<Ogre::Renderable*>& objs)
 {
-    mRayTracingContext->render(objs);
+    mRayTracingContext->render(objs, mCamera);
 }
 
 void VulkanRenderSystem::updateMainPassCB(ICamera* camera)

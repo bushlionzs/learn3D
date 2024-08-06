@@ -24,9 +24,10 @@ public:
             mObjectSize += (int32_t)vkDeviceProperties.limits.minUniformBufferOffsetAlignment;
         }
         VkBufferUsageFlags usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-        #ifdef RAYTRACEING
-        usage = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR;
-        #endif
+        if (VulkanHelper::getSingleton().haveRayTracing())
+        {
+            usage = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+        }
         VulkanHelper::getSingleton()._createBuffer(
             mObjectSize * elementCount,
             usage,

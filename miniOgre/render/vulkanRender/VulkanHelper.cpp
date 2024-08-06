@@ -73,7 +73,7 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
     createPipelineCache();
     setupDescriptorSetLayout();
     createSamples();
-    
+    this->mSettings.rayTraceing = true;
 }
 
 void VulkanHelper::_createBuffer(
@@ -103,7 +103,12 @@ void VulkanHelper::_createBuffer(
         _findMemoryType(
             memRequirements.memoryTypeBits,
             properties);
-
+    VkMemoryAllocateFlagsInfoKHR allocFlagsInfo{};
+    if (usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) {
+        allocFlagsInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
+        allocFlagsInfo.flags = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR;
+        allocInfo.pNext = &allocFlagsInfo;
+    }
     if (vkAllocateMemory(mVKDevice, &allocInfo, 
         nullptr, &bufferMemory) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate buffer memory!");
@@ -140,7 +145,12 @@ VkResult VulkanHelper::createBuffer(
         _findMemoryType(
             memRequirements.memoryTypeBits,
             memoryPropertyFlags);
-
+    VkMemoryAllocateFlagsInfoKHR allocFlagsInfo{};
+    if (usageFlags & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) {
+        allocFlagsInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
+        allocFlagsInfo.flags = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR;
+        allocInfo.pNext = &allocFlagsInfo;
+    }
     if (vkAllocateMemory(mVKDevice, &allocInfo,
         nullptr, &buffer->memory) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate buffer memory!");
@@ -149,7 +159,7 @@ VkResult VulkanHelper::createBuffer(
     buffer->usageFlags = usageFlags;
     buffer->memoryPropertyFlags = memoryPropertyFlags;
     buffer->device = mVKDevice;
-    
+    buffer->setupDescriptor();
 
     if (data)
     {
@@ -1565,7 +1575,11 @@ void VulkanHelper::_endCommandBuffer(uint32_t frame_index)
 
     vkCmdExecuteCommands(mMainCommandBuffer[frame_index], commandBuffers.size(), commandBuffers.data());
 #endif
-    vkCmdEndRenderPass(mMainCommandBuffer[frame_index]);
+    if (!mSettings.rayTraceing)
+    {
+        vkCmdEndRenderPass(mMainCommandBuffer[frame_index]);
+    }
+    
     if (vkEndCommandBuffer(mMainCommandBuffer[frame_index]) != VK_SUCCESS)
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkEndCommandBuffer!");

@@ -23,7 +23,10 @@ public:
     uint32_t getIndexSize();
 
     IndexType getType();
-
+    HardwareBuffer* getHardwareBuffer()
+    {
+        return mDelegate.get();
+    }
 private:
     std::unique_ptr<HardwareBuffer> mDelegate;
 };

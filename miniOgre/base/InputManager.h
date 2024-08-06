@@ -313,8 +313,8 @@ private:
 private:
 	HWND mHwnd;
 	static LRESULT msOldWindowProc;
-	int mWidth = 1280;
-	int mHeight = 768;
+	int mWidth;
+	int mHeight;
 	static bool msSkipMove;
 	int mMouseX;
 	int mMouseY;

@@ -33,6 +33,11 @@ public:
 		VkImageView view = VK_NULL_HANDLE;
 		VkFormat format;
 	};
+
+	struct UniformData {
+		Ogre::Matrix4 viewInverse;
+		Ogre::Matrix4 projInverse;
+	} uniformData;
 public:
 	void init();
 	int32_t allocGeometrySlot(GeometryNode& geometry);
@@ -40,9 +45,10 @@ public:
 	int32_t allocTextureSlot(VulkanTexture* texture);
 	VkBuffer getTransformBuffer();
 
-	void render(std::vector<Ogre::Renderable*>& renderList);
-	void updateRayTracing(std::vector<Ogre::Renderable*>& renderList);
+	void render(std::vector<Ogre::Renderable*>& renderList, ICamera* cam);
+	void updateRayTracing(std::vector<Ogre::Renderable*>& renderList, uint32_t frameIndex);
 private:
+	void updateUniformBuffer(ICamera* cam, uint32_t frameIndex);
 	ScratchBuffer createScratchBuffer(VkDeviceSize size);
 	void deleteScratchBuffer(VulkanRayTracingContext::ScratchBuffer& scratchBuffer);
 	void createAccelerationStructureBuffer(
@@ -59,7 +65,7 @@ private:
 	void createShaderBindingTable(ShaderBindingTable& shaderBindingTable, uint32_t handleCount);
 	VkStridedDeviceAddressRegionKHR getSbtEntryStridedDeviceAddressRegion(VkBuffer buffer, uint32_t handleCount);
 	void createDescriptorSets();
-	void updateDescriptorSets();
+	void updateDescriptorSets(uint32_t frameIndex);
 	void buildCommandBuffers();
 	VkPipelineShaderStageCreateInfo loadShader(std::string fileName, VkShaderStageFlagBits stage);
 
@@ -92,7 +98,7 @@ private:
 
 	VkPipeline pipeline{ VK_NULL_HANDLE };
 	VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };
-	VkDescriptorSet descriptorSet{ VK_NULL_HANDLE };
+	VkDescriptorSet descriptorSet[VULKAN_FRAME_RESOURCE_COUNT];
 	VkDescriptorSetLayout descriptorSetLayout{ VK_NULL_HANDLE };
 
 	std::vector<VkRayTracingShaderGroupCreateInfoKHR> shaderGroups{};

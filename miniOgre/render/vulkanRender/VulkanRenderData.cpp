@@ -50,6 +50,11 @@ bool VulkanRenderableData::update(VulkanFrame* frame, utils::JobSystem::Job* job
          mat->load(nullptr);
     }
 
+    if (VulkanHelper::getSingleton().haveRayTracing())
+    {
+        return true;
+    }
+
     updateImpl(frame);
     return true;
 }
@@ -435,9 +440,10 @@ bool VulkanRenderableData::updateRayTracingData()
     {
         VertexData* vb = _r->getVertexData();
         IndexData* ib = _r->getIndexData();
-     
-        VulkanHardwareBuffer* vulkanBuffer = (VulkanHardwareBuffer*)((HardwareVertexBuffer*)vb->getBuffer(0))->getHardwareBuffer();
-        VulkanHardwareBuffer* vulkanIndexBuffer = (VulkanHardwareBuffer*)ib;
+        HardwareVertexBuffer* vertexBuffer = (HardwareVertexBuffer*)vb->getBuffer(0);
+
+        VulkanHardwareBuffer* vulkanBuffer = (VulkanHardwareBuffer*)vertexBuffer->getHardwareBuffer();
+        VulkanHardwareBuffer* vulkanIndexBuffer = (VulkanHardwareBuffer*)ib->mIndexBuffer->getHardwareBuffer();
         mGeometryNode.vertexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanBuffer->getVKBuffer());// +primitive->firstVertex * sizeof(vkglTF::Vertex);
         mGeometryNode.indexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanIndexBuffer->getVKBuffer())
             + ib->mIndexStart * ib->mIndexBuffer->getIndexSize();
@@ -448,6 +454,7 @@ bool VulkanRenderableData::updateRayTracingData()
 
         mGeometry = {};
         mGeometry.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
+        mGeometry.flags = VK_GEOMETRY_OPAQUE_BIT_KHR;
         mGeometry.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
         mGeometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
         mGeometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;

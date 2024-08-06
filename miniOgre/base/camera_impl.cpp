@@ -1,12 +1,17 @@
 #include "OgreHeader.h"
+#include "OgreRoot.h"
 #include "camera_impl.h"
 
 
 CameraImpl::CameraImpl(Ogre::SceneManager* sceneMgr)
 {
 	mSceneManager = sceneMgr;
-    mFovy = Ogre::Degree(45).valueRadians();
-    mAspectRation = (float)1280 / (float)768;
+    mFovy = Ogre::Degree(60).valueRadians();
+
+    auto rt = Root::getSingleton().getMainRect();
+    uint32_t width = rt.width();
+    uint32_t height = rt.height();
+    mAspectRation = (float)width / (float)height;
 
     mViewMatrix = Ogre::Matrix4::IDENTITY;
     mUpdate = true;

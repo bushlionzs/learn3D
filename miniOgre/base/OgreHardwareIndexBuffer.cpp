@@ -32,8 +32,7 @@ void HardwareIndexBuffer::bind(void* cb)
 
 uint32_t HardwareIndexBuffer::getIndexSize()
 {
-    assert(false);
-    return 0;
+    return mDelegate->getVertexSize();
 }
 
 HardwareIndexBuffer::IndexType HardwareIndexBuffer::getType()

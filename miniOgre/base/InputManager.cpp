@@ -1,5 +1,6 @@
 #include "OgreHeader.h"
 #include "InputManager.h"
+#include "OgreRoot.h"
 
 
 
@@ -222,6 +223,11 @@ InputManager::InputManager() :
 	mMouseMove(false)
 {
 	
+
+	auto rt = Ogre::Root::getSingleton().getMainRect();
+
+	mWidth = rt.width();
+	mHeight = rt.height();
 }
 
 InputManager::~InputManager()
