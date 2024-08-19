@@ -6,7 +6,7 @@
 CameraImpl::CameraImpl(Ogre::SceneManager* sceneMgr)
 {
 	mSceneManager = sceneMgr;
-    mFovy = Ogre::Degree(60).valueRadians();
+    mFovy = Ogre::Degree(45).valueRadians();
 
     auto rt = Root::getSingleton().getMainRect();
     uint32_t width = rt.width();

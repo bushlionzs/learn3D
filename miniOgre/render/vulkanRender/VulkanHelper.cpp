@@ -60,6 +60,7 @@ VulkanHelper::~VulkanHelper()
 
 void VulkanHelper::_initialise(VulkanPlatform* platform)
 {
+    this->mSettings.rayTraceing = false;
     mPlatform = platform;
     createInstance();
     createSurface();
@@ -73,7 +74,7 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
     createPipelineCache();
     setupDescriptorSetLayout();
     createSamples();
-    this->mSettings.rayTraceing = true;
+    
 }
 
 void VulkanHelper::_createBuffer(

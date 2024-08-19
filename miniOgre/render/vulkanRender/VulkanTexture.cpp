@@ -223,7 +223,7 @@ void VulkanTexture::postLoad()
     if (mNeedMipmaps)
     {
         //generate mipmap
-        //vks::tools::generateMipmaps(commandBuffer, this);
+        vks::tools::generateMipmaps(commandBuffer, this);
     }
 
     if (!frame)
@@ -267,10 +267,10 @@ void VulkanTexture::createImage(
     imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+    imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | 
+        VK_IMAGE_USAGE_SAMPLED_BIT ;
 
-
-
+    ;
 
 
     
