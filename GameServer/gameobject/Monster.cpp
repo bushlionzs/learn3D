@@ -1003,66 +1003,72 @@ void Monster::RequestBaseProperty(Player* pTargetHuman, BASEPROPERTY_REFESH_MODE
 		}
 
 		// 说明客户端缓存的数据没有变化，不用重刷
+		servermessage::ServerMsgMonsterAttribute dummy;
 
-		
-		SCMonsterAttribute* packet = new SCMonsterAttribute;
-		packet->setRefreshTag(bRefesh);
-		packet->setObjId(GetID());
+		auto id = GetID();
+		dummy.set_object_id(id);
 
 		if (bRefesh)
 		{
-			
-			packet->setDataID(uDataId);
-			packet->setScale(GetIntAttr_EX(CharIntProperty::PROPERTY_ZOOM_SCALE));
-			packet->setName(GetName());
-			packet->setAIType(nAiType);
-
+			auto name = GetName();
+			dummy.set_name(name);
+			dummy.set_data_id(uDataId);
+			auto scale = GetIntAttr_EX(CharIntProperty::PROPERTY_ZOOM_SCALE);
+			dummy.set_scale(scale);
+			dummy.set_ai_type(nAiType);
 			if (fMoveSpeed > 0)
 			{
-				packet->setMoveSpeed(fMoveSpeed);
+				dummy.set_move_speed(fMoveSpeed);
 			}
 
 			if (fAttackSpeed > 0)
 			{
-				packet->setAttackSpeed((float)fAttackSpeed);
+				dummy.set_attack_speed((float)fAttackSpeed);
 			}
 
 			if (strlen(GetTitle()) > 0)
 			{
-				packet->setCountryTitle(GetTitle());
+				dummy.set_country_title(GetTitle());
 			}
 
 			if (nHorseId != INVALID_ID)
 			{
-				packet->setMountID(nHorseId);
+				dummy.set_mount_id(nHorseId);
 			}
 
-			packet->setLevel(uLevel);
+			dummy.set_level(uLevel);
 		}
 
-		packet->setHpPercent(yHPPercent);
-		packet->setTargetID(GetLockedTarget());
-
+		dummy.set_hp_percent(yHPPercent);
+		auto target = GetLockedTarget();
+		dummy.set_target_id(GetLockedTarget());
 
 		if (GetStealthLevel() != 0)
 		{
-			packet->setStealthLevel(GetStealthLevel());
+			dummy.set_steal_level(GetStealthLevel());
 		}
 
-		if (GetCampData() != NULL) 
-			packet->setCampData(*GetCampData());
+		if (GetCampData() != nullptr)
+		{
+			const SCampData* source = GetCampData();
+			base::SCampData* camp_data = dummy.mutable_camp_data();
+			camp_data->set_camp_id(source->m_nCampID);
+			camp_data->set_pk_mode(source->m_uPKMode);
+			camp_data->set_reserve1(source->m_nReserve1);
+			camp_data->set_reserve2(source->m_nReserve2);
+		}
 		if (GetOccupantGUID() != INVALID_ID)
 		{
-			packet->setOccupantGUID(GetOccupantGUID());
+			dummy.set_occupant_guid(GetOccupantGUID());
 		}
 
 		if (GetOwnerID() != INVALID_ID)
 		{
-			packet->setOwnerID(GetOwnerID());
+			dummy.set_owner_id(GetOwnerID());
 		}
-
-		NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
-
+		NetHandle handle  = pTargetHuman->GetConnector();
+		NetMessageManager::GetSingletonPtr()->sendNetMessage(handle, servermessage::SC_MONSTER_ATTRBUTE, &dummy);
+		
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 		
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

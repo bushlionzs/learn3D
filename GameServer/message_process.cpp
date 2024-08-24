@@ -5,6 +5,7 @@
 #include <Item_Container.h>
 #include <Item_Interface.h>
 #include <Player.h>
+#include <Monster.h>
 #include <game_map.h>
 #include <map_info.h>
 #include <Behavior_Player.h>
@@ -15,10 +16,15 @@
 #include "server_message.pb.h"
 #include <net_header.h>
 #include <net_message_manager.h>
+#include <server_manager.h>
+#include <LuaSystem.h>
+#include <data_manager.h>
+#include <TabDefine_Map_Quest.h>
+#include <ScriptDef.h>
 
 void cs_user_login(NetHandle h, const char* msg, uint32_t msg_size)
 {
-	auto id = std::string("1610000020");
+	auto id = std::string("1610000022");
 	CharDataTask* task = new CharDataTask(id, h);
 	DBManager::GetSingletonPtr()->addDbTask(task);
 }
@@ -76,7 +82,126 @@ void cs_char_use_skill(NetHandle h, const char* msg, uint32_t msg_size)
 
 void cs_event_request(NetHandle h, const char* msg, uint32_t msg_size)
 {
+    clientmessage::MsgEventRequest dummy;
+    bool b = dummy.ParseFromArray(msg + sizeof(NetHeader), msg_size - sizeof(NetHeader));
+    assert(b);
 
+    auto mapId = dummy.map_id();
+    auto playerId = dummy.player_id();
+    auto targetId = dummy.target_id();
+    auto scriptId = dummy.mid_script();
+    auto exIndex = dummy.ex_index();
+    GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mapId);
+
+    Object* pObj = pMap->GetSpecificObjByID(playerId);
+    if (pObj == nullptr || pObj->GetObjType() != Object::OBJECT_CLASS_PLAYER)
+    {
+        return;
+    }
+
+    Player* pPlayer = (Player*)pObj;
+
+    pObj = pMap->GetSpecificObjByID(targetId);
+
+    if (pObj == nullptr || pObj->GetObjType() != Object::OBJECT_CLASS_MONSTER)
+    {
+        return;
+    }
+
+    Monster* pMonster = (Monster*)pObj;
+
+    ScriptID_t idScript = scriptId;
+
+    int32_t	bVerifyEvent = 0;
+    NPC_QUEST* pQuest = DataManager::GetSingletonPtr()->getNpcQuest(pMonster->GetGUID());
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+    if (pQuest)
+    {
+        for (int32 i = 0; i < pQuest->m_EventCount; i++)
+        {
+            if (pQuest->m_EventList[i] == idScript)
+            {
+                bVerifyEvent = 1;
+                break;
+            }
+        }
+
+        if (bVerifyEvent == 0)
+        {
+            for (int32 i = 0; i < pQuest->m_QuestCount; i++)
+            {
+                if (pQuest->m_QuestList[i] == idScript)
+                {
+                    bVerifyEvent = 2;
+                    break;
+                }
+            }
+        }
+    }
+
+    LuaSystem* luaSystem = ServerManager::GetSingletonPtr()->getLuaSystem();
+
+    if (bVerifyEvent == 1)
+    {
+        luaSystem->RunScriptFunction
+        (
+            mapId,
+            idScript,
+            DEF_PROC_EVENT_ENTRY_FN,
+            mapId,
+            playerId,
+            targetId,
+            idScript,
+            exIndex
+        );
+
+        return;
+    }
+    else if (bVerifyEvent == 2 || bVerifyEvent == 0)
+    {
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        _QUEST_DATA_t* pData = DataManager::GetSingletonPtr()->getQuestByID(idScript);
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+        if (pData)
+        {
+            /*~~~~~~~~~~~~~~~~~~~~~~~~~*/
+            BOOL	bRunByScript = FALSE;
+            /*~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+            if (pData->nScriptID >= 100000)
+            {
+                luaSystem->RunScriptFunction
+                (
+                    mapId,
+                    pData->nScriptID,
+                    DEF_PROC_EVENT_ENTRY_FN,
+                    mapId,
+                    playerId,
+                    targetId,
+                    idScript,
+                    exIndex
+                );
+                bRunByScript = TRUE;
+            }
+
+            if (bRunByScript == FALSE)
+            {
+                luaSystem->RunScriptFunction
+                (
+                    mapId,
+                    QUEST_SCRIPTID,
+                    DEF_PROC_EVENT_ENTRY_FN,
+                    mapId,
+                    playerId,
+                    targetId,
+                    idScript,
+                    exIndex
+                );
+            }
+        }
+    }
 }
 
 void cs_manipulate_pet(NetHandle h, const char* msg, uint32_t msg_size)
@@ -91,12 +216,109 @@ void cs_pick_item(NetHandle h, const char* msg, uint32_t msg_size)
 
 void cs_player_request_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 {
+    clientmessage::MsgRequestBaseAttrib dummy;
+    bool b = dummy.ParseFromArray(msg + sizeof(NetHeader), msg_size - sizeof(NetHeader));
+    assert(b);
+    auto mapId = dummy.map_id();
+    auto playerId = dummy.player_id();
 
+    auto targetId = dummy.target_id();
+    GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mapId);
+
+    Object* pObj = pMap->GetSpecificObjByID(playerId);
+    if (pObj == NULL || pObj->GetObjType() != Object::OBJECT_CLASS_PLAYER)
+    {
+        return;
+    }
+
+    Player* pPlayer = (Player*)pObj;
+
+    pObj = pMap->GetSpecificObjByID(targetId);
+
+    if (pObj == nullptr || pObj->GetObjType() != Object::OBJECT_CLASS_MONSTER)
+    {
+        return;
+    }
+
+    Character* pCharacter = (Character*)pObj;
+
+    pCharacter->RequestBaseProperty(pPlayer);
 }
 
 void cs_query_event(NetHandle h, const char* msg, uint32_t msg_size)
 {
+    clientmessage::MsgQueryEvent dummy;
+    bool b = dummy.ParseFromArray(msg + sizeof(NetHeader), msg_size - sizeof(NetHeader));
+    assert(b);
 
+    auto mapId = dummy.map_id();
+    auto playerId = dummy.player_id();
+
+    auto objectId = dummy.object_id();
+
+    GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mapId);
+
+    Object* pObj = pMap->GetSpecificObjByID(playerId);
+    if (pObj == NULL || pObj->GetObjType() != Object::OBJECT_CLASS_PLAYER)
+    {
+        return;
+    }
+
+    Player* pPlayer = (Player*)pObj;
+
+    pObj = pMap->GetSpecificObjByID(objectId);
+
+    if (pObj == nullptr || pObj->GetObjType() != Object::OBJECT_CLASS_MONSTER)
+    {
+        return;
+    }
+
+    Monster* pMonster = (Monster*)pObj;
+
+    ScriptID_t idScript = pMonster->GetScriptID();
+
+    LuaSystem* luaSystem = ServerManager::GetSingletonPtr()->getLuaSystem();
+
+    if (idScript <= 0)
+    {
+        int32_t guid = pMonster->GetGUID();
+        NPC_QUEST* pQuest = DataManager::GetSingletonPtr()->getNpcQuest(guid);
+        if (pQuest != NULL)
+        {
+            if (pQuest->m_EventCount == 0 && pQuest->m_QuestCount == 0)
+            {
+                luaSystem->RunScriptFunction(mapId,
+                    SCENE_SCRIPTID,
+                    DEF_PROC_MAP_NPCDEFAULTDIALOG_FN,
+                    mapId,
+                    playerId,
+                    objectId,
+                    guid
+                );
+            }
+            else
+            {
+                luaSystem->RunScriptFunction(mapId,
+                    SCENE_SCRIPTID,
+                    DEF_PROC_MAP_NPCDEFAULTQUESTEVENTLIST_FN,
+                    mapId,
+                    playerId,
+                    objectId,
+                    guid
+                );
+            }
+        }
+
+        return;
+    }
+    else
+    {
+
+        luaSystem->RunScriptFunction(mapId, idScript, DEF_PROC_EVENT_ENTRY_FN,
+            (int32)mapId,
+            (int32)playerId,
+            (int32)objectId);
+    }
 }
 
 void cs_quest_abandon(NetHandle h, const char* msg, uint32_t msg_size)

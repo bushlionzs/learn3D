@@ -1356,10 +1356,6 @@ int32 ItemInterface::MoveItemToBag
 	uint32			uSlot
 )
 {
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	__GUARD__
-	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 	KCheck(pPlayer);
 	KCheck(pContainer);
 	KCheck(pContainer->IsValid());
@@ -1434,8 +1430,6 @@ int32 ItemInterface::MoveItemToBag
 	}
 
 	return ITEMOE_UNKNOW;
-
-	__UNGUARD__ return ITEMOE_UNKNOW;
 }
 
 /*

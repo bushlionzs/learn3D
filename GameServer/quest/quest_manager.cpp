@@ -457,8 +457,6 @@ int32_t QuestManager::GetQuestState(Player* pPlayer, int32 iMissionID)
 //! 玩家背包物品发生变化的任务处理
 void QuestManager::OnEvent_ItemChanged(Player* pPlayer, uint32 uItemDataID, int32 nChangeType)
 {
-    __GUARD__;
-
     int32 i;
     LuaSystem* luaSystem = ServerManager::GetSingletonPtr()->getLuaSystem();
     int32_t mapId = pPlayer->GetMap()->MapID();
@@ -516,8 +514,6 @@ void QuestManager::OnEvent_ItemChanged(Player* pPlayer, uint32 uItemDataID, int3
             }
         }
     }
-
-    __UNGUARD__;
 }
 
 int32_t QuestManager::GetNeedItemNum(int32 iMissionID, Lua_State* L, int32 itemId)

@@ -146,6 +146,8 @@ void ServerManager::registerMessage()
 	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_REQUEST_BASEATTR,
 		std::bind(cs_player_request_base_attr, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
+	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_EVENT_REQUEST,
+		std::bind(cs_event_request, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	NetMessageManager::GetSingleton().registerMessage(clientmessage::CS_QUERY_EVENT,
 		std::bind(cs_query_event, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
@@ -208,9 +210,77 @@ void run_game_server()
 	printf("server init sucessfully!!!\n");
 	ServerManager::GetSingleton().start(true);
 }
+#include "server_message.pb.h"
 
+void test()
+{
+	servermessage::ServerMsgMonsterAttribute dummy;
+
+	dummy.set_object_id(14);
+	float fMoveSpeed = 1.0f;
+	float fAttackSpeed = 100.0f;
+	if (true)
+	{
+		dummy.set_name("Ê¥Ê®×ÖÖ®Áé");
+		dummy.set_data_id(11991);
+		dummy.set_scale(1000);
+		dummy.set_ai_type(1);
+		if (fMoveSpeed > 0)
+		{
+			dummy.set_move_speed(fMoveSpeed);
+		}
+
+		if (fAttackSpeed > 0)
+		{
+			dummy.set_attack_speed((float)fAttackSpeed);
+		}
+
+
+			dummy.set_country_title("aaaa");
+
+			auto nHorseId = -1;
+		if (nHorseId != INVALID_ID)
+		{
+			dummy.set_mount_id(nHorseId);
+		}
+
+		dummy.set_level(0);
+	}
+
+	dummy.set_hp_percent(100);
+	dummy.set_target_id(1);
+
+
+		dummy.set_steal_level(2);
+
+
+
+
+		base::SCampData* camp_data = dummy.mutable_camp_data();
+		camp_data->set_camp_id(20);
+		camp_data->set_pk_mode(0);
+		camp_data->set_reserve1(-1);
+		camp_data->set_reserve2(-1);
+
+
+		//dummy.set_occupant_guid(1);
+
+
+
+		//dummy.set_owner_id(1);
+
+
+	servermessage::ServerMsgMonsterAttribute tmp;
+	std::string output;
+	dummy.AppendToString(&output);
+	auto size = output.size();
+	servermessage::ServerMsgMonsterAttribute kk;
+	bool b = kk.ParseFromArray(output.c_str(), size);
+	b = b;
+}
 int main()
 {
+	test();
 	run_game_server();
 
 	return 0 ;

@@ -63,11 +63,13 @@ int32_t LuaFunction_DispatchQuestEventList(Lua_State* L)
 	ObjID_t selfId = Lua_ValueToNumber(L, 2);
 	ObjID_t targetId = Lua_ValueToNumber(L, 3);
 
-	SCQueryEventResult* packet = new SCQueryEventResult();
-	packet->mParamEventList.Reset();
-	packet->mParamEventList.m_idNPC = targetId;
+	SCQueryEventResult packet;
+	packet.mParamEventList.Reset();
+	packet.mParamEventList.m_idNPC = targetId;
 
 	GameMap* pMap = MapManager::GetSingletonPtr()->getMap(mapId);
+
+	Object* pObject = pMap->GetSpecificObjByID(selfId);
 
 	for (int32 i = 0; i < pMap->m_QuestBuffer.mUseNum; i++)
 	{
@@ -80,7 +82,7 @@ int32_t LuaFunction_DispatchQuestEventList(Lua_State* L)
 
 			scriptStr = pMap->m_QuestBuffer.Buff[i].buf;
 			itemEvent.SetText(&scriptStr);
-			packet->mParamEventList.AddItem(&itemEvent);
+			packet.mParamEventList.AddItem(&itemEvent);
 		}
 		else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Int)
 		{
@@ -102,11 +104,36 @@ int32_t LuaFunction_DispatchQuestEventList(Lua_State* L)
 			/*~~~~~~~~~~~~~~~~~~~~~~*/
 
 			itemEvent.SetScriptID(index, state, number, &scriptStr);
-			packet->mParamEventList.AddItem(&itemEvent);
+			packet.mParamEventList.AddItem(&itemEvent);
 		}
 	}
 
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+	
+
+	servermessage::ServerMsgQueryEventResult dummy;
+	dummy.set_object_id(targetId);
+
+	for (uint32_t i = 0; i < packet.mParamEventList.m_yItemCount; i++)
+	{
+		SScriptEventItem& item = packet.mParamEventList.m_seiItem[i];
+
+		::servermessage::EventItem* event_item = dummy.add_eventlist();
+		event_item->set_item_type(item.m_nType);
+		event_item->set_item_state(item.m_state);
+		event_item->set_item_index(item.m_index);
+		event_item->set_scriptid(item.m_idScript);
+		if (item.m_strString.m_Size)
+		{
+			std::string tmp;
+			tmp.assign(item.m_strString.m_szString, item.m_strString.m_Size);
+			event_item->set_scriptstr(tmp);
+		}
+		
+	}
+	Player* pPlayer = (Player*)pObject;
+	NetHandle h = pPlayer->GetConnector();
+	NetMessageManager::GetSingleton().sendNetMessage(h, servermessage::SC_QUERY_EVENT_RESULT, &dummy);
+
 	lua_pushnumber(L, 1);
 	return 1;
 }

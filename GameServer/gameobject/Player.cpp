@@ -904,11 +904,7 @@ void	Player::OnEvent_PetChanged(uint32 uPetDataID)
 
 void Player::OnEvent_ItemChanged(uint32 uItemDataID, int32 nChangeType)
 {
-	__GUARD__;
-
 	QuestManager::GetSingletonPtr()->OnEvent_ItemChanged(this, uItemDataID, nChangeType);
-
-	__UNGUARD__;
 }
 
 /*
@@ -4747,9 +4743,13 @@ void	Player::OnQuestHaveDoneFlagsChanged(QuestID_t idQuest)
 
 void	Player::OnQuestParamChanged(uint32 uIndexQuest, uint32 uIndexParam, int32 index)
 {
-	SCModifyQuest* packet = new SCModifyQuest;
-	packet->setQuestId(uIndexQuest);
-	packet->setFlag(index);
+	servermessage::ServerMsgModifyQuest dummy;
+	dummy.set_player_id(GetID());
+	dummy.set_quest_id(uIndexQuest);
+	dummy.set_flag(index);
+	auto* quest = dummy.mutable_quest();
+
+
 	switch (index)
 	{
 	case 0:
@@ -4757,9 +4757,12 @@ void	Player::OnQuestParamChanged(uint32 uIndexQuest, uint32 uIndexParam, int32 i
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 		const OWN_QUEST* pQuest = &(GetQuestList()->m_aQuest[uIndexQuest]);
 		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-		packet->setQuest(pQuest);
-		packet->setFlagParam(uIndexParam);
-		NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+		
+		quest->set_quest_id(pQuest->m_idQuest);
+		quest->set_script_id(pQuest->m_idScript);
+		auto* af = quest->mutable_af_param();
+		af->Add(uIndexParam);
+		NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_ADD_QUEST, &dummy);
 	}
 	break;
 
@@ -4767,8 +4770,8 @@ void	Player::OnQuestParamChanged(uint32 uIndexQuest, uint32 uIndexParam, int32 i
 	{
 		if (QuestManager::GetSingletonPtr()->getFlagMDClientFilter().IsSetBit(uIndexQuest))
 		{
-			packet->setFlagParam(uIndexParam);
-			NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
+			quest->set_af_param(0, uIndexParam);
+			NetMessageManager::GetSingletonPtr()->sendNetMessage(_player_handle, servermessage::SC_ADD_QUEST, &dummy);
 		}
 		
 	}
