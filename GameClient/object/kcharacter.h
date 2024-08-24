@@ -14,6 +14,7 @@
 #include "GameEntity.h"
 #include "Basics.h"
 #include "command/KCharStruct.h"
+#include "GameTableData.h"
 
 class KAI_Player;
 class PathComponent;
@@ -24,9 +25,6 @@ class GameEntity;
 class KCharacter: public KObject
 {
 protected:
-	Ogre::Vector3 mGamePosition;
-	Ogre::Vector3 mEnginePosition;
-	Ogre::Real  mDirection = 0.0f;
 	Orphigine::SkeletonMeshComponent::AASAnimEndCallback* callback = nullptr;
 
 	PathComponent* mPathComponent;
@@ -136,16 +134,11 @@ protected:
 	// 朝向
 	FLOAT m_fToRotation = 0.0f;
 	FLOAT m_fRotationSpeed = 10.0f;
+
+	/// 在数据表中的逻辑数据结构
+	const _TABLE_CREATURE_ATT* m_pCreatureInfo = nullptr;
 public:
 	KCharacter();
-
-	const Ogre::Vector3& getPosition();
-	const Ogre::Vector3& getEnginePosition();
-	void setPosition(const Ogre::Vector3& position, bool useTerrainHeight = true);
-
-	Ogre::Real getDirection();
-	void setDirection(float dir);
-
 
 	KAI_Player* getAI()
 	{
@@ -210,7 +203,7 @@ public:
 	int32_t GetCurrCharModelID();
 
 	KCharatcterBaseData* GetCharacterData(void);
-
+	const KCharatcterBaseData* GetConstCharacterData(void) const;
 	void ChangeWeaponEffect(
 		GameEntity::eWEAPATTR ePart,
 		LPCTSTR szEffectName,
@@ -432,6 +425,8 @@ public:
 	// 摆摊
 	bool	EnterState_Stall(BOOL bPlayAni);
 
+	virtual const SCampData* GetCampData(void) const;
+
 	// 执行事件
 	void	AddEvent(const LogicEventData* pLogicEvent);
 	void	RemoveEvent(int32 nLogicCount);
@@ -474,6 +469,9 @@ public:
 
 	// 客气端的本地指令
 	eRUN_CMD_RESULT_CODE AddLocalCommand(const ObjectCmd* pCmd);
+
+	virtual LPCSTR GetPortrait(void);
+	virtual LPCSTR GetName();
 protected:
 	void OnChangeOfMountId();
 	void UpdateModel_CharActionSet(void);

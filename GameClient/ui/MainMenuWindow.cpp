@@ -23,6 +23,12 @@ MainMenuWindow::MainMenuWindow(CEGUI::Window* parent)
 	push_2->subscribeEvent(
 		CEGUI::Window::EventMouseClick,
 		CEGUI::Event::Subscriber(&MainMenuWindow::handle_ButtonClick, this));
+
+	CEGUI::Window* push_5 = _main_window->getChild("push_5");
+	push_5->setUserData((void*)GameUI_QuestLog);
+	push_5->subscribeEvent(
+		CEGUI::Window::EventMouseClick,
+		CEGUI::Event::Subscriber(&MainMenuWindow::handle_ButtonClick, this));
 }
 
 bool MainMenuWindow::handle_ButtonClick(const CEGUI::EventArgs& args)

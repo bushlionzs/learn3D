@@ -8,7 +8,10 @@
 #include "CEGUIManager.h"
 #include "kplayer.h"
 #include "game_scene_manager.h"
+#include "GameTableManager.h"
+#include "KTable.h"
 #include "game_scene.h"
+#include "StructDB.h"
 template<>
 GameInput* GameSingleton<GameInput>::m_sSingleton = nullptr;
 
@@ -25,6 +28,10 @@ GameInput::~GameInput()
 void GameInput::init()
 {
 	InputManager::getSingleton().addListener(this);
+
+	mCampAndStandDataMgr = new CampAndStandDataMgr;
+
+	mCampAndStandDataMgr->InitFromDBMemory(CGameTableManager::GetSingleton().GetTable(TABLE_CAMP_AND_STAND)->GetTableFile());
 }
 
 void GameInput::injectMouseMove(int _absx, int _absy, int _absz)
@@ -34,8 +41,6 @@ void GameInput::injectMouseMove(int _absx, int _absy, int _absz)
 	{
 		return;
 	}
-	/*_absx = 166;
-	_absy = 351;*/
 	Ogre::Vector3 fvMouseHitPlan;
 	KObject* pSelectObj = (KObject*)KObjectManager::GetSingleton().GetMouseOverObject(_absx, _absy, fvMouseHitPlan);
 
@@ -44,10 +49,30 @@ void GameInput::injectMouseMove(int _absx, int _absy, int _absz)
 		if (pSelectObj == nullptr)
 		{
 			CEGUIManager::getSingleton().ChangeMouseCursor(MouseType_Normal);
+			mLastSelectObj = nullptr;
 		}
 		else
 		{
-			CEGUIManager::getSingleton().ChangeMouseCursor(MouseType_Speak);
+			auto* campA = pPlayer->GetCampData();
+			auto* campB = pSelectObj->GetCampData();
+			auto pCampAndStand = mCampAndStandDataMgr->GetInstanceByID(campA->m_nCampID);
+			eRELATION eCampType = RELATION_FRIEND;
+			if (pCampAndStand && pCampAndStand->StandByCampID(campB->m_nCampID))
+			{
+				eCampType = RELATION_ENEMY;
+			}
+
+			if (eCampType == RELATION_FRIEND)
+			{
+				mSelectObjAttack = false;
+				CEGUIManager::getSingleton().ChangeMouseCursor(MouseType_Speak);
+			}
+			else
+			{
+				mSelectObjAttack = true;
+				CEGUIManager::getSingleton().ChangeMouseCursor(MouseType_Attack);
+			}
+			
 		}
 
 		mLastSelectObj = pSelectObj;
@@ -64,10 +89,25 @@ void GameInput::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 	{
 		auto player = KObjectManager::GetSingleton().getMySelf();
 
-		if (player)
+		if (mLastSelectObj)
 		{
-			player->injectMousePress(_absx, _absy, _id);
+			if (mSelectObjAttack)
+			{
+
+			}
+			else
+			{
+				player->speakTo(mLastSelectObj->getId());
+			}
 		}
+		else
+		{
+			if (player)
+			{
+				player->injectMousePress(_absx, _absy, _id);
+			}
+		}
+		
 			
 	}
 

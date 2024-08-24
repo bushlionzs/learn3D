@@ -49,6 +49,7 @@ bool GameWorld::gameWorldInit()
 		}
 	}
 	
+	GameDataManager::GetSingleton().Initialize();
 
 	if (KRR_SUCCEED != GetActionSetData()->Initialize("ActionSet/"))
 	{

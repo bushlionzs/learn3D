@@ -1052,7 +1052,46 @@ BOOL KAI_Player::Do_UseSkill(int32 nSkillID, int32 nTargetID, GUID_t guidTarget,
 -------------------------------------------------------------------------------------------- */
 BOOL KAI_Player::Do_ToSpeak(int32 nEventType, int32 nTargetID)
 {
-	
+	KCharacter* pCharacter = GetCharacter();
+	if (NULL == pCharacter)
+	{
+		return FALSE;
+	}
+
+	//  触发事件
+	switch (nEventType)
+	{
+		// 对话
+	case PLAYER_MOVE_TO_SPEAK:
+	{
+		SendDefaultEventMessage(nTargetID);
+
+		//KObjectManager::GetSingleton().SetMainTarget(nTargetID);
+		//KObjectManager::GetSingleton().PlayNpcSpeak(nTargetID);// 播放对话
+	}
+	break;
+	// bus
+	case PLAYER_ENTER_CHARIOT:
+	{
+		SendEnterChariotMessage(nTargetID);
+	}
+	break;
+	default:
+		return FALSE;
+		break;
+	}
+
+	// NPC有效，设置其自身的方向
+	KObject* pTarget = (KObject*)KObjectManager::GetSingleton().getObject(nTargetID);
+	/*if (pTarget && pTarget->CheckClassType(GET_CLASS(KCharacter_NPC)))
+	{
+		KCharacter_NPC* pNPC = (KCharacter_NPC*)pTarget;
+
+		if (pNPC->IsCanFaceToPlayer())
+		{
+			pNPC->SetNeedFaceToPlayer(TRUE);
+		}
+	}*/
 	return TRUE;
 }
 /* --------------------------------------------------------------------------------------------

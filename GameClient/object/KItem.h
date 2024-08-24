@@ -1,7 +1,7 @@
 #pragma once
 #include "KObject.h"
 #include "StructItem.h"
-
+#include "ItemCommon.h"
 class KItem : public KObject
 {
 public:
@@ -65,6 +65,17 @@ public:
 
 	virtual int32 GetItemLevel() { return 0; }
 
+	virtual void SetTypeOwner(ITEM_OWNER owner)
+	{
+		m_typeOwner = owner;
+	}
+
+	/* 设置虚拟物品详细解释 */
+	virtual void	SetVirtualtExtraInfo()
+	{
+
+	}
+
 private:
 	int32_t mRuleId;
 
@@ -75,5 +86,5 @@ private:
 	int32_t m_idTable = -1;
 
 	int32_t m_nNum = 1;
-
+	ITEM_OWNER			m_typeOwner;		/* 归属的类型 */
 };

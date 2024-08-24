@@ -43,13 +43,10 @@ bool ApplicationBase::appInit()
 	int width = 1280;
 	int height = 768;
 	mApplicationWindow->createWindow(width, height);
-	if (!InputManager::getSingletonPtr())
-	{
-		new InputManager();
-	}
+	
 	
 	HWND wnd = mApplicationWindow->getWnd();
-	InputManager::getSingletonPtr()->createInput((size_t)wnd);
+	
 	EngineType type = getEngineType();
 	new Ogre::Root;
 	Ogre::Root::getSingleton()._initialise();
@@ -61,6 +58,11 @@ bool ApplicationBase::appInit()
 		return false;
 	}
 
+	if (!InputManager::getSingletonPtr())
+	{
+		new InputManager();
+	}
+	InputManager::getSingletonPtr()->createInput((size_t)wnd);
 	new EngineManager;
 	EngineManager::getSingleton().initialise();
 

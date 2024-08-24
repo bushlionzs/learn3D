@@ -27,11 +27,15 @@
 #include "KObjectManager.h"
 #include "DirectlyEffectMgr.h"
 #include "AI_Player.h"
+#include "AICommand.h"
 
 class	PlayerAASAnimPlayCallback: public Orphigine::SkeletonMeshComponent::AASAnimEndCallback
 {
 public:
-	virtual void	onAnimationEnd(const char* animName, const char* parentNodeType, const char* parentNodeName,
+	virtual void	onAnimationEnd(
+		const char* animName, 
+		const char* parentNodeType, 
+		const char* parentNodeName,
 		uint64_t info)
 	{
 
@@ -72,11 +76,8 @@ void KPlayer::injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id)
 			fvSource, GAT_GAME, fvTarget);
 
 		
-		Ogre::Vector2 fvMyPos(mGamePosition.x, mGamePosition.z);
+		Ogre::Vector2 fvMyPos(mPosition.x, mPosition.z);
 		Ogre::Vector2 fvTargetPos(fvTarget.x, fvTarget.z);
-		//fvTargetPos.x = 145;
-		//fvTargetPos.y = 203;
-		//mPathComponent->moveTo(fvMyPos, fvTargetPos);
 
 		Ogre::Vector3 fvEnginePosition;
 		const _DBC_DIRECT_EFFECT* pImpact = CDirectlyEffectMgr::GetMe()->GetConstDirectlyImpact(IMPACTTYPE_PATH_LINE);
@@ -157,6 +158,11 @@ void KPlayer::input(KeyCode _key)
 	}
 }
 
+void KPlayer::speakTo(int32_t id)
+{
+	auto* ai = this->getAI();
+	ai->AddCommand_DefaultEvent(PLAYER_MOVE_TO_SPEAK, 0.f, 0.f, id, NULL);
+}
 
 void KPlayer::createCharRenderInterface(void)
 {
@@ -180,7 +186,7 @@ void KPlayer::createCharRenderInterface(void)
 	{
 		// ÉèÖÃActorFile
 		mMainEntity->setModelName(lpszModelFileName);
-		setPosition(mGamePosition);
+		setPosition(mPosition);
 	
 		m_ModelPartDateList.Clear();
 

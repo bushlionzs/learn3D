@@ -30,6 +30,7 @@ public:
 	void injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id);
 	void input(KeyCode _key);
 	void UpdateBodyPartModel();
+	void speakTo(int32_t id);
 private:
 	void createCharRenderInterface(void);
 	
@@ -66,6 +67,8 @@ private:
 	void UnEquipItem(PLAYER_EQUIP nPart, bool bUseDefaultEquip = true);
 
 	void updateMousePosition(const Ogre::Vector3& targetPos);
+
+	
 public:
 	virtual void UpdateCharBaseData(void);
 	virtual void UpdateModel_WeaponActionSet(void);

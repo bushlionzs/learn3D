@@ -74,54 +74,6 @@ bool KCharacter::initialize()
 	return true;
 }
 
-void KCharacter::setPosition(
-	const Ogre::Vector3& position,
-	bool useTerrainHeight)
-{
-	mGamePosition = position;
-	
-	EngineManager::getSingleton().positionAxisTrans(GAT_GAME, mGamePosition,
-		GAT_ENGINE, mEnginePosition, useTerrainHeight);
-
-	if(mMainEntity)
-		mMainEntity->setEntityPosition(mEnginePosition);
-
-	if (mHorseEntity)
-	{
-		mHorseEntity->setEntityPosition(mEnginePosition);
-	}
-}
-
-
-const Ogre::Vector3& KCharacter::getPosition()
-{
-	return mGamePosition;
-}
-
-const Ogre::Vector3& KCharacter::getEnginePosition()
-{
-	return mEnginePosition;
-}
-
-Ogre::Real KCharacter::getDirection()
-{
-	return mMainEntity->getDirection();
-}
-
-void KCharacter::setDirection(float dir)
-{
-	mMainEntity->setDirection(dir);
-	if (mHorseEntity)
-	{
-		mHorseEntity->setDirection(dir);
-	}
-	
-}
-
-
-
-
-
 CHARACTER_ACTION getAASNodeActionType(CHARACTER_AAS_NODE eNode)
 {
 	CHARACTER_ACTION eAction = CA_INVALID;
@@ -444,7 +396,7 @@ bool KCharacter::startSkill()
 	//125 杀无赦
 	//103 普通攻击
 	int32_t nRandAnimID = 100;
-	createSkillImpact(nRandAnimID, mDirection);
+	createSkillImpact(nRandAnimID, mDir);
 
 	
 
@@ -727,7 +679,7 @@ void KCharacter::createCharRenderInterface(void)
 {
 	mMainEntity->setModelName(mModelName);
 	// 在渲染层刷新位置
-	setPosition(mGamePosition);
+	setPosition(mPosition);
 	mMainEntity->SetModelType(CHAR_MODEL_CHAR);
 
 	if (mWeaponname.empty())
@@ -852,6 +804,11 @@ KCharatcterBaseData* KCharacter::GetCharacterData(void)
 {
 	if(nullptr == m_pCharacterData)
 		m_pCharacterData = new KCharatcterBaseData(this);
+	return m_pCharacterData;
+}
+
+const KCharatcterBaseData* KCharacter::GetConstCharacterData(void) const
+{
 	return m_pCharacterData;
 }
 
@@ -2541,6 +2498,13 @@ bool	EnterState_Stall(BOOL bPlayAni)
 	return true;
 }
 
+
+const SCampData* KCharacter::GetCampData(void) const
+{
+	const KCharatcterBaseData* data = GetConstCharacterData();
+	return data->Get_CampData();
+}
+
 KCharCmdDate_Logic* KCharacter::FindBaseStateCommand(int32 nLogicCount)
 {
 	// 当前正在执行的指令
@@ -3361,4 +3325,22 @@ eRUN_CMD_RESULT_CODE KCharacter::AddLocalCommand(const ObjectCmd* pCmd)
 		}
 	}
 	return RC_ERROR;
+}
+
+LPCSTR KCharacter::GetPortrait(void)
+{
+	if (m_pCreatureInfo != nullptr)
+	{
+		return m_pCreatureInfo->szIconName;
+	}
+	return nullptr;
+}
+
+LPCSTR KCharacter::GetName()
+{
+	if (m_pCreatureInfo != nullptr)
+	{
+		return m_pCreatureInfo->pName;
+	}
+	return nullptr;
 }

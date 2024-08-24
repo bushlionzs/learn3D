@@ -2,6 +2,7 @@
 
 #include "GameSingleton.h"
 #include "GameDataDefine.h"
+#include "QuestManager.h"
 
 class KItem;
 class KObject;
@@ -10,7 +11,7 @@ class GameDataManager :public GameSingleton<GameDataManager>
 public:
 	GameDataManager();
 	~GameDataManager();
-
+	bool Initialize();
 	void UserEquip_SetItem(
 		PLAYER_EQUIP ptEquip,
 		KItem* pEquipItem,
@@ -47,6 +48,15 @@ public:
 	{
 		return m_vUserEquip;
 	}
+
+	QuestManager* getQuestManager()
+	{
+		return &mQuestManager;
+	}
+
+	const std::string& getQuestFileName(int32_t nID);
+private:
+	void LoadQuestFile();
 private:
 	/* 玩家装备实例数组 */
 	std::vector<KItem*> m_vUserEquip;
@@ -60,4 +70,8 @@ private:
 	/* 冷却时间组 */
 	GDataDef::VECTOR_COOLDOWN			m_CoolDownGroup;
 	GDataDef::VECTOR_COOLDOWN			m_PetSkillCoolDownGroup;
+
+	QuestManager mQuestManager;
+
+	std::map<int32_t, std::string> m_QuestFileMap;		/* 解析任务脚本列表 */
 };

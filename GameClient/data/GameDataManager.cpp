@@ -3,7 +3,8 @@
 #include "KItemManager.h"
 #include "KItem.h"
 #include "GameClientUtil.h"
-
+#include "KTable.h"
+#include "GameTableManager.h"
 template<>
 GameDataManager* GameSingleton<GameDataManager>::m_sSingleton = nullptr;
 
@@ -16,6 +17,12 @@ GameDataManager::GameDataManager()
 GameDataManager::~GameDataManager()
 {
 
+}
+
+bool GameDataManager::Initialize()
+{
+	LoadQuestFile();
+	return true;
 }
 
 void GameDataManager::UserEquip_SetItem(
@@ -162,4 +169,39 @@ eRELATION GameDataManager::GetCampType(
 	idB = pObj_B->getId();
 	
 	return RELATION_FRIEND;
+}
+
+const std::string& GameDataManager::getQuestFileName(int32_t nID)
+{
+	const static std::string strEmpty = "";
+	std::map<int32_t, std::string>::iterator itFind;
+
+	itFind = m_QuestFileMap.find(nID);
+	if (itFind == m_QuestFileMap.end())
+	{
+		return strEmpty;
+	}
+
+	return itFind->second;
+}
+
+void GameDataManager::LoadQuestFile()
+{
+	/* 打开物品规则表 */
+	TABLE_DEFINEHANDLE(s_pQuestScript, TABLE_QUEST_SCRIPT);	/* Script.tab */
+	if (s_pQuestScript)
+	{
+		int32_t nRecordsNum = (int32_t)(s_pQuestScript->GetRecordsNum());
+
+		for (int32_t i = 0; i < nRecordsNum; ++i)
+		{
+			const _TABLE_QUEST_SCRIPT* pQuestScript = (const _TABLE_QUEST_SCRIPT*)
+				(s_pQuestScript->GetFieldDataByLine(i));
+
+			if (pQuestScript)
+			{
+				m_QuestFileMap.insert(std::make_pair(pQuestScript->nIndex, pQuestScript->szQuestLua));
+			};
+		}
+	}
 }

@@ -21,7 +21,7 @@
 #include "OGBulletEventSystem.h"
 #include "OGBulletFindTargetTester.h"
 #include "OGBulletOperator.h"
-
+#include <AICommand.h>
 #include <OgreRay.h>
 
 
@@ -1872,53 +1872,33 @@ BOOL KAIState_ToSpeak::RecheckTargetPos()
 -------------------------------------------------------------------------------------------- */
 BOOL KAIState_ToSpeak::DoEvent(int32 nEventType, int32 nTargetID, FLOAT fTargetX, FLOAT fTargetZ, LPCSTR pName)
 {
-	//KCharacter	*pCharacter = GetAI()->GetCharacter();
-	//if(NULL == pCharacter)
-	//{
-	//	return FALSE;
-	//}
+	KCharacter	*pCharacter = GetAI()->GetCharacter();
+	if(nullptr == pCharacter)
+	{
+		return FALSE;
+	}
 
-	//int32 nTempTargetID = nTargetID;
-	//KObject *pTarget = (KObject *)KObjectManager::GetSingleton().getObject(nTempTargetID);
+	int32 nTempTargetID = nTargetID;
+	KObject *pTarget = (KObject *)KObjectManager::GetSingleton().getObject(nTempTargetID);
 
-	//if (NULL == pTarget)
-	//{
-	//	pTarget = OBJECT_MANAGER_PTR->FindCharacterByName(m_paramBHV_DefaultEvent.m_sNpcName, CHARACTER_NPC_TYPE);
-	//	if (pTarget)
-	//	{
-	//		nTempTargetID = pTarget->getId();
-	//	}
-	//}
+	if(nullptr == pTarget)
+	{
+		return FALSE;
+	}
 
-	//if(NULL == pTarget)
-	//{
-	//	return FALSE;
-	//}
-
-	///* 触发事件 */
-	//switch(nEventType)
-	//{
-	///* 对话 */
-	//case PLAYER_MOVE_TO_SPEAK:
-	//	{
-	//		eRELATION eCampType = GAME_OPERATE_PTR->GetCampType(OBJECT_MANAGER_PTR->GetMySelf(), pTarget);
-
-	//		if(RELATION_FRIEND == eCampType)
-	//		{
-	//			GetAI()->Do_ToSpeak(nEventType, nTempTargetID);
-	//		}
-	//	}
-	//	break;
-	///* 上车 */
-	//case PLAYER_ENTER_CHARIOT:
-	//	{
-	//		GetAI()->Do_ToSpeak(nEventType, nTempTargetID);
-	//	}
-	//	break;
-	//default:
-	//	return FALSE;
-	//	break;
-	//}
+	/* 触发事件 */
+	switch(nEventType)
+	{
+	/* 对话 */
+	case PLAYER_MOVE_TO_SPEAK:
+		{
+			GetAI()->Do_ToSpeak(nEventType, nTempTargetID);
+		}
+		break;
+	default:
+		return FALSE;
+		break;
+	}
 	return TRUE;
 }
 

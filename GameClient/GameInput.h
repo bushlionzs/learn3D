@@ -2,6 +2,7 @@
 
 #include "GameSingleton.h"
 #include "InputManager.h"
+#include "Camp.h"
 
 class KObject;
 class GameInput :public InputListener
@@ -25,4 +26,6 @@ private:
 	void input(KeyCode _key);
 private:
 	KObject* mLastSelectObj = nullptr;
+	bool mSelectObjAttack = false;
+	CampAndStandDataMgr* mCampAndStandDataMgr = nullptr;
 };

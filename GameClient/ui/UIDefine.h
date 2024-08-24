@@ -6,6 +6,7 @@ enum
 	GameUI_Package,
 	GameUI_MainMenu,
 	GameUI_Quest,
+	GameUI_QuestLog,
 };
 
 class UIBase

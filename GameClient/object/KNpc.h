@@ -23,7 +23,4 @@ public:
 	virtual void   OnQueryRay(GameEntity* entity);
 private:
 	GUID_t m_GUIDServer;
-
-	/// 在数据表中的逻辑数据结构
-	const _TABLE_CREATURE_ATT* m_pCreatureInfo = nullptr;
 };

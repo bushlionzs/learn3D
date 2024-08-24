@@ -4,6 +4,7 @@
 #include "PackageWindow.h"
 #include "MainMenuWindow.h"
 #include "QuestWindow.h"
+#include "QuestLogWindow.h"
 #include <CEGUIManager.h>
 #include "kplayer.h"
 #include "GameToolTip.h"
@@ -15,9 +16,6 @@ UIManager::UIManager()
 {
 	mRoot = CEGUIManager::getSingleton().getRootWindow();
 
-	CEGUI::FontManager& fontManager(CEGUI::FontManager::getSingleton());
-	CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
-	CEGUIManager::getSingleton().getGUIContext()->setDefaultFont(&font);
 	mPlayer = nullptr;
 	
 }
@@ -27,7 +25,7 @@ UIManager::~UIManager()
 
 }
 
-bool UIManager::showWindow(uint32_t winId)
+bool UIManager::showWindow(uint32_t winId, bool show)
 {
 	auto* tip = CEGUIManager::getSingleton().getToolTip();
 	if (tip == nullptr)
@@ -37,7 +35,7 @@ bool UIManager::showWindow(uint32_t winId)
 	}
 	UIBase* base = getWindow(winId);
 	CEGUI::Window* widget = base->getView();
-	widget->setVisible(!widget->isVisible());
+	widget->setVisible(show);
 	return true;
 }
 
@@ -75,6 +73,9 @@ UIBase* UIManager::getWindow(uint32_t winId)
 		break;
 	case GameUI_Quest:
 		base = new QuestWindow(mRoot);
+		break;
+	case GameUI_QuestLog:
+		base = new QuestLogWindow(mRoot);
 		break;
 	default:
 		assert(false);

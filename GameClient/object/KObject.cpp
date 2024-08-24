@@ -2,6 +2,7 @@
 #include "KObject.h"
 #include "GameEntity.h"
 #include "Basics.h"
+#include "engine_manager.h"
 
 KObject::KObject()
 {
@@ -30,9 +31,19 @@ int64_t KObject::getId()
 	return mServerId;
 }
 
-void KObject::setPosition(const Ogre::Vector3& pos)
+void KObject::setPosition(const Ogre::Vector3& pos, bool useTerrainHeight)
 {
 	mPosition = pos;
+	EngineManager::getSingleton().positionAxisTrans(GAT_GAME, mPosition,
+		GAT_ENGINE, mEnginePosition, useTerrainHeight);
+
+	if (mMainEntity)
+		mMainEntity->setEntityPosition(mEnginePosition);
+
+	if (mHorseEntity)
+	{
+		mHorseEntity->setEntityPosition(mEnginePosition);
+	}
 }
 
 const Ogre::Vector3& KObject::getPosition()
@@ -40,14 +51,25 @@ const Ogre::Vector3& KObject::getPosition()
 	return mPosition;
 }
 
-void KObject::setOrientation(const Ogre::Vector3& dir)
+const Ogre::Vector3& KObject::getEnginePosition()
 {
-	mOrientation = dir;
+	return mEnginePosition;
 }
 
-const Ogre::Vector3& KObject::getOrientation()
+void KObject::setDirection(float dir)
 {
-	return mOrientation;
+	mDir = dir;
+
+	mMainEntity->setDirection(dir);
+	if (mHorseEntity)
+	{
+		mHorseEntity->setDirection(dir);
+	}
+}
+
+float KObject::getDirection()
+{
+	return mDir;
 }
 
 GameEntity* KObject::createGameEntity(int32_t entityType)

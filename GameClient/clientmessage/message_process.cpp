@@ -6,17 +6,21 @@
 #include "game_scene_manager.h"
 #include "KObjectManager.h"
 #include "kplayer.h"
+#include "KNpc.h"
 #include "data/GameDataCharacter.h"
 #include "KItem.h"
 #include "KItemManager.h"
 #include "data/GameDataManager.h"
 #include "server_message.pb.h"
+#include "client_message.pb.h"
 #include "Enum.h"
 #include "KNpc.h"
 #include "command/command.h"
 #include "UIManager.h"
 #include "game_scene.h"
-
+#include "net_message_manager.h"
+#include "GameDataManager.h"
+#include "GameDataStructQuest.h"
 
 void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 {
@@ -237,12 +241,54 @@ void sc_human_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
 	
 }
 
+
+void sc_monster_base_attr(NetHandle h, const char* msg, uint32_t msg_size)
+{
+	servermessage::ServerMsgMonsterAttribute dummy;
+	bool b = dummy.ParseFromArray(msg, msg_size);
+	assert(b);
+	auto objectId = dummy.object_id();
+
+	KObject* pObj = KObjectManager::GetSingleton().getObject(objectId);
+
+	KNpc* pNpc = dynamic_cast<KNpc*>(pObj);
+
+	KCharatcterBaseData* pCharacterData = pNpc->GetCharacterData();
+	if (dummy.has_camp_data())
+	{
+		auto& camp_data = dummy.camp_data();
+		SCampData tmp;
+		tmp.m_nCampID = camp_data.camp_id();
+		tmp.m_uPKMode = camp_data.pk_mode();
+		tmp.m_nReserve1 = camp_data.reserve1();
+		tmp.m_nReserve2 = camp_data.reserve2();
+		pCharacterData->Set_CampData(&tmp);
+	}
+
+	if (dummy.has_name())
+	{
+		auto& name = dummy.name();
+		pCharacterData->Set_Name(name.c_str());
+	}
+
+	if (dummy.has_move_speed())
+	{
+		pCharacterData->Set_MoveSpeed(dummy.move_speed());
+	}
+
+	if (dummy.has_attack_speed())
+	{
+		pCharacterData->Set_AttackSpeed(dummy.attack_speed());
+	}
+}
+
 void sc_detail_equip(NetHandle h, const char* msg, uint32_t msg_size)
 {
 	servermessage::ServerMsgDetailEquipList dummy;
 	dummy.ParseFromArray(msg, msg_size);
 	KObject* pObj = KObjectManager::GetSingleton().getObject(dummy.object_id());
 
+	
 	if (nullptr == pObj)
 	{
 		return;
@@ -301,11 +347,31 @@ void sc_detail_equip(NetHandle h, const char* msg, uint32_t msg_size)
 	UIManager::GetSingleton().updateWindow(GameUI_SelfEquip);
 }
 
+void sc_quest_list(NetHandle h, const char* msg, uint32_t msg_size)
+{
+	servermessage::ServerMsgQuestList dummy;
+	bool b = dummy.ParseFromArray(msg, msg_size);
+	assert(b);
+	QuestManager* questManager = GameDataManager::GetSingleton().getQuestManager();
+	questManager->clearQuest();
+	auto count = dummy.quests_size();
+	for (uint32_t i = 0; i < count; i++)
+	{
+		const ::base::Quest& quest = dummy.quests(i);
+		questManager->addQuest(quest);
+		auto quest_id = quest.quest_id();
+		auto script_id = quest.script_id();
+		ScriptQuestInterface::FillQuestInfo(quest_id, script_id);
+	}
+
+	UIManager::GetSingleton().updateWindow(GameUI_QuestLog);
+}
+
 void sc_detail_item(NetHandle h, const char* msg, uint32_t msg_size)
 {
 	servermessage::ServerMsgDetailItemList dummy;
 	bool b = dummy.ParseFromArray(msg, msg_size);
-
+	assert(b);
 	auto& items = dummy.items();
 	for (auto& item : items)
 	{
@@ -422,6 +488,14 @@ void sc_new_monster(NetHandle h, const char* msg, uint32_t msg_size)
 	cmdTemp.fParam[1] = fvGamePos.z;
 	cmdTemp.bParam[2] = FALSE;
 	pNPC->AddCommand(&cmdTemp);
+
+	{
+		clientmessage::MsgRequestBaseAttrib dummy;
+		dummy.set_player_id(pPlayer->getId());
+		dummy.set_target_id(obj_id);
+		dummy.set_map_id(GameSceneManager::getSingleton().getActiveSceneId());
+		NetMessageManager::GetSingleton().sendNetMessage(clientmessage::CS_REQUEST_BASEATTR, &dummy);
+	}
 }
 
 void sc_unequip_result(NetHandle h, const char* msg, uint32_t msg_size)
@@ -599,4 +673,40 @@ void sc_char_move(NetHandle h, const char* msg, uint32_t msg_size)
 		}
 	}
 	return;
+}
+
+void sc_query_event(NetHandle h, const char* msg, uint32_t msg_size)
+{
+	GameScene* pScene = (GameScene*)(GameSceneManager::getSingleton().GetActiveScene());
+	if (nullptr == pScene)
+	{
+		return;
+	}
+
+	servermessage::ServerMsgQueryEventResult dummy;
+
+	bool b = dummy.ParseFromArray(msg, msg_size);
+	assert(b);
+	UIManager::GetSingleton().updateQueryEvent(dummy);
+	UIManager::GetSingleton().updateWindow(GameUI_Quest);
+	UIManager::GetSingleton().showWindow(GameUI_Quest);
+}
+
+void sc_modify_quest(NetHandle h, const char* msg, uint32_t msg_size)
+{
+	servermessage::ServerMsgModifyQuest dummy;
+
+	bool b = dummy.ParseFromArray(msg, msg_size);
+	assert(b);
+
+	GameScene* pScene = (GameScene*)(GameSceneManager::getSingleton().GetActiveScene());
+	if (nullptr == pScene)
+	{
+		return;
+	}
+}
+
+void sc_script_command(NetHandle h, const char* msg, uint32_t msg_size)
+{
+
 }

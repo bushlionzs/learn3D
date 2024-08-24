@@ -1,7 +1,7 @@
 #pragma once
 
 class GameEntity;
-
+struct SCampData;
 enum ObjectType
 {
 	ObjectType_None = 0,
@@ -23,10 +23,11 @@ public:
 	virtual uint32_t getObjectType();
 	void setId(int64_t id);
 	int64_t getId();
-	void setPosition(const Ogre::Vector3& pos);
+	void setPosition(const Ogre::Vector3& position, bool useTerrainHeight = true);
 	const Ogre::Vector3& getPosition();
-	void setOrientation(const Ogre::Vector3& dir);
-	const Ogre::Vector3& getOrientation();
+	const Ogre::Vector3& getEnginePosition();
+	void setDirection(float dir);
+	float getDirection();
 
 	GameEntity* createGameEntity(int32_t entityType);
 
@@ -61,6 +62,11 @@ public:
 		m_nActionLogicCount = -1;
 	}
 
+	virtual const SCampData* GetCampData(void) const 
+	{ 
+		return nullptr; 
+	}
+
 	GameEntity* getMainEntity()
 	{
 		return mMainEntity.get();
@@ -79,7 +85,8 @@ protected:
 
 	ObjectType mObjectType;
 	Ogre::Vector3 mPosition;
-	Ogre::Vector3 mOrientation;
+	Ogre::Vector3 mEnginePosition;
+	float mDir;
 
 	uint64_t mCreateTime;
 	int32_t m_nBaseLogicCount;

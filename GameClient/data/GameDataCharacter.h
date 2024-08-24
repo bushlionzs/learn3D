@@ -769,6 +769,11 @@ public:
     void                        Set_DefendRemainPoints( uint32 uiPoints);
     uint32                      Get_DefendRemainPoints();
 
+	const SCampData* Get_CampData(void) const
+	{
+		return &(m_pData->m_CampData);
+	}
+
 	void Set_CampData(const SCampData* pCampData);
 
 	void Skill_CleanAll(void);

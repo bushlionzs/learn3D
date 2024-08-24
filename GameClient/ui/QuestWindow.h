@@ -15,6 +15,7 @@ public:
 
 	bool handle_ButtonClick(const CEGUI::EventArgs& args);
 
+	bool handle_OptionClick(const CEGUI::EventArgs& args);
 };
 
 

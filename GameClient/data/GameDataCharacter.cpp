@@ -348,13 +348,12 @@ void KCharatcterBaseData::Set_PortraitID(int32 nPortraitID)
 	
 }
 
-/*
- =======================================================================================================================
- =======================================================================================================================
- */
+#include "string_util.h"
+
 void KCharatcterBaseData::Set_Name(LPCTSTR szName)
 {
-	
+	m_pData->m_strName = szName;
+	m_pData->m_strUtf8Name = dy::acsi_to_utf8(szName);
 }
 
 /*
