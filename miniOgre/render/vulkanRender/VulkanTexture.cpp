@@ -244,17 +244,24 @@ void VulkanTexture::createImage(
     VkDeviceMemory& imageMemory)
 {
     mMipLevels = mTextureProperty._numMipmaps + 1;
-
-    if (mTextureProperty._numMipmaps == 0)
+    if (!(mUsage & Ogre::TU_RENDERTARGET))
     {
-        auto current = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
-
-        if (current > mMipLevels)
+        if (mTextureProperty._numMipmaps == 0)
         {
-            mNeedMipmaps = true;
-            mMipLevels = current;
+            auto current = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
+
+            if (current > mMipLevels)
+            {
+                mNeedMipmaps = true;
+                mMipLevels = current;
+            }
         }
     }
+    else
+    {
+        int kk = 0;
+    }
+    
 
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
