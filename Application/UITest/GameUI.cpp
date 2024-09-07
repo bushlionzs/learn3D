@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <string_util.h>
 #include "GameUI.h"
 #include "engine_manager.h"
 #include "OgreParticleSystem.h"
@@ -22,6 +23,7 @@
 
 #include "GameTableManager.h"
 #include "ToolTip.h"
+
 
 using namespace CEGUI;
 
@@ -47,7 +49,8 @@ bool GameUI::appInit()
     //HelloDemo1();
     //ToolTipDemo();
     //SelfEquipDemo();
-    PackageDemo();
+    //PackageDemo();
+    QuestDemo();
 	return true;
 }
 
@@ -489,6 +492,11 @@ void GameUI::ToolTipDemo()
 
 void GameUI::MainMenuDemo()
 {
+   
+}
+
+void GameUI::QuestDemo()
+{
     WindowManager& winMgr = WindowManager::getSingleton();
     mGUIContext = CEGUIManager::getSingleton().getGUIContext();
 
@@ -496,9 +504,35 @@ void GameUI::MainMenuDemo()
 
     mGUIContext->setRootWindow(mRoot);
 
-    auto* main =  WindowManager::getSingleton().loadLayoutFromFile("quest.xml");
+    auto* main = WindowManager::getSingleton().loadLayoutFromFile("quest.xml");
 
     mRoot->addChild(main);
 
+    CEGUI::Window* desc = main->getChildRecursive("QuestDesc");
+
     
+    std::string aa = "aaaaaaa[window = 'Quest_Option|type=Vanilla/Button|Text=我是中国人aa']bbbbb";
+    std::string cc = dy::acsi_to_utf8(aa);
+    CEGUI::String kk = (CEGUI::utf8*)cc.c_str();
+    const char* str = (const char*)kk.c_str();
+    auto str_size = strlen(str);
+    auto mm = dy::utf8_to_acsi(str);
+    desc->setProperty("Text", kk);
+    auto* win = desc->getChildRecursive("Quest_Option");
+    CEGUI::Window* npcname = main->getChild("Quest_NPCname");
+
+    if (npcname)
+    {
+        std::wstring aa = L"天天向上";
+        std::string bb = dy::unicode_to_utf8(aa);
+        npcname->setProperty("Text", (CEGUI::utf8*)bb.c_str());
+    }
+
+    /*CEGUI::Window* accept = main->getChild("Quest_Button_Accept");
+
+    accept->setProperty("Text", "Accept");
+
+    CEGUI::Window* cancel = main->getChild("Quest_Button_Refuse");
+
+    cancel->setProperty("Text", "Cancel");*/
 }

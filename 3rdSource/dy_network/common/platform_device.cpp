@@ -9,8 +9,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <intrin.h>
-#include <atlbase.h>
-#include <atlconv.h>
+//#include <atlbase.h>
+//#include <atlconv.h>
 #include <iphlpapi.h>
 #include <psapi.h>
 #elif __APPLE__

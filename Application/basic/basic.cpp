@@ -68,11 +68,11 @@ void Basic::base1()
 		leftop, leftbottom, righttop, rightbottom, normal);
 	Entity* rect = mSceneManager->createEntity("rect", meshName);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
-	//rectnode->attachObject(rect);
+	rectnode->attachObject(rect);
 
-	mSceneManager->setSkyBox(true, "SkyLan", 50000);
+	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
 
-	mGameCamera->setDistance(3.0f);
+	mGameCamera->setDistance(2.5f);
 	mGameCamera->setMoveSpeed(5);
 }
 
@@ -91,7 +91,7 @@ void Basic::base2()
 
 	mGameCamera->setDistance(2000.0f);
 
-	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
+	mSceneManager->setSkyBox(true, "SkyLan", 50000);
 }
 
 void Basic::base3()

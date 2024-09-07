@@ -2,7 +2,7 @@
 #include "SimpleApp.h"
 #include <utils/JobSystem.h>
 #include <fg/ResourceAllocator.h>
-#include <VulkanPlatform.h>
+#include <vulkan/VulkanPlatform.h>
 #include <SwapChain.h>
 #include <time_util.h>
 #include "application_window.h"
@@ -64,7 +64,7 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 	new EngineManager;
 	EngineManager::getSingleton().initialise();
 
-	mWindow = new ApplicationWindow;
+	mWindow = new ApplicationWindow(nullptr);
 	uint32_t width = 1280;
 	uint32_t height = 768;
 	mWindow->createWindow(width, height);

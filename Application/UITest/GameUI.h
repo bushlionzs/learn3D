@@ -49,6 +49,7 @@ private:
 	void MultiDemo();
 	void ToolTipDemo();
 	void MainMenuDemo();
+	void QuestDemo();
 private:
 	AnimationState* mAnimationState = nullptr;
 	Role* mRole;

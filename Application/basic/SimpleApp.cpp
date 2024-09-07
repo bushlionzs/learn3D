@@ -2,7 +2,7 @@
 #include "SimpleApp.h"
 #include <utils/JobSystem.h>
 #include <fg/ResourceAllocator.h>
-#include <VulkanPlatform.h>
+#include <Vulkan/VulkanPlatform.h>
 #include <SwapChain.h>
 #include <time_util.h>
 #include "application_window.h"
@@ -195,7 +195,7 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 		{
 			lastfps = fps;
 			char buffer[256];
-			snprintf(buffer, sizeof(buffer), "fps:%d", fps);
+			snprintf(buffer, sizeof(buffer), "fps:%lld", fps);
 			::SetWindowText(mWindow->getWnd(), buffer);
 		}
 	}
