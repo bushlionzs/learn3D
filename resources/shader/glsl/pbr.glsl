@@ -30,6 +30,7 @@ void main()
     outNormal = mat3(cbPerObject.gWorld) * normal;
     outUV0 = texcoord;
 	gl_Position = cbPerObject.gWorldViewProj * float4(position, 1.0f);
+	gl_Position.y = -gl_Position.y;
 }
 
 #endif //VERTEX_SHADER
@@ -71,7 +72,32 @@ float4 SRGBtoLINEAR(float4 srgbIn)
     #endif //MANUAL_SRGB
 }
 
+layout (location = 0) in vec3 inWorldPos;
+layout (location = 1) in vec3 inNormal;
+layout (location = 2) in vec3 inTagent;
+layout (location = 3) in vec2 inUV0;
+layout (location = 4) in vec2 inUV1;
+layout (location = 5) in vec4 inColor0;
 
+layout (location = 0) out vec4 outColor;
+
+vec3 getNormal()
+{
+	// Perturb normal, see http://www.thetenthplanet.de/archives/1180
+	vec3 tangentNormal = texture(normal_pbr, inUV0).xyz * 2.0 - 1.0;
+
+	vec3 q1 = dFdx(inWorldPos);
+	vec3 q2 = dFdy(inWorldPos);
+	vec2 st1 = dFdx(inUV0);
+	vec2 st2 = dFdy(inUV0);
+
+	vec3 N = normalize(inNormal);
+	vec3 T = normalize(q1 * st2.t - q2 * st1.t);
+	vec3 B = -normalize(cross(N, T));
+	mat3 TBN = mat3(T, B, N);
+
+	return normalize(TBN * tangentNormal);
+}
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW, float3 worldPos, float2 uv)
 {
@@ -116,8 +142,8 @@ float3 getIBLContribution(PBRInfo pbrInputs, float3 n, float3 reflection)
     float3 specular = specularLight * (pbrInputs.specularColor * brdf.x + brdf.y);
 
     // For presentation, this allows us to disable IBL terms
-    diffuse *= u_ScaleIBLAmbient.x;
-    specular *= u_ScaleIBLAmbient.y;
+    diffuse *= pbrMaterial.u_ScaleIBLAmbient.x;
+    specular *= pbrMaterial.u_ScaleIBLAmbient.y;
 
     return diffuse + specular;
 }
@@ -165,18 +191,6 @@ float microfacetDistribution(PBRInfo pbrInputs)
 }
 
 
-
-
-
-layout (location = 0) in vec3 inWorldPos;
-layout (location = 1) in vec3 inNormal;
-layout (location = 2) in vec3 inTagent;
-layout (location = 3) in vec2 inUV0;
-layout (location = 4) in vec2 inUV1;
-layout (location = 5) in vec4 inColor0;
-
-layout (location = 0) out vec4 outColor;
-
 void main()
 {
     // Metallic and Roughness material properties are packed together
@@ -187,7 +201,7 @@ void main()
 #ifdef HAS_METALROUGHNESSMAP
     // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
     // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
-    float4 mrSample = texture(metal_pbr, inUV0);
+    float4 mrSample = texture(metal_roughness_pbr, inUV0);
 	metallic = mrSample.b * metallic;
     perceptualRoughness = mrSample.g * perceptualRoughness;
     
@@ -229,9 +243,11 @@ void main()
     pbrInputs.diffuseColor = diffuseColor;
     pbrInputs.specularColor = specularColor;
 
-    float3 normalColor = texture(normal_pbr, inUV0).xyz;
+    //float3 normalColor = texture(normal_pbr, inUV0).xyz;
 	
-    float3 n = NormalSampleToWorldSpace(normalColor, inNormal, inTagent, inWorldPos, inUV0);
+    //float3 n = NormalSampleToWorldSpace(normalColor, inNormal, inTagent, inWorldPos, inUV0);
+	
+	float3 n = getNormal();
     float3 v = normalize(cbPass.gEyePosW - inWorldPos);        // Vector from surface point to camera
 	float3 u_LightDirection = {0.739942074, 0.642787576, 0.198266909};
     float3 l = normalize(u_LightDirection);             // Vector from surface point to light

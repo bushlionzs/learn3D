@@ -53,6 +53,15 @@ public:
     ICamera* _getCamera();
 private:
     void updateMainPassCB(ICamera* camera);
+    void generateIrradianceMap();
+    void generatePrefilteredMap();
+    virtual Ogre::OgreTexture* generateCubeMap(
+        const std::string& name, 
+        Ogre::OgreTexture* environmentCube,
+        Ogre::PixelFormat format, 
+        int32_t dim,
+        CubeType type);
+    virtual Ogre::OgreTexture*  generateBRDFLUT(const std::string& name);
 private:
     bool mEnableValidationLayers;
 

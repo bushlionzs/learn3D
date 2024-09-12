@@ -748,9 +748,9 @@ public:
         thrown if \a name_path does not reference a Window attached to this
         Window.
     */
-    inline Window* getChild(const String& name_path) const
+    inline Window* getChild(const String& name_path, bool enable_empty = false) const
     {
-        return static_cast<Window*>(getChildElement(name_path));
+        return static_cast<Window*>(getChildElement(name_path, enable_empty));
     }
 
     /*!

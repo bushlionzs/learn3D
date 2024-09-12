@@ -271,8 +271,8 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
 
             vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
             vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-            vd->addElement(0, 0, 24, VET_FLOAT4, VES_TANGENT);
-            vd->addElement(0, 0, 40, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+            vd->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+            vd->addElement(0, 0, 32, VET_FLOAT4, VES_TANGENT);
 
             std::vector<VertexBoneAssignment> assignInfoList;
      

@@ -131,6 +131,7 @@ String PropertySet::getProperty(const String& name) const
 *************************************************************************/
 void PropertySet::setProperty(const String& name,const String& value)
 {
+	auto size = value.size();
 	PropertyRegistry::iterator pos = d_properties.find(name);
 
 	if (pos == d_properties.end())

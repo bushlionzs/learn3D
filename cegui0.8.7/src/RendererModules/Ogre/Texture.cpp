@@ -114,9 +114,14 @@ OgreTexture::OgreTexture(const String& name, const Sizef& sz) :
     d_texelScaling(0, 0),
     d_name(name)
 {
-    d_tex_name = "white1x1.dds";
+    
     std::string aa = name.c_str();
-
+    d_tex_name = name;
+    TextureProperty texProperty;
+    texProperty._width = sz.d_width;
+    texProperty._height = sz.d_height;
+    texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
+    TextureManager::getSingleton().createManual(aa, texProperty);
     
     d_size.d_width = sz.d_width;
     d_size.d_height = sz.d_height;
@@ -207,25 +212,31 @@ void OgreTexture::loadFromMemory(const void* buffer, const Sizef& buffer_size,
 
     const size_t byte_size = calculateDataSize(buffer_size, pixel_format);
 
-    char* bufferCopy = new char[byte_size];
-    memcpy(bufferCopy, buffer, byte_size);
+    //char* bufferCopy = new char[byte_size];
+    //memcpy(bufferCopy, buffer, byte_size);
 
-    const Ogre::PixelBox* pixelBox = new Ogre::PixelBox(buffer_size.d_width, buffer_size.d_height,
-                                                       1, toOgrePixelFormat(pixel_format), bufferCopy);
+    Ogre::PixelBox pixelBox(buffer_size.d_width, buffer_size.d_height,
+                                                       1, toOgrePixelFormat(pixel_format), (void*)buffer);
 
     std::string name = d_tex_name.c_str();
 
     auto tex = TextureManager::getSingleton().getByName(name);
     if (tex)
     {
-        tex->freeInternalResources();
-        tex->setWidth(buffer_size.d_width);
-        tex->setHeight(buffer_size.d_height);
-        tex->createInternalResources();
-        tex->getBuffer(0, 0).get()->blitFromMemory(*pixelBox);
-        tex->postLoad();
-        d_size.d_width = tex->getWidth();
-        d_size.d_height = tex->getHeight();
+        auto pTex = tex.get();
+        if(pTex->getWidth() != buffer_size.d_width ||
+            pTex->getHeight() != buffer_size.d_height)
+            {
+                pTex->freeInternalResources();
+                pTex->setWidth(buffer_size.d_width);
+                pTex->setHeight(buffer_size.d_height);
+                pTex->createInternalResources();
+                
+            }
+        pTex->getBuffer(0, 0)->blitFromMemory(pixelBox);
+        pTex->postLoad();
+        d_size.d_width = buffer_size.d_width;
+        d_size.d_height = buffer_size.d_height;
         d_dataSize = buffer_size;
         updateCachedScaleValues();
     }

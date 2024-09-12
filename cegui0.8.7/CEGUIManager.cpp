@@ -98,7 +98,10 @@ bool CEGUIManager::_initialise(Ogre::RenderTarget* window)
 		ImageManager::getSingleton().loadImageset("cjsh_item_baoshi_3.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_item_xiangzi_1.imageset");
 		ImageManager::getSingleton().loadImageset("cjsh_npc_touxiang_8.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_npc_touxiang_13.imageset");
 		ImageManager::getSingleton().loadImageset("ui_mainboard_5.imageset");
+		ImageManager::getSingleton().loadImageset("cjsh_touxiang.imageset");
+		
 		ImageManager::getSingleton().loadImageset("test.imageset");
 		
 		CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
@@ -107,8 +110,8 @@ bool CEGUIManager::_initialise(Ogre::RenderTarget* window)
 		_icon_init();
 
 		FontManager& fontManager(FontManager::getSingleton());
+		fontManager.createFromFile("simhei8.font");
 		CEGUI::Font& font(fontManager.createFromFile("simhei12.font"));
-
 		mGUIContext->setDefaultFont(&font);
 	}
 

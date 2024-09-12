@@ -41,6 +41,36 @@ RenderedStringWidgetComponent::RenderedStringWidgetComponent() :
 {
 }
 
+static void split_string(const char* str, char sep, std::vector<std::string>& strlist)
+{
+    strlist.clear();
+    const char* start = str;
+
+    const char* p = str;
+    std::string tmp;
+
+    while (*p)
+    {
+        if (*p == sep)
+        {
+            tmp.assign(start, p - start);
+            strlist.push_back(tmp);
+            p++;
+            start = p;
+        }
+        else
+        {
+            p++;
+        }
+    }
+
+    if (p >= start)
+    {
+        tmp.assign(start, p - start);
+        strlist.push_back(tmp);
+    }
+}
+
 //----------------------------------------------------------------------------//
 RenderedStringWidgetComponent::RenderedStringWidgetComponent(
                                                     const String& widget_name) :
@@ -49,6 +79,42 @@ RenderedStringWidgetComponent::RenderedStringWidgetComponent(
     d_window(0),
     d_selected(false)
 {
+    const char* str = widget_name.c_str();
+    auto size = d_windowName.size();
+    std::vector<std::string> strlist;
+    split_string(str, '|', strlist);
+    if (strlist.size() > 1)
+    {
+        d_windowName = strlist[0].c_str();
+
+        for (auto i = 1; i < strlist.size(); i++)
+        {
+            auto pos = strlist[i].find_first_of('=');
+            if (pos == std::string::npos)
+            {
+                continue;
+            }
+
+            std::string type = strlist[i].substr(0, pos);
+            std::string value = strlist[i].substr(pos + 1, 100);
+            
+            if (type == "type")
+            {
+                d_windowType = value;
+            }
+            else if(type == "Text")
+            {
+
+                d_windowText = value;
+
+                auto size = strlist[i].size();
+                auto value_size = value.size();
+                int kk = 0;
+            }
+        }
+    }
+
+   
 }
 
 //----------------------------------------------------------------------------//
@@ -167,7 +233,20 @@ Window* RenderedStringWidgetComponent::getEffectiveWindow(
         if (!ref_wnd)
             return 0;
 
-        d_window = ref_wnd->getChild(d_windowName);
+        d_window = ref_wnd->getChild(d_windowName, true);
+
+        if (d_window == nullptr)
+        {
+            d_window = WindowManager::getSingleton().createWindow(d_windowType, d_windowName);
+            Window* parent = (Window*)ref_wnd;
+            parent->addChild(d_window);
+        }
+        if (!d_windowText.empty())
+        {
+            d_window->setProperty("Text", (CEGUI::utf8*)d_windowText.c_str());
+        }
+
+        d_window->setProperty("Size", "{{0.6,0},{0.035398,0}}");
         d_windowPtrSynched = true;
     }
     

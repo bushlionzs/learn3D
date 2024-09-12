@@ -58,7 +58,7 @@ void FullDemo::registerMessage()
 	NetMessageManager::GetSingleton().registerMessage(servermessage::SC_QUERY_EVENT_RESULT, sc_query_event);
 	NetMessageManager::GetSingleton().registerMessage(servermessage::SC_ADD_QUEST, sc_modify_quest);
 	NetMessageManager::GetSingleton().registerMessage(servermessage::SC_QUEST_LIST, sc_quest_list);
-	NetMessageManager::GetSingleton().registerMessage(servermessage::SC_SCRIPT_COMMAND, sc_quest_list);
+	NetMessageManager::GetSingleton().registerMessage(servermessage::SC_SCRIPT_COMMAND, sc_script_command);
 }
 
 void FullDemo::appUpdate(float delta)

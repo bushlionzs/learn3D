@@ -798,7 +798,7 @@ VkPipelineShaderStageCreateInfo VulkanRayTracingContext::loadShader(std::string 
     shaderStage.stage = stage;
 
     ResourceInfo* res = ResourceManager::getSingleton().getResource(fileName);
-    shaderStage.module = vks::tools::loadShader(res->_fullname.c_str(), mVKDevice);
+    shaderStage.module = vks::tools::loadShaderBinary(res->_fullname.c_str(), mVKDevice);
 
     shaderStage.pName = "main";
     assert(shaderStage.module != VK_NULL_HANDLE);

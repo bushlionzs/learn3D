@@ -63,6 +63,14 @@ struct AccelerationStructure {
     VkBuffer buffer;
 };
 
+
+enum VulkanLayoutIndex
+{
+    VulkanLayoutIndex_Data = 0,
+    VulkanLayoutIndex_Unlit = 1,
+    VulkanLayoutIndex_Pbr = 2
+};
+
 class VulkanHelper : public Ogre::Singleton<VulkanHelper>
 {
 public:
@@ -118,7 +126,8 @@ public:
     VkQueue _getCommandQueue();
     VkRenderPass _getRenderPass();
     VkPhysicalDevice _getPhysicalDevice();
-    VkPipelineLayout _getPipelineLayout();
+    VkPipelineLayout _getPipelineLayout(bool pbr);
+    VkPipelineCache getPipelineCache();
     void _resetCommandBuffer(uint32_t frame_index);
     void _endCommandBuffer(uint32_t frame_index);
     VkCommandBuffer getMainCommandBuffer(uint32_t frame_index);
@@ -129,7 +138,7 @@ public:
         bool have_main = true);
     VulkanFrame* _getFrame(uint32_t index);
     VkDescriptorPool _getDescriptorPool();
-    VkDescriptorSetLayout _getDescriptorSetLayout(uint32_t index);
+    VkDescriptorSetLayout _getDescriptorSetLayout(VulkanLayoutIndex index);
     VkSurfaceKHR _getSurface();
     VulkanRenderSystem* _getRenderSystem()
     {
@@ -210,7 +219,9 @@ private:
 
     VkDescriptorPool mDescriptorPool;
     std::array<VkDescriptorSetLayout,2> mDescriptorSetLayout;
+    VkDescriptorSetLayout mPbrDescriptorSetLayout;
     VkPipelineLayout mPipelineLayout;
+    VkPipelineLayout mPipelineLayoutPbr;
 
     VkPipelineCache mPipelineCache;
     VkQueue mGraphicsQueue;

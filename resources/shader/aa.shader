@@ -306,22 +306,6 @@ shader wowterrain
 	 }
 }
 
-shader pbr
-{
-     shader_unit
-	 {
-		shader_type directx
-		vertex_shader pbr.hlsl VS
-		frag_shader pbr.hlsl PS
-	 }
-	 
-	 shader_unit
-	 {
-		shader_type vulkan
-		vertex_shader pbr.glsl vs
-		frag_shader pbr.glsl ps
-	 }
-}
 
 shader projector
 {

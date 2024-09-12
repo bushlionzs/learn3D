@@ -147,7 +147,7 @@ void VulkanTexture::createInternalResourcesImpl(void)
 
         if (mUsage & Ogre::TU_RENDERTARGET)
         {
-            mVulkanFormat = VK_FORMAT_B8G8R8A8_UNORM;
+            //mVulkanFormat = VK_FORMAT_B8G8R8A8_UNORM;
         }
     }
     
@@ -257,10 +257,7 @@ void VulkanTexture::createImage(
             }
         }
     }
-    else
-    {
-        int kk = 0;
-    }
+ 
     
 
     VkImageCreateInfo imageInfo = {};

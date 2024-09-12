@@ -183,8 +183,9 @@ float Font::getTextExtent(const String& text, float x_scale) const
 {
     const FontGlyph* glyph;
     float cur_extent = 0, adv_extent = 0, width;
-
-    for (size_t c = 0; c < text.length(); ++c)
+    std::string aa = text.c_str();
+    auto length = text.length();
+    for (size_t c = 0; c < length; ++c)
     {
         glyph = getGlyphData(text[c]);
 
@@ -251,6 +252,10 @@ float Font::drawText(GeometryBuffer& buffer, const String& text,
                     const float x_scale, const float y_scale) const
 {
     std::string aa = text.c_str();
+    if (aa.find_first_of("aaaaaaaa") != std::string::npos)
+    {
+        int kk = 0;
+    }
     const float base_y = position.d_y + getBaseline(y_scale);
     Vector2f glyph_pos(position);
 

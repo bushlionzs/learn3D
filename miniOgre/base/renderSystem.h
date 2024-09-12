@@ -109,7 +109,20 @@ public:
     virtual void pushGroupMarker(const char* maker) {}
     virtual void popGroupMarker() {}
 
-    
+    virtual Ogre::OgreTexture* generateCubeMap(
+        const std::string& name,
+        Ogre::OgreTexture* environmentCube,
+        Ogre::PixelFormat format,
+        int32_t dim,
+        CubeType type)
+    {
+        return nullptr;
+    }
+
+    virtual Ogre::OgreTexture* generateBRDFLUT(const std::string& name)
+    {
+        return nullptr;
+    }
 protected:
 	
     uint32_t mBatchCount = 0;

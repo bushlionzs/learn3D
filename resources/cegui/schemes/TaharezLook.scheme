@@ -2,6 +2,8 @@
 <GUIScheme version="5" name="TaharezLook">
 	<Imageset filename="TaharezLook.imageset" />
 	<Font filename="DejaVuSans-12.font" />
+	<Font filename="simhei8.font" />
+	<Font filename="simhei12.font" />
 	<LookNFeel filename="TaharezLook.looknfeel" />
 	<WindowRendererSet filename="CEGUICoreWindowRendererSet" />
 

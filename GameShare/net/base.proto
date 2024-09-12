@@ -184,5 +184,7 @@ message ScriptParam_QuestInfo
 	int32 quest_id = 3;
 	int32 yflags = 4;
 	string text = 5;
-	repeated SQuestBonus bonus = 6;
+	repeated bytes atext = 6;
+	repeated SQuestBonusItem demand_item = 7;
+	repeated SQuestBonus abonus = 8;
 }

@@ -75,10 +75,3 @@ enum EngineType
     EngineType_Vulkan,
     EngineType_Count
 };
-
-enum ShaderType
-{
-    ShaderType_Vertex = 0,
-    ShaderType_Frag = 1,
-    ShaderType_Count
-};

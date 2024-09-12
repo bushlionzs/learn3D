@@ -137,6 +137,115 @@ bool QuestManager::getQuestInfoMemo(uint32_t index, QuestInfoMemo& memo)
 	return true;
 }
 
+std::string QuestManager::getQuestString(uint32_t type, SQuestBonus& bonus)
+{
+	std::string tmp;
+	switch (type)
+	{
+	case QUEST_BONUS_TYPE_EXP:
+		tmp = dy::str_format("经验:%d", bonus.m_uExp);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY:
+		assert(false);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY1: /* 金钱 */
+		tmp = dy::str_format("银卡:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY2: /* 金钱 */
+		tmp = dy::str_format("现银:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY3: /* 金钱 */
+		tmp = dy::str_format("金卡:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY4: /* 金钱 */
+		tmp = dy::str_format("朝廷声望:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY5: /* 金钱 */
+		tmp = dy::str_format("声望:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY6: /* 金钱 */
+		tmp = dy::str_format("荣誉:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY7: /* 金钱 */
+		tmp = dy::str_format("荣誉:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY8: /* 金钱 */
+		tmp = dy::str_format("荣誉:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_MONEY9: /* 金钱 */
+		tmp = dy::str_format("荣誉:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_ITEM:	/* 物品 */
+		assert(false);
+		break;
+
+	case QUEST_BONUS_TYPE_ITEM_RAND:					/* 随机物品 */
+		assert(false);
+		break;
+
+	case QUEST_BONUS_TYPE_ITEM_RADIO:					/* 多选1物品 */
+		tmp = dy::str_format("荣誉:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_VIGOR:						/* 活力 */
+		tmp = dy::str_format("活力:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_CHARM:						/* 魅力 */
+		tmp = dy::str_format("魅力:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_GENIUS:						/* 天赋 */
+		tmp = dy::str_format("天赋:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_GUILD_EXP:					/* 帮会经验 */
+		tmp = dy::str_format("帮会经验:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_COUNTRY_FOOD:				/* 国家食材 */
+		tmp = dy::str_format("国家食材:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_COUNTRY_MONEY:				/* 国家金钱 */
+		tmp = dy::str_format("国家金钱:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_COUNTRY_WOOD:				/* 国家木材 */
+		tmp = dy::str_format("国家木材:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_COUNTRY_METAL:				/* 国家金属 */
+		tmp = dy::str_format("荣誉:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_WEIWANG:					/* 威望 */
+		tmp = dy::str_format("荣誉:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_INHERENCE_EXP:		/* 天赋经验 */
+		tmp = dy::str_format("荣誉:%d", bonus.m_uMoney);
+		break;
+
+	case QUEST_BONUS_TYPE_GUILD_MONEY:		/* 帮会金钱 */
+		tmp = dy::str_format("荣誉:%d", bonus.m_uMoney);
+		break;
+	}
+
+	return tmp;
+}
+
 bool QuestManager::getQuestReward(uint32_t quest_id, std::vector<QuestReward>& rewardlist)
 {
 	_QUEST_INFO::QuestRewardItem* pItem = NULL;

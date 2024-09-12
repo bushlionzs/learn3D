@@ -68,6 +68,12 @@ namespace Ogre {
 
 	void OgreTexture::loadImpl()
 	{
+		bool cube = isCubeTexture();
+		if (cube)
+		{
+			mFace = 6;
+		}
+
 		if ((mUsage & TU_RENDERTARGET) || mUsage == TU_DYNAMIC_WRITE_ONLY)
 		{
 			mFormat = mTextureProperty._tex_format;
@@ -78,11 +84,7 @@ namespace Ogre {
 		
 
 
-		bool cube = isCubeTexture();
-		if (cube)
-		{
-			mFace = 6;
-		}
+		
 
 
 		CImage image;

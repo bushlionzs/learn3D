@@ -11,6 +11,8 @@
 #include "VulkanTexture.h"
 #include "VulkanHelper.h"
 #include "VulkanBuffer.h"
+#include "glslUtil.h"
+#include <platform_file.h>
 
 namespace vks
 {
@@ -315,7 +317,7 @@ namespace vks
 		}
 
 
-		VkShaderModule loadShader(const char *fileName, VkDevice device)
+		VkShaderModule loadShaderBinary(const char *fileName, VkDevice device)
 		{
 			std::ifstream is(fileName, std::ios::binary | std::ios::in | std::ios::ate);
 
@@ -346,6 +348,47 @@ namespace vks
 				std::cerr << "Error: Could not open shader file \"" << fileName << "\"" << "\n";
 				return VK_NULL_HANDLE;
 			}
+		}
+
+		VkShaderModule loadShaderAssic(const char* fileName, VkDevice device, Ogre::ShaderType type)
+		{
+			std::string content;
+			get_file_content(fileName, content);
+
+			std::string result;
+			std::string strName(fileName);
+			std::string entryPoint("main");
+			std::vector<std::pair<std::string, std::string>> shaderMacros;
+			shaderc_shader_kind kind = shaderc_glsl_vertex_shader;
+			switch (type)
+			{
+			case VertexShader:
+				kind = shaderc_glsl_vertex_shader;
+				break;
+			case PixelShader:
+				kind = shaderc_glsl_fragment_shader;
+				break;
+			default:
+				assert(false);
+				break;
+			}
+			glslCompileShader(
+				result,
+				strName,
+				content,
+				entryPoint,
+				shaderMacros,
+				kind);
+
+			VkShaderModule shaderModule;
+			VkShaderModuleCreateInfo moduleCreateInfo{};
+			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			moduleCreateInfo.codeSize = result.size();
+			moduleCreateInfo.pCode = (uint32_t*)result.c_str();
+
+			VK_CHECK_RESULT(vkCreateShaderModule(device, &moduleCreateInfo, NULL, &shaderModule));
+
+			return shaderModule;
 		}
 
 		bool fileExists(const std::string &filename)

@@ -24,7 +24,7 @@ bool Basic::appInit()
 {
 	ApplicationBase::appInit();
 
-	base2();
+	base1();
 	return true;
 }
 
@@ -53,7 +53,7 @@ void Basic::base1()
 {
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-	float aa = 1.0f;
+	float aa = 0.5f;
 	Ogre::Vector3 leftop = Ogre::Vector3(-aa, aa, 0.0f);
 	Ogre::Vector3 leftbottom = Ogre::Vector3(-aa, -aa, 0.0f);
 	Ogre::Vector3 righttop = Ogre::Vector3(aa, aa, 0.0f);
@@ -70,7 +70,7 @@ void Basic::base1()
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 
-	//mSceneManager->setSkyBox(true, "SkyLan", 50000);
+	mSceneManager->setSkyBox(true, "SkyLan", 50000);
 
 	mGameCamera->setDistance(2.5f);
 	mGameCamera->setMoveSpeed(5);

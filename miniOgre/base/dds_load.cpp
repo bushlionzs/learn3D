@@ -662,6 +662,11 @@ bool DDSImage::load(DataStream* stream)
                 // full alpha present, formats vary only in encoding 
                 imgData->format = PF_BYTE_RGBA;
                 break;
+            case PF_BC4_UNORM:
+            case PF_BC5_UNORM:
+                // full alpha present, formats vary only in encoding
+                imgData->format = PF_BYTE_RGBA;
+                break;
             default:
                 // all other cases need no special format handling
                 break;

@@ -16,18 +16,7 @@ static const std::vector<const char*> validationLayers =
     "VK_LAYER_KHRONOS_validation"
 };
 
-static const std::vector<const char*> deviceExtensions = 
-{
-    VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
-    VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
-    VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME,
-    VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
-    VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
-    VK_KHR_SPIRV_1_4_EXTENSION_NAME,
-    VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME,
-    VK_KHR_MAINTENANCE3_EXTENSION_NAME,
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
+
 
 static std::vector<const char*> getRequiredExtensions()
 {
@@ -58,9 +47,39 @@ VulkanHelper::~VulkanHelper()
 
 }
 
+static  std::vector<const char*> deviceExtensions =
+{
+    VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME,
+    VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME,
+    VK_KHR_SPIRV_1_4_EXTENSION_NAME,
+    VK_KHR_MAINTENANCE3_EXTENSION_NAME,
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
+
+//static const std::vector<const char*> deviceExtensions =
+//{
+//    VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
+//    VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
+//    VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME,
+//    VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+//    VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
+//    VK_KHR_SPIRV_1_4_EXTENSION_NAME,
+//    VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME,
+//    VK_KHR_MAINTENANCE3_EXTENSION_NAME,
+//    VK_KHR_SWAPCHAIN_EXTENSION_NAME
+//};
 void VulkanHelper::_initialise(VulkanPlatform* platform)
 {
     this->mSettings.rayTraceing = false;
+
+    if (mSettings.rayTraceing)
+    {
+        deviceExtensions.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+        deviceExtensions.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
+        deviceExtensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
+        deviceExtensions.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
+        deviceExtensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+    }
     mPlatform = platform;
     createInstance();
     createSurface();
@@ -507,6 +526,7 @@ void VulkanHelper::createLogicalDevice()
         createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
         createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
+        if(mSettings.rayTraceing)
         {
             enabledBufferDeviceAddresFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
             enabledBufferDeviceAddresFeatures.bufferDeviceAddress = VK_TRUE;
@@ -911,12 +931,12 @@ void VulkanHelper::setupDescriptorSetLayout()
                 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                 VK_SHADER_STAGE_FRAGMENT_BIT,
                 1),
-            // Binding 1 : Fragment shader image sampler
+            // Binding 2 : Fragment shader image sampler
             vks::initializers::descriptorSetLayoutBinding(
                 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                 VK_SHADER_STAGE_FRAGMENT_BIT,
                 2),
-            // Binding 1 : Fragment shader image sampler
+            // Binding 3 : Fragment shader image sampler
             vks::initializers::descriptorSetLayoutBinding(
                 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                 VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -930,6 +950,66 @@ void VulkanHelper::setupDescriptorSetLayout()
                 static_cast<uint32_t>(setLayoutBindings.size()));
         vkCreateDescriptorSetLayout(mVKDevice, &descriptorLayout,
             nullptr, &mDescriptorSetLayout[1]);
+
+        std::vector<VkDescriptorSetLayoutBinding> setLayoutBindingsPbr =
+        {
+            // Binding 0 : albedo_pbr
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                0),
+            // Binding 1 : normal_pbr
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                1),
+            // Binding 2 : ao_pbr
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                2),
+            // Binding 3 : metal_pbr
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                3),
+            // Binding 4 : roughness_pbr
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                4),
+            // Binding 5 : emissive_pbr
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                5)
+            ,
+            // Binding 6 : brdflut
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                6)
+            ,
+            // Binding 7 : irradiance
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                7)
+            ,
+            // Binding 8 : prefiltered
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                8)
+
+        };
+
+        auto descriptorLayoutPbr =
+            vks::initializers::descriptorSetLayoutCreateInfo(
+                setLayoutBindingsPbr.data(),
+                static_cast<uint32_t>(setLayoutBindingsPbr.size()));
+        vkCreateDescriptorSetLayout(mVKDevice, &descriptorLayoutPbr,
+            nullptr, &mPbrDescriptorSetLayout);
     }
     
 
@@ -941,6 +1021,20 @@ void VulkanHelper::setupDescriptorSetLayout()
 
     if (vkCreatePipelineLayout(mVKDevice, &pPipelineLayoutCreateInfo,
         nullptr, &mPipelineLayout) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to create pipeline layout!");
+    }
+
+    VkDescriptorSetLayout tmp[2];
+    tmp[0] = mDescriptorSetLayout[0];
+    tmp[1] = mPbrDescriptorSetLayout;
+    pPipelineLayoutCreateInfo =
+        vks::initializers::pipelineLayoutCreateInfo(
+            &tmp[0],
+            2);
+
+    if (vkCreatePipelineLayout(mVKDevice, &pPipelineLayoutCreateInfo,
+        nullptr, &mPipelineLayoutPbr) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create pipeline layout!");
     }
@@ -1540,9 +1634,19 @@ VkPhysicalDevice VulkanHelper::_getPhysicalDevice()
     return mPhysicalDevice;
 }
 
-VkPipelineLayout VulkanHelper::_getPipelineLayout()
+VkPipelineLayout VulkanHelper::_getPipelineLayout(bool pbr)
 {
+    if (pbr)
+    {
+        return mPipelineLayoutPbr;
+    }
+    
     return mPipelineLayout;
+}
+
+VkPipelineCache VulkanHelper::getPipelineCache()
+{
+    return mPipelineCache;
 }
 
 VulkanFrame* VulkanHelper::_getFrame(uint32_t index)
@@ -1620,9 +1724,20 @@ VkDescriptorPool VulkanHelper::_getDescriptorPool()
     return mDescriptorPool;
 }
 
-VkDescriptorSetLayout VulkanHelper::_getDescriptorSetLayout(uint32_t index)
+VkDescriptorSetLayout VulkanHelper::_getDescriptorSetLayout(VulkanLayoutIndex index)
 {
-    return mDescriptorSetLayout[index];
+    switch (index)
+    {
+    case VulkanLayoutIndex_Data:
+        return mDescriptorSetLayout[0];
+    case VulkanLayoutIndex_Unlit:
+        return mDescriptorSetLayout[1];
+    case VulkanLayoutIndex_Pbr:
+        return mPbrDescriptorSetLayout;
+    default:
+        assert(false);
+        return VK_NULL_HANDLE;
+    }
 }
 
 VkSurfaceKHR VulkanHelper::_getSurface()

@@ -380,6 +380,7 @@ namespace Ogre
             const Ogre::Vector3& position,
             const Ogre::Vector3& target,
             const Ogre::Vector3& up);
+        static Matrix4 makeRotateMatrix(const Matrix4& m, float degree, const Ogre::Vector3& v);
         static Real boundingRadiusFromAABB(const AxisAlignedBox& aabb);
 
         static size_t gcd( size_t a, size_t b )

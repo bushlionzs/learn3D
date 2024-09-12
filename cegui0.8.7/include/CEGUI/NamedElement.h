@@ -181,7 +181,7 @@ public:
         thrown if \a name_path does not reference an Element attached to this
         Element.
     */
-    NamedElement* getChildElement(const String& name_path) const;
+    NamedElement* getChildElement(const String& name_path, bool enable_empty = false) const;
 
     /*!
     \brief Find the first child with the given name, recursively and breadth-first.

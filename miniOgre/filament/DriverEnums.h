@@ -709,7 +709,8 @@ namespace filament::backend {
         ImageType_PNG,
         ImageType_JPG,
         ImageType_DDS,
-        ImageType_BLP
+        ImageType_BLP,
+        ImageType_KTX
     };
 
     //! returns whether this format a depth format

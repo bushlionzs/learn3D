@@ -399,6 +399,12 @@ namespace Ogre {
         NumShaderTypes
     };
 
+    enum CubeType
+    {
+        CubeType_Irradiance  = 0,
+        CubeType_Prefiltered = 1,
+    };
+
     /** Flags for the Instance Manager when calculating ideal number of instances per batch */
     enum InstanceManagerFlags
     {

@@ -446,7 +446,7 @@ std::shared_ptr<Ogre::Mesh> BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::Da
         unpackHalf2x16(tex[i], vdata[i].TexC);
     }
 
-    vertexData->writeBindBufferData(binding, data, sizeof(BinVertex) * geom->mVertexCount);
+    vertexData->writeBindBufferData(binding, (const  char*)vdata, sizeof(BinVertex) * geom->mVertexCount);
 
 
     AxisAlignedBox box;

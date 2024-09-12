@@ -33,7 +33,7 @@ VulkanRenderableData::VulkanRenderableData(
     mDevice = VulkanHelper::getSingleton()._getVkDevice();
 
     mRayTracingContext = context;
-	buildInitData();
+    buildInitData();
 }
 
 VulkanRenderableData::~VulkanRenderableData()
@@ -49,6 +49,8 @@ bool VulkanRenderableData::update(VulkanFrame* frame, utils::JobSystem::Job* job
     {
          mat->load(nullptr);
     }
+
+    
 
     if (VulkanHelper::getSingleton().haveRayTracing())
     {
@@ -137,7 +139,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
 
     std::vector<VkDescriptorImageInfo> textureDescriptors3d;
 
-    uint32_t tex_count = VULKAN_TEXTURE_COUNT;
+    uint32_t tex_count = 8;
 
 
     textureDescriptors.reserve(tex_count);
@@ -242,11 +244,9 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
     materialDescriptor.offset = materialInfo._offset;
     materialDescriptor.range = sizeof(MaterialConstantBuffer);
 
-    /*auto descriptorSet = _frameRenderableData[0].mDescriptorSet;
-    auto descriptorSetSampler = _frameRenderableData[0].mDescriptorSetSampler;*/
-
     auto descriptorSet = current.mDescriptorSet;
-    auto descriptorSetSampler = current.mDescriptorSetSampler;
+    bool pbr = mat->isPbr();
+    auto descriptorSetSampler = pbr?current.mDescriptorSetSamplerPbr:current.mDescriptorSetSampler;
 
     std::vector<VkWriteDescriptorSet> writeDescriptorSets =
     {
@@ -335,10 +335,10 @@ void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
     IndexData* indexData = _r->getIndexData();
     vertexData->bind(cb);
     VulkanFrameRenderableData& current = _frameRenderableData[frame->getFrameIndex()];
-    
-    VkDescriptorSet ds[2] = {current.mDescriptorSet, current.mDescriptorSetSampler};
+    bool pbr = mat->isPbr();
+    VkDescriptorSet ds[2] = {current.mDescriptorSet, pbr?current.mDescriptorSetSamplerPbr :current.mDescriptorSetSampler};
 
-    auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout();
+    auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout(pbr);
     vkCmdBindDescriptorSets(
         cb,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -377,8 +377,12 @@ void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
 
 void VulkanRenderableData::buildInitData()
 {
+    if (!_frameRenderableData.empty())
+    {
+        return;
+    }
     auto descriptorPool = VulkanHelper::getSingleton()._getDescriptorPool();
-    auto descriptorSetLayout = VulkanHelper::getSingleton()._getDescriptorSetLayout(0);
+    auto descriptorSetLayout = VulkanHelper::getSingleton()._getDescriptorSetLayout(VulkanLayoutIndex_Data);
 
     VkDescriptorSetAllocateInfo allocInfo =
         vks::initializers::descriptorSetAllocateInfo(
@@ -386,12 +390,19 @@ void VulkanRenderableData::buildInitData()
             &descriptorSetLayout,
             1);
 
-    auto descriptorSetLayoutSampler = VulkanHelper::getSingleton()._getDescriptorSetLayout(1);
+    auto descriptorSetLayoutSampler = VulkanHelper::getSingleton()._getDescriptorSetLayout(VulkanLayoutIndex_Unlit);
 
     VkDescriptorSetAllocateInfo allocInfoSampler =
         vks::initializers::descriptorSetAllocateInfo(
             descriptorPool,
             &descriptorSetLayoutSampler,
+            1);
+
+    auto descriptorSetLayoutSamplerPbr = VulkanHelper::getSingleton()._getDescriptorSetLayout(VulkanLayoutIndex_Pbr);
+    VkDescriptorSetAllocateInfo allocInfoSamplerPbr =
+        vks::initializers::descriptorSetAllocateInfo(
+            descriptorPool,
+            &descriptorSetLayoutSamplerPbr,
             1);
 
     _frameRenderableData.resize(VULKAN_FRAME_RESOURCE_COUNT);
@@ -415,6 +426,12 @@ void VulkanRenderableData::buildInitData()
         }
         
         result = vkAllocateDescriptorSets(mDevice, &allocInfoSampler, &current.mDescriptorSetSampler);
+        if (result != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to allocate descriptor set!");
+        }
+
+        result = vkAllocateDescriptorSets(mDevice, &allocInfoSamplerPbr, &current.mDescriptorSetSamplerPbr);
         if (result != VK_SUCCESS)
         {
             throw std::runtime_error("failed to allocate descriptor set!");

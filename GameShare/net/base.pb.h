@@ -72,9 +72,6 @@ extern Player_SettingDefaultTypeInternal _Player_Setting_default_instance_;
 class Quest;
 struct QuestDefaultTypeInternal;
 extern QuestDefaultTypeInternal _Quest_default_instance_;
-class SArchiveLoader_Quest;
-struct SArchiveLoader_QuestDefaultTypeInternal;
-extern SArchiveLoader_QuestDefaultTypeInternal _SArchiveLoader_Quest_default_instance_;
 class SCampData;
 struct SCampDataDefaultTypeInternal;
 extern SCampDataDefaultTypeInternal _SCampData_default_instance_;
@@ -128,7 +125,6 @@ template<> ::base::PlayerAbility* Arena::CreateMaybeMessage<::base::PlayerAbilit
 template<> ::base::PlayerSpell* Arena::CreateMaybeMessage<::base::PlayerSpell>(Arena*);
 template<> ::base::Player_Setting* Arena::CreateMaybeMessage<::base::Player_Setting>(Arena*);
 template<> ::base::Quest* Arena::CreateMaybeMessage<::base::Quest>(Arena*);
-template<> ::base::SArchiveLoader_Quest* Arena::CreateMaybeMessage<::base::SArchiveLoader_Quest>(Arena*);
 template<> ::base::SCampData* Arena::CreateMaybeMessage<::base::SCampData>(Arena*);
 template<> ::base::SEquipInfo* Arena::CreateMaybeMessage<::base::SEquipInfo>(Arena*);
 template<> ::base::SHorseGuid* Arena::CreateMaybeMessage<::base::SHorseGuid>(Arena*);
@@ -3754,163 +3750,6 @@ class Quest final :
 };
 // -------------------------------------------------------------------
 
-class SArchiveLoader_Quest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:base.SArchiveLoader_Quest) */ {
- public:
-  inline SArchiveLoader_Quest() : SArchiveLoader_Quest(nullptr) {}
-  ~SArchiveLoader_Quest() override;
-  explicit PROTOBUF_CONSTEXPR SArchiveLoader_Quest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  SArchiveLoader_Quest(const SArchiveLoader_Quest& from);
-  SArchiveLoader_Quest(SArchiveLoader_Quest&& from) noexcept
-    : SArchiveLoader_Quest() {
-    *this = ::std::move(from);
-  }
-
-  inline SArchiveLoader_Quest& operator=(const SArchiveLoader_Quest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline SArchiveLoader_Quest& operator=(SArchiveLoader_Quest&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const SArchiveLoader_Quest& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const SArchiveLoader_Quest* internal_default_instance() {
-    return reinterpret_cast<const SArchiveLoader_Quest*>(
-               &_SArchiveLoader_Quest_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    19;
-
-  friend void swap(SArchiveLoader_Quest& a, SArchiveLoader_Quest& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(SArchiveLoader_Quest* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(SArchiveLoader_Quest* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  SArchiveLoader_Quest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<SArchiveLoader_Quest>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const SArchiveLoader_Quest& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const SArchiveLoader_Quest& from) {
-    SArchiveLoader_Quest::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  uint8_t* _InternalSerialize(
-      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(SArchiveLoader_Quest* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "base.SArchiveLoader_Quest";
-  }
-  protected:
-  explicit SArchiveLoader_Quest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kQuestsFieldNumber = 1,
-  };
-  // repeated .base.Quest quests = 1;
-  int quests_size() const;
-  private:
-  int _internal_quests_size() const;
-  public:
-  void clear_quests();
-  ::base::Quest* mutable_quests(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >*
-      mutable_quests();
-  private:
-  const ::base::Quest& _internal_quests(int index) const;
-  ::base::Quest* _internal_add_quests();
-  public:
-  const ::base::Quest& quests(int index) const;
-  ::base::Quest* add_quests();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >&
-      quests() const;
-
-  // @@protoc_insertion_point(class_scope:base.SArchiveLoader_Quest)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest > quests_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_base_2eproto;
-};
-// -------------------------------------------------------------------
-
 class Player_Setting final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:base.Player_Setting) */ {
  public:
@@ -3959,7 +3798,7 @@ class Player_Setting final :
                &_Player_Setting_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    19;
 
   friend void swap(Player_Setting& a, Player_Setting& b) {
     a.Swap(&b);
@@ -4118,7 +3957,7 @@ class SQuestBonusItem final :
                &_SQuestBonusItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    20;
 
   friend void swap(SQuestBonusItem& a, SQuestBonusItem& b) {
     a.Swap(&b);
@@ -4288,7 +4127,7 @@ class SQuestBonus final :
                &_SQuestBonus_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    21;
 
   friend void swap(SQuestBonus& a, SQuestBonus& b) {
     a.Swap(&b);
@@ -4487,7 +4326,7 @@ class ScriptParam_QuestInfo final :
                &_ScriptParam_QuestInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    22;
 
   friend void swap(ScriptParam_QuestInfo& a, ScriptParam_QuestInfo& b) {
     a.Swap(&b);
@@ -4560,30 +4399,74 @@ class ScriptParam_QuestInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kBonusFieldNumber = 6,
+    kAtextFieldNumber = 6,
+    kDemandItemFieldNumber = 7,
+    kAbonusFieldNumber = 8,
     kTextFieldNumber = 5,
     kNpcIdFieldNumber = 1,
     kScriptIdFieldNumber = 2,
     kQuestIdFieldNumber = 3,
     kYflagsFieldNumber = 4,
   };
-  // repeated .base.SQuestBonus bonus = 6;
-  int bonus_size() const;
+  // repeated bytes atext = 6;
+  int atext_size() const;
   private:
-  int _internal_bonus_size() const;
+  int _internal_atext_size() const;
   public:
-  void clear_bonus();
-  ::base::SQuestBonus* mutable_bonus(int index);
+  void clear_atext();
+  const std::string& atext(int index) const;
+  std::string* mutable_atext(int index);
+  void set_atext(int index, const std::string& value);
+  void set_atext(int index, std::string&& value);
+  void set_atext(int index, const char* value);
+  void set_atext(int index, const void* value, size_t size);
+  std::string* add_atext();
+  void add_atext(const std::string& value);
+  void add_atext(std::string&& value);
+  void add_atext(const char* value);
+  void add_atext(const void* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& atext() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_atext();
+  private:
+  const std::string& _internal_atext(int index) const;
+  std::string* _internal_add_atext();
+  public:
+
+  // repeated .base.SQuestBonusItem demand_item = 7;
+  int demand_item_size() const;
+  private:
+  int _internal_demand_item_size() const;
+  public:
+  void clear_demand_item();
+  ::base::SQuestBonusItem* mutable_demand_item(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonusItem >*
+      mutable_demand_item();
+  private:
+  const ::base::SQuestBonusItem& _internal_demand_item(int index) const;
+  ::base::SQuestBonusItem* _internal_add_demand_item();
+  public:
+  const ::base::SQuestBonusItem& demand_item(int index) const;
+  ::base::SQuestBonusItem* add_demand_item();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonusItem >&
+      demand_item() const;
+
+  // repeated .base.SQuestBonus abonus = 8;
+  int abonus_size() const;
+  private:
+  int _internal_abonus_size() const;
+  public:
+  void clear_abonus();
+  ::base::SQuestBonus* mutable_abonus(int index);
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonus >*
-      mutable_bonus();
+      mutable_abonus();
   private:
-  const ::base::SQuestBonus& _internal_bonus(int index) const;
-  ::base::SQuestBonus* _internal_add_bonus();
+  const ::base::SQuestBonus& _internal_abonus(int index) const;
+  ::base::SQuestBonus* _internal_add_abonus();
   public:
-  const ::base::SQuestBonus& bonus(int index) const;
-  ::base::SQuestBonus* add_bonus();
+  const ::base::SQuestBonus& abonus(int index) const;
+  ::base::SQuestBonus* add_abonus();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonus >&
-      bonus() const;
+      abonus() const;
 
   // string text = 5;
   void clear_text();
@@ -4643,7 +4526,9 @@ class ScriptParam_QuestInfo final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonus > bonus_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> atext_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonusItem > demand_item_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonus > abonus_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr text_;
     int32_t npc_id_;
     int32_t script_id_;
@@ -6898,50 +6783,6 @@ inline void Quest::set_quest_data(int32_t value) {
 
 // -------------------------------------------------------------------
 
-// SArchiveLoader_Quest
-
-// repeated .base.Quest quests = 1;
-inline int SArchiveLoader_Quest::_internal_quests_size() const {
-  return _impl_.quests_.size();
-}
-inline int SArchiveLoader_Quest::quests_size() const {
-  return _internal_quests_size();
-}
-inline void SArchiveLoader_Quest::clear_quests() {
-  _impl_.quests_.Clear();
-}
-inline ::base::Quest* SArchiveLoader_Quest::mutable_quests(int index) {
-  // @@protoc_insertion_point(field_mutable:base.SArchiveLoader_Quest.quests)
-  return _impl_.quests_.Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >*
-SArchiveLoader_Quest::mutable_quests() {
-  // @@protoc_insertion_point(field_mutable_list:base.SArchiveLoader_Quest.quests)
-  return &_impl_.quests_;
-}
-inline const ::base::Quest& SArchiveLoader_Quest::_internal_quests(int index) const {
-  return _impl_.quests_.Get(index);
-}
-inline const ::base::Quest& SArchiveLoader_Quest::quests(int index) const {
-  // @@protoc_insertion_point(field_get:base.SArchiveLoader_Quest.quests)
-  return _internal_quests(index);
-}
-inline ::base::Quest* SArchiveLoader_Quest::_internal_add_quests() {
-  return _impl_.quests_.Add();
-}
-inline ::base::Quest* SArchiveLoader_Quest::add_quests() {
-  ::base::Quest* _add = _internal_add_quests();
-  // @@protoc_insertion_point(field_add:base.SArchiveLoader_Quest.quests)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::Quest >&
-SArchiveLoader_Quest::quests() const {
-  // @@protoc_insertion_point(field_list:base.SArchiveLoader_Quest.quests)
-  return _impl_.quests_;
-}
-
-// -------------------------------------------------------------------
-
 // Player_Setting
 
 // int32 setting_type = 1;
@@ -7352,51 +7193,164 @@ inline void ScriptParam_QuestInfo::set_allocated_text(std::string* text) {
   // @@protoc_insertion_point(field_set_allocated:base.ScriptParam_QuestInfo.text)
 }
 
-// repeated .base.SQuestBonus bonus = 6;
-inline int ScriptParam_QuestInfo::_internal_bonus_size() const {
-  return _impl_.bonus_.size();
+// repeated bytes atext = 6;
+inline int ScriptParam_QuestInfo::_internal_atext_size() const {
+  return _impl_.atext_.size();
 }
-inline int ScriptParam_QuestInfo::bonus_size() const {
-  return _internal_bonus_size();
+inline int ScriptParam_QuestInfo::atext_size() const {
+  return _internal_atext_size();
 }
-inline void ScriptParam_QuestInfo::clear_bonus() {
-  _impl_.bonus_.Clear();
+inline void ScriptParam_QuestInfo::clear_atext() {
+  _impl_.atext_.Clear();
 }
-inline ::base::SQuestBonus* ScriptParam_QuestInfo::mutable_bonus(int index) {
-  // @@protoc_insertion_point(field_mutable:base.ScriptParam_QuestInfo.bonus)
-  return _impl_.bonus_.Mutable(index);
+inline std::string* ScriptParam_QuestInfo::add_atext() {
+  std::string* _s = _internal_add_atext();
+  // @@protoc_insertion_point(field_add_mutable:base.ScriptParam_QuestInfo.atext)
+  return _s;
+}
+inline const std::string& ScriptParam_QuestInfo::_internal_atext(int index) const {
+  return _impl_.atext_.Get(index);
+}
+inline const std::string& ScriptParam_QuestInfo::atext(int index) const {
+  // @@protoc_insertion_point(field_get:base.ScriptParam_QuestInfo.atext)
+  return _internal_atext(index);
+}
+inline std::string* ScriptParam_QuestInfo::mutable_atext(int index) {
+  // @@protoc_insertion_point(field_mutable:base.ScriptParam_QuestInfo.atext)
+  return _impl_.atext_.Mutable(index);
+}
+inline void ScriptParam_QuestInfo::set_atext(int index, const std::string& value) {
+  _impl_.atext_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:base.ScriptParam_QuestInfo.atext)
+}
+inline void ScriptParam_QuestInfo::set_atext(int index, std::string&& value) {
+  _impl_.atext_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:base.ScriptParam_QuestInfo.atext)
+}
+inline void ScriptParam_QuestInfo::set_atext(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.atext_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:base.ScriptParam_QuestInfo.atext)
+}
+inline void ScriptParam_QuestInfo::set_atext(int index, const void* value, size_t size) {
+  _impl_.atext_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:base.ScriptParam_QuestInfo.atext)
+}
+inline std::string* ScriptParam_QuestInfo::_internal_add_atext() {
+  return _impl_.atext_.Add();
+}
+inline void ScriptParam_QuestInfo::add_atext(const std::string& value) {
+  _impl_.atext_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:base.ScriptParam_QuestInfo.atext)
+}
+inline void ScriptParam_QuestInfo::add_atext(std::string&& value) {
+  _impl_.atext_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:base.ScriptParam_QuestInfo.atext)
+}
+inline void ScriptParam_QuestInfo::add_atext(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _impl_.atext_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:base.ScriptParam_QuestInfo.atext)
+}
+inline void ScriptParam_QuestInfo::add_atext(const void* value, size_t size) {
+  _impl_.atext_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:base.ScriptParam_QuestInfo.atext)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+ScriptParam_QuestInfo::atext() const {
+  // @@protoc_insertion_point(field_list:base.ScriptParam_QuestInfo.atext)
+  return _impl_.atext_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+ScriptParam_QuestInfo::mutable_atext() {
+  // @@protoc_insertion_point(field_mutable_list:base.ScriptParam_QuestInfo.atext)
+  return &_impl_.atext_;
+}
+
+// repeated .base.SQuestBonusItem demand_item = 7;
+inline int ScriptParam_QuestInfo::_internal_demand_item_size() const {
+  return _impl_.demand_item_.size();
+}
+inline int ScriptParam_QuestInfo::demand_item_size() const {
+  return _internal_demand_item_size();
+}
+inline void ScriptParam_QuestInfo::clear_demand_item() {
+  _impl_.demand_item_.Clear();
+}
+inline ::base::SQuestBonusItem* ScriptParam_QuestInfo::mutable_demand_item(int index) {
+  // @@protoc_insertion_point(field_mutable:base.ScriptParam_QuestInfo.demand_item)
+  return _impl_.demand_item_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonusItem >*
+ScriptParam_QuestInfo::mutable_demand_item() {
+  // @@protoc_insertion_point(field_mutable_list:base.ScriptParam_QuestInfo.demand_item)
+  return &_impl_.demand_item_;
+}
+inline const ::base::SQuestBonusItem& ScriptParam_QuestInfo::_internal_demand_item(int index) const {
+  return _impl_.demand_item_.Get(index);
+}
+inline const ::base::SQuestBonusItem& ScriptParam_QuestInfo::demand_item(int index) const {
+  // @@protoc_insertion_point(field_get:base.ScriptParam_QuestInfo.demand_item)
+  return _internal_demand_item(index);
+}
+inline ::base::SQuestBonusItem* ScriptParam_QuestInfo::_internal_add_demand_item() {
+  return _impl_.demand_item_.Add();
+}
+inline ::base::SQuestBonusItem* ScriptParam_QuestInfo::add_demand_item() {
+  ::base::SQuestBonusItem* _add = _internal_add_demand_item();
+  // @@protoc_insertion_point(field_add:base.ScriptParam_QuestInfo.demand_item)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonusItem >&
+ScriptParam_QuestInfo::demand_item() const {
+  // @@protoc_insertion_point(field_list:base.ScriptParam_QuestInfo.demand_item)
+  return _impl_.demand_item_;
+}
+
+// repeated .base.SQuestBonus abonus = 8;
+inline int ScriptParam_QuestInfo::_internal_abonus_size() const {
+  return _impl_.abonus_.size();
+}
+inline int ScriptParam_QuestInfo::abonus_size() const {
+  return _internal_abonus_size();
+}
+inline void ScriptParam_QuestInfo::clear_abonus() {
+  _impl_.abonus_.Clear();
+}
+inline ::base::SQuestBonus* ScriptParam_QuestInfo::mutable_abonus(int index) {
+  // @@protoc_insertion_point(field_mutable:base.ScriptParam_QuestInfo.abonus)
+  return _impl_.abonus_.Mutable(index);
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonus >*
-ScriptParam_QuestInfo::mutable_bonus() {
-  // @@protoc_insertion_point(field_mutable_list:base.ScriptParam_QuestInfo.bonus)
-  return &_impl_.bonus_;
+ScriptParam_QuestInfo::mutable_abonus() {
+  // @@protoc_insertion_point(field_mutable_list:base.ScriptParam_QuestInfo.abonus)
+  return &_impl_.abonus_;
 }
-inline const ::base::SQuestBonus& ScriptParam_QuestInfo::_internal_bonus(int index) const {
-  return _impl_.bonus_.Get(index);
+inline const ::base::SQuestBonus& ScriptParam_QuestInfo::_internal_abonus(int index) const {
+  return _impl_.abonus_.Get(index);
 }
-inline const ::base::SQuestBonus& ScriptParam_QuestInfo::bonus(int index) const {
-  // @@protoc_insertion_point(field_get:base.ScriptParam_QuestInfo.bonus)
-  return _internal_bonus(index);
+inline const ::base::SQuestBonus& ScriptParam_QuestInfo::abonus(int index) const {
+  // @@protoc_insertion_point(field_get:base.ScriptParam_QuestInfo.abonus)
+  return _internal_abonus(index);
 }
-inline ::base::SQuestBonus* ScriptParam_QuestInfo::_internal_add_bonus() {
-  return _impl_.bonus_.Add();
+inline ::base::SQuestBonus* ScriptParam_QuestInfo::_internal_add_abonus() {
+  return _impl_.abonus_.Add();
 }
-inline ::base::SQuestBonus* ScriptParam_QuestInfo::add_bonus() {
-  ::base::SQuestBonus* _add = _internal_add_bonus();
-  // @@protoc_insertion_point(field_add:base.ScriptParam_QuestInfo.bonus)
+inline ::base::SQuestBonus* ScriptParam_QuestInfo::add_abonus() {
+  ::base::SQuestBonus* _add = _internal_add_abonus();
+  // @@protoc_insertion_point(field_add:base.ScriptParam_QuestInfo.abonus)
   return _add;
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::base::SQuestBonus >&
-ScriptParam_QuestInfo::bonus() const {
-  // @@protoc_insertion_point(field_list:base.ScriptParam_QuestInfo.bonus)
-  return _impl_.bonus_;
+ScriptParam_QuestInfo::abonus() const {
+  // @@protoc_insertion_point(field_list:base.ScriptParam_QuestInfo.abonus)
+  return _impl_.abonus_;
 }
 
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

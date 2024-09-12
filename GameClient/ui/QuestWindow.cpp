@@ -41,9 +41,8 @@ bool QuestWindow::handle_OptionClick(const CEGUI::EventArgs& args)
 	void* userData = dd_args.window->getUserData();
 
 	uint32_t i = (uint32_t)userData;
-
-	servermessage::ServerMsgQueryEventResult& dummy =
-		UIManager::GetSingleton().getQueryEvent();
+	QuestManager* qm = GameDataManager::GetSingleton().getQuestManager();
+	servermessage::ServerMsgQueryEventResult& dummy = qm->getQueryEvent();
 	const servermessage::EventItem& item = dummy.eventlist(i);
 
 	clientmessage::MsgEventRequest msg;
@@ -65,74 +64,134 @@ bool QuestWindow::handle_OptionClick(const CEGUI::EventArgs& args)
 
 void QuestWindow::update()
 {
-	servermessage::ServerMsgQueryEventResult& dummy = 
-		UIManager::GetSingleton().getQueryEvent();
-
-	auto objectId = dummy.object_id();
-
-	
-
-	KObject* pObject = KObjectManager::GetSingleton().getObject(objectId);
-
-	KCharacter* pCharacter = (KCharacter*)pObject;
-
-	auto portrait = pCharacter->GetPortrait();
-
-	if (portrait != nullptr)
-	{
-		auto* touxiang = _main_window->getChildRecursive("Quest_touxiang");
-		std::string name = transformImageName(portrait);
-		touxiang->setProperty("Image", name.c_str());
-	}
-
-	auto* npcName = _main_window->getChildRecursive("Quest_NPCname");
-
-	auto* name = pCharacter->GetCharacterData()->Get_Utf8Name();
-	
-	npcName->setProperty("Text", (CEGUI::utf8*)name);
-	
 	CEGUI::FontManager& fontManager(CEGUI::FontManager::getSingleton());
 	CEGUI::Font& font(fontManager.createFromFile("simhei8.font"));
+	QuestManager* qm = GameDataManager::GetSingleton().getQuestManager();
 
-	uint32_t count = dummy.eventlist_size();
-	auto* desc = _main_window->getChildRecursive("QuestDesc");
-
-	//std::wstring aa = L"任务描述\n任务描述";
-	//std::string bb = dy::unicode_to_utf8(aa);
-	//desc->setProperty("Text", (CEGUI::utf8*)bb.c_str());
-	EventData tmp;
-
-	std::string source;
-	for (uint32_t i = 0; i < count; i++)
+	if (qm->haveQueryEvent())
 	{
-		const servermessage::EventItem& item = dummy.eventlist(i);
-		getEventItemInfo(&item, tmp);
+		servermessage::ServerMsgQueryEventResult& dummy = qm->getQueryEvent();
 
-		if (tmp.type == EVENT_ITEM_TYPE_TEXT)
+		auto objectId = dummy.object_id();
+
+
+
+		KObject* pObject = KObjectManager::GetSingleton().getObject(objectId);
+
+		KCharacter* pCharacter = (KCharacter*)pObject;
+
+		auto portrait = pCharacter->GetPortrait();
+
+		if (portrait != nullptr)
 		{
-			std::string utf8 = dy::acsi_to_utf8(tmp.desc);
-			source += utf8.c_str();
-			
+			auto* touxiang = _main_window->getChildRecursive("Quest_touxiang");
+			std::string name = transformImageName(portrait);
+			touxiang->setProperty("Image", name.c_str());
 		}
-		else if (tmp.type == EVENT_ITEM_TYPE_SCRIPT_ID)
+
+		auto* npcName = _main_window->getChildRecursive("Quest_NPCname");
+
+		auto* name = pCharacter->GetCharacterData()->Get_Utf8Name();
+
+		npcName->setProperty("Text", (CEGUI::utf8*)name);
+
+		
+
+		uint32_t count = dummy.eventlist_size();
+		auto* desc = _main_window->getChildRecursive("QuestDesc");
+
+		//std::wstring aa = L"任务描述\n任务描述";
+		//std::string bb = dy::unicode_to_utf8(aa);
+		//desc->setProperty("Text", (CEGUI::utf8*)bb.c_str());
+		EventData tmp;
+
+		std::string source;
+		for (uint32_t i = 0; i < count; i++)
 		{
-			std::string utf8 = dy::acsi_to_utf8(tmp.desc);
-			source += "\n";
-			source += "[window = 'Quest_Option']";
+			const servermessage::EventItem& item = dummy.eventlist(i);
+			getEventItemInfo(&item, tmp);
 
-			auto* option = desc->getChildRecursive("Quest_Option");
-			option->setProperty("Text", (CEGUI::utf8*)utf8.c_str());
-			option->setFont(&font);
+			if (tmp.type == EVENT_ITEM_TYPE_TEXT)
+			{
+				std::string utf8 = dy::acsi_to_utf8(tmp.desc);
+				source += utf8.c_str();
 
-			option->subscribeEvent(
-				CEGUI::Window::EventMouseClick,
-				CEGUI::Event::Subscriber(&QuestWindow::handle_OptionClick, this));
+			}
+			else if (tmp.type == EVENT_ITEM_TYPE_SCRIPT_ID)
+			{
+				source += "\n";
+				std::string link = dy::str_format("[window = 'Quest_Option|type=Vanilla/Button|Text=%s']", "中国");
+				source += dy::acsi_to_utf8(link.c_str());
 
-			option->setUserData((void*)i);
+				/*auto* option = desc->getChildRecursive("Quest_Option");
+				option->setProperty("Text", (CEGUI::utf8*)utf8.c_str());
+				option->setFont(&font);*/
+
+				/*option->subscribeEvent(
+					CEGUI::Window::EventMouseClick,
+					CEGUI::Event::Subscriber(&QuestWindow::handle_OptionClick, this));
+
+				option->setUserData((void*)i);*/
+			}
 		}
+
+		desc->setProperty("Text", (CEGUI::utf8*)source.c_str());
+		desc->setFont(&font);
 	}
-	
-	desc->setProperty("Text", (CEGUI::utf8*)source.c_str());
-	desc->setFont(&font);
+	else if (qm->haveQuestInfoResponse())
+	{
+		auto* desc = _main_window->getChildRecursive("QuestDesc");
+		servermessage::ServerMsgScriptCommand& dummy = qm->getScriptCommand();
+		std::string source;
+		const auto& quest_info = dummy.quest_info();
+
+		auto text_size = quest_info.atext_size();
+
+		std::string tmp;
+		for (auto i = 0; i < text_size; i++)
+		{
+			tmp = quest_info.atext(i);
+			FormatQuestString(tmp);
+			source += tmp;
+		}
+		auto bonus_size = quest_info.abonus_size();
+		source += "\n奖励内容:\n";
+
+		for (auto i = 0; i < bonus_size; i++)
+		{
+			const base::SQuestBonus& bonus = quest_info.abonus(i);
+
+			auto type = bonus.type();
+			if (type == QUEST_BONUS_TYPE_ITEM || type == QUEST_BONUS_TYPE_ITEM_RADIO)
+			{
+				assert(false);
+			}
+			else
+			{
+				SQuestBonus tmp;
+				tmp.m_nType = type;
+				tmp.m_uExp = bonus.exp();
+				
+				source += qm->getQuestString(type, tmp);
+				source += "\n";
+			}
+
+		}
+		auto* button = _main_window->getChildRecursive("Quest_Button_Accept");
+		if (quest_info.yflags() & 0x00000001)
+		{
+			button->setVisible(false);
+		}
+		else
+		{
+			button->setVisible(true);
+		}
+
+		
+		auto strUtf8 = dy::acsi_to_utf8(source);
+		
+		desc->setProperty("Text", (CEGUI::utf8*)strUtf8.c_str());
+		desc->setFont(&font);
+	}
 }
 

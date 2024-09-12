@@ -47,6 +47,9 @@ struct TableStruct_server_5fmessage_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_server_5fmessage_2eproto;
 namespace servermessage {
+class EventItem;
+struct EventItemDefaultTypeInternal;
+extern EventItemDefaultTypeInternal _EventItem_default_instance_;
 class ServerHumanBaseAttrib;
 struct ServerHumanBaseAttribDefaultTypeInternal;
 extern ServerHumanBaseAttribDefaultTypeInternal _ServerHumanBaseAttrib_default_instance_;
@@ -187,6 +190,7 @@ struct ServerMsgUseEquipResultDefaultTypeInternal;
 extern ServerMsgUseEquipResultDefaultTypeInternal _ServerMsgUseEquipResult_default_instance_;
 }  // namespace servermessage
 PROTOBUF_NAMESPACE_OPEN
+template<> ::servermessage::EventItem* Arena::CreateMaybeMessage<::servermessage::EventItem>(Arena*);
 template<> ::servermessage::ServerHumanBaseAttrib* Arena::CreateMaybeMessage<::servermessage::ServerHumanBaseAttrib>(Arena*);
 template<> ::servermessage::ServerMsgAbilityAction* Arena::CreateMaybeMessage<::servermessage::ServerMsgAbilityAction>(Arena*);
 template<> ::servermessage::ServerMsgAbilityResult* Arena::CreateMaybeMessage<::servermessage::ServerMsgAbilityResult>(Arena*);
@@ -7280,36 +7284,38 @@ class ServerMsgMonsterAttribute final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNameFieldNumber = 16,
-    kCountryTitleFieldNumber = 17,
-    kGuildTitleFieldNumber = 18,
-    kNormalTitleFieldNumber = 19,
-    kFlagsFieldNumber = 2,
-    kCampDataFieldNumber = 11,
-    kRefreshFieldNumber = 1,
-    kObjectIdFieldNumber = 3,
-    kDataIdFieldNumber = 4,
-    kLevelFieldNumber = 5,
-    kHpPercentFieldNumber = 6,
-    kStealLevelFieldNumber = 7,
-    kMoodStateFieldNumber = 8,
-    kMoveSpeedFieldNumber = 9,
-    kAttackSpeedFieldNumber = 10,
-    kPortraitIdFieldNumber = 12,
-    kModelIdFieldNumber = 13,
-    kMountIdFieldNumber = 14,
-    kAiTypeFieldNumber = 15,
-    kCountryTitleTypeFieldNumber = 20,
-    kGuildTitleTypeFieldNumber = 21,
-    kNormalTitleTypeFieldNumber = 22,
-    kOccupantGuidFieldNumber = 23,
-    kOwnerIdFieldNumber = 24,
-    kTargetIdFieldNumber = 25,
-    kDirFieldNumber = 26,
-    kCtrlStateFieldNumber = 27,
-    kScaleFieldNumber = 28,
+    kNameFieldNumber = 14,
+    kCountryTitleFieldNumber = 15,
+    kGuildTitleFieldNumber = 16,
+    kNormalTitleFieldNumber = 17,
+    kCampDataFieldNumber = 9,
+    kObjectIdFieldNumber = 1,
+    kDataIdFieldNumber = 2,
+    kLevelFieldNumber = 3,
+    kHpPercentFieldNumber = 4,
+    kStealLevelFieldNumber = 5,
+    kMoodStateFieldNumber = 6,
+    kMoveSpeedFieldNumber = 7,
+    kAttackSpeedFieldNumber = 8,
+    kPortraitIdFieldNumber = 10,
+    kModelIdFieldNumber = 11,
+    kMountIdFieldNumber = 12,
+    kAiTypeFieldNumber = 13,
+    kCountryTitleTypeFieldNumber = 18,
+    kGuildTitleTypeFieldNumber = 19,
+    kNormalTitleTypeFieldNumber = 20,
+    kOccupantGuidFieldNumber = 21,
+    kOwnerIdFieldNumber = 22,
+    kTargetIdFieldNumber = 23,
+    kDirFieldNumber = 24,
+    kCtrlStateFieldNumber = 25,
+    kScaleFieldNumber = 26,
   };
-  // string name = 16;
+  // optional bytes name = 14;
+  bool has_name() const;
+  private:
+  bool _internal_has_name() const;
+  public:
   void clear_name();
   const std::string& name() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -7323,7 +7329,11 @@ class ServerMsgMonsterAttribute final :
   std::string* _internal_mutable_name();
   public:
 
-  // string country_title = 17;
+  // optional bytes country_title = 15;
+  bool has_country_title() const;
+  private:
+  bool _internal_has_country_title() const;
+  public:
   void clear_country_title();
   const std::string& country_title() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -7337,7 +7347,11 @@ class ServerMsgMonsterAttribute final :
   std::string* _internal_mutable_country_title();
   public:
 
-  // string guild_title = 18;
+  // optional bytes guild_title = 16;
+  bool has_guild_title() const;
+  private:
+  bool _internal_has_guild_title() const;
+  public:
   void clear_guild_title();
   const std::string& guild_title() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -7351,7 +7365,11 @@ class ServerMsgMonsterAttribute final :
   std::string* _internal_mutable_guild_title();
   public:
 
-  // string normal_title = 19;
+  // optional bytes normal_title = 17;
+  bool has_normal_title() const;
+  private:
+  bool _internal_has_normal_title() const;
+  public:
   void clear_normal_title();
   const std::string& normal_title() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -7365,25 +7383,7 @@ class ServerMsgMonsterAttribute final :
   std::string* _internal_mutable_normal_title();
   public:
 
-  // .base.Flag64 flags = 2;
-  bool has_flags() const;
-  private:
-  bool _internal_has_flags() const;
-  public:
-  void clear_flags();
-  const ::base::Flag64& flags() const;
-  PROTOBUF_NODISCARD ::base::Flag64* release_flags();
-  ::base::Flag64* mutable_flags();
-  void set_allocated_flags(::base::Flag64* flags);
-  private:
-  const ::base::Flag64& _internal_flags() const;
-  ::base::Flag64* _internal_mutable_flags();
-  public:
-  void unsafe_arena_set_allocated_flags(
-      ::base::Flag64* flags);
-  ::base::Flag64* unsafe_arena_release_flags();
-
-  // .base.SCampData camp_data = 11;
+  // optional .base.SCampData camp_data = 9;
   bool has_camp_data() const;
   private:
   bool _internal_has_camp_data() const;
@@ -7401,16 +7401,7 @@ class ServerMsgMonsterAttribute final :
       ::base::SCampData* camp_data);
   ::base::SCampData* unsafe_arena_release_camp_data();
 
-  // int32 refresh = 1;
-  void clear_refresh();
-  int32_t refresh() const;
-  void set_refresh(int32_t value);
-  private:
-  int32_t _internal_refresh() const;
-  void _internal_set_refresh(int32_t value);
-  public:
-
-  // int32 object_id = 3;
+  // int32 object_id = 1;
   void clear_object_id();
   int32_t object_id() const;
   void set_object_id(int32_t value);
@@ -7419,7 +7410,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_object_id(int32_t value);
   public:
 
-  // uint32 data_id = 4;
+  // optional uint32 data_id = 2;
+  bool has_data_id() const;
+  private:
+  bool _internal_has_data_id() const;
+  public:
   void clear_data_id();
   uint32_t data_id() const;
   void set_data_id(uint32_t value);
@@ -7428,7 +7423,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_data_id(uint32_t value);
   public:
 
-  // int32 level = 5;
+  // optional int32 level = 3;
+  bool has_level() const;
+  private:
+  bool _internal_has_level() const;
+  public:
   void clear_level();
   int32_t level() const;
   void set_level(int32_t value);
@@ -7437,7 +7436,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_level(int32_t value);
   public:
 
-  // int32 hp_percent = 6;
+  // optional int32 hp_percent = 4;
+  bool has_hp_percent() const;
+  private:
+  bool _internal_has_hp_percent() const;
+  public:
   void clear_hp_percent();
   int32_t hp_percent() const;
   void set_hp_percent(int32_t value);
@@ -7446,7 +7449,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_hp_percent(int32_t value);
   public:
 
-  // int32 steal_level = 7;
+  // optional int32 steal_level = 5;
+  bool has_steal_level() const;
+  private:
+  bool _internal_has_steal_level() const;
+  public:
   void clear_steal_level();
   int32_t steal_level() const;
   void set_steal_level(int32_t value);
@@ -7455,7 +7462,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_steal_level(int32_t value);
   public:
 
-  // int32 mood_state = 8;
+  // optional int32 mood_state = 6;
+  bool has_mood_state() const;
+  private:
+  bool _internal_has_mood_state() const;
+  public:
   void clear_mood_state();
   int32_t mood_state() const;
   void set_mood_state(int32_t value);
@@ -7464,7 +7475,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_mood_state(int32_t value);
   public:
 
-  // float move_speed = 9;
+  // optional float move_speed = 7;
+  bool has_move_speed() const;
+  private:
+  bool _internal_has_move_speed() const;
+  public:
   void clear_move_speed();
   float move_speed() const;
   void set_move_speed(float value);
@@ -7473,7 +7488,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_move_speed(float value);
   public:
 
-  // float attack_speed = 10;
+  // optional float attack_speed = 8;
+  bool has_attack_speed() const;
+  private:
+  bool _internal_has_attack_speed() const;
+  public:
   void clear_attack_speed();
   float attack_speed() const;
   void set_attack_speed(float value);
@@ -7482,7 +7501,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_attack_speed(float value);
   public:
 
-  // int32 portrait_id = 12;
+  // optional int32 portrait_id = 10;
+  bool has_portrait_id() const;
+  private:
+  bool _internal_has_portrait_id() const;
+  public:
   void clear_portrait_id();
   int32_t portrait_id() const;
   void set_portrait_id(int32_t value);
@@ -7491,7 +7514,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_portrait_id(int32_t value);
   public:
 
-  // int32 model_id = 13;
+  // optional int32 model_id = 11;
+  bool has_model_id() const;
+  private:
+  bool _internal_has_model_id() const;
+  public:
   void clear_model_id();
   int32_t model_id() const;
   void set_model_id(int32_t value);
@@ -7500,7 +7527,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_model_id(int32_t value);
   public:
 
-  // int32 mount_id = 14;
+  // optional int32 mount_id = 12;
+  bool has_mount_id() const;
+  private:
+  bool _internal_has_mount_id() const;
+  public:
   void clear_mount_id();
   int32_t mount_id() const;
   void set_mount_id(int32_t value);
@@ -7509,7 +7540,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_mount_id(int32_t value);
   public:
 
-  // int32 ai_type = 15;
+  // optional int32 ai_type = 13;
+  bool has_ai_type() const;
+  private:
+  bool _internal_has_ai_type() const;
+  public:
   void clear_ai_type();
   int32_t ai_type() const;
   void set_ai_type(int32_t value);
@@ -7518,7 +7553,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_ai_type(int32_t value);
   public:
 
-  // int32 country_title_type = 20;
+  // optional int32 country_title_type = 18;
+  bool has_country_title_type() const;
+  private:
+  bool _internal_has_country_title_type() const;
+  public:
   void clear_country_title_type();
   int32_t country_title_type() const;
   void set_country_title_type(int32_t value);
@@ -7527,7 +7566,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_country_title_type(int32_t value);
   public:
 
-  // int32 guild_title_type = 21;
+  // optional int32 guild_title_type = 19;
+  bool has_guild_title_type() const;
+  private:
+  bool _internal_has_guild_title_type() const;
+  public:
   void clear_guild_title_type();
   int32_t guild_title_type() const;
   void set_guild_title_type(int32_t value);
@@ -7536,7 +7579,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_guild_title_type(int32_t value);
   public:
 
-  // int32 normal_title_type = 22;
+  // optional int32 normal_title_type = 20;
+  bool has_normal_title_type() const;
+  private:
+  bool _internal_has_normal_title_type() const;
+  public:
   void clear_normal_title_type();
   int32_t normal_title_type() const;
   void set_normal_title_type(int32_t value);
@@ -7545,7 +7592,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_normal_title_type(int32_t value);
   public:
 
-  // uint32 occupant_guid = 23;
+  // optional uint32 occupant_guid = 21;
+  bool has_occupant_guid() const;
+  private:
+  bool _internal_has_occupant_guid() const;
+  public:
   void clear_occupant_guid();
   uint32_t occupant_guid() const;
   void set_occupant_guid(uint32_t value);
@@ -7554,7 +7605,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_occupant_guid(uint32_t value);
   public:
 
-  // int32 owner_id = 24;
+  // optional int32 owner_id = 22;
+  bool has_owner_id() const;
+  private:
+  bool _internal_has_owner_id() const;
+  public:
   void clear_owner_id();
   int32_t owner_id() const;
   void set_owner_id(int32_t value);
@@ -7563,7 +7618,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_owner_id(int32_t value);
   public:
 
-  // int32 target_id = 25;
+  // optional int32 target_id = 23;
+  bool has_target_id() const;
+  private:
+  bool _internal_has_target_id() const;
+  public:
   void clear_target_id();
   int32_t target_id() const;
   void set_target_id(int32_t value);
@@ -7572,7 +7631,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_target_id(int32_t value);
   public:
 
-  // float dir = 26;
+  // optional float dir = 24;
+  bool has_dir() const;
+  private:
+  bool _internal_has_dir() const;
+  public:
   void clear_dir();
   float dir() const;
   void set_dir(float value);
@@ -7581,7 +7644,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_dir(float value);
   public:
 
-  // int32 ctrl_state = 27;
+  // optional int32 ctrl_state = 25;
+  bool has_ctrl_state() const;
+  private:
+  bool _internal_has_ctrl_state() const;
+  public:
   void clear_ctrl_state();
   int32_t ctrl_state() const;
   void set_ctrl_state(int32_t value);
@@ -7590,7 +7657,11 @@ class ServerMsgMonsterAttribute final :
   void _internal_set_ctrl_state(int32_t value);
   public:
 
-  // float scale = 28;
+  // optional float scale = 26;
+  bool has_scale() const;
+  private:
+  bool _internal_has_scale() const;
+  public:
   void clear_scale();
   float scale() const;
   void set_scale(float value);
@@ -7607,13 +7678,13 @@ class ServerMsgMonsterAttribute final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr country_title_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr guild_title_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr normal_title_;
-    ::base::Flag64* flags_;
     ::base::SCampData* camp_data_;
-    int32_t refresh_;
     int32_t object_id_;
     uint32_t data_id_;
     int32_t level_;
@@ -7635,7 +7706,6 @@ class ServerMsgMonsterAttribute final :
     float dir_;
     int32_t ctrl_state_;
     float scale_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_server_5fmessage_2eproto;
@@ -7774,7 +7844,7 @@ class ServerMsgNewBeastie final :
     kTargetXFieldNumber = 9,
     kTargetZFieldNumber = 10,
   };
-  // string name = 2;
+  // bytes name = 2;
   void clear_name();
   const std::string& name() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -9091,6 +9161,208 @@ class ServerMsgPickItemResult final :
 };
 // -------------------------------------------------------------------
 
+class EventItem final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:servermessage.EventItem) */ {
+ public:
+  inline EventItem() : EventItem(nullptr) {}
+  ~EventItem() override;
+  explicit PROTOBUF_CONSTEXPR EventItem(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  EventItem(const EventItem& from);
+  EventItem(EventItem&& from) noexcept
+    : EventItem() {
+    *this = ::std::move(from);
+  }
+
+  inline EventItem& operator=(const EventItem& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline EventItem& operator=(EventItem&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const EventItem& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const EventItem* internal_default_instance() {
+    return reinterpret_cast<const EventItem*>(
+               &_EventItem_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    36;
+
+  friend void swap(EventItem& a, EventItem& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(EventItem* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(EventItem* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  EventItem* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<EventItem>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const EventItem& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const EventItem& from) {
+    EventItem::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(EventItem* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "servermessage.EventItem";
+  }
+  protected:
+  explicit EventItem(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kScriptStrFieldNumber = 5,
+    kItemTypeFieldNumber = 1,
+    kItemStateFieldNumber = 2,
+    kItemIndexFieldNumber = 3,
+    kScriptIdFieldNumber = 4,
+  };
+  // optional bytes scriptStr = 5;
+  bool has_scriptstr() const;
+  private:
+  bool _internal_has_scriptstr() const;
+  public:
+  void clear_scriptstr();
+  const std::string& scriptstr() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_scriptstr(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_scriptstr();
+  PROTOBUF_NODISCARD std::string* release_scriptstr();
+  void set_allocated_scriptstr(std::string* scriptstr);
+  private:
+  const std::string& _internal_scriptstr() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_scriptstr(const std::string& value);
+  std::string* _internal_mutable_scriptstr();
+  public:
+
+  // int32 item_type = 1;
+  void clear_item_type();
+  int32_t item_type() const;
+  void set_item_type(int32_t value);
+  private:
+  int32_t _internal_item_type() const;
+  void _internal_set_item_type(int32_t value);
+  public:
+
+  // int32 item_state = 2;
+  void clear_item_state();
+  int32_t item_state() const;
+  void set_item_state(int32_t value);
+  private:
+  int32_t _internal_item_state() const;
+  void _internal_set_item_state(int32_t value);
+  public:
+
+  // int32 item_index = 3;
+  void clear_item_index();
+  int32_t item_index() const;
+  void set_item_index(int32_t value);
+  private:
+  int32_t _internal_item_index() const;
+  void _internal_set_item_index(int32_t value);
+  public:
+
+  // int32 scriptId = 4;
+  void clear_scriptid();
+  int32_t scriptid() const;
+  void set_scriptid(int32_t value);
+  private:
+  int32_t _internal_scriptid() const;
+  void _internal_set_scriptid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:servermessage.EventItem)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr scriptstr_;
+    int32_t item_type_;
+    int32_t item_state_;
+    int32_t item_index_;
+    int32_t scriptid_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_server_5fmessage_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ServerMsgQueryEventResult final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:servermessage.ServerMsgQueryEventResult) */ {
  public:
@@ -9139,7 +9411,7 @@ class ServerMsgQueryEventResult final :
                &_ServerMsgQueryEventResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    36;
+    37;
 
   friend void swap(ServerMsgQueryEventResult& a, ServerMsgQueryEventResult& b) {
     a.Swap(&b);
@@ -9212,8 +9484,27 @@ class ServerMsgQueryEventResult final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kEventlistFieldNumber = 2,
     kObjectIdFieldNumber = 1,
   };
+  // repeated .servermessage.EventItem eventlist = 2;
+  int eventlist_size() const;
+  private:
+  int _internal_eventlist_size() const;
+  public:
+  void clear_eventlist();
+  ::servermessage::EventItem* mutable_eventlist(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::servermessage::EventItem >*
+      mutable_eventlist();
+  private:
+  const ::servermessage::EventItem& _internal_eventlist(int index) const;
+  ::servermessage::EventItem* _internal_add_eventlist();
+  public:
+  const ::servermessage::EventItem& eventlist(int index) const;
+  ::servermessage::EventItem* add_eventlist();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::servermessage::EventItem >&
+      eventlist() const;
+
   // uint32 object_id = 1;
   void clear_object_id();
   uint32_t object_id() const;
@@ -9231,6 +9522,7 @@ class ServerMsgQueryEventResult final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::servermessage::EventItem > eventlist_;
     uint32_t object_id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -9287,7 +9579,7 @@ class ServerMsgQuestList final :
                &_ServerMsgQuestList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    37;
+    38;
 
   friend void swap(ServerMsgQuestList& a, ServerMsgQuestList& b) {
     a.Swap(&b);
@@ -9455,7 +9747,7 @@ class ServerMsgQuestListRefresh final :
                &_ServerMsgQuestListRefresh_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    38;
+    39;
 
   friend void swap(ServerMsgQuestListRefresh& a, ServerMsgQuestListRefresh& b) {
     a.Swap(&b);
@@ -9614,7 +9906,7 @@ class ServerMsgSkillSettingResult final :
                &_ServerMsgSkillSettingResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    39;
+    40;
 
   friend void swap(ServerMsgSkillSettingResult& a, ServerMsgSkillSettingResult& b) {
     a.Swap(&b);
@@ -9793,7 +10085,7 @@ class ServerMsgScriptCommand final :
                &_ServerMsgScriptCommand_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    40;
+    41;
 
   friend void swap(ServerMsgScriptCommand& a, ServerMsgScriptCommand& b) {
     a.Swap(&b);
@@ -9873,7 +10165,11 @@ class ServerMsgScriptCommand final :
     kCmdIdFieldNumber = 1,
     kIndexFieldNumber = 3,
   };
-  // string quest_tips = 6;
+  // optional string quest_tips = 6;
+  bool has_quest_tips() const;
+  private:
+  bool _internal_has_quest_tips() const;
+  public:
   void clear_quest_tips();
   const std::string& quest_tips() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -9887,7 +10183,7 @@ class ServerMsgScriptCommand final :
   std::string* _internal_mutable_quest_tips();
   public:
 
-  // .base.Player_Setting setting = 2;
+  // optional .base.Player_Setting setting = 2;
   bool has_setting() const;
   private:
   bool _internal_has_setting() const;
@@ -9905,7 +10201,7 @@ class ServerMsgScriptCommand final :
       ::base::Player_Setting* setting);
   ::base::Player_Setting* unsafe_arena_release_setting();
 
-  // .base.ScriptParam_QuestInfo continue_param = 4;
+  // optional .base.ScriptParam_QuestInfo continue_param = 4;
   bool has_continue_param() const;
   private:
   bool _internal_has_continue_param() const;
@@ -9923,7 +10219,7 @@ class ServerMsgScriptCommand final :
       ::base::ScriptParam_QuestInfo* continue_param);
   ::base::ScriptParam_QuestInfo* unsafe_arena_release_continue_param();
 
-  // .base.ScriptParam_QuestInfo quest_info = 5;
+  // optional .base.ScriptParam_QuestInfo quest_info = 5;
   bool has_quest_info() const;
   private:
   bool _internal_has_quest_info() const;
@@ -9967,13 +10263,14 @@ class ServerMsgScriptCommand final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr quest_tips_;
     ::base::Player_Setting* setting_;
     ::base::ScriptParam_QuestInfo* continue_param_;
     ::base::ScriptParam_QuestInfo* quest_info_;
     int32_t cmd_id_;
     int32_t index_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_server_5fmessage_2eproto;
@@ -10028,7 +10325,7 @@ class ServerMsgSkillUpgrade final :
                &_ServerMsgSkillUpgrade_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    41;
+    42;
 
   friend void swap(ServerMsgSkillUpgrade& a, ServerMsgSkillUpgrade& b) {
     a.Swap(&b);
@@ -10220,7 +10517,7 @@ class ServerMsgSwapItem final :
                &_ServerMsgSwapItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    42;
+    43;
 
   friend void swap(ServerMsgSwapItem& a, ServerMsgSwapItem& b) {
     a.Swap(&b);
@@ -10390,7 +10687,7 @@ class ServerMsgTargetListAndHitFlags final :
                &_ServerMsgTargetListAndHitFlags_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    43;
+    44;
 
   friend void swap(ServerMsgTargetListAndHitFlags& a, ServerMsgTargetListAndHitFlags& b) {
     a.Swap(&b);
@@ -10607,7 +10904,7 @@ class ServerMsgTaskDownEquipResult final :
                &_ServerMsgTaskDownEquipResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    44;
+    45;
 
   friend void swap(ServerMsgTaskDownEquipResult& a, ServerMsgTaskDownEquipResult& b) {
     a.Swap(&b);
@@ -10799,7 +11096,7 @@ class ServerMsgUseEquipResult final :
                &_ServerMsgUseEquipResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    45;
+    46;
 
   friend void swap(ServerMsgUseEquipResult& a, ServerMsgUseEquipResult& b) {
     a.Swap(&b);
@@ -17524,112 +17821,7 @@ inline void ServerMsgModifyQuest::set_allocated_quest(::base::Quest* quest) {
 
 // ServerMsgMonsterAttribute
 
-// int32 refresh = 1;
-inline void ServerMsgMonsterAttribute::clear_refresh() {
-  _impl_.refresh_ = 0;
-}
-inline int32_t ServerMsgMonsterAttribute::_internal_refresh() const {
-  return _impl_.refresh_;
-}
-inline int32_t ServerMsgMonsterAttribute::refresh() const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgMonsterAttribute.refresh)
-  return _internal_refresh();
-}
-inline void ServerMsgMonsterAttribute::_internal_set_refresh(int32_t value) {
-  
-  _impl_.refresh_ = value;
-}
-inline void ServerMsgMonsterAttribute::set_refresh(int32_t value) {
-  _internal_set_refresh(value);
-  // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.refresh)
-}
-
-// .base.Flag64 flags = 2;
-inline bool ServerMsgMonsterAttribute::_internal_has_flags() const {
-  return this != internal_default_instance() && _impl_.flags_ != nullptr;
-}
-inline bool ServerMsgMonsterAttribute::has_flags() const {
-  return _internal_has_flags();
-}
-inline const ::base::Flag64& ServerMsgMonsterAttribute::_internal_flags() const {
-  const ::base::Flag64* p = _impl_.flags_;
-  return p != nullptr ? *p : reinterpret_cast<const ::base::Flag64&>(
-      ::base::_Flag64_default_instance_);
-}
-inline const ::base::Flag64& ServerMsgMonsterAttribute::flags() const {
-  // @@protoc_insertion_point(field_get:servermessage.ServerMsgMonsterAttribute.flags)
-  return _internal_flags();
-}
-inline void ServerMsgMonsterAttribute::unsafe_arena_set_allocated_flags(
-    ::base::Flag64* flags) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.flags_);
-  }
-  _impl_.flags_ = flags;
-  if (flags) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:servermessage.ServerMsgMonsterAttribute.flags)
-}
-inline ::base::Flag64* ServerMsgMonsterAttribute::release_flags() {
-  
-  ::base::Flag64* temp = _impl_.flags_;
-  _impl_.flags_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::base::Flag64* ServerMsgMonsterAttribute::unsafe_arena_release_flags() {
-  // @@protoc_insertion_point(field_release:servermessage.ServerMsgMonsterAttribute.flags)
-  
-  ::base::Flag64* temp = _impl_.flags_;
-  _impl_.flags_ = nullptr;
-  return temp;
-}
-inline ::base::Flag64* ServerMsgMonsterAttribute::_internal_mutable_flags() {
-  
-  if (_impl_.flags_ == nullptr) {
-    auto* p = CreateMaybeMessage<::base::Flag64>(GetArenaForAllocation());
-    _impl_.flags_ = p;
-  }
-  return _impl_.flags_;
-}
-inline ::base::Flag64* ServerMsgMonsterAttribute::mutable_flags() {
-  ::base::Flag64* _msg = _internal_mutable_flags();
-  // @@protoc_insertion_point(field_mutable:servermessage.ServerMsgMonsterAttribute.flags)
-  return _msg;
-}
-inline void ServerMsgMonsterAttribute::set_allocated_flags(::base::Flag64* flags) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.flags_);
-  }
-  if (flags) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(flags));
-    if (message_arena != submessage_arena) {
-      flags = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, flags, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  _impl_.flags_ = flags;
-  // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgMonsterAttribute.flags)
-}
-
-// int32 object_id = 3;
+// int32 object_id = 1;
 inline void ServerMsgMonsterAttribute::clear_object_id() {
   _impl_.object_id_ = 0;
 }
@@ -17649,9 +17841,17 @@ inline void ServerMsgMonsterAttribute::set_object_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.object_id)
 }
 
-// uint32 data_id = 4;
+// optional uint32 data_id = 2;
+inline bool ServerMsgMonsterAttribute::_internal_has_data_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_data_id() const {
+  return _internal_has_data_id();
+}
 inline void ServerMsgMonsterAttribute::clear_data_id() {
   _impl_.data_id_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000020u;
 }
 inline uint32_t ServerMsgMonsterAttribute::_internal_data_id() const {
   return _impl_.data_id_;
@@ -17661,7 +17861,7 @@ inline uint32_t ServerMsgMonsterAttribute::data_id() const {
   return _internal_data_id();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_data_id(uint32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000020u;
   _impl_.data_id_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_data_id(uint32_t value) {
@@ -17669,9 +17869,17 @@ inline void ServerMsgMonsterAttribute::set_data_id(uint32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.data_id)
 }
 
-// int32 level = 5;
+// optional int32 level = 3;
+inline bool ServerMsgMonsterAttribute::_internal_has_level() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_level() const {
+  return _internal_has_level();
+}
 inline void ServerMsgMonsterAttribute::clear_level() {
   _impl_.level_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000040u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_level() const {
   return _impl_.level_;
@@ -17681,7 +17889,7 @@ inline int32_t ServerMsgMonsterAttribute::level() const {
   return _internal_level();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_level(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000040u;
   _impl_.level_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_level(int32_t value) {
@@ -17689,9 +17897,17 @@ inline void ServerMsgMonsterAttribute::set_level(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.level)
 }
 
-// int32 hp_percent = 6;
+// optional int32 hp_percent = 4;
+inline bool ServerMsgMonsterAttribute::_internal_has_hp_percent() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_hp_percent() const {
+  return _internal_has_hp_percent();
+}
 inline void ServerMsgMonsterAttribute::clear_hp_percent() {
   _impl_.hp_percent_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000080u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_hp_percent() const {
   return _impl_.hp_percent_;
@@ -17701,7 +17917,7 @@ inline int32_t ServerMsgMonsterAttribute::hp_percent() const {
   return _internal_hp_percent();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_hp_percent(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000080u;
   _impl_.hp_percent_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_hp_percent(int32_t value) {
@@ -17709,9 +17925,17 @@ inline void ServerMsgMonsterAttribute::set_hp_percent(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.hp_percent)
 }
 
-// int32 steal_level = 7;
+// optional int32 steal_level = 5;
+inline bool ServerMsgMonsterAttribute::_internal_has_steal_level() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000100u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_steal_level() const {
+  return _internal_has_steal_level();
+}
 inline void ServerMsgMonsterAttribute::clear_steal_level() {
   _impl_.steal_level_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000100u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_steal_level() const {
   return _impl_.steal_level_;
@@ -17721,7 +17945,7 @@ inline int32_t ServerMsgMonsterAttribute::steal_level() const {
   return _internal_steal_level();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_steal_level(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000100u;
   _impl_.steal_level_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_steal_level(int32_t value) {
@@ -17729,9 +17953,17 @@ inline void ServerMsgMonsterAttribute::set_steal_level(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.steal_level)
 }
 
-// int32 mood_state = 8;
+// optional int32 mood_state = 6;
+inline bool ServerMsgMonsterAttribute::_internal_has_mood_state() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000200u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_mood_state() const {
+  return _internal_has_mood_state();
+}
 inline void ServerMsgMonsterAttribute::clear_mood_state() {
   _impl_.mood_state_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000200u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_mood_state() const {
   return _impl_.mood_state_;
@@ -17741,7 +17973,7 @@ inline int32_t ServerMsgMonsterAttribute::mood_state() const {
   return _internal_mood_state();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_mood_state(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00000200u;
   _impl_.mood_state_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_mood_state(int32_t value) {
@@ -17749,9 +17981,17 @@ inline void ServerMsgMonsterAttribute::set_mood_state(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.mood_state)
 }
 
-// float move_speed = 9;
+// optional float move_speed = 7;
+inline bool ServerMsgMonsterAttribute::_internal_has_move_speed() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000400u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_move_speed() const {
+  return _internal_has_move_speed();
+}
 inline void ServerMsgMonsterAttribute::clear_move_speed() {
   _impl_.move_speed_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000400u;
 }
 inline float ServerMsgMonsterAttribute::_internal_move_speed() const {
   return _impl_.move_speed_;
@@ -17761,7 +18001,7 @@ inline float ServerMsgMonsterAttribute::move_speed() const {
   return _internal_move_speed();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_move_speed(float value) {
-  
+  _impl_._has_bits_[0] |= 0x00000400u;
   _impl_.move_speed_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_move_speed(float value) {
@@ -17769,9 +18009,17 @@ inline void ServerMsgMonsterAttribute::set_move_speed(float value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.move_speed)
 }
 
-// float attack_speed = 10;
+// optional float attack_speed = 8;
+inline bool ServerMsgMonsterAttribute::_internal_has_attack_speed() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000800u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_attack_speed() const {
+  return _internal_has_attack_speed();
+}
 inline void ServerMsgMonsterAttribute::clear_attack_speed() {
   _impl_.attack_speed_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000800u;
 }
 inline float ServerMsgMonsterAttribute::_internal_attack_speed() const {
   return _impl_.attack_speed_;
@@ -17781,7 +18029,7 @@ inline float ServerMsgMonsterAttribute::attack_speed() const {
   return _internal_attack_speed();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_attack_speed(float value) {
-  
+  _impl_._has_bits_[0] |= 0x00000800u;
   _impl_.attack_speed_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_attack_speed(float value) {
@@ -17789,9 +18037,11 @@ inline void ServerMsgMonsterAttribute::set_attack_speed(float value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.attack_speed)
 }
 
-// .base.SCampData camp_data = 11;
+// optional .base.SCampData camp_data = 9;
 inline bool ServerMsgMonsterAttribute::_internal_has_camp_data() const {
-  return this != internal_default_instance() && _impl_.camp_data_ != nullptr;
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.camp_data_ != nullptr);
+  return value;
 }
 inline bool ServerMsgMonsterAttribute::has_camp_data() const {
   return _internal_has_camp_data();
@@ -17812,14 +18062,14 @@ inline void ServerMsgMonsterAttribute::unsafe_arena_set_allocated_camp_data(
   }
   _impl_.camp_data_ = camp_data;
   if (camp_data) {
-    
+    _impl_._has_bits_[0] |= 0x00000010u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000010u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:servermessage.ServerMsgMonsterAttribute.camp_data)
 }
 inline ::base::SCampData* ServerMsgMonsterAttribute::release_camp_data() {
-  
+  _impl_._has_bits_[0] &= ~0x00000010u;
   ::base::SCampData* temp = _impl_.camp_data_;
   _impl_.camp_data_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -17835,13 +18085,13 @@ inline ::base::SCampData* ServerMsgMonsterAttribute::release_camp_data() {
 }
 inline ::base::SCampData* ServerMsgMonsterAttribute::unsafe_arena_release_camp_data() {
   // @@protoc_insertion_point(field_release:servermessage.ServerMsgMonsterAttribute.camp_data)
-  
+  _impl_._has_bits_[0] &= ~0x00000010u;
   ::base::SCampData* temp = _impl_.camp_data_;
   _impl_.camp_data_ = nullptr;
   return temp;
 }
 inline ::base::SCampData* ServerMsgMonsterAttribute::_internal_mutable_camp_data() {
-  
+  _impl_._has_bits_[0] |= 0x00000010u;
   if (_impl_.camp_data_ == nullptr) {
     auto* p = CreateMaybeMessage<::base::SCampData>(GetArenaForAllocation());
     _impl_.camp_data_ = p;
@@ -17866,17 +18116,25 @@ inline void ServerMsgMonsterAttribute::set_allocated_camp_data(::base::SCampData
       camp_data = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, camp_data, submessage_arena);
     }
-    
+    _impl_._has_bits_[0] |= 0x00000010u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000010u;
   }
   _impl_.camp_data_ = camp_data;
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgMonsterAttribute.camp_data)
 }
 
-// int32 portrait_id = 12;
+// optional int32 portrait_id = 10;
+inline bool ServerMsgMonsterAttribute::_internal_has_portrait_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00001000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_portrait_id() const {
+  return _internal_has_portrait_id();
+}
 inline void ServerMsgMonsterAttribute::clear_portrait_id() {
   _impl_.portrait_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00001000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_portrait_id() const {
   return _impl_.portrait_id_;
@@ -17886,7 +18144,7 @@ inline int32_t ServerMsgMonsterAttribute::portrait_id() const {
   return _internal_portrait_id();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_portrait_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00001000u;
   _impl_.portrait_id_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_portrait_id(int32_t value) {
@@ -17894,9 +18152,17 @@ inline void ServerMsgMonsterAttribute::set_portrait_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.portrait_id)
 }
 
-// int32 model_id = 13;
+// optional int32 model_id = 11;
+inline bool ServerMsgMonsterAttribute::_internal_has_model_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00002000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_model_id() const {
+  return _internal_has_model_id();
+}
 inline void ServerMsgMonsterAttribute::clear_model_id() {
   _impl_.model_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00002000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_model_id() const {
   return _impl_.model_id_;
@@ -17906,7 +18172,7 @@ inline int32_t ServerMsgMonsterAttribute::model_id() const {
   return _internal_model_id();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_model_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00002000u;
   _impl_.model_id_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_model_id(int32_t value) {
@@ -17914,9 +18180,17 @@ inline void ServerMsgMonsterAttribute::set_model_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.model_id)
 }
 
-// int32 mount_id = 14;
+// optional int32 mount_id = 12;
+inline bool ServerMsgMonsterAttribute::_internal_has_mount_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00004000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_mount_id() const {
+  return _internal_has_mount_id();
+}
 inline void ServerMsgMonsterAttribute::clear_mount_id() {
   _impl_.mount_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00004000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_mount_id() const {
   return _impl_.mount_id_;
@@ -17926,7 +18200,7 @@ inline int32_t ServerMsgMonsterAttribute::mount_id() const {
   return _internal_mount_id();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_mount_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00004000u;
   _impl_.mount_id_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_mount_id(int32_t value) {
@@ -17934,9 +18208,17 @@ inline void ServerMsgMonsterAttribute::set_mount_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.mount_id)
 }
 
-// int32 ai_type = 15;
+// optional int32 ai_type = 13;
+inline bool ServerMsgMonsterAttribute::_internal_has_ai_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00008000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_ai_type() const {
+  return _internal_has_ai_type();
+}
 inline void ServerMsgMonsterAttribute::clear_ai_type() {
   _impl_.ai_type_ = 0;
+  _impl_._has_bits_[0] &= ~0x00008000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_ai_type() const {
   return _impl_.ai_type_;
@@ -17946,7 +18228,7 @@ inline int32_t ServerMsgMonsterAttribute::ai_type() const {
   return _internal_ai_type();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_ai_type(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00008000u;
   _impl_.ai_type_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_ai_type(int32_t value) {
@@ -17954,9 +18236,17 @@ inline void ServerMsgMonsterAttribute::set_ai_type(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.ai_type)
 }
 
-// string name = 16;
+// optional bytes name = 14;
+inline bool ServerMsgMonsterAttribute::_internal_has_name() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_name() const {
+  return _internal_has_name();
+}
 inline void ServerMsgMonsterAttribute::clear_name() {
   _impl_.name_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& ServerMsgMonsterAttribute::name() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerMsgMonsterAttribute.name)
@@ -17965,8 +18255,8 @@ inline const std::string& ServerMsgMonsterAttribute::name() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerMsgMonsterAttribute::set_name(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.name_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.name)
 }
 inline std::string* ServerMsgMonsterAttribute::mutable_name() {
@@ -17978,22 +18268,32 @@ inline const std::string& ServerMsgMonsterAttribute::_internal_name() const {
   return _impl_.name_.Get();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_name(const std::string& value) {
-  
+  _impl_._has_bits_[0] |= 0x00000001u;
   _impl_.name_.Set(value, GetArenaForAllocation());
 }
 inline std::string* ServerMsgMonsterAttribute::_internal_mutable_name() {
-  
+  _impl_._has_bits_[0] |= 0x00000001u;
   return _impl_.name_.Mutable(GetArenaForAllocation());
 }
 inline std::string* ServerMsgMonsterAttribute::release_name() {
   // @@protoc_insertion_point(field_release:servermessage.ServerMsgMonsterAttribute.name)
-  return _impl_.name_.Release();
+  if (!_internal_has_name()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.name_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
 }
 inline void ServerMsgMonsterAttribute::set_allocated_name(std::string* name) {
   if (name != nullptr) {
-    
+    _impl_._has_bits_[0] |= 0x00000001u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000001u;
   }
   _impl_.name_.SetAllocated(name, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -18004,9 +18304,17 @@ inline void ServerMsgMonsterAttribute::set_allocated_name(std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgMonsterAttribute.name)
 }
 
-// string country_title = 17;
+// optional bytes country_title = 15;
+inline bool ServerMsgMonsterAttribute::_internal_has_country_title() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_country_title() const {
+  return _internal_has_country_title();
+}
 inline void ServerMsgMonsterAttribute::clear_country_title() {
   _impl_.country_title_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
 inline const std::string& ServerMsgMonsterAttribute::country_title() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerMsgMonsterAttribute.country_title)
@@ -18015,8 +18323,8 @@ inline const std::string& ServerMsgMonsterAttribute::country_title() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerMsgMonsterAttribute::set_country_title(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.country_title_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+ _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_.country_title_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.country_title)
 }
 inline std::string* ServerMsgMonsterAttribute::mutable_country_title() {
@@ -18028,22 +18336,32 @@ inline const std::string& ServerMsgMonsterAttribute::_internal_country_title() c
   return _impl_.country_title_.Get();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_country_title(const std::string& value) {
-  
+  _impl_._has_bits_[0] |= 0x00000002u;
   _impl_.country_title_.Set(value, GetArenaForAllocation());
 }
 inline std::string* ServerMsgMonsterAttribute::_internal_mutable_country_title() {
-  
+  _impl_._has_bits_[0] |= 0x00000002u;
   return _impl_.country_title_.Mutable(GetArenaForAllocation());
 }
 inline std::string* ServerMsgMonsterAttribute::release_country_title() {
   // @@protoc_insertion_point(field_release:servermessage.ServerMsgMonsterAttribute.country_title)
-  return _impl_.country_title_.Release();
+  if (!_internal_has_country_title()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.country_title_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.country_title_.IsDefault()) {
+    _impl_.country_title_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
 }
 inline void ServerMsgMonsterAttribute::set_allocated_country_title(std::string* country_title) {
   if (country_title != nullptr) {
-    
+    _impl_._has_bits_[0] |= 0x00000002u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000002u;
   }
   _impl_.country_title_.SetAllocated(country_title, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -18054,9 +18372,17 @@ inline void ServerMsgMonsterAttribute::set_allocated_country_title(std::string* 
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgMonsterAttribute.country_title)
 }
 
-// string guild_title = 18;
+// optional bytes guild_title = 16;
+inline bool ServerMsgMonsterAttribute::_internal_has_guild_title() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_guild_title() const {
+  return _internal_has_guild_title();
+}
 inline void ServerMsgMonsterAttribute::clear_guild_title() {
   _impl_.guild_title_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000004u;
 }
 inline const std::string& ServerMsgMonsterAttribute::guild_title() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerMsgMonsterAttribute.guild_title)
@@ -18065,8 +18391,8 @@ inline const std::string& ServerMsgMonsterAttribute::guild_title() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerMsgMonsterAttribute::set_guild_title(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.guild_title_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+ _impl_._has_bits_[0] |= 0x00000004u;
+ _impl_.guild_title_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.guild_title)
 }
 inline std::string* ServerMsgMonsterAttribute::mutable_guild_title() {
@@ -18078,22 +18404,32 @@ inline const std::string& ServerMsgMonsterAttribute::_internal_guild_title() con
   return _impl_.guild_title_.Get();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_guild_title(const std::string& value) {
-  
+  _impl_._has_bits_[0] |= 0x00000004u;
   _impl_.guild_title_.Set(value, GetArenaForAllocation());
 }
 inline std::string* ServerMsgMonsterAttribute::_internal_mutable_guild_title() {
-  
+  _impl_._has_bits_[0] |= 0x00000004u;
   return _impl_.guild_title_.Mutable(GetArenaForAllocation());
 }
 inline std::string* ServerMsgMonsterAttribute::release_guild_title() {
   // @@protoc_insertion_point(field_release:servermessage.ServerMsgMonsterAttribute.guild_title)
-  return _impl_.guild_title_.Release();
+  if (!_internal_has_guild_title()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000004u;
+  auto* p = _impl_.guild_title_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.guild_title_.IsDefault()) {
+    _impl_.guild_title_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
 }
 inline void ServerMsgMonsterAttribute::set_allocated_guild_title(std::string* guild_title) {
   if (guild_title != nullptr) {
-    
+    _impl_._has_bits_[0] |= 0x00000004u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000004u;
   }
   _impl_.guild_title_.SetAllocated(guild_title, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -18104,9 +18440,17 @@ inline void ServerMsgMonsterAttribute::set_allocated_guild_title(std::string* gu
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgMonsterAttribute.guild_title)
 }
 
-// string normal_title = 19;
+// optional bytes normal_title = 17;
+inline bool ServerMsgMonsterAttribute::_internal_has_normal_title() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_normal_title() const {
+  return _internal_has_normal_title();
+}
 inline void ServerMsgMonsterAttribute::clear_normal_title() {
   _impl_.normal_title_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000008u;
 }
 inline const std::string& ServerMsgMonsterAttribute::normal_title() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerMsgMonsterAttribute.normal_title)
@@ -18115,8 +18459,8 @@ inline const std::string& ServerMsgMonsterAttribute::normal_title() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerMsgMonsterAttribute::set_normal_title(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.normal_title_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+ _impl_._has_bits_[0] |= 0x00000008u;
+ _impl_.normal_title_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.normal_title)
 }
 inline std::string* ServerMsgMonsterAttribute::mutable_normal_title() {
@@ -18128,22 +18472,32 @@ inline const std::string& ServerMsgMonsterAttribute::_internal_normal_title() co
   return _impl_.normal_title_.Get();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_normal_title(const std::string& value) {
-  
+  _impl_._has_bits_[0] |= 0x00000008u;
   _impl_.normal_title_.Set(value, GetArenaForAllocation());
 }
 inline std::string* ServerMsgMonsterAttribute::_internal_mutable_normal_title() {
-  
+  _impl_._has_bits_[0] |= 0x00000008u;
   return _impl_.normal_title_.Mutable(GetArenaForAllocation());
 }
 inline std::string* ServerMsgMonsterAttribute::release_normal_title() {
   // @@protoc_insertion_point(field_release:servermessage.ServerMsgMonsterAttribute.normal_title)
-  return _impl_.normal_title_.Release();
+  if (!_internal_has_normal_title()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000008u;
+  auto* p = _impl_.normal_title_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.normal_title_.IsDefault()) {
+    _impl_.normal_title_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
 }
 inline void ServerMsgMonsterAttribute::set_allocated_normal_title(std::string* normal_title) {
   if (normal_title != nullptr) {
-    
+    _impl_._has_bits_[0] |= 0x00000008u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000008u;
   }
   _impl_.normal_title_.SetAllocated(normal_title, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -18154,9 +18508,17 @@ inline void ServerMsgMonsterAttribute::set_allocated_normal_title(std::string* n
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgMonsterAttribute.normal_title)
 }
 
-// int32 country_title_type = 20;
+// optional int32 country_title_type = 18;
+inline bool ServerMsgMonsterAttribute::_internal_has_country_title_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00010000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_country_title_type() const {
+  return _internal_has_country_title_type();
+}
 inline void ServerMsgMonsterAttribute::clear_country_title_type() {
   _impl_.country_title_type_ = 0;
+  _impl_._has_bits_[0] &= ~0x00010000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_country_title_type() const {
   return _impl_.country_title_type_;
@@ -18166,7 +18528,7 @@ inline int32_t ServerMsgMonsterAttribute::country_title_type() const {
   return _internal_country_title_type();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_country_title_type(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00010000u;
   _impl_.country_title_type_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_country_title_type(int32_t value) {
@@ -18174,9 +18536,17 @@ inline void ServerMsgMonsterAttribute::set_country_title_type(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.country_title_type)
 }
 
-// int32 guild_title_type = 21;
+// optional int32 guild_title_type = 19;
+inline bool ServerMsgMonsterAttribute::_internal_has_guild_title_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00020000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_guild_title_type() const {
+  return _internal_has_guild_title_type();
+}
 inline void ServerMsgMonsterAttribute::clear_guild_title_type() {
   _impl_.guild_title_type_ = 0;
+  _impl_._has_bits_[0] &= ~0x00020000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_guild_title_type() const {
   return _impl_.guild_title_type_;
@@ -18186,7 +18556,7 @@ inline int32_t ServerMsgMonsterAttribute::guild_title_type() const {
   return _internal_guild_title_type();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_guild_title_type(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00020000u;
   _impl_.guild_title_type_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_guild_title_type(int32_t value) {
@@ -18194,9 +18564,17 @@ inline void ServerMsgMonsterAttribute::set_guild_title_type(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.guild_title_type)
 }
 
-// int32 normal_title_type = 22;
+// optional int32 normal_title_type = 20;
+inline bool ServerMsgMonsterAttribute::_internal_has_normal_title_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00040000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_normal_title_type() const {
+  return _internal_has_normal_title_type();
+}
 inline void ServerMsgMonsterAttribute::clear_normal_title_type() {
   _impl_.normal_title_type_ = 0;
+  _impl_._has_bits_[0] &= ~0x00040000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_normal_title_type() const {
   return _impl_.normal_title_type_;
@@ -18206,7 +18584,7 @@ inline int32_t ServerMsgMonsterAttribute::normal_title_type() const {
   return _internal_normal_title_type();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_normal_title_type(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00040000u;
   _impl_.normal_title_type_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_normal_title_type(int32_t value) {
@@ -18214,9 +18592,17 @@ inline void ServerMsgMonsterAttribute::set_normal_title_type(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.normal_title_type)
 }
 
-// uint32 occupant_guid = 23;
+// optional uint32 occupant_guid = 21;
+inline bool ServerMsgMonsterAttribute::_internal_has_occupant_guid() const {
+  bool value = (_impl_._has_bits_[0] & 0x00080000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_occupant_guid() const {
+  return _internal_has_occupant_guid();
+}
 inline void ServerMsgMonsterAttribute::clear_occupant_guid() {
   _impl_.occupant_guid_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00080000u;
 }
 inline uint32_t ServerMsgMonsterAttribute::_internal_occupant_guid() const {
   return _impl_.occupant_guid_;
@@ -18226,7 +18612,7 @@ inline uint32_t ServerMsgMonsterAttribute::occupant_guid() const {
   return _internal_occupant_guid();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_occupant_guid(uint32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00080000u;
   _impl_.occupant_guid_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_occupant_guid(uint32_t value) {
@@ -18234,9 +18620,17 @@ inline void ServerMsgMonsterAttribute::set_occupant_guid(uint32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.occupant_guid)
 }
 
-// int32 owner_id = 24;
+// optional int32 owner_id = 22;
+inline bool ServerMsgMonsterAttribute::_internal_has_owner_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00100000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_owner_id() const {
+  return _internal_has_owner_id();
+}
 inline void ServerMsgMonsterAttribute::clear_owner_id() {
   _impl_.owner_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00100000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_owner_id() const {
   return _impl_.owner_id_;
@@ -18246,7 +18640,7 @@ inline int32_t ServerMsgMonsterAttribute::owner_id() const {
   return _internal_owner_id();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_owner_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00100000u;
   _impl_.owner_id_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_owner_id(int32_t value) {
@@ -18254,9 +18648,17 @@ inline void ServerMsgMonsterAttribute::set_owner_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.owner_id)
 }
 
-// int32 target_id = 25;
+// optional int32 target_id = 23;
+inline bool ServerMsgMonsterAttribute::_internal_has_target_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00200000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_target_id() const {
+  return _internal_has_target_id();
+}
 inline void ServerMsgMonsterAttribute::clear_target_id() {
   _impl_.target_id_ = 0;
+  _impl_._has_bits_[0] &= ~0x00200000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_target_id() const {
   return _impl_.target_id_;
@@ -18266,7 +18668,7 @@ inline int32_t ServerMsgMonsterAttribute::target_id() const {
   return _internal_target_id();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_target_id(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00200000u;
   _impl_.target_id_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_target_id(int32_t value) {
@@ -18274,9 +18676,17 @@ inline void ServerMsgMonsterAttribute::set_target_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.target_id)
 }
 
-// float dir = 26;
+// optional float dir = 24;
+inline bool ServerMsgMonsterAttribute::_internal_has_dir() const {
+  bool value = (_impl_._has_bits_[0] & 0x00400000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_dir() const {
+  return _internal_has_dir();
+}
 inline void ServerMsgMonsterAttribute::clear_dir() {
   _impl_.dir_ = 0;
+  _impl_._has_bits_[0] &= ~0x00400000u;
 }
 inline float ServerMsgMonsterAttribute::_internal_dir() const {
   return _impl_.dir_;
@@ -18286,7 +18696,7 @@ inline float ServerMsgMonsterAttribute::dir() const {
   return _internal_dir();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_dir(float value) {
-  
+  _impl_._has_bits_[0] |= 0x00400000u;
   _impl_.dir_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_dir(float value) {
@@ -18294,9 +18704,17 @@ inline void ServerMsgMonsterAttribute::set_dir(float value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.dir)
 }
 
-// int32 ctrl_state = 27;
+// optional int32 ctrl_state = 25;
+inline bool ServerMsgMonsterAttribute::_internal_has_ctrl_state() const {
+  bool value = (_impl_._has_bits_[0] & 0x00800000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_ctrl_state() const {
+  return _internal_has_ctrl_state();
+}
 inline void ServerMsgMonsterAttribute::clear_ctrl_state() {
   _impl_.ctrl_state_ = 0;
+  _impl_._has_bits_[0] &= ~0x00800000u;
 }
 inline int32_t ServerMsgMonsterAttribute::_internal_ctrl_state() const {
   return _impl_.ctrl_state_;
@@ -18306,7 +18724,7 @@ inline int32_t ServerMsgMonsterAttribute::ctrl_state() const {
   return _internal_ctrl_state();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_ctrl_state(int32_t value) {
-  
+  _impl_._has_bits_[0] |= 0x00800000u;
   _impl_.ctrl_state_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_ctrl_state(int32_t value) {
@@ -18314,9 +18732,17 @@ inline void ServerMsgMonsterAttribute::set_ctrl_state(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgMonsterAttribute.ctrl_state)
 }
 
-// float scale = 28;
+// optional float scale = 26;
+inline bool ServerMsgMonsterAttribute::_internal_has_scale() const {
+  bool value = (_impl_._has_bits_[0] & 0x01000000u) != 0;
+  return value;
+}
+inline bool ServerMsgMonsterAttribute::has_scale() const {
+  return _internal_has_scale();
+}
 inline void ServerMsgMonsterAttribute::clear_scale() {
   _impl_.scale_ = 0;
+  _impl_._has_bits_[0] &= ~0x01000000u;
 }
 inline float ServerMsgMonsterAttribute::_internal_scale() const {
   return _impl_.scale_;
@@ -18326,7 +18752,7 @@ inline float ServerMsgMonsterAttribute::scale() const {
   return _internal_scale();
 }
 inline void ServerMsgMonsterAttribute::_internal_set_scale(float value) {
-  
+  _impl_._has_bits_[0] |= 0x01000000u;
   _impl_.scale_ = value;
 }
 inline void ServerMsgMonsterAttribute::set_scale(float value) {
@@ -18358,7 +18784,7 @@ inline void ServerMsgNewBeastie::set_object_id(uint32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewBeastie.object_id)
 }
 
-// string name = 2;
+// bytes name = 2;
 inline void ServerMsgNewBeastie::clear_name() {
   _impl_.name_.ClearToEmpty();
 }
@@ -18370,7 +18796,7 @@ template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerMsgNewBeastie::set_name(ArgT0&& arg0, ArgT... args) {
  
- _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+ _impl_.name_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgNewBeastie.name)
 }
 inline std::string* ServerMsgNewBeastie::mutable_name() {
@@ -19394,6 +19820,158 @@ inline void ServerMsgPickItemResult::set_result_code(int32_t value) {
 
 // -------------------------------------------------------------------
 
+// EventItem
+
+// int32 item_type = 1;
+inline void EventItem::clear_item_type() {
+  _impl_.item_type_ = 0;
+}
+inline int32_t EventItem::_internal_item_type() const {
+  return _impl_.item_type_;
+}
+inline int32_t EventItem::item_type() const {
+  // @@protoc_insertion_point(field_get:servermessage.EventItem.item_type)
+  return _internal_item_type();
+}
+inline void EventItem::_internal_set_item_type(int32_t value) {
+  
+  _impl_.item_type_ = value;
+}
+inline void EventItem::set_item_type(int32_t value) {
+  _internal_set_item_type(value);
+  // @@protoc_insertion_point(field_set:servermessage.EventItem.item_type)
+}
+
+// int32 item_state = 2;
+inline void EventItem::clear_item_state() {
+  _impl_.item_state_ = 0;
+}
+inline int32_t EventItem::_internal_item_state() const {
+  return _impl_.item_state_;
+}
+inline int32_t EventItem::item_state() const {
+  // @@protoc_insertion_point(field_get:servermessage.EventItem.item_state)
+  return _internal_item_state();
+}
+inline void EventItem::_internal_set_item_state(int32_t value) {
+  
+  _impl_.item_state_ = value;
+}
+inline void EventItem::set_item_state(int32_t value) {
+  _internal_set_item_state(value);
+  // @@protoc_insertion_point(field_set:servermessage.EventItem.item_state)
+}
+
+// int32 item_index = 3;
+inline void EventItem::clear_item_index() {
+  _impl_.item_index_ = 0;
+}
+inline int32_t EventItem::_internal_item_index() const {
+  return _impl_.item_index_;
+}
+inline int32_t EventItem::item_index() const {
+  // @@protoc_insertion_point(field_get:servermessage.EventItem.item_index)
+  return _internal_item_index();
+}
+inline void EventItem::_internal_set_item_index(int32_t value) {
+  
+  _impl_.item_index_ = value;
+}
+inline void EventItem::set_item_index(int32_t value) {
+  _internal_set_item_index(value);
+  // @@protoc_insertion_point(field_set:servermessage.EventItem.item_index)
+}
+
+// int32 scriptId = 4;
+inline void EventItem::clear_scriptid() {
+  _impl_.scriptid_ = 0;
+}
+inline int32_t EventItem::_internal_scriptid() const {
+  return _impl_.scriptid_;
+}
+inline int32_t EventItem::scriptid() const {
+  // @@protoc_insertion_point(field_get:servermessage.EventItem.scriptId)
+  return _internal_scriptid();
+}
+inline void EventItem::_internal_set_scriptid(int32_t value) {
+  
+  _impl_.scriptid_ = value;
+}
+inline void EventItem::set_scriptid(int32_t value) {
+  _internal_set_scriptid(value);
+  // @@protoc_insertion_point(field_set:servermessage.EventItem.scriptId)
+}
+
+// optional bytes scriptStr = 5;
+inline bool EventItem::_internal_has_scriptstr() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool EventItem::has_scriptstr() const {
+  return _internal_has_scriptstr();
+}
+inline void EventItem::clear_scriptstr() {
+  _impl_.scriptstr_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& EventItem::scriptstr() const {
+  // @@protoc_insertion_point(field_get:servermessage.EventItem.scriptStr)
+  return _internal_scriptstr();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void EventItem::set_scriptstr(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.scriptstr_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:servermessage.EventItem.scriptStr)
+}
+inline std::string* EventItem::mutable_scriptstr() {
+  std::string* _s = _internal_mutable_scriptstr();
+  // @@protoc_insertion_point(field_mutable:servermessage.EventItem.scriptStr)
+  return _s;
+}
+inline const std::string& EventItem::_internal_scriptstr() const {
+  return _impl_.scriptstr_.Get();
+}
+inline void EventItem::_internal_set_scriptstr(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.scriptstr_.Set(value, GetArenaForAllocation());
+}
+inline std::string* EventItem::_internal_mutable_scriptstr() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.scriptstr_.Mutable(GetArenaForAllocation());
+}
+inline std::string* EventItem::release_scriptstr() {
+  // @@protoc_insertion_point(field_release:servermessage.EventItem.scriptStr)
+  if (!_internal_has_scriptstr()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.scriptstr_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.scriptstr_.IsDefault()) {
+    _impl_.scriptstr_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void EventItem::set_allocated_scriptstr(std::string* scriptstr) {
+  if (scriptstr != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.scriptstr_.SetAllocated(scriptstr, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.scriptstr_.IsDefault()) {
+    _impl_.scriptstr_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:servermessage.EventItem.scriptStr)
+}
+
+// -------------------------------------------------------------------
+
 // ServerMsgQueryEventResult
 
 // uint32 object_id = 1;
@@ -19414,6 +19992,46 @@ inline void ServerMsgQueryEventResult::_internal_set_object_id(uint32_t value) {
 inline void ServerMsgQueryEventResult::set_object_id(uint32_t value) {
   _internal_set_object_id(value);
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgQueryEventResult.object_id)
+}
+
+// repeated .servermessage.EventItem eventlist = 2;
+inline int ServerMsgQueryEventResult::_internal_eventlist_size() const {
+  return _impl_.eventlist_.size();
+}
+inline int ServerMsgQueryEventResult::eventlist_size() const {
+  return _internal_eventlist_size();
+}
+inline void ServerMsgQueryEventResult::clear_eventlist() {
+  _impl_.eventlist_.Clear();
+}
+inline ::servermessage::EventItem* ServerMsgQueryEventResult::mutable_eventlist(int index) {
+  // @@protoc_insertion_point(field_mutable:servermessage.ServerMsgQueryEventResult.eventlist)
+  return _impl_.eventlist_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::servermessage::EventItem >*
+ServerMsgQueryEventResult::mutable_eventlist() {
+  // @@protoc_insertion_point(field_mutable_list:servermessage.ServerMsgQueryEventResult.eventlist)
+  return &_impl_.eventlist_;
+}
+inline const ::servermessage::EventItem& ServerMsgQueryEventResult::_internal_eventlist(int index) const {
+  return _impl_.eventlist_.Get(index);
+}
+inline const ::servermessage::EventItem& ServerMsgQueryEventResult::eventlist(int index) const {
+  // @@protoc_insertion_point(field_get:servermessage.ServerMsgQueryEventResult.eventlist)
+  return _internal_eventlist(index);
+}
+inline ::servermessage::EventItem* ServerMsgQueryEventResult::_internal_add_eventlist() {
+  return _impl_.eventlist_.Add();
+}
+inline ::servermessage::EventItem* ServerMsgQueryEventResult::add_eventlist() {
+  ::servermessage::EventItem* _add = _internal_add_eventlist();
+  // @@protoc_insertion_point(field_add:servermessage.ServerMsgQueryEventResult.eventlist)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::servermessage::EventItem >&
+ServerMsgQueryEventResult::eventlist() const {
+  // @@protoc_insertion_point(field_list:servermessage.ServerMsgQueryEventResult.eventlist)
+  return _impl_.eventlist_;
 }
 
 // -------------------------------------------------------------------
@@ -19674,9 +20292,11 @@ inline void ServerMsgScriptCommand::set_cmd_id(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgScriptCommand.cmd_id)
 }
 
-// .base.Player_Setting setting = 2;
+// optional .base.Player_Setting setting = 2;
 inline bool ServerMsgScriptCommand::_internal_has_setting() const {
-  return this != internal_default_instance() && _impl_.setting_ != nullptr;
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.setting_ != nullptr);
+  return value;
 }
 inline bool ServerMsgScriptCommand::has_setting() const {
   return _internal_has_setting();
@@ -19697,14 +20317,14 @@ inline void ServerMsgScriptCommand::unsafe_arena_set_allocated_setting(
   }
   _impl_.setting_ = setting;
   if (setting) {
-    
+    _impl_._has_bits_[0] |= 0x00000002u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000002u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:servermessage.ServerMsgScriptCommand.setting)
 }
 inline ::base::Player_Setting* ServerMsgScriptCommand::release_setting() {
-  
+  _impl_._has_bits_[0] &= ~0x00000002u;
   ::base::Player_Setting* temp = _impl_.setting_;
   _impl_.setting_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -19720,13 +20340,13 @@ inline ::base::Player_Setting* ServerMsgScriptCommand::release_setting() {
 }
 inline ::base::Player_Setting* ServerMsgScriptCommand::unsafe_arena_release_setting() {
   // @@protoc_insertion_point(field_release:servermessage.ServerMsgScriptCommand.setting)
-  
+  _impl_._has_bits_[0] &= ~0x00000002u;
   ::base::Player_Setting* temp = _impl_.setting_;
   _impl_.setting_ = nullptr;
   return temp;
 }
 inline ::base::Player_Setting* ServerMsgScriptCommand::_internal_mutable_setting() {
-  
+  _impl_._has_bits_[0] |= 0x00000002u;
   if (_impl_.setting_ == nullptr) {
     auto* p = CreateMaybeMessage<::base::Player_Setting>(GetArenaForAllocation());
     _impl_.setting_ = p;
@@ -19751,9 +20371,9 @@ inline void ServerMsgScriptCommand::set_allocated_setting(::base::Player_Setting
       setting = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, setting, submessage_arena);
     }
-    
+    _impl_._has_bits_[0] |= 0x00000002u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000002u;
   }
   _impl_.setting_ = setting;
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgScriptCommand.setting)
@@ -19779,9 +20399,11 @@ inline void ServerMsgScriptCommand::set_index(int32_t value) {
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgScriptCommand.index)
 }
 
-// .base.ScriptParam_QuestInfo continue_param = 4;
+// optional .base.ScriptParam_QuestInfo continue_param = 4;
 inline bool ServerMsgScriptCommand::_internal_has_continue_param() const {
-  return this != internal_default_instance() && _impl_.continue_param_ != nullptr;
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.continue_param_ != nullptr);
+  return value;
 }
 inline bool ServerMsgScriptCommand::has_continue_param() const {
   return _internal_has_continue_param();
@@ -19802,14 +20424,14 @@ inline void ServerMsgScriptCommand::unsafe_arena_set_allocated_continue_param(
   }
   _impl_.continue_param_ = continue_param;
   if (continue_param) {
-    
+    _impl_._has_bits_[0] |= 0x00000004u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000004u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:servermessage.ServerMsgScriptCommand.continue_param)
 }
 inline ::base::ScriptParam_QuestInfo* ServerMsgScriptCommand::release_continue_param() {
-  
+  _impl_._has_bits_[0] &= ~0x00000004u;
   ::base::ScriptParam_QuestInfo* temp = _impl_.continue_param_;
   _impl_.continue_param_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -19825,13 +20447,13 @@ inline ::base::ScriptParam_QuestInfo* ServerMsgScriptCommand::release_continue_p
 }
 inline ::base::ScriptParam_QuestInfo* ServerMsgScriptCommand::unsafe_arena_release_continue_param() {
   // @@protoc_insertion_point(field_release:servermessage.ServerMsgScriptCommand.continue_param)
-  
+  _impl_._has_bits_[0] &= ~0x00000004u;
   ::base::ScriptParam_QuestInfo* temp = _impl_.continue_param_;
   _impl_.continue_param_ = nullptr;
   return temp;
 }
 inline ::base::ScriptParam_QuestInfo* ServerMsgScriptCommand::_internal_mutable_continue_param() {
-  
+  _impl_._has_bits_[0] |= 0x00000004u;
   if (_impl_.continue_param_ == nullptr) {
     auto* p = CreateMaybeMessage<::base::ScriptParam_QuestInfo>(GetArenaForAllocation());
     _impl_.continue_param_ = p;
@@ -19856,17 +20478,19 @@ inline void ServerMsgScriptCommand::set_allocated_continue_param(::base::ScriptP
       continue_param = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, continue_param, submessage_arena);
     }
-    
+    _impl_._has_bits_[0] |= 0x00000004u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000004u;
   }
   _impl_.continue_param_ = continue_param;
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgScriptCommand.continue_param)
 }
 
-// .base.ScriptParam_QuestInfo quest_info = 5;
+// optional .base.ScriptParam_QuestInfo quest_info = 5;
 inline bool ServerMsgScriptCommand::_internal_has_quest_info() const {
-  return this != internal_default_instance() && _impl_.quest_info_ != nullptr;
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.quest_info_ != nullptr);
+  return value;
 }
 inline bool ServerMsgScriptCommand::has_quest_info() const {
   return _internal_has_quest_info();
@@ -19887,14 +20511,14 @@ inline void ServerMsgScriptCommand::unsafe_arena_set_allocated_quest_info(
   }
   _impl_.quest_info_ = quest_info;
   if (quest_info) {
-    
+    _impl_._has_bits_[0] |= 0x00000008u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000008u;
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:servermessage.ServerMsgScriptCommand.quest_info)
 }
 inline ::base::ScriptParam_QuestInfo* ServerMsgScriptCommand::release_quest_info() {
-  
+  _impl_._has_bits_[0] &= ~0x00000008u;
   ::base::ScriptParam_QuestInfo* temp = _impl_.quest_info_;
   _impl_.quest_info_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
@@ -19910,13 +20534,13 @@ inline ::base::ScriptParam_QuestInfo* ServerMsgScriptCommand::release_quest_info
 }
 inline ::base::ScriptParam_QuestInfo* ServerMsgScriptCommand::unsafe_arena_release_quest_info() {
   // @@protoc_insertion_point(field_release:servermessage.ServerMsgScriptCommand.quest_info)
-  
+  _impl_._has_bits_[0] &= ~0x00000008u;
   ::base::ScriptParam_QuestInfo* temp = _impl_.quest_info_;
   _impl_.quest_info_ = nullptr;
   return temp;
 }
 inline ::base::ScriptParam_QuestInfo* ServerMsgScriptCommand::_internal_mutable_quest_info() {
-  
+  _impl_._has_bits_[0] |= 0x00000008u;
   if (_impl_.quest_info_ == nullptr) {
     auto* p = CreateMaybeMessage<::base::ScriptParam_QuestInfo>(GetArenaForAllocation());
     _impl_.quest_info_ = p;
@@ -19941,17 +20565,25 @@ inline void ServerMsgScriptCommand::set_allocated_quest_info(::base::ScriptParam
       quest_info = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, quest_info, submessage_arena);
     }
-    
+    _impl_._has_bits_[0] |= 0x00000008u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000008u;
   }
   _impl_.quest_info_ = quest_info;
   // @@protoc_insertion_point(field_set_allocated:servermessage.ServerMsgScriptCommand.quest_info)
 }
 
-// string quest_tips = 6;
+// optional string quest_tips = 6;
+inline bool ServerMsgScriptCommand::_internal_has_quest_tips() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool ServerMsgScriptCommand::has_quest_tips() const {
+  return _internal_has_quest_tips();
+}
 inline void ServerMsgScriptCommand::clear_quest_tips() {
   _impl_.quest_tips_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& ServerMsgScriptCommand::quest_tips() const {
   // @@protoc_insertion_point(field_get:servermessage.ServerMsgScriptCommand.quest_tips)
@@ -19960,7 +20592,7 @@ inline const std::string& ServerMsgScriptCommand::quest_tips() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void ServerMsgScriptCommand::set_quest_tips(ArgT0&& arg0, ArgT... args) {
- 
+ _impl_._has_bits_[0] |= 0x00000001u;
  _impl_.quest_tips_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:servermessage.ServerMsgScriptCommand.quest_tips)
 }
@@ -19973,22 +20605,32 @@ inline const std::string& ServerMsgScriptCommand::_internal_quest_tips() const {
   return _impl_.quest_tips_.Get();
 }
 inline void ServerMsgScriptCommand::_internal_set_quest_tips(const std::string& value) {
-  
+  _impl_._has_bits_[0] |= 0x00000001u;
   _impl_.quest_tips_.Set(value, GetArenaForAllocation());
 }
 inline std::string* ServerMsgScriptCommand::_internal_mutable_quest_tips() {
-  
+  _impl_._has_bits_[0] |= 0x00000001u;
   return _impl_.quest_tips_.Mutable(GetArenaForAllocation());
 }
 inline std::string* ServerMsgScriptCommand::release_quest_tips() {
   // @@protoc_insertion_point(field_release:servermessage.ServerMsgScriptCommand.quest_tips)
-  return _impl_.quest_tips_.Release();
+  if (!_internal_has_quest_tips()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.quest_tips_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.quest_tips_.IsDefault()) {
+    _impl_.quest_tips_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
 }
 inline void ServerMsgScriptCommand::set_allocated_quest_tips(std::string* quest_tips) {
   if (quest_tips != nullptr) {
-    
+    _impl_._has_bits_[0] |= 0x00000001u;
   } else {
-    
+    _impl_._has_bits_[0] &= ~0x00000001u;
   }
   _impl_.quest_tips_.SetAllocated(quest_tips, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -20489,6 +21131,8 @@ inline void ServerMsgUseEquipResult::set_bag_index(int32_t value) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

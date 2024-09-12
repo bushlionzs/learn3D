@@ -73,6 +73,17 @@ namespace Ogre {
         return std::shared_ptr<OgreTexture>(tmp);
     }
 
+    bool TextureManager::addTexture(const String& name, OgreTexture* tex)
+    {
+        auto it = mTexMap.find(name);
+        if (it != mTexMap.end())
+        {
+            return false;
+        }
+
+        mTexMap[name] = std::shared_ptr<OgreTexture>(tex);
+        return true;
+    }
     bool TextureManager::addTexture(const String& name, Texture* tex)
     {
         if (auto iter = mTextureCache.find(name); iter != mTextureCache.end())
@@ -83,6 +94,8 @@ namespace Ogre {
         mTextureCache[name] = tex;
         return true;
     }
+
+   
 
     std::pair<Texture*, CacheResult> TextureManager::getOrCreateTexture(const String& name, bool cube)
     {

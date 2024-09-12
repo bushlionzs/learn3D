@@ -82,12 +82,11 @@ layout (set=1, binding = 0) uniform sampler2D albedo_pbr;
 layout (set=1, binding = 1) uniform sampler2D ao_pbr;
 layout (set=1, binding = 2) uniform sampler2D normal_pbr;
 layout (set=1, binding = 3) uniform sampler2D emissive_pbr;
-layout (set=1, binding = 4) uniform sampler2D metal_pbr;
-layout (set=1, binding = 5) uniform sampler2D roughness_pbr;
-layout (set=1, binding = 6) uniform sampler2D brdflut;
+layout (set=1, binding = 4) uniform sampler2D metal_roughness_pbr;
+layout (set=1, binding = 5) uniform sampler2D brdflut;
 
-layout (set=1, binding = 7) uniform samplerCube irradiance;
-layout (set=1, binding = 8) uniform samplerCube prefiltered;
+layout (set=1, binding = 6) uniform samplerCube irradiance;
+layout (set=1, binding = 7) uniform samplerCube prefiltered;
 #else
 layout(set=1, binding = 0) uniform sampler2D first;
 layout (set=1, binding = 1) uniform sampler2D second;

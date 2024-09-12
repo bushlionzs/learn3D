@@ -48,7 +48,7 @@ typedef int32_t		QuestID_t;
 typedef ID_t		GroupID_t;
 typedef ID_t		ChannelID_t;
 typedef ID_t		CooldownID_t;
-typedef ID_t		CampID_t;
+typedef uchar		CampID_t;
 typedef ID_t		GuildID_t;
 typedef ID_t		CityID_t;
 typedef ID_t		TopListID_t;

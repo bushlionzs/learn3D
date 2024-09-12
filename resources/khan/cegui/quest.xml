@@ -48,9 +48,25 @@
 		<Window type="TaharezLook/StaticImage" name="Quest_Background_Frame_1" >
 			<!--Comment	""	-->
 			<!--	Left=0, Top=108, Right=355, Bottom=637	-->
-			<Property name="Size" value="{{0.962060,0},{0.780236,0}}" />
-			<Property name="Position" value="{{0.0,0},{0.092920,0}}" />
+			<Property name="Size" value="{{0.962060,0},{0.90236,0}}" />
+			<Property name="Position" value="{{0.0,0.0},{0.092920,0}}" />
 			<Property name="Image" value="UI_MainBoard_5/UI_MainBoard_5_Quest_Board" />
+			    <Window type="TaharezLook/StaticText" name="QuestDesc" >
+				<!--Comment	""	-->
+				<!--	Left=100, Top=116, Right=236, Bottom=148	-->
+				<Property name="Size" value="{{0.9,0},{0.95,0}}" />
+			    <Property name="Position" value="{{0.05,0.05},{0.092920,0}}" />
+				<Property name="HorzFormatting" value="WordWrapLeftAligned" />
+				<Property name="VertFormatting" value="TopAligned" />
+				<Property name="TextColours" value="FF000000" />
+				<Property name="Text" value="任务描述" />
+				<Property name="AlwaysOnTop" value="True" />
+				<Property name="BackgroundEnabled" value="false" />
+				<Property name="FrameEnabled" value="false" />
+				<Property name="Font" value="simhei8.font" />
+				
+	
+			</Window>
 		</Window>
 		
 		<Window type="TaharezLook/Button" name="Quest_Button_Refuse" >
@@ -74,9 +90,12 @@
 			<Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Hover" />
 			<Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Pushed" />
 			<Property name="DisabledImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Disabled" />
-			<Property name="Text" value="确定" />
+			<Property name="Text" value="接受" />
 			<Property name="AlwaysOnTop" value="True" />
 		</Window>
+		
+		
+		
 		<Window type="TaharezLook/StaticText" name="Quest_NPCname" >
 			<!--Comment	""	-->
 			<!--	Left=100, Top=116, Right=236, Bottom=148	-->
@@ -84,9 +103,11 @@
 			<Property name="Position" value="{{0.291003,0},{0.104720,0}}" />
 			<Property name="HorzFormatting" value="HorzCentred" />
 			<Property name="VertFormatting" value="VertCentred" />
-			<Property name="TextColours" value="FF780000" />
-			<Property name="Text" value="金虎" />
+			<Property name="TextColours" value="CFFD800" />
+			<Property name="Text" value="aaaaa" />
 			<Property name="AlwaysOnTop" value="True" />
+			<Property name="BackgroundEnabled" value="false" />
+			<Property name="FrameEnabled" value="false" />
 		</Window>
 	</Window>
 </GUILayout>

@@ -69,6 +69,8 @@ protected:
 
     //! Name of window to manipulate
     String d_windowName;
+    String d_windowType;
+    std::string d_windowText;
     //! whether d_window is synched.
     mutable bool d_windowPtrSynched;
     //! pointer to the window controlled by this component.

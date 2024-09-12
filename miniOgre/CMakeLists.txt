@@ -94,6 +94,7 @@ target_include_directories(${MINIOGRE_LIB_NAME}
 	${ROOT_INC}/3rdSource/math/include
 	${ROOT_INC}/3rdSource/vkmemalloc/include
 	${ROOT_INC}/3rdSource/bluevk/include
+	${ROOT_INC}/3rdSource
 	${DYNETWORK_INCLUDE_HEADERS}
 )
 

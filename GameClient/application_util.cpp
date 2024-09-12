@@ -529,11 +529,11 @@ bool FormatQuestString(String& strConvert)
 
 			if (pNpc->nNPCType != 3)
 			{
-				snprintf(strTemp, 256, "#aB{npc_%llu_%d}%s#aE", pNpc->nIndex, nOnlyFlag++, pNpc->szNpcUIName);
+				snprintf(strTemp, 256, "{npc_%llu_%d}%s", pNpc->nIndex, nOnlyFlag++, pNpc->szNpcUIName);
 			}
 			else
 			{
-				snprintf(strTemp, 256, "#aB{npc_%llu_%d}%s#aE", pNpc->nIndex, nOnlyFlag++, pNpc->szNpcName);
+				snprintf(strTemp, 256, "{npc_%llu_%d}%s", pNpc->nIndex, nOnlyFlag++, pNpc->szNpcName);
 			}
 
 			strConvert = strConvert.substr(0, nPos) + String(strTemp) + strIndex.substr(strlen(szNum));

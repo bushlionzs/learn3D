@@ -41,25 +41,22 @@ add_subdir(.)
 
 
 
-add_library(${GLSLUTIL_LIB_NAME} SHARED ${GLSLUTIL_SRC_LIST})
+add_library(${GLSLUTIL_LIB_NAME} STATIC ${GLSLUTIL_SRC_LIST})
 
-SET(LIBRARY_OUTPUT_PATH  ${ROOT_INC}/bin)
 
 target_include_directories(${GLSLUTIL_LIB_NAME}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GLSLUTIL_INC}
+	${ROOT_INC}/3rdsource
 	${ROOT_INC}/3rd
 )
-
 set( MyFavLib_LIBRARIES 
     debug shaderc_sharedd.lib optimized shaderc_shared.lib
-    debug SpirvToolsd.lib optimized SpirvTools.lib )
+)
 	
-message(${MyFavLib_LIBRARIES})
-target_link_directories(${GLSLUTIL_LIB_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
+target_link_libraries(${GLSLUTIL_LIB_NAME} ${MyFavLib_LIBRARIES} SpirvTools)
 
-target_link_libraries(${GLSLUTIL_LIB_NAME} ${MyFavLib_LIBRARIES})
 set(GLSLUTIL_INC ${GLSLUTIL_INC}  CACHE INTERNAL "shared")
 
 

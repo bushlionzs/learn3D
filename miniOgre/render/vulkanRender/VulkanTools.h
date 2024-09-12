@@ -11,6 +11,7 @@
 #include <filament/vulkan/VulkanContext.h>
 #include "VulkanCommon.h"
 #include "VulkanInitializers.hpp"
+#include "OgreCommon.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -122,8 +123,9 @@ namespace vks
 
 		// Load a SPIR-V shader (binary)
 
-		VkShaderModule loadShader(const char *fileName, VkDevice device);
+		VkShaderModule loadShaderBinary(const char *fileName, VkDevice device);
 
+		VkShaderModule loadShaderAssic(const char* fileName, VkDevice device, Ogre::ShaderType type);
 		/** @brief Checks if a file exists */
 		bool fileExists(const std::string &filename);
 

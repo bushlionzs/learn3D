@@ -121,6 +121,29 @@ namespace Ogre
             m[3][3] = m33;
         }
 
+        inline Matrix4(const Ogre::Vector4& m0,
+                      const Ogre::Vector4& m1,
+                      const Ogre::Vector4& m2,
+                      const Ogre::Vector4& m3)
+        {
+            m[0][0] = m0[0];
+            m[0][1] = m0[1];
+            m[0][2] = m0[2];
+            m[0][3] = m0[3];
+            m[1][0] = m1[0];
+            m[1][1] = m1[1];
+            m[1][2] = m1[2];
+            m[1][3] = m1[3];
+            m[2][0] = m2[0];
+            m[2][1] = m2[1];
+            m[2][2] = m2[2];
+            m[2][3] = m2[3];
+            m[3][0] = m3[0];
+            m[3][1] = m3[1];
+            m[3][2] = m3[2];
+            m[3][3] = m3[3];
+        }
+
         inline Matrix4(const Real* arr)
         {
             memcpy(m,arr,16*sizeof(Real));

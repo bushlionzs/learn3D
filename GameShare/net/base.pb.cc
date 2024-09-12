@@ -330,19 +330,6 @@ struct QuestDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 QuestDefaultTypeInternal _Quest_default_instance_;
-PROTOBUF_CONSTEXPR SArchiveLoader_Quest::SArchiveLoader_Quest(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.quests_)*/{}
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct SArchiveLoader_QuestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR SArchiveLoader_QuestDefaultTypeInternal()
-      : _instance(::_pbi::ConstantInitialized{}) {}
-  ~SArchiveLoader_QuestDefaultTypeInternal() {}
-  union {
-    SArchiveLoader_Quest _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SArchiveLoader_QuestDefaultTypeInternal _SArchiveLoader_Quest_default_instance_;
 PROTOBUF_CONSTEXPR Player_Setting::Player_Setting(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.setting_type_)*/0
@@ -391,7 +378,9 @@ struct SQuestBonusDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SQuestBonusDefaultTypeInternal _SQuestBonus_default_instance_;
 PROTOBUF_CONSTEXPR ScriptParam_QuestInfo::ScriptParam_QuestInfo(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.bonus_)*/{}
+    /*decltype(_impl_.atext_)*/{}
+  , /*decltype(_impl_.demand_item_)*/{}
+  , /*decltype(_impl_.abonus_)*/{}
   , /*decltype(_impl_.text_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.npc_id_)*/0
   , /*decltype(_impl_.script_id_)*/0
@@ -408,7 +397,7 @@ struct ScriptParam_QuestInfoDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ScriptParam_QuestInfoDefaultTypeInternal _ScriptParam_QuestInfo_default_instance_;
 }  // namespace base
-static ::_pb::Metadata file_level_metadata_base_2eproto[24];
+static ::_pb::Metadata file_level_metadata_base_2eproto[23];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_base_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_base_2eproto = nullptr;
 
@@ -613,13 +602,6 @@ const uint32_t TableStruct_base_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pro
   PROTOBUF_FIELD_OFFSET(::base::Quest, _impl_.have_done_),
   PROTOBUF_FIELD_OFFSET(::base::Quest, _impl_.quest_data_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::base::SArchiveLoader_Quest, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::base::SArchiveLoader_Quest, _impl_.quests_),
-  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::base::Player_Setting, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -661,7 +643,9 @@ const uint32_t TableStruct_base_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pro
   PROTOBUF_FIELD_OFFSET(::base::ScriptParam_QuestInfo, _impl_.quest_id_),
   PROTOBUF_FIELD_OFFSET(::base::ScriptParam_QuestInfo, _impl_.yflags_),
   PROTOBUF_FIELD_OFFSET(::base::ScriptParam_QuestInfo, _impl_.text_),
-  PROTOBUF_FIELD_OFFSET(::base::ScriptParam_QuestInfo, _impl_.bonus_),
+  PROTOBUF_FIELD_OFFSET(::base::ScriptParam_QuestInfo, _impl_.atext_),
+  PROTOBUF_FIELD_OFFSET(::base::ScriptParam_QuestInfo, _impl_.demand_item_),
+  PROTOBUF_FIELD_OFFSET(::base::ScriptParam_QuestInfo, _impl_.abonus_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::base::Flag64)},
@@ -683,11 +667,10 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 147, 164, -1, sizeof(::base::SItem)},
   { 175, -1, -1, sizeof(::base::PlayerSpell)},
   { 184, -1, -1, sizeof(::base::Quest)},
-  { 199, -1, -1, sizeof(::base::SArchiveLoader_Quest)},
-  { 206, -1, -1, sizeof(::base::Player_Setting)},
-  { 214, -1, -1, sizeof(::base::SQuestBonusItem)},
-  { 223, 233, -1, sizeof(::base::SQuestBonus)},
-  { 237, -1, -1, sizeof(::base::ScriptParam_QuestInfo)},
+  { 199, -1, -1, sizeof(::base::Player_Setting)},
+  { 207, -1, -1, sizeof(::base::SQuestBonusItem)},
+  { 216, 226, -1, sizeof(::base::SQuestBonus)},
+  { 230, -1, -1, sizeof(::base::ScriptParam_QuestInfo)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -710,7 +693,6 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::base::_SItem_default_instance_._instance,
   &::base::_PlayerSpell_default_instance_._instance,
   &::base::_Quest_default_instance_._instance,
-  &::base::_SArchiveLoader_Quest_default_instance_._instance,
   &::base::_Player_Setting_default_instance_._instance,
   &::base::_SQuestBonusItem_default_instance_._instance,
   &::base::_SQuestBonus_default_instance_._instance,
@@ -764,25 +746,25 @@ const char descriptor_table_protodef_base_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "\005\022\016\n\006y_flag\030\003 \001(\005\022\017\n\007a_param\030\004 \003(\r\022\020\n\010af"
   "_param\030\005 \003(\002\022\020\n\010an_param\030\006 \003(\005\022\020\n\010ab_par"
   "am\030\007 \003(\005\022\021\n\thave_done\030\010 \001(\r\022\022\n\nquest_dat"
-  "a\030\t \001(\005\"3\n\024SArchiveLoader_Quest\022\033\n\006quest"
-  "s\030\001 \003(\0132\013.base.Quest\"<\n\016Player_Setting\022\024"
-  "\n\014setting_type\030\001 \001(\005\022\024\n\014setting_data\030\002 \001"
-  "(\005\"B\n\017SQuestBonusItem\022\016\n\006ycount\030\001 \001(\005\022\017\n"
-  "\007item_id\030\002 \001(\r\022\016\n\006yindex\030\003 \001(\005\"\222\001\n\013SQues"
-  "tBonus\022\014\n\004type\030\001 \001(\005\022\022\n\005money\030\002 \001(\rH\000\210\001\001"
-  "\022\020\n\003exp\030\003 \001(\rH\001\210\001\001\022.\n\nbonus_item\030\004 \001(\0132\025"
-  ".base.SQuestBonusItemH\002\210\001\001B\010\n\006_moneyB\006\n\004"
-  "_expB\r\n\013_bonus_item\"\214\001\n\025ScriptParam_Ques"
-  "tInfo\022\016\n\006npc_id\030\001 \001(\005\022\021\n\tscript_id\030\002 \001(\005"
-  "\022\020\n\010quest_id\030\003 \001(\005\022\016\n\006yflags\030\004 \001(\005\022\014\n\004te"
-  "xt\030\005 \001(\t\022 \n\005bonus\030\006 \003(\0132\021.base.SQuestBon"
-  "usb\006proto3"
+  "a\030\t \001(\005\"<\n\016Player_Setting\022\024\n\014setting_typ"
+  "e\030\001 \001(\005\022\024\n\014setting_data\030\002 \001(\005\"B\n\017SQuestB"
+  "onusItem\022\016\n\006ycount\030\001 \001(\005\022\017\n\007item_id\030\002 \001("
+  "\r\022\016\n\006yindex\030\003 \001(\005\"\222\001\n\013SQuestBonus\022\014\n\004typ"
+  "e\030\001 \001(\005\022\022\n\005money\030\002 \001(\rH\000\210\001\001\022\020\n\003exp\030\003 \001(\r"
+  "H\001\210\001\001\022.\n\nbonus_item\030\004 \001(\0132\025.base.SQuestB"
+  "onusItemH\002\210\001\001B\010\n\006_moneyB\006\n\004_expB\r\n\013_bonu"
+  "s_item\"\310\001\n\025ScriptParam_QuestInfo\022\016\n\006npc_"
+  "id\030\001 \001(\005\022\021\n\tscript_id\030\002 \001(\005\022\020\n\010quest_id\030"
+  "\003 \001(\005\022\016\n\006yflags\030\004 \001(\005\022\014\n\004text\030\005 \001(\t\022\r\n\005a"
+  "text\030\006 \003(\014\022*\n\013demand_item\030\007 \003(\0132\025.base.S"
+  "QuestBonusItem\022!\n\006abonus\030\010 \003(\0132\021.base.SQ"
+  "uestBonusb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_base_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_base_2eproto = {
-    false, false, 2330, descriptor_table_protodef_base_2eproto,
+    false, false, 2337, descriptor_table_protodef_base_2eproto,
     "base.proto",
-    &descriptor_table_base_2eproto_once, nullptr, 0, 24,
+    &descriptor_table_base_2eproto_once, nullptr, 0, 23,
     schemas, file_default_instances, TableStruct_base_2eproto::offsets,
     file_level_metadata_base_2eproto, file_level_enum_descriptors_base_2eproto,
     file_level_service_descriptors_base_2eproto,
@@ -5969,191 +5951,6 @@ void Quest::InternalSwap(Quest* other) {
 
 // ===================================================================
 
-class SArchiveLoader_Quest::_Internal {
- public:
-};
-
-SArchiveLoader_Quest::SArchiveLoader_Quest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:base.SArchiveLoader_Quest)
-}
-SArchiveLoader_Quest::SArchiveLoader_Quest(const SArchiveLoader_Quest& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  SArchiveLoader_Quest* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.quests_){from._impl_.quests_}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:base.SArchiveLoader_Quest)
-}
-
-inline void SArchiveLoader_Quest::SharedCtor(
-    ::_pb::Arena* arena, bool is_message_owned) {
-  (void)arena;
-  (void)is_message_owned;
-  new (&_impl_) Impl_{
-      decltype(_impl_.quests_){arena}
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-}
-
-SArchiveLoader_Quest::~SArchiveLoader_Quest() {
-  // @@protoc_insertion_point(destructor:base.SArchiveLoader_Quest)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void SArchiveLoader_Quest::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.quests_.~RepeatedPtrField();
-}
-
-void SArchiveLoader_Quest::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void SArchiveLoader_Quest::Clear() {
-// @@protoc_insertion_point(message_clear_start:base.SArchiveLoader_Quest)
-  uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.quests_.Clear();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* SArchiveLoader_Quest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // repeated .base.Quest quests = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_quests(), ptr);
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else
-          goto handle_unusual;
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-uint8_t* SArchiveLoader_Quest::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:base.SArchiveLoader_Quest)
-  uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // repeated .base.Quest quests = 1;
-  for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_quests_size()); i < n; i++) {
-    const auto& repfield = this->_internal_quests(i);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:base.SArchiveLoader_Quest)
-  return target;
-}
-
-size_t SArchiveLoader_Quest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:base.SArchiveLoader_Quest)
-  size_t total_size = 0;
-
-  uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // repeated .base.Quest quests = 1;
-  total_size += 1UL * this->_internal_quests_size();
-  for (const auto& msg : this->_impl_.quests_) {
-    total_size +=
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SArchiveLoader_Quest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    SArchiveLoader_Quest::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SArchiveLoader_Quest::GetClassData() const { return &_class_data_; }
-
-
-void SArchiveLoader_Quest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<SArchiveLoader_Quest*>(&to_msg);
-  auto& from = static_cast<const SArchiveLoader_Quest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:base.SArchiveLoader_Quest)
-  GOOGLE_DCHECK_NE(&from, _this);
-  uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  _this->_impl_.quests_.MergeFrom(from._impl_.quests_);
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void SArchiveLoader_Quest::CopyFrom(const SArchiveLoader_Quest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:base.SArchiveLoader_Quest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool SArchiveLoader_Quest::IsInitialized() const {
-  return true;
-}
-
-void SArchiveLoader_Quest::InternalSwap(SArchiveLoader_Quest* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.quests_.InternalSwap(&other->_impl_.quests_);
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata SArchiveLoader_Quest::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_base_2eproto_getter, &descriptor_table_base_2eproto_once,
-      file_level_metadata_base_2eproto[19]);
-}
-
-// ===================================================================
-
 class Player_Setting::_Internal {
  public:
 };
@@ -6360,7 +6157,7 @@ void Player_Setting::InternalSwap(Player_Setting* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata Player_Setting::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_base_2eproto_getter, &descriptor_table_base_2eproto_once,
-      file_level_metadata_base_2eproto[20]);
+      file_level_metadata_base_2eproto[19]);
 }
 
 // ===================================================================
@@ -6595,7 +6392,7 @@ void SQuestBonusItem::InternalSwap(SQuestBonusItem* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SQuestBonusItem::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_base_2eproto_getter, &descriptor_table_base_2eproto_once,
-      file_level_metadata_base_2eproto[21]);
+      file_level_metadata_base_2eproto[20]);
 }
 
 // ===================================================================
@@ -6900,7 +6697,7 @@ void SQuestBonus::InternalSwap(SQuestBonus* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SQuestBonus::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_base_2eproto_getter, &descriptor_table_base_2eproto_once,
-      file_level_metadata_base_2eproto[22]);
+      file_level_metadata_base_2eproto[21]);
 }
 
 // ===================================================================
@@ -6919,7 +6716,9 @@ ScriptParam_QuestInfo::ScriptParam_QuestInfo(const ScriptParam_QuestInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ScriptParam_QuestInfo* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.bonus_){from._impl_.bonus_}
+      decltype(_impl_.atext_){from._impl_.atext_}
+    , decltype(_impl_.demand_item_){from._impl_.demand_item_}
+    , decltype(_impl_.abonus_){from._impl_.abonus_}
     , decltype(_impl_.text_){}
     , decltype(_impl_.npc_id_){}
     , decltype(_impl_.script_id_){}
@@ -6947,7 +6746,9 @@ inline void ScriptParam_QuestInfo::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.bonus_){arena}
+      decltype(_impl_.atext_){arena}
+    , decltype(_impl_.demand_item_){arena}
+    , decltype(_impl_.abonus_){arena}
     , decltype(_impl_.text_){}
     , decltype(_impl_.npc_id_){0}
     , decltype(_impl_.script_id_){0}
@@ -6972,7 +6773,9 @@ ScriptParam_QuestInfo::~ScriptParam_QuestInfo() {
 
 inline void ScriptParam_QuestInfo::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.bonus_.~RepeatedPtrField();
+  _impl_.atext_.~RepeatedPtrField();
+  _impl_.demand_item_.~RepeatedPtrField();
+  _impl_.abonus_.~RepeatedPtrField();
   _impl_.text_.Destroy();
 }
 
@@ -6986,7 +6789,9 @@ void ScriptParam_QuestInfo::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.bonus_.Clear();
+  _impl_.atext_.Clear();
+  _impl_.demand_item_.Clear();
+  _impl_.abonus_.Clear();
   _impl_.text_.ClearToEmpty();
   ::memset(&_impl_.npc_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.yflags_) -
@@ -7042,16 +6847,43 @@ const char* ScriptParam_QuestInfo::_InternalParse(const char* ptr, ::_pbi::Parse
         } else
           goto handle_unusual;
         continue;
-      // repeated .base.SQuestBonus bonus = 6;
+      // repeated bytes atext = 6;
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
           ptr -= 1;
           do {
             ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_bonus(), ptr);
+            auto str = _internal_add_atext();
+            ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<50>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .base.SQuestBonusItem demand_item = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_demand_item(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<58>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .base.SQuestBonus abonus = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_abonus(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<66>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -7118,12 +6950,26 @@ uint8_t* ScriptParam_QuestInfo::_InternalSerialize(
         5, this->_internal_text(), target);
   }
 
-  // repeated .base.SQuestBonus bonus = 6;
+  // repeated bytes atext = 6;
+  for (int i = 0, n = this->_internal_atext_size(); i < n; i++) {
+    const auto& s = this->_internal_atext(i);
+    target = stream->WriteBytes(6, s, target);
+  }
+
+  // repeated .base.SQuestBonusItem demand_item = 7;
   for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_bonus_size()); i < n; i++) {
-    const auto& repfield = this->_internal_bonus(i);
+      n = static_cast<unsigned>(this->_internal_demand_item_size()); i < n; i++) {
+    const auto& repfield = this->_internal_demand_item(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(6, repfield, repfield.GetCachedSize(), target, stream);
+        InternalWriteMessage(7, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // repeated .base.SQuestBonus abonus = 8;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_abonus_size()); i < n; i++) {
+    const auto& repfield = this->_internal_abonus(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(8, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -7142,9 +6988,24 @@ size_t ScriptParam_QuestInfo::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .base.SQuestBonus bonus = 6;
-  total_size += 1UL * this->_internal_bonus_size();
-  for (const auto& msg : this->_impl_.bonus_) {
+  // repeated bytes atext = 6;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(_impl_.atext_.size());
+  for (int i = 0, n = _impl_.atext_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+      _impl_.atext_.Get(i));
+  }
+
+  // repeated .base.SQuestBonusItem demand_item = 7;
+  total_size += 1UL * this->_internal_demand_item_size();
+  for (const auto& msg : this->_impl_.demand_item_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // repeated .base.SQuestBonus abonus = 8;
+  total_size += 1UL * this->_internal_abonus_size();
+  for (const auto& msg : this->_impl_.abonus_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
@@ -7194,7 +7055,9 @@ void ScriptParam_QuestInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, 
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_impl_.bonus_.MergeFrom(from._impl_.bonus_);
+  _this->_impl_.atext_.MergeFrom(from._impl_.atext_);
+  _this->_impl_.demand_item_.MergeFrom(from._impl_.demand_item_);
+  _this->_impl_.abonus_.MergeFrom(from._impl_.abonus_);
   if (!from._internal_text().empty()) {
     _this->_internal_set_text(from._internal_text());
   }
@@ -7229,7 +7092,9 @@ void ScriptParam_QuestInfo::InternalSwap(ScriptParam_QuestInfo* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.bonus_.InternalSwap(&other->_impl_.bonus_);
+  _impl_.atext_.InternalSwap(&other->_impl_.atext_);
+  _impl_.demand_item_.InternalSwap(&other->_impl_.demand_item_);
+  _impl_.abonus_.InternalSwap(&other->_impl_.abonus_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.text_, lhs_arena,
       &other->_impl_.text_, rhs_arena
@@ -7245,7 +7110,7 @@ void ScriptParam_QuestInfo::InternalSwap(ScriptParam_QuestInfo* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ScriptParam_QuestInfo::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_base_2eproto_getter, &descriptor_table_base_2eproto_once,
-      file_level_metadata_base_2eproto[23]);
+      file_level_metadata_base_2eproto[22]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -7326,10 +7191,6 @@ Arena::CreateMaybeMessage< ::base::PlayerSpell >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::base::Quest*
 Arena::CreateMaybeMessage< ::base::Quest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::base::Quest >(arena);
-}
-template<> PROTOBUF_NOINLINE ::base::SArchiveLoader_Quest*
-Arena::CreateMaybeMessage< ::base::SArchiveLoader_Quest >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::base::SArchiveLoader_Quest >(arena);
 }
 template<> PROTOBUF_NOINLINE ::base::Player_Setting*
 Arena::CreateMaybeMessage< ::base::Player_Setting >(Arena* arena) {

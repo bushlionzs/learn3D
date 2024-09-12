@@ -1,15 +1,15 @@
 #pragma once
 #include <shaderc/shaderc.hpp>
 
-#ifdef GLSL_EXPORTS
-/* We are building this library */
-#      define _GLSLExport __declspec(dllexport)
-#    else
-/* We are using this library */
-#      define _GLSLExport __declspec(dllimport)
-#    endif
+//#ifdef GLSL_EXPORTS
+///* We are building this library */
+//#      define _GLSLExport __declspec(dllexport)
+//#    else
+///* We are using this library */
+//#      define _GLSLExport __declspec(dllimport)
+//#    endif
 
-
+#define _GLSLExport 
 bool _GLSLExport glslCompileShader(
 	std::string& result,
 	std::string& shaderName,

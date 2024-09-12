@@ -17,15 +17,7 @@ public:
 	{
 		return mPlayer;
 	}
-	void updateQueryEvent(servermessage::ServerMsgQueryEventResult& msg)
-	{
-		mLastQueryEvent = msg;
-	}
-
-	servermessage::ServerMsgQueryEventResult& getQueryEvent()
-	{
-		return mLastQueryEvent;
-	}
+	
 private:
 	UIBase* getWindow(uint32_t winId);
 private:

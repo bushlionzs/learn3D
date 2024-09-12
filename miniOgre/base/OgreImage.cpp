@@ -10,6 +10,7 @@
 #include "OgreResourceManager.h"
 #include "OgreMemoryStream.h"
 #include "OgreBlp.h"
+#include <gli/gli.hpp>
 #include <platform_file.h>
 
 namespace Ogre {
@@ -31,6 +32,10 @@ namespace Ogre {
         if (suffix == ".dds")
         {
             return backend::ImageType::ImageType_DDS;
+        }
+        else if (suffix == ".ktx")
+        {
+            return backend::ImageType::ImageType_KTX;
         }
         else if (suffix == ".blp")
         {
@@ -97,25 +102,39 @@ namespace Ogre {
         
     }
 
+    Ogre::PixelFormat translateKtxFormat(gli::texture::format_type format)
+    {
+        switch (format)
+        {
+        case gli::FORMAT_RGBA16_SFLOAT_PACK16:
+            return Ogre::PF_FLOAT16_RGBA;
+        default:
+            assert(false);
+        }
+        return Ogre::PF_FLOAT16_RGBA;
+    }
     bool CImage::loadImageInfo(
         const std::string& name,
         ImageInfo& imageInfo,
         bool cube)
     {
         ResourceInfo* res = nullptr;
+        backend::ImageType type = CImage::getImageType(name);
         if (cube)
         {
-            std::string suffix = getSuffix(name);
-            if (suffix != ".dds")
+            if (type == backend::ImageType::ImageType_DDS ||
+                type == backend::ImageType::ImageType_KTX)
             {
+                res = ResourceManager::getSingleton().getResource(name);
+            }
+            else
+            {
+                std::string suffix = getSuffix(name);
                 std::string basename = removeSuffix(name);
                 std::string current = basename + "_rt" + suffix;
                 res = ResourceManager::getSingleton().getResource(current);
             }
-            else
-            {
-                res = ResourceManager::getSingleton().getResource(name);
-            }
+            
         }
         else
         {
@@ -128,7 +147,7 @@ namespace Ogre {
 
         const char* data = content.c_str();
         uint32_t byteCount = content.size();
-        backend::ImageType type = CImage::getImageType(name);
+        
         return CImage::loadImageInfo((const uint8_t*)data, byteCount, imageInfo, type);
     }
 
@@ -140,10 +159,6 @@ namespace Ogre {
     bool CImage::loadImage(const std::string& name, bool cube)
     {
         auto type = getImageType(name);
-
-        
-
-        
         uint32_t nrComponents = 0;
 
         unsigned char* data = nullptr;
@@ -160,6 +175,21 @@ namespace Ogre {
                 ImageInfo* imageData = ddsload.getImageInfo();
                 mImageInfo = *imageData;
             }
+        }
+        else if (type == backend::ImageType::ImageType_KTX)
+        {
+            auto resInfo = ResourceManager::getSingleton().getResource(name);
+            gli::texture tmp = gli::load(resInfo->_fullname.c_str());
+
+            mImageInfo.width = static_cast<uint32_t>(tmp.extent().x);
+            mImageInfo.height = static_cast<uint32_t>(tmp.extent().y);
+            mImageInfo.num_mipmaps = static_cast<uint32_t>(tmp.levels()) - 1;
+            mImageInfo.face = tmp.faces();
+            mImageInfo.size = tmp.size();
+            auto ktxFormat = tmp.format();
+            mImageInfo.format = translateKtxFormat(ktxFormat);
+            data = new unsigned char[mImageInfo.size];
+            memcpy(data, tmp.data(), mImageInfo.size);
         }
         else if (type == backend::ImageType::ImageType_BLP)
         {

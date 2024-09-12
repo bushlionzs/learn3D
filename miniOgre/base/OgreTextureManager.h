@@ -39,8 +39,11 @@ namespace Ogre {
             PixelFormat desiredFormat = PF_UNKNOWN, 
             bool hwGammaCorrection = false);
 
+        bool addTexture(const String& name, OgreTexture* tex);
+
         std::pair<Texture*, CacheResult> getOrCreateTexture(const String& name, bool cube = false);
         bool addTexture(const String& name, Texture* tex);
+        
         void remove(const std::string& name);
         std::shared_ptr<OgreTexture> getByName(const String& name, const String& group = BLANKSTRING) const;
 

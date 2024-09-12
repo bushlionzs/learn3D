@@ -600,13 +600,13 @@ struct ServerMsgModifyQuestDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgModifyQuestDefaultTypeInternal _ServerMsgModifyQuest_default_instance_;
 PROTOBUF_CONSTEXPR ServerMsgMonsterAttribute::ServerMsgMonsterAttribute(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.country_title_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.guild_title_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.normal_title_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.flags_)*/nullptr
   , /*decltype(_impl_.camp_data_)*/nullptr
-  , /*decltype(_impl_.refresh_)*/0
   , /*decltype(_impl_.object_id_)*/0
   , /*decltype(_impl_.data_id_)*/0u
   , /*decltype(_impl_.level_)*/0
@@ -627,8 +627,7 @@ PROTOBUF_CONSTEXPR ServerMsgMonsterAttribute::ServerMsgMonsterAttribute(
   , /*decltype(_impl_.target_id_)*/0
   , /*decltype(_impl_.dir_)*/0
   , /*decltype(_impl_.ctrl_state_)*/0
-  , /*decltype(_impl_.scale_)*/0
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+  , /*decltype(_impl_.scale_)*/0} {}
 struct ServerMsgMonsterAttributeDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ServerMsgMonsterAttributeDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -764,9 +763,28 @@ struct ServerMsgPickItemResultDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgPickItemResultDefaultTypeInternal _ServerMsgPickItemResult_default_instance_;
+PROTOBUF_CONSTEXPR EventItem::EventItem(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.scriptstr_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.item_type_)*/0
+  , /*decltype(_impl_.item_state_)*/0
+  , /*decltype(_impl_.item_index_)*/0
+  , /*decltype(_impl_.scriptid_)*/0} {}
+struct EventItemDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR EventItemDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~EventItemDefaultTypeInternal() {}
+  union {
+    EventItem _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 EventItemDefaultTypeInternal _EventItem_default_instance_;
 PROTOBUF_CONSTEXPR ServerMsgQueryEventResult::ServerMsgQueryEventResult(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.object_id_)*/0u
+    /*decltype(_impl_.eventlist_)*/{}
+  , /*decltype(_impl_.object_id_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ServerMsgQueryEventResultDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ServerMsgQueryEventResultDefaultTypeInternal()
@@ -822,13 +840,14 @@ struct ServerMsgSkillSettingResultDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgSkillSettingResultDefaultTypeInternal _ServerMsgSkillSettingResult_default_instance_;
 PROTOBUF_CONSTEXPR ServerMsgScriptCommand::ServerMsgScriptCommand(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.quest_tips_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.quest_tips_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.setting_)*/nullptr
   , /*decltype(_impl_.continue_param_)*/nullptr
   , /*decltype(_impl_.quest_info_)*/nullptr
   , /*decltype(_impl_.cmd_id_)*/0
-  , /*decltype(_impl_.index_)*/0
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+  , /*decltype(_impl_.index_)*/0} {}
 struct ServerMsgScriptCommandDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ServerMsgScriptCommandDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -922,7 +941,7 @@ struct ServerMsgUseEquipResultDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServerMsgUseEquipResultDefaultTypeInternal _ServerMsgUseEquipResult_default_instance_;
 }  // namespace servermessage
-static ::_pb::Metadata file_level_metadata_server_5fmessage_2eproto[46];
+static ::_pb::Metadata file_level_metadata_server_5fmessage_2eproto[47];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_server_5fmessage_2eproto[1];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_server_5fmessage_2eproto = nullptr;
 
@@ -1375,14 +1394,12 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgModifyQuest, _impl_.flag_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgModifyQuest, _impl_.flag32_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgModifyQuest, _impl_.quest_),
-  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _impl_.refresh_),
-  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _impl_.flags_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _impl_.object_id_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _impl_.data_id_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _impl_.level_),
@@ -1409,6 +1426,32 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _impl_.dir_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _impl_.ctrl_state_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgMonsterAttribute, _impl_.scale_),
+  ~0u,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  4,
+  12,
+  13,
+  14,
+  15,
+  0,
+  1,
+  2,
+  3,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgNewBeastie, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1493,6 +1536,22 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgPickItemResult, _impl_.object_id_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgPickItemResult, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::EventItem, _impl_._has_bits_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::EventItem, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::servermessage::EventItem, _impl_.item_type_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::EventItem, _impl_.item_state_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::EventItem, _impl_.item_index_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::EventItem, _impl_.scriptid_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::EventItem, _impl_.scriptstr_),
+  ~0u,
+  ~0u,
+  ~0u,
+  ~0u,
+  0,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgQueryEventResult, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1500,6 +1559,7 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgQueryEventResult, _impl_.object_id_),
+  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgQueryEventResult, _impl_.eventlist_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgQuestList, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1525,7 +1585,7 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgSkillSettingResult, _impl_.object_id_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgSkillSettingResult, _impl_.setting_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgSkillSettingResult, _impl_.index_),
-  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgScriptCommand, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgScriptCommand, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -1537,6 +1597,12 @@ const uint32_t TableStruct_server_5fmessage_2eproto::offsets[] PROTOBUF_SECTION_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgScriptCommand, _impl_.continue_param_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgScriptCommand, _impl_.quest_info_),
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgScriptCommand, _impl_.quest_tips_),
+  ~0u,
+  1,
+  ~0u,
+  2,
+  3,
+  0,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::servermessage::ServerMsgSkillUpgrade, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1619,24 +1685,25 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 418, -1, -1, sizeof(::servermessage::ServerMsgItemInfo)},
   { 428, -1, -1, sizeof(::servermessage::ServerMsgManipulatePetResult)},
   { 437, -1, -1, sizeof(::servermessage::ServerMsgModifyQuest)},
-  { 448, -1, -1, sizeof(::servermessage::ServerMsgMonsterAttribute)},
-  { 482, -1, -1, sizeof(::servermessage::ServerMsgNewBeastie)},
-  { 498, -1, -1, sizeof(::servermessage::ServerMsgNewItem)},
-  { 510, -1, -1, sizeof(::servermessage::ServerMsgNewItemBox)},
-  { 522, -1, -1, sizeof(::servermessage::ServerMsgNewMonster)},
-  { 540, -1, -1, sizeof(::servermessage::ServerMsgNotifyEquip)},
-  { 548, -1, -1, sizeof(::servermessage::ServerMsgOperateResult)},
-  { 558, -1, -1, sizeof(::servermessage::ServerMsgPickItemResult)},
-  { 566, -1, -1, sizeof(::servermessage::ServerMsgQueryEventResult)},
-  { 573, -1, -1, sizeof(::servermessage::ServerMsgQuestList)},
-  { 581, -1, -1, sizeof(::servermessage::ServerMsgQuestListRefresh)},
-  { 589, -1, -1, sizeof(::servermessage::ServerMsgSkillSettingResult)},
-  { 598, -1, -1, sizeof(::servermessage::ServerMsgScriptCommand)},
-  { 610, -1, -1, sizeof(::servermessage::ServerMsgSkillUpgrade)},
-  { 621, -1, -1, sizeof(::servermessage::ServerMsgSwapItem)},
-  { 630, -1, -1, sizeof(::servermessage::ServerMsgTargetListAndHitFlags)},
-  { 642, -1, -1, sizeof(::servermessage::ServerMsgTaskDownEquipResult)},
-  { 653, -1, -1, sizeof(::servermessage::ServerMsgUseEquipResult)},
+  { 448, 480, -1, sizeof(::servermessage::ServerMsgMonsterAttribute)},
+  { 506, -1, -1, sizeof(::servermessage::ServerMsgNewBeastie)},
+  { 522, -1, -1, sizeof(::servermessage::ServerMsgNewItem)},
+  { 534, -1, -1, sizeof(::servermessage::ServerMsgNewItemBox)},
+  { 546, -1, -1, sizeof(::servermessage::ServerMsgNewMonster)},
+  { 564, -1, -1, sizeof(::servermessage::ServerMsgNotifyEquip)},
+  { 572, -1, -1, sizeof(::servermessage::ServerMsgOperateResult)},
+  { 582, -1, -1, sizeof(::servermessage::ServerMsgPickItemResult)},
+  { 590, 601, -1, sizeof(::servermessage::EventItem)},
+  { 606, -1, -1, sizeof(::servermessage::ServerMsgQueryEventResult)},
+  { 614, -1, -1, sizeof(::servermessage::ServerMsgQuestList)},
+  { 622, -1, -1, sizeof(::servermessage::ServerMsgQuestListRefresh)},
+  { 630, -1, -1, sizeof(::servermessage::ServerMsgSkillSettingResult)},
+  { 639, 651, -1, sizeof(::servermessage::ServerMsgScriptCommand)},
+  { 657, -1, -1, sizeof(::servermessage::ServerMsgSkillUpgrade)},
+  { 668, -1, -1, sizeof(::servermessage::ServerMsgSwapItem)},
+  { 677, -1, -1, sizeof(::servermessage::ServerMsgTargetListAndHitFlags)},
+  { 689, -1, -1, sizeof(::servermessage::ServerMsgTaskDownEquipResult)},
+  { 700, -1, -1, sizeof(::servermessage::ServerMsgUseEquipResult)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1676,6 +1743,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::servermessage::_ServerMsgNotifyEquip_default_instance_._instance,
   &::servermessage::_ServerMsgOperateResult_default_instance_._instance,
   &::servermessage::_ServerMsgPickItemResult_default_instance_._instance,
+  &::servermessage::_EventItem_default_instance_._instance,
   &::servermessage::_ServerMsgQueryEventResult_default_instance_._instance,
   &::servermessage::_ServerMsgQuestList_default_instance_._instance,
   &::servermessage::_ServerMsgQuestListRefresh_default_instance_._instance,
@@ -1850,111 +1918,128 @@ const char descriptor_table_protodef_server_5fmessage_2eproto[] PROTOBUF_SECTION
   "d\030\003 \001(\005\"u\n\024ServerMsgModifyQuest\022\021\n\tplaye"
   "r_id\030\001 \001(\005\022\020\n\010quest_id\030\002 \001(\005\022\014\n\004flag\030\003 \001"
   "(\005\022\016\n\006flag32\030\004 \001(\r\022\032\n\005quest\030\005 \001(\0132\013.base"
-  ".Quest\"\336\004\n\031ServerMsgMonsterAttribute\022\017\n\007"
-  "refresh\030\001 \001(\005\022\033\n\005flags\030\002 \001(\0132\014.base.Flag"
-  "64\022\021\n\tobject_id\030\003 \001(\005\022\017\n\007data_id\030\004 \001(\r\022\r"
-  "\n\005level\030\005 \001(\005\022\022\n\nhp_percent\030\006 \001(\005\022\023\n\013ste"
-  "al_level\030\007 \001(\005\022\022\n\nmood_state\030\010 \001(\005\022\022\n\nmo"
-  "ve_speed\030\t \001(\002\022\024\n\014attack_speed\030\n \001(\002\022\"\n\t"
-  "camp_data\030\013 \001(\0132\017.base.SCampData\022\023\n\013port"
-  "rait_id\030\014 \001(\005\022\020\n\010model_id\030\r \001(\005\022\020\n\010mount"
-  "_id\030\016 \001(\005\022\017\n\007ai_type\030\017 \001(\005\022\014\n\004name\030\020 \001(\t"
-  "\022\025\n\rcountry_title\030\021 \001(\t\022\023\n\013guild_title\030\022"
-  " \001(\t\022\024\n\014normal_title\030\023 \001(\t\022\032\n\022country_ti"
-  "tle_type\030\024 \001(\005\022\030\n\020guild_title_type\030\025 \001(\005"
-  "\022\031\n\021normal_title_type\030\026 \001(\005\022\025\n\roccupant_"
-  "guid\030\027 \001(\r\022\020\n\010owner_id\030\030 \001(\005\022\021\n\ttarget_i"
-  "d\030\031 \001(\005\022\013\n\003dir\030\032 \001(\002\022\022\n\nctrl_state\030\033 \001(\005"
-  "\022\r\n\005scale\030\034 \001(\002\"\306\001\n\023ServerMsgNewBeastie\022"
-  "\021\n\tobject_id\030\001 \001(\r\022\014\n\004name\030\002 \001(\t\022\022\n\nposi"
-  "tion_x\030\003 \001(\002\022\022\n\nposition_z\030\004 \001(\002\022\013\n\003dir\030"
-  "\005 \001(\002\022\022\n\nmove_speed\030\006 \001(\002\022\016\n\006moving\030\007 \001("
-  "\010\022\021\n\thandle_id\030\010 \001(\005\022\020\n\010target_x\030\t \001(\002\022\020"
-  "\n\010target_z\030\n \001(\002\"\207\001\n\020ServerMsgNewItem\022\021\n"
-  "\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\022\022\n\nit"
-  "em_index\030\003 \001(\005\022\022\n\nitem_count\030\004 \001(\005\022\022\n\npo"
-  "sition_x\030\005 \001(\002\022\022\n\nposition_z\030\006 \001(\002\"\215\001\n\023S"
-  "erverMsgNewItemBox\022\021\n\tobject_id\030\001 \001(\005\022\014\n"
-  "\004type\030\002 \001(\005\022\020\n\010owner_id\030\003 \001(\r\022\020\n\010scene_i"
-  "d\030\004 \001(\005\022\030\n\003pos\030\005 \001(\0132\013.base.GLPos\022\027\n\017dro"
-  "p_monster_id\030\006 \001(\005\"\352\001\n\023ServerMsgNewMonst"
-  "er\022\021\n\tobject_id\030\001 \001(\r\022\014\n\004name\030\002 \001(\014\022\022\n\np"
-  "osition_x\030\003 \001(\002\022\022\n\nposition_z\030\004 \001(\002\022\013\n\003d"
-  "ir\030\005 \001(\002\022\022\n\nmove_speed\030\006 \001(\002\022\020\n\010horse_id"
-  "\030\007 \001(\005\022\021\n\tweapon_id\030\010 \001(\005\022\024\n\014monster_typ"
-  "e\030\t \001(\005\022\014\n\004guid\030\n \001(\r\022\017\n\007race_id\030\013 \001(\005\022\017"
-  "\n\007camp_id\030\014 \001(\005\"D\n\024ServerMsgNotifyEquip\022"
-  "\021\n\tbag_index\030\001 \001(\005\022\031\n\004item\030\002 \001(\0132\013.base."
-  "SItem\"b\n\026ServerMsgOperateResult\022\021\n\tplaye"
-  "r_id\030\001 \001(\005\022\016\n\006map_id\030\002 \001(\005\022\020\n\010res_type\030\003"
-  " \001(\005\022\023\n\013result_code\030\004 \001(\005\"A\n\027ServerMsgPi"
-  "ckItemResult\022\021\n\tobject_id\030\001 \001(\005\022\023\n\013resul"
-  "t_code\030\002 \001(\005\".\n\031ServerMsgQueryEventResul"
-  "t\022\021\n\tobject_id\030\001 \001(\r\"D\n\022ServerMsgQuestLi"
-  "st\022\021\n\tplayer_id\030\001 \001(\005\022\033\n\006quests\030\002 \003(\0132\013."
-  "base.Quest\"@\n\031ServerMsgQuestListRefresh\022"
-  "\021\n\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030\002 \001(\005\"f\n\033"
-  "ServerMsgSkillSettingResult\022\021\n\tobject_id"
-  "\030\001 \001(\005\022%\n\007setting\030\002 \001(\0132\024.base.Player_Se"
-  "tting\022\r\n\005index\030\003 \001(\005\"\330\001\n\026ServerMsgScript"
-  "Command\022\016\n\006cmd_id\030\001 \001(\005\022%\n\007setting\030\002 \001(\013"
-  "2\024.base.Player_Setting\022\r\n\005index\030\003 \001(\005\0223\n"
-  "\016continue_param\030\004 \001(\0132\033.base.ScriptParam"
-  "_QuestInfo\022/\n\nquest_info\030\005 \001(\0132\033.base.Sc"
-  "riptParam_QuestInfo\022\022\n\nquest_tips\030\006 \001(\t\""
-  "o\n\025ServerMsgSkillUpgrade\022\021\n\tobject_id\030\001 "
-  "\001(\005\022\020\n\010skill_id\030\002 \001(\005\022\023\n\013skill_level\030\003 \001"
-  "(\005\022\016\n\006sucess\030\004 \001(\010\022\014\n\004type\030\005 \001(\005\"I\n\021Serv"
-  "erMsgSwapItem\022\016\n\006result\030\001 \001(\005\022\022\n\nsource_"
-  "pos\030\002 \001(\005\022\020\n\010dest_pos\030\003 \001(\005\"\227\001\n\036ServerMs"
-  "gTargetListAndHitFlags\022\021\n\tobject_id\030\001 \001("
-  "\005\022\023\n\013logic_count\030\002 \001(\005\022\020\n\010skill_id\030\003 \001(\005"
-  "\022\023\n\013target_list\030\004 \003(\005\022\022\n\nposition_x\030\005 \001("
-  "\002\022\022\n\nposition_z\030\006 \001(\002\"y\n\034ServerMsgTaskDo"
-  "wnEquipResult\022\016\n\006result\030\001 \001(\005\022\021\n\tplayer_"
-  "id\030\002 \001(\005\022\016\n\006map_id\030\003 \001(\005\022\023\n\013equip_point\030"
-  "\004 \001(\005\022\021\n\tbag_index\030\005 \001(\005\"Q\n\027ServerMsgUse"
-  "EquipResult\022\016\n\006result\030\001 \001(\005\022\023\n\013equip_poi"
-  "nt\030\002 \001(\005\022\021\n\tbag_index\030\003 \001(\005*\226\t\n\tMessageI"
-  "D\022\017\n\013SC_MSG_NONE\020\000\022\021\n\014DS_CHAR_DATA\020\210\'\022\021\n"
-  "\014SC_ENTER_MAP\020\220N\022\032\n\025SC_QUERY_EVENT_RESUL"
-  "T\020\370U\022\032\n\025SC_QUERY_QUEST_RESULT\020\371U\022\022\n\rSC_N"
-  "EWMONSTER\020\372U\022\026\n\021SC_CHARACTER_MOVE\020\373U\022\033\n\026"
-  "SC_TARGETLIST_HITFLAGS\020\374U\022\033\n\026SC_DETAIL_H"
-  "EALS_DAMAGE\020\375U\022\025\n\020SC_DELETE_OBJECT\020\376U\022\030\n"
-  "\023SC_MONSTER_ATTRBUTE\020\377U\022\017\n\nSC_NEWITEM\020\200V"
-  "\022\022\n\rSC_EQUIP_LIST\020\201V\022\030\n\023SC_PICK_ITEM_RES"
-  "ULT\020\202V\022\021\n\014SC_ITEM_INFO\020\203V\022\024\n\017SC_NOTIFY_E"
-  "QUIP\020\204V\022\021\n\014SC_SWAP_ITEM\020\205V\022\026\n\021SC_UNEQUIP"
-  "_RESULT\020\206V\022\027\n\022SC_USEEQUIP_RESULT\020\207V\022\022\n\rS"
-  "C_QUEST_LIST\020\210V\022\021\n\014SC_ADD_QUEST\020\211V\022\021\n\014SC"
-  "_DEL_QUEST\020\212V\022\017\n\nSC_COMMAND\020\213V\022\026\n\021SC_SCR"
-  "IPT_COMMAND\020\214V\022\014\n\007SC_CHAT\020\215V\022\035\n\030SC_MANIP"
-  "ULATE_PET_RESULT\020\216V\022\023\n\016SC_NEW_BEASTIE\020\217V"
-  "\022\027\n\022SC_COOLDOWN_UPDATE\020\220V\022\031\n\024SC_DETAIL_A"
-  "TTRIB_PET\020\221V\022\031\n\024SC_IMPACTLIST_UPDATE\020\222V\022"
-  "\026\n\021SC_CHAR_EQUIPMENT\020\223V\022\031\n\024SC_QUESTLIST_"
-  "REFRESH\020\224V\022\023\n\016SC_DETAIL_ATTR\020\225V\022\031\n\024SC_CH"
-  "AR_SKILL_GATHER\020\226V\022\030\n\023SC_CHAR_STOP_ACTIO"
-  "N\020\227V\022\025\n\020SC_SKILL_UPGRADE\020\230V\022\023\n\016SC_DETAIL"
-  "_BUFF\020\231V\022\025\n\020SC_SKILL_SETTING\020\232V\022\037\n\032SC_AD"
-  "D_SKILL_TO_SKILL_LIST\020\233V\022\023\n\016SC_NEW_ITEMB"
-  "OX\020\234V\022\033\n\026SC_DETAIL_ABILITY_INFO\020\235V\022\026\n\021SC"
-  "_ABILITY_RESULT\020\236V\022\026\n\021SC_OPERATE_RESULT\020"
-  "\237V\022\036\n\031SC_MESSAGE_ABILITY_ACTION\020\240V\022\027\n\022SC"
-  "_ABILITY_SUCCESS\020\241V\022\027\n\022SC_HUMAN_BASE_ATT"
-  "R\020\242V\022\031\n\024SC_DETAIL_EQUIP_LIST\020\243V\022\030\n\023SC_DE"
-  "TAIL_ITEM_LIST\020\244V\022\031\n\024SC_DETAIL_SKILL_LIS"
-  "T\020\245Vb\006proto3"
+  ".Quest\"\241\010\n\031ServerMsgMonsterAttribute\022\021\n\t"
+  "object_id\030\001 \001(\005\022\024\n\007data_id\030\002 \001(\rH\000\210\001\001\022\022\n"
+  "\005level\030\003 \001(\005H\001\210\001\001\022\027\n\nhp_percent\030\004 \001(\005H\002\210"
+  "\001\001\022\030\n\013steal_level\030\005 \001(\005H\003\210\001\001\022\027\n\nmood_sta"
+  "te\030\006 \001(\005H\004\210\001\001\022\027\n\nmove_speed\030\007 \001(\002H\005\210\001\001\022\031"
+  "\n\014attack_speed\030\010 \001(\002H\006\210\001\001\022\'\n\tcamp_data\030\t"
+  " \001(\0132\017.base.SCampDataH\007\210\001\001\022\030\n\013portrait_i"
+  "d\030\n \001(\005H\010\210\001\001\022\025\n\010model_id\030\013 \001(\005H\t\210\001\001\022\025\n\010m"
+  "ount_id\030\014 \001(\005H\n\210\001\001\022\024\n\007ai_type\030\r \001(\005H\013\210\001\001"
+  "\022\021\n\004name\030\016 \001(\014H\014\210\001\001\022\032\n\rcountry_title\030\017 \001"
+  "(\014H\r\210\001\001\022\030\n\013guild_title\030\020 \001(\014H\016\210\001\001\022\031\n\014nor"
+  "mal_title\030\021 \001(\014H\017\210\001\001\022\037\n\022country_title_ty"
+  "pe\030\022 \001(\005H\020\210\001\001\022\035\n\020guild_title_type\030\023 \001(\005H"
+  "\021\210\001\001\022\036\n\021normal_title_type\030\024 \001(\005H\022\210\001\001\022\032\n\r"
+  "occupant_guid\030\025 \001(\rH\023\210\001\001\022\025\n\010owner_id\030\026 \001"
+  "(\005H\024\210\001\001\022\026\n\ttarget_id\030\027 \001(\005H\025\210\001\001\022\020\n\003dir\030\030"
+  " \001(\002H\026\210\001\001\022\027\n\nctrl_state\030\031 \001(\005H\027\210\001\001\022\022\n\005sc"
+  "ale\030\032 \001(\002H\030\210\001\001B\n\n\010_data_idB\010\n\006_levelB\r\n\013"
+  "_hp_percentB\016\n\014_steal_levelB\r\n\013_mood_sta"
+  "teB\r\n\013_move_speedB\017\n\r_attack_speedB\014\n\n_c"
+  "amp_dataB\016\n\014_portrait_idB\013\n\t_model_idB\013\n"
+  "\t_mount_idB\n\n\010_ai_typeB\007\n\005_nameB\020\n\016_coun"
+  "try_titleB\016\n\014_guild_titleB\017\n\r_normal_tit"
+  "leB\025\n\023_country_title_typeB\023\n\021_guild_titl"
+  "e_typeB\024\n\022_normal_title_typeB\020\n\016_occupan"
+  "t_guidB\013\n\t_owner_idB\014\n\n_target_idB\006\n\004_di"
+  "rB\r\n\013_ctrl_stateB\010\n\006_scale\"\306\001\n\023ServerMsg"
+  "NewBeastie\022\021\n\tobject_id\030\001 \001(\r\022\014\n\004name\030\002 "
+  "\001(\014\022\022\n\nposition_x\030\003 \001(\002\022\022\n\nposition_z\030\004 "
+  "\001(\002\022\013\n\003dir\030\005 \001(\002\022\022\n\nmove_speed\030\006 \001(\002\022\016\n\006"
+  "moving\030\007 \001(\010\022\021\n\thandle_id\030\010 \001(\005\022\020\n\010targe"
+  "t_x\030\t \001(\002\022\020\n\010target_z\030\n \001(\002\"\207\001\n\020ServerMs"
+  "gNewItem\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010scene_id\030"
+  "\002 \001(\005\022\022\n\nitem_index\030\003 \001(\005\022\022\n\nitem_count\030"
+  "\004 \001(\005\022\022\n\nposition_x\030\005 \001(\002\022\022\n\nposition_z\030"
+  "\006 \001(\002\"\215\001\n\023ServerMsgNewItemBox\022\021\n\tobject_"
+  "id\030\001 \001(\005\022\014\n\004type\030\002 \001(\005\022\020\n\010owner_id\030\003 \001(\r"
+  "\022\020\n\010scene_id\030\004 \001(\005\022\030\n\003pos\030\005 \001(\0132\013.base.G"
+  "LPos\022\027\n\017drop_monster_id\030\006 \001(\005\"\352\001\n\023Server"
+  "MsgNewMonster\022\021\n\tobject_id\030\001 \001(\r\022\014\n\004name"
+  "\030\002 \001(\014\022\022\n\nposition_x\030\003 \001(\002\022\022\n\nposition_z"
+  "\030\004 \001(\002\022\013\n\003dir\030\005 \001(\002\022\022\n\nmove_speed\030\006 \001(\002\022"
+  "\020\n\010horse_id\030\007 \001(\005\022\021\n\tweapon_id\030\010 \001(\005\022\024\n\014"
+  "monster_type\030\t \001(\005\022\014\n\004guid\030\n \001(\r\022\017\n\007race"
+  "_id\030\013 \001(\005\022\017\n\007camp_id\030\014 \001(\005\"D\n\024ServerMsgN"
+  "otifyEquip\022\021\n\tbag_index\030\001 \001(\005\022\031\n\004item\030\002 "
+  "\001(\0132\013.base.SItem\"b\n\026ServerMsgOperateResu"
+  "lt\022\021\n\tplayer_id\030\001 \001(\005\022\016\n\006map_id\030\002 \001(\005\022\020\n"
+  "\010res_type\030\003 \001(\005\022\023\n\013result_code\030\004 \001(\005\"A\n\027"
+  "ServerMsgPickItemResult\022\021\n\tobject_id\030\001 \001"
+  "(\005\022\023\n\013result_code\030\002 \001(\005\"~\n\tEventItem\022\021\n\t"
+  "item_type\030\001 \001(\005\022\022\n\nitem_state\030\002 \001(\005\022\022\n\ni"
+  "tem_index\030\003 \001(\005\022\020\n\010scriptId\030\004 \001(\005\022\026\n\tscr"
+  "iptStr\030\005 \001(\014H\000\210\001\001B\014\n\n_scriptStr\"[\n\031Serve"
+  "rMsgQueryEventResult\022\021\n\tobject_id\030\001 \001(\r\022"
+  "+\n\teventlist\030\002 \003(\0132\030.servermessage.Event"
+  "Item\"D\n\022ServerMsgQuestList\022\021\n\tplayer_id\030"
+  "\001 \001(\005\022\033\n\006quests\030\002 \003(\0132\013.base.Quest\"@\n\031Se"
+  "rverMsgQuestListRefresh\022\021\n\tobject_id\030\001 \001"
+  "(\005\022\020\n\010scene_id\030\002 \001(\005\"f\n\033ServerMsgSkillSe"
+  "ttingResult\022\021\n\tobject_id\030\001 \001(\005\022%\n\007settin"
+  "g\030\002 \001(\0132\024.base.Player_Setting\022\r\n\005index\030\003"
+  " \001(\005\"\251\002\n\026ServerMsgScriptCommand\022\016\n\006cmd_i"
+  "d\030\001 \001(\005\022*\n\007setting\030\002 \001(\0132\024.base.Player_S"
+  "ettingH\000\210\001\001\022\r\n\005index\030\003 \001(\005\0228\n\016continue_p"
+  "aram\030\004 \001(\0132\033.base.ScriptParam_QuestInfoH"
+  "\001\210\001\001\0224\n\nquest_info\030\005 \001(\0132\033.base.ScriptPa"
+  "ram_QuestInfoH\002\210\001\001\022\027\n\nquest_tips\030\006 \001(\tH\003"
+  "\210\001\001B\n\n\010_settingB\021\n\017_continue_paramB\r\n\013_q"
+  "uest_infoB\r\n\013_quest_tips\"o\n\025ServerMsgSki"
+  "llUpgrade\022\021\n\tobject_id\030\001 \001(\005\022\020\n\010skill_id"
+  "\030\002 \001(\005\022\023\n\013skill_level\030\003 \001(\005\022\016\n\006sucess\030\004 "
+  "\001(\010\022\014\n\004type\030\005 \001(\005\"I\n\021ServerMsgSwapItem\022\016"
+  "\n\006result\030\001 \001(\005\022\022\n\nsource_pos\030\002 \001(\005\022\020\n\010de"
+  "st_pos\030\003 \001(\005\"\227\001\n\036ServerMsgTargetListAndH"
+  "itFlags\022\021\n\tobject_id\030\001 \001(\005\022\023\n\013logic_coun"
+  "t\030\002 \001(\005\022\020\n\010skill_id\030\003 \001(\005\022\023\n\013target_list"
+  "\030\004 \003(\005\022\022\n\nposition_x\030\005 \001(\002\022\022\n\nposition_z"
+  "\030\006 \001(\002\"y\n\034ServerMsgTaskDownEquipResult\022\016"
+  "\n\006result\030\001 \001(\005\022\021\n\tplayer_id\030\002 \001(\005\022\016\n\006map"
+  "_id\030\003 \001(\005\022\023\n\013equip_point\030\004 \001(\005\022\021\n\tbag_in"
+  "dex\030\005 \001(\005\"Q\n\027ServerMsgUseEquipResult\022\016\n\006"
+  "result\030\001 \001(\005\022\023\n\013equip_point\030\002 \001(\005\022\021\n\tbag"
+  "_index\030\003 \001(\005*\226\t\n\tMessageID\022\017\n\013SC_MSG_NON"
+  "E\020\000\022\021\n\014DS_CHAR_DATA\020\210\'\022\021\n\014SC_ENTER_MAP\020\220"
+  "N\022\032\n\025SC_QUERY_EVENT_RESULT\020\370U\022\032\n\025SC_QUER"
+  "Y_QUEST_RESULT\020\371U\022\022\n\rSC_NEWMONSTER\020\372U\022\026\n"
+  "\021SC_CHARACTER_MOVE\020\373U\022\033\n\026SC_TARGETLIST_H"
+  "ITFLAGS\020\374U\022\033\n\026SC_DETAIL_HEALS_DAMAGE\020\375U\022"
+  "\025\n\020SC_DELETE_OBJECT\020\376U\022\030\n\023SC_MONSTER_ATT"
+  "RBUTE\020\377U\022\017\n\nSC_NEWITEM\020\200V\022\022\n\rSC_EQUIP_LI"
+  "ST\020\201V\022\030\n\023SC_PICK_ITEM_RESULT\020\202V\022\021\n\014SC_IT"
+  "EM_INFO\020\203V\022\024\n\017SC_NOTIFY_EQUIP\020\204V\022\021\n\014SC_S"
+  "WAP_ITEM\020\205V\022\026\n\021SC_UNEQUIP_RESULT\020\206V\022\027\n\022S"
+  "C_USEEQUIP_RESULT\020\207V\022\022\n\rSC_QUEST_LIST\020\210V"
+  "\022\021\n\014SC_ADD_QUEST\020\211V\022\021\n\014SC_DEL_QUEST\020\212V\022\017"
+  "\n\nSC_COMMAND\020\213V\022\026\n\021SC_SCRIPT_COMMAND\020\214V\022"
+  "\014\n\007SC_CHAT\020\215V\022\035\n\030SC_MANIPULATE_PET_RESUL"
+  "T\020\216V\022\023\n\016SC_NEW_BEASTIE\020\217V\022\027\n\022SC_COOLDOWN"
+  "_UPDATE\020\220V\022\031\n\024SC_DETAIL_ATTRIB_PET\020\221V\022\031\n"
+  "\024SC_IMPACTLIST_UPDATE\020\222V\022\026\n\021SC_CHAR_EQUI"
+  "PMENT\020\223V\022\031\n\024SC_QUESTLIST_REFRESH\020\224V\022\023\n\016S"
+  "C_DETAIL_ATTR\020\225V\022\031\n\024SC_CHAR_SKILL_GATHER"
+  "\020\226V\022\030\n\023SC_CHAR_STOP_ACTION\020\227V\022\025\n\020SC_SKIL"
+  "L_UPGRADE\020\230V\022\023\n\016SC_DETAIL_BUFF\020\231V\022\025\n\020SC_"
+  "SKILL_SETTING\020\232V\022\037\n\032SC_ADD_SKILL_TO_SKIL"
+  "L_LIST\020\233V\022\023\n\016SC_NEW_ITEMBOX\020\234V\022\033\n\026SC_DET"
+  "AIL_ABILITY_INFO\020\235V\022\026\n\021SC_ABILITY_RESULT"
+  "\020\236V\022\026\n\021SC_OPERATE_RESULT\020\237V\022\036\n\031SC_MESSAG"
+  "E_ABILITY_ACTION\020\240V\022\027\n\022SC_ABILITY_SUCCES"
+  "S\020\241V\022\027\n\022SC_HUMAN_BASE_ATTR\020\242V\022\031\n\024SC_DETA"
+  "IL_EQUIP_LIST\020\243V\022\030\n\023SC_DETAIL_ITEM_LIST\020"
+  "\244V\022\031\n\024SC_DETAIL_SKILL_LIST\020\245Vb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_server_5fmessage_2eproto_deps[1] = {
   &::descriptor_table_base_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_server_5fmessage_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_server_5fmessage_2eproto = {
-    false, false, 10252, descriptor_table_protodef_server_5fmessage_2eproto,
+    false, false, 10957, descriptor_table_protodef_server_5fmessage_2eproto,
     "server_message.proto",
-    &descriptor_table_server_5fmessage_2eproto_once, descriptor_table_server_5fmessage_2eproto_deps, 1, 46,
+    &descriptor_table_server_5fmessage_2eproto_once, descriptor_table_server_5fmessage_2eproto_deps, 1, 47,
     schemas, file_default_instances, TableStruct_server_5fmessage_2eproto::offsets,
     file_level_metadata_server_5fmessage_2eproto, file_level_enum_descriptors_server_5fmessage_2eproto,
     file_level_service_descriptors_server_5fmessage_2eproto,
@@ -13448,29 +13533,92 @@ void ServerMsgModifyQuest::InternalSwap(ServerMsgModifyQuest* other) {
 
 class ServerMsgMonsterAttribute::_Internal {
  public:
-  static const ::base::Flag64& flags(const ServerMsgMonsterAttribute* msg);
+  using HasBits = decltype(std::declval<ServerMsgMonsterAttribute>()._impl_._has_bits_);
+  static void set_has_data_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
+  static void set_has_level(HasBits* has_bits) {
+    (*has_bits)[0] |= 64u;
+  }
+  static void set_has_hp_percent(HasBits* has_bits) {
+    (*has_bits)[0] |= 128u;
+  }
+  static void set_has_steal_level(HasBits* has_bits) {
+    (*has_bits)[0] |= 256u;
+  }
+  static void set_has_mood_state(HasBits* has_bits) {
+    (*has_bits)[0] |= 512u;
+  }
+  static void set_has_move_speed(HasBits* has_bits) {
+    (*has_bits)[0] |= 1024u;
+  }
+  static void set_has_attack_speed(HasBits* has_bits) {
+    (*has_bits)[0] |= 2048u;
+  }
   static const ::base::SCampData& camp_data(const ServerMsgMonsterAttribute* msg);
+  static void set_has_camp_data(HasBits* has_bits) {
+    (*has_bits)[0] |= 16u;
+  }
+  static void set_has_portrait_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 4096u;
+  }
+  static void set_has_model_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 8192u;
+  }
+  static void set_has_mount_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 16384u;
+  }
+  static void set_has_ai_type(HasBits* has_bits) {
+    (*has_bits)[0] |= 32768u;
+  }
+  static void set_has_name(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_country_title(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_guild_title(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static void set_has_normal_title(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+  static void set_has_country_title_type(HasBits* has_bits) {
+    (*has_bits)[0] |= 65536u;
+  }
+  static void set_has_guild_title_type(HasBits* has_bits) {
+    (*has_bits)[0] |= 131072u;
+  }
+  static void set_has_normal_title_type(HasBits* has_bits) {
+    (*has_bits)[0] |= 262144u;
+  }
+  static void set_has_occupant_guid(HasBits* has_bits) {
+    (*has_bits)[0] |= 524288u;
+  }
+  static void set_has_owner_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 1048576u;
+  }
+  static void set_has_target_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 2097152u;
+  }
+  static void set_has_dir(HasBits* has_bits) {
+    (*has_bits)[0] |= 4194304u;
+  }
+  static void set_has_ctrl_state(HasBits* has_bits) {
+    (*has_bits)[0] |= 8388608u;
+  }
+  static void set_has_scale(HasBits* has_bits) {
+    (*has_bits)[0] |= 16777216u;
+  }
 };
 
-const ::base::Flag64&
-ServerMsgMonsterAttribute::_Internal::flags(const ServerMsgMonsterAttribute* msg) {
-  return *msg->_impl_.flags_;
-}
 const ::base::SCampData&
 ServerMsgMonsterAttribute::_Internal::camp_data(const ServerMsgMonsterAttribute* msg) {
   return *msg->_impl_.camp_data_;
 }
-void ServerMsgMonsterAttribute::clear_flags() {
-  if (GetArenaForAllocation() == nullptr && _impl_.flags_ != nullptr) {
-    delete _impl_.flags_;
-  }
-  _impl_.flags_ = nullptr;
-}
 void ServerMsgMonsterAttribute::clear_camp_data() {
-  if (GetArenaForAllocation() == nullptr && _impl_.camp_data_ != nullptr) {
-    delete _impl_.camp_data_;
-  }
-  _impl_.camp_data_ = nullptr;
+  if (_impl_.camp_data_ != nullptr) _impl_.camp_data_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000010u;
 }
 ServerMsgMonsterAttribute::ServerMsgMonsterAttribute(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -13482,13 +13630,13 @@ ServerMsgMonsterAttribute::ServerMsgMonsterAttribute(const ServerMsgMonsterAttri
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ServerMsgMonsterAttribute* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.name_){}
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.name_){}
     , decltype(_impl_.country_title_){}
     , decltype(_impl_.guild_title_){}
     , decltype(_impl_.normal_title_){}
-    , decltype(_impl_.flags_){nullptr}
     , decltype(_impl_.camp_data_){nullptr}
-    , decltype(_impl_.refresh_){}
     , decltype(_impl_.object_id_){}
     , decltype(_impl_.data_id_){}
     , decltype(_impl_.level_){}
@@ -13509,15 +13657,14 @@ ServerMsgMonsterAttribute::ServerMsgMonsterAttribute(const ServerMsgMonsterAttri
     , decltype(_impl_.target_id_){}
     , decltype(_impl_.dir_){}
     , decltype(_impl_.ctrl_state_){}
-    , decltype(_impl_.scale_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
+    , decltype(_impl_.scale_){}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   _impl_.name_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.name_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_name().empty()) {
+  if (from._internal_has_name()) {
     _this->_impl_.name_.Set(from._internal_name(), 
       _this->GetArenaForAllocation());
   }
@@ -13525,7 +13672,7 @@ ServerMsgMonsterAttribute::ServerMsgMonsterAttribute(const ServerMsgMonsterAttri
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.country_title_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_country_title().empty()) {
+  if (from._internal_has_country_title()) {
     _this->_impl_.country_title_.Set(from._internal_country_title(), 
       _this->GetArenaForAllocation());
   }
@@ -13533,7 +13680,7 @@ ServerMsgMonsterAttribute::ServerMsgMonsterAttribute(const ServerMsgMonsterAttri
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.guild_title_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_guild_title().empty()) {
+  if (from._internal_has_guild_title()) {
     _this->_impl_.guild_title_.Set(from._internal_guild_title(), 
       _this->GetArenaForAllocation());
   }
@@ -13541,19 +13688,16 @@ ServerMsgMonsterAttribute::ServerMsgMonsterAttribute(const ServerMsgMonsterAttri
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.normal_title_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_normal_title().empty()) {
+  if (from._internal_has_normal_title()) {
     _this->_impl_.normal_title_.Set(from._internal_normal_title(), 
       _this->GetArenaForAllocation());
-  }
-  if (from._internal_has_flags()) {
-    _this->_impl_.flags_ = new ::base::Flag64(*from._impl_.flags_);
   }
   if (from._internal_has_camp_data()) {
     _this->_impl_.camp_data_ = new ::base::SCampData(*from._impl_.camp_data_);
   }
-  ::memcpy(&_impl_.refresh_, &from._impl_.refresh_,
+  ::memcpy(&_impl_.object_id_, &from._impl_.object_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.scale_) -
-    reinterpret_cast<char*>(&_impl_.refresh_)) + sizeof(_impl_.scale_));
+    reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.scale_));
   // @@protoc_insertion_point(copy_constructor:servermessage.ServerMsgMonsterAttribute)
 }
 
@@ -13562,13 +13706,13 @@ inline void ServerMsgMonsterAttribute::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.name_){}
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.name_){}
     , decltype(_impl_.country_title_){}
     , decltype(_impl_.guild_title_){}
     , decltype(_impl_.normal_title_){}
-    , decltype(_impl_.flags_){nullptr}
     , decltype(_impl_.camp_data_){nullptr}
-    , decltype(_impl_.refresh_){0}
     , decltype(_impl_.object_id_){0}
     , decltype(_impl_.data_id_){0u}
     , decltype(_impl_.level_){0}
@@ -13590,7 +13734,6 @@ inline void ServerMsgMonsterAttribute::SharedCtor(
     , decltype(_impl_.dir_){0}
     , decltype(_impl_.ctrl_state_){0}
     , decltype(_impl_.scale_){0}
-    , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.name_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -13625,7 +13768,6 @@ inline void ServerMsgMonsterAttribute::SharedDtor() {
   _impl_.country_title_.Destroy();
   _impl_.guild_title_.Destroy();
   _impl_.normal_title_.Destroy();
-  if (this != internal_default_instance()) delete _impl_.flags_;
   if (this != internal_default_instance()) delete _impl_.camp_data_;
 }
 
@@ -13639,257 +13781,280 @@ void ServerMsgMonsterAttribute::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.name_.ClearToEmpty();
-  _impl_.country_title_.ClearToEmpty();
-  _impl_.guild_title_.ClearToEmpty();
-  _impl_.normal_title_.ClearToEmpty();
-  if (GetArenaForAllocation() == nullptr && _impl_.flags_ != nullptr) {
-    delete _impl_.flags_;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000001fu) {
+    if (cached_has_bits & 0x00000001u) {
+      _impl_.name_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _impl_.country_title_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _impl_.guild_title_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000008u) {
+      _impl_.normal_title_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000010u) {
+      GOOGLE_DCHECK(_impl_.camp_data_ != nullptr);
+      _impl_.camp_data_->Clear();
+    }
   }
-  _impl_.flags_ = nullptr;
-  if (GetArenaForAllocation() == nullptr && _impl_.camp_data_ != nullptr) {
-    delete _impl_.camp_data_;
+  _impl_.object_id_ = 0;
+  if (cached_has_bits & 0x000000e0u) {
+    ::memset(&_impl_.data_id_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&_impl_.hp_percent_) -
+        reinterpret_cast<char*>(&_impl_.data_id_)) + sizeof(_impl_.hp_percent_));
   }
-  _impl_.camp_data_ = nullptr;
-  ::memset(&_impl_.refresh_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.scale_) -
-      reinterpret_cast<char*>(&_impl_.refresh_)) + sizeof(_impl_.scale_));
+  if (cached_has_bits & 0x0000ff00u) {
+    ::memset(&_impl_.steal_level_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&_impl_.ai_type_) -
+        reinterpret_cast<char*>(&_impl_.steal_level_)) + sizeof(_impl_.ai_type_));
+  }
+  if (cached_has_bits & 0x00ff0000u) {
+    ::memset(&_impl_.country_title_type_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&_impl_.ctrl_state_) -
+        reinterpret_cast<char*>(&_impl_.country_title_type_)) + sizeof(_impl_.ctrl_state_));
+  }
+  _impl_.scale_ = 0;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 const char* ServerMsgMonsterAttribute::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // int32 refresh = 1;
+      // int32 object_id = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.refresh_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // .base.Flag64 flags = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_flags(), ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // int32 object_id = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
           _impl_.object_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // uint32 data_id = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+      // optional uint32 data_id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _Internal::set_has_data_id(&has_bits);
           _impl_.data_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 level = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+      // optional int32 level = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _Internal::set_has_level(&has_bits);
           _impl_.level_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 hp_percent = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+      // optional int32 hp_percent = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _Internal::set_has_hp_percent(&has_bits);
           _impl_.hp_percent_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 steal_level = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+      // optional int32 steal_level = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _Internal::set_has_steal_level(&has_bits);
           _impl_.steal_level_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 mood_state = 8;
-      case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
+      // optional int32 mood_state = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          _Internal::set_has_mood_state(&has_bits);
           _impl_.mood_state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // float move_speed = 9;
-      case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 77)) {
+      // optional float move_speed = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 61)) {
+          _Internal::set_has_move_speed(&has_bits);
           _impl_.move_speed_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
-      // float attack_speed = 10;
-      case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 85)) {
+      // optional float attack_speed = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 69)) {
+          _Internal::set_has_attack_speed(&has_bits);
           _impl_.attack_speed_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
-      // .base.SCampData camp_data = 11;
-      case 11:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 90)) {
+      // optional .base.SCampData camp_data = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
           ptr = ctx->ParseMessage(_internal_mutable_camp_data(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 portrait_id = 12;
-      case 12:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 96)) {
+      // optional int32 portrait_id = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 80)) {
+          _Internal::set_has_portrait_id(&has_bits);
           _impl_.portrait_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 model_id = 13;
-      case 13:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 104)) {
+      // optional int32 model_id = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 88)) {
+          _Internal::set_has_model_id(&has_bits);
           _impl_.model_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 mount_id = 14;
-      case 14:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 112)) {
+      // optional int32 mount_id = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 96)) {
+          _Internal::set_has_mount_id(&has_bits);
           _impl_.mount_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 ai_type = 15;
-      case 15:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 120)) {
+      // optional int32 ai_type = 13;
+      case 13:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 104)) {
+          _Internal::set_has_ai_type(&has_bits);
           _impl_.ai_type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // string name = 16;
-      case 16:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 130)) {
+      // optional bytes name = 14;
+      case 14:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 114)) {
           auto str = _internal_mutable_name();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "servermessage.ServerMsgMonsterAttribute.name"));
         } else
           goto handle_unusual;
         continue;
-      // string country_title = 17;
-      case 17:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 138)) {
+      // optional bytes country_title = 15;
+      case 15:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 122)) {
           auto str = _internal_mutable_country_title();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "servermessage.ServerMsgMonsterAttribute.country_title"));
         } else
           goto handle_unusual;
         continue;
-      // string guild_title = 18;
-      case 18:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 146)) {
+      // optional bytes guild_title = 16;
+      case 16:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 130)) {
           auto str = _internal_mutable_guild_title();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "servermessage.ServerMsgMonsterAttribute.guild_title"));
         } else
           goto handle_unusual;
         continue;
-      // string normal_title = 19;
-      case 19:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 154)) {
+      // optional bytes normal_title = 17;
+      case 17:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 138)) {
           auto str = _internal_mutable_normal_title();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "servermessage.ServerMsgMonsterAttribute.normal_title"));
         } else
           goto handle_unusual;
         continue;
-      // int32 country_title_type = 20;
-      case 20:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 160)) {
+      // optional int32 country_title_type = 18;
+      case 18:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 144)) {
+          _Internal::set_has_country_title_type(&has_bits);
           _impl_.country_title_type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 guild_title_type = 21;
-      case 21:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 168)) {
+      // optional int32 guild_title_type = 19;
+      case 19:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 152)) {
+          _Internal::set_has_guild_title_type(&has_bits);
           _impl_.guild_title_type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 normal_title_type = 22;
-      case 22:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 176)) {
+      // optional int32 normal_title_type = 20;
+      case 20:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 160)) {
+          _Internal::set_has_normal_title_type(&has_bits);
           _impl_.normal_title_type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // uint32 occupant_guid = 23;
-      case 23:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 184)) {
+      // optional uint32 occupant_guid = 21;
+      case 21:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 168)) {
+          _Internal::set_has_occupant_guid(&has_bits);
           _impl_.occupant_guid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 owner_id = 24;
-      case 24:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 192)) {
+      // optional int32 owner_id = 22;
+      case 22:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 176)) {
+          _Internal::set_has_owner_id(&has_bits);
           _impl_.owner_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 target_id = 25;
-      case 25:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 200)) {
+      // optional int32 target_id = 23;
+      case 23:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 184)) {
+          _Internal::set_has_target_id(&has_bits);
           _impl_.target_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // float dir = 26;
-      case 26:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 213)) {
+      // optional float dir = 24;
+      case 24:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 197)) {
+          _Internal::set_has_dir(&has_bits);
           _impl_.dir_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
-      // int32 ctrl_state = 27;
-      case 27:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 216)) {
+      // optional int32 ctrl_state = 25;
+      case 25:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 200)) {
+          _Internal::set_has_ctrl_state(&has_bits);
           _impl_.ctrl_state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // float scale = 28;
-      case 28:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 229)) {
+      // optional float scale = 26;
+      case 26:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 213)) {
+          _Internal::set_has_scale(&has_bits);
           _impl_.scale_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
@@ -13911,6 +14076,7 @@ const char* ServerMsgMonsterAttribute::_InternalParse(const char* ptr, ::_pbi::P
     CHK_(ptr != nullptr);
   }  // while
 message_done:
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -13924,206 +14090,161 @@ uint8_t* ServerMsgMonsterAttribute::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 refresh = 1;
-  if (this->_internal_refresh() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_refresh(), target);
-  }
-
-  // .base.Flag64 flags = 2;
-  if (this->_internal_has_flags()) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, _Internal::flags(this),
-        _Internal::flags(this).GetCachedSize(), target, stream);
-  }
-
-  // int32 object_id = 3;
+  // int32 object_id = 1;
   if (this->_internal_object_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_object_id(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_object_id(), target);
   }
 
-  // uint32 data_id = 4;
-  if (this->_internal_data_id() != 0) {
+  // optional uint32 data_id = 2;
+  if (_internal_has_data_id()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(4, this->_internal_data_id(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_data_id(), target);
   }
 
-  // int32 level = 5;
-  if (this->_internal_level() != 0) {
+  // optional int32 level = 3;
+  if (_internal_has_level()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(5, this->_internal_level(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_level(), target);
   }
 
-  // int32 hp_percent = 6;
-  if (this->_internal_hp_percent() != 0) {
+  // optional int32 hp_percent = 4;
+  if (_internal_has_hp_percent()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(6, this->_internal_hp_percent(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(4, this->_internal_hp_percent(), target);
   }
 
-  // int32 steal_level = 7;
-  if (this->_internal_steal_level() != 0) {
+  // optional int32 steal_level = 5;
+  if (_internal_has_steal_level()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(7, this->_internal_steal_level(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(5, this->_internal_steal_level(), target);
   }
 
-  // int32 mood_state = 8;
-  if (this->_internal_mood_state() != 0) {
+  // optional int32 mood_state = 6;
+  if (_internal_has_mood_state()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(8, this->_internal_mood_state(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(6, this->_internal_mood_state(), target);
   }
 
-  // float move_speed = 9;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_move_speed = this->_internal_move_speed();
-  uint32_t raw_move_speed;
-  memcpy(&raw_move_speed, &tmp_move_speed, sizeof(tmp_move_speed));
-  if (raw_move_speed != 0) {
+  // optional float move_speed = 7;
+  if (_internal_has_move_speed()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(9, this->_internal_move_speed(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(7, this->_internal_move_speed(), target);
   }
 
-  // float attack_speed = 10;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_attack_speed = this->_internal_attack_speed();
-  uint32_t raw_attack_speed;
-  memcpy(&raw_attack_speed, &tmp_attack_speed, sizeof(tmp_attack_speed));
-  if (raw_attack_speed != 0) {
+  // optional float attack_speed = 8;
+  if (_internal_has_attack_speed()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(10, this->_internal_attack_speed(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(8, this->_internal_attack_speed(), target);
   }
 
-  // .base.SCampData camp_data = 11;
-  if (this->_internal_has_camp_data()) {
+  // optional .base.SCampData camp_data = 9;
+  if (_internal_has_camp_data()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(11, _Internal::camp_data(this),
+      InternalWriteMessage(9, _Internal::camp_data(this),
         _Internal::camp_data(this).GetCachedSize(), target, stream);
   }
 
-  // int32 portrait_id = 12;
-  if (this->_internal_portrait_id() != 0) {
+  // optional int32 portrait_id = 10;
+  if (_internal_has_portrait_id()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(12, this->_internal_portrait_id(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(10, this->_internal_portrait_id(), target);
   }
 
-  // int32 model_id = 13;
-  if (this->_internal_model_id() != 0) {
+  // optional int32 model_id = 11;
+  if (_internal_has_model_id()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(13, this->_internal_model_id(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(11, this->_internal_model_id(), target);
   }
 
-  // int32 mount_id = 14;
-  if (this->_internal_mount_id() != 0) {
+  // optional int32 mount_id = 12;
+  if (_internal_has_mount_id()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(14, this->_internal_mount_id(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(12, this->_internal_mount_id(), target);
   }
 
-  // int32 ai_type = 15;
-  if (this->_internal_ai_type() != 0) {
+  // optional int32 ai_type = 13;
+  if (_internal_has_ai_type()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(15, this->_internal_ai_type(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(13, this->_internal_ai_type(), target);
   }
 
-  // string name = 16;
-  if (!this->_internal_name().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "servermessage.ServerMsgMonsterAttribute.name");
-    target = stream->WriteStringMaybeAliased(
-        16, this->_internal_name(), target);
+  // optional bytes name = 14;
+  if (_internal_has_name()) {
+    target = stream->WriteBytesMaybeAliased(
+        14, this->_internal_name(), target);
   }
 
-  // string country_title = 17;
-  if (!this->_internal_country_title().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_country_title().data(), static_cast<int>(this->_internal_country_title().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "servermessage.ServerMsgMonsterAttribute.country_title");
-    target = stream->WriteStringMaybeAliased(
-        17, this->_internal_country_title(), target);
+  // optional bytes country_title = 15;
+  if (_internal_has_country_title()) {
+    target = stream->WriteBytesMaybeAliased(
+        15, this->_internal_country_title(), target);
   }
 
-  // string guild_title = 18;
-  if (!this->_internal_guild_title().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_guild_title().data(), static_cast<int>(this->_internal_guild_title().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "servermessage.ServerMsgMonsterAttribute.guild_title");
-    target = stream->WriteStringMaybeAliased(
-        18, this->_internal_guild_title(), target);
+  // optional bytes guild_title = 16;
+  if (_internal_has_guild_title()) {
+    target = stream->WriteBytesMaybeAliased(
+        16, this->_internal_guild_title(), target);
   }
 
-  // string normal_title = 19;
-  if (!this->_internal_normal_title().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_normal_title().data(), static_cast<int>(this->_internal_normal_title().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "servermessage.ServerMsgMonsterAttribute.normal_title");
-    target = stream->WriteStringMaybeAliased(
-        19, this->_internal_normal_title(), target);
+  // optional bytes normal_title = 17;
+  if (_internal_has_normal_title()) {
+    target = stream->WriteBytesMaybeAliased(
+        17, this->_internal_normal_title(), target);
   }
 
-  // int32 country_title_type = 20;
-  if (this->_internal_country_title_type() != 0) {
+  // optional int32 country_title_type = 18;
+  if (_internal_has_country_title_type()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(20, this->_internal_country_title_type(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(18, this->_internal_country_title_type(), target);
   }
 
-  // int32 guild_title_type = 21;
-  if (this->_internal_guild_title_type() != 0) {
+  // optional int32 guild_title_type = 19;
+  if (_internal_has_guild_title_type()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(21, this->_internal_guild_title_type(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(19, this->_internal_guild_title_type(), target);
   }
 
-  // int32 normal_title_type = 22;
-  if (this->_internal_normal_title_type() != 0) {
+  // optional int32 normal_title_type = 20;
+  if (_internal_has_normal_title_type()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(22, this->_internal_normal_title_type(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(20, this->_internal_normal_title_type(), target);
   }
 
-  // uint32 occupant_guid = 23;
-  if (this->_internal_occupant_guid() != 0) {
+  // optional uint32 occupant_guid = 21;
+  if (_internal_has_occupant_guid()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(23, this->_internal_occupant_guid(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(21, this->_internal_occupant_guid(), target);
   }
 
-  // int32 owner_id = 24;
-  if (this->_internal_owner_id() != 0) {
+  // optional int32 owner_id = 22;
+  if (_internal_has_owner_id()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(24, this->_internal_owner_id(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(22, this->_internal_owner_id(), target);
   }
 
-  // int32 target_id = 25;
-  if (this->_internal_target_id() != 0) {
+  // optional int32 target_id = 23;
+  if (_internal_has_target_id()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(25, this->_internal_target_id(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(23, this->_internal_target_id(), target);
   }
 
-  // float dir = 26;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_dir = this->_internal_dir();
-  uint32_t raw_dir;
-  memcpy(&raw_dir, &tmp_dir, sizeof(tmp_dir));
-  if (raw_dir != 0) {
+  // optional float dir = 24;
+  if (_internal_has_dir()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(26, this->_internal_dir(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(24, this->_internal_dir(), target);
   }
 
-  // int32 ctrl_state = 27;
-  if (this->_internal_ctrl_state() != 0) {
+  // optional int32 ctrl_state = 25;
+  if (_internal_has_ctrl_state()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(27, this->_internal_ctrl_state(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(25, this->_internal_ctrl_state(), target);
   }
 
-  // float scale = 28;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_scale = this->_internal_scale();
-  uint32_t raw_scale;
-  memcpy(&raw_scale, &tmp_scale, sizeof(tmp_scale));
-  if (raw_scale != 0) {
+  // optional float scale = 26;
+  if (_internal_has_scale()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(28, this->_internal_scale(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(26, this->_internal_scale(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -14142,185 +14263,166 @@ size_t ServerMsgMonsterAttribute::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string name = 16;
-  if (!this->_internal_name().empty()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_name());
-  }
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000001fu) {
+    // optional bytes name = 14;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+          this->_internal_name());
+    }
 
-  // string country_title = 17;
-  if (!this->_internal_country_title().empty()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_country_title());
-  }
+    // optional bytes country_title = 15;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+          this->_internal_country_title());
+    }
 
-  // string guild_title = 18;
-  if (!this->_internal_guild_title().empty()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_guild_title());
-  }
+    // optional bytes guild_title = 16;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+          this->_internal_guild_title());
+    }
 
-  // string normal_title = 19;
-  if (!this->_internal_normal_title().empty()) {
-    total_size += 2 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_normal_title());
-  }
+    // optional bytes normal_title = 17;
+    if (cached_has_bits & 0x00000008u) {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+          this->_internal_normal_title());
+    }
 
-  // .base.Flag64 flags = 2;
-  if (this->_internal_has_flags()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.flags_);
-  }
+    // optional .base.SCampData camp_data = 9;
+    if (cached_has_bits & 0x00000010u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.camp_data_);
+    }
 
-  // .base.SCampData camp_data = 11;
-  if (this->_internal_has_camp_data()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.camp_data_);
   }
-
-  // int32 refresh = 1;
-  if (this->_internal_refresh() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_refresh());
-  }
-
-  // int32 object_id = 3;
+  // int32 object_id = 1;
   if (this->_internal_object_id() != 0) {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_object_id());
   }
 
-  // uint32 data_id = 4;
-  if (this->_internal_data_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_data_id());
-  }
+  if (cached_has_bits & 0x000000e0u) {
+    // optional uint32 data_id = 2;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_data_id());
+    }
 
-  // int32 level = 5;
-  if (this->_internal_level() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_level());
-  }
+    // optional int32 level = 3;
+    if (cached_has_bits & 0x00000040u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_level());
+    }
 
-  // int32 hp_percent = 6;
-  if (this->_internal_hp_percent() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp_percent());
-  }
+    // optional int32 hp_percent = 4;
+    if (cached_has_bits & 0x00000080u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_hp_percent());
+    }
 
-  // int32 steal_level = 7;
-  if (this->_internal_steal_level() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_steal_level());
   }
+  if (cached_has_bits & 0x0000ff00u) {
+    // optional int32 steal_level = 5;
+    if (cached_has_bits & 0x00000100u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_steal_level());
+    }
 
-  // int32 mood_state = 8;
-  if (this->_internal_mood_state() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_mood_state());
+    // optional int32 mood_state = 6;
+    if (cached_has_bits & 0x00000200u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_mood_state());
+    }
+
+    // optional float move_speed = 7;
+    if (cached_has_bits & 0x00000400u) {
+      total_size += 1 + 4;
+    }
+
+    // optional float attack_speed = 8;
+    if (cached_has_bits & 0x00000800u) {
+      total_size += 1 + 4;
+    }
+
+    // optional int32 portrait_id = 10;
+    if (cached_has_bits & 0x00001000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_portrait_id());
+    }
+
+    // optional int32 model_id = 11;
+    if (cached_has_bits & 0x00002000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_model_id());
+    }
+
+    // optional int32 mount_id = 12;
+    if (cached_has_bits & 0x00004000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_mount_id());
+    }
+
+    // optional int32 ai_type = 13;
+    if (cached_has_bits & 0x00008000u) {
+      total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_ai_type());
+    }
+
   }
+  if (cached_has_bits & 0x00ff0000u) {
+    // optional int32 country_title_type = 18;
+    if (cached_has_bits & 0x00010000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_country_title_type());
+    }
 
-  // float move_speed = 9;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_move_speed = this->_internal_move_speed();
-  uint32_t raw_move_speed;
-  memcpy(&raw_move_speed, &tmp_move_speed, sizeof(tmp_move_speed));
-  if (raw_move_speed != 0) {
-    total_size += 1 + 4;
+    // optional int32 guild_title_type = 19;
+    if (cached_has_bits & 0x00020000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_guild_title_type());
+    }
+
+    // optional int32 normal_title_type = 20;
+    if (cached_has_bits & 0x00040000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_normal_title_type());
+    }
+
+    // optional uint32 occupant_guid = 21;
+    if (cached_has_bits & 0x00080000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::UInt32Size(
+          this->_internal_occupant_guid());
+    }
+
+    // optional int32 owner_id = 22;
+    if (cached_has_bits & 0x00100000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_owner_id());
+    }
+
+    // optional int32 target_id = 23;
+    if (cached_has_bits & 0x00200000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_target_id());
+    }
+
+    // optional float dir = 24;
+    if (cached_has_bits & 0x00400000u) {
+      total_size += 2 + 4;
+    }
+
+    // optional int32 ctrl_state = 25;
+    if (cached_has_bits & 0x00800000u) {
+      total_size += 2 +
+        ::_pbi::WireFormatLite::Int32Size(
+          this->_internal_ctrl_state());
+    }
+
   }
-
-  // float attack_speed = 10;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_attack_speed = this->_internal_attack_speed();
-  uint32_t raw_attack_speed;
-  memcpy(&raw_attack_speed, &tmp_attack_speed, sizeof(tmp_attack_speed));
-  if (raw_attack_speed != 0) {
-    total_size += 1 + 4;
-  }
-
-  // int32 portrait_id = 12;
-  if (this->_internal_portrait_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_portrait_id());
-  }
-
-  // int32 model_id = 13;
-  if (this->_internal_model_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_model_id());
-  }
-
-  // int32 mount_id = 14;
-  if (this->_internal_mount_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_mount_id());
-  }
-
-  // int32 ai_type = 15;
-  if (this->_internal_ai_type() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_ai_type());
-  }
-
-  // int32 country_title_type = 20;
-  if (this->_internal_country_title_type() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_country_title_type());
-  }
-
-  // int32 guild_title_type = 21;
-  if (this->_internal_guild_title_type() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_guild_title_type());
-  }
-
-  // int32 normal_title_type = 22;
-  if (this->_internal_normal_title_type() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_normal_title_type());
-  }
-
-  // uint32 occupant_guid = 23;
-  if (this->_internal_occupant_guid() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::UInt32Size(
-        this->_internal_occupant_guid());
-  }
-
-  // int32 owner_id = 24;
-  if (this->_internal_owner_id() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_owner_id());
-  }
-
-  // int32 target_id = 25;
-  if (this->_internal_target_id() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_target_id());
-  }
-
-  // float dir = 26;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_dir = this->_internal_dir();
-  uint32_t raw_dir;
-  memcpy(&raw_dir, &tmp_dir, sizeof(tmp_dir));
-  if (raw_dir != 0) {
-    total_size += 2 + 4;
-  }
-
-  // int32 ctrl_state = 27;
-  if (this->_internal_ctrl_state() != 0) {
-    total_size += 2 +
-      ::_pbi::WireFormatLite::Int32Size(
-        this->_internal_ctrl_state());
-  }
-
-  // float scale = 28;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_scale = this->_internal_scale();
-  uint32_t raw_scale;
-  memcpy(&raw_scale, &tmp_scale, sizeof(tmp_scale));
-  if (raw_scale != 0) {
+  // optional float scale = 26;
+  if (cached_has_bits & 0x01000000u) {
     total_size += 2 + 4;
   }
 
@@ -14342,106 +14444,95 @@ void ServerMsgMonsterAttribute::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_m
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_name().empty()) {
-    _this->_internal_set_name(from._internal_name());
-  }
-  if (!from._internal_country_title().empty()) {
-    _this->_internal_set_country_title(from._internal_country_title());
-  }
-  if (!from._internal_guild_title().empty()) {
-    _this->_internal_set_guild_title(from._internal_guild_title());
-  }
-  if (!from._internal_normal_title().empty()) {
-    _this->_internal_set_normal_title(from._internal_normal_title());
-  }
-  if (from._internal_has_flags()) {
-    _this->_internal_mutable_flags()->::base::Flag64::MergeFrom(
-        from._internal_flags());
-  }
-  if (from._internal_has_camp_data()) {
-    _this->_internal_mutable_camp_data()->::base::SCampData::MergeFrom(
-        from._internal_camp_data());
-  }
-  if (from._internal_refresh() != 0) {
-    _this->_internal_set_refresh(from._internal_refresh());
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000001fu) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_internal_set_name(from._internal_name());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_internal_set_country_title(from._internal_country_title());
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _this->_internal_set_guild_title(from._internal_guild_title());
+    }
+    if (cached_has_bits & 0x00000008u) {
+      _this->_internal_set_normal_title(from._internal_normal_title());
+    }
+    if (cached_has_bits & 0x00000010u) {
+      _this->_internal_mutable_camp_data()->::base::SCampData::MergeFrom(
+          from._internal_camp_data());
+    }
   }
   if (from._internal_object_id() != 0) {
     _this->_internal_set_object_id(from._internal_object_id());
   }
-  if (from._internal_data_id() != 0) {
-    _this->_internal_set_data_id(from._internal_data_id());
+  if (cached_has_bits & 0x000000e0u) {
+    if (cached_has_bits & 0x00000020u) {
+      _this->_impl_.data_id_ = from._impl_.data_id_;
+    }
+    if (cached_has_bits & 0x00000040u) {
+      _this->_impl_.level_ = from._impl_.level_;
+    }
+    if (cached_has_bits & 0x00000080u) {
+      _this->_impl_.hp_percent_ = from._impl_.hp_percent_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  if (from._internal_level() != 0) {
-    _this->_internal_set_level(from._internal_level());
+  if (cached_has_bits & 0x0000ff00u) {
+    if (cached_has_bits & 0x00000100u) {
+      _this->_impl_.steal_level_ = from._impl_.steal_level_;
+    }
+    if (cached_has_bits & 0x00000200u) {
+      _this->_impl_.mood_state_ = from._impl_.mood_state_;
+    }
+    if (cached_has_bits & 0x00000400u) {
+      _this->_impl_.move_speed_ = from._impl_.move_speed_;
+    }
+    if (cached_has_bits & 0x00000800u) {
+      _this->_impl_.attack_speed_ = from._impl_.attack_speed_;
+    }
+    if (cached_has_bits & 0x00001000u) {
+      _this->_impl_.portrait_id_ = from._impl_.portrait_id_;
+    }
+    if (cached_has_bits & 0x00002000u) {
+      _this->_impl_.model_id_ = from._impl_.model_id_;
+    }
+    if (cached_has_bits & 0x00004000u) {
+      _this->_impl_.mount_id_ = from._impl_.mount_id_;
+    }
+    if (cached_has_bits & 0x00008000u) {
+      _this->_impl_.ai_type_ = from._impl_.ai_type_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  if (from._internal_hp_percent() != 0) {
-    _this->_internal_set_hp_percent(from._internal_hp_percent());
+  if (cached_has_bits & 0x00ff0000u) {
+    if (cached_has_bits & 0x00010000u) {
+      _this->_impl_.country_title_type_ = from._impl_.country_title_type_;
+    }
+    if (cached_has_bits & 0x00020000u) {
+      _this->_impl_.guild_title_type_ = from._impl_.guild_title_type_;
+    }
+    if (cached_has_bits & 0x00040000u) {
+      _this->_impl_.normal_title_type_ = from._impl_.normal_title_type_;
+    }
+    if (cached_has_bits & 0x00080000u) {
+      _this->_impl_.occupant_guid_ = from._impl_.occupant_guid_;
+    }
+    if (cached_has_bits & 0x00100000u) {
+      _this->_impl_.owner_id_ = from._impl_.owner_id_;
+    }
+    if (cached_has_bits & 0x00200000u) {
+      _this->_impl_.target_id_ = from._impl_.target_id_;
+    }
+    if (cached_has_bits & 0x00400000u) {
+      _this->_impl_.dir_ = from._impl_.dir_;
+    }
+    if (cached_has_bits & 0x00800000u) {
+      _this->_impl_.ctrl_state_ = from._impl_.ctrl_state_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
-  if (from._internal_steal_level() != 0) {
-    _this->_internal_set_steal_level(from._internal_steal_level());
-  }
-  if (from._internal_mood_state() != 0) {
-    _this->_internal_set_mood_state(from._internal_mood_state());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_move_speed = from._internal_move_speed();
-  uint32_t raw_move_speed;
-  memcpy(&raw_move_speed, &tmp_move_speed, sizeof(tmp_move_speed));
-  if (raw_move_speed != 0) {
-    _this->_internal_set_move_speed(from._internal_move_speed());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_attack_speed = from._internal_attack_speed();
-  uint32_t raw_attack_speed;
-  memcpy(&raw_attack_speed, &tmp_attack_speed, sizeof(tmp_attack_speed));
-  if (raw_attack_speed != 0) {
-    _this->_internal_set_attack_speed(from._internal_attack_speed());
-  }
-  if (from._internal_portrait_id() != 0) {
-    _this->_internal_set_portrait_id(from._internal_portrait_id());
-  }
-  if (from._internal_model_id() != 0) {
-    _this->_internal_set_model_id(from._internal_model_id());
-  }
-  if (from._internal_mount_id() != 0) {
-    _this->_internal_set_mount_id(from._internal_mount_id());
-  }
-  if (from._internal_ai_type() != 0) {
-    _this->_internal_set_ai_type(from._internal_ai_type());
-  }
-  if (from._internal_country_title_type() != 0) {
-    _this->_internal_set_country_title_type(from._internal_country_title_type());
-  }
-  if (from._internal_guild_title_type() != 0) {
-    _this->_internal_set_guild_title_type(from._internal_guild_title_type());
-  }
-  if (from._internal_normal_title_type() != 0) {
-    _this->_internal_set_normal_title_type(from._internal_normal_title_type());
-  }
-  if (from._internal_occupant_guid() != 0) {
-    _this->_internal_set_occupant_guid(from._internal_occupant_guid());
-  }
-  if (from._internal_owner_id() != 0) {
-    _this->_internal_set_owner_id(from._internal_owner_id());
-  }
-  if (from._internal_target_id() != 0) {
-    _this->_internal_set_target_id(from._internal_target_id());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_dir = from._internal_dir();
-  uint32_t raw_dir;
-  memcpy(&raw_dir, &tmp_dir, sizeof(tmp_dir));
-  if (raw_dir != 0) {
-    _this->_internal_set_dir(from._internal_dir());
-  }
-  if (from._internal_ctrl_state() != 0) {
-    _this->_internal_set_ctrl_state(from._internal_ctrl_state());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_scale = from._internal_scale();
-  uint32_t raw_scale;
-  memcpy(&raw_scale, &tmp_scale, sizeof(tmp_scale));
-  if (raw_scale != 0) {
+  if (cached_has_bits & 0x01000000u) {
     _this->_internal_set_scale(from._internal_scale());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -14463,6 +14554,7 @@ void ServerMsgMonsterAttribute::InternalSwap(ServerMsgMonsterAttribute* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.name_, lhs_arena,
       &other->_impl_.name_, rhs_arena
@@ -14482,9 +14574,9 @@ void ServerMsgMonsterAttribute::InternalSwap(ServerMsgMonsterAttribute* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ServerMsgMonsterAttribute, _impl_.scale_)
       + sizeof(ServerMsgMonsterAttribute::_impl_.scale_)
-      - PROTOBUF_FIELD_OFFSET(ServerMsgMonsterAttribute, _impl_.flags_)>(
-          reinterpret_cast<char*>(&_impl_.flags_),
-          reinterpret_cast<char*>(&other->_impl_.flags_));
+      - PROTOBUF_FIELD_OFFSET(ServerMsgMonsterAttribute, _impl_.camp_data_)>(
+          reinterpret_cast<char*>(&_impl_.camp_data_),
+          reinterpret_cast<char*>(&other->_impl_.camp_data_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgMonsterAttribute::GetMetadata() const {
@@ -14604,13 +14696,12 @@ const char* ServerMsgNewBeastie::_InternalParse(const char* ptr, ::_pbi::ParseCo
         } else
           goto handle_unusual;
         continue;
-      // string name = 2;
+      // bytes name = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_name();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "servermessage.ServerMsgNewBeastie.name"));
         } else
           goto handle_unusual;
         continue;
@@ -14713,13 +14804,9 @@ uint8_t* ServerMsgNewBeastie::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt32ToArray(1, this->_internal_object_id(), target);
   }
 
-  // string name = 2;
+  // bytes name = 2;
   if (!this->_internal_name().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "servermessage.ServerMsgNewBeastie.name");
-    target = stream->WriteStringMaybeAliased(
+    target = stream->WriteBytesMaybeAliased(
         2, this->_internal_name(), target);
   }
 
@@ -14811,10 +14898,10 @@ size_t ServerMsgNewBeastie::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string name = 2;
+  // bytes name = 2;
   if (!this->_internal_name().empty()) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
         this->_internal_name());
   }
 
@@ -16881,6 +16968,326 @@ void ServerMsgPickItemResult::InternalSwap(ServerMsgPickItemResult* other) {
 
 // ===================================================================
 
+class EventItem::_Internal {
+ public:
+  using HasBits = decltype(std::declval<EventItem>()._impl_._has_bits_);
+  static void set_has_scriptstr(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+EventItem::EventItem(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:servermessage.EventItem)
+}
+EventItem::EventItem(const EventItem& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  EventItem* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.scriptstr_){}
+    , decltype(_impl_.item_type_){}
+    , decltype(_impl_.item_state_){}
+    , decltype(_impl_.item_index_){}
+    , decltype(_impl_.scriptid_){}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.scriptstr_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.scriptstr_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_scriptstr()) {
+    _this->_impl_.scriptstr_.Set(from._internal_scriptstr(), 
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.item_type_, &from._impl_.item_type_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.scriptid_) -
+    reinterpret_cast<char*>(&_impl_.item_type_)) + sizeof(_impl_.scriptid_));
+  // @@protoc_insertion_point(copy_constructor:servermessage.EventItem)
+}
+
+inline void EventItem::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.scriptstr_){}
+    , decltype(_impl_.item_type_){0}
+    , decltype(_impl_.item_state_){0}
+    , decltype(_impl_.item_index_){0}
+    , decltype(_impl_.scriptid_){0}
+  };
+  _impl_.scriptstr_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.scriptstr_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+EventItem::~EventItem() {
+  // @@protoc_insertion_point(destructor:servermessage.EventItem)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void EventItem::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.scriptstr_.Destroy();
+}
+
+void EventItem::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void EventItem::Clear() {
+// @@protoc_insertion_point(message_clear_start:servermessage.EventItem)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    _impl_.scriptstr_.ClearNonDefaultToEmpty();
+  }
+  ::memset(&_impl_.item_type_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.scriptid_) -
+      reinterpret_cast<char*>(&_impl_.item_type_)) + sizeof(_impl_.scriptid_));
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* EventItem::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // int32 item_type = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.item_type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 item_state = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.item_state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 item_index = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.item_index_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 scriptId = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _impl_.scriptid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional bytes scriptStr = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
+          auto str = _internal_mutable_scriptstr();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* EventItem::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:servermessage.EventItem)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 item_type = 1;
+  if (this->_internal_item_type() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_item_type(), target);
+  }
+
+  // int32 item_state = 2;
+  if (this->_internal_item_state() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_item_state(), target);
+  }
+
+  // int32 item_index = 3;
+  if (this->_internal_item_index() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_item_index(), target);
+  }
+
+  // int32 scriptId = 4;
+  if (this->_internal_scriptid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(4, this->_internal_scriptid(), target);
+  }
+
+  // optional bytes scriptStr = 5;
+  if (_internal_has_scriptstr()) {
+    target = stream->WriteBytesMaybeAliased(
+        5, this->_internal_scriptstr(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:servermessage.EventItem)
+  return target;
+}
+
+size_t EventItem::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:servermessage.EventItem)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // optional bytes scriptStr = 5;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+        this->_internal_scriptstr());
+  }
+
+  // int32 item_type = 1;
+  if (this->_internal_item_type() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_item_type());
+  }
+
+  // int32 item_state = 2;
+  if (this->_internal_item_state() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_item_state());
+  }
+
+  // int32 item_index = 3;
+  if (this->_internal_item_index() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_item_index());
+  }
+
+  // int32 scriptId = 4;
+  if (this->_internal_scriptid() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_scriptid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData EventItem::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    EventItem::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*EventItem::GetClassData() const { return &_class_data_; }
+
+
+void EventItem::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<EventItem*>(&to_msg);
+  auto& from = static_cast<const EventItem&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:servermessage.EventItem)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_scriptstr()) {
+    _this->_internal_set_scriptstr(from._internal_scriptstr());
+  }
+  if (from._internal_item_type() != 0) {
+    _this->_internal_set_item_type(from._internal_item_type());
+  }
+  if (from._internal_item_state() != 0) {
+    _this->_internal_set_item_state(from._internal_item_state());
+  }
+  if (from._internal_item_index() != 0) {
+    _this->_internal_set_item_index(from._internal_item_index());
+  }
+  if (from._internal_scriptid() != 0) {
+    _this->_internal_set_scriptid(from._internal_scriptid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void EventItem::CopyFrom(const EventItem& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:servermessage.EventItem)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool EventItem::IsInitialized() const {
+  return true;
+}
+
+void EventItem::InternalSwap(EventItem* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.scriptstr_, lhs_arena,
+      &other->_impl_.scriptstr_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(EventItem, _impl_.scriptid_)
+      + sizeof(EventItem::_impl_.scriptid_)
+      - PROTOBUF_FIELD_OFFSET(EventItem, _impl_.item_type_)>(
+          reinterpret_cast<char*>(&_impl_.item_type_),
+          reinterpret_cast<char*>(&other->_impl_.item_type_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata EventItem::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
+      file_level_metadata_server_5fmessage_2eproto[36]);
+}
+
+// ===================================================================
+
 class ServerMsgQueryEventResult::_Internal {
  public:
 };
@@ -16895,7 +17302,8 @@ ServerMsgQueryEventResult::ServerMsgQueryEventResult(const ServerMsgQueryEventRe
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ServerMsgQueryEventResult* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.object_id_){}
+      decltype(_impl_.eventlist_){from._impl_.eventlist_}
+    , decltype(_impl_.object_id_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -16908,7 +17316,8 @@ inline void ServerMsgQueryEventResult::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.object_id_){0u}
+      decltype(_impl_.eventlist_){arena}
+    , decltype(_impl_.object_id_){0u}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -16924,6 +17333,7 @@ ServerMsgQueryEventResult::~ServerMsgQueryEventResult() {
 
 inline void ServerMsgQueryEventResult::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.eventlist_.~RepeatedPtrField();
 }
 
 void ServerMsgQueryEventResult::SetCachedSize(int size) const {
@@ -16936,6 +17346,7 @@ void ServerMsgQueryEventResult::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.eventlist_.Clear();
   _impl_.object_id_ = 0u;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -16951,6 +17362,19 @@ const char* ServerMsgQueryEventResult::_InternalParse(const char* ptr, ::_pbi::P
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _impl_.object_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .servermessage.EventItem eventlist = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_eventlist(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -16989,6 +17413,14 @@ uint8_t* ServerMsgQueryEventResult::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt32ToArray(1, this->_internal_object_id(), target);
   }
 
+  // repeated .servermessage.EventItem eventlist = 2;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_eventlist_size()); i < n; i++) {
+    const auto& repfield = this->_internal_eventlist(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -17004,6 +17436,13 @@ size_t ServerMsgQueryEventResult::ByteSizeLong() const {
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // repeated .servermessage.EventItem eventlist = 2;
+  total_size += 1UL * this->_internal_eventlist_size();
+  for (const auto& msg : this->_impl_.eventlist_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
 
   // uint32 object_id = 1;
   if (this->_internal_object_id() != 0) {
@@ -17028,6 +17467,7 @@ void ServerMsgQueryEventResult::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_m
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  _this->_impl_.eventlist_.MergeFrom(from._impl_.eventlist_);
   if (from._internal_object_id() != 0) {
     _this->_internal_set_object_id(from._internal_object_id());
   }
@@ -17048,13 +17488,14 @@ bool ServerMsgQueryEventResult::IsInitialized() const {
 void ServerMsgQueryEventResult::InternalSwap(ServerMsgQueryEventResult* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.eventlist_.InternalSwap(&other->_impl_.eventlist_);
   swap(_impl_.object_id_, other->_impl_.object_id_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgQueryEventResult::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[36]);
+      file_level_metadata_server_5fmessage_2eproto[37]);
 }
 
 // ===================================================================
@@ -17269,7 +17710,7 @@ void ServerMsgQuestList::InternalSwap(ServerMsgQuestList* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgQuestList::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[37]);
+      file_level_metadata_server_5fmessage_2eproto[38]);
 }
 
 // ===================================================================
@@ -17480,7 +17921,7 @@ void ServerMsgQuestListRefresh::InternalSwap(ServerMsgQuestListRefresh* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgQuestListRefresh::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[38]);
+      file_level_metadata_server_5fmessage_2eproto[39]);
 }
 
 // ===================================================================
@@ -17738,16 +18179,29 @@ void ServerMsgSkillSettingResult::InternalSwap(ServerMsgSkillSettingResult* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgSkillSettingResult::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[39]);
+      file_level_metadata_server_5fmessage_2eproto[40]);
 }
 
 // ===================================================================
 
 class ServerMsgScriptCommand::_Internal {
  public:
+  using HasBits = decltype(std::declval<ServerMsgScriptCommand>()._impl_._has_bits_);
   static const ::base::Player_Setting& setting(const ServerMsgScriptCommand* msg);
+  static void set_has_setting(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
   static const ::base::ScriptParam_QuestInfo& continue_param(const ServerMsgScriptCommand* msg);
+  static void set_has_continue_param(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
   static const ::base::ScriptParam_QuestInfo& quest_info(const ServerMsgScriptCommand* msg);
+  static void set_has_quest_info(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
+  static void set_has_quest_tips(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
 };
 
 const ::base::Player_Setting&
@@ -17763,22 +18217,16 @@ ServerMsgScriptCommand::_Internal::quest_info(const ServerMsgScriptCommand* msg)
   return *msg->_impl_.quest_info_;
 }
 void ServerMsgScriptCommand::clear_setting() {
-  if (GetArenaForAllocation() == nullptr && _impl_.setting_ != nullptr) {
-    delete _impl_.setting_;
-  }
-  _impl_.setting_ = nullptr;
+  if (_impl_.setting_ != nullptr) _impl_.setting_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
 void ServerMsgScriptCommand::clear_continue_param() {
-  if (GetArenaForAllocation() == nullptr && _impl_.continue_param_ != nullptr) {
-    delete _impl_.continue_param_;
-  }
-  _impl_.continue_param_ = nullptr;
+  if (_impl_.continue_param_ != nullptr) _impl_.continue_param_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000004u;
 }
 void ServerMsgScriptCommand::clear_quest_info() {
-  if (GetArenaForAllocation() == nullptr && _impl_.quest_info_ != nullptr) {
-    delete _impl_.quest_info_;
-  }
-  _impl_.quest_info_ = nullptr;
+  if (_impl_.quest_info_ != nullptr) _impl_.quest_info_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000008u;
 }
 ServerMsgScriptCommand::ServerMsgScriptCommand(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -17790,20 +18238,21 @@ ServerMsgScriptCommand::ServerMsgScriptCommand(const ServerMsgScriptCommand& fro
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ServerMsgScriptCommand* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.quest_tips_){}
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.quest_tips_){}
     , decltype(_impl_.setting_){nullptr}
     , decltype(_impl_.continue_param_){nullptr}
     , decltype(_impl_.quest_info_){nullptr}
     , decltype(_impl_.cmd_id_){}
-    , decltype(_impl_.index_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
+    , decltype(_impl_.index_){}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   _impl_.quest_tips_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.quest_tips_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_quest_tips().empty()) {
+  if (from._internal_has_quest_tips()) {
     _this->_impl_.quest_tips_.Set(from._internal_quest_tips(), 
       _this->GetArenaForAllocation());
   }
@@ -17827,13 +18276,14 @@ inline void ServerMsgScriptCommand::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.quest_tips_){}
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.quest_tips_){}
     , decltype(_impl_.setting_){nullptr}
     , decltype(_impl_.continue_param_){nullptr}
     , decltype(_impl_.quest_info_){nullptr}
     , decltype(_impl_.cmd_id_){0}
     , decltype(_impl_.index_){0}
-    , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.quest_tips_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -17868,27 +18318,34 @@ void ServerMsgScriptCommand::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.quest_tips_.ClearToEmpty();
-  if (GetArenaForAllocation() == nullptr && _impl_.setting_ != nullptr) {
-    delete _impl_.setting_;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
+    if (cached_has_bits & 0x00000001u) {
+      _impl_.quest_tips_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      GOOGLE_DCHECK(_impl_.setting_ != nullptr);
+      _impl_.setting_->Clear();
+    }
+    if (cached_has_bits & 0x00000004u) {
+      GOOGLE_DCHECK(_impl_.continue_param_ != nullptr);
+      _impl_.continue_param_->Clear();
+    }
+    if (cached_has_bits & 0x00000008u) {
+      GOOGLE_DCHECK(_impl_.quest_info_ != nullptr);
+      _impl_.quest_info_->Clear();
+    }
   }
-  _impl_.setting_ = nullptr;
-  if (GetArenaForAllocation() == nullptr && _impl_.continue_param_ != nullptr) {
-    delete _impl_.continue_param_;
-  }
-  _impl_.continue_param_ = nullptr;
-  if (GetArenaForAllocation() == nullptr && _impl_.quest_info_ != nullptr) {
-    delete _impl_.quest_info_;
-  }
-  _impl_.quest_info_ = nullptr;
   ::memset(&_impl_.cmd_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.index_) -
       reinterpret_cast<char*>(&_impl_.cmd_id_)) + sizeof(_impl_.index_));
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 const char* ServerMsgScriptCommand::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
@@ -17901,7 +18358,7 @@ const char* ServerMsgScriptCommand::_InternalParse(const char* ptr, ::_pbi::Pars
         } else
           goto handle_unusual;
         continue;
-      // .base.Player_Setting setting = 2;
+      // optional .base.Player_Setting setting = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_setting(), ptr);
@@ -17917,7 +18374,7 @@ const char* ServerMsgScriptCommand::_InternalParse(const char* ptr, ::_pbi::Pars
         } else
           goto handle_unusual;
         continue;
-      // .base.ScriptParam_QuestInfo continue_param = 4;
+      // optional .base.ScriptParam_QuestInfo continue_param = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_continue_param(), ptr);
@@ -17925,7 +18382,7 @@ const char* ServerMsgScriptCommand::_InternalParse(const char* ptr, ::_pbi::Pars
         } else
           goto handle_unusual;
         continue;
-      // .base.ScriptParam_QuestInfo quest_info = 5;
+      // optional .base.ScriptParam_QuestInfo quest_info = 5;
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           ptr = ctx->ParseMessage(_internal_mutable_quest_info(), ptr);
@@ -17933,7 +18390,7 @@ const char* ServerMsgScriptCommand::_InternalParse(const char* ptr, ::_pbi::Pars
         } else
           goto handle_unusual;
         continue;
-      // string quest_tips = 6;
+      // optional string quest_tips = 6;
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
           auto str = _internal_mutable_quest_tips();
@@ -17959,6 +18416,7 @@ const char* ServerMsgScriptCommand::_InternalParse(const char* ptr, ::_pbi::Pars
     CHK_(ptr != nullptr);
   }  // while
 message_done:
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -17978,8 +18436,8 @@ uint8_t* ServerMsgScriptCommand::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_cmd_id(), target);
   }
 
-  // .base.Player_Setting setting = 2;
-  if (this->_internal_has_setting()) {
+  // optional .base.Player_Setting setting = 2;
+  if (_internal_has_setting()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(2, _Internal::setting(this),
         _Internal::setting(this).GetCachedSize(), target, stream);
@@ -17991,22 +18449,22 @@ uint8_t* ServerMsgScriptCommand::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_index(), target);
   }
 
-  // .base.ScriptParam_QuestInfo continue_param = 4;
-  if (this->_internal_has_continue_param()) {
+  // optional .base.ScriptParam_QuestInfo continue_param = 4;
+  if (_internal_has_continue_param()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(4, _Internal::continue_param(this),
         _Internal::continue_param(this).GetCachedSize(), target, stream);
   }
 
-  // .base.ScriptParam_QuestInfo quest_info = 5;
-  if (this->_internal_has_quest_info()) {
+  // optional .base.ScriptParam_QuestInfo quest_info = 5;
+  if (_internal_has_quest_info()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(5, _Internal::quest_info(this),
         _Internal::quest_info(this).GetCachedSize(), target, stream);
   }
 
-  // string quest_tips = 6;
-  if (!this->_internal_quest_tips().empty()) {
+  // optional string quest_tips = 6;
+  if (_internal_has_quest_tips()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_quest_tips().data(), static_cast<int>(this->_internal_quest_tips().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
@@ -18031,34 +18489,37 @@ size_t ServerMsgScriptCommand::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string quest_tips = 6;
-  if (!this->_internal_quest_tips().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_quest_tips());
-  }
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
+    // optional string quest_tips = 6;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_quest_tips());
+    }
 
-  // .base.Player_Setting setting = 2;
-  if (this->_internal_has_setting()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.setting_);
-  }
+    // optional .base.Player_Setting setting = 2;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.setting_);
+    }
 
-  // .base.ScriptParam_QuestInfo continue_param = 4;
-  if (this->_internal_has_continue_param()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.continue_param_);
-  }
+    // optional .base.ScriptParam_QuestInfo continue_param = 4;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.continue_param_);
+    }
 
-  // .base.ScriptParam_QuestInfo quest_info = 5;
-  if (this->_internal_has_quest_info()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.quest_info_);
-  }
+    // optional .base.ScriptParam_QuestInfo quest_info = 5;
+    if (cached_has_bits & 0x00000008u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.quest_info_);
+    }
 
+  }
   // int32 cmd_id = 1;
   if (this->_internal_cmd_id() != 0) {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_cmd_id());
@@ -18087,20 +18548,23 @@ void ServerMsgScriptCommand::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg,
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_quest_tips().empty()) {
-    _this->_internal_set_quest_tips(from._internal_quest_tips());
-  }
-  if (from._internal_has_setting()) {
-    _this->_internal_mutable_setting()->::base::Player_Setting::MergeFrom(
-        from._internal_setting());
-  }
-  if (from._internal_has_continue_param()) {
-    _this->_internal_mutable_continue_param()->::base::ScriptParam_QuestInfo::MergeFrom(
-        from._internal_continue_param());
-  }
-  if (from._internal_has_quest_info()) {
-    _this->_internal_mutable_quest_info()->::base::ScriptParam_QuestInfo::MergeFrom(
-        from._internal_quest_info());
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x0000000fu) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_internal_set_quest_tips(from._internal_quest_tips());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_internal_mutable_setting()->::base::Player_Setting::MergeFrom(
+          from._internal_setting());
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _this->_internal_mutable_continue_param()->::base::ScriptParam_QuestInfo::MergeFrom(
+          from._internal_continue_param());
+    }
+    if (cached_has_bits & 0x00000008u) {
+      _this->_internal_mutable_quest_info()->::base::ScriptParam_QuestInfo::MergeFrom(
+          from._internal_quest_info());
+    }
   }
   if (from._internal_cmd_id() != 0) {
     _this->_internal_set_cmd_id(from._internal_cmd_id());
@@ -18127,6 +18591,7 @@ void ServerMsgScriptCommand::InternalSwap(ServerMsgScriptCommand* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.quest_tips_, lhs_arena,
       &other->_impl_.quest_tips_, rhs_arena
@@ -18142,7 +18607,7 @@ void ServerMsgScriptCommand::InternalSwap(ServerMsgScriptCommand* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgScriptCommand::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[40]);
+      file_level_metadata_server_5fmessage_2eproto[41]);
 }
 
 // ===================================================================
@@ -18425,7 +18890,7 @@ void ServerMsgSkillUpgrade::InternalSwap(ServerMsgSkillUpgrade* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgSkillUpgrade::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[41]);
+      file_level_metadata_server_5fmessage_2eproto[42]);
 }
 
 // ===================================================================
@@ -18660,7 +19125,7 @@ void ServerMsgSwapItem::InternalSwap(ServerMsgSwapItem* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgSwapItem::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[42]);
+      file_level_metadata_server_5fmessage_2eproto[43]);
 }
 
 // ===================================================================
@@ -19009,7 +19474,7 @@ void ServerMsgTargetListAndHitFlags::InternalSwap(ServerMsgTargetListAndHitFlags
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgTargetListAndHitFlags::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[43]);
+      file_level_metadata_server_5fmessage_2eproto[44]);
 }
 
 // ===================================================================
@@ -19292,7 +19757,7 @@ void ServerMsgTaskDownEquipResult::InternalSwap(ServerMsgTaskDownEquipResult* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgTaskDownEquipResult::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[44]);
+      file_level_metadata_server_5fmessage_2eproto[45]);
 }
 
 // ===================================================================
@@ -19527,7 +19992,7 @@ void ServerMsgUseEquipResult::InternalSwap(ServerMsgUseEquipResult* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ServerMsgUseEquipResult::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_server_5fmessage_2eproto_getter, &descriptor_table_server_5fmessage_2eproto_once,
-      file_level_metadata_server_5fmessage_2eproto[45]);
+      file_level_metadata_server_5fmessage_2eproto[46]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -19676,6 +20141,10 @@ Arena::CreateMaybeMessage< ::servermessage::ServerMsgOperateResult >(Arena* aren
 template<> PROTOBUF_NOINLINE ::servermessage::ServerMsgPickItemResult*
 Arena::CreateMaybeMessage< ::servermessage::ServerMsgPickItemResult >(Arena* arena) {
   return Arena::CreateMessageInternal< ::servermessage::ServerMsgPickItemResult >(arena);
+}
+template<> PROTOBUF_NOINLINE ::servermessage::EventItem*
+Arena::CreateMaybeMessage< ::servermessage::EventItem >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::servermessage::EventItem >(arena);
 }
 template<> PROTOBUF_NOINLINE ::servermessage::ServerMsgQueryEventResult*
 Arena::CreateMaybeMessage< ::servermessage::ServerMsgQueryEventResult >(Arena* arena) {

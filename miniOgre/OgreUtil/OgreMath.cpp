@@ -1247,6 +1247,36 @@ namespace Ogre
         view_matrix[3][2] = -forward.dotProduct(camera_pos);
         return view_matrix;
     }
+
+    Matrix4 makeRotateMatrix(Matrix4& m, float angle, Ogre::Vector3& v)
+    {
+        Matrix4 rotate;
+
+        float const a = angle;
+        float const c = cos(a);
+        float const s = sin(a);
+
+        Ogre::Vector3 axis = v.normalisedCopy();
+        Ogre::Vector3 temp = (1.0f - c) * axis;
+       
+
+
+        rotate[0][0] = c + temp[0] * axis[0];
+        rotate[0][1] = temp[0] * axis[1] + s * axis[2];
+        rotate[0][2] = temp[0] * axis[2] - s * axis[1];
+
+        rotate[1][0] = temp[1] * axis[0] - s * axis[2];
+        rotate[1][1] = c + temp[1] * axis[1];
+        rotate[1][2] = temp[1] * axis[2] + s * axis[0];
+
+        rotate[2][0] = temp[2] * axis[0] + s * axis[1];
+        rotate[2][1] = temp[2] * axis[1] - s * axis[0];
+        rotate[2][2] = c + temp[2] * axis[2];
+
+        Matrix4 result = m * rotate;
+
+        return result;
+    }
     //---------------------------------------------------------------------
     Real Math::boundingRadiusFromAABB(const AxisAlignedBox& aabb)
     {

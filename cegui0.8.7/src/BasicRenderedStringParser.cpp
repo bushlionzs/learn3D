@@ -123,7 +123,7 @@ RenderedString BasicRenderedStringParser::parse(const String& input_string,
 
         if (!found_tag)
             return rs;
-
+        const char* str = input_string.c_str();
         if (!parse_section(input_iter, input_string.end(), ']', tag_string))
         {
             Logger::getSingleton().logEvent(
@@ -152,6 +152,7 @@ bool parse_section(String::const_iterator& pos, const String::const_iterator& en
     {
         if (*pos == delim)
         {
+            auto size = pos - start_iter;
             out.append(start_iter, pos++);
             return true;
         }

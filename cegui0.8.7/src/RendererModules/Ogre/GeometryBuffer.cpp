@@ -71,7 +71,7 @@ namespace CEGUI
 
         auto vb = vd->getVertexBuffer();
 
-        uint32_t indexCount = 2048;
+        uint32_t indexCount = 10000;
 
         std::vector<uint16_t> indexs(indexCount);
 
@@ -201,7 +201,7 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
 
     auto vertexSize = vd->getVertexSize(0);
 
-    d_renderOp.vertexData->addBindBuffer(0, vertexSize, 2048);
+    d_renderOp.vertexData->addBindBuffer(0, vertexSize, 4096);
 }
 
 //----------------------------------------------------------------------------//

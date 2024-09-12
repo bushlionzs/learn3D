@@ -138,6 +138,7 @@ bool glslCompileShader(
 
     if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
         std::string aa  = module.GetErrorMessage();
+        assert(false);
         return false;
     }
 

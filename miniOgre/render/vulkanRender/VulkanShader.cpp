@@ -187,7 +187,8 @@ VkPipeline VulkanShader::getVKPipeline(Ogre::Renderable* r)
             static_cast<uint32_t>(dynamicStateEnables.size()),
             0);
 
-    auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout();
+    bool pbr = mat->isPbr();
+    auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout(pbr);
     VkGraphicsPipelineCreateInfo pipelineCreateInfo =
         vks::initializers::pipelineCreateInfo(
             pipelineLayout,

@@ -687,7 +687,10 @@ void sc_query_event(NetHandle h, const char* msg, uint32_t msg_size)
 
 	bool b = dummy.ParseFromArray(msg, msg_size);
 	assert(b);
-	UIManager::GetSingleton().updateQueryEvent(dummy);
+
+	QuestManager* qm = GameDataManager::GetSingleton().getQuestManager();
+
+	qm->updateQueryEvent(dummy);
 	UIManager::GetSingleton().updateWindow(GameUI_Quest);
 	UIManager::GetSingleton().showWindow(GameUI_Quest);
 }
@@ -708,5 +711,14 @@ void sc_modify_quest(NetHandle h, const char* msg, uint32_t msg_size)
 
 void sc_script_command(NetHandle h, const char* msg, uint32_t msg_size)
 {
+	servermessage::ServerMsgScriptCommand dummy;
 
+	bool b = dummy.ParseFromArray(msg, msg_size);
+	assert(b);
+
+	QuestManager* qm = GameDataManager::GetSingleton().getQuestManager();
+
+	qm->updateQuestInfoResponse(dummy);
+	UIManager::GetSingleton().updateWindow(GameUI_Quest);
+	UIManager::GetSingleton().showWindow(GameUI_Quest);
 }

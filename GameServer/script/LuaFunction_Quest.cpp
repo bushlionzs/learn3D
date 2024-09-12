@@ -1487,6 +1487,315 @@ void SetDispatchQuest(T& paramEventList, GameMap* pMap, int32 i)
 	}
 }
 
+void SetDispatchQuest(base::ScriptParam_QuestInfo* quest_info, GameMap* pMap, int32 i)
+{
+	if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Item)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetItem(number[0], number[1]);
+
+		auto* quest_bonus = quest_info->add_abonus();
+		auto* bonus_item = quest_bonus->mutable_bonus_item();
+		quest_bonus->set_type(bonus.m_nType);
+		
+		bonus_item->set_item_id(number[0]);
+		bonus_item->set_ycount(number[1]);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_RandItem)
+	{
+		/*~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		/*~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetItemRand();
+		auto* quest_bonus = quest_info->add_abonus();
+		auto* bonus_item = quest_bonus->mutable_bonus_item();
+		quest_bonus->set_type(bonus.m_nType);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_RadioItem)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetItemRadio(number[0], number[1]);
+		auto* quest_bonus = quest_info->add_abonus();
+		auto* bonus_item = quest_bonus->mutable_bonus_item();
+		quest_bonus->set_type(bonus.m_nType);
+		bonus_item->set_item_id(number[0]);
+		bonus_item->set_ycount(number[1]);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money1)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney1(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money2)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney2(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money3)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney3(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money4)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney4(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money5)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney5(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money6)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney6(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money7)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney7(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money8)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney8(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Money9)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetMoney9(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Exp)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetExp(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Vigor)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.Set_Property_Vigor(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Charm)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetCharm(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_Genius)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetGenius(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_GuildExp)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetGuildExp(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_exp(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_CountryFood)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetCountryFood(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_CountryMoney)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetCountryMoney(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_CountryWood)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetCountryWood(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_CountryMetal)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetCountryMetal(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_WeiWang)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetWeiWang(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_InherenceExp)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetInherenceExp(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+	else if (pMap->m_QuestBuffer.Buff[i].mType == SQuestBuffer::_QuestItemBuf::BufType_GuildMoney)
+	{
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+		SQuestBonus	bonus;
+		int32* number = (int32*)(pMap->m_QuestBuffer.Buff[i].buf);
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+		bonus.SetGuildMoney(*number);
+		auto* quest_bonus = quest_info->add_abonus();
+		quest_bonus->set_type(bonus.m_nType);
+		quest_bonus->set_money(*number);
+	}
+}
+
 int32 LuaFunction_DispatchQuestContinueInfoNM(Lua_State* L)
 {
 	LuaStack args(L);
@@ -2052,6 +2361,15 @@ int32_t LuaFunction_DispatchQuestInfoNM(Lua_State* L)
 	}
 	Player* pPlayer = (Player*)pObj;
 
+
+	servermessage::ServerMsgScriptCommand dummy;
+
+	dummy.set_index(0);
+	auto* quest_info = dummy.mutable_quest_info();
+
+	quest_info->set_npc_id(targetId);
+	quest_info->set_quest_id(misId);
+	quest_info->set_script_id(misId);
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	ScriptParam_QuestInfo	paramEventList;
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -2061,6 +2379,10 @@ int32_t LuaFunction_DispatchQuestInfoNM(Lua_State* L)
 	paramEventList.m_idQuest = misId;
 	paramEventList.m_idScript = misId;
 	if (bDontShowOK) paramEventList.SetFlag(1);
+
+	quest_info->set_yflags(paramEventList.m_yFlags);
+	
+
 
 	for (int32 i = 0; i < pMap->m_QuestBuffer.mUseNum; i++)
 	{
@@ -2072,22 +2394,24 @@ int32_t LuaFunction_DispatchQuestInfoNM(Lua_State* L)
 
 			scriptStr = pMap->m_QuestBuffer.Buff[i].buf;
 			paramEventList.AddText(&scriptStr);
+
+			quest_info->add_atext(pMap->m_QuestBuffer.Buff[i].buf);
 		}
 		else
 		{
-			SetDispatchQuest(paramEventList, pMap, i);
+			SetDispatchQuest(quest_info, pMap, i);
 		}
 	}
 
 	pPlayer->SetRuntimeData(RT_EVENT_REQUEST_NPCID, targetId);
 	pPlayer->SetRuntimeData(RT_EVENT_REQUEST_QUEST_SCRIPT_ID, misId);
 
+	
+	dummy.set_cmd_id(SCRIPT_COMMAND_QUEST_RESPONSE);
 
-	SCScriptCommand* packet = new SCScriptCommand;
-	packet->setCmdId(SCRIPT_COMMAND_QUEST_RESPONSE);
-	packet->setQuestInfo(paramEventList);
-	NetMessageManager::GetSingletonPtr()->sendNetMessage(packet);
-
+	auto handle = pPlayer->GetConnector();
+	NetMessageManager::GetSingletonPtr()->sendNetMessage(handle, SC_SCRIPT_COMMAND, &dummy);
+	
 	return 0;
 }
 

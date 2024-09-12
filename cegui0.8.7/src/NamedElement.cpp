@@ -138,13 +138,16 @@ bool NamedElement::isAncestor(const String& name) const
 }
 
 //----------------------------------------------------------------------------//
-NamedElement* NamedElement::getChildElement(const String& name_path) const
+NamedElement* NamedElement::getChildElement(const String& name_path, bool enable_empty) const
 {
     NamedElement* e = getChildByNamePath_impl(name_path);
 
     if (e)
         return e;
-
+    if (enable_empty)
+    {
+        return nullptr;
+    }
     CEGUI_THROW(UnknownObjectException("The Element object "
         "referenced by '" + name_path + "' is not attached to Element at '"
         + getNamePath() + "'."));
