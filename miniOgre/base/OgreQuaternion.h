@@ -93,6 +93,13 @@ namespace Ogre {
             memcpy(&w, valptr, sizeof(Real)*4);
         }
 
+        inline Quaternion(const double* valptr)
+        {
+            w = valptr[0];
+            z = valptr[1];
+            y = valptr[2];
+            x = valptr[3];
+        }
         /** Exchange the contents of this quaternion with another. 
         */
         inline void swap(Quaternion& other)

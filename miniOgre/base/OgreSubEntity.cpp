@@ -56,17 +56,12 @@ namespace Ogre {
         return mWorld;
     }
 
-    void SubEntity::setPosition(Ogre::Vector3& pos)
+    void SubEntity::setLocalMatrix(
+        const Ogre::Vector3& pos, 
+        const Ogre::Vector3& scale, 
+        const Ogre::Quaternion& q)
     {
-        mPosition = pos;
-        if (mPosition != Ogre::Vector3::ZERO)
-        {
-            int kk = 0;
-        }
-        mLocal.makeTransform(
-            pos,
-            Ogre::Vector3(1.0f, 1.0f, 1.0f),
-            Ogre::Quaternion(1.0f, 0.0f, 0.0f, 0.0f));
+        mLocal.makeTransform(pos, scale, q);
     }
 
     void SubEntity::setMaterialName(const std::string& name)

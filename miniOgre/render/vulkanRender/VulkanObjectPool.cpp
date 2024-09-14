@@ -16,6 +16,12 @@ VulkanObjectPool::~VulkanObjectPool()
 
 void VulkanObjectPool::init(VulkanRenderSystem* vkrs)
 {
+
+    mObjectCountMax = 10000;
+    mPBRMaterialCountMax = 10000;
+    mMaterialCountMax = 10000;
+    mSkinnedCountMax = 2000;
+
     mObjectCB = std::make_unique<VulkanUploadBuffer<ObjectConstantBuffer>>(
         mObjectCountMax,
         true

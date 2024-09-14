@@ -104,7 +104,11 @@ namespace Ogre {
         void prepare();
 
         void setPosition(Ogre::Vector3& pos);
+        void setScale(Ogre::Vector3& scale);
+        void setRotate(Ogre::Quaternion& q);
         const Ogre::Vector3& getPosition();
+        const Ogre::Vector3& getScale();
+        const Ogre::Quaternion& getRotate();
 
         bool useSharedVertices()
         {
@@ -146,6 +150,8 @@ namespace Ogre {
         OperationType mOperationType = OT_TRIANGLE_LIST;
 
         Ogre::Vector3 mPosition;
+        Ogre::Vector3 mScale;
+        Ogre::Quaternion mQuaternion;
 
         bool mSharedVertices = false;
         bool mSharedIndex = false;

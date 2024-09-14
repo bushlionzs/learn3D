@@ -24,7 +24,7 @@ namespace Ogre {
 
         virtual const Ogre::Matrix4& getModelMatrix();
 
-        void setPosition(Ogre::Vector3& pos);
+        void setLocalMatrix(const Ogre::Vector3& pos, const Ogre::Vector3& scale, const Ogre::Quaternion& q);
 
         void setMaterialName(const std::string& name);
 
@@ -45,7 +45,7 @@ namespace Ogre {
 
         Ogre::Matrix4 mWorld;
         Ogre::Matrix4 mLocal;
-        Ogre::Vector3 mPosition;
+        //Ogre::Vector3 mPosition;
 
         bool mVisible = true;
     };

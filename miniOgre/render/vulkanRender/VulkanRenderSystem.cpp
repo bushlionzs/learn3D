@@ -380,19 +380,19 @@ void VulkanRenderSystem::updateMainPassCB(ICamera* camera)
     const Ogre::Vector3& camepos = camera->getDerivedPosition();
 
     Ogre::Matrix4 invView = view.inverse();
-    Ogre::Matrix4 viewProj = view * proj;
+    Ogre::Matrix4 viewProj = proj * view;
     Ogre::Matrix4 invProj = proj.inverse();
     Ogre::Matrix4 invViewProj = viewProj.inverse();
 
     mFrameConstantBuffer.Shadow = 0;
 
     
-    mFrameConstantBuffer.View = view;
-    mFrameConstantBuffer.InvView = invView;
-    mFrameConstantBuffer.Proj = proj;
-    mFrameConstantBuffer.InvProj = invProj;
-    mFrameConstantBuffer.ViewProj = viewProj;
-    mFrameConstantBuffer.InvViewProj = invViewProj;
+    mFrameConstantBuffer.View = view.transpose();
+    mFrameConstantBuffer.InvView = invView.transpose();
+    mFrameConstantBuffer.Proj = proj.transpose();
+    mFrameConstantBuffer.InvProj = invProj.transpose();
+    mFrameConstantBuffer.ViewProj = viewProj.transpose();
+    mFrameConstantBuffer.InvViewProj = invViewProj.transpose();
     //mFrameConstantBuffer.ShadowTransform = mShadowTransform;
     mFrameConstantBuffer.EyePosW = camepos;
 
@@ -458,10 +458,9 @@ Ogre::OgreTexture* VulkanRenderSystem::generateCubeMap(
     int32_t dim,
     CubeType type)
 {
-    const uint32_t numMips = static_cast<uint32_t>(floor(log2(dim))) + 1;
-
     Ogre::TextureProperty texProperty;
     texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
+    texProperty._tex_addr_mod = TAM_CLAMP;
     texProperty._texType = TEX_TYPE_CUBE_MAP;
     texProperty._width = dim;
     texProperty._height = dim;
@@ -775,7 +774,7 @@ Ogre::OgreTexture* VulkanRenderSystem::generateCubeMap(
 
     // Render cubemap
     VkClearValue clearValues[1];
-    clearValues[0].color = { { 0.0f, 0.0f, 0.2f, 0.0f } };
+    clearValues[0].color = { { 0.2f, 0.0f, 0.0f, 0.0f } };
 
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -809,6 +808,8 @@ Ogre::OgreTexture* VulkanRenderSystem::generateCubeMap(
     scissor.extent.width = dim;
     scissor.extent.height = dim;
 
+    const uint32_t numMips = static_cast<uint32_t>(floor(log2(dim))) + 1;
+
     VkImageSubresourceRange subresourceRange{};
     subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     subresourceRange.baseMipLevel = 0;
@@ -832,7 +833,7 @@ Ogre::OgreTexture* VulkanRenderSystem::generateCubeMap(
     }
 
     std::string meshName = "box.mesh";
-    auto mesh = MeshManager::getSingleton().createBox(meshName, 100, "SkyLan");
+    auto mesh = MeshManager::getSingleton().createBox(meshName, 512, "SkyLan");
     auto sceneManager = Ogre::Root::getSingletonPtr()->getSceneManager(MAIN_SCENE_MANAGER);
     auto entity = sceneManager->createEntity(name, meshName);
     auto r = entity->getSubEntity(0);
@@ -852,15 +853,17 @@ Ogre::OgreTexture* VulkanRenderSystem::generateCubeMap(
             vkCmdBeginRenderPass(cmdBuf, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
             // Pass parameters for current pass using a push constant block
-            auto perspective = Ogre::Math::makePerspectiveMatrixRH((float)(M_PI / 2.0), 1.0f, 0.1f, 512.0f);
+            auto perspective = Ogre::Math::makePerspectiveMatrixRH((float)(M_PI / 2.0), 1.0f, 0.1f, 512);
             if (type == CubeType_Irradiance)
             {
                 pushBlockIrradiance.mvp = perspective * matrices[f];
+                pushBlockIrradiance.mvp = pushBlockIrradiance.mvp.transpose();
                 vkCmdPushConstants(cmdBuf, pipelinelayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushBlockIrradiance), &pushBlockIrradiance);
             }
             else
             {
                 pushBlockPrefilterEnv.mvp = perspective * matrices[f];
+                pushBlockPrefilterEnv.mvp = pushBlockPrefilterEnv.mvp.transpose();
                 pushBlockPrefilterEnv.roughness = (float)m / (float)(numMips - 1);
                 vkCmdPushConstants(cmdBuf, pipelinelayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushBlockPrefilterEnv), &pushBlockPrefilterEnv);
             }
@@ -978,9 +981,11 @@ Ogre::OgreTexture* VulkanRenderSystem::generateBRDFLUT(const std::string& name)
 
     Ogre::TextureProperty texProperty;
     texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
+    texProperty._tex_addr_mod = TAM_CLAMP;
     texProperty._texType = TEX_TYPE_2D;
     texProperty._width = dim;
     texProperty._height = dim;
+    texProperty._need_mipmap = false;
     texProperty._tex_format = PF_FLOAT16_GR;
     VulkanTexture* tex = new VulkanTexture(name, &texProperty, this);
 

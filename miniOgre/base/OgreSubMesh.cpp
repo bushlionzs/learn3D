@@ -48,6 +48,8 @@ namespace Ogre {
         }
 
         mPosition = Ogre::Vector3::ZERO;
+        mScale = Ogre::Vector3::UNIT_SCALE;
+        mQuaternion = Ogre::Quaternion(1.0f, 0.0f, 0.0f, 0.0f);
     }
 
     SubMesh::~SubMesh()
@@ -185,9 +187,28 @@ namespace Ogre {
         mPosition = pos;
     }
 
+    void SubMesh::setScale(Ogre::Vector3& scale)
+    {
+        mScale = scale;
+    }
+
+    void SubMesh::setRotate(Ogre::Quaternion& q)
+    {
+        mQuaternion = q;
+    }
 
     const Ogre::Vector3& SubMesh::getPosition()
     {
         return mPosition;
+    }
+
+    const Ogre::Vector3& SubMesh::getScale()
+    {
+        return mScale;
+    }
+
+    const Ogre::Quaternion& SubMesh::getRotate()
+    {
+        return mQuaternion;
     }
 }

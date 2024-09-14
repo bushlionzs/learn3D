@@ -251,9 +251,10 @@ namespace Ogre {
 
             SubEntity* subEnt = createSubEntity(subMesh);
 
-            Ogre::Vector3 position = subMesh->getPosition();
-
-            subEnt->setPosition(position);
+            const Ogre::Vector3& position = subMesh->getPosition();
+            const Ogre::Vector3& scale = subMesh->getScale();
+            const Ogre::Quaternion& q = subMesh->getRotate();
+            subEnt->setLocalMatrix(position, scale, q);
 
             sublist->push_back(subEnt);
 

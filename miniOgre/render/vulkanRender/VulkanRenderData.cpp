@@ -74,9 +74,8 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
 
     VulkanObjectPool& pool = frame->getObjectPool();
     auto& current = _frameRenderableData[frame->getFrameIndex()];
-    current.mObjectConstantBuffer.world = model.transpose();
-    current.mObjectConstantBuffer.projector = _r->getProjectorMatrix();
-    current.mObjectConstantBuffer.worldViewProj = current.mObjectConstantBuffer.world * view * proj;
+    current.mObjectConstantBuffer.world =  model.transpose();
+    current.mObjectConstantBuffer.worldViewProj = (proj * view * model).transpose();
 
     pool.updateObject(
         current.mObjectDesc, (const char*)&current.mObjectConstantBuffer, sizeof(current.mObjectConstantBuffer));
@@ -330,19 +329,34 @@ void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
 
     vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
     //draw object
+    bool pbr = mat->isPbr();
+    auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout(pbr);
+
+    /*struct PushBlockPrefilterEnv {
+        Ogre::Matrix4 mvp;
+        float roughness;
+        uint32_t numSamples = 32u;
+    } pushBlockPrefilterEnv;
+    auto perspective = Ogre::Math::makePerspectiveMatrixRH((float)(3.14159265358f / 2.0), 1.0f, 0.1f, 10000);
+    pushBlockPrefilterEnv.mvp = Ogre::Math::makeRotateMatrix(Ogre::Matrix4::IDENTITY, 180.0f, Ogre::Vector3(0.0f, 0.0f, 1.0f)) * perspective;
+    pushBlockPrefilterEnv.roughness = 0.0f;
+    vkCmdPushConstants(cb, pipelineLayout,
+        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushBlockPrefilterEnv), &pushBlockPrefilterEnv);*/
 
     VertexData* vertexData = _r->getVertexData();
     IndexData* indexData = _r->getIndexData();
     vertexData->bind(cb);
     VulkanFrameRenderableData& current = _frameRenderableData[frame->getFrameIndex()];
-    bool pbr = mat->isPbr();
+    
     VkDescriptorSet ds[2] = {current.mDescriptorSet, pbr?current.mDescriptorSetSamplerPbr :current.mDescriptorSetSampler};
 
-    auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout(pbr);
+    
     vkCmdBindDescriptorSets(
         cb,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
         pipelineLayout, 0, 2, &ds[0], 0, nullptr);
+
+    
 
     if (indexData)
     {

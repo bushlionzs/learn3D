@@ -478,8 +478,10 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             subMesh->setPosition(position);
         }
 
-        if (!node.rotation.empty() == 4) {
-            
+        if (!node.rotation.empty())
+        {
+            Ogre::Quaternion q(node.rotation.data());
+            //subMesh->setRotate(q);
         }
         
     }

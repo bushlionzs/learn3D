@@ -651,7 +651,7 @@ void VulkanHelper::createDescriptorPool()
         vks::initializers::descriptorPoolCreateInfo(
             static_cast<uint32_t>(poolSizes.size()),
             poolSizes.data(),
-            30000);
+            40000);
 
     if (vkCreateDescriptorPool(mVKDevice, &descriptorPoolInfo, nullptr, &mDescriptorPool) != VK_SUCCESS)
     {
@@ -1018,7 +1018,11 @@ void VulkanHelper::setupDescriptorSetLayout()
         vks::initializers::pipelineLayoutCreateInfo(
             mDescriptorSetLayout.data(),
             2);
-
+    /*VkPushConstantRange pushConstantRange{};
+    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    pushConstantRange.size = sizeof(Ogre::Matrix4) * 2;
+    pPipelineLayoutCreateInfo.pushConstantRangeCount = 1;
+    pPipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRange;*/
     if (vkCreatePipelineLayout(mVKDevice, &pPipelineLayoutCreateInfo,
         nullptr, &mPipelineLayout) != VK_SUCCESS)
     {
@@ -1230,8 +1234,8 @@ void VulkanHelper::createSamples()
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 
     samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-    samplerInfo.magFilter = VK_FILTER_LINEAR;
-    samplerInfo.minFilter = VK_FILTER_LINEAR;
+    samplerInfo.magFilter = VK_FILTER_NEAREST;
+    samplerInfo.minFilter = VK_FILTER_NEAREST;
 
     samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
@@ -1250,7 +1254,7 @@ void VulkanHelper::createSamples()
     }
 
 
-
+    samplerInfo = {};
     samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
     samplerInfo.magFilter = VK_FILTER_LINEAR;
     samplerInfo.minFilter = VK_FILTER_LINEAR;
@@ -1261,11 +1265,8 @@ void VulkanHelper::createSamples()
     samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
     samplerInfo.mipLodBias = 0.0f;
     samplerInfo.minLod = 0.0f;
-    samplerInfo.maxLod = FLT_MAX;
-    samplerInfo.compareEnable = VK_TRUE;
-    samplerInfo.compareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
-    samplerInfo.maxAnisotropy = 8.0f;
-    samplerInfo.anisotropyEnable = VK_TRUE;
+    samplerInfo.maxLod = 1.0f;
+    samplerInfo.maxAnisotropy = 1.0f;
 
     if (vkCreateSampler(mVKDevice, &samplerInfo, nullptr, &samplerStateAnisotropicClamp) != VK_SUCCESS)
     {

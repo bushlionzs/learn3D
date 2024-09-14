@@ -78,6 +78,7 @@ namespace Ogre {
         uint32_t _depth = 1;
         uint32_t _numMipmaps = 0;
         Ogre::PixelFormat _tex_format = Ogre::PF_R8G8B8A8;
+        bool _need_mipmap = true;
         float _gamma = 1.0f;
         uint32_t _fsaa = 0;
         TextureUsage _tex_usage = TU_DEFAULT;

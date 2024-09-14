@@ -115,7 +115,7 @@ void CameraImpl::updateView(const Ogre::Matrix4& view)
 {
     mViewMatrix = view;
 
-    Ogre::Matrix4 combo = mProjectMatrix.transpose() * mViewMatrix.transpose();
+    Ogre::Matrix4 combo = mProjectMatrix * mViewMatrix;
 
     mFrustumPlanes[FRUSTUM_PLANE_LEFT].normal.x = combo[3][0] + combo[0][0];
     mFrustumPlanes[FRUSTUM_PLANE_LEFT].normal.y = combo[3][1] + combo[0][1];
@@ -310,6 +310,7 @@ const Ogre::Matrix4& CameraImpl::getProjectMatrix()
         }
         else
         {
+            mNear = 0.1f;
             mProjectMatrix = 
                 Ogre::Math::makePerspectiveMatrixRH(mFovy, mAspectRation, mNear, mFar);
         }

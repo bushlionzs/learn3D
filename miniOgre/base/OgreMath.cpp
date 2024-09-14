@@ -927,51 +927,30 @@ namespace Ogre
 
     Matrix4 Math::makeTranslateMatrix(const Vector3& position)
     {
-        Matrix4 m;
-        m[0][0] = 1.0f;
-        m[0][1] = 0.0f;
-        m[0][2] = 0.0f;
-        m[0][3] = 0.0f;
+        Matrix4 m = Ogre::Matrix4::IDENTITY;
 
-        m[1][0] = 0.0f;
-        m[1][1] = 1.0f;
-        m[1][2] = 0.0f;
-        m[1][3] = 0.0f;
 
-        m[2][0] = 0.0f;
-        m[2][1] = 0.0f;
-        m[2][2] = 1.0f;
-        m[2][3] = 0.0f;
-
-        m[3][0] = position.x;
-        m[3][1] = position.y;
-        m[3][2] = position.z;
+        m[0][3] = position.x;
+        m[1][3] = position.y;
+        m[2][3] = position.z;
         m[3][3] = 1.0f;
         return m;
     }
 
+    Matrix4 Math::makeRotateMatrix(const Matrix4& m, float degree, const Ogre::Vector3& v)
+    {
+        Ogre::Quaternion quat(Ogre::Radian(Ogre::Degree(degree)), v);
+        Ogre::Matrix4 result(quat);
+        
+        return m * result;
+    }
+
     Matrix4 Math::makeScaleMatrix(const Vector3& scale)
     {
-        Matrix4 m;
+        Matrix4 m = Ogre::Matrix4::IDENTITY;
         m[0][0] = scale.x;
-        m[0][1] = 0.0f;
-        m[0][2] = 0.0f;
-        m[0][3] = 0.0f;
-
-        m[1][0] = 0.0f;
         m[1][1] = scale.y;
-        m[1][2] = 0.0f;
-        m[1][3] = 0.0f;
-
-        m[2][0] = 0.0f;
-        m[2][1] = 0.0f;
         m[2][2] = scale.z;
-        m[2][3] = 0.0f;
-
-        m[3][0] = 0.0f;
-        m[3][1] = 0.0f;
-        m[3][2] = 0.0f;
-        m[3][3] = 1.0f;
         return m;
     }
     //---------------------------------------------------------------------
@@ -1025,13 +1004,13 @@ namespace Ogre
         Matrix4 m = Matrix4::ZERO;
         m[0][0] = 1.0f / (aspect * tanHalfFovy);
         m[1][1] = 1.0f / (tanHalfFovy);
-        m[2][3] = -1.0f;
-
         m[2][2] = zFar / (zNear - zFar);
+
+        m[2][3] = -1.0f;
         m[3][2] = -(zFar * zNear) / (zFar - zNear);
 
 
-        return m;
+        return m.transpose();
     }
 
     Matrix4 Math::makePerspectiveMatrixLH(
@@ -1218,7 +1197,7 @@ namespace Ogre
         view_matrix[3][0] = -right.dotProduct(camera_pos);
         view_matrix[3][1] = -up.dotProduct(camera_pos); 
         view_matrix[3][2] = forward.dotProduct(camera_pos);
-        return view_matrix;
+        return view_matrix.transpose();
     }
 
     Matrix4 Math::makeLookAtLH(
@@ -1247,53 +1226,6 @@ namespace Ogre
         view_matrix[3][2] = -forward.dotProduct(camera_pos);
         return view_matrix;
     }
-
-    Matrix4 Math::makeRotateMatrix(const Matrix4& m, float degree, const Ogre::Vector3& v)
-    {
-        Matrix3 rotate = Ogre::Matrix3::IDENTITY;
-
-        float const a = degree * 0.01745329251994329576923690768489;
-        float const c = cos(a);
-        float const s = sin(a);
-
-        Ogre::Vector3 axis = v.normalisedCopy();
-        Ogre::Vector3 temp = (1.0f - c) * axis;
-
-
-
-        rotate[0][0] = c + temp[0] * axis[0];
-        rotate[0][1] = temp[0] * axis[1] + s * axis[2];
-        rotate[0][2] = temp[0] * axis[2] - s * axis[1];
-
-        rotate[1][0] = temp[1] * axis[0] - s * axis[2];
-        rotate[1][1] = c + temp[1] * axis[1];
-        rotate[1][2] = temp[1] * axis[2] + s * axis[0];
-
-        rotate[2][0] = temp[2] * axis[0] + s * axis[1];
-        rotate[2][1] = temp[2] * axis[1] - s * axis[0];
-        rotate[2][2] = c + temp[2] * axis[2];
- 
-      
-        
-
-        Ogre::Vector4 m0(m[0]);
-        Ogre::Vector4 m1(m[1]);
-        Ogre::Vector4 m2(m[2]);
-        Ogre::Vector4 m3(m[3]);
-
-        auto r0 = m0 * rotate[0][0] + m1 * rotate[0][1] + m2 * rotate[0][2];
-        auto r1 = m0 * rotate[1][0] + m1 * rotate[1][1] + m2 * rotate[1][2];
-        auto r2 = m0 * rotate[2][0] + m1 * rotate[2][1] + m2 * rotate[2][2];
-
-        Matrix4 result(r0, r1, r2, m3);
-        result[3][0] = m[3][0];
-        result[3][1] = m[3][1];
-        result[3][2] = m[3][2];
-        result[3][3] = m[3][3];
-
-        return result;
-    }
-
     //---------------------------------------------------------------------
     Real Math::boundingRadiusFromAABB(const AxisAlignedBox& aabb)
     {

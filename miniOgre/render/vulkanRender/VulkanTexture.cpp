@@ -244,16 +244,19 @@ void VulkanTexture::createImage(
     VkDeviceMemory& imageMemory)
 {
     mMipLevels = mTextureProperty._numMipmaps + 1;
-    if (!(mUsage & Ogre::TU_RENDERTARGET))
+    if (mTextureProperty._need_mipmap)
     {
-        if (mTextureProperty._numMipmaps == 0)
+        if (!(mUsage & Ogre::TU_RENDERTARGET))
         {
-            auto current = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
-
-            if (current > mMipLevels)
+            if (mTextureProperty._numMipmaps == 0)
             {
-                mNeedMipmaps = true;
-                mMipLevels = current;
+                auto current = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
+
+                if (current > mMipLevels)
+                {
+                    mNeedMipmaps = true;
+                    mMipLevels = current;
+                }
             }
         }
     }
@@ -296,6 +299,14 @@ void VulkanTexture::createImage(
     {
         imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     }
+
+    if (mUsage & Ogre::TU_DYNAMIC_WRITE_ONLY)
+    {
+        imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    }
+
+
+
     if (isCubeTexture())
     {
         imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
