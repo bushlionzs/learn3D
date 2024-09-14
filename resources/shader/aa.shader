@@ -84,6 +84,23 @@ shader ogresky
 	 }
 }
 
+shader prefilterenvmap
+{
+     shader_unit
+	 {
+		shader_type directx
+		vertex_shader sky.hlsl VS
+		frag_shader sky.hlsl PS
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader filtercube.vert main
+		frag_shader prefilterenvmap.frag main
+	 }
+}
+
 shader ogresimple
 {
      shader_unit

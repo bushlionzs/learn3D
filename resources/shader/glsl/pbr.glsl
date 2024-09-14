@@ -3,8 +3,6 @@
 #define float3 vec3
 #define float4 vec4
 #define float3x3 mat3
-#define ddx dFdx
-#define ddy dFdy
 #define lerp mix
 #ifdef VERTEX_SHADER
 #include "common.glsl"
@@ -27,10 +25,10 @@ layout (location = 5) out vec4 outColor0;
 void main()
 {	
     outWorldPos = (cbPerObject.gWorld * float4(position, 1.0f)).xyz;
-    outNormal = mat3(cbPerObject.gWorld) * normal;
+	outWorldPos.y = -outWorldPos.y;
+    outNormal = normalize(mat3(cbPerObject.gWorld) * normal);
     outUV0 = texcoord;
-	gl_Position = cbPerObject.gWorldViewProj * float4(position, 1.0f);
-	gl_Position.y = -gl_Position.y;
+	gl_Position = cbPass.gProj * cbPass.gView * float4(outWorldPos, 1.0f);
 }
 
 #endif //VERTEX_SHADER
@@ -53,7 +51,7 @@ struct PBRInfo
     float3 specularColor;           // color contribution from specular lighting
 };
 
-#define  M_PI  3.141592653
+#define  M_PI  3.141592653589793
 #define c_MinRoughness  0.04
 
 
@@ -72,26 +70,19 @@ float4 SRGBtoLINEAR(float4 srgbIn)
     #endif //MANUAL_SRGB
 }
 
-layout (location = 0) in vec3 inWorldPos;
-layout (location = 1) in vec3 inNormal;
-layout (location = 2) in vec3 inTagent;
-layout (location = 3) in vec2 inUV0;
-layout (location = 4) in vec2 inUV1;
-layout (location = 5) in vec4 inColor0;
 
-layout (location = 0) out vec4 outColor;
 
-vec3 getNormal()
+vec3 getNormal(float3 worldPos, float3 normal, float2 uv)
 {
 	// Perturb normal, see http://www.thetenthplanet.de/archives/1180
-	vec3 tangentNormal = texture(normal_pbr, inUV0).xyz * 2.0 - 1.0;
+	vec3 tangentNormal = texture(normal_pbr, uv).xyz * 2.0 - 1.0;
 
-	vec3 q1 = dFdx(inWorldPos);
-	vec3 q2 = dFdy(inWorldPos);
-	vec2 st1 = dFdx(inUV0);
-	vec2 st2 = dFdy(inUV0);
+	vec3 q1 = dFdx(worldPos);
+	vec3 q2 = dFdy(worldPos);
+	vec2 st1 = dFdx(uv);
+	vec2 st2 = dFdy(uv);
 
-	vec3 N = normalize(inNormal);
+	vec3 N = normalize(normal);
 	vec3 T = normalize(q1 * st2.t - q2 * st1.t);
 	vec3 B = -normalize(cross(N, T));
 	mat3 TBN = mat3(T, B, N);
@@ -99,44 +90,41 @@ vec3 getNormal()
 	return normalize(TBN * tangentNormal);
 }
 
-float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW, float3 worldPos, float2 uv)
+
+vec3 Uncharted2Tonemap(vec3 color)
 {
-	// Uncompress each component from [0,1] to [-1,1].
-	float3 normalT = 2.0f*normalMapSample - 1.0f;
-	
-	float3 q1 = ddx(worldPos);
-    float3 q2 = ddy(worldPos);
-    float2 st1 = ddx(uv);
-    float2 st2 = ddy(uv);
-
-	// Build orthonormal basis.
-	float3 N = unitNormalW;
-	float3 T = normalize(tangentW - dot(tangentW, N)*N);
-	//float3 T = normalize(q1 * st2.t - q2 * st1.t);
-	float3 B = cross(N, T);
-
-	float3x3 TBN = float3x3(T, B, N);
-
-	// Transform from tangent space to world space.
-	float3 bumpedNormalW = normalT * TBN;
-
-	return bumpedNormalW;
+	float A = 0.15;
+	float B = 0.50;
+	float C = 0.10;
+	float D = 0.20;
+	float E = 0.02;
+	float F = 0.30;
+	float W = 11.2;
+	return ((color*(A*color+C*B)+D*E)/(color*(A*color+B)+D*F))-E/F;
 }
 
-float4 gDiffuseAlbedo = {1.0,1.0,1.0,1.0};
+vec4 tonemap(vec4 color)
+{
+    float exposure = 4.5f;
+	float gamma = 2.2f;
+	vec3 outcol = Uncharted2Tonemap(color.rgb * exposure);
+	outcol = outcol * (1.0f / Uncharted2Tonemap(vec3(11.2f)));	
+	return vec4(pow(outcol, vec3(1.0f / gamma)), color.a);
+}
+
 #ifdef USE_IBL
 // Calculation of the lighting contribution from an optional Image Based Light source.
 // Precomputed Environment Maps are required uniform inputs and are computed as outlined in [1].
 // See our README.md on Environment Maps [3] for additional discussion.
 float3 getIBLContribution(PBRInfo pbrInputs, float3 n, float3 reflection)
 {
-    float mipCount = 9.0; // resolution of 512x512
+    float mipCount = 10.0; // resolution of 512x512
     float lod = (pbrInputs.perceptualRoughness * mipCount);
     // retrieve a scale and bias to F0. See [1], Figure 3
     float3 brdf = SRGBtoLINEAR(texture(brdflut, float2(pbrInputs.NdotV, 1.0 - pbrInputs.perceptualRoughness))).rgb;
-    float3 diffuseLight = texture(irradiance, n).rgb;
+    float3 diffuseLight = SRGBtoLINEAR(tonemap(texture(irradiance, n))).rgb;
 
-    float3 specularLight = texture(prefiltered, reflection).rgb;
+    float3 specularLight = SRGBtoLINEAR(tonemap(textureLod(prefiltered, reflection, lod))).rgb;
 
     float3 diffuse = diffuseLight * pbrInputs.diffuseColor;
     float3 specular = specularLight * (pbrInputs.specularColor * brdf.x + brdf.y);
@@ -190,12 +178,21 @@ float microfacetDistribution(PBRInfo pbrInputs)
     return roughnessSq / a;
 }
 
+layout (location = 0) in vec3 inWorldPos;
+layout (location = 1) in vec3 inNormal;
+layout (location = 2) in vec3 inTagent;
+layout (location = 3) in vec2 inUV0;
+layout (location = 4) in vec2 inUV1;
+layout (location = 5) in vec4 inColor0;
+
+layout (location = 0) out vec4 outColor;
 
 void main()
 {
     // Metallic and Roughness material properties are packed together
     // In glTF, these factors can be specified by fixed scalar values
     // or from a metallic-roughness map
+	
     float perceptualRoughness = pbrMaterial.u_MetallicRoughnessValues.y;
     float metallic = pbrMaterial.u_MetallicRoughnessValues.x;
 #ifdef HAS_METALROUGHNESSMAP
@@ -247,13 +244,13 @@ void main()
 	
     //float3 n = NormalSampleToWorldSpace(normalColor, inNormal, inTagent, inWorldPos, inUV0);
 	
-	float3 n = getNormal();
+	float3 n = getNormal(inWorldPos, inNormal, inUV0);
+	n.y *= -1.0f;
     float3 v = normalize(cbPass.gEyePosW - inWorldPos);        // Vector from surface point to camera
-	float3 u_LightDirection = {0.739942074, 0.642787576, 0.198266909};
+	float3 u_LightDirection = {0.73994, -0.64279, 0.19827};
     float3 l = normalize(u_LightDirection);             // Vector from surface point to light
     float3 h = normalize(l+v);                          // Half vector between both l and v
-    float3 reflection = -normalize(reflect(v, n));
-    reflection.y *= -1.0;
+    float3 reflection = normalize(reflect(-v, n));
 
     pbrInputs.NdotL = clamp(dot(n, l), 0.001, 1.0);
     pbrInputs.NdotV = clamp(abs(dot(n, v)), 0.001, 1.0);
@@ -287,9 +284,8 @@ void main()
 	float3 emissive = texture(emissive_pbr,inUV0).rgb * pbrMaterial.u_EmissiveFactor;
     color += emissive;
 #endif
-    
+    //color = ibl;
     outColor =  float4(pow(color,float3(1.0/2.2, 1.0/2.2, 1.0/2.2)), baseColor.a);
-	
 }
 
 #endif //FRAGMENT_SHADER
