@@ -155,6 +155,7 @@ public:
     void loadDefaultResources();
 
     VkSampler getSampler(Ogre::TextureAddressingMode mode);
+    VkSampler getSampler(const filament::backend::SamplerParams& samplerParams);
     std::shared_ptr<OgreTexture>& getDefaultTexture();
 
     bool haveRayTracing()
@@ -256,6 +257,7 @@ private:
     std::shared_ptr<OgreTexture> mDefaultTexture;
 
     std::vector<VkSampler> mSamplers;
+    tsl::robin_map<SamplerParams, VkSampler, SamplerParams::Hasher, SamplerParams::EqualTo> mSamplersCache;
 
     VulkanSettings mSettings;
 

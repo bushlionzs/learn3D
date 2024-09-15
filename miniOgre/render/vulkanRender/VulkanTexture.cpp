@@ -300,7 +300,7 @@ void VulkanTexture::createImage(
         imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     }
 
-    if (mUsage & Ogre::TU_DYNAMIC_WRITE_ONLY)
+    if (mUsage == Ogre::TU_DYNAMIC_WRITE_ONLY)
     {
         imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     }
@@ -361,7 +361,7 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
 
 void VulkanTexture::createTextureSampler()
 {
-    mTextureSampler = VulkanHelper::getSingleton().getSampler(mTextureProperty._tex_addr_mod);
+    mTextureSampler = VulkanHelper::getSingleton().getSampler(mTextureProperty._samplerParams);
 }
 
 VulkanLayout VulkanTexture::getLayout(uint32_t layer, uint32_t level) const

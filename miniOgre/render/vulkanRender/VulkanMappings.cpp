@@ -155,4 +155,116 @@ namespace Ogre {
     {
         return format;
     }
+
+    VkSamplerAddressMode VulkanMappings::getWrapMode(filament::backend::SamplerWrapMode mode)
+    {
+        switch (mode) {
+        case filament::backend::SamplerWrapMode::REPEAT:
+            return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        case filament::backend::SamplerWrapMode::CLAMP_TO_EDGE:
+            return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+        case filament::backend::SamplerWrapMode::MIRRORED_REPEAT:
+            return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+        default:
+            assert(false);
+            return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        }
+    }
+
+    VkFilter VulkanMappings::getFilter(filament::backend::SamplerMinFilter filter)
+    {
+        switch (filter) {
+        case filament::backend::SamplerMinFilter::NEAREST:
+            return VK_FILTER_NEAREST;
+        case filament::backend::SamplerMinFilter::LINEAR:
+            return VK_FILTER_LINEAR;
+        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_NEAREST:
+            return VK_FILTER_NEAREST;
+        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_NEAREST:
+            return VK_FILTER_LINEAR;
+        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_LINEAR:
+            return VK_FILTER_NEAREST;
+        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR:
+            return VK_FILTER_LINEAR;
+        default:
+            assert(false);
+            return VK_FILTER_NEAREST;
+        }
+    }
+    VkFilter VulkanMappings::getFilter(filament::backend::SamplerMagFilter filter)
+    {
+        switch (filter) {
+        case filament::backend::SamplerMagFilter::NEAREST:
+            return VK_FILTER_NEAREST;
+        case filament::backend::SamplerMagFilter::LINEAR:
+            return VK_FILTER_LINEAR;
+        default:
+            assert(false);
+            return VK_FILTER_NEAREST;
+        }
+    }
+
+    VkSamplerMipmapMode VulkanMappings::getMipmapMode(filament::backend::SamplerMinFilter filter)
+    {
+        switch (filter) {
+        case filament::backend::SamplerMinFilter::NEAREST:
+            return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+        case filament::backend::SamplerMinFilter::LINEAR:
+            return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_NEAREST:
+            return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_NEAREST:
+            return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_LINEAR:
+            return VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR:
+            return VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        default:
+            assert(false);
+            return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+        }
+    }
+
+    float VulkanMappings::getMaxLod(filament::backend::SamplerMinFilter filter)
+    {
+        switch (filter) {
+        case filament::backend::SamplerMinFilter::NEAREST:
+        case filament::backend::SamplerMinFilter::LINEAR:
+            // The Vulkan spec recommends a max LOD of 0.25 to "disable" mipmapping.
+            // See "Mapping of OpenGL to Vulkan filter modes" in the VK Spec.
+            return 0.25f;
+        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_NEAREST:
+        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_NEAREST:
+        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_LINEAR:
+        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR:
+            return VK_LOD_CLAMP_NONE;
+        default:
+            assert(false);
+            return VK_LOD_CLAMP_NONE;
+        }
+    }
+
+    VkBool32 VulkanMappings::getCompareEnable(filament::backend::SamplerCompareMode mode)
+    {
+        return mode == filament::backend::SamplerCompareMode::NONE ? VK_FALSE : VK_TRUE;
+    }
+
+    VkCompareOp VulkanMappings::getCompareOp(filament::backend::SamplerCompareFunc func)
+    {
+        using Compare = filament::backend::SamplerCompareFunc;
+        switch (func) {
+        case Compare::LE: return VK_COMPARE_OP_LESS_OR_EQUAL;
+        case Compare::GE: return VK_COMPARE_OP_GREATER_OR_EQUAL;
+        case Compare::L:  return VK_COMPARE_OP_LESS;
+        case Compare::G:  return VK_COMPARE_OP_GREATER;
+        case Compare::E:  return VK_COMPARE_OP_EQUAL;
+        case Compare::NE: return VK_COMPARE_OP_NOT_EQUAL;
+        case Compare::A:  return VK_COMPARE_OP_ALWAYS;
+        case Compare::N:  return VK_COMPARE_OP_NEVER;
+        default:
+            assert(false);
+            return VK_COMPARE_OP_LESS_OR_EQUAL;
+        }
+    }
+
 }

@@ -459,12 +459,17 @@ Ogre::OgreTexture* VulkanRenderSystem::generateCubeMap(
     CubeType type)
 {
     Ogre::TextureProperty texProperty;
-    texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
-    texProperty._tex_addr_mod = TAM_CLAMP;
+    texProperty._tex_usage = TU_STATIC_WRITE_ONLY;
     texProperty._texType = TEX_TYPE_CUBE_MAP;
     texProperty._width = dim;
     texProperty._height = dim;
     texProperty._tex_format = format;
+    texProperty._samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
+    texProperty._samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
+    texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.anisotropyLog2 = 0;
     VulkanTexture* tex = new VulkanTexture(name, &texProperty, this);
 
     tex->load(nullptr);
@@ -748,20 +753,20 @@ Ogre::OgreTexture* VulkanRenderSystem::generateCubeMap(
     shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
     shaderStages[0].pName = "main";
 
-    auto resInfo = ResourceManager::getSingleton().getResource("filtercube.vert.spv");
-    shaderStages[0].module = vks::tools::loadShaderBinary(resInfo->_fullname.c_str(), device);
+    auto resInfo = ResourceManager::getSingleton().getResource("filtercube.vert");
+    shaderStages[0].module = vks::tools::loadShaderAssic(resInfo->_fullname.c_str(), device, Ogre::VertexShader);
     shaderStages[1] = {};
     shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     shaderStages[1].pName = "main";
     switch (type) {
     case CubeType_Irradiance:
-        resInfo = ResourceManager::getSingleton().getResource("irradiancecube.frag.spv");
-        shaderStages[1].module = vks::tools::loadShaderBinary(resInfo->_fullname.c_str(), device);
+        resInfo = ResourceManager::getSingleton().getResource("irradiancecube.frag");
+        shaderStages[1].module = vks::tools::loadShaderAssic(resInfo->_fullname.c_str(), device, Ogre::PixelShader);
         break;
     case CubeType_Prefiltered:
-        resInfo = ResourceManager::getSingleton().getResource("prefilterenvmap.frag.spv");
-        shaderStages[1].module = vks::tools::loadShaderBinary(resInfo->_fullname.c_str(), device);
+        resInfo = ResourceManager::getSingleton().getResource("prefilterenvmap.frag");
+        shaderStages[1].module = vks::tools::loadShaderAssic(resInfo->_fullname.c_str(), device, Ogre::PixelShader);
         break;
     };
     VkPipeline pipeline;
@@ -981,12 +986,17 @@ Ogre::OgreTexture* VulkanRenderSystem::generateBRDFLUT(const std::string& name)
 
     Ogre::TextureProperty texProperty;
     texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
-    texProperty._tex_addr_mod = TAM_CLAMP;
     texProperty._texType = TEX_TYPE_2D;
     texProperty._width = dim;
     texProperty._height = dim;
     texProperty._need_mipmap = false;
     texProperty._tex_format = PF_FLOAT16_GR;
+    texProperty._samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
+    texProperty._samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
+    texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.anisotropyLog2 = 0;
     VulkanTexture* tex = new VulkanTexture(name, &texProperty, this);
 
     tex->load(nullptr);
@@ -1138,15 +1148,15 @@ Ogre::OgreTexture* VulkanRenderSystem::generateBRDFLUT(const std::string& name)
     shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
     shaderStages[0].pName = "main";
-    auto resInfo = ResourceManager::getSingleton().getResource("genbrdflut.vert.spv");
-    shaderStages[0].module = vks::tools::loadShaderBinary(resInfo->_fullname.c_str(), device);
+    auto resInfo = ResourceManager::getSingleton().getResource("genbrdflut.vert");
+    shaderStages[0].module = vks::tools::loadShaderAssic(resInfo->_fullname.c_str(), device, Ogre::VertexShader);
 
     shaderStages[1] = {};
     shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     shaderStages[1].pName = "main";
-    resInfo = ResourceManager::getSingleton().getResource("genbrdflut.frag.spv");
-    shaderStages[1].module = vks::tools::loadShaderBinary(resInfo->_fullname.c_str(), device);
+    resInfo = ResourceManager::getSingleton().getResource("genbrdflut.frag");
+    shaderStages[1].module = vks::tools::loadShaderAssic(resInfo->_fullname.c_str(), device, Ogre::PixelShader);
 
     VkPipeline pipeline;
     auto pipelineCache = VulkanHelper::getSingleton().getPipelineCache();

@@ -7,8 +7,9 @@
 #include "engine_struct.h"
 #include <bluevk/BlueVK.h>
 #include "VulkanInitializers.hpp"
-
+#include <DriverEnums.h>
 #include <vk_mem_alloc.h>
+#include <tsl/robin_map.h>
 
 using namespace bluevk;
 struct QueueFamilyIndices {

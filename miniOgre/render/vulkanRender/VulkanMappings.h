@@ -25,6 +25,14 @@ namespace Ogre
 		static VkFormat _getPF(PixelFormat ogrePF);
 
 		static VkFormat _getGammaFormat(VkFormat format, bool appendSRGB);
+
+		static VkSamplerAddressMode getWrapMode(filament::backend::SamplerWrapMode mode);
+		static VkFilter getFilter(filament::backend::SamplerMinFilter filter);
+		static VkFilter getFilter(filament::backend::SamplerMagFilter filter);
+		static VkSamplerMipmapMode getMipmapMode(filament::backend::SamplerMinFilter filter);
+		static float getMaxLod(filament::backend::SamplerMinFilter filter);
+		static VkBool32 getCompareEnable(filament::backend::SamplerCompareMode mode);
+		static VkCompareOp getCompareOp(filament::backend::SamplerCompareFunc func);
 	};
 }
 

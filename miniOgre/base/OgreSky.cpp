@@ -34,11 +34,13 @@ void SkyBoxRenderer::setSkyBox(bool enable, const String& materialName, Real dis
     uint8 renderQueue, const Quaternion& orientation,
     const String& groupName)
 {
-    auto mesh = MeshManager::getSingleton().createBox("skybox", distance, materialName);
-
+    //auto mesh = MeshManager::getSingleton().createBox("skybox", distance, materialName);
+    std::string meshName = "box.gltf";
+    auto mesh = MeshManager::getSingletonPtr()->load(meshName);
     SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-    Entity* entity = mSceneManager->createEntity("skybox", "skybox");
+    Entity* entity = mSceneManager->createEntity("skybox", meshName);
+    entity->setMaterialName(materialName);
     entity->setQueryFlags(0);
     root->attachObject(entity);
 }

@@ -71,19 +71,47 @@ namespace Ogre {
     class TextureProperty
     {
     public:
-        TextureType _texType = TEX_TYPE_2D;
-        TextureTypePbr _pbrType = TextureTypePbr_general;
-        uint32_t _width = 0;
-        uint32_t _height = 0;
-        uint32_t _depth = 1;
-        uint32_t _numMipmaps = 0;
-        Ogre::PixelFormat _tex_format = Ogre::PF_R8G8B8A8;
-        bool _need_mipmap = true;
-        float _gamma = 1.0f;
-        uint32_t _fsaa = 0;
-        TextureUsage _tex_usage = TU_DEFAULT;
-        ColourValue _backgroudColor = ColourValue::Black;
-        TextureAddressingMode  _tex_addr_mod = Ogre::TAM_WRAP;
+        TextureType _texType;
+        TextureTypePbr _pbrType;
+        uint32_t _width;
+        uint32_t _height;
+        uint32_t _depth;
+        uint32_t _numMipmaps;
+        Ogre::PixelFormat _tex_format;
+        bool _need_mipmap;
+        float _gamma;
+        uint32_t _fsaa;
+        TextureUsage _tex_usage;
+        ColourValue _backgroudColor;
+        TextureAddressingMode  _tex_addr_mod;
+        filament::backend::SamplerParams _samplerParams;
+        TextureProperty()
+        {
+            _texType = TEX_TYPE_2D;
+            _pbrType = TextureTypePbr_general;
+            _width = 0;
+            _height = 0;
+            _depth = 1;
+            _numMipmaps = 0;
+            _tex_format = Ogre::PF_R8G8B8A8;
+            _need_mipmap = true;
+            _gamma = 1.0f;
+            _fsaa = 0;
+            _tex_usage = TU_DEFAULT;
+            _backgroudColor = ColourValue::Black;
+             _tex_addr_mod = Ogre::TAM_WRAP;
+             _samplerParams.filterMag = filament::backend::SamplerMagFilter::NEAREST;
+             _samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
+             _samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
+             _samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+             _samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+             _samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
+             _samplerParams.compareFunc = filament::backend::SamplerCompareFunc::LE;
+             _samplerParams.anisotropyLog2 = 3;
+             _samplerParams.padding0 = 0;
+             _samplerParams.padding1 = 0;
+             _samplerParams.padding2 = 0;
+        }
     };
 
     class OgreTexture

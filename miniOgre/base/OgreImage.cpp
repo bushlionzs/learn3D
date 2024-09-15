@@ -190,6 +190,7 @@ namespace Ogre {
             mImageInfo.format = translateKtxFormat(ktxFormat);
             data = new unsigned char[mImageInfo.size];
             memcpy(data, tmp.data(), mImageInfo.size);
+            int kk = 0;
         }
         else if (type == backend::ImageType::ImageType_BLP)
         {

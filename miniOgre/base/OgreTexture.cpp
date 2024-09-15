@@ -74,7 +74,7 @@ namespace Ogre {
 			mFace = 6;
 		}
 
-		if ((mUsage & TU_RENDERTARGET) || mUsage == TU_DYNAMIC_WRITE_ONLY)
+		if ((mUsage & TU_RENDERTARGET) || mUsage == TU_DYNAMIC_WRITE_ONLY || mUsage == TU_STATIC_WRITE_ONLY)
 		{
 			mFormat = mTextureProperty._tex_format;
 			createInternalResources();

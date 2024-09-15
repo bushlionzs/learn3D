@@ -6,6 +6,7 @@
 #include "OgreTextureManager.h"
 #include "VulkanHardwareBufferManager.h"
 #include "VulkanBuffer.h"
+#include "VulkanMappings.h"
 
 
 
@@ -1252,21 +1253,18 @@ void VulkanHelper::createSamples()
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create texture sampler!");
     }
-
-
     samplerInfo = {};
-    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     samplerInfo.magFilter = VK_FILTER_LINEAR;
     samplerInfo.minFilter = VK_FILTER_LINEAR;
     samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-
     samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
     samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
     samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    samplerInfo.mipLodBias = 0.0f;
     samplerInfo.minLod = 0.0f;
     samplerInfo.maxLod = 1.0f;
     samplerInfo.maxAnisotropy = 1.0f;
+    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
 
     if (vkCreateSampler(mVKDevice, &samplerInfo, nullptr, &samplerStateAnisotropicClamp) != VK_SUCCESS)
     {
@@ -1283,6 +1281,36 @@ VkSampler VulkanHelper::getSampler(Ogre::TextureAddressingMode mode)
         return mSamplers[1];
     }
     return mSamplers[0];
+}
+
+VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& params)
+{
+    auto iter = mSamplersCache.find(params);
+    if (UTILS_LIKELY(iter != mSamplersCache.end())) {
+        return iter->second;
+    }
+    VkSamplerCreateInfo samplerInfo{
+            .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+            .magFilter = VulkanMappings::getFilter(params.filterMag),
+            .minFilter = VulkanMappings::getFilter(params.filterMin),
+            .mipmapMode = VulkanMappings::getMipmapMode(params.filterMin),
+            .addressModeU = VulkanMappings::getWrapMode(params.wrapS),
+            .addressModeV = VulkanMappings::getWrapMode(params.wrapT),
+            .addressModeW = VulkanMappings::getWrapMode(params.wrapR),
+            .anisotropyEnable = params.anisotropyLog2 == 0 ? VK_FALSE : VK_TRUE,
+            .maxAnisotropy = (float)(1u << params.anisotropyLog2),
+            .compareEnable = VulkanMappings::getCompareEnable(params.compareMode),
+            .compareOp = VulkanMappings::getCompareOp(params.compareFunc),
+            .minLod = 0.0f,
+            .maxLod = VulkanMappings::getMaxLod(params.filterMin),
+            .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+            .unnormalizedCoordinates = VK_FALSE
+    };
+
+    VkSampler sampler;
+    VkResult error = vkCreateSampler(mVKDevice, &samplerInfo, VKALLOC, &sampler);
+    mSamplersCache.insert({ params, sampler });
+    return sampler;
 }
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback
