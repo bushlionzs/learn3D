@@ -17,7 +17,7 @@ void main() {
 	posW.xyz += cbPass.gEyePosW;
 	
 	gl_Position = cbPass.gViewProj * vec4(posW.xyz, 1.0);
-	gl_Position.y = -gl_Position.y;
+	//gl_Position.y = -gl_Position.y;
 	
 	outUV = position;
 }

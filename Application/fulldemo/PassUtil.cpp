@@ -19,18 +19,18 @@ void updateFrameBuffer(FrameConstantBuffer& frameBuffer, Ogre::SceneManager* sm,
     const Ogre::Vector3& camepos = cam->getDerivedPosition();
 
     Ogre::Matrix4 invView = view.inverse();
-    Ogre::Matrix4 viewProj = view * proj;
+    Ogre::Matrix4 viewProj = proj * view;
     Ogre::Matrix4 invProj = proj.inverse();
     Ogre::Matrix4 invViewProj = viewProj.inverse();
     frameBuffer.Shadow = 0;
 
 
-    frameBuffer.View = view;
-    frameBuffer.InvView = invView;
-    frameBuffer.Proj = proj;
-    frameBuffer.InvProj = invProj;
-    frameBuffer.ViewProj = viewProj;
-    frameBuffer.InvViewProj = invViewProj;
+    frameBuffer.View = view.transpose();
+    frameBuffer.InvView = invView.transpose();
+    frameBuffer.Proj = proj.transpose();
+    frameBuffer.InvProj = invProj.transpose();
+    frameBuffer.ViewProj = viewProj.transpose();
+    frameBuffer.InvViewProj = invViewProj.transpose();
     //mFrameConstantBuffer.ShadowTransform = mShadowTransform;
     frameBuffer.EyePosW = camepos;
 

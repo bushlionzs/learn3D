@@ -221,7 +221,7 @@ material SkyMap
 		{
 			lighting off
 			depth_write off
-            shader prefilterenvmap
+            shader ogresky
 			cull_hardware none
 			texture_unit
 			{

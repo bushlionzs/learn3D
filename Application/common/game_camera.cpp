@@ -251,7 +251,7 @@ bool GameCamera::update(float delta)
             m[1][3] = trans.y;
             m[2][3] = trans.z;
 
-            mCamera->updateCamera(m.transpose());
+            mCamera->updateCamera(m);
         }
     }
 

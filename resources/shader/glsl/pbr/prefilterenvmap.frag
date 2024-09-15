@@ -9,7 +9,7 @@
 layout (location = 0) in vec3 inPos;
 layout (location = 0) out vec4 outColor;
 
-layout (set=1,binding = 3) uniform samplerCube samplerEnv;
+layout (binding = 0) uniform samplerCube samplerEnv;
 
 layout(push_constant) uniform PushConsts {
 	layout (offset = 64) float roughness;

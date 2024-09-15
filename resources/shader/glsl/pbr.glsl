@@ -55,19 +55,20 @@ struct PBRInfo
 #define c_MinRoughness  0.04
 
 
-float4 SRGBtoLINEAR(float4 srgbIn)
+vec4 SRGBtoLINEAR(vec4 srgbIn)
 {
-    #ifdef MANUAL_SRGB
-    #ifdef SRGB_FAST_APPROXIMATION
-    float3 linOut = pow(srgbIn.xyz,float3(2.2, 2.2, 2.2));
-    #else //SRGB_FAST_APPROXIMATION
-    float3 bLess = step(float3(0.04045),srgbIn.xyz);
-    float3 linOut = mix( srgbIn.xyz/float3(12.92), pow((srgbIn.xyz+float3(0.055))/float3(1.055),float3(2.4)), bLess );
-    #endif //SRGB_FAST_APPROXIMATION
-    return float4(linOut,srgbIn.w);;
-    #else //MANUAL_SRGB
-    return srgbIn;
-    #endif //MANUAL_SRGB
+	#define MANUAL_SRGB 1
+	#ifdef MANUAL_SRGB
+	#ifdef SRGB_FAST_APPROXIMATION
+	vec3 linOut = pow(srgbIn.xyz,vec3(2.2));
+	#else //SRGB_FAST_APPROXIMATION
+	vec3 bLess = step(vec3(0.04045),srgbIn.xyz);
+	vec3 linOut = mix( srgbIn.xyz/vec3(12.92), pow((srgbIn.xyz+vec3(0.055))/vec3(1.055),vec3(2.4)), bLess );
+	#endif //SRGB_FAST_APPROXIMATION
+	return vec4(linOut,srgbIn.w);;
+	#else //MANUAL_SRGB
+	return srgbIn;
+	#endif //MANUAL_SRGB
 }
 
 

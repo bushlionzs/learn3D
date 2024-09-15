@@ -21,6 +21,7 @@ private:
 	void base2();
 	void base3();
 	void base4();
+	void base5();
 private:
 	AnimationState* mAnimationState = nullptr;
 
