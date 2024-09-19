@@ -62,6 +62,11 @@ private:
         int32_t dim,
         CubeType type);
     virtual Ogre::OgreTexture*  generateBRDFLUT(const std::string& name);
+
+    virtual FrameConstantBuffer* getFrameConstantBuffer()
+    {
+        return &mFrameConstantBuffer;
+    }
 private:
     bool mEnableValidationLayers;
 

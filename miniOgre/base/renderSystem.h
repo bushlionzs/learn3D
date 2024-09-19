@@ -123,6 +123,11 @@ public:
     {
         return nullptr;
     }
+
+    virtual FrameConstantBuffer* getFrameConstantBuffer()
+    {
+        return nullptr;
+    }
 protected:
 	
     uint32_t mBatchCount = 0;

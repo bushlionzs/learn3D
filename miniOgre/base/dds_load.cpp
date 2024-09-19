@@ -624,7 +624,7 @@ bool DDSImage::load(DataStream* stream)
 
     if (PixelUtil::isCompressed(sourceFormat))
     {
-        if (true)
+        if (false)
         {
             // We'll need to decompress
             decompressDXT = true;

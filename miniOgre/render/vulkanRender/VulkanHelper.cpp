@@ -1287,7 +1287,7 @@ VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& param
 {
     auto iter = mSamplersCache.find(params);
     if (UTILS_LIKELY(iter != mSamplersCache.end())) {
-        return iter->second;
+        //return iter->second;
     }
     VkSamplerCreateInfo samplerInfo{
             .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
@@ -1298,12 +1298,12 @@ VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& param
             .addressModeV = VulkanMappings::getWrapMode(params.wrapT),
             .addressModeW = VulkanMappings::getWrapMode(params.wrapR),
             .anisotropyEnable = params.anisotropyLog2 == 0 ? VK_FALSE : VK_TRUE,
-            .maxAnisotropy = (float)(1u << params.anisotropyLog2),
+            .maxAnisotropy = params.anisotropyLog2 == 0?0.0f:(float)(1u << params.anisotropyLog2),
             .compareEnable = VulkanMappings::getCompareEnable(params.compareMode),
             .compareOp = VulkanMappings::getCompareOp(params.compareFunc),
             .minLod = 0.0f,
             .maxLod = VulkanMappings::getMaxLod(params.filterMin),
-            .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+            .borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
             .unnormalizedCoordinates = VK_FALSE
     };
 
@@ -1331,7 +1331,7 @@ VkSurfaceFormatKHR VulkanHelper::chooseSwapSurfaceFormat(
 {
     for (auto&& surfaceFormat : availableFormats)
     {
-        if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_UNORM)
+        if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_SRGB)
         {
             return surfaceFormat;
         }

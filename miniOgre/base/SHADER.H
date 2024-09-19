@@ -30,6 +30,11 @@ struct LightInfo
     Ogre::Vector3 Position = { 0.0f, 0.0f, 0.0f };  // point/spot light only
     float SpotPower = 64.0f;                            // spot light only
 };
+
+#ifndef MAX_NUM_DIR_LIGHTS
+#define MAX_NUM_DIR_LIGHTS 1
+#endif
+
 struct FrameConstantBuffer
 {
     Ogre::Matrix4 View = Ogre::Matrix4::IDENTITY;
@@ -48,10 +53,8 @@ struct FrameConstantBuffer
     float TotalTime = 0.0f;
     float DeltaTime = 0.0f;
 
-    Ogre::ColourValue AmbientLight = ColourValue(0.45f, 0.45f, 0.45f, 1.0f);
-    LightInfo directionLights[MaxLightsEachType];
-    LightInfo pointLights[MaxLightsEachType];
-    LightInfo spotLights[MaxLightsEachType];
+    LightInfo directionLights[MAX_NUM_DIR_LIGHTS];
+    uint32_t numDirLights = 1;
 };
 
 struct MaterialConstantBuffer
@@ -73,15 +76,14 @@ struct MaterialConstantBuffer
 struct PbrMaterialConstanceBuffer
 {
     //some constance value;
-    Ogre::Vector2 u_MetallicRoughnessValues = {1.0f, 1.0f};
-    Real u_OcclusionStrength = 1.0f;
-    uint32_t alpha_mask = 0;
-    Ogre::Vector3 u_EmissiveFactor = { 1.0f, 1.0f, 1.0f };
-    float alpha_mask_cutoff = 0.0f;
-    Ogre::Vector4 u_BaseColorFactor = { 1.0f, 1.0f, 1.0f, 1.0f };
-    Ogre::Vector4 u_ScaleIBLAmbient = { 1.0f, 1.0f, 1.0f, 1.0f };
-    Ogre::Matrix4 TexScale = Ogre::Matrix4::IDENTITY;
-    Ogre::Matrix4 TexTransform = Ogre::Matrix4::IDENTITY;
+    Ogre::Vector2 metallicRoughnessValues = {1.0f, 1.0f};
+    Real occlusionStrength = 1.0f;
+    uint32_t alphaMask = 0;
+    Ogre::Vector3 emissiveFactor = { 1.0f, 1.0f, 1.0f };
+    float alphaMaskCutoff = 0.0f;
+    Ogre::Vector4 baseColorFactor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    Ogre::Vector4 scaleIBLAmbient = { 1.0f, 1.0f, 1.0f, 1.0f };
+    uint32_t debugRenderMode = 0;
 };
 
 class SkinnedConstantBuffer

@@ -14,9 +14,10 @@ namespace Ogre {
         TextureTypePbr_NormalMap = 3,
         TextureTypePbr_Emissive = 4,
         TextureTypePbr_MetalRoughness = 5,
-        TextureTypePbr_BRDF_LUT = 6,
-        TextureTypePbr_IBL_Diffuse = 7,
-        TextureTypePbr_IBL_Specular = 8
+        TextureTypePbr_Roughness = 6,
+        TextureTypePbr_BRDF_LUT = 7,
+        TextureTypePbr_IBL_Diffuse = 8,
+        TextureTypePbr_IBL_Specular = 9
     };
     
 
@@ -85,33 +86,7 @@ namespace Ogre {
         ColourValue _backgroudColor;
         TextureAddressingMode  _tex_addr_mod;
         filament::backend::SamplerParams _samplerParams;
-        TextureProperty()
-        {
-            _texType = TEX_TYPE_2D;
-            _pbrType = TextureTypePbr_general;
-            _width = 0;
-            _height = 0;
-            _depth = 1;
-            _numMipmaps = 0;
-            _tex_format = Ogre::PF_R8G8B8A8;
-            _need_mipmap = true;
-            _gamma = 1.0f;
-            _fsaa = 0;
-            _tex_usage = TU_DEFAULT;
-            _backgroudColor = ColourValue::Black;
-             _tex_addr_mod = Ogre::TAM_WRAP;
-             _samplerParams.filterMag = filament::backend::SamplerMagFilter::NEAREST;
-             _samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
-             _samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-             _samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-             _samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
-             _samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
-             _samplerParams.compareFunc = filament::backend::SamplerCompareFunc::LE;
-             _samplerParams.anisotropyLog2 = 3;
-             _samplerParams.padding0 = 0;
-             _samplerParams.padding1 = 0;
-             _samplerParams.padding2 = 0;
-        }
+        TextureProperty();
     };
 
     class OgreTexture

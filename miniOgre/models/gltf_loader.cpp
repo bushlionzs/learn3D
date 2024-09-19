@@ -386,14 +386,14 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             std::shared_ptr<Material> mat = std::make_shared<Material>(tinyMat.name, true);
 
             PbrMaterialConstanceBuffer& matInfo = mat->getMatInfo();
-            matInfo.u_BaseColorFactor.x = tinyMat.pbrMetallicRoughness.baseColorFactor[0];
-            matInfo.u_BaseColorFactor.y = tinyMat.pbrMetallicRoughness.baseColorFactor[1];
-            matInfo.u_BaseColorFactor.z = tinyMat.pbrMetallicRoughness.baseColorFactor[2];
-            matInfo.u_BaseColorFactor.w = tinyMat.pbrMetallicRoughness.baseColorFactor[3];
+            matInfo.baseColorFactor.x = tinyMat.pbrMetallicRoughness.baseColorFactor[0];
+            matInfo.baseColorFactor.y = tinyMat.pbrMetallicRoughness.baseColorFactor[1];
+            matInfo.baseColorFactor.z = tinyMat.pbrMetallicRoughness.baseColorFactor[2];
+            matInfo.baseColorFactor.w = tinyMat.pbrMetallicRoughness.baseColorFactor[3];
             if (tinyMat.alphaMode == "MASK")
             {
-                matInfo.alpha_mask = 1;
-                matInfo.alpha_mask_cutoff = tinyMat.alphaCutoff;
+                matInfo.alphaMask = 1;
+                matInfo.alphaMaskCutoff = tinyMat.alphaCutoff;
             }
             
             TextureProperty tp;

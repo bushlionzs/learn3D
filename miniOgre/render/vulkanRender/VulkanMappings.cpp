@@ -130,7 +130,7 @@ namespace Ogre {
         case PF_FLOAT32_R:      return VK_FORMAT_R32_SFLOAT;
         case PF_FLOAT32_RGBA:   return VK_FORMAT_R32G32B32A32_SFLOAT;
         case PF_SHORT_RGBA:     return VK_FORMAT_R16G16B16A16_UNORM;
-        case PF_DXT1:           return VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
+        case PF_DXT1:           return VK_FORMAT_BC1_RGB_SRGB_BLOCK;
         case PF_DXT2:           return VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
         case PF_DXT3:           return VK_FORMAT_BC2_UNORM_BLOCK;
         case PF_DXT4:           return VK_FORMAT_BC2_UNORM_BLOCK;

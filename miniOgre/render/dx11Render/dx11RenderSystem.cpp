@@ -207,25 +207,6 @@ void Dx11RenderSystem::updateFrame()
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	
-	if (camera->getCameraType() == CameraType_Common)
-	{
-		auto sceneMgr = camera->getCreator();
-		mFrameConstantBuffer.AmbientLight = sceneMgr->getAmbientLight();
-
-		const std::vector<Light*>& lights = sceneMgr->getLightList();
-
-		uint32_t directionIndex = 0;
-		for (auto l : lights)
-		{
-			if (l->getLightType() == LightType_Direction)
-			{
-				mFrameConstantBuffer.directionLights[directionIndex].Direction = l->getLightDirection();
-				directionIndex++;
-			}
-		}
-	}
-
-
 	Dx11UploadBuffer<FrameConstantBuffer>* cb = mFrameCB.get();
 	cb->CopyData(0, mFrameConstantBuffer);
 

@@ -178,6 +178,19 @@ public:
     }
 };
 
+class RoughnessTexture : public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setPbrTexture(TextureTypePbr_Roughness, val);
+    }
+};
+
 class DiffuseTexture : public ParamCommand
 {
 public:
@@ -442,6 +455,12 @@ void OgreMaterialParam::initParameters()
             PT_STRING),
             &mMetallicRoughnessTexture);
 
+        static RoughnessTexture mRoughnessTexture;
+        dict->addParameter(ParameterDef("roughness_texture",
+            "roughness_texture",
+            PT_STRING),
+            &mRoughnessTexture);
+
         static DiffuseTexture mDiffuseTexture;
         dict->addParameter(ParameterDef("diffuse_texture",
             "diffuse_texture",
@@ -570,6 +589,15 @@ void OgreMaterialParam::setTextureAddrMode(const std::string& val)
 
     TextureProperty* tp = unit->getTextureProperty();
     tp->_tex_addr_mod = mode;
+    if (mode == Ogre::TAM_CLAMP)
+    {
+        tp->_samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
+        tp->_samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
+        tp->_samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        tp->_samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        tp->_samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        tp->_samplerParams.anisotropyLog2 = 0;
+    }
 }
 
 void OgreMaterialParam::setPbrTexture(TextureTypePbr pbrtype, const std::string& val)

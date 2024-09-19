@@ -147,8 +147,7 @@ void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 
 	if (pass->mMaterial->isPbr())
 	{
-		mPbrMaterialConstanceBuffer.TexScale = mcb.TexScale;
-		mPbrMaterialConstanceBuffer.TexTransform = mcb.TexTransform;
+		
 	}
 	else
 	{

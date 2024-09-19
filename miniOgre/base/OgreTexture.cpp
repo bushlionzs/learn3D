@@ -5,6 +5,33 @@
 #include "OgreBitwise.h"
 
 namespace Ogre {
+	TextureProperty::TextureProperty()
+	{
+		_texType = TEX_TYPE_2D;
+		_pbrType = TextureTypePbr_general;
+		_width = 0;
+		_height = 0;
+		_depth = 1;
+		_numMipmaps = 0;
+		_tex_format = Ogre::PF_R8G8B8A8;
+		_need_mipmap = true;
+		_gamma = 1.0f;
+		_fsaa = 0;
+		_tex_usage = TU_DEFAULT;
+		_backgroudColor = ColourValue::Black;
+		_tex_addr_mod = Ogre::TAM_WRAP;
+		_samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
+		_samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
+		_samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
+		_samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+		_samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+		_samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
+		_samplerParams.compareFunc = filament::backend::SamplerCompareFunc::N;
+		_samplerParams.anisotropyLog2 = 0;
+		_samplerParams.padding0 = 0;
+		_samplerParams.padding1 = 0;
+		_samplerParams.padding2 = 0;
+	}
 	OgreTexture::OgreTexture(const String& name, TextureProperty* texProperty)
 	{
 		mName = name;

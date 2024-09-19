@@ -408,25 +408,7 @@ void VulkanRenderSystem::updateMainPassCB(ICamera* camera)
     mFrameConstantBuffer.FarZ = 10000.0f;
     mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
     mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-    if (camera->getCameraType() == CameraType_Light)
-    {
-        auto sceneMgr = camera->getCreator();
-        mFrameConstantBuffer.AmbientLight = sceneMgr->getAmbientLight();
-
-        const std::vector<Light*>& lights = sceneMgr->getLightList();
-
-        uint32_t directionIndex = 0;
-        for (auto l : lights)
-        {
-            if (l->getLightType() == LightType_Direction)
-            {
-                mFrameConstantBuffer.directionLights[directionIndex].Direction = l->getLightDirection();
-                directionIndex++;
-            }
-        }
-    }
-
-
+    
     mCurrentVulkanFrame->updateFrameConstantBuffer(mFrameConstantBuffer, camera);
 }
 
@@ -466,9 +448,9 @@ Ogre::OgreTexture* VulkanRenderSystem::generateCubeMap(
     texProperty._tex_format = format;
     texProperty._samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
     texProperty._samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
-    texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-    texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-    texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
+    texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+    texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
     texProperty._samplerParams.anisotropyLog2 = 0;
     VulkanTexture* tex = new VulkanTexture(name, &texProperty, this);
 

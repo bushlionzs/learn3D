@@ -411,27 +411,7 @@ void Dx12RenderSystem::updateMainPassCB(Ogre::ICamera* camera)
 	mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 	mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 
-	if (camera->getCameraType() == CameraType_Common)
-	{
-		auto sceneMgr = camera->getCreator();
-		mFrameConstantBuffer.AmbientLight = sceneMgr->getAmbientLight();
-
-		const std::vector<Light*>& lights = sceneMgr->getLightList();
-
-		uint32_t directionIndex = 0;
-		for (auto l : lights)
-		{
-			if (l->getLightType() == LightType_Direction)
-			{
-				mFrameConstantBuffer.directionLights[directionIndex].Direction = l->getLightDirection();
-				mFrameConstantBuffer.directionLights[directionIndex].Strength = Ogre::Vector3(0.6, 0.6, 0.6);
-				directionIndex++;
-			}
-		}
-	}
 	
-
-
 	UploadBuffer<FrameConstantBuffer>* cb = mCurrentFrame->getCameraFrameData(camera);
 	cb->CopyData(0, mFrameConstantBuffer);
 

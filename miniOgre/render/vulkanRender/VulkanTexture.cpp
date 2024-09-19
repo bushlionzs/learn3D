@@ -261,7 +261,10 @@ void VulkanTexture::createImage(
         }
     }
  
-    
+    if (mMipLevels > 10)
+    {
+        mMipLevels = 10;
+    }
 
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -361,7 +364,12 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
 
 void VulkanTexture::createTextureSampler()
 {
+    if (mName == "ground_albedo.dds")
+    {
+        int kk = 0;
+    }
     mTextureSampler = VulkanHelper::getSingleton().getSampler(mTextureProperty._samplerParams);
+    //mTextureSampler = VulkanHelper::getSingleton().getSampler(mTextureProperty._tex_addr_mod);
 }
 
 VulkanLayout VulkanTexture::getLayout(uint32_t layer, uint32_t level) const

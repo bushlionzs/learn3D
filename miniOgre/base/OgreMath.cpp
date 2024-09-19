@@ -1022,14 +1022,22 @@ namespace Ogre
     {
         float const tanHalfFovy = tan(fovy / 2.0f);
 
-        Matrix4 m = Matrix4::IDENTITY;
+        Matrix4 m = Matrix4::ZERO;
         m[0][0] = 1.0f / (aspect * tanHalfFovy);
         m[1][1] = 1.0f / (tanHalfFovy);
-        m[2][3] = 1.0f;
+        m[3][2] = 1.0f;
 
         m[2][2] = zFar / (zFar - zNear);
-        m[3][2] = -(zFar * zNear) / (zFar - zNear);
+        m[2][3] = -(zFar * zNear) / (zFar - zNear);
 
+
+        static const float VECTORMATH_PI_OVER_2 = 1.570796327f;
+
+        float aspectInverse = 1.0 / aspect;
+
+        auto f = ::tanf(VECTORMATH_PI_OVER_2 - fovy * 0.5f);
+        m[0][0] = f;
+        m[1][1] = f / aspectInverse;
         return m;
 
     }
@@ -1095,7 +1103,7 @@ namespace Ogre
         m[3][2] = -zNear / (zFar - zNear);
 
 
-        return m;
+        return m.transpose();
     }
 
     Matrix4 makeOrthographicOffCenterLH(
@@ -1155,7 +1163,6 @@ namespace Ogre
     {
         {
             Matrix4 tmp = makeOrthographicOffCenterLH(left, right, bottom, top, zNear, zFar);
-            tmp = tmp.transpose();
             return tmp;
         }
         Matrix4 m = Matrix4::IDENTITY;
@@ -1169,7 +1176,7 @@ namespace Ogre
         m[3][2] = -zNear / (zFar - zNear);
 
         
-        return m;
+        return m.transpose();
     }
 
     Matrix4 Math::makeLookAtRH(
@@ -1224,7 +1231,7 @@ namespace Ogre
         view_matrix[3][0] = -right.dotProduct(camera_pos);
         view_matrix[3][1] = -up.dotProduct(camera_pos);
         view_matrix[3][2] = -forward.dotProduct(camera_pos);
-        return view_matrix;
+        return view_matrix.transpose();
     }
     //---------------------------------------------------------------------
     Real Math::boundingRadiusFromAABB(const AxisAlignedBox& aabb)

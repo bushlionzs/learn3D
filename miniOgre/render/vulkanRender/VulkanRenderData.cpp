@@ -138,7 +138,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
 
     std::vector<VkDescriptorImageInfo> textureDescriptors3d;
 
-    uint32_t tex_count = 8;
+    uint32_t tex_count = 9;
 
 
     textureDescriptors.reserve(tex_count);
