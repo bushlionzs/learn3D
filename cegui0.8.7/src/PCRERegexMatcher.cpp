@@ -79,8 +79,43 @@ RegexMatcher::MatchState PCRERegexMatcher::getMatchStateOfString(
     if (!d_regex)
         CEGUI_THROW(InvalidRequestException(
             "Attempt to use invalid RegEx '" + d_string + "'."));
-    assert(false);
-    return MS_VALID;
+
+    int match[3];
+    const char* utf8_str = str.c_str();
+    const int len = static_cast<int>(strlen(utf8_str));
+
+#ifdef PCRE_PARTIAL_SOFT
+    // we are using a new version of pcre
+    const int result = pcre_exec(d_regex, 0, utf8_str, len, 0,
+        PCRE_PARTIAL_SOFT | PCRE_ANCHORED, match, 3);
+#else
+    // PCRE_PARTIAL is a backwards compatible synonym for PCRE_PARTIAL_SOFT
+    // using it is a requirement if we want to support pcre < 8.0
+
+    // Older versions of pcre have problems doing partial matching of
+    // single repeated characters if using pcre_exec,
+    // It is suggested to use pcre_dfa_exec instead.
+    int workspace[100]; // FIXME: persist the workspace between match attempts
+    const int result = pcre_dfa_exec(d_regex, 0, utf8_str, len, 0,
+        PCRE_PARTIAL | PCRE_ANCHORED, match, 3, workspace, 100);
+#endif
+
+    if (result == PCRE_ERROR_PARTIAL)
+        return MS_PARTIAL;
+
+    // a match must be for the entire string
+    if (result >= 0)
+        return (match[1] - match[0] == len) ? MS_VALID : MS_INVALID;
+
+    // no match found or if test string or regex is 0
+    if (result == PCRE_ERROR_NOMATCH || result == PCRE_ERROR_NULL)
+        return MS_INVALID;
+
+    // anything else is an error
+    CEGUI_THROW(InvalidRequestException(
+        "PCRE Error: " + PropertyHelper<int>::toString(result) +
+        " occurred while attempting to match the RegEx '" +
+        d_string + "'."));
 }
 
 //----------------------------------------------------------------------------//
