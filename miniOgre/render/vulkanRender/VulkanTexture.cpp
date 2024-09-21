@@ -260,11 +260,6 @@ void VulkanTexture::createImage(
             }
         }
     }
- 
-    if (mMipLevels > 10)
-    {
-        mMipLevels = 10;
-    }
 
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -279,10 +274,7 @@ void VulkanTexture::createImage(
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | 
         VK_IMAGE_USAGE_SAMPLED_BIT ;
-
-    ;
-
-
+    
     
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;

@@ -29,6 +29,7 @@ public:
 	void setInherit(const std::string& val);
 	void setTexture(const std::string& val);
 	void setTextureAddrMode(const std::string& val);
+	void setTextureMipmap(const std::string& val);
 	void setPbrTexture(TextureTypePbr pbrtype, const std::string& val);
 	void setAnimTexture(const String& val);
 	void setRotateTexture(const String& val);

@@ -269,6 +269,19 @@ public:
     }
 };
 
+class CmdTextureMipmap: public ParamCommand
+{
+public:
+    String doGet(const void* target) const
+    {
+        return String();
+    }
+    void doSet(void* target, const String& val)
+    {
+        static_cast<OgreMaterialParam*>(target)->setTextureMipmap(val);
+    }
+};
+
 class CmdRotateAnimTexture : public ParamCommand
 {
 public:
@@ -405,6 +418,12 @@ void OgreMaterialParam::initParameters()
             "tex_address_mode",
             PT_STRING),
             &mTextureAddrMode);
+
+        static CmdTextureMipmap mTextureMipmap;
+        dict->addParameter(ParameterDef("mipmap",
+            "mipmap",
+            PT_STRING),
+            &mTextureMipmap);
 
         static CmdRotateAnimTexture mRotateTexture;
         dict->addParameter(ParameterDef("rotate_anim",
@@ -597,6 +616,17 @@ void OgreMaterialParam::setTextureAddrMode(const std::string& val)
         tp->_samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
         tp->_samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
         tp->_samplerParams.anisotropyLog2 = 0;
+    }
+}
+
+void OgreMaterialParam::setTextureMipmap(const std::string& val)
+{
+    if (val == "false")
+    {
+        auto unit = mMaterial->getTextureUnit(mTexIndex);
+
+        TextureProperty* tp = unit->getTextureProperty();
+        tp->_need_mipmap = false;
     }
 }
 
