@@ -1,6 +1,11 @@
 #pragma
 #include "InputManager.h"
 
+enum CameraMoveType
+{
+    CameraMoveType_FirstPerson = 0,
+    CameraMoveType_ThirdPerson = 1
+};
 class GameCamera: public InputListener
 {
 private:
@@ -13,8 +18,7 @@ private:
     Real  mDistance = 1000.0f;
 
     int mLastZ = 0;
-    Ogre::Vector3 mTargetPosition;
-    Ogre::Vector3 mEyePosition;
+    
     bool mGoingForward = false;
     bool mGoingBack = false;
     bool mGoingLeft = false;
@@ -38,10 +42,19 @@ private:
 
     bool mEditMode = true;
 
-    Ogre::Vector3 mUp = Ogre::Vector3::UNIT_Y;
+    Ogre::Vector3 mUpVector = Ogre::Vector3::UNIT_Y;
+    Ogre::Vector3 mLeftVector = -Ogre::Vector3::UNIT_X;
+
+    Ogre::Vector3 mLookAtPosition;
+    Ogre::Vector3 mCameraPosition;
+
+
     Ogre::Vector3 mCameraRelPosition;
 
     Real mSpeed = 500.0f;
+
+    CameraMoveType mCameraType;
+
 
 public:
     GameCamera(Ogre::Camera* camera, SceneManager* sceneMgr);
@@ -58,6 +71,9 @@ public:
     void setHeight(float height);
 
     void setMoveSpeed(Real speed);
+
+
+    void updateCamera(const Ogre::Vector3& camPosition, const Ogre::Vector3& lookAtPosition);
 
 
     virtual void injectMouseMove(int _absx, int _absy, int _absz);

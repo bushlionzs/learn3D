@@ -1,12 +1,14 @@
 cmake_minimum_required (VERSION 2.8)
 
-project(ShadowMap)
+project(PbrMaterial)
 
 
 if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D__WINDOWS__)
+add_definitions(-D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
+add_definitions(-DCEGUI_STATIC)
 endif()
 
 
@@ -59,13 +61,17 @@ target_include_directories(${PROJECT_NAME}
 	${MIDDLE_INC}
 	${MINIOGRE_INC}
 	${MYGUI_INC}
+	${CEGUI_INC}
 	${ROOT_INC}/3rd/OIS/include
 )
 
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
+
+
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
-CEGUI expat Middle stormlib OIS freetype GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
+CEGUI expat Middle stormlib OIS GameShare freetype zlibstatic dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
+
 tinyxmld
 pcre
 utils

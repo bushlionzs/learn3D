@@ -18,24 +18,24 @@ void updateFrameBuffer(FrameConstantBuffer& frameBuffer, Ogre::SceneManager* sm,
     const Ogre::Vector3& camepos = cam->getDerivedPosition();
 
     Ogre::Matrix4 invView = view.inverse();
-    Ogre::Matrix4 viewProj = view * proj;
+    Ogre::Matrix4 viewProj = proj * view;
     Ogre::Matrix4 invProj = proj.inverse();
     Ogre::Matrix4 invViewProj = viewProj.inverse();
     frameBuffer.Shadow = 0;
 
 
-    frameBuffer.View = view;
-    frameBuffer.InvView = invView;
-    frameBuffer.Proj = proj;
-    frameBuffer.InvProj = invProj;
-    frameBuffer.ViewProj = viewProj;
-    frameBuffer.InvViewProj = invViewProj;
+    frameBuffer.View = view.transpose();
+    frameBuffer.InvView = invView.transpose();
+    frameBuffer.Proj = proj.transpose();
+    frameBuffer.InvProj = invProj.transpose();
+    frameBuffer.ViewProj = viewProj.transpose();
+    frameBuffer.InvViewProj = invViewProj.transpose();
     //mFrameConstantBuffer.ShadowTransform = mShadowTransform;
     frameBuffer.EyePosW = camepos;
 
-
-    auto width = 1024;
-    auto height = 768;
+    const auto& rt = Ogre::Root::getSingleton().getMainRect();
+    auto width = rt.width();
+    auto height = rt.height();
     frameBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
     frameBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
     frameBuffer.NearZ = 0.1f;
@@ -212,7 +212,11 @@ FrameGraphId<FrameGraphTexture> PassUtil::colorPass(
                             driveApi.bindUniformBuffer(0, rbh);
 
                             auto mbh = mat->getMaterialBufferHandle();
-                            driveApi.bindUniformBuffer(2, mbh);
+                            if (mbh)
+                            {
+                                driveApi.bindUniformBuffer(2, mbh);
+                            }
+                            
 
                             auto sbh = r->getSkinnedHandle();
                             if (sbh)

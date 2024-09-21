@@ -58,14 +58,18 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 	js.adopt();
 
 	new Ogre::Root(engine);
+
+	uint32_t width = 1280;
+	uint32_t height = 768;
+	Ogre::Root::getSingleton().updateMainRect({ 0, 0, (int)width, (int)height });
+
 	Ogre::Root::getSingleton()._initialise();
 
 	new EngineManager;
 	EngineManager::getSingleton().initialise();
 
 	mWindow = new ApplicationWindow(nullptr);
-	uint32_t width = 1280;
-	uint32_t height = 768;
+	
 	mWindow->createWindow(width, height);
 	if (!InputManager::getSingletonPtr())
 	{
@@ -95,7 +99,6 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 	auto camera = EngineManager::getSingletonPtr()->getMainCamera();
 
 	mGameCamera = new GameCamera(camera, mSceneManager);
-
 	InputManager::getSingletonPtr()->addListener(mGameCamera);
 
 	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources"), "sujian", true);
@@ -230,8 +233,8 @@ void SimpleApp::example1()
 	auto mat = sub->getMaterial();
 	auto tu = mat->getTextureUnit(0);
 
-	//tu->updateTexture(0, "RenderToTexture");
-	mGameCamera->setDistance(3.0f);
+	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -2.5f), Ogre::Vector3::ZERO);
+
 	mGameCamera->setMoveSpeed(5.0f);
 }
 

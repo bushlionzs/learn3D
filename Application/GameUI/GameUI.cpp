@@ -50,7 +50,7 @@ bool GameUI::appInit()
     //ToolTipDemo();
     //SelfEquipDemo();
     //PackageDemo();
-    QuestDemo();
+    PbrDemo();
 	return true;
 }
 
@@ -493,6 +493,11 @@ void GameUI::ToolTipDemo()
 void GameUI::MainMenuDemo()
 {
    
+}
+#include "pbrWindow.h"
+void GameUI::PbrDemo()
+{
+    auto* window = new PBRWindow();
 }
 
 void GameUI::QuestDemo()

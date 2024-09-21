@@ -39,12 +39,14 @@ bool ShadowMap::appInit()
 	Ogre::Vector3 righttop = Ogre::Vector3(aa, h, -aa);
 	Ogre::Vector3 rightbottom = Ogre::Vector3(aa, h , aa);
 	Ogre::Vector3 normal = Ogre::Vector3(0.0f, 1.0f, 0.0f);
+	std::string meshName = "myrect";
 	auto mesh = MeshManager::getSingletonPtr()->createRect(
-		"myrect",
+		nullptr,
+		meshName,
 		leftop, leftbottom, righttop, rightbottom, normal);
 	auto mat = MaterialManager::getSingleton().getByName("myground");
 	mesh->getSubMesh(0)->setMaterial(mat);
-	Entity* ground = mSceneManager->createEntity("ground", mesh);
+	Entity* ground = mSceneManager->createEntity("ground", meshName);
 	SceneNode* groundnode = root->createChildSceneNode("ground");
 	groundnode->attachObject(ground);
 
@@ -61,7 +63,7 @@ bool ShadowMap::appInit()
 	cylinder->setCastShadows(true);
 	ground->setCastShadows(false);
 	mesh = MeshManager::getSingleton().load("ninja.mesh");
-	Entity* ninja = mSceneManager->createEntity("ninja", mesh);
+	Entity* ninja = mSceneManager->createEntity("ninja", "ninja.mesh");
 	SceneNode* ninjanode = root->createChildSceneNode("ninja");
 	ninjanode->attachObject(ninja);
 	ninjanode->setPosition(Ogre::Vector3(-4, -2, -1.0f));
@@ -82,24 +84,24 @@ bool ShadowMap::appInit()
 	righttop = Ogre::Vector3(aa, aa, 0.0f);
 	rightbottom = Ogre::Vector3(aa, -aa, 0.0f);
 	normal = Ogre::Vector3(0.0f, 0.0f, 1.0f);
-	mesh = MeshManager::getSingletonPtr()->createRect(
-		"myrect",
-		leftop, leftbottom, righttop, rightbottom, normal);
-	Entity* rect = mSceneManager->createEntity("rect", mesh);
+
+
+	/*Entity* rect = mSceneManager->createEntity("rect", meshName);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 	rectnode->setPosition(1.5, 0.0f, 3.0f);
 
 	mat = MaterialManager::getSingleton().getByName("shadow");
 
-	rect->setMaterial(0, mat);
-	mGameCamera->setDistance(8.0f);
+	rect->setMaterial(0, mat);*/
+
+	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, 8.0f), Ogre::Vector3::ZERO);
 	mGameCamera->setMoveSpeed(10.0f);
 
 	auto light = mSceneManager->createLight("shadow");
 	light->setLightType(LightType_Direction, 0);
 
-	auto m4 = Ogre::Math::makeLookAtRH(
+	auto m4 = Ogre::Math::makeLookAtLH(
 		Ogre::Vector3(-20, 20, -20), Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_Y);
 
 	auto q = m4.extractQuaternion();
@@ -135,5 +137,6 @@ void ShadowMap::appUpdate(float delta)
 
 EngineType ShadowMap::getEngineType()
 {
-	return EngineType_Dx12;
+	//return EngineType_Dx11;
+	return EngineType_Vulkan;
 }

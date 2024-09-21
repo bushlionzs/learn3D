@@ -53,7 +53,7 @@ void Basic::base1()
 {
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-	float aa = 0.5f;
+	float aa = 1.0f;
 	Ogre::Vector3 leftop = Ogre::Vector3(-aa, aa, 0.0f);
 	Ogre::Vector3 leftbottom = Ogre::Vector3(-aa, -aa, 0.0f);
 	Ogre::Vector3 righttop = Ogre::Vector3(aa, aa, 0.0f);
@@ -62,19 +62,19 @@ void Basic::base1()
 
 	std::string meshName = "box.gltf";
 	
-	/*auto mesh = MeshManager::getSingletonPtr()->createRect(
+	auto mesh = MeshManager::getSingletonPtr()->createRect(
 		nullptr,
 		meshName,
-		leftop, leftbottom, righttop, rightbottom, normal);*/
+		leftop, leftbottom, righttop, rightbottom, normal);
 
-	auto mesh = MeshManager::getSingletonPtr()->load(meshName);
+	//auto mesh = MeshManager::getSingletonPtr()->load(meshName);
 	Entity* rect = mSceneManager->createEntity("rect", meshName);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
-	//rectnode->attachObject(rect);
+	rectnode->attachObject(rect);
 
-	mSceneManager->setSkyBox(true, "SkyMap", 1);
-
-	//mGameCamera->setDistance(2.5f);
+	mSceneManager->setSkyBox(true, "SkyMap", 10000);
+	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -2.5f), Ogre::Vector3::ZERO);
+	mGameCamera->setDistance(2.5f);
 	mGameCamera->setMoveSpeed(5);
 }
 

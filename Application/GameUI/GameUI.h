@@ -50,6 +50,7 @@ private:
 	void ToolTipDemo();
 	void MainMenuDemo();
 	void QuestDemo();
+	void PbrDemo();
 private:
 	AnimationState* mAnimationState = nullptr;
 	Role* mRole;

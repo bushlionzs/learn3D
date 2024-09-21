@@ -12,7 +12,7 @@ int main()
 {
 	platform_log_init();
 
-	bool use_filament = false;
+	bool use_filament = true;
 
 	if (use_filament)
 	{
