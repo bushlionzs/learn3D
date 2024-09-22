@@ -427,6 +427,8 @@ namespace Ogre {
         */
         virtual void _endUpdate();
 
+        virtual void preRender(const ColourValue& colour) {}
+
     protected:
         /// The name of this target.
         String mName;
@@ -480,6 +482,8 @@ namespace Ogre {
         
         /// Internal implementation of update()
         virtual void updateImpl();
+
+       
     };
     /** @} */
     /** @} */

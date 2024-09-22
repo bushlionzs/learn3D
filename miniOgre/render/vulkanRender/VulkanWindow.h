@@ -7,8 +7,7 @@
 
 class VulkanFrame;
 
-class VulkanWindow : public Ogre::RenderWindow,
-	public Ogre::VulkanRenderTarget
+class VulkanWindow : public Ogre::RenderWindow
 {
 public:
 	VulkanWindow();
@@ -25,7 +24,7 @@ public:
 
 	virtual bool requiresTextureFlipping() const;
 
-	virtual void preRender(VulkanFrame* frame, const ColourValue& colour);
+	virtual void preRender(const ColourValue& colour);
 
 	void start();
 	VkFramebuffer getFrameBuffer(uint32_t index);

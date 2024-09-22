@@ -3,7 +3,6 @@
 #include "OgreCamera.h"
 #include "OgreSceneManager.h"
 #include "OgreSceneNOde.h"
-#include "engine_manager.h"
 
 GameCamera::GameCamera(Camera* camera, SceneManager* sceneMgr)
 {
@@ -46,6 +45,8 @@ void GameCamera::updateCamera(const Ogre::Vector3& camPosition, const Ogre::Vect
 {
     mCameraPosition = camPosition;
     mLookAtPosition = lookAtPosition;
+
+    mCameraRelPosition = mCameraPosition - mLookAtPosition;
 }
 
 void GameCamera::injectMouseWheel(int _absz)
@@ -69,15 +70,23 @@ void GameCamera::injectMouseMove(int _absx, int _absy, int _absz)
     mMouseDeltaX = _absx - mMousePickX;
     mMouseDeltaY = _absy - mMousePickY;
 
+    float yaw = 0.0f;
+    float pitch = 0.0f;
+
+    bool need = false;
     if (mMouseDeltaX != 0)
     {
         mYaw -= mMouseDeltaX * 0.15f;
+        yaw =  -mMouseDeltaX * 0.15f;
+        need = true;
     }
 
 
     if (mMouseDeltaY != 0)
     {
         mPitch -= mMouseDeltaY * 0.15f;
+        pitch = -mMouseDeltaY * 0.15f;
+        need = true;
     }
 
     mMousePickX = _absx;
@@ -177,12 +186,12 @@ bool GameCamera::update(float delta)
 
         if (mGoingRight)
         {
-            sidesway = -speed * delta;
+            sidesway = speed * delta;
         }
 
         if (mGoingLeft)
         {
-            sidesway = speed * delta;
+            sidesway = -speed * delta;
         }
 
 
@@ -206,80 +215,38 @@ bool GameCamera::update(float delta)
             height -= delta * speed;
         }
 
-        Ogre::Vector3 target;
-        Ogre::Vector3 position;
-        if (mCameraType == CameraMoveType_FirstPerson)
-        {
-            target = mLookAtPosition;
-            position = mCameraPosition;
-        }
-        else
-        {
-            target = EngineManager::getSingletonPtr()->getMyPosition();
-            position = getPosition();
-        }
 
+        Ogre::Vector3 target = mLookAtPosition;
+        Ogre::Vector3 position = mCameraPosition;
         position.y = target.y;
         Ogre::Vector3 aheadVector = (target - position);
         aheadVector.normalise();
-        mLeftVector = mUpVector.crossProduct(aheadVector);
+        Ogre::Vector3 leftVector = mUpVector.crossProduct(aheadVector);
 
 
         target += aheadVector * goahead;
-        target += mLeftVector * sidesway;
+        target += leftVector * sidesway;
         target += mUpVector * height;
 
-
-
-
-        if (mCameraType == CameraMoveType_FirstPerson)
-        {
-            mLookAtPosition = target;
-
-            mCameraPosition += aheadVector * goahead;
-            mCameraPosition += mLeftVector * sidesway;
-            mCameraPosition += mUpVector * height;
-        }
-        else
-        {
-            EngineManager::getSingletonPtr()->setMyPosition(target);
-        }
+        mLookAtPosition = target;
     }
-    
-    if (mCameraType == CameraMoveType_FirstPerson)
+
     {
         mCameraNode->resetOrientation();
         mCameraSubNode->resetOrientation();
+        {
+            mCameraNode->setPosition(mLookAtPosition);
+            mCameraSubNode->setPosition(mCameraRelPosition);
+            mCameraNode->yaw(Ogre::Degree(mYaw));
 
-        mCameraNode->setPosition(mLookAtPosition);
+            mCameraNode->pitch(Ogre::Degree(mPitch));
 
-        auto relativePos = mCameraPosition - mLookAtPosition;
-        mCameraSubNode->setPosition(relativePos);
-        mCameraNode->yaw(Ogre::Degree(mYaw));
+            mCameraPosition = mCameraSubNode->_getDerivedPosition();
 
-        mCameraNode->pitch(Ogre::Degree(mPitch));
+            auto m2 = Ogre::Math::makeLookAtLH(mCameraPosition, mLookAtPosition, Ogre::Vector3::UNIT_Y);
 
-        const Vector3& camPos = mCameraSubNode->_getDerivedPosition();
-        const Vector3& lookAtPos = mCameraNode->_getDerivedPosition();
-        auto m = Ogre::Math::makeLookAtLH(camPos, lookAtPos, Ogre::Vector3::UNIT_Y);
-        mCamera->updateCamera(m);
-    }
-    else
-    {
-        mCameraNode->resetOrientation();
-        mCameraSubNode->resetOrientation();
-
-        Ogre::Vector3 playerPos = EngineManager::getSingletonPtr()->getMyPosition();
-        mCameraNode->setPosition(playerPos);
-        mCameraSubNode->setPosition(mCameraRelPosition);
-        mCameraNode->yaw(Ogre::Degree(mYaw));
-
-        mCameraNode->pitch(Ogre::Degree(mPitch));
-
-        const Vector3& camPos = mCameraSubNode->_getDerivedPosition();
-        const Vector3& lookAtPos = mCameraNode->_getDerivedPosition();
-        auto m = Ogre::Math::makeLookAtLH(camPos, lookAtPos, Ogre::Vector3::UNIT_Y);
-        mCamera->updateCamera(m);
+            mCamera->updateCamera(m2);
+        }
     }
 
     mCamera->needUpdate();

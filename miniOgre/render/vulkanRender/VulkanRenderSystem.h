@@ -43,6 +43,12 @@ public:
     void _setViewport(ICamera* cam, Ogre::Viewport* vp);
     EngineType getRenderType();
 
+    void beginRenderPass(
+        Ogre::ICamera* cam,
+        RenderTarget* target,
+        Ogre::OgreTexture* depth,
+        const Ogre::ColourValue& colour);
+
     virtual void clearFrameBuffer(uint32 buffers,
         const ColourValue& colour,
         float depth, uint16 stencil);
@@ -78,7 +84,7 @@ private:
 
     VulkanWindow* mRenderWindow;
 
-    Ogre::VulkanRenderTarget* mActiveVulkanRenderTarget;
+    Ogre::RenderTarget* mActiveVulRenderTarget;
 
     enki::TaskScheduler mTaskScheduler;
 

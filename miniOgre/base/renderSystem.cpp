@@ -45,6 +45,15 @@ void RenderSystem::_setViewport(ICamera* cam, Viewport* vp)
 
 }
 
+void RenderSystem::beginRenderPass(
+    Ogre::ICamera* cam,
+    RenderTarget* target,
+    Ogre::OgreTexture* depth,
+    const Ogre::ColourValue& colour)
+{
+
+}
+
 void RenderSystem::clearFrameBuffer(uint32 buffers, 
     const ColourValue& colour,
     float depth, uint16 stencil)

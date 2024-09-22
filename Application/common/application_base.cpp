@@ -79,14 +79,14 @@ bool ApplicationBase::appInit()
 	
 	mSceneManager = EngineManager::getSingletonPtr()->getSceneManager();
 
-	auto camera = EngineManager::getSingletonPtr()->getMainCamera();
+	mCamera = EngineManager::getSingletonPtr()->getMainCamera();
 
-	camera->setNearClipDistance(1.0f);
-	mViewport = mRenderWindow->addViewport(camera);
+	mCamera->setNearClipDistance(1.0f);
+	mViewport = mRenderWindow->addViewport(mCamera);
 	mViewport->setBackgroundColour(color);
 	mViewport->setClearEveryFrame(true);
 	EngineManager::getSingleton().setViewPort(mViewport);
-	mGameCamera = new GameCamera(camera, mSceneManager);
+	mGameCamera = new GameCamera(mCamera, mSceneManager);
 
 	InputManager::getSingletonPtr()->addListener(mGameCamera);
 
@@ -138,9 +138,31 @@ void ApplicationBase::run()
 		}
 		else
 		{
-			Ogre::Root::getSingletonPtr()->renderOneFrame();
+			render();
 			ShowFrameFrequency();
 		}
+	}
+}
+
+void ApplicationBase::render()
+{
+	if (0)
+	{
+		Ogre::Root::getSingletonPtr()->renderOneFrame();
+	}
+	else
+	{
+		Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
+
+		mRenderSystem->frameStart();
+		Ogre::Root::getSingleton()._fireFrameStarted();
+		mRenderSystem->beginRenderPass(mCamera, mRenderWindow, nullptr, color);
+		static EngineRenderList engineRenerList;
+		
+		mSceneManager->getSceneRenderList(mCamera, engineRenerList);
+		mRenderSystem->multiRender(engineRenerList.mOpaqueList);
+		mRenderWindow->swapBuffers();
+		mRenderSystem->frameEnd();
 	}
 }
 

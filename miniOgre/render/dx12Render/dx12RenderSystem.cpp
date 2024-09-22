@@ -217,8 +217,6 @@ ID3D12GraphicsCommandList* Dx12RenderSystem::getCommandList()
 
 void Dx12RenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
 {
-	mViewport = vp;
-	
 	mCamera = cam;
 	updateMainPassCB(cam);
 	

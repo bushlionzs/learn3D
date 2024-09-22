@@ -188,7 +188,7 @@ void VulkanRenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
     Ogre::RenderTarget* target;
     target = vp->getTarget();
     updateMainPassCB(cam);
-    mActiveVulkanRenderTarget = dynamic_cast<Ogre::VulkanRenderTarget*>(target);
+    mActiveRenderTarget = target;
     
 }
 
@@ -197,12 +197,26 @@ EngineType VulkanRenderSystem::getRenderType()
     return EngineType_Vulkan;
 }
 
+void VulkanRenderSystem::beginRenderPass(
+    Ogre::ICamera* cam,
+    RenderTarget* target,
+    Ogre::OgreTexture* depth,
+    const Ogre::ColourValue& colour)
+{
+    mCamera = cam;
+    
+    updateMainPassCB(mCamera);
+    mActiveRenderTarget = target;
+    mActiveRenderTarget->preRender(colour);
+    
+}
+
 void VulkanRenderSystem::clearFrameBuffer(uint32 buffers,
     const ColourValue& colour,
     float depth, uint16 stencil)
 {
 
-    mActiveVulkanRenderTarget->preRender(mCurrentVulkanFrame, colour);
+    mActiveRenderTarget->preRender(colour);
 }
 
 Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
@@ -298,7 +312,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     
     uint32_t size = (uint32_t)mRenderList.size();
 
-    if(mActiveVulkanRenderTarget->offset())
+    if(false)
     {
         for (auto r : mRenderList)
         {

@@ -18,6 +18,7 @@ public:
 	virtual bool appInit();
 	virtual void appUpdate(float delta);
 	void run();
+	void render();
 	virtual EngineType getEngineType();
 	virtual bool isUseMyGUI()
 	{
@@ -41,6 +42,7 @@ protected:
 	uint64_t mLastFPS = 0;
 
 	SceneManager* mSceneManager = nullptr;
+	Ogre::Camera* mCamera = nullptr;
 	GameCamera* mGameCamera = nullptr;
 	Ogre::RenderWindow* mRenderWindow = nullptr;
 	Ogre::Viewport* mViewport = nullptr;

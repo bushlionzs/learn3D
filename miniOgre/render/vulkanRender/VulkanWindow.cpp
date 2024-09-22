@@ -65,8 +65,9 @@ void VulkanWindow::start()
 {
     mHaveRenderPass = false;
 }
-void VulkanWindow::preRender(VulkanFrame* frame, const ColourValue& colour)
+void VulkanWindow::preRender(const ColourValue& colour)
 {
+    VulkanFrame* frame = VulkanHelper::getSingleton()._getRenderSystem()->_getCurrentFrame();
     auto width = mWidth;
     auto height = mHeight;
 

@@ -68,7 +68,6 @@ void Dx11RenderSystem::frameEnd()
 
 void Dx11RenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
 {
-	mViewport = vp;
 	mCamera = cam;
 	updateFrame();
 

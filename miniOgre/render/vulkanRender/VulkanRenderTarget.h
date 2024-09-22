@@ -1,9 +1,11 @@
 #pragma once
 #include "VulkanCommon.h"
+#include "OgreRenderTarget.h"
+
 class VulkanFrame;
 namespace Ogre
 {
-	class VulkanRenderTarget
+	class VulkanRenderTarget: public Ogre::RenderTarget
 	{
 	public:
 		VulkanRenderTarget
@@ -11,7 +13,10 @@ namespace Ogre
 		);
 		~VulkanRenderTarget();
 
-		virtual void preRender(VulkanFrame* frame, const ColourValue& colour) = 0;
+		virtual void preRender(VulkanFrame* frame, const ColourValue& colour)
+		{
+			int kk = 0;
+		}
 
 		virtual bool offset() { return false; }
 

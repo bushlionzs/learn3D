@@ -116,16 +116,6 @@ namespace Ogre {
     {
         mCurrentViewport = vp;
 
-        if (vp->getShadowsEnabled())
-        {
-            //
-            if (!mLightMap.empty())
-            {
-                Light* light = mLightMap.begin()->second;
-                _renderScene2(light, vp);
-            }
-        }
-
         _renderScene2(camera, vp);
     }
 

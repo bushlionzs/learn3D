@@ -26,7 +26,7 @@ ShadowMap::~ShadowMap()
 bool ShadowMap::appInit()
 {
 	ApplicationBase::appInit();
-	mViewport->setShadowsEnabled(true);
+	mViewport->setShadowsEnabled(false);
 	auto root = mSceneManager->getRoot();
 
 	MeshManager::getSingletonPtr()->CreateSphere("sphere.mesh", 0.5f, 20, 20);
