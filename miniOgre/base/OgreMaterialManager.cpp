@@ -60,12 +60,6 @@ namespace Ogre {
 		return std::shared_ptr<Material>();
 	}
 
-	std::shared_ptr<Shader> MaterialManager::buildShader(ShaderInfo& sinfo)
-	{
-		auto shader = Ogre::Root::getSingleton().getRenderSystem()->createShader(sinfo);
-		return std::shared_ptr<Shader>(shader);
-	}
-
 	bool MaterialManager::unloadUnreferencedResource(const String& name)
 	{
 		return true;

@@ -40,6 +40,7 @@ void main() {
 #else
     gl_Position = cbPerObject.gWorldViewProj * vec4(position, 1.0);
 #endif
+    outShadowPosH = cbPass.gShadowTransform * vec4(position, 1.0);
     outTexC = (cbMaterial.gTexTransform * vec4(texcoord, 0.0f, 1.0f)).xy;
 	gl_Position.y = -gl_Position.y;
 }

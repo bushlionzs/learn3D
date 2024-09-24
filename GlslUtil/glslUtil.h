@@ -15,7 +15,7 @@ bool _GLSLExport glslCompileShader(
 	std::string& shaderName,
 	std::string& shaderContent,
 	std::string& entryPoint,
-	std::vector<std::pair<std::string, std::string>>& shaderMacros,
+	const std::vector<std::pair<std::string, std::string>>& shaderMacros,
 	shaderc_shader_kind kind
 );
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "OgreHardwareBuffer.h"
 #include "OgreColourValue.h"
 
@@ -111,7 +112,7 @@ public:
         return mType;
     }
 
-    size_t getSize(void) const;
+    uint32_t getSize(void) const;
 
     inline void baseVertexPointerToElement(void* pBase, float** pElem) const
     {
@@ -128,7 +129,7 @@ public:
         *pElem = reinterpret_cast<T*>(static_cast<char*>(pBase) + mOffset);
     }
 
-    static size_t getTypeSize(VertexElementType etype);
+    static uint32_t getTypeSize(VertexElementType etype);
 
     static uint32_t convertColourValue(const Ogre::ColourValue& src,
         VertexElementType dst);

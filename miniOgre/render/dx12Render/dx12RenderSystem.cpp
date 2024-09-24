@@ -123,10 +123,10 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	mat->load(nullptr);
 
 	
-	const std::shared_ptr<Shader>& shader = mat->getShader();
+
 	mCurrentPass.mRenderListType = t;
 	mCurrentPass.mMaterial = mat.get();
-	mCurrentPass.mShader = (Dx12Shader*)shader.get();
+	mCurrentPass.mShader = nullptr;
 	mCurrentPass.mRenderable = r;
 	mCurrentPass.mDx12RenderableData = (Dx12RenderableData*)r->getRenderableData();
 	mCurrentPass.mDx12RenderableData->updateCurrentFrame(mCurrentFrame->getFrameIndex());

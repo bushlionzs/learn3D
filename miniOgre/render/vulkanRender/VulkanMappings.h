@@ -18,6 +18,8 @@ namespace Ogre
 		/// return a Vulkan equivalent for a Ogre CompareFunction value
 		static VkCompareOp get(CompareFunction cf);
 
+		static VkPrimitiveTopology get(OperationType opType);
+
 		static LPCSTR getSemanticName(VertexElementSemantic sem);
 
 		static PixelFormat _getClosestSupportedPF(PixelFormat ogrePF);

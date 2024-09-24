@@ -8,11 +8,19 @@
 
 class ApplicationWindow;
 class RenderSystem;
-
+class Ogre::RenderTarget;
+class Ogre::Camera;
 
 class ApplicationBase: public Ogre::FrameListener
 {
 public:
+	struct BasicPass
+	{
+		Ogre::RenderTarget* color;
+		Ogre::RenderTarget* depth;
+		SceneManager* sceneMgr;
+		Ogre::ICamera* cam;
+	};
 	ApplicationBase();
 	~ApplicationBase();
 	virtual bool appInit();
@@ -32,6 +40,9 @@ public:
 	virtual void addCustomDirectory() {}
 
 	virtual void OnSize(uint32_t width, uint32_t height);
+
+protected:
+	void addMainPass();
 private:
 	virtual bool frameStarted(const FrameEvent& evt);
 	void ShowFrameFrequency();
@@ -46,5 +57,5 @@ protected:
 	GameCamera* mGameCamera = nullptr;
 	Ogre::RenderWindow* mRenderWindow = nullptr;
 	Ogre::Viewport* mViewport = nullptr;
-	
+	std::vector<BasicPass> mPassList;
 };

@@ -329,7 +329,7 @@ void GameUI::SelfEquipDemo()
     float height = 300;
 
     TextureProperty texProperty;
-    texProperty._tex_usage = TU_RENDERTARGET;
+    texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
     texProperty._width = width;
     texProperty._height = height;
 

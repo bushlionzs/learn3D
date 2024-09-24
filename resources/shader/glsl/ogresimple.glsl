@@ -13,9 +13,8 @@ layout (location = 0) out vec2 outTexC;
 
 
 void main() {
-    gl_Position = cbPerObject.gWorldViewProj * vec4(position, 1.0);
+    gl_Position = cbPass.gViewProj * cbPerObject.gWorld * vec4(position, 1.0);
 	gl_Position.y = -gl_Position.y;
-	outTexC = (cbMaterial.gTexTransform * vec4(texcoord, 0.0f, 1.0f)).xy;
 	outTexC = texcoord;
 }
 #endif //VERTEX_SHADER
@@ -23,12 +22,12 @@ void main() {
 #ifdef FRAGMENT_SHADER
 #include "common.glsl"
 
-layout (location = 0) in vec2 outTexC;
+layout (location = 0) in vec2 inTexC;
 
 layout(location = 0) out vec4 outColor;
 
 void main() {
-	outColor = texture(first, outTexC);
+	outColor = texture(first, inTexC);
     //outColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	if(outColor.a < 0.5f)
 	{

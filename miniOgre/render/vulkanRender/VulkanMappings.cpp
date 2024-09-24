@@ -50,6 +50,23 @@ namespace Ogre {
         return VK_BLEND_OP_ADD;
     }
 
+    VkPrimitiveTopology VulkanMappings::get(OperationType opType)
+    {
+        switch (opType)
+        {
+            // clang-format off
+        case OT_POINT_LIST:     return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+        case OT_LINE_LIST:      return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+        case OT_LINE_STRIP:     return VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+        case OT_TRIANGLE_LIST:  return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        case OT_TRIANGLE_STRIP: return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+        case OT_TRIANGLE_FAN:   return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
+        default:
+            return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+            // clang-format on
+        }
+    }
+
     LPCSTR VulkanMappings::getSemanticName(VertexElementSemantic sem)
     {
         // todo - add to ogre - POSITIONT and PSIZE ("Transformed vertex position" and "Point size")

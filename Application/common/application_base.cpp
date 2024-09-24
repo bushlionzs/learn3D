@@ -82,10 +82,6 @@ bool ApplicationBase::appInit()
 	mCamera = EngineManager::getSingletonPtr()->getMainCamera();
 
 	mCamera->setNearClipDistance(1.0f);
-	mViewport = mRenderWindow->addViewport(mCamera);
-	mViewport->setBackgroundColour(color);
-	mViewport->setClearEveryFrame(true);
-	EngineManager::getSingleton().setViewPort(mViewport);
 	mGameCamera = new GameCamera(mCamera, mSceneManager);
 
 	InputManager::getSingletonPtr()->addListener(mGameCamera);
@@ -152,18 +148,41 @@ void ApplicationBase::render()
 	}
 	else
 	{
-		Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
+		
 
 		mRenderSystem->frameStart();
 		Ogre::Root::getSingleton()._fireFrameStarted();
-		mRenderSystem->beginRenderPass(mCamera, mRenderWindow, nullptr, color);
-		static EngineRenderList engineRenerList;
 		
-		mSceneManager->getSceneRenderList(mCamera, engineRenerList);
-		mRenderSystem->multiRender(engineRenerList.mOpaqueList);
-		mRenderWindow->swapBuffers();
+		Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
+		for (auto& pass : mPassList)
+		{
+			RenderPassInfo passInfo;
+			passInfo.renderTargets[0].renderTarget = pass.color;
+			passInfo.depthTarget.depthStencil = pass.depth;
+			passInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
+			passInfo.depthTarget.clearValue = {1.0f, 0.0f};
+			passInfo.cam = pass.cam;
+			mRenderSystem->beginRenderPass(passInfo);
+			static EngineRenderList engineRenerList;
+			mSceneManager->getSceneRenderList(pass.cam, engineRenerList);
+			mRenderSystem->multiRender(engineRenerList.mOpaqueList);
+			mRenderSystem->endRenderPass();
+		}
+		
+
+		mRenderSystem->present();
 		mRenderSystem->frameEnd();
 	}
+}
+
+void ApplicationBase::addMainPass()
+{
+	mPassList.emplace_back();
+	auto& pass = mPassList.back();
+	pass.color = mRenderWindow->getColorTarget();
+	pass.depth = mRenderWindow->getDepthTarget();
+	pass.sceneMgr = mSceneManager;
+	pass.cam = mCamera;
 }
 
 void ApplicationBase::ShowFrameFrequency()

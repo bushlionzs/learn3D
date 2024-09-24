@@ -8,6 +8,8 @@ layout (location = 0) in vec3 inUV;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-	outColor = texture(gCubeMap, inUV);
-	//outColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    vec3 aa = vec3(0.15427, 0.01148, -0.5);
+	vec3 texColor = texture(gCubeMap, inUV).rgb;
+	texColor = texColor / (texColor + vec3(1.0f, 1.0f, 1.0f));
+	outColor = vec4(texColor, 1.0f);
 }

@@ -58,14 +58,7 @@ namespace Orphigine
 		mReflectPlane = new Ogre::Plane(Ogre::Vector3::UNIT_Y, position.y + REFLECT_PLANE_BIAS);
 
 		mCamera = EngineManager::getSingleton().getMainCamera();
-		
-
-		TextureProperty texProperty;
-		texProperty._width = REFLECT_TEXTURE_SIZE;
-		texProperty._height = REFLECT_TEXTURE_SIZE;
-		texProperty._tex_format = Ogre::PF_X8R8G8B8;
-		texProperty._tex_usage = Ogre::TU_RENDERTARGET;
-
+	
 		mReflectTexture->load(nullptr);
 		mRenderTarget = mReflectTexture->getBuffer(0)->getRenderTarget();
 		//Ogre::Viewport* viewPort = mRenderTarget->addViewport( mReflectCamera);
@@ -81,15 +74,10 @@ namespace Orphigine
 		mCamera->setAspectRatio(aspectRatio);
 		mCamera->_notifyViewport(oldViewPort);
 
-		mRenderTarget->addListener(this);
-		mRenderTarget->setPriority(OGRE_REND_TO_TEX_RT_GROUP);
-		mRenderTarget->setActive(false);
 	}
 
 	ReflectRenderTargetListener::~ReflectRenderTargetListener()
 	{
-		mRenderTarget->removeListener(this);
-		mRenderTarget->removeAllViewports();
 		if (!mReflectTexture)
 		{
 			Ogre::String texName = mReflectTexture->getName();
@@ -113,7 +101,6 @@ namespace Orphigine
 			mCamera->getProjectionMatrixWithRSDepth() * mCamera->getViewMatrix());
 		mCamera->disableReflection();
 		mCamera->disableCustomNearClipPlane();
-		mRenderTarget->setActive(false);
 		//mTerrainLiquid->setReflectMatrix(mReflectCamera->getProjectionMatrixWithRSDepth() * mReflectCamera->getViewMatrix());
 	}
 
@@ -131,13 +118,11 @@ namespace Orphigine
 	{
 		if (mRenderTarget == NULL)
 			return;
-
-		mRenderTarget->setActive(enable && needUpdate());
 	}
 
 	bool ReflectRenderTargetListener::isUpdateEnable() const
 	{
-		return mRenderTarget != NULL && mRenderTarget->isActive();
+		return mRenderTarget != NULL;
 	}
 
 	bool ReflectRenderTargetListener::needUpdate() const

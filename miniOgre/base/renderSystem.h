@@ -55,7 +55,6 @@ public:
     virtual Ogre::RenderTarget* createRenderTarget(
         const String& name, uint32_t width, uint32_t height, Ogre::PixelFormat format, Ogre::TextureUsage usage);
 
-    virtual Shader* createShader(ShaderInfo& sinfo);
 
     virtual void ready() {}
 

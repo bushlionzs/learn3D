@@ -1651,7 +1651,7 @@ namespace filament::backend {
         mPipelineCache.bindProgram(program);
         mPipelineCache.bindRasterState(vulkanRasterState);
         mPipelineCache.bindPrimitiveTopology(topology);
-        mPipelineCache.bindVertexArray(attribDesc, bufferDesc, vbi.getAttributeCount());
+        mPipelineCache.bindVertexArray(attribDesc, vbi.getAttributeCount(), bufferDesc, vbi.getAttributeCount());
 
         // Query the program for the mapping from (SamplerGroupBinding,Offset) to (SamplerBinding),
         // where "SamplerBinding" is the integer in the GLSL, and SamplerGroupBinding is the abstract

@@ -40,7 +40,7 @@ material mybox
 		pass
 		{
 			lighting off
-			shader ogresimple
+			shader basic
 			texture_unit
 			{
 				texture container.jpg
@@ -58,10 +58,10 @@ material myrect
 		{
 			lighting off
 			cull_hardware none
-			shader ogresimple
+			shader basic
 			texture_unit
 			{
-				texture aa.dds
+				texture ground_albedo.dds
 				//texture cloudy_noon_bk.jpg
 				//texture Smoke15Frames.png
 				//scroll_anim 0 -0.9
@@ -150,6 +150,7 @@ material mysphere
 		pass
 		{
 			lighting off
+			shader basic
 			texture_unit
 			{
 				texture bricks3.dds
@@ -167,6 +168,7 @@ material myCylinder
 		pass
 		{
 			lighting off
+			shader basic
 			texture_unit
 			{
 				texture bricks3.dds
@@ -226,8 +228,9 @@ material SkyMap
 			texture_unit
 			{
 				#texture evening.jpg cubic
-				texture papermill.ktx cubic
+				texture LA_Helipad3D.dds cubic
 				tex_address_mode clamp
+				mipmap false
 			}
 		}
 	}

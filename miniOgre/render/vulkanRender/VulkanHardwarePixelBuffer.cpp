@@ -3,7 +3,6 @@
 #include "VulkanTexture.h"
 #include "VulkanHelper.h"
 #include "OgreStringConverter.h"
-#include "VulkanRenderTexture.h"
 #include "VulkanRenderSystem.h"
 
 VulkanHardwarePixelBuffer::VulkanHardwarePixelBuffer(

@@ -19,6 +19,10 @@
 #include "VulkanHardwareBuffer.h"
 #include "VulkanRaytracing.h"
 #include "VulkanTools.h"
+#include "VulkanMappings.h"
+#include <vulkan/VulkanPipelineCache.h>
+#include "shaderManager.h"
+#include "OgreResourceManager.h"
 #include <utils/JobSystem.h>
 
 
@@ -50,6 +54,7 @@ bool VulkanRenderableData::update(VulkanFrame* frame, utils::JobSystem::Job* job
          mat->load(nullptr);
     }
 
+    buildPipelineData(mat);
     
 
     if (VulkanHelper::getSingleton().haveRayTracing())
@@ -64,9 +69,7 @@ bool VulkanRenderableData::update(VulkanFrame* frame, utils::JobSystem::Job* job
 void VulkanRenderableData::updateImpl(VulkanFrame* frame)
 {
     auto mat = _r->getMaterial().get();
-    VulkanShader* shader = (VulkanShader*)mat->getShader().get();
-    shader->getVKPipeline(_r);
-
+    
     auto cam = mEngine->_getCamera();
     const Ogre::Matrix4& view = cam->getViewMatrix();
     const Ogre::Matrix4& proj = cam->getProjectMatrix();
@@ -200,21 +203,6 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
             textureDescriptor.sampler = tex->getSampler();
             textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         }
-
-        /*int32_t start = textureDescriptors.size();
-        if (start < tex_count)
-        {
-            auto defaultTex = VulkanHelper::getSingleton().getDefaultTexture();
-            VulkanTexture* tex = (VulkanTexture*)defaultTex.get();
-            for (int32_t i = start; i < tex_count; i++)
-            {
-                textureDescriptors.emplace_back();
-                VkDescriptorImageInfo& textureDescriptor = textureDescriptors.back();
-                textureDescriptor.imageView = tex->getVkImageView();
-                textureDescriptor.sampler = tex->getSampler();
-                textureDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            }
-        }*/
     }
 
 
@@ -317,31 +305,25 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame)
         writeDescriptorSets.data(), 0, nullptr);
 }
 
-void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
+void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb, VulkanPipelineCache* pipelineCache)
 {
     auto mat = _r->getMaterial().get();
-
-    const std::shared_ptr<Shader>& shader = mat->getShader();
-
-    VulkanShader* vShader = (VulkanShader*)shader.get();
-    //bind pipeline
-    VkPipeline pipeline = vShader->getVKPipeline(_r);
-
-    vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-    //draw object
+    pipelineCache->bindRenderPass(nullptr, 0);
+    pipelineCache->bindProgram(mVertexShader, mFragShader);
+    pipelineCache->bindRasterState(mRasterState);
+    pipelineCache->bindPrimitiveTopology(VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
     bool pbr = mat->isPbr();
     auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout(pbr);
+    pipelineCache->bindLayout(pipelineLayout);
 
-    /*struct PushBlockPrefilterEnv {
-        Ogre::Matrix4 mvp;
-        float roughness;
-        uint32_t numSamples = 32u;
-    } pushBlockPrefilterEnv;
-    auto perspective = Ogre::Math::makePerspectiveMatrixRH((float)(3.14159265358f / 2.0), 1.0f, 0.1f, 10000);
-    pushBlockPrefilterEnv.mvp = Ogre::Math::makeRotateMatrix(Ogre::Matrix4::IDENTITY, 180.0f, Ogre::Vector3(0.0f, 0.0f, 1.0f)) * perspective;
-    pushBlockPrefilterEnv.roughness = 0.0f;
-    vkCmdPushConstants(cb, pipelineLayout,
-        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushBlockPrefilterEnv), &pushBlockPrefilterEnv);*/
+    pipelineCache->bindVertexArray(
+        attributeDescriptions.data(), 
+        attributeDescriptions.size(), 
+        vertexInputBindings.data(), 
+        vertexInputBindings.size());
+
+    pipelineCache->bindPipeline(cb);
+    //draw object
 
     VertexData* vertexData = _r->getVertexData();
     IndexData* indexData = _r->getIndexData();
@@ -387,7 +369,79 @@ void VulkanRenderableData::render(VulkanFrame* frame, VkCommandBuffer cb)
 }
 
 
+bool VulkanRenderableData::updateRayTracingData()
+{
 
+    if (mRayTracingUpdate)
+    {
+        const Ogre::Matrix4& m = _r->getModelMatrix();
+        mRayTracingContext->updateTransform(mGeometrySlot, m);
+        return false;
+    }
+
+    mRayTracingUpdate = true;
+    if (mRayTracingContext)
+    {
+        VertexData* vb = _r->getVertexData();
+        IndexData* ib = _r->getIndexData();
+        HardwareVertexBuffer* vertexBuffer = (HardwareVertexBuffer*)vb->getBuffer(0);
+
+        VulkanHardwareBuffer* vulkanBuffer = (VulkanHardwareBuffer*)vertexBuffer->getHardwareBuffer();
+        VulkanHardwareBuffer* vulkanIndexBuffer = (VulkanHardwareBuffer*)ib->mIndexBuffer->getHardwareBuffer();
+        mGeometryNode.vertexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanBuffer->getVKBuffer());// +primitive->firstVertex * sizeof(vkglTF::Vertex);
+        mGeometryNode.indexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanIndexBuffer->getVKBuffer())
+            + ib->mIndexStart * ib->mIndexBuffer->getIndexSize();
+        mGeometrySlot = mRayTracingContext->allocGeometrySlot(mGeometryNode);
+        mGeometryNode.transformBufferDeviceAddress.deviceAddress =
+            vks::tools::getBufferDeviceAddress(mDevice, mRayTracingContext->getTransformBuffer())
+            + mGeometrySlot * sizeof(VkTransformMatrixKHR);
+
+        mGeometry = {};
+        mGeometry.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
+        mGeometry.flags = VK_GEOMETRY_OPAQUE_BIT_KHR;
+        mGeometry.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
+        mGeometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
+        mGeometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
+        mGeometry.geometry.triangles.vertexData = mGeometryNode.vertexBufferDeviceAddress;
+        mGeometry.geometry.triangles.maxVertex = vb->getVertexCount();
+        mGeometry.geometry.triangles.vertexStride = vb->getVertexSize(0);
+        mGeometry.geometry.triangles.indexType = ib->mIndexBuffer->getIndexSize() == 4 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
+        mGeometry.geometry.triangles.indexData = mGeometryNode.indexBufferDeviceAddress;
+        mGeometry.geometry.triangles.transformData = mGeometryNode.transformBufferDeviceAddress;
+
+        auto mat = _r->getMaterial().get();
+        auto texs = mat->getAllTexureUnit();
+
+        for (int32_t i = 0; i < texs.size(); i++)
+        {
+            VulkanTexture* tex = (VulkanTexture*)texs[i]->getRaw();
+
+            int32_t slot = tex->getSlot();
+
+            if (slot == -1)
+            {
+                slot = mRayTracingContext->allocTextureSlot(tex);
+            }
+
+            mGeometryNode.textureIndex[i] = slot;
+
+        }
+
+
+
+        VkTransformMatrixKHR tmp;
+
+        mBuildRangeInfo.firstVertex = vb->getVertexStart();
+        mBuildRangeInfo.primitiveOffset = 0;
+        mBuildRangeInfo.primitiveCount = ib->mIndexCount / 3;
+        mBuildRangeInfo.transformOffset = 0;
+
+        const Ogre::Matrix4& m = _r->getModelMatrix();
+        mRayTracingContext->updateTransform(mGeometrySlot, m);
+    }
+
+    return true;
+}
 
 void VulkanRenderableData::buildInitData()
 {
@@ -451,82 +505,189 @@ void VulkanRenderableData::buildInitData()
             throw std::runtime_error("failed to allocate descriptor set!");
         }
     }
-    
-
-    
 }
 
-bool VulkanRenderableData::updateRayTracingData()
+void VulkanRenderableData::parseInputBindingDescription(
+    VertexDeclaration* decl,
+    std::vector<GlslInputDesc>& inputDesc)
 {
-    
-    if (mRayTracingUpdate)
+    vertexInputBindings.clear();
+    for (uint32_t binding = 0; binding < 10; binding++)
     {
-        const Ogre::Matrix4& m = _r->getModelMatrix();
-        mRayTracingContext->updateTransform(mGeometrySlot, m);
-        return false;
+        int32_t stride = decl->getVertexSize(binding);
+
+        if (stride <= 0)
+            continue;
+        vertexInputBindings.emplace_back();
+        vertexInputBindings.back().binding = binding;
+        vertexInputBindings.back().stride = stride;
+        vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     }
+}
 
-    mRayTracingUpdate = true;
-    if (mRayTracingContext)
+void VulkanRenderableData::parseAttributeDescriptions(
+    VertexDeclaration* vd,
+    std::vector<GlslInputDesc>& inputDesc)
+{
+    attributeDescriptions.resize(inputDesc.size());
+    int32_t i = 0;
+
+    for (auto& input : inputDesc)
     {
-        VertexData* vb = _r->getVertexData();
-        IndexData* ib = _r->getIndexData();
-        HardwareVertexBuffer* vertexBuffer = (HardwareVertexBuffer*)vb->getBuffer(0);
+        bool find = false;
 
-        VulkanHardwareBuffer* vulkanBuffer = (VulkanHardwareBuffer*)vertexBuffer->getHardwareBuffer();
-        VulkanHardwareBuffer* vulkanIndexBuffer = (VulkanHardwareBuffer*)ib->mIndexBuffer->getHardwareBuffer();
-        mGeometryNode.vertexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanBuffer->getVKBuffer());// +primitive->firstVertex * sizeof(vkglTF::Vertex);
-        mGeometryNode.indexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanIndexBuffer->getVKBuffer())
-            + ib->mIndexStart * ib->mIndexBuffer->getIndexSize();
-        mGeometrySlot = mRayTracingContext->allocGeometrySlot(mGeometryNode);
-        mGeometryNode.transformBufferDeviceAddress.deviceAddress =
-            vks::tools::getBufferDeviceAddress(mDevice, mRayTracingContext->getTransformBuffer())
-            + mGeometrySlot * sizeof(VkTransformMatrixKHR);
-
-        mGeometry = {};
-        mGeometry.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
-        mGeometry.flags = VK_GEOMETRY_OPAQUE_BIT_KHR;
-        mGeometry.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
-        mGeometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
-        mGeometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
-        mGeometry.geometry.triangles.vertexData = mGeometryNode.vertexBufferDeviceAddress;
-        mGeometry.geometry.triangles.maxVertex = vb->getVertexCount();
-        mGeometry.geometry.triangles.vertexStride = vb->getVertexSize(0);
-        mGeometry.geometry.triangles.indexType = ib->mIndexBuffer->getIndexSize() == 4 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
-        mGeometry.geometry.triangles.indexData = mGeometryNode.indexBufferDeviceAddress;
-        mGeometry.geometry.triangles.transformData = mGeometryNode.transformBufferDeviceAddress;
-
-        auto mat = _r->getMaterial().get();
-        auto texs = mat->getAllTexureUnit();
-
-        for (int32_t i = 0; i < texs.size(); i++)
+        auto& elementlist = vd->getElementList();
+        for (auto elem : elementlist)
         {
-            VulkanTexture* tex = (VulkanTexture*)texs[i]->getRaw();
-
-            int32_t slot = tex->getSlot();
-
-            if (slot == -1)
+            if (input._name == VulkanMappings::getSemanticName(elem.getSemantic()) &&
+                input._index == elem.getIndex())
             {
-                slot = mRayTracingContext->allocTextureSlot(tex);
+                attributeDescriptions[i].binding = elem.getSource();
+                attributeDescriptions[i].location = input._location;
+                attributeDescriptions[i].format = getVKFormatFromType(elem.getType());
+                attributeDescriptions[i].offset = elem.getOffset();
+                i++;
+                find = true;
+                break;
             }
-
-            mGeometryNode.textureIndex[i] = slot;
-            
         }
 
-        
 
-        VkTransformMatrixKHR tmp;
+        if (!find)
+        {
+            OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "can not find input param");
+        }
+    }
+}
 
-        mBuildRangeInfo.firstVertex = vb->getVertexStart();
-        mBuildRangeInfo.primitiveOffset = 0;
-        mBuildRangeInfo.primitiveCount = ib->mIndexCount / 3;
-        mBuildRangeInfo.transformOffset = 0;
 
-        const Ogre::Matrix4& m = _r->getModelMatrix();
-        mRayTracingContext->updateTransform(mGeometrySlot, m);
+void VulkanRenderableData::buildPipelineData(Ogre::Material* mat)
+{
+    const auto& shaderInfo = mat->getShaderInfo();
+    Ogre::ShaderPrivateInfo* privateInfo =
+        ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
+
+    std::vector<GlslInputDesc> inputDesc;
+
+    if (mVertexShader == VK_NULL_HANDLE)
+    {
+        String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
+        auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+
+        if (res == nullptr)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to find shader!");
+        }
+        String vertexSpv;
+
+
+        glslCompileShader(
+            vertexSpv,
+            res->_fullname,
+            *vertexContent,
+            privateInfo->vertexShaderEntryPoint,
+            shaderInfo.shaderMacros,
+            shaderc_glsl_vertex_shader);
+        mVertexShader = vks::tools::loadShaderMemory(vertexSpv, mDevice);
+        parserGlslInputDesc(vertexSpv, inputDesc);
+        VertexDeclaration* decl = _r->getVertexData()->getVertexDeclaration();
+        parseInputBindingDescription(decl, inputDesc);
+        parseAttributeDescriptions(decl, inputDesc);
+    }
+    
+    
+    if (mFragShader == VK_NULL_HANDLE)
+    {
+        String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
+
+        String fragSpv;
+
+        auto res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
+        glslCompileShader(
+            fragSpv,
+            res->_fullname,
+            *fragContent,
+            privateInfo->fragShaderEntryPoint,
+            shaderInfo.shaderMacros,
+            shaderc_glsl_fragment_shader);
+
+        mFragShader = vks::tools::loadShaderMemory(fragSpv, mDevice);
     }
 
-    return true;
+
+    auto findLocation = [&inputDesc](const VertexElement& elem) -> int32_t
+        {
+            for (auto& input : inputDesc)
+            {
+                if (input._name == VulkanMappings::getSemanticName(elem.getSemantic()) &&
+                    input._index == elem.getIndex())
+                {
+                    return input._location;
+                }
+            }
+            assert(false);
+            return -1;
+        };
+
+    
+
+   
+    
+
+    
+    mRasterState.cullMode = VK_CULL_MODE_NONE;
+    mRasterState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    mRasterState.depthBiasEnable = VK_FALSE;
+
+    auto blendState = mat->getBlendState();
+    mRasterState.blendEnable = blendState.blendingEnabled();
+    mRasterState.depthWriteEnable = mat->isWriteDepth();
+    mRasterState.alphaToCoverageEnable = VK_FALSE;
+    if (mRasterState.blendEnable)
+    {
+        mRasterState.srcColorBlendFactor = VulkanMappings::get(blendState.sourceFactor, false);
+        mRasterState.dstColorBlendFactor = VulkanMappings::get(blendState.destFactor, false);
+        mRasterState.srcAlphaBlendFactor = VulkanMappings::get(blendState.sourceFactorAlpha, true);
+        mRasterState.dstAlphaBlendFactor = VulkanMappings::get(blendState.destFactorAlpha, true);
+        mRasterState.colorBlendOp = BlendEquation::ADD;
+        mRasterState.alphaBlendOp = BlendEquation::ADD;
+    }
+    else
+    {
+        mRasterState.srcColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+        mRasterState.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+        mRasterState.colorBlendOp = BlendEquation::ADD;
+        mRasterState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        mRasterState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        mRasterState.alphaBlendOp = BlendEquation::ADD;
+    }
+
+    struct RasterState {
+        VkCullModeFlags       cullMode : 2;
+        VkFrontFace           frontFace : 2;
+        VkBool32              depthBiasEnable : 1;
+        VkBool32              blendEnable : 1;
+        VkBool32              depthWriteEnable : 1;
+        VkBool32              alphaToCoverageEnable : 1;
+        VkBlendFactor         srcColorBlendFactor : 5; // offset = 1 byte
+        VkBlendFactor         dstColorBlendFactor : 5;
+        VkBlendFactor         srcAlphaBlendFactor : 5;
+        VkBlendFactor         dstAlphaBlendFactor : 5;
+        VkColorComponentFlags colorWriteMask : 4;
+        uint8_t               rasterizationSamples;    // offset = 4 bytes
+        uint8_t               colorTargetCount;        // offset = 5 bytes
+        BlendEquation         colorBlendOp : 4;        // offset = 6 bytes
+        BlendEquation         alphaBlendOp : 4;
+        SamplerCompareFunc    depthCompareOp;          // offset = 7 bytes
+        float                 depthBiasConstantFactor; // offset = 8 bytes
+        float                 depthBiasSlopeFactor;    // offset = 12 bytes
+    };
+    mRasterState.colorWriteMask = 0xf;
+    mRasterState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+    mRasterState.colorTargetCount = 1;
+    mRasterState.depthCompareOp = SamplerCompareFunc::LE;
+    mRasterState.depthBiasConstantFactor = 0.0f;
+    mRasterState.depthBiasSlopeFactor = 0.0f;
 }
+
 

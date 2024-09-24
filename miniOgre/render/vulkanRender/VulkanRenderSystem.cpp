@@ -29,6 +29,7 @@
 #include "VulkanRenderTarget.h"
 #include "VulkanMappings.h"
 #include "VulkanRaytracing.h"
+#include <vulkan/VulkanPipelineCache.h>
 
 static const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
@@ -37,6 +38,45 @@ static const std::vector<const char*> validationLayers = {
 static const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 };
+
+VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevice,
+    VkDevice device) {
+    VmaAllocator allocator;
+    VmaVulkanFunctions const funcs{
+#if VMA_DYNAMIC_VULKAN_FUNCTIONS
+        .vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+        .vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+#else
+        .vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
+        .vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties,
+        .vkAllocateMemory = vkAllocateMemory,
+        .vkFreeMemory = vkFreeMemory,
+        .vkMapMemory = vkMapMemory,
+        .vkUnmapMemory = vkUnmapMemory,
+        .vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges,
+        .vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges,
+        .vkBindBufferMemory = vkBindBufferMemory,
+        .vkBindImageMemory = vkBindImageMemory,
+        .vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements,
+        .vkGetImageMemoryRequirements = vkGetImageMemoryRequirements,
+        .vkCreateBuffer = vkCreateBuffer,
+        .vkDestroyBuffer = vkDestroyBuffer,
+        .vkCreateImage = vkCreateImage,
+        .vkDestroyImage = vkDestroyImage,
+        .vkCmdCopyBuffer = vkCmdCopyBuffer,
+        .vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR,
+        .vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR
+#endif
+    };
+    VmaAllocatorCreateInfo const allocatorInfo{
+        .physicalDevice = physicalDevice,
+        .device = device,
+        .pVulkanFunctions = &funcs,
+        .instance = instance,
+    };
+    vmaCreateAllocator(&allocatorInfo, &allocator);
+    return allocator;
+}
 
 VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
 {
@@ -59,8 +99,8 @@ bool VulkanRenderSystem::engineInit()
 {
     RenderSystem::engineInit();
     
-    
-    VulkanHelper::getSingleton()._initialise(nullptr);
+    VulkanHelper& helper = VulkanHelper::getSingleton();
+    helper._initialise(nullptr);
 
     enki::TaskSchedulerConfig config;
     config.numTaskThreadsToCreate = VULKAN_COMMAND_THREAD;
@@ -68,7 +108,9 @@ bool VulkanRenderSystem::engineInit()
 
     mRayTracingContext = new VulkanRayTracingContext;
 
-    
+    mAllocator = createAllocator(helper._getVKInstance(), helper._getPhysicalDevice(), helper._getVkDevice());
+
+    mPipelineCache = new filament::backend::VulkanPipelineCache(helper._getVkDevice(), mAllocator);
 
     return true;
 }
@@ -439,7 +481,7 @@ void VulkanRenderSystem::render(Renderable* r, RenderListType t)
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
     VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
     rd->update(mCurrentVulkanFrame, nullptr);
-    rd->render(mCurrentVulkanFrame, commandBuffer);
+    rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache);
 }
 
 using fn_on_got_tracker_info = std::function<void(uint32_t)>;
@@ -468,7 +510,7 @@ struct ParallelTaskSet : public enki::IPinnedTask
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
 
             VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(tdx, _frame->getFrameIndex());
-            rd->render(_frame, commandBuffer);
+            rd->render(_frame, commandBuffer, nullptr);//zhousha
         }
     }
 
@@ -514,7 +556,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
             // VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
             VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-            rd->render(mCurrentVulkanFrame, commandBuffer);
+            rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache);
         }
         return;
     }
@@ -525,7 +567,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
             //VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
             VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-            rd->render(mCurrentVulkanFrame, commandBuffer);
+            rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache);
         }
         return;
     }

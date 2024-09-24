@@ -89,6 +89,12 @@ namespace Ogre {
     {
         return Ogre::Vector3(0.0f, 0.0f, 0.0f);
     }
+
+    Ogre::OperationType Renderable::getPrimitiveTopology()
+    {
+        return OT_TRIANGLE_LIST;
+    }
+
     void Renderable::prepare(VertexData* vd, IndexData* id)
     {
         vd->prepare();

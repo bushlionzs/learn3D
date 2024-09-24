@@ -120,7 +120,7 @@ OgreTexture::OgreTexture(const String& name, const Sizef& sz) :
     TextureProperty texProperty;
     texProperty._width = sz.d_width;
     texProperty._height = sz.d_height;
-    texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
+    texProperty._tex_usage = Ogre::TextureUsage::UPLOADABLE;
     TextureManager::getSingleton().createManual(aa, texProperty);
     
     d_size.d_width = sz.d_width;

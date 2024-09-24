@@ -5,6 +5,7 @@
 class Basic : public ApplicationBase
 {
 public:
+	
 	Basic();
 	~Basic();
 	virtual bool appInit();
@@ -24,5 +25,4 @@ private:
 	void base5();
 private:
 	AnimationState* mAnimationState = nullptr;
-
 };

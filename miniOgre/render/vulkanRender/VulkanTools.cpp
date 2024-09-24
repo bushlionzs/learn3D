@@ -391,6 +391,19 @@ namespace vks
 			return shaderModule;
 		}
 
+		VkShaderModule loadShaderMemory(const std::string& code, VkDevice device)
+		{
+			VkShaderModule shaderModule;
+			VkShaderModuleCreateInfo moduleCreateInfo{};
+			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			moduleCreateInfo.codeSize = code.size();
+			moduleCreateInfo.pCode = (uint32_t*)code.data();
+
+			VK_CHECK_RESULT(vkCreateShaderModule(device, &moduleCreateInfo, NULL, &shaderModule));
+
+			return shaderModule;
+		}
+
 		bool fileExists(const std::string &filename)
 		{
 			std::ifstream f(filename.c_str());

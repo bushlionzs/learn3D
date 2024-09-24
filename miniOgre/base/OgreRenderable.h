@@ -93,6 +93,8 @@ namespace Ogre {
             return mSkinnObjectHandle;
         }
 
+        Ogre::OperationType getPrimitiveTopology();
+
         void prepare(VertexData* vd, IndexData* id);
 
     protected:

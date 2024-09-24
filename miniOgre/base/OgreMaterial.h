@@ -47,7 +47,8 @@ namespace Ogre {
         std::vector<std::shared_ptr<TextureUnit>>& getAllTexureUnit();
 
         void addShader(ShaderInfo& sinfo);
-        const std::shared_ptr<Shader>& getShader() const;
+
+        const ShaderInfo& getShaderInfo();
 
         void scale(Real u, Real v);
         void animation(Real u, Real v);
@@ -194,9 +195,6 @@ namespace Ogre {
         float mVFactor = 0.02f;
 
         std::vector<std::shared_ptr<TextureUnit>> mTextureUnits;
-
-        std::shared_ptr<Shader> mShader;
-
         ShaderInfo mShaderInfo;
         PbrMaterialConstanceBuffer mPbrMatInfo;
         MaterialConstantBuffer mMatInfo;

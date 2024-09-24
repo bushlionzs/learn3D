@@ -35,12 +35,6 @@ Ogre::RenderTarget* RenderSystem::createRenderTarget(
     return nullptr;
 }
 
-Shader* RenderSystem::createShader(ShaderInfo& sinfo)
-{
-    return nullptr;
-}
-
-
 Viewport* RenderSystem::_getViewport()
 {
     return nullptr;

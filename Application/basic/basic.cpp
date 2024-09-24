@@ -8,7 +8,10 @@
 #include "OgreResourceManager.h"
 #include "OgreMaterialManager.h"
 #include "OgreAnimationState.h"
-
+#include "renderSystem.h"
+#include "OgreCamera.h"
+#include "OgreRenderTarget.h"
+#include "OgreRenderWindow.h"
 
 Basic::Basic()
 {
@@ -49,6 +52,7 @@ void Basic::addCustomDirectory()
 	//ResourceManager::getSingletonPtr()->addDirectory(std::string("D:\\wow3.3.5\\Data"), "wow", true);
 }
 
+
 void Basic::base1()
 {
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
@@ -67,7 +71,6 @@ void Basic::base1()
 		meshName,
 		leftop, leftbottom, righttop, rightbottom, normal);
 
-	//auto mesh = MeshManager::getSingletonPtr()->load(meshName);
 	Entity* rect = mSceneManager->createEntity("rect", meshName);
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
@@ -76,6 +79,8 @@ void Basic::base1()
 	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -2.5f), Ogre::Vector3::ZERO);
 	mGameCamera->setDistance(2.5f);
 	mGameCamera->setMoveSpeed(5);
+
+	addMainPass();
 }
 
 void Basic::base2()

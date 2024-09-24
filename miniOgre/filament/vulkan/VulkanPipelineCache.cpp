@@ -79,6 +79,13 @@ namespace filament::backend {
         commands->setPipeline(cacheEntry->handle);
     }
 
+    void VulkanPipelineCache::bindPipeline(VkCommandBuffer cb)
+    {
+        PipelineCacheEntry* cacheEntry = getOrCreatePipeline();
+        mBoundPipeline = mPipelineRequirements;
+        vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, cacheEntry->handle);
+    }
+
     void VulkanPipelineCache::bindScissor(VkCommandBuffer cmdbuffer, VkRect2D scissor) noexcept {
         vkCmdSetScissor(cmdbuffer, 0, 1, &scissor);
     }
@@ -155,8 +162,7 @@ namespace filament::backend {
         VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
         pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineCreateInfo.layout = mPipelineRequirements.layout;
-        pipelineCreateInfo.renderPass = mPipelineRequirements.renderPass;
-        pipelineCreateInfo.subpass = mPipelineRequirements.subpassIndex;
+        pipelineCreateInfo.renderPass = VK_NULL_HANDLE;
         pipelineCreateInfo.stageCount = hasFragmentShader ? SHADER_MODULE_COUNT : 1;
         pipelineCreateInfo.pStages = shaderStages;
         pipelineCreateInfo.pVertexInputState = &vertexInputState;
@@ -231,6 +237,19 @@ namespace filament::backend {
             colorBlendState.attachmentCount = 0;
         }
 
+
+        VkPipelineRenderingCreateInfoKHR pipelineRenderingCreateInfo{};
+
+        auto depthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
+        auto colorFormat = VK_FORMAT_B8G8R8A8_SRGB;
+        pipelineRenderingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
+        pipelineRenderingCreateInfo.colorAttachmentCount = 1;
+        pipelineRenderingCreateInfo.pColorAttachmentFormats = &colorFormat;
+        pipelineRenderingCreateInfo.depthAttachmentFormat = depthFormat;
+        pipelineRenderingCreateInfo.stencilAttachmentFormat = depthFormat;
+
+        pipelineCreateInfo.pNext = &pipelineRenderingCreateInfo;
+
         PipelineCacheEntry cacheEntry = {};
 
 #if FVK_ENABLED(FVK_DEBUG_SHADER_MODULE)
@@ -261,6 +280,12 @@ namespace filament::backend {
 #endif
     }
 
+    void VulkanPipelineCache::bindProgram(VkShaderModule vertexShader, VkShaderModule fragShader) noexcept
+    {
+        mPipelineRequirements.shaders[0] = vertexShader;
+        mPipelineRequirements.shaders[1] = fragShader;
+    }
+
     void VulkanPipelineCache::bindRasterState(const RasterState& rasterState) noexcept {
         mPipelineRequirements.rasterState = rasterState;
     }
@@ -275,15 +300,26 @@ namespace filament::backend {
         mPipelineRequirements.topology = topology;
     }
 
-    void VulkanPipelineCache::bindVertexArray(VkVertexInputAttributeDescription const* attribDesc,
-        VkVertexInputBindingDescription const* bufferDesc, uint8_t count) {
+    void VulkanPipelineCache::bindVertexArray(
+        VkVertexInputAttributeDescription const* attribDesc,
+        uint8_t attribDescCount,
+        VkVertexInputBindingDescription const* bufferDesc,
+        uint8_t bufferDescCount) {
         for (size_t i = 0; i < VERTEX_ATTRIBUTE_COUNT; i++) {
-            if (i < count) {
+            if (i < attribDescCount) {
                 mPipelineRequirements.vertexAttributes[i] = attribDesc[i];
+            }
+            else
+            {
+                mPipelineRequirements.vertexAttributes[i] = {};
+            }
+
+            if (i < bufferDescCount)
+            {
                 mPipelineRequirements.vertexBuffers[i] = bufferDesc[i];
             }
-            else {
-                mPipelineRequirements.vertexAttributes[i] = {};
+            else
+            {
                 mPipelineRequirements.vertexBuffers[i] = {};
             }
         }

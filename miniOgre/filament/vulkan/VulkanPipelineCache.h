@@ -118,18 +118,22 @@ namespace filament::backend {
 
         // Creates a new pipeline if necessary and binds it using vkCmdBindPipeline.
         void bindPipeline(VulkanCommandBuffer* commands);
-
+        void bindPipeline(VkCommandBuffer cb);
         // Sets up a new scissor rectangle if it has been dirtied.
         void bindScissor(VkCommandBuffer cmdbuffer, VkRect2D scissor) noexcept;
 
         // Each of the following methods are fast and do not make Vulkan calls.
         void bindProgram(VulkanProgram* program) noexcept;
+        void bindProgram(VkShaderModule vertexShader, VkShaderModule fragShader) noexcept;
         void bindRasterState(const RasterState& rasterState) noexcept;
         void bindRenderPass(VkRenderPass renderPass, int subpassIndex) noexcept;
         void bindPrimitiveTopology(VkPrimitiveTopology topology) noexcept;
 
-        void bindVertexArray(VkVertexInputAttributeDescription const* attribDesc,
-            VkVertexInputBindingDescription const* bufferDesc, uint8_t count);
+        void bindVertexArray(
+            VkVertexInputAttributeDescription const* attribDesc,
+            uint8_t attribDescCount,
+            VkVertexInputBindingDescription const* bufferDesc, 
+            uint8_t bufferDescCount);
 
         // Destroys all managed Vulkan objects. This should be called before changing the VkDevice.
         void terminate() noexcept;

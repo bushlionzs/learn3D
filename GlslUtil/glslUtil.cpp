@@ -55,7 +55,7 @@ private:
 
 std::string getGlslKey(
     std::string& shaderName,
-    std::vector<std::pair<std::string, std::string>>& shaderMacros,
+    const std::vector<std::pair<std::string, std::string>>& shaderMacros,
     shaderc_shader_kind kind)
 {
     uint64_t macro_bit = 0;
@@ -86,7 +86,7 @@ bool glslCompileShader(
     std::string& shaderName,
     std::string& shaderContent,
     std::string& entryPoint,
-	std::vector<std::pair<std::string, std::string>>& shaderMacros,
+	const std::vector<std::pair<std::string, std::string>>& shaderMacros,
     shaderc_shader_kind kind
 )
 {

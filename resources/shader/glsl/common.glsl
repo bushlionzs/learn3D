@@ -1,5 +1,5 @@
-#ifndef NUM_DIR_LIGHTS
-    #define NUM_DIR_LIGHTS 1
+#ifndef MAX_NUM_DIR_LIGHTS
+    #define MAX_NUM_DIR_LIGHTS 1
 #endif
 
 #ifndef NUM_POINT_LIGHTS
@@ -19,7 +19,47 @@ struct Light {
     float SpotPower;    // spot light only
 };
 
-#define MaxLights 16
+
+float textureProj(sampler2D shadowMap, vec4 shadowCoord, vec2 off)
+{
+	float shadow = 1.0;
+	if ( shadowCoord.z > -1.0 && shadowCoord.z < 1.0 ) 
+	{
+		float dist = texture( shadowMap, shadowCoord.st + off).r;
+		if ( shadowCoord.w > 0.0 && dist < shadowCoord.z ) 
+		{
+			shadow = 0.1;
+		}
+	}
+	return shadow;
+}
+
+float calcShadowFactor(vec4 shadowPosH, sampler2D shadowMap, float shadowMapSize)
+{
+    // Complete projection by doing division by w.
+    vec3 shadowPosNDC = shadowPosH.xyz / shadowPosH.w;
+
+    // Depth in NDC space.
+    float depth = shadowPosNDC.z;
+
+    vec2 texelSize = vec2(1.0) / shadowMapSize;
+
+    float percentLit = 0.0;
+    vec2 offsets[9] = vec2[]
+    (
+        vec2(-texelSize.x,  -texelSize.y), vec2(0.0,  -texelSize.y), vec2(texelSize.x,  -texelSize.y),
+        vec2(-texelSize.x, 0.0),           vec2(0.0, 0.0),           vec2(texelSize.x, 0.0),
+        vec2(-texelSize.x,  texelSize.y), vec2(0.0,  texelSize.y), vec2(texelSize.x,  texelSize.y)
+    );
+
+    for(int i = 0; i < 9; ++i)
+    {
+        percentLit += textureProj(shadowMap, shadowPosH , offsets[i]);
+    }
+
+    return percentLit / 9.0;
+}
+
 
 layout(binding = 0, std140) uniform ObjectUniforms {
     mat4 gWorld;
@@ -43,8 +83,8 @@ layout(binding = 1, std140) uniform FrameUniforms {
     float gFarZ;
     float gTotalTime;
     float gDeltaTime;
-    vec4 gAmbientLight;
-	Light gLights[MaxLights];
+	Light gDirLights[MAX_NUM_DIR_LIGHTS];
+	uint numDirLights;
 } cbPass;
 #ifdef PBR
 layout(binding = 2, std140) uniform MaterialUniforms {
@@ -56,8 +96,7 @@ layout(binding = 2, std140) uniform MaterialUniforms {
 	float alpha_mask_cutoff;
 	vec4 u_BaseColorFactor;
 	vec4 u_ScaleIBLAmbient;
-    mat4 gTexScale;
-	mat4 gTexTransform;
+	uint debugRenderMode;
 } pbrMaterial;
 #else
 layout(binding = 2, std140) uniform MaterialUniforms {
@@ -83,14 +122,16 @@ layout (set=1, binding = 1) uniform sampler2D ao_pbr;
 layout (set=1, binding = 2) uniform sampler2D normal_pbr;
 layout (set=1, binding = 3) uniform sampler2D emissive_pbr;
 layout (set=1, binding = 4) uniform sampler2D metal_roughness_pbr;
-layout (set=1, binding = 5) uniform sampler2D brdflut;
+layout (set=1, binding = 5) uniform sampler2D roughness_pbr;
+layout (set=1, binding = 6) uniform sampler2D brdflut;
 
-layout (set=1, binding = 6) uniform samplerCube irradiance;
-layout (set=1, binding = 7) uniform samplerCube prefiltered;
+layout (set=1, binding = 7) uniform samplerCube irradianceCube;
+layout (set=1, binding = 8) uniform samplerCube prefilteredCube;
 #else
 layout(set=1, binding = 0) uniform sampler2D first;
 layout (set=1, binding = 1) uniform sampler2D second;
 layout (set=1, binding = 2) uniform sampler2D third;
 
 layout (set=1, binding = 3) uniform samplerCube gCubeMap;
+layout (set=1, binding = 4) uniform sampler2D gShadowMap;
 #endif //PBR

@@ -884,8 +884,7 @@ const Ogre::Matrix4& OgreRenderer::getWorldViewProjMatrix() const
 #ifdef CEGUI_USE_OGRE_HLMS
         if (d_pimpl->d_renderTarget->requiresTextureFlipping())
 #else
-        if (d_pimpl->d_renderSystem->_getViewport()->getTarget()->
-            requiresTextureFlipping())
+        if (false)//zhousha
 #endif
         {
             final_prj[1][0] = -final_prj[1][0];

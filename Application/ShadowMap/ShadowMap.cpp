@@ -11,6 +11,8 @@
 #include "OgreLight.h"
 #include "OgreMaterialManager.h"
 #include "OgreViewport.h"
+#include "OgreRenderWindow.h"
+#include "renderSystem.h"
 
 ShadowMap::ShadowMap()
 {
@@ -26,7 +28,6 @@ ShadowMap::~ShadowMap()
 bool ShadowMap::appInit()
 {
 	ApplicationBase::appInit();
-	mViewport->setShadowsEnabled(false);
 	auto root = mSceneManager->getRoot();
 
 	MeshManager::getSingletonPtr()->CreateSphere("sphere.mesh", 0.5f, 20, 20);
@@ -49,12 +50,12 @@ bool ShadowMap::appInit()
 	Entity* ground = mSceneManager->createEntity("ground", meshName);
 	SceneNode* groundnode = root->createChildSceneNode("ground");
 	groundnode->attachObject(ground);
-
+	
 	Entity* sphere = mSceneManager->createEntity("sphere", "sphere.mesh");
 	SceneNode* spherenode = root->createChildSceneNode("sphere");
 	spherenode->setPosition(Ogre::Vector3(0.0f, 1.5f, 0.0f));
 	spherenode->attachObject(sphere);
-
+	spherenode->_getDerivedPosition();
 	Entity* cylinder = mSceneManager->createEntity("cylinder", "cylinder.mesh");
 	SceneNode* cylindernode = root->createChildSceneNode("cylinder");
 	cylindernode->attachObject(cylinder);
@@ -78,48 +79,48 @@ bool ShadowMap::appInit()
 		mAnimationState->setLoop(true);
 	}
 
-	aa = 0.8f;
-	leftop = Ogre::Vector3(-aa, aa, 0.0f);
-	leftbottom = Ogre::Vector3(-aa, -aa, 0.0f);
-	righttop = Ogre::Vector3(aa, aa, 0.0f);
-	rightbottom = Ogre::Vector3(aa, -aa, 0.0f);
-	normal = Ogre::Vector3(0.0f, 0.0f, 1.0f);
-
-
-	/*Entity* rect = mSceneManager->createEntity("rect", meshName);
-	SceneNode* rectnode = root->createChildSceneNode("rect");
-	rectnode->attachObject(rect);
-	rectnode->setPosition(1.5, 0.0f, 3.0f);
-
-	mat = MaterialManager::getSingleton().getByName("shadow");
-
-	rect->setMaterial(0, mat);*/
-
 	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, 8.0f), Ogre::Vector3::ZERO);
 	mGameCamera->setMoveSpeed(10.0f);
 
-	auto light = mSceneManager->createLight("shadow");
+	Ogre::Light* light = mSceneManager->createLight("shadow");
 	light->setLightType(LightType_Direction, 0);
+
+	mLightNode = root->createChildSceneNode("light");
 
 	auto m4 = Ogre::Math::makeLookAtLH(
 		Ogre::Vector3(-20, 20, -20), Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_Y);
 
 	auto q = m4.extractQuaternion();
-	
-	mLightNode = root->createChildSceneNode("light");
 
 	auto subnode = mLightNode->createChildSceneNode("shadow");
 	subnode->attachObject(light);
 	subnode->setOrientation(q);
 	subnode->setPosition(Ogre::Vector3(-20, 20, -20));
+	
+	light->mViewMatrix = Ogre::Math::makeLookAtLH(
+		Ogre::Vector3(-20, 20, -20), Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_Y);
 
 
-	Matrix3 m3;
-	q.ToRotationMatrix(m3);
+	int width = 10;
+	int height = 10;
 
-	auto bb = Ogre::Vector3::ZERO - Ogre::Vector3(-20, 20, -20);
-	bb.normalise();
-	auto dir = m3.GetColumn(2);
+	Real left = -width / 2.0f;
+	Real right = width / 2.0f;
+	Real top = height / 2.0f;
+	Real bottom = -height / 2.0f;
+
+
+	light->mProjMatrix = Ogre::Math::makeOrthoLH(left, right, bottom, top, 1.0f, 10000.0f);
+
+	/*auto shadowSize = 1024;
+	mPassList.emplace_back();
+	auto& pass = mPassList.back();
+	pass.depth = mRenderSystem->createRenderTarget("shadow", shadowSize, shadowSize, Ogre::PF_DEPTH32_STENCIL8, Ogre::TextureUsage::DEPTH_ATTACHMENT);
+	pass.sceneMgr = mSceneManager;
+	pass.cam = light;*/
+	
+
+	addMainPass();
 
 	return true;
 }

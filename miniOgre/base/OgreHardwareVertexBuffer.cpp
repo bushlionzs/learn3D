@@ -2,12 +2,12 @@
 #include "OgreHardwareVertexBuffer.h"
 
 
-    size_t VertexElement::getSize() const
+    uint32_t VertexElement::getSize() const
     {
         return getTypeSize(mType);
     }
 
-    size_t VertexElement::getTypeSize(VertexElementType etype)
+    uint32_t VertexElement::getTypeSize(VertexElementType etype)
     {
         switch (etype)
         {

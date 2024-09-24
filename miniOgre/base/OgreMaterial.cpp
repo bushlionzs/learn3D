@@ -142,13 +142,6 @@ namespace Ogre {
             samplers[2] = { "third", 2 };
             samplers[3] = { "gCubeMap", 3 };
 
-            
-
-            if (mMaterialName == "Â¥À¼µØ¹¬Ç½012")
-            {
-                int kk = 0;
-            }
-
             uint32_t samplerCount = 0;
             uint32_t samplerCubeCount = 0;
             for (uint32_t i = 0; i < mTextureUnits.size(); i++)
@@ -259,10 +252,6 @@ namespace Ogre {
                 }
             }
 
-            mShader = MaterialManager::getSingletonPtr()->buildShader(mShaderInfo);
-
-            mShader->load();
-
             mLoad = true;
         }
 
@@ -343,12 +332,11 @@ namespace Ogre {
     void Material::addShader(ShaderInfo& sinfo)
     {
         mShaderInfo = sinfo;
-
     }
 
-    const std::shared_ptr<Shader>& Material::getShader() const
+    const ShaderInfo& Material::getShaderInfo()
     {
-        return mShader;
+        return mShaderInfo;
     }
 
     void Material::scale(Real u, Real v)

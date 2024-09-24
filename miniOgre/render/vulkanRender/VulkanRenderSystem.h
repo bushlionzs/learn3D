@@ -10,7 +10,10 @@ class VulkanFrame;
 class VulkanWindow;
 class VulkanRayTracingContext;
 
-
+namespace filament::backend
+{
+    class VulkanPipelineCache;
+}
 
 class VulkanRenderSystem : public RenderSystem
 {
@@ -97,4 +100,9 @@ private:
 
     uint32_t mFrameIndex = 0;
     uint32_t mImageIndex = 0;
+
+
+    VmaAllocator mAllocator = VK_NULL_HANDLE;
+
+    VulkanPipelineCache* mPipelineCache = nullptr;
 };
