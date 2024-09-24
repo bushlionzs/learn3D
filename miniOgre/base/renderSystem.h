@@ -52,6 +52,9 @@ public:
         const String& name, unsigned int width, unsigned int height,
         const NameValuePairList* miscParams) = 0;
 
+    virtual Ogre::RenderTarget* createRenderTarget(
+        const String& name, uint32_t width, uint32_t height, Ogre::PixelFormat format, Ogre::TextureUsage usage);
+
     virtual Shader* createShader(ShaderInfo& sinfo);
 
     virtual void ready() {}
@@ -93,17 +96,15 @@ public:
     virtual void _setViewport(ICamera* cam, Ogre::Viewport* vp);
 
     virtual void beginRenderPass(
-        Ogre::ICamera* cam,
-        RenderTarget* target,
-        Ogre::OgreTexture* depth,
-        const Ogre::ColourValue& colour);
+        RenderPassInfo& renderPassInfo);
+    virtual void endRenderPass();
+    virtual void present();
     virtual void clearFrameBuffer(uint32 buffers, const Ogre::ColourValue& colour = Ogre::ColourValue::Black,
         float depth = 1.0f, uint16 stencil = 0);
 
     virtual void _convertProjectionMatrix(const Ogre::Matrix4& matrix,
         Ogre::Matrix4& dest, bool forGpuProgram = false) {}
 
-    void attachRenderTarget(Ogre::RenderTarget& target);
 
    virtual void _updateAllRenderTargets(bool swapBuffers = true);
 

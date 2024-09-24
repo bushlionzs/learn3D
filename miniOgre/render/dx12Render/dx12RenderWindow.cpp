@@ -306,11 +306,6 @@ void Dx12RenderWindow::swapBuffers()
 	cl->ResourceBarrier(1, &barrier);
 }
 
-void Dx12RenderWindow::copyContentsToMemory(const Box& src, const PixelBox& dst, FrameBuffer buffer)
-{
-
-}
-
 bool Dx12RenderWindow::requiresTextureFlipping() const
 {
 	return false;

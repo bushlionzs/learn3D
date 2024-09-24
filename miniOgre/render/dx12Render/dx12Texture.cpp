@@ -114,7 +114,7 @@ void Dx12Texture::_create2DTex()
     D3D12_RESOURCE_STATES states = D3D12_RESOURCE_STATE_COMMON;
 
     D3D12_CLEAR_VALUE* pvalue = nullptr;
-    if (mUsage & TU_RENDERTARGET)
+    if (mTextureProperty.isRenderTarget())
     {
         auto& backColor = mTextureProperty._backgroudColor;
         D3D12_CLEAR_VALUE ClearValue = {};
@@ -148,7 +148,7 @@ void Dx12Texture::_create2DTex()
         OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "CreateCommittedResource failed!");
     }
 
-    if (mUsage & TU_RENDERTARGET)
+    if (mTextureProperty.isRenderTarget())
     {
         return;
     }
@@ -173,7 +173,7 @@ void Dx12Texture::_create2DTex()
 
 void Dx12Texture::postLoad()
 {
-    if (mUsage & TU_RENDERTARGET)
+    if (mTextureProperty.isRenderTarget())
     {
         return;
     }
@@ -344,7 +344,7 @@ void Dx12Texture::buildDescriptorHeaps(int32_t handleIndex)
         else
         {
             srvDesc.Format = mTex->GetDesc().Format;
-            if (mUsage & TU_RENDERTARGET)
+            if (mTextureProperty.isRenderTarget())
             {
                 srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DMS;
             }

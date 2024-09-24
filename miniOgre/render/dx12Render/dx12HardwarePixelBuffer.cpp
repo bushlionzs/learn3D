@@ -22,21 +22,7 @@ Dx12HardwarePixelBuffer::Dx12HardwarePixelBuffer(
 	mMipLevel(mipLevel)
 {
 	mUsage = usage;
-	if (mUsage & Ogre::TU_RENDERTARGET)
-	{
-		// Create render target for each slice
-		mSliceTRT.reserve(mDepth);
-		for (size_t zoffset = 0; zoffset < mDepth; ++zoffset)
-		{
-			String name;
-			name = "rtt/" + StringConverter::toString((size_t)this) + "/" + parentTexture->getName();
-
-			RenderTexture* trt = new Dx12RenderTexture(name, this, zoffset);
-			mSliceTRT.push_back(trt);
-			DX12Helper::getSingleton().getDx12RenderSystem()->attachRenderTarget(*trt);
-		}
-	}
-
+	
 	uint32_t byteSize = PixelUtil::getMemorySize(width, height, depth, format);
 
 	mBuffer.resize(byteSize);

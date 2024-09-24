@@ -79,8 +79,7 @@ namespace Ogre
     bool DepthBuffer::isCompatible( RenderTarget *renderTarget ) const
     {
         if( this->getWidth() >= renderTarget->getWidth() &&
-            this->getHeight() >= renderTarget->getHeight() &&
-            this->getFSAA() == renderTarget->getFSAA() )
+            this->getHeight() >= renderTarget->getHeight() )
         {
             return true;
         }
@@ -110,7 +109,7 @@ namespace Ogre
         while( itor != end )
         {
             //If we call, detachDepthBuffer, we'll invalidate the iterators
-            (*itor)->_detachDepthBuffer();
+            //(*itor)->_detachDepthBuffer();
             ++itor;
         }
 

@@ -88,6 +88,10 @@ VulkanTexture::~VulkanTexture()
 
 void VulkanTexture::_createSurfaceList(void)
 {
+    if (mTextureProperty.isRenderTarget())
+    {
+        return;
+    }
     // Create new list of surfaces
     mSurfaceList.clear();
     size_t depth = mTextureProperty._depth;
@@ -144,11 +148,6 @@ void VulkanTexture::createInternalResourcesImpl(void)
         mFormat = VulkanMappings::_getClosestSupportedPF(mFormat);
 
         mVulkanFormat = VulkanMappings::_getGammaFormat(VulkanMappings::_getPF(mFormat), false);
-
-        if (mUsage & Ogre::TU_RENDERTARGET)
-        {
-            //mVulkanFormat = VK_FORMAT_B8G8R8A8_UNORM;
-        }
     }
     
 
@@ -246,7 +245,7 @@ void VulkanTexture::createImage(
     mMipLevels = mTextureProperty._numMipmaps + 1;
     if (mTextureProperty._need_mipmap)
     {
-        if (!(mUsage & Ogre::TU_RENDERTARGET))
+        if (mTextureProperty.isRenderTarget())
         {
             if (mTextureProperty._numMipmaps == 0)
             {
@@ -260,7 +259,7 @@ void VulkanTexture::createImage(
             }
         }
     }
-
+    
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -290,15 +289,16 @@ void VulkanTexture::createImage(
         imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
     }
 
-    if (mUsage & Ogre::TU_RENDERTARGET)
+    if (mUsage & Ogre::TextureUsage::COLOR_ATTACHMENT)
     {
-        imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        imageInfo.usage |=  VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     }
 
-    if (mUsage == Ogre::TU_DYNAMIC_WRITE_ONLY)
+    if (mUsage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
     {
-        imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
     }
+    
 
 
 
@@ -339,7 +339,13 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     }
     
     viewInfo.format = format;
-    viewInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, mMipLevels, 0, mFace };
+
+    VkImageAspectFlags flags = VK_IMAGE_ASPECT_COLOR_BIT;
+    if (this->mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    {
+        flags = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+    }
+    viewInfo.subresourceRange = { flags, 0, mMipLevels, 0, mFace };
 
     viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;
     viewInfo.components.g = VK_COMPONENT_SWIZZLE_G;
@@ -418,54 +424,6 @@ void VulkanTexture::updateImage(const PixelBufferDescriptor& data, uint32_t widt
     VulkanCommandBuffer& commands = mCommands->get();
     VkCommandBuffer const cmdbuf = commands.buffer();
     commands.acquire(this);
-
-    //VkBufferImageCopy copyRegion = {
-    //    .bufferOffset = {},
-    //    .bufferRowLength = {},
-    //    .bufferImageHeight = {},
-    //    .imageSubresource = {
-    //        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-    //        .mipLevel = miplevel,
-    //        .baseArrayLayer = 0,
-    //        .layerCount = 1
-    //    },
-    //    .imageOffset = { int32_t(xoffset), int32_t(yoffset), int32_t(zoffset) },
-    //    .imageExtent = { width, height, depth }
-    //};
-
-    //VkImageSubresourceRange transitionRange = {
-    //    .aspectMask = getImageAspect(),
-    //    .baseMipLevel = miplevel,
-    //    .levelCount = 1,
-    //    .baseArrayLayer = 0,
-    //    .layerCount = 1
-    //};
-
-    //// Vulkan specifies subregions for 3D textures differently than from 2D arrays.
-    //if (target == SamplerType::SAMPLER_2D_ARRAY ||
-    //    target == SamplerType::SAMPLER_CUBEMAP ||
-    //    target == SamplerType::SAMPLER_CUBEMAP_ARRAY) {
-    //    copyRegion.imageOffset.z = 0;
-    //    copyRegion.imageExtent.depth = 1;
-    //    copyRegion.imageSubresource.baseArrayLayer = zoffset;
-    //    copyRegion.imageSubresource.layerCount = depth;
-    //    transitionRange.baseArrayLayer = zoffset;
-    //    transitionRange.layerCount = depth;
-    //}
-
-    //VulkanLayout const newLayout = VulkanLayout::TRANSFER_DST;
-    //VulkanLayout nextLayout = getLayout(transitionRange.baseArrayLayer, miplevel);
-    //VkImageLayout const newVkLayout = imgutil::getVkLayout(newLayout);
-
-    //if (nextLayout == VulkanLayout::UNDEFINED) {
-    //    nextLayout = imgutil::getDefaultLayout(this->usage);
-    //}
-
-    //transitionLayout(cmdbuf, transitionRange, newLayout);
-
-    //vkCmdCopyBufferToImage(cmdbuf, stage->buffer, mTextureImage, newVkLayout, 1, &copyRegion);
-
-    //transitionLayout(cmdbuf, transitionRange, nextLayout);
 
     vks::tools::copyBufferToImage(
         cmdbuf,

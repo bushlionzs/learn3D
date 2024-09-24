@@ -80,7 +80,7 @@ bool TextureUnit::updateTexture(uint32_t index, const std::string& texName)
                }
                else
                {
-                   mResourceState == ResourceState::LOADING;
+                   mResourceState = ResourceState::LOADING;
                    mOwner->setResourceState(ResourceState::LOADING);
                }
            }

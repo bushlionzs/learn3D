@@ -76,7 +76,7 @@ std::shared_ptr<OgreTexture> TextureSet::createAlphaMapTexture(const std::string
     texProperty._height = 64;
     texProperty._tex_format = PF_BYTE_RGB;
 
-    texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
+    texProperty._tex_usage = Ogre::TextureUsage::UPLOADABLE;
     auto tex = TextureManager::getSingleton().createManual(name, texProperty);
 
     const auto& buffer = tex->getBuffer();

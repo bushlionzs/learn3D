@@ -7,6 +7,7 @@
 
 class VulkanFrame;
 
+
 class VulkanWindow : public Ogre::RenderWindow
 {
 public:
@@ -16,27 +17,28 @@ public:
 	virtual void create(const String& name, unsigned int width, unsigned int height,
 		bool fullScreen, const NameValuePairList* miscParams);
 
+	
+
 	virtual void destroy();
 
 	virtual void resize(unsigned int width, unsigned int height);
 
-	virtual void copyContentsToMemory(const Box& src, const PixelBox& dst, FrameBuffer buffer = FB_AUTO);
+	virtual Ogre::RenderTarget* getColorTarget();
+	virtual Ogre::RenderTarget* getDepthTarget();
 
 	virtual bool requiresTextureFlipping() const;
 
 	virtual void preRender(const ColourValue& colour);
-
+	virtual void postRender();
 	void start();
 	VkFramebuffer getFrameBuffer(uint32_t index);
 
-	virtual uint32_t getTargetWidth();
-	virtual uint32_t getTargetHeight();
 
 	VulkanFrame* getNextFrame();
 private:
 	void createFramebuffers();
 	void createSyncObjects();
-	virtual void swapBuffers() override;
+	virtual void swapBuffers();
 private:
 
 	const int SwapChainBufferCount = 3;
@@ -51,10 +53,14 @@ private:
 	
 
 	uint32_t mFrameIndex = 0;
+	uint32_t mImageIndex = 0;
 
 	bool mHaveRenderPass = false;
 
 	MultisampleTarget mMultisampleTarget;
 
-	uint32_t mImageIndex;
+
+	Ogre::VulkanRenderTarget* mDepthTarget;
+
+	Ogre::VulkanRenderTarget* mColorTarget;
 };

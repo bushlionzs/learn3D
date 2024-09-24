@@ -20,8 +20,6 @@ public:
 
 	virtual void resize(unsigned int width, unsigned int height);
 
-	virtual void copyContentsToMemory(const Box& src, const PixelBox& dst, FrameBuffer buffer = FB_AUTO);
-
 	virtual bool requiresTextureFlipping() const;
 	void swapBuffers();
 	virtual ID3D11RenderTargetView* getRenderTargetView() const;

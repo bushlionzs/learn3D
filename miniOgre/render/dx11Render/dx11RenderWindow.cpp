@@ -221,10 +221,6 @@ void Dx11RenderWindow::swapBuffers()
 	context->PSSetShaderResources(2, 1, &input);
 }
 
-void Dx11RenderWindow::copyContentsToMemory(const Box& src, const PixelBox& dst, FrameBuffer buffer)
-{
-
-}
 
 bool Dx11RenderWindow::requiresTextureFlipping() const
 {

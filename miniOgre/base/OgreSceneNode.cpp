@@ -31,18 +31,10 @@ namespace Ogre {
         if (!mVisible)
             return;
 
-        bool useShadow = cam->getCameraType() == CameraType_Light;
         for (auto& pair : mObjectsByName)
         {
-            if (useShadow && !pair.second->getCastShadows())
-            {
-                continue;
-            }
-            if (!useShadow)
-            {
-                pair.second->_notifyCurrentCamera(cam);
-            }
-            
+             pair.second->_notifyCurrentCamera(cam);
+              
             const AxisAlignedBox& box = pair.second->getWorldBoundingBox(true);
             if (!cam->isVisible(box))
             {

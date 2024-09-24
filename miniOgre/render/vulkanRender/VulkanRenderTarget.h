@@ -1,28 +1,31 @@
 #pragma once
 #include "VulkanCommon.h"
 #include "OgreRenderTarget.h"
+#include "OgreTexture.h"
 
-class VulkanFrame;
+class VulkanTexture;
 namespace Ogre
 {
 	class VulkanRenderTarget: public Ogre::RenderTarget
 	{
 	public:
-		VulkanRenderTarget
-		(
-		);
+		VulkanRenderTarget(const String&name, TextureProperty& texProperty);
+		VulkanRenderTarget(uint32_t width, uint32_t height, bool screen);
 		~VulkanRenderTarget();
 
-		virtual void preRender(VulkanFrame* frame, const ColourValue& colour)
-		{
-			int kk = 0;
-		}
+		virtual void preRender(const ColourValue& colour) override;
+		virtual void postRender() override;
 
-		virtual bool offset() { return false; }
+		VkImageView getImageView();
+		VkImage getImage();
 
-		virtual VkFramebuffer getFrameBuffer(uint32_t index) = 0;
-
-		virtual uint32_t getTargetWidth() = 0;
-		virtual uint32_t getTargetHeight() = 0;
+	private:
+		VkFramebuffer getFrameBuffer(uint32_t index);
+	private:
+		VulkanTexture* mTarget = nullptr;
+		VulkanTexture* mDepth = nullptr;
+		VkFramebuffer mFramebuffer = nullptr;
+		MultisampleTarget mMultisampleTarget;
+		bool mScreen;
 	};
 }

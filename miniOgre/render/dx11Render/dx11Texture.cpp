@@ -66,7 +66,7 @@ void Dx11Texture::_create2DTex()
         mAutoMipMapGeneration = true;
     }
 
-    if (mUsage & TU_RENDERTARGET)
+    if (mTextureProperty.isRenderTarget())
     {
         mNumMipmaps = 0;
         numMips = 1;
@@ -108,10 +108,6 @@ void Dx11Texture::_create2DTex()
     
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
-    if (mUsage & TU_RENDERTARGET)
-    {
-        int kk = 0;
-    }
    
     mTex->GetDesc(&desc);
     srvDesc.Format = desc.Format;

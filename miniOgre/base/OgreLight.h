@@ -47,6 +47,7 @@ namespace Ogre {
         uint32_t mLightNumber = 0;
         LightType mLightType = LightType_Direction;
         //for shadow only
+        mutable Ogre::Vector3 mPosition;
         mutable Ogre::Matrix4 mViewMatrix;
         mutable Ogre::Matrix4 mProjMatrix;
     };

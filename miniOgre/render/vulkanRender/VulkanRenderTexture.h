@@ -6,7 +6,7 @@
 class VulkanHardwarePixelBuffer;
 class VulkanRenderSystem;
 class VulkanTexture;
-
+class VulkanFrame;
 class VulkanRenderTexture : public Ogre::RenderTexture
 {
 public:

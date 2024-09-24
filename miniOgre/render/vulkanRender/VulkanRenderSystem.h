@@ -43,22 +43,22 @@ public:
     void _setViewport(ICamera* cam, Ogre::Viewport* vp);
     EngineType getRenderType();
 
-    void beginRenderPass(
-        Ogre::ICamera* cam,
-        RenderTarget* target,
-        Ogre::OgreTexture* depth,
-        const Ogre::ColourValue& colour);
-
+    void beginRenderPass(RenderPassInfo& renderPassInfo);
+    void endRenderPass();
+    void present();
     virtual void clearFrameBuffer(uint32 buffers,
         const ColourValue& colour,
         float depth, uint16 stencil);
     virtual Ogre::RenderWindow* createRenderWindow(
         const String& name, unsigned int width, unsigned int height,
-        const NameValuePairList* miscParams);
+        const NameValuePairList* miscParams) override;
+    virtual Ogre::RenderTarget* createRenderTarget(
+        const String& name, uint32_t width, uint32_t height, Ogre::PixelFormat format, Ogre::TextureUsage usage) override;
     VulkanFrame* _getCurrentFrame();
     ICamera* _getCamera();
 private:
     void updateMainPassCB(ICamera* camera);
+    VulkanFrame* getNextFrame();
     void generateIrradianceMap();
     void generatePrefilteredMap();
     virtual Ogre::OgreTexture* generateCubeMap(
@@ -73,10 +73,11 @@ private:
     {
         return &mFrameConstantBuffer;
     }
-private:
-    bool mEnableValidationLayers;
 
-    ICamera* mCamera = nullptr;
+    
+private:
+
+    RenderPassInfo mCurrentRenderPassInfo;
 
     FrameConstantBuffer mFrameConstantBuffer;
     
@@ -84,7 +85,7 @@ private:
 
     VulkanWindow* mRenderWindow;
 
-    Ogre::RenderTarget* mActiveVulRenderTarget;
+    VkImage mCurrentVKImage;
 
     enki::TaskScheduler mTaskScheduler;
 
@@ -93,4 +94,7 @@ private:
     std::vector<Ogre::Renderable*> mRenderList;
 
     VulkanRayTracingContext* mRayTracingContext;
+
+    uint32_t mFrameIndex = 0;
+    uint32_t mImageIndex = 0;
 };

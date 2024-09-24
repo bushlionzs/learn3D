@@ -1,6 +1,6 @@
 #pragma once
 #define OGRE_STREAM_TEMP_SIZE 128
-
+#include <OgreHeader.h>
 enum RenderListType
 {
     RenderListType_Opaque = 0,
@@ -52,13 +52,73 @@ public:
     uint32_t mVertexCount;
 };
 
-typedef struct VertexBoneAssignment_s
+typedef struct 
 {
     unsigned int vertexIndex;
     unsigned short boneIndex;
     Real weight;
 
 } VertexBoneAssignment;
+
+typedef union ClearValue
+{
+    struct
+    {
+        float r;
+        float g;
+        float b;
+        float a;
+    };
+    struct
+    {
+        float    depth;
+        uint32_t stencil;
+    };
+} ClearValue;
+
+typedef struct BindRenderTargetDesc
+{
+    Ogre::RenderTarget* renderTarget;
+    ClearValue clearColour;
+} BindRenderTargetDesc;
+
+typedef struct BindDepthTargetDesc
+{
+    Ogre::RenderTarget* depthStencil;
+    ClearValue      clearValue;
+} BindDepthTargetDesc;
+
+enum
+{
+    MAX_INSTANCE_EXTENSIONS = 64,
+    MAX_DEVICE_EXTENSIONS = 64,
+    /// Max number of GPUs in SLI or Cross-Fire
+    MAX_LINKED_GPUS = 4,
+    /// Max number of GPUs in unlinked mode
+    MAX_UNLINKED_GPUS = 4,
+    /// Max number of GPus for either linked or unlinked mode. must update WindowsBase::setupPlatformUI accordingly
+    MAX_MULTIPLE_GPUS = 4,
+    MAX_RENDER_TARGET_ATTACHMENTS = 8,
+    MAX_VERTEX_BINDINGS = 15,
+    MAX_VERTEX_ATTRIBS = 15,
+    MAX_RESOURCE_NAME_LENGTH = 256,
+    MAX_SEMANTIC_NAME_LENGTH = 128,
+    MAX_DEBUG_NAME_LENGTH = 128,
+    MAX_MIP_LEVELS = 0xFFFFFFFF,
+    MAX_SWAPCHAIN_IMAGES = 3,
+    MAX_GPU_VENDOR_STRING_LENGTH = 256, // max size for GPUVendorPreset strings
+    MAX_SAMPLE_LOCATIONS = 16,
+};
+
+struct RenderPassInfo
+{
+    uint32_t renderTargetCount = 1;
+    BindRenderTargetDesc renderTargets[MAX_RENDER_TARGET_ATTACHMENTS];
+    BindDepthTargetDesc  depthTarget;
+    Ogre::OgreTexture* shadowMap = nullptr;
+    Ogre::ICamera* cam = nullptr;
+    bool shadowPass = false;
+};
 
 class SkinnedData
 {

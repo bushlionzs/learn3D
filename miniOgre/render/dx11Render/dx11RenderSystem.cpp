@@ -95,8 +95,6 @@ Ogre::RenderWindow* Dx11RenderSystem::createRenderWindow(
 
 	mRenderWindow->create(name, width, height, false, miscParams);
 
-	attachRenderTarget(*mRenderWindow);
-
 	return mRenderWindow;
 }
 

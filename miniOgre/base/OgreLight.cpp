@@ -33,8 +33,7 @@ void Light::setAttenuation(float range, float constant, float linear, float quad
 {
 
 }
-#include <DirectXMath.h>
-using namespace DirectX;
+
 const Ogre::Matrix4& Light::getViewMatrix() const
 {
 	auto& q = mParent->_getDerivedOrientation();
@@ -50,27 +49,19 @@ const Ogre::Matrix4& Light::getViewMatrix() const
 		mViewMatrix = Ogre::Math::makeLookAtLH(position, target, Ogre::Vector3::UNIT_Y);
 		return mViewMatrix;
 	}
-	
 }
 
 
 
 const Ogre::Matrix4& Light::getProjectMatrix() const
 {
-	float width = 40.0f;
-	float height = 40.0f;
-	Real left = -width / 2.0f;
-	Real right = width / 2.0f;
-	Real top = height / 2.0f;
-	Real bottom = -height / 2.0f;
-	mProjMatrix =
-		Ogre::Math::makeOrthoRH(left, right, bottom, top, 2, 100);
 	return mProjMatrix;
 }
 
 const Ogre::Vector3& Light::getDerivedPosition() const
 {
-	return mParent->_getDerivedPosition();
+	mPosition = mViewMatrix.getTrans();
+	return mPosition;
 }
 
 bool Light::isVisible(const AxisAlignedBox& bound) const

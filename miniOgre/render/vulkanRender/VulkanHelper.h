@@ -124,7 +124,6 @@ public:
         uint32_t typeFilter,
         VkMemoryPropertyFlags properties);
     VkQueue _getCommandQueue();
-    VkRenderPass _getRenderPass();
     VkPhysicalDevice _getPhysicalDevice();
     VkPipelineLayout _getPipelineLayout(bool pbr);
     VkPipelineCache getPipelineCache();
@@ -184,7 +183,6 @@ private:
     void createSyncObjects();
     void createPipelineCache();
     void setupDescriptorSetLayout();
-    void createRenderPass();
     void createSamples();
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(
         const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -234,7 +232,6 @@ private:
     VkCommandBuffer mMainCommandBuffer[VULKAN_FRAME_RESOURCE_COUNT];
     std::vector<CommandHelper> mCommandPools;
 
-    VkRenderPass mRenderPass;
     VkFormat mSwapChainImageFormat;
     VkColorSpaceKHR mColorSpace;
 
@@ -251,6 +248,8 @@ private:
     std::vector<SwapChainBuffer> mSwapChainbuffers;
     //
     VkDebugUtilsMessengerEXT mDebugMessenger;
+
+    VkPhysicalDeviceDynamicRenderingFeaturesKHR enabledDynamicRenderingFeaturesKHR{};
 
     //default texture
 
@@ -273,4 +272,6 @@ private:
     VkPhysicalDeviceBufferDeviceAddressFeatures enabledBufferDeviceAddresFeatures{};
     VkPhysicalDeviceRayTracingPipelineFeaturesKHR enabledRayTracingPipelineFeatures{};
     VkPhysicalDeviceAccelerationStructureFeaturesKHR enabledAccelerationStructureFeatures{};
+
+
 };

@@ -17,7 +17,7 @@
 #include "VulkanFrame.h"
 #include "VulkanWindow.h"
 #include "OgreViewport.h"
-#include "VulkanRenderTarget.h"
+#include "OgreTextureManager.h"
 #include "OgreSceneManager.h"
 #include "OgreRoot.h"
 #include "OgreNode.h"
@@ -26,6 +26,7 @@
 #include "OgreSubEntity.h"
 #include "OgreMeshManager.h"
 #include "OgreResourceManager.h"
+#include "VulkanRenderTarget.h"
 #include "VulkanMappings.h"
 #include "VulkanRaytracing.h"
 
@@ -40,12 +41,6 @@ static const std::vector<const char*> deviceExtensions = {
 VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
 {
     bluevk::initialize();
-#ifdef _DEBUG
-    mEnableValidationLayers = true;
-#else
-    mEnableValidationLayers = false;
-#endif
-
 
     mRenderSystemName = "Vulkan";
 
@@ -89,8 +84,7 @@ void VulkanRenderSystem::frameStart()
     mTriangleCount = 0;
     mBatchCount = 0;
 
-    mCurrentVulkanFrame = mRenderWindow->getNextFrame();
-    mRenderWindow->start();
+    mCurrentVulkanFrame = getNextFrame();
 
     VulkanHelper::getSingleton()._resetCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
 
@@ -99,19 +93,22 @@ void VulkanRenderSystem::frameStart()
 
     VkCommandBufferBeginInfo cmdBeginInfo{};
     cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    cmdBeginInfo.pNext = NULL;
+    cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    cmdBeginInfo.pInheritanceInfo = NULL;
 
-    auto framebuffer = mRenderWindow->getFrameBuffer(mCurrentVulkanFrame->getFrameIndex());
-    auto renderPass = VulkanHelper::getSingleton()._getRenderPass();
-    VkCommandBufferInheritanceInfo inheritanceInfo = vks::initializers::commandBufferInheritanceInfo();
-    inheritanceInfo.renderPass = renderPass;
-    // Secondary command buffer also use the currently active framebuffer
-    inheritanceInfo.framebuffer = framebuffer;
+    //auto framebuffer = mRenderWindow->getFrameBuffer(mCurrentVulkanFrame->getFrameIndex());
+    //auto renderPass = VulkanHelper::getSingleton()._getRenderPass();
+    //VkCommandBufferInheritanceInfo inheritanceInfo = vks::initializers::commandBufferInheritanceInfo();
+    //inheritanceInfo.renderPass = renderPass;
+    //// Secondary command buffer also use the currently active framebuffer
+    //inheritanceInfo.framebuffer = framebuffer;
 
 
 
-    VkCommandBufferBeginInfo secondBufferBeginInfo = vks::initializers::commandBufferBeginInfo();
-    secondBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
-    secondBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
+    //VkCommandBufferBeginInfo secondBufferBeginInfo = vks::initializers::commandBufferBeginInfo();
+    //secondBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+    //secondBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
 
 
     auto result = vkBeginCommandBuffer(cmdlist[0], &cmdBeginInfo);
@@ -120,7 +117,7 @@ void VulkanRenderSystem::frameStart()
     {
         throw std::runtime_error("vkBeginCommandBuffer failed");
     }
-
+#ifdef MULTITHREAD
     for (int32_t i = 1; i < cmdlist.size(); i++)
     {
         auto* commandBuffer = cmdlist.at(i);
@@ -130,8 +127,8 @@ void VulkanRenderSystem::frameStart()
         {
             throw std::runtime_error("vkBeginCommandBuffer failed");
         }
-
     }
+#endif
 }
 
 void VulkanRenderSystem::frameEnd()
@@ -141,11 +138,8 @@ void VulkanRenderSystem::frameEnd()
 
 void VulkanRenderSystem::preRender(Ogre::Camera* cam)
 {
-    mCamera = cam;
     
-    
-
-    updateMainPassCB(mCamera);    
+    updateMainPassCB(cam);
 }
 
 
@@ -184,7 +178,6 @@ RenderableData* VulkanRenderSystem::createRenderableData(Ogre::Renderable* r)
 void VulkanRenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
 {
     mViewport = vp;
-    mCamera = cam;
     Ogre::RenderTarget* target;
     target = vp->getTarget();
     updateMainPassCB(cam);
@@ -198,17 +191,207 @@ EngineType VulkanRenderSystem::getRenderType()
 }
 
 void VulkanRenderSystem::beginRenderPass(
-    Ogre::ICamera* cam,
-    RenderTarget* target,
-    Ogre::OgreTexture* depth,
-    const Ogre::ColourValue& colour)
+    RenderPassInfo& renderPassInfo)
 {
-    mCamera = cam;
+
+    auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
+    VkCommandBuffer cmdBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
+
+    mCurrentVKImage = nullptr;
+    mCurrentRenderPassInfo = renderPassInfo;
+    updateMainPassCB(mCurrentRenderPassInfo.cam);
+  
+    VkRenderingAttachmentInfo colorAttachments[MAX_RENDER_TARGET_ATTACHMENTS] = {};
+    VkRenderingAttachmentInfo depthAttachment = {};
+
+    for (auto i = 0; i < renderPassInfo.renderTargetCount; i++)
+    {
+        colorAttachments[i].sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO_KHR;
+        colorAttachments[i].pNext = NULL;
+        colorAttachments[i].imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        colorAttachments[i].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        colorAttachments[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        Ogre::VulkanRenderTarget* rt = (Ogre::VulkanRenderTarget*)renderPassInfo.renderTargets[i].renderTarget;
+        mCurrentVKImage = rt->getImage();
+
+        vks::tools::insertImageMemoryBarrier(
+            cmdBuffer,
+            rt->getImage(),
+            0,
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+            VK_IMAGE_LAYOUT_UNDEFINED,
+            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
+
+        colorAttachments[i].imageView = rt->getImageView();
+        const ClearValue* clearValue = &renderPassInfo.renderTargets[i].clearColour;
+        colorAttachments[i].clearValue.color = { { clearValue->r, clearValue->g, clearValue->b, clearValue->a } };
+    }
+
+    bool hasDepth = true;
+
+    if (hasDepth)
+    {
+        depthAttachment.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO_KHR;
+        depthAttachment.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+
+        Ogre::VulkanRenderTarget* rt = (Ogre::VulkanRenderTarget*)renderPassInfo.depthTarget.depthStencil;
+        depthAttachment.imageView = rt->getImageView();
+
+        vks::tools::insertImageMemoryBarrier(
+            cmdBuffer,
+            rt->getImage(),
+            0,
+            VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+            VK_IMAGE_LAYOUT_UNDEFINED,
+            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+            VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+            VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+            VkImageSubresourceRange{ VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 });
+
+        const ClearValue* clearValue = &renderPassInfo.depthTarget.clearValue;
+        depthAttachment.clearValue.depthStencil = { clearValue->depth, clearValue->stencil };
+
+    }
+
+    VkRect2D renderArea = {};
+    renderArea.offset.x = 0;
+    renderArea.offset.y = 0;
+    uint32_t layerCount = 0;
+    if (renderPassInfo.renderTargetCount)
+    {
+        renderArea.extent.width = renderPassInfo.renderTargets[0].renderTarget->getWidth();
+        renderArea.extent.height = renderPassInfo.renderTargets[0].renderTarget->getHeight();
+        layerCount = 1;
+    }
+    else if (hasDepth)
+    {
+        renderArea.extent.width = renderPassInfo.depthTarget.depthStencil->getWidth();
+        renderArea.extent.height = renderPassInfo.depthTarget.depthStencil->getHeight();
+        layerCount = 1;
+    }
+    else
+    {
+        assert(false);
+    }
+
+    VkRenderingInfoKHR renderingInfo = {};
+    renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO_KHR;
+    renderingInfo.pColorAttachments = colorAttachments;
+    renderingInfo.colorAttachmentCount = renderPassInfo.renderTargetCount;
+    renderingInfo.pDepthAttachment = hasDepth ? &depthAttachment : nullptr;
+    renderingInfo.pStencilAttachment = hasDepth ? &depthAttachment : nullptr;
+    renderingInfo.renderArea = renderArea;
+    renderingInfo.layerCount = layerCount;
+
+  
+    bluevk::vkCmdBeginRenderingKHR(cmdBuffer, &renderingInfo);
+
+    auto width = renderArea.extent.width;
+    auto height = renderArea.extent.height;
+    VkViewport viewport = vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
+    VkRect2D scissor = vks::initializers::rect2D(width, height, 0, 0);
+
+    bluevk::vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+    bluevk::vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+}
+
+void VulkanRenderSystem::endRenderPass()
+{
+    auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
+    VkCommandBuffer cmdBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
+
+    vkCmdEndRenderingKHR(cmdBuffer);
+
+    if (mCurrentVKImage)
+    {
+        vks::tools::insertImageMemoryBarrier(
+            cmdBuffer,
+            mCurrentVKImage,
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+            0,
+            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+            VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
+    }
     
-    updateMainPassCB(mCamera);
-    mActiveRenderTarget = target;
-    mActiveRenderTarget->preRender(colour);
-    
+
+    VulkanHelper::getSingleton()._endCommandBuffer(frameIndex);
+}
+
+void VulkanRenderSystem::present()
+{
+    auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
+    VkSubmitInfo submitInfo = {};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+
+    VkPipelineStageFlags waitDestStageMasks[2] = {
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+    };
+
+    auto imageAvailableSemaphore = mCurrentVulkanFrame->getImageAvailableSemaphore();
+    auto renderFinshedSemaphore = mCurrentVulkanFrame->getFinishedSemaphore();
+
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = &imageAvailableSemaphore;
+
+    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffer;
+
+
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = &renderFinshedSemaphore;
+    submitInfo.pWaitDstStageMask = waitDestStageMasks;
+
+    auto queue = VulkanHelper::getSingleton()._getCommandQueue();
+    auto fence = mCurrentVulkanFrame->getFence();
+    auto result = vkQueueSubmit(queue, 1, &submitInfo, fence);
+    if (result != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to submit draw command buffer!");
+    }
+
+    auto device = VulkanHelper::getSingleton()._getVkDevice();
+
+    //vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+
+
+
+
+    auto swapchain = VulkanHelper::getSingleton().getSwapchain();
+
+    VkPresentInfoKHR presentInfo = {};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.pNext = NULL;
+    presentInfo.waitSemaphoreCount = 1;
+    presentInfo.pWaitSemaphores = &renderFinshedSemaphore;
+
+    presentInfo.swapchainCount = 1;
+    presentInfo.pSwapchains = &swapchain;
+
+    presentInfo.pImageIndices = &mImageIndex;
+
+    result = vkQueuePresentKHR(queue, &presentInfo);
+
+    if (result != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to present swap chain image!");
+    }
+
+    mFrameIndex++;
+
+    mFrameIndex %= VULKAN_FRAME_RESOURCE_COUNT;
+
+
 }
 
 void VulkanRenderSystem::clearFrameBuffer(uint32 buffers,
@@ -227,9 +410,21 @@ Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
 
     mRenderWindow->create(name, width, height, false, miscParams);
 
-    attachRenderTarget(*mRenderWindow);
-
     return mRenderWindow;
+}
+
+Ogre::RenderTarget* VulkanRenderSystem::createRenderTarget(
+    const String& name, uint32_t width, uint32_t height, Ogre::PixelFormat format, Ogre::TextureUsage usage)
+{
+    TextureProperty texProperty;
+    texProperty._width = width;
+    texProperty._height = height;
+    texProperty._tex_usage = usage;
+    texProperty._tex_format = format;
+    texProperty._need_mipmap = false;
+    
+    Ogre::VulkanRenderTarget* renderTarget = new Ogre::VulkanRenderTarget(name, texProperty);
+    return renderTarget;
 }
 
 void VulkanRenderSystem::update(Renderable* r)
@@ -384,7 +579,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
 
 void VulkanRenderSystem::rayTracingRender(std::vector<Ogre::Renderable*>& objs)
 {
-    mRayTracingContext->render(objs, mCamera);
+    mRayTracingContext->render(objs, _getCamera());
 }
 
 void VulkanRenderSystem::updateMainPassCB(ICamera* camera)
@@ -426,6 +621,45 @@ void VulkanRenderSystem::updateMainPassCB(ICamera* camera)
     mCurrentVulkanFrame->updateFrameConstantBuffer(mFrameConstantBuffer, camera);
 }
 
+VulkanFrame* VulkanRenderSystem::getNextFrame()
+{
+    auto swapchain = VulkanHelper::getSingleton().getSwapchain();
+    auto device = VulkanHelper::getSingleton()._getVkDevice();
+
+    auto frame = VulkanHelper::getSingleton()._getFrame(mFrameIndex);
+
+    auto fence = frame->getFence();
+
+    VkResult result = vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+
+    if (result != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkWaitForFences error");
+    }
+
+    result = vkResetFences(device, 1, &fence);
+
+    if (result != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkResetFences error");
+    }
+
+    auto imageAvailableSemaphore = frame->getImageAvailableSemaphore();
+    result = vkAcquireNextImageKHR(
+        device,
+        swapchain,
+        std::numeric_limits<uint64_t>::max(),
+        imageAvailableSemaphore,
+        VK_NULL_HANDLE,
+        &mImageIndex);
+    if (result != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkAcquireNextImageKHR error");
+    }
+
+
+    return frame;
+}
 
 VulkanFrame* VulkanRenderSystem::_getCurrentFrame()
 {
@@ -434,7 +668,7 @@ VulkanFrame* VulkanRenderSystem::_getCurrentFrame()
 
 ICamera* VulkanRenderSystem::_getCamera()
 {
-    return mCamera;
+    return mCurrentRenderPassInfo.cam;
 }
 
 void VulkanRenderSystem::generateIrradianceMap()
@@ -455,7 +689,7 @@ Ogre::OgreTexture* VulkanRenderSystem::generateCubeMap(
     CubeType type)
 {
     Ogre::TextureProperty texProperty;
-    texProperty._tex_usage = TU_STATIC_WRITE_ONLY;
+    texProperty._tex_usage = Ogre::TextureUsage::UPLOADABLE;
     texProperty._texType = TEX_TYPE_CUBE_MAP;
     texProperty._width = dim;
     texProperty._height = dim;
@@ -981,7 +1215,7 @@ Ogre::OgreTexture* VulkanRenderSystem::generateBRDFLUT(const std::string& name)
     const uint32_t numMips = static_cast<uint32_t>(floor(log2(dim))) + 1;
 
     Ogre::TextureProperty texProperty;
-    texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
+    texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
     texProperty._texType = TEX_TYPE_2D;
     texProperty._width = dim;
     texProperty._height = dim;

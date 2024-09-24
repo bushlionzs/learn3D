@@ -192,7 +192,7 @@ VkPipeline VulkanShader::getVKPipeline(Ogre::Renderable* r)
     VkGraphicsPipelineCreateInfo pipelineCreateInfo =
         vks::initializers::pipelineCreateInfo(
             pipelineLayout,
-            VulkanHelper::getSingleton()._getRenderPass(),
+            nullptr,
             0);
 
     pipelineCreateInfo.pVertexInputState = &vertexInputInfo;
@@ -205,6 +205,19 @@ VkPipeline VulkanShader::getVKPipeline(Ogre::Renderable* r)
     pipelineCreateInfo.pDynamicState = &dynamicState;
     pipelineCreateInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
     pipelineCreateInfo.pStages = shaderStages.data();
+    pipelineCreateInfo.renderPass = nullptr;
+
+    VkPipelineRenderingCreateInfoKHR pipelineRenderingCreateInfo{};
+
+    auto depthFormat = VulkanHelper::getSingleton()._getDepthFormat();
+    auto colorFormat = VulkanHelper::getSingleton().getSwapChainImageFormat();
+    pipelineRenderingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
+    pipelineRenderingCreateInfo.colorAttachmentCount = 1;
+    pipelineRenderingCreateInfo.pColorAttachmentFormats = &colorFormat;
+    pipelineRenderingCreateInfo.depthAttachmentFormat = depthFormat;
+    pipelineRenderingCreateInfo.stencilAttachmentFormat = depthFormat;
+
+    pipelineCreateInfo.pNext = &pipelineRenderingCreateInfo;
 
     if (vkCreateGraphicsPipelines(
         VulkanHelper::getSingleton()._getVkDevice(),

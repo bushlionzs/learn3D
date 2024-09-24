@@ -23,22 +23,6 @@ VulkanHardwarePixelBuffer::VulkanHardwarePixelBuffer(
 	mMipLevel(mipLevel)
 {
 	mUsage = usage;
-
-	if (mUsage & Ogre::TU_RENDERTARGET)
-	{
-		// Create render target for each slice
-		mSliceTRT.reserve(mDepth);
-		for (size_t zoffset = 0; zoffset < mDepth; ++zoffset)
-		{
-			String name;
-			name = "rtt/" + StringConverter::toString((size_t)this) + "/" + parentTexture->getName();
-
-			RenderTexture* trt = new VulkanRenderTexture(name, this, zoffset);
-			mSliceTRT.push_back(trt);
-			VulkanHelper::getSingleton()._getRenderSystem()->attachRenderTarget(*trt);
-		}
-	}
-
 	mSizeInBytes = PixelUtil::getMemorySize(width, height, depth, format);
 	
 }

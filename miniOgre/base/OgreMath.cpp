@@ -1096,60 +1096,15 @@ namespace Ogre
         Matrix4 m = Matrix4::IDENTITY;
         m[0][0] = 2.0f / (right - left);
         m[1][1] = 2.0f / (top - bottom);
-        m[3][0] = -(right + left) / (right - left);
-        m[3][1] = -(top + bottom) / (top - bottom);
+        m[2][2] = -1.0f / (zFar - zNear);
 
-        m[2][2] = 1.0f / (zFar - zNear);
-        m[3][2] = -zNear / (zFar - zNear);
+        m[0][3] = -(right + left) / (right - left);
+        m[1][3] = -(top + bottom) / (top - bottom);
+
+        
+        m[2][3] = -zNear / (zFar - zNear);
 
 
-        return m.transpose();
-    }
-
-    Matrix4 makeOrthographicOffCenterLH(
-        float left,
-        float right,
-        float bottom,
-        float top,
-        float nearZ,
-        float farZ)
-    {
-        Real inv_w = 1 / (right - left);
-        Real inv_h = 1 / (top - bottom);
-        Real inv_d = 1 / (farZ - nearZ);
-
-        Real A = 2 * inv_w;
-        Real B = 2 * inv_h;
-        Real C = -(right + left) * inv_w;
-        Real D = -(top + bottom) * inv_h;
-        Real q, qn;
-        if (farZ == 0)
-        {
-            // Can not do infinite far plane here, avoid divided zero only
-            q = -0.00001 / nearZ;
-            qn = -0.00001 - 1;
-        }
-        else
-        {
-            q = -2 * inv_d;
-            qn = -(farZ + nearZ) * inv_d;
-        }
-
-        Matrix4 m;
-        m = Matrix4::ZERO;
-        m[0][0] = A;
-        m[0][3] = C;
-        m[1][1] = B;
-        m[1][3] = D;
-        m[2][2] = q;
-        m[2][3] = qn;
-        m[3][3] = 1;
-
-        // Convert depth range from [-1,+1] to [0,1]
-        m[2][0] = (m[2][0] + m[3][0]) / 2;
-        m[2][1] = (m[2][1] + m[3][1]) / 2;
-        m[2][2] = (m[2][2] + m[3][2]) / 2;
-        m[2][3] = (m[2][3] + m[3][3]) / 2;
         return m;
     }
 
@@ -1161,22 +1116,17 @@ namespace Ogre
         float zNear,
         float zFar)
     {
-        {
-            Matrix4 tmp = makeOrthographicOffCenterLH(left, right, bottom, top, zNear, zFar);
-            return tmp;
-        }
         Matrix4 m = Matrix4::IDENTITY;
         m[0][0] = 2.0f / (right - left);
         m[1][1] = 2.0f / (top - bottom);
-        m[3][0] = -(right + left) / (right - left);
-        m[3][1] = -(top + bottom) / (top - bottom);
-
-        // Convert depth range from [-1,+1] to [0,1]
         m[2][2] = 1.0f / (zFar - zNear);
-        m[3][2] = -zNear / (zFar - zNear);
 
-        
-        return m.transpose();
+        m[0][3] = -(right + left) / (right - left);
+        m[1][3] = -(top + bottom) / (top - bottom);
+
+        m[2][3] = -zNear / (zFar - zNear);
+   
+        return m;
     }
 
     Matrix4 Math::makeLookAtRH(

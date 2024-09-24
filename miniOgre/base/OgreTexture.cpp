@@ -32,6 +32,20 @@ namespace Ogre {
 		_samplerParams.padding1 = 0;
 		_samplerParams.padding2 = 0;
 	}
+
+	bool TextureProperty::isRenderTarget()
+	{
+		if (_tex_usage & Ogre::TextureUsage::COLOR_ATTACHMENT)
+		{
+			return true;
+		}
+		if (_tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+		{
+			return true;
+		}
+		return false;
+	}
+
 	OgreTexture::OgreTexture(const String& name, TextureProperty* texProperty)
 	{
 		mName = name;
@@ -101,7 +115,7 @@ namespace Ogre {
 			mFace = 6;
 		}
 
-		if ((mUsage & TU_RENDERTARGET) || mUsage == TU_DYNAMIC_WRITE_ONLY || mUsage == TU_STATIC_WRITE_ONLY)
+		if (mTextureProperty.isRenderTarget())
 		{
 			mFormat = mTextureProperty._tex_format;
 			createInternalResources();

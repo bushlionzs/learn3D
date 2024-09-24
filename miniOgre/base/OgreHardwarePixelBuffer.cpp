@@ -52,10 +52,6 @@ namespace Ogre
     //-----------------------------------------------------------------------------    
     HardwarePixelBuffer::~HardwarePixelBuffer()
     {
-        if (mUsage & TU_RENDERTARGET)
-        {
-            assert(false);
-        }
     }
     
   
@@ -111,7 +107,7 @@ namespace Ogre
     
     RenderTexture *HardwarePixelBuffer::getRenderTarget(size_t zoffset)
     {
-        assert(mUsage & TU_RENDERTARGET);
+        assert(false);
         return mSliceTRT.at(zoffset);
     }
     //-----------------------------------------------------------------------------    

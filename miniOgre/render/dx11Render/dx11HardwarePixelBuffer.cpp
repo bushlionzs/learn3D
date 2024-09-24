@@ -24,20 +24,7 @@ Dx11HardwarePixelBuffer::Dx11HardwarePixelBuffer(
 {
 	mUsage = usage;
 
-	if (mUsage & Ogre::TU_RENDERTARGET)
-	{
-		// Create render target for each slice
-		mSliceTRT.reserve(mDepth);
-		for (size_t zoffset = 0; zoffset < mDepth; ++zoffset)
-		{
-			String name;
-			name = "rtt/" + StringConverter::toString((size_t)this) + "/" + parentTexture->getName();
-
-			RenderTexture* trt = new Dx11RenderTexture(name, this, zoffset);
-			mSliceTRT.push_back(trt);
-			DX11Helper::getSingleton().getRenderSystem()->attachRenderTarget(*trt);
-		}
-	}
+	
 }
 
 Dx11HardwarePixelBuffer::~Dx11HardwarePixelBuffer()
@@ -85,11 +72,6 @@ void Dx11HardwarePixelBuffer::blitToMemory(const Box& srcBox, const PixelBox& ds
 
 void* Dx11HardwarePixelBuffer::lockimpl(size_t offset, size_t length, LockOptions options)
 {
-	if (mUsage & TU_RENDERTARGET)
-	{
-		OGRE_EXCEPT(0);
-	}
-
 	createStagingBuffer();
 
 	mLockedBox = Box(0, 0, 0, mWidth, mHeight, mDepth);

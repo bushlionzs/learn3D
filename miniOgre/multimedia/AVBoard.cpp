@@ -58,7 +58,7 @@ void AVBoard::make_board_object(int w, int h)
         texProperty._width = w;
         texProperty._height = h;
         texProperty._tex_format = PF_A8R8G8B8;
-        texProperty._tex_usage = TU_DYNAMIC_WRITE_ONLY;
+        texProperty._tex_usage = Ogre::TextureUsage::UPLOADABLE;
         mAVTexture = TextureManager::getSingleton().createManual(mMatName, texProperty);
         mAVMaterial->addTexture(mAVTexture);
     }

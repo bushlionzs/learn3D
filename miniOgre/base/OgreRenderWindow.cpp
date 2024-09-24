@@ -31,38 +31,10 @@ THE SOFTWARE.
 namespace Ogre {
 
     RenderWindow::RenderWindow()
-        : RenderTarget(), mIsFullScreen(false), mIsPrimary(false), mClosed(false), mLeft(0), mTop(0), mVSyncInterval(1)
+        :mWidth(0), mHeight(0)
     {
-        mAutoDeactivatedOnFocusChange = true;
+       
     }
 
-    //-----------------------------------------------------------------------
-    void RenderWindow::getMetrics(unsigned int& width, unsigned int& height,
-        int& left, int& top) const
-    {
-        width = mWidth;
-        height = mHeight;
-        left = mLeft;
-        top = mTop;
-    }
-    //-----------------------------------------------------------------------
-    bool RenderWindow::isFullScreen(void) const
-    {
-        return mIsFullScreen;
-    }
-    //-----------------------------------------------------------------------
-    bool RenderWindow::isPrimary(void) const
-    {
-        return mIsPrimary;
-    }
-
-    bool RenderWindow::isDeactivatedOnFocusChange() const
-    {
-        return mAutoDeactivatedOnFocusChange;
-    }
-
-    void RenderWindow::setDeactivateOnFocusChange(bool deactivate)
-    {
-        mAutoDeactivatedOnFocusChange = deactivate;
-    }
+    
 }

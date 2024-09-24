@@ -40,31 +40,14 @@ namespace Ogre {
 
     enum TextureUsage
     {
-        /// same as #HBU_GPU_TO_CPU
-        TU_STATIC = HBU_GPU_TO_CPU,
-        /// same as #HBU_CPU_ONLY
-        TU_DYNAMIC = HBU_CPU_ONLY,
-        /// same as #HBU_DETAIL_WRITE_ONLY
-        TU_WRITE_ONLY = HBU_DETAIL_WRITE_ONLY,
-        /// same as #HBU_GPU_ONLY
-        TU_STATIC_WRITE_ONLY = HBU_GPU_ONLY,
-        /// same as #HBU_CPU_TO_GPU
-        TU_DYNAMIC_WRITE_ONLY = HBU_CPU_TO_GPU,
-        /// Mipmaps will be automatically generated for this texture
-        TU_AUTOMIPMAP = 0x10,
-        /** This texture will be a render target, i.e. used as a target for render to texture
-            setting this flag will ignore all other texture usages except TU_AUTOMIPMAP, TU_UAV, TU_NOT_SRV */
-        TU_RENDERTARGET = 0x20,
-        /// Texture would not be used as Shader Resource View, i.e. as regular texture.
-        /// That flag could be combined with TU_RENDERTARGET or TU_UAV to remove possible limitations on some hardware
-        TU_NOT_SRV = 0x40,
-        /// Texture can be bound as an Unordered Access View
-        /// (imageStore/imageRead/glBindImageTexture in GL jargon)
-        TU_UAV = 0x80,
-        /// Texture can be used as an UAV, but not as a regular texture.
-        TU_UAV_NOT_SRV = TU_UAV | TU_NOT_SRV,
-        /// Default to automatic mipmap generation static textures
-        TU_DEFAULT = TU_AUTOMIPMAP | HBU_GPU_ONLY,
+        NONE = 0x0000,
+        COLOR_ATTACHMENT = 0x0001,            //!< Texture can be used as a color attachment
+        DEPTH_ATTACHMENT = 0x0002,            //!< Texture can be used as a depth attachment
+        STENCIL_ATTACHMENT = 0x0004,          //!< Texture can be used as a stencil attachment
+        UPLOADABLE = 0x0008,                  //!< Data can be uploaded into this texture (default)
+        SAMPLEABLE = 0x0010,                  //!< Texture can be sampled (default)
+       
+        TU_DEFAULT = UPLOADABLE | SAMPLEABLE,
     };
 
     
@@ -87,6 +70,7 @@ namespace Ogre {
         TextureAddressingMode  _tex_addr_mod;
         filament::backend::SamplerParams _samplerParams;
         TextureProperty();
+        bool isRenderTarget();
     };
 
     class OgreTexture

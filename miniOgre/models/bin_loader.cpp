@@ -7,27 +7,7 @@
 #include "shader.h"
 #include "OgreMaterial.h"
 
-enum
-{
-    MAX_INSTANCE_EXTENSIONS = 64,
-    MAX_DEVICE_EXTENSIONS = 64,
-    /// Max number of GPUs in SLI or Cross-Fire
-    MAX_LINKED_GPUS = 4,
-    /// Max number of GPUs in unlinked mode
-    MAX_UNLINKED_GPUS = 4,
-    /// Max number of GPus for either linked or unlinked mode. must update WindowsBase::setupPlatformUI accordingly
-    MAX_MULTIPLE_GPUS = 4,
-    MAX_RENDER_TARGET_ATTACHMENTS = 8,
-    MAX_VERTEX_BINDINGS = 15,
-    MAX_VERTEX_ATTRIBS = 15,
-    MAX_RESOURCE_NAME_LENGTH = 256,
-    MAX_SEMANTIC_NAME_LENGTH = 128,
-    MAX_DEBUG_NAME_LENGTH = 128,
-    MAX_MIP_LEVELS = 0xFFFFFFFF,
-    MAX_SWAPCHAIN_IMAGES = 3,
-    MAX_GPU_VENDOR_STRING_LENGTH = 256, // max size for GPUVendorPreset strings
-    MAX_SAMPLE_LOCATIONS = 16,
-};
+
 
 typedef enum IndexType
 {

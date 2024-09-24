@@ -29,6 +29,12 @@ OgreTexture* RenderSystem::createTextureFromFile(
     return nullptr;
 }
 
+Ogre::RenderTarget* RenderSystem::createRenderTarget(
+    const String& name, uint32_t width, uint32_t height, Ogre::PixelFormat format, Ogre::TextureUsage usage)
+{
+    return nullptr;
+}
+
 Shader* RenderSystem::createShader(ShaderInfo& sinfo)
 {
     return nullptr;
@@ -37,6 +43,7 @@ Shader* RenderSystem::createShader(ShaderInfo& sinfo)
 
 Viewport* RenderSystem::_getViewport()
 {
+    return nullptr;
     return mViewport;
 }
 
@@ -45,11 +52,17 @@ void RenderSystem::_setViewport(ICamera* cam, Viewport* vp)
 
 }
 
-void RenderSystem::beginRenderPass(
-    Ogre::ICamera* cam,
-    RenderTarget* target,
-    Ogre::OgreTexture* depth,
-    const Ogre::ColourValue& colour)
+void RenderSystem::beginRenderPass(RenderPassInfo& renderPassInfo)
+{
+
+}
+
+void RenderSystem::endRenderPass()
+{
+
+}
+
+void RenderSystem::present()
 {
 
 }
@@ -61,30 +74,14 @@ void RenderSystem::clearFrameBuffer(uint32 buffers,
 
 }
 
-void RenderSystem::attachRenderTarget(RenderTarget& target)
-{
-    assert(target.getPriority() < OGRE_NUM_RENDERTARGET_GROUPS);
-
-    mRenderTargets.emplace(target.getName(), &target);
-    mPrioritisedRenderTargets.emplace(target.getPriority(), &target);
-}
-
 void RenderSystem::_updateAllRenderTargets(bool swapBuffers)
 {
-    for (auto& rt : mPrioritisedRenderTargets)
-    {
-        if (rt.second->isActive() && rt.second->isAutoUpdated())
-            rt.second->update(swapBuffers);
-    }
+   
 }
 
 void RenderSystem::_swapAllRenderTargetBuffers()
 {
-    for (auto& rt : mPrioritisedRenderTargets)
-    {
-        if (rt.second->isActive() && rt.second->isAutoUpdated())
-            rt.second->swapBuffers();
-    }
+    
 }
 
 

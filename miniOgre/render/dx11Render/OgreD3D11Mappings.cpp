@@ -640,7 +640,8 @@ namespace Ogre
 		// We mark all textures as render target to be able to use GenerateMips() on it
 		// TODO: use DDSTextureLoader way of determining supported formats via CheckFormatSupport() & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN
 		// TODO: explore DDSTextureLoader way of generating mips on temporary texture, to avoid D3D11_BIND_RENDER_TARGET flag injection 
-		bool isRenderTarget = /*(usage & TU_RENDERTARGET) &&*/ !(usage & TU_DYNAMIC);
+        assert(false); //view commit log
+        bool isRenderTarget = false;
 
 		// check for incompatible pixel formats
 		if(isRenderTarget)
@@ -703,14 +704,16 @@ namespace Ogre
 		}
 
         UINT retVal = 0;
-        if( !(usage & TU_NOT_SRV) )
+        assert(false);
+        //view commit log
+        /*if( !(usage & TU_NOT_SRV) )
             retVal |= D3D11_BIND_SHADER_RESOURCE;
 
         if( isRenderTarget )
             retVal |= D3D11_BIND_RENDER_TARGET;
 
         if( usage & TU_UAV )
-            retVal |= D3D11_BIND_UNORDERED_ACCESS;
+            retVal |= D3D11_BIND_UNORDERED_ACCESS;*/
 
         return retVal;
 	}

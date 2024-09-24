@@ -35,8 +35,8 @@ bool VulkanRenderTexture::requiresTextureFlipping() const
 
 void VulkanRenderTexture::preRender(VulkanFrame* frame, const ColourValue& colour)
 {
-	auto width = getTargetWidth();
-	auto height = getTargetHeight();
+	auto width = mParentTexture->getWidth();
+	auto height = mParentTexture->getHeight();
 	
 
 	auto frame_index = frame->getFrameIndex();
