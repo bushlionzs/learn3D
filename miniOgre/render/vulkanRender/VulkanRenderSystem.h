@@ -36,8 +36,6 @@ public:
         const std::string& name,
         Ogre::TextureProperty* texProperty);
 
-    virtual Shader* createShader(ShaderInfo& sinfo);
-
     virtual void ready();
 
     

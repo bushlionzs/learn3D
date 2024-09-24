@@ -1,6 +1,9 @@
+#include <OgreHeader.h>
 #include "glslUtil.h"
 #include <libshaderc_util/file_finder.h>
 #include <SPIRV_Cross/spirv_glsl.hpp>
+#include <VulkanTools.h>
+#include <VulkanHelper.h>
 #include <mutex>
 
 static std::string getContentFromFile(const char* name)
@@ -77,30 +80,33 @@ std::string getGlslKey(
     return result;
 }
 
-static std::unordered_map<std::string, std::string> gGlslCacheMap;
+struct ShaderContent
+{
+    VkShaderModule shaderModule;
+    std::vector<GlslInputDesc> inputDesc;
+};
+static std::unordered_map<std::string, ShaderContent> gVertexShaderCacheMap;
 
 static std::mutex gShaderMutex;
 
-bool glslCompileShader(
-    std::string& result,
+VkShaderModule glslCompileVertexShader(
     std::string& shaderName,
     std::string& shaderContent,
     std::string& entryPoint,
 	const std::vector<std::pair<std::string, std::string>>& shaderMacros,
-    shaderc_shader_kind kind
+    std::vector<GlslInputDesc>& inputDesc
 )
 {
-
-    std::string key = getGlslKey(shaderName, shaderMacros, kind);
+    std::string key = getGlslKey(shaderName, shaderMacros, shaderc_glsl_vertex_shader);
 
     {
         std::unique_lock<std::mutex> lck(gShaderMutex);
-        auto itor = gGlslCacheMap.find(key);
+        auto itor = gVertexShaderCacheMap.find(key);
 
-        if (itor != gGlslCacheMap.end())
+        if (itor != gVertexShaderCacheMap.end())
         {
-            result = itor->second;
-            return true;
+            inputDesc = itor->second.inputDesc;
+            return itor->second.shaderModule;
         }
     }
     
@@ -119,19 +125,14 @@ bool glslCompileShader(
         options.AddMacroDefinition(pair.first, pair.second);
     }
 
-    if (kind == shaderc_glsl_vertex_shader)
-    {
-        options.AddMacroDefinition("VERTEX_SHADER", "1");
-    }
-    else if (kind == shaderc_glsl_fragment_shader)
-    {
-        options.AddMacroDefinition("FRAGMENT_SHADER", "1");
-    }
+  
+    options.AddMacroDefinition("VERTEX_SHADER", "1");
+
 
     shaderc::SpvCompilationResult module =
         compiler.CompileGlslToSpv(
             shaderContent, 
-            kind, 
+            shaderc_glsl_vertex_shader,
             shaderName.c_str(), 
             entryPoint.c_str(),
             options);
@@ -139,27 +140,113 @@ bool glslCompileShader(
     if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
         std::string aa  = module.GetErrorMessage();
         assert(false);
-        return false;
+        return VK_NULL_HANDLE;
     }
 
 
     std::vector<uint32_t> aa = { module.cbegin(), module.cend() };
 
+    std::string result;
     result.resize(aa.size() * sizeof(uint32_t));
     memcpy((void*)result.data(), aa.data(), aa.size() * sizeof(uint32_t));
+    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    VkShaderModule shader = vks::tools::loadShaderMemory(result, device);
+    if (VK_NULL_HANDLE == shader)
+    {
+        return VK_NULL_HANDLE;
+    }
 
-    
     {
         std::unique_lock<std::mutex> lck(gShaderMutex);
-        auto itor = gGlslCacheMap.find(key);
-        if (itor == gGlslCacheMap.end())
+        auto itor = gVertexShaderCacheMap.find(key);
+        if (itor == gVertexShaderCacheMap.end())
         {
-            gGlslCacheMap[key] = result;
+            gVertexShaderCacheMap[key].shaderModule = shader;
+            parserGlslInputDesc(result, inputDesc);
+            gVertexShaderCacheMap[key].inputDesc = inputDesc;
         }
     }
+
+    return shader;
+}
+
+static std::unordered_map<std::string, VkShaderModule> gFragShaderCacheMap;
+
+VkShaderModule glslCompileFragShader(
+    std::string& shaderName,
+    std::string& shaderContent,
+    std::string& entryPoint,
+    const std::vector<std::pair<std::string, std::string>>& shaderMacros
+)
+{
+    std::string key = getGlslKey(shaderName, shaderMacros, shaderc_glsl_fragment_shader);
+
+    {
+        std::unique_lock<std::mutex> lck(gShaderMutex);
+        auto itor = gFragShaderCacheMap.find(key);
+
+        if (itor != gFragShaderCacheMap.end())
+        {
+            return itor->second;
+        }
+    }
+
+    shaderc::Compiler compiler;
+    shaderc::CompileOptions options;
+
+
+    auto pos = shaderName.find_last_of("\\");
+    std::string rootpath = shaderName.substr(0, pos + 1);
+
+
+    options.SetIncluder(std::make_unique<MyIncluderInterface>(rootpath));
+    // Like -DMY_DEFINE=1
+    for (auto& pair : shaderMacros)
+    {
+        options.AddMacroDefinition(pair.first, pair.second);
+    }
+
+
+    options.AddMacroDefinition("FRAGMENT_SHADER", "1");
     
 
-    return true;
+    shaderc::SpvCompilationResult module =
+        compiler.CompileGlslToSpv(
+            shaderContent,
+            shaderc_glsl_fragment_shader,
+            shaderName.c_str(),
+            entryPoint.c_str(),
+            options);
+
+    if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
+        std::string aa = module.GetErrorMessage();
+        assert(false);
+        return VK_NULL_HANDLE;
+    }
+
+
+    std::vector<uint32_t> aa = { module.cbegin(), module.cend() };
+
+    std::string result;
+    result.resize(aa.size() * sizeof(uint32_t));
+    memcpy((void*)result.data(), aa.data(), aa.size() * sizeof(uint32_t));
+    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    VkShaderModule shader = vks::tools::loadShaderMemory(result, device);
+    if (VK_NULL_HANDLE == shader)
+    {
+        return VK_NULL_HANDLE;
+    }
+
+    {
+        std::unique_lock<std::mutex> lck(gShaderMutex);
+        auto itor = gFragShaderCacheMap.find(key);
+        if (itor == gFragShaderCacheMap.end())
+        {
+            gFragShaderCacheMap[key] = shader;
+        }
+    }
+
+    return shader;
 }
 
 void parserGlslInputDesc(

@@ -76,184 +76,28 @@ namespace Ogre {
 
     void Material::load(utils::JobSystem::Job* job)
     {
-        if (job)
+        if (mLoad)
         {
-            if (mState > ResourceState::NONE)
-            {
-                return;
-            }
+            return;
+        }
 
-            mState = ResourceState::LOADING;
 
-            for (auto& it : mTextureUnits)
+        if (!mVideoName.empty())
+        {
+
+            VideoManager::getSingleton()._playVideoMaterial(mMaterialName);
+        }
+
+
+        for (auto& it : mTextureUnits)
+        {
+            if (!it->isLoaded())
             {
                 it->_load(job);
             }
-
-            auto* engine = Ogre::Root::getSingleton().getEngine();
-
-            backend::Program p(mMaterialName.c_str());
-            Ogre::ShaderPrivateInfo* privateInfo =
-                ShaderManager::getSingleton().getShader(mShaderInfo.shaderName, EngineType_Vulkan);
-
-            String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
-            auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
-
-            std::string vertexSpv;
-
-            glslCompileShader(
-                vertexSpv,
-                res->_fullname,
-                *vertexContent,
-                privateInfo->vertexShaderEntryPoint,
-                mShaderInfo.shaderMacros,
-                shaderc_glsl_vertex_shader);
-
-            p.shader(backend::ShaderStage::VERTEX, vertexSpv.data(), vertexSpv.size());
-
-            String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
-            res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
-            std::string fragSpv;
-
-            glslCompileShader(
-                fragSpv,
-                res->_fullname,
-                *fragContent,
-                privateInfo->fragShaderEntryPoint,
-                mShaderInfo.shaderMacros,
-                shaderc_glsl_fragment_shader);
-
-            p.shader(backend::ShaderStage::FRAGMENT, fragSpv.data(), fragSpv.size());
-
-            p.shaderLanguage(backend::ShaderLanguage::SPIRV);
-
-            utils::FixedCapacityVector<std::pair<utils::CString, uint8_t>>  uniformBlockBindings(4);
-
-            uniformBlockBindings[0] = {"ObjectUniforms", 0};
-            uniformBlockBindings[1] = { "FrameUniforms", 1 };
-            uniformBlockBindings[2] = { "MaterialUniforms", 2 };
-            uniformBlockBindings[3] = { "SkinnedUniforms", 3 };
-
-            p.uniformBlockBindings(uniformBlockBindings);
-            std::array<backend::Program::Sampler, backend::MAX_SAMPLER_COUNT> samplers{};
-
-            samplers[0] = {"first", 0};
-            samplers[1] = { "second", 1 };
-            samplers[2] = { "third", 2 };
-            samplers[3] = { "gCubeMap", 3 };
-
-            uint32_t samplerCount = 0;
-            uint32_t samplerCubeCount = 0;
-            for (uint32_t i = 0; i < mTextureUnits.size(); i++)
-            {
-                if (mTextureUnits[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
-                {
-                    samplerCubeCount++;
-                }
-                else
-                {
-                    samplerCount++;
-                }
-            }
-
-            p.setSamplerGroup(0, backend::ShaderStageFlags::FRAGMENT, samplers.data(), samplerCount);
-
-            if (samplerCubeCount > 0)
-            {
-                p.setSamplerGroup(1, backend::ShaderStageFlags::FRAGMENT, samplers.data() + 3, 1);
-            }
-            
-
-            if (samplerCount > 0)
-            {
-                if (samplerCount == 3)
-                {
-                    int kk = 0;
-                }
-                mSamplerHandle = engine->getDriverApi().createSamplerGroup(
-                    samplerCount, utils::FixedSizeString<32>(mMaterialName.c_str()));
-
-                uint32_t index = 0;
-                backend::SamplerGroup sg(samplerCount);
-                for (uint32_t i = 0; i < mTextureUnits.size(); i++)
-                {
-                    backend::SamplerDescriptor sd;
-                    FTexture* ftex = (FTexture*)mTextureUnits[i]->getFTexture();
-                    sd.t = ftex->getHwHandle();
-                    sd.s.filterMag = filament::backend::SamplerMagFilter::LINEAR;
-                    sd.s.filterMin = filament::backend::SamplerMinFilter::LINEAR;
-                    sd.s.wrapR = filament::backend::SamplerWrapMode::REPEAT;
-                    sd.s.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-                    sd.s.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-                    if (mTextureUnits[i]->getTextureProperty()->_texType == TEX_TYPE_2D)
-                    {
-                        sg.setSampler(index++, sd);
-                    }
-
-                }
-
-                engine->getDriverApi().updateSamplerGroup(mSamplerHandle, sg.toBufferDescriptor(engine->getDriverApi()));
-            }
-            
-
-            if (samplerCubeCount > 0)
-            {
-                mSamplerCubeHandle = engine->getDriverApi().createSamplerGroup(
-                    samplerCubeCount, utils::FixedSizeString<32>(mMaterialName.c_str()));
-
-                uint32_t index = 0;
-                backend::SamplerGroup sg(samplerCubeCount);
-                for (uint32_t i = 0; i < mTextureUnits.size(); i++)
-                {
-                    backend::SamplerDescriptor sd;
-                    FTexture* ftex = (FTexture*)mTextureUnits[i]->getFTexture();
-                    sd.t = ftex->getHwHandle();
-                    sd.s.filterMag = filament::backend::SamplerMagFilter::LINEAR;
-                    sd.s.filterMin = filament::backend::SamplerMinFilter::LINEAR;
-                    sd.s.wrapR = filament::backend::SamplerWrapMode::REPEAT;
-                    sd.s.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-                    sd.s.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-                    if (mTextureUnits[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
-                    {
-                        sg.setSampler(index++, sd);
-                    }
-
-                }
-
-                engine->getDriverApi().updateSamplerGroup(mSamplerCubeHandle, sg.toBufferDescriptor(engine->getDriverApi()));
-            }
-
-            mProgram = engine->getDriverApi().createProgram(std::move(p));
-
-            mMaterialBufferHandle = engine->getDriverApi().createBufferObject(sizeof(MaterialConstantBuffer), backend::BufferObjectBinding::UNIFORM, backend::BufferUsage::DYNAMIC);
-
-            engine->getDriverApi().updateBufferObject(mMaterialBufferHandle, backend::BufferDescriptor(&mMatInfo, sizeof(MaterialConstantBuffer)), 0);
         }
-        else
-        {
-            if (mLoad)
-            {
-                return;
-            }
 
-
-            if (!mVideoName.empty())
-            {
-
-                VideoManager::getSingleton()._playVideoMaterial(mMaterialName);
-            }
-
-
-            for (auto& it : mTextureUnits)
-            {
-                if (!it->isLoaded())
-                {
-                    it->_load(job);
-                }
-            }
-
-            mLoad = true;
-        }
+        mLoad = true;
 
     }
 

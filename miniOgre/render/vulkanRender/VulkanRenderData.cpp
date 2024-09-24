@@ -5,7 +5,6 @@
 #include "VulkanRenderSystem.h"
 #include "OgreMaterial.h"
 #include "VulkanTexture.h"
-#include "VulkanShader.h"
 #include "OgreTextureUnit.h"
 #include "OgreRenderable.h"
 #include "engine_struct.h"
@@ -578,18 +577,14 @@ void VulkanRenderableData::buildPipelineData(Ogre::Material* mat)
         {
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to find shader!");
         }
-        String vertexSpv;
 
-
-        glslCompileShader(
-            vertexSpv,
+        mVertexShader = glslCompileVertexShader(
             res->_fullname,
             *vertexContent,
             privateInfo->vertexShaderEntryPoint,
             shaderInfo.shaderMacros,
-            shaderc_glsl_vertex_shader);
-        mVertexShader = vks::tools::loadShaderMemory(vertexSpv, mDevice);
-        parserGlslInputDesc(vertexSpv, inputDesc);
+            inputDesc);
+
         VertexDeclaration* decl = _r->getVertexData()->getVertexDeclaration();
         parseInputBindingDescription(decl, inputDesc);
         parseAttributeDescriptions(decl, inputDesc);
@@ -600,18 +595,12 @@ void VulkanRenderableData::buildPipelineData(Ogre::Material* mat)
     {
         String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
 
-        String fragSpv;
-
         auto res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
-        glslCompileShader(
-            fragSpv,
+        mFragShader = glslCompileFragShader(
             res->_fullname,
             *fragContent,
             privateInfo->fragShaderEntryPoint,
-            shaderInfo.shaderMacros,
-            shaderc_glsl_fragment_shader);
-
-        mFragShader = vks::tools::loadShaderMemory(fragSpv, mDevice);
+            shaderInfo.shaderMacros);
     }
 
 

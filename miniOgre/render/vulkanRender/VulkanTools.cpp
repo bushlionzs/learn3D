@@ -360,34 +360,22 @@ namespace vks
 			std::string entryPoint("main");
 			std::vector<std::pair<std::string, std::string>> shaderMacros;
 			shaderc_shader_kind kind = shaderc_glsl_vertex_shader;
+			std::vector<GlslInputDesc> inputDesc;
+			VkShaderModule shaderModule;
 			switch (type)
 			{
 			case VertexShader:
 				kind = shaderc_glsl_vertex_shader;
+				shaderModule = glslCompileVertexShader(strName, content, entryPoint, shaderMacros, inputDesc);
 				break;
 			case PixelShader:
 				kind = shaderc_glsl_fragment_shader;
+				shaderModule = glslCompileFragShader(strName, content, entryPoint, shaderMacros);
 				break;
 			default:
 				assert(false);
 				break;
 			}
-			glslCompileShader(
-				result,
-				strName,
-				content,
-				entryPoint,
-				shaderMacros,
-				kind);
-
-			VkShaderModule shaderModule;
-			VkShaderModuleCreateInfo moduleCreateInfo{};
-			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleCreateInfo.codeSize = result.size();
-			moduleCreateInfo.pCode = (uint32_t*)result.c_str();
-
-			VK_CHECK_RESULT(vkCreateShaderModule(device, &moduleCreateInfo, NULL, &shaderModule));
-
 			return shaderModule;
 		}
 

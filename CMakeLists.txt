@@ -70,7 +70,6 @@ set_property(TARGET LinearMath PROPERTY FOLDER third_party/bullet3)
 
 
 add_subdirectory(GameUtil GameUtil)
-add_subdirectory(GLSLUTIL GlslUtil)
 add_subdirectory(miniOgre miniOgre)
 add_subdirectory(cegui0.8.7 CEGUI)
 add_subdirectory(GameShare GameShare)

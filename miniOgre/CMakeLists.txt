@@ -98,4 +98,15 @@ target_include_directories(${MINIOGRE_LIB_NAME}
 	${DYNETWORK_INCLUDE_HEADERS}
 )
 
+set( MyFavLib_LIBRARIES 
+    debug shaderc_sharedd.lib optimized shaderc_shared.lib
+)
+	
+target_link_libraries(${MINIOGRE_LIB_NAME} ${MyFavLib_LIBRARIES} SpirvTools utils bluevk
+dxgi
+dxguid
+d3d12
+d3d11
+D3DCompiler)
+
 set(MINIOGRE_INC ${MINIOGRE_INC} CACHE INTERNAL "shared")

@@ -58,18 +58,15 @@ target_include_directories(${PROJECT_NAME}
 	${GAMESHARE_INC}
 	${MIDDLE_INC}
 	${MINIOGRE_INC}
-	${MYGUI_INC}
 	${ROOT_INC}/3rd/OIS/include
 )
 
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
-target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
+target_link_libraries(${PROJECT_NAME} GameUtil  miniOgre 
 CEGUI expat Middle stormlib OIS freetype GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
 pcre
-utils
-bluevk
 avcodec
 avdevice
 avfilter
@@ -78,11 +75,6 @@ avutil
 postproc
 swresample
 swscale
-dxgi
-dxguid
-d3d12
-d3d11
-D3DCompiler
 Shlwapi
 winmm
 dbghelp)

@@ -1,6 +1,5 @@
 #include "OgreHeader.h"
 #include "VulkanRenderSystem.h"
-#include "VulkanShader.h"
 #include "VulkanTexture.h"
 #include "OgreRenderable.h"
 #include "OgreVertexData.h"
@@ -200,12 +199,6 @@ OgreTexture* VulkanRenderSystem::createTextureFromFile(
     auto tex =  new VulkanTexture(name, texProperty, this);
     return tex;
 }
-
-Shader* VulkanRenderSystem::createShader(ShaderInfo& sinfo)
-{
-    return new VulkanShader(sinfo, this);
-}
-
 
 void VulkanRenderSystem::ready()
 {
