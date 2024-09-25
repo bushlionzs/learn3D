@@ -4,7 +4,7 @@
 #include "VulkanUploadbuffer.h"
 #include "VulkanBuffer.h"
 class VulkanTexture;
-
+class VulkanRenderSystemBase;
 class ShaderBindingTable : public VulkanBuffer {
 public:
 	VkStridedDeviceAddressRegionKHR stridedDeviceAddressRegion{};
@@ -109,7 +109,7 @@ private:
 
 	VkDescriptorPool descriptorPool{ VK_NULL_HANDLE };
 
-	VulkanRenderSystem* mVulkanRenderSystem = nullptr;
+	VulkanRenderSystemBase* mVulkanRenderSystem = nullptr;
 	bool mInit = false;
 
 	void* deviceCreatepNextChain = nullptr;

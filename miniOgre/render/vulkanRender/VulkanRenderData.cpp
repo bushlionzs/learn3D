@@ -27,7 +27,7 @@
 
 
 VulkanRenderableData::VulkanRenderableData(
-    VulkanRenderSystem* engine, 
+    VulkanRenderSystemBase* engine,
     Ogre::Renderable* r,
     VulkanRayTracingContext* context)
     :RenderableData(r)

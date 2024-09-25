@@ -29,7 +29,7 @@ static std::vector<const char*> getRequiredExtensions()
     return instanceExtensions;
 }
 
-VulkanHelper::VulkanHelper(VulkanRenderSystem* rs, HWND wnd)
+VulkanHelper::VulkanHelper(VulkanRenderSystemBase* rs, HWND wnd)
 {
     mVulkanRenderSystem = rs;
     mWnd = wnd;

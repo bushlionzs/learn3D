@@ -60,7 +60,6 @@ public:
 
     virtual RenderableData* createRenderableData(Ogre::Renderable* r) { return nullptr; }
 
-    virtual EngineType getRenderType() = 0;
     virtual const String& getRenderSystemName()
     {
         return mRenderSystemName;
@@ -150,6 +149,6 @@ protected:
     Ogre::RenderTarget* mActiveRenderTarget;
 
     String mRenderSystemName;
-
+    uint32_t mRenderType;
     
 };

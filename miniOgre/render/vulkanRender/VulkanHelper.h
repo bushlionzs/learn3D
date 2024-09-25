@@ -37,7 +37,7 @@ struct VulkanSettings {
     }
 };
 
-class VulkanRenderSystem;
+class VulkanRenderSystemBase;
 class VulkanFrame;
 class VulkanTexture;
 class VulkanBuffer;
@@ -74,7 +74,7 @@ enum VulkanLayoutIndex
 class VulkanHelper : public Ogre::Singleton<VulkanHelper>
 {
 public:
-	VulkanHelper(VulkanRenderSystem* rs, HWND wnd);
+	VulkanHelper(VulkanRenderSystemBase* rs, HWND wnd);
 	~VulkanHelper();
 
     void _initialise(VulkanPlatform* platform);
@@ -139,7 +139,7 @@ public:
     VkDescriptorPool _getDescriptorPool();
     VkDescriptorSetLayout _getDescriptorSetLayout(VulkanLayoutIndex index);
     VkSurfaceKHR _getSurface();
-    VulkanRenderSystem* _getRenderSystem()
+    VulkanRenderSystemBase* _getRenderSystem()
     {
         return mVulkanRenderSystem;
     }
@@ -162,7 +162,7 @@ public:
         return mSettings.rayTraceing;
     }
 
-    const VulkanSettings& getVulkanSettings()
+     VulkanSettings& getVulkanSettings()
     {
         return mSettings;
     }
@@ -200,7 +200,7 @@ private:
     void createStorageImage();
     void createShaderBindingTable();
 private:
-	VulkanRenderSystem* mVulkanRenderSystem;
+    VulkanRenderSystemBase* mVulkanRenderSystem;
     bool mEnableValidationLayers;
 
     VkInstance mVKInstance;

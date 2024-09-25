@@ -24,7 +24,7 @@ struct VulkanBufferInfo
 	uint32_t _offset;
 };
 
-class VulkanRenderSystem;
+class VulkanRenderSystemBase;
 
 class VulkanObjectPool
 {
@@ -32,7 +32,7 @@ public:
 	VulkanObjectPool();
 	~VulkanObjectPool();
 
-	void init(VulkanRenderSystem* vkrs);
+	void init(VulkanRenderSystemBase* vkrs);
 
 	VulkanObjectDesc allocObject(VulkanObjectType vkType);
 	void releaseObject(VulkanObjectDesc& desc);

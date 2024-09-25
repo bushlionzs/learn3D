@@ -18,7 +18,7 @@
 VulkanTexture::VulkanTexture(
     const std::string& name,
     Ogre::TextureProperty* texProperty,
-    VulkanRenderSystem* rs):
+    VulkanRenderSystemBase* rs):
     OgreTexture(name, texProperty),
     HwTexture(SamplerType::SAMPLER_2D, 1, 0, 0, 0, 1, TextureFormat::UNUSED, filament::backend::TextureUsage::NONE),
     VulkanResource(VulkanResourceType::TEXTURE)

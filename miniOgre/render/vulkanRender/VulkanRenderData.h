@@ -43,7 +43,7 @@ public:
 class VulkanRenderableData: public RenderableData
 {
 public:
-	VulkanRenderableData(VulkanRenderSystem* engine, Ogre::Renderable* r, VulkanRayTracingContext* context);
+	VulkanRenderableData(VulkanRenderSystemBase* engine, Ogre::Renderable* r, VulkanRayTracingContext* context);
 	~VulkanRenderableData();
 
 	bool update(VulkanFrame* frame, utils::JobSystem::Job* job);
@@ -82,7 +82,7 @@ private:
 	void buildInitData();
 	void buildPipelineData(Ogre::Material* mat);
 private:
-	VulkanRenderSystem* mEngine;
+	VulkanRenderSystemBase* mEngine;
 	VkDevice mDevice;
 	std::vector<VulkanFrameRenderableData> _frameRenderableData;
 	

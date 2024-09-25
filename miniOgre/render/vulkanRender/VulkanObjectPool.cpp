@@ -14,7 +14,7 @@ VulkanObjectPool::~VulkanObjectPool()
 }
 
 
-void VulkanObjectPool::init(VulkanRenderSystem* vkrs)
+void VulkanObjectPool::init(VulkanRenderSystemBase* vkrs)
 {
 
     mObjectCountMax = 10000;

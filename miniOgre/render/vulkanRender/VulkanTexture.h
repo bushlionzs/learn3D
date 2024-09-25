@@ -15,7 +15,7 @@ namespace filament::backend {
     class VulkanCommands;
     class VulkanStagePool;
 }
-class VulkanRenderSystem;
+class VulkanRenderSystemBase;
 using namespace filament::backend;
 
 class VulkanTexture :public Ogre::OgreTexture, public filament::backend::HwTexture, public filament::backend::VulkanResource
@@ -24,7 +24,7 @@ public:
     VulkanTexture(
         const std::string& name, 
         Ogre::TextureProperty* texProperty,
-        VulkanRenderSystem* engine);
+        VulkanRenderSystemBase* engine);
 
     VulkanTexture(VkDevice device, VkPhysicalDevice physicalDevice, VulkanContext const& context,
         VmaAllocator allocator, VulkanCommands* commands, SamplerType target, uint8_t levels,
@@ -136,7 +136,7 @@ private:
 
     
 private:
-    VulkanRenderSystem* mRenderSystem;
+    VulkanRenderSystemBase* mRenderSystem;
     VkDevice mVKDevice;
 
     VkBuffer mStagingBuffer = VK_NULL_HANDLE;
