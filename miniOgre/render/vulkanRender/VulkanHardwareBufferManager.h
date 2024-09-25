@@ -1,7 +1,7 @@
 #pragma once
 #include "OgreHardwareBufferManager.h"
 
-class VulkanHardwareBufferManager : public HardwareBufferManager
+class VulkanHardwareBufferManager : public Ogre::HardwareBufferManager
 {
 public:
     VulkanHardwareBufferManager();

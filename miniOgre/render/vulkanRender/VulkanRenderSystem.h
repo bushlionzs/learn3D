@@ -1,14 +1,7 @@
 #pragma once
-#include "renderSystem.h"
-#include "VulkanTexture.h"
-#include "VulkanRenderTarget.h"
-#include "VulkanUploadbuffer.h"
+
 #include "VulkanRenderSystemBase.h"
 #include "enkiTS/TaskScheduler.h"
-
-
-class VulkanRayTracingContext;
-
 
 
 class VulkanRenderSystem : public VulkanRenderSystemBase

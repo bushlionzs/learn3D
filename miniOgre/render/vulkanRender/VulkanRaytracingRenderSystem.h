@@ -1,21 +1,10 @@
 #pragma once
-#include "enkiTS/TaskScheduler.h"
-#include "renderSystem.h"
-#include "VulkanTexture.h"
-#include "VulkanRenderTarget.h"
-#include "VulkanUploadbuffer.h"
+
+#include "VulkanCommon.h"
 #include "VulkanBuffer.h"
 #include "VulkanRenderSystemBase.h"
 
-class VulkanGraphicsCommandList;
-class VulkanFrame;
-class VulkanWindow;
-class VulkanRayTracingContext;
-
-namespace filament::backend
-{
-    class VulkanPipelineCache;
-}
+class VulkanTexture;
 
 class ShaderBindingTable : public VulkanBuffer {
 public:

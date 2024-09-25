@@ -27,7 +27,6 @@
 #include "OgreResourceManager.h"
 #include "VulkanRenderTarget.h"
 #include "VulkanMappings.h"
-#include "VulkanRaytracing.h"
 #include <vulkan/VulkanPipelineCache.h>
 
 static const std::vector<const char*> validationLayers = {

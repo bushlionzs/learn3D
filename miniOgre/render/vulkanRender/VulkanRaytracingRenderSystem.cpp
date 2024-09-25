@@ -1,20 +1,12 @@
 #include "OgreHeader.h"
 #include "VulkanRaytracingRenderSystem.h"
-#include "VulkanTexture.h"
 #include "OgreRenderable.h"
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
 #include "OgreVertexDeclaration.h"
-#include "VulkanRenderData.h"
 #include "OgreMaterial.h"
 #include "OgreHardwareIndexBuffer.h"
-#include "VulkanHardwareBufferManager.h"
 #include "OgreCamera.h"
-#include "VulkanTools.h"
-#include "VulkanObjectPool.h"
-#include "VulkanHelper.h"
-#include "VulkanFrame.h"
-#include "VulkanWindow.h"
 #include "OgreViewport.h"
 #include "OgreTextureManager.h"
 #include "OgreSceneManager.h"
@@ -27,6 +19,16 @@
 #include "OgreResourceManager.h"
 #include "VulkanRenderTarget.h"
 #include "VulkanMappings.h"
+#include "VulkanTexture.h"
+#include "VulkanRenderTarget.h"
+#include "VulkanUploadbuffer.h"
+#include "VulkanTools.h"
+#include "VulkanObjectPool.h"
+#include "VulkanHelper.h"
+#include "VulkanFrame.h"
+#include "VulkanWindow.h"
+#include "VulkanRenderData.h"
+#include "VulkanHardwareBufferManager.h"
 #include <vulkan/VulkanPipelineCache.h>
 
 static const std::vector<const char*> validationLayers = {
@@ -425,41 +427,6 @@ void VulkanRaytracingRenderSystem::render(Renderable* r, RenderListType t)
     rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache);
 }
 
-using fn_on_got_tracker_info = std::function<void(uint32_t)>;
-
-struct ParallelTaskSet : public enki::IPinnedTask
-{
-    void update(int32_t start, int32_t end, VulkanFrame* frame, std::vector<Ogre::Renderable*>* objs)
-    {
-        _start = start;
-        _end = end;
-        _frame = frame;
-        _objs = objs;
-    }
-
-    ParallelTaskSet(uint32_t tdx):IPinnedTask(tdx)
-    {
-
-    }
-    virtual void Execute() 
-    { 
-        auto tdx = threadNum;
-        std::vector<Ogre::Renderable*>& objs = *_objs;
-        for (int32_t i = _start; i < _end; i++)
-        {
-            Ogre::Renderable* r = objs[i];
-            VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-
-            VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(tdx, _frame->getFrameIndex());
-            rd->render(_frame, commandBuffer, nullptr);//zhousha
-        }
-    }
-
-    int32_t _start;
-    int32_t _end;
-    std::vector<Ogre::Renderable*>* _objs;
-    VulkanFrame* _frame;
-};
 
 void VulkanRaytracingRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread)
 {

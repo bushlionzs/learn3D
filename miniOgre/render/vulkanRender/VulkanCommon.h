@@ -65,9 +65,51 @@ struct MultisampleTarget
     } depth;
 };
 
-class VulkanShader;
-class VulkanRenderableData;
+struct SwapChainBuffer
+{
+    VkImage _image;
+    VkImageView _view;
+};
 
+struct VulkanSettings {
+    bool validation = false;
+    bool fullscreen = false;
+    bool vsync = false;
+    bool multiSampling = true;
+    bool rayTraceing = true;
+    VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_4_BIT;
+    VulkanSettings()
+    {
+        multiSampling = false;
+
+        if (!multiSampling)
+        {
+            sampleCount = VK_SAMPLE_COUNT_1_BIT;
+        }
+    }
+};
+
+// Holds data for a ray tracing scratch buffer that is used as a temporary storage
+struct RayTracingScratchBuffer
+{
+    uint64_t deviceAddress = 0;
+    VkBuffer handle = VK_NULL_HANDLE;
+    VkDeviceMemory memory = VK_NULL_HANDLE;
+};
+
+// Ray tracing acceleration structure
+struct AccelerationStructure {
+    VkAccelerationStructureKHR handle;
+    uint64_t deviceAddress = 0;
+    VkDeviceMemory memory;
+    VkBuffer buffer;
+};
+
+#define VULKAN_FRAME_RESOURCE_COUNT 3
+#define VULKAN_TEXTURE_COUNT 6
+#define VULKAN_COMMAND_THREAD 4
+
+using namespace filament::backend;
 
 VkFormat getVKFormatFromType(VertexElementType type);
 
