@@ -115,6 +115,7 @@ struct RenderPassInfo
     uint32_t renderTargetCount = 1;
     BindRenderTargetDesc renderTargets[MAX_RENDER_TARGET_ATTACHMENTS];
     BindDepthTargetDesc  depthTarget;
+    Ogre::Matrix4 lightViewProj;
     Ogre::OgreTexture* shadowMap = nullptr;
     Ogre::ICamera* cam = nullptr;
     bool shadowPass = false;

@@ -16,13 +16,6 @@ public:
 		ICamera* cam);
 
 	uint32_t getFrameIndex();
-
-	/*std::unique_ptr<VulkanUploadBuffer<FrameConstantBuffer>>&
-		getFrameCB()
-	{
-		return mFrameCB;
-	}*/
-
 	void updateFrameDescriptor(VkDescriptorBufferInfo& frameDescriptor, ICamera* cam);
 
 	VkFence getFence()

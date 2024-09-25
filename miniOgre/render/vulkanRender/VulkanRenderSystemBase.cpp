@@ -59,7 +59,7 @@ void VulkanRenderSystemBase::updateMainPassCB(ICamera* camera)
     Ogre::Matrix4 invProj = proj.inverse();
     Ogre::Matrix4 invViewProj = viewProj.inverse();
 
-    mFrameConstantBuffer.Shadow = 0;
+    mFrameConstantBuffer.Shadow = mCurrentRenderPassInfo.shadowPass?1:0;
 
 
     mFrameConstantBuffer.View = view.transpose();
@@ -68,7 +68,7 @@ void VulkanRenderSystemBase::updateMainPassCB(ICamera* camera)
     mFrameConstantBuffer.InvProj = invProj.transpose();
     mFrameConstantBuffer.ViewProj = viewProj.transpose();
     mFrameConstantBuffer.InvViewProj = invViewProj.transpose();
-    //mFrameConstantBuffer.ShadowTransform = mShadowTransform;
+    
     mFrameConstantBuffer.EyePosW = camepos;
 
 
@@ -149,7 +149,11 @@ Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
 }
 
 Ogre::RenderTarget* VulkanRenderSystemBase::createRenderTarget(
-    const String& name, uint32_t width, uint32_t height, Ogre::PixelFormat format, Ogre::TextureUsage usage)
+    const String& name, 
+    uint32_t width, 
+    uint32_t height, 
+    Ogre::PixelFormat format, 
+    uint32_t usage)
 {
     TextureProperty texProperty;
     texProperty._width = width;
@@ -481,9 +485,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
         break;
     };
     VkPipeline pipeline;
-    auto pipelineCache = VulkanHelper::getSingleton().getPipelineCache();
-    //pipelineCache = VK_NULL_HANDLE;
-    VK_CHECK_RESULT(vkCreateGraphicsPipelines(device, pipelineCache, 1, &pipelineCI, nullptr, &pipeline));
+    VK_CHECK_RESULT(vkCreateGraphicsPipelines(device, nullptr, 1, &pipelineCI, nullptr, &pipeline));
     for (auto shaderStage : shaderStages) {
         vkDestroyShaderModule(device, shaderStage.module, nullptr);
     }
@@ -870,9 +872,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateBRDFLUT(const std::string& na
     shaderStages[1].module = vks::tools::loadShaderAssic(resInfo->_fullname.c_str(), device, Ogre::PixelShader);
 
     VkPipeline pipeline;
-    auto pipelineCache = VulkanHelper::getSingleton().getPipelineCache();
-    pipelineCache = VK_NULL_HANDLE;
-    VK_CHECK_RESULT(bluevk::vkCreateGraphicsPipelines(device, pipelineCache, 1, &pipelineCI, nullptr, &pipeline));
+    VK_CHECK_RESULT(bluevk::vkCreateGraphicsPipelines(device, nullptr, 1, &pipelineCI, nullptr, &pipeline));
     for (auto shaderStage : shaderStages) {
         vkDestroyShaderModule(device, shaderStage.module, nullptr);
     }

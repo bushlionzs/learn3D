@@ -63,8 +63,6 @@ namespace Ogre {
         // Calculate actual dimensions
         _updateDimensions();
 
-        // notify camera
-        if(cam) cam->_notifyViewport(this);
     }
     //---------------------------------------------------------------------
     Viewport::~Viewport()
@@ -77,10 +75,7 @@ namespace Ogre {
         }
 
         RenderSystem* rs = Root::getSingleton().getRenderSystem();
-        if ((rs) && (rs->_getViewport() == this))
-        {
-            rs->_setViewport(nullptr, nullptr);
-        }
+
     }
     //---------------------------------------------------------------------
     bool Viewport::_isUpdated(void) const
@@ -125,14 +120,6 @@ namespace Ogre {
     //---------------------------------------------------------------------
     void Viewport::update(void)
     {
-        if (mCamera)
-        {
-            if (mCamera->getViewport() != this)
-                mCamera->_notifyViewport(this);
-
-            // Tell Camera to render into me
-            mCamera->_renderScene(this);
-        }
     }
     //---------------------------------------------------------------------
     void Viewport::setOrientationMode(OrientationMode orientationMode, bool setDefault)
@@ -182,38 +169,7 @@ namespace Ogre {
         mClearEveryFrame = inClear;
         mClearBuffers = inClear ? inBuffers : 0;
     }
-    //---------------------------------------------------------------------
-    void Viewport::clear(uint32 buffers, const ColourValue& col, float depth, uint16 stencil)
-    {
-       
-    }
-
-    //---------------------------------------------------------------------
-    unsigned int Viewport::_getNumRenderedFaces(void) const
-    {
-        return mCamera ? mCamera->_getNumRenderedFaces() : 0;
-    }
-    //---------------------------------------------------------------------
-    unsigned int Viewport::_getNumRenderedBatches(void) const
-    {
-        return mCamera ? mCamera->_getNumRenderedBatches() : 0;
-    }
-    //---------------------------------------------------------------------
-    void Viewport::setCamera(Camera* cam)
-    {
-        if (cam != NULL && mCamera != NULL && mCamera->getViewport() == this)
-        {
-                mCamera->_notifyViewport(NULL);
-        }
-
-        mCamera = cam;
-        
-
-        for (ListenerList::iterator i = mListeners.begin(); i != mListeners.end(); ++i)
-        {
-            (*i)->viewportCameraChanged(this);
-        }
-    }
+    
     //-----------------------------------------------------------------------
     void Viewport::pointOrientedToScreen(const Vector2 &v, int orientationMode, Vector2 &outv)
     {

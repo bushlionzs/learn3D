@@ -26,13 +26,20 @@ namespace Ogre {
         return node;
     }
 
-    void SceneNode::traverse(EngineRenderList& containter, ICamera* cam)
+    void SceneNode::traverse(
+        EngineRenderList& containter, 
+        ICamera* cam,
+        bool shadow)
     {
         if (!mVisible)
             return;
 
         for (auto& pair : mObjectsByName)
         {
+            if (shadow && !pair.second->getCastShadows())
+            {
+                continue;
+            }
              pair.second->_notifyCurrentCamera(cam);
               
             const AxisAlignedBox& box = pair.second->getWorldBoundingBox(true);
@@ -60,7 +67,7 @@ namespace Ogre {
         for (auto child : mChildren)
         {
             SceneNode* sn = (SceneNode*)child;
-            sn->traverse(containter, cam);
+            sn->traverse(containter, cam, shadow);
         }
     }
 

@@ -1,12 +1,16 @@
 #include "OgreHeader.h"
+#include "OgreTextureManager.h"
+#include "OgreResourceManager.h"
+#include "glslUtil.h"
 #include "VulkanHelper.h"
 #include "VulkanRenderSystem.h"
 #include "VulkanTools.h"
 #include "VulkanFrame.h"
-#include "OgreTextureManager.h"
+
 #include "VulkanHardwareBufferManager.h"
 #include "VulkanBuffer.h"
 #include "VulkanMappings.h"
+#include "shaderManager.h"
 
 
 
@@ -72,7 +76,7 @@ static  std::vector<const char*> deviceExtensions =
 //    VK_KHR_MAINTENANCE3_EXTENSION_NAME,
 //    VK_KHR_SWAPCHAIN_EXTENSION_NAME
 //};
-void VulkanHelper::_initialise(VulkanPlatform* platform)
+void VulkanHelper::_initialise()
 {
     this->mSettings.rayTraceing = false;
 
@@ -84,19 +88,16 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
         deviceExtensions.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
         deviceExtensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
     }
-    mPlatform = platform;
     createInstance();
     createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
     createCommandPool();
     createDescriptorPool();
-    setupSwapChain();
+    createSwapChain();
     createCommandBuffer();
-    createPipelineCache();
     setupDescriptorSetLayout();
     createSamples();
-    
 }
 
 void VulkanHelper::_createBuffer(
@@ -350,6 +351,55 @@ void VulkanHelper::loadDefaultResources()
     mDefaultTexture->load(nullptr);
 }
 
+//void VulkanHelper::createShadowPipeline()
+//{
+//    auto& rasterState = mShadowPipelineInfo.rasterState;
+//    rasterState.cullMode = VK_CULL_MODE_NONE;
+//    rasterState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+//    rasterState.depthBiasEnable = VK_FALSE;
+//    rasterState.blendEnable = false;
+//    rasterState.depthWriteEnable = true;
+//    rasterState.alphaToCoverageEnable = VK_FALSE;
+//    rasterState.srcColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+//    rasterState.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+//    rasterState.colorBlendOp = BlendEquation::ADD;
+//    rasterState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+//    rasterState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+//    rasterState.alphaBlendOp = BlendEquation::ADD;
+//    rasterState.colorWriteMask = 0;
+//    rasterState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+//    rasterState.colorTargetCount = 0;
+//    rasterState.depthCompareOp = SamplerCompareFunc::LE;
+//    rasterState.depthBiasConstantFactor = 0.0f;
+//    rasterState.depthBiasSlopeFactor = 0.0f;
+//
+//    String shadowName = "shadow";
+//
+//    Ogre::ShaderPrivateInfo* privateInfo =
+//        ShaderManager::getSingleton().getShader(shadowName, EngineType_Vulkan);
+//    {
+//        String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
+//        auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+//
+//        std::vector<std::pair<std::string, std::string>> shaderMacros;
+//        std::vector<GlslInputDesc> inputDesc;
+//
+//        mShadowPipelineInfo.vertexShader = glslCompileVertexShader(
+//            res->_fullname,
+//            *vertexContent,
+//            privateInfo->vertexShaderEntryPoint,
+//            shaderMacros,
+//            inputDesc);
+//        shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
+//        mShadowPipelineInfo.vertexShaderAnimation = glslCompileVertexShader(
+//            res->_fullname,
+//            *vertexContent,
+//            privateInfo->vertexShaderEntryPoint,
+//            shaderMacros,
+//            inputDesc);
+//    }
+//}
+
 std::shared_ptr<OgreTexture>& VulkanHelper::getDefaultTexture()
 {
     return mDefaultTexture;
@@ -433,17 +483,11 @@ bool VulkanHelper::checkValidationLayerSupport()
 void VulkanHelper::createSurface()
 {
     bluevk::bindInstance(mVKInstance);
-    if (mPlatform)
-    {
-        return;
-    }
     
     VkWin32SurfaceCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     createInfo.hwnd = mWnd;
-    createInfo.hinstance = GetModuleHandle(nullptr);
-
-    
+    createInfo.hinstance =  GetModuleHandle(nullptr);
 
     if (vkCreateWin32SurfaceKHR(mVKInstance, &createInfo, nullptr, &mSurface) != VK_SUCCESS)
     {
@@ -455,139 +499,121 @@ void VulkanHelper::createSurface()
 
 void VulkanHelper::pickPhysicalDevice()
 {
-    if (mPlatform)
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(mVKInstance, &deviceCount, nullptr);
+
+    if (deviceCount == 0)
     {
-        mPhysicalDevice = mPlatform->getPhysicalDevice();
+        throw std::runtime_error("failed to find GPUs with Vulkan support!");
     }
-    else
+
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(mVKInstance, &deviceCount, devices.data());
+
+    for (const auto& device : devices)
     {
-        uint32_t deviceCount = 0;
-        vkEnumeratePhysicalDevices(mVKInstance, &deviceCount, nullptr);
-
-        if (deviceCount == 0)
+        if (isDeviceSuitable(device))
         {
-            throw std::runtime_error("failed to find GPUs with Vulkan support!");
+            mPhysicalDevice = device;
+            break;
         }
+    }
 
-        std::vector<VkPhysicalDevice> devices(deviceCount);
-        vkEnumeratePhysicalDevices(mVKInstance, &deviceCount, devices.data());
-
-        for (const auto& device : devices)
-        {
-            if (isDeviceSuitable(device))
-            {
-                mPhysicalDevice = device;
-                break;
-            }
-        }
-
-        if (mPhysicalDevice == VK_NULL_HANDLE)
-        {
-            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to find a suitable GPU!");
-        }
+    if (mPhysicalDevice == VK_NULL_HANDLE)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to find a suitable GPU!");
     }
     
 
 
-    vkGetPhysicalDeviceProperties(mPhysicalDevice, &mPhysicalDeviceProperties);
-    vkGetPhysicalDeviceFeatures(mPhysicalDevice, &mDeviceFeatures);
-    vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mPhysicalMemoryProperties);
+    bluevk::vkGetPhysicalDeviceProperties(mPhysicalDevice, &mPhysicalDeviceProperties);
+    bluevk::vkGetPhysicalDeviceFeatures(mPhysicalDevice, &mDeviceFeatures);
+    bluevk::vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mPhysicalMemoryProperties);
 }
 
 void VulkanHelper::createLogicalDevice()
 {
-    if (mPlatform)
+    updateQueueFamilies(mPhysicalDevice);
+
+    const float queue_priority[] = { 1.0f };
+    VkDeviceQueueCreateInfo queue_info[2] = {};
+
+    VkDeviceQueueCreateInfo& main_queue = queue_info[0];
+    main_queue.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    main_queue.queueFamilyIndex = main_queue_index;
+    main_queue.queueCount = 1;
+    main_queue.pQueuePriorities = queue_priority;
+
+       
+    deviceFeatures.shaderInt64 = VK_TRUE;
+    deviceFeatures.samplerAnisotropy = VK_TRUE;
+
+    VkDeviceCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+
+    createInfo.queueCreateInfoCount = 1;
+    createInfo.pQueueCreateInfos = queue_info;
+
+    createInfo.pEnabledFeatures = &deviceFeatures;
+
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+    createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+
+    if(mSettings.rayTraceing)
     {
-        mVKDevice = mPlatform->getDevice();
-        mGraphicsQueue = mPlatform->getGraphicsQueue();
+        enabledBufferDeviceAddresFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+        enabledBufferDeviceAddresFeatures.bufferDeviceAddress = VK_TRUE;
+
+        enabledRayTracingPipelineFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
+        enabledRayTracingPipelineFeatures.rayTracingPipeline = VK_TRUE;
+        enabledRayTracingPipelineFeatures.pNext = &enabledBufferDeviceAddresFeatures;
+
+        enabledAccelerationStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+        enabledAccelerationStructureFeatures.accelerationStructure = VK_TRUE;
+        enabledAccelerationStructureFeatures.pNext = &enabledRayTracingPipelineFeatures;
+
+        physicalDeviceDescriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+        physicalDeviceDescriptorIndexingFeatures.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
+        physicalDeviceDescriptorIndexingFeatures.runtimeDescriptorArray = VK_TRUE;
+        physicalDeviceDescriptorIndexingFeatures.descriptorBindingVariableDescriptorCount = VK_TRUE;
+        physicalDeviceDescriptorIndexingFeatures.pNext = &enabledAccelerationStructureFeatures;
+
+        deviceCreatepNextChain = &physicalDeviceDescriptorIndexingFeatures;
     }
     else
     {
-        updateQueueFamilies(mPhysicalDevice);
+        enabledDynamicRenderingFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
+        enabledDynamicRenderingFeaturesKHR.dynamicRendering = VK_TRUE;
+        deviceCreatepNextChain = &enabledDynamicRenderingFeaturesKHR;
+    }
+    VkPhysicalDeviceFeatures2 physicalDeviceFeatures2{};
 
-        const float queue_priority[] = { 1.0f };
-        VkDeviceQueueCreateInfo queue_info[2] = {};
-
-        VkDeviceQueueCreateInfo& main_queue = queue_info[0];
-        main_queue.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        main_queue.queueFamilyIndex = main_queue_index;
-        main_queue.queueCount = 1;
-        main_queue.pQueuePriorities = queue_priority;
-
-       
-        deviceFeatures.shaderInt64 = VK_TRUE;
-        deviceFeatures.samplerAnisotropy = VK_TRUE;
-
-        VkDeviceCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-
-        createInfo.queueCreateInfoCount = 1;
-        createInfo.pQueueCreateInfos = queue_info;
-
-        createInfo.pEnabledFeatures = &deviceFeatures;
-
-        createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
-        createInfo.ppEnabledExtensionNames = deviceExtensions.data();
-
-        if(mSettings.rayTraceing)
-        {
-            enabledBufferDeviceAddresFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
-            enabledBufferDeviceAddresFeatures.bufferDeviceAddress = VK_TRUE;
-
-            enabledRayTracingPipelineFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
-            enabledRayTracingPipelineFeatures.rayTracingPipeline = VK_TRUE;
-            enabledRayTracingPipelineFeatures.pNext = &enabledBufferDeviceAddresFeatures;
-
-            enabledAccelerationStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
-            enabledAccelerationStructureFeatures.accelerationStructure = VK_TRUE;
-            enabledAccelerationStructureFeatures.pNext = &enabledRayTracingPipelineFeatures;
-
-            physicalDeviceDescriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
-            physicalDeviceDescriptorIndexingFeatures.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
-            physicalDeviceDescriptorIndexingFeatures.runtimeDescriptorArray = VK_TRUE;
-            physicalDeviceDescriptorIndexingFeatures.descriptorBindingVariableDescriptorCount = VK_TRUE;
-            physicalDeviceDescriptorIndexingFeatures.pNext = &enabledAccelerationStructureFeatures;
-
-            deviceCreatepNextChain = &physicalDeviceDescriptorIndexingFeatures;
-        }
-        else
-        {
-            enabledDynamicRenderingFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
-            enabledDynamicRenderingFeaturesKHR.dynamicRendering = VK_TRUE;
-            deviceCreatepNextChain = &enabledDynamicRenderingFeaturesKHR;
-        }
-        VkPhysicalDeviceFeatures2 physicalDeviceFeatures2{};
-
-        if (deviceCreatepNextChain)
-        {
-            physicalDeviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-            physicalDeviceFeatures2.features = deviceFeatures;
-            physicalDeviceFeatures2.pNext = deviceCreatepNextChain;
-            createInfo.pEnabledFeatures = nullptr;
-            createInfo.pNext = &physicalDeviceFeatures2;
-        }
-        mEnableValidationLayers = false;
-        if (mEnableValidationLayers)
-        {
-            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-            createInfo.ppEnabledLayerNames = validationLayers.data();
-        }
-        else
-        {
-            createInfo.enabledLayerCount = 0;
-        }
-
-        if (vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mVKDevice) != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to create logical device!");
-        }
-
-        vkGetDeviceQueue(mVKDevice, main_queue_index, 0, &mGraphicsQueue);
-
+    if (deviceCreatepNextChain)
+    {
+        physicalDeviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+        physicalDeviceFeatures2.features = deviceFeatures;
+        physicalDeviceFeatures2.pNext = deviceCreatepNextChain;
+        createInfo.pEnabledFeatures = nullptr;
+        createInfo.pNext = &physicalDeviceFeatures2;
+    }
+    mEnableValidationLayers = false;
+    if (mEnableValidationLayers)
+    {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+    }
+    else
+    {
+        createInfo.enabledLayerCount = 0;
     }
 
-    
-    
+    if (vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mVKDevice) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to create logical device!");
+    }
+
+    vkGetDeviceQueue(mVKDevice, main_queue_index, 0, &mGraphicsQueue);
+
 }
 
 void VulkanHelper::createCommandPool()
@@ -668,12 +694,8 @@ void VulkanHelper::createDescriptorPool()
     }
 }
 
-void VulkanHelper::setupSwapChain()
+void VulkanHelper::createSwapChain()
 {
-    if (mPlatform)
-    {
-        return;
-    }
     VkSwapchainKHR oldSwapchain = mSwapChain;
 
 
@@ -882,15 +904,6 @@ void VulkanHelper::createSyncObjects()
     
 }
 
-
-void VulkanHelper::createPipelineCache()
-{
-    VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
-    pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
-    vkCreatePipelineCache(mVKDevice, &pipelineCacheCreateInfo,
-        nullptr, &mPipelineCache);
-}
-
 void VulkanHelper::setupDescriptorSetLayout()
 {
     {
@@ -949,7 +962,12 @@ void VulkanHelper::setupDescriptorSetLayout()
             vks::initializers::descriptorSetLayoutBinding(
                 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
                 VK_SHADER_STAGE_FRAGMENT_BIT,
-                3)
+                3),
+            // Binding 4 : Fragment shader image sampler
+            vks::initializers::descriptorSetLayoutBinding(
+                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                VK_SHADER_STAGE_FRAGMENT_BIT,
+                4)
             
         };
 
@@ -1027,11 +1045,7 @@ void VulkanHelper::setupDescriptorSetLayout()
         vks::initializers::pipelineLayoutCreateInfo(
             mDescriptorSetLayout.data(),
             2);
-    /*VkPushConstantRange pushConstantRange{};
-    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-    pushConstantRange.size = sizeof(Ogre::Matrix4) * 2;
-    pPipelineLayoutCreateInfo.pushConstantRangeCount = 1;
-    pPipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRange;*/
+
     if (vkCreatePipelineLayout(mVKDevice, &pPipelineLayoutCreateInfo,
         nullptr, &mPipelineLayout) != VK_SUCCESS)
     {
@@ -1056,7 +1070,6 @@ void VulkanHelper::setupDescriptorSetLayout()
 
 void VulkanHelper::createSamples()
 {
-
     VkSampler samplerStatePointWrap;
     VkSampler samplerStatePointClamp;
     VkSampler samplerStateLinearWrap;
@@ -1104,16 +1117,6 @@ void VulkanHelper::createSamples()
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create texture sampler!");
     }
     mSamplers = { samplerStateAnisotropicWrap, samplerStateAnisotropicClamp};
-
-}
-
-VkSampler VulkanHelper::getSampler(Ogre::TextureAddressingMode mode)
-{
-    if (mode == TAM_CLAMP)
-    {
-        return mSamplers[1];
-    }
-    return mSamplers[0];
 }
 
 VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& params)
@@ -1250,23 +1253,6 @@ void VulkanHelper::setupDebugMessenger()
     }
 }
 
-
-void VulkanHelper::createBottomLevelAccelerationStructure()
-{
-}
-
-void VulkanHelper::createTopLevelAccelerationStructure()
-{
-}
-
-void VulkanHelper::createStorageImage()
-{
-}
-
-void VulkanHelper::createShaderBindingTable()
-{
-}
-
 VkCommandBuffer VulkanHelper::createCommandBuffer(VkCommandBufferLevel level, bool begin)
 {
     VkCommandBufferAllocateInfo cmdBufAllocateInfo = vks::initializers::commandBufferAllocateInfo(mCommandPool[0], level, 1);
@@ -1324,139 +1310,6 @@ void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
     
 }
 
-void VulkanHelper::transitionImageLayout(
-    VkImage image,
-    VkFormat format,
-    VkImageLayout oldLayout,
-    VkImageLayout newLayout)
-{
-    VkCommandBuffer commandBuffer = beginSingleTimeCommands();
-
-    VkImageMemoryBarrier barrier = {};
-    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    barrier.oldLayout = oldLayout;
-    barrier.newLayout = newLayout;
-    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.image = image;
-    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    barrier.subresourceRange.baseMipLevel = 0;
-    barrier.subresourceRange.levelCount = 1;
-    barrier.subresourceRange.baseArrayLayer = 0;
-    barrier.subresourceRange.layerCount = 1;
-
-    VkPipelineStageFlags sourceStage;
-    VkPipelineStageFlags destinationStage;
-
-    if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-        barrier.srcAccessMask = 0;
-        barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    }
-    else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    }
-    else {
-        throw std::invalid_argument("unsupported layout transition!");
-    }
-
-    vkCmdPipelineBarrier(
-        commandBuffer,
-        sourceStage, destinationStage,
-        0,
-        0, nullptr,
-        0, nullptr,
-        1, &barrier
-    );
-
-    endSingleTimeCommands(commandBuffer);
-}
-
-void VulkanHelper::insertImageMemoryBarrier(
-    VkCommandBuffer cmdbuffer,
-    VkImage image,
-    VkAccessFlags srcAccessMask,
-    VkAccessFlags dstAccessMask,
-    VkImageLayout oldImageLayout,
-    VkImageLayout newImageLayout,
-    VkPipelineStageFlags srcStageMask,
-    VkPipelineStageFlags dstStageMask,
-    VkImageSubresourceRange subresourceRange)
-{
-    VkImageMemoryBarrier imageMemoryBarrier = vks::initializers::imageMemoryBarrier();
-    imageMemoryBarrier.srcAccessMask = srcAccessMask;
-    imageMemoryBarrier.dstAccessMask = dstAccessMask;
-    imageMemoryBarrier.oldLayout = oldImageLayout;
-    imageMemoryBarrier.newLayout = newImageLayout;
-    imageMemoryBarrier.image = image;
-    imageMemoryBarrier.subresourceRange = subresourceRange;
-
-    vkCmdPipelineBarrier(
-        cmdbuffer,
-        srcStageMask,
-        dstStageMask,
-        0,
-        0, nullptr,
-        0, nullptr,
-        1, &imageMemoryBarrier);
-}
-
-
-VulkanDepthStencil VulkanHelper::createDepthStencil(uint32_t width, uint32_t height)
-{
-    VulkanDepthStencil dummy;
-
-    VkImageCreateInfo imageCI{};
-    imageCI.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    imageCI.imageType = VK_IMAGE_TYPE_2D;
-    imageCI.format = mDepthFormat;
-    imageCI.extent = { (uint32_t)width, (uint32_t)height, 1 };
-    imageCI.mipLevels = 1;
-    imageCI.arrayLayers = 1;
-    imageCI.samples = VK_SAMPLE_COUNT_1_BIT;
-    imageCI.tiling = VK_IMAGE_TILING_OPTIMAL;
-    imageCI.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-    imageCI.flags = 0;
-
-    if (vkCreateImage(mVKDevice, &imageCI, nullptr, &dummy.image) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to vkCreateImage!");
-    }
-    VkMemoryRequirements memReqs{};
-    vkGetImageMemoryRequirements(mVKDevice, dummy.image, &memReqs);
-
-    VkMemoryAllocateInfo memAllloc{};
-    memAllloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    memAllloc.allocationSize = memReqs.size;
-    memAllloc.memoryTypeIndex = _findMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    vkAllocateMemory(mVKDevice, &memAllloc, nullptr, &dummy.memory);
-    vkBindImageMemory(mVKDevice, dummy.image, dummy.memory, 0);
-
-    VkImageViewCreateInfo depthStencilView{};
-    depthStencilView.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    depthStencilView.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    depthStencilView.image = dummy.image;
-    depthStencilView.format = mDepthFormat;
-    depthStencilView.subresourceRange.baseMipLevel = 0;
-    depthStencilView.subresourceRange.levelCount = 1;
-    depthStencilView.subresourceRange.baseArrayLayer = 0;
-    depthStencilView.subresourceRange.layerCount = 1;
-    depthStencilView.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-
-
-    if (vkCreateImageView(mVKDevice, &depthStencilView,nullptr, &dummy.view) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to vkCreateImageView!");
-    }
-
-    return dummy;
-}
 
 VkFormat VulkanHelper::_getDepthFormat()
 {
@@ -1497,11 +1350,6 @@ VkPipelineLayout VulkanHelper::_getPipelineLayout(bool pbr)
     }
     
     return mPipelineLayout;
-}
-
-VkPipelineCache VulkanHelper::getPipelineCache()
-{
-    return mPipelineCache;
 }
 
 VulkanFrame* VulkanHelper::_getFrame(uint32_t index)

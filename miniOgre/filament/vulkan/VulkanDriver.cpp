@@ -253,8 +253,6 @@ namespace filament::backend {
 
         mTimestamps = std::make_unique<VulkanTimestamps>(mPlatform->getDevice());
 
-        new VulkanHelper(nullptr, 0);
-        VulkanHelper::getSingleton()._initialise(mPlatform);
         mEmptyTexture = createEmptyTexture(mPlatform->getDevice(), mPlatform->getPhysicalDevice(),
             mContext, mAllocator, &mCommands, mStagePool);
         mEmptyBufferObject = createEmptyBufferObject(mAllocator, mStagePool, &mCommands);

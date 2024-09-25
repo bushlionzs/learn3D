@@ -13,14 +13,14 @@ namespace Ogre
 		VulkanRenderTarget(uint32_t width, uint32_t height, bool screen);
 		~VulkanRenderTarget();
 
-		virtual void preRender(const ColourValue& colour) override;
-		virtual void postRender() override;
+		virtual void preRender(const ColourValue& colour) ;
+		virtual void postRender() ;
 
 		VkImageView getImageView();
 		VkImage getImage();
 
-	private:
-		VkFramebuffer getFrameBuffer(uint32_t index);
+		virtual Ogre::OgreTexture* getTarget();
+
 	private:
 		VulkanTexture* mTarget = nullptr;
 		VulkanTexture* mDepth = nullptr;

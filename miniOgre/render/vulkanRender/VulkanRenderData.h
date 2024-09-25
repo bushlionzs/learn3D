@@ -6,7 +6,6 @@
 #include "glslUtil.h"
 #include <utils/JobSystem.h>
 #include <DriverEnums.h>
-#include <vulkan/VulkanPipelineCache.h>
 #include <utils/StructureOfArrays.h>
 
 class VulkanRenderSystem;
@@ -33,7 +32,6 @@ public:
 	VkDescriptorSet mDescriptorSetSampler;
 	VkDescriptorSet mDescriptorSetSamplerPbr;
 	bool mDescriptorSetUpdate = false;
-
 };
 
 
@@ -46,9 +44,16 @@ public:
 	VulkanRenderableData(VulkanRenderSystemBase* engine, Ogre::Renderable* r, VulkanRayTracingContext* context);
 	~VulkanRenderableData();
 
-	bool update(VulkanFrame* frame, utils::JobSystem::Job* job);
-	void updateImpl(VulkanFrame* frame);
-	void render(VulkanFrame* frame, VkCommandBuffer cb, VulkanPipelineCache* pipelineCache);
+	bool update(
+		VulkanFrame* frame,
+		const RenderPassInfo& passInfo,
+		utils::JobSystem::Job* job);
+	void updateImpl(VulkanFrame* frame, const RenderPassInfo& passInfo);
+	void render(
+		VulkanFrame* frame, 
+		VkCommandBuffer cb, 
+		VulkanPipelineCache* pipelineCache,
+		const RenderPassInfo& passInfo);
 
 	bool updateRayTracingData();
 
@@ -81,13 +86,18 @@ private:
 		std::vector<GlslInputDesc>& inputDesc);
 	void buildInitData();
 	void buildPipelineData(Ogre::Material* mat);
+	void bindPipeline(
+		VkCommandBuffer cb, 
+		VulkanPipelineCache* pipelineCache,
+		bool shadow = false);
 private:
 	VulkanRenderSystemBase* mEngine;
 	VkDevice mDevice;
 	std::vector<VulkanFrameRenderableData> _frameRenderableData;
+	std::vector<VulkanFrameRenderableData> _frameRenderableShadowData;
 	
-	std::vector<VkVertexInputBindingDescription> vertexInputBindings;
-	std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+	std::vector<VkVertexInputBindingDescription> mVertexInputBindings;
+	std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
 	bool mUpdate = false;
 
 	VkShaderModule mVertexShader = VK_NULL_HANDLE;
@@ -107,4 +117,6 @@ private:
 	int32_t mGeometrySlot = -1;
 
 	bool mRayTracingUpdate = false;
+
+	uint64_t mLastFrame = 0xffffffff;
 };

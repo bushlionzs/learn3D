@@ -10,24 +10,23 @@ public:
     VulkanRenderSystem(HWND wnd);
 	~VulkanRenderSystem();
 
-    virtual bool engineInit();
-    virtual void frameStart();
-    virtual void frameEnd();
-    virtual void update(Renderable* r);
-    virtual void render(Renderable* r, RenderListType t);
-    virtual void multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread);
+    virtual bool engineInit() override;
+    virtual void frameStart() override;
+    virtual void frameEnd() override;
+    virtual void update(Renderable* r) override;
+    virtual void render(Renderable* r, RenderListType t) override;
+    virtual void multiRender(
+        std::vector<Ogre::Renderable*>& objs, bool multithread) override;
 
-    void beginRenderPass(RenderPassInfo& renderPassInfo);
-    void endRenderPass();
-    void present();
-    virtual void clearFrameBuffer(uint32 buffers,
-        const ColourValue& colour,
-        float depth, uint16 stencil);
+    virtual void beginRenderPass(RenderPassInfo& renderPassInfo) override;
+    virtual void endRenderPass() override;
+    virtual void present() override;
     virtual Ogre::RenderWindow* createRenderWindow(
         const String& name, unsigned int width, unsigned int height,
         const NameValuePairList* miscParams) override;
     virtual Ogre::RenderTarget* createRenderTarget(
-        const String& name, uint32_t width, uint32_t height, Ogre::PixelFormat format, Ogre::TextureUsage usage) override;
+        const String& name, uint32_t width, uint32_t height, 
+        Ogre::PixelFormat format, uint32_t textureUsage) override;
 private:
     enki::TaskScheduler mTaskScheduler;
 

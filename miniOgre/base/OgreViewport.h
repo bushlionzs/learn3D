@@ -104,32 +104,10 @@ namespace Ogre {
         /** Instructs the viewport to updates its contents.
         */
         void update(void);
-        
-        /** Instructs the viewport to clear itself, without performing an update.
-         @remarks
-            You would not normally call this method when updating the viewport, 
-            since the viewport usually clears itself when updating anyway (@see 
-            Viewport::setClearEveryFrame). However, if you wish you have the
-            option of manually clearing the frame buffer (or elements of it)
-            using this method.
-         @param buffers Bitmask identifying which buffer elements to clear
-         @param colour The colour value to clear to, if FBT_COLOUR is included
-         @param depth The depth value to clear to, if FBT_DEPTH is included
-         @param stencil The stencil value to clear to, if FBT_STENCIL is included
-        */
-        void clear(uint32 buffers = FBT_COLOUR | FBT_DEPTH, const ColourValue& colour = ColourValue::Black,
-                   float depth = 1.0f, uint16 stencil = 0);
 
         /** Retrieves a pointer to the render target for this viewport.
         */
         RenderTarget* getTarget(void) const { return mTarget; }
-
-        /** Retrieves a pointer to the camera for this viewport.
-        */
-        Camera* getCamera(void) const { return mCamera; }
-
-        /** Sets the camera to use for rendering to this viewport. */
-        void setCamera(Camera* cam);
 
         /** Gets the Z-Order of this viewport. */
         int getZOrder(void) const { return mZOrder; }
@@ -276,14 +254,6 @@ namespace Ogre {
 
         bool _isUpdated(void) const;
         void _clearUpdatedFlag(void);
-
-        /** Gets the number of rendered faces in the last update.
-        */
-        unsigned int _getNumRenderedFaces(void) const;
-
-        /** Gets the number of rendered batches in the last update.
-        */
-        unsigned int _getNumRenderedBatches(void) const;
 
         /** Tells this viewport whether it should display Overlay objects.
         @remarks

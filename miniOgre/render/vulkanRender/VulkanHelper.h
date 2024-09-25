@@ -4,13 +4,7 @@
 #include "OgreSingleton.h"
 #include "VulkanCommon.h"
 #include "OgreCommon.h"
-#include <filament/vulkan/VulkanPlatform.h>
-
-
-
-
-
-
+#include <vulkan/VulkanPipelineCache.h>
 
 
 class VulkanRenderSystemBase;
@@ -22,8 +16,6 @@ struct CommandHelper
     VkCommandPool _commandPool;
     VkCommandBuffer _commandBuffer;
 };
-
-
 
 
 enum VulkanLayoutIndex
@@ -39,7 +31,7 @@ public:
 	VulkanHelper(VulkanRenderSystemBase* rs, HWND wnd);
 	~VulkanHelper();
 
-    void _initialise(VulkanPlatform* platform);
+    void _initialise();
     void _createBuffer(
         VkDeviceSize size,
         VkBufferUsageFlags usage,
@@ -63,24 +55,7 @@ public:
     VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, bool begin);
     VkCommandBuffer beginSingleTimeCommands();
     void endSingleTimeCommands(VkCommandBuffer commandBuffer);
-    void transitionImageLayout(
-        VkImage image,
-        VkFormat format,
-        VkImageLayout oldLayout,
-        VkImageLayout newLayout);
-    void insertImageMemoryBarrier(
-        VkCommandBuffer cmdbuffer,
-        VkImage image,
-        VkAccessFlags srcAccessMask,
-        VkAccessFlags dstAccessMask,
-        VkImageLayout oldImageLayout,
-        VkImageLayout newImageLayout,
-        VkPipelineStageFlags srcStageMask,
-        VkPipelineStageFlags dstStageMask,
-        VkImageSubresourceRange subresourceRange);
-
-    VulkanDepthStencil createDepthStencil(uint32_t width, uint32_t height);
-
+    
     VkFormat _getDepthFormat();
     int32_t _findMemoryType(
         uint32_t typeFilter,
@@ -88,7 +63,6 @@ public:
     VkQueue _getCommandQueue();
     VkPhysicalDevice _getPhysicalDevice();
     VkPipelineLayout _getPipelineLayout(bool pbr);
-    VkPipelineCache getPipelineCache();
     void _resetCommandBuffer(uint32_t frame_index);
     void _endCommandBuffer(uint32_t frame_index);
     VkCommandBuffer getMainCommandBuffer(uint32_t frame_index);
@@ -114,8 +88,6 @@ public:
         return mSwapChainImageFormat;
     }
     void loadDefaultResources();
-
-    VkSampler getSampler(Ogre::TextureAddressingMode mode);
     VkSampler getSampler(const filament::backend::SamplerParams& samplerParams);
     std::shared_ptr<OgreTexture>& getDefaultTexture();
 
@@ -128,6 +100,7 @@ public:
     {
         return mSettings;
     }
+
 private:
     bool isDeviceSuitable(VkPhysicalDevice device);
     
@@ -140,10 +113,9 @@ private:
     void createLogicalDevice();
     void createCommandPool();
     void createDescriptorPool();
-    void setupSwapChain();
+    void createSwapChain();
     void createCommandBuffer();
     void createSyncObjects();
-    void createPipelineCache();
     void setupDescriptorSetLayout();
     void createSamples();
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(
@@ -156,11 +128,6 @@ private:
     void populateDebugMessengerCreateInfo(
         VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     void setupDebugMessenger();
-
-    void createBottomLevelAccelerationStructure();
-    void createTopLevelAccelerationStructure();
-    void createStorageImage();
-    void createShaderBindingTable();
 private:
     VulkanRenderSystemBase* mVulkanRenderSystem;
     bool mEnableValidationLayers;
@@ -183,8 +150,6 @@ private:
     VkDescriptorSetLayout mPbrDescriptorSetLayout;
     VkPipelineLayout mPipelineLayout;
     VkPipelineLayout mPipelineLayoutPbr;
-
-    VkPipelineCache mPipelineCache;
     VkQueue mGraphicsQueue;
 
     uint32_t main_queue_index = UINT_MAX;
@@ -221,11 +186,6 @@ private:
     tsl::robin_map<SamplerParams, VkSampler, SamplerParams::Hasher, SamplerParams::EqualTo> mSamplersCache;
 
     VulkanSettings mSettings;
-
-    //
-    VkCommandBuffer mResourceCommandBuffer = VK_NULL_HANDLE;
-
-    VulkanPlatform* mPlatform;
 
     void* deviceCreatepNextChain = nullptr;
     VkPhysicalDeviceFeatures deviceFeatures{};

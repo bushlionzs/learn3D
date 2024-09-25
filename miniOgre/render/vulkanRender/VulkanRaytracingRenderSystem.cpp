@@ -100,7 +100,7 @@ bool VulkanRaytracingRenderSystem::engineInit()
     RenderSystem::engineInit();
     
     VulkanHelper& helper = VulkanHelper::getSingleton();
-    helper._initialise(nullptr);
+    helper._initialise();
     helper.getVulkanSettings().rayTraceing = true;
     mAllocator = createAllocator(helper._getVKInstance(), helper._getPhysicalDevice(), helper._getVkDevice());
 
@@ -416,15 +416,15 @@ void VulkanRaytracingRenderSystem::update(Renderable* r)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
 
-    rd->update(mCurrentVulkanFrame, nullptr);
+    rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
 }
 
 void VulkanRaytracingRenderSystem::render(Renderable* r, RenderListType t)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
     VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-    rd->update(mCurrentVulkanFrame, nullptr);
-    rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache);
+    rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
+    rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
 }
 
 
@@ -437,7 +437,7 @@ void VulkanRaytracingRenderSystem::multiRender(std::vector<Ogre::Renderable*>& o
     for (auto r : objs)
     {
         VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-        if (rd->update(mCurrentVulkanFrame, nullptr))
+        if (rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr))
         {
             mRenderList.push_back(r);
         }

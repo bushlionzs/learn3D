@@ -323,11 +323,12 @@ bool EngineManager::positionAxisTrans(
 				return false;
 			}
 
+			const auto& rt = Ogre::Root::getSingleton().getMainRect();
 			/* x:[-1w, 1w] z:[-1h, 1h] */
 			Ogre::Vector3	vRet = pOgreCamera->getProjectMatrix() * 
 				pOgreCamera->getViewMatrix() * fvSource;
-			int32_t nWidth = rs->_getViewport()->getActualWidth();
-			int32_t nHeight = rs->_getViewport()->getActualHeight();
+			int32_t nWidth = rt.width();
+			int32_t nHeight = rt.height();
 
 			fvTarget.x = ((vRet.x + 1.0f) * nWidth / 2.0f);
 			fvTarget.y = ((-vRet.y + 1.0f) * nHeight / 2.0f);

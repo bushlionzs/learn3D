@@ -18,7 +18,8 @@ void main() {
 	    discard;
 	}
 
-	//vec3 shadowFactor = vec3(0.0f, 1.0f, 1.0f);
-	//shadowFactor[0] = CalcShadowFactor(inShadowPosH, gShadowMap, 1024);
-	//outColor = shadowFactor * outColor
+	//return;
+	float shadow = textureProj(inShadowPosH /inShadowPosH.w, gShadowMap, vec2(0.0));
+	outColor = outColor * shadow;
+	outColor.w = 1.0f;
 }

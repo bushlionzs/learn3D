@@ -65,7 +65,7 @@ namespace Ogre {
         bool _need_mipmap;
         float _gamma;
         uint32_t _fsaa;
-        TextureUsage _tex_usage;
+        uint32_t _tex_usage; //TextureUsage
         ColourValue _backgroudColor;
         TextureAddressingMode  _tex_addr_mod;
         filament::backend::SamplerParams _samplerParams;

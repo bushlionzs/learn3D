@@ -27,18 +27,7 @@ namespace Ogre {
 
         Ogre::SortMode getSortMode() const { return mSortMode; }
 
-
-        Viewport* getViewport(void) const;
-        /** Notifies this camera that a viewport is using it.*/
-        void _notifyViewport(Viewport* viewport);
-
         bool getAutoAspectRatio(void) const;
-
-        unsigned int _getNumRenderedFaces(void) const;
-
-        unsigned int _getNumRenderedBatches(void) const;
-
-        void _renderScene(Viewport* vp);
 
         virtual const AxisAlignedBox& getBoundingBox(void) const;
 
@@ -79,7 +68,6 @@ namespace Ogre {
 
         Ogre::SortMode mSortMode = Ogre::SM_DISTANCE;
 
-        Viewport* mViewport = nullptr; 
 
         SceneManager* mCreator = nullptr;
 

@@ -98,7 +98,7 @@ bool VulkanRenderSystem::engineInit()
     RenderSystem::engineInit();
     
     VulkanHelper& helper = VulkanHelper::getSingleton();
-    helper._initialise(nullptr);
+    helper._initialise();
 
     enki::TaskSchedulerConfig config;
     config.numTaskThreadsToCreate = VULKAN_COMMAND_THREAD;
@@ -166,7 +166,7 @@ void VulkanRenderSystem::frameStart()
 
 void VulkanRenderSystem::frameEnd()
 {
-
+    mFrameNumber++;
 }
 
 void VulkanRenderSystem::beginRenderPass(
@@ -178,6 +178,11 @@ void VulkanRenderSystem::beginRenderPass(
 
     mCurrentVKImage = nullptr;
     mCurrentRenderPassInfo = renderPassInfo;
+
+    if (!renderPassInfo.shadowPass)
+    {
+        mFrameConstantBuffer.ShadowTransform = renderPassInfo.lightViewProj;
+    }
     updateMainPassCB(mCurrentRenderPassInfo.cam);
   
     VkRenderingAttachmentInfo colorAttachments[MAX_RENDER_TARGET_ATTACHMENTS] = {};
@@ -221,6 +226,10 @@ void VulkanRenderSystem::beginRenderPass(
         Ogre::VulkanRenderTarget* rt = (Ogre::VulkanRenderTarget*)renderPassInfo.depthTarget.depthStencil;
         depthAttachment.imageView = rt->getImageView();
 
+        if (renderPassInfo.shadowPass)
+        {
+            mCurrentVKImage = rt->getImage();
+        }
         vks::tools::insertImageMemoryBarrier(
             cmdBuffer,
             rt->getImage(),
@@ -288,25 +297,46 @@ void VulkanRenderSystem::endRenderPass()
 
     if (mCurrentVKImage)
     {
-        vks::tools::insertImageMemoryBarrier(
-            cmdBuffer,
-            mCurrentVKImage,
-            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-            0,
-            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-            VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
+        if (mCurrentRenderPassInfo.shadowPass)
+        {
+            VkImageSubresourceRange subresourceRange = {};
+            subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+            subresourceRange.baseMipLevel = 0;
+            subresourceRange.levelCount = 1;
+            subresourceRange.layerCount = 1;
+
+            vks::tools::setImageLayout(
+                cmdBuffer,
+                mCurrentVKImage,
+                VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                subresourceRange);
+            
+        }
+        else
+        {
+            vks::tools::insertImageMemoryBarrier(
+                cmdBuffer,
+                mCurrentVKImage,
+                VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                0,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
+        }
+        
     }
     
 
-    VulkanHelper::getSingleton()._endCommandBuffer(frameIndex);
+    
 }
 
 void VulkanRenderSystem::present()
 {
     auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
+    VulkanHelper::getSingleton()._endCommandBuffer(frameIndex);
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -373,13 +403,6 @@ void VulkanRenderSystem::present()
 
 }
 
-void VulkanRenderSystem::clearFrameBuffer(uint32 buffers,
-    const ColourValue& colour,
-    float depth, uint16 stencil)
-{
-
-    mActiveRenderTarget->preRender(colour);
-}
 
 Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
     const String& name, unsigned int width, unsigned int height,
@@ -393,12 +416,16 @@ Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
 }
 
 Ogre::RenderTarget* VulkanRenderSystem::createRenderTarget(
-    const String& name, uint32_t width, uint32_t height, Ogre::PixelFormat format, Ogre::TextureUsage usage)
+    const String& name, 
+    uint32_t width, 
+    uint32_t height, 
+    Ogre::PixelFormat format, 
+    uint32_t textureUsage)
 {
     TextureProperty texProperty;
     texProperty._width = width;
     texProperty._height = height;
-    texProperty._tex_usage = usage;
+    texProperty._tex_usage = textureUsage;
     texProperty._tex_format = format;
     texProperty._need_mipmap = false;
     
@@ -410,15 +437,15 @@ void VulkanRenderSystem::update(Renderable* r)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
 
-    rd->update(mCurrentVulkanFrame, nullptr);
+    rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
 }
 
 void VulkanRenderSystem::render(Renderable* r, RenderListType t)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
     VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-    rd->update(mCurrentVulkanFrame, nullptr);
-    rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache);
+    rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
+    rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
 }
 
 using fn_on_got_tracker_info = std::function<void(uint32_t)>;
@@ -447,7 +474,7 @@ struct ParallelTaskSet : public enki::IPinnedTask
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
 
             VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(tdx, _frame->getFrameIndex());
-            rd->render(_frame, commandBuffer, nullptr);//zhousha
+            //rd->render(_frame, commandBuffer, nullptr, mCurrentRenderPassInfo);//zhousha
         }
     }
 
@@ -466,7 +493,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     for (auto r : objs)
     {
         VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-        if (rd->update(mCurrentVulkanFrame, nullptr))
+        if (rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr))
         {
             mRenderList.push_back(r);
         }
@@ -486,7 +513,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
             // VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
             VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-            rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache);
+            rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
         }
         return;
     }
@@ -497,7 +524,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
             VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
             //VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
             VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-            rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache);
+            rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
         }
         return;
     }

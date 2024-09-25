@@ -470,9 +470,7 @@ namespace Ogre {
 
         if (renderSystem)
         {
-            // API specific
-            renderSystem->_convertProjectionMatrix(mProjMatrix, mProjMatrixRS);
-            renderSystem->_convertProjectionMatrix(mProjMatrix, mProjMatrixRSDepth, true);
+
         }
         else
         {

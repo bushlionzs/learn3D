@@ -45,9 +45,6 @@ bool CEGUIManager::_initialise(Ogre::RenderTarget* window)
 	mRenderWindow = window;
 	auto width = mRenderWindow->getWidth();
 	auto height = mRenderWindow->getHeight();
-	mViewPort = mRenderWindow->addViewport(mCamera, 2);
-	mViewPort->setClearEveryFrame(false);
-
 	
 
 	mCamera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);

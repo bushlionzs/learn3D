@@ -16,4 +16,6 @@ private:
 	AnimationState* mAnimationState = nullptr;
 
 	SceneNode* mLightNode;
+
+	Ogre::Light* light;
 };

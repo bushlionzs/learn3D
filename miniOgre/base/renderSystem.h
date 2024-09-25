@@ -53,7 +53,11 @@ public:
         const NameValuePairList* miscParams) = 0;
 
     virtual Ogre::RenderTarget* createRenderTarget(
-        const String& name, uint32_t width, uint32_t height, Ogre::PixelFormat format, Ogre::TextureUsage usage);
+        const String& name, 
+        uint32_t width, 
+        uint32_t height, 
+        Ogre::PixelFormat format, 
+        uint32_t textureUsage);
 
 
     virtual void ready() {}
@@ -84,31 +88,15 @@ public:
         return mBatchCount;
     }
 
-    uint64_t getNextFrame()
+    uint64_t getFrameNumber()
     {
-        return mNextFrame;
+        return mFrameNumber;
     }
-
-
-    Ogre::Viewport* _getViewport();
-    virtual void _setViewport(ICamera* cam, Ogre::Viewport* vp);
 
     virtual void beginRenderPass(
         RenderPassInfo& renderPassInfo);
     virtual void endRenderPass();
     virtual void present();
-    virtual void clearFrameBuffer(uint32 buffers, const Ogre::ColourValue& colour = Ogre::ColourValue::Black,
-        float depth = 1.0f, uint16 stencil = 0);
-
-    virtual void _convertProjectionMatrix(const Ogre::Matrix4& matrix,
-        Ogre::Matrix4& dest, bool forGpuProgram = false) {}
-
-
-   virtual void _updateAllRenderTargets(bool swapBuffers = true);
-
-    virtual void _swapAllRenderTargetBuffers();
-
-    virtual void _resourceLoaded() {}
 
     virtual void pushGroupMarker(const char* maker) {}
     virtual void popGroupMarker() {}
@@ -137,7 +125,7 @@ protected:
     uint32_t mBatchCount = 0;
     uint32_t mTriangleCount = 0;
     uint32_t mLoadResCount = 0;
-    uint64_t mNextFrame = 0;
+    uint64_t mFrameNumber = 0;
     Ogre::Viewport* mViewport = nullptr;
 
 

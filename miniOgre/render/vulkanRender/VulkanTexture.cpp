@@ -271,8 +271,7 @@ void VulkanTexture::createImage(
     imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | 
-        VK_IMAGE_USAGE_SAMPLED_BIT ;
+    imageInfo.usage = usage;
     
     
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -296,7 +295,7 @@ void VulkanTexture::createImage(
 
     if (mUsage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
     {
-        imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+        imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
     }
     
 
@@ -343,7 +342,8 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     VkImageAspectFlags flags = VK_IMAGE_ASPECT_COLOR_BIT;
     if (this->mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
     {
-        flags = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+        //flags = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+        flags = VK_IMAGE_ASPECT_DEPTH_BIT;
     }
     viewInfo.subresourceRange = { flags, 0, mMipLevels, 0, mFace };
 

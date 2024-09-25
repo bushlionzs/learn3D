@@ -85,35 +85,9 @@ namespace Ogre {
 		return mCameraImpl->isVisible(position);
 	}
 
-	Viewport* Camera::getViewport(void) const
-	{
-		return mViewport;
-	}
-
-	/** Notifies this camera that a viewport is using it.*/
-	void Camera::_notifyViewport(Viewport* viewport)
-	{
-		mViewport = viewport;
-	}
-
 	bool Camera::getAutoAspectRatio(void) const
 	{
 		return true;
-	}
-
-	unsigned int Camera::_getNumRenderedFaces(void) const
-	{
-		return 1;
-	}
-
-	unsigned int Camera::_getNumRenderedBatches(void) const
-	{
-		return 1;
-	}
-
-	void Camera::_renderScene(Viewport* vp)
-	{
-		mCreator->_renderScene(this, vp);
 	}
 
 	const AxisAlignedBox& Camera::getBoundingBox(void) const

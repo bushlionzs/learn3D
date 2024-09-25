@@ -17,10 +17,11 @@ struct Light {
     float FalloffEnd;   // point/spot light only
     vec3 Position;    // point light only
     float SpotPower;    // spot light only
+	mat4 viewProj;
 };
 
 
-float textureProj(sampler2D shadowMap, vec4 shadowCoord, vec2 off)
+float textureProj(vec4 shadowCoord, sampler2D shadowMap,  vec2 off)
 {
 	float shadow = 1.0;
 	if ( shadowCoord.z > -1.0 && shadowCoord.z < 1.0 ) 
@@ -54,7 +55,7 @@ float calcShadowFactor(vec4 shadowPosH, sampler2D shadowMap, float shadowMapSize
 
     for(int i = 0; i < 9; ++i)
     {
-        percentLit += textureProj(shadowMap, shadowPosH , offsets[i]);
+        percentLit += textureProj(shadowPosH , shadowMap, offsets[i]);
     }
 
     return percentLit / 9.0;
@@ -131,7 +132,7 @@ layout (set=1, binding = 8) uniform samplerCube prefilteredCube;
 layout(set=1, binding = 0) uniform sampler2D first;
 layout (set=1, binding = 1) uniform sampler2D second;
 layout (set=1, binding = 2) uniform sampler2D third;
+layout (set=1, binding = 3) uniform sampler2D gShadowMap;
+layout (set=1, binding = 4) uniform samplerCube gCubeMap;
 
-layout (set=1, binding = 3) uniform samplerCube gCubeMap;
-layout (set=1, binding = 4) uniform sampler2D gShadowMap;
 #endif //PBR

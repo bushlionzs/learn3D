@@ -156,15 +156,24 @@ void ApplicationBase::render()
 		Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
 		for (auto& pass : mPassList)
 		{
-			RenderPassInfo passInfo;
-			passInfo.renderTargets[0].renderTarget = pass.color;
-			passInfo.depthTarget.depthStencil = pass.depth;
-			passInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-			passInfo.depthTarget.clearValue = {1.0f, 0.0f};
-			passInfo.cam = pass.cam;
-			mRenderSystem->beginRenderPass(passInfo);
+			if (!pass.color)
+			{
+				mPassInfo.renderTargetCount = 0;
+			}
+			else
+			{
+				mPassInfo.renderTargetCount = 1;
+			}
+			mPassInfo.renderTargets[0].renderTarget = pass.color;
+			mPassInfo.depthTarget.depthStencil = pass.depth;
+			mPassInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
+			mPassInfo.depthTarget.clearValue = {1.0f, 0.0f};
+			mPassInfo.cam = pass.cam;
+			mPassInfo.shadowPass = pass.shadowPass;
+			mPassInfo.shadowMap = pass.shadowMap;
+			mRenderSystem->beginRenderPass(mPassInfo);
 			static EngineRenderList engineRenerList;
-			mSceneManager->getSceneRenderList(pass.cam, engineRenerList);
+			mSceneManager->getSceneRenderList(pass.cam, engineRenerList, pass.shadowPass);
 			mRenderSystem->multiRender(engineRenerList.mOpaqueList);
 			mRenderSystem->endRenderPass();
 		}
@@ -175,7 +184,7 @@ void ApplicationBase::render()
 	}
 }
 
-void ApplicationBase::addMainPass()
+void ApplicationBase::addMainPass(Ogre::OgreTexture* shadowMap)
 {
 	mPassList.emplace_back();
 	auto& pass = mPassList.back();
@@ -183,6 +192,7 @@ void ApplicationBase::addMainPass()
 	pass.depth = mRenderWindow->getDepthTarget();
 	pass.sceneMgr = mSceneManager;
 	pass.cam = mCamera;
+	pass.shadowMap = shadowMap;
 }
 
 void ApplicationBase::ShowFrameFrequency()

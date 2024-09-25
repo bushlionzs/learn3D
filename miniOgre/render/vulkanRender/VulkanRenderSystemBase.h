@@ -32,7 +32,7 @@ public:
         uint32_t width, 
         uint32_t height, 
         Ogre::PixelFormat format, 
-        Ogre::TextureUsage usage) override;
+        uint32_t usage) override;
     //
     VulkanFrame* _getCurrentFrame();
     ICamera* _getCamera();
@@ -62,7 +62,6 @@ protected:
     VulkanWindow* mRenderWindow;
 
     VkImage mCurrentVKImage;
-
 
     std::vector<Ogre::Renderable*> mRenderList;
 

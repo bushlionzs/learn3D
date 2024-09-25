@@ -90,41 +90,24 @@ namespace Ogre {
         virtual ~RenderTarget();
 
         /// Retrieve target's name.
-        virtual const String& getName(void) const;
+        const String& getName(void) const;
 
 
-        virtual uint32 getWidth(void) const;
-        virtual uint32 getHeight(void) const;
-
-        
-        virtual void swapBuffers() {}
+        uint32 getWidth(void) const;
+        uint32 getHeight(void) const;
 
         
-        virtual Viewport* addViewport(Camera* cam, int ZOrder = 0, float left = 0.0f, float top = 0.0f,
-            float width = 1.0f, float height = 1.0f) 
+        virtual Ogre::OgreTexture* getTarget()
         {
             return nullptr;
         }
 
-        
-        virtual void _endUpdate() {}
-
-        virtual void preRender(const ColourValue& colour)
-        {
-        }
-        virtual void postRender()
-        {
-        }
     protected:
         /// The name of this target.
         String mName;
-       
-
         uint32 mWidth;
         uint32 mHeight;
-       
-
-       
+      
     };
     /** @} */
     /** @} */

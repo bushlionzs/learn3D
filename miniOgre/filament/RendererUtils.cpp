@@ -234,7 +234,7 @@ FrameGraphId<FrameGraphTexture> RendererUtils::colorPass(
 
                 static EngineRenderList engineRenerList;
 
-                sm->getSceneRenderList(cam, engineRenerList);
+                sm->getSceneRenderList(cam, engineRenerList, false);
                 for (auto* r : engineRenerList.mOpaqueList)
                 {
                     auto* mat = r->getMaterial().get();

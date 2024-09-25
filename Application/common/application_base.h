@@ -16,10 +16,12 @@ class ApplicationBase: public Ogre::FrameListener
 public:
 	struct BasicPass
 	{
-		Ogre::RenderTarget* color;
-		Ogre::RenderTarget* depth;
-		SceneManager* sceneMgr;
-		Ogre::ICamera* cam;
+		Ogre::RenderTarget* color = nullptr;
+		Ogre::RenderTarget* depth = nullptr;
+		SceneManager* sceneMgr = nullptr;
+		Ogre::ICamera* cam = nullptr;
+		Ogre::OgreTexture* shadowMap = nullptr;
+		bool shadowPass = false;
 	};
 	ApplicationBase();
 	~ApplicationBase();
@@ -42,7 +44,7 @@ public:
 	virtual void OnSize(uint32_t width, uint32_t height);
 
 protected:
-	void addMainPass();
+	void addMainPass(Ogre::OgreTexture* shadowMap);
 private:
 	virtual bool frameStarted(const FrameEvent& evt);
 	void ShowFrameFrequency();
@@ -58,4 +60,5 @@ protected:
 	Ogre::RenderWindow* mRenderWindow = nullptr;
 	Ogre::Viewport* mViewport = nullptr;
 	std::vector<BasicPass> mPassList;
+	RenderPassInfo mPassInfo;
 };

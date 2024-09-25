@@ -106,67 +106,17 @@ namespace Ogre {
 
         return nullptr;
     }
-
-    Camera* SceneManager::addShadowCamera(const std::string& name)
-    {
-        return nullptr;
-    }
-
-    void SceneManager::_renderScene(Camera* camera, Ogre::Viewport* vp)
-    {
-        mCurrentViewport = vp;
-
-        _renderScene2(camera, vp);
-    }
-
-    void SceneManager::_renderScene2(ICamera* camera, Ogre::Viewport* vp)
-    {
-        mEngineRenderList.mOpaqueList.clear();
-        mEngineRenderList.mTransparentList.clear();
-
-        mRenderSystem->_setViewport(camera, vp);
-
-        bool multithread = true;
-
-        if (camera->getProjectionType() == Ogre::PT_ORTHOGRAPHIC)
-        {
-            multithread = false;
-        }
-
-        mRoot->traverse(mEngineRenderList, camera);
-
-        if (mCurrentViewport->getClearEveryFrame())
-        {
-            mRenderSystem->clearFrameBuffer(
-                mCurrentViewport->getClearBuffers(),
-                mCurrentViewport->getBackgroundColour(),
-                mCurrentViewport->getDepthClear());
-        }
-
-        {
-            std::sort(mEngineRenderList.mOpaqueList.begin(), mEngineRenderList.mOpaqueList.end(),
-                [](Ogre::Renderable* a, Ogre::Renderable* b)
-            {
-                return a->getSortValue() < b->getSortValue();
-            }
-            );
-
-            if(!mEngineRenderList.mOpaqueList.empty())
-                mRenderSystem->multiRender(mEngineRenderList.mOpaqueList, multithread);
-
-            if (!mEngineRenderList.mTransparentList.empty())
-                mRenderSystem->multiRender(mEngineRenderList.mTransparentList, multithread);
-
-        }
-    }
-
-    void SceneManager::getSceneRenderList(ICamera* camera, EngineRenderList& renderList)
+ 
+    void SceneManager::getSceneRenderList(
+        ICamera* camera, 
+        EngineRenderList& renderList,
+        bool shadow)
     {
         renderList.mOpaqueList.clear();
         renderList.mTransparentList.clear();
 
 
-        mRoot->traverse(renderList, camera);
+        mRoot->traverse(renderList, camera, shadow);
 
         std::sort(mEngineRenderList.mOpaqueList.begin(), mEngineRenderList.mOpaqueList.end(),
             [](Ogre::Renderable* a, Ogre::Renderable* b)

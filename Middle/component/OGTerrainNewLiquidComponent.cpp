@@ -61,19 +61,6 @@ namespace Orphigine
 	
 		mReflectTexture->load(nullptr);
 		mRenderTarget = mReflectTexture->getBuffer(0)->getRenderTarget();
-		//Ogre::Viewport* viewPort = mRenderTarget->addViewport( mReflectCamera);
-		Real aspectRatio = mCamera->getAspectRatio();
-		Ogre::Viewport* oldViewPort = mCamera->getViewport();
-		Ogre::Viewport* viewPort = mRenderTarget->addViewport(mCamera);
-
-		viewPort->setOverlaysEnabled(false);
-		viewPort->setSkiesEnabled(false);
-		viewPort->setClearEveryFrame(true);
-		viewPort->setBackgroundColour(mTerrainLiquid->mHighLiquidColour);
-
-		mCamera->setAspectRatio(aspectRatio);
-		mCamera->_notifyViewport(oldViewPort);
-
 	}
 
 	ReflectRenderTargetListener::~ReflectRenderTargetListener()

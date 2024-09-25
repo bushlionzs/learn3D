@@ -60,18 +60,22 @@ bool ShadowMap::appInit()
 	SceneNode* cylindernode = root->createChildSceneNode("cylinder");
 	cylindernode->attachObject(cylinder);
 	cylindernode->setPosition(Ogre::Vector3(0, 0.0, 0.0f));
-	sphere->setCastShadows(true);
-	cylinder->setCastShadows(true);
-	ground->setCastShadows(false);
+	
+
 	mesh = MeshManager::getSingleton().load("ninja.mesh");
 	Entity* ninja = mSceneManager->createEntity("ninja", "ninja.mesh");
+
 	SceneNode* ninjanode = root->createChildSceneNode("ninja");
 	ninjanode->attachObject(ninja);
 	ninjanode->setPosition(Ogre::Vector3(-4, -2, -1.0f));
 	ninjanode->yaw(Ogre::Radian(3.14f));
 	float s = 0.015f;
 	ninjanode->setScale(Ogre::Vector3(s, s, s));
+	
 	ninja->setCastShadows(true);
+	sphere->setCastShadows(true);
+	cylinder->setCastShadows(true);
+
 	mAnimationState = ninja->getAnimationState(std::string("Walk"));
 	if (mAnimationState)
 	{
@@ -82,7 +86,7 @@ bool ShadowMap::appInit()
 	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, 8.0f), Ogre::Vector3::ZERO);
 	mGameCamera->setMoveSpeed(10.0f);
 
-	Ogre::Light* light = mSceneManager->createLight("shadow");
+	light = mSceneManager->createLight("shadow");
 	light->setLightType(LightType_Direction, 0);
 
 	mLightNode = root->createChildSceneNode("light");
@@ -112,15 +116,26 @@ bool ShadowMap::appInit()
 
 	light->mProjMatrix = Ogre::Math::makeOrthoLH(left, right, bottom, top, 1.0f, 10000.0f);
 
-	/*auto shadowSize = 1024;
+
+	auto shadowSize = 1024;
+	uint32_t usage = Ogre::TextureUsage::COLOR_ATTACHMENT | Ogre::TextureUsage::DEPTH_ATTACHMENT;
+	usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
+	auto shadowMap = mRenderSystem->createRenderTarget(
+		"shadow", shadowSize, shadowSize, Ogre::PF_DEPTH32_STENCIL8, 
+		usage);
+	Ogre::OgreTexture* target = shadowMap->getTarget();
+
 	mPassList.emplace_back();
 	auto& pass = mPassList.back();
-	pass.depth = mRenderSystem->createRenderTarget("shadow", shadowSize, shadowSize, Ogre::PF_DEPTH32_STENCIL8, Ogre::TextureUsage::DEPTH_ATTACHMENT);
+	pass.depth = shadowMap;
 	pass.sceneMgr = mSceneManager;
-	pass.cam = light;*/
+	pass.cam = light;
+	pass.shadowPass = true;
+	pass.shadowMap = target;
 	
-
-	addMainPass();
+	
+	addMainPass(target);
+	
 
 	return true;
 }
@@ -132,6 +147,8 @@ void ShadowMap::appUpdate(float delta)
 	{
 		mAnimationState->addTime(delta);
 	}
+
+	mPassInfo.lightViewProj = (light->getProjectMatrix() * light->getViewMatrix()).transpose();
 
 	mLightNode->yaw(Ogre::Radian(3.14) * delta * 0.1);
 }
