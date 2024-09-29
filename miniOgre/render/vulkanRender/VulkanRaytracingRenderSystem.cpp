@@ -39,45 +39,6 @@ static const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 };
 
-static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevice,
-    VkDevice device) {
-    VmaAllocator allocator;
-    VmaVulkanFunctions const funcs{
-#if VMA_DYNAMIC_VULKAN_FUNCTIONS
-        .vkGetInstanceProcAddr = vkGetInstanceProcAddr,
-        .vkGetDeviceProcAddr = vkGetDeviceProcAddr,
-#else
-        .vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
-        .vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties,
-        .vkAllocateMemory = vkAllocateMemory,
-        .vkFreeMemory = vkFreeMemory,
-        .vkMapMemory = vkMapMemory,
-        .vkUnmapMemory = vkUnmapMemory,
-        .vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges,
-        .vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges,
-        .vkBindBufferMemory = vkBindBufferMemory,
-        .vkBindImageMemory = vkBindImageMemory,
-        .vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements,
-        .vkGetImageMemoryRequirements = vkGetImageMemoryRequirements,
-        .vkCreateBuffer = vkCreateBuffer,
-        .vkDestroyBuffer = vkDestroyBuffer,
-        .vkCreateImage = vkCreateImage,
-        .vkDestroyImage = vkDestroyImage,
-        .vkCmdCopyBuffer = vkCmdCopyBuffer,
-        .vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR,
-        .vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR
-#endif
-    };
-    VmaAllocatorCreateInfo const allocatorInfo{
-        .physicalDevice = physicalDevice,
-        .device = device,
-        .pVulkanFunctions = &funcs,
-        .instance = instance,
-    };
-    vmaCreateAllocator(&allocatorInfo, &allocator);
-    return allocator;
-}
-
 VulkanRaytracingRenderSystem::VulkanRaytracingRenderSystem(HWND wnd)
 {
     bluevk::initialize();
@@ -102,9 +63,6 @@ bool VulkanRaytracingRenderSystem::engineInit()
     VulkanHelper& helper = VulkanHelper::getSingleton();
     helper._initialise();
     helper.getVulkanSettings().rayTraceing = true;
-    mAllocator = createAllocator(helper._getVKInstance(), helper._getPhysicalDevice(), helper._getVkDevice());
-
-    mPipelineCache = new filament::backend::VulkanPipelineCache(helper._getVkDevice(), mAllocator);
 
     mMaxObjectCount = 100;
     mTransformMatrices.resize(mMaxObjectCount);

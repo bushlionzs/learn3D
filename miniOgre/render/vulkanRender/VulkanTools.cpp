@@ -12,6 +12,7 @@
 #include "VulkanHelper.h"
 #include "VulkanBuffer.h"
 #include "glslUtil.h"
+#include <spirv.hpp>
 #include <platform_file.h>
 
 namespace vks
@@ -361,22 +362,22 @@ namespace vks
 			std::vector<std::pair<std::string, std::string>> shaderMacros;
 			shaderc_shader_kind kind = shaderc_glsl_vertex_shader;
 			std::vector<GlslInputDesc> inputDesc;
-			VkShaderModule shaderModule;
+			VkShaderModuleInfo shaderModuleInfo;
 			switch (type)
 			{
 			case VertexShader:
-				kind = shaderc_glsl_vertex_shader;
-				shaderModule = glslCompileVertexShader(strName, content, entryPoint, shaderMacros, inputDesc);
+				shaderModuleInfo.shaderType = Ogre::ShaderType::VertexShader;
+				glslCompileShader(strName, content, entryPoint, shaderMacros, shaderModuleInfo);
 				break;
 			case PixelShader:
-				kind = shaderc_glsl_fragment_shader;
-				shaderModule = glslCompileFragShader(strName, content, entryPoint, shaderMacros);
+				shaderModuleInfo.shaderType = Ogre::ShaderType::PixelShader;
+				glslCompileShader(strName, content, entryPoint, shaderMacros, shaderModuleInfo);
 				break;
 			default:
 				assert(false);
 				break;
 			}
-			return shaderModule;
+			return shaderModuleInfo.shaderModule;
 		}
 
 		VkShaderModule loadShaderMemory(const std::string& code, VkDevice device)
@@ -630,6 +631,66 @@ namespace vks
 				VK_IMAGE_LAYOUT_GENERAL,
 				{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
 			VulkanHelper::getSingletonPtr()->endSingleTimeCommands(cmdBuffer);
+		}
+
+		std::tuple<uint32_t, uint32_t, uint32_t> getShaderBindings(const std::string& blob)
+		{
+			std::unordered_map<uint32_t, uint32_t> targetToSet, targetToBinding;
+
+
+			constexpr size_t HEADER_SIZE = 5;
+
+			size_t const dataSize = blob.size() / 4;
+			uint32_t const* data = (uint32_t*)blob.data();
+
+			for (uint32_t cursor = HEADER_SIZE, cursorEnd = dataSize; cursor < cursorEnd;) {
+				uint32_t const firstWord = data[cursor];
+				uint32_t const wordCount = firstWord >> 16;
+				uint32_t const op = firstWord & 0x0000FFFF;
+
+				switch (op) {
+				case spv::Op::OpDecorate: {
+					if (data[cursor + 2] == spv::Decoration::DecorationDescriptorSet) {
+						uint32_t const targetVar = data[cursor + 1];
+						uint32_t const setId = data[cursor + 3];
+						targetToSet[targetVar] = setId;
+					}
+					else if (data[cursor + 2] == spv::Decoration::DecorationBinding) {
+						uint32_t const targetVar = data[cursor + 1];
+						uint32_t const binding = data[cursor + 3];
+						targetToBinding[targetVar] = binding;
+					}
+					break;
+				}
+				default:
+					break;
+				}
+				cursor += wordCount;
+			}
+
+			constexpr uint32_t UBO = 0;
+			constexpr uint32_t SAMPLER = 1;
+			constexpr uint32_t IATTACHMENT = 2;
+			uint32_t ubo = 0, sampler = 0, inputAttachment = 0;
+
+			for (auto const& [target, setId] : targetToSet) {
+				uint32_t const binding = targetToBinding[target];
+				assert_invariant(binding < 32);
+				switch (setId) {
+				case UBO:
+					ubo |= (1 << binding);
+					break;
+				case SAMPLER:
+					sampler |= (1 << binding);
+					break;
+				case IATTACHMENT:
+					inputAttachment |= (1 << binding);
+					break;
+				default:
+					PANIC_POSTCONDITION("unexpected %d", (int)setId);
+				}
+			}
+			return { ubo, sampler, inputAttachment };
 		}
 	}
 

@@ -6,7 +6,7 @@
 #include "glslUtil.h"
 #include <utils/JobSystem.h>
 #include <DriverEnums.h>
-#include <utils/StructureOfArrays.h>
+
 
 class VulkanRenderSystem;
 class VulkanRayTracingContext;
@@ -90,6 +90,7 @@ private:
 		VkCommandBuffer cb, 
 		VulkanPipelineCache* pipelineCache,
 		bool shadow = false);
+	void buildLayout();
 private:
 	VulkanRenderSystemBase* mEngine;
 	VkDevice mDevice;
@@ -100,11 +101,16 @@ private:
 	std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
 	bool mUpdate = false;
 
-	VkShaderModule mVertexShader = VK_NULL_HANDLE;
-	VkShaderModule mFragShader = VK_NULL_HANDLE;
+	VkShaderModuleInfo mVertexShaderInfo;
+	VkShaderModuleInfo mFragShaderInfo;
 
 
 	filament::backend::VulkanPipelineCache::RasterState mRasterState;
+
+	std::vector<DescriptorSetLayoutBindingInfo> mUBOLayoutInfo;
+	std::vector<DescriptorSetLayoutBindingInfo> mSamplerLayoutInfo;
+	std::array <VkDescriptorSetLayout, 2> mLayouts;
+	VkPipelineLayout mPipelineLayout;
 
 	GeometryNode mGeometryNode;
 

@@ -6,12 +6,52 @@
 #include "VulkanRenderSystem.h"
 #include "VulkanTools.h"
 #include "VulkanFrame.h"
-
 #include "VulkanHardwareBufferManager.h"
 #include "VulkanBuffer.h"
 #include "VulkanMappings.h"
+#include "VulkanLayoutCache.h"
+#include "VulkanPipelineLayoutCacheEx.h"
 #include "shaderManager.h"
 
+
+static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevice,
+    VkDevice device) {
+    VmaAllocator allocator;
+    VmaVulkanFunctions const funcs{
+#if VMA_DYNAMIC_VULKAN_FUNCTIONS
+        .vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+        .vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+#else
+        .vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
+        .vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties,
+        .vkAllocateMemory = vkAllocateMemory,
+        .vkFreeMemory = vkFreeMemory,
+        .vkMapMemory = vkMapMemory,
+        .vkUnmapMemory = vkUnmapMemory,
+        .vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges,
+        .vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges,
+        .vkBindBufferMemory = vkBindBufferMemory,
+        .vkBindImageMemory = vkBindImageMemory,
+        .vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements,
+        .vkGetImageMemoryRequirements = vkGetImageMemoryRequirements,
+        .vkCreateBuffer = vkCreateBuffer,
+        .vkDestroyBuffer = vkDestroyBuffer,
+        .vkCreateImage = vkCreateImage,
+        .vkDestroyImage = vkDestroyImage,
+        .vkCmdCopyBuffer = vkCmdCopyBuffer,
+        .vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR,
+        .vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR
+#endif
+    };
+    VmaAllocatorCreateInfo const allocatorInfo{
+        .physicalDevice = physicalDevice,
+        .device = device,
+        .pVulkanFunctions = &funcs,
+        .instance = instance,
+    };
+    vmaCreateAllocator(&allocatorInfo, &allocator);
+    return allocator;
+}
 
 
 template<> VulkanHelper* Ogre::Singleton<VulkanHelper>::msSingleton = 0;
@@ -34,6 +74,7 @@ static std::vector<const char*> getRequiredExtensions()
 }
 
 VulkanHelper::VulkanHelper(VulkanRenderSystemBase* rs, HWND wnd)
+    :mResourceAllocator(8388608, false)
 {
     mVulkanRenderSystem = rs;
     mWnd = wnd;
@@ -1065,6 +1106,14 @@ void VulkanHelper::setupDescriptorSetLayout()
     {
         throw std::runtime_error("failed to create pipeline layout!");
     }
+
+    mAllocator = createAllocator(_getVKInstance(), _getPhysicalDevice(), mVKDevice);
+
+    mLayoutCache = new VulkanLayoutCache(mVKDevice, &mResourceAllocator);
+
+    mPipelineCache = new filament::backend::VulkanPipelineCache(mVKDevice, mAllocator);
+
+    mPipelineLayoutCache = new Ogre::VulkanPipelineLayoutCache(mVKDevice, &mResourceAllocator);
 }
 
 

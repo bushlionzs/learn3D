@@ -59,7 +59,7 @@ private:
 std::string getGlslKey(
     std::string& shaderName,
     const std::vector<std::pair<std::string, std::string>>& shaderMacros,
-    shaderc_shader_kind kind)
+    Ogre::ShaderType shaderType)
 {
     uint64_t macro_bit = 0;
     std::vector<std::string> keys;
@@ -68,7 +68,8 @@ std::string getGlslKey(
         keys.push_back(pair.first);
         keys.push_back(pair.second);
     }
-    keys.push_back(std::to_string(kind));
+
+    keys.push_back(std::to_string(shaderType));
 
     std::sort(keys.begin(), keys.end());
 
@@ -85,28 +86,29 @@ struct ShaderContent
     VkShaderModule shaderModule;
     std::vector<GlslInputDesc> inputDesc;
 };
-static std::unordered_map<std::string, ShaderContent> gVertexShaderCacheMap;
+static std::unordered_map<std::string, ShaderContent> gShaderCacheMap;
 
 static std::mutex gShaderMutex;
 
-VkShaderModule glslCompileVertexShader(
+bool glslCompileShader(
     std::string& shaderName,
     std::string& shaderContent,
     std::string& entryPoint,
 	const std::vector<std::pair<std::string, std::string>>& shaderMacros,
-    std::vector<GlslInputDesc>& inputDesc
+    VkShaderModuleInfo& shaderModuleInfo
 )
 {
-    std::string key = getGlslKey(shaderName, shaderMacros, shaderc_glsl_vertex_shader);
+    std::string key = getGlslKey(shaderName, shaderMacros, shaderModuleInfo.shaderType);
 
     {
         std::unique_lock<std::mutex> lck(gShaderMutex);
-        auto itor = gVertexShaderCacheMap.find(key);
+        auto itor = gShaderCacheMap.find(key);
 
-        if (itor != gVertexShaderCacheMap.end())
+        if (itor != gShaderCacheMap.end())
         {
-            inputDesc = itor->second.inputDesc;
-            return itor->second.shaderModule;
+            shaderModuleInfo.shaderModule = itor->second.shaderModule;
+            shaderModuleInfo.inputDesc = itor->second.inputDesc;
+            return true;
         }
     }
     
@@ -125,14 +127,28 @@ VkShaderModule glslCompileVertexShader(
         options.AddMacroDefinition(pair.first, pair.second);
     }
 
-  
-    options.AddMacroDefinition("VERTEX_SHADER", "1");
+    shaderc_shader_kind kind = shaderc_glsl_vertex_shader;
+
+    if (shaderModuleInfo.shaderType == Ogre::ShaderType::VertexShader)
+    {
+        options.AddMacroDefinition("VERTEX_SHADER", "1");
+    }
+    else if (shaderModuleInfo.shaderType == Ogre::ShaderType::PixelShader)
+    {
+        options.AddMacroDefinition("FRAGMENT_SHADER", "1");
+        kind = shaderc_glsl_fragment_shader;
+    }
+    else
+    {
+        assert(shaderModuleInfo.shaderType == Ogre::ShaderType::ComputeShader);
+        kind = shaderc_glsl_compute_shader;
+    }
 
 
     shaderc::SpvCompilationResult module =
         compiler.CompileGlslToSpv(
             shaderContent, 
-            shaderc_glsl_vertex_shader,
+            kind,
             shaderName.c_str(), 
             entryPoint.c_str(),
             options);
@@ -140,7 +156,7 @@ VkShaderModule glslCompileVertexShader(
     if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
         std::string aa  = module.GetErrorMessage();
         assert(false);
-        return VK_NULL_HANDLE;
+        return false;
     }
 
 
@@ -153,100 +169,24 @@ VkShaderModule glslCompileVertexShader(
     VkShaderModule shader = vks::tools::loadShaderMemory(result, device);
     if (VK_NULL_HANDLE == shader)
     {
-        return VK_NULL_HANDLE;
+        return false;
     }
 
     {
         std::unique_lock<std::mutex> lck(gShaderMutex);
-        auto itor = gVertexShaderCacheMap.find(key);
-        if (itor == gVertexShaderCacheMap.end())
+        auto itor = gShaderCacheMap.find(key);
+        if (itor == gShaderCacheMap.end())
         {
-            gVertexShaderCacheMap[key].shaderModule = shader;
-            parserGlslInputDesc(result, inputDesc);
-            gVertexShaderCacheMap[key].inputDesc = inputDesc;
+            gShaderCacheMap[key].shaderModule = shader;
+            parserGlslInputDesc(result, shaderModuleInfo.inputDesc);
+            gShaderCacheMap[key].inputDesc = shaderModuleInfo.inputDesc;
+            shaderModuleInfo.shaderModule = shader;
+
         }
     }
 
-    return shader;
-}
-
-static std::unordered_map<std::string, VkShaderModule> gFragShaderCacheMap;
-
-VkShaderModule glslCompileFragShader(
-    std::string& shaderName,
-    std::string& shaderContent,
-    std::string& entryPoint,
-    const std::vector<std::pair<std::string, std::string>>& shaderMacros
-)
-{
-    std::string key = getGlslKey(shaderName, shaderMacros, shaderc_glsl_fragment_shader);
-
-    {
-        std::unique_lock<std::mutex> lck(gShaderMutex);
-        auto itor = gFragShaderCacheMap.find(key);
-
-        if (itor != gFragShaderCacheMap.end())
-        {
-            return itor->second;
-        }
-    }
-
-    shaderc::Compiler compiler;
-    shaderc::CompileOptions options;
-
-
-    auto pos = shaderName.find_last_of("\\");
-    std::string rootpath = shaderName.substr(0, pos + 1);
-
-
-    options.SetIncluder(std::make_unique<MyIncluderInterface>(rootpath));
-    // Like -DMY_DEFINE=1
-    for (auto& pair : shaderMacros)
-    {
-        options.AddMacroDefinition(pair.first, pair.second);
-    }
-
-
-    options.AddMacroDefinition("FRAGMENT_SHADER", "1");
-    
-
-    shaderc::SpvCompilationResult module =
-        compiler.CompileGlslToSpv(
-            shaderContent,
-            shaderc_glsl_fragment_shader,
-            shaderName.c_str(),
-            entryPoint.c_str(),
-            options);
-
-    if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
-        std::string aa = module.GetErrorMessage();
-        assert(false);
-        return VK_NULL_HANDLE;
-    }
-
-
-    std::vector<uint32_t> aa = { module.cbegin(), module.cend() };
-
-    std::string result;
-    result.resize(aa.size() * sizeof(uint32_t));
-    memcpy((void*)result.data(), aa.data(), aa.size() * sizeof(uint32_t));
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
-    VkShaderModule shader = vks::tools::loadShaderMemory(result, device);
-    if (VK_NULL_HANDLE == shader)
-    {
-        return VK_NULL_HANDLE;
-    }
-
-    {
-        std::unique_lock<std::mutex> lck(gShaderMutex);
-        auto itor = gFragShaderCacheMap.find(key);
-        if (itor == gFragShaderCacheMap.end())
-        {
-            gFragShaderCacheMap[key] = shader;
-        }
-    }
-
-    return shader;
+    assert(shaderModuleInfo.shaderModule);
+    return true;
 }
 
 void parserGlslInputDesc(

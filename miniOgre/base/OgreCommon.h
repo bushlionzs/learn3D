@@ -408,7 +408,7 @@ namespace Ogre {
     {
         VertexShader,
         PixelShader,
-        GeometryShader,
+        ComputeShader,
         HullShader,
         DomainShader,
         NumShaderTypes

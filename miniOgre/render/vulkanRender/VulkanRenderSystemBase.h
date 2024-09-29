@@ -68,8 +68,5 @@ protected:
     uint32_t mFrameIndex = 0;
     uint32_t mImageIndex = 0;
 
-
-    VmaAllocator mAllocator = VK_NULL_HANDLE;
-
     filament::backend::VulkanPipelineCache* mPipelineCache = nullptr;
 };

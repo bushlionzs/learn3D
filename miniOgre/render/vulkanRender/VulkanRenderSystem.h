@@ -31,6 +31,6 @@ private:
     enki::TaskScheduler mTaskScheduler;
 
     utils::JobSystem::Job* mRootJob;
-
+    
    
 };

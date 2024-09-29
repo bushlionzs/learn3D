@@ -4,13 +4,22 @@
 #include "OgreSingleton.h"
 #include "VulkanCommon.h"
 #include "OgreCommon.h"
+#include <vulkan/VulkanResourceAllocator.h>
 #include <vulkan/VulkanPipelineCache.h>
+#include <vulkan/caching/VulkanPipelineLayoutCache.h>
 
 
 class VulkanRenderSystemBase;
 class VulkanFrame;
 class VulkanTexture;
 class VulkanBuffer;
+class VulkanLayoutCache;
+
+namespace Ogre
+{
+    class VulkanPipelineLayoutCache;
+}
+
 struct CommandHelper
 {
     VkCommandPool _commandPool;
@@ -101,6 +110,21 @@ public:
         return mSettings;
     }
 
+     filament::backend::VulkanPipelineCache* getPipelineCache()
+     {
+         return mPipelineCache;
+     }
+
+     Ogre::VulkanPipelineLayoutCache* getPipelineLayoutCache()
+     {
+         return mPipelineLayoutCache;
+     }
+
+     VulkanLayoutCache* getLayoutCache()
+     {
+         return mLayoutCache;
+     }
+
 private:
     bool isDeviceSuitable(VkPhysicalDevice device);
     
@@ -185,6 +209,12 @@ private:
     std::vector<VkSampler> mSamplers;
     tsl::robin_map<SamplerParams, VkSampler, SamplerParams::Hasher, SamplerParams::EqualTo> mSamplersCache;
 
+    VmaAllocator mAllocator = VK_NULL_HANDLE;
+    filament::backend::VulkanResourceAllocator mResourceAllocator;
+    VulkanLayoutCache* mLayoutCache;
+    Ogre::VulkanPipelineLayoutCache* mPipelineLayoutCache = nullptr;
+    filament::backend::VulkanPipelineCache* mPipelineCache = nullptr;
+    std::array<descset::DescriptorSetLayout, 2> mLayouts;
     VulkanSettings mSettings;
 
     void* deviceCreatepNextChain = nullptr;

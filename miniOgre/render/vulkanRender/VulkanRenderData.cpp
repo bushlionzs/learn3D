@@ -19,7 +19,8 @@
 #include "VulkanRaytracing.h"
 #include "VulkanTools.h"
 #include "VulkanMappings.h"
-#include <vulkan/VulkanPipelineCache.h>
+#include "VulkanPipelineLayoutCacheEx.h"
+#include "VulkanLayoutCache.h"
 #include "shaderManager.h"
 #include "OgreResourceManager.h"
 #include <utils/JobSystem.h>
@@ -36,6 +37,15 @@ VulkanRenderableData::VulkanRenderableData(
     mDevice = VulkanHelper::getSingleton()._getVkDevice();
 
     mRayTracingContext = context;
+    mVertexShaderInfo.shaderType = Ogre::ShaderType::VertexShader;
+    mVertexShaderInfo.shaderModule = VK_NULL_HANDLE;
+    mVertexShaderInfo.uboMask = 1 | 2 | 4 | 8;
+    mVertexShaderInfo.samplerMask = 1 | 2 | 4 | 8 | 16;
+    mFragShaderInfo.shaderType = Ogre::ShaderType::PixelShader;
+    mFragShaderInfo.shaderModule = VK_NULL_HANDLE;
+    mFragShaderInfo.uboMask = 1 | 2 | 4 | 8;
+    mFragShaderInfo.samplerMask = 1 | 2 | 4 | 8 | 16;
+
     buildInitData();
 }
 
@@ -356,16 +366,17 @@ void VulkanRenderableData::render(
 
     bool pbr = mat->isPbr();
     VkDescriptorSet ds[2] = 
-    {current->mDescriptorSet, pbr?current->mDescriptorSetSamplerPbr :current->mDescriptorSetSampler};
+    {
+        current->mDescriptorSet, 
+        pbr?current->mDescriptorSetSamplerPbr :current->mDescriptorSetSampler
+    };
 
     
-
-    auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout(pbr);
 
     vkCmdBindDescriptorSets(
         cb,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
-        pipelineLayout, 0, 2, &ds[0], 0, nullptr);
+        mPipelineLayout, 0, 2, &ds[0], 0, nullptr);
 
     //draw object
 
@@ -477,8 +488,12 @@ void VulkanRenderableData::buildInitData()
     {
         return;
     }
+
+    buildLayout();
+
+
     auto descriptorPool = VulkanHelper::getSingleton()._getDescriptorPool();
-    auto descriptorSetLayout = VulkanHelper::getSingleton()._getDescriptorSetLayout(VulkanLayoutIndex_Data);
+    auto descriptorSetLayout = mLayouts[0];
 
     VkDescriptorSetAllocateInfo allocInfo =
         vks::initializers::descriptorSetAllocateInfo(
@@ -486,7 +501,7 @@ void VulkanRenderableData::buildInitData()
             &descriptorSetLayout,
             1);
 
-    auto descriptorSetLayoutSampler = VulkanHelper::getSingleton()._getDescriptorSetLayout(VulkanLayoutIndex_Unlit);
+    auto descriptorSetLayoutSampler = mLayouts[1];
 
     VkDescriptorSetAllocateInfo allocInfoSampler =
         vks::initializers::descriptorSetAllocateInfo(
@@ -627,48 +642,47 @@ void VulkanRenderableData::buildPipelineData(Ogre::Material* mat)
     const auto& shaderInfo = mat->getShaderInfo();
     Ogre::ShaderPrivateInfo* privateInfo =
         ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
+    String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
+    auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
 
-    std::vector<GlslInputDesc> inputDesc;
-
-    if (mVertexShader == VK_NULL_HANDLE)
+    if (res == nullptr)
     {
-        String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
-        auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
-
-        if (res == nullptr)
-        {
-            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to find shader!");
-        }
-
-        mVertexShader = glslCompileVertexShader(
-            res->_fullname,
-            *vertexContent,
-            privateInfo->vertexShaderEntryPoint,
-            shaderInfo.shaderMacros,
-            inputDesc);
-
-        VertexDeclaration* decl = _r->getVertexData()->getVertexDeclaration();
-        parseInputBindingDescription(decl, inputDesc);
-        parseAttributeDescriptions(decl, inputDesc);
-    }
-    
-    
-    if (mFragShader == VK_NULL_HANDLE)
-    {
-        String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
-
-        auto res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
-        mFragShader = glslCompileFragShader(
-            res->_fullname,
-            *fragContent,
-            privateInfo->fragShaderEntryPoint,
-            shaderInfo.shaderMacros);
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to find shader!");
     }
 
+    glslCompileShader(
+        res->_fullname,
+        *vertexContent,
+        privateInfo->vertexShaderEntryPoint,
+        shaderInfo.shaderMacros,
+        mVertexShaderInfo);
 
-    auto findLocation = [&inputDesc](const VertexElement& elem) -> int32_t
+    if (mVertexShaderInfo.shaderModule == nullptr)
+    {
+        int kk = 0;
+    }
+
+    VertexDeclaration* decl = _r->getVertexData()->getVertexDeclaration();
+    parseInputBindingDescription(decl, mVertexShaderInfo.inputDesc);
+    parseAttributeDescriptions(decl, mVertexShaderInfo.inputDesc);
+
+    
+    
+
+    String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
+
+    res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
+    glslCompileShader(
+        res->_fullname,
+        *fragContent,
+        privateInfo->fragShaderEntryPoint,
+        shaderInfo.shaderMacros,
+        mFragShaderInfo);
+
+
+    auto findLocation = [&](const VertexElement& elem) -> int32_t
         {
-            for (auto& input : inputDesc)
+            for (auto& input : mVertexShaderInfo.inputDesc)
             {
                 if (input._name == VulkanMappings::getSemanticName(elem.getSemantic()) &&
                     input._index == elem.getIndex())
@@ -679,13 +693,9 @@ void VulkanRenderableData::buildPipelineData(Ogre::Material* mat)
             assert(false);
             return -1;
         };
-
     
 
-   
-    
 
-    
     mRasterState.cullMode = VK_CULL_MODE_NONE;
     mRasterState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     mRasterState.depthBiasEnable = VK_FALSE;
@@ -731,7 +741,7 @@ void VulkanRenderableData::bindPipeline(
         auto mat = _r->getMaterial().get();
         pipelineCache->bindRenderPass(nullptr, 0);
         
-        pipelineCache->bindProgram(mVertexShader, nullptr);
+        pipelineCache->bindProgram(mVertexShaderInfo.shaderModule, nullptr);
         
         pipelineCache->bindRasterState(mRasterState);
         pipelineCache->bindPrimitiveTopology(VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
@@ -749,12 +759,10 @@ void VulkanRenderableData::bindPipeline(
     {
         auto mat = _r->getMaterial().get();
         pipelineCache->bindRenderPass(nullptr, 0);
-        pipelineCache->bindProgram(mVertexShader, mFragShader);
+        pipelineCache->bindProgram(mVertexShaderInfo.shaderModule, mFragShaderInfo.shaderModule);
         pipelineCache->bindRasterState(mRasterState);
         pipelineCache->bindPrimitiveTopology(VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-        bool pbr = mat->isPbr();
-        auto pipelineLayout = VulkanHelper::getSingleton()._getPipelineLayout(pbr);
-        pipelineCache->bindLayout(pipelineLayout);
+        pipelineCache->bindLayout(mPipelineLayout);
 
         pipelineCache->bindVertexArray(
             mAttributeDescriptions.data(),
@@ -764,7 +772,68 @@ void VulkanRenderableData::bindPipeline(
 
         pipelineCache->bindPipeline(cb);
     }
-    
+}
+
+void VulkanRenderableData::buildLayout()
+{
+    DescriptorSetLayoutBindingInfo binding;
+    for (auto i = 0; i < 16; i++)
+    {
+        bool hasVertex = (mVertexShaderInfo.uboMask & (1uLL << i)) != 0;
+        bool hasFragment = (mFragShaderInfo.uboMask & (1uLL << i)) != 0;
+
+        if (!hasVertex && !hasFragment)
+            continue;
+        binding.binding = i;
+        binding.flags = DescriptorFlags::NONE;
+        binding.count = 0;
+        binding.type = DescriptorType::UNIFORM_BUFFER;
+        if (hasVertex)
+        {
+            binding.stageFlags = ShaderStageFlags2::VERTEX;
+        }
+
+        if (hasFragment)
+        {
+            binding.stageFlags = static_cast<ShaderStageFlags2>(
+                binding.stageFlags | ShaderStageFlags2::FRAGMENT);
+        }
+
+        mUBOLayoutInfo.push_back(binding);
+    }
+
+    for (auto i = 0; i < 32; i++)
+    {
+        bool hasVertex = (mVertexShaderInfo.samplerMask & (1uLL << i)) != 0;
+        bool hasFragment = (mFragShaderInfo.samplerMask & (1uLL << i)) != 0;
+        if (!hasVertex && !hasFragment)
+            continue;
+        binding.binding = i;
+        binding.flags = DescriptorFlags::NONE;
+        binding.count = 0;
+        binding.type = DescriptorType::SAMPLER;
+        if (hasVertex)
+        {
+            binding.stageFlags = ShaderStageFlags2::VERTEX;
+        }
+
+        if (hasFragment)
+        {
+            binding.stageFlags = static_cast<ShaderStageFlags2>(
+                binding.stageFlags | ShaderStageFlags2::FRAGMENT);
+        }
+
+        mSamplerLayoutInfo.push_back(binding);
+    }
+
+    auto* layoutCache = VulkanHelper::getSingleton().getLayoutCache();
+
+    mLayouts[0] = layoutCache->getLayout(mUBOLayoutInfo);
+    mLayouts[1] = layoutCache->getLayout(mSamplerLayoutInfo);
+
+    auto* pipelineLayoutCahce = VulkanHelper::getSingleton().getPipelineLayoutCache();
+    mPipelineLayout = pipelineLayoutCahce->getLayout(mLayouts);
+
 }
 
 

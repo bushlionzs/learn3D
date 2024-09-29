@@ -7,7 +7,9 @@
 #include "engine_struct.h"
 #include <bluevk/BlueVK.h>
 #include "VulkanInitializers.hpp"
+#include <OgreCommon.h>
 #include <DriverEnums.h>
+#include <vulkan/VulkanUtility.h>
 #include <vk_mem_alloc.h>
 #include <tsl/robin_map.h>
 
@@ -87,6 +89,34 @@ struct VulkanSettings {
             sampleCount = VK_SAMPLE_COUNT_1_BIT;
         }
     }
+};
+
+struct GlslInputDesc
+{
+    std::string _name;
+    uint32_t _index;
+    uint32_t _location;
+    uint32_t _size;
+    uint32_t _type;
+    uint32_t _offset;
+
+};
+
+struct VkShaderModuleInfo
+{
+    Ogre::ShaderType shaderType;
+    VkShaderModule shaderModule;
+    uint64_t uboMask;
+    uint64_t samplerMask;
+    std::vector<GlslInputDesc> inputDesc;
+};
+
+struct DescriptorSetLayoutBindingInfo {
+    filament::backend::descset::DescriptorType type;
+    filament::backend::descset::ShaderStageFlags2 stageFlags;
+    uint8_t binding;
+    filament::backend::descset::DescriptorFlags flags;
+    uint16_t count;
 };
 
 // Holds data for a ray tracing scratch buffer that is used as a temporary storage
