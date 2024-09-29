@@ -29,7 +29,7 @@ namespace Ogre {
         IndexDataView* getIndexView();
 
         void setMaterial(std::shared_ptr<Material>& mat);
-        const std::shared_ptr<Material>& getMaterial();
+        std::shared_ptr<Material>& getMaterial();
 
         void setMaterialName(std::string& name);
         const std::string& getMaterialName();

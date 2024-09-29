@@ -153,6 +153,8 @@ namespace Ogre {
         case PF_DXT3:           return VK_FORMAT_BC2_UNORM_BLOCK;
         case PF_DXT4:           return VK_FORMAT_BC2_UNORM_BLOCK;
         case PF_DXT5:           return VK_FORMAT_BC3_UNORM_BLOCK;
+        case PFG_BC3_UNORM:             return VK_FORMAT_BC3_UNORM_BLOCK;
+        case PFG_BC3_UNORM_SRGB:        return VK_FORMAT_BC3_SRGB_BLOCK;
         case PF_BC4_SNORM:      return VK_FORMAT_BC4_UNORM_BLOCK;
         case PF_BC4_UNORM:      return VK_FORMAT_BC4_UNORM_BLOCK;
         case PF_BC5_SNORM:      return VK_FORMAT_BC5_UNORM_BLOCK;
@@ -166,7 +168,9 @@ namespace Ogre {
         case PF_DEPTH32F:       return VK_FORMAT_R32_UINT;
         case PF_DEPTH24_STENCIL8:     return VK_FORMAT_D24_UNORM_S8_UINT;
         case PF_DEPTH32_STENCIL8:     return VK_FORMAT_D32_SFLOAT_S8_UINT;
-        default:                return VK_FORMAT_UNDEFINED;
+        default:
+            //assert(false);
+            return VK_FORMAT_UNDEFINED;
         }
     }
 

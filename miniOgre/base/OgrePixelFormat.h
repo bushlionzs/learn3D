@@ -200,6 +200,17 @@ namespace Ogre {
         PF_R32G32B32A32_SINT,
         /// 32-bit pixel format, 9 bits for blue, green, red plus a 5 bit exponent.
         PF_R9G9B9E5_SHAREDEXP,
+        /// BC1, aka DXT1 & DXT2
+        PFG_BC1_UNORM,
+        PFG_BC1_UNORM_SRGB,
+
+        /// BC2, aka DXT3 & DXT4
+        PFG_BC2_UNORM,
+        PFG_BC2_UNORM_SRGB,
+
+        /// BC3, aka DXT5
+        PFG_BC3_UNORM,
+        PFG_BC3_UNORM_SRGB,
         /// DDS (DirectDraw Surface) BC4 format (unsigned normalised)
         PF_BC4_UNORM,
         /// DDS (DirectDraw Surface) BC4 format (signed normalised)

@@ -126,9 +126,12 @@ namespace Ogre {
             case PF_DXT4:
             case PF_DXT5:
                 return ((width + 3) / 4) * ((height + 3) / 4) * 16 * depth;
+            
             case PF_BC4_SNORM:
             case PF_BC4_UNORM:
                 return ((width + 3) / 4) * ((height + 3) / 4) * 8 * depth;
+            case PFG_BC3_UNORM:
+            case PFG_BC3_UNORM_SRGB:
             case PF_BC5_SNORM:
             case PF_BC5_UNORM:
             case PF_BC6H_SF16:

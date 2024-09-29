@@ -110,7 +110,7 @@ namespace Ogre {
         mMaterial = mat;
     }
 
-    const std::shared_ptr<Material>& SubMesh::getMaterial()
+    std::shared_ptr<Material>& SubMesh::getMaterial()
     {
         return mMaterial;
     }

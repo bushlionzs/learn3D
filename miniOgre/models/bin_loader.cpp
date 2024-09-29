@@ -74,6 +74,15 @@ typedef struct GeometryMeshlets
     uint8_t* mTriangles;
 } GeometryMeshlets;
 
+typedef struct IndirectDrawIndexArguments
+{
+    uint32_t mIndexCount;
+    uint32_t mInstanceCount;
+    uint32_t mStartIndex;
+    uint32_t mVertexOffset;
+    uint32_t mStartInstance;
+} IndirectDrawIndexArguments;
+
 typedef struct Geometry
 {
     /// Index buffer to bind when drawing this geometry
@@ -83,7 +92,7 @@ typedef struct Geometry
  
 
     /// The array of traditional draw arguments to draw each subset in this geometry
-    void* pDrawArgs;
+    IndirectDrawIndexArguments* pDrawArgs;
 
     /// The array of vertex buffer strides to bind when drawing this geometry
     uint32_t mVertexStrides[MAX_VERTEX_BINDINGS];
@@ -161,6 +170,8 @@ typedef struct GeometryData
 
     uint32_t mPad1[5];
 } GeometryData;
+
+
 
 struct BinVertex
 {
@@ -383,19 +394,27 @@ std::shared_ptr<Ogre::Mesh> BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::Da
         vertexOffsets[i] = UINT_MAX;
 
     uint32_t defaultTexcoordSemantic = SEMANTIC_UNDEFINED;
+    geom->pDrawArgs = (IndirectDrawIndexArguments*)(geom + 1);
+    for (uint32_t i = 0; i < geom->mDrawArgCount; i++)
+    {
+        auto subMesh = mesh->addSubMesh(true, true);
 
-    auto subMesh = mesh->addSubMesh(false, false);
+        IndirectDrawIndexArguments& arg = geom->pDrawArgs[i];
+        subMesh->addIndexs(arg.mIndexCount, arg.mStartIndex, arg.mVertexOffset);
+        std::string matName = "Material_" + stream->getName() + std::to_string(i);
+        std::shared_ptr<Material> mat = std::make_shared<Material>(matName, false);
 
-    std::shared_ptr<Material> mat = std::make_shared<Material>("bin", true);
+        ShaderInfo sinfo;
+        sinfo.shaderName = "basic";
+        mat->addShader(sinfo);
+        subMesh->setMaterial(mat);
+    }
+    
 
-    ShaderInfo sinfo;
-    sinfo.shaderName = "basic";
-    mat->addShader(sinfo);
-
-    subMesh->setMaterial(mat);
-    subMesh->addIndexs(geom->mIndexCount, 0, 0);
-    IndexData* indexData = subMesh->getIndexData();
-    VertexData* vertexData = subMesh->getVertexData();
+    
+    
+    IndexData* indexData = mesh->getIndexData();
+    VertexData* vertexData = mesh->getVertexData();
     vertexData->setVertexCount(geom->mVertexCount);
     indexData->mIndexCount = geom->mIndexCount;
     indexData->createBuffer(indexStride, indexData->mIndexCount);

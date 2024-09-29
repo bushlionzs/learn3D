@@ -229,6 +229,12 @@ PixelFormat convertDXToOgreFormat(uint32_t dxfmt)
         return PF_R8_SINT;
     case 65: // DXGI_FORMAT_A8_UNORM
         return PF_A8;
+    case 72:  // DXGI_FORMAT_BC1_UNORM_SRGB
+        return PFG_BC1_UNORM_SRGB;
+    case 75:  // DXGI_FORMAT_BC2_UNORM_SRGB
+        return PFG_BC2_UNORM_SRGB;
+    case 78:  // DXGI_FORMAT_BC3_UNORM_SRGB
+        return PFG_BC3_UNORM_SRGB;
     case 80: // DXGI_FORMAT_BC4_UNORM
         return PF_BC4_UNORM;
     case 81: // DXGI_FORMAT_BC4_SNORM

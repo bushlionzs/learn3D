@@ -21,15 +21,12 @@ namespace Ogre {
 
     VertexData* SubEntity::getVertexData()
     {
-        VertexData* vd = mSubMesh->getVertexData();
-        return vd ? vd : mParentEntity->getVertexData();
+        return mSubMesh->getVertexData();
     }
 
     IndexData* SubEntity::getIndexData()
     {
-        IndexData* id = mSubMesh->getIndexData();
-
-        return id ? id : mParentEntity->getIndexData();
+        return mSubMesh->getIndexData();
     }
 
     IndexDataView* SubEntity::getIndexView()
