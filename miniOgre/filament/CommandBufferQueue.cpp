@@ -21,7 +21,7 @@
 #include <utils/Panic.h>
 #include <utils/debug.h>
 
-#include "filament/BackendUtils.h"
+//#include "filament/BackendUtils.h"
 #include "filament/CommandStream.h"
 
 using namespace utils;

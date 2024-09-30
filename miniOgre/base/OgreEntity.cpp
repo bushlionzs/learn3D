@@ -13,8 +13,6 @@
 #include "OgreAnimationState.h"
 #include "OgreRoot.h"
 #include "OgreMaterialManager.h"
-#include <filament/Engine.h>
-#include <filament/DriverApi.h>
 #include "OgreVertexDeclaration.h"
 
 namespace Ogre {
@@ -241,13 +239,14 @@ namespace Ogre {
         std::vector<Renderable*>* sublist)
     {
         int32_t numSubMeshes = mesh->getSubMeshCount();
-
-        auto* engine = Ogre::Root::getSingleton().getEngine();
-
+        std::string newMatName;
         for (int32_t i = 0; i < numSubMeshes; ++i)
         {
             SubMesh* subMesh = mesh->getSubMesh(i);
-            const std::string& name = subMesh->getMaterialName();
+
+            std::shared_ptr<Material>& mat = subMesh->getMaterial();
+            newMatName = mName + "_" + mat->getName() + std::to_string(i);
+            std::shared_ptr<Material> newMat = mat->clone(newMatName);
 
             SubEntity* subEnt = createSubEntity(subMesh);
 
@@ -255,13 +254,8 @@ namespace Ogre {
             const Ogre::Vector3& scale = subMesh->getScale();
             const Ogre::Quaternion& q = subMesh->getRotate();
             subEnt->setLocalMatrix(position, scale, q);
-
+            subEnt->setMaterial(newMat);
             sublist->push_back(subEnt);
-
-            if (engine)
-            {
-                subEnt->updateBuffer(subMesh->getVertexBuffer(), subMesh->getIndexBuffer());
-            }
         }
 
         //skeleton

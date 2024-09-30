@@ -5,33 +5,17 @@
 #include "OgreVertexDeclaration.h"
 #include "OgreRoot.h"
 #include "OgreMemoryBuffer.h"
-#include <filament/FVertexBuffer.h>
-#include <filament/FIndexBuffer.h>
-#include <filament/OgreFilamentUtils.h>
-#include <filament/Engine.h>
-#include <filament/DriverApi.h>
-#include <filament/FVertexBuffer.h>
+
 
 
 void VertexSlotInfo::createBuffer(uint32_t vertexSize, uint32_t vertexCount)
 {
     mVertexSize = vertexSize;
-
-    auto engine = Ogre::Root::getSingleton().getEngine();
-
-    if (engine)
-    {
-        hardwareVertexBuffer = std::make_shared<HardwareVertexBuffer>(vertexSize, vertexCount, new Ogre::MemoryBuffer(vertexSize, vertexCount));
-    }
-    else
-    {
-        hardwareVertexBuffer = HardwareBufferManager::getSingleton().createVertexBuffer(
-            vertexSize,
-            vertexCount,
-            5
-        );
-    }
-    
+    hardwareVertexBuffer = HardwareBufferManager::getSingleton().createVertexBuffer(
+        vertexSize,
+        vertexCount,
+        5
+    );
 }
 
 void VertexSlotInfo::writeData(const char* data, uint32_t size)
@@ -198,14 +182,6 @@ void VertexData::addBoneInfo(std::vector<VertexBoneAssignment>& assignInfoList)
 void VertexData::writeBindBufferData(uint32_t slot, const char* data, uint32_t size, bool writeGPU)
 {
     vertexSlotInfo[slot].writeData(data, size);
-
-    if (writeGPU && mVertexBuffer)
-    {
-        auto engine = Ogre::Root::getSingleton().getEngine();
-        FVertexBuffer* fvb = (FVertexBuffer*)mVertexBuffer;
-        auto handle = fvb->getBufferObjectHandle(slot);
-        engine->getDriverApi().updateBufferObjectUnsynchronized(handle, backend::BufferDescriptor(data, size), 0);
-    }
 }
 
 int32_t VertexData::getUnusedBinding()
@@ -221,62 +197,5 @@ int32_t VertexData::getUnusedBinding()
     return -1;
 }
 
-void VertexData::prepare()
-{
-    auto engine = Ogre::Root::getSingleton().getEngine();
-    if (engine && !mVertexBuffer)
-    {
-        VertexBuffer::Builder vBuilder;
-
-        auto bufferCount = getBufferCount();
-        vBuilder.vertexCount(mVertexCount);
-        vBuilder.bufferCount(bufferCount);
-        //vBuilder.advancedSkinning(true);
-
-
-        const VertexDeclaration::VertexElementList& elist = vertexDeclaration->getElementList();
-
-        for (auto& e : elist)
-        {
-            auto bufferIndex = e.getSource();
-            auto stride = vertexDeclaration->getVertexSize(bufferIndex);
-            auto offset = e.getOffset();
-            auto attributeType = filament::mappingOgreVertexType(e.getType());
-            auto attribute = filament::mappingOgreVertexAttribute(e.getSemantic(), e.getIndex());
-            vBuilder.attribute(attribute, bufferIndex, attributeType, offset, stride);
-        }
-
-
-        auto vb = vBuilder.build(*engine);
-        for (auto i = 0; i < bufferCount; i++)
-        {
-            auto buf = getBuffer(i);
-            if (buf)
-            {
-                void* data = buf->lock();
-                auto byteCount = buf->getSizeInBytes();
-                Ogre::Vector3* tmp = (Ogre::Vector3*)data;
-                vb->setBufferAt(*engine, i, { data, byteCount });
-            }
-        }
-
-        mVertexBuffer = vb;
-    }
-}
-
-void VertexData::upload(uint32_t binding, uint32_t vertexCount)
-{
-    auto engine = Ogre::Root::getSingleton().getEngine();
-    if (engine)
-    {
-        filament::FVertexBuffer* vb = (filament::FVertexBuffer*)mVertexBuffer;
-
-        auto buf = vertexSlotInfo[binding].hardwareVertexBuffer.get();
-        const char* data = (const char*)buf->lock();
-
-        auto byteCount = vertexCount * vertexSlotInfo[binding].mVertexSize;
-        engine->getDriverApi().updateBufferObjectUnsynchronized(vb->getBufferObjectHandle(binding), { data, byteCount }, 0);
-    }
-}
 
 

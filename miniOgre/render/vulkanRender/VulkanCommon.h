@@ -9,10 +9,12 @@
 #include "VulkanInitializers.hpp"
 #include <OgreCommon.h>
 #include <DriverEnums.h>
-#include <vulkan/VulkanUtility.h>
 #include <vk_mem_alloc.h>
 #include <tsl/robin_map.h>
+#include <utils/FixedCapacityVector.h>
 
+VK_DEFINE_HANDLE(VmaAllocator)
+VK_DEFINE_HANDLE(VmaPool)
 using namespace bluevk;
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
@@ -112,11 +114,15 @@ struct VkShaderModuleInfo
 };
 
 struct DescriptorSetLayoutBindingInfo {
-    filament::backend::descset::DescriptorType type;
-    filament::backend::descset::ShaderStageFlags2 stageFlags;
+    DescriptorType type;
+    ShaderStageFlags2 stageFlags;
     uint8_t binding;
-    filament::backend::descset::DescriptorFlags flags;
+    DescriptorFlags flags;
     uint16_t count;
+};
+
+struct DescriptorSetLayout {
+    utils::FixedCapacityVector<DescriptorSetLayoutBindingInfo> bindings;
 };
 
 // Holds data for a ray tracing scratch buffer that is used as a temporary storage

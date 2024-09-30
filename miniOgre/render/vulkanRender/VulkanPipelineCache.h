@@ -16,18 +16,9 @@
 
 #ifndef TNT_FILAMENT_BACKEND_VULKANPIPELINECACHE_H
 #define TNT_FILAMENT_BACKEND_VULKANPIPELINECACHE_H
-
-#include "VulkanCommands.h"
-#include "VulkanMemory.h"
-#include "VulkanResources.h"
-#include "VulkanUtility.h"
-
+#include <VulkanCommon.h>
 #include <filament/DriverEnums.h>
 #include <filament/TargetBufferInfo.h>
-
-#include "filament/Program.h"
-
-#include <bluevk/BlueVK.h>
 
 #include <utils/bitset.h>
 #include <utils/compiler.h>
@@ -39,7 +30,7 @@
 #include <vector>
 #include <unordered_map>
 
-namespace filament::backend {
+
 
     struct VulkanProgram;
     struct VulkanBufferObject;
@@ -117,13 +108,11 @@ namespace filament::backend {
         void bindLayout(VkPipelineLayout layout) noexcept;
 
         // Creates a new pipeline if necessary and binds it using vkCmdBindPipeline.
-        void bindPipeline(VulkanCommandBuffer* commands);
         void bindPipeline(VkCommandBuffer cb);
         // Sets up a new scissor rectangle if it has been dirtied.
         void bindScissor(VkCommandBuffer cmdbuffer, VkRect2D scissor) noexcept;
 
         // Each of the following methods are fast and do not make Vulkan calls.
-        void bindProgram(VulkanProgram* program) noexcept;
         void bindProgram(VkShaderModule vertexShader, VkShaderModule fragShader) noexcept;
         void bindRasterState(const RasterState& rasterState) noexcept;
         void bindRenderPass(VkRenderPass renderPass, int subpassIndex) noexcept;
@@ -132,7 +121,7 @@ namespace filament::backend {
         void bindVertexArray(
             VkVertexInputAttributeDescription const* attribDesc,
             uint8_t attribDescCount,
-            VkVertexInputBindingDescription const* bufferDesc, 
+            VkVertexInputBindingDescription const* bufferDesc,
             uint8_t bufferDescCount);
 
         // Destroys all managed Vulkan objects. This should be called before changing the VkDevice.
@@ -271,6 +260,6 @@ namespace filament::backend {
         VkRect2D mCurrentScissor = {};
     };
 
-} // namespace filament::backend
+
 
 #endif // TNT_FILAMENT_BACKEND_VULKANPIPELINECACHE_H

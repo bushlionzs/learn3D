@@ -19,7 +19,7 @@
 #include "VulkanRaytracing.h"
 #include "VulkanTools.h"
 #include "VulkanMappings.h"
-#include "VulkanPipelineLayoutCacheEx.h"
+#include "VulkanPipelineLayoutCache.h"
 #include "VulkanLayoutCache.h"
 #include "shaderManager.h"
 #include "OgreResourceManager.h"
@@ -785,7 +785,7 @@ void VulkanRenderableData::buildLayout()
         if (!hasVertex && !hasFragment)
             continue;
         binding.binding = i;
-        binding.flags = DescriptorFlags::NONE;
+        binding.flags = DescriptorFlags::DescriptorFlags_None;
         binding.count = 0;
         binding.type = DescriptorType::UNIFORM_BUFFER;
         if (hasVertex)
@@ -809,7 +809,7 @@ void VulkanRenderableData::buildLayout()
         if (!hasVertex && !hasFragment)
             continue;
         binding.binding = i;
-        binding.flags = DescriptorFlags::NONE;
+        binding.flags = DescriptorFlags::DescriptorFlags_None;
         binding.count = 0;
         binding.type = DescriptorType::SAMPLER;
         if (hasVertex)

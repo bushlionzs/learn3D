@@ -69,17 +69,9 @@ public:
 
     int32_t getUnusedBinding();
 
-    void prepare();
-    void upload(uint32_t binding, uint32_t vertexCount);
-    VertexBuffer* getVertexBuffer()
-    {
-        return mVertexBuffer;
-    }
-
 private:
     uint32_t mVertexStart = 0;
     uint32_t mVertexCount = 0;
     VertexDeclaration* vertexDeclaration = nullptr;
     std::array<VertexSlotInfo, 5> vertexSlotInfo;
-    VertexBuffer* mVertexBuffer = nullptr;
 };

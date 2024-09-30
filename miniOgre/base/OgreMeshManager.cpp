@@ -13,9 +13,7 @@
 #include "renderSystem.h"
 #include "m3d_loader.h"
 #include "OgreMaterialManager.h"
-#include "filament/Engine.h"
-#include "filament/VertexBuffer.h"
-#include "filament/IndexBuffer.h"
+
 
 
 

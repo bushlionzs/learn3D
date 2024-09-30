@@ -7,11 +7,10 @@
 */
 
 #pragma once
-#include <bluevk/BlueVK.h>
-#include <filament/vulkan/VulkanContext.h>
+#include "OgreCommon.h"
 #include "VulkanCommon.h"
 #include "VulkanInitializers.hpp"
-#include "OgreCommon.h"
+
 
 #include <math.h>
 #include <stdlib.h>
@@ -63,6 +62,7 @@ using namespace bluevk;
 #endif
 
 class VulkanBuffer;
+class VulkanTexture;
 
 namespace vks
 {

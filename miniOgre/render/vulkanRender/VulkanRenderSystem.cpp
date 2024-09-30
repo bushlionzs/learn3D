@@ -27,7 +27,7 @@
 #include "OgreResourceManager.h"
 #include "VulkanRenderTarget.h"
 #include "VulkanMappings.h"
-#include <vulkan/VulkanPipelineCache.h>
+#include <VulkanPipelineCache.h>
 
 static const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"

@@ -5,12 +5,8 @@
 class VulkanGraphicsCommandList;
 class VulkanFrame;
 class VulkanWindow;
+class VulkanPipelineCache;
 class Ogre::ICamera;
-
-namespace filament::backend
-{
-    class VulkanPipelineCache;
-}
 
 class VulkanRenderSystemBase: public RenderSystem
 {
@@ -68,5 +64,5 @@ protected:
     uint32_t mFrameIndex = 0;
     uint32_t mImageIndex = 0;
 
-    filament::backend::VulkanPipelineCache* mPipelineCache = nullptr;
+    VulkanPipelineCache* mPipelineCache = nullptr;
 };

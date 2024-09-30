@@ -2,11 +2,10 @@
 
 
 #include "OgreSingleton.h"
-#include "VulkanCommon.h"
 #include "OgreCommon.h"
-#include <vulkan/VulkanResourceAllocator.h>
-#include <vulkan/VulkanPipelineCache.h>
-#include <vulkan/caching/VulkanPipelineLayoutCache.h>
+#include "VulkanCommon.h"
+#include "VulkanResourceAllocator.h"
+
 
 
 class VulkanRenderSystemBase;
@@ -14,11 +13,9 @@ class VulkanFrame;
 class VulkanTexture;
 class VulkanBuffer;
 class VulkanLayoutCache;
+class VulkanPipelineCache;
+class VulkanPipelineLayoutCache;
 
-namespace Ogre
-{
-    class VulkanPipelineLayoutCache;
-}
 
 struct CommandHelper
 {
@@ -110,12 +107,12 @@ public:
         return mSettings;
     }
 
-     filament::backend::VulkanPipelineCache* getPipelineCache()
+     VulkanPipelineCache* getPipelineCache()
      {
          return mPipelineCache;
      }
 
-     Ogre::VulkanPipelineLayoutCache* getPipelineLayoutCache()
+     VulkanPipelineLayoutCache* getPipelineLayoutCache()
      {
          return mPipelineLayoutCache;
      }
@@ -210,11 +207,11 @@ private:
     tsl::robin_map<SamplerParams, VkSampler, SamplerParams::Hasher, SamplerParams::EqualTo> mSamplersCache;
 
     VmaAllocator mAllocator = VK_NULL_HANDLE;
-    filament::backend::VulkanResourceAllocator mResourceAllocator;
+    VulkanResourceAllocator mResourceAllocator;
     VulkanLayoutCache* mLayoutCache;
-    Ogre::VulkanPipelineLayoutCache* mPipelineLayoutCache = nullptr;
-    filament::backend::VulkanPipelineCache* mPipelineCache = nullptr;
-    std::array<descset::DescriptorSetLayout, 2> mLayouts;
+    VulkanPipelineLayoutCache* mPipelineLayoutCache = nullptr;
+    VulkanPipelineCache* mPipelineCache = nullptr;
+    std::array<DescriptorSetLayout, 2> mLayouts;
     VulkanSettings mSettings;
 
     void* deviceCreatepNextChain = nullptr;

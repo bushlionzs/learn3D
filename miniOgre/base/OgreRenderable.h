@@ -69,30 +69,6 @@ namespace Ogre {
 
         RenderableData* getRenderableData();
 
-        void updateBuffer(VertexBuffer* vb, IndexBuffer* ib);
-
-        void updateBufferObject(Ogre::Camera* cam);
-
-        VertexBuffer* getVertexBuffer()
-        {
-            return mVertexBuffer;
-        }
-
-        IndexBuffer* getIndexBuffer()
-        {
-            return mIndexBuffer;
-        }
-
-        backend::BufferObjectHandle getRenderableHandle()
-        {
-            return mRenderableObjectHandle;
-        }
-
-        backend::BufferObjectHandle getSkinnedHandle()
-        {
-            return mSkinnObjectHandle;
-        }
-
         Ogre::OperationType getPrimitiveTopology();
 
         void prepare(VertexData* vd, IndexData* id);
@@ -101,8 +77,6 @@ namespace Ogre {
         std::shared_ptr<Material> mMaterial;
         RenderableData* mRenderableData = nullptr;
 
-        VertexBuffer* mVertexBuffer = nullptr;
-        IndexBuffer* mIndexBuffer = nullptr;
         backend::BufferObjectHandle mRenderableObjectHandle;
         backend::BufferObjectHandle mSkinnObjectHandle;
         ObjectConstantBuffer mObjectBuffer;

@@ -13,27 +13,8 @@ namespace Ogre
 }
 
 
-
-typedef std::map< String, Ogre::RenderTarget* > RenderTargetMap;
-typedef std::multimap<uchar, Ogre::RenderTarget* > RenderTargetPriorityMap;
-
 class RenderSystem
 {
-public:
-    class  Listener
-    {
-    public:
-        Listener() {}
-        virtual ~Listener() {}
-
-        /** A rendersystem-specific event occurred.
-        @param eventName The name of the event which has occurred
-        @param parameters A list of parameters that may belong to this event,
-        may be null if there are no parameters
-        */
-        virtual void eventOccurred(const String& eventName,
-            const NameValuePairList* parameters = 0) = 0;
-    };
 public:
     RenderSystem();
     ~RenderSystem();
@@ -120,6 +101,8 @@ public:
     {
         return nullptr;
     }
+
+
 protected:
 	
     uint32_t mBatchCount = 0;
@@ -128,13 +111,6 @@ protected:
     uint64_t mFrameNumber = 0;
     Ogre::Viewport* mViewport = nullptr;
 
-
-    /** The render targets. */
-    RenderTargetMap mRenderTargets;
-    /** The render targets, ordered by priority. */
-    RenderTargetPriorityMap mPrioritisedRenderTargets;
-    /** The Active render target. */
-    Ogre::RenderTarget* mActiveRenderTarget;
 
     String mRenderSystemName;
     uint32_t mRenderType;

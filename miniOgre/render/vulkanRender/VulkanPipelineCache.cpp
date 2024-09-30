@@ -15,16 +15,15 @@
  */
 #include "OgreHeader.h"
 #include "VulkanPipelineCache.h"
-#include "VulkanMemory.h"
-#include "caching/VulkanDescriptorSetManager.h"
+
 
 #include <utils/Log.h>
 #include <utils/Panic.h>
 
 #include "VulkanConstants.h"
-#include "VulkanHandles.h"
+//#include "VulkanHandles.h"
 #include "render/vulkanRender/VulkanTexture.h"
-#include "VulkanUtility.h"
+
 
  // Vulkan functions often immediately dereference pointers, so it's fine to pass in a pointer
  // to a stack-allocated variable.
@@ -33,7 +32,20 @@
 
 using namespace bluevk;
 
-namespace filament::backend {
+
+    VkCompareOp getCompareOp(SamplerCompareFunc func) {
+        using Compare = SamplerCompareFunc;
+        switch (func) {
+        case Compare::LE: return VK_COMPARE_OP_LESS_OR_EQUAL;
+        case Compare::GE: return VK_COMPARE_OP_GREATER_OR_EQUAL;
+        case Compare::L:  return VK_COMPARE_OP_LESS;
+        case Compare::G:  return VK_COMPARE_OP_GREATER;
+        case Compare::E:  return VK_COMPARE_OP_EQUAL;
+        case Compare::NE: return VK_COMPARE_OP_NOT_EQUAL;
+        case Compare::A:  return VK_COMPARE_OP_ALWAYS;
+        case Compare::N:  return VK_COMPARE_OP_NEVER;
+        }
+    }
 
     VulkanPipelineCache::VulkanPipelineCache(VkDevice device, VmaAllocator allocator)
         : mDevice(device),
@@ -60,23 +72,6 @@ namespace filament::backend {
         auto ret = createPipeline();
         ret->lastUsed = mCurrentTime;
         return ret;
-    }
-
-    void VulkanPipelineCache::bindPipeline(VulkanCommandBuffer* commands) {
-        VkCommandBuffer const cmdbuffer = commands->buffer();
-
-        PipelineCacheEntry* cacheEntry = getOrCreatePipeline();
-        // Check if the required pipeline is already bound.
-        if (cacheEntry->handle == commands->pipeline()) {
-            return;
-        }
-
-        // If an error occurred, allow higher levels to handle it gracefully.
-        assert_invariant(cacheEntry != nullptr && "Failed to create/find pipeline");
-
-        mBoundPipeline = mPipelineRequirements;
-        vkCmdBindPipeline(cmdbuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, cacheEntry->handle);
-        commands->setPipeline(cacheEntry->handle);
     }
 
     void VulkanPipelineCache::bindPipeline(VkCommandBuffer cb)
@@ -267,19 +262,6 @@ namespace filament::backend {
         return &mPipelines.emplace(mPipelineRequirements, cacheEntry).first.value();
     }
 
-    void VulkanPipelineCache::bindProgram(VulkanProgram* program) noexcept {
-        mPipelineRequirements.shaders[0] = program->getVertexShader();
-        mPipelineRequirements.shaders[1] = program->getFragmentShader();
-
-        // If this is a debug build, validate the current shader.
-#if FVK_ENABLED(FVK_DEBUG_SHADER_MODULE)
-        if (mPipelineRequirements.shaders[0] == VK_NULL_HANDLE ||
-            mPipelineRequirements.shaders[1] == VK_NULL_HANDLE) {
-            utils::slog.e << "Binding missing shader: " << program->name.c_str() << utils::io::endl;
-        }
-#endif
-    }
-
     void VulkanPipelineCache::bindProgram(VkShaderModule vertexShader, VkShaderModule fragShader) noexcept
     {
         mPipelineRequirements.shaders[0] = vertexShader;
@@ -367,6 +349,6 @@ namespace filament::backend {
         return 0 == memcmp((const void*)&k1, (const void*)&k2, sizeof(k1));
     }
 
-} // namespace filament::backend
+
 
 #pragma clang diagnostic pop

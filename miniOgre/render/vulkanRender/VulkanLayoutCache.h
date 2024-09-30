@@ -1,17 +1,36 @@
 #pragma once
-#include <vulkan/VulkanHandles.h>
-#include <vulkan/VulkanResourceAllocator.h>
+#include <VulkanCommon.h>
+#include <VulkanResourceAllocator.h>
 #include <utils/FixedCapacityVector.h>
 #include <utils/Panic.h>
 #include <utils/Hash.h>
+using UniformBufferBitmask = uint32_t;
+using SamplerBitmask = uint64_t;
+struct VulkanDescriptorSetLayout
+{
+    
+    // The bitmask representation of a set layout.
+    struct Bitmask {
+        UniformBufferBitmask ubo = 0;         // 4 bytes
+        UniformBufferBitmask dynamicUbo = 0;  // 4 bytes
+        SamplerBitmask sampler = 0;           // 8 bytes
+     
+
+        bool operator==(Bitmask const& right) const {
+            return ubo == right.ubo && dynamicUbo == right.dynamicUbo && sampler == right.sampler;
+        }
+
+        static Bitmask fromBackendLayout(const std::vector<DescriptorSetLayoutBindingInfo>& layout);
+    };
+};
 
 class VulkanLayoutCache {
 public:
-    using Key = filament::backend::VulkanDescriptorSetLayout::Bitmask;
-    using BitmaskHashFn = utils::hash::MurmurHashFn<filament::backend::VulkanDescriptorSetLayout::Bitmask>;
+    using Key = VulkanDescriptorSetLayout::Bitmask;
+    using BitmaskHashFn = utils::hash::MurmurHashFn<VulkanDescriptorSetLayout::Bitmask>;
     struct BitmaskEqual {
-        bool operator()(filament::backend::VulkanDescriptorSetLayout::Bitmask const& k1, 
-            filament::backend::VulkanDescriptorSetLayout::Bitmask const& k2) const {
+        bool operator()(VulkanDescriptorSetLayout::Bitmask const& k1, 
+            VulkanDescriptorSetLayout::Bitmask const& k2) const {
             return k1 == k2;
         }
     };
@@ -22,7 +41,7 @@ public:
         BitmaskEqual>;
 
 public:
-    explicit VulkanLayoutCache(VkDevice device, VulkanResourceAllocator* allocator)
+    explicit VulkanLayoutCache(VkDevice device, filament::backend::VulkanResourceAllocator* allocator)
         : mDevice(device),
         mAllocator(allocator) {}
 
@@ -47,6 +66,6 @@ public:
 
 private:
     VkDevice mDevice;
-    VulkanResourceAllocator* mAllocator;
+    filament::backend::VulkanResourceAllocator* mAllocator;
     LayoutMap mLayouts;
 };

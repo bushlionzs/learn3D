@@ -11,11 +11,6 @@ class RenderSystem;
 #define MAIN_CAMERA "__main_camera__"
 
 
-namespace filament
-{
-	class ResourceAllocator;
-}
-
 namespace Ogre {
 	class MovableObjectFactory;
 
@@ -24,7 +19,7 @@ namespace Ogre {
 	public:
 		typedef std::map<String, MovableObjectFactory*> MovableObjectFactoryMap;
 	public:
-		Root(filament::Engine* engine = nullptr);
+		Root();
 		~Root();
 
 		void _initialise();
@@ -60,12 +55,6 @@ namespace Ogre {
 		Ogre::FrameEvent& getFrameEvent()
 		{
 			return mEvt;
-		}
-
-
-		filament::Engine* getEngine()
-		{
-			return mEngine;
 		}
 
 		utils::JobSystem::Job* getLoadJob()
@@ -110,8 +99,6 @@ namespace Ogre {
 		RenderWindow* mAutoWindow = nullptr;
 
 		Ogre::FrameEvent mEvt;
-
-		filament::Engine* mEngine;
 
 		utils::JobSystem::Job* mLoadJob = nullptr;
 

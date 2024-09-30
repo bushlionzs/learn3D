@@ -4,7 +4,6 @@
 #include "engine_struct.h"
 #include "OgreBlendMode.h"
 #include "OgreController.h"
-#include <filament/Texture.h>
 class TextureUnit;
 class TextureAnimationControllerValue : public Ogre::ControllerValue<Real>
 {
@@ -163,5 +162,5 @@ private:
 
     //
     std::vector<Texture*> mFTextures;
-    ResourceState mResourceState = ResourceState::NONE;
+    ResourceState mResourceState = ResourceState::ResourceState_None;
 };

@@ -10,9 +10,7 @@
 #include "OgreSkeletonManager.h"
 #include "OgreSkeleton.h"
 #include "OgreRoot.h"
-#include <filament/FVertexBuffer.h>
-#include <filament/FIndexBuffer.h>
-#include <filament/OgreFilamentUtils.h>
+
 
 namespace Ogre {
     Mesh::Mesh(const std::string& name)
@@ -104,27 +102,11 @@ namespace Ogre {
 
     void Mesh::prepare()
     {
-        
         if (!mBoneAssignments.empty())
         {
             mVertexData->addBoneInfo(mBoneAssignments);
         }
 
-        auto engine = Ogre::Root::getSingleton().getEngine();
-        if (engine)
-        if (mVertexData && !mVertexData->empty())
-        {
-            mVertexData->prepare();
-
-            mVertexBuffer = mVertexData->getVertexBuffer();    
-            if (mIndexData)
-            {
-                mIndexData->prepare();
-                mIndexBuffer = mIndexData->getFIndexBuffer();
-            }
-        }
-        
-        
         for (auto sub : mSubMeshList)
         {
             sub->prepare();

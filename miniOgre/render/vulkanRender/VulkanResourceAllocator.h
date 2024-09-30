@@ -18,7 +18,7 @@
 #define TNT_FILAMENT_BACKEND_VULKANRESOURCEALLOCATOR_H
 
 #include "VulkanConstants.h"
-#include "VulkanHandles.h"
+
 
 #include <filament/HandleAllocator.h>
 

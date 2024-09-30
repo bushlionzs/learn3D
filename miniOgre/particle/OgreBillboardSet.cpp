@@ -450,7 +450,6 @@ namespace Ogre {
     void BillboardSet::endBillboards(void)
     {
         mVertexData->getBuffer(0)->unlock();
-        mVertexData->upload(0, mNumVisibleBillboards * 6);
     }
     //-----------------------------------------------------------------------
     void BillboardSet::setBounds(const AxisAlignedBox& box, Real radius)
@@ -663,15 +662,6 @@ namespace Ogre {
 
             }
         }
-
-        if (!mVertexData->empty())
-        {
-            mVertexData->prepare();
-        }
-
-        mIndexData->prepare();
-
-        this->updateBuffer(mVertexData->getVertexBuffer(), mIndexData->getFIndexBuffer());
 
         mBuffersCreated = true;
     }

@@ -8,9 +8,6 @@
 #include "OgreIndexData.h"
 #include "OgreVertexDeclaration.h"
 #include "OgreRoot.h"
-#include <filament/FVertexBuffer.h>
-#include <filament/FIndexBuffer.h>
-#include <filament/OgreFilamentUtils.h>
 
 
 namespace Ogre {
@@ -136,49 +133,6 @@ namespace Ogre {
         {
             mVertexData->addBoneInfo(mBoneAssignments);
         }
-        auto engine = Ogre::Root::getSingleton().getEngine();
-        if (engine)
-        {
-            VertexBuffer* vb = nullptr;
-            IndexBuffer* ib = nullptr;
-            if (mVertexData)
-            {
-                mVertexData->prepare();
-                vb = mVertexData->getVertexBuffer();
-            }
-
-            if (mIndexData)
-            {
-                auto buf = mIndexData->getIndexBuffer();
-
-                auto indexCount = buf->getNumVerts();
-                auto indexType = IndexBuffer::IndexType::USHORT;
-                if (buf->getType() == HardwareIndexBuffer::IndexType::IT_32BIT)
-                {
-                    indexType = IndexBuffer::IndexType::UINT;
-                };
-
-                ib = IndexBuffer::Builder()
-                    .indexCount(indexCount)
-                    .bufferType(indexType)
-                    .build(*engine);
-
-                ib->setBuffer(*engine, { buf->lock(), buf->getSizeInBytes() });
-            }
-            
-
-            if (vb == nullptr)
-            {
-                vb = mParent->getVertexBuffer();
-            }
-
-            if (ib == nullptr)
-            {
-                ib = mParent->getIndexbuffer();
-            }
-            updateBuffer(vb, ib);
-        }
-        
     }
 
 

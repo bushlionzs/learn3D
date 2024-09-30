@@ -38,5 +38,5 @@ const Ogre::Matrix4& CustomRenderable::getModelMatrix()
 
 void CustomRenderable::prepare()
 {
-    Renderable::prepare(mVertexData, mIndexData);
+    
 }

@@ -4,10 +4,6 @@
 #include "OgreTexture.h"
 #include "OgrePixelFormat.h"
 
-namespace filament
-{
-    struct TextureInfo;
-}
 
 namespace Ogre {
     enum class CacheResult {
@@ -40,9 +36,6 @@ namespace Ogre {
             bool hwGammaCorrection = false);
 
         bool addTexture(const String& name, OgreTexture* tex);
-
-        std::pair<Texture*, CacheResult> getOrCreateTexture(const String& name, bool cube = false);
-        bool addTexture(const String& name, Texture* tex);
         
         void remove(const std::string& name);
         std::shared_ptr<OgreTexture> getByName(const String& name, const String& group = BLANKSTRING) const;
@@ -60,13 +53,6 @@ namespace Ogre {
         void updateTextures();
     private:
         std::unordered_map<std::string, std::shared_ptr<OgreTexture>> mTexMap;
-
-        TextureCache mTextureCache;
-
-        std::vector<std::unique_ptr<TextureInfo> > mTextureInfos;
-
-        Engine* mEngine;
-
         utils::JobSystem::Job* mDecoderRootJob = nullptr;
     };
 }

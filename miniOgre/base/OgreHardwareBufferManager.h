@@ -26,6 +26,8 @@ namespace Ogre {
                 size_t numIndexes,
                 HardwareBuffer::Usage usage) = 0;
 
+        virtual std::shared_ptr<HardwareBuffer> createBuffer(uint32_t size, HardwareBuffer::Usage usage);
+
     protected:
     };
 }

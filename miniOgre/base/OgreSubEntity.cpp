@@ -63,6 +63,6 @@ namespace Ogre {
 
     void SubEntity::setMaterialName(const std::string& name)
     {
-
+        assert(false);
     }
 }

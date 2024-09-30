@@ -52,10 +52,6 @@ add_subdir(render/vulkanRender)
 add_subdir(wow)
 add_subdir(fg)
 add_subdir(filament)
-add_subdir(filament/vulkan)
-add_subdir(filament/vulkan/spirv)
-add_subdir(filament/vulkan/caching)
-
 
 list(APPEND MINIOGRE_INC ${CMAKE_CURRENT_SOURCE_DIR}/animation)
 list(APPEND MINIOGRE_INC ${CMAKE_CURRENT_SOURCE_DIR}/base)
@@ -104,7 +100,7 @@ set( MyFavLib_LIBRARIES
     debug shaderc_sharedd.lib optimized shaderc_shared.lib
 )
 	
-target_link_libraries(${MINIOGRE_LIB_NAME} ${MyFavLib_LIBRARIES} SpirvTools utils bluevk
+target_link_libraries(${MINIOGRE_LIB_NAME} ${MyFavLib_LIBRARIES} SpirvTools utils bluevk VulkanMemoryAllocator
 dxgi
 dxguid
 d3d12

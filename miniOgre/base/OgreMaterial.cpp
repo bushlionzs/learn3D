@@ -7,11 +7,9 @@
 #include "OgreResourceManager.h"
 #include "glslUtil.h"
 #include <OgreRoot.h>
-#include <filament/Program.h>
-#include <filament/FEngine.h>
 #include <filament/DriverEnums.h>
 #include <filament/DriverBase.h>
-#include <filament/FTexture.h>
+
 namespace Ogre {
 
     Material::Material(const std::string& name, bool pbr)
@@ -101,21 +99,6 @@ namespace Ogre {
 
     }
 
-
-    void Material::bindSamplerGroup()
-    {
-        auto* engine = Ogre::Root::getSingleton().getEngine();
-        if (mSamplerHandle)
-        {
-            engine->getDriverApi().bindSamplers(0, mSamplerHandle);
-        }
-
-        if (mSamplerCubeHandle)
-        {
-            engine->getDriverApi().bindSamplers(1, mSamplerCubeHandle);
-        }
-    }
-
     void Material::updateResourceState()
     {
         if (mState == ResourceState::LOADING)
@@ -137,12 +120,21 @@ namespace Ogre {
         }
     }
 
+    bool Material::createUniformBuffer(uint32_t binding, uint32_t size)
+    {
+        return true;
+    }
+
+    bool Material::updateUniformBuffer(uint32_t binding, const char* data, uint32_t size)
+    {
+        return true;
+    }
+
+
     bool Material::isLoaded()
     {
         return mLoad;
     }
-
-
 
     std::shared_ptr<Material> Material::clone(const String& name)
     {

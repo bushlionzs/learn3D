@@ -19,4 +19,9 @@ namespace Ogre {
     {
         return new VertexDeclaration;
     }
+
+    std::shared_ptr<HardwareBuffer> HardwareBufferManager::createBuffer(uint32_t size, HardwareBuffer::Usage usage)
+    {
+        return std::shared_ptr<HardwareBuffer>();
+    }
 }

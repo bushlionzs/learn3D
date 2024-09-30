@@ -1,6 +1,33 @@
 #include <OgreHeader.h>
 #include "VulkanLayoutCache.h"
 
+constexpr UniformBufferBitmask UBO_VERTEX_STAGE = 0x1;
+constexpr UniformBufferBitmask UBO_FRAGMENT_STAGE = (0x1ULL << (sizeof(UniformBufferBitmask) * 4));
+constexpr SamplerBitmask SAMPLER_VERTEX_STAGE = 0x1;
+constexpr SamplerBitmask SAMPLER_FRAGMENT_STAGE = (0x1ULL << (sizeof(SamplerBitmask) * 4));
+
+
+template<typename Bitmask>
+static constexpr Bitmask getVertexStage() noexcept {
+    if constexpr (std::is_same_v<Bitmask, UniformBufferBitmask>) {
+        return UBO_VERTEX_STAGE;
+    }
+    if constexpr (std::is_same_v<Bitmask, SamplerBitmask>) {
+        return SAMPLER_VERTEX_STAGE;
+    }
+}
+
+template<typename Bitmask>
+static constexpr Bitmask getFragmentStage() noexcept {
+    if constexpr (std::is_same_v<Bitmask, UniformBufferBitmask>) {
+        return UBO_FRAGMENT_STAGE;
+    }
+    if constexpr (std::is_same_v<Bitmask, SamplerBitmask>) {
+        return SAMPLER_FRAGMENT_STAGE;
+    }
+
+}
+
 template<typename Bitmask>
 static constexpr Bitmask fromStageFlags(ShaderStageFlags2 flags, uint8_t binding) {
     Bitmask ret = 0;
@@ -18,8 +45,8 @@ VulkanLayoutCache::Key fromBackendLayout(const std::vector<DescriptorSetLayoutBi
     VulkanLayoutCache::Key mask;
     for (auto const& binding : layout) {
         switch (binding.type) {
-        case descset::DescriptorType::UNIFORM_BUFFER: {
-            if (binding.flags == descset::DescriptorFlags::DYNAMIC_OFFSET) {
+        case DescriptorType::UNIFORM_BUFFER: {
+            if (binding.flags == DescriptorFlags::DYNAMIC_OFFSET) {
                 mask.dynamicUbo |= fromStageFlags<UniformBufferBitmask>(binding.stageFlags,
                     binding.binding);
             }
@@ -29,15 +56,11 @@ VulkanLayoutCache::Key fromBackendLayout(const std::vector<DescriptorSetLayoutBi
             }
             break;
         }
-        case descset::DescriptorType::SAMPLER: {
+        case DescriptorType::SAMPLER: {
             mask.sampler |= fromStageFlags<SamplerBitmask>(binding.stageFlags, binding.binding);
             break;
         }
-        case descset::DescriptorType::INPUT_ATTACHMENT: {
-            mask.inputAttachment |=
-                fromStageFlags<InputAttachmentBitmask>(binding.stageFlags, binding.binding);
-            break;
-        }
+
         }
     }
     return mask;
@@ -56,26 +79,26 @@ VkDescriptorSetLayout VulkanLayoutCache::getLayout(const std::vector<DescriptorS
         VkShaderStageFlags stages = 0;
         VkDescriptorType type;
 
-        if (binding.stageFlags & descset::ShaderStageFlags2::VERTEX) {
+        if (binding.stageFlags & ShaderStageFlags2::VERTEX) {
             stages |= VK_SHADER_STAGE_VERTEX_BIT;
         }
-        if (binding.stageFlags & descset::ShaderStageFlags2::FRAGMENT) {
+        if (binding.stageFlags & ShaderStageFlags2::FRAGMENT) {
             stages |= VK_SHADER_STAGE_FRAGMENT_BIT;
         }
         assert_invariant(stages != 0);
 
         switch (binding.type) {
-        case descset::DescriptorType::UNIFORM_BUFFER: {
-            type = binding.flags == descset::DescriptorFlags::DYNAMIC_OFFSET
+        case DescriptorType::UNIFORM_BUFFER: {
+            type = binding.flags == DescriptorFlags::DYNAMIC_OFFSET
                 ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC
                 : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             break;
         }
-        case descset::DescriptorType::SAMPLER: {
+        case DescriptorType::SAMPLER: {
             type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             break;
         }
-        case descset::DescriptorType::INPUT_ATTACHMENT: {
+        case DescriptorType::INPUT_ATTACHMENT: {
             type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
             break;
         }

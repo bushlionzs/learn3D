@@ -5,10 +5,9 @@
 #include "OgreBlendMode.h"
 #include "OgreCommon.h"
 #include "OgreTexture.h"
-#include <filament/Texture.h>
 #include <filament/Handle.h>
 #include <filament/DriverEnums.h>
-#include <filament/SamplerGroup.h>
+
 
 class TextureUnit;
 
@@ -158,27 +157,16 @@ namespace Ogre {
         {
             return mState;
         }
-
         void updateResourceState();
-
-
-        backend::Handle<backend::HwProgram> getProgram()
-        {
-            return mProgram;
-        }
-
-        backend::BufferObjectHandle getMaterialBufferHandle()
-        {
-            return mMaterialBufferHandle;
-        }
-
-
-        void bindSamplerGroup();
 
         void setResourceState(ResourceState rs)
         {
             mState = rs;
         }
+
+        bool createUniformBuffer(uint32_t binding, uint32_t size);
+
+        bool updateUniformBuffer(uint32_t binding, const char* data, uint32_t size);
 
     private:
         std::string mMaterialName;
@@ -213,13 +201,7 @@ namespace Ogre {
 
         bool mChanged = true;
 
-        ResourceState mState = ResourceState::NONE;
+        ResourceState mState = ResourceState::ResourceState_None;
 
-        backend::Handle<backend::HwProgram> mProgram;
-        backend::BufferObjectHandle mMaterialBufferHandle;
-
-        
-        backend::Handle<backend::HwSamplerGroup> mSamplerHandle;
-        backend::Handle<backend::HwSamplerGroup> mSamplerCubeHandle;
     };
 }

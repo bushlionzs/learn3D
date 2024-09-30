@@ -10,7 +10,8 @@
 #include "VulkanBuffer.h"
 #include "VulkanMappings.h"
 #include "VulkanLayoutCache.h"
-#include "VulkanPipelineLayoutCacheEx.h"
+#include "VulkanPipelineCache.h"
+#include "VulkanPipelineLayoutCache.h"
 #include "shaderManager.h"
 
 
@@ -1111,9 +1112,9 @@ void VulkanHelper::setupDescriptorSetLayout()
 
     mLayoutCache = new VulkanLayoutCache(mVKDevice, &mResourceAllocator);
 
-    mPipelineCache = new filament::backend::VulkanPipelineCache(mVKDevice, mAllocator);
+    mPipelineCache = new VulkanPipelineCache(mVKDevice, mAllocator);
 
-    mPipelineLayoutCache = new Ogre::VulkanPipelineLayoutCache(mVKDevice, &mResourceAllocator);
+    mPipelineLayoutCache = new VulkanPipelineLayoutCache(mVKDevice, &mResourceAllocator);
 }
 
 

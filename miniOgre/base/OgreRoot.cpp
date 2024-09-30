@@ -21,14 +21,12 @@
 #include "VideoManager.h"
 #include "shaderManager.h"
 #include "OgreEntity.h"
-#include <filament/Engine.h>
 
 namespace Ogre {
 
 	template<> Root* Ogre::Singleton<Root>::msSingleton = 0;
 
-	Root::Root(filament::Engine* engine)
-        :mEngine(engine)
+	Root::Root()
 	{
         new ResourceParserManager;
         new ResourceManager;
@@ -69,13 +67,6 @@ namespace Ogre {
 
 
         addMovableObjectFactory(new EntityFactory());
-
-        if (mEngine)
-        {
-            auto& js = mEngine->getJobSystem();
-
-            mLoadJob = js.createJob();
-        }
 
     }
 

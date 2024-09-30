@@ -6,16 +6,12 @@
 #include "glslUtil.h"
 #include <utils/JobSystem.h>
 #include <DriverEnums.h>
-
+#include "VulkanPipelineCache.h"
 
 class VulkanRenderSystem;
 class VulkanRayTracingContext;
 class VertexDeclaration;
 
-namespace filament::backend
-{
-	class VulkanPipelineCache;
-}
 
 class VulkanFrameRenderableData
 {
@@ -105,7 +101,7 @@ private:
 	VkShaderModuleInfo mFragShaderInfo;
 
 
-	filament::backend::VulkanPipelineCache::RasterState mRasterState;
+	VulkanPipelineCache::RasterState mRasterState;
 
 	std::vector<DescriptorSetLayoutBindingInfo> mUBOLayoutInfo;
 	std::vector<DescriptorSetLayoutBindingInfo> mSamplerLayoutInfo;

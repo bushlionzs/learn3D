@@ -61,38 +61,11 @@ bool TextureUnit::updateTexture(uint32_t index, const std::string& texName)
     {
         mNameList[index] = texName;
 
-        auto* engine = Ogre::Root::getSingleton().getEngine();
-
-        if (engine)
+        if (mLoad)
         {
-            
-           auto [tex, result] = TextureManager::getSingleton().getOrCreateTexture(texName);
-
-           if (mResourceState == ResourceState::LOADING)
-           {
-               mFTextures[index] = tex;
-           }
-           else if (mResourceState == ResourceState::READY)
-           {
-               if (tex->isReady())
-               {
-                   mFTextures[index] = tex;
-               }
-               else
-               {
-                   mResourceState = ResourceState::LOADING;
-                   mOwner->setResourceState(ResourceState::LOADING);
-               }
-           }
+            mTextures[index] = TextureManager::getSingleton().load(texName, nullptr);
         }
-        else
-        {
-            if (mLoad)
-            {
-                mTextures[index] = TextureManager::getSingleton().load(texName, nullptr);
-            }
-            
-        }
+       
     }
     else
     {
@@ -174,21 +147,8 @@ void TextureUnit::_load(utils::JobSystem::Job* job)
 {
     if (job)
     {
-        if (mResourceState != ResourceState::NONE)
-        {
-            return;
-        }
-
-        mResourceState = ResourceState::LOADING;
-
-        mTextures.reserve(mNameList.size());
-        for (auto& name : mNameList)
-        {
-            auto [texture, cacheResult] = TextureManager::getSingletonPtr()->getOrCreateTexture(name, mTextureProperty._texType == TEX_TYPE_CUBE_MAP);
-            mFTextures.push_back(texture);
-        }
-        
-
+        assert(false);
+       
     }
     else
     {
@@ -244,24 +204,7 @@ void TextureUnit::_unload()
 void TextureUnit::updateResourceState()
 {
     
-    if (mResourceState == ResourceState::LOADING)
-    {
-        bool ready = true;
-        for (auto i = 0; i < mFTextures.size(); i++)
-        {
-            auto tex = mFTextures[i];
-            
-            if (!tex->isReady())
-            {
-                ready = false;
-            }
-        }
-
-        if (ready)
-        {
-            mResourceState = ResourceState::READY;
-        }
-    }
+    
     
 }
 

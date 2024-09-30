@@ -29,7 +29,7 @@
 #include "VulkanWindow.h"
 #include "VulkanRenderData.h"
 #include "VulkanHardwareBufferManager.h"
-#include <vulkan/VulkanPipelineCache.h>
+#include <VulkanPipelineCache.h>
 
 static const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
