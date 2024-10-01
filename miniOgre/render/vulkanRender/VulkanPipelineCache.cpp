@@ -32,21 +32,6 @@
 
 using namespace bluevk;
 
-
-    VkCompareOp getCompareOp(SamplerCompareFunc func) {
-        using Compare = SamplerCompareFunc;
-        switch (func) {
-        case Compare::LE: return VK_COMPARE_OP_LESS_OR_EQUAL;
-        case Compare::GE: return VK_COMPARE_OP_GREATER_OR_EQUAL;
-        case Compare::L:  return VK_COMPARE_OP_LESS;
-        case Compare::G:  return VK_COMPARE_OP_GREATER;
-        case Compare::E:  return VK_COMPARE_OP_EQUAL;
-        case Compare::NE: return VK_COMPARE_OP_NOT_EQUAL;
-        case Compare::A:  return VK_COMPARE_OP_ALWAYS;
-        case Compare::N:  return VK_COMPARE_OP_NEVER;
-        }
-    }
-
     VulkanPipelineCache::VulkanPipelineCache(VkDevice device, VmaAllocator allocator)
         : mDevice(device),
         mAllocator(allocator) {

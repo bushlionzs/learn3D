@@ -3,9 +3,14 @@
 #include "shader.h"
 #include "engine_struct.h"
 #include "OgreTexture.h"
+#include <filament/Handle.h>
+#include <filament/DriverBase.h>
+
 
 class GraphicsCommandList;
 class RenderableData;
+
+using namespace filament::backend;
 
 namespace Ogre
 {
@@ -102,6 +107,14 @@ public:
         return nullptr;
     }
 
+    virtual Handle<HwBufferObject> createBufferObject(
+        BufferObjectBinding bindingType, 
+        BufferUsage usage, 
+        uint32_t bufferCount);
+    virtual void updateBufferObject(
+        Handle<HwBufferObject> boh, 
+        const char* data, 
+        uint32_t size);
 
 protected:
 	

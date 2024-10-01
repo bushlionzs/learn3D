@@ -1,14 +1,16 @@
 #pragma once
+#include <utils/JobSystem.h>
 #include "shader.h"
-#include "VulkanUploadBuffer.h"
-#include "VulkanObjectPool.h"
 #include "renderHelper.h"
 #include "glslUtil.h"
-#include <utils/JobSystem.h>
 #include <DriverEnums.h>
 #include "VulkanPipelineCache.h"
+#include "VulkanUploadBuffer.h"
+#include "VulkanObjectPool.h"
+#include "VulkanCommands.h"
+#include "VulkanPlatform.h"
 
-class VulkanRenderSystem;
+class VulkanRenderSystemBase;
 class VulkanRayTracingContext;
 class VertexDeclaration;
 
@@ -37,7 +39,10 @@ public:
 class VulkanRenderableData: public RenderableData
 {
 public:
-	VulkanRenderableData(VulkanRenderSystemBase* engine, Ogre::Renderable* r, VulkanRayTracingContext* context);
+	VulkanRenderableData(
+		VulkanPlatform* platform, 
+		VulkanCommands* commands, 
+		Ogre::Renderable* r);
 	~VulkanRenderableData();
 
 	bool update(
@@ -103,8 +108,8 @@ private:
 
 	VulkanPipelineCache::RasterState mRasterState;
 
-	std::vector<DescriptorSetLayoutBindingInfo> mUBOLayoutInfo;
-	std::vector<DescriptorSetLayoutBindingInfo> mSamplerLayoutInfo;
+	descset::DescriptorSetLayout mUBOLayoutInfo;
+	descset::DescriptorSetLayout mSamplerLayoutInfo;
 	std::array <VkDescriptorSetLayout, 2> mLayouts;
 	VkPipelineLayout mPipelineLayout;
 
@@ -121,4 +126,6 @@ private:
 	bool mRayTracingUpdate = false;
 
 	uint64_t mLastFrame = 0xffffffff;
+
+	VulkanCommands* mCommands;
 };

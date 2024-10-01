@@ -36,7 +36,7 @@ public:
             mUniformBufferMemory
         );
 
-        mDevice = VulkanHelper::getSingleton()._getVkDevice();
+        mDevice = VulkanHelper::getSingleton().getDevcie();
         auto result = vkMapMemory(
             mDevice,
             mUniformBufferMemory, 

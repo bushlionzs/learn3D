@@ -2,9 +2,12 @@
 
 
 //#include "engine_struct.h"
+#include <utils/RangeMap.h>
 #include "VulkanCommon.h"
 #include "OgreTexture.h"
-#include <utils/RangeMap.h>
+#include "VulkanCommands.h"
+#include "VulkanImageUtility.h"
+#include "VulkanPlatform.h"
 
 namespace filament::backend {
     struct VulkanContext;
@@ -18,9 +21,19 @@ class VulkanTexture :public Ogre::OgreTexture
 {
 public:
     VulkanTexture(
-        const std::string& name, 
-        Ogre::TextureProperty* texProperty,
-        VulkanRenderSystemBase* engine);
+        const std::string& name,
+        VulkanPlatform* platform,
+        VulkanCommands* commands,
+        Ogre::TextureProperty* texProperty
+        );
+
+    VulkanTexture(
+        const std::string& name,
+        VulkanPlatform* platform,
+        VulkanCommands* commands,
+        VkImage image,
+        Ogre::TextureProperty* texProperty
+    );
 
     void updateTextureName(const char* name, uint32_t size)
     {
@@ -61,17 +74,12 @@ public:
     VulkanTexture* getSidecar() const {
         return mSidecarMSAA.get();
     }
-
-    void setPrimaryRange(uint32_t minMiplevel, uint32_t maxMiplevel);
-
-    VkImageSubresourceRange getPrimaryViewRange() const;
-
-    VkImageViewType getViewType() const;
-
-    VkImageView getViewForType(VkImageSubresourceRange const& range, VkImageViewType type);
-
-    VkImageView getAttachmentView(VkImageSubresourceRange range);
-
+    VulkanLayout getLayout(uint32_t layer, uint32_t level) const;
+    void setLayout(const VkImageSubresourceRange& range, VulkanLayout newLayout);
+    void transitionLayout(
+        VkCommandBuffer cmdbuf,
+        const VkImageSubresourceRange& range, 
+        VulkanLayout newLayout);
 
     void updateTextureData();
     void* getVulkanBuffer(uint32_t offset);
@@ -106,9 +114,7 @@ private:
 
     
 private:
-    VulkanRenderSystemBase* mRenderSystem;
-    VkDevice mVKDevice;
-
+    VulkanPlatform* mPlatform;
     VkBuffer mStagingBuffer = VK_NULL_HANDLE;
     VkDeviceMemory mStagingBufferMemory = VK_NULL_HANDLE;
     char* mMappedMemory;
@@ -126,7 +132,11 @@ private:
 
     // The texture with the sidecar owns the sidecar.
     std::unique_ptr<VulkanTexture> mSidecarMSAA;
-    
+    // Track the image layout of each subresource using a sparse range map.
+    utils::RangeMap<uint32_t, filament::backend::VulkanLayout> mSubresourceLayouts;
+
+
+
     VmaAllocator mAllocator;
     VulkanCommands* mCommands;
     VulkanStagePool* mStagePool = nullptr;

@@ -1,7 +1,9 @@
 #pragma once
-#include "VulkanCommon.h"
-#include "OgreRenderTarget.h"
 #include "OgreTexture.h"
+#include "OgreRenderTarget.h"
+#include "VulkanCommon.h"
+#include "VulkanCommands.h"
+#include "VulkanSwapChain.h"
 
 class VulkanTexture;
 namespace Ogre
@@ -9,12 +11,14 @@ namespace Ogre
 	class VulkanRenderTarget: public Ogre::RenderTarget
 	{
 	public:
-		VulkanRenderTarget(const String&name, TextureProperty& texProperty);
-		VulkanRenderTarget(uint32_t width, uint32_t height, bool screen);
+		VulkanRenderTarget(
+			const String&name, 
+			VulkanPlatform* platform,
+			VulkanCommands* commands, 
+			TextureProperty& texProperty);
+		VulkanRenderTarget(VulkanSwapChain* swapChain, bool depth = false);
 		~VulkanRenderTarget();
 
-		virtual void preRender(const ColourValue& colour) ;
-		virtual void postRender() ;
 
 		VkImageView getImageView();
 		VkImage getImage();
@@ -23,9 +27,8 @@ namespace Ogre
 
 	private:
 		VulkanTexture* mTarget = nullptr;
-		VulkanTexture* mDepth = nullptr;
-		VkFramebuffer mFramebuffer = nullptr;
-		MultisampleTarget mMultisampleTarget;
-		bool mScreen;
+		
+		VulkanSwapChain* mSwapChain = nullptr;
+		bool mDepth = false;
 	};
 }

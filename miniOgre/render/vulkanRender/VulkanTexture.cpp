@@ -14,18 +14,32 @@
 
 VulkanTexture::VulkanTexture(
     const std::string& name,
-    Ogre::TextureProperty* texProperty,
-    VulkanRenderSystemBase* rs):
+    VulkanPlatform* platform,
+    VulkanCommands* commands,
+    Ogre::TextureProperty* texProperty):
     OgreTexture(name, texProperty)
 {
     mLoad = false;
-    mRenderSystem = rs;
 
     mName = name;
-    mVKDevice = VulkanHelper::getSingleton()._getVkDevice();
+    mCommands = commands;
+    mPlatform = platform;
 }
 
-
+VulkanTexture::VulkanTexture(
+    const std::string& name,
+    VulkanPlatform* platform,
+    VulkanCommands* commands,
+    VkImage image,
+    Ogre::TextureProperty* texProperty
+):OgreTexture(name, texProperty)
+{
+    mName = name;
+    mCommands = commands;
+    mPlatform = platform;
+    mTextureImage = image;
+    createInternalResourcesImpl();
+}
 
 VulkanTexture::~VulkanTexture()
 {
@@ -79,7 +93,7 @@ void VulkanTexture::_createSurfaceList(void)
         mStagingBuffer,
         mStagingBufferMemory);
 
-    VkResult result = vkMapMemory(mVKDevice, mStagingBufferMemory, 0, bufferSizeAll, 0, (void**)&mMappedMemory);
+    VkResult result = vkMapMemory(mPlatform->getDevice(), mStagingBufferMemory, 0, bufferSizeAll, 0, (void**)&mMappedMemory);
 
     if (result != VK_SUCCESS)
     {
@@ -120,7 +134,7 @@ void VulkanTexture::createInternalResourcesImpl(void)
 
 void VulkanTexture::freeInternalResourcesImpl(void)
 {
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    auto device = mPlatform->getDevice();
     if (mTextureImageView)
     {
         vkDestroyImageView(device, mTextureImageView, nullptr);
@@ -144,17 +158,9 @@ void VulkanTexture::postLoad()
     auto frameIndex = 0;
     VulkanFrame* frame = nullptr;// mRenderSystem->_getCurrentFrame();
     VkCommandBuffer commandBuffer = nullptr;
-    if (frame)
-    {
-        frameIndex = frame->getFrameIndex();
-        commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
-    }
-    else
-    {
-        commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands();
-    }
+  
+    commandBuffer = mCommands->get().buffer();
     
-
     if (!mSurfaceList.empty())
     {
         vks::tools::copyBufferToImage(
@@ -170,12 +176,6 @@ void VulkanTexture::postLoad()
         //generate mipmap
         vks::tools::generateMipmaps(commandBuffer, this);
     }
-
-    if (!frame)
-    {
-        VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer);
-    }
-    
 }
 
 void VulkanTexture::createImage(
@@ -252,25 +252,26 @@ void VulkanTexture::createImage(
         imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
     }
 
-
-    VK_CHECK_RESULT(vkCreateImage(mVKDevice, &imageInfo, nullptr, &image));
+    auto device = mPlatform->getDevice();
+    VK_CHECK_RESULT(vkCreateImage(device, &imageInfo, nullptr, &image));
 
     VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements(mVKDevice, image, &memRequirements);
+    bluevk::vkGetImageMemoryRequirements(device, image, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = VulkanHelper::getSingleton()._findMemoryType(memRequirements.memoryTypeBits, properties);
 
-    VK_CHECK_RESULT(vkAllocateMemory(mVKDevice, &allocInfo, nullptr, &imageMemory));
+    VK_CHECK_RESULT(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory));
 
-    VK_CHECK_RESULT(vkBindImageMemory(mVKDevice, image, imageMemory, 0));
+    VK_CHECK_RESULT(vkBindImageMemory(device, image, imageMemory, 0));
 
 }
 
 VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format) 
 {
+    auto device = mPlatform->getDevice();
     VkImageViewCreateInfo viewInfo = {};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = image;
@@ -298,7 +299,7 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     viewInfo.components.b = VK_COMPONENT_SWIZZLE_B;
     viewInfo.components.a = VK_COMPONENT_SWIZZLE_A;
     VkImageView imageView;
-    if (vkCreateImageView(mVKDevice, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
+    if (vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
     {
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create texture image view!");
     }
@@ -317,25 +318,111 @@ void VulkanTexture::createTextureSampler()
 }
 
 
-VkImageViewType VulkanTexture::getViewType() const
-{
-    return VK_IMAGE_VIEW_TYPE_2D;
-}
-
-
 void* VulkanTexture::getVulkanBuffer(uint32_t offset)
 {
     return mMappedMemory + offset;
 }
 
+VulkanLayout VulkanTexture::getLayout(uint32_t layer, uint32_t level) const
+{
+    assert_invariant(level <= 0xffff && layer <= 0xffff);
+    const uint32_t key = (layer << 16) | level;
+    if (!mSubresourceLayouts.has(key)) {
+        return VulkanLayout::UNDEFINED;
+    }
+    return mSubresourceLayouts.get(key);
+}
+
+void VulkanTexture::setLayout(const VkImageSubresourceRange& range, VulkanLayout newLayout)
+{
+    uint32_t const firstLayer = range.baseArrayLayer;
+    uint32_t const lastLayer = firstLayer + range.layerCount;
+    uint32_t const firstLevel = range.baseMipLevel;
+    uint32_t const lastLevel = firstLevel + range.levelCount;
+
+    assert_invariant(firstLevel <= 0xffff && lastLevel <= 0xffff);
+    assert_invariant(firstLayer <= 0xffff && lastLayer <= 0xffff);
+
+    if (newLayout == VulkanLayout::UNDEFINED) {
+        for (uint32_t layer = firstLayer; layer < lastLayer; ++layer) {
+            uint32_t const first = (layer << 16) | firstLevel;
+            uint32_t const last = (layer << 16) | lastLevel;
+            mSubresourceLayouts.clear(first, last);
+        }
+    }
+    else {
+        for (uint32_t layer = firstLayer; layer < lastLayer; ++layer) {
+            uint32_t const first = (layer << 16) | firstLevel;
+            uint32_t const last = (layer << 16) | lastLevel;
+            mSubresourceLayouts.add(first, last, newLayout);
+        }
+    }
+}
+
+void VulkanTexture::transitionLayout(
+    VkCommandBuffer cmdbuf,
+    const VkImageSubresourceRange& range,
+    VulkanLayout newLayout)
+{
+    VulkanLayout const oldLayout = getLayout(range.baseArrayLayer, range.baseMipLevel);
+
+    uint32_t const firstLayer = range.baseArrayLayer;
+    uint32_t const lastLayer = firstLayer + range.layerCount;
+    uint32_t const firstLevel = range.baseMipLevel;
+    uint32_t const lastLevel = firstLevel + range.levelCount;
+
+    // If we are transitioning more than one layer/level (slice), we need to know whether they are
+    // all of the same layer.  If not, we need to transition slice-by-slice. Otherwise it would
+    // trigger the validation layer saying that the `oldLayout` provided is incorrect.
+    // TODO: transition by multiple slices with more sophiscated range finding.
+    bool transitionSliceBySlice = false;
+    for (uint32_t i = firstLayer; i < lastLayer; ++i) {
+        for (uint32_t j = firstLevel; j < lastLevel; ++j) {
+            if (oldLayout != getLayout(i, j)) {
+                transitionSliceBySlice = true;
+                break;
+            }
+        }
+    }
+
+    if (transitionSliceBySlice) {
+        for (uint32_t i = firstLayer; i < lastLayer; ++i) {
+            for (uint32_t j = firstLevel; j < lastLevel; ++j) {
+                VulkanLayout const layout = getLayout(i, j);
+                imgutil::transitionLayout(cmdbuf, {
+                        .image = mTextureImage,
+                        .oldLayout = layout,
+                        .newLayout = newLayout,
+                        .subresources = {
+                            .aspectMask = range.aspectMask,
+                            .baseMipLevel = j,
+                            .levelCount = 1,
+                            .baseArrayLayer = i,
+                            .layerCount = 1,
+                        },
+                    });
+            }
+        }
+    }
+    else {
+        imgutil::transitionLayout(cmdbuf, {
+            .image = mTextureImage,
+            .oldLayout = oldLayout,
+            .newLayout = newLayout,
+            .subresources = range,
+            });
+    }
+
+    setLayout(range, newLayout);
+}
+
 void VulkanTexture::updateTextureData()
 {
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands();
+    VkCommandBuffer commandBuffer = mCommands->get().buffer();
     vks::tools::copyBufferToImage(
         commandBuffer,
         mStagingBuffer,
         mTextureImage,
         this
     );
-    VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer);
 }

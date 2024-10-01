@@ -2,6 +2,15 @@
 #include "VulkanCommon.h"
 #include "renderSystem.h"
 #include "SHADER.H"
+#include <VulkanStagePool.h>
+#include <VulkanHandles.h>
+#include <VulkanResourceAllocator.h>
+#include <VulkanResources.h>
+#include <VulkanCommands.h>
+#include <VulkanSwapChain.h>
+#include <VulkanPlatform.h>
+#include <VulkanContext.h>
+
 class VulkanGraphicsCommandList;
 class VulkanFrame;
 class VulkanWindow;
@@ -48,6 +57,17 @@ protected:
     {
         return &mFrameConstantBuffer;
     }
+
+    virtual Handle<HwBufferObject> createBufferObject(
+        BufferObjectBinding bindingType,
+        BufferUsage usage,
+        uint32_t bufferCount) override;
+
+    virtual void updateBufferObject(
+        Handle<HwBufferObject> boh,
+        const char* data, 
+        uint32_t size) override;
+
 protected:
     RenderPassInfo mCurrentRenderPassInfo;
 
@@ -65,4 +85,13 @@ protected:
     uint32_t mImageIndex = 0;
 
     VulkanPipelineCache* mPipelineCache = nullptr;
+
+    VmaAllocator mAllocator = VK_NULL_HANDLE;
+    VulkanResourceAllocator mResourceAllocator;
+
+    VulkanStagePool mStagePool;
+    VulkanCommands* mCommands;
+    VulkanSwapChain* mSwapChain;
+    VulkanPlatform* mVulkanPlatform;
+    VulkanContext mVulkanContext;
 };

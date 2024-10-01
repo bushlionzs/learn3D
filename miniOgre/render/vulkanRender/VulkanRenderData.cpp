@@ -1,42 +1,41 @@
 #include "OgreHeader.h"
-#include "OgreHeader.h"
+#include <utils/JobSystem.h>
+#include "engine_struct.h"
 #include "VulkanRenderData.h"
 #include "OgreCamera.h"
-#include "VulkanRenderSystem.h"
 #include "OgreMaterial.h"
-#include "VulkanTexture.h"
 #include "OgreTextureUnit.h"
 #include "OgreRenderable.h"
-#include "engine_struct.h"
-#include "VulkanHelper.h"
-#include "VulkanFrame.h"
+#include "shaderManager.h"
+#include "OgreResourceManager.h"
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
 #include "OgreVertexDeclaration.h"
 #include "OgreHardwareIndexBuffer.h"
 #include "OgreRoot.h"
+#include "VulkanRenderSystemBase.h"
 #include "VulkanHardwareBuffer.h"
-#include "VulkanRaytracing.h"
 #include "VulkanTools.h"
 #include "VulkanMappings.h"
 #include "VulkanPipelineLayoutCache.h"
 #include "VulkanLayoutCache.h"
-#include "shaderManager.h"
-#include "OgreResourceManager.h"
-#include <utils/JobSystem.h>
+#include "VulkanTexture.h"
+#include "VulkanFrame.h"
+
+
 
 
 
 VulkanRenderableData::VulkanRenderableData(
-    VulkanRenderSystemBase* engine,
-    Ogre::Renderable* r,
-    VulkanRayTracingContext* context)
+    VulkanPlatform* platform,
+    VulkanCommands* commands,
+    Ogre::Renderable* r)
     :RenderableData(r)
 {
-	mEngine = engine;
-    mDevice = VulkanHelper::getSingleton()._getVkDevice();
+    mEngine = (VulkanRenderSystemBase*)Ogre::Root::getSingleton().getRenderSystem();
+    mCommands = commands;
+    mDevice = platform->getDevice();
 
-    mRayTracingContext = context;
     mVertexShaderInfo.shaderType = Ogre::ShaderType::VertexShader;
     mVertexShaderInfo.shaderModule = VK_NULL_HANDLE;
     mVertexShaderInfo.uboMask = 1 | 2 | 4 | 8;
@@ -83,7 +82,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame, const RenderPassInfo& 
 {
     auto mat = _r->getMaterial().get();
     
-    auto cam = mEngine->_getCamera();
+    auto cam = passInfo.cam;
     const Ogre::Matrix4& view = cam->getViewMatrix();
     const Ogre::Matrix4& proj = cam->getProjectMatrix();
     const Ogre::Matrix4& model = _r->getModelMatrix();
@@ -411,74 +410,6 @@ void VulkanRenderableData::render(
 
 bool VulkanRenderableData::updateRayTracingData()
 {
-    if (mRayTracingUpdate)
-    {
-        const Ogre::Matrix4& m = _r->getModelMatrix();
-        mRayTracingContext->updateTransform(mGeometrySlot, m);
-        return false;
-    }
-
-    mRayTracingUpdate = true;
-    if (mRayTracingContext)
-    {
-        VertexData* vb = _r->getVertexData();
-        IndexData* ib = _r->getIndexData();
-        HardwareVertexBuffer* vertexBuffer = (HardwareVertexBuffer*)vb->getBuffer(0);
-
-        VulkanHardwareBuffer* vulkanBuffer = (VulkanHardwareBuffer*)vertexBuffer->getHardwareBuffer();
-        VulkanHardwareBuffer* vulkanIndexBuffer = (VulkanHardwareBuffer*)ib->mIndexBuffer->getHardwareBuffer();
-        mGeometryNode.vertexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanBuffer->getVKBuffer());// +primitive->firstVertex * sizeof(vkglTF::Vertex);
-        mGeometryNode.indexBufferDeviceAddress.deviceAddress = vks::tools::getBufferDeviceAddress(mDevice, vulkanIndexBuffer->getVKBuffer())
-            + ib->mIndexStart * ib->mIndexBuffer->getIndexSize();
-        mGeometrySlot = mRayTracingContext->allocGeometrySlot(mGeometryNode);
-        mGeometryNode.transformBufferDeviceAddress.deviceAddress =
-            vks::tools::getBufferDeviceAddress(mDevice, mRayTracingContext->getTransformBuffer())
-            + mGeometrySlot * sizeof(VkTransformMatrixKHR);
-
-        mGeometry = {};
-        mGeometry.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
-        mGeometry.flags = VK_GEOMETRY_OPAQUE_BIT_KHR;
-        mGeometry.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
-        mGeometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
-        mGeometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
-        mGeometry.geometry.triangles.vertexData = mGeometryNode.vertexBufferDeviceAddress;
-        mGeometry.geometry.triangles.maxVertex = vb->getVertexCount();
-        mGeometry.geometry.triangles.vertexStride = vb->getVertexSize(0);
-        mGeometry.geometry.triangles.indexType = ib->mIndexBuffer->getIndexSize() == 4 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
-        mGeometry.geometry.triangles.indexData = mGeometryNode.indexBufferDeviceAddress;
-        mGeometry.geometry.triangles.transformData = mGeometryNode.transformBufferDeviceAddress;
-
-        auto mat = _r->getMaterial().get();
-        auto texs = mat->getAllTexureUnit();
-
-        for (int32_t i = 0; i < texs.size(); i++)
-        {
-            VulkanTexture* tex = (VulkanTexture*)texs[i]->getRaw();
-
-            int32_t slot = tex->getSlot();
-
-            if (slot == -1)
-            {
-                slot = mRayTracingContext->allocTextureSlot(tex);
-            }
-
-            mGeometryNode.textureIndex[i] = slot;
-
-        }
-
-
-
-        VkTransformMatrixKHR tmp;
-
-        mBuildRangeInfo.firstVertex = vb->getVertexStart();
-        mBuildRangeInfo.primitiveOffset = 0;
-        mBuildRangeInfo.primitiveCount = ib->mIndexCount / 3;
-        mBuildRangeInfo.transformOffset = 0;
-
-        const Ogre::Matrix4& m = _r->getModelMatrix();
-        mRayTracingContext->updateTransform(mGeometrySlot, m);
-    }
-
     return true;
 }
 
@@ -776,7 +707,10 @@ void VulkanRenderableData::bindPipeline(
 
 void VulkanRenderableData::buildLayout()
 {
-    DescriptorSetLayoutBindingInfo binding;
+    DescriptorSetLayoutBinding binding;
+
+    mUBOLayoutInfo.bindings.reserve(10);
+
     for (auto i = 0; i < 16; i++)
     {
         bool hasVertex = (mVertexShaderInfo.uboMask & (1uLL << i)) != 0;
@@ -785,12 +719,13 @@ void VulkanRenderableData::buildLayout()
         if (!hasVertex && !hasFragment)
             continue;
         binding.binding = i;
-        binding.flags = DescriptorFlags::DescriptorFlags_None;
+       
+        binding.flags = descset::DescriptorFlags::NONE;
         binding.count = 0;
-        binding.type = DescriptorType::UNIFORM_BUFFER;
+        binding.type = descset::DescriptorType::UNIFORM_BUFFER;
         if (hasVertex)
         {
-            binding.stageFlags = ShaderStageFlags2::VERTEX;
+            binding.stageFlags = descset::ShaderStageFlags2::VERTEX;
         }
 
         if (hasFragment)
@@ -798,9 +733,11 @@ void VulkanRenderableData::buildLayout()
             binding.stageFlags = static_cast<ShaderStageFlags2>(
                 binding.stageFlags | ShaderStageFlags2::FRAGMENT);
         }
-
-        mUBOLayoutInfo.push_back(binding);
+        
+        mUBOLayoutInfo.bindings.push_back(binding);
     }
+
+    mSamplerLayoutInfo.bindings.reserve(10);
 
     for (auto i = 0; i < 32; i++)
     {
@@ -809,7 +746,7 @@ void VulkanRenderableData::buildLayout()
         if (!hasVertex && !hasFragment)
             continue;
         binding.binding = i;
-        binding.flags = DescriptorFlags::DescriptorFlags_None;
+        binding.flags = DescriptorFlags::NONE;
         binding.count = 0;
         binding.type = DescriptorType::SAMPLER;
         if (hasVertex)
@@ -823,7 +760,7 @@ void VulkanRenderableData::buildLayout()
                 binding.stageFlags | ShaderStageFlags2::FRAGMENT);
         }
 
-        mSamplerLayoutInfo.push_back(binding);
+        mSamplerLayoutInfo.bindings.push_back(binding);
     }
 
     auto* layoutCache = VulkanHelper::getSingleton().getLayoutCache();

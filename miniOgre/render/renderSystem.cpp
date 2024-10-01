@@ -55,5 +55,20 @@ void RenderSystem::present()
 
 }
 
+Handle<HwBufferObject> RenderSystem::createBufferObject(
+    BufferObjectBinding bindingType,
+    BufferUsage usage,
+    uint32_t bufferCount)
+{
+    assert(false);
+    return Handle<HwBufferObject>();
+}
 
+void RenderSystem::updateBufferObject(
+    Handle<HwBufferObject> boh, 
+    const char* data, 
+    uint32_t size)
+{
+    assert(false);
+}
 

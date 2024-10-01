@@ -160,7 +160,5 @@ private:
     Ogre::Material* mOwner;
 
 
-    //
-    std::vector<Texture*> mFTextures;
     ResourceState mResourceState = ResourceState::ResourceState_None;
 };

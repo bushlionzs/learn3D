@@ -35,8 +35,9 @@
 #include <thread>
 #include <utility>
 #include <vector>
-
 #include <stdint.h>
+
+using namespace filament::backend;
 
 namespace filament::backend {
 

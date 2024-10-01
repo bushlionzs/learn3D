@@ -414,27 +414,6 @@ namespace Ogre {
         NumShaderTypes
     };
 
-
-    enum ShaderStageFlags2 : uint8_t
-    {
-        ShaderStageFlags2_NONE = 0,
-        VERTEX = 0x1,
-        FRAGMENT = 0x2,
-    };
-
-    enum DescriptorType : uint8_t
-    {
-        UNIFORM_BUFFER,
-        SAMPLER,
-        INPUT_ATTACHMENT,
-    };
-
-    enum DescriptorFlags : uint8_t 
-    {
-        DescriptorFlags_None = 0x00,
-        DYNAMIC_OFFSET = 0x01
-    };
-
     enum CubeType
     {
         CubeType_Irradiance  = 0,

@@ -29,6 +29,45 @@
 #include "VulkanMappings.h"
 #include <VulkanPipelineCache.h>
 
+static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevice,
+    VkDevice device) {
+    VmaAllocator allocator;
+    VmaVulkanFunctions const funcs{
+#if VMA_DYNAMIC_VULKAN_FUNCTIONS
+        .vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+        .vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+#else
+        .vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
+        .vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties,
+        .vkAllocateMemory = vkAllocateMemory,
+        .vkFreeMemory = vkFreeMemory,
+        .vkMapMemory = vkMapMemory,
+        .vkUnmapMemory = vkUnmapMemory,
+        .vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges,
+        .vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges,
+        .vkBindBufferMemory = vkBindBufferMemory,
+        .vkBindImageMemory = vkBindImageMemory,
+        .vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements,
+        .vkGetImageMemoryRequirements = vkGetImageMemoryRequirements,
+        .vkCreateBuffer = vkCreateBuffer,
+        .vkDestroyBuffer = vkDestroyBuffer,
+        .vkCreateImage = vkCreateImage,
+        .vkDestroyImage = vkDestroyImage,
+        .vkCmdCopyBuffer = vkCmdCopyBuffer,
+        .vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR,
+        .vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR
+#endif
+    };
+    VmaAllocatorCreateInfo const allocatorInfo{
+        .physicalDevice = physicalDevice,
+        .device = device,
+        .pVulkanFunctions = &funcs,
+        .instance = instance,
+    };
+    vmaCreateAllocator(&allocatorInfo, &allocator);
+    return allocator;
+}
+
 static const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
 };
@@ -57,14 +96,23 @@ VulkanRenderSystem::~VulkanRenderSystem()
 bool VulkanRenderSystem::engineInit()
 {
     RenderSystem::engineInit();
+    mVulkanPlatform = new VulkanPlatform();
     
+
     VulkanHelper& helper = VulkanHelper::getSingleton();
-    helper._initialise();
+    helper._initialise(mVulkanPlatform);
+   
+    auto device = mVulkanPlatform->getDevice();
+    mAllocator = createAllocator(
+        mVulkanPlatform->getInstance(), mVulkanPlatform->getPhysicalDevice(), device);
 
-    enki::TaskSchedulerConfig config;
-    config.numTaskThreadsToCreate = VULKAN_COMMAND_THREAD;
-    mTaskScheduler.Initialize(config);
+    
+    auto queue = mVulkanPlatform->getGraphicsQueue();
+    auto queueIndex = mVulkanPlatform->getGraphicsQueueIndex();
 
+    mCommands = new VulkanCommands(device, queue, queueIndex, &mVulkanContext, &mResourceAllocator);
+
+    
     mPipelineCache = helper.getPipelineCache();
 
     return true;
@@ -75,52 +123,7 @@ void VulkanRenderSystem::frameStart()
 { 
     mTriangleCount = 0;
     mBatchCount = 0;
-
     mCurrentVulkanFrame = getNextFrame();
-
-    VulkanHelper::getSingleton()._resetCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-
-    static std::vector<VkCommandBuffer>  cmdlist;
-    VulkanHelper::getSingleton().fillCommandBufferList(cmdlist, mCurrentVulkanFrame->getFrameIndex(), true);
-
-    VkCommandBufferBeginInfo cmdBeginInfo{};
-    cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    cmdBeginInfo.pNext = NULL;
-    cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    cmdBeginInfo.pInheritanceInfo = NULL;
-
-    //auto framebuffer = mRenderWindow->getFrameBuffer(mCurrentVulkanFrame->getFrameIndex());
-    //auto renderPass = VulkanHelper::getSingleton()._getRenderPass();
-    //VkCommandBufferInheritanceInfo inheritanceInfo = vks::initializers::commandBufferInheritanceInfo();
-    //inheritanceInfo.renderPass = renderPass;
-    //// Secondary command buffer also use the currently active framebuffer
-    //inheritanceInfo.framebuffer = framebuffer;
-
-
-
-    //VkCommandBufferBeginInfo secondBufferBeginInfo = vks::initializers::commandBufferBeginInfo();
-    //secondBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
-    //secondBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
-
-
-    auto result = vkBeginCommandBuffer(cmdlist[0], &cmdBeginInfo);
-
-    if (result != VK_SUCCESS)
-    {
-        throw std::runtime_error("vkBeginCommandBuffer failed");
-    }
-#ifdef MULTITHREAD
-    for (int32_t i = 1; i < cmdlist.size(); i++)
-    {
-        auto* commandBuffer = cmdlist.at(i);
-        auto result = vkBeginCommandBuffer(commandBuffer, &secondBufferBeginInfo);
-
-        if (result != VK_SUCCESS)
-        {
-            throw std::runtime_error("vkBeginCommandBuffer failed");
-        }
-    }
-#endif
 }
 
 void VulkanRenderSystem::frameEnd()
@@ -131,9 +134,7 @@ void VulkanRenderSystem::frameEnd()
 void VulkanRenderSystem::beginRenderPass(
     RenderPassInfo& renderPassInfo)
 {
-
-    auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
-    VkCommandBuffer cmdBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
+    VkCommandBuffer cmdBuffer = mCommands->get().buffer();
 
     mCurrentVKImage = nullptr;
     mCurrentRenderPassInfo = renderPassInfo;
@@ -250,7 +251,7 @@ void VulkanRenderSystem::beginRenderPass(
 void VulkanRenderSystem::endRenderPass()
 {
     auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
-    VkCommandBuffer cmdBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
+    VkCommandBuffer cmdBuffer = mCommands->get().buffer();
 
     vkCmdEndRenderingKHR(cmdBuffer);
 
@@ -294,102 +295,9 @@ void VulkanRenderSystem::endRenderPass()
 
 void VulkanRenderSystem::present()
 {
-    auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
-    VulkanHelper::getSingleton()._endCommandBuffer(frameIndex);
-    VkSubmitInfo submitInfo = {};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-
-    VkPipelineStageFlags waitDestStageMasks[2] = {
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-    };
-
-    auto imageAvailableSemaphore = mCurrentVulkanFrame->getImageAvailableSemaphore();
-    auto renderFinshedSemaphore = mCurrentVulkanFrame->getFinishedSemaphore();
-
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = &imageAvailableSemaphore;
-
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffer;
-
-
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = &renderFinshedSemaphore;
-    submitInfo.pWaitDstStageMask = waitDestStageMasks;
-
-    auto queue = VulkanHelper::getSingleton()._getCommandQueue();
-    auto fence = mCurrentVulkanFrame->getFence();
-    auto result = vkQueueSubmit(queue, 1, &submitInfo, fence);
-    if (result != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to submit draw command buffer!");
-    }
-
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
-
-    //vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
-
-
-
-
-    auto swapchain = VulkanHelper::getSingleton().getSwapchain();
-
-    VkPresentInfoKHR presentInfo = {};
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    presentInfo.pNext = NULL;
-    presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = &renderFinshedSemaphore;
-
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = &swapchain;
-
-    presentInfo.pImageIndices = &mImageIndex;
-
-    result = vkQueuePresentKHR(queue, &presentInfo);
-
-    if (result != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to present swap chain image!");
-    }
-
+    mSwapChain->present();
     mFrameIndex++;
-
     mFrameIndex %= VULKAN_FRAME_RESOURCE_COUNT;
-
-
-}
-
-
-Ogre::RenderWindow* VulkanRenderSystem::createRenderWindow(
-    const String& name, unsigned int width, unsigned int height,
-    const NameValuePairList* miscParams)
-{
-    mRenderWindow = new VulkanWindow();
-
-    mRenderWindow->create(name, width, height, false, miscParams);
-
-    return mRenderWindow;
-}
-
-Ogre::RenderTarget* VulkanRenderSystem::createRenderTarget(
-    const String& name, 
-    uint32_t width, 
-    uint32_t height, 
-    Ogre::PixelFormat format, 
-    uint32_t textureUsage)
-{
-    TextureProperty texProperty;
-    texProperty._width = width;
-    texProperty._height = height;
-    texProperty._tex_usage = textureUsage;
-    texProperty._tex_format = format;
-    texProperty._need_mipmap = false;
-    
-    Ogre::VulkanRenderTarget* renderTarget = new Ogre::VulkanRenderTarget(name, texProperty);
-    return renderTarget;
 }
 
 void VulkanRenderSystem::update(Renderable* r)
@@ -402,46 +310,11 @@ void VulkanRenderSystem::update(Renderable* r)
 void VulkanRenderSystem::render(Renderable* r, RenderListType t)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
+    VkCommandBuffer commandBuffer = mCommands->get().buffer();
     rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
     rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
 }
 
-using fn_on_got_tracker_info = std::function<void(uint32_t)>;
-
-struct ParallelTaskSet : public enki::IPinnedTask
-{
-    void update(int32_t start, int32_t end, VulkanFrame* frame, std::vector<Ogre::Renderable*>* objs)
-    {
-        _start = start;
-        _end = end;
-        _frame = frame;
-        _objs = objs;
-    }
-
-    ParallelTaskSet(uint32_t tdx):IPinnedTask(tdx)
-    {
-
-    }
-    virtual void Execute() 
-    { 
-        auto tdx = threadNum;
-        std::vector<Ogre::Renderable*>& objs = *_objs;
-        for (int32_t i = _start; i < _end; i++)
-        {
-            Ogre::Renderable* r = objs[i];
-            VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-
-            VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(tdx, _frame->getFrameIndex());
-            //rd->render(_frame, commandBuffer, nullptr, mCurrentRenderPassInfo);//zhousha
-        }
-    }
-
-    int32_t _start;
-    int32_t _end;
-    std::vector<Ogre::Renderable*>* _objs;
-    VulkanFrame* _frame;
-};
 
 void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread)
 {
@@ -465,74 +338,14 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
 
     uint32_t size = (uint32_t)mRenderList.size();
 
-    if(false)
-    {
-        for (auto r : mRenderList)
-        {
-            VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-            // VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
-            VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-            rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
-        }
-        return;
-    }
-    if (!multithread)
-    {
-        for (auto r : mRenderList)
-        {
-            VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-            //VkCommandBuffer commandBuffer = VulkanHelper::getSingleton()._getThreadCommandBuffer(3, mCurrentVulkanFrame->getFrameIndex());
-            VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-            rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
-        }
-        return;
-    }
-
-    uint32_t every = size / VULKAN_COMMAND_THREAD;
-
-    uint32_t left = size - every * VULKAN_COMMAND_THREAD;
-
-    int32 start = 0;
-    int32 end = 0;
-    VulkanFrame* frame = mCurrentVulkanFrame;
-
     
-
-    static std::vector<ParallelTaskSet*> tasklist;
-    if (tasklist.empty())
+    for (auto r : mRenderList)
     {
-        tasklist.resize(VULKAN_COMMAND_THREAD);
-        for (int32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
-        {
-            tasklist[i] = new ParallelTaskSet(i);
-        }
+        VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
+        VkCommandBuffer commandBuffer = mCommands->get().buffer();
+        rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
     }
 
-    
-    for (int32_t i = 0; i < VULKAN_COMMAND_THREAD - 1; i++)
-    {
-        end = start + every;
-        if (end > start)
-        {
-            ParallelTaskSet* task = tasklist[i];
-            task->update(start, end, mCurrentVulkanFrame, &objs);
-            mTaskScheduler.AddPinnedTask(task);
-        }
-        
-        start = end;
-    }
-
-    ParallelTaskSet* task = tasklist[VULKAN_COMMAND_THREAD - 1];
-    end = start + every + left;
-    task->update(start, end, mCurrentVulkanFrame, &objs);
-    mTaskScheduler.AddPinnedTask(task);
-
-    mTaskScheduler.RunPinnedTasks();
-
-    for (int32_t i = 0; i < VULKAN_COMMAND_THREAD; i++)
-    {
-        mTaskScheduler.WaitforTask(tasklist[i]);
-    }
 }
 
 

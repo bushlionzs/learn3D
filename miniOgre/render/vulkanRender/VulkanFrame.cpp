@@ -9,7 +9,7 @@ VulkanFrame::VulkanFrame(uint32_t frame_index)
         true
         );
 
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    auto device = VulkanHelper::getSingleton().getDevcie();
 
     VkSemaphoreCreateInfo semaphoreInfo{};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;

@@ -30,12 +30,6 @@
 #include <vector>
 #include <unordered_map>
 
-
-
-    struct VulkanProgram;
-    struct VulkanBufferObject;
-    class VulkanResourceAllocator;
-
     // VulkanPipelineCache manages a cache of descriptor sets and pipelines.
     //
     // Please note the following limitations:

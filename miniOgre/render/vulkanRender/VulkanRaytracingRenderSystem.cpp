@@ -61,7 +61,7 @@ bool VulkanRaytracingRenderSystem::engineInit()
     RenderSystem::engineInit();
     
     VulkanHelper& helper = VulkanHelper::getSingleton();
-    helper._initialise();
+    helper._initialise(nullptr);
     helper.getVulkanSettings().rayTraceing = true;
 
     mMaxObjectCount = 100;
@@ -92,7 +92,7 @@ bool VulkanRaytracingRenderSystem::engineInit()
         &transformBuffer,
         mMaxObjectCount * sizeof(VkTransformMatrixKHR),
         nullptr);
-    mVKDevice = VulkanHelper::getSingletonPtr()->_getVkDevice();
+    mVKDevice = mVulkanPlatform->getDevice();
 
     mGeometryNodes.reserve(mMaxObjectCount);
     mBuildRangeInfos.reserve(mMaxObjectCount);
@@ -135,28 +135,6 @@ void VulkanRaytracingRenderSystem::frameStart()
     mBatchCount = 0;
 
     mCurrentVulkanFrame = getNextFrame();
-
-    VulkanHelper::getSingleton()._resetCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
-
-    static std::vector<VkCommandBuffer>  cmdlist;
-    VulkanHelper::getSingleton().fillCommandBufferList(cmdlist, mCurrentVulkanFrame->getFrameIndex(), true);
-
-    VkCommandBufferBeginInfo cmdBeginInfo{};
-    cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    cmdBeginInfo.pNext = NULL;
-    cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    cmdBeginInfo.pInheritanceInfo = NULL;
-
-    
-
-
-    auto result = vkBeginCommandBuffer(cmdlist[0], &cmdBeginInfo);
-
-    if (result != VK_SUCCESS)
-    {
-        throw std::runtime_error("vkBeginCommandBuffer failed");
-    }
-
 }
 
 void VulkanRaytracingRenderSystem::frameEnd()
@@ -170,7 +148,7 @@ void VulkanRaytracingRenderSystem::beginRenderPass(
 {
 
     auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
-    VkCommandBuffer cmdBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
+    VkCommandBuffer cmdBuffer = VK_NULL_HANDLE;
 
     mCurrentVKImage = nullptr;
     mCurrentRenderPassInfo = renderPassInfo;
@@ -278,7 +256,7 @@ void VulkanRaytracingRenderSystem::beginRenderPass(
 void VulkanRaytracingRenderSystem::endRenderPass()
 {
     auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
-    VkCommandBuffer cmdBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
+    VkCommandBuffer cmdBuffer = VK_NULL_HANDLE;
 
     vkCmdEndRenderingKHR(cmdBuffer);
 
@@ -295,76 +273,11 @@ void VulkanRaytracingRenderSystem::endRenderPass()
             VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
             VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
     }
-    
-
-    VulkanHelper::getSingleton()._endCommandBuffer(frameIndex);
 }
 
 void VulkanRaytracingRenderSystem::present()
 {
-    auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
-    VkSubmitInfo submitInfo = {};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-
-    VkPipelineStageFlags waitDestStageMasks[2] = {
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-    };
-
-    auto imageAvailableSemaphore = mCurrentVulkanFrame->getImageAvailableSemaphore();
-    auto renderFinshedSemaphore = mCurrentVulkanFrame->getFinishedSemaphore();
-
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = &imageAvailableSemaphore;
-
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffer;
-
-
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = &renderFinshedSemaphore;
-    submitInfo.pWaitDstStageMask = waitDestStageMasks;
-
-    auto queue = VulkanHelper::getSingleton()._getCommandQueue();
-    auto fence = mCurrentVulkanFrame->getFence();
-    auto result = vkQueueSubmit(queue, 1, &submitInfo, fence);
-    if (result != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to submit draw command buffer!");
-    }
-
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
-
-    //vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
-
-
-
-
-    auto swapchain = VulkanHelper::getSingleton().getSwapchain();
-
-    VkPresentInfoKHR presentInfo = {};
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    presentInfo.pNext = NULL;
-    presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = &renderFinshedSemaphore;
-
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = &swapchain;
-
-    presentInfo.pImageIndices = &mImageIndex;
-
-    result = vkQueuePresentKHR(queue, &presentInfo);
-
-    if (result != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to present swap chain image!");
-    }
-
-    mFrameIndex++;
-
-    mFrameIndex %= VULKAN_FRAME_RESOURCE_COUNT;
+   
 
 
 }
@@ -380,7 +293,7 @@ void VulkanRaytracingRenderSystem::update(Renderable* r)
 void VulkanRaytracingRenderSystem::render(Renderable* r, RenderListType t)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(mCurrentVulkanFrame->getFrameIndex());
+    VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
     rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
     rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
 }
@@ -388,94 +301,7 @@ void VulkanRaytracingRenderSystem::render(Renderable* r, RenderListType t)
 
 void VulkanRaytracingRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread)
 {
-    multithread = false;
-
-    mRenderList.clear();
     
-    for (auto r : objs)
-    {
-        VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-        if (rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr))
-        {
-            mRenderList.push_back(r);
-        }
-    }
-
-    if (mRenderList.empty())
-    {
-        return;
-    }
-
-    VulkanFrame* frame = _getCurrentFrame();
-
-    uint32_t frameIndex = frame->getFrameIndex();
-    updateUniformBuffer(mCurrentRenderPassInfo.cam, frameIndex);
-    updateRayTracing(mRenderList, frameIndex);
-
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
-
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline);
-
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipelineLayout,
-        0, 1, &descriptorSet[frameIndex], 0, 0);
-
-    auto rt = Ogre::Root::getSingleton().getMainRect();
-
-    uint32_t width = rt.width();
-    uint32_t height = rt.height();
-
-    VkStridedDeviceAddressRegionKHR emptySbtEntry = {};
-    vkCmdTraceRaysKHR(
-        commandBuffer,
-        &shaderBindingTables.raygen.stridedDeviceAddressRegion,
-        &shaderBindingTables.miss.stridedDeviceAddressRegion,
-        &shaderBindingTables.hit.stridedDeviceAddressRegion,
-        &emptySbtEntry,
-        width,
-        height,
-        1);
-
-    VkImageSubresourceRange subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-
-    auto swapchain = VulkanHelper::getSingleton().getSwapchainBuffer();
-    vks::tools::setImageLayout(
-        commandBuffer,
-        swapchain[frameIndex]._image,
-        VK_IMAGE_LAYOUT_UNDEFINED,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        subresourceRange);
-
-    vks::tools::setImageLayout(
-        commandBuffer,
-        mStorageImage.image,
-        VK_IMAGE_LAYOUT_GENERAL,
-        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        subresourceRange);
-
-    VkImageCopy copyRegion{};
-    copyRegion.srcSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
-    copyRegion.srcOffset = { 0, 0, 0 };
-    copyRegion.dstSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
-    copyRegion.dstOffset = { 0, 0, 0 };
-    copyRegion.extent = { width, height, 1 };
-    vkCmdCopyImage(commandBuffer, mStorageImage.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        swapchain[frameIndex]._image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
-
-    // Transition swap chain image back for presentation
-    vks::tools::setImageLayout(
-        commandBuffer,
-        swapchain[frameIndex]._image,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-        subresourceRange);
-
-    // Transition ray tracing output image back to general layout
-    vks::tools::setImageLayout(
-        commandBuffer,
-        mStorageImage.image,
-        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        VK_IMAGE_LAYOUT_GENERAL,
-        subresourceRange);
  
    
 }
@@ -522,76 +348,7 @@ VkBuffer VulkanRaytracingRenderSystem::getTransformBuffer()
 
 void VulkanRaytracingRenderSystem::render(std::vector<Ogre::Renderable*>& renderList, ICamera* cam)
 {
-    VulkanFrame* frame = _getCurrentFrame();
-
-    uint32_t frameIndex = frame->getFrameIndex();
-    updateUniformBuffer(cam, frameIndex);
-    updateRayTracing(renderList, frameIndex);
-
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().getMainCommandBuffer(frameIndex);
-
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline);
-
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipelineLayout,
-        0, 1, &descriptorSet[frameIndex], 0, 0);
-
-    auto rt = Ogre::Root::getSingleton().getMainRect();
-
-    uint32_t width = rt.width();
-    uint32_t height = rt.height();
-
-    VkStridedDeviceAddressRegionKHR emptySbtEntry = {};
-    vkCmdTraceRaysKHR(
-        commandBuffer,
-        &shaderBindingTables.raygen.stridedDeviceAddressRegion,
-        &shaderBindingTables.miss.stridedDeviceAddressRegion,
-        &shaderBindingTables.hit.stridedDeviceAddressRegion,
-        &emptySbtEntry,
-        width,
-        height,
-        1);
-
-    VkImageSubresourceRange subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-
-    auto swapchain = VulkanHelper::getSingleton().getSwapchainBuffer();
-    vks::tools::setImageLayout(
-        commandBuffer,
-        swapchain[frameIndex]._image,
-        VK_IMAGE_LAYOUT_UNDEFINED,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        subresourceRange);
-
-    vks::tools::setImageLayout(
-        commandBuffer,
-        mStorageImage.image,
-        VK_IMAGE_LAYOUT_GENERAL,
-        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        subresourceRange);
-
-    VkImageCopy copyRegion{};
-    copyRegion.srcSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
-    copyRegion.srcOffset = { 0, 0, 0 };
-    copyRegion.dstSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
-    copyRegion.dstOffset = { 0, 0, 0 };
-    copyRegion.extent = { width, height, 1 };
-    vkCmdCopyImage(commandBuffer, mStorageImage.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        swapchain[frameIndex]._image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
-
-    // Transition swap chain image back for presentation
-    vks::tools::setImageLayout(
-        commandBuffer,
-        swapchain[frameIndex]._image,
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-        subresourceRange);
-
-    // Transition ray tracing output image back to general layout
-    vks::tools::setImageLayout(
-        commandBuffer,
-        mStorageImage.image,
-        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        VK_IMAGE_LAYOUT_GENERAL,
-        subresourceRange);
+    
 }
 
 void VulkanRaytracingRenderSystem::updateRayTracing(
@@ -782,14 +539,13 @@ void VulkanRaytracingRenderSystem::createBottomLevelAccelerationStructure(std::v
 
     const VkAccelerationStructureBuildRangeInfoKHR* buildOffsetInfo = mBuildRangeInfos.data();
 
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands();
+    VkCommandBuffer commandBuffer = mCommands->get().buffer();
 
     vkCmdBuildAccelerationStructuresKHR(
         commandBuffer,
         1,
         &accelerationStructureBuildGeometryInfo,
         mBuildRangePointerInfos.data());
-    VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer);
 
     VkAccelerationStructureDeviceAddressInfoKHR accelerationDeviceAddressInfo{};
     accelerationDeviceAddressInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
@@ -882,13 +638,12 @@ void VulkanRaytracingRenderSystem::createTopLevelAccelerationStructure()
 
     // Build the acceleration structure on the device via a one-time command buffer submission
     // Some implementations may support acceleration structure building on the host (VkPhysicalDeviceAccelerationStructureFeaturesKHR->accelerationStructureHostCommands), but we prefer device builds
-    VkCommandBuffer commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands();
+    VkCommandBuffer commandBuffer = mCommands->get().buffer();
     vkCmdBuildAccelerationStructuresKHR(
         commandBuffer,
         1,
         &accelerationBuildGeometryInfo,
         accelerationBuildStructureRangeInfos.data());
-    VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer);
 
     VkAccelerationStructureDeviceAddressInfoKHR accelerationDeviceAddressInfo{};
     accelerationDeviceAddressInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
@@ -900,17 +655,16 @@ void VulkanRaytracingRenderSystem::createTopLevelAccelerationStructure()
 
 void VulkanRaytracingRenderSystem::prepare()
 {
-    auto physicalDevice = VulkanHelper::getSingleton()._getPhysicalDevice();
     rayTracingPipelineProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
     VkPhysicalDeviceProperties2 deviceProperties2{};
     deviceProperties2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
     deviceProperties2.pNext = &rayTracingPipelineProperties;
-    vkGetPhysicalDeviceProperties2(physicalDevice, &deviceProperties2);
+    vkGetPhysicalDeviceProperties2(mVulkanPlatform->getPhysicalDevice(), &deviceProperties2);
     accelerationStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
     VkPhysicalDeviceFeatures2 deviceFeatures2{};
     deviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
     deviceFeatures2.pNext = &accelerationStructureFeatures;
-    vkGetPhysicalDeviceFeatures2(physicalDevice, &deviceFeatures2);
+    vkGetPhysicalDeviceFeatures2(mVulkanPlatform->getPhysicalDevice(), &deviceFeatures2);
 }
 
 void VulkanRaytracingRenderSystem::createStorageImage()
@@ -957,12 +711,11 @@ void VulkanRaytracingRenderSystem::createStorageImage()
     colorImageView.image = mStorageImage.image;
     VK_CHECK_RESULT(vkCreateImageView(mVKDevice, &colorImageView, nullptr, &mStorageImage.view));
 
-    VkCommandBuffer cmdBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands();
+    VkCommandBuffer cmdBuffer = mCommands->get().buffer();
     vks::tools::setImageLayout(cmdBuffer, mStorageImage.image,
         VK_IMAGE_LAYOUT_UNDEFINED,
         VK_IMAGE_LAYOUT_GENERAL,
         { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
-    VulkanHelper::getSingleton().endSingleTimeCommands(cmdBuffer);
 }
 
 void VulkanRaytracingRenderSystem::createUniformBuffer()

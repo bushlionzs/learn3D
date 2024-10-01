@@ -4,6 +4,7 @@
 #include "OgreSingleton.h"
 #include "OgreCommon.h"
 #include "VulkanCommon.h"
+#include "VulkanContext.h"
 #include "VulkanResourceAllocator.h"
 
 
@@ -37,7 +38,7 @@ public:
 	VulkanHelper(VulkanRenderSystemBase* rs, HWND wnd);
 	~VulkanHelper();
 
-    void _initialise();
+    void _initialise(VulkanPlatform* platform);
     void _createBuffer(
         VkDeviceSize size,
         VkBufferUsageFlags usage,
@@ -51,44 +52,30 @@ public:
         VkDeviceSize size,
         void* data);
 
-    VkDevice _getVkDevice();
-    VkInstance _getVKInstance();
+    VkDevice getDevcie()
+    {
+        return mVKDevice;
+    }
     VkPhysicalDeviceProperties& _getVkPhysicalDeviceProperties();
     VkPhysicalDeviceFeatures& _getVkPhysicalDeviceFeatures()
     {
         return mDeviceFeatures;
     }
-    VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, bool begin);
-    VkCommandBuffer beginSingleTimeCommands();
-    void endSingleTimeCommands(VkCommandBuffer commandBuffer);
-    
     VkFormat _getDepthFormat();
     int32_t _findMemoryType(
         uint32_t typeFilter,
         VkMemoryPropertyFlags properties);
-    VkQueue _getCommandQueue();
-    VkPhysicalDevice _getPhysicalDevice();
     VkPipelineLayout _getPipelineLayout(bool pbr);
-    void _resetCommandBuffer(uint32_t frame_index);
-    void _endCommandBuffer(uint32_t frame_index);
-    VkCommandBuffer getMainCommandBuffer(uint32_t frame_index);
-    VkCommandBuffer _getThreadCommandBuffer(uint32_t tdx, uint32_t frame_index);
-    void fillCommandBufferList(
-        std::vector<VkCommandBuffer>& cmdlist, 
-        uint32_t frame_index,
-        bool have_main = true);
+    VmaAllocator getVmaAllocator();
+    VulkanResourceAllocator* getVulkanResourceAllocator();
+
     VulkanFrame* _getFrame(uint32_t index);
     VkDescriptorPool _getDescriptorPool();
     VkDescriptorSetLayout _getDescriptorSetLayout(VulkanLayoutIndex index);
-    VkSurfaceKHR _getSurface();
     VulkanRenderSystemBase* _getRenderSystem()
     {
         return mVulkanRenderSystem;
     }
-    SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-
-    const std::vector<SwapChainBuffer>& getSwapchainBuffer();
-    VkSwapchainKHR getSwapchain();
     VkFormat getSwapChainImageFormat()
     {
         return mSwapChainImageFormat;
@@ -123,28 +110,15 @@ public:
      }
 
 private:
-    bool isDeviceSuitable(VkPhysicalDevice device);
-    
     bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-    void updateQueueFamilies(VkPhysicalDevice device);
     bool checkValidationLayerSupport();
-    void createInstance();
-    void createSurface();
-    void pickPhysicalDevice();
-    void createLogicalDevice();
-    void createCommandPool();
     void createDescriptorPool();
-    void createSwapChain();
-    void createCommandBuffer();
-    void createSyncObjects();
     void setupDescriptorSetLayout();
     void createSamples();
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(
         const std::vector<VkSurfaceFormatKHR>& availableFormats);
     VkPresentModeKHR chooseSwapPresentMode(
         const std::vector<VkPresentModeKHR>& availablePresentModes);
-    VkExtent2D chooseSwapExtent(
-        const VkSurfaceCapabilitiesKHR& capabilities);
     //debug
     void populateDebugMessengerCreateInfo(
         VkDebugUtilsMessengerCreateInfoEXT& createInfo);
@@ -153,17 +127,16 @@ private:
     VulkanRenderSystemBase* mVulkanRenderSystem;
     bool mEnableValidationLayers;
 
+    VkDevice mVKDevice;
     VkInstance mVKInstance;
-    VkSurfaceKHR mSurface;
-    HWND mWnd;
-    uint32_t mWidth;
-    uint32_t mHeight;
 
+
+    VulkanPlatform* mPlatform;
     VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
     VkPhysicalDeviceProperties mPhysicalDeviceProperties;
     VkPhysicalDeviceFeatures mDeviceFeatures;
     VkPhysicalDeviceMemoryProperties mPhysicalMemoryProperties;
-    VkDevice mVKDevice = VK_NULL_HANDLE;
+ 
 
 
     VkDescriptorPool mDescriptorPool;
@@ -171,14 +144,6 @@ private:
     VkDescriptorSetLayout mPbrDescriptorSetLayout;
     VkPipelineLayout mPipelineLayout;
     VkPipelineLayout mPipelineLayoutPbr;
-    VkQueue mGraphicsQueue;
-
-    uint32_t main_queue_index = UINT_MAX;
-
-    VkCommandPool mCommandPool[VULKAN_FRAME_RESOURCE_COUNT];
-    VkCommandPool mSingleCommandPool;
-    VkCommandBuffer mMainCommandBuffer[VULKAN_FRAME_RESOURCE_COUNT];
-    std::vector<CommandHelper> mCommandPools;
 
     VkFormat mSwapChainImageFormat;
     VkColorSpaceKHR mColorSpace;
@@ -190,10 +155,7 @@ private:
     std::vector<VulkanFrame*> mFrameList;
 
 
-    VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;
-    VkSwapchainKHR mOldSwapChain = VK_NULL_HANDLE;
-    VkExtent2D mSwapChainExtent;
-    std::vector<SwapChainBuffer> mSwapChainbuffers;
+
     //
     VkDebugUtilsMessengerEXT mDebugMessenger;
 
@@ -211,7 +173,7 @@ private:
     VulkanLayoutCache* mLayoutCache;
     VulkanPipelineLayoutCache* mPipelineLayoutCache = nullptr;
     VulkanPipelineCache* mPipelineCache = nullptr;
-    std::array<DescriptorSetLayout, 2> mLayouts;
+    std::array<descset::DescriptorSetLayout, 2> mLayouts;
     VulkanSettings mSettings;
 
     void* deviceCreatepNextChain = nullptr;
@@ -221,6 +183,4 @@ private:
     VkPhysicalDeviceBufferDeviceAddressFeatures enabledBufferDeviceAddresFeatures{};
     VkPhysicalDeviceRayTracingPipelineFeaturesKHR enabledRayTracingPipelineFeatures{};
     VkPhysicalDeviceAccelerationStructureFeaturesKHR enabledAccelerationStructureFeatures{};
-
-
 };

@@ -582,57 +582,6 @@ namespace vks
 				subresourceRange);
 		}
 
-		void createVulkanImage(VkFormat format, VkExtent3D extent, VulkanImage& result)
-		{
-			auto device = VulkanHelper::getSingletonPtr()->_getVkDevice();
-			// Release ressources if image is to be recreated
-			if (result.image != VK_NULL_HANDLE) {
-				vkDestroyImageView(device, result.view, nullptr);
-				vkDestroyImage(device, result.image, nullptr);
-				vkFreeMemory(device, result.memory, nullptr);
-				result = {};
-			}
-
-			VkImageCreateInfo image = vks::initializers::imageCreateInfo();
-			image.imageType = VK_IMAGE_TYPE_2D;
-			image.format = format;
-			image.extent = extent;
-			image.mipLevels = 1;
-			image.arrayLayers = 1;
-			image.samples = VK_SAMPLE_COUNT_1_BIT;
-			image.tiling = VK_IMAGE_TILING_OPTIMAL;
-			image.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
-			image.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			VK_CHECK_RESULT(vkCreateImage(device, &image, nullptr, &result.image));
-
-			VkMemoryRequirements memReqs;
-			vkGetImageMemoryRequirements(device, result.image, &memReqs);
-			VkMemoryAllocateInfo memoryAllocateInfo = vks::initializers::memoryAllocateInfo();
-			memoryAllocateInfo.allocationSize = memReqs.size;
-			memoryAllocateInfo.memoryTypeIndex = VulkanHelper::getSingletonPtr()->_findMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-			VK_CHECK_RESULT(vkAllocateMemory(device, &memoryAllocateInfo, nullptr, &result.memory));
-			VK_CHECK_RESULT(vkBindImageMemory(device, result.image, result.memory, 0));
-
-			VkImageViewCreateInfo colorImageView = vks::initializers::imageViewCreateInfo();
-			colorImageView.viewType = VK_IMAGE_VIEW_TYPE_2D;
-			colorImageView.format = format;
-			colorImageView.subresourceRange = {};
-			colorImageView.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			colorImageView.subresourceRange.baseMipLevel = 0;
-			colorImageView.subresourceRange.levelCount = 1;
-			colorImageView.subresourceRange.baseArrayLayer = 0;
-			colorImageView.subresourceRange.layerCount = 1;
-			colorImageView.image = result.image;
-			VK_CHECK_RESULT(vkCreateImageView(device, &colorImageView, nullptr, &result.view));
-			
-			VkCommandBuffer cmdBuffer = VulkanHelper::getSingletonPtr()->beginSingleTimeCommands();
-			vks::tools::setImageLayout(cmdBuffer, result.image,
-				VK_IMAGE_LAYOUT_UNDEFINED,
-				VK_IMAGE_LAYOUT_GENERAL,
-				{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
-			VulkanHelper::getSingletonPtr()->endSingleTimeCommands(cmdBuffer);
-		}
-
 		std::tuple<uint32_t, uint32_t, uint32_t> getShaderBindings(const std::string& blob)
 		{
 			std::unordered_map<uint32_t, uint32_t> targetToSet, targetToBinding;

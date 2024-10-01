@@ -1,5 +1,6 @@
 #pragma once
 
+#include <unordered_map>
 #include "shader.h"
 #include "engine_struct.h"
 #include "OgreBlendMode.h"
@@ -7,11 +8,9 @@
 #include "OgreTexture.h"
 #include <filament/Handle.h>
 #include <filament/DriverEnums.h>
-
+#include <filament/DriverBase.h>
 
 class TextureUnit;
-
-
 
 class MaterialInfo
 {
@@ -202,6 +201,9 @@ namespace Ogre {
         bool mChanged = true;
 
         ResourceState mState = ResourceState::ResourceState_None;
+
+        std::unordered_map<uint32_t, Handle<HwBufferObject>> mUniformHandleMap;
+        
 
     };
 }

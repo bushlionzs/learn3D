@@ -1,28 +1,11 @@
 #pragma once
 #include <VulkanCommon.h>
+#include <VulkanHandles.h>
 #include <VulkanResourceAllocator.h>
 #include <utils/FixedCapacityVector.h>
 #include <utils/Panic.h>
 #include <utils/Hash.h>
-using UniformBufferBitmask = uint32_t;
-using SamplerBitmask = uint64_t;
-struct VulkanDescriptorSetLayout
-{
-    
-    // The bitmask representation of a set layout.
-    struct Bitmask {
-        UniformBufferBitmask ubo = 0;         // 4 bytes
-        UniformBufferBitmask dynamicUbo = 0;  // 4 bytes
-        SamplerBitmask sampler = 0;           // 8 bytes
-     
 
-        bool operator==(Bitmask const& right) const {
-            return ubo == right.ubo && dynamicUbo == right.dynamicUbo && sampler == right.sampler;
-        }
-
-        static Bitmask fromBackendLayout(const std::vector<DescriptorSetLayoutBindingInfo>& layout);
-    };
-};
 
 class VulkanLayoutCache {
 public:
@@ -62,7 +45,7 @@ public:
         
     }
 
-    VkDescriptorSetLayout getLayout(const std::vector<DescriptorSetLayoutBindingInfo>& layout);
+    VkDescriptorSetLayout getLayout(descset::DescriptorSetLayout& layout);
 
 private:
     VkDevice mDevice;

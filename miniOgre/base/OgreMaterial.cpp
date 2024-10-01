@@ -7,6 +7,7 @@
 #include "OgreResourceManager.h"
 #include "glslUtil.h"
 #include <OgreRoot.h>
+#include <renderSystem.h>
 #include <filament/DriverEnums.h>
 #include <filament/DriverBase.h>
 
@@ -122,11 +123,24 @@ namespace Ogre {
 
     bool Material::createUniformBuffer(uint32_t binding, uint32_t size)
     {
+        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+        Handle<HwBufferObject> handle = rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::STATIC, size);
+        mUniformHandleMap[binding] = handle;
         return true;
     }
 
     bool Material::updateUniformBuffer(uint32_t binding, const char* data, uint32_t size)
     {
+        auto itor = mUniformHandleMap.find(binding);
+        if (itor != mUniformHandleMap.end())
+        {
+            auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+            rs->updateBufferObject(itor->second, data, size);
+        }
+        else
+        {
+            assert(false);
+        }
         return true;
     }
 

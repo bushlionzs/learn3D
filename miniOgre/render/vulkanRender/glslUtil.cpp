@@ -165,7 +165,7 @@ bool glslCompileShader(
     std::string result;
     result.resize(aa.size() * sizeof(uint32_t));
     memcpy((void*)result.data(), aa.data(), aa.size() * sizeof(uint32_t));
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    auto device = VulkanHelper::getSingleton().getDevcie();
     VkShaderModule shader = vks::tools::loadShaderMemory(result, device);
     if (VK_NULL_HANDLE == shader)
     {

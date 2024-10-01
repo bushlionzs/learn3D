@@ -55,7 +55,7 @@ VulkanHardwareBuffer::~VulkanHardwareBuffer()
 
 void* VulkanHardwareBuffer::lockimpl(size_t offset, size_t length, LockOptions options)
 {
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    auto device = VulkanHelper::getSingleton().getDevcie();
     void* gpudata;
     vkMapMemory(device, mVertexBufferMemory, offset, length, 0, &gpudata);
     return gpudata;
@@ -63,7 +63,7 @@ void* VulkanHardwareBuffer::lockimpl(size_t offset, size_t length, LockOptions o
 
 void VulkanHardwareBuffer::unlock()
 {
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    auto device = VulkanHelper::getSingleton().getDevcie();
     vkUnmapMemory(device, mVertexBufferMemory);
 }
 

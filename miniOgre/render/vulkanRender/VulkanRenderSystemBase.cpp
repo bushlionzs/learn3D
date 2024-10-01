@@ -21,6 +21,8 @@
 
 
 VulkanRenderSystemBase::VulkanRenderSystemBase()
+    :mStagePool(nullptr, nullptr),
+    mResourceAllocator(8388608, false)
 {
 
 }
@@ -34,7 +36,7 @@ OgreTexture* VulkanRenderSystemBase::createTextureFromFile(
     const std::string& name,
     TextureProperty* texProperty)
 {
-    auto tex = new VulkanTexture(name, texProperty, this);
+    auto tex = new VulkanTexture(name, mVulkanPlatform, mCommands, texProperty);
     return tex;
 }
 
@@ -45,7 +47,7 @@ void VulkanRenderSystemBase::ready()
 
 RenderableData* VulkanRenderSystemBase::createRenderableData(Ogre::Renderable* r)
 {
-    return new VulkanRenderableData(this, r, nullptr);
+    return new VulkanRenderableData(mVulkanPlatform, mCommands, r);
 }
 
 void VulkanRenderSystemBase::updateMainPassCB(ICamera* camera)
@@ -89,41 +91,9 @@ void VulkanRenderSystemBase::updateMainPassCB(ICamera* camera)
 
 VulkanFrame* VulkanRenderSystemBase::getNextFrame()
 {
-    auto swapchain = VulkanHelper::getSingleton().getSwapchain();
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
-
+    bool resized = false;
+    mSwapChain->acquire(resized);
     auto frame = VulkanHelper::getSingleton()._getFrame(mFrameIndex);
-
-    auto fence = frame->getFence();
-
-    VkResult result = vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
-
-    if (result != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkWaitForFences error");
-    }
-
-    result = vkResetFences(device, 1, &fence);
-
-    if (result != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkResetFences error");
-    }
-
-    auto imageAvailableSemaphore = frame->getImageAvailableSemaphore();
-    result = vkAcquireNextImageKHR(
-        device,
-        swapchain,
-        std::numeric_limits<uint64_t>::max(),
-        imageAvailableSemaphore,
-        VK_NULL_HANDLE,
-        &mImageIndex);
-    if (result != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "vkAcquireNextImageKHR error");
-    }
-
-
     return frame;
 }
 
@@ -143,7 +113,21 @@ Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
 {
     mRenderWindow = new VulkanWindow();
 
-    mRenderWindow->create(name, width, height, false, miscParams);
+    auto itor = miscParams->find("externalWindowHandle");
+    if (itor == miscParams->end())
+    {
+        OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "externalWindowHandle should be provided");
+    }
+
+    auto wnd = (HWND)StringConverter::parseSizeT(itor->second);
+    VkExtent2D extent;
+    extent.width = width;
+    extent.height = height;
+
+    mSwapChain = new VulkanSwapChain(
+        mVulkanPlatform, mVulkanContext, mAllocator, mCommands, mStagePool, (void*)&wnd, 0, extent);
+
+    mRenderWindow->create(mSwapChain);
 
     return mRenderWindow;
 }
@@ -162,7 +146,8 @@ Ogre::RenderTarget* VulkanRenderSystemBase::createRenderTarget(
     texProperty._tex_format = format;
     texProperty._need_mipmap = false;
 
-    Ogre::VulkanRenderTarget* renderTarget = new Ogre::VulkanRenderTarget(name, texProperty);
+    Ogre::VulkanRenderTarget* renderTarget = new Ogre::VulkanRenderTarget(
+        name, mVulkanPlatform, mCommands, texProperty);
     return renderTarget;
 }
 
@@ -185,7 +170,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
     texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
     texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
     texProperty._samplerParams.anisotropyLog2 = 0;
-    VulkanTexture* tex = new VulkanTexture(name, &texProperty, this);
+    VulkanTexture* tex = new VulkanTexture(name, mVulkanPlatform, mCommands, &texProperty);
 
     tex->load(nullptr);
 
@@ -238,7 +223,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
     renderPassCI.pDependencies = dependencies.data();
     VkRenderPass renderpass;
 
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    auto device = mVulkanPlatform->getDevice();
     VK_CHECK_RESULT(vkCreateRenderPass(device, &renderPassCI, nullptr, &renderpass));
 
     struct Offscreen {
@@ -301,7 +286,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
         framebufferCI.layers = 1;
         VK_CHECK_RESULT(vkCreateFramebuffer(device, &framebufferCI, nullptr, &offscreen.framebuffer));
 
-        VkCommandBuffer layoutCmd = VulkanHelper::getSingleton().beginSingleTimeCommands();
+        VkCommandBuffer layoutCmd = mCommands->get().buffer();
         VkImageMemoryBarrier imageMemoryBarrier{};
         imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         imageMemoryBarrier.image = offscreen.image;
@@ -311,7 +296,6 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
         imageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
         imageMemoryBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
         vkCmdPipelineBarrier(layoutCmd, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
-        VulkanHelper::getSingleton().endSingleTimeCommands(layoutCmd);
     }
 
     // Descriptors
@@ -536,7 +520,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
     auto cubeImage = tex->getVkImage();
     // Change image layout for all cubemap faces to transfer destination
     {
-        VkCommandBuffer cmdBuf = VulkanHelper::getSingleton().beginSingleTimeCommands();
+        VkCommandBuffer cmdBuf = mCommands->get().buffer();
         VkImageMemoryBarrier imageMemoryBarrier{};
         imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         imageMemoryBarrier.image = cubeImage;
@@ -546,8 +530,6 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
         imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         imageMemoryBarrier.subresourceRange = subresourceRange;
         vkCmdPipelineBarrier(cmdBuf, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
-
-        VulkanHelper::getSingleton().endSingleTimeCommands(cmdBuf);
     }
 
     std::string meshName = "box.mesh";
@@ -560,7 +542,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
     for (uint32_t m = 0; m < numMips; m++) {
         for (uint32_t f = 0; f < 6; f++) {
 
-            VkCommandBuffer cmdBuf = VulkanHelper::getSingleton().beginSingleTimeCommands();
+            VkCommandBuffer cmdBuf = mCommands->get().buffer();
 
             viewport.width = static_cast<float>(dim * std::pow(0.5f, m));
             viewport.height = static_cast<float>(dim * std::pow(0.5f, m));
@@ -661,12 +643,11 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
                 vkCmdPipelineBarrier(cmdBuf, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
             }
 
-            VulkanHelper::getSingleton().endSingleTimeCommands(cmdBuf);
         }
     }
 
     {
-        VkCommandBuffer cmdBuf = VulkanHelper::getSingleton().beginSingleTimeCommands();
+        VkCommandBuffer cmdBuf = mCommands->get().buffer();
         VkImageMemoryBarrier imageMemoryBarrier{};
         imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         imageMemoryBarrier.image = cubeImage;
@@ -676,7 +657,6 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
         imageMemoryBarrier.dstAccessMask = VK_ACCESS_HOST_WRITE_BIT | VK_ACCESS_TRANSFER_WRITE_BIT;
         imageMemoryBarrier.subresourceRange = subresourceRange;
         vkCmdPipelineBarrier(cmdBuf, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
-        VulkanHelper::getSingleton().endSingleTimeCommands(cmdBuf);
     }
 
 
@@ -710,11 +690,11 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateBRDFLUT(const std::string& na
     texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
     texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
     texProperty._samplerParams.anisotropyLog2 = 0;
-    VulkanTexture* tex = new VulkanTexture(name, &texProperty, this);
+    VulkanTexture* tex = new VulkanTexture(name, mVulkanPlatform, mCommands, &texProperty);
 
     tex->load(nullptr);
 
-    auto device = VulkanHelper::getSingleton()._getVkDevice();
+    auto device = mVulkanPlatform->getDevice();
     auto vulkanFormat = VK_FORMAT_R16G16_SFLOAT;
 
     // FB, Att, RP, Pipe, etc.
@@ -890,7 +870,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateBRDFLUT(const std::string& na
     renderPassBeginInfo.pClearValues = clearValues;
     renderPassBeginInfo.framebuffer = framebuffer;
 
-    VkCommandBuffer cmdBuf = VulkanHelper::getSingleton().beginSingleTimeCommands();
+    VkCommandBuffer cmdBuf = mCommands->get().buffer();
     bluevk::vkCmdBeginRenderPass(cmdBuf, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     VkViewport viewport{};
@@ -909,7 +889,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateBRDFLUT(const std::string& na
     bluevk::vkCmdDraw(cmdBuf, 3, 1, 0, 0);
     bluevk::vkCmdEndRenderPass(cmdBuf);
 
-    VulkanHelper::getSingleton().endSingleTimeCommands(cmdBuf);
+    
 
     bluevk::vkDestroyPipeline(device, pipeline, nullptr);
     bluevk::vkDestroyPipelineLayout(device, pipelinelayout, nullptr);
@@ -918,4 +898,27 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateBRDFLUT(const std::string& na
     bluevk::vkDestroyDescriptorSetLayout(device, descriptorsetlayout, nullptr);
 
     return tex;
+}
+
+Handle<HwBufferObject> VulkanRenderSystemBase::createBufferObject(
+    BufferObjectBinding bindingType,
+    BufferUsage usage,
+    uint32_t bufferCount)
+{
+    Handle<HwBufferObject> boh =  mResourceAllocator.allocHandle<VulkanBufferObject>();
+
+    auto bufferObject = mResourceAllocator.construct<VulkanBufferObject>(boh, mAllocator,
+        mStagePool, bufferCount, bindingType);
+
+    return boh;
+}
+
+void VulkanRenderSystemBase::updateBufferObject(
+    Handle<HwBufferObject> boh,
+    const char* data,
+    uint32_t size)
+{
+    VulkanCommandBuffer& commands = mCommands->get();
+    auto bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
+    bo->buffer.loadFromCpu(commands.buffer(), data, 0, size);
 }

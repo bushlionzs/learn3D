@@ -9,6 +9,7 @@
 #include "VulkanInitializers.hpp"
 #include <OgreCommon.h>
 #include <DriverEnums.h>
+#include <VulkanUtility.h>
 #include <vk_mem_alloc.h>
 #include <tsl/robin_map.h>
 #include <utils/FixedCapacityVector.h>
@@ -113,17 +114,6 @@ struct VkShaderModuleInfo
     std::vector<GlslInputDesc> inputDesc;
 };
 
-struct DescriptorSetLayoutBindingInfo {
-    DescriptorType type;
-    ShaderStageFlags2 stageFlags;
-    uint8_t binding;
-    DescriptorFlags flags;
-    uint16_t count;
-};
-
-struct DescriptorSetLayout {
-    utils::FixedCapacityVector<DescriptorSetLayoutBindingInfo> bindings;
-};
 
 // Holds data for a ray tracing scratch buffer that is used as a temporary storage
 struct RayTracingScratchBuffer
