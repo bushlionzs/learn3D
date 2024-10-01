@@ -37,8 +37,8 @@ THE SOFTWARE.
 namespace Ogre {
 
     RenderTarget::RenderTarget()
-         :mWidth(1024)
-        ,mHeight(768)
+         :mWidth(0)
+        ,mHeight(0)
     {
         
     }

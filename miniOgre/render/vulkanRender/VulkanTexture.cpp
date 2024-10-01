@@ -156,11 +156,9 @@ void VulkanTexture::freeInternalResourcesImpl(void)
 void VulkanTexture::postLoad()
 {
     auto frameIndex = 0;
-    VulkanFrame* frame = nullptr;// mRenderSystem->_getCurrentFrame();
-    VkCommandBuffer commandBuffer = nullptr;
-  
-    commandBuffer = mCommands->get().buffer();
-    
+
+    VkCommandBuffer commandBuffer = mCommands->get().buffer();
+    commandBuffer = VulkanHelper::getSingleton().beginSingleTimeCommands();
     if (!mSurfaceList.empty())
     {
         vks::tools::copyBufferToImage(
@@ -176,6 +174,8 @@ void VulkanTexture::postLoad()
         //generate mipmap
         vks::tools::generateMipmaps(commandBuffer, this);
     }
+
+    VulkanHelper::getSingleton().endSingleTimeCommands(commandBuffer);
 }
 
 void VulkanTexture::createImage(
@@ -223,16 +223,6 @@ void VulkanTexture::createImage(
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-
-    if (mTextureUsage == filament::backend::TextureUsage::COLOR_ATTACHMENT)
-    {
-        imageInfo.usage = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    }
-
-    if (mTextureUsage == filament::backend::TextureUsage::DEPTH_ATTACHMENT)
-    {
-        imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-    }
 
     if (mUsage & Ogre::TextureUsage::COLOR_ATTACHMENT)
     {

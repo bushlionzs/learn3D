@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "OgreHeader.h"
+
 #include "VulkanPlatformSwapChainImpl.h"
 
 #include "VulkanConstants.h"
 #include "VulkanUtility.h"
 
-#include <filament/DriverEnums.h>
+#include <DriverEnums.h>
 
-
+using namespace bluevk;
 using namespace utils;
 
 namespace filament::backend {
@@ -50,8 +50,7 @@ std::tuple<VkImage, VkDeviceMemory> createImageAndMemory(VulkanContext const& co
     };
     VkImage image;
     VkResult result = vkCreateImage(device, &imageInfo, VKALLOC, &image);
-    ASSERT_POSTCONDITION(result == VK_SUCCESS,
-            "Unable to create image: ", static_cast<int32_t>(result));
+
 
     // Allocate memory for the VkImage and bind it.
     VkDeviceMemory imageMemory;
@@ -61,8 +60,6 @@ std::tuple<VkImage, VkDeviceMemory> createImageAndMemory(VulkanContext const& co
     uint32_t memoryTypeIndex
             = context.selectMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-    ASSERT_POSTCONDITION(memoryTypeIndex < VK_MAX_MEMORY_TYPES,
-            "VulkanPlatformSwapChainImpl: unable to find a memory type that meets requirements.");
 
     VkMemoryAllocateInfo allocInfo = {
             .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -70,9 +67,7 @@ std::tuple<VkImage, VkDeviceMemory> createImageAndMemory(VulkanContext const& co
             .memoryTypeIndex = memoryTypeIndex,
     };
     result = vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory);
-    ASSERT_POSTCONDITION(result == VK_SUCCESS, "Unable to allocate image memory.");
     result = vkBindImageMemory(device, image, imageMemory, 0);
-    ASSERT_POSTCONDITION(result == VK_SUCCESS, "Unable to bind image.");
     return std::tuple(image, imageMemory);
 }
 
@@ -133,6 +128,7 @@ VulkanPlatformSurfaceSwapChain::VulkanPlatformSurfaceSwapChain(VulkanContext con
 VulkanPlatformSurfaceSwapChain::~VulkanPlatformSurfaceSwapChain() {
     vkDestroySwapchainKHR(mDevice, mSwapchain, VKALLOC);
     vkDestroySurfaceKHR(mInstance, mSurface, VKALLOC);
+    destroy();
 }
 
 VkResult VulkanPlatformSurfaceSwapChain::create() {
@@ -153,8 +149,6 @@ VkResult VulkanPlatformSurfaceSwapChain::create() {
     // the number of images, though there may be limits related to the total amount of memory used
     // by presentable images."
     if (maxImageCount != 0 && desiredImageCount > maxImageCount) {
-        utils::slog.e << "Swap chain does not support " << desiredImageCount << " images."
-                      << utils::io::endl;
         desiredImageCount = caps.minImageCount;
     }
 
@@ -178,12 +172,10 @@ VkResult VulkanPlatformSurfaceSwapChain::create() {
             break;
         }
     }
-    ASSERT_POSTCONDITION(surfaceFormat.format != VK_FORMAT_UNDEFINED,
-            "Cannot find suitable swapchain format");
 
     // Verify that our chosen present mode is supported. In practice all devices support the FIFO
     // mode, but we check for it anyway for completeness.  (and to avoid validation warnings)
-    VkPresentModeKHR const desiredPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;// VK_PRESENT_MODE_FIFO_KHR;
+    VkPresentModeKHR const desiredPresentMode = VK_PRESENT_MODE_FIFO_KHR;
     FixedCapacityVector<VkPresentModeKHR> presentModes
             = enumerate(vkGetPhysicalDeviceSurfacePresentModesKHR, mPhysicalDevice, mSurface);
     bool foundSuitablePresentMode = false;
@@ -193,8 +185,6 @@ VkResult VulkanPlatformSurfaceSwapChain::create() {
             break;
         }
     }
-    ASSERT_POSTCONDITION(foundSuitablePresentMode,
-            "Desired present mode is not supported by this device.");
 
     // Create the low-level swap chain.
     if (caps.currentExtent.width == VULKAN_UNDEFINED_EXTENT
@@ -237,8 +227,7 @@ VkResult VulkanPlatformSurfaceSwapChain::create() {
             .oldSwapchain = mSwapchain,
     };
     VkResult result = vkCreateSwapchainKHR(mDevice, &createInfo, VKALLOC, &mSwapchain);
-    ASSERT_POSTCONDITION(result == VK_SUCCESS, "vkGetPhysicalDeviceSurfaceFormatsKHR error: %d",
-            static_cast<int32_t>(result));
+
 
     mSwapChainBundle.colors = enumerate(vkGetSwapchainImagesKHR, mDevice, mSwapchain);
     mSwapChainBundle.colorFormat = surfaceFormat.format;
@@ -246,27 +235,28 @@ VkResult VulkanPlatformSurfaceSwapChain::create() {
             selectDepthFormat(mContext.getAttachmentDepthStencilFormats(), mHasStencil);
     mSwapChainBundle.depth = createImage(mSwapChainBundle.extent, mSwapChainBundle.depthFormat);
 
-    slog.i << "vkCreateSwapchain"
-           << ": " << mSwapChainBundle.extent.width << "x" << mSwapChainBundle.extent.height << ", "
-           << surfaceFormat.format << ", " << surfaceFormat.colorSpace << ", "
-           << "swapchain-size=" << mSwapChainBundle.colors.size() << ", "
-           << "identity-transform=" << (caps.currentTransform == 1) << ", "
-           << "depth=" << mSwapChainBundle.depthFormat
-           << io::endl;
+
+    VkSemaphoreCreateInfo const semaphoreCreateInfo = {
+            .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+    };
+
+    for (uint32_t i = 0; i < IMAGE_READY_SEMAPHORE_COUNT; ++i) {
+        VkResult result = vkCreateSemaphore(mDevice, &semaphoreCreateInfo, nullptr,
+                mImageReady + i);
+    }
 
     return result;
 }
 
-VkResult VulkanPlatformSurfaceSwapChain::acquire(VkSemaphore clientSignal, uint32_t* index) {
-    // This immediately retrieves the index of the next available presentable image, and
-    // asynchronously requests the GPU to trigger the "imageAvailable" semaphore.
-    VkResult result = vkAcquireNextImageKHR(mDevice, mSwapchain, UINT64_MAX, clientSignal,
-            VK_NULL_HANDLE, index);
+VkResult VulkanPlatformSurfaceSwapChain::acquire(VulkanPlatform::ImageSyncData* outImageSyncData) {
+    mCurrentImageReadyIndex = (mCurrentImageReadyIndex + 1) % IMAGE_READY_SEMAPHORE_COUNT;
+    outImageSyncData->imageReadySemaphore = mImageReady[mCurrentImageReadyIndex];
+    VkResult result = vkAcquireNextImageKHR(mDevice, mSwapchain, UINT64_MAX,
+            outImageSyncData->imageReadySemaphore, VK_NULL_HANDLE, &outImageSyncData->imageIndex);
 
     // Users should be notified of a suboptimal surface, but it should not cause a cascade of
     // log messages or a loop of re-creations.
     if (result == VK_SUBOPTIMAL_KHR && !mSuboptimal) {
-        slog.w << "Vulkan Driver: Suboptimal swap chain." << io::endl;
         mSuboptimal = true;
     }
     return result;
@@ -288,7 +278,6 @@ VkResult VulkanPlatformSurfaceSwapChain::present(uint32_t index, VkSemaphore fin
     // On Android Q and above, a suboptimal surface is always reported after screen rotation:
     // https://android-developers.googleblog.com/2020/02/handling-device-orientation-efficiently.html
     if (result == VK_SUBOPTIMAL_KHR && !mSuboptimal) {
-        utils::slog.w << "Vulkan Driver: Suboptimal swap chain." << utils::io::endl;
         mSuboptimal = true;
     }
     return result;
@@ -310,6 +299,17 @@ bool VulkanPlatformSurfaceSwapChain::hasResized() {
 VkResult VulkanPlatformSurfaceSwapChain::recreate() {
     destroy();
     return create();
+}
+
+void VulkanPlatformSurfaceSwapChain::destroy() {
+    VulkanPlatformSwapChainImpl::destroy();
+
+    for (uint32_t i = 0; i < IMAGE_READY_SEMAPHORE_COUNT; ++i) {
+        if (mImageReady[i] != VK_NULL_HANDLE) {
+            vkDestroySemaphore(mDevice, mImageReady[i], VKALLOC);
+            mImageReady[i] = VK_NULL_HANDLE;
+        }
+    }
 }
 
 VulkanPlatformHeadlessSwapChain::VulkanPlatformHeadlessSwapChain(VulkanContext const& context,
@@ -343,8 +343,8 @@ VkResult VulkanPlatformHeadlessSwapChain::present(uint32_t index, VkSemaphore fi
     return VK_SUCCESS;
 }
 
-VkResult VulkanPlatformHeadlessSwapChain::acquire(VkSemaphore clientSignal, uint32_t* index) {
-    *index = mCurrentIndex;
+VkResult VulkanPlatformHeadlessSwapChain::acquire(VulkanPlatform::ImageSyncData* outImageSyncData) {
+    outImageSyncData->imageIndex = mCurrentIndex;
     mCurrentIndex = (mCurrentIndex + 1) % HEADLESS_SWAPCHAIN_SIZE;
     return VK_SUCCESS;
 }

@@ -126,7 +126,6 @@ private:
     VkSampler mTextureSampler;
 
     VkFormat mVulkanFormat = VK_FORMAT_UNDEFINED;
-    filament::backend::TextureUsage mTextureUsage = filament::backend::TextureUsage::NONE;
     bool mNeedMipmaps = false;
     uint32_t mMipLevels = 1;
 

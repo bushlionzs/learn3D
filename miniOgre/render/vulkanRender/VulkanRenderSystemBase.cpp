@@ -119,13 +119,17 @@ Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
         OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "externalWindowHandle should be provided");
     }
 
-    auto wnd = (HWND)StringConverter::parseSizeT(itor->second);
+    HWND wnd = (HWND)StringConverter::parseSizeT(itor->second);
     VkExtent2D extent;
-    extent.width = width;
-    extent.height = height;
+    extent.width = 0;
+    extent.height = 0;
 
+    uint32_t flags = backend::SWAP_CHAIN_CONFIG_SRGB_COLORSPACE;
+    flags |= SWAP_CHAIN_CONFIG_HAS_STENCIL_BUFFER;
     mSwapChain = new VulkanSwapChain(
-        mVulkanPlatform, mVulkanContext, mAllocator, mCommands, mStagePool, (void*)&wnd, 0, extent);
+        mVulkanPlatform, 
+        mVulkanContext, 
+        mAllocator, mCommands, &mResourceAllocator, mStagePool, (void*)wnd, flags, extent);
 
     mRenderWindow->create(mSwapChain);
 

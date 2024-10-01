@@ -17,7 +17,6 @@
 #include <VulkanPlatform.h>
 
 #include "VulkanConstants.h"
-//#include "vulkan/VulkanDriverFactory.h"
 
 #include <utils/Panic.h>
 
@@ -80,7 +79,7 @@ using namespace bluevk;
 
 namespace filament::backend {
 
-VulkanPlatform::ExtensionSet VulkanPlatform::getRequiredInstanceExtensions() {
+VulkanPlatform::ExtensionSet VulkanPlatform::getSwapchainInstanceExtensions() {
     VulkanPlatform::ExtensionSet ret;
     #if defined(__ANDROID__)
         ret.insert("VK_KHR_android_surface");
@@ -94,7 +93,7 @@ VulkanPlatform::ExtensionSet VulkanPlatform::getRequiredInstanceExtensions() {
             ret.insert("VK_KHR_xlib_surface");
         #endif
     #elif defined(WIN32)
-        ret.insert("VK_KHR_win32_surface");
+        ret.insert(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
     #endif
     return ret;
 }

@@ -16,14 +16,21 @@
 
 #ifndef TNT_FILAMENT_BACKEND_PLATFORMS_VULKANPLATFORM_H
 #define TNT_FILAMENT_BACKEND_PLATFORMS_VULKANPLATFORM_H
-#include <render/vulkanRender/VulkanCommon.h>
-#include <filament/Platform.h>
+
+#include <Platform.h>
+
+#include <bluevk/BlueVK.h>
+
 #include <utils/CString.h>
 #include <utils/FixedCapacityVector.h>
+#include <utils/Hash.h>
 #include <utils/PrivateImplementation.h>
 
 #include <tuple>
 #include <unordered_set>
+
+#include <stddef.h>
+#include <stdint.h>
 
 namespace filament::backend {
 
@@ -39,6 +46,14 @@ struct VulkanPlatformPrivate;
  */
 class VulkanPlatform : public Platform, utils::PrivateImplementation<VulkanPlatformPrivate> {
 public:
+
+    struct ExtensionHashFn {
+        std::size_t operator()(utils::CString const& s) const noexcept {
+            return std::hash<std::string>{}(s.data());
+        }
+    };
+    // Utility for managing device or instance extensions during initialization.
+    using ExtensionSet = std::unordered_set<utils::CString, ExtensionHashFn>;
 
     /**
      * A collection of handles to objects and metadata that comprises a Vulkan context. The client
@@ -75,12 +90,26 @@ public:
         VkExtent2D extent = {0, 0};
     };
 
+    struct ImageSyncData {
+        static constexpr uint32_t INVALID_IMAGE_INDEX = UINT32_MAX;
+
+        // The index of the next image as returned by vkAcquireNextImage or equivalent.
+        uint32_t imageIndex = INVALID_IMAGE_INDEX;
+
+        // Semaphore to be signaled once the image is available.
+        VkSemaphore imageReadySemaphore = VK_NULL_HANDLE;
+
+        // A function called right before vkQueueSubmit. After this call, the image must be 
+        // available. This pointer can be null if imageReadySemaphore is not VK_NULL_HANDLE.
+        std::function<void(SwapChainPtr handle)> explicitImageReadyWait = nullptr;
+    };
+
     VulkanPlatform();
 
     ~VulkanPlatform() override;
 
     Driver* createDriver(void* sharedContext,
-        Platform::DriverConfig const& driverConfig) noexcept override;
+            Platform::DriverConfig const& driverConfig) noexcept override;
 
     int getOSVersion() const noexcept override {
         return 0;
@@ -112,6 +141,12 @@ public:
          * before recreating the swapchain. Default is true.
          */
         bool flushAndWaitOnWindowResize = true;
+
+        /**
+         * Whether the swapchain image should be transitioned to a layout suitable for
+         * presentation. Default is true.
+         */
+        bool transitionSwapChainImageLayoutForPresent = true;
     };
 
     /**
@@ -140,13 +175,10 @@ public:
      * corresponding VkImage will be used as the output color attachment. The client should signal
      * the `clientSignal` semaphore when the image is ready to be used by the backend.
      * @param handle         The handle returned by createSwapChain()
-     * @param clientSignal   The semaphore that the client will signal to indicate that the backend
-     *                       may render into the image.
-     * @param index          Pointer to memory that will be filled with the index that corresponding
-     *                       to an image in the `SwapChainBundle.colors` array.
+     * @param outImageSyncData The synchronization data used for image readiness
      * @return               Result of acquire
      */
-    virtual VkResult acquire(SwapChainPtr handle, VkSemaphore clientSignal, uint32_t* index);
+    virtual VkResult acquire(SwapChainPtr handle, ImageSyncData* outImageSyncData);
 
     /**
      * Present the image corresponding to `index` to the display. The client should wait on
@@ -184,6 +216,13 @@ public:
      */
     virtual SwapChainPtr createSwapChain(void* nativeWindow, uint64_t flags = 0,
             VkExtent2D extent = {0, 0});
+
+    /**
+     * Allows implementers to provide instance extensions that they'd like to include in the
+     * instance creation.
+     * @return          A set of extensions to enable for the instance.
+     */
+    virtual ExtensionSet getRequiredInstanceExtensions() { return {}; }
 
     /**
      * Destroy the swapchain.
@@ -229,10 +268,9 @@ public:
     VkQueue getGraphicsQueue() const noexcept;
 
 private:
-    // Platform dependent helper methods
-    using ExtensionSet = std::unordered_set<std::string_view>;
-    static ExtensionSet getRequiredInstanceExtensions();
+    static ExtensionSet getSwapchainInstanceExtensions();
 
+    // Platform dependent helper methods
     using SurfaceBundle = std::tuple<VkSurfaceKHR, VkExtent2D>;
     static SurfaceBundle createVkSurfaceKHR(void* nativeWindow, VkInstance instance,
             uint64_t flags) noexcept;

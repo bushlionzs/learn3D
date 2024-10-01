@@ -154,7 +154,7 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame, const RenderPassInfo& 
     
     if (current->mDescriptorSetUpdate)
     {
-        //return;
+        return;
     }
 
     current->mDescriptorSetUpdate = true;

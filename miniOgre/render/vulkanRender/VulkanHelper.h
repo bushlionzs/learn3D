@@ -82,7 +82,10 @@ public:
     }
     void loadDefaultResources();
     VkSampler getSampler(const filament::backend::SamplerParams& samplerParams);
+
     std::shared_ptr<OgreTexture>& getDefaultTexture();
+    VkCommandBuffer beginSingleTimeCommands();
+    void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
     bool haveRayTracing()
     {
@@ -112,6 +115,7 @@ public:
 private:
     bool checkDeviceExtensionSupport(VkPhysicalDevice device);
     bool checkValidationLayerSupport();
+    void createCommandPool();
     void createDescriptorPool();
     void setupDescriptorSetLayout();
     void createSamples();
@@ -148,7 +152,7 @@ private:
     VkFormat mSwapChainImageFormat;
     VkColorSpaceKHR mColorSpace;
 
-    
+    VkCommandPool mSingleCommandPool;
 
     VkFormat mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
 

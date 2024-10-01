@@ -17,14 +17,16 @@
 #ifndef TNT_FILAMENT_BACKEND_VULKANSWAPCHAIN_IMPL_H
 #define TNT_FILAMENT_BACKEND_VULKANSWAPCHAIN_IMPL_H
 
-#include "VulkanCommon.h"
 #include "VulkanContext.h"
-#include "VulkanPlatform.h"
 
+#include <VulkanPlatform.h>
+
+#include <bluevk/BlueVK.h>
 
 #include <tuple>
 #include <unordered_map>
 
+using namespace bluevk;
 
 namespace filament::backend {
 
@@ -40,7 +42,7 @@ struct VulkanPlatformSwapChainImpl : public Platform::SwapChain {
     ~VulkanPlatformSwapChainImpl();
 
     // Non-virtual override-able method
-    VkResult acquire(VkSemaphore clientSignal, uint32_t* index) {
+    VkResult acquire(VulkanPlatform::ImageSyncData* outImageSyncData) {
         PANIC_PRECONDITION("Should not be called");
         return VK_ERROR_UNKNOWN;
     }
@@ -84,7 +86,7 @@ struct VulkanPlatformSurfaceSwapChain : public VulkanPlatformSwapChainImpl {
     ~VulkanPlatformSurfaceSwapChain();
 
     // Non-virtual override
-    VkResult acquire(VkSemaphore clientSignal, uint32_t* index);
+    VkResult acquire(VulkanPlatform::ImageSyncData* outImageSyncData);
 
     // Non-virtual override
     VkResult present(uint32_t index, VkSemaphore finished);
@@ -95,7 +97,13 @@ struct VulkanPlatformSurfaceSwapChain : public VulkanPlatformSwapChainImpl {
     // Non-virtual override-able method
     bool hasResized();
 
+protected:
+    // Non-virtual override-able method
+    void destroy();
+
 private:
+    static constexpr int IMAGE_READY_SEMAPHORE_COUNT = FVK_MAX_COMMAND_BUFFERS;
+    
     VkResult create();
 
     VkInstance mInstance;
@@ -104,6 +112,8 @@ private:
     VkSurfaceKHR mSurface;
     VkSwapchainKHR mSwapchain = VK_NULL_HANDLE;
     VkExtent2D const mFallbackExtent;
+    VkSemaphore mImageReady[IMAGE_READY_SEMAPHORE_COUNT];
+    uint32_t mCurrentImageReadyIndex;
 
     bool mUsesRGB = false;
     bool mHasStencil = false;
@@ -119,7 +129,7 @@ struct VulkanPlatformHeadlessSwapChain : public VulkanPlatformSwapChainImpl {
     ~VulkanPlatformHeadlessSwapChain();
 
     // Non-virtual override
-    VkResult acquire(VkSemaphore clientSignal, uint32_t* index);
+    VkResult acquire(VulkanPlatform::ImageSyncData* outImageSyncData);
 
     // Non-virtual override
     VkResult present(uint32_t index, VkSemaphore finished);

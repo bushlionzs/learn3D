@@ -123,11 +123,24 @@ void VulkanRenderSystem::frameStart()
 { 
     mTriangleCount = 0;
     mBatchCount = 0;
-    mCurrentVulkanFrame = getNextFrame();
+    mCommands->updateFences();
+    bool resized = false;
+    mSwapChain->acquire(resized);
+    mCurrentVulkanFrame = VulkanHelper::getSingleton()._getFrame(mFrameIndex);
+}
+
+void VulkanRenderSystem::present()
+{
+    mSwapChain->present();
+    mFrameIndex++;
+    mFrameIndex %= VULKAN_FRAME_RESOURCE_COUNT;
 }
 
 void VulkanRenderSystem::frameEnd()
 {
+    mCommands->gc();
+    mStagePool.gc();
+    mPipelineCache->gc();
     mFrameNumber++;
 }
 
@@ -293,12 +306,6 @@ void VulkanRenderSystem::endRenderPass()
     
 }
 
-void VulkanRenderSystem::present()
-{
-    mSwapChain->present();
-    mFrameIndex++;
-    mFrameIndex %= VULKAN_FRAME_RESOURCE_COUNT;
-}
 
 void VulkanRenderSystem::update(Renderable* r)
 {

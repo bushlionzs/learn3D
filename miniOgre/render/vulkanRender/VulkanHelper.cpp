@@ -103,18 +103,6 @@ static  std::vector<const char*> deviceExtensions =
     VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME
 };
 
-//static const std::vector<const char*> deviceExtensions =
-//{
-//    VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
-//    VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
-//    VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME,
-//    VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
-//    VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
-//    VK_KHR_SPIRV_1_4_EXTENSION_NAME,
-//    VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME,
-//    VK_KHR_MAINTENANCE3_EXTENSION_NAME,
-//    VK_KHR_SWAPCHAIN_EXTENSION_NAME
-//};
 void VulkanHelper::_initialise(VulkanPlatform* platform)
 {
     this->mSettings.rayTraceing = false;
@@ -140,7 +128,7 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
     mVKDevice = mPlatform->getDevice();
 
     
-
+    createCommandPool();
     createDescriptorPool();
     setupDescriptorSetLayout();
     createSamples();
@@ -289,6 +277,48 @@ std::shared_ptr<OgreTexture>& VulkanHelper::getDefaultTexture()
     return mDefaultTexture;
 }
 
+VkCommandBuffer VulkanHelper::beginSingleTimeCommands()
+{
+    VkCommandBuffer commandBuffer;
+
+    VkCommandBufferAllocateInfo allocInfo = {};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool = mSingleCommandPool;
+
+    // 
+    allocInfo.commandBufferCount = 1;
+
+    vkAllocateCommandBuffers(mVKDevice, &allocInfo, &commandBuffer);
+
+
+    VkCommandBufferBeginInfo beginInfo = {};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    //beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+    return commandBuffer;
+}
+
+void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
+{
+    vkEndCommandBuffer(commandBuffer);
+    VkSubmitInfo submitInfo = {};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffer;
+
+    auto queue = mPlatform->getGraphicsQueue();
+
+    auto result = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+
+    if (result != VK_SUCCESS)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkQueueSubmit!");
+    }
+    vkQueueWaitIdle(queue);
+}
+
 bool VulkanHelper::checkDeviceExtensionSupport(VkPhysicalDevice device)
 {
     uint32_t extensionCount;
@@ -336,6 +366,21 @@ bool VulkanHelper::checkValidationLayerSupport()
     }
 
     return true;
+}
+
+void VulkanHelper::createCommandPool()
+{
+    VkCommandPoolCreateInfo cmdPoolInfo = {};
+
+
+    cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    cmdPoolInfo.queueFamilyIndex = mPlatform->getGraphicsQueueIndex();
+    cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+    if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &mSingleCommandPool) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to create command pool!");
+    }
 }
 
 void VulkanHelper::createDescriptorPool()

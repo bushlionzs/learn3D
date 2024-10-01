@@ -25,7 +25,10 @@ namespace Ogre
 	VulkanRenderTarget::VulkanRenderTarget(VulkanSwapChain* swapChain, bool depth)
 	{
 		mSwapChain = swapChain;
-		mDepth = true;
+		mDepth = depth;
+
+		mWidth = swapChain->getExtent().width;
+		mHeight = swapChain->getExtent().height;
 	}
 
 	VulkanRenderTarget::~VulkanRenderTarget()
