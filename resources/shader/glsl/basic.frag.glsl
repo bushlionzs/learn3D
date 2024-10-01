@@ -18,7 +18,7 @@ void main() {
 	    discard;
 	}
 
-	//return;
+	return;
 	float shadow = textureProj(inShadowPosH /inShadowPosH.w, gShadowMap, vec2(0.0));
 	outColor = outColor * shadow;
 	outColor.w = 1.0f;

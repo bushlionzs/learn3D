@@ -38,12 +38,13 @@ EngineType ApplicationBase::getEngineType()
 
 bool ApplicationBase::appInit()
 {
+	printf("5\n");
 	mApplicationWindow = new ApplicationWindow(this);
 	int width = 1280;
 	int height = 720;
 	mApplicationWindow->createWindow(width, height);
 	
-	
+	printf("6\n");
 	HWND wnd = mApplicationWindow->getWnd();
 	
 	
@@ -57,12 +58,14 @@ bool ApplicationBase::appInit()
 	}
 	InputManager::getSingletonPtr()->createInput((size_t)wnd);
 	EngineType type = getEngineType();
+
+	printf("7\n");
 	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(wnd, type);
 	if (!mRenderSystem)
 	{
 		return false;
 	}
-
+	printf("8\n");
 	new EngineManager;
 	EngineManager::getSingleton().initialise();
 

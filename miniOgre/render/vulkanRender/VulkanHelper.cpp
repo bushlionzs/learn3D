@@ -119,7 +119,9 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
    
 
     Platform::DriverConfig config;
+
     mPlatform->createDriver(nullptr, config);
+
     mVKInstance = mPlatform->getInstance();
     mPhysicalDevice = mPlatform->getPhysicalDevice();
     vkGetPhysicalDeviceProperties(mPhysicalDevice, &mPhysicalDeviceProperties);

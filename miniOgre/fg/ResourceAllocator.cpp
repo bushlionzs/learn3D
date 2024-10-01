@@ -17,7 +17,7 @@
 #include "ResourceAllocator.h"
 
 #include <filament/Engine.h>
-#include <filament/FTexture.h>
+
 
 #include <filament/DriverApiForward.h>
 #include <filament/Handle.h>
@@ -91,20 +91,9 @@ namespace filament {
     ResourceAllocatorInterface::~ResourceAllocatorInterface() = default;
 
     size_t ResourceAllocator::TextureKey::getSize() const noexcept {
-        size_t const pixelCount = width * height * depth;
-        size_t size = pixelCount * FTexture::getFormatSize(format);
-        size_t const s = std::max(uint8_t(1), samples);
-        if (s > 1) {
-            // if we have MSAA, we assume N times the storage
-            size *= s;
-        }
-        if (levels > 1) {
-            // if we have mip-maps we assume the full pyramid
-            size += size / 3;
-        }
-        // TODO: this is not taking into account the potential sidecar MS buffer
-        //  but we have no way to know about its existence at this point.
-        return size;
+        //zhousha
+        assert(false);
+        return 0;
     }
 
     ResourceAllocator::ResourceAllocator(Engine::Config const& config, DriverApi& driverApi) noexcept
@@ -241,13 +230,7 @@ namespace filament {
         slog.d << "# entries=" << mTextureCache.size() << ", sz=" << mCacheSize / float(1u << 20u)
             << " MiB" << io::endl;
         if (!brief) {
-            for (auto const& it : mTextureCache) {
-                auto w = it.first.width;
-                auto h = it.first.height;
-                auto f = FTexture::getFormatSize(it.first.format);
-                slog.d << it.first.name << ": w=" << w << ", h=" << h << ", f=" << f << ", sz="
-                    << it.second.size / float(1u << 20u) << io::endl;
-            }
+
         }
     }
 

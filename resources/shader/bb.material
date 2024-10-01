@@ -61,11 +61,8 @@ material myrect
 			shader basic
 			texture_unit
 			{
-				texture ground_albedo.dds
-				//texture cloudy_noon_bk.jpg
-				//texture Smoke15Frames.png
-				//scroll_anim 0 -0.9
-				//rotate_anim 1.2
+				texture ForgeFlags.dds
+
 				tex_address_mode clamp
 			}
 

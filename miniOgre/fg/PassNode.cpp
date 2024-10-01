@@ -21,8 +21,6 @@
 
 #include "ResourceAllocator.h"
 
-#include <filament/Texture.h>
-
 #include <string>
 
 using namespace filament::backend;

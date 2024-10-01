@@ -38,10 +38,6 @@ bool CEGUIManager::_initialise(Ogre::RenderTarget* window)
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(std::string("cegui"));
 
 	mCamera = mSceneManager->createCamera("cegui_camera");
-
-	auto engine = Ogre::Root::getSingleton().getEngine();
-
-	
 	mRenderWindow = window;
 	auto width = mRenderWindow->getWidth();
 	auto height = mRenderWindow->getHeight();

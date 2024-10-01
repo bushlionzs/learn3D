@@ -290,7 +290,7 @@ VkInstance createInstance(ExtensionSet const& requiredExts) {
         instanceCreateInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
     }
 
-    bool enableDebug = false;
+    bool enableDebug = true;
     if (enableDebug)
     {
         static const std::vector<const char*> validationLayers =
@@ -356,18 +356,17 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
 
     void* pNext = nullptr;
     bool dynamicRendering = true;
+    VkPhysicalDeviceDynamicRenderingFeaturesKHR enabledDynamicRenderingFeaturesKHR{};
     if (dynamicRendering)
     {
-        VkPhysicalDeviceDynamicRenderingFeaturesKHR enabledDynamicRenderingFeaturesKHR{};
+        
         enabledDynamicRenderingFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
         enabledDynamicRenderingFeaturesKHR.dynamicRendering = VK_TRUE;
         pNext = &enabledDynamicRenderingFeaturesKHR;
     }
 
     deviceCreateInfo.pNext = pNext;
-
     VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, VKALLOC, &device);
-
     return device;
 }
 
@@ -624,7 +623,7 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
 
         mImpl->mSharedContext = true;
     }
-
+    printf("100\n");
     VulkanContext context;
 
     ExtensionSet instExts;
@@ -655,7 +654,7 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     mImpl->mInstance
             = mImpl->mInstance == VK_NULL_HANDLE ? createInstance(instExts) : mImpl->mInstance;
     assert_invariant(mImpl->mInstance != VK_NULL_HANDLE);
-
+    printf("101\n");
     bluevk::bindInstance(mImpl->mInstance);
 
     VulkanPlatform::Customization::GPUPreference const pref = getCustomization().gpu;
@@ -687,7 +686,7 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     // within the family hasn't been provided by the client, we assume it to be 0.
     mImpl->mGraphicsQueueIndex
             = mImpl->mGraphicsQueueIndex == INVALID_VK_INDEX ? 0 : mImpl->mGraphicsQueueIndex;
-
+    printf("102\n");
     ExtensionSet deviceExts;
     // If using a shared context, we do not assume any extensions.
     if (!mImpl->mSharedContext) {
@@ -697,13 +696,13 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
         instExts = prunedInstExts;
         deviceExts = prunedDeviceExts;
     }
-
+    printf("103\n");
     mImpl->mDevice
             = mImpl->mDevice == VK_NULL_HANDLE ? createLogicalDevice(mImpl->mPhysicalDevice,
                       context.mPhysicalDeviceFeatures, mImpl->mGraphicsQueueFamilyIndex, deviceExts)
                                                : mImpl->mDevice;
     assert_invariant(mImpl->mDevice != VK_NULL_HANDLE);
-
+    printf("104\n");
     vkGetDeviceQueue(mImpl->mDevice, mImpl->mGraphicsQueueFamilyIndex, mImpl->mGraphicsQueueIndex,
             &mImpl->mGraphicsQueue);
     assert_invariant(mImpl->mGraphicsQueue != VK_NULL_HANDLE);
@@ -712,11 +711,6 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     context.mDebugUtilsSupported = setContains(instExts, VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     context.mDebugMarkersSupported = setContains(deviceExts, VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
 
-#ifdef NDEBUG
-    // If we are in release build, we should not have turned on debug extensions
-    FILAMENT_CHECK_POSTCONDITION(!context.mDebugUtilsSupported && !context.mDebugMarkersSupported)
-            << "Debug utils should not be enabled in release build.";
-#endif
 
     context.mDepthStencilFormats = findAttachmentDepthStencilFormats(mImpl->mPhysicalDevice);
     context.mBlittableDepthStencilFormats =

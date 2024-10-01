@@ -13,9 +13,12 @@ public:
 	}
 	EngineType getEngineType();
 private:
+	void base1();
+	void base2();
+private:
 	AnimationState* mAnimationState = nullptr;
 
-	SceneNode* mLightNode;
+	SceneNode* mLightNode = nullptr;
 
-	Ogre::Light* light;
+	Ogre::Light* light = nullptr;
 };

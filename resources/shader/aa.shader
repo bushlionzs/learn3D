@@ -289,6 +289,7 @@ shader shadow
 	 }
 }
 
+
 shader shadows
 {
     shader_unit
@@ -326,7 +327,7 @@ shader wowterrain
 
 shader projector
 {
-  shader_unit
+     shader_unit
 	 {
 		shader_type directx
 		vertex_shader projector.hlsl VS
@@ -338,5 +339,22 @@ shader projector
 		shader_type vulkan
 		vertex_shader projector.glsl main
 		frag_shader projector.glsl main
+	 }
+}
+
+shader visibleBuffer
+{
+    shader_unit
+	 {
+		shader_type directx
+		vertex_shader projector.hlsl VS
+		frag_shader projector.hlsl PS
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader visiblebuffer.glsl main
+		frag_shader visiblebuffer.glsl main
 	 }
 }

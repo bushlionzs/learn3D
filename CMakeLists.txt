@@ -22,6 +22,7 @@ add_subdirectory(3rdSource/bluevk bluevk)
 add_subdirectory(3rdSource/math math)
 add_subdirectory(3rdSource/SPIRV_Cross SpirvTools)
 add_subdirectory(3rdSource/gli gli)
+add_subdirectory(3rdSource/vkmemalloc vkmemalloc)
 
 set_property(TARGET zlibstatic PROPERTY FOLDER third_party)
 #set_property(TARGET crypto PROPERTY FOLDER third_party)

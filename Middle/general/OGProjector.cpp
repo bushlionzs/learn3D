@@ -119,12 +119,6 @@ namespace Orphigine {
             }
             buf->unlock();
 
-            mVertexData->prepare();
-            mIndexData->prepare();
-
-            auto vb = mVertexData->getVertexBuffer();
-            auto ib = mIndexData->getFIndexBuffer();
-            this->updateBuffer(vb, ib);
             mIndexDataView.mIndexCount = mTempPositions.size();
             mIndexDataView.mIndexLocation = 0;
             mIndexDataView.mBaseVertexLocation = 0;

@@ -67,9 +67,6 @@ namespace CEGUI
         //mMaterial->load(nullptr);
 
         VertexData* vd = _owner->getVertexData();
-        vd->prepare();
-
-        auto vb = vd->getVertexBuffer();
 
         uint32_t indexCount = 10000;
 
@@ -82,17 +79,9 @@ namespace CEGUI
         mIndexData = new IndexData;
         mIndexData->createBuffer(2, indexCount);
         mIndexData->writeData((const char*)indexs.data(), indexs.size());
-        mIndexData->prepare();
+
 
         mIndexDataView.mBaseVertexLocation = 0;
-
-        auto ib = mIndexData->getFIndexBuffer();
-
-        if (vb)
-        {
-            updateBuffer(vb, ib);
-        }
-        
     }
 
     VertexData* CEGUIRenderable::getVertexData()
