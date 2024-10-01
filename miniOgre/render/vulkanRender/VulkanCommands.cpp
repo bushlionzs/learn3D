@@ -142,7 +142,9 @@ namespace filament::backend {
             vkCreateSemaphore(mDevice, &sci, nullptr, &semaphore);
         }
 
-        VkFenceCreateInfo fenceCreateInfo{ .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO };
+        VkFenceCreateInfo fenceCreateInfo{};
+        fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
         for (auto& fence : mFences) {
             vkCreateFence(device, &fenceCreateInfo, VKALLOC, &fence);
         }
@@ -157,8 +159,6 @@ namespace filament::backend {
     }
 
     void VulkanCommands::terminate() {
-        wait();
-        gc();
         vkDestroyCommandPool(mDevice, mPool, VKALLOC);
         for (VkSemaphore sema : mSubmissionSignals) {
             vkDestroySemaphore(mDevice, sema, VKALLOC);
@@ -173,32 +173,23 @@ namespace filament::backend {
             return *mStorage[mCurrentCommandBufferIndex].get();
         }
 
-        // If we ran out of available command buffers, stall until one finishes. This is very rare.
-        // It occurs only when Filament invokes commit() or endFrame() a large number of times without
-        // presenting the swap chain or waiting on a fence.
-        while (mAvailableBufferCount == 0) {
-            wait();
-            gc();
-        }
+        int8_t nextIndex = (mLastCommandBufferIndex + 1) % CAPACITY;
 
-        VulkanCommandBuffer* currentbuf = nullptr;
-        // Find an available slot.
-        for (size_t i = 0; i < CAPACITY; ++i) {
-            auto wrapper = mStorage[i].get();
-            if (wrapper->buffer() == VK_NULL_HANDLE) {
-                mCurrentCommandBufferIndex = static_cast<int8_t>(i);
-                currentbuf = wrapper;
-                break;
-            }
-        }
+        auto fence = mFences[nextIndex];
 
+        VkResult result = vkWaitForFences(mDevice, 1, &fence, VK_TRUE, UINT64_MAX);
+
+        vkResetFences(mDevice, 1, &fence);
+
+        VulkanCommandBuffer* currentbuf = mStorage[nextIndex].get();
+        
+        mCurrentCommandBufferIndex = nextIndex;
         assert_invariant(currentbuf);
-        mAvailableBufferCount--;
 
         // Note that the fence wrapper uses shared_ptr because a DriverAPI fence can also have ownership
         // over it.  The destruction of the low-level fence occurs either in VulkanCommands::gc(), or in
         // VulkanDriver::destroyFence(), both of which are safe spots.
-        currentbuf->fence = std::make_shared<VulkanCmdFence>(mFences[mCurrentCommandBufferIndex]);
+        currentbuf->fence = std::make_shared<VulkanCmdFence>(mFences[nextIndex]);
 
         // Begin writing into the command buffer.
         const VkCommandBufferBeginInfo binfo{
@@ -212,14 +203,6 @@ namespace filament::backend {
             mObserver->onCommandBuffer(*currentbuf);
         }
 
-#if FVK_ENABLED(FVK_DEBUG_GROUP_MARKERS)
-        // We push the current markers onto a temporary stack. This must be placed after currentbuf is
-        // set to the new command buffer since pushGroupMarker also calls get().
-        while (mCarriedOverMarkers && !mCarriedOverMarkers->empty()) {
-            auto [marker, time] = mCarriedOverMarkers->pop();
-            pushGroupMarker(marker.c_str(), time);
-        }
-#endif
         return *currentbuf;
     }
 
@@ -228,20 +211,6 @@ namespace filament::backend {
         if (mCurrentCommandBufferIndex < 0) {
             return false;
         }
-
-        // Before actually submitting, we need to pop any leftover group markers.
-        // Note that this needs to occur before vkEndCommandBuffer.
-#if FVK_ENABLED(FVK_DEBUG_GROUP_MARKERS)
-        while (mGroupMarkers && !mGroupMarkers->empty()) {
-            if (!mCarriedOverMarkers) {
-                mCarriedOverMarkers = std::make_unique<VulkanGroupMarkers>();
-            }
-            auto const [marker, time] = mGroupMarkers->top();
-            mCarriedOverMarkers->push(marker, time);
-            // We still need to call through to vkCmdEndDebugUtilsLabelEXT.
-            popGroupMarker();
-        }
-#endif
 
         int8_t const index = mCurrentCommandBufferIndex;
         VulkanCommandBuffer const* currentbuf = mStorage[index].get();
@@ -284,15 +253,14 @@ namespace filament::backend {
         };
 
         auto& cmdfence = currentbuf->fence;
-        std::unique_lock<utils::Mutex> lock(cmdfence->mutex);
-        cmdfence->status.store(VK_NOT_READY);
+
         UTILS_UNUSED_IN_RELEASE VkResult result = vkQueueSubmit(mQueue, 1, &submitInfo, cmdfence->fence);
-        cmdfence->condition.notify_all();
-        lock.unlock();
+
         assert_invariant(result == VK_SUCCESS);
 
         mSubmissionSignal = renderingFinished;
         mInjectedSignal = VK_NULL_HANDLE;
+        mLastCommandBufferIndex = mCurrentCommandBufferIndex;
         mCurrentCommandBufferIndex = -1;
         return true;
     }
@@ -308,63 +276,7 @@ namespace filament::backend {
         mInjectedSignal = next;
     }
 
-    void VulkanCommands::wait() {
-        VkFence fences[CAPACITY];
-        size_t count = 0;
-        for (size_t i = 0; i < CAPACITY; i++) {
-            auto wrapper = mStorage[i].get();
-            if (wrapper->buffer() != VK_NULL_HANDLE
-                && mCurrentCommandBufferIndex != static_cast<int8_t>(i)) {
-                fences[count++] = wrapper->fence->fence;
-            }
-        }
-        if (count > 0) {
-            vkWaitForFences(mDevice, count, fences, VK_TRUE, UINT64_MAX);
-            updateFences();
-        }
-    }
-
-    void VulkanCommands::gc() {
-        FVK_SYSTRACE_CONTEXT();
-        FVK_SYSTRACE_START("commands::gc");
-
-        VkFence fences[CAPACITY];
-        size_t count = 0;
-
-        for (size_t i = 0; i < CAPACITY; i++) {
-            auto wrapper = mStorage[i].get();
-            if (wrapper->buffer() == VK_NULL_HANDLE) {
-                continue;
-            }
-            VkResult const result = vkGetFenceStatus(mDevice, wrapper->fence->fence);
-            if (result != VK_SUCCESS) {
-                continue;
-            }
-            fences[count++] = wrapper->fence->fence;
-            wrapper->fence->status.store(VK_SUCCESS);
-            wrapper->reset();
-            mAvailableBufferCount++;
-        }
-
-        if (count > 0) {
-            vkResetFences(mDevice, count, fences);
-        }
-        FVK_SYSTRACE_END();
-    }
-
-    void VulkanCommands::updateFences() {
-        for (size_t i = 0; i < CAPACITY; i++) {
-            auto wrapper = mStorage[i].get();
-            if (wrapper->buffer() != VK_NULL_HANDLE) {
-                VulkanCmdFence* fence = wrapper->fence.get();
-                if (fence) {
-                    VkResult status = vkGetFenceStatus(mDevice, fence->fence);
-                    // This is either VK_SUCCESS, VK_NOT_READY, or VK_ERROR_DEVICE_LOST.
-                    fence->status.store(status, std::memory_order_relaxed);
-                }
-            }
-        }
-    }
+    
 
 } // namespace filament::backend
 

@@ -50,7 +50,6 @@ VulkanSwapChain::~VulkanSwapChain() {
     // Must wait for the inflight command buffers to finish since they might contain the images
     // we're about to destroy.
     mCommands->flush();
-    mCommands->wait();
 
     mPlatform->destroy(swapChain);
 }
@@ -117,7 +116,8 @@ void VulkanSwapChain::acquire(bool& resized) {
     if ((resized = mPlatform->hasResized(swapChain))) {
         if (mFlushAndWaitOnResize) {
             mCommands->flush();
-            mCommands->wait();
+            assert(false);
+            //mCommands->wait(); zhousha
         }
         mPlatform->recreate(swapChain);
         update();

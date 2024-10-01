@@ -290,7 +290,7 @@ VkInstance createInstance(ExtensionSet const& requiredExts) {
         instanceCreateInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
     }
 
-    bool enableDebug = true;
+    bool enableDebug = false;
     if (enableDebug)
     {
         static const std::vector<const char*> validationLayers =

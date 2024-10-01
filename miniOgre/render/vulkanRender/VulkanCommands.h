@@ -171,31 +171,11 @@ namespace filament::backend {
         // semaphore is allowed per flush. Useful after calling vkAcquireNextImageKHR.
         void injectDependency(VkSemaphore next);
 
-        // Destroys all command buffers that are no longer in use.
-        void gc();
-
-        // Waits for all outstanding command buffers to finish.
-        void wait();
-
-        // Updates the atomic "status" variable in every extant fence.
-        void updateFences();
-
         // Sets an observer who is notified every time a new command buffer has been made "current".
         // The observer's event handler can only be called during get().
         void setObserver(CommandBufferObserver* observer) { mObserver = observer; }
-
-#if FVK_ENABLED(FVK_DEBUG_GROUP_MARKERS)
-        void pushGroupMarker(char const* str, VulkanGroupMarkers::Timestamp timestamp = {});
-
-        void popGroupMarker();
-
-        void insertEventMarker(char const* string, uint32_t len);
-
-        std::string getTopGroupMarker() const;
-#endif
-
     private:
-        static constexpr int CAPACITY = FVK_MAX_COMMAND_BUFFERS;
+        static constexpr int CAPACITY = 3;
         VkDevice const mDevice;
         VkQueue const mQueue;
         VkCommandPool const mPool;
@@ -204,12 +184,12 @@ namespace filament::backend {
         // int8 only goes up to 127, therefore capacity must be less than that.
         static_assert(CAPACITY < 128);
         int8_t mCurrentCommandBufferIndex = -1;
+        int8_t mLastCommandBufferIndex = CAPACITY - 1;
         VkSemaphore mSubmissionSignal = {};
         VkSemaphore mInjectedSignal = {};
         utils::FixedCapacityVector<std::unique_ptr<VulkanCommandBuffer>> mStorage;
         VkFence mFences[CAPACITY] = {};
         VkSemaphore mSubmissionSignals[CAPACITY] = {};
-        uint8_t mAvailableBufferCount = CAPACITY;
         CommandBufferObserver* mObserver = nullptr;
 
 #if FVK_ENABLED(FVK_DEBUG_GROUP_MARKERS)

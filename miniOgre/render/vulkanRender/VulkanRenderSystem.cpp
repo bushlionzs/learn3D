@@ -123,7 +123,7 @@ void VulkanRenderSystem::frameStart()
 { 
     mTriangleCount = 0;
     mBatchCount = 0;
-    mCommands->updateFences();
+    mCommands->get();
     bool resized = false;
     mSwapChain->acquire(resized);
     mCurrentVulkanFrame = VulkanHelper::getSingleton()._getFrame(mFrameIndex);
@@ -138,7 +138,6 @@ void VulkanRenderSystem::present()
 
 void VulkanRenderSystem::frameEnd()
 {
-    mCommands->gc();
     mStagePool.gc();
     mPipelineCache->gc();
     mFrameNumber++;
