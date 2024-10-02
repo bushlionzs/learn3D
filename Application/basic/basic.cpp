@@ -71,7 +71,7 @@ void Basic::base1()
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 
-	mSceneManager->setSkyBox(true, "SkyMap", 10000);
+	//mSceneManager->setSkyBox(true, "SkyMap", 10000);
 	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -2.5f), Ogre::Vector3::ZERO);
 	mGameCamera->setDistance(2.5f);
 	mGameCamera->setMoveSpeed(5);

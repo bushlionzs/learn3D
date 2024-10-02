@@ -41,7 +41,6 @@ endmacro()
 add_subdir(.)
 add_subdir(../common)
 
-
 add_executable(${PROJECT_NAME} ${GAMECLIENT_SRC_LIST})
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${ROOT_INC}/bin)
@@ -63,8 +62,8 @@ target_include_directories(${PROJECT_NAME}
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 	
-target_link_libraries(${PROJECT_NAME} Middle GameUtil  miniOgre LinearMath BulletCollision BulletDynamics BulletSoftBody
-CEGUI expat  stormlib OIS freetype GameShare dy_network 
+target_link_libraries(${PROJECT_NAME}  GameUtil  miniOgre LinearMath BulletCollision BulletDynamics BulletSoftBody
+CEGUI expat  stormlib OIS freetype dy_network 
 tinyxmld
 pcre
 avcodec
