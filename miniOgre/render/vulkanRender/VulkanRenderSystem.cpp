@@ -82,7 +82,7 @@ VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
 
     mRenderSystemName = "Vulkan";
     mRenderType = EngineType_Vulkan;
-    new VulkanHelper(this, wnd);
+    new VulkanHelper(this);
 
     mRenderList.reserve(3000);
     
@@ -139,7 +139,6 @@ void VulkanRenderSystem::present()
 void VulkanRenderSystem::frameEnd()
 {
     mStagePool.gc();
-    mPipelineCache->gc();
     mFrameNumber++;
 }
 
@@ -310,15 +309,15 @@ void VulkanRenderSystem::update(Renderable* r)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
 
-    rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
+    rd->update(mCurrentRenderPassInfo, nullptr);
 }
 
 void VulkanRenderSystem::render(Renderable* r, RenderListType t)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
     VkCommandBuffer commandBuffer = mCommands->get().buffer();
-    rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
-    rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
+    rd->update(mCurrentRenderPassInfo, nullptr);
+    rd->render(commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
 }
 
 
@@ -331,7 +330,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     for (auto r : objs)
     {
         VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-        if (rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr))
+        if (rd->update(mCurrentRenderPassInfo, nullptr))
         {
             mRenderList.push_back(r);
         }
@@ -349,7 +348,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
     {
         VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
         VkCommandBuffer commandBuffer = mCommands->get().buffer();
-        rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
+        rd->render(commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
     }
 
 }

@@ -59,11 +59,12 @@ using namespace bluevk;
         return ret;
     }
 
-    void VulkanPipelineCache::bindPipeline(VkCommandBuffer cb)
+    VkPipeline VulkanPipelineCache::bindPipeline(VkCommandBuffer cb)
     {
         PipelineCacheEntry* cacheEntry = getOrCreatePipeline();
         mBoundPipeline = mPipelineRequirements;
         vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, cacheEntry->handle);
+        return cacheEntry->handle;
     }
 
     void VulkanPipelineCache::bindScissor(VkCommandBuffer cmdbuffer, VkRect2D scissor) noexcept {

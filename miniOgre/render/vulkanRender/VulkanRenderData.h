@@ -46,12 +46,10 @@ public:
 	~VulkanRenderableData();
 
 	bool update(
-		VulkanFrame* frame,
 		const RenderPassInfo& passInfo,
 		utils::JobSystem::Job* job);
-	void updateImpl(VulkanFrame* frame, const RenderPassInfo& passInfo);
+	void updateImpl(const RenderPassInfo& passInfo);
 	void render(
-		VulkanFrame* frame, 
 		VkCommandBuffer cb, 
 		VulkanPipelineCache* pipelineCache,
 		const RenderPassInfo& passInfo);
@@ -128,4 +126,6 @@ private:
 	uint64_t mLastFrame = 0xffffffff;
 
 	VulkanCommands* mCommands;
+
+	VkPipeline mPipeline = VK_NULL_HANDLE;
 };

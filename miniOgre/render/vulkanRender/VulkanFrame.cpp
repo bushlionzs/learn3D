@@ -8,25 +8,6 @@ VulkanFrame::VulkanFrame(uint32_t frame_index)
         8,
         true
         );
-
-    auto device = VulkanHelper::getSingleton().getDevcie();
-
-    VkSemaphoreCreateInfo semaphoreInfo{};
-    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-    VkFenceCreateInfo fenceInfo{};
-    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-    if (
-        vkCreateFence(device, &fenceInfo, nullptr, &mFlightFence) != VK_SUCCESS ||
-        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mRenderFinishedSemaphore) != VK_SUCCESS ||
-        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mImageAvailableSemaphore) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create synchronization objects for a frame!");
-    }
-
-    auto result = vkGetFenceStatus(device, mFlightFence);
-
     _vulkanObjectPool.init(VulkanHelper::getSingleton()._getRenderSystem());
 }
 

@@ -28,7 +28,7 @@ ShadowMap::~ShadowMap()
 bool ShadowMap::appInit()
 {
 	ApplicationBase::appInit();
-	base1();
+	base2();
 	return true;
 }
 

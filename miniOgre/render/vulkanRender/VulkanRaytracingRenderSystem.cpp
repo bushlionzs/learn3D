@@ -45,7 +45,7 @@ VulkanRaytracingRenderSystem::VulkanRaytracingRenderSystem(HWND wnd)
 
     mRenderSystemName = "VulkanRaytracing";
     mRenderType = EngineType_VulkanRaytracing;
-    new VulkanHelper(this, wnd);
+    new VulkanHelper(this);
 
     mRenderList.reserve(3000);
     
@@ -287,15 +287,15 @@ void VulkanRaytracingRenderSystem::update(Renderable* r)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
 
-    rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
+    rd->update(mCurrentRenderPassInfo, nullptr);
 }
 
 void VulkanRaytracingRenderSystem::render(Renderable* r, RenderListType t)
 {
     VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
     VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
-    rd->update(mCurrentVulkanFrame, mCurrentRenderPassInfo, nullptr);
-    rd->render(mCurrentVulkanFrame, commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
+    rd->update(mCurrentRenderPassInfo, nullptr);
+    rd->render(commandBuffer, mPipelineCache, mCurrentRenderPassInfo);
 }
 
 

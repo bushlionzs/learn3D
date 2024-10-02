@@ -623,7 +623,6 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
 
         mImpl->mSharedContext = true;
     }
-    printf("100\n");
     VulkanContext context;
 
     ExtensionSet instExts;
@@ -654,7 +653,6 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     mImpl->mInstance
             = mImpl->mInstance == VK_NULL_HANDLE ? createInstance(instExts) : mImpl->mInstance;
     assert_invariant(mImpl->mInstance != VK_NULL_HANDLE);
-    printf("101\n");
     bluevk::bindInstance(mImpl->mInstance);
 
     VulkanPlatform::Customization::GPUPreference const pref = getCustomization().gpu;
@@ -686,7 +684,6 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     // within the family hasn't been provided by the client, we assume it to be 0.
     mImpl->mGraphicsQueueIndex
             = mImpl->mGraphicsQueueIndex == INVALID_VK_INDEX ? 0 : mImpl->mGraphicsQueueIndex;
-    printf("102\n");
     ExtensionSet deviceExts;
     // If using a shared context, we do not assume any extensions.
     if (!mImpl->mSharedContext) {
@@ -696,13 +693,11 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
         instExts = prunedInstExts;
         deviceExts = prunedDeviceExts;
     }
-    printf("103\n");
     mImpl->mDevice
             = mImpl->mDevice == VK_NULL_HANDLE ? createLogicalDevice(mImpl->mPhysicalDevice,
                       context.mPhysicalDeviceFeatures, mImpl->mGraphicsQueueFamilyIndex, deviceExts)
                                                : mImpl->mDevice;
     assert_invariant(mImpl->mDevice != VK_NULL_HANDLE);
-    printf("104\n");
     vkGetDeviceQueue(mImpl->mDevice, mImpl->mGraphicsQueueFamilyIndex, mImpl->mGraphicsQueueIndex,
             &mImpl->mGraphicsQueue);
     assert_invariant(mImpl->mGraphicsQueue != VK_NULL_HANDLE);

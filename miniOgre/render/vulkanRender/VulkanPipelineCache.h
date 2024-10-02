@@ -102,7 +102,7 @@
         void bindLayout(VkPipelineLayout layout) noexcept;
 
         // Creates a new pipeline if necessary and binds it using vkCmdBindPipeline.
-        void bindPipeline(VkCommandBuffer cb);
+        VkPipeline bindPipeline(VkCommandBuffer cb);
         // Sets up a new scissor rectangle if it has been dirtied.
         void bindScissor(VkCommandBuffer cmdbuffer, VkRect2D scissor) noexcept;
 

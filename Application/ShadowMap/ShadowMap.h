@@ -7,10 +7,6 @@ public:
 	~ShadowMap();
 	virtual bool appInit();
 	virtual void appUpdate(float delta);
-	virtual bool isUseMyGUI()
-	{
-		return false;
-	}
 	EngineType getEngineType();
 private:
 	void base1();

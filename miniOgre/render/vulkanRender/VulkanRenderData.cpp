@@ -54,7 +54,6 @@ VulkanRenderableData::~VulkanRenderableData()
 }
 
 bool VulkanRenderableData::update(
-    VulkanFrame* frame,
     const RenderPassInfo& passInfo,
     utils::JobSystem::Job* job)
 {
@@ -74,28 +73,30 @@ bool VulkanRenderableData::update(
         return true;
     }
 
-    updateImpl(frame, passInfo);
+    updateImpl(passInfo);
     return true;
 }
 
-void VulkanRenderableData::updateImpl(VulkanFrame* frame, const RenderPassInfo& passInfo)
+void VulkanRenderableData::updateImpl(const RenderPassInfo& passInfo)
 {
+    auto frameNumber = Ogre::Root::getSingleton().getNextFrameNumber();
+    auto frameIndex = frameNumber % VULKAN_FRAME_RESOURCE_COUNT;
     auto mat = _r->getMaterial().get();
     
     auto cam = passInfo.cam;
     const Ogre::Matrix4& view = cam->getViewMatrix();
     const Ogre::Matrix4& proj = cam->getProjectMatrix();
     const Ogre::Matrix4& model = _r->getModelMatrix();
-
+    VulkanFrame* frame = VulkanHelper::getSingleton()._getFrame(frameIndex);
     VulkanObjectPool& pool = frame->getObjectPool();
     VulkanFrameRenderableData* current = nullptr;
     if (passInfo.shadowPass)
     {
-        current = &_frameRenderableShadowData[frame->getFrameIndex()];
+        current = &_frameRenderableShadowData[frameIndex];
     }
     else
     {
-        current = &_frameRenderableData[frame->getFrameIndex()];
+        current = &_frameRenderableData[frameIndex];
     }
     
     current->mObjectConstantBuffer.world =  model.transpose();
@@ -341,11 +342,13 @@ void VulkanRenderableData::updateImpl(VulkanFrame* frame, const RenderPassInfo& 
 }
 
 void VulkanRenderableData::render(
-    VulkanFrame* frame, 
     VkCommandBuffer cb, 
     VulkanPipelineCache* pipelineCache,
     const RenderPassInfo& passInfo)
 {
+    auto frameNumber = Ogre::Root::getSingleton().getNextFrameNumber();
+    auto frameIndex = frameNumber % VULKAN_FRAME_RESOURCE_COUNT;
+
     auto mat = _r->getMaterial().get();
     bindPipeline(cb, pipelineCache, passInfo.shadowPass);
     
@@ -356,11 +359,11 @@ void VulkanRenderableData::render(
     VulkanFrameRenderableData* current = nullptr;
     if (passInfo.shadowPass)
     {
-        current = &_frameRenderableShadowData[frame->getFrameIndex()];
+        current = &_frameRenderableShadowData[frameIndex];
     }
     else
     {
-        current = &_frameRenderableData[frame->getFrameIndex()];
+        current = &_frameRenderableData[frameIndex];
     }
 
     bool pbr = mat->isPbr();
@@ -570,45 +573,57 @@ void VulkanRenderableData::parseAttributeDescriptions(
 
 void VulkanRenderableData::buildPipelineData(Ogre::Material* mat)
 {
-    const auto& shaderInfo = mat->getShaderInfo();
-    Ogre::ShaderPrivateInfo* privateInfo =
-        ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
-    String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
-    auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
-
-    if (res == nullptr)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to find shader!");
-    }
-
-    glslCompileShader(
-        res->_fullname,
-        *vertexContent,
-        privateInfo->vertexShaderEntryPoint,
-        shaderInfo.shaderMacros,
-        mVertexShaderInfo);
-
+    bool change = false;
     if (mVertexShaderInfo.shaderModule == nullptr)
     {
-        int kk = 0;
+        change = true;
+        const auto& shaderInfo = mat->getShaderInfo();
+        Ogre::ShaderPrivateInfo* privateInfo =
+            ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
+        String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
+        auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+
+        if (res == nullptr)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to find shader!");
+        }
+
+        glslCompileShader(
+            res->_fullname,
+            *vertexContent,
+            privateInfo->vertexShaderEntryPoint,
+            shaderInfo.shaderMacros,
+            mVertexShaderInfo);
+
+
+        VertexDeclaration* decl = _r->getVertexData()->getVertexDeclaration();
+        parseInputBindingDescription(decl, mVertexShaderInfo.inputDesc);
+        parseAttributeDescriptions(decl, mVertexShaderInfo.inputDesc);
+    }
+    
+
+    
+    if (mFragShaderInfo.shaderModule == nullptr)
+    {
+        change = true;
+        const auto& shaderInfo = mat->getShaderInfo();
+        Ogre::ShaderPrivateInfo* privateInfo =
+            ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
+        String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
+
+        auto res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
+        glslCompileShader(
+            res->_fullname,
+            *fragContent,
+            privateInfo->fragShaderEntryPoint,
+            shaderInfo.shaderMacros,
+            mFragShaderInfo);
     }
 
-    VertexDeclaration* decl = _r->getVertexData()->getVertexDeclaration();
-    parseInputBindingDescription(decl, mVertexShaderInfo.inputDesc);
-    parseAttributeDescriptions(decl, mVertexShaderInfo.inputDesc);
-
-    
-    
-
-    String* fragContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
-
-    res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
-    glslCompileShader(
-        res->_fullname,
-        *fragContent,
-        privateInfo->fragShaderEntryPoint,
-        shaderInfo.shaderMacros,
-        mFragShaderInfo);
+    if (!change)
+    {
+        return;
+    }
 
 
     auto findLocation = [&](const VertexElement& elem) -> int32_t
@@ -701,7 +716,7 @@ void VulkanRenderableData::bindPipeline(
             mVertexInputBindings.data(),
             mVertexInputBindings.size());
 
-        pipelineCache->bindPipeline(cb);
+        mPipeline = pipelineCache->bindPipeline(cb);
     }
 }
 

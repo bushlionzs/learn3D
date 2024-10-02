@@ -74,15 +74,12 @@ static std::vector<const char*> getRequiredExtensions()
     return instanceExtensions;
 }
 
-VulkanHelper::VulkanHelper(VulkanRenderSystemBase* rs, HWND wnd)
+VulkanHelper::VulkanHelper(VulkanRenderSystemBase* rs)
     :mResourceAllocator(8388608, false)
 {
     mVulkanRenderSystem = rs;
 
-    RECT rt;
-    ::GetWindowRect(wnd, &rt);
-
-
+ 
     new VulkanHardwareBufferManager();
 }
 
@@ -248,26 +245,6 @@ VkPhysicalDeviceProperties& VulkanHelper::_getVkPhysicalDeviceProperties()
     return mPhysicalDeviceProperties;
 }
 
-VKAPI_ATTR VkBool32 VKAPI_CALL debugUtilsCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-    VkDebugUtilsMessageTypeFlagsEXT types, const VkDebugUtilsMessengerCallbackDataEXT* cbdata,
-    void* pUserData) {
-    if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
-        std::cout << "VULKAN ERROR: (" << cbdata->pMessageIdName << ") " << cbdata->pMessage
-            << std::endl;
-    }
-    else {
-        // TODO: emit best practices warnings about aggressive pipeline barriers.
-        if (strstr(cbdata->pMessage, "ALL_GRAPHICS_BIT")
-            || strstr(cbdata->pMessage, "ALL_COMMANDS_BIT")) {
-            return VK_FALSE;
-        }
-        std::cout << "VULKAN WARNING: (" << cbdata->pMessageIdName << ") " << cbdata->pMessage
-            << std::endl;
-    }
- 
-    return VK_FALSE;
-}
-
 void VulkanHelper::loadDefaultResources()
 {
     mDefaultTexture = TextureManager::getSingleton().load("white1x1.dds", nullptr);
@@ -321,54 +298,6 @@ void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
     vkQueueWaitIdle(queue);
 }
 
-bool VulkanHelper::checkDeviceExtensionSupport(VkPhysicalDevice device)
-{
-    uint32_t extensionCount;
-    vkEnumerateDeviceExtensionProperties(device, nullptr,
-        &extensionCount, nullptr);
-
-    std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-    vkEnumerateDeviceExtensionProperties(device, nullptr,
-        &extensionCount, availableExtensions.data());
-
-    std::set<std::string> requiredExtensions(deviceExtensions.begin(),
-        deviceExtensions.end());
-
-    for (const auto& extension : availableExtensions) {
-
-        requiredExtensions.erase(extension.extensionName);
-    }
-
-    return requiredExtensions.empty();
-}
-
-
-bool VulkanHelper::checkValidationLayerSupport()
-{
-    uint32_t layerCount;
-    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-
-    std::vector<VkLayerProperties> availableLayers(layerCount);
-    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-
-    for (auto layerName : validationLayers) {
-        bool layerFound = false;
-
-        for (const auto& layerProperties : availableLayers) {
-            if (strcmp(layerName, layerProperties.layerName) == 0) {
-                layerFound = true;
-                break;
-            }
-        }
-
-        if (!layerFound)
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
 
 void VulkanHelper::createCommandPool()
 {
@@ -660,92 +589,6 @@ VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& param
     return sampler;
 }
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback
-(
-    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-    VkDebugUtilsMessageTypeFlagsEXT messageType,
-    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-    void* pUserData)
-{
-
-    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-
-    return VK_FALSE;
-}
-
-VkSurfaceFormatKHR VulkanHelper::chooseSwapSurfaceFormat(
-    const std::vector<VkSurfaceFormatKHR>& availableFormats)
-{
-    for (auto&& surfaceFormat : availableFormats)
-    {
-        if (surfaceFormat.format == VK_FORMAT_B8G8R8A8_SRGB)
-        {
-            return surfaceFormat;
-        }
-    }
-
-    return availableFormats[0];
-}
-
-VkPresentModeKHR VulkanHelper::chooseSwapPresentMode(
-    const std::vector<VkPresentModeKHR>& availablePresentModes)
-{
-    for (const auto& availablePresentMode : availablePresentModes)
-    {
-        if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
-        {
-            return availablePresentMode;
-        }
-    }
-
-    return VK_PRESENT_MODE_FIFO_KHR;
-}
-
-void VulkanHelper::populateDebugMessengerCreateInfo(
-    VkDebugUtilsMessengerCreateInfoEXT& createInfo)
-{
-    createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-    createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-    createInfo.pfnUserCallback = debugCallback;
-}
-
-
-VkResult CreateDebugUtilsMessengerEXT(
-    VkInstance instance,
-    const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkDebugUtilsMessengerEXT* pDebugMessenger)
-{
-    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-    if (func != nullptr)
-    {
-        return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
-    }
-    else
-    {
-        return VK_ERROR_EXTENSION_NOT_PRESENT;
-    }
-}
-
-void VulkanHelper::setupDebugMessenger()
-{
-    if (!mEnableValidationLayers) return;
-
-    VkDebugUtilsMessengerCreateInfoEXT createInfo;
-    populateDebugMessengerCreateInfo(createInfo);
-
-    if (CreateDebugUtilsMessengerEXT(mVKInstance, 
-        &createInfo, nullptr, &mDebugMessenger) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to set up debug messenger!");
-    }
-}
-
-
-
-
 VkFormat VulkanHelper::_getDepthFormat()
 {
     return mDepthFormat;
@@ -780,15 +623,6 @@ VkPipelineLayout VulkanHelper::_getPipelineLayout(bool pbr)
     return mPipelineLayout;
 }
 
-VmaAllocator VulkanHelper::getVmaAllocator()
-{
-    return mAllocator;
-}
-
-VulkanResourceAllocator* VulkanHelper::getVulkanResourceAllocator()
-{
-    return &mResourceAllocator;
-}
 
 VulkanFrame* VulkanHelper::_getFrame(uint32_t index)
 {

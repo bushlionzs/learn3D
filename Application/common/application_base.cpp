@@ -13,6 +13,7 @@
 #include "OgreViewport.h"
 #include "GameTableManager.h"
 #include "CEGUIManager.h"
+#include <ResourceParserManager.h>
 #include "bluevk/BlueVK.h"
 
 
@@ -38,13 +39,11 @@ EngineType ApplicationBase::getEngineType()
 
 bool ApplicationBase::appInit()
 {
-	printf("5\n");
 	mApplicationWindow = new ApplicationWindow(this);
 	int width = 1280;
 	int height = 720;
 	mApplicationWindow->createWindow(width, height);
 	
-	printf("6\n");
 	HWND wnd = mApplicationWindow->getWnd();
 	
 	
@@ -59,15 +58,13 @@ bool ApplicationBase::appInit()
 	InputManager::getSingletonPtr()->createInput((size_t)wnd);
 	EngineType type = getEngineType();
 
-	printf("7\n");
 	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(wnd, type);
 	if (!mRenderSystem)
 	{
 		return false;
 	}
-	printf("8\n");
-	new EngineManager;
-	EngineManager::getSingleton().initialise();
+	/*new EngineManager;
+	EngineManager::getSingleton().initialise();*/
 
 	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
 	Ogre::NameValuePairList params;
@@ -75,14 +72,14 @@ bool ApplicationBase::appInit()
 	params["backGroundColor"] = Ogre::StringConverter::toString(color);
 	mRenderWindow = mRenderSystem->createRenderWindow("", width, height, &params);
 
-	
+	ResourceParserManager::getSingleton()._initialise();
 	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources"), "sujian", true);
 	addCustomDirectory();
 	ResourceManager::getSingletonPtr()->loadAllResource();
 	
-	mSceneManager = EngineManager::getSingletonPtr()->getSceneManager();
+	mSceneManager = Ogre::Root::getSingleton().createSceneManger(MAIN_SCENE_MANAGER);
 
-	mCamera = EngineManager::getSingletonPtr()->getMainCamera();
+	mCamera = mSceneManager->createCamera(MAIN_CAMERA);
 
 	mCamera->setNearClipDistance(1.0f);
 	mGameCamera = new GameCamera(mCamera, mSceneManager);

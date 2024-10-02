@@ -35,7 +35,7 @@ enum VulkanLayoutIndex
 class VulkanHelper : public Ogre::Singleton<VulkanHelper>
 {
 public:
-	VulkanHelper(VulkanRenderSystemBase* rs, HWND wnd);
+	VulkanHelper(VulkanRenderSystemBase* rs);
 	~VulkanHelper();
 
     void _initialise(VulkanPlatform* platform);
@@ -57,17 +57,13 @@ public:
         return mVKDevice;
     }
     VkPhysicalDeviceProperties& _getVkPhysicalDeviceProperties();
-    VkPhysicalDeviceFeatures& _getVkPhysicalDeviceFeatures()
-    {
-        return mDeviceFeatures;
-    }
+
     VkFormat _getDepthFormat();
     int32_t _findMemoryType(
         uint32_t typeFilter,
         VkMemoryPropertyFlags properties);
     VkPipelineLayout _getPipelineLayout(bool pbr);
-    VmaAllocator getVmaAllocator();
-    VulkanResourceAllocator* getVulkanResourceAllocator();
+
 
     VulkanFrame* _getFrame(uint32_t index);
     VkDescriptorPool _getDescriptorPool();
@@ -113,23 +109,12 @@ public:
      }
 
 private:
-    bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-    bool checkValidationLayerSupport();
     void createCommandPool();
     void createDescriptorPool();
     void setupDescriptorSetLayout();
     void createSamples();
-    VkSurfaceFormatKHR chooseSwapSurfaceFormat(
-        const std::vector<VkSurfaceFormatKHR>& availableFormats);
-    VkPresentModeKHR chooseSwapPresentMode(
-        const std::vector<VkPresentModeKHR>& availablePresentModes);
-    //debug
-    void populateDebugMessengerCreateInfo(
-        VkDebugUtilsMessengerCreateInfoEXT& createInfo);
-    void setupDebugMessenger();
 private:
     VulkanRenderSystemBase* mVulkanRenderSystem;
-    bool mEnableValidationLayers;
 
     VkDevice mVKDevice;
     VkInstance mVKInstance;
@@ -160,10 +145,6 @@ private:
 
 
 
-    //
-    VkDebugUtilsMessengerEXT mDebugMessenger;
-
-    VkPhysicalDeviceDynamicRenderingFeaturesKHR enabledDynamicRenderingFeaturesKHR{};
 
     //default texture
 
@@ -180,11 +161,6 @@ private:
     std::array<descset::DescriptorSetLayout, 2> mLayouts;
     VulkanSettings mSettings;
 
-    void* deviceCreatepNextChain = nullptr;
     VkPhysicalDeviceFeatures deviceFeatures{};
     VkPhysicalDeviceDescriptorIndexingFeaturesEXT physicalDeviceDescriptorIndexingFeatures{};
-    // Enabled features and properties
-    VkPhysicalDeviceBufferDeviceAddressFeatures enabledBufferDeviceAddresFeatures{};
-    VkPhysicalDeviceRayTracingPipelineFeaturesKHR enabledRayTracingPipelineFeatures{};
-    VkPhysicalDeviceAccelerationStructureFeaturesKHR enabledAccelerationStructureFeatures{};
 };
