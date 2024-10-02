@@ -231,7 +231,11 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     bool PixelUtil::isCompressed(PixelFormat format)
     {
-        return (PixelUtil::getFlags(format) & PFF_COMPRESSED) > 0;
+        if (format >= PF_DXT1 && format <= PF_BC7_UNORM)
+        {
+            return true;
+        }
+        return false;
     }
     //-----------------------------------------------------------------------
     bool PixelUtil::isDepth(PixelFormat format)

@@ -116,7 +116,7 @@ public:
      * @return backend concrete Texture handle
      */
     backend::Handle<backend::HwTexture> getTexture(FrameGraphId<FrameGraphTexture> handle) const {
-        return get(handle).handle;
+        return get(handle)._tex_handle;
     }
 
 private:

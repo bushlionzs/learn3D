@@ -134,7 +134,8 @@ void VulkanRaytracingRenderSystem::frameStart()
     mTriangleCount = 0;
     mBatchCount = 0;
 
-    mCurrentVulkanFrame = getNextFrame();
+    bool resized = false;
+    mSwapChain->acquire(resized);
 }
 
 void VulkanRaytracingRenderSystem::frameEnd()
@@ -146,8 +147,6 @@ void VulkanRaytracingRenderSystem::frameEnd()
 void VulkanRaytracingRenderSystem::beginRenderPass(
     RenderPassInfo& renderPassInfo)
 {
-
-    auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
     VkCommandBuffer cmdBuffer = VK_NULL_HANDLE;
 
     mCurrentVKImage = nullptr;
@@ -255,7 +254,6 @@ void VulkanRaytracingRenderSystem::beginRenderPass(
 
 void VulkanRaytracingRenderSystem::endRenderPass()
 {
-    auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
     VkCommandBuffer cmdBuffer = VK_NULL_HANDLE;
 
     vkCmdEndRenderingKHR(cmdBuffer);

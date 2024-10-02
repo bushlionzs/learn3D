@@ -86,21 +86,14 @@ void VulkanRenderSystemBase::updateMainPassCB(ICamera* camera)
     mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
     mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 
-    mCurrentVulkanFrame->updateFrameConstantBuffer(mFrameConstantBuffer, camera);
+    auto frameNumber = Ogre::Root::getSingleton().getNextFrameNumber();
+    auto frameIndex = frameNumber % VULKAN_FRAME_RESOURCE_COUNT;
+
+    VulkanFrame* frame = VulkanHelper::getSingleton()._getFrame(frameIndex);
+    frame->updateFrameConstantBuffer(mFrameConstantBuffer, camera);
 }
 
-VulkanFrame* VulkanRenderSystemBase::getNextFrame()
-{
-    bool resized = false;
-    mSwapChain->acquire(resized);
-    auto frame = VulkanHelper::getSingleton()._getFrame(mFrameIndex);
-    return frame;
-}
 
-VulkanFrame* VulkanRenderSystemBase::_getCurrentFrame()
-{
-    return mCurrentVulkanFrame;
-}
 
 ICamera* VulkanRenderSystemBase::_getCamera()
 {
@@ -926,3 +919,4 @@ void VulkanRenderSystemBase::updateBufferObject(
     auto bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
     bo->buffer.loadFromCpu(commands.buffer(), data, 0, size);
 }
+

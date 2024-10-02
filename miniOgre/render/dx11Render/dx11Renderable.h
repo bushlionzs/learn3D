@@ -18,7 +18,7 @@ private:
     void _initialise();
     void updateObject(ICamera* cam);
     ID3D11Buffer* getObjectBuffer(ICamera* cam);
-    void applyMaterialTexture(Material* mat);
+    void applyMaterialTexture(Ogre::Material* mat);
 private:
     
     ObjectConstantBuffer mObjectConstantBuffer;

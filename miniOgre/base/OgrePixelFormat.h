@@ -92,16 +92,6 @@ namespace Ogre {
         PF_A2R10G10B10,
         /// 32-bit pixel format, 10 bits for blue, green and red, 2 bits for alpha.
         PF_A2B10G10R10,
-        /// DDS (DirectDraw Surface) DXT1 format
-        PF_DXT1,
-        /// DDS (DirectDraw Surface) DXT2 format
-        PF_DXT2,
-        /// DDS (DirectDraw Surface) DXT3 format
-        PF_DXT3,
-        /// DDS (DirectDraw Surface) DXT4 format
-        PF_DXT4,
-        /// DDS (DirectDraw Surface) DXT5 format
-        PF_DXT5,
         /// 48-bit pixel format, 16 bits (float) for red, 16 bits (float) for green, 16 bits (float) for blue
         PF_FLOAT16_RGB,
         /// 64-bit pixel format, 16 bits (float) for red, 16 bits (float) for green, 16 bits (float) for blue, 16 bits (float) for alpha
@@ -201,6 +191,16 @@ namespace Ogre {
         PF_R32G32B32A32_SINT,
         /// 32-bit pixel format, 9 bits for blue, green, red plus a 5 bit exponent.
         PF_R9G9B9E5_SHAREDEXP,
+        /// DDS (DirectDraw Surface) DXT1 format
+        PF_DXT1,
+        /// DDS (DirectDraw Surface) DXT2 format
+        PF_DXT2,
+        /// DDS (DirectDraw Surface) DXT3 format
+        PF_DXT3,
+        /// DDS (DirectDraw Surface) DXT4 format
+        PF_DXT4,
+        /// DDS (DirectDraw Surface) DXT5 format
+        PF_DXT5,
         /// BC1, aka DXT1 & DXT2
         PFG_BC1_UNORM,
         PFG_BC1_UNORM_SRGB,

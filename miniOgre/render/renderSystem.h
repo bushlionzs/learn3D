@@ -1,10 +1,16 @@
 #pragma once
-
+#include <functional>
 #include "shader.h"
 #include "engine_struct.h"
 #include "OgreTexture.h"
+#include <utils/Allocator.h>
+#include <utils/JobSystem.h>
 #include <filament/Handle.h>
 #include <filament/DriverBase.h>
+#include <fg/FrameGraphId.h>
+#include <fg/FrameGraphTexture.h>
+#include <fg/Allocators.h>
+#include <fg/ResourceAllocator.h>
 
 
 class GraphicsCommandList;
@@ -17,16 +23,17 @@ namespace Ogre
     class RenderWindow;
 }
 
+using PassCallback = std::function< FrameGraphId<FrameGraphTexture>(FrameGraph& fg)>;
 
 class RenderSystem
 {
 public:
     RenderSystem();
     ~RenderSystem();
-
     virtual bool engineInit();
     virtual void frameStart() = 0;
     virtual void frameEnd() = 0;
+    virtual void render(PassCallback cb);
     virtual void update(Renderable* r) {}
     virtual void render(Ogre::Renderable* r, RenderListType t) = 0;
     virtual void multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread = true) {}
@@ -79,6 +86,12 @@ public:
         return mFrameNumber;
     }
 
+
+    utils::JobSystem& getJobSystem()
+    {
+        return mJobSystem;
+    }
+
     virtual void beginRenderPass(
         RenderPassInfo& renderPassInfo);
     virtual void endRenderPass();
@@ -115,6 +128,8 @@ public:
         Handle<HwBufferObject> boh, 
         const char* data, 
         uint32_t size);
+private:
+    void renderJob(ArenaScope& arena, PassCallback cb);
 
 protected:
 	
@@ -122,10 +137,11 @@ protected:
     uint32_t mTriangleCount = 0;
     uint32_t mLoadResCount = 0;
     uint64_t mFrameNumber = 0;
-    Ogre::Viewport* mViewport = nullptr;
 
 
     String mRenderSystemName;
     uint32_t mRenderType;
     
+    utils::JobSystem mJobSystem;
+    filament::LinearAllocatorArena mPerRenderPassArena;
 };

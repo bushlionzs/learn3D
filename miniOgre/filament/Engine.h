@@ -634,21 +634,7 @@ namespace filament {
          */
         utils::EntityManager& getEntityManager() noexcept;
 
-        /**
-         * @return RenderableManager reference
-         */
-        RenderableManager& getRenderableManager() noexcept;
-
-        /**
-         * @return LightManager reference
-         */
-        LightManager& getLightManager() noexcept;
-
-        /**
-         * @return TransformManager reference
-         */
-        TransformManager& getTransformManager() noexcept;
-
+       
         /**
          * Helper to enable accurate translations.
          * If you need this Engine to handle a very large world space, one way to achieve this
@@ -953,14 +939,7 @@ namespace filament {
           */
         void execute();
 
-        /**
-          * Retrieves the job system that the Engine has ownership over.
-          *
-          * @return JobSystem used by filament
-          */
-        utils::JobSystem& getJobSystem() noexcept;
-
-        filament::backend::DriverApi& getDriverApi() noexcept;
+ 
 
 #if defined(__EMSCRIPTEN__)
         /**
@@ -978,7 +957,6 @@ namespace filament {
         void resetBackendState() noexcept;
 #endif
 
-        DebugRegistry& getDebugRegistry() noexcept;
 
     protected:
         //! \privatesection

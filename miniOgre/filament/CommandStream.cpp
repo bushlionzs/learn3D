@@ -57,11 +57,9 @@ static UTILS_NOINLINE UTILS_UNUSED std::string extractMethodName(std::string& co
 }
 
 // ------------------------------------------------------------------------------------------------
-
 CommandStream::CommandStream(Driver& driver, CircularBuffer& buffer) noexcept
         : mDriver(driver),
-          mCurrentBuffer(buffer),
-          mDispatcher(driver.getDispatcher())
+          mCurrentBuffer(buffer)
 #ifndef NDEBUG
           , mThreadId(ThreadUtils::getThreadId())
 #endif

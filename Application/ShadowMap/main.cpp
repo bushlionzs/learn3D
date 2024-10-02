@@ -3,28 +3,26 @@
 #include "ShadowMap.h"
 #include "platform_log.h"
 #include "SimpleApp.h"
+#include "OgreMaterialManager.h"
+#include "OgreAnimationState.h"
 
 int main()
 {
 	platform_log_init();
-	bool usefilament = true;
 
-	if (usefilament)
-	{
-		SimpleApp app;
-		auto setup = [&app](Engine* engine) {
-			};
-		auto cleanup = [&app](Engine* engine) {
-			};
-		app.run(setup, cleanup);
-	}
-	else
-	{
-		ShadowMap app;
-		app.appInit();
-		app.run();
-	}
+	ShadowMap instance;
+	SimpleApp app;
+	SimpleApp::AppInfo info;
 
+	info.setup = [&instance](RenderSystem* rs, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
+		instance.setup(rs, sceneManager, gameCamera);
+		};
+	info.update = [&instance](float delta) {
+		instance.update(delta);
+	};
+	info.cleanup = [&instance]() {
+		};
+	app.run(info);
 	return 0;
 }
 

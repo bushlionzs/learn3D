@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-#include "filament/FEngine.h"
-
-#include "filament/BufferObject.h"
-
-#include "filament/Fence.h"
-
-#include "filament/Renderer.h"
-
-#include "filament/SwapChain.h"
-#include "filament/FTexture.h"
-#include "filament/VertexBuffer.h"
-#include "filament/FView.h"
 
 #include <filament/Engine.h>
-
 #include <filament/DriverEnums.h>
-
 #include <utils/compiler.h>
 #include <utils/Panic.h>
-
+#include <utils/Entity.h>
+#include <utils/EntityManager.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -49,7 +36,7 @@ namespace filament {
     using namespace backend;
 
     void Engine::destroy(Engine* engine) {
-        FEngine::destroy(downcast(engine));
+       
     }
 
 #if UTILS_HAS_THREADING
@@ -59,63 +46,49 @@ namespace filament {
 #endif
 
     void Engine::destroy(Engine** pEngine) {
-        if (pEngine) {
-            Engine* engine = *pEngine;
-            FEngine::destroy(downcast(engine));
-            *pEngine = nullptr;
-        }
+        
     }
 
-    // -----------------------------------------------------------------------------------------------
-    // Resource management
-    // -----------------------------------------------------------------------------------------------
-
-    const Material* Engine::getDefaultMaterial() const noexcept {
-        return downcast(this)->getDefaultMaterial();
-    }
-
-    Backend Engine::getBackend() const noexcept {
-        return downcast(this)->getBackend();
-    }
+ 
 
     Platform* Engine::getPlatform() const noexcept {
-        return downcast(this)->getPlatform();
+        return nullptr;
     }
 
     Renderer* Engine::createRenderer() noexcept {
-        return downcast(this)->createRenderer();
+        return nullptr;
     }
 
     View* Engine::createView() noexcept {
-        return downcast(this)->createView();
+        return nullptr;
     }
 
     Scene* Engine::createScene() noexcept {
-        return downcast(this)->createScene();
+        return nullptr;
     }
 
     Camera* Engine::createCamera(Entity entity) noexcept {
-        return downcast(this)->createCamera(entity);
+        return nullptr;
     }
 
     Camera* Engine::getCameraComponent(utils::Entity entity) noexcept {
-        return downcast(this)->getCameraComponent(entity);
+        return nullptr;
     }
 
     void Engine::destroyCameraComponent(utils::Entity entity) noexcept {
-        downcast(this)->destroyCameraComponent(entity);
+
     }
 
     Fence* Engine::createFence() noexcept {
-        return downcast(this)->createFence();
+        return nullptr;
     }
 
     SwapChain* Engine::createSwapChain(void* nativeWindow, uint64_t flags) noexcept {
-        return downcast(this)->createSwapChain(nativeWindow, flags);
+        return nullptr;
     }
 
     SwapChain* Engine::createSwapChain(uint32_t width, uint32_t height, uint64_t flags) noexcept {
-        return downcast(this)->createSwapChain(width, height, flags);
+        return nullptr;
     }
 
     bool Engine::destroy(const BufferObject* p) {
@@ -260,106 +233,85 @@ namespace filament {
     }
 
     void Engine::flushAndWait() {
-        downcast(this)->flushAndWait();
+
     }
 
     void Engine::flush() {
-        downcast(this)->flush();
+
     }
 
     utils::EntityManager& Engine::getEntityManager() noexcept {
-        return downcast(this)->getEntityManager();
+        return utils::EntityManager::get();
     }
 
-    RenderableManager& Engine::getRenderableManager() noexcept {
-        return downcast(this)->getRenderableManager();
-    }
-
-    LightManager& Engine::getLightManager() noexcept {
-        return downcast(this)->getLightManager();
-    }
-
-    TransformManager& Engine::getTransformManager() noexcept {
-        return downcast(this)->getTransformManager();
-    }
-
+   
     void Engine::enableAccurateTranslations() noexcept {
        
     }
 
     void* Engine::streamAlloc(size_t size, size_t alignment) noexcept {
-        return downcast(this)->streamAlloc(size, alignment);
+        return nullptr;
     }
 
     // The external-facing execute does a flush, and is meant only for single-threaded environments.
     // It also discards the boolean return value, which would otherwise indicate a thread exit.
     void Engine::execute() {
         ASSERT_PRECONDITION(!UTILS_HAS_THREADING, "Execute is meant for single-threaded platforms.");
-        downcast(this)->flush();
-        downcast(this)->execute();
+        
     }
 
-    utils::JobSystem& Engine::getJobSystem() noexcept {
-        return downcast(this)->getJobSystem();
-    }
-
-    filament::backend::DriverApi& Engine::getDriverApi() noexcept
-    {
-        return downcast(this)->getDriverApi();
-    }
 
     bool Engine::isPaused() const noexcept {
         ASSERT_PRECONDITION(UTILS_HAS_THREADING, "Pause is meant for multi-threaded platforms.");
-        return downcast(this)->isPaused();
+        return false;
     }
 
     void Engine::setPaused(bool paused) {
         ASSERT_PRECONDITION(UTILS_HAS_THREADING, "Pause is meant for multi-threaded platforms.");
-        downcast(this)->setPaused(paused);
+
     }
 
-    DebugRegistry& Engine::getDebugRegistry() noexcept {
-        return downcast(this)->getDebugRegistry();
-    }
+    
 
     void Engine::pumpMessageQueues() {
-        downcast(this)->pumpMessageQueues();
+        
     }
 
     void Engine::setAutomaticInstancingEnabled(bool enable) noexcept {
-        downcast(this)->setAutomaticInstancingEnabled(enable);
+        
     }
 
     bool Engine::isAutomaticInstancingEnabled() const noexcept {
-        return downcast(this)->isAutomaticInstancingEnabled();
+        return false;
     }
 
     FeatureLevel Engine::getSupportedFeatureLevel() const noexcept {
-        return downcast(this)->getSupportedFeatureLevel();
+        return FeatureLevel::FEATURE_LEVEL_0;
     }
 
     FeatureLevel Engine::setActiveFeatureLevel(FeatureLevel featureLevel) {
-        return downcast(this)->setActiveFeatureLevel(featureLevel);
+        return FeatureLevel::FEATURE_LEVEL_0;
     }
 
     FeatureLevel Engine::getActiveFeatureLevel() const noexcept {
-        return downcast(this)->getActiveFeatureLevel();
+        return FeatureLevel::FEATURE_LEVEL_0;
     }
 
     size_t Engine::getMaxAutomaticInstances() const noexcept {
-        return downcast(this)->getMaxAutomaticInstances();
+        return 0;
     }
 
     const Engine::Config& Engine::getConfig() const noexcept {
-        return downcast(this)->getConfig();
+        static Engine::Config dummy;
+        return dummy;
     }
 
     bool Engine::isStereoSupported(StereoscopicType stereoscopicType) const noexcept {
-        return downcast(this)->isStereoSupported(stereoscopicType);
+        return false;
     }
 
     size_t Engine::getMaxStereoscopicEyes() noexcept {
-        return FEngine::getMaxStereoscopicEyes();
+        return 0;
     }
 
 #if defined(__EMSCRIPTEN__)

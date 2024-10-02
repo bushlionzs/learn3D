@@ -26,16 +26,16 @@ void FrameGraphTexture::create(ResourceAllocatorInterface& resourceAllocator, co
             descriptor.swizzle.g,
             descriptor.swizzle.b,
             descriptor.swizzle.a };
-    handle = resourceAllocator.createTexture(name,
+    /*_tex_handle = resourceAllocator.createTexture(name,
             descriptor.type, descriptor.levels, descriptor.format, descriptor.samples,
             descriptor.width, descriptor.height, descriptor.depth,
-            swizzle, usage);
+            swizzle, usage);*/
 }
 
 void FrameGraphTexture::destroy(ResourceAllocatorInterface& resourceAllocator) noexcept {
-    if (handle) {
-        resourceAllocator.destroyTexture(handle);
-        handle.clear();
+    if (_tex_handle) {
+        resourceAllocator.destroyTexture(_tex_handle);
+        _tex_handle.clear();
     }
 }
 

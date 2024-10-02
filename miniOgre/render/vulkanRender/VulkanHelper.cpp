@@ -136,7 +136,6 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
 
     for (int32_t i = 0; i < VULKAN_FRAME_RESOURCE_COUNT; i++)
     {
-
         mFrameList[i] = new VulkanFrame(i);
     }
 }

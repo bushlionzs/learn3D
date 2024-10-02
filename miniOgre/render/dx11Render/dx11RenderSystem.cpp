@@ -71,7 +71,7 @@ void Dx11RenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
 	mCamera = cam;
 	updateFrame();
 
-	RenderTarget* target;
+	Ogre::RenderTarget* target;
 	target = vp->getTarget();
 
 	mActiveRenderTarget = dynamic_cast<Dx11RenderTarget*>(target);

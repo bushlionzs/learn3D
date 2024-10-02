@@ -130,7 +130,7 @@ ID3D11Buffer* Dx11RenderableData::getObjectBuffer(ICamera* cam)
 	return nullptr;
 }
 
-void Dx11RenderableData::applyMaterialTexture(Material* mat)
+void Dx11RenderableData::applyMaterialTexture(Ogre::Material* mat)
 {
 	auto dx11Context = DX11Helper::getSingleton().getDeviceContext();
 	if (mat->isPbr())

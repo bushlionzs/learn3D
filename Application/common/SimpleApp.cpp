@@ -40,8 +40,9 @@ SimpleApp::~SimpleApp()
 
 }
 
-void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
+void SimpleApp::run(AppInfo& info)
 {
+	mAppInfo = &info;
 	new Ogre::Root();
 
 	uint32_t width = 1280;
@@ -82,7 +83,7 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 
 	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources"), "sujian", true);
 	ResourceManager::getSingletonPtr()->loadAllResource();
-
+	Ogre::Root::getSingleton().addFrameListener(this);
 	if (true)
 	{
 		//ShowCursor(FALSE);
@@ -92,9 +93,30 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 		CEGUIManager::getSingleton()._initialise(&rt);
 	}
 
-	
-	example1();
-	
+	info.setup(mRenderSystem, mSceneManager, mGameCamera);
+
+	auto passCallback = [width, height, this](FrameGraph& fg) -> FrameGraphId<FrameGraphTexture> {
+		FrameGraphTexture::Descriptor colorBufferDesc = {
+		.width = width,
+		.height = height,
+		.format = backend::TextureFormat::RGB16F
+		};
+
+		PassUtil::PassConfig config;
+
+
+		config.rs = this->mRenderSystem;
+		config.target = this->mRenderWindow;
+		config.scene = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
+
+		config.cam = config.scene->getCamera(MAIN_CAMERA);
+		auto color = PassUtil::colorPass(fg, "Color Pass", colorBufferDesc, config);
+
+		config.scene = Ogre::Root::getSingleton().getSceneManager("cegui");
+
+		config.cam = config.scene->getCamera("cegui_camera");
+		return color;
+		};
 
 	while (!mClosed)
 	{
@@ -120,47 +142,37 @@ void SimpleApp::run(SetupCallback setup, CleanupCallback cleanup)
 			}
 		}
 		InputManager::getSingletonPtr()->captureInput();
-		update(0.0f);
+		Ogre::Root::getSingleton()._fireFrameStarted();
 
-		auto passCallback = [width, height, this](FrameGraph& fg) -> FrameGraphId<FrameGraphTexture> {
-			FrameGraphTexture::Descriptor colorBufferDesc = {
-			.width = width,
-			.height = height,
-			.format = backend::TextureFormat::RGB16F
-			};
-
-			PassUtil::PassConfig config;
-
-			
-			config.rs = this->mRenderSystem;
-			config.target = this->mRenderWindow;
-			config.scene = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
-
-			config.cam = config.scene->getCamera(MAIN_CAMERA);
-			auto color = PassUtil::colorPass(fg, "Color Pass", colorBufferDesc, config);
-
-			config.scene = Ogre::Root::getSingleton().getSceneManager("cegui");
-
-			config.cam = config.scene->getCamera("cegui_camera");
-			return color;
-			};
+		
 		mRenderSystem->frameStart();
 		mRenderSystem->render(passCallback);
 		mRenderSystem->present();
 		mRenderSystem->frameEnd();
 
-		static uint32_t lastfps = 0;
-		auto fps = Ogre::Root::getSingleton().getCurrentFPS();
-
-		if (fps != lastfps)
-		{
-			lastfps = fps;
-			char buffer[256];
-			snprintf(buffer, sizeof(buffer), "fps:%lld", fps);
-			::SetWindowText(mWindow->getWnd(), buffer);
-		}
+		ShowFrameFrequency();
 	}
 
+}
+
+void SimpleApp::ShowFrameFrequency()
+{
+	if (mLastFPS != Ogre::Root::getSingletonPtr()->getCurrentFPS())
+	{
+		mLastFPS = Ogre::Root::getSingletonPtr()->getCurrentFPS();
+
+
+		char buffer[1024];
+		std::string str = mGameCamera->getCameraString();
+		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, triangle:%d,batch:%d, %s",
+			mRenderSystem->getRenderSystemName().c_str(),
+			mLastFPS, mRenderSystem->getTriangleCount(),
+			mRenderSystem->getBatchCount(),
+			str.c_str());
+
+
+		::SetWindowText(mWindow->getWnd(), buffer);
+	}
 }
 
 void SimpleApp::example1()
@@ -351,4 +363,10 @@ void SimpleApp::update(float delta)
 EngineType SimpleApp::getEngineType()
 {
 	return EngineType_Vulkan;
+}
+
+bool SimpleApp::frameStarted(const FrameEvent& evt)
+{
+	mAppInfo->update(evt.timeSinceLastFrame);
+	return true;
 }

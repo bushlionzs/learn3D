@@ -139,7 +139,7 @@ void VulkanRenderableData::updateImpl(const RenderPassInfo& passInfo)
 
 
     VkDescriptorBufferInfo frameDescriptor = {};
-    mEngine->_getCurrentFrame()->updateFrameDescriptor(frameDescriptor, cam);
+    frame->updateFrameDescriptor(frameDescriptor, cam);
 
     if (mat->isChanged())
     {
@@ -155,7 +155,7 @@ void VulkanRenderableData::updateImpl(const RenderPassInfo& passInfo)
     
     if (current->mDescriptorSetUpdate)
     {
-        return;
+        //return;
     }
 
     current->mDescriptorSetUpdate = true;

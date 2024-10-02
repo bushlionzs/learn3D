@@ -183,7 +183,7 @@ void FrameGraph::execute(backend::DriverApi& driver) noexcept {
     auto const& passNodes = mPassNodes;
     auto& resourceAllocator = mResourceAllocator;
 
-    driver.pushGroupMarker("FrameGraph");
+    //driver.pushGroupMarker("FrameGraph");
 
     auto first = passNodes.begin();
     const auto activePassNodesEnd = mActivePassNodesEnd;
@@ -194,7 +194,7 @@ void FrameGraph::execute(backend::DriverApi& driver) noexcept {
 
         SYSTRACE_NAME(node->getName());
 
-        driver.pushGroupMarker(node->getName());
+        //driver.pushGroupMarker(node->getName());
 
         // devirtualize resourcesList
         for (VirtualResource* resource : node->devirtualize) {
@@ -212,9 +212,9 @@ void FrameGraph::execute(backend::DriverApi& driver) noexcept {
             resource->destroy(resourceAllocator);
         }
 
-        driver.popGroupMarker();
+        //driver.popGroupMarker();
     }
-    driver.popGroupMarker();
+    //driver.popGroupMarker();
 }
 
 void FrameGraph::addPresentPass(const std::function<void(FrameGraph::Builder&)>& setup) noexcept {

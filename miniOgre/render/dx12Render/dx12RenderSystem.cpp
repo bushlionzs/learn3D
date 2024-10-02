@@ -221,7 +221,7 @@ void Dx12RenderSystem::_setViewport(ICamera* cam, Ogre::Viewport* vp)
 	updateMainPassCB(cam);
 	
 	
-	RenderTarget* target;
+	Ogre::RenderTarget* target;
 	target = vp->getTarget();
 
 	mActiveDx12RenderTarget = dynamic_cast<Dx12RenderTarget*>(target);

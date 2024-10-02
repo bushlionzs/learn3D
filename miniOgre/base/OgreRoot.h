@@ -56,12 +56,6 @@ namespace Ogre {
 		{
 			return mEvt;
 		}
-
-		utils::JobSystem::Job* getLoadJob()
-		{
-			return mLoadJob;
-		}
-
 		const  Rect& getMainRect()
 		{
 			return mActRect;
@@ -99,9 +93,6 @@ namespace Ogre {
 		RenderWindow* mAutoWindow = nullptr;
 
 		Ogre::FrameEvent mEvt;
-
-		utils::JobSystem::Job* mLoadJob = nullptr;
-
 		Rect mActRect;
 
 	};

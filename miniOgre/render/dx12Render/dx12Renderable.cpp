@@ -110,7 +110,7 @@ void Dx12RenderableData::updateSkinedConstanctBuffer(RawData* rd)
 	mCurrentFrameData->updateSkinnedCB(rd);
 }
 
-void Dx12RenderableData::buildMaterial(Material* mat)
+void Dx12RenderableData::buildMaterial(Ogre::Material* mat)
 {
 	if (mat->isPbr())
 	{
@@ -166,7 +166,7 @@ void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 
 }
 
-void Dx12RenderableData::buildPbrMaterial(Material* mat)
+void Dx12RenderableData::buildPbrMaterial(Ogre::Material* mat)
 {
 	if (mTexStartIndex >= 0 || mCubeTexStartIndex >= 0)
 	{
@@ -234,7 +234,7 @@ void Dx12RenderableData::buildPbrMaterial(Material* mat)
 	}
 }
 
-void Dx12RenderableData::buildCommonMaterial(Material* mat)
+void Dx12RenderableData::buildCommonMaterial(Ogre::Material* mat)
 {
 	auto texs = mat->getAllTexureUnit();
 

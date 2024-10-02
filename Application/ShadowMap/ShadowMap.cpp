@@ -25,34 +25,26 @@ ShadowMap::~ShadowMap()
 }
 
 
-bool ShadowMap::appInit()
+void ShadowMap::setup(
+    RenderSystem* rs,
+    Ogre::SceneManager* sceneManager,
+    GameCamera* gameCamera
+)
 {
-	ApplicationBase::appInit();
-	base2();
-	return true;
+    mRenderSystem = rs;
+    mSceneManager = sceneManager;
+    mGameCamera = gameCamera;
+
+    base1();
 }
 
-void ShadowMap::appUpdate(float delta)
+void ShadowMap::update(float delta)
 {
-	ApplicationBase::appUpdate(delta);
-	if (mAnimationState)
-	{
-		mAnimationState->addTime(delta);
-	}
-
-	if (light)
-	{
-		mPassInfo.lightViewProj = (light->getProjectMatrix() * light->getViewMatrix()).transpose();
-
-		mLightNode->yaw(Ogre::Radian(3.14) * delta * 0.1);
-	}
-	
-}
-
-EngineType ShadowMap::getEngineType()
-{
-	//return EngineType_Dx11;
-	return EngineType_Vulkan;
+    mGameCamera->update(delta);
+    if (mAnimationState)
+    {
+        mAnimationState->addTime(delta);
+    }
 }
 
 void ShadowMap::base1()
@@ -152,23 +144,7 @@ void ShadowMap::base1()
 	auto shadowMap = mRenderSystem->createRenderTarget(
 		"shadow", shadowSize, shadowSize, Ogre::PF_DEPTH32_STENCIL8,
 		usage);
-	Ogre::OgreTexture* target = nullptr;
-    bool shadow = false;
-    if (shadow)
-    {
-        target = shadowMap->getTarget();
-        mPassList.emplace_back();
-        auto& pass = mPassList.back();
-        pass.depth = shadowMap;
-        pass.sceneMgr = mSceneManager;
-        pass.cam = light;
-        pass.shadowPass = true;
-        pass.shadowMap = target;
-    }
-    
-
-
-	addMainPass(target);
+	
 }
 
 static void setTextures(Mesh* mesh, 
@@ -911,5 +887,4 @@ void ShadowMap::base2()
 	sanMiguelNode->attachObject(sanMiguel);
 	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, 8.0f), Ogre::Vector3::ZERO);
 	mGameCamera->setMoveSpeed(10.0f);
-	addMainPass(nullptr);
 }

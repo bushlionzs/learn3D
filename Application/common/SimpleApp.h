@@ -9,28 +9,26 @@
 
 class GameCamera;
 class ApplicationWindow;
-class SimpleApp
+class SimpleApp: public FrameListener
 {
-    struct RenderTextureInfo
+public:
+    using SetupCallback = std::function<void(RenderSystem*, Ogre::SceneManager*, GameCamera*)>;
+    using CleanupCallback = std::function<void()>;
+    using UpdateCallback = std::function<void(float)>;
+    struct AppInfo
     {
-        Ogre::Camera* cam;
-        Ogre::SceneManager* sm;
-        uint32_t width;
-        uint32_t height;
+        SetupCallback setup;
+        CleanupCallback cleanup;
+        UpdateCallback update;
     };
 public:
-    using SetupCallback = std::function<void(filament::Engine*)>;
-    using CleanupCallback = std::function<void(filament::Engine*)>;
+    
     SimpleApp();
     ~SimpleApp();
-    void run(SetupCallback setup, CleanupCallback cleanup);
-
-    std::vector<RenderTextureInfo>& getTextureInfos()
-    {
-        return mRTInfos;
-    }
-
+    void run(AppInfo& info);
     virtual EngineType getEngineType();
+private:
+    bool frameStarted(const FrameEvent& evt);
 private:
     
     void example1();
@@ -40,6 +38,7 @@ private:
     void example5();
     void example6();
     void update(float delta);
+    void ShowFrameFrequency();
 private:
     filament::SwapChain* mSwapChain = nullptr;
     filament::Renderer* mRenderer = nullptr;
@@ -51,10 +50,11 @@ private:
     SceneManager* mSceneManager = nullptr;
     AnimationState* mAnimationState = nullptr;
     CEGUI::GUIContext* mGUIContext = nullptr;
-
-    std::vector<RenderTextureInfo> mRTInfos;
-
     RenderSystem* mRenderSystem;
 
     Ogre::RenderWindow* mRenderWindow;
+
+    AppInfo* mAppInfo;
+
+    uint64_t mLastFPS = 0;
 };

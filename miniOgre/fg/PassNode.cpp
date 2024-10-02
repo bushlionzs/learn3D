@@ -249,7 +249,7 @@ namespace filament {
                 if (attachmentInfo[i]) {
                     auto const* pResource = static_cast<Resource<FrameGraphTexture> const*>(
                         fg.getResource(attachmentInfo[i]));
-                    colorInfo[i].handle = pResource->resource.handle;
+                    colorInfo[i].handle = pResource->resource._tex_handle;
                     colorInfo[i].level = pResource->subResourceDescriptor.level;
                     colorInfo[i].layer = pResource->subResourceDescriptor.layer;
                 }
@@ -260,7 +260,7 @@ namespace filament {
                 if (attachmentInfo[MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT + i]) {
                     auto const* pResource = static_cast<Resource<FrameGraphTexture> const*>(
                         fg.getResource(attachmentInfo[MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT + i]));
-                    info[i].handle = pResource->resource.handle;
+                    info[i].handle = pResource->resource._tex_handle;
                     info[i].level = pResource->subResourceDescriptor.level;
                     info[i].layer = pResource->subResourceDescriptor.layer;
                 }

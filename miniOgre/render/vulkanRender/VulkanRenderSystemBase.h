@@ -39,11 +39,9 @@ public:
         Ogre::PixelFormat format, 
         uint32_t usage) override;
     //
-    VulkanFrame* _getCurrentFrame();
     ICamera* _getCamera();
 protected:
     void updateMainPassCB(ICamera* camera);
-    VulkanFrame* getNextFrame();
 
     virtual Ogre::OgreTexture* generateCubeMap(
         const std::string& name,
@@ -67,22 +65,16 @@ protected:
         Handle<HwBufferObject> boh,
         const char* data, 
         uint32_t size) override;
-
 protected:
     RenderPassInfo mCurrentRenderPassInfo;
 
     FrameConstantBuffer mFrameConstantBuffer;
-
-    VulkanFrame* mCurrentVulkanFrame = nullptr;
-
     VulkanWindow* mRenderWindow;
 
     VkImage mCurrentVKImage;
 
     std::vector<Ogre::Renderable*> mRenderList;
 
-    uint32_t mFrameIndex = 0;
-    uint32_t mImageIndex = 0;
 
     VulkanPipelineCache* mPipelineCache = nullptr;
 
@@ -91,7 +83,7 @@ protected:
 
     VulkanStagePool mStagePool;
     VulkanCommands* mCommands;
-    VulkanSwapChain* mSwapChain;
+    VulkanSwapChain* mSwapChain = nullptr;
     VulkanPlatform* mVulkanPlatform;
     VulkanContext mVulkanContext;
 };

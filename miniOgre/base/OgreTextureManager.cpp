@@ -95,8 +95,14 @@ namespace Ogre {
 
     bool TextureManager::getImageInfo(const String& name, ImageInfo& info, bool cube)
     {
-        assert(false);
-        return false;
+        auto it = mTexMap.find(name);
+        if (it != mTexMap.end())
+        {
+            info.width = it->second->getWidth();
+            info.height = it->second->getHeight();
+            return true;
+        }
+        return CImage::loadImageInfo(name, info, cube);
     }
 
     void TextureManager::remove(const std::string& name)

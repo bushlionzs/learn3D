@@ -126,14 +126,11 @@ void VulkanRenderSystem::frameStart()
     mCommands->get();
     bool resized = false;
     mSwapChain->acquire(resized);
-    mCurrentVulkanFrame = VulkanHelper::getSingleton()._getFrame(mFrameIndex);
 }
 
 void VulkanRenderSystem::present()
 {
     mSwapChain->present();
-    mFrameIndex++;
-    mFrameIndex %= VULKAN_FRAME_RESOURCE_COUNT;
 }
 
 void VulkanRenderSystem::frameEnd()
@@ -261,7 +258,6 @@ void VulkanRenderSystem::beginRenderPass(
 
 void VulkanRenderSystem::endRenderPass()
 {
-    auto frameIndex = mCurrentVulkanFrame->getFrameIndex();
     VkCommandBuffer cmdBuffer = mCommands->get().buffer();
 
     vkCmdEndRenderingKHR(cmdBuffer);

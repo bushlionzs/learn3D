@@ -42,7 +42,7 @@ namespace filament {
  *      void destroy(ResourceAllocatorInterface&) noexcept;
  */
 struct FrameGraphTexture {
-    backend::Handle<backend::HwTexture> handle;
+    backend::Handle<backend::HwTexture> _tex_handle;
 
     /** describes a FrameGraphTexture resource */
     struct Descriptor {

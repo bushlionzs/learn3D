@@ -75,7 +75,11 @@ public:
 
     // Returns the dispatcher. This is only called once during initialization of the CommandStream,
     // so it doesn't matter that it's virtual.
-    virtual Dispatcher getDispatcher() const noexcept = 0;
+    virtual Dispatcher getDispatcher() const noexcept
+    {
+        static Dispatcher dispatcher;
+        return dispatcher;
+    }
 
     // called from CommandStream::execute on the render-thread
     // the fn function will execute a batch of driver commands
