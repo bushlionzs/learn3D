@@ -4,7 +4,7 @@ class ApplicationBase;
 class ApplicationWindow
 {
 public:
-	ApplicationWindow(ApplicationBase* app);
+	ApplicationWindow();
 	~ApplicationWindow();
 
 	bool createWindow(int32_t width, int32_t height);

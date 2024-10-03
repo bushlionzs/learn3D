@@ -1,26 +1,16 @@
 #pragma once
-#include <functional>
-#include "filament/Engine.h"
+#include <engine_struct.h>
+#include "ApplicationBase.h"
 #include <DefaultWindow.h>
 #include <FrameWindow.h>
 #include <CEGUIManager.h>
-#include <engine_struct.h>
-#include <renderSystem.h>
+
+
 
 class GameCamera;
 class ApplicationWindow;
 class SimpleApp: public FrameListener
 {
-public:
-    using SetupCallback = std::function<void(RenderSystem*, Ogre::SceneManager*, GameCamera*)>;
-    using CleanupCallback = std::function<void()>;
-    using UpdateCallback = std::function<void(float)>;
-    struct AppInfo
-    {
-        SetupCallback setup;
-        CleanupCallback cleanup;
-        UpdateCallback update;
-    };
 public:
     
     SimpleApp();

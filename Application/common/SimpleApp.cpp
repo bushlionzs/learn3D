@@ -51,7 +51,7 @@ void SimpleApp::run(AppInfo& info)
 
 	Ogre::Root::getSingleton()._initialise();
 
-	mWindow = new ApplicationWindow(nullptr);
+	mWindow = new ApplicationWindow();
 	
 	mWindow->createWindow(width, height);
 	if (!InputManager::getSingletonPtr())
@@ -93,30 +93,9 @@ void SimpleApp::run(AppInfo& info)
 		CEGUIManager::getSingleton()._initialise(&rt);
 	}
 
-	info.setup(mRenderSystem, mSceneManager, mGameCamera);
+	info.setup(mRenderSystem, mRenderWindow, mSceneManager, mGameCamera);
 
-	auto passCallback = [width, height, this](FrameGraph& fg) -> FrameGraphId<FrameGraphTexture> {
-		FrameGraphTexture::Descriptor colorBufferDesc = {
-		.width = width,
-		.height = height,
-		.format = backend::TextureFormat::RGB16F
-		};
-
-		PassUtil::PassConfig config;
-
-
-		config.rs = this->mRenderSystem;
-		config.target = this->mRenderWindow;
-		config.scene = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
-
-		config.cam = config.scene->getCamera(MAIN_CAMERA);
-		auto color = PassUtil::colorPass(fg, "Color Pass", colorBufferDesc, config);
-
-		config.scene = Ogre::Root::getSingleton().getSceneManager("cegui");
-
-		config.cam = config.scene->getCamera("cegui_camera");
-		return color;
-		};
+	
 
 	while (!mClosed)
 	{
@@ -141,10 +120,12 @@ void SimpleApp::run(AppInfo& info)
 				break;
 			}
 		}
-		InputManager::getSingletonPtr()->captureInput();
-		Ogre::Root::getSingleton()._fireFrameStarted();
-
 		
+		auto passCallback = [&info](FrameGraph& fg) -> FrameGraphId<FrameGraphTexture> {
+			return info.fgpass(fg);
+			};
+
+		Ogre::Root::getSingleton()._fireFrameStarted();
 		mRenderSystem->frameStart();
 		mRenderSystem->render(passCallback);
 		mRenderSystem->present();
@@ -343,22 +324,6 @@ void SimpleApp::example6()
 	mGameCamera->setMoveSpeed(25.0f);
 }
 
-void SimpleApp::update(float delta)
-{
-	mGameCamera->update(delta);
-	if (mAnimationState)
-	{
-		mAnimationState->addTime(delta);
-	}
-
-	if (mGUIContext)
-	{
-		mGUIContext->injectTimePulse(delta);
-	}
-
-	Ogre::Root::getSingleton()._fireFrameStarted();
-	Ogre::TextureManager::getSingleton().updateTextures();
-}
 
 EngineType SimpleApp::getEngineType()
 {
@@ -367,6 +332,7 @@ EngineType SimpleApp::getEngineType()
 
 bool SimpleApp::frameStarted(const FrameEvent& evt)
 {
+	InputManager::getSingletonPtr()->captureInput();
 	mAppInfo->update(evt.timeSinceLastFrame);
 	return true;
 }

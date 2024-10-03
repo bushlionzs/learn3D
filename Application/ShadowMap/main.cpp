@@ -1,28 +1,44 @@
 #include "OgreHeader.h"
-#include "application_base.h"
 #include "ShadowMap.h"
 #include "platform_log.h"
 #include "SimpleApp.h"
-#include "OgreMaterialManager.h"
-#include "OgreAnimationState.h"
+#include "ManualApplication.h"
 
 int main()
 {
 	platform_log_init();
 
 	ShadowMap instance;
-	SimpleApp app;
-	SimpleApp::AppInfo info;
+	
+    AppInfo info;
 
-	info.setup = [&instance](RenderSystem* rs, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
-		instance.setup(rs, sceneManager, gameCamera);
+	info.setup = [&instance](RenderSystem* rs, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
+		instance.setup(rs, win, sceneManager, gameCamera);
 		};
+	
 	info.update = [&instance](float delta) {
 		instance.update(delta);
 	};
 	info.cleanup = [&instance]() {
 		};
-	app.run(info);
+	bool manual = true;
+	if (manual)
+	{
+		ManualApplication app;
+		info.pass = [&instance, &app](std::vector<BasicPass>& passlist) {
+			instance.updatePass(passlist);
+			};
+		app.run(info);
+	}
+	else
+	{
+		info.fgpass = [&instance](FrameGraph& fg) {
+			return instance.fgPass(fg);
+			};
+		SimpleApp app;
+		app.run(info);
+	}
+	
 	return 0;
 }
 

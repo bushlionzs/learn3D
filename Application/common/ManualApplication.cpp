@@ -1,5 +1,5 @@
 #include "OgreHeader.h"
-#include "application_base.h"
+#include "ManualApplication.h"
 #include "application_window.h"
 #include "InputManager.h"
 #include "renderSystem.h"
@@ -14,32 +14,29 @@
 #include "GameTableManager.h"
 #include "CEGUIManager.h"
 #include <ResourceParserManager.h>
-#include "bluevk/BlueVK.h"
 
 
-ApplicationBase::ApplicationBase()
+
+ManualApplication::ManualApplication()
 {
 }
 
-ApplicationBase::~ApplicationBase()
+ManualApplication::~ManualApplication()
 {
 
 }
 
-bool ApplicationBase::frameStarted(const FrameEvent& evt)
+bool ManualApplication::frameStarted(const FrameEvent& evt)
 {
-	appUpdate(evt.timeSinceLastFrame);
+	InputManager::getSingletonPtr()->captureInput();
+	mAppInfo->update(evt.timeSinceLastFrame);
 	return true;
 }
 
-EngineType ApplicationBase::getEngineType()
-{
-	return EngineType_Dx12;
-}
 
-bool ApplicationBase::appInit()
+bool ManualApplication::appInit()
 {
-	mApplicationWindow = new ApplicationWindow(this);
+	mApplicationWindow = new ApplicationWindow();
 	int width = 1280;
 	int height = 720;
 	mApplicationWindow->createWindow(width, height);
@@ -56,9 +53,8 @@ bool ApplicationBase::appInit()
 		new InputManager();
 	}
 	InputManager::getSingletonPtr()->createInput((size_t)wnd);
-	EngineType type = getEngineType();
 
-	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(wnd, type);
+	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(wnd, EngineType_Vulkan);
 	if (!mRenderSystem)
 	{
 		return false;
@@ -74,7 +70,6 @@ bool ApplicationBase::appInit()
 
 	ResourceParserManager::getSingleton()._initialise();
 	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources"), "sujian", true);
-	addCustomDirectory();
 	ResourceManager::getSingletonPtr()->loadAllResource();
 	
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(MAIN_SCENE_MANAGER);
@@ -102,14 +97,14 @@ bool ApplicationBase::appInit()
 	return true;
 }
 
-void ApplicationBase::appUpdate(float delta)
-{
-	InputManager::getSingletonPtr()->captureInput();
-	mGameCamera->update(delta);
-}
 
-void ApplicationBase::run()
+
+void ManualApplication::run(AppInfo& info)
 {
+	mAppInfo = &info;
+	appInit();
+	info.setup(mRenderSystem, mRenderWindow, mSceneManager, mGameCamera);
+	info.pass(mPassList);
 	MSG msg;
 	mRenderSystem->ready();
 	while (true)
@@ -140,62 +135,42 @@ void ApplicationBase::run()
 	}
 }
 
-void ApplicationBase::render()
+void ManualApplication::render()
 {
-	if (0)
-	{
-		Ogre::Root::getSingletonPtr()->renderOneFrame();
-	}
-	else
-	{
-		
+	mRenderSystem->frameStart();
+	Ogre::Root::getSingleton()._fireFrameStarted();
 
-		mRenderSystem->frameStart();
-		Ogre::Root::getSingleton()._fireFrameStarted();
-		
-		Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
-		for (auto& pass : mPassList)
+	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
+	for (auto& pass : mPassList)
+	{
+		if (!pass.color)
 		{
-			if (!pass.color)
-			{
-				mPassInfo.renderTargetCount = 0;
-			}
-			else
-			{
-				mPassInfo.renderTargetCount = 1;
-			}
-			mPassInfo.renderTargets[0].renderTarget = pass.color;
-			mPassInfo.depthTarget.depthStencil = pass.depth;
-			mPassInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-			mPassInfo.depthTarget.clearValue = {1.0f, 0.0f};
-			mPassInfo.cam = pass.cam;
-			mPassInfo.shadowPass = pass.shadowPass;
-			mPassInfo.shadowMap = pass.shadowMap;
-			mRenderSystem->beginRenderPass(mPassInfo);
-			static EngineRenderList engineRenerList;
-			mSceneManager->getSceneRenderList(pass.cam, engineRenerList, pass.shadowPass);
-			mRenderSystem->multiRender(engineRenerList.mOpaqueList);
-			mRenderSystem->endRenderPass();
+			mPassInfo.renderTargetCount = 0;
 		}
-		
-
-		mRenderSystem->present();
-		mRenderSystem->frameEnd();
+		else
+		{
+			mPassInfo.renderTargetCount = 1;
+		}
+		mPassInfo.renderTargets[0].renderTarget = pass.color;
+		mPassInfo.depthTarget.depthStencil = pass.depth;
+		mPassInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
+		mPassInfo.depthTarget.clearValue = { 1.0f, 0.0f };
+		mPassInfo.cam = pass.cam;
+		mPassInfo.shadowPass = pass.shadowPass;
+		mPassInfo.shadowMap = pass.shadowMap;
+		mRenderSystem->beginRenderPass(mPassInfo);
+		static EngineRenderList engineRenerList;
+		mSceneManager->getSceneRenderList(pass.cam, engineRenerList, pass.shadowPass);
+		mRenderSystem->multiRender(engineRenerList.mOpaqueList);
+		mRenderSystem->endRenderPass();
 	}
+
+
+	mRenderSystem->present();
+	mRenderSystem->frameEnd();
 }
 
-void ApplicationBase::addMainPass(Ogre::OgreTexture* shadowMap)
-{
-	mPassList.emplace_back();
-	auto& pass = mPassList.back();
-	pass.color = mRenderWindow->getColorTarget();
-	pass.depth = mRenderWindow->getDepthTarget();
-	pass.sceneMgr = mSceneManager;
-	pass.cam = mCamera;
-	pass.shadowMap = shadowMap;
-}
-
-void ApplicationBase::ShowFrameFrequency()
+void ManualApplication::ShowFrameFrequency()
 {
 	if (mLastFPS != Ogre::Root::getSingletonPtr()->getCurrentFPS())
 	{
@@ -215,7 +190,7 @@ void ApplicationBase::ShowFrameFrequency()
 	}
 }
 
-void ApplicationBase::OnSize(uint32_t width, uint32_t height)
+void ManualApplication::OnSize(uint32_t width, uint32_t height)
 {
 	if (mRenderWindow)
 	{

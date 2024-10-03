@@ -1,15 +1,25 @@
 #pragma once
-#include "application_base.h"
+#include "filament/Engine.h"
+#include <fg/FrameGraphTexture.h>
+#include "ApplicationBase.h"
+class GameCamera;
+class RenderSystem;
+class Ogre::RenderWindow;
+class Ogre::SceneManager;
+
 class ShadowMap
 {
 public:
 	ShadowMap();
 	~ShadowMap();
 	void setup(
-		RenderSystem* rs,
+		RenderSystem* renderSystem,
+		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void update(float delta);
+	void updatePass(std::vector<BasicPass>& passlist);
+	FrameGraphId<FrameGraphTexture> fgPass(FrameGraph& fg);
 private:
 	void base1();
 	void base2();
@@ -23,4 +33,5 @@ private:
 	Ogre::SceneManager* mSceneManager;
 	GameCamera* mGameCamera;
 	RenderSystem* mRenderSystem;
+	RenderWindow* mRenderWindow;
 };

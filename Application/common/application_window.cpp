@@ -1,6 +1,5 @@
 #include "OgreHeader.h"
 #include "application_window.h"
-#include "application_base.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -15,9 +14,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 }
 
-ApplicationWindow::ApplicationWindow(ApplicationBase* app)
+ApplicationWindow::ApplicationWindow()
 {
-	mApp = app;
+
 }
 
 ApplicationWindow::~ApplicationWindow()
@@ -156,10 +155,7 @@ LRESULT WINAPI ApplicationWindow::MessageHandler(HWND hWnd, UINT message, WPARAM
 	{
 		int32_t width = LOWORD(lParam);
 		int32_t height = HIWORD(lParam);
-		if (mApp)
-		{
-			mApp->OnSize(width, height);
-		}
+		
 	}
 	break;
 	case WM_DESTROY:

@@ -13,6 +13,11 @@
 #include "OgreViewport.h"
 #include "OgreRenderWindow.h"
 #include "renderSystem.h"
+#include "game_camera.h"
+#include "OgreSceneManager.h"
+#include "OgreEntity.h"
+#include "OgreRoot.h"
+#include "PassUtil.h"
 
 ShadowMap::ShadowMap()
 {
@@ -26,12 +31,14 @@ ShadowMap::~ShadowMap()
 
 
 void ShadowMap::setup(
-    RenderSystem* rs,
+    RenderSystem* renderSystem,
+    RenderWindow* renderWindow,
     Ogre::SceneManager* sceneManager,
     GameCamera* gameCamera
 )
 {
-    mRenderSystem = rs;
+    mRenderSystem = renderSystem;
+    mRenderWindow = renderWindow;
     mSceneManager = sceneManager;
     mGameCamera = gameCamera;
 
@@ -47,6 +54,36 @@ void ShadowMap::update(float delta)
     }
 }
 
+void ShadowMap::updatePass(std::vector<BasicPass>& passlist)
+{
+    passlist.emplace_back();
+    auto& pass = passlist.back();
+    pass.color = mRenderWindow->getColorTarget();
+    pass.depth = mRenderWindow->getDepthTarget();
+    pass.sceneMgr = mSceneManager;
+    pass.cam = mGameCamera->getCamera();
+    pass.shadowMap = nullptr;
+}
+
+FrameGraphId<FrameGraphTexture> ShadowMap::fgPass(FrameGraph& fg)
+{
+    FrameGraphTexture::Descriptor colorBufferDesc = {
+        .width = mRenderWindow->getWidth(),
+        .height = mRenderWindow->getHeight(),
+        .format = backend::TextureFormat::RGB16F
+    };
+
+    PassUtil::PassConfig config;
+
+
+    config.rs = mRenderSystem;
+    config.target = mRenderWindow;
+    config.scene = Ogre::Root::getSingleton().getSceneManager(MAIN_SCENE_MANAGER);
+
+    config.cam = config.scene->getCamera(MAIN_CAMERA);
+    auto color = PassUtil::colorPass(fg, "Color Pass", colorBufferDesc, config);
+    return color;
+}
 void ShadowMap::base1()
 {
 	auto root = mSceneManager->getRoot();
