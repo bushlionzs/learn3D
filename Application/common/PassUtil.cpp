@@ -9,41 +9,6 @@
 #include <renderSystem.h>
 #include <SHADER.H>
 
-void updateFrameBuffer(FrameConstantBuffer& frameBuffer, Ogre::SceneManager* sm, Ogre::Camera* cam)
-{
-    const Ogre::Matrix4& view = cam->getViewMatrix();
-    const Ogre::Matrix4& proj = cam->getProjectMatrix();
-    const Ogre::Vector3& camepos = cam->getDerivedPosition();
-
-    Ogre::Matrix4 invView = view.inverse();
-    Ogre::Matrix4 viewProj = proj * view;
-    Ogre::Matrix4 invProj = proj.inverse();
-    Ogre::Matrix4 invViewProj = viewProj.inverse();
-    frameBuffer.Shadow = 0;
-
-
-    frameBuffer.View = view.transpose();
-    frameBuffer.InvView = invView.transpose();
-    frameBuffer.Proj = proj.transpose();
-    frameBuffer.InvProj = invProj.transpose();
-    frameBuffer.ViewProj = viewProj.transpose();
-    frameBuffer.InvViewProj = invViewProj.transpose();
-    //mFrameConstantBuffer.ShadowTransform = mShadowTransform;
-    frameBuffer.EyePosW = camepos;
-
-    const auto& rt = Ogre::Root::getSingleton().getMainRect();
-    auto width = rt.width();
-    auto height = rt.height();
-    frameBuffer.RenderTargetSize = Ogre::Vector2((float)width, (float)height);
-    frameBuffer.InvRenderTargetSize = Ogre::Vector2(1.0f / width, 1.0f / height);
-    frameBuffer.NearZ = 0.1f;
-    frameBuffer.FarZ = 10000.0f;
-    frameBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-    frameBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-}
-
-
-
 FrameGraphId<FrameGraphTexture> PassUtil::colorPass(
 	FrameGraph& fg, const char* name, 
 	FrameGraphTexture::Descriptor const& colorBufferDesc,
@@ -142,8 +107,6 @@ FrameGraphId<FrameGraphTexture> PassUtil::colorPass(
                 SceneManager* sm = config.scene;
                 Ogre::Camera* cam = config.cam;
                 
-                static FrameConstantBuffer frameBuffer;
-                updateFrameBuffer(frameBuffer, sm, cam);
                 static EngineRenderList engineRenerList;
                 sm->getSceneRenderList(cam, engineRenerList, false);
                 rs->multiRender(engineRenerList.mOpaqueList);
@@ -264,8 +227,6 @@ FrameGraphId<FrameGraphTexture> PassUtil::renderTexturePass(
                 SceneManager* sm = config.scene;
                 Ogre::Camera* cam = config.cam;
 
-                FrameConstantBuffer frameBuffer;
-                updateFrameBuffer(frameBuffer, sm, cam);
 
                 static EngineRenderList engineRenerList;
 

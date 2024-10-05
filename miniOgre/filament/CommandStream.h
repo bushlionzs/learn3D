@@ -19,7 +19,7 @@
 
 #include "filament/CircularBuffer.h"
 #include "filament/Dispatcher.h"
-#include "filament/Driver.h"
+#include "filament/DriverBase.h"
 #include "utils/debug.h"
 
 #include <filament/BufferDescriptor.h>

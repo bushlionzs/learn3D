@@ -254,7 +254,7 @@ namespace filament::backend {
 
         auto& cmdfence = currentbuf->fence;
 
-        UTILS_UNUSED_IN_RELEASE VkResult result = vkQueueSubmit(mQueue, 1, &submitInfo, cmdfence->fence);
+        UTILS_UNUSED_IN_RELEASE VkResult result = vkQueueSubmit(mQueue, 1, &submitInfo, cmdfence->getFence());
 
         assert_invariant(result == VK_SUCCESS);
 

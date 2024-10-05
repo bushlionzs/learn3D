@@ -20,7 +20,13 @@ public:
 
     virtual void beginRenderPass(RenderPassInfo& renderPassInfo) override;
     virtual void endRenderPass() override;
+    virtual void beginComputePass(
+        ComputePassInfo& computePassInfo) override;
+    virtual void endComputePass() override;
+
     virtual void present() override;
+
+    /// 
 private:
     
    

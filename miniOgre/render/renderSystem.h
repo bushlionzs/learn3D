@@ -3,10 +3,12 @@
 #include "shader.h"
 #include "engine_struct.h"
 #include "OgreTexture.h"
+#include <DriverEnums.h>
 #include <utils/Allocator.h>
 #include <utils/JobSystem.h>
 #include <filament/Handle.h>
 #include <filament/DriverBase.h>
+#include <filament/DescriptorSetOffsetArray.h>
 #include <fg/FrameGraphId.h>
 #include <fg/FrameGraphTexture.h>
 #include <fg/Allocators.h>
@@ -23,7 +25,7 @@ namespace Ogre
     class RenderWindow;
 }
 
-using PassCallback = std::function< FrameGraphId<FrameGraphTexture>(FrameGraph& fg)>;
+using FrameGraphPassCallback = std::function< FrameGraphId<FrameGraphTexture>(FrameGraph& fg)>;
 
 class RenderSystem
 {
@@ -33,7 +35,7 @@ public:
     virtual bool engineInit();
     virtual void frameStart() = 0;
     virtual void frameEnd() = 0;
-    virtual void render(PassCallback cb);
+    virtual void render(FrameGraphPassCallback cb);
     virtual void update(Renderable* r) {}
     virtual void render(Ogre::Renderable* r, RenderListType t) = 0;
     virtual void multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread = true) {}
@@ -95,6 +97,12 @@ public:
     virtual void beginRenderPass(
         RenderPassInfo& renderPassInfo);
     virtual void endRenderPass();
+
+    virtual void beginComputePass(
+        ComputePassInfo& computePassInfo);
+    virtual void endComputePass();
+
+    virtual void dispatchComputeShader();
     virtual void present();
 
     virtual void pushGroupMarker(const char* maker) {}
@@ -128,8 +136,25 @@ public:
         Handle<HwBufferObject> boh, 
         const char* data, 
         uint32_t size);
+    virtual Handle<HwDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout& info);
+    virtual Handle<HwDescriptorSet> createDescriptorSet(Handle<HwDescriptorSetLayout> dslh);
+    virtual void bindDescriptorSet(
+        Handle<HwDescriptorSet> dsh,
+        uint8_t setIndex,
+        backend::DescriptorSetOffsetArray&& offsets);
+    virtual void updateDescriptorSetBuffer(
+        Handle<HwDescriptorSet> dsh,
+        backend::descriptor_binding_t binding,
+        backend::BufferObjectHandle boh,
+        uint32_t offset,
+        uint32_t size);
+    virtual void updateDescriptorSetTexture(
+        Handle<HwDescriptorSet> dsh,
+        backend::descriptor_binding_t binding,
+        backend::TextureHandle th,
+        SamplerParams params);
 private:
-    void renderJob(ArenaScope& arena, PassCallback cb);
+    void renderJob(ArenaScope& arena, FrameGraphPassCallback cb);
 
 protected:
 	

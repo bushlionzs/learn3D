@@ -6,7 +6,8 @@
 
 class VulkanTexture;
 
-class ShaderBindingTable : public VulkanBuffer {
+class ShaderBindingTable
+{
 public:
     VkStridedDeviceAddressRegionKHR stridedDeviceAddressRegion{};
 };

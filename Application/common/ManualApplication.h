@@ -43,7 +43,7 @@ protected:
 	Ogre::Camera* mCamera = nullptr;
 	GameCamera* mGameCamera = nullptr;
 	Ogre::RenderWindow* mRenderWindow = nullptr;
-	std::vector<BasicPass> mPassList;
+	std::vector<PassBase*> mPassList;
 	RenderPassInfo mPassInfo;
 
 	AppInfo* mAppInfo;

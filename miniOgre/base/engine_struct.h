@@ -1,6 +1,13 @@
 #pragma once
 #define OGRE_STREAM_TEMP_SIZE 128
 #include <OgreHeader.h>
+#include <Handle.h>
+#include <DriverEnums.h>
+#include <OgreCommon.h>
+
+
+using namespace filament::backend;
+
 enum RenderListType
 {
     RenderListType_Opaque = 0,
@@ -119,6 +126,14 @@ struct RenderPassInfo
     Ogre::OgreTexture* shadowMap = nullptr;
     Ogre::ICamera* cam = nullptr;
     bool shadowPass = false;
+};
+
+struct ComputePassInfo
+{
+    std::string shaderName;
+    PipelineLayout pipelineLayout;
+    Handle<HwDescriptorSet> ds;
+    Ogre::Vector3i computeGroup;
 };
 
 class SkinnedData

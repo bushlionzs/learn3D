@@ -3,8 +3,8 @@
 
 
 
-VkDescriptorSetLayout VulkanLayoutCache::getLayout(descset::DescriptorSetLayout& layout) {
-    Key key = VulkanDescriptorSetLayout::Bitmask::fromBackendLayout(layout);
+VkDescriptorSetLayout VulkanLayoutCache::getLayout(DescriptorSetLayout& layout) {
+    Key key = VulkanDescriptorSetLayout::fromBackendLayout(layout);
     if (auto iter = mLayouts.find(key); iter != mLayouts.end()) {
         return iter->second;
     }
@@ -16,10 +16,10 @@ VkDescriptorSetLayout VulkanLayoutCache::getLayout(descset::DescriptorSetLayout&
         VkShaderStageFlags stages = 0;
         VkDescriptorType type;
 
-        if (binding.stageFlags & ShaderStageFlags2::VERTEX) {
+        if ((bool)(binding.stageFlags & ShaderStageFlags::VERTEX)) {
             stages |= VK_SHADER_STAGE_VERTEX_BIT;
         }
-        if (binding.stageFlags & ShaderStageFlags2::FRAGMENT) {
+        if ((bool)(binding.stageFlags & ShaderStageFlags::FRAGMENT)) {
             stages |= VK_SHADER_STAGE_FRAGMENT_BIT;
         }
         assert_invariant(stages != 0);

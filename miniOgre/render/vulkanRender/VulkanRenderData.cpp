@@ -735,18 +735,18 @@ void VulkanRenderableData::buildLayout()
             continue;
         binding.binding = i;
        
-        binding.flags = descset::DescriptorFlags::NONE;
+        binding.flags = DescriptorFlags::NONE;
         binding.count = 0;
-        binding.type = descset::DescriptorType::UNIFORM_BUFFER;
+        binding.type = DescriptorType::UNIFORM_BUFFER;
         if (hasVertex)
         {
-            binding.stageFlags = descset::ShaderStageFlags2::VERTEX;
+            binding.stageFlags = ShaderStageFlags::VERTEX;
         }
 
         if (hasFragment)
         {
-            binding.stageFlags = static_cast<ShaderStageFlags2>(
-                binding.stageFlags | ShaderStageFlags2::FRAGMENT);
+            binding.stageFlags = static_cast<ShaderStageFlags>(
+                binding.stageFlags | ShaderStageFlags::FRAGMENT);
         }
         
         mUBOLayoutInfo.bindings.push_back(binding);
@@ -766,13 +766,13 @@ void VulkanRenderableData::buildLayout()
         binding.type = DescriptorType::SAMPLER;
         if (hasVertex)
         {
-            binding.stageFlags = ShaderStageFlags2::VERTEX;
+            binding.stageFlags = ShaderStageFlags::VERTEX;
         }
 
         if (hasFragment)
         {
-            binding.stageFlags = static_cast<ShaderStageFlags2>(
-                binding.stageFlags | ShaderStageFlags2::FRAGMENT);
+            binding.stageFlags = static_cast<ShaderStageFlags>(
+                binding.stageFlags | ShaderStageFlags::FRAGMENT);
         }
 
         mSamplerLayoutInfo.bindings.push_back(binding);

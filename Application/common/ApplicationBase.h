@@ -15,17 +15,9 @@ namespace Ogre
 using namespace filament::backend;
 using namespace filament;
 
-struct BasicPass
-{
-	Ogre::RenderTarget* color = nullptr;
-	Ogre::RenderTarget* depth = nullptr;
-	SceneManager* sceneMgr = nullptr;
-	Ogre::ICamera* cam = nullptr;
-	Ogre::OgreTexture* shadowMap = nullptr;
-	bool shadowPass = false;
-};
 
-using PassCallback = std::function<void(std::vector<BasicPass>&)>;
+class PassBase;
+using PassCallback = std::function<void(std::vector<PassBase*>&)>;
 using SetupCallback = std::function<void(RenderSystem*, Ogre::RenderWindow*, Ogre::SceneManager*, GameCamera*)>;
 using CleanupCallback = std::function<void()>;
 using UpdateCallback = std::function<void(float)>;

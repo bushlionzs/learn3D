@@ -45,7 +45,7 @@ public:
         
     }
 
-    VkDescriptorSetLayout getLayout(descset::DescriptorSetLayout& layout);
+    VkDescriptorSetLayout getLayout(DescriptorSetLayout& layout);
 
 private:
     VkDevice mDevice;

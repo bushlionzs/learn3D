@@ -10,6 +10,7 @@
 #include <VulkanSwapChain.h>
 #include <VulkanPlatform.h>
 #include <VulkanContext.h>
+#include <VulkanDescriptorSetManager.h>
 
 class VulkanGraphicsCommandList;
 class VulkanFrame;
@@ -23,6 +24,8 @@ public:
 	VulkanRenderSystemBase();
 	~VulkanRenderSystemBase();
 public:
+    bool engineInit();
+
     virtual OgreTexture* createTextureFromFile(
         const std::string& name,
         Ogre::TextureProperty* texProperty);
@@ -65,6 +68,24 @@ protected:
         Handle<HwBufferObject> boh,
         const char* data, 
         uint32_t size) override;
+
+    virtual Handle<HwDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout& info) override;
+    virtual Handle<HwDescriptorSet> createDescriptorSet(Handle<HwDescriptorSetLayout> dslh) override;
+    virtual void bindDescriptorSet(
+        Handle<HwDescriptorSet> dsh,
+        uint8_t setIndex,
+        backend::DescriptorSetOffsetArray&& offsets) override;
+    virtual void updateDescriptorSetBuffer(
+        Handle<HwDescriptorSet> dsh,
+        backend::descriptor_binding_t binding,
+        backend::BufferObjectHandle boh,
+        uint32_t offset,
+        uint32_t size) override;
+    virtual void updateDescriptorSetTexture(
+        Handle<HwDescriptorSet> dsh,
+        backend::descriptor_binding_t binding,
+        backend::TextureHandle th,
+        SamplerParams params) override;
 protected:
     RenderPassInfo mCurrentRenderPassInfo;
 
@@ -86,4 +107,5 @@ protected:
     VulkanSwapChain* mSwapChain = nullptr;
     VulkanPlatform* mVulkanPlatform;
     VulkanContext mVulkanContext;
+    VulkanDescriptorSetManager* mDescriptorSetManager;
 };

@@ -18,6 +18,7 @@
 #include "OgreEntity.h"
 #include "OgreRoot.h"
 #include "PassUtil.h"
+#include "pass.h"
 
 ShadowMap::ShadowMap()
 {
@@ -42,6 +43,61 @@ void ShadowMap::setup(
     mSceneManager = sceneManager;
     mGameCamera = gameCamera;
 
+    RenderPassInput renderInput;
+    renderInput.cam = mGameCamera->getCamera();
+    renderInput.color = mRenderWindow->getColorTarget();
+    renderInput.depth = mRenderWindow->getDepthTarget();
+    renderInput.sceneMgr = mSceneManager;
+    renderInput.shadowMap = nullptr;
+    renderInput.shadowPass = false;
+    mMainPass = createRenderPass(renderInput);
+
+    ComputePassInput computeInput;
+    computeInput.shaderName = "clearBuffer";
+    Handle<HwDescriptorSetLayout> dslh;
+    DescriptorSetLayout info;
+    info.bindings.reserve(2);
+    DescriptorSetLayoutBinding bindings;
+    bindings.type = DescriptorType::SHADER_STORAGE_BUFFER;
+    bindings.stageFlags = ShaderStageFlags::COMPUTE;
+    bindings.binding = 0;
+    bindings.flags = DescriptorFlags::NONE;
+    bindings.count = 1;
+    info.bindings.push_back(bindings);
+    bindings.type = DescriptorType::UNIFORM_BUFFER;
+    bindings.stageFlags = ShaderStageFlags::COMPUTE;
+    bindings.binding = 2;
+    bindings.flags = DescriptorFlags::NONE;
+    bindings.count = 1;
+    info.bindings.push_back(bindings);
+
+    dslh = mRenderSystem->createDescriptorSetLayout(info);
+    
+    computeInput.ds = mRenderSystem->createDescriptorSet(dslh);
+    computeInput.pipelineLayout.setLayout[0] = dslh;
+    
+    struct VBConstants
+    {
+        uint32_t indexOffset;
+        uint32_t pad_0;
+        uint32_t pad_1;
+        uint32_t pad_2;
+    };
+
+    VBConstants constants[2];
+    memset(&constants[0], 0, sizeof(VBConstants) * 2);
+    Handle<HwBufferObject> vbconstantHandle = 
+        mRenderSystem->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::STATIC, sizeof(VBConstants) * 2);
+    Handle<HwBufferObject> indirectDrawHandle =
+        mRenderSystem->createBufferObject(BufferObjectBinding::SHADER_STORAGE, BufferUsage::DYNAMIC, 320);
+    mRenderSystem->updateDescriptorSetBuffer(computeInput.ds, 0, indirectDrawHandle, 0, 320);
+    mRenderSystem->updateDescriptorSetBuffer(computeInput.ds, 2, vbconstantHandle, 0, sizeof(VBConstants) * 2);
+
+    computeInput.computeGroup._x = 1;
+    computeInput.computeGroup._y = 1;
+    computeInput.computeGroup._z = 1;
+    clearBufferPass = createComputePass(computeInput);
+
     base1();
 }
 
@@ -54,15 +110,11 @@ void ShadowMap::update(float delta)
     }
 }
 
-void ShadowMap::updatePass(std::vector<BasicPass>& passlist)
+void ShadowMap::updatePass(std::vector<PassBase*>& passlist)
 {
-    passlist.emplace_back();
-    auto& pass = passlist.back();
-    pass.color = mRenderWindow->getColorTarget();
-    pass.depth = mRenderWindow->getDepthTarget();
-    pass.sceneMgr = mSceneManager;
-    pass.cam = mGameCamera->getCamera();
-    pass.shadowMap = nullptr;
+    passlist.clear();
+    passlist.push_back(clearBufferPass);
+    passlist.push_back(mMainPass);
 }
 
 FrameGraphId<FrameGraphTexture> ShadowMap::fgPass(FrameGraph& fg)

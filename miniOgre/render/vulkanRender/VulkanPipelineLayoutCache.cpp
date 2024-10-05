@@ -16,14 +16,23 @@ VkPipelineLayout VulkanPipelineLayoutCache::getLayout(
         entry.lastUsed = mTimestamp++;
         return entry.handle;
     }
+    uint8_t descSetLayoutCount = 0;
+    for (auto layoutHandle : key) {
+        if (layoutHandle == VK_NULL_HANDLE) {
+            break;
+        }
+        descSetLayoutCount++;
+    }
 
     VkPipelineLayoutCreateInfo info{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .pNext = nullptr,
-        .setLayoutCount = (uint32_t)key.size(),
+        .setLayoutCount = descSetLayoutCount,
         .pSetLayouts = key.data(),
         .pushConstantRangeCount = 0,
     };
+
+    
     VkPipelineLayout layout;
     vkCreatePipelineLayout(mDevice, &info, VKALLOC, &layout);
 

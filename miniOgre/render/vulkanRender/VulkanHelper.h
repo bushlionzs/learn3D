@@ -5,14 +5,15 @@
 #include "OgreCommon.h"
 #include "VulkanCommon.h"
 #include "VulkanContext.h"
+#include "VulkanBuffer.h"
 #include "VulkanResourceAllocator.h"
+#include "VulkanPlatform.h"
 
 
 
 class VulkanRenderSystemBase;
 class VulkanFrame;
 class VulkanTexture;
-class VulkanBuffer;
 class VulkanLayoutCache;
 class VulkanPipelineCache;
 class VulkanPipelineLayoutCache;
@@ -45,12 +46,6 @@ public:
         VkMemoryPropertyFlags properties,
         VkBuffer& buffer,
         VkDeviceMemory& bufferMemory);
-    VkResult createBuffer(
-        VkBufferUsageFlags usageFlags,
-        VkMemoryPropertyFlags memoryPropertyFlags,
-        VulkanBuffer* buffer,
-        VkDeviceSize size,
-        void* data);
 
     VkDevice getDevcie()
     {
@@ -108,6 +103,11 @@ public:
          return mLayoutCache;
      }
 
+     VkPipeline createComputePipeline(
+         const std::string& shaderName, 
+         VkPipelineLayout layout);
+
+     
 private:
     void createCommandPool();
     void createDescriptorPool();
@@ -158,7 +158,28 @@ private:
     VulkanLayoutCache* mLayoutCache;
     VulkanPipelineLayoutCache* mPipelineLayoutCache = nullptr;
     VulkanPipelineCache* mPipelineCache = nullptr;
-    std::array<descset::DescriptorSetLayout, 2> mLayouts;
+    struct ComputePipelineKey
+    {
+        VkShaderModule shaderModule;
+        VkPipelineLayout pipelineLayout;
+        struct Hasher {
+            size_t operator()(const ComputePipelineKey& key) const noexcept {
+                // we don't use std::hash<> here, so we don't have to include <functional>
+                return (uint64_t)((uint64_t)key.shaderModule << 32) +
+                    ((uint64_t)key.pipelineLayout >> 32);
+            }
+        };
+
+        struct EqualTo {
+            bool operator()(const ComputePipelineKey& lhs, const ComputePipelineKey& rhs) const noexcept {
+                return lhs.shaderModule == rhs.shaderModule &&
+                    lhs.pipelineLayout == rhs.pipelineLayout;
+            }
+        };
+    };
+    tsl::robin_map<ComputePipelineKey, VkPipeline, ComputePipelineKey::Hasher, ComputePipelineKey::EqualTo> mComputePipelineCache;
+
+    std::array<DescriptorSetLayout, 2> mLayouts;
     VulkanSettings mSettings;
 
     VkPhysicalDeviceFeatures deviceFeatures{};

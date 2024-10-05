@@ -349,6 +349,11 @@ void VulkanTexture::setLayout(const VkImageSubresourceRange& range, VulkanLayout
     }
 }
 
+bool VulkanTexture::transitionReady()
+{
+    return true;
+}
+
 void VulkanTexture::transitionLayout(
     VkCommandBuffer cmdbuf,
     const VkImageSubresourceRange& range,

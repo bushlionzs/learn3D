@@ -18,7 +18,7 @@ public:
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void update(float delta);
-	void updatePass(std::vector<BasicPass>& passlist);
+	void updatePass(std::vector<PassBase*>& passlist);
 	FrameGraphId<FrameGraphTexture> fgPass(FrameGraph& fg);
 private:
 	void base1();
@@ -34,4 +34,8 @@ private:
 	GameCamera* mGameCamera;
 	RenderSystem* mRenderSystem;
 	RenderWindow* mRenderWindow;
+
+	PassBase* mMainPass;
+
+	PassBase* clearBufferPass;
 };

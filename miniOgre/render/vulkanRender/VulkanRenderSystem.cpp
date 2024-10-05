@@ -28,53 +28,9 @@
 #include "VulkanRenderTarget.h"
 #include "VulkanMappings.h"
 #include <VulkanPipelineCache.h>
+#include <VulkanPipelineLayoutCache.h>
+#include <shaderManager.h>
 
-static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevice,
-    VkDevice device) {
-    VmaAllocator allocator;
-    VmaVulkanFunctions const funcs{
-#if VMA_DYNAMIC_VULKAN_FUNCTIONS
-        .vkGetInstanceProcAddr = vkGetInstanceProcAddr,
-        .vkGetDeviceProcAddr = vkGetDeviceProcAddr,
-#else
-        .vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
-        .vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties,
-        .vkAllocateMemory = vkAllocateMemory,
-        .vkFreeMemory = vkFreeMemory,
-        .vkMapMemory = vkMapMemory,
-        .vkUnmapMemory = vkUnmapMemory,
-        .vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges,
-        .vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges,
-        .vkBindBufferMemory = vkBindBufferMemory,
-        .vkBindImageMemory = vkBindImageMemory,
-        .vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements,
-        .vkGetImageMemoryRequirements = vkGetImageMemoryRequirements,
-        .vkCreateBuffer = vkCreateBuffer,
-        .vkDestroyBuffer = vkDestroyBuffer,
-        .vkCreateImage = vkCreateImage,
-        .vkDestroyImage = vkDestroyImage,
-        .vkCmdCopyBuffer = vkCmdCopyBuffer,
-        .vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR,
-        .vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR
-#endif
-    };
-    VmaAllocatorCreateInfo const allocatorInfo{
-        .physicalDevice = physicalDevice,
-        .device = device,
-        .pVulkanFunctions = &funcs,
-        .instance = instance,
-    };
-    vmaCreateAllocator(&allocatorInfo, &allocator);
-    return allocator;
-}
-
-static const std::vector<const char*> validationLayers = {
-    "VK_LAYER_KHRONOS_validation"
-};
-
-static const std::vector<const char*> deviceExtensions = {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-};
 
 VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
 {
@@ -82,7 +38,7 @@ VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
 
     mRenderSystemName = "Vulkan";
     mRenderType = EngineType_Vulkan;
-    new VulkanHelper(this);
+    
 
     mRenderList.reserve(3000);
     
@@ -95,25 +51,8 @@ VulkanRenderSystem::~VulkanRenderSystem()
 
 bool VulkanRenderSystem::engineInit()
 {
-    RenderSystem::engineInit();
-    mVulkanPlatform = new VulkanPlatform();
+    VulkanRenderSystemBase::engineInit();
     
-
-    VulkanHelper& helper = VulkanHelper::getSingleton();
-    helper._initialise(mVulkanPlatform);
-   
-    auto device = mVulkanPlatform->getDevice();
-    mAllocator = createAllocator(
-        mVulkanPlatform->getInstance(), mVulkanPlatform->getPhysicalDevice(), device);
-
-    
-    auto queue = mVulkanPlatform->getGraphicsQueue();
-    auto queueIndex = mVulkanPlatform->getGraphicsQueueIndex();
-
-    mCommands = new VulkanCommands(device, queue, queueIndex, &mVulkanContext, &mResourceAllocator);
-
-    
-    mPipelineCache = helper.getPipelineCache();
 
     return true;
 }
@@ -295,9 +234,36 @@ void VulkanRenderSystem::endRenderPass()
         }
         
     }
-    
+}
+
+void VulkanRenderSystem::beginComputePass(ComputePassInfo& computePassInfo)
+{
+    std::array<VkDescriptorSetLayout, 2> layoutKey;
+    VulkanDescriptorSetLayout* first = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(
+        computePassInfo.pipelineLayout.setLayout[0]);
+    layoutKey[0] = first->getVkLayout();
+    layoutKey[1] = VK_NULL_HANDLE;
+    auto pipelineLayoutCache = VulkanHelper::getSingleton().getPipelineLayoutCache();
+    auto pipelineLayout = pipelineLayoutCache->getLayout(layoutKey);
+
+    auto pipeline = VulkanHelper::getSingleton().createComputePipeline(computePassInfo.shaderName, pipelineLayout);
+    VkCommandBuffer commandBuffer = mCommands->get().buffer();
+
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 
     
+    VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(computePassInfo.ds);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+        pipelineLayout, 0, 1, &set->vkSet, 0, nullptr);
+
+    vkCmdDispatch(commandBuffer,
+        computePassInfo.computeGroup._x, computePassInfo.computeGroup._y, computePassInfo.computeGroup._z);
+
+}
+
+void VulkanRenderSystem::endComputePass()
+{
+
 }
 
 

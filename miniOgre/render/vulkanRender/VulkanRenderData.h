@@ -106,8 +106,8 @@ private:
 
 	VulkanPipelineCache::RasterState mRasterState;
 
-	descset::DescriptorSetLayout mUBOLayoutInfo;
-	descset::DescriptorSetLayout mSamplerLayoutInfo;
+	DescriptorSetLayout mUBOLayoutInfo;
+	DescriptorSetLayout mSamplerLayoutInfo;
 	std::array <VkDescriptorSetLayout, 2> mLayouts;
 	VkPipelineLayout mPipelineLayout;
 

@@ -21,8 +21,8 @@
 #include <utils/Panic.h>
 
 #include "VulkanConstants.h"
-//#include "VulkanHandles.h"
-#include "render/vulkanRender/VulkanTexture.h"
+#include "VulkanHandles.h"
+#include "VulkanTexture.h"
 
 
  // Vulkan functions often immediately dereference pointers, so it's fine to pass in a pointer

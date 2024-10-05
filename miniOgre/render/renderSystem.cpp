@@ -25,7 +25,7 @@ bool RenderSystem::engineInit()
     return true;
 }
 
-void RenderSystem::render(PassCallback cb)
+void RenderSystem::render(FrameGraphPassCallback cb)
 {
     utils::ArenaScope rootArena(mPerRenderPassArena);
     auto* rootJob = mJobSystem.setRootJob(mJobSystem.createJob());
@@ -67,7 +67,7 @@ public:
 
 };
 
-void RenderSystem::renderJob(ArenaScope& arena, PassCallback cb)
+void RenderSystem::renderJob(ArenaScope& arena, FrameGraphPassCallback cb)
 {
     static CircularBuffer buf(1000);
     backend::Driver* driver = (backend::Driver*)&buf;
@@ -143,6 +143,22 @@ void RenderSystem::endRenderPass()
 
 }
 
+void RenderSystem::beginComputePass(
+    ComputePassInfo& computePassInfo)
+{
+
+}
+
+void RenderSystem::endComputePass()
+{
+
+}
+
+void RenderSystem::dispatchComputeShader()
+{
+
+}
+
 void RenderSystem::present()
 {
 
@@ -163,5 +179,44 @@ void RenderSystem::updateBufferObject(
     uint32_t size)
 {
     assert(false);
+}
+
+Handle<HwDescriptorSetLayout> RenderSystem::createDescriptorSetLayout(DescriptorSetLayout& info)
+{
+    assert(false);
+    return Handle<HwDescriptorSetLayout>();
+}
+
+Handle<HwDescriptorSet> RenderSystem::createDescriptorSet(Handle<HwDescriptorSetLayout> dslh)
+{
+    assert(false);
+    return Handle<HwDescriptorSet>();
+}
+
+void RenderSystem::bindDescriptorSet(
+    Handle<HwDescriptorSet> dsh,
+    uint8_t setIndex,
+    backend::DescriptorSetOffsetArray&& offsets)
+{
+    assert(false);
+}
+
+void RenderSystem::updateDescriptorSetBuffer(
+    Handle<HwDescriptorSet> dsh,
+    backend::descriptor_binding_t binding,
+    backend::BufferObjectHandle boh,
+    uint32_t offset,
+    uint32_t size)
+{
+    
+}
+
+void RenderSystem::updateDescriptorSetTexture(
+    Handle<HwDescriptorSet> dsh,
+    backend::descriptor_binding_t binding,
+    backend::TextureHandle th,
+    SamplerParams params)
+{
+
 }
 

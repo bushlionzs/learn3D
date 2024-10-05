@@ -6,6 +6,7 @@
 #include "VulkanRenderSystem.h"
 #include "VulkanTools.h"
 #include "VulkanFrame.h"
+#include "VulkanBuffer.h"
 #include "VulkanHardwareBufferManager.h"
 #include "VulkanBuffer.h"
 #include "VulkanMappings.h"
@@ -182,62 +183,6 @@ void VulkanHelper::_createBuffer(
 }
 
 
-VkResult VulkanHelper::createBuffer(
-    VkBufferUsageFlags usageFlags,
-    VkMemoryPropertyFlags memoryPropertyFlags,
-    VulkanBuffer* buffer,
-    VkDeviceSize size,
-    void* data)
-{
-    VkBufferCreateInfo bufferInfo = {};
-    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    bufferInfo.size = size;
-    bufferInfo.usage = usageFlags;
-    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-    if (vkCreateBuffer(mVKDevice, &bufferInfo, nullptr, &buffer->buffer) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create buffer!");
-    }
-
-    VkMemoryRequirements memRequirements;
-    vkGetBufferMemoryRequirements(mVKDevice, buffer->buffer, &memRequirements);
-
-    VkMemoryAllocateInfo allocInfo = {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex =
-        _findMemoryType(
-            memRequirements.memoryTypeBits,
-            memoryPropertyFlags);
-    VkMemoryAllocateFlagsInfoKHR allocFlagsInfo{};
-    if (usageFlags & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) {
-        allocFlagsInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
-        allocFlagsInfo.flags = VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR;
-        allocInfo.pNext = &allocFlagsInfo;
-    }
-    if (vkAllocateMemory(mVKDevice, &allocInfo,
-        nullptr, &buffer->memory) != VK_SUCCESS) {
-        throw std::runtime_error("failed to allocate buffer memory!");
-    }
-
-    buffer->usageFlags = usageFlags;
-    buffer->memoryPropertyFlags = memoryPropertyFlags;
-    buffer->device = mVKDevice;
-    buffer->setupDescriptor();
-
-    if (data)
-    {
-        VK_CHECK_RESULT(buffer->map());
-        memcpy(buffer->mapped, data, size);
-        if ((memoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) == 0)
-            buffer->flush();
-
-        buffer->unmap();
-    }
-
-    return buffer->bind();
-}
-
 
 VkPhysicalDeviceProperties& VulkanHelper::_getVkPhysicalDeviceProperties()
 {
@@ -297,6 +242,64 @@ void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
     vkQueueWaitIdle(queue);
 }
 
+VkPipeline VulkanHelper::createComputePipeline(
+    const std::string& shaderName, 
+    VkPipelineLayout layout)
+{
+
+    Ogre::ShaderPrivateInfo* privateInfo =
+        ShaderManager::getSingleton().getShader(shaderName, EngineType_Vulkan);
+    String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->computeShaderName);
+    auto res = ResourceManager::getSingleton().getResource(privateInfo->computeShaderName);
+
+    if (res == nullptr)
+    {
+        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to find shader!");
+    }
+
+    VkShaderModuleInfo modudleInfo;
+    modudleInfo.shaderType = Ogre::ComputeShader;
+    glslCompileShader(
+        res->_fullname,
+        *vertexContent,
+        privateInfo->vertexShaderEntryPoint,
+        std::vector<std::pair<std::string, std::string>>(),
+        modudleInfo);
+
+    VkPipeline pipeline;
+    VkPipelineShaderStageCreateInfo stage{};
+    stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    stage.pNext = NULL;
+    stage.flags = 0;
+    stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+    stage.module = modudleInfo.shaderModule;
+    stage.pName = "main";
+    stage.pSpecializationInfo = nullptr;
+
+    ComputePipelineKey key;
+    key.pipelineLayout = layout;
+    key.shaderModule = modudleInfo.shaderModule;
+
+    auto itor = mComputePipelineCache.find(key);
+    if (itor != mComputePipelineCache.end())
+    {
+        return itor->second;
+    }
+  
+    VkComputePipelineCreateInfo create_info{};
+    create_info.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+    create_info.pNext = NULL;
+    create_info.flags = 0;
+    create_info.stage = stage;
+    create_info.layout = key.pipelineLayout;
+    create_info.basePipelineHandle = 0;
+    create_info.basePipelineIndex = 0;
+    vkCreateComputePipelines(mVKDevice, NULL, 1, &create_info,
+        nullptr, &pipeline);
+
+    mComputePipelineCache[key] = pipeline;
+    return pipeline;
+}
 
 void VulkanHelper::createCommandPool()
 {

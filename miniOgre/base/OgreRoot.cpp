@@ -17,7 +17,6 @@
 #include "dx11RenderSystem.h"
 #include "dx12RenderSystem.h"
 #include "VulkanRenderSystem.h"
-#include "VulkanRaytracingRenderSystem.h"
 #include "VideoManager.h"
 #include "shaderManager.h"
 #include "OgreEntity.h"
@@ -91,10 +90,10 @@ namespace Ogre {
         }
         else if (et == EngineType_VulkanRaytracing)
         {
-            VulkanRaytracingRenderSystem* engine = new VulkanRaytracingRenderSystem(wnd);
+            /*VulkanRaytracingRenderSystem* engine = new VulkanRaytracingRenderSystem(wnd);
             std::shared_ptr<RenderSystem> ans(engine);
 
-            mRenderSystem = ans;
+            mRenderSystem = ans;*/
         }
         else if (et == EngineType_Dx11)
         {

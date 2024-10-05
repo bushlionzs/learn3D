@@ -19,7 +19,7 @@
 
 #include <filament/DriverEnums.h>
 #include <filament/Handle.h>
-
+#include <filament/DriverBase.h>
 #include <utils/ostream.h>
 
 #include <stdint.h>
@@ -31,6 +31,7 @@ namespace filament::backend {
     struct PipelineState {
         Handle<HwProgram> program;                                              //  4
         Handle<HwVertexBufferInfo> vertexBufferInfo;                            //  4
+        PipelineLayout pipelineLayout;                                          // 16
         RasterState rasterState;                                                //  4
         StencilState stencilState;                                              // 12
         PolygonOffset polygonOffset;                                            //  8

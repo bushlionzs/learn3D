@@ -178,7 +178,7 @@ namespace filament {
         using Backend = backend::Backend;
         using DriverConfig = backend::Platform::DriverConfig;
         using FeatureLevel = backend::FeatureLevel;
-        using StereoscopicType = backend::StereoscopicType;
+        using StereoscopicType = backend::Platform::StereoscopicType;
 
         /**
          * Config is used to define the memory footprint used by the engine, such as the

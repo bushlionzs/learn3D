@@ -412,14 +412,6 @@ namespace vks
 			return vkGetBufferDeviceAddressKHR(device, &bufferDeviceAI);
 		}
 
-		uint64_t getBufferDeviceAddress(VulkanBuffer* buffer)
-		{
-			VkBufferDeviceAddressInfoKHR bufferDeviceAI{};
-			bufferDeviceAI.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
-			bufferDeviceAI.buffer = buffer->buffer;
-			return vkGetBufferDeviceAddressKHR(buffer->device, &bufferDeviceAI);
-		}
-
 		void copyBufferToImage(
 			VkCommandBuffer commandBuffer,
 			VkBuffer buffer,

@@ -157,6 +157,16 @@ namespace Ogre {
 					shaderFormat->shaderInfo[EngineType_Dx11].privateInfo.fragShaderEntryPoint = aa[1];
 				}
 			}
+			else if (pair.first == "compute_shader")
+			{
+				shaderFormat->shaderInfo[enginetype].privateInfo.computeShaderName = aa[0];
+				shaderFormat->shaderInfo[enginetype].privateInfo.computeShaderEntryPoint = aa[1];
+				if (enginetype == EngineType_Dx12)
+				{
+					shaderFormat->shaderInfo[EngineType_Dx11].privateInfo.computeShaderName = aa[0];
+					shaderFormat->shaderInfo[EngineType_Dx11].privateInfo.computeShaderEntryPoint = aa[1];
+				}
+			}
 			
 		}
 		return true;

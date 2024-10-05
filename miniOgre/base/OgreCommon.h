@@ -52,6 +52,10 @@ namespace Ogre {
     struct Vector3i
     {
         int32_t _x, _y, _z;
+        Vector3i()
+        {
+
+        }
         Vector3i(int32_t x, int32_t y, int32_t z)
         {
             _x = x;

@@ -17,7 +17,7 @@ namespace filament::backend {
 class VulkanRenderSystemBase;
 
 
-class VulkanTexture :public Ogre::OgreTexture
+class VulkanTexture :public Ogre::OgreTexture, public HwTexture
 {
 public:
     VulkanTexture(
@@ -76,10 +76,13 @@ public:
     }
     VulkanLayout getLayout(uint32_t layer, uint32_t level) const;
     void setLayout(const VkImageSubresourceRange& range, VulkanLayout newLayout);
+    bool transitionReady();
     void transitionLayout(
         VkCommandBuffer cmdbuf,
         const VkImageSubresourceRange& range, 
         VulkanLayout newLayout);
+
+    
 
     void updateTextureData();
     void* getVulkanBuffer(uint32_t offset);

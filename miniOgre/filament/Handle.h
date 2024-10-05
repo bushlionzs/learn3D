@@ -39,7 +39,9 @@ struct HwVertexBufferInfo;
 struct HwVertexBuffer;
 struct HwTexture;
 struct HwRenderTarget;
-
+struct HwDescriptorSetLayout;
+struct HwDescriptorSet;
+struct HwPipelineLayout;
 /*
  * A handle to a backend resource. HandleBase is for internal use only.
  * HandleBase *must* be a trivial for the purposes of calls, that is, it cannot have user-defined

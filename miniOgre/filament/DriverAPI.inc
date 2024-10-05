@@ -126,8 +126,6 @@
  * Driver API below...
  */
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
 
 DECL_DRIVER_API_0(tick)
 
@@ -303,7 +301,6 @@ DECL_DRIVER_API_SYNCHRONOUS_0(bool, isFrameTimeSupported)
 DECL_DRIVER_API_SYNCHRONOUS_0(bool, isAutoDepthResolveSupported)
 DECL_DRIVER_API_SYNCHRONOUS_0(bool, isSRGBSwapChainSupported)
 DECL_DRIVER_API_SYNCHRONOUS_0(bool, isProtectedContentSupported)
-DECL_DRIVER_API_SYNCHRONOUS_N(bool, isStereoSupported, backend::StereoscopicType, stereoscopicType)
 DECL_DRIVER_API_SYNCHRONOUS_0(bool, isParallelShaderCompileSupported)
 DECL_DRIVER_API_SYNCHRONOUS_0(bool, isDepthStencilResolveSupported)
 DECL_DRIVER_API_SYNCHRONOUS_N(bool, isDepthStencilBlitSupported, backend::TextureFormat, format)
@@ -534,7 +531,6 @@ DECL_DRIVER_API_N(scissor,
         Viewport, scissor)
 
 
-#pragma clang diagnostic pop
 
 #undef EXPAND
 

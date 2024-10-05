@@ -19,17 +19,80 @@
 #include "VulkanTools.h"
 #include "VulkanRenderData.h"
 
+static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevice,
+    VkDevice device) {
+    VmaAllocator allocator;
+    VmaVulkanFunctions const funcs{
+#if VMA_DYNAMIC_VULKAN_FUNCTIONS
+        .vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+        .vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+#else
+        .vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties,
+        .vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties,
+        .vkAllocateMemory = vkAllocateMemory,
+        .vkFreeMemory = vkFreeMemory,
+        .vkMapMemory = vkMapMemory,
+        .vkUnmapMemory = vkUnmapMemory,
+        .vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges,
+        .vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges,
+        .vkBindBufferMemory = vkBindBufferMemory,
+        .vkBindImageMemory = vkBindImageMemory,
+        .vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements,
+        .vkGetImageMemoryRequirements = vkGetImageMemoryRequirements,
+        .vkCreateBuffer = vkCreateBuffer,
+        .vkDestroyBuffer = vkDestroyBuffer,
+        .vkCreateImage = vkCreateImage,
+        .vkDestroyImage = vkDestroyImage,
+        .vkCmdCopyBuffer = vkCmdCopyBuffer,
+        .vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR,
+        .vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR
+#endif
+    };
+    VmaAllocatorCreateInfo const allocatorInfo{
+        .physicalDevice = physicalDevice,
+        .device = device,
+        .pVulkanFunctions = &funcs,
+        .instance = instance,
+    };
+    vmaCreateAllocator(&allocatorInfo, &allocator);
+    return allocator;
+}
 
 VulkanRenderSystemBase::VulkanRenderSystemBase()
     :mStagePool(nullptr, nullptr),
     mResourceAllocator(8388608, false)
 {
-
+    new VulkanHelper(this);
 }
 
 VulkanRenderSystemBase::~VulkanRenderSystemBase()
 {
 
+}
+
+bool VulkanRenderSystemBase::engineInit()
+{
+    mVulkanPlatform = new VulkanPlatform();
+
+
+    VulkanHelper& helper = VulkanHelper::getSingleton();
+    helper._initialise(mVulkanPlatform);
+
+    auto device = mVulkanPlatform->getDevice();
+    mAllocator = createAllocator(
+        mVulkanPlatform->getInstance(), mVulkanPlatform->getPhysicalDevice(), device);
+
+
+    auto queue = mVulkanPlatform->getGraphicsQueue();
+    auto queueIndex = mVulkanPlatform->getGraphicsQueueIndex();
+
+    mCommands = new VulkanCommands(device, queue, queueIndex, &mVulkanContext, &mResourceAllocator);
+
+
+    mPipelineCache = helper.getPipelineCache();
+
+    mDescriptorSetManager = new VulkanDescriptorSetManager(device, &mResourceAllocator);
+    return true;
 }
 
 OgreTexture* VulkanRenderSystemBase::createTextureFromFile(
@@ -920,3 +983,53 @@ void VulkanRenderSystemBase::updateBufferObject(
     bo->buffer.loadFromCpu(commands.buffer(), data, 0, size);
 }
 
+Handle<HwDescriptorSetLayout> VulkanRenderSystemBase::createDescriptorSetLayout(DescriptorSetLayout& info)
+{
+    Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
+    VulkanDescriptorSetLayout* layout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(
+        dslh, info);
+    mDescriptorSetManager->initVkLayout(layout);
+    return dslh;
+}
+
+Handle<HwDescriptorSet> VulkanRenderSystemBase::createDescriptorSet(Handle<HwDescriptorSetLayout> dslh)
+{
+    Handle<HwDescriptorSet> dsh = mResourceAllocator.allocHandle<HwDescriptorSet>();
+
+    auto layout = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(dslh);
+    mDescriptorSetManager->createSet(dsh, layout);
+    return dsh;
+}
+
+void VulkanRenderSystemBase::updateDescriptorSetBuffer(
+    Handle<HwDescriptorSet> dsh,
+    backend::descriptor_binding_t binding,
+    backend::BufferObjectHandle boh,
+    uint32_t offset,
+    uint32_t size)
+{
+    VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
+    VulkanBufferObject* obj = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
+    mDescriptorSetManager->updateBuffer(set, binding, obj, offset, size);
+}
+
+void VulkanRenderSystemBase::updateDescriptorSetTexture(
+    Handle<HwDescriptorSet> dsh,
+    backend::descriptor_binding_t binding,
+    backend::TextureHandle th,
+    SamplerParams params)
+{
+    VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
+    VulkanTexture* texture = mResourceAllocator.handle_cast<VulkanTexture*>(th);
+    VkSampler const vksampler = VulkanHelper::getSingleton().getSampler(params);
+    mDescriptorSetManager->updateSampler(set, binding, texture, vksampler);
+}
+
+void VulkanRenderSystemBase::bindDescriptorSet(
+    Handle<HwDescriptorSet> dsh,
+    uint8_t setIndex,
+    backend::DescriptorSetOffsetArray&& offsets)
+{
+    VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
+    mDescriptorSetManager->bind(setIndex, set, std::move(offsets));
+}

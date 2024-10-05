@@ -61,7 +61,6 @@ using namespace bluevk;
 }
 #endif
 
-class VulkanBuffer;
 class VulkanTexture;
 
 namespace vks
@@ -134,8 +133,6 @@ namespace vks
 		uint32_t alignedSize(uint32_t value, uint32_t alignment);
 
 		uint64_t getBufferDeviceAddress(VkDevice device, VkBuffer buffer);
-
-		uint64_t getBufferDeviceAddress(VulkanBuffer* buffer);
 
 		void copyBufferToImage(
 			VkCommandBuffer commandBuffer,

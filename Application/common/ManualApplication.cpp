@@ -14,6 +14,7 @@
 #include "GameTableManager.h"
 #include "CEGUIManager.h"
 #include <ResourceParserManager.h>
+#include "pass.h"
 
 
 
@@ -141,28 +142,9 @@ void ManualApplication::render()
 	Ogre::Root::getSingleton()._fireFrameStarted();
 
 	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
-	for (auto& pass : mPassList)
+	for (auto pass : mPassList)
 	{
-		if (!pass.color)
-		{
-			mPassInfo.renderTargetCount = 0;
-		}
-		else
-		{
-			mPassInfo.renderTargetCount = 1;
-		}
-		mPassInfo.renderTargets[0].renderTarget = pass.color;
-		mPassInfo.depthTarget.depthStencil = pass.depth;
-		mPassInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-		mPassInfo.depthTarget.clearValue = { 1.0f, 0.0f };
-		mPassInfo.cam = pass.cam;
-		mPassInfo.shadowPass = pass.shadowPass;
-		mPassInfo.shadowMap = pass.shadowMap;
-		mRenderSystem->beginRenderPass(mPassInfo);
-		static EngineRenderList engineRenerList;
-		mSceneManager->getSceneRenderList(pass.cam, engineRenerList, pass.shadowPass);
-		mRenderSystem->multiRender(engineRenerList.mOpaqueList);
-		mRenderSystem->endRenderPass();
+		pass->execute(mRenderSystem);
 	}
 
 

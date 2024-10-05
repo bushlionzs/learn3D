@@ -15,7 +15,7 @@
  */
 
 #include "filament/SamplerGroup.h"
-
+#include "filament/DriverBase.h"
 #include "filament/DriverApi.h"
 
 #include "filament/BufferDescriptor.h"

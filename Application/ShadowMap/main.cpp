@@ -25,7 +25,7 @@ int main()
 	if (manual)
 	{
 		ManualApplication app;
-		info.pass = [&instance, &app](std::vector<BasicPass>& passlist) {
+		info.pass = [&instance, &app](std::vector<PassBase*>& passlist) {
 			instance.updatePass(passlist);
 			};
 		app.run(info);
