@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "shader.h"
+#include <engine_struct.h>
 #include "LightHelper.h"
 
 class Dx11RenderSystem;
@@ -13,7 +13,7 @@ class VertexDeclaration;
 
 
 
-class Dx11Shader:public Shader
+class Dx11Shader
 {
 public:
     typedef std::vector<D3D11_SIGNATURE_PARAMETER_DESC> D3d11ShaderParameters;

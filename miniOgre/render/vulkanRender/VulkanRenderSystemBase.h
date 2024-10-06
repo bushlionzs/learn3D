@@ -16,6 +16,7 @@ class VulkanGraphicsCommandList;
 class VulkanFrame;
 class VulkanWindow;
 class VulkanPipelineCache;
+class VulkanPipelineLayoutCache;
 class Ogre::ICamera;
 
 class VulkanRenderSystemBase: public RenderSystem
@@ -62,7 +63,7 @@ protected:
     virtual Handle<HwBufferObject> createBufferObject(
         BufferObjectBinding bindingType,
         BufferUsage usage,
-        uint32_t bufferCount) override;
+        uint32_t byteCount) override;
 
     virtual void updateBufferObject(
         Handle<HwBufferObject> boh,
@@ -70,7 +71,14 @@ protected:
         uint32_t size) override;
 
     virtual Handle<HwDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout& info) override;
+    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t index) override;
     virtual Handle<HwDescriptorSet> createDescriptorSet(Handle<HwDescriptorSetLayout> dslh) override;
+    virtual Handle<HwPipelineLayout> createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts) override;
+    virtual Handle<HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo) override;
+    virtual Handle<HwPipeline> createPipeline(
+        backend::RasterState& rasterState, 
+        Handle<HwProgram>& program) override;
+
     virtual void bindDescriptorSet(
         Handle<HwDescriptorSet> dsh,
         uint8_t setIndex,
@@ -98,7 +106,7 @@ protected:
 
 
     VulkanPipelineCache* mPipelineCache = nullptr;
-
+    VulkanPipelineLayoutCache* mPipelineLayoutCache = nullptr;
     VmaAllocator mAllocator = VK_NULL_HANDLE;
     VulkanResourceAllocator mResourceAllocator;
 

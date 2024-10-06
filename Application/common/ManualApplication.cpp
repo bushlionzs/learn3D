@@ -38,16 +38,19 @@ bool ManualApplication::frameStarted(const FrameEvent& evt)
 bool ManualApplication::appInit()
 {
 	mApplicationWindow = new ApplicationWindow();
-	int width = 1280;
-	int height = 720;
-	mApplicationWindow->createWindow(width, height);
+
+	new Ogre::Root();
+	Ogre::Root::getSingleton()._initialise();
+
+	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+
+	mApplicationWindow->createWindow(ogreConfig.width, ogreConfig.height);
 	
 	HWND wnd = mApplicationWindow->getWnd();
 	
 	
-	new Ogre::Root();
-	Ogre::Root::getSingleton()._initialise();
-	Ogre::Root::getSingleton().updateMainRect({0, 0, width, height});
+	
+
 
 	if (!InputManager::getSingletonPtr())
 	{
@@ -60,14 +63,11 @@ bool ManualApplication::appInit()
 	{
 		return false;
 	}
-	/*new EngineManager;
-	EngineManager::getSingleton().initialise();*/
-
 	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
 	Ogre::NameValuePairList params;
 	params["externalWindowHandle"] = Ogre::StringConverter::toString((uint64_t)wnd);
 	params["backGroundColor"] = Ogre::StringConverter::toString(color);
-	mRenderWindow = mRenderSystem->createRenderWindow("", width, height, &params);
+	mRenderWindow = mRenderSystem->createRenderWindow("", ogreConfig.width, ogreConfig.height, &params);
 
 	ResourceParserManager::getSingleton()._initialise();
 	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources"), "sujian", true);
@@ -91,10 +91,6 @@ bool ManualApplication::appInit()
 		new CEGUIManager;
 		CEGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
-	
-
-	
-	
 	return true;
 }
 

@@ -410,11 +410,10 @@ bool GameScene::getIntersectObject(
 	std::vector<Orphigine::ActorPtr>& objects)
 {
 	auto mainCamera = EngineManager::getSingleton().getMainCamera();
-
-	auto rt = Ogre::Root::getSingleton().getMainRect();
+	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	
-	float screenX = (winx - rt.left) / rt.width();
-	float screenY = (winy - rt.top) / rt.height();
+	float screenX = winx/ ogreConfig.width;
+	float screenY = winy/ ogreConfig.height;
 	auto ray = mainCamera->getCameraToViewportRay(screenX, screenY);
 
 	std::map<uint64_t, Orphigine::ActorPtr> aa;

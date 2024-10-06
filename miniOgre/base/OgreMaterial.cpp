@@ -15,15 +15,11 @@ namespace Ogre {
 
     Material::Material(const std::string& name, bool pbr)
     {
-        if (name == "3low")
-        {
-            int kk = 0;
-        }
-        mTransform = Ogre::Matrix4::IDENTITY;
-
         mMaterialName = name;
-
         mPbr = pbr;
+        
+
+        
     }
 
 
@@ -80,14 +76,6 @@ namespace Ogre {
             return;
         }
 
-
-        if (!mVideoName.empty())
-        {
-
-            VideoManager::getSingleton()._playVideoMaterial(mMaterialName);
-        }
-
-
         for (auto& it : mTextureUnits)
         {
             if (!it->isLoaded())
@@ -95,6 +83,8 @@ namespace Ogre {
                 it->_load(job);
             }
         }
+
+        createFrameResourceInfo();
 
         mLoad = true;
 
@@ -121,28 +111,68 @@ namespace Ogre {
         }
     }
 
-    bool Material::createUniformBuffer(uint32_t binding, uint32_t size)
+    FrameResourceInfo* Material::getFrameResourceInfo(uint32_t frameIndex)
     {
-        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-        Handle<HwBufferObject> handle = rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::STATIC, size);
-        mUniformHandleMap[binding] = handle;
-        return true;
+        return &mFrameResourceInfoList[frameIndex];
     }
 
-    bool Material::updateUniformBuffer(uint32_t binding, const char* data, uint32_t size)
+    void Material::createFrameResourceInfo()
     {
-        auto itor = mUniformHandleMap.find(binding);
-        if (itor != mUniformHandleMap.end())
+        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
+        mProgramHandle = rs->createShaderProgram(mShaderInfo);
+        mPipelineHandle = rs->createPipeline(mRasterState, mProgramHandle);
+
+        mUboLayoutHandle = rs->getDescriptorSetLayout(mProgramHandle, 0);
+        mSamplerLayoutHandle = rs->getDescriptorSetLayout(mProgramHandle, 0);
+        auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+        
+        
+        mFrameResourceInfoList.resize(ogreConfig.swapBufferCount);
+
+       
+
+        for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
         {
-            auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-            rs->updateBufferObject(itor->second, data, size);
+            FrameResourceInfo* resourceInfo = &mFrameResourceInfoList[i];
+            Handle<HwBufferObject> objectBufferHandle = 
+                rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(ObjectConstantBuffer));
+            resourceInfo->modelObjectHandle = objectBufferHandle;
+
+            Handle<HwBufferObject> matBufferHandle;
+            if (mPbr)
+            {
+                rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(PbrMaterialConstanceBuffer));
+            }
+            else
+            {
+                rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(GeneralMaterialConstantBuffer));
+            }
+                
+            resourceInfo->matObjectHandle = matBufferHandle;
+                
+            
+            resourceInfo->uboShadowSet = rs->createDescriptorSet(mUboLayoutHandle);
+            resourceInfo->uboSet = rs->createDescriptorSet(mUboLayoutHandle);
+            resourceInfo->samplerSet = rs->createDescriptorSet(mSamplerLayoutHandle);
+
+            rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 0, objectBufferHandle, 0, sizeof(ObjectConstantBuffer));
+            rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 2, matBufferHandle, 0, sizeof(PbrMaterialConstanceBuffer));
+
+            if (mHasSkinData)
+            {
+                resourceInfo->skinObjectHandle =
+                    rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(SkinnedConstantBuffer));
+
+                rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 3, 
+                    resourceInfo->skinObjectHandle, 0, sizeof(SkinnedConstantBuffer));
+            }
+            
         }
-        else
-        {
-            assert(false);
-        }
-        return true;
+
+
     }
+
 
 
     bool Material::isLoaded()
@@ -182,6 +212,19 @@ namespace Ogre {
     void Material::addShader(ShaderInfo& sinfo)
     {
         mShaderInfo = sinfo;
+
+        mShaderInfo.uboVertexMask = 1 & 2;
+        mShaderInfo.uboFragMask = 2 & 4;
+        mShaderInfo.samplerFragMask = 1 & 2 & 4 & 8 & 16;
+
+        for (auto& pair : mShaderInfo.shaderMacros)
+        {
+            if (pair.first == "SKINNED")
+            {
+                mHasSkinData = true;
+                break;
+            }
+        }
     }
 
     const ShaderInfo& Material::getShaderInfo()
@@ -199,11 +242,6 @@ namespace Ogre {
         mAnimation = true;
         mUFactor = u;
         mVFactor = v;
-    }
-
-    void Material::updateMatInfo(PbrMaterialConstanceBuffer& mcb)
-    {
-        mPbrMatInfo = mcb;
     }
 
     PbrMaterialConstanceBuffer& Material::getMatInfo()
@@ -256,6 +294,16 @@ namespace Ogre {
         return Ogre::Vector2(mUOffset, mVOffset);
     }
 
+    const Ogre::ColourBlendState& Material::getBlendState() const
+    {
+        return mBlendState;
+    }
+
+    void Material::setBlendState(Ogre::ColourBlendState& state)
+    {
+        mBlendState = state;
+    }
+
     void Material::setCullMode(Ogre::CullingMode mode)
     {
         mCullingMode = mode;
@@ -268,11 +316,6 @@ namespace Ogre {
 
     Material& Material::operator=(const Material& rhs)
     {
-        mAmbient = rhs.mAmbient;
-        mDiffuse = rhs.mDiffuse;
-        mSpecular = rhs.mSpecular;
-        mReflect = rhs.mReflect;
-        mTransform = rhs.mTransform;
         mAnimation = rhs.mAnimation;
         mUOffset = rhs.mUOffset;
         mVOffset = rhs.mVOffset;
@@ -295,91 +338,5 @@ namespace Ogre {
     bool Material::isTransparent()
     {
         return false;
-    }
-
-    uint64_t Material::getHandle()
-    {
-        return 0;
-    }
-
-    void Material::setAmbient(float red, float green, float blue)
-    {
-
-    }
-
-    void Material::setAmbient(const ColourValue& selfIllum)
-    {
-
-    }
-    void Material::setDiffuse(float red, float green, float blue, float alpha)
-    {
-
-    }
-    void Material::setDiffuse(const ColourValue& selfIllum)
-    {
-
-    }
-    void Material::setSelfIllumination(float red, float green, float blue)
-    {
-
-    }
-    void Material::setSpecular(float red, float green, float blue, float alpha)
-    {
-
-    }
-
-    /// @overload
-    void Material::setSpecular(const ColourValue& specular)
-    {
-
-    }
-
-    /// @overload
-    void Material::setSelfIllumination(const ColourValue& selfIllum)
-    {
-
-    }
-    const ColourValue& Material::getSelfIllumination()
-    {
-        return ColourValue::Black;
-    }
-
-    void Material::setShininess(Real val)
-    {
-
-    }
-
-    void Material::setFog(
-        bool overrideScene,
-        FogMode mode,
-        const ColourValue& colour,
-        Real expDensity, Real linearStart, Real linearEnd)
-    {
-
-    }
-
-    void Material::setSceneBlending(const SceneBlendType sbt)
-    {
-
-    }
-
-    void Material::touch()
-    {
-
-    }
-
-    void Material::setVideoName(const String& videoName)
-    {
-        mVideoName = videoName;
-    }
-
-    bool Material::_isVideo()
-    {
-        return !mVideoName.empty();
-    }
-
-    String Material::getVideoName()
-    {
-        return mVideoName;
     }
 }

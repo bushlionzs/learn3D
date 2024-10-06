@@ -41,7 +41,7 @@ public:
 	void updateObject(const VulkanObjectDesc& desc, const char* data, uint32_t size);
 private:
 	std::unique_ptr<VulkanUploadBuffer<ObjectConstantBuffer>>  mObjectCB;
-	std::unique_ptr<VulkanUploadBuffer<MaterialConstantBuffer>>  mMaterialCB;
+	std::unique_ptr<VulkanUploadBuffer<GeneralMaterialConstantBuffer>>  mMaterialCB;
 	std::unique_ptr<VulkanUploadBuffer<PbrMaterialConstanceBuffer>>  mPBRMaterialCB;
 	std::unique_ptr<VulkanUploadBuffer<SkinnedConstantBuffer>> mSkinnedCB;
 

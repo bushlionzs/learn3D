@@ -18,6 +18,8 @@
 #include "VulkanMappings.h"
 #include "VulkanTools.h"
 #include "VulkanRenderData.h"
+#include "VulkanPipelineLayoutCache.h"
+#include "shaderManager.h"
 
 static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevice,
     VkDevice device) {
@@ -149,7 +151,7 @@ void VulkanRenderSystemBase::updateMainPassCB(ICamera* camera)
     mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
     mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 
-    auto frameNumber = Ogre::Root::getSingleton().getNextFrameNumber();
+    auto frameNumber = Ogre::Root::getSingleton().getCurrentFrame();
     auto frameIndex = frameNumber % VULKAN_FRAME_RESOURCE_COUNT;
 
     VulkanFrame* frame = VulkanHelper::getSingleton()._getFrame(frameIndex);
@@ -963,12 +965,12 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateBRDFLUT(const std::string& na
 Handle<HwBufferObject> VulkanRenderSystemBase::createBufferObject(
     BufferObjectBinding bindingType,
     BufferUsage usage,
-    uint32_t bufferCount)
+    uint32_t byteCount)
 {
     Handle<HwBufferObject> boh =  mResourceAllocator.allocHandle<VulkanBufferObject>();
 
     auto bufferObject = mResourceAllocator.construct<VulkanBufferObject>(boh, mAllocator,
-        mStagePool, bufferCount, bindingType);
+        mStagePool, byteCount, bindingType);
 
     return boh;
 }
@@ -985,11 +987,17 @@ void VulkanRenderSystemBase::updateBufferObject(
 
 Handle<HwDescriptorSetLayout> VulkanRenderSystemBase::createDescriptorSetLayout(DescriptorSetLayout& info)
 {
-    Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
-    VulkanDescriptorSetLayout* layout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(
-        dslh, info);
-    mDescriptorSetManager->initVkLayout(layout);
+    Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<HwDescriptorSetLayout>();
+    VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(dslh, info);
+    mDescriptorSetManager->initVkLayout(uboLayout);
     return dslh;
+}
+
+Handle<HwDescriptorSetLayout> VulkanRenderSystemBase::getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t index)
+{
+    VulkanProgram* vulkanProgram = mResourceAllocator.handle_cast<VulkanProgram*>(programHandle);
+
+    return vulkanProgram->getLayout(index);
 }
 
 Handle<HwDescriptorSet> VulkanRenderSystemBase::createDescriptorSet(Handle<HwDescriptorSetLayout> dslh)
@@ -999,6 +1007,174 @@ Handle<HwDescriptorSet> VulkanRenderSystemBase::createDescriptorSet(Handle<HwDes
     auto layout = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(dslh);
     mDescriptorSetManager->createSet(dsh, layout);
     return dsh;
+}
+
+Handle<HwPipelineLayout> VulkanRenderSystemBase::createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts)
+{
+    Handle<HwPipelineLayout> plo = mResourceAllocator.allocHandle<HwPipelineLayout>();
+    uint32_t index = 0;
+
+    VulkanPipelineLayoutCache::PipelineLayoutKey key;
+    for (auto& layoutHandle : layouts)
+    {
+        auto layout = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(layoutHandle);
+        VkDescriptorSetLayout vkLayout = layout->getVkLayout();
+        key[index] = vkLayout;
+        index++;
+    }
+    VkPipelineLayout vulkanPipelineLayout = mPipelineLayoutCache->getLayout(key);
+    VulkanPipelineLayout* pipeLayout = mResourceAllocator.construct<VulkanPipelineLayout>(plo, vulkanPipelineLayout);
+    return plo;
+}
+
+Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& shaderInfo)
+{
+    Handle<HwProgram> program = mResourceAllocator.allocHandle<HwProgram>();
+    VulkanProgram* vulkanProgram = mResourceAllocator.construct<VulkanProgram>(program, shaderInfo.shaderName);
+
+    Ogre::ShaderPrivateInfo* privateInfo =
+        ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
+
+    auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+    if (res)
+    {
+        String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
+        VkShaderModuleInfo moduleInfo;
+        moduleInfo.shaderType = Ogre::VertexShader;
+        glslCompileShader(
+            res->_fullname,
+            *vertexContent,
+            privateInfo->vertexShaderEntryPoint,
+            shaderInfo.shaderMacros,
+            moduleInfo);
+        vulkanProgram->updateVertexShader(moduleInfo.shaderModule);
+    }
+    
+    res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
+    if (res)
+    {
+        String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
+        VkShaderModuleInfo moduleInfo;
+        moduleInfo.shaderType = Ogre::PixelShader;
+
+        glslCompileShader(
+            res->_fullname,
+            *vertexContent,
+            privateInfo->vertexShaderEntryPoint,
+            shaderInfo.shaderMacros,
+            moduleInfo);
+        vulkanProgram->updateFragmentShader(moduleInfo.shaderModule);
+    }
+    
+    DescriptorSetLayout info;
+    info.bindings.reserve(4);
+    DescriptorSetLayoutBinding binding;
+    for (auto i = 0; i < 16; i++)
+    {
+        bool hasVertex = (shaderInfo.uboVertexMask & (1uLL << i)) != 0;
+        bool hasFragment = (shaderInfo.uboFragMask & (1uLL << i)) != 0;
+
+        if (!hasVertex && !hasFragment)
+            continue;
+        binding.binding = i;
+
+        binding.flags = DescriptorFlags::NONE;
+        binding.count = 0;
+        binding.type = DescriptorType::UNIFORM_BUFFER;
+        if (hasVertex)
+        {
+            binding.stageFlags = ShaderStageFlags::VERTEX;
+        }
+
+        if (hasFragment)
+        {
+            binding.stageFlags = static_cast<ShaderStageFlags>(
+                binding.stageFlags | ShaderStageFlags::FRAGMENT);
+        }
+
+        info.bindings.push_back(binding);
+    }
+
+    Handle<HwDescriptorSetLayout> uboLayoutHandle = mResourceAllocator.allocHandle<HwDescriptorSetLayout>();
+    VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(uboLayoutHandle, info);
+    mDescriptorSetManager->initVkLayout(uboLayout);
+
+    info.bindings.clear();
+
+    for (auto i = 0; i < 32; i++)
+    {
+        binding.binding = i;
+        binding.flags = DescriptorFlags::NONE;
+        binding.count = 0;
+        binding.type = DescriptorType::SAMPLER;
+
+   
+        binding.stageFlags = static_cast<ShaderStageFlags>(
+            binding.stageFlags | ShaderStageFlags::FRAGMENT);
+
+
+        info.bindings.push_back(binding);
+    }
+
+    Handle<HwDescriptorSetLayout> samplerLayoutHandle = mResourceAllocator.allocHandle<HwDescriptorSetLayout>();
+    VulkanDescriptorSetLayout* samplerLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(uboLayoutHandle, info);
+    mDescriptorSetManager->initVkLayout(samplerLayout);
+    VulkanPipelineLayoutCache::PipelineLayoutKey key;
+    key[0] = uboLayout->getVkLayout();
+    key[1] = samplerLayout->getVkLayout();
+    
+    VkPipelineLayout vulkanPipelineLayout = mPipelineLayoutCache->getLayout(key);
+    vulkanProgram->updateVulkanPipelineLayout(vulkanPipelineLayout);
+    vulkanProgram->updateLayout(0, uboLayoutHandle);
+    vulkanProgram->updateLayout(1, samplerLayoutHandle);
+    return program;
+}
+
+Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
+    backend::RasterState& rasterState,
+    Handle<HwProgram>& program)
+{
+    Handle<HwPipeline> pipelineHandle = mResourceAllocator.allocHandle<HwPipeline>();
+    
+    VulkanProgram* vulkanProgram = mResourceAllocator.handle_cast<VulkanProgram*>(program);
+    VkPipelineLayout pipelineLayout = vulkanProgram->getVulkanPipelineLayout();
+    VulkanPipelineCache::RasterState vulkanRasterState;
+    vulkanRasterState.cullMode = getCullMode(rasterState.culling);
+    vulkanRasterState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    vulkanRasterState.depthBiasEnable = VK_FALSE;
+
+
+    vulkanRasterState.blendEnable = rasterState.hasBlending();
+    vulkanRasterState.depthWriteEnable = rasterState.depthWrite;
+    vulkanRasterState.alphaToCoverageEnable = rasterState.alphaToCoverage;
+
+    vulkanRasterState.srcColorBlendFactor = getBlendFactor(rasterState.blendFunctionSrcRGB);
+    vulkanRasterState.dstColorBlendFactor = getBlendFactor(rasterState.blendFunctionDstRGB);
+    vulkanRasterState.srcAlphaBlendFactor = getBlendFactor(rasterState.blendFunctionSrcAlpha);
+    vulkanRasterState.dstAlphaBlendFactor = getBlendFactor(rasterState.blendFunctionDstAlpha);
+    vulkanRasterState.colorBlendOp = rasterState.blendEquationRGB;
+    vulkanRasterState.alphaBlendOp = rasterState.blendEquationAlpha;
+
+    vulkanRasterState.colorWriteMask = 0xf;
+    vulkanRasterState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+    vulkanRasterState.colorTargetCount = 1;
+    vulkanRasterState.depthCompareOp = SamplerCompareFunc::LE;
+    vulkanRasterState.depthBiasConstantFactor = 0.0f;
+    vulkanRasterState.depthBiasSlopeFactor = 0.0f;
+
+    mPipelineCache->bindRenderPass(nullptr, 0);
+    mPipelineCache->bindProgram(vulkanProgram->getVertexShader(), vulkanProgram->getFragmentShader());
+    mPipelineCache->bindRasterState(vulkanRasterState);
+    mPipelineCache->bindPrimitiveTopology(VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    mPipelineCache->bindLayout(pipelineLayout);
+    VkPipeline pipeline = mPipelineCache->getPipeline();
+
+    mPipelineCache->bindProgram(vulkanProgram->getVertexShader(), nullptr);
+
+    VkPipeline pipelineShadow = mPipelineCache->getPipeline();
+    VulkanPipeline* vulkanPipeline = mResourceAllocator.construct<VulkanPipeline>(
+        pipelineHandle, pipeline, pipelineShadow);
+    return pipelineHandle;
 }
 
 void VulkanRenderSystemBase::updateDescriptorSetBuffer(

@@ -5,6 +5,7 @@
 #include "glslUtil.h"
 #include <DriverEnums.h>
 #include "VulkanPipelineCache.h"
+#include "VulkanPipelineLayoutCache.h"
 #include "VulkanUploadBuffer.h"
 #include "VulkanObjectPool.h"
 #include "VulkanCommands.h"
@@ -18,18 +19,10 @@ class VertexDeclaration;
 class VulkanFrameRenderableData
 {
 public:
-	VulkanObjectDesc mObjectDesc;
-	VulkanObjectDesc mMaterialDesc;
-	VulkanObjectDesc mPBRMaterialDesc;
-	VulkanObjectDesc mSkinnedDesc;
-
-	ObjectConstantBuffer mObjectConstantBuffer;
-	MaterialConstantBuffer mMaterialConstantBuffer;
-	PbrMaterialConstanceBuffer mPBRMaterialConstantBuffer;
-	VkDescriptorSet mDescriptorSet;
-	VkDescriptorSet mDescriptorSetSampler;
-	VkDescriptorSet mDescriptorSetSamplerPbr;
-	bool mDescriptorSetUpdate = false;
+	Handle<HwDescriptorSet> uboSet;
+	Handle<HwDescriptorSet> uboShadowSet;
+	Handle<HwDescriptorSet> samplerSet;
+	
 };
 
 
@@ -93,8 +86,7 @@ private:
 private:
 	VulkanRenderSystemBase* mEngine;
 	VkDevice mDevice;
-	std::vector<VulkanFrameRenderableData> _frameRenderableData;
-	std::vector<VulkanFrameRenderableData> _frameRenderableShadowData;
+	std::vector<VulkanFrameRenderableData> mFrameRenderableData;
 	
 	std::vector<VkVertexInputBindingDescription> mVertexInputBindings;
 	std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
@@ -108,7 +100,12 @@ private:
 
 	DescriptorSetLayout mUBOLayoutInfo;
 	DescriptorSetLayout mSamplerLayoutInfo;
-	std::array <VkDescriptorSetLayout, 2> mLayouts;
+
+	Handle<HwDescriptorSetLayout> mUBOLayout;
+	Handle<HwDescriptorSetLayout> mSamplerLayout;
+
+	VulkanPipelineLayoutCache::PipelineLayoutKey mLayouts;
+
 	VkPipelineLayout mPipelineLayout;
 
 	GeometryNode mGeometryNode;
@@ -126,6 +123,4 @@ private:
 	uint64_t mLastFrame = 0xffffffff;
 
 	VulkanCommands* mCommands;
-
-	VkPipeline mPipeline = VK_NULL_HANDLE;
 };

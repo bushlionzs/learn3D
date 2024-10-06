@@ -224,10 +224,10 @@ InputManager::InputManager() :
 {
 	
 
-	auto rt = Ogre::Root::getSingleton().getMainRect();
+	auto config = Ogre::Root::getSingleton().getEngineConfig();
 
-	mWidth = rt.width();
-	mHeight = rt.height();
+	mWidth = config.width;
+	mHeight = config.height;
 }
 
 InputManager::~InputManager()

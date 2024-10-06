@@ -110,7 +110,6 @@ namespace CEGUI
         if (src.get() != tex.get())
         {
             tu->setTexture(0, tex);
-            mMaterial->setChanged(true);
         }
         
     }
@@ -127,8 +126,7 @@ namespace CEGUI
 
         std::string tmp(texName.c_str());
         tu->updateTexture(0, tmp);
-        mMaterial->setChanged(true);
-      
+        assert(false);
     }
 
 //----------------------------------------------------------------------------//

@@ -13,14 +13,14 @@ class FrameRenderableData
 {
 private:
     std::unordered_map<Ogre::ICamera*, std::shared_ptr<UploadBuffer<ObjectConstantBuffer>>> mCamaraDataMap;
-    std::unique_ptr<UploadBuffer<MaterialConstantBuffer>> mMaterialCB;
+    std::unique_ptr<UploadBuffer<GeneralMaterialConstantBuffer>> mMaterialCB;
     std::unique_ptr<UploadBuffer<PbrMaterialConstanceBuffer>> mPBrMaterialCB;
     std::unique_ptr<UploadBuffer<SkinnedConstantBuffer>> mSkinnedCB;
     
 public:
     void _initialise();
     void updateObjectCB(ICamera* cam, ObjectConstantBuffer& cb);
-    void updateMaterialCB(MaterialConstantBuffer& cb);
+    void updateMaterialCB(GeneralMaterialConstantBuffer& cb);
     void updateSkinnedCB(RawData* rd);
 
     D3D12_GPU_VIRTUAL_ADDRESS getObjectAddress(ICamera* cam);
@@ -67,7 +67,7 @@ private:
     int32_t mCubeTexStartIndex = -1;
 
     ObjectConstantBuffer mObjectConstantBuffer;
-    MaterialConstantBuffer mMaterialConstantBuffer;
+    GeneralMaterialConstantBuffer mMaterialConstantBuffer;
     PbrMaterialConstanceBuffer mPbrMaterialConstanceBuffer;
 
     ICamera* mCurrentCamera;

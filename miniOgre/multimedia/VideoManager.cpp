@@ -38,13 +38,13 @@ bool VideoManager::_playVideoMaterial(
 	
 	auto mat = MaterialManager::getSingleton().getByName(matName);
 
-	if (!mat || !mat->_isVideo())
+	if (!mat)
 	{
 		return false;
 	}
 
-	String videoName = mat->getVideoName();
-	pAVBoard->setupAVBoard(matName, videoName);
+	assert(false);
+	//pAVBoard->setupAVBoard(matName, videoName);
 	return true;
 }
 

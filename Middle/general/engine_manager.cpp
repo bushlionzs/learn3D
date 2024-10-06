@@ -323,12 +323,13 @@ bool EngineManager::positionAxisTrans(
 				return false;
 			}
 
-			const auto& rt = Ogre::Root::getSingleton().getMainRect();
+			auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+
 			/* x:[-1w, 1w] z:[-1h, 1h] */
 			Ogre::Vector3	vRet = pOgreCamera->getProjectMatrix() * 
 				pOgreCamera->getViewMatrix() * fvSource;
-			int32_t nWidth = rt.width();
-			int32_t nHeight = rt.height();
+			int32_t nWidth = ogreConfig.width;
+			int32_t nHeight = ogreConfig.height;
 
 			fvTarget.x = ((vRet.x + 1.0f) * nWidth / 2.0f);
 			fvTarget.y = ((-vRet.y + 1.0f) * nHeight / 2.0f);
@@ -402,7 +403,7 @@ bool EngineManager::axisCheckValid(GAME_AXIS_TYPE typeSource, const Ogre::Vector
 
 	case GAT_SCREEN:
 	{
-		auto rect = Ogre::Root::getSingleton().getMainRect();
+		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 
 		POINT pt;
 
@@ -410,10 +411,10 @@ bool EngineManager::axisCheckValid(GAME_AXIS_TYPE typeSource, const Ogre::Vector
 		pt.y = (int32_t)fvAxis.y;
 
 		RECT rt;
-		rt.left = rect.left;
-		rt.right = rect.right;
-		rt.top = rect.top;
-		rt.bottom = rect.bottom;
+		rt.left = 0;
+		rt.right = ogreConfig.width;
+		rt.top = 0;
+		rt.bottom = ogreConfig.height;
 		return(PtInRect(&rt, pt) == TRUE);
 	}
 	break;

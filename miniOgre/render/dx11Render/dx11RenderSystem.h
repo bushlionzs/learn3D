@@ -28,7 +28,6 @@ public:
     virtual void multiRender(std::vector<Ogre::Renderable*>& objs, bool multithread);
     virtual void postRender();
     virtual OgreTexture* createTextureFromFile(const std::string& name, TextureProperty* texProperty);
-    virtual Shader* createShader(ShaderInfo& sinfo);
     virtual RenderableData* createRenderableData(Ogre::Renderable* r);
     EngineType getRenderType();
     ICamera* getCamera()

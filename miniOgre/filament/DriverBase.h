@@ -118,6 +118,10 @@ struct HwPipelineLayout : public HwBase {
     HwPipelineLayout() noexcept = default;
 };
 
+struct HwPipeline : public HwBase {
+    HwPipeline() noexcept = default;
+};
+
 struct HwTexture : public HwBase {
     uint32_t width{};
     uint32_t height{};

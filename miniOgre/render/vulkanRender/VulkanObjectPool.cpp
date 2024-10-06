@@ -27,7 +27,7 @@ void VulkanObjectPool::init(VulkanRenderSystemBase* vkrs)
         true
         );
 
-    mMaterialCB = std::make_unique<VulkanUploadBuffer<MaterialConstantBuffer>>(
+    mMaterialCB = std::make_unique<VulkanUploadBuffer<GeneralMaterialConstantBuffer>>(
         mMaterialCountMax,
         true
         );

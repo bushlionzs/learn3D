@@ -177,7 +177,7 @@ namespace Ogre {
     void Entity::setMaterialName(const std::string& name)
     {
         auto mat = MaterialManager::getSingleton().getByName(name);
-        mat->setChanged(true);
+        assert(false);
         for (auto r : mSubEntityList)
         {
             r->setMaterial(mat);

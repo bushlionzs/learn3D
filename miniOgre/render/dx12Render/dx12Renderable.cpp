@@ -16,7 +16,7 @@
 void FrameRenderableData::_initialise()
 {
 	auto device = DX12Helper::getSingleton().getDevice();
-	mMaterialCB = std::make_unique< UploadBuffer<MaterialConstantBuffer>>(device, 1, true);
+	mMaterialCB = std::make_unique< UploadBuffer<GeneralMaterialConstantBuffer>>(device, 1, true);
 	mSkinnedCB = std::make_unique< UploadBuffer<SkinnedConstantBuffer>>(device, 1, true);
 }
 
@@ -36,7 +36,7 @@ void FrameRenderableData::updateObjectCB(ICamera* cam, ObjectConstantBuffer& cb)
 	}
 }
 
-void FrameRenderableData::updateMaterialCB(MaterialConstantBuffer& cb)
+void FrameRenderableData::updateMaterialCB(GeneralMaterialConstantBuffer& cb)
 {
 	mMaterialCB->CopyData(0, cb);
 }
@@ -140,7 +140,6 @@ void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 		const Ogre::Matrix4& proj = cam->getProjectMatrix();
 
 		mObjectConstantBuffer.projector = pass->mRenderable->getProjectorMatrix();
-		mObjectConstantBuffer.worldViewProj = model.transpose() * view * proj;
 	}
 
 	const PbrMaterialConstanceBuffer& mcb = pass->mMaterial->getMatInfo();

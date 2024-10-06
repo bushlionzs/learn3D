@@ -13,7 +13,7 @@ class Dx12RenderSystem;
 class VertexDeclaration;
 class Dx12Pass;
 
-class Dx12Shader:public Shader
+class Dx12Shader
 {
 public:
     typedef std::vector<D3D12_SIGNATURE_PARAMETER_DESC> D3d12ShaderParameters;

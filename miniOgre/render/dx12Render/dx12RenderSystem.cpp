@@ -200,10 +200,6 @@ void Dx12RenderSystem::createFrameResource()
 }
 
 
-Shader* Dx12RenderSystem::createShader(ShaderInfo& sinfo)
-{
-	return new Dx12Shader(sinfo);
-}
 
 RenderableData* Dx12RenderSystem::createRenderableData(Ogre::Renderable* r)
 {

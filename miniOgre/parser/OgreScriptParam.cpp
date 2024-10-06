@@ -579,11 +579,6 @@ void OgreMaterialParam::setTexture(const std::string& val)
     {
         if(aa[1] == "cubic")
             tp._texType = TEX_TYPE_CUBE_MAP;
-        else if (aa[1] == "video")
-        {
-            video = true;
-            mMaterial->setVideoName(aa[0]);
-        }
     }
 
     if (!video)

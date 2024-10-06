@@ -13,7 +13,7 @@ public:
 
     void terminate() noexcept;
 
-    using PipelineLayoutKey = std::array<VkDescriptorSetLayout,2>;
+    using PipelineLayoutKey = std::array<VkDescriptorSetLayout,4>;
 
     VulkanPipelineLayoutCache(VulkanPipelineLayoutCache const&) = delete;
     VulkanPipelineLayoutCache& operator=(VulkanPipelineLayoutCache const&) = delete;

@@ -1,6 +1,6 @@
 #pragma once
 #include "OgreStringInterface.h"
-#include "shader.h"
+#include <engine_struct.h>
 #include "OgreTexture.h"
 #include "OgreBlendMode.h"
 

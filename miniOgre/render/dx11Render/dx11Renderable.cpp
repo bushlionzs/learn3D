@@ -43,7 +43,6 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 			0.0f, -0.5f, 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.5f, 0.5f, 0.0f, 1.0f);
-		mObjectConstantBuffer.worldViewProj = model.transpose() * view * proj;
 	}
 
 	updateObject(cam);
@@ -100,7 +99,7 @@ void Dx11RenderableData::updateData(Dx11Pass& pass, ICamera* cam)
 void Dx11RenderableData::_initialise()
 {
 	mMaterialCB =
-		std::make_unique<Dx11UploadBuffer<MaterialConstantBuffer>>(1, true);
+		std::make_unique<Dx11UploadBuffer<GeneralMaterialConstantBuffer>>(1, true);
 	mSkinnedCB = 
 		std::make_unique<Dx11UploadBuffer<SkinnedConstantBuffer>>(1, true);
 }

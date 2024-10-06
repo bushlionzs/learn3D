@@ -81,7 +81,7 @@ namespace Orphigine
 
 		const Ogre::ColourValue realZero(0.0,0.0,0.0,1.0);
 
-		return mat->getSelfIllumination();
+		return realZero;
 	}
 
 	//从旧材质生成两个新的材质实例(原材质的克隆体和带透明属性的继承材质)

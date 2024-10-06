@@ -226,7 +226,7 @@ namespace Ogre {
         mAABB.setInfinite();
 
         mLastVisibleFrame =
-            Ogre::Root::getSingleton().getNextFrameNumber();
+            Ogre::Root::getSingleton().getCurrentFrame();
     }
     //-----------------------------------------------------------------------
     ParticleSystem::~ParticleSystem()
@@ -453,7 +453,7 @@ namespace Ogre {
         {
             // Check whether it's been more than one frame (update is ahead of
             // camera notification by one frame because of the ordering)
-            long frameDiff = Ogre::Root::getSingleton().getNextFrameNumber() - mLastVisibleFrame;
+            long frameDiff = Ogre::Root::getSingleton().getCurrentFrame() - mLastVisibleFrame;
             if (frameDiff > 1 || frameDiff < 0) // < 0 if wrap only
             {
                 mTimeSinceLastVisible += timeElapsed;
@@ -945,7 +945,7 @@ namespace Ogre {
         Camera* pCamera = (Camera*)cam;
         if (true)
         {
-            mLastVisibleFrame = Root::getSingleton().getNextFrameNumber();
+            mLastVisibleFrame = Root::getSingleton().getCurrentFrame();
             mTimeSinceLastVisible = 0.0f;
 
             if (mSorted)

@@ -19,5 +19,7 @@ public:
 	virtual Ogre::ProjectionType getProjectionType() { return Ogre::PT_ORTHOGRAPHIC; }
 	virtual const CameraType getCameraType();
 	virtual SceneManager* getCreator() { return nullptr; }
+
 };
+
 }

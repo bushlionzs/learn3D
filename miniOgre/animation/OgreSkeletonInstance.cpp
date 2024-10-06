@@ -153,7 +153,7 @@ namespace Ogre {
 	void SkeletonInstance::setAnimationState(const AnimationStateSet& animSet)
 	{
 		Root& root = Root::getSingleton();
-		auto currentFrame = root.getNextFrameNumber();
+		auto currentFrame = root.getCurrentFrame();
 		if (mFrameLastUpdated == currentFrame)
 		{
 			return;

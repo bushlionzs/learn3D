@@ -131,13 +131,20 @@ public:
     virtual Handle<HwBufferObject> createBufferObject(
         BufferObjectBinding bindingType, 
         BufferUsage usage, 
-        uint32_t bufferCount);
+        uint32_t byteCount);
     virtual void updateBufferObject(
         Handle<HwBufferObject> boh, 
         const char* data, 
         uint32_t size);
     virtual Handle<HwDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout& info);
+    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t index);
     virtual Handle<HwDescriptorSet> createDescriptorSet(Handle<HwDescriptorSetLayout> dslh);
+    virtual Handle<HwPipelineLayout> createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts);
+    virtual Handle<HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo);
+    virtual Handle<HwPipeline> createPipeline(
+        backend::RasterState& rasterState,
+        Handle<HwProgram>& program);
+
     virtual void bindDescriptorSet(
         Handle<HwDescriptorSet> dsh,
         uint8_t setIndex,

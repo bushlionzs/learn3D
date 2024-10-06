@@ -65,7 +65,6 @@ float calcShadowFactor(vec4 shadowPosH, sampler2D shadowMap, float shadowMapSize
 layout(binding = 0, std140) uniform ObjectUniforms {
     mat4 gWorld;
     mat4 gProjector;
-    mat4 gWorldViewProj;
 } cbPerObject;
 
 layout(binding = 1, std140) uniform FrameUniforms {

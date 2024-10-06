@@ -179,71 +179,30 @@ void PushConstantDescription::write(VulkanCommands* commands, VkPipelineLayout l
             &binaryValue);
 }
 
-VulkanProgram::VulkanProgram(VkDevice device, Program const& builder) noexcept
-    : HwProgram(builder.getName()),
+VulkanProgram::VulkanProgram(const std::string& name) noexcept
+    : HwProgram(utils::CString(name.c_str())),
       VulkanResource(VulkanResourceType::PROGRAM),
-      mInfo(new(std::nothrow) PipelineInfo(builder)),
-      mDevice(device) {
+    mShaders{},
+    mLayouts{}
+{
 
-    Program::ShaderSource const& blobs = builder.getShadersSource();
-    auto& modules = mInfo->shaders;
-    auto const& specializationConstants = builder.getSpecializationConstants();
-    std::vector<uint32_t> shader;
-
-    static_assert(static_cast<ShaderStage>(0) == ShaderStage::VERTEX &&
-            static_cast<ShaderStage>(1) == ShaderStage::FRAGMENT &&
-            MAX_SHADER_MODULES == 2);
-
-    for (size_t i = 0; i < MAX_SHADER_MODULES; i++) {
-        Program::ShaderBlob const& blob = blobs[i];
-
-        uint32_t* data = (uint32_t*) blob.data();
-        size_t dataSize = blob.size();
-
-        if (!specializationConstants.empty()) {
-            //workaroundSpecConstant(blob, specializationConstants, shader);
-            data = (uint32_t*) shader.data();
-            dataSize = shader.size() * 4;
-        }
-
-        VkShaderModule& module = modules[i];
-        VkShaderModuleCreateInfo moduleInfo = {
-            .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            .codeSize = dataSize,
-            .pCode = data,
-        };
-        VkResult result = vkCreateShaderModule(mDevice, &moduleInfo, VKALLOC, &module);
-
-#if FVK_ENABLED(FVK_DEBUG_DEBUG_UTILS)
-        std::string name{ builder.getName().c_str(), builder.getName().size() };
-        switch (static_cast<ShaderStage>(i)) {
-            case ShaderStage::VERTEX:
-                name += "_vs";
-                break;
-            case ShaderStage::FRAGMENT:
-                name += "_fs";
-                break;
-            default:
-                PANIC_POSTCONDITION("Unexpected stage");
-                break;
-        }
-        VulkanDriver::DebugUtils::setName(VK_OBJECT_TYPE_SHADER_MODULE,
-                reinterpret_cast<uint64_t>(module), name.c_str());
-#endif
-    }
-
-#if FVK_ENABLED(FVK_DEBUG_SHADER_MODULE)
-    FVK_LOGD << "Created VulkanProgram " << builder << ", shaders = (" << modules[0]
-             << ", " << modules[1] << ")" << utils::io::endl;
-#endif
+   
 }
 
 VulkanProgram::~VulkanProgram() {
-    for (auto shader: mInfo->shaders) {
-        vkDestroyShaderModule(mDevice, shader, VKALLOC);
-    }
-    delete mInfo;
+    
 }
+
+VulkanPipeline::VulkanPipeline(VkPipeline pipeline, VkPipeline pipelineShadow)
+    :
+    mPipeline(pipeline),
+    mPipelineShadow(pipelineShadow),
+    VulkanResource(VulkanResourceType::END_TYPE)
+{
+    
+}
+
+
 
 // Creates a special "default" render target (i.e. associated with the swap chain)
 VulkanRenderTarget::VulkanRenderTarget() :

@@ -393,7 +393,7 @@ void TextureUnit::addTime(float delta)
                 mAnimAccumulate -= mAnimDuration;
             }
 
-            mOwner->setChanged(true);
+            assert(false);
         }
 
     }

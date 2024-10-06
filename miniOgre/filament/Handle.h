@@ -42,6 +42,7 @@ struct HwRenderTarget;
 struct HwDescriptorSetLayout;
 struct HwDescriptorSet;
 struct HwPipelineLayout;
+struct HwPipeline;
 /*
  * A handle to a backend resource. HandleBase is for internal use only.
  * HandleBase *must* be a trivial for the purposes of calls, that is, it cannot have user-defined

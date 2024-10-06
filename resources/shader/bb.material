@@ -61,7 +61,7 @@ material myrect
 			shader basic
 			texture_unit
 			{
-				texture ForgeFlags.dds
+				texture checkboard.dds
 
 				tex_address_mode clamp
 			}

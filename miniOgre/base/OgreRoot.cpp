@@ -38,7 +38,7 @@ namespace Ogre {
         new Ogre::ControllerManager;
         new ShaderManager;
         mRenderSystem = nullptr;
-        mNextFrame = 0;
+        mCurrentFrame = 0;
 
         mLastFrame = 0;
         mCurrentFPS = 0;
@@ -51,7 +51,6 @@ namespace Ogre {
 
         mEvt.timeSinceLastEvent = 0;
         mEvt.timeSinceLastFrame = 0;
-        mActRect = { 0,0,0,0 };
 	}
 
 	Root::~Root()
@@ -202,9 +201,14 @@ namespace Ogre {
         return nullptr;
     }
 
-    uint64_t Root::getNextFrameNumber()
+    uint64_t Root::getCurrentFrame()
     {
-        return mNextFrame;
+        return mCurrentFrame;
+    }
+
+    uint64_t Root::getCurrentFrameIndex()
+    {
+        return mCurrentFrame % mEngineConfig.swapBufferCount;
     }
 
     uint64_t Root::getCurrentFPS()
@@ -220,16 +224,16 @@ namespace Ogre {
 
         mFrameLast = mFrameCurrent;
         _syncAddedRemovedFrameListeners();
-        mNextFrame++;
+        mCurrentFrame++;
         
         
 
         mAccumulation += delta;
         if (mAccumulation >= mLast + 1.0f)
         {
-            mCurrentFPS = (mNextFrame - mLastFrame);
+            mCurrentFPS = (mCurrentFrame - mLastFrame);
 
-            mLastFrame = mNextFrame;
+            mLastFrame = mCurrentFrame;
             mLast = mAccumulation;
         }
 

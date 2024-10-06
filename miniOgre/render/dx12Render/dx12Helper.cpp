@@ -378,7 +378,6 @@ void DX12Helper::_createMipmapPrepare()
 
 	Ogre::Matrix4 view = Ogre::Math::makeViewMatrix(
 		Ogre::Vector3(0, 0, 15), Ogre::Quaternion::IDENTITY);
-	dummy.worldViewProj = (proj * view).transpose();
 
 	mMipmapFrameCB->CopyData(0, dummy);
 	

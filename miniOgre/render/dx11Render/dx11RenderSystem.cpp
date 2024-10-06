@@ -142,12 +142,6 @@ OgreTexture* Dx11RenderSystem::createTextureFromFile(const std::string& name, Te
 	return tex;
 }
 
-Shader* Dx11RenderSystem::createShader(ShaderInfo& sinfo)
-{
-	Dx11Shader* shader = new Dx11Shader(sinfo, this);
-	return shader;
-}
-
 RenderableData* Dx11RenderSystem::createRenderableData(Ogre::Renderable* r)
 {
 	return new Dx11RenderableData(r);

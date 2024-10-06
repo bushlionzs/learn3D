@@ -417,9 +417,6 @@ std::shared_ptr<Mesh> MeshManager::createGrid(
 	MaterialInfo matInfo;
 	matInfo.mTexname = "floor.dds";
 	matInfo.mTexScale = 10.0f;
-	matInfo.mMatInfo.DiffuseAlbedo = Ogre::Vector4(0.9f, 0.9f, 0.9f, 1.0f);
-	matInfo.mMatInfo.FresnelR0 = Ogre::Vector3(0.2f, 0.2f, 0.2f);
-	matInfo.mMatInfo.Roughness = 0.1f;
 	applyMesh(pMesh, matInfo);
 
 	std::shared_ptr<Mesh> p(pMesh);
@@ -715,84 +712,6 @@ std::shared_ptr<Mesh> MeshManager::CreateCylinder(const std::string& name, float
 		MaterialManager::getSingletonPtr()->getByName(std::string("myCylinder"));
 	pMesh->getSubMesh(0)->setMaterial(mat);
 	
-	mMeshMap[name] = p;
-	return p;
-}
-
-std::shared_ptr<Mesh> MeshManager::CreateSkull(const std::string& name)
-{
-	auto res = ResourceManager::getSingletonPtr()->getResource(std::string("skull.txt"));
-
-	std::ifstream fin(res->_fullname);
-
-	uint32_t vcount = 0;
-	uint32_t tcount = 0;
-	std::string ignore;
-
-	fin >> ignore >> vcount;
-	fin >> ignore >> tcount;
-	fin >> ignore >> ignore >> ignore >> ignore;
-
-	SVertexElement tmp;
-	
-
-	std::vector<SVertexElement> vertices;
-
-	DirectX::XMFLOAT3 TangentU;
-	for (UINT i = 0; i < vcount; ++i)
-	{
-		
-		fin >> tmp.mPosition.x >> tmp.mPosition.y >> tmp.mPosition.z; //position
-
-		fin >> tmp.mNormal.x >> tmp.mNormal.y >> tmp.mNormal.z; //normal
-
-		tmp.mUV = Ogre::Vector2(0.0f, 0.0f);
-
-		DirectX::XMVECTOR P = DirectX::XMVectorSet(tmp.mPosition.x, tmp.mPosition.y, tmp.mPosition.z, 1.0f);
-
-		DirectX::XMVECTOR N = DirectX::XMVectorSet(tmp.mNormal.x, tmp.mNormal.y, tmp.mNormal.z, 1.0f);
-
-		// Generate a tangent vector so normal mapping works.  We aren't applying
-		// a texture map to the skull, so we just need any tangent vector so that
-		// the math works out to give us the original interpolated vertex normal.
-		DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-		if (fabsf(DirectX::XMVectorGetX(DirectX::XMVector3Dot(N, up))) < 1.0f - 0.001f)
-		{
-			DirectX::XMVECTOR T = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(up, N));
-			DirectX::XMStoreFloat3(&TangentU, T);
-		}
-		else
-		{
-			up = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-			DirectX::XMVECTOR T = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(N, up));
-			DirectX::XMStoreFloat3(&TangentU, T);
-		}
-
-		vertices.push_back(tmp);
-	}
-
-	fin >> ignore;
-	fin >> ignore;
-	fin >> ignore;
-
-	std::vector<uint32_t> indices(3 * tcount);
-	for (UINT i = 0; i < tcount; ++i)
-	{
-		fin >> indices[i * 3 + 0] >> indices[i * 3 + 1] >> indices[i * 3 + 2];
-	}
-
-	fin.close();
-
-	Mesh* pMesh = BuildHardBuffer(vertices, indices);
-	MaterialInfo matInfo;
-	matInfo.mTexname = "white1x1.dds";
-	matInfo.mMatInfo.DiffuseAlbedo = Ogre::Vector4(0.8f, 0.8f, 0.8f, 1.0f);
-	matInfo.mMatInfo.FresnelR0 = Ogre::Vector3(0.2f, 0.2f, 0.2f);
-	matInfo.mMatInfo.Roughness = 0.3f;
-	applyMesh(pMesh, matInfo);
-
-	std::shared_ptr<Mesh> p(pMesh);
-
 	mMeshMap[name] = p;
 	return p;
 }

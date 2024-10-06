@@ -8,9 +8,9 @@ CameraImpl::CameraImpl(Ogre::SceneManager* sceneMgr)
 	mSceneManager = sceneMgr;
     mFovy = 3.141592653 / 2.0f;
 
-    auto rt = Root::getSingleton().getMainRect();
-    uint32_t width = rt.width();
-    uint32_t height = rt.height();
+    auto config = Ogre::Root::getSingleton().getEngineConfig();
+    uint32_t width = config.width;
+    uint32_t height = config.height;
     mAspectRation = (float)width / (float)height;
 
     mViewMatrix = Ogre::Matrix4::IDENTITY;

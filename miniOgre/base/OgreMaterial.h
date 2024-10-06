@@ -20,7 +20,7 @@ public:
     bool mCube = false;
     std::string mVSname="basic.hlsl";
     std::string mPSname="basic.hlsl";
-    MaterialConstantBuffer mMatInfo;
+    GeneralMaterialConstantBuffer mMatInfo;
 };
 
 namespace Ogre {
@@ -51,7 +51,6 @@ namespace Ogre {
         void scale(Real u, Real v);
         void animation(Real u, Real v);
 
-        void updateMatInfo(PbrMaterialConstanceBuffer& mcb);
         PbrMaterialConstanceBuffer& getMatInfo();
         void update(Real delta);
         void setFresnelR0(Ogre::Vector3& fresnelR0);
@@ -60,23 +59,12 @@ namespace Ogre {
 
         bool hasAnimation();
         Ogre::Vector2 getTexAnimationOffset();
-        const Ogre::ColourBlendState& getBlendState() const
-        {
-            return mBlendState;
-        }
+        const Ogre::ColourBlendState& getBlendState() const;
 
-        void setBlendState(Ogre::ColourBlendState& state)
-        {
-            mBlendState = state;
-        }
+        void setBlendState(Ogre::ColourBlendState& state);
 
         void setCullMode(Ogre::CullingMode mode);
         Ogre::CullingMode getCullMode();
-
-        const Ogre::Matrix4& getTransform() const
-        {
-            return mTransform;
-        }
 
         bool isPbr() const
         {
@@ -109,49 +97,6 @@ namespace Ogre {
 
         bool isTransparent();
 
-        uint64_t getHandle();
-
-        void setAmbient(float red, float green, float blue);
-        void setAmbient(const ColourValue& selfIllum);
-        void setDiffuse(float red, float green, float blue, float alpha);
-        void setDiffuse(const ColourValue& selfIllum);
-        void setSelfIllumination(float red, float green, float blue);
-        void setSpecular(float red, float green, float blue, float alpha);
-
-        /// @overload
-        void setSpecular(const ColourValue& specular);
-
-        /// @overload
-        void setSelfIllumination(const ColourValue& selfIllum);
-        const ColourValue& getSelfIllumination();
-
-        void setShininess(Real val);
-
-        void setFog(
-            bool overrideScene,
-            FogMode mode = FOG_NONE,
-            const ColourValue& colour = ColourValue::White,
-            Real expDensity = 0.001f, Real linearStart = 0.0f, Real linearEnd = 1.0f);
-
-        void setSceneBlending(const SceneBlendType sbt);
-
-        void touch();
-
-        //for video material
-        void setVideoName(const String& videoName);
-        bool _isVideo();
-        String getVideoName();
-
-        bool isChanged()
-        {
-            return mChanged;
-        }
-
-        void setChanged(bool changed)
-        {
-            mChanged = changed;
-        }
-
         ResourceState getResourceState()
         {
             return mState;
@@ -163,18 +108,26 @@ namespace Ogre {
             mState = rs;
         }
 
-        bool createUniformBuffer(uint32_t binding, uint32_t size);
+        RasterState& getRasterState()
+        {
+            return mRasterState;
+        }
 
-        bool updateUniformBuffer(uint32_t binding, const char* data, uint32_t size);
+        Handle<HwPipeline> getPipeline()
+        {
+            return mPipelineHandle;
+        }
+        Handle<HwProgram> getProgram()
+        {
+            return mProgramHandle;
+        }
 
+        FrameResourceInfo* getFrameResourceInfo(uint32_t frameIndex);
+    private:
+        void createFrameResourceInfo();
     private:
         std::string mMaterialName;
-        Ogre::Vector4 mAmbient;
-        Ogre::Vector4 mDiffuse;
-        Ogre::Vector4 mSpecular;
-        Ogre::Vector4 mReflect;
-        Ogre::Matrix4 mTransform;
-
+  
         bool mAnimation = false;
         float mUOffset = 0.0f;
         float mVOffset = 0.0f;
@@ -184,26 +137,27 @@ namespace Ogre {
         std::vector<std::shared_ptr<TextureUnit>> mTextureUnits;
         ShaderInfo mShaderInfo;
         PbrMaterialConstanceBuffer mPbrMatInfo;
-        MaterialConstantBuffer mMatInfo;
+        GeneralMaterialConstantBuffer mMatInfo;
         bool mPbr;
-
+        bool mHasSkinData = false;
         bool mLoad = false;
 
         bool mWriteDepth = true;
 
         bool mDepthTest = true;
 
-        String mVideoName;
         Ogre::ColourBlendState mBlendState;
 
         Ogre::CullingMode mCullingMode = CULL_CLOCKWISE;
 
-        bool mChanged = true;
-
         ResourceState mState = ResourceState::ResourceState_None;
 
-        std::unordered_map<uint32_t, Handle<HwBufferObject>> mUniformHandleMap;
+        std::vector<FrameResourceInfo> mFrameResourceInfoList;
         
-
+        RasterState mRasterState;
+        Handle<HwPipeline> mPipelineHandle;
+        Handle<HwProgram> mProgramHandle;
+        Handle<HwDescriptorSetLayout> mUboLayoutHandle;
+        Handle<HwDescriptorSetLayout> mSamplerLayoutHandle;
     };
 }

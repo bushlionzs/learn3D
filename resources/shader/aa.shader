@@ -358,3 +358,18 @@ shader visibleBuffer
 		frag_shader visiblebuffer.glsl main
 	 }
 }
+
+shader clearBuffer
+{
+    shader_unit
+	 {
+		shader_type directx
+		compute_shader clearVisibilityBuffers.hlsl main
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		compute_shader clearVisibilityBuffers.glsl main
+	 }
+}

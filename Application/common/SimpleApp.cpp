@@ -45,15 +45,13 @@ void SimpleApp::run(AppInfo& info)
 	mAppInfo = &info;
 	new Ogre::Root();
 
-	uint32_t width = 1280;
-	uint32_t height = 768;
-	Ogre::Root::getSingleton().updateMainRect({ 0, 0, (int)width, (int)height });
-
+	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+	
 	Ogre::Root::getSingleton()._initialise();
 
 	mWindow = new ApplicationWindow();
 	
-	mWindow->createWindow(width, height);
+	mWindow->createWindow(ogreConfig.width, ogreConfig.height);
 	if (!InputManager::getSingletonPtr())
 	{
 		new InputManager();
@@ -71,7 +69,7 @@ void SimpleApp::run(AppInfo& info)
 	Ogre::NameValuePairList params;
 	params["externalWindowHandle"] = Ogre::StringConverter::toString((uint64_t)wnd);
 	params["backGroundColor"] = Ogre::StringConverter::toString(color);
-	mRenderWindow = mRenderSystem->createRenderWindow("", width, height, &params);
+	mRenderWindow = mRenderSystem->createRenderWindow("", ogreConfig.width, ogreConfig.height, &params);
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(MAIN_SCENE_MANAGER);
 
 	auto camera = mSceneManager->createCamera(MAIN_CAMERA);

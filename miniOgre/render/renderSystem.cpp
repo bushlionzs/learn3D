@@ -84,9 +84,9 @@ void RenderSystem::renderJob(ArenaScope& arena, FrameGraphPassCallback cb)
     Handle<HwRenderTarget> viewRenderTarget;
     
     filament::Viewport vp;
-    const  Rect&  rt = Ogre::Root::getSingleton().getMainRect();
-    vp.width = rt.width();
-    vp.height = rt.height();
+    auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+    vp.width = ogreConfig.width;
+    vp.height = ogreConfig.height;
     
     const filament::math::float4 clearColor = {};
     TargetBufferFlags attachmentMask = TargetBufferFlags::COLOR0;
@@ -167,7 +167,7 @@ void RenderSystem::present()
 Handle<HwBufferObject> RenderSystem::createBufferObject(
     BufferObjectBinding bindingType,
     BufferUsage usage,
-    uint32_t bufferCount)
+    uint32_t byteCount)
 {
     assert(false);
     return Handle<HwBufferObject>();
@@ -187,10 +187,36 @@ Handle<HwDescriptorSetLayout> RenderSystem::createDescriptorSetLayout(Descriptor
     return Handle<HwDescriptorSetLayout>();
 }
 
+Handle<HwDescriptorSetLayout> RenderSystem::getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t index)
+{
+    assert(false);
+    return Handle<HwDescriptorSetLayout>();
+}
+
 Handle<HwDescriptorSet> RenderSystem::createDescriptorSet(Handle<HwDescriptorSetLayout> dslh)
 {
     assert(false);
     return Handle<HwDescriptorSet>();
+}
+
+Handle<HwPipelineLayout> RenderSystem::createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts)
+{
+    assert(false);
+    return Handle<HwPipelineLayout>();
+}
+
+Handle<HwProgram> RenderSystem::createShaderProgram(const ShaderInfo& mShaderInfo)
+{
+    assert(false);
+    return Handle<HwProgram>();
+}
+
+Handle<HwPipeline> RenderSystem::createPipeline(
+    backend::RasterState& rasterState,
+    Handle<HwProgram>& program)
+{
+    assert(false);
+    return Handle<HwPipeline>();
 }
 
 void RenderSystem::bindDescriptorSet(

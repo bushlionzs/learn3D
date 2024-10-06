@@ -90,7 +90,7 @@ void MeshComponentParticleVisualData::destroyVisualData(void)
 		mSceneNode = NULL;
 
 		if (mMaterial)
-			MaterialManager::getSingleton().remove(mMaterial->getHandle());
+			MaterialManager::getSingleton().remove(mMaterial->getName());
 
 		mInit = false;
 	}		
@@ -183,7 +183,7 @@ void MeshComponentParticleVisualData::modifyMaterial(const String &matName)
 	assert(mEntity);
 
 	if (mMaterial)
-		MaterialManager::getSingleton().remove(mMaterial->getHandle());
+		MaterialManager::getSingleton().remove(mMaterial->getName());
 
 	cloneMaterial(matName);
 	mEntity->setMaterialName(mMaterial->getName());

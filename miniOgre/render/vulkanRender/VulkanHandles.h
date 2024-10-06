@@ -25,7 +25,6 @@
 #include "VulkanSwapChain.h"
 #include "VulkanTexture.h"
 #include "VulkanUtility.h"
-
 #include <SamplerGroup.h>
 #include <Program.h>
 
@@ -186,6 +185,21 @@ private:
     OnRecycle mOnRecycleFn;
 };
 
+struct VulkanPipelineLayout : public VulkanResource, HwPipelineLayout {
+    VulkanPipelineLayout(VkPipelineLayout layout):
+        mPipelineLayout(layout),
+        VulkanResource(VulkanResourceType::END_TYPE)
+    {
+    }
+
+    VkPipelineLayout getLayout()
+    {
+        return mPipelineLayout;
+    }
+private:
+    VkPipelineLayout mPipelineLayout;
+};
+
 using PushConstantNameArray = utils::FixedCapacityVector<char const*>;
 using PushConstantNameByStage = std::array<PushConstantNameArray, Program::SHADER_TYPE_COUNT>;
 
@@ -209,79 +223,67 @@ private:
 };
 
 struct VulkanProgram : public HwProgram, VulkanResource {
-
-    using BindingList = CappedArray<uint16_t, MAX_SAMPLER_COUNT>;
-
-    VulkanProgram(VkDevice device, Program const& builder) noexcept;
+    VulkanProgram(const std::string& name) noexcept;
 
     ~VulkanProgram();
 
     inline VkShaderModule getVertexShader() const {
-        return mInfo->shaders[0];
+        return mShaders[0];
     }
 
-    inline VkShaderModule getFragmentShader() const { return mInfo->shaders[1]; }
-
-    inline utils::FixedCapacityVector<uint16_t> const& getBindingToSamplerIndex() const {
-        return mInfo->bindingToSamplerIndex;
+    inline VkShaderModule getFragmentShader() const 
+    { 
+        return mShaders[1];
     }
 
-    // Get a list of the sampler binding indices so that we don't have to loop through all possible
-    // samplers.
-    inline BindingList const& getBindings() const { return mInfo->bindings; }
-
-    inline uint32_t getPushConstantRangeCount() const {
-        return mInfo->pushConstantDescription.getVkRangeCount();
+    
+    void updateVertexShader(VkShaderModule shaderModule)
+    {
+        mShaders[0] = shaderModule;
     }
 
-    inline VkPushConstantRange const* getPushConstantRanges() const {
-        return mInfo->pushConstantDescription.getVkRanges();
+    void updateFragmentShader(VkShaderModule shaderModule)
+    {
+        mShaders[1] = shaderModule;
     }
 
-    inline void writePushConstant(VulkanCommands* commands, VkPipelineLayout layout,
-            backend::ShaderStage stage, uint8_t index, backend::PushConstantVariant const& value) {
-        mInfo->pushConstantDescription.write(commands, layout, stage, index, value);
+    void updateVulkanPipelineLayout(VkPipelineLayout layout)
+    {
+        mPipelineLayout = layout;
     }
 
-#if FVK_ENABLED_DEBUG_SAMPLER_NAME
-    inline utils::FixedCapacityVector<std::string> const& getBindingToName() const {
-        return mInfo->bindingToName;
+    VkPipelineLayout getVulkanPipelineLayout()
+    {
+        return mPipelineLayout;
     }
-#endif
 
-    // TODO: handle compute shaders.
-    // The expected order of shaders - from frontend to backend - is vertex, fragment, compute.
+    void updateLayout(uint32_t index, Handle<HwDescriptorSetLayout> h)
+    {
+        mLayouts[index] = h;
+    }
+
+    Handle<HwDescriptorSetLayout> getLayout(uint32_t index)
+    {
+        return mLayouts[index];
+    }
+
     static constexpr uint8_t const MAX_SHADER_MODULES = 2;
 
 private:
-    struct PipelineInfo {
-        explicit PipelineInfo(backend::Program const& program) noexcept
-            : bindingToSamplerIndex(MAX_SAMPLER_COUNT, 0xffff),
-              pushConstantDescription(program)
-#if FVK_ENABLED_DEBUG_SAMPLER_NAME
-            , bindingToName(MAX_SAMPLER_COUNT, "")
-#endif
-            {}
-
-        BindingList bindings;
-
-        // We store the samplerGroupIndex as the top 8-bit and the index within each group as the lower 8-bit.
-        utils::FixedCapacityVector<uint16_t> bindingToSamplerIndex;
-        VkShaderModule shaders[MAX_SHADER_MODULES] = { VK_NULL_HANDLE };
-
-        PushConstantDescription pushConstantDescription;
-
-#if FVK_ENABLED_DEBUG_SAMPLER_NAME
-        // We store the sampler name mapped from binding index (only for debug purposes).
-        utils::FixedCapacityVector<std::string> bindingToName;
-#endif
-
-    };
-
-    PipelineInfo* mInfo;
-    VkDevice mDevice = VK_NULL_HANDLE;
+    
+    VkShaderModule mShaders[MAX_SHADER_MODULES];
+    VkPipelineLayout mPipelineLayout;
+    Handle<HwDescriptorSetLayout> mLayouts[4];
 };
 
+
+struct VulkanPipeline : private HwPipeline, VulkanResource
+{
+    VulkanPipeline(VkPipeline pipeline, VkPipeline pipelineShadow);
+private:
+    VkPipeline mPipeline;
+    VkPipeline mPipelineShadow;
+};
 // The render target bundles together a set of attachments, each of which can have one of the
 // following ownership semantics:
 //

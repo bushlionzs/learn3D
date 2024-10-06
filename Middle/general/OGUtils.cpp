@@ -56,12 +56,7 @@ createPureColourMaterial(const ColourValue& colour)
         return std::dynamic_pointer_cast<Material>(res);
 
     MaterialPtr material = MaterialManager::getSingleton().create(name);
-    material->setAmbient(0, 0, 0);
-    material->setDiffuse(0, 0, 0, colour.a);
-    material->setSelfIllumination(colour);
-    material->setFog(true, FOG_NONE);
-    if (colour.a != 1)
-        material->setSceneBlending(SBT_TRANSPARENT_ALPHA);
+   
     return material;
 }
 
@@ -82,10 +77,7 @@ createColourMaterial(const ColourValue& colour)
         return res;
 
     MaterialPtr material = MaterialManager::getSingleton().create(name);
-    material->setAmbient(colour);
-    material->setDiffuse(colour);
-    if (colour.a != 1)
-        material->setSceneBlending(SBT_TRANSPARENT_ALPHA);
+
     return material;
 }
 
@@ -112,12 +104,7 @@ createColourMaterial(const ColourValue& colour, const ColourValue& specular, Rea
         return res;
 
     MaterialPtr material = MaterialManager::getSingleton().create(name);
-    material->setAmbient(colour);
-    material->setDiffuse(colour);
-    material->setSpecular(specular);
-    material->setShininess(shininess);
-    if (colour.a != 1)
-        material->setSceneBlending(SBT_TRANSPARENT_ALPHA);
+
     return material;
 }
 

@@ -13,6 +13,13 @@ class RenderSystem;
 
 namespace Ogre {
 	class MovableObjectFactory;
+	struct EngineConfig
+	{
+		uint32_t width = 1280;
+		uint32_t height = 720;
+		uint32_t frameConstantBufferSize = sizeof(FrameConstantBuffer);
+		uint32_t swapBufferCount = 2;
+	};
 
 	class Root : public Ogre::Singleton<Root>
 	{
@@ -36,8 +43,10 @@ namespace Ogre {
 		void destroySceneManager(SceneManager* sceneMgr);
 
 		SceneManager* getSceneManager(const std::string& name);
-		uint64_t getNextFrameNumber();
+		uint64_t getCurrentFrame();
+		uint64_t getCurrentFrameIndex();
 		uint64_t getCurrentFPS();
+		
 		bool _fireFrameStarted();
 		void update(float delta);
 		bool _fireFrameEnded();
@@ -45,25 +54,21 @@ namespace Ogre {
 		void removeFrameListener(FrameListener* oldListener);
 		void _syncAddedRemovedFrameListeners();
 
-		Timer* getTimer(void)
+		bool renderOneFrame(void);
+
+		Timer* getTimer()
 		{
 			return &mTimer;
 		}
-
-		bool renderOneFrame(void);
 
 		Ogre::FrameEvent& getFrameEvent()
 		{
 			return mEvt;
 		}
-		const  Rect& getMainRect()
-		{
-			return mActRect;
-		}
 
-		void updateMainRect(const Rect& rt)
+		EngineConfig& getEngineConfig()
 		{
-			mActRect = rt;
+			return mEngineConfig;
 		}
 	private:
 		uint32_t _allocateNextMovableObjectTypeFlag(void);
@@ -71,7 +76,7 @@ namespace Ogre {
 		MovableObjectFactoryMap mMovableObjectFactoryMap;
 		uint32 mNextMovableObjectTypeFlag;
 
-		uint64_t mNextFrame;
+		uint64_t mCurrentFrame;
 		uint64_t mCurrentFPS;
 
 		uint64_t mLastFrame;
@@ -90,10 +95,8 @@ namespace Ogre {
 
 		uint64_t mFrameCurrent, mFrameLast;
 
-		RenderWindow* mAutoWindow = nullptr;
-
 		Ogre::FrameEvent mEvt;
-		Rect mActRect;
-
+		
+		EngineConfig mEngineConfig;
 	};
 }
