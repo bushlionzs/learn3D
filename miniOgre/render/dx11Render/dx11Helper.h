@@ -4,6 +4,7 @@
 #include "dx11Common.h"
 #include "OgreBlendMode.h"
 #include "OgreCommon.h"
+#include "DriverEnums.h"
 
 
 class Dx11RenderSystem;
@@ -23,7 +24,7 @@ public:
 
 	void _setColourBlendState(const ColourBlendState& state);
 	void _setDepthBufferWriteEnabled(bool enabled);
-	void _setCullingMode(Ogre::CullingMode mode);
+	void _setCullingMode(backend::CullingMode mode);
 
 	Dx11RenderSystem* getRenderSystem()
 	{

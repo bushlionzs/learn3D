@@ -234,7 +234,7 @@ ID3D12PipelineState* Dx12Shader::BuildNormalPSO(Dx12Pass* pass)
         };
         psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 
-        if (pass->mMaterial->getCullMode() == Ogre::CULL_NONE)
+        if (pass->mMaterial->getCullMode() == backend::CullingMode::NONE)
         {
             psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
         }

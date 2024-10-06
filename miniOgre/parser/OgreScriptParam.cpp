@@ -706,15 +706,15 @@ void OgreMaterialParam::setCullMode(const String& val)
 {
     if (val == "none")
     {
-        mMaterial->setCullMode(Ogre::CULL_NONE);
+        mMaterial->setCullMode(backend::CullingMode::NONE);
     }
     else if (val == "clockwise")
     {
-        mMaterial->setCullMode(Ogre::CULL_CLOCKWISE);
+        mMaterial->setCullMode(backend::CullingMode::FRONT);
     }
     else if (val == "anticlockwise")
     {
-        mMaterial->setCullMode(Ogre::CULL_ANTICLOCKWISE);
+        mMaterial->setCullMode(backend::CullingMode::BACK);
     }
 }
 

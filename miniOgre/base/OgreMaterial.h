@@ -63,8 +63,8 @@ namespace Ogre {
 
         void setBlendState(Ogre::ColourBlendState& state);
 
-        void setCullMode(Ogre::CullingMode mode);
-        Ogre::CullingMode getCullMode();
+        void setCullMode(backend::CullingMode mode);
+        backend::CullingMode getCullMode();
 
         bool isPbr() const
         {
@@ -76,23 +76,12 @@ namespace Ogre {
             return mMaterialName;
         }
 
-        bool isDepthTest()
-        {
-            return mDepthTest;
-        }
+        bool isDepthTest();
 
-        void setDepthTest(bool test)
-        {
-            mDepthTest = test;
-        }
-        bool isWriteDepth()
-        {
-            return mWriteDepth;
-        }
-        void setWriteDepth(bool bWrite)
-        {
-            mWriteDepth = bWrite;
-        }
+        void setDepthTest(bool test);
+
+        bool isWriteDepth();
+        void setWriteDepth(bool bWrite);
         Material& operator=(const Material& rhs);
 
         bool isTransparent();
@@ -146,13 +135,7 @@ namespace Ogre {
         bool mHasSkinData = false;
         bool mLoad = false;
 
-        bool mWriteDepth = true;
-
-        bool mDepthTest = true;
-
         Ogre::ColourBlendState mBlendState;
-
-        Ogre::CullingMode mCullingMode = CULL_CLOCKWISE;
 
         ResourceState mState = ResourceState::ResourceState_None;
 

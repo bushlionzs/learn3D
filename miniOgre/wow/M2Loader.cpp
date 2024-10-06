@@ -548,7 +548,7 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 		if(animated)
 			info.shaderMacros.emplace_back("SKINNED", "1");
 		mat->addShader(info);
-		mat->setCullMode(CULL_NONE);
+		mat->setCullMode(backend::CullingMode::NONE);
 		if (pass.noZWrite)
 		{
 			mat->setWriteDepth(false);

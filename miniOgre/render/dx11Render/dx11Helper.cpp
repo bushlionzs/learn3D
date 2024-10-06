@@ -294,9 +294,9 @@ void DX11Helper::_setDepthBufferWriteEnabled(bool enabled)
 	mDepthStencilDescChanged = true;
 }
 
-void DX11Helper::_setCullingMode(Ogre::CullingMode mode)
+void DX11Helper::_setCullingMode(backend::CullingMode mode)
 {
-	D3D11_CULL_MODE d3dmode = D3D11Mappings::get(mode);
+	D3D11_CULL_MODE d3dmode;
 
 	if (d3dmode != mRasterizerDesc.CullMode)
 	{

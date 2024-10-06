@@ -17,11 +17,12 @@ namespace Ogre {
     {
         mMaterialName = name;
         mPbr = pbr;
-        mShaderInfo.uboVertexMask = 1 | 2;
-        mShaderInfo.uboFragMask = 2 | 4;
+        mShaderInfo.uboVertexMask = 1 | 2 | 8;
+        mShaderInfo.uboFragMask = 1 | 2 | 4;
         mShaderInfo.samplerFragMask = 1 | 2 | 4 | 8 | 16;
 
-        
+        mRasterState.depthWrite = true;
+        mRasterState.culling = backend::CullingMode::NONE;
     }
 
 
@@ -242,8 +243,8 @@ namespace Ogre {
     {
         mShaderInfo = sinfo;
 
-        mShaderInfo.uboVertexMask = 1 | 2;
-        mShaderInfo.uboFragMask = 2 | 4;
+        mShaderInfo.uboVertexMask = 1 | 2 | 8;
+        mShaderInfo.uboFragMask = 1 | 2 | 4;
         mShaderInfo.samplerFragMask = 1 | 2 | 4 | 8 | 16;
 
         for (auto& pair : mShaderInfo.shaderMacros)
@@ -333,14 +334,15 @@ namespace Ogre {
         mBlendState = state;
     }
 
-    void Material::setCullMode(Ogre::CullingMode mode)
+    void Material::setCullMode(backend::CullingMode mode)
     {
-        mCullingMode = mode;
+        mRasterState.culling = mode;
+        
     }
 
-    Ogre::CullingMode Material::getCullMode()
+    backend::CullingMode Material::getCullMode()
     {
-        return mCullingMode;
+        return mRasterState.culling;
     }
 
     Material& Material::operator=(const Material& rhs)
@@ -355,13 +357,39 @@ namespace Ogre {
         mMatInfo = rhs.mMatInfo;
         mPbr = rhs.mPbr;
         mLoad = false;
-        mWriteDepth = rhs.mWriteDepth;
-        mCullingMode = rhs.mCullingMode;
         for (auto tu : rhs.mTextureUnits)
         {
             mTextureUnits.push_back(tu->clone(this));
         }
+        mHasSkinData = rhs.mHasSkinData;
+        mRasterState = rhs.mRasterState;
         return *this;
+    }
+
+    bool Material::isDepthTest()
+    {
+        return mRasterState.depthFunc != SamplerCompareFunc::A;
+    }
+
+    void Material::setDepthTest(bool test)
+    {
+        if (test)
+        {
+            mRasterState.depthFunc = SamplerCompareFunc::LE;
+        }
+        else
+        {
+            mRasterState.depthFunc = SamplerCompareFunc::A;
+        }
+    }
+
+    bool Material::isWriteDepth()
+    {
+        return mRasterState.depthWrite;
+    }
+    void Material::setWriteDepth(bool bWrite)
+    {
+        mRasterState.depthWrite = bWrite;
     }
 
     bool Material::isTransparent()
