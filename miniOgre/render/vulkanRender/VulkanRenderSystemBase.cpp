@@ -12,14 +12,14 @@
 #include "OgreHardwareIndexBuffer.h"
 #include "VulkanRenderSystemBase.h"
 #include "VulkanWindow.h"
-#include "VulkanFrame.h"
 #include "VulkanTexture.h"
 #include "VulkanHelper.h"
 #include "VulkanMappings.h"
 #include "VulkanTools.h"
-#include "VulkanRenderData.h"
 #include "VulkanPipelineLayoutCache.h"
+#include "VulkanPipelineCache.h"
 #include "shaderManager.h"
+#include "glslUtil.h"
 
 static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevice,
     VkDevice device) {
@@ -61,7 +61,7 @@ static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physic
 }
 
 VulkanRenderSystemBase::VulkanRenderSystemBase()
-    :mStagePool(nullptr, nullptr),
+    :
     mResourceAllocator(8388608, false)
 {
     new VulkanHelper(this);
@@ -84,15 +84,15 @@ bool VulkanRenderSystemBase::engineInit()
     mAllocator = createAllocator(
         mVulkanPlatform->getInstance(), mVulkanPlatform->getPhysicalDevice(), device);
 
-
+    
     auto queue = mVulkanPlatform->getGraphicsQueue();
     auto queueIndex = mVulkanPlatform->getGraphicsQueueIndex();
 
     mCommands = new VulkanCommands(device, queue, queueIndex, &mVulkanContext, &mResourceAllocator);
-
+    mStagePool = new VulkanStagePool(mAllocator, mCommands);
 
     mPipelineCache = helper.getPipelineCache();
-
+    mPipelineLayoutCache = helper.getPipelineLayoutCache();
     mDescriptorSetManager = new VulkanDescriptorSetManager(device, &mResourceAllocator);
     return true;
 }
@@ -112,7 +112,7 @@ void VulkanRenderSystemBase::ready()
 
 RenderableData* VulkanRenderSystemBase::createRenderableData(Ogre::Renderable* r)
 {
-    return new VulkanRenderableData(mVulkanPlatform, mCommands, r);
+    return nullptr;
 }
 
 void VulkanRenderSystemBase::updateMainPassCB(ICamera* camera)
@@ -150,12 +150,6 @@ void VulkanRenderSystemBase::updateMainPassCB(ICamera* camera)
     mFrameConstantBuffer.FarZ = 10000.0f;
     mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
     mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-
-    auto frameNumber = Ogre::Root::getSingleton().getCurrentFrame();
-    auto frameIndex = frameNumber % VULKAN_FRAME_RESOURCE_COUNT;
-
-    VulkanFrame* frame = VulkanHelper::getSingleton()._getFrame(frameIndex);
-    frame->updateFrameConstantBuffer(mFrameConstantBuffer, camera);
 }
 
 
@@ -187,7 +181,7 @@ Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
     mSwapChain = new VulkanSwapChain(
         mVulkanPlatform, 
         mVulkanContext, 
-        mAllocator, mCommands, &mResourceAllocator, mStagePool, (void*)wnd, flags, extent);
+        mAllocator, mCommands, &mResourceAllocator, *mStagePool, (void*)wnd, flags, extent);
 
     mRenderWindow->create(mSwapChain);
 
@@ -970,7 +964,7 @@ Handle<HwBufferObject> VulkanRenderSystemBase::createBufferObject(
     Handle<HwBufferObject> boh =  mResourceAllocator.allocHandle<VulkanBufferObject>();
 
     auto bufferObject = mResourceAllocator.construct<VulkanBufferObject>(boh, mAllocator,
-        mStagePool, byteCount, bindingType);
+        *mStagePool, byteCount, bindingType);
 
     return boh;
 }
@@ -981,13 +975,13 @@ void VulkanRenderSystemBase::updateBufferObject(
     uint32_t size)
 {
     VulkanCommandBuffer& commands = mCommands->get();
-    auto bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
+    VulkanBufferObject* bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
     bo->buffer.loadFromCpu(commands.buffer(), data, 0, size);
 }
 
 Handle<HwDescriptorSetLayout> VulkanRenderSystemBase::createDescriptorSetLayout(DescriptorSetLayout& info)
 {
-    Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<HwDescriptorSetLayout>();
+    Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
     VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(dslh, info);
     mDescriptorSetManager->initVkLayout(uboLayout);
     return dslh;
@@ -1002,16 +996,16 @@ Handle<HwDescriptorSetLayout> VulkanRenderSystemBase::getDescriptorSetLayout(Han
 
 Handle<HwDescriptorSet> VulkanRenderSystemBase::createDescriptorSet(Handle<HwDescriptorSetLayout> dslh)
 {
-    Handle<HwDescriptorSet> dsh = mResourceAllocator.allocHandle<HwDescriptorSet>();
+    Handle<HwDescriptorSet> dsh = mResourceAllocator.allocHandle<VulkanDescriptorSet>();
 
-    auto layout = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(dslh);
+    VulkanDescriptorSetLayout* layout = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(dslh);
     mDescriptorSetManager->createSet(dsh, layout);
     return dsh;
 }
 
 Handle<HwPipelineLayout> VulkanRenderSystemBase::createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts)
 {
-    Handle<HwPipelineLayout> plo = mResourceAllocator.allocHandle<HwPipelineLayout>();
+    Handle<HwPipelineLayout> plo = mResourceAllocator.allocHandle<VulkanPipelineLayout>();
     uint32_t index = 0;
 
     VulkanPipelineLayoutCache::PipelineLayoutKey key;
@@ -1027,9 +1021,9 @@ Handle<HwPipelineLayout> VulkanRenderSystemBase::createPipelineLayout(std::array
     return plo;
 }
 
-Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& shaderInfo)
+Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& shaderInfo, VertexDeclaration* decl)
 {
-    Handle<HwProgram> program = mResourceAllocator.allocHandle<HwProgram>();
+    Handle<HwProgram> program = mResourceAllocator.allocHandle<VulkanProgram>();
     VulkanProgram* vulkanProgram = mResourceAllocator.construct<VulkanProgram>(program, shaderInfo.shaderName);
 
     Ogre::ShaderPrivateInfo* privateInfo =
@@ -1048,6 +1042,12 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
             shaderInfo.shaderMacros,
             moduleInfo);
         vulkanProgram->updateVertexShader(moduleInfo.shaderModule);
+        std::vector<VkVertexInputAttributeDescription>& attributeDescriptions = 
+            vulkanProgram->getAttributeDescriptions();
+        this->parseAttributeDescriptions(decl, moduleInfo.inputDesc, attributeDescriptions);
+        std::vector<VkVertexInputBindingDescription>& vertexInputBindings =
+            vulkanProgram->getVertexInputBindings();
+        this->parseInputBindingDescription(decl, moduleInfo.inputDesc, vertexInputBindings);
     }
     
     res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
@@ -1067,7 +1067,7 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
     }
     
     DescriptorSetLayout info;
-    info.bindings.reserve(4);
+    info.bindings.reserve(10);
     DescriptorSetLayoutBinding binding;
     for (auto i = 0; i < 16; i++)
     {
@@ -1095,7 +1095,7 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
         info.bindings.push_back(binding);
     }
 
-    Handle<HwDescriptorSetLayout> uboLayoutHandle = mResourceAllocator.allocHandle<HwDescriptorSetLayout>();
+    Handle<HwDescriptorSetLayout> uboLayoutHandle = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
     VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(uboLayoutHandle, info);
     mDescriptorSetManager->initVkLayout(uboLayout);
 
@@ -1103,6 +1103,13 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
 
     for (auto i = 0; i < 32; i++)
     {
+        bool hasFragment = (shaderInfo.samplerFragMask & (1uLL << i)) != 0;
+
+        if (!hasFragment)
+        {
+            continue;
+        }
+
         binding.binding = i;
         binding.flags = DescriptorFlags::NONE;
         binding.count = 0;
@@ -1116,13 +1123,14 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
         info.bindings.push_back(binding);
     }
 
-    Handle<HwDescriptorSetLayout> samplerLayoutHandle = mResourceAllocator.allocHandle<HwDescriptorSetLayout>();
-    VulkanDescriptorSetLayout* samplerLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(uboLayoutHandle, info);
+    Handle<HwDescriptorSetLayout> samplerLayoutHandle = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
+    VulkanDescriptorSetLayout* samplerLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(samplerLayoutHandle, info);
     mDescriptorSetManager->initVkLayout(samplerLayout);
     VulkanPipelineLayoutCache::PipelineLayoutKey key;
     key[0] = uboLayout->getVkLayout();
     key[1] = samplerLayout->getVkLayout();
-    
+    key[2] = VK_NULL_HANDLE;
+    key[3] = VK_NULL_HANDLE;
     VkPipelineLayout vulkanPipelineLayout = mPipelineLayoutCache->getLayout(key);
     vulkanProgram->updateVulkanPipelineLayout(vulkanPipelineLayout);
     vulkanProgram->updateLayout(0, uboLayoutHandle);
@@ -1134,7 +1142,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     backend::RasterState& rasterState,
     Handle<HwProgram>& program)
 {
-    Handle<HwPipeline> pipelineHandle = mResourceAllocator.allocHandle<HwPipeline>();
+    Handle<HwPipeline> pipelineHandle = mResourceAllocator.allocHandle<VulkanPipeline>();
     
     VulkanProgram* vulkanProgram = mResourceAllocator.handle_cast<VulkanProgram*>(program);
     VkPipelineLayout pipelineLayout = vulkanProgram->getVulkanPipelineLayout();
@@ -1162,11 +1170,21 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     vulkanRasterState.depthBiasConstantFactor = 0.0f;
     vulkanRasterState.depthBiasSlopeFactor = 0.0f;
 
+    std::vector<VkVertexInputBindingDescription>& vertexInputBindings =
+        vulkanProgram->getVertexInputBindings();
+    std::vector<VkVertexInputAttributeDescription>& attributeDescriptions =
+        vulkanProgram->getAttributeDescriptions();
     mPipelineCache->bindRenderPass(nullptr, 0);
     mPipelineCache->bindProgram(vulkanProgram->getVertexShader(), vulkanProgram->getFragmentShader());
     mPipelineCache->bindRasterState(vulkanRasterState);
     mPipelineCache->bindPrimitiveTopology(VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
     mPipelineCache->bindLayout(pipelineLayout);
+    mPipelineCache->bindVertexArray(
+        attributeDescriptions.data(),
+        attributeDescriptions.size(),
+        vertexInputBindings.data(),
+        vertexInputBindings.size());
+
     VkPipeline pipeline = mPipelineCache->getPipeline();
 
     mPipelineCache->bindProgram(vulkanProgram->getVertexShader(), nullptr);
@@ -1192,13 +1210,30 @@ void VulkanRenderSystemBase::updateDescriptorSetBuffer(
 void VulkanRenderSystemBase::updateDescriptorSetTexture(
     Handle<HwDescriptorSet> dsh,
     backend::descriptor_binding_t binding,
-    backend::TextureHandle th,
-    SamplerParams params)
+    OgreTexture* tex)
 {
     VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
-    VulkanTexture* texture = mResourceAllocator.handle_cast<VulkanTexture*>(th);
-    VkSampler const vksampler = VulkanHelper::getSingleton().getSampler(params);
-    mDescriptorSetManager->updateSampler(set, binding, texture, vksampler);
+
+    VulkanTexture* vulkanTexture = (VulkanTexture*)tex;
+    VkDescriptorImageInfo info{};
+
+    info.imageView = vulkanTexture->getVkImageView();
+    info.sampler = vulkanTexture->getSampler();
+    info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    VkWriteDescriptorSet const descriptorWrite = {
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .pNext = nullptr,
+            .dstSet = set->vkSet,
+            .dstBinding = binding,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .pImageInfo = &info,
+        };
+
+    vkUpdateDescriptorSets(
+        mVulkanPlatform->getDevice(),
+        1,
+        &descriptorWrite, 0, nullptr);
 }
 
 void VulkanRenderSystemBase::bindDescriptorSet(
@@ -1208,4 +1243,59 @@ void VulkanRenderSystemBase::bindDescriptorSet(
 {
     VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
     mDescriptorSetManager->bind(setIndex, set, std::move(offsets));
+}
+
+void VulkanRenderSystemBase::parseInputBindingDescription(
+    VertexDeclaration* decl,
+    std::vector<GlslInputDesc>& inputDesc,
+    std::vector<VkVertexInputBindingDescription>& vertexInputBindings)
+{
+    vertexInputBindings.clear();
+    for (uint32_t binding = 0; binding < 10; binding++)
+    {
+        int32_t stride = decl->getVertexSize(binding);
+
+        if (stride <= 0)
+            continue;
+        vertexInputBindings.emplace_back();
+        vertexInputBindings.back().binding = binding;
+        vertexInputBindings.back().stride = stride;
+        vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    }
+}
+
+void VulkanRenderSystemBase::parseAttributeDescriptions(
+    VertexDeclaration* vd,
+    std::vector<GlslInputDesc>& inputDesc,
+    std::vector<VkVertexInputAttributeDescription>& attributeDescriptions)
+{
+    attributeDescriptions.resize(inputDesc.size());
+    int32_t i = 0;
+
+    for (auto& input : inputDesc)
+    {
+        bool find = false;
+
+        auto& elementlist = vd->getElementList();
+        for (auto elem : elementlist)
+        {
+            if (input._name == VulkanMappings::getSemanticName(elem.getSemantic()) &&
+                input._index == elem.getIndex())
+            {
+                attributeDescriptions[i].binding = elem.getSource();
+                attributeDescriptions[i].location = input._location;
+                attributeDescriptions[i].format = getVKFormatFromType(elem.getType());
+                attributeDescriptions[i].offset = elem.getOffset();
+                i++;
+                find = true;
+                break;
+            }
+        }
+
+
+        if (!find)
+        {
+            OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "can not find input param");
+        }
+    }
 }

@@ -3,7 +3,6 @@
 #include "VulkanTexture.h"
 #include "VulkanHelper.h"
 #include "VulkanRenderSystem.h"
-#include "VulkanFrame.h"
 #include "VulkanTools.h"
 
 namespace Ogre

@@ -267,6 +267,16 @@ struct VulkanProgram : public HwProgram, VulkanResource {
         return mLayouts[index];
     }
 
+    std::vector<VkVertexInputBindingDescription>& getVertexInputBindings()
+    {
+        return mVertexInputBindings;
+    }
+
+    std::vector<VkVertexInputAttributeDescription>& getAttributeDescriptions()
+    {
+        return mAttributeDescriptions;
+    }
+
     static constexpr uint8_t const MAX_SHADER_MODULES = 2;
 
 private:
@@ -274,12 +284,24 @@ private:
     VkShaderModule mShaders[MAX_SHADER_MODULES];
     VkPipelineLayout mPipelineLayout;
     Handle<HwDescriptorSetLayout> mLayouts[4];
+    std::vector<VkVertexInputBindingDescription> mVertexInputBindings;
+    std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
 };
 
 
 struct VulkanPipeline : private HwPipeline, VulkanResource
 {
     VulkanPipeline(VkPipeline pipeline, VkPipeline pipelineShadow);
+
+    VkPipeline getPipeline()
+    {
+        return mPipeline;
+    }
+
+    VkPipeline getPipelineShadow()
+    {
+        return mPipelineShadow;
+    }
 private:
     VkPipeline mPipeline;
     VkPipeline mPipelineShadow;

@@ -8,7 +8,6 @@
 #include "VulkanHardwarePixelBuffer.h"
 #include "VulkanMappings.h"
 #include "VulkanTools.h"
-#include "VulkanFrame.h"
 
 
 

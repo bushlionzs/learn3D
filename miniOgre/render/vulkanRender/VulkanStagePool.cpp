@@ -56,7 +56,7 @@ namespace filament::backend {
             .usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
         };
         VmaAllocationCreateInfo allocInfo{ .usage = VMA_MEMORY_USAGE_CPU_ONLY };
-        UTILS_UNUSED_IN_RELEASE VkResult result = vmaCreateBuffer(mAllocator, &bufferInfo,
+        VkResult result = vmaCreateBuffer(mAllocator, &bufferInfo,
             &allocInfo, &stage->buffer, &stage->memory, nullptr);
 
 #if FVK_ENABLED(FVK_DEBUG_ALLOCATION)

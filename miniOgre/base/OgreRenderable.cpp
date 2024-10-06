@@ -5,6 +5,7 @@
 #include <OgreCamera.h>
 #include <OgreVertexData.h>
 #include <OgreIndexData.h>
+#include <OgreMaterial.h>
 
 namespace Ogre {
     Renderable::Renderable()
@@ -16,6 +17,15 @@ namespace Ogre {
 
     Renderable::~Renderable()
     {
+    }
+
+    void Renderable::setMaterial(std::shared_ptr<Material> mat)
+    {
+        mMaterial = mat;
+
+        VertexData* vd = getVertexData();
+        VertexDeclaration* decl = vd->getVertexDeclaration();
+        mMaterial->updateVertexDeclaration(decl);
     }
 
     RenderableData* Renderable::getRenderableData()

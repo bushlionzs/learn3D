@@ -17,6 +17,7 @@
 
 class GraphicsCommandList;
 class RenderableData;
+class VertexDeclaration;
 
 using namespace filament::backend;
 
@@ -83,12 +84,6 @@ public:
         return mBatchCount;
     }
 
-    uint64_t getFrameNumber()
-    {
-        return mFrameNumber;
-    }
-
-
     utils::JobSystem& getJobSystem()
     {
         return mJobSystem;
@@ -140,7 +135,7 @@ public:
     virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t index);
     virtual Handle<HwDescriptorSet> createDescriptorSet(Handle<HwDescriptorSetLayout> dslh);
     virtual Handle<HwPipelineLayout> createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts);
-    virtual Handle<HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo);
+    virtual Handle<HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo, VertexDeclaration* decl);
     virtual Handle<HwPipeline> createPipeline(
         backend::RasterState& rasterState,
         Handle<HwProgram>& program);
@@ -158,8 +153,7 @@ public:
     virtual void updateDescriptorSetTexture(
         Handle<HwDescriptorSet> dsh,
         backend::descriptor_binding_t binding,
-        backend::TextureHandle th,
-        SamplerParams params);
+        OgreTexture* tex);
 private:
     void renderJob(ArenaScope& arena, FrameGraphPassCallback cb);
 
@@ -168,7 +162,6 @@ protected:
     uint32_t mBatchCount = 0;
     uint32_t mTriangleCount = 0;
     uint32_t mLoadResCount = 0;
-    uint64_t mFrameNumber = 0;
 
 
     String mRenderSystemName;

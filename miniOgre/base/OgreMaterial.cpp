@@ -17,7 +17,9 @@ namespace Ogre {
     {
         mMaterialName = name;
         mPbr = pbr;
-        
+        mShaderInfo.uboVertexMask = 1 | 2;
+        mShaderInfo.uboFragMask = 2 | 4;
+        mShaderInfo.samplerFragMask = 1 | 2 | 4 | 8 | 16;
 
         
     }
@@ -120,11 +122,11 @@ namespace Ogre {
     {
         auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 
-        mProgramHandle = rs->createShaderProgram(mShaderInfo);
+        mProgramHandle = rs->createShaderProgram(mShaderInfo, mVertexDeclaration);
         mPipelineHandle = rs->createPipeline(mRasterState, mProgramHandle);
 
         mUboLayoutHandle = rs->getDescriptorSetLayout(mProgramHandle, 0);
-        mSamplerLayoutHandle = rs->getDescriptorSetLayout(mProgramHandle, 0);
+        mSamplerLayoutHandle = rs->getDescriptorSetLayout(mProgramHandle, 1);
         auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
         
         
@@ -136,17 +138,22 @@ namespace Ogre {
         {
             FrameResourceInfo* resourceInfo = &mFrameResourceInfoList[i];
             Handle<HwBufferObject> objectBufferHandle = 
-                rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(ObjectConstantBuffer));
+                rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, 
+                    sizeof(ObjectConstantBuffer));
             resourceInfo->modelObjectHandle = objectBufferHandle;
 
             Handle<HwBufferObject> matBufferHandle;
             if (mPbr)
             {
-                rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(PbrMaterialConstanceBuffer));
+                matBufferHandle = 
+                    rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, 
+                        sizeof(PbrMaterialConstanceBuffer));
             }
             else
             {
-                rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(GeneralMaterialConstantBuffer));
+                matBufferHandle = 
+                    rs->createBufferObject(BufferObjectBinding::UNIFORM, 
+                        BufferUsage::DYNAMIC, sizeof(GeneralMaterialConstantBuffer));
             }
                 
             resourceInfo->matObjectHandle = matBufferHandle;
@@ -168,6 +175,28 @@ namespace Ogre {
                     resourceInfo->skinObjectHandle, 0, sizeof(SkinnedConstantBuffer));
             }
             
+
+            //update texture
+            uint32_t index = 0;
+            for (int32_t i = 0; i < mTextureUnits.size(); i++)
+            {
+                if (mTextureUnits[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
+                    continue;
+                OgreTexture* tex = mTextureUnits[i]->getRaw();
+
+                rs->updateDescriptorSetTexture(resourceInfo->samplerSet, index, tex);
+                index++;
+            }
+
+            index = 4;
+            for (int32_t i = 0; i < mTextureUnits.size(); i++)
+            {
+                if (mTextureUnits[i]->getTextureProperty()->_texType != TEX_TYPE_CUBE_MAP)
+                    continue;
+                OgreTexture* tex = mTextureUnits[i]->getRaw();
+
+                rs->updateDescriptorSetTexture(resourceInfo->samplerSet, index, tex);
+            }
         }
 
 
@@ -213,9 +242,9 @@ namespace Ogre {
     {
         mShaderInfo = sinfo;
 
-        mShaderInfo.uboVertexMask = 1 & 2;
-        mShaderInfo.uboFragMask = 2 & 4;
-        mShaderInfo.samplerFragMask = 1 & 2 & 4 & 8 & 16;
+        mShaderInfo.uboVertexMask = 1 | 2;
+        mShaderInfo.uboFragMask = 2 | 4;
+        mShaderInfo.samplerFragMask = 1 | 2 | 4 | 8 | 16;
 
         for (auto& pair : mShaderInfo.shaderMacros)
         {

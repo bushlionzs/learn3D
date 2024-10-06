@@ -12,7 +12,6 @@
 
 
 class VulkanRenderSystemBase;
-class VulkanFrame;
 class VulkanTexture;
 class VulkanLayoutCache;
 class VulkanPipelineCache;
@@ -60,7 +59,6 @@ public:
     VkPipelineLayout _getPipelineLayout(bool pbr);
 
 
-    VulkanFrame* _getFrame(uint32_t index);
     VkDescriptorPool _getDescriptorPool();
     VkDescriptorSetLayout _getDescriptorSetLayout(VulkanLayoutIndex index);
     VulkanRenderSystemBase* _getRenderSystem()
@@ -140,11 +138,6 @@ private:
     VkCommandPool mSingleCommandPool;
 
     VkFormat mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
-
-    std::vector<VulkanFrame*> mFrameList;
-
-
-
 
     //default texture
 

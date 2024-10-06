@@ -11,7 +11,7 @@
 #include <filament/DriverBase.h>
 
 class TextureUnit;
-
+class VertexDeclaration;
 class MaterialInfo
 {
 public:
@@ -113,6 +113,10 @@ namespace Ogre {
             return mRasterState;
         }
 
+        void updateVertexDeclaration(VertexDeclaration* decl)
+        {
+            mVertexDeclaration = decl;
+        }
         Handle<HwPipeline> getPipeline()
         {
             return mPipelineHandle;
@@ -159,5 +163,7 @@ namespace Ogre {
         Handle<HwProgram> mProgramHandle;
         Handle<HwDescriptorSetLayout> mUboLayoutHandle;
         Handle<HwDescriptorSetLayout> mSamplerLayoutHandle;
+
+        VertexDeclaration* mVertexDeclaration = nullptr;
     };
 }

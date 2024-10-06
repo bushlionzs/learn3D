@@ -72,7 +72,7 @@ using namespace bluevk;
         vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, cacheEntry->handle);
     }
 
-    void bindPipeline(VkCommandBuffer cb, VkPipeline pipeline)
+    void VulkanPipelineCache::bindPipeline(VkCommandBuffer cb, VkPipeline pipeline)
     {
         vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
     }

@@ -87,7 +87,6 @@ public:
 
     std::shared_ptr<OgreTexture> getTexture();
 
-    Texture* getFTexture();
     OgreTexture* getRaw();
     TextureProperty* getTextureProperty();
 

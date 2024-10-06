@@ -205,7 +205,7 @@ Handle<HwPipelineLayout> RenderSystem::createPipelineLayout(std::array<Handle<Hw
     return Handle<HwPipelineLayout>();
 }
 
-Handle<HwProgram> RenderSystem::createShaderProgram(const ShaderInfo& mShaderInfo)
+Handle<HwProgram> RenderSystem::createShaderProgram(const ShaderInfo& mShaderInfo, VertexDeclaration* decl)
 {
     assert(false);
     return Handle<HwProgram>();
@@ -240,8 +240,7 @@ void RenderSystem::updateDescriptorSetBuffer(
 void RenderSystem::updateDescriptorSetTexture(
     Handle<HwDescriptorSet> dsh,
     backend::descriptor_binding_t binding,
-    backend::TextureHandle th,
-    SamplerParams params)
+    OgreTexture* tex)
 {
 
 }

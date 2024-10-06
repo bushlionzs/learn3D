@@ -12,6 +12,7 @@
 #include <VulkanContext.h>
 #include <VulkanDescriptorSetManager.h>
 
+class VertexDeclaration;
 class VulkanGraphicsCommandList;
 class VulkanFrame;
 class VulkanWindow;
@@ -74,7 +75,7 @@ protected:
     virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t index) override;
     virtual Handle<HwDescriptorSet> createDescriptorSet(Handle<HwDescriptorSetLayout> dslh) override;
     virtual Handle<HwPipelineLayout> createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts) override;
-    virtual Handle<HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo) override;
+    virtual Handle<HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo, VertexDeclaration* decl) override;
     virtual Handle<HwPipeline> createPipeline(
         backend::RasterState& rasterState, 
         Handle<HwProgram>& program) override;
@@ -92,8 +93,16 @@ protected:
     virtual void updateDescriptorSetTexture(
         Handle<HwDescriptorSet> dsh,
         backend::descriptor_binding_t binding,
-        backend::TextureHandle th,
-        SamplerParams params) override;
+        OgreTexture* tex) override;
+private:
+    void parseInputBindingDescription(
+        VertexDeclaration* decl,
+        std::vector<GlslInputDesc>& inputDesc,
+        std::vector<VkVertexInputBindingDescription>& vertexInputBindings);
+    void parseAttributeDescriptions(
+        VertexDeclaration* vd,
+        std::vector<GlslInputDesc>& inputDesc,
+        std::vector<VkVertexInputAttributeDescription>& attributeDescriptions);
 protected:
     RenderPassInfo mCurrentRenderPassInfo;
 
@@ -110,7 +119,7 @@ protected:
     VmaAllocator mAllocator = VK_NULL_HANDLE;
     VulkanResourceAllocator mResourceAllocator;
 
-    VulkanStagePool mStagePool;
+    VulkanStagePool* mStagePool;
     VulkanCommands* mCommands;
     VulkanSwapChain* mSwapChain = nullptr;
     VulkanPlatform* mVulkanPlatform;

@@ -5,15 +5,12 @@
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
 #include "OgreVertexDeclaration.h"
-#include "VulkanRenderData.h"
 #include "OgreMaterial.h"
 #include "OgreHardwareIndexBuffer.h"
 #include "VulkanHardwareBufferManager.h"
 #include "OgreCamera.h"
 #include "VulkanTools.h"
-#include "VulkanObjectPool.h"
 #include "VulkanHelper.h"
-#include "VulkanFrame.h"
 #include "VulkanWindow.h"
 #include "OgreViewport.h"
 #include "OgreTextureManager.h"
@@ -74,8 +71,7 @@ void VulkanRenderSystem::present()
 
 void VulkanRenderSystem::frameEnd()
 {
-    mStagePool.gc();
-    mFrameNumber++;
+    
 }
 
 void VulkanRenderSystem::beginRenderPass(
@@ -269,17 +265,12 @@ void VulkanRenderSystem::endComputePass()
 
 void VulkanRenderSystem::update(Renderable* r)
 {
-    VulkanRenderableData* rd = (VulkanRenderableData*)r->getRenderableData();
-
-    rd->update(mCurrentRenderPassInfo, nullptr);
+   
 }
 
 void VulkanRenderSystem::render(Renderable* r, RenderListType t)
 {
     
-
-
-
 }
 
 
@@ -287,10 +278,10 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
 {
     auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
     VkCommandBuffer cmdBuffer = mCommands->get().buffer();
-    ObjectConstantBuffer objectConstantBuffer;
-    for (auto r : mRenderList)
+    for (auto r : objs)
     {
         Ogre::Material* mat = r->getMaterial().get();
+        
         Handle<HwPipeline> pipeline = mat->getPipeline();
         Handle<HwProgram> program = mat->getProgram();
         VulkanPipeline* vulkanPineline = mResourceAllocator.handle_cast<VulkanPipeline*>(pipeline);
@@ -300,19 +291,15 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
         vertexData->bind(cmdBuffer);
 
         FrameResourceInfo* resourceInfo = mat->getFrameResourceInfo(frameIndex);
-        const Ogre::Matrix4& model = r->getModelMatrix();
-        objectConstantBuffer.world = model.transpose();
-
-        updateBufferObject(resourceInfo->modelObjectHandle, 
-            (const char*) & objectConstantBuffer, sizeof(objectConstantBuffer));
-        updateDescriptorSetBuffer(resourceInfo->uboSet, 1, 
-            mCurrentRenderPassInfo.frameDataHandle, 0, mCurrentRenderPassInfo.frameDataSize);
+        
         VulkanDescriptorSet* ubo = 
             mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->uboSet);
         VulkanDescriptorSet* sampler = 
             mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->samplerSet);
         VkDescriptorSet ds[2] = {ubo->vkSet,  sampler->vkSet};
 
+        auto vulkanPipe = vulkanPineline->getPipeline();
+        mPipelineCache->bindPipeline(cmdBuffer, vulkanPipe);
         vkCmdBindDescriptorSets(
             cmdBuffer,
             VK_PIPELINE_BIND_POINT_GRAPHICS,

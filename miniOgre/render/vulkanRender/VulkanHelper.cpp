@@ -5,7 +5,6 @@
 #include "VulkanHelper.h"
 #include "VulkanRenderSystem.h"
 #include "VulkanTools.h"
-#include "VulkanFrame.h"
 #include "VulkanBuffer.h"
 #include "VulkanHardwareBufferManager.h"
 #include "VulkanBuffer.h"
@@ -132,13 +131,6 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
     createDescriptorPool();
     setupDescriptorSetLayout();
     createSamples();
-
-    mFrameList.resize(VULKAN_FRAME_RESOURCE_COUNT);
-
-    for (int32_t i = 0; i < VULKAN_FRAME_RESOURCE_COUNT; i++)
-    {
-        mFrameList[i] = new VulkanFrame(i);
-    }
 }
 
 void VulkanHelper::_createBuffer(
@@ -624,13 +616,6 @@ VkPipelineLayout VulkanHelper::_getPipelineLayout(bool pbr)
     
     return mPipelineLayout;
 }
-
-
-VulkanFrame* VulkanHelper::_getFrame(uint32_t index)
-{
-    return mFrameList[index];
-}
-
 
 VkDescriptorPool VulkanHelper::_getDescriptorPool()
 {

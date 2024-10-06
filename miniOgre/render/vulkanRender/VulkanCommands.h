@@ -207,7 +207,7 @@ namespace filament::backend {
         // The observer's event handler can only be called during get().
         void setObserver(CommandBufferObserver* observer) { mObserver = observer; }
     private:
-        static constexpr int CAPACITY = 3;
+        static constexpr int CAPACITY = 2;
         VkDevice const mDevice;
         VkQueue const mQueue;
         VkCommandPool const mPool;
