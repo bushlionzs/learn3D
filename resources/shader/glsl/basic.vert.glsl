@@ -38,12 +38,11 @@ void main() {
 		weights[3] * cbSkinned.gBoneTransforms[bone_indices.w];
 	outPosH =  cbPerObject.gWorld * skinMat * vec4(position, 1.0);
 #else
-    gl_Position = cbPerObject.gWorldViewProj * vec4(position, 1.0);
-	outPosH = cbPerObject.gWorld * vec4(position, 1.0);
+    outPosH = cbPerObject.gWorld * vec4(position, 1.0);
 #endif
     outShadowPosH = cbPass.gShadowTransform * outPosH;
 	gl_Position = cbPass.gViewProj * outPosH;
-    outTexC = (cbMaterial.gTexTransform * vec4(texcoord, 0.0f, 1.0f)).xy;
+    outTexC = texcoord;
 	gl_Position.y = -gl_Position.y;
 }
 

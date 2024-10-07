@@ -39,7 +39,15 @@ public:
 
 	void execute(RenderSystem* rs)
 	{
-		mRenderPassInfo.renderTargets[0].renderTarget = mInput.color;
+		if (mInput.color)
+		{
+			mRenderPassInfo.renderTargetCount = 1;
+			mRenderPassInfo.renderTargets[0].renderTarget = mInput.color;
+		}
+		else
+		{
+			mRenderPassInfo.renderTargetCount = 0;
+		}
 		mRenderPassInfo.depthTarget.depthStencil = mInput.depth;
 		mRenderPassInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
 		mRenderPassInfo.depthTarget.clearValue = { 1.0f, 0.0f };
@@ -50,16 +58,65 @@ public:
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		mRenderPassInfo.frameDataHandle = mFrameBufferObjectList[frameIndex];
 		
-		rs->beginRenderPass(mRenderPassInfo);
 		static EngineRenderList engineRenerList;
 		mInput.sceneMgr->getSceneRenderList(mInput.cam, engineRenerList, mInput.shadowPass);
-
 		
+		if(true)
+		{
+			updateFrameData(rs, mRenderPassInfo.cam, mInput.light);
+			auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+			ObjectConstantBuffer objectConstantBuffer;
+			for (auto r : engineRenerList.mOpaqueList)
+			{
+				Ogre::Material* mat = r->getMaterial().get();
+				if (!mat->isLoaded())
+				{
+					mat->load(nullptr);
+				}
+
+				FrameResourceInfo* resourceInfo = mat->getFrameResourceInfo(frameIndex);
+				const Ogre::Matrix4& model = r->getModelMatrix();
+				objectConstantBuffer.world = model.transpose();
+
+				rs->updateBufferObject(resourceInfo->modelObjectHandle,
+					(const char*)&objectConstantBuffer, sizeof(objectConstantBuffer));
+
+
+				
+
+				RawData* rawData = r->getSkinnedData();
+
+				if (rawData)
+				{
+					rs->updateBufferObject(resourceInfo->skinObjectHandle, rawData->mData, rawData->mDataSize);
+				}
+
+				if (mInput.shadowPass)
+				{
+					rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 1,
+						mRenderPassInfo.frameDataHandle, 0, sizeof(mFrameConstantBuffer));
+				}
+				else
+				{
+					rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 1,
+						mRenderPassInfo.frameDataHandle, 0, sizeof(mFrameConstantBuffer));
+				}
+
+				if (mInput.shadowMap)
+				{
+					rs->updateDescriptorSetTexture(resourceInfo->samplerSet, 3, mInput.shadowMap);
+
+					
+				}
+
+			}
+		}
+		rs->beginRenderPass(mRenderPassInfo);
 		rs->multiRender(engineRenerList.mOpaqueList);
 		rs->endRenderPass();
 	}
 
-	void updateFrameData(RenderSystem* rs, ICamera* camera, bool shadow)
+	void updateFrameData(RenderSystem* rs, ICamera* camera, ICamera* light)
 	{
 		const Ogre::Matrix4& view = camera->getViewMatrix();
 		const Ogre::Matrix4& proj = camera->getProjectMatrix();
@@ -70,7 +127,7 @@ public:
 		Ogre::Matrix4 invProj = proj.inverse();
 		Ogre::Matrix4 invViewProj = viewProj.inverse();
 
-		mFrameConstantBuffer.Shadow = shadow;
+		
 
 		mFrameConstantBuffer.View = view.transpose();
 		mFrameConstantBuffer.InvView = invView.transpose();
@@ -81,7 +138,16 @@ public:
 
 		mFrameConstantBuffer.EyePosW = camepos;
 
-
+		if (light)
+		{
+			mFrameConstantBuffer.ShadowTransform = (light->getProjectMatrix() * light->getViewMatrix()).transpose();
+			mFrameConstantBuffer.Shadow = 1;
+		}
+		else
+		{
+			mFrameConstantBuffer.Shadow = 0;
+		}
+		
 		
 		mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
 		mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;

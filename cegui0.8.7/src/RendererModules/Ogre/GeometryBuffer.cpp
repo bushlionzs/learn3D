@@ -63,7 +63,7 @@ namespace CEGUI
         mMaterial->setBlendState(mBlendState);
         mMaterial->setWriteDepth(false);
         mMaterial->setDepthTest(false);
-        mMaterial->setCullMode(Ogre::CULL_NONE);
+        mMaterial->setCullMode(backend::CullingMode::NONE);
         //mMaterial->load(nullptr);
 
         VertexData* vd = _owner->getVertexData();

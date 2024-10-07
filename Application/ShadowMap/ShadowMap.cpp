@@ -43,14 +43,11 @@ void ShadowMap::setup(
     mSceneManager = sceneManager;
     mGameCamera = gameCamera;
 
-    RenderPassInput renderInput;
-    renderInput.cam = mGameCamera->getCamera();
-    renderInput.color = mRenderWindow->getColorTarget();
-    renderInput.depth = mRenderWindow->getDepthTarget();
-    renderInput.sceneMgr = mSceneManager;
-    renderInput.shadowMap = nullptr;
-    renderInput.shadowPass = false;
-    mMainPass = createRenderPass(renderInput);
+    
+
+    
+
+    
 
     ComputePassInput computeInput;
     computeInput.shaderName = "clearBuffer";
@@ -108,12 +105,18 @@ void ShadowMap::update(float delta)
     {
         mAnimationState->addTime(delta);
     }
+
+    if (mLightNode)
+    {
+        mLightNode->yaw(Ogre::Radian(3.14) * delta * 0.1);
+    }
 }
 
 void ShadowMap::updatePass(std::vector<PassBase*>& passlist)
 {
     passlist.clear();
-    passlist.push_back(clearBufferPass);
+    //passlist.push_back(clearBufferPass);
+    passlist.push_back(mShadowPass);
     passlist.push_back(mMainPass);
 }
 
@@ -228,11 +231,28 @@ void ShadowMap::base1()
 
 
 	auto shadowSize = 1024;
-	uint32_t usage = Ogre::TextureUsage::COLOR_ATTACHMENT | Ogre::TextureUsage::DEPTH_ATTACHMENT;
-	usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
+
 	auto shadowMap = mRenderSystem->createRenderTarget(
 		"shadow", shadowSize, shadowSize, Ogre::PF_DEPTH32_STENCIL8,
-		usage);
+        Ogre::TextureUsage::DEPTH_ATTACHMENT);
+
+    RenderPassInput renderInput;
+    renderInput.cam = light;
+    renderInput.color = nullptr;
+    renderInput.depth = shadowMap;
+    renderInput.sceneMgr = mSceneManager;
+    renderInput.shadowMap = nullptr;
+    renderInput.shadowPass = true;
+    mShadowPass = createRenderPass(renderInput);
+
+    renderInput.cam = mGameCamera->getCamera();
+    renderInput.color = mRenderWindow->getColorTarget();
+    renderInput.depth = mRenderWindow->getDepthTarget();
+    renderInput.sceneMgr = mSceneManager;
+    renderInput.shadowMap = shadowMap->getTarget();
+    renderInput.shadowPass = false;
+    renderInput.light = light;
+    mMainPass = createRenderPass(renderInput);
 	
 }
 

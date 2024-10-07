@@ -36,6 +36,6 @@ private:
 	RenderWindow* mRenderWindow;
 
 	PassBase* mMainPass;
-
+	PassBase* mShadowPass;
 	PassBase* clearBufferPass;
 };

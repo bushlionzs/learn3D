@@ -19,6 +19,7 @@ struct RenderPassInput
 	Ogre::SceneManager* sceneMgr = nullptr;
 	Ogre::ICamera* cam = nullptr;
 	Ogre::OgreTexture* shadowMap = nullptr;
+	Ogre::ICamera* light = nullptr;
 	bool shadowPass = false;
 };
 

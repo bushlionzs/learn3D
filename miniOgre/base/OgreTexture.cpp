@@ -22,9 +22,9 @@ namespace Ogre {
 		_tex_addr_mod = Ogre::TAM_WRAP;
 		_samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
 		_samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
-		_samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-		_samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-		_samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+		_samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+		_samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+		_samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
 		_samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
 		_samplerParams.compareFunc = filament::backend::SamplerCompareFunc::N;
 		_samplerParams.anisotropyLog2 = 0;

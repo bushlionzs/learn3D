@@ -167,12 +167,17 @@ namespace Ogre {
             rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 0, objectBufferHandle, 0, sizeof(ObjectConstantBuffer));
             rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 2, matBufferHandle, 0, sizeof(PbrMaterialConstanceBuffer));
 
+            rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 0, objectBufferHandle, 0, sizeof(ObjectConstantBuffer));
+
             if (mHasSkinData)
             {
                 resourceInfo->skinObjectHandle =
                     rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(SkinnedConstantBuffer));
 
                 rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 3, 
+                    resourceInfo->skinObjectHandle, 0, sizeof(SkinnedConstantBuffer));
+
+                rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 3,
                     resourceInfo->skinObjectHandle, 0, sizeof(SkinnedConstantBuffer));
             }
             

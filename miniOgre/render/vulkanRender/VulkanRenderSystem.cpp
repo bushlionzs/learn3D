@@ -71,7 +71,7 @@ void VulkanRenderSystem::present()
 
 void VulkanRenderSystem::frameEnd()
 {
-    
+    mStagePool->gc();
 }
 
 void VulkanRenderSystem::beginRenderPass(
@@ -81,12 +81,6 @@ void VulkanRenderSystem::beginRenderPass(
 
     mCurrentVKImage = nullptr;
     mCurrentRenderPassInfo = renderPassInfo;
-
-    if (!renderPassInfo.shadowPass)
-    {
-        mFrameConstantBuffer.ShadowTransform = renderPassInfo.lightViewProj;
-    }
-    updateMainPassCB(mCurrentRenderPassInfo.cam);
   
     VkRenderingAttachmentInfo colorAttachments[MAX_RENDER_TARGET_ATTACHMENTS] = {};
     VkRenderingAttachmentInfo depthAttachment = {};
@@ -292,18 +286,34 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
 
         FrameResourceInfo* resourceInfo = mat->getFrameResourceInfo(frameIndex);
         
-        VulkanDescriptorSet* ubo = 
-            mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->uboSet);
-        VulkanDescriptorSet* sampler = 
-            mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->samplerSet);
-        VkDescriptorSet ds[2] = {ubo->vkSet,  sampler->vkSet};
+        
+        if (mCurrentRenderPassInfo.shadowPass)
+        {
+            VulkanDescriptorSet* ubo =
+                mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->uboShadowSet);
+            auto vulkanPipeShadow = vulkanPineline->getPipelineShadow();
+            mPipelineCache->bindPipeline(cmdBuffer, vulkanPipeShadow);
+            vkCmdBindDescriptorSets(
+                cmdBuffer,
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                vulkanProgram->getVulkanPipelineLayout(), 0, 1, &ubo->vkSet, 0, nullptr);
+        }
+        else
+        {
+            VulkanDescriptorSet* ubo =
+                mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->uboSet);
+            VulkanDescriptorSet* sampler =
+                mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->samplerSet);
+            VkDescriptorSet ds[2] = { ubo->vkSet,  sampler->vkSet };
 
-        auto vulkanPipe = vulkanPineline->getPipeline();
-        mPipelineCache->bindPipeline(cmdBuffer, vulkanPipe);
-        vkCmdBindDescriptorSets(
-            cmdBuffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            vulkanProgram->getVulkanPipelineLayout(), 0, 2, &ds[0], 0, nullptr);
+            auto vulkanPipe = vulkanPineline->getPipeline();
+            mPipelineCache->bindPipeline(cmdBuffer, vulkanPipe);
+            vkCmdBindDescriptorSets(
+                cmdBuffer,
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                vulkanProgram->getVulkanPipelineLayout(), 0, 2, &ds[0], 0, nullptr);
+        }
+       
 
         if (indexData)
         {
