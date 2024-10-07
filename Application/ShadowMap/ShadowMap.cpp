@@ -19,6 +19,7 @@
 #include "OgreRoot.h"
 #include "PassUtil.h"
 #include "pass.h"
+#include "shaderManager.h"
 
 ShadowMap::ShadowMap()
 {
@@ -42,60 +43,7 @@ void ShadowMap::setup(
     mRenderWindow = renderWindow;
     mSceneManager = sceneManager;
     mGameCamera = gameCamera;
-
-    
-
-    
-
-    
-
-    ComputePassInput computeInput;
-    computeInput.shaderName = "clearBuffer";
-    Handle<HwDescriptorSetLayout> dslh;
-    DescriptorSetLayout info;
-    info.bindings.reserve(2);
-    DescriptorSetLayoutBinding bindings;
-    bindings.type = DescriptorType::SHADER_STORAGE_BUFFER;
-    bindings.stageFlags = ShaderStageFlags::COMPUTE;
-    bindings.binding = 0;
-    bindings.flags = DescriptorFlags::NONE;
-    bindings.count = 1;
-    info.bindings.push_back(bindings);
-    bindings.type = DescriptorType::UNIFORM_BUFFER;
-    bindings.stageFlags = ShaderStageFlags::COMPUTE;
-    bindings.binding = 2;
-    bindings.flags = DescriptorFlags::NONE;
-    bindings.count = 1;
-    info.bindings.push_back(bindings);
-
-    dslh = mRenderSystem->createDescriptorSetLayout(info);
-    
-    computeInput.ds = mRenderSystem->createDescriptorSet(dslh);
-    computeInput.pipelineLayout.setLayout[0] = dslh;
-    
-    struct VBConstants
-    {
-        uint32_t indexOffset;
-        uint32_t pad_0;
-        uint32_t pad_1;
-        uint32_t pad_2;
-    };
-
-    VBConstants constants[2];
-    memset(&constants[0], 0, sizeof(VBConstants) * 2);
-    Handle<HwBufferObject> vbconstantHandle = 
-        mRenderSystem->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::STATIC, sizeof(VBConstants) * 2);
-    Handle<HwBufferObject> indirectDrawHandle =
-        mRenderSystem->createBufferObject(BufferObjectBinding::SHADER_STORAGE, BufferUsage::DYNAMIC, 320);
-    mRenderSystem->updateDescriptorSetBuffer(computeInput.ds, 0, indirectDrawHandle, 0, 320);
-    mRenderSystem->updateDescriptorSetBuffer(computeInput.ds, 2, vbconstantHandle, 0, sizeof(VBConstants) * 2);
-
-    computeInput.computeGroup._x = 1;
-    computeInput.computeGroup._y = 1;
-    computeInput.computeGroup._z = 1;
-    clearBufferPass = createComputePass(computeInput);
-
-    base1();
+    base2();
 }
 
 void ShadowMap::update(float delta)
@@ -114,10 +62,7 @@ void ShadowMap::update(float delta)
 
 void ShadowMap::updatePass(std::vector<PassBase*>& passlist)
 {
-    passlist.clear();
-    //passlist.push_back(clearBufferPass);
-    passlist.push_back(mShadowPass);
-    passlist.push_back(mMainPass);
+    passlist = mPassList;   
 }
 
 FrameGraphId<FrameGraphTexture> ShadowMap::fgPass(FrameGraph& fg)
@@ -243,7 +188,8 @@ void ShadowMap::base1()
     renderInput.sceneMgr = mSceneManager;
     renderInput.shadowMap = nullptr;
     renderInput.shadowPass = true;
-    mShadowPass = createRenderPass(renderInput);
+    auto shadowPass = createRenderPass(renderInput);
+    mPassList.push_back(shadowPass);
 
     renderInput.cam = mGameCamera->getCamera();
     renderInput.color = mRenderWindow->getColorTarget();
@@ -252,8 +198,8 @@ void ShadowMap::base1()
     renderInput.shadowMap = shadowMap->getTarget();
     renderInput.shadowPass = false;
     renderInput.light = light;
-    mMainPass = createRenderPass(renderInput);
-	
+    auto mainPass = createRenderPass(renderInput);
+    mPassList.push_back(mainPass);
 }
 
 static void setTextures(Mesh* mesh, 
@@ -994,6 +940,89 @@ void ShadowMap::base2()
 	Entity* sanMiguel = mSceneManager->createEntity(meshname, meshname);
 	SceneNode* sanMiguelNode = root->createChildSceneNode(meshname);
 	sanMiguelNode->attachObject(sanMiguel);
-	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, 8.0f), Ogre::Vector3::ZERO);
+	mGameCamera->updateCamera(Ogre::Vector3(0, 5.0f, 8.0f), Ogre::Vector3(0, 5.0f, 0.0f));
 	mGameCamera->setMoveSpeed(10.0f);
+
+    //clear buffer pass
+    struct VBConstants
+    {
+        uint32_t indexOffset;
+        uint32_t pad_0;
+        uint32_t pad_1;
+        uint32_t pad_2;
+    };
+
+    VBConstants constants[2];
+    memset(&constants[0], 0, sizeof(VBConstants) * 2);
+
+    {
+        ComputePassInput computeInput;
+        ShaderInfo shaderInfo;
+        shaderInfo.shaderName = "clearBuffer";
+        computeInput.programHandle = mRenderSystem->createComputeProgram(shaderInfo);
+        DescriptorSetLayout info;
+        info.bindings.reserve(2);
+        DescriptorSetLayoutBinding bindings;
+        bindings.type = DescriptorType::SHADER_STORAGE_BUFFER;
+        bindings.stageFlags = ShaderStageFlags::COMPUTE;
+        bindings.binding = 0;
+        bindings.flags = DescriptorFlags::NONE;
+        bindings.count = 1;
+        info.bindings.push_back(bindings);
+        bindings.type = DescriptorType::UNIFORM_BUFFER;
+        bindings.stageFlags = ShaderStageFlags::COMPUTE;
+        bindings.binding = 2;
+        bindings.flags = DescriptorFlags::NONE;
+        bindings.count = 1;
+        info.bindings.push_back(bindings);
+
+        auto* rs = mRenderSystem;
+
+        Handle<HwDescriptorSetLayout> dslh = rs->getDescriptorSetLayout(computeInput.programHandle);
+        computeInput.ds = rs->createDescriptorSet(dslh);
+
+        Handle<HwBufferObject> vbconstantHandle =
+            mRenderSystem->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::STATIC, sizeof(VBConstants) * 2);
+        Handle<HwBufferObject> indirectDrawHandle =
+            mRenderSystem->createBufferObject(BufferObjectBinding::SHADER_STORAGE, BufferUsage::DYNAMIC, 320);
+        rs->updateDescriptorSetBuffer(computeInput.ds, 0, indirectDrawHandle, 0, 320);
+        rs->updateDescriptorSetBuffer(computeInput.ds, 2, vbconstantHandle, 0, sizeof(VBConstants) * 2);
+
+        computeInput.computeGroup._x = 1;
+        computeInput.computeGroup._y = 1;
+        computeInput.computeGroup._z = 1;
+        auto clearBufferPass = createComputePass(computeInput);
+        //mPassList.push_back(clearBufferPass);
+    }
+    
+
+    //filter triangles pass
+    {
+        ShaderInfo shaderInfo;
+        shaderInfo.shaderName = "filterTriangles";
+        Handle<HwComputeProgram> computeHandle = mRenderSystem->createComputeProgram(shaderInfo);
+        ComputePassInput computeInput;
+        auto filterTrianglesPass = createComputePass(computeInput);
+        mPassList.push_back(filterTrianglesPass);
+
+
+    }
+ 
+
+    
+    //draw esm shadow map
+
+    //visibility buffer pass
+
+    //visibility shade pass
+
+    RenderPassInput renderInput;
+    renderInput.cam = mGameCamera->getCamera();
+    renderInput.color = mRenderWindow->getColorTarget();
+    renderInput.depth = mRenderWindow->getDepthTarget();
+    renderInput.sceneMgr = mSceneManager;
+    renderInput.shadowMap = nullptr;
+    renderInput.shadowPass = false;
+    auto mainPass = createRenderPass(renderInput);
+    mPassList.push_back(mainPass);
 }

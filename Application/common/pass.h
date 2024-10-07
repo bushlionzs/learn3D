@@ -25,9 +25,8 @@ struct RenderPassInput
 
 struct ComputePassInput
 {
-	std::string shaderName;
-	PipelineLayout pipelineLayout;
 	Handle<HwDescriptorSet> ds;
+	Handle<HwComputeProgram> programHandle;
 	Ogre::Vector3i computeGroup;
 };
 

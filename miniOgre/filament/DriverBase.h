@@ -102,6 +102,12 @@ struct HwProgram : public HwBase {
     HwProgram() noexcept = default;
 };
 
+struct HwComputeProgram : public HwBase {
+    utils::CString name;
+    explicit HwComputeProgram(utils::CString name) noexcept : name(std::move(name)) { }
+    HwComputeProgram() noexcept = default;
+};
+
 struct HwDescriptorSetLayout : public HwBase {
     HwDescriptorSetLayout() noexcept = default;
 };

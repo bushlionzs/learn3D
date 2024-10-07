@@ -259,7 +259,7 @@ struct Equal {
 
 template<typename Bitmask>
 uint32_t createBindings(VkDescriptorSetLayoutBinding* toBind, uint32_t count, VkDescriptorType type,
-        Bitmask const& mask, bool compute = false) {
+        Bitmask const& mask) {
     Bitmask alreadySeen;
     mask.forEachSetBit([&](size_t index) {
         VkShaderStageFlags stages = 0;
@@ -278,10 +278,6 @@ uint32_t createBindings(VkDescriptorSetLayoutBinding* toBind, uint32_t count, Vk
             stages |= VK_SHADER_STAGE_FRAGMENT_BIT;
         }
 
-        if (compute)
-        {
-            stages = VK_SHADER_STAGE_COMPUTE_BIT;
-        }
         if (stages) {
             toBind[count++] = {
                 .binding = binding,
@@ -303,8 +299,6 @@ inline VkDescriptorSetLayout createLayout(VkDevice device, BitmaskGroup const& b
     count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
             bitmaskGroup.dynamicUbo);
     count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, bitmaskGroup.ubo);
-    count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, bitmaskGroup.computeUbo, true);
-    count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, bitmaskGroup.computeDynamicUbo, true);
     count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             bitmaskGroup.sampler);
     count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,

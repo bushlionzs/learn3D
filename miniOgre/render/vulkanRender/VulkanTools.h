@@ -141,8 +141,6 @@ namespace vks
 			VulkanTexture* tex);
 		void generateMipmaps(VkCommandBuffer commandBuffer, VulkanTexture* tex);
 
-		void createVulkanImage(VkFormat format, VkExtent3D extent, VulkanImage& result);
-
-		std::tuple<uint32_t, uint32_t, uint32_t> getShaderBindings(const std::string& blob);
+		std::vector<VkDescriptorSetLayoutBinding> getProgramBindings(const std::string& blob);
 	}
 }

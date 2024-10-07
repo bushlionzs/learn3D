@@ -211,6 +211,18 @@ Handle<HwProgram> RenderSystem::createShaderProgram(const ShaderInfo& mShaderInf
     return Handle<HwProgram>();
 }
 
+Handle<HwDescriptorSetLayout> RenderSystem::getDescriptorSetLayout(Handle<HwComputeProgram>)
+{
+    assert(false);
+    return Handle<HwDescriptorSetLayout>();
+}
+
+Handle<HwComputeProgram> RenderSystem::createComputeProgram(const ShaderInfo& mShaderInfo)
+{
+    assert(false);
+    return Handle<HwComputeProgram>();
+}
+
 Handle<HwPipeline> RenderSystem::createPipeline(
     backend::RasterState& rasterState,
     Handle<HwProgram>& program)

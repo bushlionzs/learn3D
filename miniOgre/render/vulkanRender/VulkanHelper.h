@@ -100,12 +100,6 @@ public:
      {
          return mLayoutCache;
      }
-
-     VkPipeline createComputePipeline(
-         const std::string& shaderName, 
-         VkPipelineLayout layout);
-
-     
 private:
     void createCommandPool();
     void createDescriptorPool();

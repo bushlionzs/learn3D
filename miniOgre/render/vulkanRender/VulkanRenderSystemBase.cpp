@@ -1138,6 +1138,92 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
     return program;
 }
 
+Handle<HwDescriptorSetLayout> VulkanRenderSystemBase::getDescriptorSetLayout(Handle<HwComputeProgram> programHandle)
+{
+    VulkanComputeProgram* program = mResourceAllocator.handle_cast<VulkanComputeProgram*>(programHandle);
+    return program->getSetLayoutHandle();
+}
+
+Handle<HwComputeProgram> VulkanRenderSystemBase::createComputeProgram(const ShaderInfo& shaderInfo)
+{
+    Handle<HwComputeProgram> program = mResourceAllocator.allocHandle<VulkanComputeProgram>();
+    VulkanComputeProgram* vulkanProgram = mResourceAllocator.construct<VulkanComputeProgram>(program, shaderInfo.shaderName);
+
+
+    Ogre::ShaderPrivateInfo* privateInfo =
+        ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
+
+    auto res = ResourceManager::getSingleton().getResource(privateInfo->computeShaderName);
+    
+    String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->computeShaderName);
+    VkShaderModuleInfo moduleInfo;
+    moduleInfo.shaderType = Ogre::ComputeShader;
+    glslCompileShader(
+        res->_fullname,
+        *vertexContent,
+        privateInfo->vertexShaderEntryPoint,
+        shaderInfo.shaderMacros,
+        moduleInfo);
+    vulkanProgram->updateComputeShader(moduleInfo.shaderModule);
+
+    std::vector<VkDescriptorSetLayoutBinding> results = vks::tools::getProgramBindings(moduleInfo.spv);
+
+   
+    assert_invariant(!results.empty() && "Need at least one binding for descriptor set layout.");
+    VkDescriptorSetLayoutCreateInfo dlinfo = {
+            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+            .pNext = nullptr,
+            .bindingCount = (uint32_t)results.size(),
+            .pBindings = results.data(),
+    };
+
+    VkDescriptorSetLayout vkLayout;
+    vkCreateDescriptorSetLayout(mVulkanPlatform->getDevice(), &dlinfo, VKALLOC, &vkLayout);
+    vulkanProgram->updateSetLayout(vkLayout);
+    DescriptorSetLayout layoutInfo;
+    Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
+    VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(dslh, layoutInfo);
+    uboLayout->setVkLayout(vkLayout);
+    vulkanProgram->updateSetLayoutHandle(dslh);
+    VkPipelineLayout pipelineLayout;
+    VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo =
+        vks::initializers::pipelineLayoutCreateInfo(
+            &vkLayout,
+            1);
+
+    if (vkCreatePipelineLayout(mVulkanPlatform->getDevice(), &pPipelineLayoutCreateInfo,
+        nullptr, &pipelineLayout) != VK_SUCCESS)
+    {
+        assert_invariant(!results.empty() && "vkCreatePipelineLayout failed.");
+    }
+
+    vulkanProgram->updatePipelineLayout(pipelineLayout);
+
+    VkPipelineShaderStageCreateInfo stage{};
+    stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    stage.pNext = NULL;
+    stage.flags = 0;
+    stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+    stage.module = moduleInfo.shaderModule;
+    stage.pName = "main";
+    stage.pSpecializationInfo = nullptr;
+
+    VkComputePipelineCreateInfo create_info{};
+    create_info.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+    create_info.pNext = NULL;
+    create_info.flags = 0;
+    create_info.stage = stage;
+    create_info.layout = pipelineLayout;
+    create_info.basePipelineHandle = 0;
+    create_info.basePipelineIndex = 0;
+    VkPipeline pipeline;
+    vkCreateComputePipelines(mVulkanPlatform->getDevice(), NULL, 1, &create_info,
+        nullptr, &pipeline);
+
+    vulkanProgram->updatePipeline(pipeline);
+    return program;
+}
+
 Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     backend::RasterState& rasterState,
     Handle<HwProgram>& program)

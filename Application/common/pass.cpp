@@ -6,6 +6,8 @@
 #include "OgreSceneManager.h"
 #include "OgreRenderable.h"
 #include "OgreMaterial.h"
+#include "OgreRenderTarget.h"
+#include "OgreTextureManager.h"
 
 class RenderPass : public PassBase
 {
@@ -34,7 +36,7 @@ public:
 			mFrameBufferObjectList[i] =
 				rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(mFrameConstantBuffer));
 		}
-		
+		mDefaultTexture = TextureManager::getSingleton().load("white1x1.dds", nullptr);
 	}
 
 	void execute(RenderSystem* rs)
@@ -100,13 +102,18 @@ public:
 				{
 					rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 1,
 						mRenderPassInfo.frameDataHandle, 0, sizeof(mFrameConstantBuffer));
+
+					rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 3,
+						mRenderPassInfo.frameDataHandle, 0, sizeof(mFrameConstantBuffer));
 				}
 
 				if (mInput.shadowMap)
 				{
 					rs->updateDescriptorSetTexture(resourceInfo->samplerSet, 3, mInput.shadowMap);
-
-					
+				}
+				else
+				{
+					rs->updateDescriptorSetTexture(resourceInfo->samplerSet, 3, mDefaultTexture.get());
 				}
 
 			}
@@ -163,6 +170,8 @@ private:
 
 	FrameConstantBuffer mFrameConstantBuffer;
 	std::vector<Handle<HwBufferObject>> mFrameBufferObjectList;
+
+	std::shared_ptr<OgreTexture> mDefaultTexture;
 };
 
 PassBase* createRenderPass(RenderPassInput& input)
@@ -175,8 +184,7 @@ class ComputePass : public PassBase
 public:
 	ComputePass(ComputePassInput& input)
 	{
-		mComputePassInfo.shaderName = input.shaderName;
-		mComputePassInfo.pipelineLayout = input.pipelineLayout;
+		mComputePassInfo.programHandle = input.programHandle;
 		mComputePassInfo.ds = input.ds;
 		mComputePassInfo.computeGroup = input.computeGroup;
 	}

@@ -30,6 +30,7 @@ struct HwBufferObject;
 struct HwFence;
 struct HwIndexBuffer;
 struct HwProgram;
+struct HwComputeProgram;
 struct HwRenderPrimitive;
 struct HwSamplerGroup;
 struct HwStream;
@@ -43,6 +44,7 @@ struct HwDescriptorSetLayout;
 struct HwDescriptorSet;
 struct HwPipelineLayout;
 struct HwPipeline;
+
 /*
  * A handle to a backend resource. HandleBase is for internal use only.
  * HandleBase *must* be a trivial for the purposes of calls, that is, it cannot have user-defined

@@ -136,6 +136,8 @@ public:
     virtual Handle<HwDescriptorSet> createDescriptorSet(Handle<HwDescriptorSetLayout> dslh);
     virtual Handle<HwPipelineLayout> createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts);
     virtual Handle<HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo, VertexDeclaration* decl);
+    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwComputeProgram>);
+    virtual Handle<HwComputeProgram> createComputeProgram(const ShaderInfo& mShaderInfo);
     virtual Handle<HwPipeline> createPipeline(
         backend::RasterState& rasterState,
         Handle<HwProgram>& program);

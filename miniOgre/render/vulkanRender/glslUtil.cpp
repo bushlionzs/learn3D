@@ -84,6 +84,7 @@ std::string getGlslKey(
 struct ShaderContent
 {
     VkShaderModule shaderModule;
+    std::string spv;
     std::vector<GlslInputDesc> inputDesc;
 };
 static std::unordered_map<std::string, ShaderContent> gShaderCacheMap;
@@ -108,6 +109,7 @@ bool glslCompileShader(
         {
             shaderModuleInfo.shaderModule = itor->second.shaderModule;
             shaderModuleInfo.inputDesc = itor->second.inputDesc;
+            shaderModuleInfo.spv = itor->second.spv;
             return true;
         }
     }
@@ -180,8 +182,9 @@ bool glslCompileShader(
             gShaderCacheMap[key].shaderModule = shader;
             parserGlslInputDesc(result, shaderModuleInfo.inputDesc);
             gShaderCacheMap[key].inputDesc = shaderModuleInfo.inputDesc;
+            gShaderCacheMap[key].spv = result;
             shaderModuleInfo.shaderModule = shader;
-
+            shaderModuleInfo.spv = result;
         }
     }
 
@@ -215,5 +218,8 @@ void parserGlslInputDesc(
 
         inputDesc[i]._location = glsl.get_decoration(input.id, spv::DecorationLocation);
 
+        auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
+        auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
+        int kk = 0;
     }
 }

@@ -234,65 +234,6 @@ void VulkanHelper::endSingleTimeCommands(VkCommandBuffer commandBuffer)
     vkQueueWaitIdle(queue);
 }
 
-VkPipeline VulkanHelper::createComputePipeline(
-    const std::string& shaderName, 
-    VkPipelineLayout layout)
-{
-
-    Ogre::ShaderPrivateInfo* privateInfo =
-        ShaderManager::getSingleton().getShader(shaderName, EngineType_Vulkan);
-    String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->computeShaderName);
-    auto res = ResourceManager::getSingleton().getResource(privateInfo->computeShaderName);
-
-    if (res == nullptr)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to find shader!");
-    }
-
-    VkShaderModuleInfo modudleInfo;
-    modudleInfo.shaderType = Ogre::ComputeShader;
-    glslCompileShader(
-        res->_fullname,
-        *vertexContent,
-        privateInfo->vertexShaderEntryPoint,
-        std::vector<std::pair<std::string, std::string>>(),
-        modudleInfo);
-
-    VkPipeline pipeline;
-    VkPipelineShaderStageCreateInfo stage{};
-    stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    stage.pNext = NULL;
-    stage.flags = 0;
-    stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-    stage.module = modudleInfo.shaderModule;
-    stage.pName = "main";
-    stage.pSpecializationInfo = nullptr;
-
-    ComputePipelineKey key;
-    key.pipelineLayout = layout;
-    key.shaderModule = modudleInfo.shaderModule;
-
-    auto itor = mComputePipelineCache.find(key);
-    if (itor != mComputePipelineCache.end())
-    {
-        return itor->second;
-    }
-  
-    VkComputePipelineCreateInfo create_info{};
-    create_info.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-    create_info.pNext = NULL;
-    create_info.flags = 0;
-    create_info.stage = stage;
-    create_info.layout = key.pipelineLayout;
-    create_info.basePipelineHandle = 0;
-    create_info.basePipelineIndex = 0;
-    vkCreateComputePipelines(mVKDevice, NULL, 1, &create_info,
-        nullptr, &pipeline);
-
-    mComputePipelineCache[key] = pipeline;
-    return pipeline;
-}
-
 void VulkanHelper::createCommandPool()
 {
     VkCommandPoolCreateInfo cmdPoolInfo = {};

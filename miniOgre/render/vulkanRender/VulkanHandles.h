@@ -288,6 +288,55 @@ private:
     std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
 };
 
+struct VulkanComputeProgram : public HwComputeProgram, VulkanResource {
+    VulkanComputeProgram(const std::string& name) noexcept;
+
+    ~VulkanComputeProgram();
+    void updateComputeShader(VkShaderModule shaderModule)
+    {
+        mShader = shaderModule;
+    }
+
+    void updateSetLayout(VkDescriptorSetLayout layout)
+    {
+        mLayout = layout;
+    }
+
+    void updateSetLayoutHandle(Handle<HwDescriptorSetLayout> layoutHandle)
+    {
+        mLayoutHandle = layoutHandle;
+    }
+
+    Handle<HwDescriptorSetLayout> getSetLayoutHandle()
+    {
+        return mLayoutHandle;
+    }
+
+    void updatePipelineLayout(VkPipelineLayout layout)
+    {
+        mPipelineLayout = layout;
+    }
+
+    VkPipelineLayout getPipelineLayout()
+    {
+        return mPipelineLayout;
+    }
+
+    void updatePipeline(VkPipeline pipeline)
+    {
+        mPipeline = pipeline;
+    }
+    VkPipeline getPipeline()
+    {
+        return mPipeline;
+    }
+private:
+    VkShaderModule mShader;
+    VkPipelineLayout mPipelineLayout;
+    VkPipeline       mPipeline;
+    VkDescriptorSetLayout mLayout;
+    Handle<HwDescriptorSetLayout> mLayoutHandle;
+};
 
 struct VulkanPipeline : private HwPipeline, VulkanResource
 {

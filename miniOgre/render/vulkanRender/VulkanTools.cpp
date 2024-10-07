@@ -14,6 +14,7 @@
 #include "glslUtil.h"
 #include <spirv.hpp>
 #include <platform_file.h>
+#include <SPIRV_Cross/spirv_glsl.hpp>
 
 namespace vks
 {
@@ -574,64 +575,50 @@ namespace vks
 				subresourceRange);
 		}
 
-		std::tuple<uint32_t, uint32_t, uint32_t> getShaderBindings(const std::string& blob)
+		std::vector<VkDescriptorSetLayoutBinding> getProgramBindings(const std::string& blob)
 		{
-			std::unordered_map<uint32_t, uint32_t> targetToSet, targetToBinding;
+			
+			std::vector<VkDescriptorSetLayoutBinding> result;
+			spirv_cross::CompilerGLSL  glsl((const uint32_t*)blob.data(), blob.size() / 4);
 
+			auto inputs = glsl.get_shader_resources().uniform_buffers;
 
-			constexpr size_t HEADER_SIZE = 5;
+			for (int32_t i = 0; i < inputs.size(); i++)
+			{
+				auto& input = inputs[i];
+				std::string name = glsl.get_name(input.id);
 
-			size_t const dataSize = blob.size() / 4;
-			uint32_t const* data = (uint32_t*)blob.data();
+				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
+				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
 
-			for (uint32_t cursor = HEADER_SIZE, cursorEnd = dataSize; cursor < cursorEnd;) {
-				uint32_t const firstWord = data[cursor];
-				uint32_t const wordCount = firstWord >> 16;
-				uint32_t const op = firstWord & 0x0000FFFF;
-
-				switch (op) {
-				case spv::Op::OpDecorate: {
-					if (data[cursor + 2] == spv::Decoration::DecorationDescriptorSet) {
-						uint32_t const targetVar = data[cursor + 1];
-						uint32_t const setId = data[cursor + 3];
-						targetToSet[targetVar] = setId;
-					}
-					else if (data[cursor + 2] == spv::Decoration::DecorationBinding) {
-						uint32_t const targetVar = data[cursor + 1];
-						uint32_t const binding = data[cursor + 3];
-						targetToBinding[targetVar] = binding;
-					}
-					break;
-				}
-				default:
-					break;
-				}
-				cursor += wordCount;
+				result.emplace_back();
+				auto& back = result.back();
+				back.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+				back.descriptorCount = 1;
+				back.binding = binding;
+				back.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+				back.pImmutableSamplers = nullptr;
 			}
 
-			constexpr uint32_t UBO = 0;
-			constexpr uint32_t SAMPLER = 1;
-			constexpr uint32_t IATTACHMENT = 2;
-			uint32_t ubo = 0, sampler = 0, inputAttachment = 0;
+			inputs = glsl.get_shader_resources().storage_buffers;
 
-			for (auto const& [target, setId] : targetToSet) {
-				uint32_t const binding = targetToBinding[target];
-				assert_invariant(binding < 32);
-				switch (setId) {
-				case UBO:
-					ubo |= (1 << binding);
-					break;
-				case SAMPLER:
-					sampler |= (1 << binding);
-					break;
-				case IATTACHMENT:
-					inputAttachment |= (1 << binding);
-					break;
-				default:
-					PANIC_POSTCONDITION("unexpected %d", (int)setId);
-				}
+			for (int32_t i = 0; i < inputs.size(); i++)
+			{
+				auto& input = inputs[i];
+				std::string name = glsl.get_name(input.id);
+
+				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
+				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
+				result.emplace_back();
+				auto& back = result.back();
+				back.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+				back.descriptorCount = 1;
+				back.binding = binding;
+				back.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+				back.pImmutableSamplers = nullptr;
 			}
-			return { ubo, sampler, inputAttachment };
+
+			return result;
 		}
 	}
 

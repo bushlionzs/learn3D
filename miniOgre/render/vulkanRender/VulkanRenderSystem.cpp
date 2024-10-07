@@ -25,6 +25,7 @@
 #include "VulkanRenderTarget.h"
 #include "VulkanMappings.h"
 #include <VulkanPipelineCache.h>
+#include <VulkanHandles.h>
 #include <VulkanPipelineLayoutCache.h>
 #include <shaderManager.h>
 
@@ -228,15 +229,10 @@ void VulkanRenderSystem::endRenderPass()
 
 void VulkanRenderSystem::beginComputePass(ComputePassInfo& computePassInfo)
 {
-    VulkanPipelineLayoutCache::PipelineLayoutKey layoutKey;
-    VulkanDescriptorSetLayout* first = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(
-        computePassInfo.pipelineLayout.setLayout[0]);
-    layoutKey[0] = first->getVkLayout();
-    layoutKey[1] = VK_NULL_HANDLE;
-    auto pipelineLayoutCache = VulkanHelper::getSingleton().getPipelineLayoutCache();
-    auto pipelineLayout = pipelineLayoutCache->getLayout(layoutKey);
+    VulkanComputeProgram* program = mResourceAllocator.handle_cast<VulkanComputeProgram*>(computePassInfo.programHandle);
 
-    auto pipeline = VulkanHelper::getSingleton().createComputePipeline(computePassInfo.shaderName, pipelineLayout);
+    auto pipeline = program->getPipeline();
+    auto pipelineLayout = program->getPipelineLayout();
     VkCommandBuffer commandBuffer = mCommands->get().buffer();
 
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);

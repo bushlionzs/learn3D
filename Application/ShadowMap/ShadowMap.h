@@ -35,7 +35,9 @@ private:
 	RenderSystem* mRenderSystem;
 	RenderWindow* mRenderWindow;
 
-	PassBase* mMainPass;
-	PassBase* mShadowPass;
-	PassBase* clearBufferPass;
+
+
+	std::vector<PassBase*> mPassList;
+
+	
 };

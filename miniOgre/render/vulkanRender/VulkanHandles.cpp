@@ -193,6 +193,18 @@ VulkanProgram::~VulkanProgram() {
     
 }
 
+VulkanComputeProgram::VulkanComputeProgram(const std::string& name) noexcept
+    : HwComputeProgram(utils::CString(name.c_str())),
+    VulkanResource(VulkanResourceType::PROGRAM)
+{
+
+
+}
+
+VulkanComputeProgram::~VulkanComputeProgram() {
+
+}
+
 VulkanPipeline::VulkanPipeline(VkPipeline pipeline, VkPipeline pipelineShadow)
     :
     mPipeline(pipeline),
