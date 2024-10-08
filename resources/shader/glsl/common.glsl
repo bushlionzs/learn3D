@@ -76,7 +76,7 @@ layout(binding = 1, std140) uniform FrameUniforms {
     mat4 gInvViewProj;
 	mat4 gShadowTransform;
     vec3 gEyePosW;
-    uint gShadow;
+    uint gUseShadow;
     vec2 gRenderTargetSize;
     vec2 gInvRenderTargetSize;
     float gNearZ;

@@ -1,5 +1,4 @@
 #include "OgreHeader.h"
-#include "application_base.h"
 #include "basic.h"
 #include "platform_log.h"
 #include "SimpleApp.h"

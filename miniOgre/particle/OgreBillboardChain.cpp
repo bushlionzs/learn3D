@@ -455,7 +455,7 @@ namespace Ogre {
 
                     // Determine base pointer to vertex #1
 
-                    HardwareBufferLockGuard lockGuard(back);
+                    BufferHandleLockGuard lockGuard(back);
 
                     float* pFloat = reinterpret_cast<float*>(lockGuard.data());
 

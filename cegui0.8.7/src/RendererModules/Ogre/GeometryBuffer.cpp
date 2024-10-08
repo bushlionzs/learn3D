@@ -436,14 +436,14 @@ void OgreGeometryBuffer::updateMatrix() const
 void OgreGeometryBuffer::syncHardwareBuffer() const
 {
     // Reallocate h/w buffer as requied
-    auto hwBuffer = d_renderOp.vertexData->getBuffer(0);
-    size_t size = hwBuffer->getNumVerts();
+    auto numVerts = d_renderOp.vertexData->getVertexCount();
+
     const size_t required_size = d_vertices.size();
-    if(size < required_size)
+    if(numVerts < required_size)
     {
         // calculate new size to use
-        while(size < required_size)
-            size *= 2;
+        while(numVerts < required_size)
+            numVerts *= 2;
 
     }
 

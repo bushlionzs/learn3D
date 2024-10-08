@@ -61,10 +61,15 @@ protected:
         return &mFrameConstantBuffer;
     }
 
+    virtual void* lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes);
+    virtual void unlockBuffer(Handle<HwBufferObject> bufHandle);
+    virtual void bindVertexBuffer(Handle<HwBufferObject> bufHandle, uint32_t binding);
+    virtual void bindIndexBuffer(Handle<HwBufferObject>, uint32_t indexSize);
     virtual Handle<HwBufferObject> createBufferObject(
         BufferObjectBinding bindingType,
         BufferUsage usage,
-        uint32_t byteCount) override;
+        uint32_t byteCount,
+        const char* debugName) override;
 
     virtual void updateBufferObject(
         Handle<HwBufferObject> boh,
@@ -78,7 +83,7 @@ protected:
     virtual Handle<HwProgram> createShaderProgram(
         const ShaderInfo& mShaderInfo, 
         VertexDeclaration* decl) override;
-    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwComputeProgram>) override;
+    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwComputeProgram> programHandle, uint32_t set) override;
     virtual Handle<HwComputeProgram> createComputeProgram(const ShaderInfo& mShaderInfo) override;
     virtual Handle<HwPipeline> createPipeline(
         backend::RasterState& rasterState, 

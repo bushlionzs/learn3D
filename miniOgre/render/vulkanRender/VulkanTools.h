@@ -141,6 +141,8 @@ namespace vks
 			VulkanTexture* tex);
 		void generateMipmaps(VkCommandBuffer commandBuffer, VulkanTexture* tex);
 
-		std::vector<VkDescriptorSetLayoutBinding> getProgramBindings(const std::string& blob);
+		using BingdingInfo = std::unordered_map<uint8_t, std::vector<VkDescriptorSetLayoutBinding>>;
+
+		BingdingInfo getProgramBindings(const std::string& blob);
 	}
 }

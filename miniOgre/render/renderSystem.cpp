@@ -167,7 +167,8 @@ void RenderSystem::present()
 Handle<HwBufferObject> RenderSystem::createBufferObject(
     BufferObjectBinding bindingType,
     BufferUsage usage,
-    uint32_t byteCount)
+    uint32_t byteCount,
+    const char* debugName)
 {
     assert(false);
     return Handle<HwBufferObject>();
@@ -211,7 +212,9 @@ Handle<HwProgram> RenderSystem::createShaderProgram(const ShaderInfo& mShaderInf
     return Handle<HwProgram>();
 }
 
-Handle<HwDescriptorSetLayout> RenderSystem::getDescriptorSetLayout(Handle<HwComputeProgram>)
+Handle<HwDescriptorSetLayout> RenderSystem::getDescriptorSetLayout(
+    Handle<HwComputeProgram> programHandle,
+    uint32_t set)
 {
     assert(false);
     return Handle<HwDescriptorSetLayout>();

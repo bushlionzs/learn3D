@@ -83,16 +83,6 @@ public:
 				rs->updateBufferObject(resourceInfo->modelObjectHandle,
 					(const char*)&objectConstantBuffer, sizeof(objectConstantBuffer));
 
-
-				
-
-				RawData* rawData = r->getSkinnedData();
-
-				if (rawData)
-				{
-					rs->updateBufferObject(resourceInfo->skinObjectHandle, rawData->mData, rawData->mDataSize);
-				}
-
 				if (mInput.shadowPass)
 				{
 					rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 1,
@@ -100,11 +90,17 @@ public:
 				}
 				else
 				{
+					RawData* rawData = r->getSkinnedData();
+
+					if (rawData)
+					{
+						rs->updateBufferObject(resourceInfo->skinObjectHandle, rawData->mData, rawData->mDataSize);
+					}
+
 					rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 1,
 						mRenderPassInfo.frameDataHandle, 0, sizeof(mFrameConstantBuffer));
 
-					rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 3,
-						mRenderPassInfo.frameDataHandle, 0, sizeof(mFrameConstantBuffer));
+					
 				}
 
 				if (mInput.shadowMap)

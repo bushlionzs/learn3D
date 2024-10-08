@@ -35,6 +35,7 @@ THE SOFTWARE.
 #include "OgreDataStream.h"
 #include "OgreSerializer.h"
 #include "OgreStringConverter.h"
+#include "OgreVertexData.h"
 
 namespace Ogre {
     static String rendererTypeName = "billboard";
@@ -158,13 +159,15 @@ namespace Ogre {
     {
         if (1)
         {
-            mBillboardSet->beginBillboards();
+            auto bufHandle = mBillboardSet->beginBillboards();
+            BufferHandleLockGuard guard(bufHandle);
+            float* lockPtr = reinterpret_cast<float*>(guard.data());
             for (auto i = currentParticles.begin();
                 i != currentParticles.end(); ++i)
             {
                 Particle* p = *i;
 
-                mBillboardSet->injectBillboard(p);
+                mBillboardSet->injectBillboard(p, lockPtr);
             }
             mBillboardSet->endBillboards();
 
@@ -177,7 +180,10 @@ namespace Ogre {
             mBillboardSet->setCullIndividually(cullIndividually);
 
             // Update billboard set geometry
-            mBillboardSet->beginBillboards(currentParticles.size());
+            auto bufHandle = mBillboardSet->beginBillboards(currentParticles.size());
+            BufferHandleLockGuard guard(bufHandle);
+            float* lockPtr = reinterpret_cast<float*>(guard.data());
+
             Billboard bb;
 
             for (Particle* p : currentParticles)
@@ -201,7 +207,7 @@ namespace Ogre {
                     bb.mWidth = p->mWidth;
                     bb.mHeight = p->mHeight;
                 }
-                mBillboardSet->injectBillboard(bb);
+                mBillboardSet->injectBillboard(bb, lockPtr);
             }
 
             mBillboardSet->endBillboards();

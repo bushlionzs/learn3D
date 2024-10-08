@@ -123,20 +123,27 @@ public:
         return nullptr;
     }
 
+    virtual void bindVertexBuffer(Handle<HwBufferObject> bufHandle, uint32_t binding) {}
+    virtual void bindIndexBuffer(Handle<HwBufferObject> bufHandle, uint32_t indexSize) {}
+    virtual void* lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes) { return nullptr; }
+    virtual void unlockBuffer(Handle<HwBufferObject> bufHandle) {}
     virtual Handle<HwBufferObject> createBufferObject(
         BufferObjectBinding bindingType, 
         BufferUsage usage, 
-        uint32_t byteCount);
+        uint32_t byteCount,
+        const char* debugName = nullptr);
     virtual void updateBufferObject(
         Handle<HwBufferObject> boh, 
         const char* data, 
         uint32_t size);
     virtual Handle<HwDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout& info);
-    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t index);
+    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t set);
     virtual Handle<HwDescriptorSet> createDescriptorSet(Handle<HwDescriptorSetLayout> dslh);
     virtual Handle<HwPipelineLayout> createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts);
     virtual Handle<HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo, VertexDeclaration* decl);
-    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwComputeProgram>);
+    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(
+        Handle<HwComputeProgram> programHandle, 
+        uint32_t set);
     virtual Handle<HwComputeProgram> createComputeProgram(const ShaderInfo& mShaderInfo);
     virtual Handle<HwPipeline> createPipeline(
         backend::RasterState& rasterState,

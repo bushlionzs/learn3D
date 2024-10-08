@@ -575,14 +575,15 @@ namespace vks
 				subresourceRange);
 		}
 
-		std::vector<VkDescriptorSetLayoutBinding> getProgramBindings(const std::string& blob)
+		BingdingInfo getProgramBindings(const std::string& blob)
 		{
 			
-			std::vector<VkDescriptorSetLayoutBinding> result;
+			BingdingInfo result;
 			spirv_cross::CompilerGLSL  glsl((const uint32_t*)blob.data(), blob.size() / 4);
 
 			auto inputs = glsl.get_shader_resources().uniform_buffers;
 
+			VkDescriptorSetLayoutBinding layout{};
 			for (int32_t i = 0; i < inputs.size(); i++)
 			{
 				auto& input = inputs[i];
@@ -590,14 +591,18 @@ namespace vks
 
 				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
 				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
+				spirv_cross::SPIRType type = glsl.get_type(input.type_id);
 
-				result.emplace_back();
-				auto& back = result.back();
-				back.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-				back.descriptorCount = 1;
-				back.binding = binding;
-				back.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
-				back.pImmutableSamplers = nullptr;
+				if (type.array.size())
+					layout.descriptorCount = type.array[0];
+				else
+					layout.descriptorCount = 1;
+
+				layout.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+				layout.binding = binding;
+				layout.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+
+				result[set].push_back(layout);
 			}
 
 			inputs = glsl.get_shader_resources().storage_buffers;
@@ -609,13 +614,22 @@ namespace vks
 
 				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
 				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
-				result.emplace_back();
-				auto& back = result.back();
-				back.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-				back.descriptorCount = 1;
-				back.binding = binding;
-				back.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
-				back.pImmutableSamplers = nullptr;
+				
+				spirv_cross::SPIRType type = glsl.get_type(input.type_id);
+
+				if (type.array.size())
+					layout.descriptorCount = type.array[0];
+				else
+					layout.descriptorCount = 1;
+
+				layout.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+
+				layout.binding = binding;
+				layout.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+				
+
+
+				result[set].push_back(layout);
 			}
 
 			return result;

@@ -10,21 +10,42 @@
 
 void VertexSlotInfo::createBuffer(uint32_t vertexSize, uint32_t vertexCount)
 {
-    mVertexSize = vertexSize;
-    hardwareVertexBuffer = HardwareBufferManager::getSingleton().createVertexBuffer(
-        vertexSize,
-        vertexCount,
-        5
-    );
+    mVertexSize  = vertexSize;
+    mVertexCount = vertexCount;
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
+    mVertexBuffer = rs->createBufferObject(
+        BufferObjectBinding::VERTEX,
+        BufferUsage::DYNAMIC,
+        vertexSize * vertexCount,
+        "VertexBuffer");
 }
 
 void VertexSlotInfo::writeData(const char* data, uint32_t size)
 {
-    void* vdata = hardwareVertexBuffer->lock();
-    memcpy(vdata, data, size);
-    hardwareVertexBuffer->unlock();
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
+    rs->updateBufferObject(mVertexBuffer, data, size);
 }
 
+BufferHandleLockGuard::BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle)
+{
+    mBufferHandle = bufferHandle;
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
+    mBufferData = rs->lockBuffer(mBufferHandle, 0, UINT32_MAX);
+}
+
+void* BufferHandleLockGuard::data()
+{
+    return mBufferData;
+}
+
+BufferHandleLockGuard::~BufferHandleLockGuard()
+{
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+    rs->unlockBuffer(mBufferHandle);
+}
 
 VertexData::VertexData()
 {
@@ -36,33 +57,29 @@ VertexData::~VertexData()
 
 }
 
-void VertexData::updateFilamentVertexBuffer(VertexBuffer* vb, VertexData* vd)
-{
-
-}
-
 void VertexData::bind(void* cb)
 {
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
     for (auto i = 0; i < vertexSlotInfo.size(); i++)
     {
         auto& slot = vertexSlotInfo[i];
         if (slot.mVertexSize > 0)
         {
-            slot.hardwareVertexBuffer->bind(i, cb);
+            rs->bindVertexBuffer(slot.mVertexBuffer, i);
         }
     }
 }
 
-HardwareBuffer* VertexData::getBuffer(int32_t index) const
+Handle<HwBufferObject> VertexData::getBuffer(int32_t index)
 {
-    const VertexSlotInfo* slot = vertexSlotInfo.data();
+    VertexSlotInfo* slot = vertexSlotInfo.data();
     if (slot[index].mVertexSize > 0)
     {
-        return slot[index].hardwareVertexBuffer.get();
+        return slot[index].getHandle();
     }
-    
-
-    return nullptr;
+    assert(false);
+    return Handle<HwBufferObject>();
 }
 
 uint32_t VertexData::getBufferCount()
@@ -147,7 +164,7 @@ void VertexData::addBoneInfo(std::vector<VertexBoneAssignment>& assignInfoList)
 
     vertexSlotInfo[binding].createBuffer(sizeof(SkinnedData), mVertexCount);
 
-    HardwareBufferLockGuard lockGuard(slot.hardwareVertexBuffer.get());
+    BufferHandleLockGuard lockGuard(slot.getHandle());
     SkinnedData* skin = (SkinnedData*)lockGuard.data();
     std::vector<uint32_t> vertexIndex(mVertexCount);
 

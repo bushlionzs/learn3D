@@ -172,7 +172,7 @@ namespace Ogre {
             if (mHasSkinData)
             {
                 resourceInfo->skinObjectHandle =
-                    rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(SkinnedConstantBuffer));
+                    rs->createBufferObject(BufferObjectBinding::VERTEX, BufferUsage::DYNAMIC, sizeof(SkinnedConstantBuffer));
 
                 rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 3, 
                     resourceInfo->skinObjectHandle, 0, sizeof(SkinnedConstantBuffer));

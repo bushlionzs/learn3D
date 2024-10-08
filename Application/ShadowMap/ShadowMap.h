@@ -1,11 +1,19 @@
 #pragma once
-#include "filament/Engine.h"
-#include <fg/FrameGraphTexture.h>
 #include "ApplicationBase.h"
+#include "forgeCommon.h"
 class GameCamera;
 class RenderSystem;
 class Ogre::RenderWindow;
 class Ogre::SceneManager;
+
+#define NUM_CULLING_VIEWPORTS 5
+#define NUM_GEOMETRY_SETS 2
+
+struct FrameData
+{
+	Handle<HwBufferObject> filterDispatchGroupDataBuffer;
+	Handle<HwBufferObject> indirectDataBuffer;
+};
 
 class ShadowMap
 {
@@ -34,10 +42,15 @@ private:
 	GameCamera* mGameCamera;
 	RenderSystem* mRenderSystem;
 	RenderWindow* mRenderWindow;
-
-
-
 	std::vector<PassBase*> mPassList;
 
-	
+	std::vector<FrameData> mFrameData;
+
+	Handle<HwBufferObject> filteredIndexBuffer[NUM_CULLING_VIEWPORTS];
+
+	Handle<HwBufferObject> indirectDrawArgBuffer;
+
+	Handle<HwBufferObject> vbConstantsBuffer[NUM_GEOMETRY_SETS];
+
+	VBConstants vbConstants[NUM_GEOMETRY_SETS];
 };

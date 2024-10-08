@@ -284,7 +284,7 @@ namespace Ogre {
         mCamDir = mCamQ * Vector3::NEGATIVE_UNIT_Z;
     }
     //-----------------------------------------------------------------------
-    void BillboardSet::beginBillboards(size_t numBillboards)
+    Handle<HwBufferObject> BillboardSet::beginBillboards(size_t numBillboards)
     {
         // create vertex and index buffers if they haven't already been
         if (!mBuffersCreated)
@@ -316,8 +316,6 @@ namespace Ogre {
 
         // Init num visible
         mNumVisibleBillboards = 0;
-
-        auto back = mVertexData->getBuffer(0);
         // Lock the buffer
         if (numBillboards) // optimal lock
         {
@@ -335,18 +333,12 @@ namespace Ogre {
                 // 4 corners
                 billboardSize = mVertexData->getVertexSize(0) * 4;
             }
-
-
-            mLockPtr = reinterpret_cast<float*>(back->lock());
-        }
-        else // lock the entire thing
-        {
-            mLockPtr = reinterpret_cast<float*>(back->lock());
         }
 
+        return mVertexData->getBuffer(0);
     }
     //-----------------------------------------------------------------------
-    void BillboardSet::injectBillboard(const Billboard& bb)
+    void BillboardSet::injectBillboard(const Billboard& bb, float* lockPtr)
     {
         // Don't accept injections beyond pool size
         if (mNumVisibleBillboards == mPoolSize) return;
@@ -359,7 +351,7 @@ namespace Ogre {
 
         if (mPointRendering)
         {
-            genPointVertices(bb);
+            genPointVertices(bb, lockPtr);
             return;
         }
 
@@ -379,16 +371,16 @@ namespace Ogre {
             Real height = bb.mOwnDimensions ? bb.mHeight : mDefaultHeight;
             genVertOffsets(mLeftOff, mRightOff, mTopOff, mBottomOff,
                 width, height, mCamX, mCamY, vOwnOffset);
-            genQuadVertices(vOwnOffset, bb);
+            genQuadVertices(vOwnOffset, bb, lockPtr);
         }
         else
         {
             // Use default dimension, already computed before the loop, for faster creation
-            genQuadVertices(mVOffset, bb);
+            genQuadVertices(mVOffset, bb, lockPtr);
         }
     }
 
-    void BillboardSet::injectBillboard(Particle* p)
+    void BillboardSet::injectBillboard(Particle* p, float* lockPtr)
     {
 
         // If they're all the same size or we're point rendering
@@ -407,7 +399,7 @@ namespace Ogre {
                 genVertOffsets(mDefaultWidth, mDefaultHeight, p->mXAxis, p->mYAxis, mVOffset);
             }
 #if USE_VIDEO_DYN_BUFFER
-            genVertices(mVOffset, p);
+            genVertices(mVOffset, p, lockPtr);
 #else
             genMemoryBufferVertices(mVOffset, p);
 #endif
@@ -424,7 +416,7 @@ namespace Ogre {
                 genVertOffsets(p->mWidth, p->mHeight, p->mXAxis, p->mYAxis, vOwnOffset);
                 // Create vertex data
 #if USE_VIDEO_DYN_BUFFER
-                genVertices(vOwnOffset, p);
+                genVertices(vOwnOffset, p, lockPtr);
 #else
                 genMemoryBufferVertices(vOwnOffset, p);
 #endif
@@ -436,7 +428,7 @@ namespace Ogre {
                     genVertOffsets(p->mWidth, p->mHeight, mCamX, mCamY, mVOffset);
                 }
 #if USE_VIDEO_DYN_BUFFER
-                genVertices(mVOffset, p);
+                genVertices(mVOffset, p, lockPtr);
 #else
                 genMemoryBufferVertices(mVOffset, p);
 #endif
@@ -449,7 +441,6 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void BillboardSet::endBillboards(void)
     {
-        mVertexData->getBuffer(0)->unlock();
     }
     //-----------------------------------------------------------------------
     void BillboardSet::setBounds(const AxisAlignedBox& box, Real radius)
@@ -508,11 +499,14 @@ namespace Ogre {
                 _sortBillboards(mCurrentCamera);
             }
 
-            beginBillboards(mActiveBillboards);
+            auto bufHandle = beginBillboards(mActiveBillboards);
+            BufferHandleLockGuard guard(bufHandle);
+
+            float* lockPtr = reinterpret_cast<float*>(guard.data());
             auto iend = mBillboardPool.begin() + mActiveBillboards;
             for (auto it = mBillboardPool.begin(); it != iend; ++it)
             {
-                injectBillboard(*(*it));
+                injectBillboard(*(*it), lockPtr);
             }
             endBillboards();
             mBillboardDataChanged = false;
@@ -1089,20 +1083,20 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    void BillboardSet::genPointVertices(const Billboard& bb)
+    void BillboardSet::genPointVertices(const Billboard& bb, float* lockPtr)
     {
         RGBA colour = bb.mColour.getAsBYTE(); //todoeffect
         // Single vertex per billboard, ignore offsets
         // position
-        *mLockPtr++ = bb.mPosition.x;
-        *mLockPtr++ = bb.mPosition.y;
-        *mLockPtr++ = bb.mPosition.z;
+        *lockPtr++ = bb.mPosition.x;
+        *lockPtr++ = bb.mPosition.y;
+        *lockPtr++ = bb.mPosition.z;
         // Colour
 
-        memcpy(mLockPtr++, &colour, sizeof(RGBA));
+        memcpy(lockPtr++, &colour, sizeof(RGBA));
         // No texture coords in point rendering
     }
-    void BillboardSet::genQuadVertices(const Vector3* const offsets, const Billboard& bb)
+    void BillboardSet::genQuadVertices(const Vector3* const offsets, const Billboard& bb, float* lockPtr)
     {
         RGBA colour = bb.mColour.getAsBYTE();
 
@@ -1115,47 +1109,47 @@ namespace Ogre {
         {
             // Left-top
             // Positions
-            *mLockPtr++ = offsets[0].x + bb.mPosition.x;
-            *mLockPtr++ = offsets[0].y + bb.mPosition.y;
-            *mLockPtr++ = offsets[0].z + bb.mPosition.z;
+            *lockPtr++ = offsets[0].x + bb.mPosition.x;
+            *lockPtr++ = offsets[0].y + bb.mPosition.y;
+            *lockPtr++ = offsets[0].z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = r.left;
-            *mLockPtr++ = r.top;
+            *lockPtr++ = r.left;
+            *lockPtr++ = r.top;
 
             // Right-top
             // Positions
-            *mLockPtr++ = offsets[1].x + bb.mPosition.x;
-            *mLockPtr++ = offsets[1].y + bb.mPosition.y;
-            *mLockPtr++ = offsets[1].z + bb.mPosition.z;
+            *lockPtr++ = offsets[1].x + bb.mPosition.x;
+            *lockPtr++ = offsets[1].y + bb.mPosition.y;
+            *lockPtr++ = offsets[1].z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = r.right;
-            *mLockPtr++ = r.top;
+            *lockPtr++ = r.right;
+            *lockPtr++ = r.top;
 
             // Left-bottom
             // Positions
-            *mLockPtr++ = offsets[2].x + bb.mPosition.x;
-            *mLockPtr++ = offsets[2].y + bb.mPosition.y;
-            *mLockPtr++ = offsets[2].z + bb.mPosition.z;
+            *lockPtr++ = offsets[2].x + bb.mPosition.x;
+            *lockPtr++ = offsets[2].y + bb.mPosition.y;
+            *lockPtr++ = offsets[2].z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = r.left;
-            *mLockPtr++ = r.bottom;
+            *lockPtr++ = r.left;
+            *lockPtr++ = r.bottom;
 
             // Right-bottom
             // Positions
-            *mLockPtr++ = offsets[3].x + bb.mPosition.x;
-            *mLockPtr++ = offsets[3].y + bb.mPosition.y;
-            *mLockPtr++ = offsets[3].z + bb.mPosition.z;
+            *lockPtr++ = offsets[3].x + bb.mPosition.x;
+            *lockPtr++ = offsets[3].y + bb.mPosition.y;
+            *lockPtr++ = offsets[3].z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = r.right;
-            *mLockPtr++ = r.bottom;
+            *lockPtr++ = r.right;
+            *lockPtr++ = r.bottom;
         }
         else if (mRotationType == BBR_VERTEX)
         {
@@ -1170,50 +1164,50 @@ namespace Ogre {
             // Left-top
             // Positions
             pt = rotation * offsets[0];
-            *mLockPtr++ = pt.x + bb.mPosition.x;
-            *mLockPtr++ = pt.y + bb.mPosition.y;
-            *mLockPtr++ = pt.z + bb.mPosition.z;
+            *lockPtr++ = pt.x + bb.mPosition.x;
+            *lockPtr++ = pt.y + bb.mPosition.y;
+            *lockPtr++ = pt.z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = r.left;
-            *mLockPtr++ = r.top;
+            *lockPtr++ = r.left;
+            *lockPtr++ = r.top;
 
             // Right-top
             // Positions
             pt = rotation * offsets[1];
-            *mLockPtr++ = pt.x + bb.mPosition.x;
-            *mLockPtr++ = pt.y + bb.mPosition.y;
-            *mLockPtr++ = pt.z + bb.mPosition.z;
+            *lockPtr++ = pt.x + bb.mPosition.x;
+            *lockPtr++ = pt.y + bb.mPosition.y;
+            *lockPtr++ = pt.z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = r.right;
-            *mLockPtr++ = r.top;
+            *lockPtr++ = r.right;
+            *lockPtr++ = r.top;
 
             // Left-bottom
             // Positions
             pt = rotation * offsets[2];
-            *mLockPtr++ = pt.x + bb.mPosition.x;
-            *mLockPtr++ = pt.y + bb.mPosition.y;
-            *mLockPtr++ = pt.z + bb.mPosition.z;
+            *lockPtr++ = pt.x + bb.mPosition.x;
+            *lockPtr++ = pt.y + bb.mPosition.y;
+            *lockPtr++ = pt.z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = r.left;
-            *mLockPtr++ = r.bottom;
+            *lockPtr++ = r.left;
+            *lockPtr++ = r.bottom;
 
             // Right-bottom
             // Positions
             pt = rotation * offsets[3];
-            *mLockPtr++ = pt.x + bb.mPosition.x;
-            *mLockPtr++ = pt.y + bb.mPosition.y;
-            *mLockPtr++ = pt.z + bb.mPosition.z;
+            *lockPtr++ = pt.x + bb.mPosition.x;
+            *lockPtr++ = pt.y + bb.mPosition.y;
+            *lockPtr++ = pt.z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = r.right;
-            *mLockPtr++ = r.bottom;
+            *lockPtr++ = r.right;
+            *lockPtr++ = r.bottom;
         }
         else
         {
@@ -1232,47 +1226,47 @@ namespace Ogre {
 
             // Left-top
             // Positions
-            *mLockPtr++ = offsets[0].x + bb.mPosition.x;
-            *mLockPtr++ = offsets[0].y + bb.mPosition.y;
-            *mLockPtr++ = offsets[0].z + bb.mPosition.z;
+            *lockPtr++ = offsets[0].x + bb.mPosition.x;
+            *lockPtr++ = offsets[0].y + bb.mPosition.y;
+            *lockPtr++ = offsets[0].z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = mid_u - cos_rot_w + sin_rot_h;
-            *mLockPtr++ = mid_v - sin_rot_w - cos_rot_h;
+            *lockPtr++ = mid_u - cos_rot_w + sin_rot_h;
+            *lockPtr++ = mid_v - sin_rot_w - cos_rot_h;
 
             // Right-top
             // Positions
-            *mLockPtr++ = offsets[1].x + bb.mPosition.x;
-            *mLockPtr++ = offsets[1].y + bb.mPosition.y;
-            *mLockPtr++ = offsets[1].z + bb.mPosition.z;
+            *lockPtr++ = offsets[1].x + bb.mPosition.x;
+            *lockPtr++ = offsets[1].y + bb.mPosition.y;
+            *lockPtr++ = offsets[1].z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = mid_u + cos_rot_w + sin_rot_h;
-            *mLockPtr++ = mid_v + sin_rot_w - cos_rot_h;
+            *lockPtr++ = mid_u + cos_rot_w + sin_rot_h;
+            *lockPtr++ = mid_v + sin_rot_w - cos_rot_h;
 
             // Left-bottom
             // Positions
-            *mLockPtr++ = offsets[2].x + bb.mPosition.x;
-            *mLockPtr++ = offsets[2].y + bb.mPosition.y;
-            *mLockPtr++ = offsets[2].z + bb.mPosition.z;
+            *lockPtr++ = offsets[2].x + bb.mPosition.x;
+            *lockPtr++ = offsets[2].y + bb.mPosition.y;
+            *lockPtr++ = offsets[2].z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = mid_u - cos_rot_w - sin_rot_h;
-            *mLockPtr++ = mid_v - sin_rot_w + cos_rot_h;
+            *lockPtr++ = mid_u - cos_rot_w - sin_rot_h;
+            *lockPtr++ = mid_v - sin_rot_w + cos_rot_h;
 
             // Right-bottom
             // Positions
-            *mLockPtr++ = offsets[3].x + bb.mPosition.x;
-            *mLockPtr++ = offsets[3].y + bb.mPosition.y;
-            *mLockPtr++ = offsets[3].z + bb.mPosition.z;
+            *lockPtr++ = offsets[3].x + bb.mPosition.x;
+            *lockPtr++ = offsets[3].y + bb.mPosition.y;
+            *lockPtr++ = offsets[3].z + bb.mPosition.z;
             // Colour
-            memcpy(mLockPtr++, &colour, sizeof(RGBA));
+            memcpy(lockPtr++, &colour, sizeof(RGBA));
             // Texture coords
-            *mLockPtr++ = mid_u + cos_rot_w - sin_rot_h;
-            *mLockPtr++ = mid_v + sin_rot_w + cos_rot_h;
+            *lockPtr++ = mid_u + cos_rot_w - sin_rot_h;
+            *lockPtr++ = mid_v + sin_rot_w + cos_rot_h;
         }
     }
 
@@ -1319,7 +1313,7 @@ namespace Ogre {
 
     }
 
-    void BillboardSet::genVertices(const Vector3* const offsets, Particle* p)
+    void BillboardSet::genVertices(const Vector3* const offsets, Particle* p, float* lockPtr)
     {
         RGBA colour = p->mColour.getAsBYTE();
         //RGBA color;
@@ -1340,78 +1334,78 @@ namespace Ogre {
         {
             // Single vertex per billboard, ignore offsets
             // position
-            *mLockPtr++ = p->mPosition.x;
-            *mLockPtr++ = p->mPosition.y;
-            *mLockPtr++ = p->mPosition.z;
+            *lockPtr++ = p->mPosition.x;
+            *lockPtr++ = p->mPosition.y;
+            *lockPtr++ = p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // No texture coords in point rendering
         }
         else if (mAllDefaultRotation || p->mRotation == Radian(0))
         {
             // Left-top
             // Positions
-            *mLockPtr++ = offsets[0].x + p->mPosition.x;
-            *mLockPtr++ = offsets[0].y + p->mPosition.y;
-            *mLockPtr++ = offsets[0].z + p->mPosition.z;
+            *lockPtr++ = offsets[0].x + p->mPosition.x;
+            *lockPtr++ = offsets[0].y + p->mPosition.y;
+            *lockPtr++ = offsets[0].z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = r.left;
-            *mLockPtr++ = r.top;
+            *lockPtr++ = r.left;
+            *lockPtr++ = r.top;
 
             // Right-top
             // Positions
-            *mLockPtr++ = offsets[1].x + p->mPosition.x;
-            *mLockPtr++ = offsets[1].y + p->mPosition.y;
-            *mLockPtr++ = offsets[1].z + p->mPosition.z;
+            *lockPtr++ = offsets[1].x + p->mPosition.x;
+            *lockPtr++ = offsets[1].y + p->mPosition.y;
+            *lockPtr++ = offsets[1].z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = r.right;
-            *mLockPtr++ = r.top;
+            *lockPtr++ = r.right;
+            *lockPtr++ = r.top;
 
             // Left-bottom
             // Positions
-            *mLockPtr++ = offsets[2].x + p->mPosition.x;
-            *mLockPtr++ = offsets[2].y + p->mPosition.y;
-            *mLockPtr++ = offsets[2].z + p->mPosition.z;
+            *lockPtr++ = offsets[2].x + p->mPosition.x;
+            *lockPtr++ = offsets[2].y + p->mPosition.y;
+            *lockPtr++ = offsets[2].z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = r.left;
-            *mLockPtr++ = r.bottom;
+            *lockPtr++ = r.left;
+            *lockPtr++ = r.bottom;
 
             // Right-bottom
             // Positions
-            *mLockPtr++ = offsets[3].x + p->mPosition.x;
-            *mLockPtr++ = offsets[3].y + p->mPosition.y;
-            *mLockPtr++ = offsets[3].z + p->mPosition.z;
+            *lockPtr++ = offsets[3].x + p->mPosition.x;
+            *lockPtr++ = offsets[3].y + p->mPosition.y;
+            *lockPtr++ = offsets[3].z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = r.right;
-            *mLockPtr++ = r.bottom;
+            *lockPtr++ = r.right;
+            *lockPtr++ = r.bottom;
         }
         else if (mRotationType == BBR_VERTEX)
         {
@@ -1424,66 +1418,66 @@ namespace Ogre {
             // Left-top
             // Positions
             pt = rotation * offsets[0];
-            *mLockPtr++ = pt.x + p->mPosition.x;
-            *mLockPtr++ = pt.y + p->mPosition.y;
-            *mLockPtr++ = pt.z + p->mPosition.z;
+            *lockPtr++ = pt.x + p->mPosition.x;
+            *lockPtr++ = pt.y + p->mPosition.y;
+            *lockPtr++ = pt.z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = r.left;
-            *mLockPtr++ = r.top;
+            *lockPtr++ = r.left;
+            *lockPtr++ = r.top;
 
             // Right-top
             // Positions
             pt = rotation * offsets[1];
-            *mLockPtr++ = pt.x + p->mPosition.x;
-            *mLockPtr++ = pt.y + p->mPosition.y;
-            *mLockPtr++ = pt.z + p->mPosition.z;
+            *lockPtr++ = pt.x + p->mPosition.x;
+            *lockPtr++ = pt.y + p->mPosition.y;
+            *lockPtr++ = pt.z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = r.right;
-            *mLockPtr++ = r.top;
+            *lockPtr++ = r.right;
+            *lockPtr++ = r.top;
 
             // Left-bottom
             // Positions
             pt = rotation * offsets[2];
-            *mLockPtr++ = pt.x + p->mPosition.x;
-            *mLockPtr++ = pt.y + p->mPosition.y;
-            *mLockPtr++ = pt.z + p->mPosition.z;
+            *lockPtr++ = pt.x + p->mPosition.x;
+            *lockPtr++ = pt.y + p->mPosition.y;
+            *lockPtr++ = pt.z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = r.left;
-            *mLockPtr++ = r.bottom;
+            *lockPtr++ = r.left;
+            *lockPtr++ = r.bottom;
 
             // Right-bottom
             // Positions
             pt = rotation * offsets[3];
-            *mLockPtr++ = pt.x + p->mPosition.x;
-            *mLockPtr++ = pt.y + p->mPosition.y;
-            *mLockPtr++ = pt.z + p->mPosition.z;
+            *lockPtr++ = pt.x + p->mPosition.x;
+            *lockPtr++ = pt.y + p->mPosition.y;
+            *lockPtr++ = pt.z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = r.right;
-            *mLockPtr++ = r.bottom;
+            *lockPtr++ = r.right;
+            *lockPtr++ = r.bottom;
         }
         else
         {
@@ -1502,63 +1496,63 @@ namespace Ogre {
 
             // Left-top
             // Positions
-            *mLockPtr++ = offsets[0].x + p->mPosition.x;
-            *mLockPtr++ = offsets[0].y + p->mPosition.y;
-            *mLockPtr++ = offsets[0].z + p->mPosition.z;
+            *lockPtr++ = offsets[0].x + p->mPosition.x;
+            *lockPtr++ = offsets[0].y + p->mPosition.y;
+            *lockPtr++ = offsets[0].z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = mid_u - cos_rot_w + sin_rot_h;
-            *mLockPtr++ = mid_v - sin_rot_w - cos_rot_h;
+            *lockPtr++ = mid_u - cos_rot_w + sin_rot_h;
+            *lockPtr++ = mid_v - sin_rot_w - cos_rot_h;
 
             // Right-top
             // Positions
-            *mLockPtr++ = offsets[1].x + p->mPosition.x;
-            *mLockPtr++ = offsets[1].y + p->mPosition.y;
-            *mLockPtr++ = offsets[1].z + p->mPosition.z;
+            *lockPtr++ = offsets[1].x + p->mPosition.x;
+            *lockPtr++ = offsets[1].y + p->mPosition.y;
+            *lockPtr++ = offsets[1].z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = mid_u + cos_rot_w + sin_rot_h;
-            *mLockPtr++ = mid_v + sin_rot_w - cos_rot_h;
+            *lockPtr++ = mid_u + cos_rot_w + sin_rot_h;
+            *lockPtr++ = mid_v + sin_rot_w - cos_rot_h;
 
             // Left-bottom
             // Positions
-            *mLockPtr++ = offsets[2].x + p->mPosition.x;
-            *mLockPtr++ = offsets[2].y + p->mPosition.y;
-            *mLockPtr++ = offsets[2].z + p->mPosition.z;
+            *lockPtr++ = offsets[2].x + p->mPosition.x;
+            *lockPtr++ = offsets[2].y + p->mPosition.y;
+            *lockPtr++ = offsets[2].z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = mid_u - cos_rot_w - sin_rot_h;
-            *mLockPtr++ = mid_v - sin_rot_w + cos_rot_h;
+            *lockPtr++ = mid_u - cos_rot_w - sin_rot_h;
+            *lockPtr++ = mid_v - sin_rot_w + cos_rot_h;
 
             // Right-bottom
             // Positions
-            *mLockPtr++ = offsets[3].x + p->mPosition.x;
-            *mLockPtr++ = offsets[3].y + p->mPosition.y;
-            *mLockPtr++ = offsets[3].z + p->mPosition.z;
+            *lockPtr++ = offsets[3].x + p->mPosition.x;
+            *lockPtr++ = offsets[3].y + p->mPosition.y;
+            *lockPtr++ = offsets[3].z + p->mPosition.z;
             // Colour
             // Convert float* to RGBA*
-            pCol = static_cast<RGBA*>(static_cast<void*>(mLockPtr));
+            pCol = static_cast<RGBA*>(static_cast<void*>(lockPtr));
             *pCol++ = colour;
             // Update lock pointer
-            mLockPtr = static_cast<float*>(static_cast<void*>(pCol));
+            lockPtr = static_cast<float*>(static_cast<void*>(pCol));
             // Texture coords
-            *mLockPtr++ = mid_u + cos_rot_w - sin_rot_h;
-            *mLockPtr++ = mid_v + sin_rot_w + cos_rot_h;
+            *lockPtr++ = mid_u + cos_rot_w - sin_rot_h;
+            *lockPtr++ = mid_v + sin_rot_w + cos_rot_h;
         }
     }
 

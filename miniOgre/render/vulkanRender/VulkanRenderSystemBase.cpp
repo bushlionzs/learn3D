@@ -18,6 +18,7 @@
 #include "VulkanTools.h"
 #include "VulkanPipelineLayoutCache.h"
 #include "VulkanPipelineCache.h"
+#include "VulkanBuffer.h"
 #include "shaderManager.h"
 #include "glslUtil.h"
 
@@ -202,6 +203,12 @@ Ogre::RenderTarget* VulkanRenderSystemBase::createRenderTarget(
     texProperty._tex_format = format;
     texProperty._need_mipmap = false;
 
+    if (usage & (uint32_t)Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    {
+        texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    }
     Ogre::VulkanRenderTarget* renderTarget = new Ogre::VulkanRenderTarget(
         name, mVulkanPlatform, mCommands, texProperty);
     return renderTarget;
@@ -956,16 +963,55 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateBRDFLUT(const std::string& na
     return tex;
 }
 
+void* VulkanRenderSystemBase::lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes)
+{
+    VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
+    return vulkanBufferObject->buffer.lock(offset, numBytes);
+}
+
+void VulkanRenderSystemBase::unlockBuffer(Handle<HwBufferObject> bufHandle)
+{
+    VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
+    vulkanBufferObject->buffer.unlock(mCommands->get().buffer());
+}
+
+void VulkanRenderSystemBase::bindVertexBuffer(Handle<HwBufferObject> bufferHandle, uint32_t binding)
+{
+    VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufferHandle);
+
+    VkDeviceSize offsets[1] = { 0 };
+    auto cmdBuffer = mCommands->get().buffer();
+
+    VkBuffer vkBuffer = vulkanBufferObject->buffer.getGpuBuffer();
+    vkCmdBindVertexBuffers(cmdBuffer, binding, 1, &vkBuffer, offsets);
+
+}
+
+void VulkanRenderSystemBase::bindIndexBuffer(Handle<HwBufferObject> bufferHandle, uint32_t indexSize)
+{
+    VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufferHandle);
+    auto cmdBuffer = mCommands->get().buffer();
+
+    VkBuffer vkBuffer = vulkanBufferObject->buffer.getGpuBuffer();
+
+    vkCmdBindIndexBuffer(cmdBuffer, vkBuffer, 0, indexSize==2? VK_INDEX_TYPE_UINT16: VK_INDEX_TYPE_UINT32);
+}
+
 Handle<HwBufferObject> VulkanRenderSystemBase::createBufferObject(
     BufferObjectBinding bindingType,
     BufferUsage usage,
-    uint32_t byteCount)
+    uint32_t byteCount,
+    const char* debugName)
 {
     Handle<HwBufferObject> boh =  mResourceAllocator.allocHandle<VulkanBufferObject>();
 
-    auto bufferObject = mResourceAllocator.construct<VulkanBufferObject>(boh, mAllocator,
+    VulkanBufferObject* bufferObject = mResourceAllocator.construct<VulkanBufferObject>(boh, mAllocator,
         *mStagePool, byteCount, bindingType);
-
+    if (debugName)
+    {
+        bufferObject->buffer.setBufferName(mVulkanPlatform->getDevice(), debugName);
+    }
+    
     return boh;
 }
 
@@ -1138,10 +1184,10 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
     return program;
 }
 
-Handle<HwDescriptorSetLayout> VulkanRenderSystemBase::getDescriptorSetLayout(Handle<HwComputeProgram> programHandle)
+Handle<HwDescriptorSetLayout> VulkanRenderSystemBase::getDescriptorSetLayout(Handle<HwComputeProgram> programHandle, uint32_t set)
 {
     VulkanComputeProgram* program = mResourceAllocator.handle_cast<VulkanComputeProgram*>(programHandle);
-    return program->getSetLayoutHandle();
+    return program->getSetLayoutHandle(set);
 }
 
 Handle<HwComputeProgram> VulkanRenderSystemBase::createComputeProgram(const ShaderInfo& shaderInfo)
@@ -1166,30 +1212,38 @@ Handle<HwComputeProgram> VulkanRenderSystemBase::createComputeProgram(const Shad
         moduleInfo);
     vulkanProgram->updateComputeShader(moduleInfo.shaderModule);
 
-    std::vector<VkDescriptorSetLayoutBinding> results = vks::tools::getProgramBindings(moduleInfo.spv);
+    auto results = vks::tools::getProgramBindings(moduleInfo.spv);
 
    
     assert_invariant(!results.empty() && "Need at least one binding for descriptor set layout.");
-    VkDescriptorSetLayoutCreateInfo dlinfo = {
+
+    std::array<VkDescriptorSetLayout, 4> layoutlist;
+
+    for (auto& pair : results)
+    {
+        VkDescriptorSetLayoutCreateInfo dlinfo = {
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
             .pNext = nullptr,
-            .bindingCount = (uint32_t)results.size(),
-            .pBindings = results.data(),
-    };
+            .bindingCount = (uint32_t)pair.second.size(),
+            .pBindings = pair.second.data(),
+        };
 
-    VkDescriptorSetLayout vkLayout;
-    vkCreateDescriptorSetLayout(mVulkanPlatform->getDevice(), &dlinfo, VKALLOC, &vkLayout);
-    vulkanProgram->updateSetLayout(vkLayout);
-    DescriptorSetLayout layoutInfo;
-    Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
-    VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(dslh, layoutInfo);
-    uboLayout->setVkLayout(vkLayout);
-    vulkanProgram->updateSetLayoutHandle(dslh);
+        VkDescriptorSetLayout vkLayout;
+        vkCreateDescriptorSetLayout(mVulkanPlatform->getDevice(), &dlinfo, VKALLOC, &vkLayout);
+        layoutlist[pair.first] = vkLayout;
+        vulkanProgram->updateSetLayout(vkLayout);
+        DescriptorSetLayout layoutInfo;
+        Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
+        VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(dslh, layoutInfo);
+        uboLayout->setVkLayout(vkLayout);
+        vulkanProgram->updateSetLayoutHandle(pair.first, dslh);
+    }
+    
     VkPipelineLayout pipelineLayout;
     VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo =
         vks::initializers::pipelineLayoutCreateInfo(
-            &vkLayout,
-            1);
+            layoutlist.data(),
+            results.size());
 
     if (vkCreatePipelineLayout(mVulkanPlatform->getDevice(), &pPipelineLayoutCreateInfo,
         nullptr, &pipelineLayout) != VK_SUCCESS)

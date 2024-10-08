@@ -397,8 +397,10 @@ void WowParticleSystem::update(float dt)
 
 	RGBA* pCol;
 	
-	auto buf = mVertexData->getBuffer(0);
-	float* lockPtr = reinterpret_cast<float*>(buf->lock());
+	auto bufHandle = mVertexData->getBuffer(0);
+
+	BufferHandleLockGuard guard(bufHandle);
+	float* lockPtr = reinterpret_cast<float*>(guard.data());
 	float* firstPtr = lockPtr;
 	for (auto it = particles.begin(); it != particles.end(); it++)
 	{
@@ -458,7 +460,6 @@ void WowParticleSystem::update(float dt)
 		*pCol++ = colour;
 		lockPtr = static_cast<float*>(static_cast<void*>(pCol));
 	}
-	buf->unlock();
 }
 
 void WowParticleSystem::setup(size_t anim, size_t time)

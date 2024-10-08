@@ -6,6 +6,7 @@
 #include "OgreParticleSystem.h"
 #include "platform_log.h"
 #include "OgreBillboard.h"
+#include "OgreVertexData.h"
 
 namespace Ogre {
 
@@ -119,7 +120,9 @@ namespace Ogre {
 		Real repeatedParticleTime = 0.0f;
 		uint16 texCoords = 0;
 
-		billboardset->beginBillboards();
+		auto bufHandle = billboardset->beginBillboards();
+		BufferHandleLockGuard guard(bufHandle);
+		float* lockPtr = reinterpret_cast<float*>(guard.data());
 		BillboardForTexcoordBillboardRenderer bb;
 
 		for (std::list<Particle*>::iterator i = currentParticles.begin();
@@ -156,7 +159,7 @@ namespace Ogre {
 			bb.mRotation = p->mRotation;
 			bb.setTexcoordIndex(texCoords);
 			bb._setDimensions(true, p->mWidth, p->mHeight); 
-			billboardset->injectBillboard(bb);
+			billboardset->injectBillboard(bb, lockPtr);
 		}
 
 		billboardset->endBillboards();

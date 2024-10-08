@@ -9,11 +9,32 @@ class VertexSlotInfo
 public:
     int32_t mSlot = -1;
     uint32_t mVertexSize = 0;
-    std::shared_ptr<Ogre::HardwareVertexBuffer> hardwareVertexBuffer;
+    uint32_t mVertexCount = 0;
     void createBuffer(uint32_t vertexSize, uint32_t vertexCount);
     void writeData(const char* data, uint32_t size);
+
+    Handle<HwBufferObject> getHandle()
+    {
+        return mVertexBuffer;
+    }
+private:
+    //std::shared_ptr<Ogre::HardwareVertexBuffer> hardwareVertexBuffer;
+    Handle<HwBufferObject> mVertexBuffer;
+    friend class VertexData;
 };
 
+
+class BufferHandleLockGuard
+{
+public:
+    BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle);
+    ~BufferHandleLockGuard();
+
+    void* data();
+private:
+    Handle<HwBufferObject> mBufferHandle;
+    void* mBufferData;
+};
 class VertexData
 {
 public:
@@ -21,13 +42,12 @@ public:
 public:
     VertexData();
     ~VertexData();
-    static void updateFilamentVertexBuffer(VertexBuffer* vb, VertexData* vd);
     void bind(void* cb);
     bool empty()
     {
         return mVertexCount == 0;
     }
-    HardwareBuffer* getBuffer(int32_t index) const;
+    Handle<HwBufferObject> getBuffer(int32_t index);
 
     uint32_t getBufferCount();
 

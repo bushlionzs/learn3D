@@ -76,6 +76,16 @@ namespace Ogre {
             return mMaterialName;
         }
 
+        void setMaterialFlags(uint32_t flags)
+        {
+            mMaterialFlags = flags;
+        }
+
+        uint32_t getMaterialFlags()
+        {
+            return mMaterialFlags;
+        }
+
         bool isDepthTest();
 
         void setDepthTest(bool test);
@@ -120,7 +130,8 @@ namespace Ogre {
         void createFrameResourceInfo();
     private:
         std::string mMaterialName;
-  
+ 
+        uint32_t mMaterialFlags = 0;
         bool mAnimation = false;
         float mUOffset = 0.0f;
         float mVOffset = 0.0f;

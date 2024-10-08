@@ -302,14 +302,14 @@ struct VulkanComputeProgram : public HwComputeProgram, VulkanResource {
         mLayout = layout;
     }
 
-    void updateSetLayoutHandle(Handle<HwDescriptorSetLayout> layoutHandle)
+    void updateSetLayoutHandle(uint32_t set, Handle<HwDescriptorSetLayout> layoutHandle)
     {
-        mLayoutHandle = layoutHandle;
+        mLayoutHandleArray[set] = layoutHandle;
     }
 
-    Handle<HwDescriptorSetLayout> getSetLayoutHandle()
+    Handle<HwDescriptorSetLayout> getSetLayoutHandle(uint32_t set)
     {
-        return mLayoutHandle;
+        return mLayoutHandleArray[set];
     }
 
     void updatePipelineLayout(VkPipelineLayout layout)
@@ -336,6 +336,8 @@ private:
     VkPipeline       mPipeline;
     VkDescriptorSetLayout mLayout;
     Handle<HwDescriptorSetLayout> mLayoutHandle;
+
+    std::array<Handle<HwDescriptorSetLayout>, 4> mLayoutHandleArray;
 };
 
 struct VulkanPipeline : private HwPipeline, VulkanResource

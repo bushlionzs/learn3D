@@ -174,7 +174,7 @@ namespace Ogre {
         std::unique_ptr<VertexData> mVertexData;
 
         /// Locked pointer to buffer
-        float* mLockPtr;
+        //float* mLockPtr;
         /// Boundary offsets based on origin and camera orientation
         /// Vector3 vLeftOff, vRightOff, vTopOff, vBottomOff;
         /// Final vertex offsets, used where sizes all default to save calcs
@@ -255,9 +255,9 @@ namespace Ogre {
         @param offsets Array of 4 Vector3 offsets
         @param pBillboard Reference to billboard
         */
-        void genQuadVertices(const Vector3* const offsets, const Billboard& pBillboard);
+        void genQuadVertices(const Vector3* const offsets, const Billboard& pBillboard, float* lockPtr);
 
-        void genPointVertices(const Billboard& pBillboard);
+        void genPointVertices(const Billboard& pBillboard, float* lockPtr);
 
         /** Internal method generates vertex offsets.
         @remarks
@@ -273,7 +273,7 @@ namespace Ogre {
         static void genVertOffsets(Real inleft, Real inright, Real intop, Real inbottom,
             Real width, Real height,
             const Vector3& x, const Vector3& y, Vector3* pDestVec);
-        void genVertices(const Vector3* const offsets, Particle* p);
+        void genVertices(const Vector3* const offsets, Particle* p, float* lockPtr);
 
         /** Sort by direction functor */
         struct SortByDirectionFunctor
@@ -534,11 +534,11 @@ namespace Ogre {
         @param numBillboards If you know the number of billboards you will be
             issuing, state it here to make the update more efficient.
         */
-        void beginBillboards(size_t numBillboards = 0);
+        Handle<HwBufferObject> beginBillboards(size_t numBillboards = 0);
         /** Define a billboard. */
-        void injectBillboard(const Billboard& bb);
+        void injectBillboard(const Billboard& bb, float* lockPtr);
 
-        void injectBillboard(Particle* p);
+        void injectBillboard(Particle* p, float* lockPtr);
         /** Finish defining billboards. */
         void endBillboards(void);
         /** Set the bounds of the BillboardSet.

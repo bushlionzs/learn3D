@@ -29,21 +29,27 @@ public:
     VulkanBuffer(VmaAllocator allocator, VulkanStagePool& stagePool, VkBufferUsageFlags usage,
             uint32_t numBytes);
     ~VulkanBuffer();
+    void* lock(uint32_t offset, uint32_t numBytes);
+    void unlock(VkCommandBuffer cmdbuf);
     void loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint32_t byteOffset,
             uint32_t numBytes);
+    
     VkBuffer getGpuBuffer() const {
         return mGpuBuffer;
     }
 
+    void setBufferName(VkDevice device, const char* name);
+
 private:
     VmaAllocator mAllocator;
     VulkanStagePool& mStagePool;
-
+    VulkanStage const* mCurrentStage = nullptr;
     VmaAllocation mGpuMemory = VK_NULL_HANDLE;
     VkBuffer mGpuBuffer = VK_NULL_HANDLE;
     VkBufferUsageFlags mUsage = {};
 	uint32_t mUpdatedOffset = 0;
     uint32_t mUpdatedBytes = 0;
+    uint32_t mBufferBytes = 0;
 };
 
 } // namespace filament::backend

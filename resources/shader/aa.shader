@@ -341,35 +341,3 @@ shader projector
 		frag_shader projector.glsl main
 	 }
 }
-
-shader visibleBuffer
-{
-    shader_unit
-	 {
-		shader_type directx
-		vertex_shader projector.hlsl VS
-		frag_shader projector.hlsl PS
-	 }
-	 
-	 shader_unit
-	 {
-		shader_type vulkan
-		vertex_shader visiblebuffer.glsl main
-		frag_shader visiblebuffer.glsl main
-	 }
-}
-
-shader clearBuffer
-{
-    shader_unit
-	 {
-		shader_type directx
-		compute_shader clearVisibilityBuffers.hlsl main
-	 }
-	 
-	 shader_unit
-	 {
-		shader_type vulkan
-		compute_shader clearVisibilityBuffers.glsl main
-	 }
-}
