@@ -340,7 +340,7 @@ void Dx12RenderSystem::renderImpl(Dx12Pass* pass)
 
 	vertexData->bind(commandlist);
 	if(indexData)
-		indexData->getIndexBuffer()->bind(commandlist);
+		indexData->bind();
 
 	commandlist->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

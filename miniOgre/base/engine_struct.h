@@ -132,7 +132,7 @@ struct RenderPassInfo
 
 struct ComputePassInfo
 {
-    Handle<HwDescriptorSet> ds;
+    std::vector<Handle<HwDescriptorSet>> descSets;
     Handle<HwComputeProgram> programHandle;
     Ogre::Vector3i computeGroup;
 };

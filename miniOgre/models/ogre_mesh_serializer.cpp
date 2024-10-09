@@ -154,20 +154,20 @@ void OgreMeshSerializerImpl::readSubMesh(
         {
             indexData = sm->getIndexData();
         }
-        indexData->mIndexCount = indexCount;
+        
         if (idx32bit)
         {
             indexData->createBuffer(4, indexCount);
-            void* data = indexData->mIndexBuffer->lock();
+            BufferHandleLockGuard lockGuard(indexData->getHandle());
+            void* data = lockGuard.data();
             readInts(stream, (uint32_t*)data, indexCount);
-            indexData->mIndexBuffer->unlock();
         }
         else
         {
             indexData->createBuffer(2, indexCount);
-            void* data = indexData->mIndexBuffer->lock();
+            BufferHandleLockGuard lockGuard(indexData->getHandle());
+            void* data = lockGuard.data();
             readShorts(stream, (uint16_t*)data, indexCount);
-            indexData->mIndexBuffer->unlock();
         }
         sm->addIndexs(indexCount, 0, 0);
     }

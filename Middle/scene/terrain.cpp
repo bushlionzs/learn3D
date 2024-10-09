@@ -118,9 +118,8 @@ void Terrain::_initIndexBuffer(size_t maxQuads)
 {
 	mIndexData = std::make_unique<IndexData>();
 
-	mIndexData->mIndexCount = maxQuads * 6;
-	mIndexData->createBuffer(4, mIndexData->mIndexCount);
-	HardwareBufferLockGuard lockGuard(mIndexData->mIndexBuffer.get());
+	mIndexData->createBuffer(4, maxQuads * 6);
+	BufferHandleLockGuard lockGuard(mIndexData->getHandle());
 	uint32_t* pIndex = (uint32_t*)lockGuard.data();
 	//填充数据
 	for (int32_t i = 0; i < maxQuads; ++i)
@@ -261,7 +260,7 @@ int32_t Terrain::_getPixmapAtlasId(int32_t pixmapId)//创建并获得纹理区域块id对应
 	return mAtlasPixmaps[pixmapId].atlasId - 1;
 }
 
-void Terrain::_applySurfaceParams(const std::shared_ptr<Material>& material) const
+void Terrain::_applySurfaceParams(const std::shared_ptr<Ogre::Material>& material) const
 {
 	/*material->setAmbient(mTerrainInfo.mAmbient);
 	material->setDiffuse(mTerrainInfo.mDiffuse);
@@ -272,7 +271,7 @@ void Terrain::_applySurfaceParams(const std::shared_ptr<Material>& material) con
 
 }
 
-const std::shared_ptr<Material>& Terrain::_getGridMaterial(
+const std::shared_ptr<Ogre::Material>& Terrain::_getGridMaterial(
 	const TerrainInfo::GridInfoStr& gridInfo,
 	int32_t depthBias, 
 	int32_t gridXIndex,
@@ -306,7 +305,7 @@ const std::shared_ptr<Material>& Terrain::_getGridMaterial(
 	String lightmapName = mTerrainInfo.getLightmapName(lightMapXIndex, lightMapZIndex);
 	//获得材质名称
 	String name = getTerrainMaterialName(gridInfo, depthBias, lightMapXIndex, lightMapZIndex);
-	std::shared_ptr<Material> material = MaterialManager::getSingleton().getByName(name);//每一块grid创建一个材质
+	std::shared_ptr<Ogre::Material> material = MaterialManager::getSingleton().getByName(name);//每一块grid创建一个材质
 	//这里创建的材质的初始状态是：未加载
 	if (!material)
 	{

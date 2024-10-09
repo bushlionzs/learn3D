@@ -164,21 +164,21 @@ namespace Ogre {
             resourceInfo->uboSet = rs->createDescriptorSet(mUboLayoutHandle);
             resourceInfo->samplerSet = rs->createDescriptorSet(mSamplerLayoutHandle);
 
-            rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 0, objectBufferHandle, 0, sizeof(ObjectConstantBuffer));
-            rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 2, matBufferHandle, 0, sizeof(PbrMaterialConstanceBuffer));
+            rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 0, &objectBufferHandle, 1);
+            rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 2, &matBufferHandle, 1);
 
-            rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 0, objectBufferHandle, 0, sizeof(ObjectConstantBuffer));
+            rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 0, &objectBufferHandle, 1);
 
             if (mHasSkinData)
             {
                 resourceInfo->skinObjectHandle =
-                    rs->createBufferObject(BufferObjectBinding::VERTEX, BufferUsage::DYNAMIC, sizeof(SkinnedConstantBuffer));
+                    rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(SkinnedConstantBuffer));
 
                 rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 3, 
-                    resourceInfo->skinObjectHandle, 0, sizeof(SkinnedConstantBuffer));
+                    &resourceInfo->skinObjectHandle, 1);
 
                 rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 3,
-                    resourceInfo->skinObjectHandle, 0, sizeof(SkinnedConstantBuffer));
+                    &resourceInfo->skinObjectHandle, 1);
             }
             
 

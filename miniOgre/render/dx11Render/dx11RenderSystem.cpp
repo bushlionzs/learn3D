@@ -227,7 +227,7 @@ void Dx11RenderSystem::renderImpl(Dx11Pass& pass)
 
 	if (indexData)
 	{
-		indexData->mIndexBuffer->bind(nullptr);
+		//indexData->mIndexBuffer->bind(nullptr);
 		IndexDataView* view = pass._render->getIndexView();
 		mDx11Context->DrawIndexedInstanced(
 			view->mIndexCount,

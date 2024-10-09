@@ -17,6 +17,7 @@
 #include "OgreSceneManager.h"
 #include "OgreEntity.h"
 #include "OgreRoot.h"
+#include "OgreVertexData.h"
 #include "PassUtil.h"
 #include "pass.h"
 #include "shaderManager.h"
@@ -44,7 +45,7 @@ void ShadowMap::setup(
     mRenderWindow = renderWindow;
     mSceneManager = sceneManager;
     mGameCamera = gameCamera;
-    base1();
+    base2();
 }
 
 void ShadowMap::update(float delta)
@@ -213,6 +214,11 @@ void ShadowMap::base1()
     mPassList.push_back(mainPass);
 }
 
+#define BATCH_FACE_COUNT_LOW_BIT 2
+#define BATCH_FACE_COUNT_MASK 0x1FFC
+#define BATCH_GEOMETRY_LOW_BIT 0
+#define BATCH_GEOMETRY_MASK 0x3
+
 void ShadowMap::base2()
 {
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
@@ -226,104 +232,149 @@ void ShadowMap::base2()
 	mGameCamera->updateCamera(Ogre::Vector3(0, 5.0f, 8.0f), Ogre::Vector3(0, 5.0f, 0.0f));
 	mGameCamera->setMoveSpeed(10.0f);
 
-    //clear buffer pass
-    
 
-    VBConstants constants[2];
-    memset(&constants[0], 0, sizeof(VBConstants) * 2);
-    auto* rs = mRenderSystem;
-    {
-        ComputePassInput computeInput;
-        ShaderInfo shaderInfo;
-        shaderInfo.shaderName = "clearBuffer";
-        computeInput.programHandle = rs->createComputeProgram(shaderInfo);
-      
-        Handle<HwDescriptorSetLayout> dslh = rs->getDescriptorSetLayout(computeInput.programHandle, 0);
-        computeInput.ds = rs->createDescriptorSet(dslh);
-
-        Handle<HwBufferObject> vbconstantHandle =
-            mRenderSystem->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::STATIC, sizeof(VBConstants) * 2);
-        Handle<HwBufferObject> indirectDrawHandle =
-            mRenderSystem->createBufferObject(BufferObjectBinding::SHADER_STORAGE, BufferUsage::DYNAMIC, 320);
-        rs->updateDescriptorSetBuffer(computeInput.ds, 0, indirectDrawHandle, 0, 320);
-        rs->updateDescriptorSetBuffer(computeInput.ds, 2, vbconstantHandle, 0, sizeof(VBConstants) * 2);
-
-        computeInput.computeGroup._x = 1;
-        computeInput.computeGroup._y = 1;
-        computeInput.computeGroup._z = 1;
-        auto clearBufferPass = createComputePass(computeInput);
-        mPassList.push_back(clearBufferPass);
-    }
-    
     enum
     {
         GEOMSET_OPAQUE = 0,
         GEOMSET_ALPHA_CUTOUT
     };
 
-   
     uint32_t visibilityBufferFilteredIndexCount[NUM_GEOMETRY_SETS] = {};
+    auto numFrame = ogreConfig.swapBufferCount;
 
+    auto subMeshCount = mesh->getSubMeshCount();
+    std::vector<MeshConstants> meshConstants(subMeshCount);
+    auto* rs = mRenderSystem;
+    VBConstants constants[2];
+    uint32_t indexOffset = 0;
+    for (auto i = 0; i < subMeshCount; i++)
+    {
+        auto subMesh = mesh->getSubMesh(i);
+
+        auto mat = subMesh->getMaterial();
+
+        auto materialFlag = mat->getMaterialFlags();
+
+        uint32_t geomSet = materialFlag & MATERIAL_FLAG_ALPHA_TESTED ? GEOMSET_ALPHA_CUTOUT : GEOMSET_OPAQUE;
+
+        auto indexView = subMesh->getIndexView();
+        visibilityBufferFilteredIndexCount[geomSet] += indexView->mIndexCount;
+
+        meshConstants[i].indexOffset = indexView->mIndexLocation;
+        meshConstants[i].vertexOffset = indexView->mBaseVertexLocation;
+        meshConstants[i].materialID = i;
+        meshConstants[i].twoSided = (materialFlag & MATERIAL_FLAG_TWO_SIDED) ? 1 : 0;
+
+
+    }
+    for (uint32_t geomSet = 0; geomSet < NUM_GEOMETRY_SETS; ++geomSet)
+    {
+        constants[geomSet].indexOffset = indexOffset;
+        indexOffset += visibilityBufferFilteredIndexCount[geomSet];
+    }
+
+    vbConstantsBuffer =
+        mRenderSystem->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::STATIC, sizeof(VBConstants) * 2);
+
+    rs->updateBufferObject(vbConstantsBuffer, (const char*)& constants[0], sizeof(VBConstants) * 2);
+
+    uint32_t indirectDrawArgBufferSize = NUM_GEOMETRY_SETS * NUM_CULLING_VIEWPORTS * 8 * sizeof(uint32_t);
+
+    indirectDrawArgBuffer =
+        mRenderSystem->createBufferObject(
+            BufferObjectBinding::SHADER_STORAGE, 
+            BufferUsage::DYNAMIC, 
+            indirectDrawArgBufferSize,
+            "IndirectDrawArgBuffer");
+    
+    //clear buffer pass
+    {
+        ShaderInfo shaderInfo;
+        shaderInfo.shaderName = "clearBuffer";
+        auto clearBufferProgramHandle = rs->createComputeProgram(shaderInfo);
+      
+        Handle<HwDescriptorSetLayout> dslh = rs->getDescriptorSetLayout(clearBufferProgramHandle, 0);
+        Handle<HwDescriptorSet> ds = rs->createDescriptorSet(dslh);
+        
+
+        
+        rs->updateDescriptorSetBuffer(ds, 0, &indirectDrawArgBuffer, 1);
+        rs->updateDescriptorSetBuffer(ds, 2, &vbConstantsBuffer, 1);
+
+        ComputePassCallback callback = [ds, clearBufferProgramHandle](ComputePassInfo& info) {
+            info.programHandle = clearBufferProgramHandle;
+            info.computeGroup = Ogre::Vector3i(1, 1, 1);
+            info.descSets.clear();
+            info.descSets.push_back(ds);
+            };
+        auto clearBufferPass = createComputePass(callback);
+        mPassList.push_back(clearBufferPass);
+    }
+    
     //filter triangles pass
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "filterTriangles";
-        Handle<HwComputeProgram> computeHandle = rs->createComputeProgram(shaderInfo);
-        ComputePassInput computeInput;
-        auto filterTrianglesPass = createComputePass(computeInput);
-
-        auto numFrame = ogreConfig.swapBufferCount;
-
-        auto subMeshCount = mesh->getSubMeshCount();
-
-        std::vector<MeshConstants> meshConstants(subMeshCount);
+        filterTrianglesProgramHandle = rs->createComputeProgram(shaderInfo);
         
-        for (auto i = 0; i < subMeshCount; i++)
-        {
-            auto subMesh = mesh->getSubMesh(i);
-
-            auto mat = subMesh->getMaterial();
-
-            auto materialFlag = mat->getMaterialFlags();
-
-            uint32_t geomSet = materialFlag & MATERIAL_FLAG_ALPHA_TESTED?GEOMSET_ALPHA_CUTOUT:GEOMSET_OPAQUE;
-
-            auto indexView = subMesh->getIndexView();
-            visibilityBufferFilteredIndexCount[geomSet] += indexView->mIndexCount;
-
-            meshConstants[i].indexOffset = indexView->mIndexLocation;
-            meshConstants[i].vertexOffset = indexView->mBaseVertexLocation;
-            meshConstants[i].materialID = i;
-            meshConstants[i].twoSided = (materialFlag & MATERIAL_FLAG_TWO_SIDED) ? 1 : 0;
-        }
-
         uint32_t maxIndices = 0;
         for (uint32_t geomSet = 0; geomSet < NUM_GEOMETRY_SETS; ++geomSet)
         {
             maxIndices += visibilityBufferFilteredIndexCount[geomSet];
         }
 
+        uint32_t dispatchGroupCount = 0;
         uint32_t computeThread = 256;
+        
         auto maxFilterBatches = (maxIndices / 3) / (computeThread >> 1);
 
         uint32_t filterDispatchGroupSize = maxFilterBatches * sizeof(FilterDispatchGroupData);
-        mFrameData.resize(numFrame);
-        for (uint32_t i = 0; i < numFrame; i++)
+
+        auto filterDispatchGroupDataBuffer =
+            rs->createBufferObject(
+                BufferObjectBinding::SHADER_STORAGE,
+                BufferUsage::DYNAMIC,
+                filterDispatchGroupSize,
+                "FilterDispatchGroupDataBuffer");
+        
+
+        BufferHandleLockGuard lockGuard(filterDispatchGroupDataBuffer);
+
+        FilterDispatchGroupData* dispatchGroupData = (FilterDispatchGroupData*)lockGuard.data();
+
+        for (auto i = 0; i < subMeshCount; i++)
         {
-            mFrameData[i].filterDispatchGroupDataBuffer = 
-                rs->createBufferObject(
-                    BufferObjectBinding::SHADER_STORAGE,
-                    BufferUsage::DYNAMIC,
-                    filterDispatchGroupSize,
-                    "FilterDispatchGroupDataBuffer");
-            mFrameData[i].indirectDataBuffer =
-                rs->createBufferObject(
-                    BufferObjectBinding::SHADER_STORAGE,
-                    BufferUsage::DYNAMIC,
-                    maxIndices * sizeof(uint32_t),
-                    "IndirectDataBuffer");
-            
+            auto subMesh = mesh->getSubMesh(i);
+
+            uint32_t triangleCount = subMesh->getIndexView()->mIndexCount / 3;
+            uint32_t numDispatchGroups = (subMesh->getIndexView()->mIndexCount / 3 + computeThread - 1) / computeThread;
+            auto mat = subMesh->getMaterial();
+
+            auto materialFlag = mat->getMaterialFlags();
+
+            uint32_t geomSet = materialFlag & MATERIAL_FLAG_ALPHA_TESTED ? GEOMSET_ALPHA_CUTOUT : GEOMSET_OPAQUE;
+            for (uint32_t groupIdx = 0; groupIdx < numDispatchGroups; ++groupIdx)
+            {
+                FilterDispatchGroupData& groupData = dispatchGroupData[dispatchGroupCount++];
+                const uint32_t firstTriangle = groupIdx * computeThread;
+                const uint32_t lastTriangle = std::min(firstTriangle + computeThread, triangleCount);
+                const uint32_t trianglesInGroup = lastTriangle - firstTriangle;
+
+                // Fill GPU filter batch data
+             
+                groupData.meshIndex = i;
+                groupData.instanceDataIndex = 0;
+
+                groupData.geometrySet_faceCount = ((trianglesInGroup << BATCH_FACE_COUNT_LOW_BIT) & BATCH_FACE_COUNT_MASK) |
+                    ((geomSet << BATCH_GEOMETRY_LOW_BIT) & BATCH_GEOMETRY_MASK);
+
+                // Offset relative to the start of the mesh
+                groupData.indexOffset = firstTriangle * 3;
+            }
         }
+
+
+        
 
         for (auto i = 0; i < NUM_CULLING_VIEWPORTS; i++)
         {
@@ -335,25 +386,79 @@ void ShadowMap::base2()
                     "FilteredIndexBuffer");
         }
 
-        indirectDrawArgBuffer = 
+        uint32_t meshConstantsBufferSize = subMeshCount * sizeof(MeshConstants);
+        meshConstantsBuffer =
             rs->createBufferObject(
                 BufferObjectBinding::SHADER_STORAGE,
                 BufferUsage::DYNAMIC,
-                NUM_GEOMETRY_SETS * NUM_CULLING_VIEWPORTS * 8 * sizeof(uint32_t),
-                "IndirectDrawArgBuffer");
-        uint32_t indexOffset = 0;
-        for (auto i = 0; i < NUM_GEOMETRY_SETS; i++)
+                meshConstantsBufferSize,
+                "meshConstantsBuffer");
+
+        rs->updateBufferObject(meshConstantsBuffer, (const char*)meshConstants.data(), meshConstantsBufferSize);
+
+
+        auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+
+        Handle<HwDescriptorSetLayout> defaultLayoutHandle =
+            rs->getDescriptorSetLayout(filterTrianglesProgramHandle, 0);
+
+        Handle<HwDescriptorSetLayout> frameLayoutHandle =
+            rs->getDescriptorSetLayout(filterTrianglesProgramHandle, 1);
+        
+        mFrameData.resize(numFrame);
+        for (auto i = 0; i < numFrame; i++)
         {
-            vbConstants[i].indexOffset = indexOffset;
-            indexOffset += visibilityBufferFilteredIndexCount[i];
-            vbConstantsBuffer[i] =
+            auto indirectDataBuffer =
                 rs->createBufferObject(
                     BufferObjectBinding::SHADER_STORAGE,
                     BufferUsage::DYNAMIC,
-                    NUM_GEOMETRY_SETS * sizeof(VBConstants),
-                    "VBConstantBuffer");
+                    maxIndices * sizeof(uint32_t),
+                    "IndirectDataBuffer");
+            mFrameData[i].indirectDataBuffer = indirectDataBuffer;
+
+            auto perFrameConstantsBuffer = 
+                rs->createBufferObject(
+                    BufferObjectBinding::UNIFORM,
+                    BufferUsage::DYNAMIC,
+                    sizeof(PerFrameVBConstants),
+                    "PerFrameVBConstants Buffer Desc");
+            mFrameData[i].perFrameConstantsBuffer = perFrameConstantsBuffer;
+            Handle <HwDescriptorSet> defaultDescSet = rs->createDescriptorSet(defaultLayoutHandle);
+            mFrameData[i].defaultDescSet = defaultDescSet;
+            rs->updateDescriptorSetBuffer(defaultDescSet, 0, &indirectDrawArgBuffer, 1);
+
+            VertexData* vertexData = mesh->getVertexData();
+            Handle<HwBufferObject> vertexDataHandle = vertexData->getBuffer(0);
+            rs->updateDescriptorSetBuffer(defaultDescSet, 1, &vertexDataHandle, 1);
+            rs->updateDescriptorSetBuffer(defaultDescSet, 2, &vbConstantsBuffer, 1);
+            IndexData* indexData = mesh->getIndexData();
+            Handle<HwBufferObject> indexDataHandle = indexData->getHandle();
+            rs->updateDescriptorSetBuffer(defaultDescSet, 4, &indexDataHandle, 1);
+            rs->updateDescriptorSetBuffer(defaultDescSet, 5, &meshConstantsBuffer, 1);
+
+
+            Handle <HwDescriptorSet> frameDescSet = rs->createDescriptorSet(frameLayoutHandle);
+            mFrameData[i].frameDescSet = frameDescSet;
+            rs->updateDescriptorSetBuffer(frameDescSet, 1, &mFrameData[frameIndex].perFrameConstantsBuffer, 1);
+
+            rs->updateDescriptorSetBuffer(frameDescSet, 3, &filterDispatchGroupDataBuffer, 1);
+
+            rs->updateDescriptorSetBuffer(frameDescSet, 6, &mFrameData[frameIndex].indirectDataBuffer, 1);
+
+            rs->updateDescriptorSetBuffer(frameDescSet, 8, &filteredIndexBuffer[0], NUM_CULLING_VIEWPORTS);
         }
-       // mPassList.push_back(filterTrianglesPass);
+        
+        ComputePassCallback callback = [&, dispatchGroupCount](ComputePassInfo& info) {
+            auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+            info.programHandle = filterTrianglesProgramHandle;
+            info.computeGroup = Ogre::Vector3i(dispatchGroupCount, 1, 1);
+            info.descSets.clear();
+            info.descSets.push_back(mFrameData[frameIndex].defaultDescSet);
+            info.descSets.push_back(mFrameData[frameIndex].frameDescSet);
+            };
+
+        auto filterTrianglesPass = createComputePass(callback);
+        mPassList.push_back(filterTrianglesPass);
     }
  
 

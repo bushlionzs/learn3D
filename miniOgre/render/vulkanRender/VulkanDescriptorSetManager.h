@@ -49,7 +49,7 @@ public:
     void terminate() noexcept;
 
     void updateBuffer(VulkanDescriptorSet* set, uint8_t binding,
-            VulkanBufferObject* bufferObject, VkDeviceSize offset, VkDeviceSize size) noexcept;
+            VulkanBufferObject** bufferObject, uint32_t bufferObjectCount) noexcept;
 
     void updateSampler(VulkanDescriptorSet* set, uint8_t binding,
             VulkanTexture* texture, VkSampler sampler) noexcept;

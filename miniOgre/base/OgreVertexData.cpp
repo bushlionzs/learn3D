@@ -15,7 +15,7 @@ void VertexSlotInfo::createBuffer(uint32_t vertexSize, uint32_t vertexCount)
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 
     mVertexBuffer = rs->createBufferObject(
-        BufferObjectBinding::VERTEX,
+        BufferObjectBinding::SHADER_STORAGE,
         BufferUsage::DYNAMIC,
         vertexSize * vertexCount,
         "VertexBuffer");

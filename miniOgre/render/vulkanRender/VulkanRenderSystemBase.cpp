@@ -640,7 +640,7 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
 
             if (indexData)
             {
-                indexData->getIndexBuffer()->bind(cmdBuf);
+                indexData->bind();
                 IndexDataView* view = r->getIndexView();
                 vkCmdDrawIndexed(cmdBuf, view->mIndexCount, 1,
                     view->mIndexLocation, view->mBaseVertexLocation, 0);
@@ -1338,13 +1338,20 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
 void VulkanRenderSystemBase::updateDescriptorSetBuffer(
     Handle<HwDescriptorSet> dsh,
     backend::descriptor_binding_t binding,
-    backend::BufferObjectHandle boh,
-    uint32_t offset,
-    uint32_t size)
+    backend::BufferObjectHandle* boh,
+    uint32_t handleCount)
 {
     VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
-    VulkanBufferObject* obj = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
-    mDescriptorSetManager->updateBuffer(set, binding, obj, offset, size);
+
+    assert(handleCount < 10);
+    VulkanBufferObject* bufferObjects[10];
+
+    for (auto i = 0; i < handleCount; i++)
+    {
+        bufferObjects[i] = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh[i]);
+    }
+    
+    mDescriptorSetManager->updateBuffer(set, binding, &bufferObjects[0], handleCount);
 }
 
 void VulkanRenderSystemBase::updateDescriptorSetTexture(

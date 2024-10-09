@@ -202,9 +202,7 @@ void WowParticleSystem::init(
 	mIndexDataView->mBaseVertexLocation = 0;
 	mIndexDataView->mIndexLocation = 0;
 	mIndexData.reset(new IndexData());
-	mIndexData->mIndexStart = 0;
-	mIndexData->mIndexCount = maxParticles * 6;
-	mIndexData->createBuffer(2, mIndexData->mIndexCount);
+	mIndexData->createBuffer(2, maxParticles * 6);
 	/* Create indexes (will be the same every frame)
 	   Using indexes because it means 1/3 less vertex transforms (4 instead of 6)
 
@@ -217,7 +215,7 @@ void WowParticleSystem::init(
 		2-----3
 	*/
 
-	HardwareBufferLockGuard lockGuard(mIndexData->mIndexBuffer.get());
+	BufferHandleLockGuard lockGuard(mIndexData->getHandle());
 	uint16_t* pIdx = (uint16_t*)lockGuard.data();
 
 	for (size_t idx, idxOff, bboard = 0; bboard < maxParticles; ++bboard)

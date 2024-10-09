@@ -491,6 +491,7 @@ enum class ElementType : uint8_t {
 //! Buffer object binding type
 enum class BufferObjectBinding : uint8_t {
     VERTEX,
+    INDEX,
     UNIFORM,
     SHADER_STORAGE
 };

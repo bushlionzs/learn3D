@@ -917,9 +917,9 @@ Mesh* MeshManager::BuildHardBuffer(
 	vd->addBindBuffer(0, sizeof(SVertexElement), vertexCount);
 	vd->writeBindBufferData(0, (const char*)vertices.data(), size);
 
-	id->mIndexCount = indices.size();
-	id->createBuffer(4, id->mIndexCount);
-	id->writeData((const char*)indices.data(), 4 * id->mIndexCount);
+
+	id->createBuffer(4, indices.size());
+	id->writeData((const char*)indices.data(), 4 * indices.size());
 	SubMesh* sub = pMesh->addSubMesh(true, true);
 
 	sub->addIndexs(indices.size(), 0, 0);

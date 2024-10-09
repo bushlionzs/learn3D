@@ -86,7 +86,7 @@ public:
 				if (mInput.shadowPass)
 				{
 					rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 1,
-						mRenderPassInfo.frameDataHandle, 0, sizeof(mFrameConstantBuffer));
+						&mRenderPassInfo.frameDataHandle, 1);
 				}
 				else
 				{
@@ -98,7 +98,7 @@ public:
 					}
 
 					rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 1,
-						mRenderPassInfo.frameDataHandle, 0, sizeof(mFrameConstantBuffer));
+						&mRenderPassInfo.frameDataHandle, 1);
 
 					
 				}
@@ -178,24 +178,23 @@ PassBase* createRenderPass(RenderPassInput& input)
 class ComputePass : public PassBase
 {
 public:
-	ComputePass(ComputePassInput& input)
+	ComputePass(ComputePassCallback userCallback)
 	{
-		mComputePassInfo.programHandle = input.programHandle;
-		mComputePassInfo.ds = input.ds;
-		mComputePassInfo.computeGroup = input.computeGroup;
+		mCallback = userCallback;
 	}
 
 	void execute(RenderSystem* rs)
 	{
+		mCallback(mComputePassInfo);
 		rs->beginComputePass(mComputePassInfo);
 		rs->endComputePass();
 	}
 private:
-
 	ComputePassInfo mComputePassInfo;
+	ComputePassCallback mCallback;
 };
 
-PassBase* createComputePass(ComputePassInput& input)
+PassBase* createComputePass(ComputePassCallback userCallback)
 {
-	return new ComputePass(input);
+	return new ComputePass(userCallback);
 }

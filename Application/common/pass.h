@@ -23,12 +23,8 @@ struct RenderPassInput
 	bool shadowPass = false;
 };
 
-struct ComputePassInput
-{
-	Handle<HwDescriptorSet> ds;
-	Handle<HwComputeProgram> programHandle;
-	Ogre::Vector3i computeGroup;
-};
+using ComputePassCallback = std::function< void(ComputePassInfo& info)>;
+
 
 class PassBase
 {
@@ -38,4 +34,4 @@ public:
 
 PassBase* createRenderPass(RenderPassInput& input);
 
-PassBase* createComputePass(ComputePassInput& input);
+PassBase* createComputePass(ComputePassCallback userCallback);

@@ -71,7 +71,7 @@ namespace Orphigine
 	{
 		mIndexDataView.mBaseVertexLocation = 0;
 		mIndexDataView.mIndexLocation = 0;
-		mIndexDataView.mIndexCount = mRenderOp.indexData->mIndexCount;
+		mIndexDataView.mIndexCount = mRenderOp.indexData->getIndexCount();
 		return &mIndexDataView;
 	}
 }

@@ -11,8 +11,14 @@ class Ogre::SceneManager;
 
 struct FrameData
 {
-	Handle<HwBufferObject> filterDispatchGroupDataBuffer;
+    //在compute shader中，保存索引对应的batchMeshIndex
 	Handle<HwBufferObject> indirectDataBuffer;
+	PerFrameVBConstants    perFrameVBConstants;
+	Handle<HwBufferObject> perFrameConstantsBuffer;
+	//set=0的描述符
+	Handle <HwDescriptorSet> defaultDescSet;
+	//set=1的描述符
+	Handle <HwDescriptorSet> frameDescSet;
 };
 
 class ShadowMap
@@ -45,12 +51,18 @@ private:
 	std::vector<PassBase*> mPassList;
 
 	std::vector<FrameData> mFrameData;
+	Handle<HwComputeProgram> clearBufferProgramHandle;
+	Handle<HwComputeProgram> filterTrianglesProgramHandle;
 
 	Handle<HwBufferObject> filteredIndexBuffer[NUM_CULLING_VIEWPORTS];
 
 	Handle<HwBufferObject> indirectDrawArgBuffer;
 
-	Handle<HwBufferObject> vbConstantsBuffer[NUM_GEOMETRY_SETS];
+	Handle<HwBufferObject> vbConstantsBuffer;
+
+	Handle<HwBufferObject> meshConstantsBuffer;
 
 	VBConstants vbConstants[NUM_GEOMETRY_SETS];
+
+	
 };

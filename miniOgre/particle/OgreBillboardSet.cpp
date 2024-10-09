@@ -620,9 +620,8 @@ namespace Ogre {
         if (!mPointRendering)
         {
             mIndexData.reset(new IndexData());
-            mIndexData->mIndexStart = 0;
-            mIndexData->mIndexCount = mPoolSize * 6;
-            mIndexData->createBuffer(2, 6 * mIndexData->mIndexCount);
+            assert(false); //todo
+            mIndexData->createBuffer(2, mPoolSize * 6);
             /* Create indexes (will be the same every frame)
                Using indexes because it means 1/3 less vertex transforms (4 instead of 6)
 
@@ -635,7 +634,7 @@ namespace Ogre {
                 2-----3
             */
 
-            HardwareBufferLockGuard lockGuard(mIndexData->mIndexBuffer.get());
+            BufferHandleLockGuard lockGuard(mIndexData->getHandle());
             uint16_t* pIdx = (uint16_t*)lockGuard.data();
 
             for (

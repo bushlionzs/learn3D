@@ -416,9 +416,8 @@ std::shared_ptr<Ogre::Mesh> BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::Da
     IndexData* indexData = mesh->getIndexData();
     VertexData* vertexData = mesh->getVertexData();
     vertexData->setVertexCount(geom->mVertexCount);
-    indexData->mIndexCount = geom->mIndexCount;
-    indexData->createBuffer(indexStride, indexData->mIndexCount);
-    indexData->writeData((const char*)geomData->pShadow->pIndices, indexStride * indexData->mIndexCount);
+    indexData->createBuffer(indexStride, geom->mIndexCount);
+    indexData->writeData((const char*)geomData->pShadow->pIndices, indexStride * geom->mIndexCount);
     uint32_t source = 0;
 
     vertexData->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);

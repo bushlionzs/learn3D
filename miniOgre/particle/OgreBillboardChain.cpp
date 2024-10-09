@@ -565,9 +565,10 @@ namespace Ogre {
         setupBuffers();
         if (mIndexContentDirty)
         {
-            HardwareBufferLockGuard lockGuard((HardwareBuffer*)mIndexData->mIndexBuffer.get());
+            BufferHandleLockGuard lockGuard(mIndexData->getHandle());
             uint32_t* pInt = static_cast<uint32_t*>(lockGuard.data());
-            mIndexData->mIndexCount = 0;
+            
+            uint32_t indexCount = 0;
             // indexes
             for (ChainSegmentList::iterator segi = mChainSegmentList.begin();
                 segi != mChainSegmentList.end(); ++segi)
@@ -597,7 +598,7 @@ namespace Ogre {
                         *pInt++ = baseIdx + 1;
                         *pInt++ = baseIdx;
 
-                        mIndexData->mIndexCount += 6;
+                        indexCount += 6;
 
 
                         if (e == seg.tail)
@@ -609,6 +610,8 @@ namespace Ogre {
                 }
 
             }
+
+            mIndexData->updateIndexCount(indexCount);
             mIndexContentDirty = false;
         }
 

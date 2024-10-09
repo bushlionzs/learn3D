@@ -24,17 +24,7 @@ private:
 };
 
 
-class BufferHandleLockGuard
-{
-public:
-    BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle);
-    ~BufferHandleLockGuard();
 
-    void* data();
-private:
-    Handle<HwBufferObject> mBufferHandle;
-    void* mBufferData;
-};
 class VertexData
 {
 public:

@@ -136,7 +136,6 @@ std::shared_ptr<Mesh> M3dLoader::loadMeshFromFile(std::shared_ptr<DataStream>& s
 	
 
 	IndexData* indexData = pMesh->getIndexData();
-	indexData->mIndexCount = indices.size();
 	indexData->createBuffer(4, indices.size());
 	indexData->writeData((const char*)indices.data(), 4 * indices.size());
 

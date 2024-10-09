@@ -18,16 +18,15 @@ namespace Orphigine {
     //-----------------------------------------------------------------------
     size_t
     MeshInformer::getVertices(Vector3* pDst,
-                              const VertexData* vertexData)
+                              VertexData* vertexData)
     {
         const VertexElement* posElem = 
             vertexData->getVertexDeclaration()->findElementBySemantic(VES_POSITION);
-        auto vbuf = vertexData->getBuffer(posElem->getSource());
-        size_t vertex_stride = vbuf->getVertexSize();
+        auto bufHandle = vertexData->getBuffer(posElem->getSource());
+        size_t vertex_stride = vertexData->getVertexSize(posElem->getSource());
         size_t vertexCount = vertexData->getVertexCount();
-
-        void* pBase = vbuf->lock(
-            HardwareBuffer::HBL_READ_ONLY);
+        BufferHandleLockGuard lockGuard(bufHandle);
+        void* pBase = lockGuard.data();
 
         float* pFloat; 
         posElem->baseVertexPointerToElement(pBase, &pFloat);
@@ -37,9 +36,6 @@ namespace Orphigine {
             pDst->y = pFloat[1];
             pDst->z = pFloat[2];
         }
-
-        vbuf->unlock();
-
         return vertexCount;
     }
     //-----------------------------------------------------------------------
@@ -98,14 +94,17 @@ namespace Orphigine {
     MeshInformer::getTriangles(size_t* pDst,
                                const IndexData* indexData, size_t offset, int operationType)
     {
-        size_t index_stride = indexData->mIndexBuffer->getIndexSize();
-        size_t index_count = indexData->mIndexCount;
+        size_t index_stride = indexData->getIndexSize();
+        size_t index_count = indexData->getIndexCount();
 
-        const void* pBase = indexData->mIndexBuffer->lock(
-            HardwareBuffer::HBL_READ_ONLY);
+        auto bufHandle = indexData->getHandle();
+
+        BufferHandleLockGuard lockGuard(bufHandle);
+
+        const void* pBase = lockGuard.data();
 
         size_t result;
-        if (indexData->mIndexBuffer->getType() == HardwareIndexBuffer::IT_16BIT)
+        if (index_stride == 2)
         {
             const uint16* pSrc = static_cast<const uint16*>(pBase);
             result = getTriangleIndices(pDst, pSrc, index_count, offset, operationType);
@@ -115,9 +114,6 @@ namespace Orphigine {
             const uint32* pSrc = static_cast<const uint32*>(pBase);
             result = getTriangleIndices(pDst, pSrc, index_count, offset, operationType);
         }
-
-        indexData->mIndexBuffer->unlock();
-
         return result;
     }
     //-----------------------------------------------------------------------
@@ -152,13 +148,13 @@ namespace Orphigine {
                 switch (subMesh->getOperationType())
                 {
                 case RenderOperation::OT_TRIANGLE_LIST:
-                    assert(subMesh->getIndexData()->mIndexCount % 3 == 0);
-                    numIndices += subMesh->getIndexData()->mIndexCount;
+                    assert(subMesh->getIndexData()->getIndexCount() % 3 == 0);
+                    numIndices += subMesh->getIndexData()->getIndexCount();
                     break;
 
                 case RenderOperation::OT_TRIANGLE_STRIP:
                 case RenderOperation::OT_TRIANGLE_FAN:
-                    numIndices += (subMesh->getIndexData()->mIndexCount - 2) * 3;
+                    numIndices += (subMesh->getIndexData()->getIndexCount() - 2) * 3;
                     break;
                 }
             }
@@ -261,17 +257,16 @@ namespace Orphigine {
                     numVertices += subMesh->getVertexData()->getVertexCount();
                 }
 
-                assert(subMesh->getIndexData()->mIndexCount >= 3);
+                assert(subMesh->getIndexData()->getIndexCount() >= 3);
                 switch (subMesh->getOperationType())
                 {
                 case RenderOperation::OT_TRIANGLE_LIST:
-                    assert(subMesh->getIndexData()->mIndexCount % 3 == 0);
-                    numIndices += subMesh->getIndexData()->mIndexCount;
+                    numIndices += subMesh->getIndexData()->getIndexCount();
                     break;
 
                 case RenderOperation::OT_TRIANGLE_STRIP:
                 case RenderOperation::OT_TRIANGLE_FAN:
-                    numIndices += (subMesh->getIndexData()->mIndexCount - 2) * 3;
+                    numIndices += (subMesh->getIndexData()->getIndexCount() - 2) * 3;
                     break;
                 }
             }

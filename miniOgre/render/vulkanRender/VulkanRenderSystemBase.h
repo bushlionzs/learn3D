@@ -96,9 +96,8 @@ protected:
     virtual void updateDescriptorSetBuffer(
         Handle<HwDescriptorSet> dsh,
         backend::descriptor_binding_t binding,
-        backend::BufferObjectHandle boh,
-        uint32_t offset,
-        uint32_t size) override;
+        backend::BufferObjectHandle* boh,
+        uint32_t handleCount) override;
     virtual void updateDescriptorSetTexture(
         Handle<HwDescriptorSet> dsh,
         backend::descriptor_binding_t binding,

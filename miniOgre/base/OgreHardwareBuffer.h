@@ -1,5 +1,5 @@
 #pragma once
-
+#include <DriverBase.h>
 namespace Ogre {
     enum HardwareBufferUsage : uint8_t
     {
@@ -145,5 +145,17 @@ namespace Ogre {
 
         HardwareBuffer* pBuf;
         void* pData;
+    };
+
+    class BufferHandleLockGuard
+    {
+    public:
+        BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle);
+        ~BufferHandleLockGuard();
+
+        void* data();
+    private:
+        Handle<HwBufferObject> mBufferHandle;
+        void* mBufferData;
     };
 }

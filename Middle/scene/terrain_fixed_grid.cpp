@@ -116,15 +116,23 @@ bool TerrainFixedGrid::createGeometryData( )
 
 		float* pBuffer[VDI_LAYER_COUNT];
 
-		for ( size_t i = 0; i < VDI_LAYER_COUNT; ++ i )
+		Handle<HwBufferObject> bufHandle[VDI_LAYER_COUNT];
+		for (auto i = 0; i < VDI_LAYER_COUNT; ++ i )
 		{
 			pBuffer[i] = NULL;
 			VertexData* vertexData = mVertexDatas[i];
 			if (vertexData->getVertexCount() == 0)
 				continue;
 
-			auto vb = vertexData->getBuffer(0);
-			pBuffer[i] = (float*)vb->lock();
+			bufHandle[i] = vertexData->getBuffer(0);
+		}
+
+		std::array<BufferHandleLockGuard*, VDI_LAYER_COUNT> lockGuards;
+		
+		for (auto i = 0; i < VDI_LAYER_COUNT; i++)
+		{
+			lockGuards[i] = new BufferHandleLockGuard(bufHandle[i]);
+			pBuffer[i] = (float*)lockGuards[i]->data();
 		}
 
 		const int lightmapGridXSize = pTerrain->getTerrainInfo()->mLightmapGridXSize;
@@ -210,15 +218,11 @@ bool TerrainFixedGrid::createGeometryData( )
 			}
 		}
 
-
-		for (size_t i = 0; i < VDI_LAYER_COUNT; ++i)
+		for (auto i = 0; i < VDI_LAYER_COUNT; i++)
 		{
-			VertexData* vertexData = mVertexDatas[i];
-			if (vertexData->getVertexCount() == 0)
-				continue;
-			auto vb = vertexData->getBuffer(0);
-			vb->unlock();
+			delete lockGuards[i];
 		}
+
 		createGeometryFromData(tempMaterialBucketMap);
 
 		mTerrain->getTerrainInfo()->setGroundTileAABB(mBounds, mXBase, mZBase, mXSize, mZSize);

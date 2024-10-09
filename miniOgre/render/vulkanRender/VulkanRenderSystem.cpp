@@ -237,10 +237,15 @@ void VulkanRenderSystem::beginComputePass(ComputePassInfo& computePassInfo)
 
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 
+
+    for (auto& ds : computePassInfo.descSets)
+    {
+        VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(ds);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+            pipelineLayout, 0, 1, &set->vkSet, 0, nullptr);
+    }
     
-    VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(computePassInfo.ds);
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
-        pipelineLayout, 0, 1, &set->vkSet, 0, nullptr);
+    
 
     vkCmdDispatch(commandBuffer,
         computePassInfo.computeGroup._x, computePassInfo.computeGroup._y, computePassInfo.computeGroup._z);
@@ -313,7 +318,7 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
 
         if (indexData)
         {
-            indexData->getIndexBuffer()->bind(cmdBuffer);
+            indexData->bind();
             IndexDataView* view = r->getIndexView();
             vkCmdDrawIndexed(cmdBuffer, view->mIndexCount, 1,
                 view->mIndexLocation, view->mBaseVertexLocation, 0);

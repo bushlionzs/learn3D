@@ -559,6 +559,8 @@ inline constexpr VkBufferUsageFlagBits getBufferObjectUsage(
     switch(bindingType) {
         case BufferObjectBinding::VERTEX:
             return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+        case BufferObjectBinding::INDEX:
+            return VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
         case BufferObjectBinding::UNIFORM:
             return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
         case BufferObjectBinding::SHADER_STORAGE:

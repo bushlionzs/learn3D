@@ -485,13 +485,8 @@ public:
         mLastBoundInfo = nextInfo;
     }
 
-    void updateBuffer(VulkanDescriptorSet* set, uint8_t binding, VulkanBufferObject* bufferObject,
-            VkDeviceSize offset, VkDeviceSize size) noexcept {
-        VkDescriptorBufferInfo const info = {
-            .buffer = bufferObject->buffer.getGpuBuffer(),
-            .offset = offset,
-            .range = size,
-        };
+    void updateBuffer(VulkanDescriptorSet* set, uint8_t binding, VulkanBufferObject** bufferObject,
+        uint32_t bufferObjectCount) noexcept {
 
         VkDescriptorType type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         auto& history = mHistory[set];
@@ -500,9 +495,19 @@ public:
             type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
         }
 
-        if (bufferObject->bindingType == BufferObjectBinding::SHADER_STORAGE)
+        if (bufferObject[0]->bindingType == BufferObjectBinding::SHADER_STORAGE)
         {
             type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        }
+
+        assert(bufferObjectCount < 10);
+        VkDescriptorBufferInfo bufferInfos[10];
+
+        for (auto i = 0; i < bufferObjectCount; i++)
+        {
+            bufferInfos[i].offset = 0;
+            bufferInfos[i].range = VK_WHOLE_SIZE;
+            bufferInfos[i].buffer = bufferObject[i]->buffer.getGpuBuffer();
         }
 
         VkWriteDescriptorSet const descriptorWrite = {
@@ -510,12 +515,11 @@ public:
             .pNext = nullptr,
             .dstSet = set->vkSet,
             .dstBinding = binding,
-            .descriptorCount = 1,
+            .descriptorCount = bufferObjectCount,
             .descriptorType = type,
-            .pBufferInfo = &info,
+            .pBufferInfo = &bufferInfos[0],
         };
         vkUpdateDescriptorSets(mDevice, 1, &descriptorWrite, 0, nullptr);
-        set->acquire(bufferObject);
         history.write(binding);
     }
 
@@ -634,8 +638,8 @@ void VulkanDescriptorSetManager::terminate() noexcept {
 }
 
 void VulkanDescriptorSetManager::updateBuffer(VulkanDescriptorSet* set, uint8_t binding,
-        VulkanBufferObject* bufferObject, VkDeviceSize offset, VkDeviceSize size) noexcept {
-    mImpl->updateBuffer(set, binding, bufferObject, offset, size);
+        VulkanBufferObject** bufferObject, uint32_t bufferObjectCount) noexcept {
+    mImpl->updateBuffer(set, binding, bufferObject, bufferObjectCount);
 }
 
 void VulkanDescriptorSetManager::updateSampler(VulkanDescriptorSet* set, uint8_t binding,

@@ -245,9 +245,8 @@ void RenderSystem::bindDescriptorSet(
 void RenderSystem::updateDescriptorSetBuffer(
     Handle<HwDescriptorSet> dsh,
     backend::descriptor_binding_t binding,
-    backend::BufferObjectHandle boh,
-    uint32_t offset,
-    uint32_t size)
+    backend::BufferObjectHandle* boh,
+    uint32_t handleCount)
 {
     
 }

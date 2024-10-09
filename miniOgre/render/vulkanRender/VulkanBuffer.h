@@ -40,6 +40,11 @@ public:
 
     void setBufferName(VkDevice device, const char* name);
 
+    uint32_t getBufferBytes()
+    {
+        return mBufferBytes;
+    }
+
 private:
     VmaAllocator mAllocator;
     VulkanStagePool& mStagePool;

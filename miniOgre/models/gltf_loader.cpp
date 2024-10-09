@@ -227,11 +227,9 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 }
             }
             IndexData* indexData = subMesh->getIndexData();
-            indexData->mIndexCount = accessor.count;
-
-
-            indexData->createBuffer(4, indexData->mIndexCount);
-            indexData->writeData((const char*)indices.data(), 4 * indexData->mIndexCount);
+      
+            indexData->createBuffer(4, accessor.count);
+            indexData->writeData((const char*)indices.data(), 4 * accessor.count);
 
             VertexData* vd = subMesh->getVertexData();
 
@@ -383,7 +381,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             
             
            // sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
-            std::shared_ptr<Material> mat = std::make_shared<Material>(tinyMat.name, true);
+            std::shared_ptr<Ogre::Material> mat = std::make_shared<Ogre::Material>(tinyMat.name, true);
 
             PbrMaterialConstanceBuffer& matInfo = mat->getMatInfo();
             matInfo.baseColorFactor.x = tinyMat.pbrMetallicRoughness.baseColorFactor[0];

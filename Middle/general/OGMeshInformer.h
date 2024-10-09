@@ -9,7 +9,7 @@ namespace Orphigine
     {
     public:
         static size_t getVertices(Ogre::Vector3* pDst,
-                                  const VertexData* vertexData);
+                                  VertexData* vertexData);
 
         template <typename DestType, typename SrcType>
         static size_t getTriangleIndices(DestType* pDest,

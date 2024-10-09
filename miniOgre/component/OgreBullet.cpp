@@ -347,7 +347,7 @@ void VertexIndexToShape::addAnimatedVertexData(
 void VertexIndexToShape::addIndexData(IndexData* data, const unsigned int offset)
 {
     const unsigned int prev_size = mIndexCount;
-    mIndexCount += (unsigned int)data->mIndexCount;
+    mIndexCount += (unsigned int)data->getIndexCount();
 
     unsigned int* tmp_ind = new unsigned int[mIndexCount];
     if (mIndexBuffer)
@@ -357,32 +357,31 @@ void VertexIndexToShape::addIndexData(IndexData* data, const unsigned int offset
     }
     mIndexBuffer = tmp_ind;
 
-    const unsigned int numTris = (unsigned int)data->mIndexCount / 3;
-    auto& ibuf = data->mIndexBuffer;
-    const bool use32bitindexes = (ibuf->getType() == HardwareIndexBuffer::IT_32BIT);
+    const unsigned int numTris = (unsigned int)data->getIndexCount() / 3;
+    auto bufHandle = data->getHandle();
+    const bool use32bitindexes = (data->getIndexSize() == 4);
     unsigned int index_offset = prev_size;
 
+    BufferHandleLockGuard lockGuard(bufHandle);
     if (use32bitindexes)
     {
-        const unsigned int* pInt = static_cast<unsigned int*>(ibuf->lock(HardwareBuffer::HBL_READ_ONLY));
+        const unsigned int* pInt = static_cast<unsigned int*>(lockGuard.data());
         for (unsigned int k = 0; k < numTris; ++k)
         {
             mIndexBuffer[index_offset++] = offset + *pInt++;
             mIndexBuffer[index_offset++] = offset + *pInt++;
             mIndexBuffer[index_offset++] = offset + *pInt++;
         }
-        ibuf->unlock();
     }
     else
     {
-        const unsigned short* pShort = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_READ_ONLY));
+        const unsigned short* pShort = static_cast<unsigned short*>(lockGuard.data());
         for (unsigned int k = 0; k < numTris; ++k)
         {
             mIndexBuffer[index_offset++] = offset + static_cast<unsigned int>(*pShort++);
             mIndexBuffer[index_offset++] = offset + static_cast<unsigned int>(*pShort++);
             mIndexBuffer[index_offset++] = offset + static_cast<unsigned int>(*pShort++);
         }
-        ibuf->unlock();
     }
 }
 //------------------------------------------------------------------------------------------------

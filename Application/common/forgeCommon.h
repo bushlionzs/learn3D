@@ -25,6 +25,15 @@ STRUCT(CullingViewPort)
 	DATA(uint32_t, _pad0, None);
 };
 
+STRUCT(PerFrameVBConstants)
+{
+	DATA(Transform, transform[5], None);
+	DATA(CullingViewPort, cullingViewports[5], None);
+	DATA(uint32_t, numViewports, None);
+};
+
+
+
 STRUCT(FilterDispatchGroupData)
 {
 	DATA(uint32_t, meshIndex, None);
@@ -41,7 +50,7 @@ STRUCT(MeshConstants)
 	DATA(uint32_t, twoSided, None);
 };
 
-STRUCT(VertexData)
+STRUCT(VertexDataBuffer)
 {
 	DATA(Ogre::Vector3, vertexPosition, None);
 	DATA(Ogre::Vector2, vertexTextureUV, None);

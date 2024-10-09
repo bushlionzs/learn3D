@@ -106,8 +106,9 @@ namespace Orphigine {
             mVertexData->setVertexCount(vertexCount);
 
           
-            auto buf = mVertexData->getBuffer(0);
-            float* pFloat = static_cast<float*>(buf->lock());
+            auto bufHandle = mVertexData->getBuffer(0);
+            BufferHandleLockGuard lockGuard(bufHandle);
+            float* pFloat = static_cast<float*>(lockGuard.data());
             for (uint32_t i = 0; i < mTempPositions.size(); i++)
             {
                 *pFloat++ = mTempPositions[i].x;
@@ -117,8 +118,6 @@ namespace Orphigine {
                 *pColour = mColour;
                 pFloat++;
             }
-            buf->unlock();
-
             mIndexDataView.mIndexCount = mTempPositions.size();
             mIndexDataView.mIndexLocation = 0;
             mIndexDataView.mBaseVertexLocation = 0;

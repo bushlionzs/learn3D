@@ -1014,10 +1014,11 @@ namespace Orphigine
 		{
 			mIndexData[renderableIndex] = new IndexData;
 			IndexData* indexData = mIndexData[renderableIndex]; // cache to register for optimise
+
+			auto indexCount = mCellFacesNum[renderableIndex] * 3;
 			indexData->createBuffer(sizeof(unsigned short), mCellFacesNum[renderableIndex] * 3);
-			indexData->mIndexStart = 0;
-			indexData->mIndexCount = mCellFacesNum[renderableIndex] * 3;
-			assert(65535 > indexData->mIndexCount);
+
+			assert(65535 > indexCount);
 			indexData->writeData((const char*)mTempIndexBuffer[renderableIndex], 
 				mCellFacesNum[renderableIndex] * 3 * sizeof(unsigned short));
 		}

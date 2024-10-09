@@ -117,15 +117,17 @@ namespace Ogre {
        if (mChainElementList.size() < 2)
           return;
 
-       auto buf = mRenderOp.vertexData->getBuffer(0);
-
-       void* pBufferStart = buf->lock(HardwareBuffer::HBL_DISCARD);
+       auto bufHandle = mRenderOp.vertexData->getBuffer(0);
+       BufferHandleLockGuard lockGuard(bufHandle);
+       void* pBufferStart = lockGuard.data();
 
        // Here. we need to compute the position of the camera in the coordinate system of the billboard chain.
 
        
        Vector3 eyePos = mParent->_getDerivedOrientation().Inverse() *
                    (mCamera->getDerivedPosition() - mParent->_getDerivedPosition());
+
+       uint32_t vertexSize = mRenderOp.vertexData->getVertexSize(0);
 
        // Compute the position of the vertices in the chain
 	   unsigned int chainSize = mChainElementList.size();
@@ -134,7 +136,7 @@ namespace Ogre {
            // 计算新的偏移量，因为每个循环是计算两个顶点，所以要乘以2
            void* pBase = static_cast<void*>(
               static_cast<char*>(pBufferStart) +
-              buf->getVertexSize() * i * 2);
+               vertexSize * i * 2);
 
            Vector3 chainTangent;
            if (i == 0) chainTangent = mChainElementList[1].position - mChainElementList[0].position;
@@ -187,8 +189,6 @@ namespace Ogre {
            *pFloat++ = mChainElementList[i].uTexCoord;
            *pFloat++ = 1.0f;
        }
-
-       buf->unlock();
    }
 
    void EffectBillboardChain::_createBuffer(void)
