@@ -299,6 +299,11 @@ inline VkDescriptorSetLayout createLayout(VkDevice device, BitmaskGroup const& b
     count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
             bitmaskGroup.dynamicUbo);
     count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, bitmaskGroup.ubo);
+
+    count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+        bitmaskGroup.storgeUbo);
+    count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
+        bitmaskGroup.storegeDynamicUbo);
     count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             bitmaskGroup.sampler);
     count = createBindings(toBind, count, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
@@ -495,7 +500,7 @@ public:
             type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
         }
 
-        if (bufferObject[0]->bindingType == BufferObjectBinding::SHADER_STORAGE)
+        if (bufferObject[0]->bindingType & BufferObjectBinding::BufferObjectBinding_Storge)
         {
             type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         }

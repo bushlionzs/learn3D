@@ -67,16 +67,16 @@ struct VulkanDescriptorSetLayout : public VulkanResource, HwDescriptorSetLayout 
         // TODO: better utiltize the space below and use bitset instead.
         UniformBufferBitmask ubo;         // 8 bytes
         UniformBufferBitmask dynamicUbo;  // 8 bytes
-        ComputeBitMask computeUbo;       //  4 bytes
-        ComputeBitMask computeDynamicUbo;       //  4 bytes
+        StoreBufferBitMask storgeUbo;       //  4 bytes
+        StoreBufferBitMask storegeDynamicUbo;       //  4 bytes
         SamplerBitmask sampler;          //  8 bytes
         InputAttachmentBitmask inputAttachment; // 8 bytes
 
         bool operator==(Bitmask const& right) const {
             return ubo == right.ubo && 
                    dynamicUbo == right.dynamicUbo && 
-                   computeUbo == right.computeUbo && 
-                   computeDynamicUbo == right.computeDynamicUbo &&
+                storgeUbo == right.storgeUbo &&
+                storegeDynamicUbo == right.storegeDynamicUbo &&
                    sampler == right.sampler &&
                    inputAttachment == right.inputAttachment;
         }
@@ -88,19 +88,19 @@ struct VulkanDescriptorSetLayout : public VulkanResource, HwDescriptorSetLayout 
     struct Count {
         uint32_t ubo = 0;
         uint32_t dynamicUbo = 0;
-        uint32_t computeUbo = 0;
-        uint32_t computeDynamicUbo = 0;
+        uint32_t storegeUbo = 0;
+        uint32_t storegeDynamicUbo = 0;
         uint32_t sampler = 0;
         uint32_t inputAttachment = 0;
 
         inline uint32_t total() const {
-            return ubo + dynamicUbo + computeUbo + computeDynamicUbo + sampler + inputAttachment;
+            return ubo + dynamicUbo + storegeUbo + storegeDynamicUbo + sampler + inputAttachment;
         }
 
         bool operator==(Count const& right) const noexcept {
             return ubo == right.ubo && dynamicUbo == right.dynamicUbo && 
-                   computeUbo == right.computeUbo &&
-                   computeDynamicUbo == right.computeDynamicUbo &&
+                storegeUbo == right.storegeUbo &&
+                storegeDynamicUbo == right.storegeDynamicUbo &&
                    sampler == right.sampler &&
                    inputAttachment == right.inputAttachment;
         }
@@ -109,8 +109,8 @@ struct VulkanDescriptorSetLayout : public VulkanResource, HwDescriptorSetLayout 
             return {
                 .ubo = collapsedCount(mask.ubo),
                 .dynamicUbo = collapsedCount(mask.dynamicUbo),
-                .computeUbo = collapsedCount(mask.dynamicUbo),
-                .computeDynamicUbo = collapsedCount(mask.computeDynamicUbo),
+                .storegeUbo = collapsedCount(mask.storgeUbo),
+                .storegeDynamicUbo = collapsedCount(mask.storegeDynamicUbo),
                 .sampler = collapsedCount(mask.sampler),
                 .inputAttachment = collapsedCount(mask.inputAttachment),
             };
@@ -122,8 +122,8 @@ struct VulkanDescriptorSetLayout : public VulkanResource, HwDescriptorSetLayout 
             Count ret;
             ret.ubo = ubo * mult;
             ret.dynamicUbo = dynamicUbo * mult;
-            ret.computeUbo = computeUbo * mult;
-            ret.computeDynamicUbo = computeDynamicUbo * mult;
+            ret.storegeUbo = storegeUbo * mult;
+            ret.storegeDynamicUbo = storegeDynamicUbo * mult;
             ret.sampler = sampler * mult;
             ret.inputAttachment = inputAttachment * mult;
             return ret;
@@ -488,10 +488,10 @@ struct VulkanIndexBuffer : public HwIndexBuffer, VulkanResource {
 
 struct VulkanBufferObject : public HwBufferObject, VulkanResource {
     VulkanBufferObject(VmaAllocator allocator, VulkanStagePool& stagePool, uint32_t byteCount,
-            BufferObjectBinding bindingType);
+            uint32_t bindingType);
 
     VulkanBuffer buffer;
-    const BufferObjectBinding bindingType;
+    const VkBufferUsageFlags bindingType;
 };
 
 struct VulkanSamplerGroup : public HwSamplerGroup, VulkanResource {
@@ -554,20 +554,34 @@ private:
 };
 
 
-inline constexpr VkBufferUsageFlagBits getBufferObjectUsage(
-        BufferObjectBinding bindingType) noexcept {
-    switch(bindingType) {
-        case BufferObjectBinding::VERTEX:
-            return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-        case BufferObjectBinding::INDEX:
-            return VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-        case BufferObjectBinding::UNIFORM:
-            return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-        case BufferObjectBinding::SHADER_STORAGE:
-            return VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-        // when adding more buffer-types here, make sure to update VulkanBuffer::loadFromCpu()
-        // if necessary.
+inline  VkBufferUsageFlags getBufferObjectUsage(
+        uint32_t bindingType) noexcept {
+    VkBufferUsageFlags flags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+    if (bindingType & BufferObjectBinding::BufferObjectBinding_Vertex)
+    {
+        flags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     }
+
+    if (bindingType & BufferObjectBinding::BufferObjectBinding_Index)
+    {
+        flags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+    }
+    if (bindingType & BufferObjectBinding::BufferObjectBinding_Uniform)
+    {
+        flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+    }
+
+    if (bindingType & BufferObjectBinding::BufferObjectBinding_Storge)
+    {
+        flags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+    }
+
+    if (bindingType & BufferObjectBinding::BufferObjectBinding_InDirectBuffer)
+    {
+        flags |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
+    }
+
+    return flags;
 }
 
 } // namespace filament::backend

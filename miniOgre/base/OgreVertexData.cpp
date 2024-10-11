@@ -14,8 +14,8 @@ void VertexSlotInfo::createBuffer(uint32_t vertexSize, uint32_t vertexCount)
     mVertexCount = vertexCount;
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 
-    mVertexBuffer = rs->createBufferObject(
-        BufferObjectBinding::SHADER_STORAGE,
+    mVertexBufferHandle = rs->createBufferObject(
+        BufferObjectBinding::BufferObjectBinding_Storge | BufferObjectBinding::BufferObjectBinding_Vertex,
         BufferUsage::DYNAMIC,
         vertexSize * vertexCount,
         "VertexBuffer");
@@ -25,7 +25,7 @@ void VertexSlotInfo::writeData(const char* data, uint32_t size)
 {
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 
-    rs->updateBufferObject(mVertexBuffer, data, size);
+    rs->updateBufferObject(mVertexBufferHandle, data, size);
 }
 
 BufferHandleLockGuard::BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle)
@@ -66,7 +66,7 @@ void VertexData::bind(void* cb)
         auto& slot = vertexSlotInfo[i];
         if (slot.mVertexSize > 0)
         {
-            rs->bindVertexBuffer(slot.mVertexBuffer, i);
+            rs->bindVertexBuffer(slot.mVertexBufferHandle, i);
         }
     }
 }

@@ -1,33 +1,20 @@
 #include "OgreHeader.h"
 #include "VulkanRenderSystem.h"
-#include "VulkanTexture.h"
 #include "OgreRenderable.h"
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
-#include "OgreVertexDeclaration.h"
 #include "OgreMaterial.h"
-#include "OgreHardwareIndexBuffer.h"
-#include "VulkanHardwareBufferManager.h"
-#include "OgreCamera.h"
-#include "VulkanTools.h"
-#include "VulkanHelper.h"
-#include "VulkanWindow.h"
-#include "OgreViewport.h"
-#include "OgreTextureManager.h"
-#include "OgreSceneManager.h"
 #include "OgreRoot.h"
-#include "OgreNode.h"
-#include "OgreMath.h"
-#include "OgreEntity.h"
-#include "OgreSubEntity.h"
-#include "OgreMeshManager.h"
-#include "OgreResourceManager.h"
 #include "VulkanRenderTarget.h"
 #include "VulkanMappings.h"
 #include <VulkanPipelineCache.h>
 #include <VulkanHandles.h>
 #include <VulkanPipelineLayoutCache.h>
-#include <shaderManager.h>
+#include "VulkanTexture.h"
+#include "VulkanTools.h"
+#include "VulkanHelper.h"
+#include "VulkanWindow.h"
+
 
 
 VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
@@ -227,6 +214,70 @@ void VulkanRenderSystem::endRenderPass()
     }
 }
 
+
+void VulkanRenderSystem::bindPipeline(
+    Handle<HwProgram> programHandle,
+    Handle<HwPipeline> pipelineHandle,
+    Handle<HwDescriptorSet>* descSets,
+    uint32_t setCount)
+{
+    VulkanProgram* vulkanProgram = mResourceAllocator.handle_cast<VulkanProgram*>(programHandle);
+    VkCommandBuffer commandBuffer = mCommands->get().buffer();
+    VulkanPipeline* vulkanPipeline = mResourceAllocator.handle_cast<VulkanPipeline*>(pipelineHandle);
+
+    auto pipeline = vulkanPipeline->getPipeline();
+
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    auto pipelineLayout = vulkanProgram->getVulkanPipelineLayout();
+
+    VkDescriptorSet descriptorSet[4];
+   
+    for (auto i = 0; i < setCount; i++)
+    {
+        if (descSets[i])
+        {
+            VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(descSets[i]);
+            descriptorSet[i] = set->vkSet;
+        }
+        else
+        {
+            descriptorSet[i] =  pEmptyDescriptorSet;
+        }
+    }
+
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+        pipelineLayout, 0, setCount, &descriptorSet[0], 0, nullptr);
+}
+
+void VulkanRenderSystem::drawIndexed(
+    uint32_t indexCount,
+    uint32_t instanceCount,
+    uint32_t firstIndex,
+    uint32_t vertexOffset,
+    uint32_t firstInstance)
+{
+    auto cmdBuffer = mCommands->get().buffer();
+    vkCmdDrawIndexed(cmdBuffer, indexCount, instanceCount,
+        firstIndex, vertexOffset, firstInstance);
+
+    incrTriangleCount(indexCount / 3);
+
+    incrBatchCount(1);
+}
+
+void VulkanRenderSystem::drawIndexedIndirect(
+    Handle<HwBufferObject> drawBuffer,
+    uint32_t offset,
+    uint32_t drawCount,
+    uint32_t stride
+)
+{
+    auto cmdBuffer = mCommands->get().buffer();
+    VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(drawBuffer);
+    VkBuffer vkBuf = vulkanBufferObject->buffer.getGpuBuffer();
+    vkCmdDrawIndexedIndirect(cmdBuffer, vkBuf, offset, drawCount, stride);
+}
+
 void VulkanRenderSystem::beginComputePass(ComputePassInfo& computePassInfo)
 {
     VulkanComputeProgram* program = mResourceAllocator.handle_cast<VulkanComputeProgram*>(computePassInfo.programHandle);
@@ -237,13 +288,17 @@ void VulkanRenderSystem::beginComputePass(ComputePassInfo& computePassInfo)
 
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 
-
+    VkDescriptorSet descriptorSet[4];
+    uint32_t index = 0;
     for (auto& ds : computePassInfo.descSets)
     {
         VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(ds);
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
-            pipelineLayout, 0, 1, &set->vkSet, 0, nullptr);
+        descriptorSet[index] = set->vkSet;
+        index++;
     }
+
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+        pipelineLayout, 0, index, &descriptorSet[0], 0, nullptr);
     
     
 

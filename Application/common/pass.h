@@ -23,6 +23,7 @@ struct RenderPassInput
 	bool shadowPass = false;
 };
 
+using RenderPassCallback = std::function< void(RenderPassInfo& info)>;
 using ComputePassCallback = std::function< void(ComputePassInfo& info)>;
 
 
@@ -32,6 +33,8 @@ public:
 	virtual void execute(RenderSystem* rs) = 0;
 };
 
-PassBase* createRenderPass(RenderPassInput& input);
+PassBase* createStandardRenderPass(RenderPassInput& input);
+
+PassBase* createUserDefineRenderPass(RenderPassCallback callback);
 
 PassBase* createComputePass(ComputePassCallback userCallback);

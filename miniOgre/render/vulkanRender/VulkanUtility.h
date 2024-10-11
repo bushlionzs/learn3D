@@ -530,7 +530,7 @@ private:
 
 using UniformBufferBitmask = utils::bitset64;
 using SamplerBitmask = utils::bitset64;
-using ComputeBitMask = utils::bitset32;
+using StoreBufferBitMask = utils::bitset32;
 
 // We only have at most one input attachment, so this bitmask exists only to make the code more
 // general.

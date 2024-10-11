@@ -143,6 +143,6 @@ namespace vks
 
 		using BingdingInfo = std::unordered_map<uint8_t, std::vector<VkDescriptorSetLayoutBinding>>;
 
-		BingdingInfo getProgramBindings(const std::string& blob);
+		BingdingInfo getProgramBindings(const std::string& blob, VkShaderStageFlags stageFlags);
 	}
 }

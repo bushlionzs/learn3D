@@ -575,18 +575,18 @@ namespace vks
 				subresourceRange);
 		}
 
-		BingdingInfo getProgramBindings(const std::string& blob)
+		BingdingInfo getProgramBindings(const std::string& blob, VkShaderStageFlags stageFlags)
 		{
 			
 			BingdingInfo result;
 			spirv_cross::CompilerGLSL  glsl((const uint32_t*)blob.data(), blob.size() / 4);
 
-			auto inputs = glsl.get_shader_resources().uniform_buffers;
+			auto uniforms = glsl.get_shader_resources().uniform_buffers;
 
 			VkDescriptorSetLayoutBinding layout{};
-			for (int32_t i = 0; i < inputs.size(); i++)
+			for (int32_t i = 0; i < uniforms.size(); i++)
 			{
-				auto& input = inputs[i];
+				auto& input = uniforms[i];
 				std::string name = glsl.get_name(input.id);
 
 				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
@@ -600,16 +600,15 @@ namespace vks
 
 				layout.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 				layout.binding = binding;
-				layout.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
-
+				layout.stageFlags = stageFlags;
 				result[set].push_back(layout);
 			}
 
-			inputs = glsl.get_shader_resources().storage_buffers;
+			auto storage_buffers = glsl.get_shader_resources().storage_buffers;
 
-			for (int32_t i = 0; i < inputs.size(); i++)
+			for (int32_t i = 0; i < storage_buffers.size(); i++)
 			{
-				auto& input = inputs[i];
+				auto& input = storage_buffers[i];
 				std::string name = glsl.get_name(input.id);
 
 				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
@@ -625,13 +624,34 @@ namespace vks
 				layout.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 
 				layout.binding = binding;
-				layout.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
-				
+				layout.stageFlags = stageFlags;
 
 
 				result[set].push_back(layout);
 			}
 
+			auto sampled_images = glsl.get_shader_resources().sampled_images;
+
+			for (int32_t i = 0; i < sampled_images.size(); i++)
+			{
+				auto& input = sampled_images[i];
+				std::string name = glsl.get_name(input.id);
+
+				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
+				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
+
+				spirv_cross::SPIRType type = glsl.get_type(input.type_id);
+
+				if (type.array.size())
+					layout.descriptorCount = type.array[0];
+				else
+					layout.descriptorCount = 1;
+
+				layout.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+
+				layout.binding = binding;
+				layout.stageFlags = stageFlags;
+			}
 			return result;
 		}
 	}

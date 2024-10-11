@@ -30,9 +30,9 @@ VulkanBuffer::VulkanBuffer(VmaAllocator allocator, VulkanStagePool& stagePool,
       mUsage(usage),
 	  mUpdatedOffset(0),
       mUpdatedBytes(0) {
-    // for now make sure that only 1 bit is set in usage
-    // (because loadFromCpu() assumes that somewhat)
-    assert_invariant(usage && !(usage & (usage - 1)));
+    //// for now make sure that only 1 bit is set in usage
+    //// (because loadFromCpu() assumes that somewhat)
+    //assert_invariant(usage && !(usage & (usage - 1)));
     mBufferBytes = numBytes;
     // Create the VkBuffer.
     VkBufferCreateInfo bufferInfo {

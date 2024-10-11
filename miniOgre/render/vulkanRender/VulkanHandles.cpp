@@ -87,20 +87,12 @@ VulkanDescriptorSetLayout::BitmaskGroup VulkanDescriptorSetLayout::fromBackendLa
     for (auto const& binding : layout.bindings) {
         switch (binding.type) {
         case DescriptorType::UNIFORM_BUFFER: {
-            if (binding.stageFlags == ShaderStageFlags::COMPUTE)
-            {
-                fromStageFlags(binding.stageFlags, binding.binding, mask.computeUbo);
-            }
-            else
-            {
                 if ((binding.flags & DescriptorFlags::DYNAMIC_OFFSET) != DescriptorFlags::NONE) {
                     fromStageFlags(binding.stageFlags, binding.binding, mask.dynamicUbo);
                 }
                 else {
                     fromStageFlags(binding.stageFlags, binding.binding, mask.ubo);
                 }
-            }
-            
             break;
         }
         case DescriptorType::SAMPLER: {
@@ -112,7 +104,15 @@ VulkanDescriptorSetLayout::BitmaskGroup VulkanDescriptorSetLayout::fromBackendLa
             break;
         }
         case DescriptorType::SHADER_STORAGE_BUFFER:
-            fromStageFlags(binding.stageFlags, binding.binding, mask.computeDynamicUbo);
+            if (binding.flags == DescriptorFlags::NONE)
+            {
+                fromStageFlags(binding.stageFlags, binding.binding, mask.storgeUbo);
+            }
+            else
+            {
+                fromStageFlags(binding.stageFlags, binding.binding, mask.storegeDynamicUbo);
+            }
+            
             break;
         }
     }
@@ -383,7 +383,7 @@ void VulkanVertexBuffer::setBuffer(VulkanResourceAllocator const& allocator,
 }
 
 VulkanBufferObject::VulkanBufferObject(VmaAllocator allocator, VulkanStagePool& stagePool,
-        uint32_t byteCount, BufferObjectBinding bindingType)
+        uint32_t byteCount, uint32_t bindingType)
     : HwBufferObject(byteCount),
       VulkanResource(VulkanResourceType::BUFFER_OBJECT),
       buffer(allocator, stagePool, getBufferObjectUsage(bindingType), byteCount),

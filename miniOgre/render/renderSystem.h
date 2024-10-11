@@ -93,6 +93,32 @@ public:
         RenderPassInfo& renderPassInfo);
     virtual void endRenderPass();
 
+    virtual void bindPipeline(
+        Handle<HwProgram> programHandle,
+        Handle<HwPipeline> pipelineHandle,
+        Handle<HwDescriptorSet>* descSets,
+        uint32_t setCount) 
+    {
+    }
+
+
+    virtual void drawIndexed(
+        uint32_t indexCount,
+        uint32_t instanceCount,
+        uint32_t firstIndex,
+        uint32_t vertexOffset,
+        uint32_t firstInstance)
+    {
+    }
+    virtual void drawIndexedIndirect(
+        Handle<HwBufferObject> drawBuffer,
+        uint32_t offset,
+        uint32_t drawCount,
+        uint32_t stride
+    ) 
+    {
+    }
+
     virtual void beginComputePass(
         ComputePassInfo& computePassInfo);
     virtual void endComputePass();
@@ -128,7 +154,7 @@ public:
     virtual void* lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes) { return nullptr; }
     virtual void unlockBuffer(Handle<HwBufferObject> bufHandle) {}
     virtual Handle<HwBufferObject> createBufferObject(
-        BufferObjectBinding bindingType, 
+        uint32_t bindingType, 
         BufferUsage usage, 
         uint32_t byteCount,
         const char* debugName = nullptr);

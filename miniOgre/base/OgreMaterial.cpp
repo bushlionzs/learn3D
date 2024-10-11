@@ -139,7 +139,7 @@ namespace Ogre {
         {
             FrameResourceInfo* resourceInfo = &mFrameResourceInfoList[i];
             Handle<HwBufferObject> objectBufferHandle = 
-                rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, 
+                rs->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform, BufferUsage::DYNAMIC,
                     sizeof(ObjectConstantBuffer));
             resourceInfo->modelObjectHandle = objectBufferHandle;
 
@@ -147,13 +147,13 @@ namespace Ogre {
             if (mPbr)
             {
                 matBufferHandle = 
-                    rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, 
+                    rs->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform, BufferUsage::DYNAMIC,
                         sizeof(PbrMaterialConstanceBuffer));
             }
             else
             {
                 matBufferHandle = 
-                    rs->createBufferObject(BufferObjectBinding::UNIFORM, 
+                    rs->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform,
                         BufferUsage::DYNAMIC, sizeof(GeneralMaterialConstantBuffer));
             }
                 
@@ -172,7 +172,10 @@ namespace Ogre {
             if (mHasSkinData)
             {
                 resourceInfo->skinObjectHandle =
-                    rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(SkinnedConstantBuffer));
+                    rs->createBufferObject(
+                        BufferObjectBinding::BufferObjectBinding_Uniform, 
+                        BufferUsage::DYNAMIC, 
+                        sizeof(SkinnedConstantBuffer));
 
                 rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 3, 
                     &resourceInfo->skinObjectHandle, 1);

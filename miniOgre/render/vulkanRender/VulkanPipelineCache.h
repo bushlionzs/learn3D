@@ -112,7 +112,7 @@
         // Each of the following methods are fast and do not make Vulkan calls.
         void bindProgram(VkShaderModule vertexShader, VkShaderModule fragShader) noexcept;
         void bindRasterState(const RasterState& rasterState) noexcept;
-        void bindRenderPass(VkRenderPass renderPass, int subpassIndex) noexcept;
+        void bindFormat(VkFormat colorFormat, VkFormat depthFormat);
         void bindPrimitiveTopology(VkPrimitiveTopology topology) noexcept;
 
         void bindVertexArray(
@@ -187,7 +187,8 @@
         // VkPipeline object. The size:offset comments below are expressed in bytes.
         struct PipelineKey {                                                          // size : offset
             VkShaderModule shaders[SHADER_MODULE_COUNT];                              //  16  : 0
-            VkRenderPass renderPass;                                                  //  8   : 16
+            VkFormat depthFormat;                                                     //  4   : 16
+            VkFormat colorFormat;                                                     //  4   : 20
             uint16_t topology;                                                        //  2   : 24
             uint16_t subpassIndex;                                                    //  2   : 26
             VertexInputAttributeDescription vertexAttributes[VERTEX_ATTRIBUTE_COUNT]; //  128 : 28

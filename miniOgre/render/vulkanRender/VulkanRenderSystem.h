@@ -20,6 +20,23 @@ public:
 
     virtual void beginRenderPass(RenderPassInfo& renderPassInfo) override;
     virtual void endRenderPass() override;
+    virtual void bindPipeline(
+        Handle<HwProgram> programHandle,
+        Handle<HwPipeline> pipelineHandle,
+        Handle<HwDescriptorSet>* descSets,
+        uint32_t setCount) override;
+    virtual void drawIndexed(
+        uint32_t indexCount,
+        uint32_t instanceCount,
+        uint32_t firstIndex,
+        uint32_t vertexOffset,
+        uint32_t firstInstance);
+    virtual void drawIndexedIndirect(
+        Handle<HwBufferObject> drawBuffer,
+        uint32_t offset,
+        uint32_t drawCount,
+        uint32_t stride
+    );
     virtual void beginComputePass(
         ComputePassInfo& computePassInfo) override;
     virtual void endComputePass() override;

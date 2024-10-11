@@ -427,8 +427,11 @@ void VulkanHelper::setupDescriptorSetLayout()
             &tmp[0],
             2);
 
-    if (vkCreatePipelineLayout(mVKDevice, &pPipelineLayoutCreateInfo,
-        nullptr, &mPipelineLayoutPbr) != VK_SUCCESS)
+    if (vkCreatePipelineLayout(
+        mVKDevice, 
+        &pPipelineLayoutCreateInfo,
+        nullptr, 
+        &mPipelineLayoutPbr) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create pipeline layout!");
     }

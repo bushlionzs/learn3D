@@ -15,10 +15,19 @@ struct FrameData
 	Handle<HwBufferObject> indirectDataBuffer;
 	PerFrameVBConstants    perFrameVBConstants;
 	Handle<HwBufferObject> perFrameConstantsBuffer;
+	ObjectUniformBlock   meshUniformBlock;
+	Handle<HwBufferObject> objectUniformBlockHandle;
+
+	//for filter angles pass
 	//set=0µÄÃèÊö·û
 	Handle <HwDescriptorSet> defaultDescSet;
 	//set=1µÄÃèÊö·û
 	Handle <HwDescriptorSet> frameDescSet;
+
+	//for visibility pass
+
+	Handle <HwDescriptorSet> defaultDescriptorSetOfVisibilityPass;
+	Handle <HwDescriptorSet> drawDescriptorSetOfVisibilityPass;
 };
 
 class ShadowMap
@@ -34,6 +43,11 @@ public:
 	void update(float delta);
 	void updatePass(std::vector<PassBase*>& passlist);
 	FrameGraphId<FrameGraphTexture> fgPass(FrameGraph& fg);
+
+	FrameData* getFrameData(uint32_t frameIndex)
+	{
+		return &mFrameData[frameIndex];
+	}
 private:
 	void base1();
 	void base2();
@@ -56,6 +70,7 @@ private:
 
 	Handle<HwBufferObject> filteredIndexBuffer[NUM_CULLING_VIEWPORTS];
 
+	
 	Handle<HwBufferObject> indirectDrawArgBuffer;
 
 	Handle<HwBufferObject> vbConstantsBuffer;
@@ -64,5 +79,4 @@ private:
 
 	VBConstants vbConstants[NUM_GEOMETRY_SETS];
 
-	
 };

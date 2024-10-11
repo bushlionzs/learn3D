@@ -66,7 +66,7 @@ protected:
     virtual void bindVertexBuffer(Handle<HwBufferObject> bufHandle, uint32_t binding);
     virtual void bindIndexBuffer(Handle<HwBufferObject>, uint32_t indexSize);
     virtual Handle<HwBufferObject> createBufferObject(
-        BufferObjectBinding bindingType,
+        uint32_t bindingType,
         BufferUsage usage,
         uint32_t byteCount,
         const char* debugName) override;
@@ -120,6 +120,10 @@ protected:
     VkImage mCurrentVKImage;
 
     std::vector<Ogre::Renderable*> mRenderList;
+
+    VkDescriptorPool       pEmptyDescriptorPool;
+    VkDescriptorSetLayout  pEmptyDescriptorSetLayout;
+    VkDescriptorSet        pEmptyDescriptorSet;
 
 
     VulkanPipelineCache* mPipelineCache = nullptr;

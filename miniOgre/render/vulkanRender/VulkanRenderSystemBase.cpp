@@ -9,7 +9,6 @@
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
 #include "OgreVertexDeclaration.h"
-#include "OgreHardwareIndexBuffer.h"
 #include "VulkanRenderSystemBase.h"
 #include "VulkanWindow.h"
 #include "VulkanTexture.h"
@@ -95,6 +94,30 @@ bool VulkanRenderSystemBase::engineInit()
     mPipelineCache = helper.getPipelineCache();
     mPipelineLayoutCache = helper.getPipelineLayoutCache();
     mDescriptorSetManager = new VulkanDescriptorSetManager(device, &mResourceAllocator);
+
+
+    VkDescriptorSetLayoutCreateInfo layoutCreateInfo = {};
+    layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    vkCreateDescriptorSetLayout(device, &layoutCreateInfo,
+        nullptr,
+        &pEmptyDescriptorSetLayout);
+    VkDescriptorPoolSize descriptorPoolSizes[1] = { { VK_DESCRIPTOR_TYPE_SAMPLER, 1 } };
+    VkDescriptorPoolCreateInfo poolCreateInfo = {};
+    poolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolCreateInfo.pNext = NULL;
+    poolCreateInfo.poolSizeCount = 1;
+    poolCreateInfo.pPoolSizes = descriptorPoolSizes;
+    poolCreateInfo.flags = 0;
+    poolCreateInfo.maxSets = 1;
+    vkCreateDescriptorPool(device, &poolCreateInfo, nullptr, &pEmptyDescriptorPool);
+
+    VkDescriptorSetAllocateInfo alloc_info{};
+    alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    alloc_info.pNext = NULL;
+    alloc_info.descriptorPool = pEmptyDescriptorPool;
+    alloc_info.descriptorSetCount = 1;
+    alloc_info.pSetLayouts = &pEmptyDescriptorSetLayout;
+    vkAllocateDescriptorSets(device, &alloc_info, &pEmptyDescriptorSet);
     return true;
 }
 
@@ -998,7 +1021,7 @@ void VulkanRenderSystemBase::bindIndexBuffer(Handle<HwBufferObject> bufferHandle
 }
 
 Handle<HwBufferObject> VulkanRenderSystemBase::createBufferObject(
-    BufferObjectBinding bindingType,
+    uint32_t bindingType,
     BufferUsage usage,
     uint32_t byteCount,
     const char* debugName)
@@ -1076,6 +1099,15 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
         ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
 
     auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+
+    struct ShaderMask
+    {
+        uint32_t uboMask;
+        uint32_t samplerMask;
+        uint32_t uboStorge;
+    };
+
+    std::unordered_map<uint8_t, ShaderMask> vertexMaskMap;
     if (res)
     {
         String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
@@ -1088,14 +1120,41 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
             shaderInfo.shaderMacros,
             moduleInfo);
         vulkanProgram->updateVertexShader(moduleInfo.shaderModule);
-        std::vector<VkVertexInputAttributeDescription>& attributeDescriptions = 
+        std::vector<VkVertexInputAttributeDescription>& attributeDescriptions =
             vulkanProgram->getAttributeDescriptions();
         this->parseAttributeDescriptions(decl, moduleInfo.inputDesc, attributeDescriptions);
         std::vector<VkVertexInputBindingDescription>& vertexInputBindings =
             vulkanProgram->getVertexInputBindings();
         this->parseInputBindingDescription(decl, moduleInfo.inputDesc, vertexInputBindings);
+
+        auto bingingInfo = vks::tools::getProgramBindings(moduleInfo.spv, VK_SHADER_STAGE_VERTEX_BIT);
+
+        ShaderMask shaderMask;
+        for (auto& pair : bingingInfo)
+        {
+            shaderMask.uboMask = 0;
+            shaderMask.samplerMask = 0;
+            shaderMask.uboStorge = 0;
+            for (auto& layoutBinding : pair.second)
+            {
+                if (layoutBinding.descriptorType == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                {
+                    shaderMask.samplerMask |= 1 << layoutBinding.binding;
+                }
+                else
+                {
+                    shaderMask.uboMask |= 1 << layoutBinding.binding;
+
+                    if (layoutBinding.descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
+                    {
+                        shaderMask.uboStorge |= 1 << layoutBinding.binding;
+                    }
+                }
+            }
+            vertexMaskMap[pair.first] = shaderMask;
+        }
     }
-    
+    std::unordered_map<uint8_t, ShaderMask> fragMaskMap;
     res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
     if (res)
     {
@@ -1110,77 +1169,151 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
             shaderInfo.shaderMacros,
             moduleInfo);
         vulkanProgram->updateFragmentShader(moduleInfo.shaderModule);
+
+        auto bingingInfo = vks::tools::getProgramBindings(moduleInfo.spv, VK_SHADER_STAGE_FRAGMENT_BIT);
+
+        ShaderMask shaderMask;
+        for (auto& pair : bingingInfo)
+        {
+            shaderMask.uboMask = 0;
+            shaderMask.samplerMask = 0;
+            shaderMask.uboStorge = 0;
+            for (auto& layoutBinding : pair.second)
+            {
+                if (layoutBinding.descriptorType == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                {
+                    shaderMask.samplerMask &= 1 << layoutBinding.binding;
+                }
+                else
+                {
+                    shaderMask.uboMask &= 1 << layoutBinding.binding;
+                    if (layoutBinding.descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
+                    {
+                        shaderMask.uboStorge |= 1 << layoutBinding.binding;
+                    }
+                }
+            }
+            fragMaskMap[pair.first] = shaderMask;
+        }
     }
-    
+
     DescriptorSetLayout info;
     info.bindings.reserve(10);
     DescriptorSetLayoutBinding binding;
-    for (auto i = 0; i < 16; i++)
+    VulkanPipelineLayoutCache::PipelineLayoutKey keys = {};
+    for (auto set = 0; set < 4; set++)
     {
-        bool hasVertex = (shaderInfo.uboVertexMask & (1uLL << i)) != 0;
-        bool hasFragment = (shaderInfo.uboFragMask & (1uLL << i)) != 0;
+        auto vertexItor = vertexMaskMap.find(set);
 
-        if (!hasVertex && !hasFragment)
-            continue;
-        binding.binding = i;
-
-        binding.flags = DescriptorFlags::NONE;
-        binding.count = 0;
-        binding.type = DescriptorType::UNIFORM_BUFFER;
-        if (hasVertex)
+        uint32_t uboVertex = 0;
+        uint32_t samplerVertex = 0;
+        uint32_t uboStorge = 0;
+        if (vertexItor != vertexMaskMap.end())
         {
-            binding.stageFlags = ShaderStageFlags::VERTEX;
+            uboVertex = vertexItor->second.uboMask;
+            samplerVertex = vertexItor->second.samplerMask;
+            uboStorge = vertexItor->second.uboStorge;
         }
 
-        if (hasFragment)
+        auto flagItor = fragMaskMap.find(set);
+        uint32_t uboFlag = 0;
+        uint32_t samplerFlag = 0;
+        if (flagItor != fragMaskMap.end())
         {
-            binding.stageFlags = static_cast<ShaderStageFlags>(
-                binding.stageFlags | ShaderStageFlags::FRAGMENT);
+            uboFlag = flagItor->second.uboMask;
+            samplerFlag = flagItor->second.samplerMask;
+            uboStorge |= flagItor->second.uboStorge;
         }
 
-        info.bindings.push_back(binding);
+        if (uboVertex | uboFlag)
+        {
+            info.bindings.clear();
+            for (auto i = 0; i < 16; i++)
+            {
+                bool hasVertex = (uboVertex & (1uLL << i)) != 0;
+                bool hasFragment = (uboFlag & (1uLL << i)) != 0;
+
+                if (!hasVertex && !hasFragment)
+                    continue;
+                bool hasStore = (uboStorge & (1uLL << i)) != 0;
+                binding.binding = i;
+
+                binding.flags = DescriptorFlags::NONE;
+                binding.count = 1;
+                if (hasStore)
+                {
+                    binding.type = DescriptorType::SHADER_STORAGE_BUFFER;
+                }
+                else
+                {
+                    binding.type = DescriptorType::UNIFORM_BUFFER;
+                }
+                
+                if (hasVertex)
+                {
+                    binding.stageFlags = ShaderStageFlags::VERTEX;
+                }
+
+                if (hasFragment)
+                {
+                    binding.stageFlags = static_cast<ShaderStageFlags>(
+                        binding.stageFlags | ShaderStageFlags::FRAGMENT);
+                }
+
+                info.bindings.push_back(binding);
+            }
+            Handle<HwDescriptorSetLayout> uboLayoutHandle = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
+            VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(uboLayoutHandle, info);
+            mDescriptorSetManager->initVkLayout(uboLayout);
+            auto vkLayout = uboLayout->getVkLayout();
+            keys[set] = vkLayout;
+
+            vulkanProgram->updateLayout(set, uboLayoutHandle);
+            
+        }
+        else if (samplerVertex | samplerFlag)
+        {
+            info.bindings.clear();
+            for (auto i = 0; i < 32; i++)
+            {
+                bool hasFragment = (shaderInfo.samplerFragMask & (1uLL << i)) != 0;
+
+                if (!hasFragment)
+                {
+                    continue;
+                }
+
+                binding.binding = i;
+                binding.flags = DescriptorFlags::NONE;
+                binding.count = 0;
+                binding.type = DescriptorType::SAMPLER;
+
+
+                binding.stageFlags = static_cast<ShaderStageFlags>(
+                    binding.stageFlags | ShaderStageFlags::FRAGMENT);
+
+                info.bindings.push_back(binding);
+            }
+
+            Handle<HwDescriptorSetLayout> samplerLayoutHandle = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
+            VulkanDescriptorSetLayout* samplerLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(samplerLayoutHandle, info);
+            mDescriptorSetManager->initVkLayout(samplerLayout);
+
+            keys[set] = samplerLayout->getVkLayout();
+
+            vulkanProgram->updateLayout(set, samplerLayoutHandle);
+        }
+        else
+        {
+            keys[set] = pEmptyDescriptorSetLayout;
+        }
     }
 
-    Handle<HwDescriptorSetLayout> uboLayoutHandle = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
-    VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(uboLayoutHandle, info);
-    mDescriptorSetManager->initVkLayout(uboLayout);
-
-    info.bindings.clear();
-
-    for (auto i = 0; i < 32; i++)
-    {
-        bool hasFragment = (shaderInfo.samplerFragMask & (1uLL << i)) != 0;
-
-        if (!hasFragment)
-        {
-            continue;
-        }
-
-        binding.binding = i;
-        binding.flags = DescriptorFlags::NONE;
-        binding.count = 0;
-        binding.type = DescriptorType::SAMPLER;
-
-   
-        binding.stageFlags = static_cast<ShaderStageFlags>(
-            binding.stageFlags | ShaderStageFlags::FRAGMENT);
-
-
-        info.bindings.push_back(binding);
-    }
-
-    Handle<HwDescriptorSetLayout> samplerLayoutHandle = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
-    VulkanDescriptorSetLayout* samplerLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(samplerLayoutHandle, info);
-    mDescriptorSetManager->initVkLayout(samplerLayout);
-    VulkanPipelineLayoutCache::PipelineLayoutKey key;
-    key[0] = uboLayout->getVkLayout();
-    key[1] = samplerLayout->getVkLayout();
-    key[2] = VK_NULL_HANDLE;
-    key[3] = VK_NULL_HANDLE;
-    VkPipelineLayout vulkanPipelineLayout = mPipelineLayoutCache->getLayout(key);
+    
+  
+    VkPipelineLayout vulkanPipelineLayout = mPipelineLayoutCache->getLayout(keys);
     vulkanProgram->updateVulkanPipelineLayout(vulkanPipelineLayout);
-    vulkanProgram->updateLayout(0, uboLayoutHandle);
-    vulkanProgram->updateLayout(1, samplerLayoutHandle);
+    
     return program;
 }
 
@@ -1212,31 +1345,37 @@ Handle<HwComputeProgram> VulkanRenderSystemBase::createComputeProgram(const Shad
         moduleInfo);
     vulkanProgram->updateComputeShader(moduleInfo.shaderModule);
 
-    auto results = vks::tools::getProgramBindings(moduleInfo.spv);
+    auto results = vks::tools::getProgramBindings(moduleInfo.spv, VK_SHADER_STAGE_COMPUTE_BIT);
 
    
     assert_invariant(!results.empty() && "Need at least one binding for descriptor set layout.");
 
     std::array<VkDescriptorSetLayout, 4> layoutlist;
 
-    for (auto& pair : results)
+    for (auto set = 0; set < 4; set++)
     {
+        auto itor = results.find(set);
+        if (itor == results.end())
+        {
+            layoutlist[set] = pEmptyDescriptorSetLayout;
+            continue;
+        }
         VkDescriptorSetLayoutCreateInfo dlinfo = {
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
             .pNext = nullptr,
-            .bindingCount = (uint32_t)pair.second.size(),
-            .pBindings = pair.second.data(),
+            .bindingCount = (uint32_t)itor->second.size(),
+            .pBindings = itor->second.data(),
         };
 
         VkDescriptorSetLayout vkLayout;
         vkCreateDescriptorSetLayout(mVulkanPlatform->getDevice(), &dlinfo, VKALLOC, &vkLayout);
-        layoutlist[pair.first] = vkLayout;
+        layoutlist[set] = vkLayout;
         vulkanProgram->updateSetLayout(vkLayout);
         DescriptorSetLayout layoutInfo;
         Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
         VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(dslh, layoutInfo);
         uboLayout->setVkLayout(vkLayout);
-        vulkanProgram->updateSetLayoutHandle(pair.first, dslh);
+        vulkanProgram->updateSetLayoutHandle(set, dslh);
     }
     
     VkPipelineLayout pipelineLayout;
@@ -1314,7 +1453,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
         vulkanProgram->getVertexInputBindings();
     std::vector<VkVertexInputAttributeDescription>& attributeDescriptions =
         vulkanProgram->getAttributeDescriptions();
-    mPipelineCache->bindRenderPass(nullptr, 0);
+    mPipelineCache->bindFormat(VK_FORMAT_B8G8R8A8_UNORM,VK_FORMAT_D32_SFLOAT_S8_UINT); //todo
     mPipelineCache->bindProgram(vulkanProgram->getVertexShader(), vulkanProgram->getFragmentShader());
     mPipelineCache->bindRasterState(vulkanRasterState);
     mPipelineCache->bindPrimitiveTopology(VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
@@ -1398,21 +1537,25 @@ void VulkanRenderSystemBase::parseInputBindingDescription(
     std::vector<VkVertexInputBindingDescription>& vertexInputBindings)
 {
     vertexInputBindings.clear();
-    for (uint32_t binding = 0; binding < 10; binding++)
+    if (decl)
     {
-        int32_t stride = decl->getVertexSize(binding);
+        for (uint32_t binding = 0; binding < 10; binding++)
+        {
+            int32_t stride = decl->getVertexSize(binding);
 
-        if (stride <= 0)
-            continue;
-        vertexInputBindings.emplace_back();
-        vertexInputBindings.back().binding = binding;
-        vertexInputBindings.back().stride = stride;
-        vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+            if (stride <= 0)
+                continue;
+            vertexInputBindings.emplace_back();
+            vertexInputBindings.back().binding = binding;
+            vertexInputBindings.back().stride = stride;
+            vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        }
     }
+    
 }
 
 void VulkanRenderSystemBase::parseAttributeDescriptions(
-    VertexDeclaration* vd,
+    VertexDeclaration* decl,
     std::vector<GlslInputDesc>& inputDesc,
     std::vector<VkVertexInputAttributeDescription>& attributeDescriptions)
 {
@@ -1423,7 +1566,7 @@ void VulkanRenderSystemBase::parseAttributeDescriptions(
     {
         bool find = false;
 
-        auto& elementlist = vd->getElementList();
+        auto& elementlist = decl->getElementList();
         for (auto elem : elementlist)
         {
             if (input._name == VulkanMappings::getSemanticName(elem.getSemantic()) &&

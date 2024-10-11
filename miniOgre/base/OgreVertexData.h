@@ -15,11 +15,11 @@ public:
 
     Handle<HwBufferObject> getHandle()
     {
-        return mVertexBuffer;
+        return mVertexBufferHandle;
     }
 private:
     //std::shared_ptr<Ogre::HardwareVertexBuffer> hardwareVertexBuffer;
-    Handle<HwBufferObject> mVertexBuffer;
+    Handle<HwBufferObject> mVertexBufferHandle;
     friend class VertexData;
 };
 

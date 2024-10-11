@@ -32,7 +32,11 @@ STRUCT(PerFrameVBConstants)
 	DATA(uint32_t, numViewports, None);
 };
 
-
+STRUCT(ObjectUniformBlock)
+{
+	DATA(Ogre::Matrix4, worldViewProjMat, None);
+	DATA(uint32_t, viewID, None);
+};
 
 STRUCT(FilterDispatchGroupData)
 {
@@ -66,4 +70,7 @@ enum MaterialFlagBits
 	MATERIAL_FLAG_ALL = MATERIAL_FLAG_TWO_SIDED | MATERIAL_FLAG_ALPHA_TESTED | MATERIAL_FLAG_DOUBLE_VOXEL_SIZE
 };
 
+
+#define VIEW_CAMERA          0
+#define VIEW_SHADOW          1
 std::shared_ptr<Mesh> loadSanMiguel(const std::string& name);

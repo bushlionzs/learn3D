@@ -230,14 +230,12 @@ using namespace bluevk;
 
 
         VkPipelineRenderingCreateInfoKHR pipelineRenderingCreateInfo{};
-        //zhousha todo
-        auto depthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
-        auto colorFormat = VK_FORMAT_B8G8R8A8_SRGB;
+
         pipelineRenderingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
         pipelineRenderingCreateInfo.colorAttachmentCount = colorBlendState.attachmentCount;
-        pipelineRenderingCreateInfo.pColorAttachmentFormats = &colorFormat;
-        pipelineRenderingCreateInfo.depthAttachmentFormat = depthFormat;
-        pipelineRenderingCreateInfo.stencilAttachmentFormat = depthFormat;
+        pipelineRenderingCreateInfo.pColorAttachmentFormats = &mPipelineRequirements.colorFormat;
+        pipelineRenderingCreateInfo.depthAttachmentFormat = mPipelineRequirements.depthFormat;
+        pipelineRenderingCreateInfo.stencilAttachmentFormat = mPipelineRequirements.depthFormat;
 
         pipelineCreateInfo.pNext = &pipelineRenderingCreateInfo;
 
@@ -268,10 +266,12 @@ using namespace bluevk;
         mPipelineRequirements.rasterState = rasterState;
     }
 
-    void VulkanPipelineCache::bindRenderPass(VkRenderPass renderPass, int subpassIndex) noexcept {
-        mPipelineRequirements.renderPass = renderPass;
-        mPipelineRequirements.subpassIndex = subpassIndex;
+    void VulkanPipelineCache::bindFormat(VkFormat colorFormat, VkFormat depthFormat)
+    {
+        mPipelineRequirements.colorFormat = colorFormat;
+        mPipelineRequirements.depthFormat = depthFormat;
     }
+    
 
     void VulkanPipelineCache::bindPrimitiveTopology(VkPrimitiveTopology topology) noexcept {
         assert_invariant(uint32_t(topology) <= 0xffffu);

@@ -165,7 +165,7 @@ void RenderSystem::present()
 }
 
 Handle<HwBufferObject> RenderSystem::createBufferObject(
-    BufferObjectBinding bindingType,
+    uint32_t bindingType,
     BufferUsage usage,
     uint32_t byteCount,
     const char* debugName)

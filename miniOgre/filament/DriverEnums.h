@@ -489,11 +489,14 @@ enum class ElementType : uint8_t {
 };
 
 //! Buffer object binding type
-enum class BufferObjectBinding : uint8_t {
-    VERTEX,
-    INDEX,
-    UNIFORM,
-    SHADER_STORAGE
+enum  BufferObjectBinding
+{
+    BufferObjectBinding_None = 0,
+    BufferObjectBinding_Vertex = 1,
+    BufferObjectBinding_Index = BufferObjectBinding_Vertex << 1,
+    BufferObjectBinding_Uniform = BufferObjectBinding_Index << 1,
+    BufferObjectBinding_Storge = BufferObjectBinding_Uniform << 1,
+    BufferObjectBinding_InDirectBuffer = BufferObjectBinding_Storge << 1,
 };
 
 //! Face culling Mode

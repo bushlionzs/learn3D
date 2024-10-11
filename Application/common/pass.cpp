@@ -34,7 +34,7 @@ public:
 		for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
 		{
 			mFrameBufferObjectList[i] =
-				rs->createBufferObject(BufferObjectBinding::UNIFORM, BufferUsage::DYNAMIC, sizeof(mFrameConstantBuffer));
+				rs->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform, BufferUsage::DYNAMIC, sizeof(mFrameConstantBuffer));
 		}
 		mDefaultTexture = TextureManager::getSingleton().load("white1x1.dds", nullptr);
 	}
@@ -170,9 +170,30 @@ private:
 	std::shared_ptr<OgreTexture> mDefaultTexture;
 };
 
-PassBase* createRenderPass(RenderPassInput& input)
+PassBase* createStandardRenderPass(RenderPassInput& input)
 {
 	return new RenderPass(input);
+}
+
+class UserDefineRenderPass : public PassBase
+{
+public:
+	UserDefineRenderPass(RenderPassCallback userCallback)
+	{
+		mCallback = userCallback;
+	}
+
+	void execute(RenderSystem* rs)
+	{
+		mCallback(mRenderPassInfo);
+	}
+private:
+	RenderPassInfo mRenderPassInfo;
+	RenderPassCallback mCallback;
+};
+PassBase* createUserDefineRenderPass(RenderPassCallback callback)
+{
+	return new UserDefineRenderPass(callback);
 }
 
 class ComputePass : public PassBase
@@ -186,8 +207,7 @@ public:
 	void execute(RenderSystem* rs)
 	{
 		mCallback(mComputePassInfo);
-		rs->beginComputePass(mComputePassInfo);
-		rs->endComputePass();
+		
 	}
 private:
 	ComputePassInfo mComputePassInfo;
