@@ -56,11 +56,6 @@ public:
     int32_t _findMemoryType(
         uint32_t typeFilter,
         VkMemoryPropertyFlags properties);
-    VkPipelineLayout _getPipelineLayout(bool pbr);
-
-
-    VkDescriptorPool _getDescriptorPool();
-    VkDescriptorSetLayout _getDescriptorSetLayout(VulkanLayoutIndex index);
     VulkanRenderSystemBase* _getRenderSystem()
     {
         return mVulkanRenderSystem;
@@ -102,9 +97,7 @@ public:
      }
 private:
     void createCommandPool();
-    void createDescriptorPool();
-    void setupDescriptorSetLayout();
-    void createSamples();
+    void createVulkanResourceCache();
 private:
     VulkanRenderSystemBase* mVulkanRenderSystem;
 
@@ -118,13 +111,6 @@ private:
     VkPhysicalDeviceFeatures mDeviceFeatures;
     VkPhysicalDeviceMemoryProperties mPhysicalMemoryProperties;
  
-
-
-    VkDescriptorPool mDescriptorPool;
-    std::array<VkDescriptorSetLayout,2> mDescriptorSetLayout;
-    VkDescriptorSetLayout mPbrDescriptorSetLayout;
-    VkPipelineLayout mPipelineLayout;
-    VkPipelineLayout mPipelineLayoutPbr;
 
     VkFormat mSwapChainImageFormat;
     VkColorSpaceKHR mColorSpace;

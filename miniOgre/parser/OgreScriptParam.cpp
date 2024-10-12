@@ -605,8 +605,9 @@ void OgreMaterialParam::setTextureAddrMode(const std::string& val)
     tp->_tex_addr_mod = mode;
     if (mode == Ogre::TAM_CLAMP)
     {
-        tp->_samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
-        tp->_samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
+        tp->_samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
+        tp->_samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
+        tp->_samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
         tp->_samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
         tp->_samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
         tp->_samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;

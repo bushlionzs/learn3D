@@ -30,9 +30,9 @@ namespace Ogre
 
 		static VkSamplerAddressMode getWrapMode(filament::backend::SamplerWrapMode mode);
 		static VkFilter getFilter(filament::backend::SamplerMinFilter filter);
-		static VkFilter getFilter(filament::backend::SamplerMagFilter filter);
-		static VkSamplerMipmapMode getMipmapMode(filament::backend::SamplerMinFilter filter);
-		static float getMaxLod(filament::backend::SamplerMinFilter filter);
+		static VkFilter getFilter(filament::backend::SamplerFilterType filter);
+		static VkSamplerMipmapMode getMipmapMode(filament::backend::SamplerMipMapMode filter);
+		static float getMaxLod(filament::backend::SamplerMipMapMode mipMapMode);
 		static VkBool32 getCompareEnable(filament::backend::SamplerCompareMode mode);
 		static VkCompareOp getCompareOp(filament::backend::SamplerCompareFunc func);
 	};

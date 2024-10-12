@@ -220,6 +220,12 @@ Handle<HwDescriptorSetLayout> RenderSystem::getDescriptorSetLayout(
     return Handle<HwDescriptorSetLayout>();
 }
 
+Handle<HwSampler> RenderSystem::createTextureSampler(filament::backend::SamplerParams& samplerParams)
+{
+    assert(false);
+    return Handle<HwSampler>();
+}
+
 Handle<HwComputeProgram> RenderSystem::createComputeProgram(const ShaderInfo& mShaderInfo)
 {
     assert(false);

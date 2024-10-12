@@ -83,7 +83,10 @@ protected:
     virtual Handle<HwProgram> createShaderProgram(
         const ShaderInfo& mShaderInfo, 
         VertexDeclaration* decl) override;
-    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwComputeProgram> programHandle, uint32_t set) override;
+    virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(
+        Handle<HwComputeProgram> programHandle, 
+        uint32_t set) override;
+    virtual Handle<HwSampler> createTextureSampler(filament::backend::SamplerParams& samplerParams);
     virtual Handle<HwComputeProgram> createComputeProgram(const ShaderInfo& mShaderInfo) override;
     virtual Handle<HwPipeline> createPipeline(
         backend::RasterState& rasterState, 

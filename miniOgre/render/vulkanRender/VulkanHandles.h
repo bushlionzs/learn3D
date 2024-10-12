@@ -288,6 +288,17 @@ private:
     std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
 };
 
+struct VulkanTextureSampler : public HwSampler, VulkanResource {
+    VulkanTextureSampler(backend::SamplerParams& samplerParams);
+    ~VulkanTextureSampler();
+
+    VkSampler getSampler()
+    {
+        return mVkSampler;
+    }
+private:
+    VkSampler mVkSampler;
+};
 struct VulkanComputeProgram : public HwComputeProgram, VulkanResource {
     VulkanComputeProgram(const std::string& name) noexcept;
 

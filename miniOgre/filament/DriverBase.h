@@ -178,6 +178,10 @@ struct HwStream : public HwBase {
 struct HwTimerQuery : public HwBase {
 };
 
+struct HwSampler : public HwBase {
+
+};
+
 /*
     * Base class of all Driver implementations
     */

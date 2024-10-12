@@ -344,6 +344,7 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
     // consequences let's just enable the features we need.
     VkPhysicalDeviceFeatures enabledFeatures{
             .geometryShader = VK_TRUE,
+            .sampleRateShading = VK_TRUE,
             .depthClamp = features.depthClamp,
             .samplerAnisotropy = features.samplerAnisotropy,
             .textureCompressionETC2 = features.textureCompressionETC2,

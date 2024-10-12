@@ -170,6 +170,7 @@ public:
     virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(
         Handle<HwComputeProgram> programHandle, 
         uint32_t set);
+    virtual Handle<HwSampler> createTextureSampler(filament::backend::SamplerParams& samplerParams);
     virtual Handle<HwComputeProgram> createComputeProgram(const ShaderInfo& mShaderInfo);
     virtual Handle<HwPipeline> createPipeline(
         backend::RasterState& rasterState,

@@ -128,9 +128,7 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
 
     
     createCommandPool();
-    createDescriptorPool();
-    setupDescriptorSetLayout();
-    createSamples();
+    createVulkanResourceCache();
 }
 
 void VulkanHelper::_createBuffer(
@@ -249,193 +247,8 @@ void VulkanHelper::createCommandPool()
     }
 }
 
-void VulkanHelper::createDescriptorPool()
+void VulkanHelper::createVulkanResourceCache()
 {
-    // Example uses one ubo and one image sampler
-    std::vector<VkDescriptorPoolSize> poolSizes =
-    {
-        vks::initializers::descriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 20000),
-        vks::initializers::descriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10000)
-    };
-
-    VkDescriptorPoolCreateInfo descriptorPoolInfo =
-        vks::initializers::descriptorPoolCreateInfo(
-            static_cast<uint32_t>(poolSizes.size()),
-            poolSizes.data(),
-            40000);
-
-    if (vkCreateDescriptorPool(mVKDevice, &descriptorPoolInfo, nullptr, &mDescriptorPool) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to vkCreateDescriptorPool!");
-    }
-}
-
-
-void VulkanHelper::setupDescriptorSetLayout()
-{
-    {
-        std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings =
-        {
-            // Binding 0 : Vertex shader uniform buffer
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                VK_SHADER_STAGE_VERTEX_BIT,
-                0),
-            // Binding 1 :  Vertex shader uniform buffer
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-                1),
-            // Binding 2 :  Vertex shader uniform buffer
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-                2),
-            // Binding 3 :  Vertex shader uniform buffer
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                VK_SHADER_STAGE_VERTEX_BIT,
-                3)
-            
-        };
-
-        VkDescriptorSetLayoutCreateInfo descriptorLayout =
-            vks::initializers::descriptorSetLayoutCreateInfo(
-                setLayoutBindings.data(),
-                static_cast<uint32_t>(setLayoutBindings.size()));
-        vkCreateDescriptorSetLayout(mVKDevice, &descriptorLayout,
-            nullptr, &mDescriptorSetLayout[0]);
-    }
-    
-    {
-        std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings =
-        {
-            // Binding 0 : Fragment shader image sampler
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                0),
-            // Binding 1 : Fragment shader image sampler
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                1),
-            // Binding 2 : Fragment shader image sampler
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                2),
-            // Binding 3 : Fragment shader image sampler
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                3),
-            // Binding 4 : Fragment shader image sampler
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                4)
-            
-        };
-
-        VkDescriptorSetLayoutCreateInfo descriptorLayout =
-            vks::initializers::descriptorSetLayoutCreateInfo(
-                setLayoutBindings.data(),
-                static_cast<uint32_t>(setLayoutBindings.size()));
-        vkCreateDescriptorSetLayout(mVKDevice, &descriptorLayout,
-            nullptr, &mDescriptorSetLayout[1]);
-
-        std::vector<VkDescriptorSetLayoutBinding> setLayoutBindingsPbr =
-        {
-            // Binding 0 : albedo_pbr
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                0),
-            // Binding 1 : normal_pbr
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                1),
-            // Binding 2 : ao_pbr
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                2),
-            // Binding 3 : metal_pbr
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                3),
-            // Binding 4 : roughness_pbr
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                4),
-            // Binding 5 : emissive_pbr
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                5)
-            ,
-            // Binding 6 : brdflut
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                6)
-            ,
-            // Binding 7 : irradiance
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                7)
-            ,
-            // Binding 8 : prefiltered
-            vks::initializers::descriptorSetLayoutBinding(
-                VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                VK_SHADER_STAGE_FRAGMENT_BIT,
-                8)
-
-        };
-
-        auto descriptorLayoutPbr =
-            vks::initializers::descriptorSetLayoutCreateInfo(
-                setLayoutBindingsPbr.data(),
-                static_cast<uint32_t>(setLayoutBindingsPbr.size()));
-        vkCreateDescriptorSetLayout(mVKDevice, &descriptorLayoutPbr,
-            nullptr, &mPbrDescriptorSetLayout);
-    }
-    
-
-
-    VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo =
-        vks::initializers::pipelineLayoutCreateInfo(
-            mDescriptorSetLayout.data(),
-            2);
-
-    if (vkCreatePipelineLayout(mVKDevice, &pPipelineLayoutCreateInfo,
-        nullptr, &mPipelineLayout) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create pipeline layout!");
-    }
-
-    VkDescriptorSetLayout tmp[2];
-    tmp[0] = mDescriptorSetLayout[0];
-    tmp[1] = mPbrDescriptorSetLayout;
-    pPipelineLayoutCreateInfo =
-        vks::initializers::pipelineLayoutCreateInfo(
-            &tmp[0],
-            2);
-
-    if (vkCreatePipelineLayout(
-        mVKDevice, 
-        &pPipelineLayoutCreateInfo,
-        nullptr, 
-        &mPipelineLayoutPbr) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create pipeline layout!");
-    }
-
     mAllocator = createAllocator(mVKInstance, mPhysicalDevice, mVKDevice);
 
     mLayoutCache = new VulkanLayoutCache(mVKDevice, &mResourceAllocator);
@@ -445,57 +258,6 @@ void VulkanHelper::setupDescriptorSetLayout()
     mPipelineLayoutCache = new VulkanPipelineLayoutCache(mVKDevice, &mResourceAllocator);
 }
 
-
-void VulkanHelper::createSamples()
-{
-    VkSampler samplerStatePointWrap;
-    VkSampler samplerStatePointClamp;
-    VkSampler samplerStateLinearWrap;
-    VkSampler samplerStateLinearClamp;
-    VkSampler samplerStateAnisotropicWrap;
-    VkSampler samplerStateAnisotropicClamp;
-
-    VkSamplerCreateInfo samplerInfo = {};
-    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-
-    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-    samplerInfo.magFilter = VK_FILTER_NEAREST;
-    samplerInfo.minFilter = VK_FILTER_NEAREST;
-
-    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
-    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
-    samplerInfo.maxAnisotropy = 1.0;
-    samplerInfo.maxLod = (float)FLT_MAX;
-    samplerInfo.maxAnisotropy = 8.0f;
-    samplerInfo.anisotropyEnable = VK_TRUE;
-
-
-    if (vkCreateSampler(mVKDevice, &samplerInfo, nullptr, &samplerStateAnisotropicWrap) != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create texture sampler!");
-    }
-    samplerInfo = {};
-    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    samplerInfo.magFilter = VK_FILTER_LINEAR;
-    samplerInfo.minFilter = VK_FILTER_LINEAR;
-    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    samplerInfo.minLod = 0.0f;
-    samplerInfo.maxLod = 1.0f;
-    samplerInfo.maxAnisotropy = 1.0f;
-    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
-
-    if (vkCreateSampler(mVKDevice, &samplerInfo, nullptr, &samplerStateAnisotropicClamp) != VK_SUCCESS)
-    {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create texture sampler!");
-    }
-    mSamplers = { samplerStateAnisotropicWrap, samplerStateAnisotropicClamp};
-}
 
 VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& params)
 {
@@ -507,7 +269,7 @@ VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& param
             .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .magFilter = VulkanMappings::getFilter(params.filterMag),
             .minFilter = VulkanMappings::getFilter(params.filterMin),
-            .mipmapMode = VulkanMappings::getMipmapMode(params.filterMin),
+            .mipmapMode = VulkanMappings::getMipmapMode(params.mipMapMode),
             .addressModeU = VulkanMappings::getWrapMode(params.wrapS),
             .addressModeV = VulkanMappings::getWrapMode(params.wrapT),
             .addressModeW = VulkanMappings::getWrapMode(params.wrapR),
@@ -516,7 +278,7 @@ VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& param
             .compareEnable = VulkanMappings::getCompareEnable(params.compareMode),
             .compareOp = VulkanMappings::getCompareOp(params.compareFunc),
             .minLod = 0.0f,
-            .maxLod = VulkanMappings::getMaxLod(params.filterMin),
+            .maxLod = VulkanMappings::getMaxLod(params.mipMapMode),
             .borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
             .unnormalizedCoordinates = VK_FALSE
     };
@@ -550,35 +312,4 @@ int32_t VulkanHelper::_findMemoryType(
     return -1;
 }
 
-
-VkPipelineLayout VulkanHelper::_getPipelineLayout(bool pbr)
-{
-    if (pbr)
-    {
-        return mPipelineLayoutPbr;
-    }
-    
-    return mPipelineLayout;
-}
-
-VkDescriptorPool VulkanHelper::_getDescriptorPool()
-{
-    return mDescriptorPool;
-}
-
-VkDescriptorSetLayout VulkanHelper::_getDescriptorSetLayout(VulkanLayoutIndex index)
-{
-    switch (index)
-    {
-    case VulkanLayoutIndex_Data:
-        return mDescriptorSetLayout[0];
-    case VulkanLayoutIndex_Unlit:
-        return mDescriptorSetLayout[1];
-    case VulkanLayoutIndex_Pbr:
-        return mPbrDescriptorSetLayout;
-    default:
-        assert(false);
-        return VK_NULL_HANDLE;
-    }
-}
 

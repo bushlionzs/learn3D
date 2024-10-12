@@ -947,12 +947,27 @@ enum class SamplerMagFilter : uint8_t {
     LINEAR = 1,                 //!< Box filtering. Weighted average of 4 neighbors is used.
 };
 
+//! Sampler magnification filter
+enum class SamplerFilterType : uint8_t {
+    // don't change the enums values
+    NEAREST = 0,                //!< No filtering. Nearest neighbor is used.
+    LINEAR = 1,                 //!< Box filtering. Weighted average of 4 neighbors is used.
+};
+
+
+enum class SamplerMipMapMode : uint8_t {
+    MIPMAP_MODE_NEAREST = 0,
+    MIPMAP_MODE_LINEAR = 1
+};
 //! Sampler compare mode
 enum class SamplerCompareMode : uint8_t {
     // don't change the enums values
     NONE = 0,
     COMPARE_TO_TEXTURE = 1
 };
+
+
+
 
 //! comparison function for the depth / stencil sampler
 enum class SamplerCompareFunc : uint8_t {
@@ -969,8 +984,9 @@ enum class SamplerCompareFunc : uint8_t {
 
 //! Sampler parameters
 struct SamplerParams { // NOLINT
-    SamplerMagFilter filterMag      : 1;    //!< magnification filter (NEAREST)
-    SamplerMinFilter filterMin      : 3;    //!< minification filter  (NEAREST)
+    SamplerFilterType filterMag      : 1;    //!< magnification filter (NEAREST)
+    SamplerFilterType filterMin      : 1;    //!< minification filter  (NEAREST)
+    SamplerMipMapMode mipMapMode     : 2;
     SamplerWrapMode wrapS           : 2;    //!< s-coordinate wrap mode (CLAMP_TO_EDGE)
     SamplerWrapMode wrapT           : 2;    //!< t-coordinate wrap mode (CLAMP_TO_EDGE)
 
@@ -980,6 +996,7 @@ struct SamplerParams { // NOLINT
     uint8_t padding0                : 2;    //!< reserved. must be 0.
 
     SamplerCompareFunc compareFunc  : 3;    //!< sampler comparison function (LE)
+    
     uint8_t padding1                : 5;    //!< reserved. must be 0.
     uint8_t padding2                : 8;    //!< reserved. must be 0.
 
@@ -1379,7 +1396,7 @@ utils::io::ostream& operator<<(utils::io::ostream& out, filament::backend::Targe
 utils::io::ostream& operator<<(utils::io::ostream& out, filament::backend::SamplerCompareFunc func);
 utils::io::ostream& operator<<(utils::io::ostream& out, filament::backend::SamplerCompareMode mode);
 utils::io::ostream& operator<<(utils::io::ostream& out, filament::backend::SamplerFormat format);
-utils::io::ostream& operator<<(utils::io::ostream& out, filament::backend::SamplerMagFilter filter);
+utils::io::ostream& operator<<(utils::io::ostream& out, filament::backend::SamplerFilterType filter);
 utils::io::ostream& operator<<(utils::io::ostream& out, filament::backend::SamplerMinFilter filter);
 utils::io::ostream& operator<<(utils::io::ostream& out, filament::backend::SamplerParams params);
 utils::io::ostream& operator<<(utils::io::ostream& out, filament::backend::SamplerType type);

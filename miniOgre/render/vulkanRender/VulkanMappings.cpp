@@ -215,12 +215,12 @@ namespace Ogre {
             return VK_FILTER_NEAREST;
         }
     }
-    VkFilter VulkanMappings::getFilter(filament::backend::SamplerMagFilter filter)
+    VkFilter VulkanMappings::getFilter(filament::backend::SamplerFilterType filter)
     {
         switch (filter) {
-        case filament::backend::SamplerMagFilter::NEAREST:
+        case filament::backend::SamplerFilterType::NEAREST:
             return VK_FILTER_NEAREST;
-        case filament::backend::SamplerMagFilter::LINEAR:
+        case filament::backend::SamplerFilterType::LINEAR:
             return VK_FILTER_LINEAR;
         default:
             assert(false);
@@ -228,39 +228,27 @@ namespace Ogre {
         }
     }
 
-    VkSamplerMipmapMode VulkanMappings::getMipmapMode(filament::backend::SamplerMinFilter filter)
+    VkSamplerMipmapMode VulkanMappings::getMipmapMode(filament::backend::SamplerMipMapMode filter)
     {
         switch (filter) {
-        case filament::backend::SamplerMinFilter::NEAREST:
+        case filament::backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST:
             return VK_SAMPLER_MIPMAP_MODE_NEAREST;
-        case filament::backend::SamplerMinFilter::LINEAR:
+        case filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR:
             return VK_SAMPLER_MIPMAP_MODE_NEAREST;
-        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_NEAREST:
-            return VK_SAMPLER_MIPMAP_MODE_NEAREST;
-        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_NEAREST:
-            return VK_SAMPLER_MIPMAP_MODE_NEAREST;
-        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_LINEAR:
-            return VK_SAMPLER_MIPMAP_MODE_LINEAR;
-        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR:
-            return VK_SAMPLER_MIPMAP_MODE_LINEAR;
         default:
             assert(false);
             return VK_SAMPLER_MIPMAP_MODE_NEAREST;
         }
     }
 
-    float VulkanMappings::getMaxLod(filament::backend::SamplerMinFilter filter)
+    float VulkanMappings::getMaxLod(filament::backend::SamplerMipMapMode mipMapMode)
     {
-        switch (filter) {
-        case filament::backend::SamplerMinFilter::NEAREST:
-        case filament::backend::SamplerMinFilter::LINEAR:
+        switch (mipMapMode) {
+        case filament::backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST:
+            return 0.25f;
+        case filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR:
             // The Vulkan spec recommends a max LOD of 0.25 to "disable" mipmapping.
             // See "Mapping of OpenGL to Vulkan filter modes" in the VK Spec.
-            return 0.25f;
-        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_NEAREST:
-        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_NEAREST:
-        case filament::backend::SamplerMinFilter::NEAREST_MIPMAP_LINEAR:
-        case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR:
             return VK_LOD_CLAMP_NONE;
         default:
             assert(false);

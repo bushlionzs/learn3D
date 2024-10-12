@@ -250,8 +250,9 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateCubeMap(
     texProperty._width = dim;
     texProperty._height = dim;
     texProperty._tex_format = format;
-    texProperty._samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
-    texProperty._samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
+    texProperty._samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
+    texProperty._samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
+    texProperty._samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
     texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
     texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
     texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
@@ -770,11 +771,12 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateBRDFLUT(const std::string& na
     texProperty._height = dim;
     texProperty._need_mipmap = false;
     texProperty._tex_format = PF_FLOAT16_GR;
-    texProperty._samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
-    texProperty._samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
-    texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-    texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-    texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
+    texProperty._samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
+    texProperty._samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
+    texProperty._samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    texProperty._samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
     texProperty._samplerParams.anisotropyLog2 = 0;
     VulkanTexture* tex = new VulkanTexture(name, mVulkanPlatform, mCommands, &texProperty);
 
@@ -1321,6 +1323,15 @@ Handle<HwDescriptorSetLayout> VulkanRenderSystemBase::getDescriptorSetLayout(Han
 {
     VulkanComputeProgram* program = mResourceAllocator.handle_cast<VulkanComputeProgram*>(programHandle);
     return program->getSetLayoutHandle(set);
+}
+
+Handle<HwSampler> VulkanRenderSystemBase::createTextureSampler(filament::backend::SamplerParams& samplerParams)
+{
+    Handle<HwSampler> samplerHandle = mResourceAllocator.allocHandle<HwSampler>();
+
+    VulkanTextureSampler* sampler = mResourceAllocator.construct<VulkanTextureSampler>(samplerHandle, samplerParams);
+
+    return samplerHandle;
 }
 
 Handle<HwComputeProgram> VulkanRenderSystemBase::createComputeProgram(const ShaderInfo& shaderInfo)

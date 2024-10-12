@@ -23,6 +23,7 @@
 #include "VulkanResourceAllocator.h"
 #include "VulkanUtility.h"
 #include <VulkanPlatform.h>
+#include <VulkanHelper.h>
 
 #include <utils/Panic.h>    // ASSERT_POSTCONDITION
 
@@ -191,6 +192,17 @@ VulkanProgram::VulkanProgram(const std::string& name) noexcept
 
 VulkanProgram::~VulkanProgram() {
     
+}
+
+VulkanTextureSampler::VulkanTextureSampler(backend::SamplerParams& samplerParams)
+    :VulkanResource(VulkanResourceType::SAMPLER_GROUP)
+{
+    mVkSampler = VulkanHelper::getSingleton().getSampler(samplerParams);
+}
+
+VulkanTextureSampler::~VulkanTextureSampler()
+{
+
 }
 
 VulkanComputeProgram::VulkanComputeProgram(const std::string& name) noexcept
