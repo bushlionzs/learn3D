@@ -103,8 +103,8 @@ enum BackendResourceState
 typedef struct BufferBarrier
 {
     Handle<HwBufferObject> buffer;
-    BackendResourceState mCurrentState;
-    BackendResourceState mNewState;
+    uint32_t mCurrentState; //BackendResourceState
+    uint32_t mNewState; //BackendResourceState
     uint8_t       mBeginOnly : 1;
     uint8_t       mEndOnly : 1;
 } BufferBarrier;

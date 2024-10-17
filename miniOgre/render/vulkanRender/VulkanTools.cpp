@@ -130,7 +130,7 @@ namespace vks
 
 		void setImageLayout(
 			VkCommandBuffer cmdbuffer,
-			VkImage image,
+			VkImage imagex,
 			VkImageLayout oldImageLayout,
 			VkImageLayout newImageLayout,
 			VkImageSubresourceRange subresourceRange,
@@ -141,7 +141,7 @@ namespace vks
 			VkImageMemoryBarrier imageMemoryBarrier = vks::initializers::imageMemoryBarrier();
 			imageMemoryBarrier.oldLayout = oldImageLayout;
 			imageMemoryBarrier.newLayout = newImageLayout;
-			imageMemoryBarrier.image = image;
+			imageMemoryBarrier.image = imagex;
 			imageMemoryBarrier.subresourceRange = subresourceRange;
 
 			// Source layouts (old)

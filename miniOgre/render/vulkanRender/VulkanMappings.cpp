@@ -291,7 +291,7 @@ namespace Ogre {
         }
     }
 
-    VkAccessFlags VulkanMappings::util_to_vk_access_flags(BackendResourceState state)
+    VkAccessFlags VulkanMappings::util_to_vk_access_flags(uint32_t state)
     {
         VkAccessFlags ret = 0;
         if (state & RESOURCE_STATE_COPY_SOURCE)

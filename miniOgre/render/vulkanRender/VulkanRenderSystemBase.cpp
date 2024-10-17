@@ -992,6 +992,30 @@ Ogre::OgreTexture* VulkanRenderSystemBase::generateBRDFLUT(const std::string& na
     return tex;
 }
 
+void VulkanRenderSystemBase::pushGroupMarker(const char* maker)
+{
+    if (mVulkanSettings->mDebugUtilsExtension)
+    {
+        VkDebugUtilsLabelEXT markerInfo = {};
+        markerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+        markerInfo.color[0] = 1.0f;
+        markerInfo.color[1] = 1.0f;
+        markerInfo.color[2] = 0.0f;
+        markerInfo.color[3] = 1.0f;
+        markerInfo.pLabelName = maker;
+        vkCmdBeginDebugUtilsLabelEXT(mCommands->get().buffer(), &markerInfo);
+    }
+    
+}
+
+void VulkanRenderSystemBase::popGroupMarker()
+{
+    if (mVulkanSettings->mDebugUtilsExtension)
+    {
+        vkCmdEndDebugUtilsLabelEXT(mCommands->get().buffer());
+    }
+}
+
 void* VulkanRenderSystemBase::lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes)
 {
     VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
@@ -1036,10 +1060,15 @@ Handle<HwBufferObject> VulkanRenderSystemBase::createBufferObject(
 
     VulkanBufferObject* bufferObject = mResourceAllocator.construct<VulkanBufferObject>(boh, mAllocator,
         *mStagePool, byteCount, bindingType);
-    if (debugName)
+
+    if (mVulkanSettings->mDebugUtilsExtension)
     {
-        bufferObject->buffer.setBufferName(mVulkanPlatform->getDevice(), debugName);
+        if (debugName)
+        {
+            bufferObject->buffer.setBufferName(mVulkanPlatform->getDevice(), debugName);
+        }
     }
+    
     
     return boh;
 }

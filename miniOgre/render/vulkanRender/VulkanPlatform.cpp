@@ -164,9 +164,7 @@ ExtensionSet getInstanceExtensions(ExtensionSet const& externallyRequiredExts = 
         VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
 
     // Request these if available.
-#if FVK_ENABLED(FVK_DEBUG_DEBUG_UTILS)
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-#endif
         VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME,
 
 #if FVK_ENABLED(FVK_DEBUG_VALIDATION)
@@ -299,12 +297,7 @@ VkInstance createInstance(ExtensionSet const& requiredExts) {
         };
         instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         instanceCreateInfo.ppEnabledLayerNames = validationLayers.data();
-        VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
-        debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-        debugCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        debugCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-        debugCreateInfo.pfnUserCallback = debugCallback;
-        debugCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+        
     }
     else
     {
@@ -314,6 +307,8 @@ VkInstance createInstance(ExtensionSet const& requiredExts) {
     }
 
     VkResult result = vkCreateInstance(&instanceCreateInfo, VKALLOC, &instance);
+
+    
     return instance;
 }
 
@@ -344,6 +339,7 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
     // consequences let's just enable the features we need.
     VkPhysicalDeviceFeatures enabledFeatures{
             .geometryShader = VK_TRUE,
+            .tessellationShader = VK_TRUE,
             .sampleRateShading = VK_TRUE,
             .depthClamp = features.depthClamp,
             .samplerAnisotropy = features.samplerAnisotropy,
@@ -657,6 +653,21 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
             = mImpl->mInstance == VK_NULL_HANDLE ? createInstance(instExts) : mImpl->mInstance;
     assert_invariant(mImpl->mInstance != VK_NULL_HANDLE);
     bluevk::bindInstance(mImpl->mInstance);
+
+    VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+    debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    debugCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    debugCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
+    debugCreateInfo.pfnUserCallback = debugCallback;
+    debugCreateInfo.flags = 0;
+    debugCreateInfo.pUserData = NULL;
+
+
+    static VkDebugUtilsMessengerEXT debugUtilsMessenger;
+
+    VkResult debugCallbackRes = bluevk::vkCreateDebugUtilsMessengerEXT(mImpl->mInstance, &debugCreateInfo,
+        nullptr,
+        &debugUtilsMessenger);
 
     VulkanPlatform::Customization::GPUPreference const pref = getCustomization().gpu;
     bool const hasGPUPreference = pref.index >= 0 || !pref.deviceName.empty();

@@ -35,7 +35,7 @@ namespace Ogre
 		static float getMaxLod(filament::backend::SamplerMipMapMode mipMapMode);
 		static VkBool32 getCompareEnable(filament::backend::SamplerCompareMode mode);
 		static VkCompareOp getCompareOp(filament::backend::SamplerCompareFunc func);
-		static VkAccessFlags util_to_vk_access_flags(BackendResourceState state);
+		static VkAccessFlags util_to_vk_access_flags(uint32_t state);
 	};
 }
 

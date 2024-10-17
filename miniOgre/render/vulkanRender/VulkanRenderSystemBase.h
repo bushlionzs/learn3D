@@ -62,6 +62,8 @@ protected:
         return &mFrameConstantBuffer;
     }
 
+    virtual void pushGroupMarker(const char* maker);
+    virtual void popGroupMarker();
     virtual void* lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes);
     virtual void unlockBuffer(Handle<HwBufferObject> bufHandle);
     virtual void bindVertexBuffer(Handle<HwBufferObject> bufHandle, uint32_t binding);

@@ -138,7 +138,7 @@ static_assert(FVK_ENABLED(FVK_DEBUG_VALIDATION));
 constexpr struct VkAllocationCallbacks* VKALLOC = nullptr;
 
 constexpr static const int FVK_REQUIRED_VERSION_MAJOR = 1;
-constexpr static const int FVK_REQUIRED_VERSION_MINOR = 1;
+constexpr static const int FVK_REQUIRED_VERSION_MINOR = 3;
 
 // Maximum number of VkCommandBuffer handles managed simultaneously by VulkanCommands.
 //
