@@ -13,21 +13,41 @@ struct FrameData
 {
     //在compute shader中，保存索引对应的batchMeshIndex
 	Handle<HwBufferObject> indirectDataBuffer;
-	PerFrameVBConstants    perFrameVBConstants;
+	Handle<HwBufferObject> indirectDrawArgBuffer;
+	Handle<HwBufferObject> filterDispatchGroupDataBuffer;
 	Handle<HwBufferObject> perFrameConstantsBuffer;
-	ObjectUniformBlock   meshUniformBlock;
+	
 	Handle<HwBufferObject> objectUniformBlockHandle;
+	Handle<HwBufferObject> esmUniformBlockHandle;
 
+	Handle<HwBufferObject> cameraUniformHandle;
+	Handle<HwBufferObject> ligthUniformHandle;
+
+	//clear buffer pass
+	Handle<HwDescriptorSet> clearBufferDescrSet;
 	//for filter angles pass
-	//set=0的描述符
-	Handle <HwDescriptorSet> defaultDescSet;
-	//set=1的描述符
-	Handle <HwDescriptorSet> frameDescSet;
+	Handle <HwDescriptorSet> zeroDescSetOfFilter;
+	Handle <HwDescriptorSet> firstDescSetOfFilter;
 
+	//for shadow pass
+	Handle <HwDescriptorSet> zeroDescrSetOfShadowPass;
+	Handle <HwDescriptorSet> thirdDescrSetOfShadowPass;
+
+	Handle <HwDescriptorSet> zeroDescrSetOfShadowPassAlpha;
+	Handle <HwDescriptorSet> firstDescrSetOfShadowPassAlpha;
+	Handle <HwDescriptorSet> thirdDescrSetOfShadowPassAlpha;
 	//for visibility pass
 
-	Handle <HwDescriptorSet> defaultDescriptorSetOfVisibilityPass;
-	Handle <HwDescriptorSet> drawDescriptorSetOfVisibilityPass;
+	Handle <HwDescriptorSet> zeroDescrSetOfVbPass;
+	Handle <HwDescriptorSet> thirdDescrSetOfVbPass;
+
+	Handle <HwDescriptorSet> zeroDescrSetOfVbPassAlpha;
+	Handle <HwDescriptorSet> firstDescrSetOfVbPassAlpha;
+	Handle <HwDescriptorSet> thirdDescrSetOfVbPassAlpha;
+
+	//for visibility shade pass
+	Handle <HwDescriptorSet> zeroDescrSetOfVbShadePass;
+	Handle <HwDescriptorSet> firstDescrSetOfVbShadePass;
 };
 
 class ShadowMap
@@ -65,18 +85,32 @@ private:
 	std::vector<PassBase*> mPassList;
 
 	std::vector<FrameData> mFrameData;
-	Handle<HwComputeProgram> clearBufferProgramHandle;
-	Handle<HwComputeProgram> filterTrianglesProgramHandle;
 
 	Handle<HwBufferObject> filteredIndexBuffer[NUM_CULLING_VIEWPORTS];
-
-	
-	Handle<HwBufferObject> indirectDrawArgBuffer;
 
 	Handle<HwBufferObject> vbConstantsBuffer;
 
 	Handle<HwBufferObject> meshConstantsBuffer;
 
+	Handle<HwBufferObject> renderSettingsUniformHandle;
+	Handle<HwBufferObject> esmInputConstantsHandle;
+	Handle<HwBufferObject> sssEnabledHandle;
 	VBConstants vbConstants[NUM_GEOMETRY_SETS];
 
+	Ogre::RenderTarget* esmShadowMap;
+	Ogre::RenderTarget* visibilityBufferTarget;
+
+
+	PerFrameVBConstants    perFrameVBConstants;
+	MeshInfoUniformBlock   meshUniformBlock;
+	MeshInfoUniformBlock   esmMeshUniformBlock;
+	CameraUniform          cameraUniform;
+	LightUniformBlock      lightUniformBlock;
+	RenderSettingsUniformData renderSetting;
+	ESMInputConstants   esmConstants;
+	uint32_t          sssEnabled = 0;
+
+	MeshInfoStruct    meshInfoStruct;
+
+	LightCpuSettings  lightCpuSettings;
 };

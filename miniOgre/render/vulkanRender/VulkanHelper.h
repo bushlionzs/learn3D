@@ -52,17 +52,12 @@ public:
     }
     VkPhysicalDeviceProperties& _getVkPhysicalDeviceProperties();
 
-    VkFormat _getDepthFormat();
     int32_t _findMemoryType(
         uint32_t typeFilter,
         VkMemoryPropertyFlags properties);
     VulkanRenderSystemBase* _getRenderSystem()
     {
         return mVulkanRenderSystem;
-    }
-    VkFormat getSwapChainImageFormat()
-    {
-        return mSwapChainImageFormat;
     }
     void loadDefaultResources();
     VkSampler getSampler(const filament::backend::SamplerParams& samplerParams);
@@ -73,7 +68,7 @@ public:
 
     bool haveRayTracing()
     {
-        return mSettings.rayTraceing;
+        return mSettings.mRayPipelineSupported;
     }
 
      VulkanSettings& getVulkanSettings()
@@ -112,18 +107,11 @@ private:
     VkPhysicalDeviceMemoryProperties mPhysicalMemoryProperties;
  
 
-    VkFormat mSwapChainImageFormat;
-    VkColorSpaceKHR mColorSpace;
-
     VkCommandPool mSingleCommandPool;
-
-    VkFormat mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
 
     //default texture
 
     std::shared_ptr<OgreTexture> mDefaultTexture;
-
-    std::vector<VkSampler> mSamplers;
     tsl::robin_map<SamplerParams, VkSampler, SamplerParams::Hasher, SamplerParams::EqualTo> mSamplersCache;
 
     VmaAllocator mAllocator = VK_NULL_HANDLE;

@@ -31,6 +31,9 @@ namespace Ogre {
 
         virtual const AxisAlignedBox& getBoundingBox(void) const;
 
+        float getNear();
+        float getFar();
+
         Real getAspectRatio();
         void setAspectRatio(float aa);
         

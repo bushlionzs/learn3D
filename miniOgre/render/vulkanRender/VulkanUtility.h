@@ -528,7 +528,7 @@ private:
     uint32_t mInd = 0;
 };
 
-using UniformBufferBitmask = utils::bitset64;
+using UniformBufferBitmask = utils::bitset32;
 using SamplerBitmask = utils::bitset64;
 using StoreBufferBitMask = utils::bitset32;
 
@@ -548,11 +548,6 @@ static constexpr uint8_t getFragmentStageShift() noexcept {
     return sizeof(Bitmask) * 4;
 }
 
-template<typename Bitmask>
-static constexpr uint8_t getComputeStageShift() noexcept {
-    // We assume the top half of bits are for fragment stages.
-    return 0;
-}
 
 // We have at most 4 descriptor sets. This is to indicate which ones are active.
 using DescriptorSetMask = utils::bitset8;

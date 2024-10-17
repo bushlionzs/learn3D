@@ -47,6 +47,14 @@ public:
     void setAspectRatio(float aa);
     void setNearClipDistance(float znear);
     void setFarClipDistance(float zfar);
+    float getNear()
+    {
+        return mNear;
+    }
+    float getFar()
+    {
+        return mFar;
+    }
     void setProjectionType(Ogre::ProjectionType pt);
     Ogre::ProjectionType getProjectionType()
     {

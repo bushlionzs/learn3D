@@ -25,7 +25,7 @@ namespace Ogre
 		static PixelFormat _getClosestSupportedPF(PixelFormat ogrePF);
 
 		static VkFormat _getPF(PixelFormat ogrePF);
-
+		static PixelFormat getPixelFormat(VkFormat format);
 		static VkFormat _getGammaFormat(VkFormat format, bool appendSRGB);
 
 		static VkSamplerAddressMode getWrapMode(filament::backend::SamplerWrapMode mode);
@@ -35,6 +35,7 @@ namespace Ogre
 		static float getMaxLod(filament::backend::SamplerMipMapMode mipMapMode);
 		static VkBool32 getCompareEnable(filament::backend::SamplerCompareMode mode);
 		static VkCompareOp getCompareOp(filament::backend::SamplerCompareFunc func);
+		static VkAccessFlags util_to_vk_access_flags(BackendResourceState state);
 	};
 }
 

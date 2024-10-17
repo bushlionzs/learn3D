@@ -9,8 +9,8 @@
 #include <VulkanCommands.h>
 #include <VulkanSwapChain.h>
 #include <VulkanPlatform.h>
+#include <VulkanDescriptorPool.h>
 #include <VulkanContext.h>
-#include <VulkanDescriptorSetManager.h>
 
 class VertexDeclaration;
 class VulkanGraphicsCommandList;
@@ -18,6 +18,7 @@ class VulkanFrame;
 class VulkanWindow;
 class VulkanPipelineCache;
 class VulkanPipelineLayoutCache;
+class VulkanLayoutCache;
 class Ogre::ICamera;
 
 class VulkanRenderSystemBase: public RenderSystem
@@ -76,7 +77,6 @@ protected:
         const char* data, 
         uint32_t size) override;
 
-    virtual Handle<HwDescriptorSetLayout> createDescriptorSetLayout(DescriptorSetLayout& info) override;
     virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t index) override;
     virtual Handle<HwDescriptorSet> createDescriptorSet(Handle<HwDescriptorSetLayout> dslh) override;
     virtual Handle<HwPipelineLayout> createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts) override;
@@ -91,11 +91,6 @@ protected:
     virtual Handle<HwPipeline> createPipeline(
         backend::RasterState& rasterState, 
         Handle<HwProgram>& program) override;
-
-    virtual void bindDescriptorSet(
-        Handle<HwDescriptorSet> dsh,
-        uint8_t setIndex,
-        backend::DescriptorSetOffsetArray&& offsets) override;
     virtual void updateDescriptorSetBuffer(
         Handle<HwDescriptorSet> dsh,
         backend::descriptor_binding_t binding,
@@ -104,7 +99,22 @@ protected:
     virtual void updateDescriptorSetTexture(
         Handle<HwDescriptorSet> dsh,
         backend::descriptor_binding_t binding,
+        OgreTexture** tex,
+        uint32_t count,
+        bool onlyImage) override;
+    virtual void updateDescriptorSetSampler(
+        Handle<HwDescriptorSet> dsh,
+        backend::descriptor_binding_t binding,
+        Handle<HwSampler> samplerHandle) override;
+    virtual void updateDescriptorSetSampler(
+        Handle<HwDescriptorSet> dsh,
+        backend::descriptor_binding_t binding,
         OgreTexture* tex) override;
+
+    virtual void resourceBarrier(
+        uint32_t numBufferBarriers,
+        BufferBarrier* pBufferBarriers
+    )  override;
 private:
     void parseInputBindingDescription(
         VertexDeclaration* decl,
@@ -131,13 +141,15 @@ protected:
 
     VulkanPipelineCache* mPipelineCache = nullptr;
     VulkanPipelineLayoutCache* mPipelineLayoutCache = nullptr;
+    VulkanLayoutCache* mVulkanLayoutCache = nullptr;
     VmaAllocator mAllocator = VK_NULL_HANDLE;
     VulkanResourceAllocator mResourceAllocator;
-
     VulkanStagePool* mStagePool;
     VulkanCommands* mCommands;
     VulkanSwapChain* mSwapChain = nullptr;
     VulkanPlatform* mVulkanPlatform;
+    DescriptorInfinitePool* mDescriptorInfinitePool = nullptr;
     VulkanContext mVulkanContext;
-    VulkanDescriptorSetManager* mDescriptorSetManager;
+
+    VulkanSettings* mVulkanSettings;
 };

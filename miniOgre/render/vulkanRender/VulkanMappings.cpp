@@ -175,6 +175,18 @@ namespace Ogre {
         }
     }
 
+    PixelFormat VulkanMappings::getPixelFormat(VkFormat format)
+    {
+        switch (format)
+        {
+        case VK_FORMAT_B8G8R8A8_UNORM:          return PF_A8R8G8B8;
+        case VK_FORMAT_D32_SFLOAT_S8_UINT :     return PF_DEPTH32_STENCIL8;
+        default:
+            assert(false);
+            return PF_UNKNOWN;
+        }
+    }
+
     VkFormat VulkanMappings::_getGammaFormat(VkFormat format, bool appendSRGB)
     {
         return format;
@@ -277,6 +289,66 @@ namespace Ogre {
             assert(false);
             return VK_COMPARE_OP_LESS_OR_EQUAL;
         }
+    }
+
+    VkAccessFlags VulkanMappings::util_to_vk_access_flags(BackendResourceState state)
+    {
+        VkAccessFlags ret = 0;
+        if (state & RESOURCE_STATE_COPY_SOURCE)
+        {
+            ret |= VK_ACCESS_TRANSFER_READ_BIT;
+        }
+        if (state & RESOURCE_STATE_COPY_DEST)
+        {
+            ret |= VK_ACCESS_TRANSFER_WRITE_BIT;
+        }
+        if (state & RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER)
+        {
+            ret |= VK_ACCESS_UNIFORM_READ_BIT | VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+        }
+        if (state & RESOURCE_STATE_INDEX_BUFFER)
+        {
+            ret |= VK_ACCESS_INDEX_READ_BIT;
+        }
+        if (state & RESOURCE_STATE_UNORDERED_ACCESS)
+        {
+            ret |= VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
+        }
+        if (state & RESOURCE_STATE_INDIRECT_ARGUMENT)
+        {
+            ret |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+        }
+        if (state & RESOURCE_STATE_RENDER_TARGET)
+        {
+            ret |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        }
+        if (state & RESOURCE_STATE_DEPTH_WRITE)
+        {
+            ret |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        }
+        if (state & RESOURCE_STATE_DEPTH_READ)
+        {
+            ret |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+        }
+        if (state & RESOURCE_STATE_SHADER_RESOURCE)
+        {
+            ret |= VK_ACCESS_SHADER_READ_BIT;
+        }
+        if (state & RESOURCE_STATE_PRESENT)
+        {
+            ret |= VK_ACCESS_MEMORY_READ_BIT;
+        }
+
+        if (state & RESOURCE_STATE_ACCELERATION_STRUCTURE_READ)
+        {
+            ret |= VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
+        }
+        if (state & RESOURCE_STATE_ACCELERATION_STRUCTURE_WRITE)
+        {
+            ret |= VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
+        }
+
+        return ret;
     }
 
 }

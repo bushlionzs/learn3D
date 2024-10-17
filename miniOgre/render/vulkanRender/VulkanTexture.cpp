@@ -122,6 +122,10 @@ void VulkanTexture::createInternalResourcesImpl(void)
             mTextureImage,
             mTextureImageMemory);
     }
+    else
+    {
+        int kk = 0;
+    }
     
 
     mTextureImageView = createImageView(mTextureImage, mVulkanFormat);

@@ -54,15 +54,19 @@ void clampToFramebuffer(VkRect2D* rect, uint32_t fbWidth, uint32_t fbHeight) {
 
 template<typename Bitmask>
 inline void fromStageFlags(backend::ShaderStageFlags stage, descriptor_binding_t binding,
-        Bitmask& mask) {
-    if ((bool) (stage & ShaderStageFlags::VERTEX)) {
-        mask.set(binding + getVertexStageShift<Bitmask>());
+        Bitmask& mask, bool shift) {
+    if (shift)
+    {
+        if ((bool)(stage & ShaderStageFlags::VERTEX)) {
+            mask.set(binding + getVertexStageShift<Bitmask>());
+        }
+        if ((bool)(stage & ShaderStageFlags::FRAGMENT)) {
+            mask.set(binding + getFragmentStageShift<Bitmask>());
+        }
     }
-    if ((bool) (stage & ShaderStageFlags::FRAGMENT)) {
-        mask.set(binding + getFragmentStageShift<Bitmask>());
-    }
-    if ((bool)(stage & ShaderStageFlags::COMPUTE)) {
-        mask.set(binding + getComputeStageShift<Bitmask>());
+    else
+    {
+        mask.set(binding);
     }
 }
 
@@ -83,52 +87,16 @@ inline VkShaderStageFlags getVkStage(backend::ShaderStage stage) {
 } // anonymous namespace
 
 
-VulkanDescriptorSetLayout::BitmaskGroup VulkanDescriptorSetLayout::fromBackendLayout(DescriptorSetLayout const& layout) {
-    VulkanDescriptorSetLayout::BitmaskGroup mask;
-    for (auto const& binding : layout.bindings) {
-        switch (binding.type) {
-        case DescriptorType::UNIFORM_BUFFER: {
-                if ((binding.flags & DescriptorFlags::DYNAMIC_OFFSET) != DescriptorFlags::NONE) {
-                    fromStageFlags(binding.stageFlags, binding.binding, mask.dynamicUbo);
-                }
-                else {
-                    fromStageFlags(binding.stageFlags, binding.binding, mask.ubo);
-                }
-            break;
-        }
-        case DescriptorType::SAMPLER: {
-            fromStageFlags(binding.stageFlags, binding.binding, mask.sampler);
-            break;
-        }
-        case DescriptorType::INPUT_ATTACHMENT: {
-            fromStageFlags(binding.stageFlags, binding.binding, mask.inputAttachment);
-            break;
-        }
-        case DescriptorType::SHADER_STORAGE_BUFFER:
-            if (binding.flags == DescriptorFlags::NONE)
-            {
-                fromStageFlags(binding.stageFlags, binding.binding, mask.storgeUbo);
-            }
-            else
-            {
-                fromStageFlags(binding.stageFlags, binding.binding, mask.storegeDynamicUbo);
-            }
-            
-            break;
-        }
-    }
-    return mask;
-}
 
-VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(DescriptorSetLayout const& layout)
-    : VulkanResource(VulkanResourceType::DESCRIPTOR_SET_LAYOUT),
-      bitmask(fromBackendLayout(layout)),
-      count(Count::fromLayoutBitmask(bitmask)) {}
+
+VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(const VulkanDescriptorSetLayoutInfo& info)
+    :
+    mVulkanDescriptorSetLayoutInfo(info),
+    VulkanResource(VulkanResourceType::DESCRIPTOR_SET_LAYOUT){
+}
 
 void VulkanDescriptorSet::acquire(VulkanTexture* texture) {
     assert(false);
-    //mResources.acquire(texture);
-    mTextures[mTextureCount++] = texture;
 }
 
 void VulkanDescriptorSet::acquire(VulkanBufferObject* bufferObject) {

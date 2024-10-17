@@ -141,8 +141,13 @@ namespace vks
 			VulkanTexture* tex);
 		void generateMipmaps(VkCommandBuffer commandBuffer, VulkanTexture* tex);
 
-		using BingdingInfo = std::unordered_map<uint8_t, std::vector<VkDescriptorSetLayoutBinding>>;
+		using BingdingInfo = std::map<uint8_t, std::vector<VkDescriptorSetLayoutBinding>>;
 
 		BingdingInfo getProgramBindings(const std::string& blob, VkShaderStageFlags stageFlags);
+		
+		VkPipelineStageFlags util_determine_pipeline_stage_flags(
+			VulkanSettings* settings,
+			VkAccessFlags accessFlags,
+			QueueType queueType);
 	}
 }

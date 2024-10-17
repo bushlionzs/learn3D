@@ -100,7 +100,7 @@ using namespace bluevk;
         VkPipelineColorBlendStateCreateInfo colorBlendState;
         colorBlendState = VkPipelineColorBlendStateCreateInfo{};
         colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-        colorBlendState.attachmentCount = 1;
+        colorBlendState.attachmentCount = mPipelineRequirements.rasterState.colorTargetCount;
         colorBlendState.pAttachments = colorBlendAttachments;
 
         // If we reach this point, we need to create and stash a brand new pipeline object.

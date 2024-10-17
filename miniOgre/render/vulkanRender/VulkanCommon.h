@@ -81,7 +81,9 @@ struct VulkanSettings {
     bool fullscreen = false;
     bool vsync = false;
     bool multiSampling = true;
-    bool rayTraceing = true;
+    bool mGeometryShaderSupported = true;
+    bool mTessellationSupported = false;
+    bool mRayPipelineSupported = false;
     VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_4_BIT;
     VulkanSettings()
     {

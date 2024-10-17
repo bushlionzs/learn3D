@@ -102,10 +102,10 @@ static  std::vector<const char*> deviceExtensions =
 
 void VulkanHelper::_initialise(VulkanPlatform* platform)
 {
-    this->mSettings.rayTraceing = false;
+    this->mSettings.mRayPipelineSupported = false;
     mPlatform = platform;
 
-    if (mSettings.rayTraceing)
+    if (mSettings.mRayPipelineSupported)
     {
         deviceExtensions.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
         deviceExtensions.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
@@ -289,11 +289,6 @@ VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& param
     return sampler;
 }
 
-VkFormat VulkanHelper::_getDepthFormat()
-{
-    return mDepthFormat;
-}
-
 int32_t VulkanHelper::_findMemoryType(
     uint32_t typeFilter,
     VkMemoryPropertyFlags properties)
@@ -306,9 +301,6 @@ int32_t VulkanHelper::_findMemoryType(
             return i;
         }
     }
-
-    
-
     return -1;
 }
 

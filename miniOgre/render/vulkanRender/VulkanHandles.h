@@ -59,92 +59,75 @@ struct VulkanDescriptorSetLayout : public VulkanResource, HwDescriptorSetLayout 
     static constexpr uint8_t UNIQUE_DESCRIPTOR_SET_COUNT = 4;
     static constexpr uint8_t MAX_BINDINGS = 25;
 
-    using DescriptorSetLayoutArray = std::array<VkDescriptorSetLayout,
-            VulkanDescriptorSetLayout::UNIQUE_DESCRIPTOR_SET_COUNT>;
-
-    // The bitmask representation of a set layout.
-    struct Bitmask {
-        // TODO: better utiltize the space below and use bitset instead.
-        UniformBufferBitmask ubo;         // 8 bytes
-        UniformBufferBitmask dynamicUbo;  // 8 bytes
-        StoreBufferBitMask storgeUbo;       //  4 bytes
-        StoreBufferBitMask storegeDynamicUbo;       //  4 bytes
-        SamplerBitmask sampler;          //  8 bytes
-        InputAttachmentBitmask inputAttachment; // 8 bytes
-
-        bool operator==(Bitmask const& right) const {
-            return ubo == right.ubo && 
-                   dynamicUbo == right.dynamicUbo && 
-                storgeUbo == right.storgeUbo &&
-                storegeDynamicUbo == right.storegeDynamicUbo &&
-                   sampler == right.sampler &&
-                   inputAttachment == right.inputAttachment;
-        }
+    using VulkanLayoutKey = std::array<uint32_t, MAX_BINDINGS>;
+    struct VulkanDescriptorSetLayoutInfo
+    {
+        uint32_t uboCount = 0;
+        uint32_t dynamicUboCount = 0;
+        uint32_t storeCount = 0;
+        uint32_t samplerCount = 0;
+        uint32_t combinedImage = 0;
+        uint32_t inputAttachmentCount = 0;
     };
-    static_assert(sizeof(Bitmask) == 40);
-
-    // This is a convenience struct to quickly check layout compatibility in terms of descriptor set
-    // pools.
-    struct Count {
-        uint32_t ubo = 0;
-        uint32_t dynamicUbo = 0;
-        uint32_t storegeUbo = 0;
-        uint32_t storegeDynamicUbo = 0;
-        uint32_t sampler = 0;
-        uint32_t inputAttachment = 0;
-
-        inline uint32_t total() const {
-            return ubo + dynamicUbo + storegeUbo + storegeDynamicUbo + sampler + inputAttachment;
-        }
-
-        bool operator==(Count const& right) const noexcept {
-            return ubo == right.ubo && dynamicUbo == right.dynamicUbo && 
-                storegeUbo == right.storegeUbo &&
-                storegeDynamicUbo == right.storegeDynamicUbo &&
-                   sampler == right.sampler &&
-                   inputAttachment == right.inputAttachment;
-        }
-
-        static inline Count fromLayoutBitmask(Bitmask const& mask) {
-            return {
-                .ubo = collapsedCount(mask.ubo),
-                .dynamicUbo = collapsedCount(mask.dynamicUbo),
-                .storegeUbo = collapsedCount(mask.storgeUbo),
-                .storegeDynamicUbo = collapsedCount(mask.storegeDynamicUbo),
-                .sampler = collapsedCount(mask.sampler),
-                .inputAttachment = collapsedCount(mask.inputAttachment),
-            };
-        }
-
-        Count operator*(uint16_t mult) const noexcept {
-            // TODO: check for overflow.
-
-            Count ret;
-            ret.ubo = ubo * mult;
-            ret.dynamicUbo = dynamicUbo * mult;
-            ret.storegeUbo = storegeUbo * mult;
-            ret.storegeDynamicUbo = storegeDynamicUbo * mult;
-            ret.sampler = sampler * mult;
-            ret.inputAttachment = inputAttachment * mult;
-            return ret;
-        }
-    };
-
-    using BitmaskGroup = VulkanDescriptorSetLayout::Bitmask;
-    static BitmaskGroup fromBackendLayout(DescriptorSetLayout const& layout);
-
-    VulkanDescriptorSetLayout(DescriptorSetLayout const& layout);
+    VulkanDescriptorSetLayout(const VulkanDescriptorSetLayoutInfo& info);
 
     ~VulkanDescriptorSetLayout() = default;
 
     VkDescriptorSetLayout getVkLayout() const { return mVkLayout; }
     void setVkLayout(VkDescriptorSetLayout vklayout) { mVkLayout = vklayout; }
 
-    Bitmask const bitmask;
-    Count const count;
+    bool hasUbo()
+    {
+        return mVulkanDescriptorSetLayoutInfo.uboCount > 0;
+    }
 
+    uint32_t getUboCount()
+    {
+        return mVulkanDescriptorSetLayoutInfo.uboCount;
+    }
+
+    bool hasDynamicUbo()
+    {
+        return mVulkanDescriptorSetLayoutInfo.dynamicUboCount > 0;
+    }
+
+    uint32_t getDynamicUboCount()
+    {
+        return mVulkanDescriptorSetLayoutInfo.dynamicUboCount;
+    }
+
+    bool hasStore()
+    {
+        return mVulkanDescriptorSetLayoutInfo.storeCount > 0;
+    }
+
+    uint32_t getStoreCount()
+    {
+        return mVulkanDescriptorSetLayoutInfo.storeCount;
+    }
+
+    bool hasCombinedImage()
+    {
+        return mVulkanDescriptorSetLayoutInfo.combinedImage > 0;
+    }
+
+    uint32_t getCombinedImageCount()
+    {
+        return mVulkanDescriptorSetLayoutInfo.combinedImage;
+    }
+
+    bool hasInputAttachment()
+    {
+        return mVulkanDescriptorSetLayoutInfo.inputAttachmentCount > 0;
+    }
+
+    uint32_t getInputAttachmentCount()
+    {
+        return mVulkanDescriptorSetLayoutInfo.inputAttachmentCount;
+    }
 private:
     VkDescriptorSetLayout mVkLayout = VK_NULL_HANDLE;
+    VulkanDescriptorSetLayoutInfo mVulkanDescriptorSetLayoutInfo;
 };
 
 struct VulkanDescriptorSet : public VulkanResource, HwDescriptorSet {
@@ -153,12 +136,10 @@ public:
     // can use to repackage the vk handle.
     using OnRecycle = std::function<void(VulkanDescriptorSet*)>;
 
-    VulkanDescriptorSet(VulkanResourceAllocator* allocator, VkDescriptorSet rawSet,
-            OnRecycle&& onRecycleFn)
+    VulkanDescriptorSet(VulkanResourceAllocator* allocator, VkDescriptorSet rawSet)
         : VulkanResource(VulkanResourceType::DESCRIPTOR_SET),
           vkSet(rawSet),
-          mResources(allocator),
-          mOnRecycleFn(std::move(onRecycleFn)) {}
+          mResources(allocator) {}
 
     ~VulkanDescriptorSet() {
         if (mOnRecycleFn) {
@@ -170,17 +151,10 @@ public:
 
     void acquire(VulkanBufferObject* texture);
 
-    bool hasTexture(VulkanTexture* texture) {
-        return std::any_of(mTextures.begin(), mTextures.end(),
-                [texture](auto t) { return t == texture; });
-    }
-
     // TODO: maybe change to fixed size for performance.
     VkDescriptorSet const vkSet;
 
 private:
-    std::array<VulkanTexture*, 16> mTextures = { nullptr };
-    uint8_t mTextureCount = 0;
     VulkanAcquireOnlyResourceManager mResources;
     OnRecycle mOnRecycleFn;
 };

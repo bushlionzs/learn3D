@@ -36,19 +36,7 @@ void Light::setAttenuation(float range, float constant, float linear, float quad
 
 const Ogre::Matrix4& Light::getViewMatrix() const
 {
-	auto& q = mParent->_getDerivedOrientation();
-	Matrix3 rot;
-	q.ToRotationMatrix(rot);
-
-	auto dir = rot.GetColumn(2);
-
-	{
-		Ogre::Vector3 target = Ogre::Vector3::ZERO;
-		Ogre::Vector3 position = target + (dir) * 40;
-		mParent->setPosition(position);
-		mViewMatrix = Ogre::Math::makeLookAtLH(position, target, Ogre::Vector3::UNIT_Y);
-		return mViewMatrix;
-	}
+	return mViewMatrix;
 }
 
 
@@ -95,6 +83,14 @@ LightType Light::getLightType()
 uint32_t Light::getLightNumber()
 {
 	return mLightNumber;
+}
+
+Ogre::Vector3 Light::getLightUp()
+{
+	const Ogre::Quaternion& q = mParent->_getDerivedOrientation();
+	Matrix3 rot;
+	q.ToRotationMatrix(rot);
+	return rot.GetColumn(1);
 }
 
 Ogre::Vector3 Light::getLightDirection()

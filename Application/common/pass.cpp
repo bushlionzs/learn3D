@@ -74,6 +74,18 @@ public:
 				if (!mat->isLoaded())
 				{
 					mat->load(nullptr);
+					auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+
+					auto* shadowTex = mDefaultTexture.get();
+					if (mInput.shadowMap)
+					{
+						shadowTex = mInput.shadowMap;
+					}
+					for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
+					{
+						FrameResourceInfo* resourceInfo = mat->getFrameResourceInfo(i);
+						rs->updateDescriptorSetTexture(resourceInfo->samplerSet, 3, &shadowTex, 1);
+					}
 				}
 
 				FrameResourceInfo* resourceInfo = mat->getFrameResourceInfo(frameIndex);
@@ -103,14 +115,7 @@ public:
 					
 				}
 
-				if (mInput.shadowMap)
-				{
-					rs->updateDescriptorSetTexture(resourceInfo->samplerSet, 3, mInput.shadowMap);
-				}
-				else
-				{
-					rs->updateDescriptorSetTexture(resourceInfo->samplerSet, 3, mDefaultTexture.get());
-				}
+				
 
 			}
 		}

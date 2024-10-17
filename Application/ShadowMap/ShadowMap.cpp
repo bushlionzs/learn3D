@@ -22,7 +22,12 @@
 #include "pass.h"
 #include "shaderManager.h"
 #include "forgeCommon.h"
+#include "OgreMaterial.h"
+#include "OgreTextureUnit.h"
 
+#define SAN_MIGUEL_OFFSETX          150.f
+#define MESH_SCALE                  10.f
+#define PI 3.14159265358979323846f
 ShadowMap::ShadowMap()
 {
 
@@ -63,34 +68,115 @@ void ShadowMap::update(float delta)
 
     auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-    FrameData& frameData = mFrameData[frameIndex];
+    auto width = ogreConfig.width;
+    auto height = ogreConfig.height;
 
     auto cam = mGameCamera->getCamera();
     const Ogre::Matrix4& view = cam->getViewMatrix();
-    const Ogre::Matrix4& project = cam->getProjectMatrix();
+    //const Ogre::Matrix4& project = cam->getProjectMatrix();
 
-    frameData.perFrameVBConstants.numViewports = 2;
-    frameData.perFrameVBConstants.transform[VIEW_CAMERA].vp = (project * view).transpose();
-    frameData.perFrameVBConstants.transform[VIEW_CAMERA].mvp = (project * view).transpose();
-    frameData.perFrameVBConstants.cullingViewports[VIEW_CAMERA].windowSize = { (float)ogreConfig.width, (float)ogreConfig.height };
-    frameData.perFrameVBConstants.cullingViewports[VIEW_CAMERA].sampleCount = 1;
+    float aspect = width / (float)height;
+
+    Ogre::Matrix4 project =
+        Ogre::Math::makePerspectiveMatrixLH(PI / 2.0f, aspect, 0.1f, 1000.0f);
+
+    
+
+  
+    if (!mFrameData.empty())
+    {
+        FrameData& frameData = mFrameData[frameIndex];
+        
+
+        mRenderSystem->updateBufferObject(
+            frameData.perFrameConstantsBuffer,
+            (const char*)&perFrameVBConstants,
+            sizeof(perFrameVBConstants));
+
+        meshUniformBlock.worldViewProjMat = (project * view).transpose();
+        meshUniformBlock.viewID = 0;
+        mRenderSystem->updateBufferObject(
+            frameData.objectUniformBlockHandle,
+            (const char*)&meshUniformBlock,
+            sizeof(meshUniformBlock));
 
 
-    frameData.perFrameVBConstants.transform[VIEW_SHADOW].mvp = (project * view).transpose();
-    frameData.perFrameVBConstants.cullingViewports[VIEW_SHADOW].windowSize = { (float)ogreConfig.width, (float)ogreConfig.height };
-    frameData.perFrameVBConstants.cullingViewports[VIEW_SHADOW].sampleCount = 1;
 
-    mRenderSystem->updateBufferObject(
-        frameData.perFrameConstantsBuffer, 
-        (const char*) & frameData.perFrameVBConstants,
-        sizeof(frameData.perFrameVBConstants));
+        cameraUniform.mView = view.transpose();
+        cameraUniform.mProject = project.transpose();
+        cameraUniform.mViewProject = (project * view).transpose();
+        cameraUniform.mInvView = cameraUniform.mView.inverse();
+        cameraUniform.mInvProj = cameraUniform.mProject.inverse();
+        cameraUniform.mInvViewProject = cameraUniform.mViewProject.inverse();
+        cameraUniform.mCameraPos = cam->getDerivedPosition();
+        cameraUniform.mNear = cam->getNear();
+        cameraUniform.mFar = cam->getFar();
+        cameraUniform.mFarNearDiff = cameraUniform.mFar - cameraUniform.mNear;
+        cameraUniform.mFarNear = cameraUniform.mFar * cameraUniform.mNear;
+        cameraUniform.mTwoOverRes = Ogre::Vector2(1.5f / width, 1.5f / height);
+        cameraUniform.mWindowSize = Ogre::Vector2(width, height);
 
-    frameData.meshUniformBlock.worldViewProjMat = (project * view).transpose();
-    frameData.meshUniformBlock.viewID = 0;
-    mRenderSystem->updateBufferObject(
-        frameData.objectUniformBlockHandle,
-        (const char*)&frameData.meshUniformBlock,
-        sizeof(frameData.meshUniformBlock));
+        mRenderSystem->updateBufferObject(
+            frameData.cameraUniformHandle,
+            (const char*)&cameraUniform,
+            sizeof(cameraUniform));
+        
+        Ogre::Vector3 lightSourcePos(10.f, 0.0f, 10.f);
+        lightSourcePos[0] += (20.f);
+        lightSourcePos[0] += (SAN_MIGUEL_OFFSETX);
+
+        Ogre::Matrix4 rotation = Ogre::Math::makeRotateMatirx(
+            lightCpuSettings.mSunControl.x, lightCpuSettings.mSunControl.y);
+
+        Ogre::Matrix4 translation = Ogre::Math::makeTranslateMatrix(-lightSourcePos);
+
+        auto newLightDir = rotation.inverse() * Ogre::Vector4(0, 0, 1, 0);
+
+        auto lightViewMatrix = rotation * translation;
+
+        Real left = -140.0f;
+        Real right = 140.0f;
+        Real top = 90.0f;
+        Real bottom = -210.0f;
+
+        auto lightProjMatrix = Ogre::Math::makeOrthoLH(left, right, bottom, top, -220, 100);
+
+        esmMeshUniformBlock.worldViewProjMat = 
+            (lightProjMatrix * lightViewMatrix * meshInfoStruct.mWorldMat).transpose();
+        esmMeshUniformBlock.viewID = 1;
+        mRenderSystem->updateBufferObject(
+            frameData.esmUniformBlockHandle,
+            (const char*)&esmMeshUniformBlock,
+            sizeof(esmMeshUniformBlock));
+
+        lightUniformBlock.mLightPosition = Ogre::Vector4(0.0f);
+        lightUniformBlock.mLightViewProj = (lightProjMatrix * lightViewMatrix).transpose();
+        lightUniformBlock.mLightColor = Ogre::Vector4(1, 1, 1, 1);
+        lightUniformBlock.mLightUpVec = lightViewMatrix.getUpVec();
+        lightUniformBlock.mLightDir = newLightDir.xyz();
+        
+
+        perFrameVBConstants.numViewports = 2;
+        perFrameVBConstants.transform[VIEW_CAMERA].vp = (project * view).transpose();
+        perFrameVBConstants.transform[VIEW_CAMERA].mvp = (project * view * meshInfoStruct.mWorldMat).transpose();
+        perFrameVBConstants.cullingViewports[VIEW_CAMERA].windowSize = { (float)width, (float)height };
+        perFrameVBConstants.cullingViewports[VIEW_CAMERA].sampleCount = 1;
+
+
+        perFrameVBConstants.transform[VIEW_SHADOW].mvp = 
+            (lightProjMatrix * lightViewMatrix * meshInfoStruct.mWorldMat).transpose();
+        perFrameVBConstants.cullingViewports[VIEW_SHADOW].windowSize = {2048,2048};
+        perFrameVBConstants.cullingViewports[VIEW_SHADOW].sampleCount = 1;
+        
+
+        mRenderSystem->updateBufferObject(sssEnabledHandle,
+            (const char*)&sssEnabled, sizeof(sssEnabled));
+        mRenderSystem->updateBufferObject(esmInputConstantsHandle,
+            (const char*)&esmConstants, sizeof(esmConstants));
+        mRenderSystem->updateBufferObject(renderSettingsUniformHandle,
+            (const char*)&renderSetting, sizeof(renderSetting));
+    }
+    
 
 }
 
@@ -215,7 +301,7 @@ void ShadowMap::base1()
 		"shadow", shadowSize, shadowSize, Ogre::PF_DEPTH32_STENCIL8,
         Ogre::TextureUsage::DEPTH_ATTACHMENT);
 
-    bool useShadow = true;
+    bool useShadow = false;
     RenderPassInput renderInput;
     renderInput.cam = light;
     renderInput.color = nullptr;
@@ -250,41 +336,71 @@ void ShadowMap::base1()
 #define BATCH_FACE_COUNT_MASK 0x1FFC
 #define BATCH_GEOMETRY_LOW_BIT 0
 #define BATCH_GEOMETRY_MASK 0x3
+enum
+{
+    GEOMSET_OPAQUE = 0,
+    GEOMSET_ALPHA_CUTOUT
+};
+
+
 
 void ShadowMap::base2()
 {
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	auto rootNode = mSceneManager->getRoot();
+    auto root = mSceneManager->getRoot();
+    
+    meshInfoStruct.mColor = Ogre::Vector4(1.f);
+    meshInfoStruct.mScale = Ogre::Vector3(MESH_SCALE);
+    meshInfoStruct.mScaleMat = Ogre::Matrix4::IDENTITY;
+    meshInfoStruct.mScaleMat.setScale(meshInfoStruct.mScale);
+    float finalXTranslation = SAN_MIGUEL_OFFSETX;
+    meshInfoStruct.mTranslation = Ogre::Vector3(finalXTranslation, 0.f, 0.f);
+    meshInfoStruct.mOffsetTranslation = Ogre::Vector3(0.0f, 0.f, 0.f);
+    meshInfoStruct.mTranslationMat = Ogre::Matrix4::IDENTITY;
+    meshInfoStruct.mTranslationMat.setTrans(meshInfoStruct.mTranslation);
+
+    meshInfoStruct.mWorldMat = meshInfoStruct.mTranslationMat * meshInfoStruct.mScaleMat;
+
 	std::string meshname = "SanMiguel.bin";
     std::shared_ptr<Mesh> mesh = loadSanMiguel(meshname);
     
 	Entity* sanMiguel = mSceneManager->createEntity(meshname, meshname);
 	SceneNode* sanMiguelNode = rootNode->createChildSceneNode(meshname);
 	sanMiguelNode->attachObject(sanMiguel);
-	mGameCamera->updateCamera(Ogre::Vector3(0, 5.0f, 8.0f), Ogre::Vector3(0, 5.0f, 0.0f));
+
+    Ogre::Vector3 camPos(120.f + SAN_MIGUEL_OFFSETX, 98.f, 14.f);
+    Ogre::Vector3 lookAt = camPos + Ogre::Vector3(-1.0f - 0.0f, 0.1f, 0.0f);
+
+	mGameCamera->updateCamera(camPos, lookAt);
 	mGameCamera->setMoveSpeed(10.0f);
 
-
-    enum
-    {
-        GEOMSET_OPAQUE = 0,
-        GEOMSET_ALPHA_CUTOUT
-    };
-
+    auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
     uint32_t visibilityBufferFilteredIndexCount[NUM_GEOMETRY_SETS] = {};
     auto numFrame = ogreConfig.swapBufferCount;
     mFrameData.resize(numFrame);
     auto subMeshCount = mesh->getSubMeshCount();
     std::vector<MeshConstants> meshConstants(subMeshCount);
     auto* rs = mRenderSystem;
-    VBConstants constants[2];
-    uint32_t indexOffset = 0;
+    
+    VertexData* vertexData = mesh->getVertexData();
+    VertexDeclaration* vertexDecl = vertexData->getVertexDeclaration();
+    Handle<HwBufferObject> vertexDataHandle = vertexData->getBuffer(0);
+    
+    uint32_t meshConstantsBufferSize = subMeshCount * sizeof(MeshConstants);
+    meshConstantsBuffer =
+        rs->createBufferObject(
+            BufferObjectBinding::BufferObjectBinding_Storge,
+            BufferUsage::DYNAMIC,
+            meshConstantsBufferSize,
+            "meshConstantsBuffer");
+
+    // Calculate mesh constants and filter containers
     for (auto i = 0; i < subMeshCount; i++)
     {
         auto subMesh = mesh->getSubMesh(i);
 
-        auto mat = subMesh->getMaterial();
-
+        auto& mat = subMesh->getMaterial();
         auto materialFlag = mat->getMaterialFlags();
 
         uint32_t geomSet = materialFlag & MATERIAL_FLAG_ALPHA_TESTED ? GEOMSET_ALPHA_CUTOUT : GEOMSET_OPAQUE;
@@ -296,86 +412,47 @@ void ShadowMap::base2()
         meshConstants[i].vertexOffset = indexView->mBaseVertexLocation;
         meshConstants[i].materialID = i;
         meshConstants[i].twoSided = (materialFlag & MATERIAL_FLAG_TWO_SIDED) ? 1 : 0;
-
-
     }
+
+    rs->updateBufferObject(meshConstantsBuffer, (const char*)meshConstants.data(), 
+        meshConstantsBufferSize);
+
+    
+    uint32_t maxIndices = 0;
     for (uint32_t geomSet = 0; geomSet < NUM_GEOMETRY_SETS; ++geomSet)
     {
-        constants[geomSet].indexOffset = indexOffset;
-        indexOffset += visibilityBufferFilteredIndexCount[geomSet];
+        maxIndices += visibilityBufferFilteredIndexCount[geomSet];
     }
 
-    vbConstantsBuffer =
-        mRenderSystem->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform, BufferUsage::STATIC, sizeof(VBConstants) * 2);
-
-    rs->updateBufferObject(vbConstantsBuffer, (const char*)& constants[0], sizeof(VBConstants) * 2);
-
-    uint32_t indirectDrawArgBufferSize = NUM_GEOMETRY_SETS * NUM_CULLING_VIEWPORTS * 8 * sizeof(uint32_t);
-
-  
-    indirectDrawArgBuffer =
-        mRenderSystem->createBufferObject(
-            BufferObjectBinding::BufferObjectBinding_Storge | BufferObjectBinding_InDirectBuffer,
-            BufferUsage::DYNAMIC,
-            indirectDrawArgBufferSize,
-            "IndirectDrawArgBuffer");
-    
-    
-    
-    //clear buffer pass
+    for (auto i = 0; i < NUM_CULLING_VIEWPORTS; i++)
     {
-        ShaderInfo shaderInfo;
-        shaderInfo.shaderName = "clearBuffer";
-        auto clearBufferProgramHandle = rs->createComputeProgram(shaderInfo);
-      
-        Handle<HwDescriptorSetLayout> dslh = rs->getDescriptorSetLayout(clearBufferProgramHandle, 0);
-        Handle<HwDescriptorSet> ds = rs->createDescriptorSet(dslh);
-        
-
-        
-        rs->updateDescriptorSetBuffer(ds, 0, &indirectDrawArgBuffer, 1);
-        rs->updateDescriptorSetBuffer(ds, 2, &vbConstantsBuffer, 1);
-
-        ComputePassCallback callback = [ds, clearBufferProgramHandle](ComputePassInfo& info) {
-            info.programHandle = clearBufferProgramHandle;
-            info.computeGroup = Ogre::Vector3i(1, 1, 1);
-            info.descSets.clear();
-            info.descSets.push_back(ds);
-            auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-            rs->beginComputePass(info);
-            rs->endComputePass();
-            };
-        auto clearBufferPass = createComputePass(callback);
-        mPassList.push_back(clearBufferPass);
+        filteredIndexBuffer[i] =
+            rs->createBufferObject(
+                BufferObjectBinding::BufferObjectBinding_Storge | BufferObjectBinding::BufferObjectBinding_Index,
+                BufferUsage::DYNAMIC,
+                maxIndices * sizeof(uint32_t),
+                "FilteredIndexBuffer");
     }
-    
-    //filter triangles pass
+    uint32_t computeThread = 256;
+
+    auto maxFilterBatches = (maxIndices / 3) / (computeThread >> 1);
+
+    uint32_t filterDispatchGroupSize = maxFilterBatches * sizeof(FilterDispatchGroupData);
+
+    uint32_t dispatchGroupCount = 0;
+
+    //group bufer
+
+    for (auto frame = 0; frame < numFrame; frame++)
     {
-        ShaderInfo shaderInfo;
-        shaderInfo.shaderName = "filterTriangles";
-        filterTrianglesProgramHandle = rs->createComputeProgram(shaderInfo);
-        
-        uint32_t maxIndices = 0;
-        for (uint32_t geomSet = 0; geomSet < NUM_GEOMETRY_SETS; ++geomSet)
-        {
-            maxIndices += visibilityBufferFilteredIndexCount[geomSet];
-        }
-
-        uint32_t dispatchGroupCount = 0;
-        uint32_t computeThread = 256;
-        
-        auto maxFilterBatches = (maxIndices / 3) / (computeThread >> 1);
-
-        uint32_t filterDispatchGroupSize = maxFilterBatches * sizeof(FilterDispatchGroupData);
-
+        dispatchGroupCount = 0;
         auto filterDispatchGroupDataBuffer =
             rs->createBufferObject(
                 BufferObjectBinding::BufferObjectBinding_Storge,
                 BufferUsage::DYNAMIC,
                 filterDispatchGroupSize,
                 "FilterDispatchGroupDataBuffer");
-        
-
+        mFrameData[frame].filterDispatchGroupDataBuffer = filterDispatchGroupDataBuffer;
         BufferHandleLockGuard lockGuard(filterDispatchGroupDataBuffer);
 
         FilterDispatchGroupData* dispatchGroupData = (FilterDispatchGroupData*)lockGuard.data();
@@ -386,7 +463,7 @@ void ShadowMap::base2()
 
             uint32_t triangleCount = subMesh->getIndexView()->mIndexCount / 3;
             uint32_t numDispatchGroups = (subMesh->getIndexView()->mIndexCount / 3 + computeThread - 1) / computeThread;
-            auto mat = subMesh->getMaterial();
+            auto& mat = subMesh->getMaterial();
 
             auto materialFlag = mat->getMaterialFlags();
 
@@ -399,60 +476,123 @@ void ShadowMap::base2()
                 const uint32_t trianglesInGroup = lastTriangle - firstTriangle;
 
                 // Fill GPU filter batch data
-             
+
                 groupData.meshIndex = i;
                 groupData.instanceDataIndex = 0;
 
                 groupData.geometrySet_faceCount = ((trianglesInGroup << BATCH_FACE_COUNT_LOW_BIT) & BATCH_FACE_COUNT_MASK) |
-                    ((geomSet << BATCH_GEOMETRY_LOW_BIT)& BATCH_GEOMETRY_MASK);
+                    ((geomSet << BATCH_GEOMETRY_LOW_BIT) & BATCH_GEOMETRY_MASK);
 
-                    // Offset relative to the start of the mesh
-                    groupData.indexOffset = firstTriangle * 3;
+                // Offset relative to the start of the mesh
+                groupData.indexOffset = firstTriangle * 3;
             }
         }
+    }
+    
+    //vb constant
+    VBConstants constants[2];
+    uint32_t indexOffset = 0;
 
+    for (uint32_t geomSet = 0; geomSet < NUM_GEOMETRY_SETS; ++geomSet)
+    {
+        constants[geomSet].indexOffset = indexOffset;
+        indexOffset += visibilityBufferFilteredIndexCount[geomSet];
+    }
 
+    vbConstantsBuffer =
+        mRenderSystem->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform, 
+            BufferUsage::STATIC, sizeof(VBConstants) * 2);
 
+    rs->updateBufferObject(vbConstantsBuffer, (const char*)&constants[0], sizeof(VBConstants) * 2);
 
-        for (auto i = 0; i < NUM_CULLING_VIEWPORTS; i++)
-        {
-            filteredIndexBuffer[i] =
-                rs->createBufferObject(
-                    BufferObjectBinding::BufferObjectBinding_Storge | BufferObjectBinding::BufferObjectBinding_Index,
-                    BufferUsage::DYNAMIC,
-                    maxIndices * sizeof(uint32_t),
-                    "FilteredIndexBuffer");
-        }
-
-        uint32_t meshConstantsBufferSize = subMeshCount * sizeof(MeshConstants);
-        meshConstantsBuffer =
-            rs->createBufferObject(
-                BufferObjectBinding::BufferObjectBinding_Storge,
+    uint32_t indirectDrawArgBufferSize = NUM_GEOMETRY_SETS * NUM_CULLING_VIEWPORTS * 8 * sizeof(uint32_t);
+    for (auto i = 0; i < numFrame; i++)
+    {
+        auto indirectDrawArgBuffer =
+            mRenderSystem->createBufferObject(
+                BufferObjectBinding::BufferObjectBinding_Storge | BufferObjectBinding_InDirectBuffer,
                 BufferUsage::DYNAMIC,
-                meshConstantsBufferSize,
-                "meshConstantsBuffer");
+                indirectDrawArgBufferSize,
+                "IndirectDrawArgBuffer");
+        mFrameData[i].indirectDrawArgBuffer = indirectDrawArgBuffer;
+    }
+    
+    //clear buffer pass
+    {
+        ShaderInfo shaderInfo;
+        shaderInfo.shaderName = "clearBuffer";
+        auto clearBufferProgramHandle = rs->createComputeProgram(shaderInfo);
 
-        rs->updateBufferObject(meshConstantsBuffer, (const char*)meshConstants.data(), meshConstantsBufferSize);
-
-
-        auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-
-        Handle<HwDescriptorSetLayout> defaultLayoutHandle =
-            rs->getDescriptorSetLayout(filterTrianglesProgramHandle, 0);
-
-        Handle<HwDescriptorSetLayout> frameLayoutHandle =
-            rs->getDescriptorSetLayout(filterTrianglesProgramHandle, 1);
-
+        Handle<HwDescriptorSetLayout> zeroLayout = rs->getDescriptorSetLayout(clearBufferProgramHandle, 0);
         
+
+
         for (auto i = 0; i < numFrame; i++)
         {
+            Handle<HwDescriptorSet> descrSet = rs->createDescriptorSet(zeroLayout);
+            rs->updateDescriptorSetBuffer(descrSet, 0, &mFrameData[i].indirectDrawArgBuffer, 1);
+            rs->updateDescriptorSetBuffer(descrSet, 2, &vbConstantsBuffer, 1);
+
+            mFrameData[i].clearBufferDescrSet = descrSet;
+        }
+        
+
+        ComputePassCallback callback = [frameIndex, clearBufferProgramHandle, rs, this](ComputePassInfo& info) {
+            info.programHandle = clearBufferProgramHandle;
+            info.computeGroup = Ogre::Vector3i(1, 1, 1);
+            FrameData* frameData = this->getFrameData(frameIndex);
+            info.descSets.clear();
+            info.descSets.push_back(frameData->clearBufferDescrSet);
+
+            rs->beginComputePass(info);
+            rs->endComputePass();
+
+            // Clear Buffers Synchronization 
+            {
+                BufferBarrier barriers[2];
+
+                barriers[0] =
+                {
+                    frameData->filterDispatchGroupDataBuffer,
+                    RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
+                };
+
+                barriers[1] =
+                {
+                    frameData->indirectDrawArgBuffer,
+                    RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
+                };
+
+                //rs->resourceBarrier(2, &barriers[0]);
+            }
+            };
+        auto clearBufferPass = createComputePass(callback);
+        mPassList.push_back(clearBufferPass);
+    }
+    
+    //filter triangles pass
+    {
+        ShaderInfo shaderInfo;
+        shaderInfo.shaderName = "filterTriangles";
+        auto filterTrianglesProgramHandle = rs->createComputeProgram(shaderInfo);
+       
+        Handle<HwDescriptorSetLayout> zeroLayoutHandle =
+            rs->getDescriptorSetLayout(filterTrianglesProgramHandle, 0);
+
+        Handle<HwDescriptorSetLayout> firstLayoutHandle =
+            rs->getDescriptorSetLayout(filterTrianglesProgramHandle, 1);
+
+
+        for (auto i = 0; i < numFrame; i++)
+        {
+            auto& frameData = mFrameData[i];
             auto indirectDataBuffer =
                 rs->createBufferObject(
                     BufferObjectBinding::BufferObjectBinding_Storge,
                     BufferUsage::DYNAMIC,
                     maxIndices * sizeof(uint32_t),
                     "IndirectDataBuffer");
-            mFrameData[i].indirectDataBuffer = indirectDataBuffer;
+            frameData.indirectDataBuffer = indirectDataBuffer;
 
             auto perFrameConstantsBuffer =
                 rs->createBufferObject(
@@ -460,47 +600,54 @@ void ShadowMap::base2()
                     BufferUsage::DYNAMIC,
                     sizeof(PerFrameVBConstants),
                     "PerFrameVBConstants Buffer Desc");
-            mFrameData[i].perFrameConstantsBuffer = perFrameConstantsBuffer;
+            frameData.perFrameConstantsBuffer = perFrameConstantsBuffer;
 
-            auto objectUniformBlockHandle = 
+            auto objectUniformBlockHandle =
                 rs->createBufferObject(
                     BufferObjectBinding::BufferObjectBinding_Uniform,
                     BufferUsage::DYNAMIC,
-                    sizeof(ObjectUniformBlock),
+                    sizeof(MeshInfoUniformBlock),
                     "objectUniformBlock Buffer");
-            mFrameData[i].objectUniformBlockHandle = objectUniformBlockHandle;
-            Handle <HwDescriptorSet> defaultDescSet = rs->createDescriptorSet(defaultLayoutHandle);
-            mFrameData[i].defaultDescSet = defaultDescSet;
-            rs->updateDescriptorSetBuffer(defaultDescSet, 0, &indirectDrawArgBuffer, 1);
+            frameData.objectUniformBlockHandle = objectUniformBlockHandle;
 
-            VertexData* vertexData = mesh->getVertexData();
-            Handle<HwBufferObject> vertexDataHandle = vertexData->getBuffer(0);
-            rs->updateDescriptorSetBuffer(defaultDescSet, 1, &vertexDataHandle, 1);
-            rs->updateDescriptorSetBuffer(defaultDescSet, 2, &vbConstantsBuffer, 1);
+            auto esmUniformBlockHandle = 
+                rs->createBufferObject(
+                    BufferObjectBinding::BufferObjectBinding_Uniform,
+                    BufferUsage::DYNAMIC,
+                    sizeof(MeshInfoUniformBlock),
+                    "esmUniformBlock Buffer");
+            frameData.esmUniformBlockHandle = esmUniformBlockHandle;
+            Handle <HwDescriptorSet> zeroDescSet = rs->createDescriptorSet(zeroLayoutHandle);
+            frameData.zeroDescSetOfFilter = zeroDescSet;
+            rs->updateDescriptorSetBuffer(zeroDescSet, 0, &frameData.indirectDrawArgBuffer, 1);
+
+            
+            rs->updateDescriptorSetBuffer(zeroDescSet, 1, &vertexDataHandle, 1);
+            rs->updateDescriptorSetBuffer(zeroDescSet, 2, &vbConstantsBuffer, 1);
             IndexData* indexData = mesh->getIndexData();
             Handle<HwBufferObject> indexDataHandle = indexData->getHandle();
-            rs->updateDescriptorSetBuffer(defaultDescSet, 4, &indexDataHandle, 1);
-            rs->updateDescriptorSetBuffer(defaultDescSet, 5, &meshConstantsBuffer, 1);
+            rs->updateDescriptorSetBuffer(zeroDescSet, 4, &indexDataHandle, 1);
+            rs->updateDescriptorSetBuffer(zeroDescSet, 5, &meshConstantsBuffer, 1);
 
 
-            Handle <HwDescriptorSet> frameDescSet = rs->createDescriptorSet(frameLayoutHandle);
-            mFrameData[i].frameDescSet = frameDescSet;
-            rs->updateDescriptorSetBuffer(frameDescSet, 1, &mFrameData[frameIndex].perFrameConstantsBuffer, 1);
+            Handle <HwDescriptorSet> firstDescSet = rs->createDescriptorSet(firstLayoutHandle);
+            frameData.firstDescSetOfFilter = firstDescSet;
+            rs->updateDescriptorSetBuffer(firstDescSet, 1, &frameData.perFrameConstantsBuffer, 1);
 
-            rs->updateDescriptorSetBuffer(frameDescSet, 3, &filterDispatchGroupDataBuffer, 1);
+            rs->updateDescriptorSetBuffer(firstDescSet, 3, &frameData.filterDispatchGroupDataBuffer, 1);
 
-            rs->updateDescriptorSetBuffer(frameDescSet, 6, &mFrameData[frameIndex].indirectDataBuffer, 1);
+            rs->updateDescriptorSetBuffer(firstDescSet, 6, &frameData.indirectDataBuffer, 1);
 
-            rs->updateDescriptorSetBuffer(frameDescSet, 8, &filteredIndexBuffer[0], NUM_CULLING_VIEWPORTS);
+            rs->updateDescriptorSetBuffer(firstDescSet, 8, &filteredIndexBuffer[0], NUM_CULLING_VIEWPORTS);
         }
-
-        ComputePassCallback callback = [&, dispatchGroupCount](ComputePassInfo& info) {
+        ComputePassCallback callback = [=, this](ComputePassInfo& info) {
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+            auto* frameData = this->getFrameData(frameIndex);
             info.programHandle = filterTrianglesProgramHandle;
             info.computeGroup = Ogre::Vector3i(dispatchGroupCount, 1, 1);
             info.descSets.clear();
-            info.descSets.push_back(mFrameData[frameIndex].defaultDescSet);
-            info.descSets.push_back(mFrameData[frameIndex].frameDescSet);
+            info.descSets.push_back(frameData->zeroDescSetOfFilter);
+            info.descSets.push_back(frameData->firstDescSetOfFilter);
             auto* rs = Ogre::Root::getSingleton().getRenderSystem();
             rs->beginComputePass(info);
             rs->endComputePass();
@@ -510,47 +657,225 @@ void ShadowMap::base2()
         mPassList.push_back(filterTrianglesPass);
     }
 
+    backend::SamplerParams samplerParams;
 
+    samplerParams.filterMag = backend::SamplerFilterType::NEAREST;
+    samplerParams.filterMin = backend::SamplerFilterType::NEAREST;
+    samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
+    samplerParams.compareMode = backend::SamplerCompareMode::NONE;
+    samplerParams.compareFunc = backend::SamplerCompareFunc::LE;
+    samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    samplerParams.anisotropyLog2 = 0;
+    samplerParams.padding0 = 0;
+    samplerParams.padding1 = 0;
+    samplerParams.padding2 = 0;
+    auto nearSamplerHandle = rs->createTextureSampler(samplerParams);
+
+    auto shadowSize = 2048;
+
+    esmShadowMap = mRenderSystem->createRenderTarget(
+        "shadow", shadowSize, shadowSize, Ogre::PF_DEPTH32_STENCIL8,
+        Ogre::TextureUsage::DEPTH_ATTACHMENT);
 
     //draw esm shadow map
+    {
+        ShaderInfo shaderInfo;
+        shaderInfo.shaderName = "meshDepth";
+        auto meshDepthHandle = rs->createShaderProgram(shaderInfo, vertexDecl);
+        shaderInfo.shaderName = "meshDepthAlpha";
+        auto meshDepthAlphaHandle = rs->createShaderProgram(shaderInfo, vertexDecl);
 
+        backend::RasterState rasterState{};
+        rasterState.colorWrite = false;
+        rasterState.depthWrite = true;
+        rasterState.depthFunc = SamplerCompareFunc::LE;
+        auto meshDepthPipelineHandle = rs->createPipeline(rasterState, meshDepthHandle);
+
+        auto meshDepthAlphaPipelineHandle = rs->createPipeline(rasterState, meshDepthAlphaHandle);
+
+  
+        auto vertexHandle = vertexData->getBuffer(0);
+
+        auto zeroLayout = rs->getDescriptorSetLayout(meshDepthHandle, 0);
+        auto thirdLayout = rs->getDescriptorSetLayout(meshDepthHandle, 3);
+
+        auto zeroLayoutAlpha = rs->getDescriptorSetLayout(meshDepthAlphaHandle, 0);
+        auto firstLayoutAlpha = rs->getDescriptorSetLayout(meshDepthAlphaHandle, 1);
+        auto thirdLayoutAlpha = rs->getDescriptorSetLayout(meshDepthAlphaHandle, 3);
+
+        auto subMeshCount = mesh->getSubMeshCount();
+
+        std::vector<OgreTexture*> diffuseList;
+        diffuseList.reserve(subMeshCount);
+        for (auto i = 0; i < subMeshCount; i++)
+        {
+            auto* subMesh = mesh->getSubMesh(i);
+            auto& mat = subMesh->getMaterial();
+            mat->updateVertexDeclaration(vertexDecl);
+            mat->load(nullptr);
+            auto& unitList = mat->getAllTexureUnit();
+            auto* diffuseTex = unitList[0]->getRaw();
+            diffuseList.push_back(diffuseTex);
+        }
+
+        for (auto i = 0; i < numFrame; i++)
+        {
+            FrameData& frameData = mFrameData[i];
+
+            auto zeroDescrSetOfShadowPass =
+                rs->createDescriptorSet(zeroLayout);
+            rs->updateDescriptorSetBuffer(zeroDescrSetOfShadowPass, 4, &vertexHandle, 1);
+
+            auto thirdDescrSetOfShadowPass =
+                rs->createDescriptorSet(thirdLayout);
+            rs->updateDescriptorSetBuffer(thirdDescrSetOfShadowPass, 0,
+                &frameData.esmUniformBlockHandle, 1);
+            frameData.zeroDescrSetOfShadowPass = zeroDescrSetOfShadowPass;
+            frameData.thirdDescrSetOfShadowPass = thirdDescrSetOfShadowPass;
+
+            //alpha
+
+            auto zeroDescrSetOfShadowPassAlpha =
+                rs->createDescriptorSet(zeroLayoutAlpha);
+            rs->updateDescriptorSetBuffer(zeroDescrSetOfShadowPassAlpha, 4, &vertexHandle, 1);
+
+            auto firstDescrSetOfShadowPassAlpha =
+                rs->createDescriptorSet(firstLayoutAlpha);
+
+            rs->updateDescriptorSetBuffer(firstDescrSetOfShadowPassAlpha, 2,
+                &frameData.indirectDataBuffer, 1);
+
+            auto thirdDescrSetOfShadowPassAlpha =
+                rs->createDescriptorSet(thirdLayoutAlpha);
+
+            rs->updateDescriptorSetBuffer(thirdDescrSetOfShadowPassAlpha, 0,
+                &frameData.esmUniformBlockHandle, 1);
+            rs->updateDescriptorSetSampler(zeroDescrSetOfShadowPassAlpha, 5, nearSamplerHandle);
+            rs->updateDescriptorSetTexture(zeroDescrSetOfShadowPassAlpha, 6,
+                diffuseList.data(), diffuseList.size());
+
+            frameData.zeroDescrSetOfShadowPassAlpha = zeroDescrSetOfShadowPassAlpha;
+            frameData.firstDescrSetOfShadowPassAlpha = firstDescrSetOfShadowPassAlpha;
+            frameData.thirdDescrSetOfShadowPassAlpha = thirdDescrSetOfShadowPassAlpha;
+        }
+
+        RenderPassCallback shadowCallback = [=, this](RenderPassInfo& info) {
+            auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+            auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+            info.renderTargetCount = 0;
+            info.depthTarget.depthStencil = esmShadowMap;
+            info.depthTarget.clearValue = { 1.0f, 0.0f };
+            rs->beginRenderPass(info);
+            rs->bindIndexBuffer(filteredIndexBuffer[VIEW_SHADOW], 4);
+            FrameData* frameData = this->getFrameData(frameIndex);
+            Handle<HwDescriptorSet> tmp[4];
+            tmp[0] = frameData->zeroDescrSetOfShadowPass;
+            tmp[1] = Handle<HwDescriptorSet>();
+            tmp[2] = Handle<HwDescriptorSet>();
+            tmp[3] = frameData->thirdDescrSetOfShadowPass;
+            rs->bindPipeline(meshDepthHandle, meshDepthPipelineHandle, &tmp[0], 4);
+
+            uint64_t indirectBufferByteOffset =
+                GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_SHADOW, 0, 0) * sizeof(uint32_t);
+
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+
+            tmp[0] = frameData->zeroDescrSetOfShadowPassAlpha;
+            tmp[1] = frameData->firstDescrSetOfShadowPassAlpha;
+            tmp[2] = Handle<HwDescriptorSet>();
+            tmp[3] = frameData->thirdDescrSetOfShadowPassAlpha;
+            rs->bindPipeline(meshDepthAlphaHandle, meshDepthAlphaPipelineHandle, &tmp[0], 4);
+            
+
+            indirectBufferByteOffset = 
+                GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_SHADOW, 1, 0) * sizeof(uint32_t);
+
+            //rs->drawIndexedIndirect(indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+
+            rs->endRenderPass();
+            };
+        auto shadowPass = createUserDefineRenderPass(shadowCallback);
+        //mPassList.push_back(shadowPass);
+    }
     //visibility buffer pass
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "visibilityBuffer";
-        shaderInfo.uboVertexMask = 1;
-        shaderInfo.uboFragMask = 0;
-        shaderInfo.samplerFragMask = 0;
-        auto programHandle = rs->createShaderProgram(shaderInfo, nullptr);
+        auto vbBufferPassHandle = rs->createShaderProgram(shaderInfo, nullptr);
+        shaderInfo.shaderName = "visibilityBufferAlpha";
+        auto vbBufferPassAlphaHandle = rs->createShaderProgram(shaderInfo, nullptr);
         backend::RasterState rasterState{};
         
-        auto pipelineHandle = rs->createPipeline(rasterState, programHandle);
+        auto vbBufferPasssPipelineHandle = rs->createPipeline(rasterState, vbBufferPassHandle);
+
+        auto vbBufferPasssAlphaPipelineHandle = rs->createPipeline(rasterState, vbBufferPassHandle);
         auto width = mRenderWindow->getWidth();
         auto height = mRenderWindow->getHeight();
 
-        auto visibilityBufferTarget = rs->createRenderTarget("visibilityBufferTarget",
+        visibilityBufferTarget = rs->createRenderTarget("visibilityBufferTarget",
             width, height, Ogre::PixelFormat::PF_A8R8G8B8, Ogre::TextureUsage::COLOR_ATTACHMENT);
 
-        auto winDepth = mRenderWindow->getDepthTarget();
 
-        VertexData* vertexData = mesh->getVertexData();
-        Handle<HwBufferObject> vertexDataHandle = vertexData->getBuffer(0);
-        auto layout = rs->getDescriptorSetLayout(programHandle, 0);
-        auto drawLayout = rs->getDescriptorSetLayout(programHandle, 3);
+
+        auto zeroLayout = rs->getDescriptorSetLayout(vbBufferPassHandle, 0);
+        auto thirdLayout = rs->getDescriptorSetLayout(vbBufferPassHandle, 3);
+
+
+        auto zeroLayoutAlpha = rs->getDescriptorSetLayout(vbBufferPassAlphaHandle, 0);
+        auto firstLayoutAlpha = rs->getDescriptorSetLayout(vbBufferPassAlphaHandle, 1);
+        auto thirdLayoutAlpha = rs->getDescriptorSetLayout(vbBufferPassAlphaHandle, 3);
+
+        auto subMeshCount = mesh->getSubMeshCount();
+
+        std::vector<OgreTexture*> diffuseList;
+        diffuseList.reserve(subMeshCount);
+        for (auto i = 0; i < subMeshCount; i++)
+        {
+            auto* subMesh = mesh->getSubMesh(i);
+            auto& mat = subMesh->getMaterial();
+
+            auto& unitList = mat->getAllTexureUnit();
+            auto* diffuseTex = unitList[0]->getRaw();
+            diffuseList.push_back(diffuseTex);
+        }
 
         for (auto i = 0; i < numFrame; i++)
         {
-            mFrameData[i].defaultDescriptorSetOfVisibilityPass = rs->createDescriptorSet(layout);
-            rs->updateDescriptorSetBuffer(mFrameData[i].defaultDescriptorSetOfVisibilityPass, 3, &vertexDataHandle, 1);
+            FrameData& frameData = mFrameData[i];
+            frameData.zeroDescrSetOfVbPass = rs->createDescriptorSet(zeroLayout);
+            rs->updateDescriptorSetBuffer(frameData.zeroDescrSetOfVbPass, 3, &vertexDataHandle, 1);
 
 
-            mFrameData[i].drawDescriptorSetOfVisibilityPass = rs->createDescriptorSet(drawLayout);
+            mFrameData[i].thirdDescrSetOfVbPass = rs->createDescriptorSet(thirdLayout);
             rs->updateDescriptorSetBuffer(
-                mFrameData[i].drawDescriptorSetOfVisibilityPass, 
+                mFrameData[i].thirdDescrSetOfVbPass,
                 0, 
                 &mFrameData[i].objectUniformBlockHandle, 1);
+
+            auto zeroDescrSetOfVbPassAlpha  = rs->createDescriptorSet(zeroLayoutAlpha);
+            auto firstDescrSetOfVbPassAlpha = rs->createDescriptorSet(firstLayoutAlpha);
+            auto thirdDescrSetOfVbPassAlpha = rs->createDescriptorSet(thirdLayoutAlpha);
+            frameData.zeroDescrSetOfVbPassAlpha = zeroDescrSetOfVbPassAlpha;
+            frameData.firstDescrSetOfVbPassAlpha = firstDescrSetOfVbPassAlpha;
+            frameData.thirdDescrSetOfVbPassAlpha = thirdDescrSetOfVbPassAlpha;
+
+            rs->updateDescriptorSetBuffer(zeroDescrSetOfVbPassAlpha, 3, &vertexDataHandle, 1);
+            rs->updateDescriptorSetBuffer(firstDescrSetOfVbPassAlpha, 2,
+                &frameData.indirectDataBuffer, 1);
+            rs->updateDescriptorSetBuffer(thirdDescrSetOfVbPassAlpha,
+                0, &frameData.objectUniformBlockHandle, 1);
+
+            rs->updateDescriptorSetSampler(zeroDescrSetOfVbPassAlpha, 5, nearSamplerHandle);
+
+            
+
+            rs->updateDescriptorSetTexture(zeroDescrSetOfVbPassAlpha, 6,
+                diffuseList.data(), subMeshCount);
         }
         
+        auto winDepth = mRenderWindow->getDepthTarget();
         RenderPassCallback visibilityBufferCallback = [=, this](RenderPassInfo& info) {
             auto* rs = Ogre::Root::getSingleton().getRenderSystem();
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
@@ -562,24 +887,201 @@ void ShadowMap::base2()
             rs->beginRenderPass(info);
 
             FrameData* frameData = this->getFrameData(frameIndex);
-            Handle<HwDescriptorSet> tmp[4];
-            tmp[0] = frameData->defaultDescriptorSetOfVisibilityPass;
-            tmp[1] = Handle<HwDescriptorSet>();
-            tmp[2] = Handle<HwDescriptorSet>();
-            tmp[3] = frameData->drawDescriptorSetOfVisibilityPass;
-            rs->bindPipeline(programHandle, pipelineHandle, &tmp[0], 4);
 
-            uint64_t indirectBufferByteOffset = 0;
-            rs->bindIndexBuffer(filteredIndexBuffer[0], 4);
-            rs->drawIndexedIndirect(indirectDrawArgBuffer, 0, 1, sizeof(uint32_t));
+            auto nullSet = Handle<HwDescriptorSet>();
+            Handle<HwDescriptorSet> tmp[4];
+            tmp[0] = frameData->zeroDescrSetOfVbPass;
+            tmp[1] = nullSet;
+            tmp[2] = nullSet;
+            tmp[3] = frameData->thirdDescrSetOfVbPass;
+            rs->bindPipeline(vbBufferPassHandle, vbBufferPasssPipelineHandle, &tmp[0], 4);
+            uint64_t indirectBufferByteOffset =
+                GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 0, 0) * sizeof(uint32_t);
+            
+            rs->bindIndexBuffer(filteredIndexBuffer[VIEW_CAMERA], 4);
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+
+            tmp[0] = frameData->zeroDescrSetOfVbPassAlpha;
+            tmp[1] = frameData->firstDescrSetOfVbPassAlpha;
+            tmp[2] = nullSet;
+            tmp[3] = frameData->thirdDescrSetOfVbPassAlpha;
+            rs->bindPipeline(vbBufferPassAlphaHandle, vbBufferPasssAlphaPipelineHandle, &tmp[0], 4);
+            rs->bindIndexBuffer(filteredIndexBuffer[VIEW_CAMERA], 4);
+            indirectBufferByteOffset =
+                GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 1, 0) * sizeof(uint32_t);
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset,
+                1, 32);
+            
             rs->endRenderPass();
             };
-        auto visibilityBufferPass = createUserDefineRenderPass(visibilityBufferCallback);
-        mPassList.push_back(visibilityBufferPass);
+        auto vbPass = createUserDefineRenderPass(visibilityBufferCallback);
+        //mPassList.push_back(vbPass);
     }
     
 
     //visibility shade pass
+    {
+        ShaderInfo shaderInfo;
+        shaderInfo.shaderName = "visibilityBufferShade";
+        auto programHandle = rs->createShaderProgram(shaderInfo, nullptr);
 
+        auto descriptorSetLayout0 = rs->getDescriptorSetLayout(programHandle, 0);
+        auto descriptorSetLayout1 = rs->getDescriptorSetLayout(programHandle, 1);
+
+        backend::SamplerParams samplerParams;
+
+        samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
+        samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
+        samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
+        samplerParams.wrapS = backend::SamplerWrapMode::REPEAT;
+        samplerParams.wrapT = backend::SamplerWrapMode::REPEAT;
+        samplerParams.wrapR = backend::SamplerWrapMode::REPEAT;
+        samplerParams.compareMode = backend::SamplerCompareMode::NONE;
+        samplerParams.compareFunc = backend::SamplerCompareFunc::N;
+        samplerParams.anisotropyLog2 = 0;
+        samplerParams.padding0 = 0;
+        samplerParams.padding1 = 0;
+        samplerParams.padding2 = 0;
+        auto textureSamplerHandle = rs->createTextureSampler(samplerParams);
+
+        samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
+        samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
+        samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
+        samplerParams.compareMode = backend::SamplerCompareMode::NONE;
+        samplerParams.compareFunc = backend::SamplerCompareFunc::LE;
+        samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+
+        auto clampMiplessLinearSamplerHandle = rs->createTextureSampler(samplerParams);
+        samplerParams.filterMag = backend::SamplerFilterType::NEAREST;
+        samplerParams.filterMin = backend::SamplerFilterType::NEAREST;
+        samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
+        samplerParams.compareMode = backend::SamplerCompareMode::NONE;
+        samplerParams.compareFunc = backend::SamplerCompareFunc::LE;
+        samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+
+        auto clampMiplessNearSamplerHandle = rs->createTextureSampler(samplerParams);
+        samplerParams.filterMag = backend::SamplerFilterType::NEAREST;
+        samplerParams.filterMin = backend::SamplerFilterType::NEAREST;
+        samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
+        samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.compareMode = backend::SamplerCompareMode::NONE;
+        auto clampBorderNearSamplerHandle = rs->createTextureSampler(samplerParams);
+
+        samplerParams.filterMag = backend::SamplerFilterType::NEAREST;
+        samplerParams.filterMin = backend::SamplerFilterType::NEAREST;
+        samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
+        samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
+        samplerParams.compareFunc = backend::SamplerCompareFunc::LE;
+        auto shadowCmpSamplerHandle = rs->createTextureSampler(samplerParams);
+
+        renderSettingsUniformHandle = rs->createBufferObject(
+            BufferObjectBinding::BufferObjectBinding_Uniform,
+            BufferUsage::STATIC,
+            sizeof(renderSetting)
+        );
+
+        rs->updateBufferObject(renderSettingsUniformHandle,
+            (const char*)&renderSetting, sizeof(renderSetting));
+
+        esmInputConstantsHandle = rs->createBufferObject(
+            BufferObjectBinding::BufferObjectBinding_Uniform,
+            BufferUsage::STATIC,
+            sizeof(ESMInputConstants)
+        );
+
+        rs->updateBufferObject(esmInputConstantsHandle,
+            (const char*)&esmConstants, sizeof(esmConstants));
+        sssEnabledHandle = rs->createBufferObject(
+            BufferObjectBinding::BufferObjectBinding_Uniform,
+            BufferUsage::STATIC,
+            sizeof(uint32_t)
+        );
+        rs->updateBufferObject(sssEnabledHandle, (const char*)& sssEnabled, sizeof(sssEnabled));
+        for (auto frame = 0; frame < numFrame; frame++)
+        {
+            FrameData& frameData = mFrameData[frame];
+
+            frameData.cameraUniformHandle = rs->createBufferObject(
+                BufferObjectBinding::BufferObjectBinding_Uniform,
+                BufferUsage::STATIC,
+                sizeof(cameraUniform)
+            );
+            frameData.ligthUniformHandle = rs->createBufferObject(
+                BufferObjectBinding::BufferObjectBinding_Uniform,
+                BufferUsage::STATIC,
+                sizeof(lightUniformBlock)
+            );
+            frameData.zeroDescrSetOfVbShadePass =
+                rs->createDescriptorSet(descriptorSetLayout0);
+            frameData.firstDescrSetOfVbShadePass =
+                rs->createDescriptorSet(descriptorSetLayout1);
+            auto& zeroSet = frameData.zeroDescrSetOfVbShadePass;
+            auto& firstSet = frameData.firstDescrSetOfVbShadePass;
+
+            rs->updateDescriptorSetBuffer(zeroSet, 6, &meshConstantsBuffer, 1);
+            rs->updateDescriptorSetSampler(zeroSet, 7, textureSamplerHandle);
+            rs->updateDescriptorSetSampler(zeroSet, 8, clampMiplessLinearSamplerHandle);
+            rs->updateDescriptorSetSampler(zeroSet, 9, clampMiplessNearSamplerHandle);
+            rs->updateDescriptorSetSampler(zeroSet, 10, clampBorderNearSamplerHandle);
+            rs->updateDescriptorSetSampler(zeroSet, 11, shadowCmpSamplerHandle);
+
+            Ogre::OgreTexture* tex = visibilityBufferTarget->getTarget();
+            rs->updateDescriptorSetTexture(zeroSet, 18, &tex, 1);
+
+            auto subMeshCount = mesh->getSubMeshCount();
+
+            std::vector<OgreTexture*> diffuseList;
+            std::vector<OgreTexture*> specularList;
+            std::vector<OgreTexture*> normalList;
+            diffuseList.reserve(subMeshCount);
+            specularList.reserve(subMeshCount);
+            normalList.reserve(subMeshCount);
+            for (auto i = 0; i < subMeshCount; i++)
+            {
+                auto* subMesh = mesh->getSubMesh(i);
+                auto& mat = subMesh->getMaterial();
+
+                auto& unitList = mat->getAllTexureUnit();
+                auto* diffuseTex = unitList[0]->getRaw();
+                auto* specularTex = unitList[1]->getRaw();
+                auto* normalTex = unitList[2]->getRaw();
+                diffuseList.push_back(diffuseTex);
+                specularList.push_back(specularTex);
+                normalList.push_back(normalTex);
+            }
+            OgreTexture* esmShadow = esmShadowMap->getTarget();
+            rs->updateDescriptorSetTexture(zeroSet, 25, &esmShadow, 1);
+            rs->updateDescriptorSetTexture(zeroSet, 25, diffuseList.data(), diffuseList.size());
+            rs->updateDescriptorSetTexture(zeroSet, 26, specularList.data(), specularList.size());
+            rs->updateDescriptorSetTexture(zeroSet, 27, normalList.data(), normalList.size());
+
+            VertexData*  vertexData = mesh->getVertexData();
+            auto vertexHandle = vertexData->getBuffer(0);
+            rs->updateDescriptorSetBuffer(zeroSet, 35, &vertexHandle, 1);
+
+            rs->updateDescriptorSetBuffer(zeroSet, 2, &vbConstantsBuffer, 1);
+
+            rs->updateDescriptorSetBuffer(firstSet, 4, &filteredIndexBuffer[frame], 1);
+            rs->updateDescriptorSetBuffer(firstSet, 5, &frameData.indirectDataBuffer, 1);
+            rs->updateDescriptorSetBuffer(firstSet, 13, &frameData.objectUniformBlockHandle, 1);
+            rs->updateDescriptorSetBuffer(firstSet, 14, &frameData.cameraUniformHandle, 1);
+            rs->updateDescriptorSetBuffer(firstSet, 15, &frameData.ligthUniformHandle, 1);
+            rs->updateDescriptorSetBuffer(firstSet, 16, &renderSettingsUniformHandle, 1);
+
+            rs->updateDescriptorSetBuffer(firstSet, 17, &esmInputConstantsHandle, 1);
+            rs->updateDescriptorSetBuffer(firstSet, 19, &sssEnabledHandle, 1);
+        }
+
+
+    }
     
 }

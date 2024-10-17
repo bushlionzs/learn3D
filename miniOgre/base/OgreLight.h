@@ -34,6 +34,7 @@ namespace Ogre {
         void setLightType(LightType type, uint32_t lightNumber);
         LightType getLightType();
         uint32_t getLightNumber();
+        Ogre::Vector3 getLightUp();
         Ogre::Vector3 getLightDirection();
 
     public:

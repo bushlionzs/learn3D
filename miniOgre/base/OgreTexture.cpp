@@ -29,6 +29,7 @@ namespace Ogre {
 		_samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
 		_samplerParams.compareFunc = filament::backend::SamplerCompareFunc::N;
 		_samplerParams.anisotropyLog2 = 0;
+		_samplerParams.padding0 = 0;
 		_samplerParams.padding1 = 0;
 		_samplerParams.padding2 = 0;
 	}

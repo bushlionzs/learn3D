@@ -32,7 +32,7 @@ VulkanHardwareBuffer::VulkanHardwareBuffer(
     mVertexSize = vertexSize;
     mNumVerts = numVerts;
 
-    if (VulkanHelper::getSingleton().getVulkanSettings().rayTraceing)
+    if (VulkanHelper::getSingleton().getVulkanSettings().mRayPipelineSupported)
     {
         flags |= VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | 
                  VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | 

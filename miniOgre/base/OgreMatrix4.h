@@ -440,6 +440,11 @@ namespace Ogre
         {
           return Vector3(m[0][3], m[1][3], m[2][3]);
         }
+
+        inline Vector3 getUpVec() const
+        {
+            return Vector3(m[1][0], m[1][1], m[1][2]);
+        }
         
 
         /** Builds a translation matrix

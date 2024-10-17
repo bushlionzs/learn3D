@@ -193,7 +193,12 @@ namespace Ogre {
                     continue;
                 OgreTexture* tex = mTextureUnits[i]->getRaw();
 
-                rs->updateDescriptorSetTexture(resourceInfo->samplerSet, index, tex);
+                rs->updateDescriptorSetTexture(resourceInfo->samplerSet, index, &tex,  1);
+
+                if (index == 0)
+                {
+                    rs->updateDescriptorSetSampler(resourceInfo->samplerSet, 5, tex);
+                }
                 index++;
             }
 
@@ -204,7 +209,7 @@ namespace Ogre {
                     continue;
                 OgreTexture* tex = mTextureUnits[i]->getRaw();
 
-                rs->updateDescriptorSetTexture(resourceInfo->samplerSet, index, tex);
+                rs->updateDescriptorSetTexture(resourceInfo->samplerSet, index, &tex, 1);
             }
         }
 

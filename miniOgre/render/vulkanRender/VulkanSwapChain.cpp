@@ -16,7 +16,7 @@
 #include <OgreHeader.h>
 #include "VulkanSwapChain.h"
 #include "VulkanTexture.h"
-
+#include "VulkanMappings.h"
 #include <utils/FixedCapacityVector.h>
 #include <utils/Panic.h>
 
@@ -64,12 +64,12 @@ void VulkanSwapChain::update() {
     texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
     texProperty._width = bundle.extent.width;
     texProperty._height = bundle.extent.height;
-    texProperty._tex_format = Ogre::PF_A8R8G8B8_SRGB;
+    texProperty._tex_format = VulkanMappings::getPixelFormat(bundle.colorFormat);
     for (auto const color: bundle.colors) {
         mColors.push_back(std::make_unique<VulkanTexture>("", mPlatform, mCommands, color, &texProperty));
     }
     texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
-    texProperty._tex_format = Ogre::PF_DEPTH32_STENCIL8;
+    texProperty._tex_format = VulkanMappings::getPixelFormat(bundle.depthFormat);
     mDepth = std::make_unique<VulkanTexture>("", mPlatform, mCommands, bundle.depth, &texProperty);
 
     mExtent = bundle.extent;

@@ -430,6 +430,15 @@ namespace Ogre {
         READY,    // resource is loaded completely.
     };
 
+    
+
+    typedef enum QueueType
+    {
+        QUEUE_TYPE_GRAPHICS = 0,
+        QUEUE_TYPE_TRANSFER,
+        QUEUE_TYPE_COMPUTE,
+        MAX_QUEUE_TYPE
+    } QueueType;
     /** Flags for the Instance Manager when calculating ideal number of instances per batch */
     enum InstanceManagerFlags
     {

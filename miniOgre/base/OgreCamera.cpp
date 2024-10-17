@@ -96,6 +96,16 @@ namespace Ogre {
 		return aa;
 	}
 
+	float Camera::getNear()
+	{
+		return mCameraImpl->getNear();
+	}
+
+	float Camera::getFar()
+	{
+		return mCameraImpl->getFar();
+	}
+
 	Real Camera::getAspectRatio()
 	{
 		return 0.0f;

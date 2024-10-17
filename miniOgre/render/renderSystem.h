@@ -188,7 +188,24 @@ public:
     virtual void updateDescriptorSetTexture(
         Handle<HwDescriptorSet> dsh,
         backend::descriptor_binding_t binding,
-        OgreTexture* tex);
+        OgreTexture** tex,
+        uint32_t count,
+        bool onlyImage = true);
+
+    virtual void updateDescriptorSetSampler(
+        Handle<HwDescriptorSet> dsh,
+        backend::descriptor_binding_t binding,
+        Handle<HwSampler> samplerHandle) {}
+
+    virtual void updateDescriptorSetSampler(
+        Handle<HwDescriptorSet> dsh,
+        backend::descriptor_binding_t binding,
+        OgreTexture* tex) {}
+
+    virtual void resourceBarrier(
+        uint32_t numBufferBarriers, 
+        BufferBarrier* pBufferBarriers
+    ) {}
 private:
     void renderJob(ArenaScope& arena, FrameGraphPassCallback cb);
 

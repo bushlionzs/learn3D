@@ -9,19 +9,18 @@
 
 class VulkanLayoutCache {
 public:
-    using Key = VulkanDescriptorSetLayout::Bitmask;
-    using BitmaskHashFn = utils::hash::MurmurHashFn<VulkanDescriptorSetLayout::Bitmask>;
-    struct BitmaskEqual {
-        bool operator()(VulkanDescriptorSetLayout::Bitmask const& k1, 
-            VulkanDescriptorSetLayout::Bitmask const& k2) const {
-            return k1 == k2;
+    using key = VulkanDescriptorSetLayout::VulkanLayoutKey;
+    using VulkanLayoutKeyHashFn = utils::hash::MurmurHashFn<key>;
+    struct VulkanLayoutKeyEqual {
+        bool operator()(key const& k1, key const& k2) const {
+            const uint32_t* data1 = k1.data();
+            const uint32_t* data2 = k2.data();
+            return 0 == memcmp((const void*)data1, (const void*)data2, VulkanDescriptorSetLayout::MAX_BINDINGS * sizeof(uint16_t));
         }
     };
-    // Make sure the key is 8-bytes aligned.
-    static_assert(sizeof(Key) % 8 == 0);
 
-    using LayoutMap = std::unordered_map<Key, VkDescriptorSetLayout, BitmaskHashFn,
-        BitmaskEqual>;
+    using LayoutMap = std::unordered_map<key, VkDescriptorSetLayout, VulkanLayoutKeyHashFn,
+        VulkanLayoutKeyEqual>;
 
 public:
     explicit VulkanLayoutCache(VkDevice device, filament::backend::VulkanResourceAllocator* allocator)
@@ -45,7 +44,7 @@ public:
         
     }
 
-    VkDescriptorSetLayout getLayout(DescriptorSetLayout& layout);
+    VkDescriptorSetLayout getLayout(VkDescriptorSetLayoutBinding* binding, uint32 count);
 
 private:
     VkDevice mDevice;

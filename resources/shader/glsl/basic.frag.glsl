@@ -12,12 +12,12 @@ layout (location = 4) in vec2 inTexC;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    outColor = texture(first, inTexC);
+    outColor = texture(sampler2D(first, baseSampler), inTexC);
 	if(outColor.a < 0.5f)
 	{
 	    discard;
 	}
-	
+	return;
 	if(cbPass.gUseShadow == 1)
 	{
 	    float shadow = textureProj(inShadowPosH /inShadowPosH.w, gShadowMap, vec2(0.0));

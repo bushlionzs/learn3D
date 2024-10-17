@@ -945,6 +945,19 @@ namespace Ogre
         return m * result;
     }
 
+    Matrix4 Math::makeRotateMatirx(const float radiansX, const float radiansY)
+    {
+        const float cosX = cosf(radiansX), sinX = sinf(radiansX);
+        const float cosY = cosf(radiansY), sinY = sinf(radiansY);
+
+        return Ogre::Matrix4(
+            cosY, 0, sinY, 0,
+            sinX * sinY, cosX, -sinX * cosY, 0,
+            cosX * -sinY, sinX, cosX * cosY, 0,
+            0, 0, 0, 1
+            );
+    }
+
     Matrix4 Math::makeScaleMatrix(const Vector3& scale)
     {
         Matrix4 m = Ogre::Matrix4::IDENTITY;

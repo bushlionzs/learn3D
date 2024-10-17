@@ -11,21 +11,17 @@ static void setTextures(Mesh* mesh,
 {
     SubMesh* subMesh = mesh->getSubMesh(index);
 
-
-    //pScene->materialFlags[index] = matFlags;
     Ogre::Material* mat = subMesh->getMaterial().get();
     mat->setMaterialFlags(matFlags);
     std::string albedoName(albedo);
     albedoName += ".dds";
     mat->addTexture(albedoName);
-    //// default textures
-    //pScene->textures[index] = (char*)tf_calloc(strlen(albedo) + 5, sizeof(char));
-    //pScene->specularMaps[index] = (char*)tf_calloc(strlen(specular) + 5, sizeof(char));
-    //pScene->normalMaps[index] = (char*)tf_calloc(strlen(normal) + 5, sizeof(char));
-
-    //snprintf(pScene->textures[index], strlen(albedo) + 5, "%s.tex", albedo);
-    //snprintf(pScene->specularMaps[index], strlen(specular) + 5, "%s.tex", specular);
-    //snprintf(pScene->normalMaps[index], strlen(normal) + 5, "%s.tex", normal);
+    std::string specularName(specular);
+    specularName += ".dds";
+    mat->addTexture(specularName);
+    std::string normalName(normal);
+    normalName += ".dds";
+    mat->addTexture(normalName);
 }
 
 #define DEFAULT_ALBEDO           "Default"

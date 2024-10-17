@@ -260,7 +260,9 @@ void RenderSystem::updateDescriptorSetBuffer(
 void RenderSystem::updateDescriptorSetTexture(
     Handle<HwDescriptorSet> dsh,
     backend::descriptor_binding_t binding,
-    OgreTexture* tex)
+    OgreTexture** tex,
+    uint32_t count,
+    bool onlyImage)
 {
 
 }

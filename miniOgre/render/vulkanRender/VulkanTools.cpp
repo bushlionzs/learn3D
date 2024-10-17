@@ -587,7 +587,7 @@ namespace vks
 			for (int32_t i = 0; i < uniforms.size(); i++)
 			{
 				auto& input = uniforms[i];
-				std::string name = glsl.get_name(input.id);
+				const std::string& name = glsl.get_name(input.id);
 
 				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
 				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
@@ -609,7 +609,7 @@ namespace vks
 			for (int32_t i = 0; i < storage_buffers.size(); i++)
 			{
 				auto& input = storage_buffers[i];
-				std::string name = glsl.get_name(input.id);
+				const std::string& name = glsl.get_name(input.id);
 
 				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
 				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
@@ -630,12 +630,37 @@ namespace vks
 				result[set].push_back(layout);
 			}
 
-			auto sampled_images = glsl.get_shader_resources().sampled_images;
+			auto separate_samplers = glsl.get_shader_resources().separate_samplers;
 
-			for (int32_t i = 0; i < sampled_images.size(); i++)
+			for (int32_t i = 0; i < separate_samplers.size(); i++)
 			{
-				auto& input = sampled_images[i];
-				std::string name = glsl.get_name(input.id);
+				auto& input = separate_samplers[i];
+				const std::string& name = glsl.get_name(input.id);
+
+				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
+				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
+
+				spirv_cross::SPIRType type = glsl.get_type(input.type_id);
+
+				if (type.array.size())
+					layout.descriptorCount = type.array[0];
+				else
+					layout.descriptorCount = 1;
+
+				layout.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+
+				layout.binding = binding;
+				layout.stageFlags = stageFlags;
+
+				result[set].push_back(layout);
+			}
+
+			auto separate_images = glsl.get_shader_resources().separate_images;
+
+			for (int32_t i = 0; i < separate_images.size(); i++)
+			{
+				auto& input = separate_images[i];
+				const std::string& name = glsl.get_name(input.id);
 
 				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
 				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
@@ -651,9 +676,115 @@ namespace vks
 
 				layout.binding = binding;
 				layout.stageFlags = stageFlags;
+
+				result[set].push_back(layout);
 			}
+
+			auto sampled_images = glsl.get_shader_resources().sampled_images;
+
+			for (int32_t i = 0; i < sampled_images.size(); i++)
+			{
+				auto& input = sampled_images[i];
+				const std::string& name = glsl.get_name(input.id);
+
+				auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
+				auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
+
+				spirv_cross::SPIRType type = glsl.get_type(input.type_id);
+
+				if (type.array.size())
+					layout.descriptorCount = type.array[0];
+				else
+					layout.descriptorCount = 1;
+
+				layout.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+
+				layout.binding = binding;
+				layout.stageFlags = stageFlags;
+
+				result[set].push_back(layout);
+			}
+
 			return result;
+		}
+
+		VkPipelineStageFlags util_determine_pipeline_stage_flags(
+			VulkanSettings* settings,
+			VkAccessFlags accessFlags,
+			QueueType queueType)
+		{
+			VkPipelineStageFlags flags = 0;
+
+			switch (queueType)
+			{
+			case QUEUE_TYPE_GRAPHICS:
+			{
+				if ((accessFlags & (VK_ACCESS_INDEX_READ_BIT | VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT)) != 0)
+					flags |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+
+				if ((accessFlags & (VK_ACCESS_UNIFORM_READ_BIT | VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT)) != 0)
+				{
+					flags |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+					flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+					if (settings->mGeometryShaderSupported)
+					{
+						flags |= VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT;
+					}
+					if (settings->mTessellationSupported)
+					{
+						flags |= VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT;
+						flags |= VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT;
+					}
+					flags |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+
+					if (settings->mRayPipelineSupported)
+					{
+						flags |= VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR;
+					}
+				}
+
+				if ((accessFlags & VK_ACCESS_INPUT_ATTACHMENT_READ_BIT) != 0)
+					flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+
+				if ((accessFlags & (VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT)) != 0)
+					flags |= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+				if ((accessFlags & (VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT)) != 0)
+					flags |= VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+
+				break;
+			}
+			case QUEUE_TYPE_COMPUTE:
+			{
+				if ((accessFlags & (VK_ACCESS_INDEX_READ_BIT | VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT)) != 0 ||
+					(accessFlags & VK_ACCESS_INPUT_ATTACHMENT_READ_BIT) != 0 ||
+					(accessFlags & (VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT)) != 0 ||
+					(accessFlags & (VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT)) != 0)
+					return VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+
+				if ((accessFlags & (VK_ACCESS_UNIFORM_READ_BIT | VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT)) != 0)
+					flags |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+
+				break;
+			}
+			}
+
+			// Compatible with both compute and graphics queues
+			if ((accessFlags & VK_ACCESS_INDIRECT_COMMAND_READ_BIT) != 0)
+				flags |= VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
+
+			if ((accessFlags & (VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT)) != 0)
+				flags |= VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+			if ((accessFlags & (VK_ACCESS_HOST_READ_BIT | VK_ACCESS_HOST_WRITE_BIT)) != 0)
+				flags |= VK_PIPELINE_STAGE_HOST_BIT;
+
+			if (flags == 0)
+				flags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+
+			return flags;
 		}
 	}
 
+	
 }

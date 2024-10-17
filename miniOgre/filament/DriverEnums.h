@@ -226,6 +226,7 @@ enum class DescriptorType : uint8_t {
     UNIFORM_BUFFER,
     SHADER_STORAGE_BUFFER,
     SAMPLER,
+    COMBINED_IMAGE,
     INPUT_ATTACHMENT,
 };
 
@@ -1193,6 +1194,8 @@ struct RasterState {
 
             //! padding, must be 0
             bool depthClamp                             : 1;        // 32
+
+
         };
         uint32_t u = 0;
     };
