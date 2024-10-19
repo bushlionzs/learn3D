@@ -1826,10 +1826,27 @@ void VulkanRenderSystemBase::resourceBarrier(
     VkPipelineStageFlags dstStageMask = vks::tools::util_determine_pipeline_stage_flags(
         mVulkanSettings, dstAccessFlags, QUEUE_TYPE_GRAPHICS);
 
+    if (numBufferBarriers == 2) {
+        srcAccessFlags = VK_ACCESS_SHADER_WRITE_BIT;
+        dstAccessFlags = VK_ACCESS_SHADER_READ_BIT;
+        memoryBarrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+        memoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        srcStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+        dstStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+    }
+    else
+    {
+        srcAccessFlags = VK_ACCESS_SHADER_WRITE_BIT;
+        dstAccessFlags = VK_ACCESS_SHADER_READ_BIT;
+        memoryBarrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+        memoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        srcStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+        dstStageMask = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+    }
     if (srcAccessFlags || dstAccessFlags)
     {
         vkCmdPipelineBarrier(
-            mCommands->get().buffer(),
+            mCommandBuffer,
             srcStageMask, dstStageMask, 0, memoryBarrier.srcAccessMask ? 1 : 0,
             memoryBarrier.srcAccessMask ? &memoryBarrier : NULL, 0, NULL,
             0, nullptr);

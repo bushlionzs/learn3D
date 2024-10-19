@@ -24,6 +24,7 @@ namespace Ogre {
         bool isVisible(const Ogre::Sphere& bound) const;
         bool isVisible(const AxisAlignedBox& bound) const;
         bool isVisible(const Ogre::Vector3& position) const;
+        virtual void setCameraCull(bool cull) override;
 
         Ogre::SortMode getSortMode() const { return mSortMode; }
 
@@ -75,5 +76,7 @@ namespace Ogre {
         SceneManager* mCreator = nullptr;
 
         mutable bool mNeedUpdate = true;
+
+        bool mCull = true;
     };
 }

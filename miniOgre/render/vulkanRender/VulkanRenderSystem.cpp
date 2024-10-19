@@ -47,7 +47,7 @@ void VulkanRenderSystem::frameStart()
 { 
     mTriangleCount = 0;
     mBatchCount = 0;
-    mCommands->get();
+    mCommandBuffer = mCommands->get().buffer();
     bool resized = false;
     mSwapChain->acquire(resized);
 }
@@ -340,13 +340,13 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
         IndexData* indexData = r->getIndexData();
         vertexData->bind(cmdBuffer);
 
-        FrameResourceInfo* resourceInfo = mat->getFrameResourceInfo(frameIndex);
+        FrameResourceInfo* resourceInfo = r->getFrameResourceInfo(frameIndex);
         
         
         if (mCurrentRenderPassInfo.shadowPass)
         {
             VulkanDescriptorSet* ubo =
-                mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->uboShadowSet);
+                mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->zeroShadowSet);
             auto vulkanPipeShadow = vulkanPineline->getPipelineShadow();
             mPipelineCache->bindPipeline(cmdBuffer, vulkanPipeShadow);
             vkCmdBindDescriptorSets(
@@ -357,9 +357,9 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
         else
         {
             VulkanDescriptorSet* ubo =
-                mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->uboSet);
+                mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->zeroSet);
             VulkanDescriptorSet* sampler =
-                mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->samplerSet);
+                mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->firstSet);
             VkDescriptorSet ds[2] = { ubo->vkSet,  sampler->vkSet };
 
             auto vulkanPipe = vulkanPineline->getPipeline();

@@ -51,7 +51,8 @@ namespace Ogre {
         void scale(Real u, Real v);
         void animation(Real u, Real v);
 
-        PbrMaterialConstanceBuffer& getMatInfo();
+        PbrMaterialConstanceBuffer& getPbrMatInfo();
+        GeneralMaterialConstantBuffer& getMatInfo();
         void update(Real delta);
         void setFresnelR0(Ogre::Vector3& fresnelR0);
         void setRoughness(Real roughness);
@@ -125,7 +126,6 @@ namespace Ogre {
             return mProgramHandle;
         }
 
-        FrameResourceInfo* getFrameResourceInfo(uint32_t frameIndex);
     private:
         void createFrameResourceInfo();
     private:
@@ -143,14 +143,13 @@ namespace Ogre {
         PbrMaterialConstanceBuffer mPbrMatInfo;
         GeneralMaterialConstantBuffer mMatInfo;
         bool mPbr;
-        bool mHasSkinData = false;
         bool mLoad = false;
 
         Ogre::ColourBlendState mBlendState;
 
         ResourceState mState = ResourceState::ResourceState_None;
 
-        std::vector<FrameResourceInfo> mFrameResourceInfoList;
+        
         
         RasterState mRasterState;
         Handle<HwPipeline> mPipelineHandle;

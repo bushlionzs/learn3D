@@ -25,16 +25,20 @@ struct RenderPassInput
 
 using RenderPassCallback = std::function< void(RenderPassInfo& info)>;
 using ComputePassCallback = std::function< void(ComputePassInfo& info)>;
-
+using UpdatePassCallback = std::function<void(float delta)>;
 
 class PassBase
 {
 public:
 	virtual void execute(RenderSystem* rs) = 0;
+	virtual void update(float delta) {}
 };
+
 
 PassBase* createStandardRenderPass(RenderPassInput& input);
 
-PassBase* createUserDefineRenderPass(RenderPassCallback callback);
+PassBase* createUserDefineRenderPass(
+	RenderPassCallback renderCallback, 
+	UpdatePassCallback updateCallback);
 
 PassBase* createComputePass(ComputePassCallback userCallback);

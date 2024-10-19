@@ -83,6 +83,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             data,
             size,
             base_dir);
+        assert(res);
     }
 	
     auto pMesh = new Ogre::Mesh(stream->getName());
@@ -383,7 +384,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
            // sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
             std::shared_ptr<Ogre::Material> mat = std::make_shared<Ogre::Material>(tinyMat.name, true);
 
-            PbrMaterialConstanceBuffer& matInfo = mat->getMatInfo();
+            PbrMaterialConstanceBuffer& matInfo = mat->getPbrMatInfo();
             matInfo.baseColorFactor.x = tinyMat.pbrMetallicRoughness.baseColorFactor[0];
             matInfo.baseColorFactor.y = tinyMat.pbrMetallicRoughness.baseColorFactor[1];
             matInfo.baseColorFactor.z = tinyMat.pbrMetallicRoughness.baseColorFactor[2];
@@ -422,6 +423,11 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 const tinygltf::Image& normalImage = model.images[model.textures[normalIndex].source];
                 tp._pbrType = TextureTypePbr_NormalMap;
                 mat->addTexture(normalImage.uri, &tp);
+                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_NORMALMAP", "1"));
+            }
+            else
+            {
+                int kk = 0;
             }
             
 

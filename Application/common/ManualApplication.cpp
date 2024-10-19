@@ -31,6 +31,11 @@ bool ManualApplication::frameStarted(const FrameEvent& evt)
 {
 	InputManager::getSingletonPtr()->captureInput();
 	mAppInfo->update(evt.timeSinceLastFrame);
+
+	for (auto pass : mPassList)
+	{
+		pass->update(evt.timeSinceLastFrame);
+	}
 	return true;
 }
 

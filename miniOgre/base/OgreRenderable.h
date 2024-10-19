@@ -64,23 +64,15 @@ namespace Ogre {
 
         virtual const Ogre::Matrix4& getModelMatrix();
 
-        RenderableData* getRenderableData();
-
         Ogre::OperationType getPrimitiveTopology();
 
-        void prepare(VertexData* vd, IndexData* id);
-
+        void createFrameResource();
+        void updateFrameResource(uint32_t frameIndex);
+        FrameResourceInfo* getFrameResourceInfo(uint32_t frameIndex);
     protected:
         std::shared_ptr<Material> mMaterial;
-        RenderableData* mRenderableData = nullptr;
-
-        backend::BufferObjectHandle mRenderableObjectHandle;
-        backend::BufferObjectHandle mSkinnObjectHandle;
-        ObjectConstantBuffer mObjectBuffer;
         Ogre::Matrix4 mModel;
-
         uint64_t mSortValue;
-
-
+        std::vector<FrameResourceInfo> mFrameResourceInfoList;
     };
 }

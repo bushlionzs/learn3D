@@ -71,18 +71,28 @@ namespace Ogre {
 
 	bool Camera::isVisible(const Ogre::Sphere& bound) const
 	{
-		return true;
+		if (!mCull)
+			return true;
 		return mCameraImpl->isVisible(bound);
 	}
 
 	bool Camera::isVisible(const AxisAlignedBox& bound) const
 	{
+		if (!mCull)
+			return true;
 		return mCameraImpl->isVisible(bound);
 	}
 
 	bool Camera::isVisible(const Ogre::Vector3& position) const
 	{
+		if (!mCull)
+			return true;
 		return mCameraImpl->isVisible(position);
+	}
+
+	void Camera::setCameraCull(bool cull)
+	{
+		mCull = cull;
 	}
 
 	bool Camera::getAutoAspectRatio(void) const

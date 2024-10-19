@@ -142,7 +142,7 @@ void Dx12RenderableData::updateData(Dx12Pass* pass, ICamera* cam)
 		mObjectConstantBuffer.projector = pass->mRenderable->getProjectorMatrix();
 	}
 
-	const PbrMaterialConstanceBuffer& mcb = pass->mMaterial->getMatInfo();
+	const PbrMaterialConstanceBuffer& mcb = pass->mMaterial->getPbrMatInfo();
 
 	if (pass->mMaterial->isPbr())
 	{

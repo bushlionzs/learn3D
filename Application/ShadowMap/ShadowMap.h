@@ -13,7 +13,7 @@ struct FrameData
 {
     //在compute shader中，保存索引对应的batchMeshIndex
 	Handle<HwBufferObject> indirectDataBuffer;
-	
+	Handle<HwBufferObject> indirectDrawArgBuffer;
 	Handle<HwBufferObject> filterDispatchGroupDataBuffer;
 	Handle<HwBufferObject> perFrameConstantsBuffer;
 	
@@ -71,6 +71,7 @@ public:
 private:
 	void base1();
 	void base2();
+	void updateFrameData(uint32_t i);
 private:
 	AnimationState* mAnimationState = nullptr;
 
@@ -91,7 +92,6 @@ private:
 	Handle<HwBufferObject> vbConstantsBuffer;
 
 	Handle<HwBufferObject> meshConstantsBuffer;
-	Handle<HwBufferObject> indirectDrawArgBuffer;
 	Handle<HwBufferObject> renderSettingsUniformHandle;
 	Handle<HwBufferObject> esmInputConstantsHandle;
 	Handle<HwBufferObject> sssEnabledHandle;

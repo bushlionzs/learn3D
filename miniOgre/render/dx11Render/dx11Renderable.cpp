@@ -178,7 +178,7 @@ void Dx11RenderableData::applyMaterialTexture(Ogre::Material* mat)
 	}
 	else
 	{
-		const PbrMaterialConstanceBuffer& mcb = mat->getMatInfo();
+		const PbrMaterialConstanceBuffer& mcb = mat->getPbrMatInfo();
 		if (mat->getTextureUnitCount())
 		{
 			auto unit = mat->getTextureUnit(0);

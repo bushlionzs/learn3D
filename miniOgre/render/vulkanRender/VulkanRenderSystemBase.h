@@ -134,6 +134,8 @@ protected:
 
     VkImage mCurrentVKImage;
 
+    VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;
+
     std::vector<Ogre::Renderable*> mRenderList;
 
     VkDescriptorPool       pEmptyDescriptorPool;

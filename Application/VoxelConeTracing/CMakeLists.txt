@@ -1,12 +1,13 @@
 cmake_minimum_required (VERSION 2.8)
 
-project(gltfModel)
+project(VoxelConeTracing)
 
 
 if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D__WINDOWS__)
+add_definitions(-DCEGUI_STATIC)
 endif()
 
 
@@ -64,12 +65,18 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
-target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
-CEGUI expat Middle stormlib OIS freetype GameShare dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
+
+target_link_libraries(${PROJECT_NAME}
+GameUtil
+miniOgre 
+CEGUI 
+expat  
+stormlib 
+OIS 
+freetype 
+dy_network 
 tinyxmld
 pcre
-bluevk
-utils
 avcodec
 avdevice
 avfilter

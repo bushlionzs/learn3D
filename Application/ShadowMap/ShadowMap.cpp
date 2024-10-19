@@ -66,115 +66,15 @@ void ShadowMap::update(float delta)
         mLightNode->yaw(Ogre::Radian(3.14) * delta * 0.1);
     }
 
-    auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-    auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-    auto width = ogreConfig.width;
-    auto height = ogreConfig.height;
+    static bool update = false;
 
-    auto cam = mGameCamera->getCamera();
-    const Ogre::Matrix4& view = cam->getViewMatrix();
-    //const Ogre::Matrix4& project = cam->getProjectMatrix();
-
-    float aspect = width / (float)height;
-
-    Ogre::Matrix4 project =
-        Ogre::Math::makePerspectiveMatrixLH(PI / 2.0f, aspect, 0.1f, 1000.0f);
-
-    
-
-  
-    if (!mFrameData.empty())
+    if (!update)
     {
-        FrameData& frameData = mFrameData[frameIndex];
-        meshUniformBlock.worldViewProjMat = (project * view).transpose();
-        meshUniformBlock.viewID = 0;
-        mRenderSystem->updateBufferObject(
-            frameData.objectUniformBlockHandle,
-            (const char*)&meshUniformBlock,
-            sizeof(meshUniformBlock));
-
-
-
-        cameraUniform.mView = view.transpose();
-        cameraUniform.mProject = project.transpose();
-        cameraUniform.mViewProject = (project * view).transpose();
-        cameraUniform.mInvView = cameraUniform.mView.inverse();
-        cameraUniform.mInvProj = cameraUniform.mProject.inverse();
-        cameraUniform.mInvViewProject = cameraUniform.mViewProject.inverse();
-        cameraUniform.mCameraPos = cam->getDerivedPosition();
-        cameraUniform.mNear = cam->getNear();
-        cameraUniform.mFar = cam->getFar();
-        cameraUniform.mFarNearDiff = cameraUniform.mFar - cameraUniform.mNear;
-        cameraUniform.mFarNear = cameraUniform.mFar * cameraUniform.mNear;
-        cameraUniform.mTwoOverRes = Ogre::Vector2(1.5f / width, 1.5f / height);
-        cameraUniform.mWindowSize = Ogre::Vector2(width, height);
-
-        mRenderSystem->updateBufferObject(
-            frameData.cameraUniformHandle,
-            (const char*)&cameraUniform,
-            sizeof(cameraUniform));
-        
-        Ogre::Vector3 lightSourcePos(10.f, 0.0f, 10.f);
-        lightSourcePos[0] += (20.f);
-        lightSourcePos[0] += (SAN_MIGUEL_OFFSETX);
-
-        Ogre::Matrix4 rotation = Ogre::Math::makeRotateMatirx(
-            lightCpuSettings.mSunControl.x, lightCpuSettings.mSunControl.y);
-
-        Ogre::Matrix4 translation = Ogre::Math::makeTranslateMatrix(-lightSourcePos);
-
-        auto newLightDir = rotation.inverse() * Ogre::Vector4(0, 0, 1, 0);
-
-        auto lightViewMatrix = rotation * translation;
-
-        Real left = -140.0f;
-        Real right = 140.0f;
-        Real top = 90.0f;
-        Real bottom = -210.0f;
-
-        auto lightProjMatrix = Ogre::Math::makeOrthoLH(left, right, bottom, top, -220, 100);
-
-        esmMeshUniformBlock.worldViewProjMat = 
-            (lightProjMatrix * lightViewMatrix * meshInfoStruct.mWorldMat).transpose();
-        esmMeshUniformBlock.viewID = 1;
-        mRenderSystem->updateBufferObject(
-            frameData.esmUniformBlockHandle,
-            (const char*)&esmMeshUniformBlock,
-            sizeof(esmMeshUniformBlock));
-
-        lightUniformBlock.mLightPosition = Ogre::Vector4(0.0f);
-        lightUniformBlock.mLightViewProj = (lightProjMatrix * lightViewMatrix).transpose();
-        lightUniformBlock.mLightColor = Ogre::Vector4(1, 1, 1, 1);
-        lightUniformBlock.mLightUpVec = lightViewMatrix.getUpVec();
-        lightUniformBlock.mLightDir = newLightDir.xyz();
-        
-
-        perFrameVBConstants.numViewports = 2;
-        perFrameVBConstants.transform[VIEW_CAMERA].vp = (project * view).transpose();
-        perFrameVBConstants.transform[VIEW_CAMERA].mvp = (project * view * meshInfoStruct.mWorldMat).transpose();
-        perFrameVBConstants.cullingViewports[VIEW_CAMERA].windowSize = { (float)width, (float)height };
-        perFrameVBConstants.cullingViewports[VIEW_CAMERA].sampleCount = 1;
-
-
-        perFrameVBConstants.transform[VIEW_SHADOW].mvp = 
-            (lightProjMatrix * lightViewMatrix * meshInfoStruct.mWorldMat).transpose();
-        perFrameVBConstants.cullingViewports[VIEW_SHADOW].windowSize = {2048,2048};
-        perFrameVBConstants.cullingViewports[VIEW_SHADOW].sampleCount = 1;
-        
-        mRenderSystem->updateBufferObject(
-            frameData.perFrameConstantsBuffer,
-            (const char*)&perFrameVBConstants,
-            sizeof(perFrameVBConstants));
-
-        mRenderSystem->updateBufferObject(sssEnabledHandle,
-            (const char*)&sssEnabled, sizeof(sssEnabled));
-        mRenderSystem->updateBufferObject(esmInputConstantsHandle,
-            (const char*)&esmConstants, sizeof(esmConstants));
-        mRenderSystem->updateBufferObject(renderSettingsUniformHandle,
-            (const char*)&renderSetting, sizeof(renderSetting));
+        updateFrameData(0);
+        updateFrameData(1);
+        update = true;
     }
     
-
 }
 
 void ShadowMap::updatePass(std::vector<PassBase*>& passlist)
@@ -340,6 +240,125 @@ enum
 };
 
 
+void ShadowMap::updateFrameData(uint32_t i)
+{
+    auto frameIndex = i;
+    auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+    auto width = ogreConfig.width;
+    auto height = ogreConfig.height;
+
+    auto cam = mGameCamera->getCamera();
+    const Ogre::Matrix4& view = cam->getViewMatrix();
+    //const Ogre::Matrix4& project = cam->getProjectMatrix();
+
+    float aspect = width / (float)height;
+
+    Ogre::Matrix4 project =
+        Ogre::Math::makePerspectiveMatrixLH(PI / 2.0f, aspect, 0.1f, 1000.0f);
+
+
+
+
+    if (!mFrameData.empty())
+    {
+        FrameData& frameData = mFrameData[frameIndex];
+        meshUniformBlock.worldViewProjMat = (project * view).transpose();
+        meshUniformBlock.viewID = 0;
+        mRenderSystem->updateBufferObject(
+            frameData.objectUniformBlockHandle,
+            (const char*)&meshUniformBlock,
+            sizeof(meshUniformBlock));
+
+
+
+        cameraUniform.mView = view.transpose();
+        cameraUniform.mProject = project.transpose();
+        cameraUniform.mViewProject = (project * view).transpose();
+        cameraUniform.mInvView = cameraUniform.mView.inverse();
+        cameraUniform.mInvProj = cameraUniform.mProject.inverse();
+        cameraUniform.mInvViewProject = cameraUniform.mViewProject.inverse();
+        cameraUniform.mCameraPos = cam->getDerivedPosition();
+        cameraUniform.mNear = cam->getNear();
+        cameraUniform.mFar = cam->getFar();
+        cameraUniform.mFarNearDiff = cameraUniform.mFar - cameraUniform.mNear;
+        cameraUniform.mFarNear = cameraUniform.mFar * cameraUniform.mNear;
+        cameraUniform.mTwoOverRes = Ogre::Vector2(1.5f / width, 1.5f / height);
+        cameraUniform.mWindowSize = Ogre::Vector2(width, height);
+
+        mRenderSystem->updateBufferObject(
+            frameData.cameraUniformHandle,
+            (const char*)&cameraUniform,
+            sizeof(cameraUniform));
+
+        Ogre::Vector3 lightSourcePos(10.f, 0.0f, 10.f);
+        lightSourcePos[0] += (20.f);
+        lightSourcePos[0] += (SAN_MIGUEL_OFFSETX);
+
+        Ogre::Matrix4 rotation = Ogre::Math::makeRotateMatirx(
+            lightCpuSettings.mSunControl.x, lightCpuSettings.mSunControl.y);
+
+        Ogre::Matrix4 translation = Ogre::Math::makeTranslateMatrix(-lightSourcePos);
+
+        auto newLightDir = rotation.inverse() * Ogre::Vector4(0, 0, 1, 0);
+
+        auto lightViewMatrix = rotation * translation;
+
+        Real left = -140.0f;
+        Real right = 140.0f;
+        Real top = 90.0f;
+        Real bottom = -210.0f;
+
+        auto lightProjMatrix = Ogre::Math::makeOrthoLH(left, right, bottom, top, -220, 100);
+
+        esmMeshUniformBlock.worldViewProjMat =
+            (lightProjMatrix * lightViewMatrix * meshInfoStruct.mWorldMat).transpose();
+        esmMeshUniformBlock.viewID = 1;
+        mRenderSystem->updateBufferObject(
+            frameData.esmUniformBlockHandle,
+            (const char*)&esmMeshUniformBlock,
+            sizeof(esmMeshUniformBlock));
+
+        lightUniformBlock.mLightPosition = Ogre::Vector4(0.0f);
+        lightUniformBlock.mLightViewProj = (lightProjMatrix * lightViewMatrix).transpose();
+        lightUniformBlock.mLightColor = Ogre::Vector4(1, 1, 1, 1);
+        lightUniformBlock.mLightUpVec = lightViewMatrix.getUpVec();
+        lightUniformBlock.mLightDir = newLightDir.xyz();
+
+
+        perFrameVBConstants.numViewports = 2;
+        perFrameVBConstants.transform[VIEW_CAMERA].vp = (project * view).transpose();
+        perFrameVBConstants.transform[VIEW_CAMERA].mvp = (project * view * meshInfoStruct.mWorldMat).transpose();
+        perFrameVBConstants.cullingViewports[VIEW_CAMERA].windowSize = { (float)width, (float)height };
+        perFrameVBConstants.cullingViewports[VIEW_CAMERA].sampleCount = 1;
+
+
+        perFrameVBConstants.transform[VIEW_SHADOW].mvp =
+            (lightProjMatrix * lightViewMatrix * meshInfoStruct.mWorldMat).transpose();
+        perFrameVBConstants.cullingViewports[VIEW_SHADOW].windowSize = { 2048,2048 };
+        perFrameVBConstants.cullingViewports[VIEW_SHADOW].sampleCount = 1;
+
+        mRenderSystem->updateBufferObject(
+            frameData.perFrameConstantsBuffer,
+            (const char*)&perFrameVBConstants,
+            sizeof(perFrameVBConstants));
+
+        mRenderSystem->updateBufferObject(sssEnabledHandle,
+            (const char*)&sssEnabled, sizeof(sssEnabled));
+        mRenderSystem->updateBufferObject(esmInputConstantsHandle,
+            (const char*)&esmConstants, sizeof(esmConstants));
+        mRenderSystem->updateBufferObject(renderSettingsUniformHandle,
+            (const char*)&renderSetting, sizeof(renderSetting));
+
+        BufferBarrier barriers[2];
+
+        barriers[0] =
+        {
+            frameData.perFrameConstantsBuffer,
+            RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
+        };
+        mRenderSystem->resourceBarrier(1, &barriers[0]);
+    }
+}
 
 void ShadowMap::base2()
 {
@@ -448,8 +467,7 @@ void ShadowMap::base2()
             rs->createBufferObject(
                 BufferObjectBinding::BufferObjectBinding_Storge,
                 BufferUsage::DYNAMIC,
-                filterDispatchGroupSize,
-                "FilterDispatchGroupDataBuffer");
+                filterDispatchGroupSize);
         mFrameData[frame].filterDispatchGroupDataBuffer = filterDispatchGroupDataBuffer;
         BufferHandleLockGuard lockGuard(filterDispatchGroupDataBuffer);
 
@@ -466,6 +484,7 @@ void ShadowMap::base2()
             auto materialFlag = mat->getMaterialFlags();
 
             uint32_t geomSet = materialFlag & MATERIAL_FLAG_ALPHA_TESTED ? GEOMSET_ALPHA_CUTOUT : GEOMSET_OPAQUE;
+            geomSet = 0;
             for (uint32_t groupIdx = 0; groupIdx < numDispatchGroups; ++groupIdx)
             {
                 FilterDispatchGroupData& groupData = dispatchGroupData[dispatchGroupCount++];
@@ -530,17 +549,16 @@ void ShadowMap::base2()
 
     uint32_t indirectDrawArgBufferSize = NUM_GEOMETRY_SETS * NUM_CULLING_VIEWPORTS * 8 * sizeof(uint32_t);
 
-    indirectDrawArgBuffer =
-        mRenderSystem->createBufferObject(
-            BufferObjectBinding::BufferObjectBinding_Storge | BufferObjectBinding_InDirectBuffer,
-            BufferUsage::DYNAMIC,
-            indirectDrawArgBufferSize,
-            "IndirectDrawArgBuffer");
+    
 
     for (auto i = 0; i < numFrame; i++)
     {
         auto& frameData = mFrameData[i];
-        
+        frameData.indirectDrawArgBuffer =
+            mRenderSystem->createBufferObject(
+                BufferObjectBinding::BufferObjectBinding_Storge | BufferObjectBinding_InDirectBuffer,
+                BufferUsage::DYNAMIC,
+                indirectDrawArgBufferSize);
 
         frameData.objectUniformBlockHandle =
             rs->createBufferObject(
@@ -595,7 +613,7 @@ void ShadowMap::base2()
         for (auto i = 0; i < numFrame; i++)
         {
             Handle<HwDescriptorSet> descrSet = rs->createDescriptorSet(zeroLayout);
-            rs->updateDescriptorSetBuffer(descrSet, 0, &indirectDrawArgBuffer, 1);
+            rs->updateDescriptorSetBuffer(descrSet, 0, &mFrameData[i].indirectDrawArgBuffer, 1);
             rs->updateDescriptorSetBuffer(descrSet, 2, &vbConstantsBuffer, 1);
 
             mFrameData[i].clearBufferDescrSet = descrSet;
@@ -625,7 +643,7 @@ void ShadowMap::base2()
 
                 barriers[1] =
                 {
-                    indirectDrawArgBuffer,
+                    frameData->indirectDrawArgBuffer,
                     RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
                 };
 
@@ -655,7 +673,7 @@ void ShadowMap::base2()
             
             Handle <HwDescriptorSet> zeroDescSet = rs->createDescriptorSet(zeroLayoutHandle);
             frameData.zeroDescSetOfFilter = zeroDescSet;
-            rs->updateDescriptorSetBuffer(zeroDescSet, 0, &indirectDrawArgBuffer, 1);
+            rs->updateDescriptorSetBuffer(zeroDescSet, 0, &frameData.indirectDrawArgBuffer, 1);
 
             
             rs->updateDescriptorSetBuffer(zeroDescSet, 1, &vertexDataHandle, 1);
@@ -695,20 +713,20 @@ void ShadowMap::base2()
 
                 barriers[barrierCount++] =
                 {
-                    indirectDrawArgBuffer,
-                    RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_INDIRECT_ARGUMENT | RESOURCE_STATE_SHADER_RESOURCE
+                    frameData->indirectDrawArgBuffer,
+                    RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
                 };
 
                 barriers[barrierCount++] =
                 {
                     frameData->indirectDataBuffer,
-                    RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_SHADER_RESOURCE
+                    RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
                 };
 
                 for (auto i = 0; i < 2; i++)
                 {
                     barriers[barrierCount++] = { filteredIndexBuffer[i], RESOURCE_STATE_UNORDERED_ACCESS,
-                                                   RESOURCE_STATE_INDEX_BUFFER | RESOURCE_STATE_SHADER_RESOURCE };
+                                                   RESOURCE_STATE_UNORDERED_ACCESS };
                 }
                 
 
@@ -744,7 +762,7 @@ void ShadowMap::base2()
 
     //draw esm shadow map
     auto draw = false;
-    if(1)
+    if(0)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "meshDepth";
@@ -852,7 +870,7 @@ void ShadowMap::base2()
             uint64_t indirectBufferByteOffset =
                 GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_SHADOW, 0, 0) * sizeof(uint32_t);
 
-            rs->drawIndexedIndirect(indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
 
             if (alpha)
             {
@@ -866,7 +884,7 @@ void ShadowMap::base2()
                 indirectBufferByteOffset =
                     GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_SHADOW, 1, 0) * sizeof(uint32_t);
 
-                rs->drawIndexedIndirect(indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+                rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
             }
             
 
@@ -874,7 +892,10 @@ void ShadowMap::base2()
 
             rs->popGroupMarker();
             };
-        auto shadowPass = createUserDefineRenderPass(shadowCallback);
+
+        UpdateCallback shadowUpdateCallback = [=, this](float delta) {
+            };
+        auto shadowPass = createUserDefineRenderPass(shadowCallback, shadowUpdateCallback);
         mPassList.push_back(shadowPass);
     }
     //visibility buffer pass
@@ -978,7 +999,7 @@ void ShadowMap::base2()
                 GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 0, 0) * sizeof(uint32_t);
             
             rs->bindIndexBuffer(filteredIndexBuffer[VIEW_CAMERA], 4);
-            rs->drawIndexedIndirect(indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
 
             tmp[0] = frameData->zeroDescrSetOfVbPassAlpha;
             tmp[1] = frameData->firstDescrSetOfVbPassAlpha;
@@ -988,12 +1009,15 @@ void ShadowMap::base2()
             rs->bindIndexBuffer(filteredIndexBuffer[VIEW_CAMERA], 4);
             indirectBufferByteOffset =
                 GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 1, 0) * sizeof(uint32_t);
-            rs->drawIndexedIndirect(indirectDrawArgBuffer, indirectBufferByteOffset,
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset,
                 1, 32);
             
             rs->endRenderPass();
             };
-        auto vbPass = createUserDefineRenderPass(visibilityBufferCallback);
+
+        UpdateCallback vbUpdateCallback = [=, this](float delta) {
+            };
+        auto vbPass = createUserDefineRenderPass(visibilityBufferCallback, vbUpdateCallback);
         //mPassList.push_back(vbPass);
     }
     
@@ -1127,8 +1151,6 @@ void ShadowMap::base2()
             rs->updateDescriptorSetBuffer(firstSet, 17, &esmInputConstantsHandle, 1);
             rs->updateDescriptorSetBuffer(firstSet, 19, &sssEnabledHandle, 1);
         }
-
-
     }
     
 }

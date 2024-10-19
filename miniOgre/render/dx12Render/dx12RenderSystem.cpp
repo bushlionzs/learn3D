@@ -128,7 +128,6 @@ void Dx12RenderSystem::render(Renderable* r, RenderListType t)
 	mCurrentPass.mMaterial = mat.get();
 	mCurrentPass.mShader = nullptr;
 	mCurrentPass.mRenderable = r;
-	mCurrentPass.mDx12RenderableData = (Dx12RenderableData*)r->getRenderableData();
 	mCurrentPass.mDx12RenderableData->updateCurrentFrame(mCurrentFrame->getFrameIndex());
 	VertexData* vertexData = r->getVertexData();
 	auto vd = vertexData->getVertexDeclaration();

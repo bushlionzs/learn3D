@@ -1,11 +1,7 @@
-#pragma
+#pragma once
 #include "InputManager.h"
+#include "engine_struct.h"
 
-enum CameraMoveType
-{
-    CameraMoveType_FirstPerson = 0,
-    CameraMoveType_ThirdPerson = 1
-};
 class GameCamera: public InputListener
 {
 private:

@@ -122,9 +122,7 @@ struct RenderPassInfo
     uint32_t renderTargetCount = 1;
     BindRenderTargetDesc renderTargets[MAX_RENDER_TARGET_ATTACHMENTS];
     BindDepthTargetDesc  depthTarget;
-    Ogre::Matrix4 lightViewProj;
-    Handle<HwBufferObject> frameDataHandle;
-    uint32_t frameDataSize;
+    Ogre::SceneManager* sceneMgr;
     Ogre::OgreTexture* shadowMap = nullptr;
     Ogre::ICamera* cam = nullptr;
     bool shadowPass = false;
@@ -140,9 +138,9 @@ struct ComputePassInfo
 
 struct FrameResourceInfo
 {
-    Handle<HwDescriptorSet> uboSet;
-    Handle<HwDescriptorSet> uboShadowSet;
-    Handle<HwDescriptorSet> samplerSet;
+    Handle<HwDescriptorSet> zeroSet;
+    Handle<HwDescriptorSet> firstSet;
+    Handle<HwDescriptorSet> zeroShadowSet;
     Handle<HwBufferObject>  modelObjectHandle;
     Handle<HwBufferObject>  matObjectHandle;
     Handle<HwBufferObject>  skinObjectHandle;
@@ -161,6 +159,7 @@ struct LightInfo
     float FalloffEnd = 10.0f;                           // point/spot light only
     Ogre::Vector3 Position = { 0.0f, 0.0f, 0.0f };  // point/spot light only
     float SpotPower = 64.0f;                            // spot light only
+    Ogre::Matrix4 lightViewProject;
 };
 
 struct FrameConstantBuffer

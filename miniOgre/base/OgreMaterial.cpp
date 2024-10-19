@@ -114,11 +114,6 @@ namespace Ogre {
         }
     }
 
-    FrameResourceInfo* Material::getFrameResourceInfo(uint32_t frameIndex)
-    {
-        return &mFrameResourceInfoList[frameIndex];
-    }
-
     void Material::createFrameResourceInfo()
     {
         auto* rs = Ogre::Root::getSingleton().getRenderSystem();
@@ -128,95 +123,11 @@ namespace Ogre {
 
         mUboLayoutHandle = rs->getDescriptorSetLayout(mProgramHandle, 0);
         mSamplerLayoutHandle = rs->getDescriptorSetLayout(mProgramHandle, 1);
-        auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
         
         
-        mFrameResourceInfoList.resize(ogreConfig.swapBufferCount);
-
-       
-
-        for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
-        {
-            FrameResourceInfo* resourceInfo = &mFrameResourceInfoList[i];
-            Handle<HwBufferObject> objectBufferHandle = 
-                rs->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform, BufferUsage::DYNAMIC,
-                    sizeof(ObjectConstantBuffer));
-            resourceInfo->modelObjectHandle = objectBufferHandle;
-
-            Handle<HwBufferObject> matBufferHandle;
-            if (mPbr)
-            {
-                matBufferHandle = 
-                    rs->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform, BufferUsage::DYNAMIC,
-                        sizeof(PbrMaterialConstanceBuffer));
-            }
-            else
-            {
-                matBufferHandle = 
-                    rs->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform,
-                        BufferUsage::DYNAMIC, sizeof(GeneralMaterialConstantBuffer));
-            }
-                
-            resourceInfo->matObjectHandle = matBufferHandle;
-                
-            
-            resourceInfo->uboShadowSet = rs->createDescriptorSet(mUboLayoutHandle);
-            resourceInfo->uboSet = rs->createDescriptorSet(mUboLayoutHandle);
-            resourceInfo->samplerSet = rs->createDescriptorSet(mSamplerLayoutHandle);
-
-            rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 0, &objectBufferHandle, 1);
-            rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 2, &matBufferHandle, 1);
-
-            rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 0, &objectBufferHandle, 1);
-
-            if (mHasSkinData)
-            {
-                resourceInfo->skinObjectHandle =
-                    rs->createBufferObject(
-                        BufferObjectBinding::BufferObjectBinding_Uniform, 
-                        BufferUsage::DYNAMIC, 
-                        sizeof(SkinnedConstantBuffer));
-
-                rs->updateDescriptorSetBuffer(resourceInfo->uboSet, 3, 
-                    &resourceInfo->skinObjectHandle, 1);
-
-                rs->updateDescriptorSetBuffer(resourceInfo->uboShadowSet, 3,
-                    &resourceInfo->skinObjectHandle, 1);
-            }
-            
-
-            //update texture
-            uint32_t index = 0;
-            for (int32_t i = 0; i < mTextureUnits.size(); i++)
-            {
-                if (mTextureUnits[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
-                    continue;
-                OgreTexture* tex = mTextureUnits[i]->getRaw();
-
-                rs->updateDescriptorSetTexture(resourceInfo->samplerSet, index, &tex,  1);
-
-                if (index == 0)
-                {
-                    rs->updateDescriptorSetSampler(resourceInfo->samplerSet, 5, tex);
-                }
-                index++;
-            }
-
-            index = 4;
-            for (int32_t i = 0; i < mTextureUnits.size(); i++)
-            {
-                if (mTextureUnits[i]->getTextureProperty()->_texType != TEX_TYPE_CUBE_MAP)
-                    continue;
-                OgreTexture* tex = mTextureUnits[i]->getRaw();
-
-                rs->updateDescriptorSetTexture(resourceInfo->samplerSet, index, &tex, 1);
-            }
-        }
-
-
+        
+        
     }
-
-
 
     bool Material::isLoaded()
     {
@@ -259,15 +170,6 @@ namespace Ogre {
         mShaderInfo.uboVertexMask = 1 | 2 | 8;
         mShaderInfo.uboFragMask = 1 | 2 | 4;
         mShaderInfo.samplerFragMask = 1 | 2 | 4 | 8 | 16;
-
-        for (auto& pair : mShaderInfo.shaderMacros)
-        {
-            if (pair.first == "SKINNED")
-            {
-                mHasSkinData = true;
-                break;
-            }
-        }
     }
 
     const ShaderInfo& Material::getShaderInfo()
@@ -287,9 +189,14 @@ namespace Ogre {
         mVFactor = v;
     }
 
-    PbrMaterialConstanceBuffer& Material::getMatInfo()
+    PbrMaterialConstanceBuffer& Material::getPbrMatInfo()
     {
         return mPbrMatInfo;
+    }
+
+    GeneralMaterialConstantBuffer& Material::getMatInfo()
+    {
+        return mMatInfo;
     }
 
     void Material::update(Real delta)
@@ -367,6 +274,7 @@ namespace Ogre {
         mVFactor = rhs.mVFactor;
         mBlendState = rhs.mBlendState;
         mShaderInfo = rhs.mShaderInfo;
+        mPbrMatInfo = rhs.mPbrMatInfo;
         mMatInfo = rhs.mMatInfo;
         mPbr = rhs.mPbr;
         mLoad = false;
@@ -374,7 +282,7 @@ namespace Ogre {
         {
             mTextureUnits.push_back(tu->clone(this));
         }
-        mHasSkinData = rhs.mHasSkinData;
+
         mRasterState = rhs.mRasterState;
         return *this;
     }

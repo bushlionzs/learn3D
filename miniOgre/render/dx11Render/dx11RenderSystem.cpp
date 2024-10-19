@@ -117,7 +117,6 @@ void Dx11RenderSystem::render(Renderable* r, RenderListType t)
 	
 
 	mDx11Pass._shader = nullptr;
-	mDx11Pass._renderData = (Dx11RenderableData*)r->getRenderableData();
 	
 	renderImpl(mDx11Pass);
 }
