@@ -13,14 +13,21 @@
 #include "OgreRenderTexture.h"
 #include "OgreCamera.h"
 #include "OgreSubEntity.h"
-#include "role.h"
-#include "application_util.h"
 #include "pbrWindow.h"
 #include "OgreRoot.h"
+#include "OgreEntity.h"
+#include "OgreSceneManager.h"
+#include "OgreSceneNode.h"
+#include "OgreMeshManager.h"
+#include "OgreMaterial.h"
+#include "game_camera.h"
 #include <platform_file.h>
 #include <OgreRoot.h>
 #include <algorithm>
 
+
+#define ENTRY_INSTANCE_COUNT 6
+#define PI 3.14159265358
 PbrMaterial::PbrMaterial()
 {
    
@@ -49,12 +56,16 @@ std::vector<std::string> matNameList =
 	"ForgeGround",
 	"ForgePlate",
 };
-#define ENTRY_INSTANCE_COUNT 6
-bool PbrMaterial::appInit()
+
+void PbrMaterial::setup(
+	RenderPipeline* renderPipeline,
+	RenderSystem* renderSystem,
+	Ogre::RenderWindow* renderWindow,
+	Ogre::SceneManager* sceneManager,
+	GameCamera* gameCamera)
 {
-	ApplicationBase::appInit();
 	uiInit();
-#define PI 3.14159265358
+
 
 	float baseX = 22.0f;
 	float baseY = -1.8f;
@@ -69,10 +80,10 @@ bool PbrMaterial::appInit()
 
 	std::string matBallName = "matBall.bin";
 	auto matBall = MeshManager::getSingletonPtr()->load(matBallName);
-	
+
 	matBallList.resize(ENTRY_INSTANCE_COUNT);
 
-	
+
 
 	for (uint32_t i = 0; i < ENTRY_INSTANCE_COUNT; ++i)
 	{
@@ -83,7 +94,7 @@ bool PbrMaterial::appInit()
 		auto* r = entity->getSubEntity(0);
 		Ogre::Vector3 pos = Ogre::Vector3(baseX - i - offsetX * i, baseY, baseZ);
 		r->setLocalMatrix(pos,
-			Ogre::Vector3(4.0), 
+			Ogre::Vector3(4.0),
 			Ogre::Quaternion(Ogre::Radian(PI), Ogre::Vector3::UNIT_Y));
 
 		SceneNode* entityNode = root->createChildSceneNode(entryName);
@@ -103,7 +114,7 @@ bool PbrMaterial::appInit()
 		auto* r = entity->getSubEntity(0);
 		r->setLocalMatrix(Ogre::Vector3(baseX - i - offsetX * i, -5.8f, baseZ + materialPlateOffset),
 			Ogre::Vector3(3.0f, 0.1f, 1.0f),
-			Ogre::Quaternion(Ogre::Radian(PI/5.0f), Ogre::Vector3::UNIT_X));
+			Ogre::Quaternion(Ogre::Radian(PI / 5.0f), Ogre::Vector3::UNIT_X));
 
 		SceneNode* entityNode = root->createChildSceneNode(entryName);
 		entityNode->attachObject(entity);
@@ -125,26 +136,27 @@ bool PbrMaterial::appInit()
 		entityNode->attachObject(entity);
 	}
 
-	
+
 
 	std::vector<Ogre::MaterialPtr> matList;
 	for (auto& name : matNameList)
 	{
 		auto mat = MaterialManager::getSingleton().getByName(name);
-		PbrMaterialConstanceBuffer& matInfo = mat->getMatInfo();
+		PbrMaterialConstanceBuffer& matInfo = mat->getPbrMatInfo();
 		matList.push_back(mat);
 	}
-	
+
 	TextureProperty tp;
-	
+
 
 	auto rs = Ogre::Root::getSingleton().getRenderSystem();
-	
+
 	tp._need_mipmap = false;
 	tp._texType = TEX_TYPE_CUBE_MAP;
 	tp._tex_addr_mod = TAM_CLAMP;
-	tp._samplerParams.filterMag = filament::backend::SamplerMagFilter::LINEAR;
-	tp._samplerParams.filterMin = filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR;
+	tp._samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
+	tp._samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
+	tp._samplerParams.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
 	tp._samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
 	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
 	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
@@ -160,7 +172,7 @@ bool PbrMaterial::appInit()
 		[&prefilteredenvName, &tp](Ogre::MaterialPtr& mat)
 		{mat->addTexture(prefilteredenvName, &tp); });
 
-	
+
 	std::string irradianceName = "IrradianceMap";
 	auto irradianceMap = rs->generateCubeMap(irradianceName, environmentCube, PF_FLOAT32_RGBA, 32, CubeType_Irradiance);
 	TextureManager::getSingleton().addTexture(irradianceName, irradianceMap);
@@ -179,26 +191,22 @@ bool PbrMaterial::appInit()
 		[&brdfLutName, &tp](Ogre::MaterialPtr mat)
 		{mat->addTexture(brdfLutName, &tp); });
 
-	
+
 
 	mSceneManager->setSkyBox(true, "SkyMap", 10000);
 	mGameCamera->updateCamera(Ogre::Vector3(0, 10.0f, 60.0f), Ogre::Vector3::ZERO);
 
 	mGameCamera->setMoveSpeed(20);
-	return true;
 }
 
-void PbrMaterial::appUpdate(float delta)
+void PbrMaterial::update(float delta)
 {
-	ApplicationBase::appUpdate(delta);
 
-	
 }
 
 EngineType PbrMaterial::getEngineType()
 {
 	return EngineType_Vulkan;
-	return EngineType_Dx11;
 }
 
 void PbrMaterial::uiInit()
@@ -211,7 +219,7 @@ void PbrMaterial::updateRenderMode(uint32_t mode)
 	for (auto& name : matNameList)
 	{
 		auto mat = MaterialManager::getSingleton().getByName(name);
-		PbrMaterialConstanceBuffer& matInfo = mat->getMatInfo();
+		PbrMaterialConstanceBuffer& matInfo = mat->getPbrMatInfo();
 		matInfo.debugRenderMode = mode;
 	}
 }

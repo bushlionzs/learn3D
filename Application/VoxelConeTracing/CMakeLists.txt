@@ -77,14 +77,6 @@ freetype
 dy_network 
 tinyxmld
 pcre
-avcodec
-avdevice
-avfilter
-avformat
-avutil
-postproc
-swresample
-swscale
 dxgi
 dxguid
 d3d12

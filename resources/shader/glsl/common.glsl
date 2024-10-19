@@ -128,9 +128,9 @@ layout (set=1, binding = 6) uniform sampler2D brdflut;
 layout (set=1, binding = 7) uniform samplerCube irradianceCube;
 layout (set=1, binding = 8) uniform samplerCube prefilteredCube;
 #else
-layout(set=1, binding = 0) uniform texture2D first;
-layout (set=1, binding = 1) uniform texture2D second;
-layout (set=1, binding = 2) uniform texture2D third;
+layout(set=1, binding = 0) uniform sampler2D first;
+layout (set=1, binding = 1) uniform sampler2D second;
+layout (set=1, binding = 2) uniform sampler2D third;
 layout (set=1, binding = 3) uniform sampler2D gShadowMap;
 layout (set=1, binding = 4) uniform samplerCube gCubeMap;
 layout(set=1, binding = 5) uniform sampler baseSampler;

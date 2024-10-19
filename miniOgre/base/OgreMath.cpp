@@ -945,7 +945,7 @@ namespace Ogre
         return m * result;
     }
 
-    Matrix4 Math::makeRotateMatirx(const float radiansX, const float radiansY)
+    Matrix4 Math::makeRotateMatrix(const float radiansX, const float radiansY)
     {
         const float cosX = cosf(radiansX), sinX = sinf(radiansX);
         const float cosY = cosf(radiansY), sinY = sinf(radiansY);

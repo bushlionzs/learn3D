@@ -164,7 +164,7 @@ namespace Ogre {
                     OgreTexture* tex = texs[i]->getRaw();
 
                     rs->updateDescriptorSetTexture(
-                        resourceInfo->firstSet, index, &tex, 1, true);
+                        resourceInfo->firstSet, index, &tex, 1, false);
                 }
             }
         }

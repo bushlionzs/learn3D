@@ -28,7 +28,7 @@ VoxelConeTracingApp::~VoxelConeTracingApp()
 
 void VoxelConeTracingApp::setup(
 	RenderPipeline* renderPipeline,
-	RenderSystem* renderSystem,
+	RenderSystem* rs,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
@@ -44,13 +44,10 @@ void VoxelConeTracingApp::setup(
 	sponzaNode->attachObject(sponza);
 
 	float h = 100.0f;
-	//gameCamera->updateCamera(Ogre::Vector3(-10, h, 0.0f), Ogre::Vector3(0.f, h, 0.0f));
-	mGameCamera->updateCamera(Ogre::Vector3(-10, 0.0f, 0.0f), Ogre::Vector3::ZERO);
+	gameCamera->updateCamera(Ogre::Vector3(0, 1, 0.0f), Ogre::Vector3(0.f, -90.f, 0.0f));
 	gameCamera->setMoveSpeed(200);
-	gameCamera->getCamera()->setCameraCull(true);
 	
-	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
-	RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
+	mRenderSystem = rs;
 	auto& ogreConfig = ::Root::getSingleton().getEngineConfig();
 
 

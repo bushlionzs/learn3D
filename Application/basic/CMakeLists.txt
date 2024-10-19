@@ -62,18 +62,10 @@ target_include_directories(${PROJECT_NAME}
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 	
-target_link_libraries(${PROJECT_NAME}  GameUtil  miniOgre LinearMath BulletCollision BulletDynamics BulletSoftBody
+target_link_libraries(${PROJECT_NAME}  GameUtil  miniOgre 
 CEGUI expat  stormlib OIS freetype dy_network 
 tinyxmld
 pcre
-avcodec
-avdevice
-avfilter
-avformat
-avutil
-postproc
-swresample
-swscale
 dxgi
 dxguid
 d3d12

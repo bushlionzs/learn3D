@@ -1,7 +1,6 @@
 #pragma once
-#include "application_base.h"
 #include "OgreAnimationState.h"
-
+#include <engine_struct.h>
 #include <CEGUI/WindowManager.h>
 #include <CEGUI/FontManager.h>
 #include <CEGUI/SchemeManager.h>
@@ -13,15 +12,24 @@
 #include <DefaultWindow.h>
 #include <FrameWindow.h>
 #include <CEGUIManager.h>
+#include "pass.h"
 
 class Role;
-class PbrMaterial : public ApplicationBase, public InputListener
+class PbrMaterial : public InputListener
 {
 public:
 	PbrMaterial();
 	~PbrMaterial();
-	virtual bool appInit();
-	virtual void appUpdate(float delta);
+
+	void setup(
+		RenderPipeline* renderPipeline,
+		RenderSystem* renderSystem,
+		Ogre::RenderWindow* renderWindow,
+		Ogre::SceneManager* sceneManager,
+		GameCamera* gameCamera);
+	void update(float delta);
+
+
 	EngineType getEngineType();
 
 	virtual bool isUseCEGUI()
@@ -37,4 +45,9 @@ private:
 	CEGUI::GUIContext* mGUIContext = nullptr;
 	CEGUI::Window* mRoot = nullptr;
 	std::vector<Ogre::Entity*> matBallList;
+
+	SceneManager* mSceneManager;
+	GameCamera* mGameCamera;
+	RenderSystem* mRenderSystem;
+	RenderWindow* mRenderWindow;
 };

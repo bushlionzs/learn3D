@@ -1043,7 +1043,6 @@ namespace Orphigine
 			liquidRenderable->mRenderOp.operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 			liquidRenderable->mRenderOp.vertexData = mVertexData;
 
-			liquidRenderable->prepare(mVertexData, mIndexData[i]);
 			//liquidRenderable->mMaterial = mMaterial;
 
 			liquidRenderable->mBoundingBox.setExtents(

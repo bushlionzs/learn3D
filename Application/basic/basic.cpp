@@ -37,7 +37,7 @@ void BasicApplication::setup(
 	mGameCamera = gameCamera;
 	mRenderWindow = renderWindow;
 	mRenderSystem = renderSystem;
-	base1();
+	base2();
 
 	RenderPassInput input;
 	input.color = renderWindow->getColorTarget();
@@ -110,9 +110,10 @@ void BasicApplication::base2()
 
 	spherenode->attachObject(sphere);
 
-	mGameCamera->setDistance(2000.0f);
-
 	mSceneManager->setSkyBox(true, "SkyLan", 50000);
+
+	mGameCamera->updateCamera(Ogre::Vector3(2000, 0.0f, 0.0f), Ogre::Vector3(0.0f, 90.0f, 0.0f));
+	mGameCamera->setMoveSpeed(200);
 }
 
 void BasicApplication::base3()

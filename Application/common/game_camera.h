@@ -24,10 +24,6 @@ private:
     bool mFastMove = false;
     bool mPickup = false;
 
-    bool mDistanceMove = false;
-
-    SceneNode* mCameraNode = nullptr;
-    SceneNode* mCameraSubNode = nullptr;
 
     int32_t mMousePickX = 0;
     int32_t mMousePickY = 0;
@@ -36,22 +32,14 @@ private:
     int32_t mMouseDeltaY = 0;
 
 
-    bool mEditMode = true;
-
-    Ogre::Vector3 mUpVector = Ogre::Vector3::UNIT_Y;
-    Ogre::Vector3 mLeftVector = -Ogre::Vector3::UNIT_X;
-
-    Ogre::Vector3 mLookAtPosition;
-    Ogre::Vector3 mCameraPosition;
-
-
-    Ogre::Vector3 mCameraRelPosition;
-
-    Real mSpeed = 500.0f;
-
+    Real mMoveSpeed = 500.0f;
+    Real mRotateSpeed = 0.15f;
     CameraMoveType mCameraType;
 
 
+    Ogre::Vector3 rotation = Ogre::Vector3::ZERO;
+    Ogre::Vector3 position = Ogre::Vector3::ZERO;
+    Ogre::Vector4 viewPos = Ogre::Vector4::ZERO;
 public:
     GameCamera(Ogre::Camera* camera, SceneManager* sceneMgr);
 
@@ -67,9 +55,11 @@ public:
     void setHeight(float height);
 
     void setMoveSpeed(Real speed);
+    void setRotateSpeed(Real speed);
 
-
-    void updateCamera(const Ogre::Vector3& camPosition, const Ogre::Vector3& lookAtPosition);
+    void updateCamera(
+        const Ogre::Vector3& camPosition, 
+        const Ogre::Vector3& camRotate);
 
 
     virtual void injectMouseMove(int _absx, int _absy, int _absz);
