@@ -1,19 +1,25 @@
 #pragma once
-#include "application_base.h"
-#include "OGImpact.h"
 
-class Basic : public ApplicationBase
+#include <engine_struct.h>
+#include "pass.h"
+#include "game_camera.h"
+#include "DriverBase.h"
+
+class BasicApplication
 {
 public:
 	
-	Basic();
-	~Basic();
-	virtual bool appInit();
-	virtual void appUpdate(float delta);
-	virtual bool isUseMyGUI()
-	{
-		return true;
-	}
+	BasicApplication();
+	~BasicApplication();
+
+	void setup(
+		RenderPipeline* renderPipeline,
+		RenderSystem* renderSystem,
+		Ogre::RenderWindow* renderWindow,
+		Ogre::SceneManager* sceneManager,
+		GameCamera* gameCamera);
+	void update(float delta);
+
 	EngineType getEngineType();
 
 	void addCustomDirectory();
@@ -25,4 +31,9 @@ private:
 	void base5();
 private:
 	AnimationState* mAnimationState = nullptr;
+
+	SceneManager* mSceneManager;
+	GameCamera* mGameCamera;
+	RenderSystem* mRenderSystem;
+	RenderWindow* mRenderWindow;
 };

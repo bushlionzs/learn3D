@@ -7,14 +7,16 @@
 #include "OgreEntity.h"
 #include "game_camera.h"
 #include "OgreFrameListener.h"
-
+#include "pass.h"
 
 class ApplicationWindow;
 class RenderSystem;
 class Ogre::RenderTarget;
 class Ogre::Camera;
 
-class ManualApplication: public Ogre::FrameListener
+
+
+class ManualApplication: public Ogre::FrameListener, public RenderPipeline
 {
 public:
 	ManualApplication();
@@ -28,6 +30,8 @@ public:
 	}
 
 	virtual void OnSize(uint32_t width, uint32_t height);
+
+	virtual void addRenderPass(PassBase* pass);
 private:
 	bool appInit();
 	void render();

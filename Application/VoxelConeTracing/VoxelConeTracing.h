@@ -11,12 +11,12 @@ public:
 	~VoxelConeTracingApp();
 
 	void setup(
+		RenderPipeline* renderPipeline,
 		RenderSystem* renderSystem,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void update(float delta);
-	void updatePass(std::vector<PassBase*>& passlist);
 	void updateFrameData(ICamera* camera, ICamera* light);
 
 	Handle<HwBufferObject> getFrameHandle(uint32_t frameIndex)
@@ -32,7 +32,6 @@ private:
 	GameCamera* mGameCamera;
 	RenderSystem* mRenderSystem;
 	RenderWindow* mRenderWindow;
-	std::vector<PassBase*> mPassList;
 	FrameConstantBuffer mFrameConstantBuffer;
 	std::vector<Handle<HwBufferObject>> mFrameBufferObjectList;
 };

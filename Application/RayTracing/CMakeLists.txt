@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 
-project(AnimTexture)
+project(RayTracing)
 
 
 if (WIN32)
@@ -69,15 +69,6 @@ target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
 MyGUI Middle stormlib OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
 tinyxmld
-vulkan-1
-avcodec
-avdevice
-avfilter
-avformat
-avutil
-postproc
-swresample
-swscale
 dxgi
 dxguid
 d3d12

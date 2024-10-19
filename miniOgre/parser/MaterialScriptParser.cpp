@@ -53,6 +53,11 @@ void MaterialScriptParser::parseMaterialImpl(const std::string& content)
 
         ss >> materialname;
 
+        if (materialname == "SkyLan")
+        {
+            int kk = 0;
+        }
+
         materialname = string_trim(materialname);
         materialname = UTF8ToGBK(materialname.c_str());
 

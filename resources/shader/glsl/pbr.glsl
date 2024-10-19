@@ -31,7 +31,7 @@ void main()
     outWorldPos = (cbPerObject.gWorld * float4(position, 1.0f)).xyz;
     outNormal = mat3(cbPerObject.gWorld) * normal;
     outUV0 = texcoord;
-	gl_Position = cbPerObject.gWorldViewProj * float4(position, 1.0f);
+	gl_Position = cbPass.gViewProj * float4(outWorldPos, 1.0f);
 	gl_Position.y = -gl_Position.y;
 }
 
@@ -389,8 +389,11 @@ void main()
 	
 	float3 v = normalize(cbPass.gEyePosW - inWorldPos);        // Vector from surface point to camera
 	
+#ifdef HAS_NORMALMAP
 	float3 n = getNormal(-v, inNormal, inUV0);
-
+#else
+    float3 n = inNormal;
+#endif
 
     
     float NdotV = clamp(abs(dot(n, v)), 0.001, 1.0);
@@ -407,8 +410,9 @@ void main()
 	
 	float3 color = directColor;
     // Calculate lighting contribution from image based lighting source (IBL)
-#ifdef USE_IBL
 	float3 ibl = vec3(0.0f);
+#ifdef USE_IBL
+	
 	for (uint i = 0; i < cbPass.numDirLights; ++i)
 	{
 	    ibl += EnvironmentBRDF(n, v, baseColor.rgb, roughness, metalness);
@@ -417,8 +421,9 @@ void main()
     color += ibl;
 #endif
     // Apply optional PBR terms for additional (optional) shading
+	float ao = 0.0f;
 #ifdef HAS_OCCLUSIONMAP
-	float ao = texture(ao_pbr, inUV0).r;
+	ao = texture(ao_pbr, inUV0).r;
     color = lerp(color, color * ao, pbrMaterial.u_OcclusionStrength);
 #endif
 

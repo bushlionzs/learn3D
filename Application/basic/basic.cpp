@@ -9,47 +9,67 @@
 #include "OgreCamera.h"
 #include "OgreRenderTarget.h"
 #include "OgreRenderWindow.h"
+#include "OgreSceneManager.h"
+#include "OgreSceneNode.h"
+#include "OgreMeshManager.h"
+#include "OgreEntity.h"
 
-Basic::Basic()
+BasicApplication::BasicApplication()
 {
 
 }
 
-Basic::~Basic()
+BasicApplication::~BasicApplication()
 {
 
 }
 
-bool Basic::appInit()
+
+void BasicApplication::setup(
+	RenderPipeline* renderPipeline,
+	RenderSystem* renderSystem,
+	Ogre::RenderWindow* renderWindow,
+	Ogre::SceneManager* sceneManager,
+	GameCamera* gameCamera)
 {
-	ApplicationBase::appInit();
+
+	mSceneManager = sceneManager;
+	mGameCamera = gameCamera;
+	mRenderWindow = renderWindow;
+	mRenderSystem = renderSystem;
 	base1();
-	return true;
+
+	RenderPassInput input;
+	input.color = renderWindow->getColorTarget();
+	input.depth = renderWindow->getDepthTarget();
+	input.cam = gameCamera->getCamera();
+	input.sceneMgr = sceneManager;
+	auto mainPass = createStandardRenderPass(input);
+	renderPipeline->addRenderPass(mainPass);
 }
 
-void Basic::appUpdate(float delta)
+void BasicApplication::update(float delta)
 {
-	ApplicationBase::appUpdate(delta);
-
 	if (mAnimationState)
 	{
 		mAnimationState->addTime(delta);
 	}
 }
 
-EngineType Basic::getEngineType()
+
+
+EngineType BasicApplication::getEngineType()
 {
-	//return EngineType_Dx11;
 	return EngineType_Vulkan;
 }
 
-void Basic::addCustomDirectory()
+void BasicApplication::addCustomDirectory()
 {
 	//ResourceManager::getSingletonPtr()->addDirectory(std::string("D:\\wow3.3.5\\Data"), "wow", true);
 }
 
 
-void Basic::base1()
+void BasicApplication::base1()
 {
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
@@ -71,14 +91,13 @@ void Basic::base1()
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 
-	mSceneManager->setSkyBox(true, "SkyMap", 10000);
+	mSceneManager->setSkyBox(true, "SkyLan", 10000);
 	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -2.5f), Ogre::Vector3::ZERO);
 	mGameCamera->setMoveSpeed(5);
 
-	addMainPass(nullptr);
 }
 
-void Basic::base2()
+void BasicApplication::base2()
 {
 	std::string name = "Êé_·ðÉ½_·¿ÎÝ_13.mesh";
 	name = "Â¥À¼ÕÊÅñ04.mesh";
@@ -96,7 +115,7 @@ void Basic::base2()
 	mSceneManager->setSkyBox(true, "SkyLan", 50000);
 }
 
-void Basic::base3()
+void BasicApplication::base3()
 {
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 	auto mesh = MeshManager::getSingleton().createBox("box.mesh", 1, "mybox");
@@ -136,7 +155,7 @@ void Basic::base3()
 	mGameCamera->setMoveSpeed(25.0f);
 }
 
-void Basic::base4()
+void BasicApplication::base4()
 {
 	std::string meshname = "ÃÉ¹Å¹ó×åÅ®_03.mesh";
 	auto mesh = MeshManager::getSingletonPtr()->load(meshname);
@@ -160,7 +179,7 @@ void Basic::base4()
 	mGameCamera->setMoveSpeed(25.0f);
 }
 
-void Basic::base5()
+void BasicApplication::base5()
 {
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 

@@ -177,10 +177,11 @@ namespace Ogre {
     void Entity::setMaterialName(const std::string& name)
     {
         auto mat = MaterialManager::getSingleton().getByName(name);
-        assert(false);
+        
         for (auto r : mSubEntityList)
         {
-            r->setMaterial(mat);
+            std::shared_ptr<Material> copy = mat->clone(name);
+            r->setMaterial(copy);
         }
     }
 

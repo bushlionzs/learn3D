@@ -17,7 +17,6 @@
 #include "dx11RenderSystem.h"
 #include "dx12RenderSystem.h"
 #include "VulkanRenderSystem.h"
-#include "VideoManager.h"
 #include "shaderManager.h"
 #include "OgreEntity.h"
 
@@ -33,7 +32,6 @@ namespace Ogre {
         new MeshManager;
         new MaterialManager;
         new SkeletonManager;
-        new VideoManager;
         new Ogre::ParticleSystemManager;
         new Ogre::ControllerManager;
         new ShaderManager;

@@ -152,7 +152,7 @@ void main()
 	}
 	
 	groupMemoryBarrier();
-	
+
 	bool cull[ 5 ];
 	uint threadOutputSlot[ 5 ];
 
@@ -188,24 +188,14 @@ void main()
 			LoadVertex(indices[2])
 		};
 
-		for (uint i = 0; i < numViewports; ++i)
-		{
-			float4x4 worldViewProjection = transform[i].mvp;
 
-			vec4 vertices[3] =
-			{
-				mul(worldViewProjection, vert[0]),
-				mul(worldViewProjection, vert[1]),
-				mul(worldViewProjection, vert[2])
-			};
-
-			CullingViewPort viewport = cullingViewports[i];
-			cull[i] = FilterTriangle(indices, vertices, !twoSided, viewport.windowSize, viewport.sampleCount);
-			if (!cull[i])
-				AtomicAdd(workGroupIndexCount[i], 3, threadOutputSlot[i]);
-		}
 	}
-
+	
+	for (uint i = 0; i < numViewports; ++i)
+		{
+		    AtomicAdd(workGroupIndexCount[i], 1, threadOutputSlot[i]);
+		}
+	
 	groupMemoryBarrier();
 
 	if (inGroupId.x == 0)

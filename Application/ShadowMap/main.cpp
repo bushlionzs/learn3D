@@ -11,9 +11,9 @@ int main()
 	ShadowMap instance;
 	
     AppInfo info;
-
-	info.setup = [&instance](RenderSystem* rs, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
-		instance.setup(rs, win, sceneManager, gameCamera);
+	ManualApplication app;
+	info.setup = [&instance, &app](RenderSystem* rs, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
+		instance.setup(&app, rs, win, sceneManager, gameCamera);
 		};
 	
 	info.update = [&instance](float delta) {
@@ -24,10 +24,7 @@ int main()
 	bool manual = true;
 	if (manual)
 	{
-		ManualApplication app;
-		info.pass = [&instance, &app](std::vector<PassBase*>& passlist) {
-			instance.updatePass(passlist);
-			};
+		
 		app.run(info);
 	}
 	else

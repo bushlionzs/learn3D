@@ -18,10 +18,13 @@ struct RenderPassInput
 	Ogre::RenderTarget* depth = nullptr;
 	Ogre::SceneManager* sceneMgr = nullptr;
 	Ogre::ICamera* cam = nullptr;
-	Ogre::OgreTexture* shadowMap = nullptr;
-	Ogre::ICamera* light = nullptr;
+	Ogre::Light* light = nullptr;
+	Ogre::RenderTarget* shadowMapTarget = nullptr;
 	bool shadowPass = false;
 };
+
+
+
 
 using RenderPassCallback = std::function< void(RenderPassInfo& info)>;
 using ComputePassCallback = std::function< void(ComputePassInfo& info)>;
@@ -34,6 +37,11 @@ public:
 	virtual void update(float delta) {}
 };
 
+class RenderPipeline
+{
+public:
+	virtual void addRenderPass(PassBase* pass) = 0;
+};
 
 PassBase* createStandardRenderPass(RenderPassInput& input);
 

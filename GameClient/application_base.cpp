@@ -40,8 +40,8 @@ bool ApplicationBase::appInit()
 {
 	mApplicationWindow = new ApplicationWindow;
 
-	int width = 1280;
-	int height = 768;
+	int width = 1920;
+	int height = 1080;
 	mApplicationWindow->createWindow(width, height);
 	
 	

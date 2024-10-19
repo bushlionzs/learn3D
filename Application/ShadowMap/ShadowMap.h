@@ -1,6 +1,7 @@
 #pragma once
 #include "ApplicationBase.h"
 #include "forgeCommon.h"
+#include "pass.h"
 class GameCamera;
 class RenderSystem;
 class Ogre::RenderWindow;
@@ -56,6 +57,7 @@ public:
 	ShadowMap();
 	~ShadowMap();
 	void setup(
+		RenderPipeline* renderPipeline,
 		RenderSystem* renderSystem,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
@@ -83,6 +85,7 @@ private:
 	GameCamera* mGameCamera;
 	RenderSystem* mRenderSystem;
 	RenderWindow* mRenderWindow;
+	RenderPipeline* mRenderPipeline;
 	std::vector<PassBase*> mPassList;
 
 	std::vector<FrameData> mFrameData;

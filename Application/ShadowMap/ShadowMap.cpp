@@ -40,12 +40,14 @@ ShadowMap::~ShadowMap()
 
 
 void ShadowMap::setup(
+    RenderPipeline* renderPipeline,
     RenderSystem* renderSystem,
     RenderWindow* renderWindow,
     Ogre::SceneManager* sceneManager,
     GameCamera* gameCamera
 )
 {
+    mRenderPipeline = renderPipeline;
     mRenderSystem = renderSystem;
     mRenderWindow = renderWindow;
     mSceneManager = sceneManager;
@@ -204,7 +206,7 @@ void ShadowMap::base1()
     renderInput.color = nullptr;
     renderInput.depth = shadowMap;
     renderInput.sceneMgr = mSceneManager;
-    renderInput.shadowMap = nullptr;
+    renderInput.shadowMapTarget = nullptr;
     renderInput.shadowPass = true;
     if (useShadow)
     {
@@ -219,7 +221,7 @@ void ShadowMap::base1()
     renderInput.sceneMgr = mSceneManager;
     if (useShadow)
     {
-        renderInput.shadowMap = shadowMap->getTarget();
+        renderInput.shadowMapTarget = shadowMap;
         renderInput.light = light;
     }
     

@@ -27,6 +27,7 @@ VoxelConeTracingApp::~VoxelConeTracingApp()
 }
 
 void VoxelConeTracingApp::setup(
+	RenderPipeline* renderPipeline,
 	RenderSystem* renderSystem,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
@@ -43,8 +44,9 @@ void VoxelConeTracingApp::setup(
 	sponzaNode->attachObject(sponza);
 
 	float h = 100.0f;
-	gameCamera->updateCamera(Ogre::Vector3(0, h, 0.0f), Ogre::Vector3(-10.f, h, 0.0f));
-	gameCamera->setMoveSpeed(50.0f);
+	//gameCamera->updateCamera(Ogre::Vector3(-10, h, 0.0f), Ogre::Vector3(0.f, h, 0.0f));
+	mGameCamera->updateCamera(Ogre::Vector3(-10, 0.0f, 0.0f), Ogre::Vector3::ZERO);
+	gameCamera->setMoveSpeed(200);
 	gameCamera->getCamera()->setCameraCull(true);
 	
 	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
@@ -72,57 +74,20 @@ void VoxelConeTracingApp::setup(
 
 	auto* cam = gameCamera->getCamera();
 	auto* light = sceneManager->createLight("light");
-	UpdatePassCallback mainUpdateCallback = [=, this](float delta) {
-		this->updateFrameData(cam, light);
-		};
-	RenderPassCallback renderCallback = [=, this](RenderPassInfo& info) {
-		info.renderTargetCount = 1;
-		info.renderTargets[0].renderTarget = renderWindow->getColorTarget();
-		info.depthTarget.depthStencil = renderWindow->getDepthTarget();
-		info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-		info.depthTarget.clearValue = { 1.0f, 0.0f };
-		info.cam = cam;
-		static EngineRenderList engineRenerList;
-		sceneManager->getSceneRenderList(cam, engineRenerList, false);
-		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-		for (auto r : engineRenerList.mOpaqueList)
-		{
-			Ogre::Material* mat = r->getMaterial().get();
-			
-			if (!mat->isLoaded())
-			{
-				mat->load(nullptr);
-				r->createFrameResource();
-				for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
-				{
-					FrameResourceInfo* resourceInfo = r->getFrameResourceInfo(i);
-					auto frameHandle = this->getFrameHandle(i);
-					rs->updateDescriptorSetBuffer(resourceInfo->zeroSet, 1, &frameHandle, 1);
-					rs->updateDescriptorSetBuffer(resourceInfo->zeroShadowSet, 1, &frameHandle, 1);
-				}
-				
-			}
-
-			
-			r->updateFrameResource(frameIndex);
-		}
-		rs->beginRenderPass(info);
-		rs->multiRender(engineRenerList.mOpaqueList);
-		rs->endRenderPass();
-		};
-	auto mainPass = createUserDefineRenderPass(renderCallback, mainUpdateCallback);
-	mPassList.push_back(mainPass);
+	
+	RenderPassInput input;
+	input.color = renderWindow->getColorTarget();
+	input.depth = renderWindow->getDepthTarget();
+	input.cam = cam;
+	input.sceneMgr = sceneManager;
+	auto mainPass = createStandardRenderPass(input);
+	renderPipeline->addRenderPass(mainPass);
 }
 
 void VoxelConeTracingApp::update(float delta)
 {
-	mGameCamera->update(delta);
 }
 
-void VoxelConeTracingApp::updatePass(std::vector<PassBase*>& passlist)
-{
-	passlist = mPassList;
-}
 
 EngineType VoxelConeTracingApp::getEngineType()
 {

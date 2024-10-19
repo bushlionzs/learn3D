@@ -17,7 +17,7 @@
 #ifndef TNT_FILAMENT_BACKEND_HANDLE_H
 #define TNT_FILAMENT_BACKEND_HANDLE_H
 
-#include "utils/compiler.h"
+#include <utils/compiler.h>
 #include <stdint.h>
 #include <assert.h>
 #include <limits>

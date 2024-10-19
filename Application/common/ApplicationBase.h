@@ -17,7 +17,6 @@ using namespace filament;
 
 
 class PassBase;
-using PassCallback = std::function<void(std::vector<PassBase*>&)>;
 using SetupCallback = std::function<void(RenderSystem*, Ogre::RenderWindow*, Ogre::SceneManager*, GameCamera*)>;
 using CleanupCallback = std::function<void()>;
 using UpdateCallback = std::function<void(float)>;
@@ -25,7 +24,6 @@ using UpdateCallback = std::function<void(float)>;
 struct AppInfo
 {
     SetupCallback setup;
-	PassCallback pass;
 	FrameGraphPassCallback  fgpass;
     CleanupCallback cleanup;
     UpdateCallback update;

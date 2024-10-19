@@ -31,7 +31,7 @@ bool ManualApplication::frameStarted(const FrameEvent& evt)
 {
 	InputManager::getSingletonPtr()->captureInput();
 	mAppInfo->update(evt.timeSinceLastFrame);
-
+	mGameCamera->update(evt.timeSinceLastFrame);
 	for (auto pass : mPassList)
 	{
 		pass->update(evt.timeSinceLastFrame);
@@ -48,7 +48,8 @@ bool ManualApplication::appInit()
 	Ogre::Root::getSingleton()._initialise();
 
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-
+	ogreConfig.width = 1440;
+	ogreConfig.height = 900;
 	mApplicationWindow->createWindow(ogreConfig.width, ogreConfig.height);
 	
 	HWND wnd = mApplicationWindow->getWnd();
@@ -106,7 +107,6 @@ void ManualApplication::run(AppInfo& info)
 	mAppInfo = &info;
 	appInit();
 	info.setup(mRenderSystem, mRenderWindow, mSceneManager, mGameCamera);
-	info.pass(mPassList);
 	MSG msg;
 	mRenderSystem->ready();
 	while (true)
@@ -184,4 +184,9 @@ void ManualApplication::OnSize(uint32_t width, uint32_t height)
 			mRenderWindow->resize(width, height);
 		}
 	}
+}
+
+void ManualApplication::addRenderPass(PassBase* pass)
+{
+	mPassList.push_back(pass);
 }
