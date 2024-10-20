@@ -49,7 +49,7 @@ public:
         return mCamera;
     }
 
-    const Ogre::Vector3 getPosition();
+    const Ogre::Vector3& getPosition() const;
 
     void setDistance(float distance);
     void setHeight(float height);

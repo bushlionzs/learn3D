@@ -1624,7 +1624,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
 
     vulkanRasterState.colorWriteMask = 0xf;
     vulkanRasterState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-    vulkanRasterState.colorTargetCount = rasterState.colorWrite?1:0;
+    vulkanRasterState.colorTargetCount = rasterState.renderTargetCount;
     vulkanRasterState.depthCompareOp = SamplerCompareFunc::LE;
     vulkanRasterState.depthBiasConstantFactor = 0.0f;
     vulkanRasterState.depthBiasSlopeFactor = 0.0f;
@@ -1873,7 +1873,23 @@ void VulkanRenderSystemBase::parseInputBindingDescription(
             vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         }
     }
-    
+    else
+    {
+        int32_t stride = 0;
+        for (auto i = 0; i < inputDesc.size(); i++)
+        {
+            auto& input = inputDesc[i];
+
+            stride += getTypeSize(input._type);
+        }
+
+       
+        vertexInputBindings.emplace_back();
+        vertexInputBindings.back().binding = 0;
+        vertexInputBindings.back().stride = stride;
+        vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        
+    }
 }
 
 void VulkanRenderSystemBase::parseAttributeDescriptions(
@@ -1881,10 +1897,26 @@ void VulkanRenderSystemBase::parseAttributeDescriptions(
     std::vector<GlslInputDesc>& inputDesc,
     std::vector<VkVertexInputAttributeDescription>& attributeDescriptions)
 {
+
     attributeDescriptions.resize(inputDesc.size());
+    if (decl == nullptr)
+    {
+        uint32_t offset = 0;
+        for (auto i = 0; i < inputDesc.size(); i++)
+        {
+            auto& input = inputDesc[i];
+            attributeDescriptions[i].binding = 0;
+            attributeDescriptions[i].location = input._location;
+            attributeDescriptions[i].format = getVKFormatFromType(input._type);
+            attributeDescriptions[i].offset = offset;
+            offset += getTypeSize(input._type);
+        }
+        return;
+    }
+    
     int32_t i = 0;
 
-    for (auto& input : inputDesc)
+    for (GlslInputDesc& input : inputDesc)
     {
         bool find = false;
 

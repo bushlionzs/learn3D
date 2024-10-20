@@ -108,6 +108,8 @@ namespace Ogre {
         {
         case gli::FORMAT_RGBA16_SFLOAT_PACK16:
             return Ogre::PF_FLOAT16_RGBA;
+        case gli::FORMAT_RGBA8_UNORM_PACK8:
+            return Ogre::PF_A8B8G8R8;
         default:
             assert(false);
         }

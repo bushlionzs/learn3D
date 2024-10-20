@@ -34,11 +34,7 @@ namespace Ogre {
 
 	const Ogre::Vector3& Camera::getDerivedPosition() const
 	{
-		if (mParent)
-		{
-			return mParent->_getDerivedPosition();
-		}
-		return Ogre::Vector3::ZERO;
+		return mPosition;
 	}
 
 	const Ogre::Quaternion& Camera::getDerivedOrientation() const
@@ -129,6 +125,11 @@ namespace Ogre {
 	void Camera::needUpdate()
 	{
 		mNeedUpdate = true;
+	}
+
+	void Camera::updatePosition(const Ogre::Vector3& position)
+	{
+		mPosition = position;
 	}
 
 	void Camera::updateCamera(const Ogre::Matrix4& m)

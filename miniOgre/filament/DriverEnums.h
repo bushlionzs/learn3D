@@ -1125,7 +1125,7 @@ struct RasterState {
     using BlendFunction = backend::BlendFunction;
 
     RasterState() noexcept { // NOLINT
-        static_assert(sizeof(RasterState) == sizeof(uint32_t),
+        static_assert(sizeof(RasterState) == sizeof(uint64_t),
                 "RasterState size not what was intended");
         culling = CullingMode::BACK;
         blendEquationRGB = BlendEquation::ADD;
@@ -1195,9 +1195,9 @@ struct RasterState {
             //! padding, must be 0
             bool depthClamp                             : 1;        // 32
 
-
+            uint32_t renderTargetCount;
         };
-        uint32_t u = 0;
+        uint64_t u = 0;
     };
 };
 

@@ -7,9 +7,11 @@
 #include <OgreIndexData.h>
 #include <OgreMaterial.h>
 #include "OgreTextureUnit.h"
+#include <OgreTextureManager.h>
 
 namespace Ogre {
-    Renderable::Renderable()
+    Renderable::Renderable():
+        mObjectType(ObjectType_Static)
     {
         mModel = Ogre::Matrix4::IDENTITY;
 
@@ -58,6 +60,7 @@ namespace Ogre {
         for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
         {
             FrameResourceInfo* resourceInfo = &mFrameResourceInfoList[i];
+            resourceInfo->update = false;
             Handle<HwBufferObject> objectBufferHandle =
                 rs->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform, BufferUsage::DYNAMIC,
                     sizeof(ObjectConstantBuffer));
@@ -115,6 +118,8 @@ namespace Ogre {
 
             if (mat->isPbr())
             {
+                std::array<OgreTexture*, 5> texArray = 
+                {nullptr, nullptr, nullptr, nullptr, nullptr};
                 for (int32_t i = 0; i < texs.size(); i++)
                 {
                     int32_t texIndex = -1;
@@ -139,9 +144,21 @@ namespace Ogre {
 
                     assert(texIndex >= 0);
                     OgreTexture* tex = texs[i]->getRaw();
-                    rs->updateDescriptorSetTexture(
-                        resourceInfo->firstSet, texIndex, &tex, 1, false);
+                    texArray[texIndex] = tex;
                 }
+                std::shared_ptr<OgreTexture> defaultTex =
+                    TextureManager::getSingleton().getByName("white1x1.dds");
+                for (auto i = 0; i < 5; i++)
+                {
+                    OgreTexture* tex = texArray[i];
+                    if (tex == nullptr)
+                    {
+                        tex = defaultTex.get();
+                    }
+                    rs->updateDescriptorSetTexture(
+                        resourceInfo->firstSet, i, &tex, 1, false);
+                }
+                
             }
             else
             {
@@ -172,11 +189,19 @@ namespace Ogre {
 
     void Renderable::updateFrameResource(uint32_t frameIndex)
     {
+        FrameResourceInfo& resourceInfo = mFrameResourceInfoList[frameIndex];
+        if (resourceInfo.update)
+        {
+            if(mObjectType == ObjectType_Static)
+                return;
+        }
+        else
+        {
+            resourceInfo.update = true;
+        }
+        
         auto* rs = Ogre::Root::getSingleton().getRenderSystem();
         Material* mat = mMaterial.get();
-
-        FrameResourceInfo& resourceInfo = mFrameResourceInfoList[frameIndex];
-
         static ObjectConstantBuffer objectBuffer;
         objectBuffer.world = mModel.transpose();
         rs->updateBufferObject(resourceInfo.modelObjectHandle,
@@ -194,11 +219,39 @@ namespace Ogre {
             rs->updateBufferObject(resourceInfo.matObjectHandle,
                 (const char*)&matBuffer, sizeof(matBuffer));
         }
+    }
 
+    void Renderable::updateMaterialInfo()
+    {
+        Material* mat = mMaterial.get();
+        auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+        for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
+        {
+            auto& resourceInfo = mFrameResourceInfoList[i];
+            if (mat->isPbr())
+            {
+                auto& matBuffer = mat->getPbrMatInfo();
+                rs->updateBufferObject(resourceInfo.matObjectHandle,
+                    (const char*)&matBuffer, sizeof(matBuffer));
+            }
+            else
+            {
+                auto& matBuffer = mat->getMatInfo();
+                rs->updateBufferObject(resourceInfo.matObjectHandle,
+                    (const char*)&matBuffer, sizeof(matBuffer));
+            }
+        }
+        
     }
 
     FrameResourceInfo* Renderable::getFrameResourceInfo(uint32_t frameIndex)
     {
         return &mFrameResourceInfoList[frameIndex];
+    }
+
+    void Renderable::setObjectType(ObjectType type)
+    {
+        mObjectType = type;
     }
 }

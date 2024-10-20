@@ -1,10 +1,10 @@
 #include <OgreHeader.h>
 #include "glslUtil.h"
 #include <libshaderc_util/file_finder.h>
-#include <SPIRV_Cross/spirv_glsl.hpp>
 #include <VulkanTools.h>
 #include <VulkanHelper.h>
 #include <mutex>
+#include "OgreResourceManager.h"
 
 static std::string getContentFromFile(const char* name)
 {
@@ -34,7 +34,8 @@ public:
         const char* requesting_source,
         size_t include_depth)
     {
-        mName = mRootPath + requested_source;
+        ResourceInfo* resInfo = ResourceManager::getSingleton().getResource(requested_source);
+        mName = resInfo->_fullname;
         mIncludeResult.source_name = mName.c_str();
         mIncludeResult.source_name_length = mName.size();
 
@@ -218,7 +219,10 @@ void parserGlslInputDesc(
 
         inputDesc[i]._location = glsl.get_decoration(input.id, spv::DecorationLocation);
 
-        auto set = glsl.get_decoration(input.id, spv::DecorationDescriptorSet);
+        inputDesc[i]._type = glsl.get_type(input.type_id);
+
+
+        auto offset = glsl.get_decoration(input.id, spv::DecorationOffset);
         auto binding = glsl.get_decoration(input.id, spv::DecorationBinding);
         int kk = 0;
     }

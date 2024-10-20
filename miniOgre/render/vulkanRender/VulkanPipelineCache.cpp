@@ -173,7 +173,7 @@ using namespace bluevk;
                 .failOp = VK_STENCIL_OP_KEEP,
                 .passOp = VK_STENCIL_OP_KEEP,
                 .depthFailOp = VK_STENCIL_OP_KEEP,
-                .compareOp = VK_COMPARE_OP_ALWAYS,
+                .compareOp = VK_COMPARE_OP_NEVER,
                 .compareMask = 0u,
                 .writeMask = 0u,
                 .reference = 0u,
@@ -233,7 +233,13 @@ using namespace bluevk;
 
         pipelineRenderingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
         pipelineRenderingCreateInfo.colorAttachmentCount = colorBlendState.attachmentCount;
-        pipelineRenderingCreateInfo.pColorAttachmentFormats = &mPipelineRequirements.colorFormat;
+
+        VkFormat colorFormat[MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT];
+        for (auto i = 0; i < colorBlendState.attachmentCount; i++)
+        {
+            colorFormat[i] = mPipelineRequirements.colorFormat;
+        }
+        pipelineRenderingCreateInfo.pColorAttachmentFormats = colorFormat;
         pipelineRenderingCreateInfo.depthAttachmentFormat = mPipelineRequirements.depthFormat;
         pipelineRenderingCreateInfo.stencilAttachmentFormat = mPipelineRequirements.depthFormat;
 

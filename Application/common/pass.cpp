@@ -64,10 +64,7 @@ public:
 					rs->updateDescriptorSetBuffer(resourceInfo->zeroSet, 1, &frameHandle, 1);
 					rs->updateDescriptorSetBuffer(resourceInfo->zeroShadowSet, 1, &frameHandle, 1);
 				}
-
 			}
-
-
 			r->updateFrameResource(frameIndex);
 		}
 		rs->beginRenderPass(info);
@@ -113,6 +110,8 @@ private:
 		else
 		{
 			mFrameConstantBuffer.Shadow = 0;
+			mFrameConstantBuffer.directionLights[0].Direction = Ogre::Vector3(0, -1, 0.0f);
+			mFrameConstantBuffer.directionLights[0].Direction.normalise();
 		}
 
 
@@ -121,8 +120,8 @@ private:
 
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 
-		rs->updateBufferObject(
-			mFrameBufferObjectList[frameIndex], (const char*)&mFrameConstantBuffer, sizeof(mFrameConstantBuffer));
+		rs->updateBufferObject(mFrameBufferObjectList[frameIndex], 
+			(const char*)&mFrameConstantBuffer, sizeof(mFrameConstantBuffer));
 
 	}
 private:

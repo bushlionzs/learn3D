@@ -2389,6 +2389,7 @@ bool LoadImageData(Image *image, const int image_idx, std::string *err,
     }
   }
 
+  return true; //zhousha
   // at this point, if data is still NULL, it means that the image wasn't
   // 16bit per channel, we are going to load it as a normal 8bit per channel
   // mage as we used to do:

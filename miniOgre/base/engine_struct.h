@@ -14,6 +14,12 @@ enum RenderListType
     RenderListType_Transparent
 };
 
+enum ObjectType
+{
+    ObjectType_Static = 0,
+    ObjectType_Dynamic
+};
+
 class EngineRenderList
 {
 public:
@@ -144,6 +150,7 @@ struct FrameResourceInfo
     Handle<HwBufferObject>  modelObjectHandle;
     Handle<HwBufferObject>  matObjectHandle;
     Handle<HwBufferObject>  skinObjectHandle;
+    bool update;
 };
 
 #ifndef MAX_NUM_DIR_LIGHTS
@@ -203,7 +210,7 @@ struct GeneralMaterialConstantBuffer
 struct PbrMaterialConstanceBuffer
 {
     //some constance value;
-    Ogre::Vector2 metallicRoughnessValues = { 1.0f, 1.0f };
+    Ogre::Vector2 metallicRoughnessValues = { 0.1f, 1.0f };
     Real occlusionStrength = 1.0f;
     uint32_t alphaMask = 0;
     Ogre::Vector3 emissiveFactor = { 1.0f, 1.0f, 1.0f };
@@ -211,6 +218,9 @@ struct PbrMaterialConstanceBuffer
     Ogre::Vector4 baseColorFactor = { 1.0f, 1.0f, 1.0f, 1.0f };
     Ogre::Vector4 scaleIBLAmbient = { 1.0f, 1.0f, 1.0f, 1.0f };
     uint32_t debugRenderMode = 0;
+    uint32_t hasEmissiveMap = 0;
+    uint32_t hasNormalMap = 0;
+    uint32_t hasMetalRoughNessMap = 0;
 };
 
 struct ObjectConstantBuffer

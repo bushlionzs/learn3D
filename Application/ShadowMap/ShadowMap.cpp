@@ -895,7 +895,7 @@ void ShadowMap::base2()
             rs->popGroupMarker();
             };
 
-        UpdateCallback shadowUpdateCallback = [=, this](float delta) {
+        UpdatePassCallback shadowUpdateCallback = [=, this](float delta) {
             };
         auto shadowPass = createUserDefineRenderPass(shadowCallback, shadowUpdateCallback);
         mPassList.push_back(shadowPass);

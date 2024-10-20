@@ -25,7 +25,7 @@ struct GltfVertex
     Ogre::Vector3 Pos;
     Ogre::Vector3 Normal;
     Ogre::Vector2 TexC;
-    Ogre::Vector4 Tangent;
+    Ogre::Vector3 Tangent;
 };
 
 struct GltfSkinnedVertex
@@ -250,7 +250,6 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                     mVertexBuffer[i].Tangent.x = gltfTangent[0];
                     mVertexBuffer[i].Tangent.y = gltfTangent[1];
                     mVertexBuffer[i].Tangent.z = gltfTangent[2];
-                    mVertexBuffer[i].Tangent.w = gltfTangent[3];
                     gltfTangent += 4;
                 }
                 
@@ -271,7 +270,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
             vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
             vd->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
-            vd->addElement(0, 0, 32, VET_FLOAT4, VES_TANGENT);
+            vd->addElement(0, 0, 32, VET_FLOAT3, VES_TANGENT);
 
             std::vector<VertexBoneAssignment> assignInfoList;
      
@@ -369,17 +368,12 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 }
             }
             
-			
             vd->addBoneInfo(assignInfoList);
-            
             
             ShaderInfo sinfo;
             sinfo.shaderName = "pbr";
             
             const tinygltf::Material& tinyMat = model.materials[prim.material];
-            
-            
-            
             
            // sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("SKINNED", "1"));
             std::shared_ptr<Ogre::Material> mat = std::make_shared<Ogre::Material>(tinyMat.name, true);
@@ -406,7 +400,6 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_BASECOLORMAP", "1"));
             }
             
-
             int32_t occlusionIndex = tinyMat.occlusionTexture.index;
             if (occlusionIndex >= 0)
             {
@@ -416,7 +409,6 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_OCCLUSIONMAP", "1"));
             }
             
-
             int32_t normalIndex = tinyMat.normalTexture.index;
             if (normalIndex >= 0)
             {
@@ -430,7 +422,6 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 int kk = 0;
             }
             
-
             int32_t metallicRoughnessIndex = tinyMat.pbrMetallicRoughness.metallicRoughnessTexture.index;
             if (metallicRoughnessIndex >= 0)
             {
@@ -440,7 +431,6 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_METALROUGHNESSMAP", "1"));
             }
             
-
             int32_t emissiveIndex = tinyMat.emissiveTexture.index;
             if (emissiveIndex >= 0)
             {
@@ -450,11 +440,6 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_EMISSIVEMAP", "1"));
             }
 
-            
-
-            
-
-            
             sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("PBR", "1"));
             mat->addShader(sinfo);
 

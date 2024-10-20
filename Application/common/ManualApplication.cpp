@@ -13,6 +13,7 @@
 #include "OgreViewport.h"
 #include "GameTableManager.h"
 #include "CEGUIManager.h"
+#include "OgreTextureManager.h"
 #include <ResourceParserManager.h>
 #include "pass.h"
 
@@ -97,6 +98,8 @@ bool ManualApplication::appInit()
 		new CEGUIManager;
 		CEGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
+
+	TextureManager::getSingleton().load("white1x1.dds", nullptr);
 	return true;
 }
 
@@ -142,7 +145,6 @@ void ManualApplication::render()
 	mRenderSystem->frameStart();
 	Ogre::Root::getSingleton()._fireFrameStarted();
 
-	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
 	for (auto pass : mPassList)
 	{
 		pass->execute(mRenderSystem);

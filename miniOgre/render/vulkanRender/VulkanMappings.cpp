@@ -180,6 +180,8 @@ namespace Ogre {
         switch (format)
         {
         case VK_FORMAT_B8G8R8A8_UNORM:          return PF_A8R8G8B8;
+        case VK_FORMAT_B8G8R8A8_SRGB:           return PF_A8R8G8B8_SRGB;
+        case VK_FORMAT_D32_SFLOAT:              return PF_DEPTH32;
         case VK_FORMAT_D32_SFLOAT_S8_UINT :     return PF_DEPTH32_STENCIL8;
         default:
             assert(false);
@@ -257,7 +259,7 @@ namespace Ogre {
     {
         switch (mipMapMode) {
         case filament::backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST:
-            return 0.25f;
+            return VK_LOD_CLAMP_NONE;
         case filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR:
             // The Vulkan spec recommends a max LOD of 0.25 to "disable" mipmapping.
             // See "Mapping of OpenGL to Vulkan filter modes" in the VK Spec.

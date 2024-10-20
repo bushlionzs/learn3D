@@ -40,6 +40,7 @@ namespace Ogre {
         
 
         void needUpdate();
+        void updatePosition(const Ogre::Vector3& position);
         void updateCamera(const Ogre::Matrix4& m);
         void updateCamera(
             const Ogre::Vector3& eyePos,
@@ -75,6 +76,7 @@ namespace Ogre {
 
         SceneManager* mCreator = nullptr;
 
+        Ogre::Vector3 mPosition;
         mutable bool mNeedUpdate = true;
 
         bool mCull = true;

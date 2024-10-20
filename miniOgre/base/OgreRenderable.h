@@ -68,11 +68,15 @@ namespace Ogre {
 
         void createFrameResource();
         void updateFrameResource(uint32_t frameIndex);
+        void updateMaterialInfo();
         FrameResourceInfo* getFrameResourceInfo(uint32_t frameIndex);
+
+        void setObjectType(ObjectType type);
     protected:
         std::shared_ptr<Material> mMaterial;
         Ogre::Matrix4 mModel;
         uint64_t mSortValue;
+        ObjectType mObjectType;
         std::vector<FrameResourceInfo> mFrameResourceInfoList;
     };
 }

@@ -47,6 +47,7 @@ void VulkanRenderSystem::frameStart()
 { 
     mTriangleCount = 0;
     mBatchCount = 0;
+    mLastPipeline = VK_NULL_HANDLE;
     mCommandBuffer = mCommands->get().buffer();
     bool resized = false;
     mSwapChain->acquire(resized);
@@ -362,8 +363,14 @@ void VulkanRenderSystem::multiRender(std::vector<Ogre::Renderable*>& objs, bool 
                 mResourceAllocator.handle_cast<VulkanDescriptorSet*>(resourceInfo->firstSet);
             VkDescriptorSet ds[2] = { ubo->vkSet,  sampler->vkSet };
 
-            auto vulkanPipe = vulkanPineline->getPipeline();
-            mPipelineCache->bindPipeline(cmdBuffer, vulkanPipe);
+            auto vulkanPipeline = vulkanPineline->getPipeline();
+
+            if (vulkanPipeline != mLastPipeline)
+            {
+                mPipelineCache->bindPipeline(cmdBuffer, vulkanPipeline);
+                mLastPipeline = vulkanPipeline;
+            }
+            
             vkCmdBindDescriptorSets(
                 cmdBuffer,
                 VK_PIPELINE_BIND_POINT_GRAPHICS,

@@ -13,6 +13,7 @@
 #include <vk_mem_alloc.h>
 #include <tsl/robin_map.h>
 #include <utils/FixedCapacityVector.h>
+#include <SPIRV_Cross/spirv_glsl.hpp>
 
 VK_DEFINE_HANDLE(VmaAllocator)
 VK_DEFINE_HANDLE(VmaPool)
@@ -103,7 +104,7 @@ struct GlslInputDesc
     uint32_t _index;
     uint32_t _location;
     uint32_t _size;
-    uint32_t _type;
+    spirv_cross::SPIRType _type;
     uint32_t _offset;
 
 };
@@ -143,3 +144,6 @@ using namespace filament::backend;
 
 VkFormat getVKFormatFromType(VertexElementType type);
 
+VkFormat getVKFormatFromType(spirv_cross::SPIRType type);
+
+int32_t getTypeSize(spirv_cross::SPIRType type);

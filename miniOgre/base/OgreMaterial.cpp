@@ -22,7 +22,8 @@ namespace Ogre {
         mShaderInfo.samplerFragMask = 1 | 2 | 4 | 8 | 16;
 
         mRasterState.depthWrite = true;
-        mRasterState.culling = backend::CullingMode::NONE;
+        mRasterState.colorWrite = true;
+        mRasterState.renderTargetCount = 1;
     }
 
 
@@ -124,9 +125,24 @@ namespace Ogre {
         mUboLayoutHandle = rs->getDescriptorSetLayout(mProgramHandle, 0);
         mSamplerLayoutHandle = rs->getDescriptorSetLayout(mProgramHandle, 1);
         
-        
-        
-        
+        if (mPbr)
+        {
+            for (int32_t i = 0; i < mTextureUnits.size(); i++)
+            {
+                switch (mTextureUnits[i]->getTextureProperty()->_pbrType)
+                {
+                case TextureTypePbr_MetalRoughness:
+                    mPbrMatInfo.hasMetalRoughNessMap = 1;
+                    break;
+                case TextureTypePbr_NormalMap:
+                    mPbrMatInfo.hasNormalMap = 1;
+                    break;
+                case TextureTypePbr_Emissive:
+                    mPbrMatInfo.hasEmissiveMap = 1;
+                    break;
+                }
+            }
+        } 
     }
 
     bool Material::isLoaded()

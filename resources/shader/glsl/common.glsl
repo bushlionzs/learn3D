@@ -97,6 +97,9 @@ layout(binding = 2, std140) uniform MaterialUniforms {
 	vec4 u_BaseColorFactor;
 	vec4 u_ScaleIBLAmbient;
 	uint debugRenderMode;
+	uint hasEmissiveMap;
+    uint hasNormalMap;
+    uint hasMetalRoughNessMap;
 } pbrMaterial;
 #else
 layout(binding = 2, std140) uniform MaterialUniforms {

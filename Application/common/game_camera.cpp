@@ -13,7 +13,7 @@ GameCamera::GameCamera(Camera* camera, SceneManager* sceneMgr)
     mCameraType = CameraMoveType_FirstPerson;
 }
 
-const Ogre::Vector3 GameCamera::getPosition()
+const Ogre::Vector3& GameCamera::getPosition() const
 {
     return position;
 }
@@ -239,7 +239,7 @@ bool GameCamera::update(float delta)
     Ogre::Matrix4 m = rotM * transM;
 
     mCamera->updateCamera(m);
-
+    mCamera->updatePosition(position);
     return true;
 }
 

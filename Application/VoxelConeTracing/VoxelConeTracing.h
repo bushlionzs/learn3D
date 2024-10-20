@@ -4,6 +4,11 @@
 #include "game_camera.h"
 #include "DriverBase.h"
 
+struct FrameData
+{
+	Handle <HwDescriptorSet> zeroDescSet;
+	Handle <HwDescriptorSet> firstDescSet;
+};
 class VoxelConeTracingApp
 {
 public:
@@ -24,9 +29,11 @@ public:
 		return mFrameBufferObjectList[frameIndex];
 	}
 private:
-
-	EngineType getEngineType();
-	
+	void renderObject(
+		Ogre::Renderable* r, 
+		Handle<HwProgram> programHandle,
+		Handle<HwPipeline> pipelineHandle);
+	void updateObject(Ogre::Renderable* r, Handle<HwPipeline> pipelineHandle);
 private:
 	SceneManager* mSceneManager;
 	GameCamera* mGameCamera;
@@ -34,4 +41,6 @@ private:
 	RenderWindow* mRenderWindow;
 	FrameConstantBuffer mFrameConstantBuffer;
 	std::vector<Handle<HwBufferObject>> mFrameBufferObjectList;
+
+	std::vector<FrameData> mFrameData;
 };

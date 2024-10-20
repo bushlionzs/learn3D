@@ -37,7 +37,7 @@ void BasicApplication::setup(
 	mGameCamera = gameCamera;
 	mRenderWindow = renderWindow;
 	mRenderSystem = renderSystem;
-	base2();
+	base1();
 
 	RenderPassInput input;
 	input.color = renderWindow->getColorTarget();
@@ -91,7 +91,7 @@ void BasicApplication::base1()
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 
-	mSceneManager->setSkyBox(true, "SkyLan", 10000);
+	//mSceneManager->setSkyBox(true, "SkyLan", 10000);
 	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -2.5f), Ogre::Vector3::ZERO);
 	mGameCamera->setMoveSpeed(5);
 

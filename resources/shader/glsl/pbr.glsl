@@ -91,20 +91,7 @@ vec3 getNormal(float3 viewDirection, float3 normal, float2 uv)
 	vec3 tangentNormal = ReconstructNormal(sampleNormal, 0.56);
 	
 
-	vec3 q1 = dFdx(viewDirection);
-	vec3 q2 = dFdy(viewDirection);
-	vec2 st1 = dFdx(uv);
-	vec2 st2 = dFdy(uv);
-
-	vec3 N = normalize(normal);
-	vec3 T = normalize(q1 * st2.t - q2 * st1.t);
-	vec3 B = -normalize(cross(N, T));
-	mat3 TBN = mat3(T, B, N);
-
-	//return normalize(tangentNormal * TBN);
-	
-	{
-	    float3 dPdx = ddx(viewDirection);
+	float3 dPdx = ddx(viewDirection);
 	float3 dPdy = ddy(viewDirection);
 	float2 dUVdx = ddx(uv);
 	float2 dUVdy = ddy(uv);
@@ -121,8 +108,6 @@ vec3 getNormal(float3 viewDirection, float3 normal, float2 uv)
 	f3x3 TBN = make_f3x3_rows(T * invScale, B * invScale, N);
 	
 	return normalize(tangentNormal * TBN);
-	}
-	
 }
 
 
@@ -353,16 +338,15 @@ void main()
     // Metallic and Roughness material properties are packed together
     // In glTF, these factors can be specified by fixed scalar values
     // or from a metallic-roughness map
-    float roughness = pbrMaterial.u_MetallicRoughnessValues.y;
-    float metalness = pbrMaterial.u_MetallicRoughnessValues.x;
-	
-
 #ifdef HAS_METALROUGHNESSMAP
     // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
     // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
     float4 mrSample = texture(metal_roughness_pbr, inUV0);
-	metalness = mrSample.b * metalness;
-    roughness = mrSample.g * roughness;
+	float metalness = mrSample.b;
+    float roughness = mrSample.g;
+#else
+     float roughness = pbrMaterial.u_MetallicRoughnessValues.y;
+    float metalness = pbrMaterial.u_MetallicRoughnessValues.x;
 #endif
     
 #ifdef HAS_METALMAP
@@ -383,7 +367,6 @@ void main()
 #else
     float4 baseColor = vec4(0.04f, 0.04f, 0.04f, 1.0f);
 #endif
-
     float3 f0 = float3(0.04, 0.04, 0.04);
 	f0 = lerp(f0, baseColor.rgb, metalness);
 	
@@ -431,9 +414,8 @@ void main()
 	float3 emissive = texture(emissive_pbr,inUV0).rgb * pbrMaterial.u_EmissiveFactor;
     color += emissive;
 #endif
-    outColor =  float4(pow(color,float3(1.0/2.2, 1.0/2.2, 1.0/2.2)), baseColor.a);
-	//color = color / (color + float3(1.0f, 1.0f, 1.0f));
-	
+    
+
 	switch (pbrMaterial.debugRenderMode)
 	{
 	default:
@@ -446,8 +428,8 @@ void main()
 	case 6: color = directColor;break;
 	case 7: color = ibl;
 	}
-	
-	outColor = float4(color, 1.0f);
+	outColor =  float4(pow(color,float3(1.0/2.2, 1.0/2.2, 1.0/2.2)), baseColor.a);
+	//outColor =  float4(color, baseColor.a);
 }
 
 #endif //FRAGMENT_SHADER
