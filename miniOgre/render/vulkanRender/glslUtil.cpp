@@ -141,6 +141,11 @@ bool glslCompileShader(
         options.AddMacroDefinition("FRAGMENT_SHADER", "1");
         kind = shaderc_glsl_fragment_shader;
     }
+    else if (shaderModuleInfo.shaderType == Ogre::ShaderType::GeometryShader)
+    {
+        options.AddMacroDefinition("GEOMETRY_SHADER", "1");
+        kind = shaderc_glsl_geometry_shader;
+    }
     else
     {
         assert(shaderModuleInfo.shaderType == Ogre::ShaderType::ComputeShader);

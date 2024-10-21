@@ -39,7 +39,7 @@ namespace Ogre {
         return mParentEntity->getSkinnedData(dummy);
     }
 
-    const std::shared_ptr<Material>& SubEntity::getMaterial()
+    std::shared_ptr<Material>& SubEntity::getMaterial()
     {
         if (mMaterial)
             return mMaterial;

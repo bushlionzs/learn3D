@@ -15,6 +15,9 @@ namespace Ogre {
 		std::string fragShaderName;
 		std::string fragShaderEntryPoint;
 
+		std::string geometryShaderName;
+		std::string geometryShaderEntryPoint;
+
 		std::string computeShaderName;
 		std::string computeShaderEntryPoint;
 	};

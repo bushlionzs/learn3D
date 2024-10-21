@@ -205,9 +205,14 @@ struct VulkanProgram : public HwProgram, VulkanResource {
         return mShaders[0];
     }
 
+    inline VkShaderModule getGeometryShader() const
+    {
+        return mShaders[1];
+    }
+
     inline VkShaderModule getFragmentShader() const 
     { 
-        return mShaders[1];
+        return mShaders[2];
     }
 
     
@@ -216,9 +221,14 @@ struct VulkanProgram : public HwProgram, VulkanResource {
         mShaders[0] = shaderModule;
     }
 
-    void updateFragmentShader(VkShaderModule shaderModule)
+    void updateGeometryShader(VkShaderModule shaderModule)
     {
         mShaders[1] = shaderModule;
+    }
+
+    void updateFragmentShader(VkShaderModule shaderModule)
+    {
+        mShaders[2] = shaderModule;
     }
 
     void updateVulkanPipelineLayout(VkPipelineLayout layout)
@@ -251,7 +261,7 @@ struct VulkanProgram : public HwProgram, VulkanResource {
         return mAttributeDescriptions;
     }
 
-    static constexpr uint8_t const MAX_SHADER_MODULES = 2;
+    static constexpr uint8_t const MAX_SHADER_MODULES = 3;
 
 private:
     

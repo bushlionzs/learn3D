@@ -13,6 +13,7 @@
 #include "OgreSceneNode.h"
 #include "OgreMeshManager.h"
 #include "OgreEntity.h"
+#include "OgreSubEntity.h"
 
 BasicApplication::BasicApplication()
 {
@@ -91,8 +92,12 @@ void BasicApplication::base1()
 	SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 
+	SubEntity* subEntry = rect->getSubEntity(0);
+	auto& mat = subEntry->getMaterial();
+	ShaderInfo& info = mat->getShaderInfo();
+	info.shaderName = "testShader";
 	//mSceneManager->setSkyBox(true, "SkyLan", 10000);
-	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -2.5f), Ogre::Vector3::ZERO);
+	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -10.f), Ogre::Vector3::ZERO);
 	mGameCamera->setMoveSpeed(5);
 
 }

@@ -109,7 +109,7 @@ FrameGraphId<FrameGraphTexture> PassUtil::colorPass(
                 
                 static EngineRenderList engineRenerList;
                 sm->getSceneRenderList(cam, engineRenerList, false);
-                rs->multiRender(engineRenerList.mOpaqueList);
+                
                 rs->endRenderPass();
         }
     );

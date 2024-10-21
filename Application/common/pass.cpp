@@ -8,6 +8,8 @@
 #include "OgreMaterial.h"
 #include "OgreRenderTarget.h"
 #include "OgreTextureManager.h"
+#include "OgreVertexData.h"
+#include "OgreIndexData.h"
 
 class StandardRenderPass : public PassBase
 {
@@ -68,7 +70,28 @@ public:
 			r->updateFrameResource(frameIndex);
 		}
 		rs->beginRenderPass(info);
-		rs->multiRender(engineRenerList.mOpaqueList);
+		for (auto r : engineRenerList.mOpaqueList)
+		{
+			Ogre::Material* mat = r->getMaterial().get();
+			auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+			FrameResourceInfo* resourceInfo = r->getFrameResourceInfo(frameIndex);
+			Handle<HwDescriptorSet> descriptorSet[2];
+			descriptorSet[0] = resourceInfo->zeroSet;
+			descriptorSet[1] = resourceInfo->firstSet;
+
+			auto programHandle = mat->getProgram();
+			auto piplineHandle = mat->getPipeline();
+			rs->bindPipeline(programHandle, piplineHandle, descriptorSet, 2);
+
+
+			VertexData* vertexData = r->getVertexData();
+			IndexData* indexData = r->getIndexData();
+			vertexData->bind(nullptr);
+			indexData->bind();
+			IndexDataView* view = r->getIndexView();
+			rs->drawIndexed(view->mIndexCount, 1,
+				view->mIndexLocation, view->mBaseVertexLocation, 0);
+		}
 		rs->endRenderPass();
 	}
 	virtual void update(float delta)

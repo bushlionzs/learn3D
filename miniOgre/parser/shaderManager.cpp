@@ -94,12 +94,6 @@ namespace Ogre {
 			{"vulkan", EngineType_Vulkan}
 		};
 
-		static std::map<String, Ogre::ShaderType> shadertype_map =
-		{
-			{"vertex_shader", VertexShader},
-			{"frag_shader", PixelShader}
-		};
-
 		std::string linePart;
 		ss >> linePart;
 
@@ -165,6 +159,16 @@ namespace Ogre {
 				{
 					shaderFormat->shaderInfo[EngineType_Dx11].privateInfo.computeShaderName = aa[0];
 					shaderFormat->shaderInfo[EngineType_Dx11].privateInfo.computeShaderEntryPoint = aa[1];
+				}
+			}
+			else if (pair.first == "geometry_shader")
+			{
+				shaderFormat->shaderInfo[enginetype].privateInfo.geometryShaderName = aa[0];
+				shaderFormat->shaderInfo[enginetype].privateInfo.geometryShaderEntryPoint = aa[1];
+				if (enginetype == EngineType_Dx12)
+				{
+					shaderFormat->shaderInfo[EngineType_Dx11].privateInfo.geometryShaderName = aa[0];
+					shaderFormat->shaderInfo[EngineType_Dx11].privateInfo.geometryShaderEntryPoint = aa[1];
 				}
 			}
 			

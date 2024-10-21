@@ -44,7 +44,7 @@
         VulkanPipelineCache(VulkanPipelineCache const&) = delete;
         VulkanPipelineCache& operator=(VulkanPipelineCache const&) = delete;
 
-        static constexpr uint32_t SHADER_MODULE_COUNT = 2;
+        static constexpr uint32_t SHADER_MODULE_COUNT = 3;
         static constexpr uint32_t VERTEX_ATTRIBUTE_COUNT = MAX_VERTEX_ATTRIBUTE_COUNT;
 
         // The ProgramBundle contains weak references to the compiled vertex and fragment shaders.
@@ -110,7 +110,10 @@
         void bindScissor(VkCommandBuffer cmdbuffer, VkRect2D scissor) noexcept;
 
         // Each of the following methods are fast and do not make Vulkan calls.
-        void bindProgram(VkShaderModule vertexShader, VkShaderModule fragShader) noexcept;
+        void bindProgram(
+            VkShaderModule vertexShader, 
+            VkShaderModule geomtryShader,
+            VkShaderModule fragShader) noexcept;
         void bindRasterState(const RasterState& rasterState) noexcept;
         void bindFormat(VkFormat colorFormat, VkFormat depthFormat);
         void bindPrimitiveTopology(VkPrimitiveTopology topology) noexcept;
@@ -186,7 +189,7 @@
         // The pipeline key is a POD that represents all currently bound states that form the immutable
         // VkPipeline object. The size:offset comments below are expressed in bytes.
         struct PipelineKey {                                                          // size : offset
-            VkShaderModule shaders[SHADER_MODULE_COUNT];                              //  16  : 0
+            VkShaderModule shaders[SHADER_MODULE_COUNT];                              //  24  : 0
             VkFormat depthFormat;                                                     //  4   : 16
             VkFormat colorFormat;                                                     //  4   : 20
             uint16_t topology;                                                        //  2   : 24
@@ -198,7 +201,7 @@
             VkPipelineLayout layout;                                                  //  8   : 304
         };
 
-        static_assert(sizeof(PipelineKey) == 312, "PipelineKey must not have implicit padding.");
+        static_assert(sizeof(PipelineKey) == 320, "PipelineKey must not have implicit padding.");
 
         using PipelineHashFn = utils::hash::MurmurHashFn<PipelineKey>;
 

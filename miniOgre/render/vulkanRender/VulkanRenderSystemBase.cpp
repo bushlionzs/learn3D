@@ -1183,20 +1183,55 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
         vertexMap[pair.first] = shaderMask;
     }
     
-    
+    res = ResourceManager::getSingleton().getResource(privateInfo->geometryShaderName);
+    std::unordered_map<uint8_t, ShaderMask> geometryMap;
+
+    if (res)
+    {
+        String* content = ShaderManager::getSingleton().getShaderContent(privateInfo->geometryShaderName);
+        VkShaderModuleInfo moduleInfo;
+        moduleInfo.shaderType = Ogre::GeometryShader;
+        glslCompileShader(
+            res->_fullname,
+            *content,
+            privateInfo->geometryShaderEntryPoint,
+            shaderInfo.shaderMacros,
+            moduleInfo);
+        vulkanProgram->updateGeometryShader(moduleInfo.shaderModule);
+
+        auto bingingInfo = vks::tools::getProgramBindings(moduleInfo.spv, VK_SHADER_STAGE_GEOMETRY_BIT);
+        for (auto& pair : bingingInfo)
+        {
+            shaderMask.uniformMap.clear();
+            shaderMask.storgeMap.clear();
+            for (auto& layoutBinding : pair.second)
+            {
+                if (layoutBinding.descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
+                {
+                    shaderMask.storgeMap[layoutBinding.binding] = layoutBinding.descriptorCount;
+                }
+                else if (layoutBinding.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+                {
+                    shaderMask.uniformMap[layoutBinding.binding] = layoutBinding.descriptorCount;
+                }
+            }
+            geometryMap[pair.first] = shaderMask;
+        }
+        
+    }
     res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
 
     std::unordered_map<uint8_t, ShaderMask> fragMap;
     if (res)
     {
-        String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
+        String* content = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
         VkShaderModuleInfo moduleInfo;
         moduleInfo.shaderType = Ogre::PixelShader;
 
         glslCompileShader(
             res->_fullname,
-            *vertexContent,
-            privateInfo->vertexShaderEntryPoint,
+            *content,
+            privateInfo->fragShaderEntryPoint,
             shaderInfo.shaderMacros,
             moduleInfo);
         vulkanProgram->updateFragmentShader(moduleInfo.shaderModule);
@@ -1257,7 +1292,22 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
 
             for (auto& pair : vertexItor->second.storgeMap)
             {
-                storgeVertex |= 1 << pair.first;
+                storgeVertex |= 1uLL << pair.first;
+            }
+        }
+        auto geometryItor = fragMap.find(set);
+        uint32_t uniformGeometry = 0;
+        uint64_t storgeGeometry = 0;
+        if (geometryItor != fragMap.end())
+        {
+            for (auto& pair : geometryItor->second.uniformMap)
+            {
+                uniformGeometry |= 1 << pair.first;
+            }
+
+            for (auto& pair : geometryItor->second.storgeMap)
+            {
+                storgeGeometry |= 1uLL << pair.first;
             }
         }
 
@@ -1273,10 +1323,6 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
 
             for (auto& pair : flagItor->second.storgeMap)
             {
-                if (pair.first == 35)
-                {
-                    int kk = 0;
-                }
                 storgeFlag |= 1uLL << pair.first;
             }
         }
@@ -1291,6 +1337,9 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
 
                 if (!hasVertex && !hasFragment)
                     continue;
+
+                bool hasGeometry = (uniformGeometry & (1uLL << i)) != 0;
+
                 toBind[bindIndex].binding = i;
                 
                 toBind[bindIndex].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -1323,6 +1372,11 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
                     toBind[bindIndex].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
                 }
 
+                if (hasGeometry)
+                {
+                    toBind[bindIndex].stageFlags |= VK_SHADER_STAGE_GEOMETRY_BIT;
+                }
+
                 if (hasFragment)
                 {
                     toBind[bindIndex].stageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -1341,6 +1395,7 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
 
                 if (!hasVertex && !hasFragment)
                     continue;
+                bool hasGeometry = (storgeGeometry & (1uLL << i)) != 0;
 
                 toBind[bindIndex].binding = i;
                 toBind[bindIndex].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
@@ -1370,6 +1425,11 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
                 if (hasVertex)
                 {
                     toBind[bindIndex].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+                }
+
+                if (hasGeometry)
+                {
+                    toBind[bindIndex].stageFlags |= VK_SHADER_STAGE_GEOMETRY_BIT;
                 }
 
                 if (hasFragment)
@@ -1634,7 +1694,10 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     std::vector<VkVertexInputAttributeDescription>& attributeDescriptions =
         vulkanProgram->getAttributeDescriptions();
     mPipelineCache->bindFormat(VK_FORMAT_B8G8R8A8_UNORM,VK_FORMAT_D32_SFLOAT_S8_UINT); //todo
-    mPipelineCache->bindProgram(vulkanProgram->getVertexShader(), vulkanProgram->getFragmentShader());
+    mPipelineCache->bindProgram(
+        vulkanProgram->getVertexShader(), 
+        vulkanProgram->getGeometryShader(), 
+        vulkanProgram->getFragmentShader());
     mPipelineCache->bindRasterState(vulkanRasterState);
     mPipelineCache->bindPrimitiveTopology(VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
     mPipelineCache->bindLayout(pipelineLayout);
@@ -1646,7 +1709,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
 
     VkPipeline pipeline = mPipelineCache->getPipeline();
 
-    mPipelineCache->bindProgram(vulkanProgram->getVertexShader(), nullptr);
+    mPipelineCache->bindProgram(vulkanProgram->getVertexShader(), nullptr, nullptr);
 
     VkPipeline pipelineShadow = mPipelineCache->getPipeline();
     VulkanPipeline* vulkanPipeline = mResourceAllocator.construct<VulkanPipeline>(

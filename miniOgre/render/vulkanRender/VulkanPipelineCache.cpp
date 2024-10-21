@@ -90,11 +90,14 @@ using namespace bluevk;
         shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
         shaderStages[0].pName = "main";
-
         shaderStages[1] = VkPipelineShaderStageCreateInfo{};
         shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        shaderStages[1].stage = VK_SHADER_STAGE_GEOMETRY_BIT;
         shaderStages[1].pName = "main";
+        shaderStages[2] = VkPipelineShaderStageCreateInfo{};
+        shaderStages[2].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        shaderStages[2].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        shaderStages[2].pName = "main";
 
         VkPipelineColorBlendAttachmentState colorBlendAttachments[MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT];
         VkPipelineColorBlendStateCreateInfo colorBlendState;
@@ -106,7 +109,7 @@ using namespace bluevk;
         // If we reach this point, we need to create and stash a brand new pipeline object.
         shaderStages[0].module = mPipelineRequirements.shaders[0];
         shaderStages[1].module = mPipelineRequirements.shaders[1];
-
+        shaderStages[2].module = mPipelineRequirements.shaders[2];
         // Expand our size-optimized structs into the proper Vk structs.
         uint32_t numVertexAttribs = 0;
         uint32_t numVertexBuffers = 0;
@@ -262,10 +265,14 @@ using namespace bluevk;
         return &mPipelines.emplace(mPipelineRequirements, cacheEntry).first.value();
     }
 
-    void VulkanPipelineCache::bindProgram(VkShaderModule vertexShader, VkShaderModule fragShader) noexcept
+    void VulkanPipelineCache::bindProgram(
+        VkShaderModule vertexShader,
+        VkShaderModule geomtryShader,
+        VkShaderModule fragShader) noexcept
     {
         mPipelineRequirements.shaders[0] = vertexShader;
-        mPipelineRequirements.shaders[1] = fragShader;
+        mPipelineRequirements.shaders[1] = geomtryShader;
+        mPipelineRequirements.shaders[2] = fragShader;
     }
 
     void VulkanPipelineCache::bindRasterState(const RasterState& rasterState) noexcept {

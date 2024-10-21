@@ -46,7 +46,7 @@ namespace Ogre {
 
         void addShader(ShaderInfo& sinfo);
 
-        const ShaderInfo& getShaderInfo();
+        ShaderInfo& getShaderInfo();
 
         void scale(Real u, Real v);
         void animation(Real u, Real v);

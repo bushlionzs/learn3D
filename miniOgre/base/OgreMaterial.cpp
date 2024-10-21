@@ -188,7 +188,7 @@ namespace Ogre {
         mShaderInfo.samplerFragMask = 1 | 2 | 4 | 8 | 16;
     }
 
-    const ShaderInfo& Material::getShaderInfo()
+    ShaderInfo& Material::getShaderInfo()
     {
         return mShaderInfo;
     }
