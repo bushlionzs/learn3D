@@ -272,6 +272,7 @@ namespace Ogre {
 
     void Material::setCullMode(backend::CullingMode mode)
     {
+        
         mRasterState.culling = mode;
         
     }
@@ -300,6 +301,11 @@ namespace Ogre {
         }
 
         mRasterState = rhs.mRasterState;
+
+        if (mRasterState.culling == backend::CullingMode::BACK)
+        {
+            int kk = 0;
+        }
         return *this;
     }
 

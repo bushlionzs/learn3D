@@ -138,55 +138,6 @@ void VulkanRenderSystemBase::ready()
     VulkanHelper::getSingleton().loadDefaultResources();
 }
 
-RenderableData* VulkanRenderSystemBase::createRenderableData(Ogre::Renderable* r)
-{
-    return nullptr;
-}
-
-void VulkanRenderSystemBase::updateMainPassCB(ICamera* camera)
-{
-    const Ogre::Matrix4& view = camera->getViewMatrix();
-    const Ogre::Matrix4& proj = camera->getProjectMatrix();
-    const Ogre::Vector3& camepos = camera->getDerivedPosition();
-
-    Ogre::Matrix4 invView = view.inverse();
-    Ogre::Matrix4 viewProj = proj * view;
-    Ogre::Matrix4 invProj = proj.inverse();
-    Ogre::Matrix4 invViewProj = viewProj.inverse();
-
-    mFrameConstantBuffer.Shadow = mCurrentRenderPassInfo.shadowPass?1:0;
-
-
-    mFrameConstantBuffer.View = view.transpose();
-    mFrameConstantBuffer.InvView = invView.transpose();
-    mFrameConstantBuffer.Proj = proj.transpose();
-    mFrameConstantBuffer.InvProj = invProj.transpose();
-    mFrameConstantBuffer.ViewProj = viewProj.transpose();
-    mFrameConstantBuffer.InvViewProj = invViewProj.transpose();
-    
-    mFrameConstantBuffer.EyePosW = camepos;
-
-
-    auto width = mRenderWindow->getWidth();
-    auto height = mRenderWindow->getHeight();
-    mFrameConstantBuffer.RenderTargetSize =
-        Ogre::Vector2((float)width,
-            (float)height);
-    mFrameConstantBuffer.InvRenderTargetSize =
-        Ogre::Vector2(1.0f / width, 1.0f / height);
-    mFrameConstantBuffer.NearZ = 0.1f;
-    mFrameConstantBuffer.FarZ = 10000.0f;
-    mFrameConstantBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-    mFrameConstantBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-}
-
-
-
-ICamera* VulkanRenderSystemBase::_getCamera()
-{
-    return mCurrentRenderPassInfo.cam;
-}
-
 Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
     const String& name, unsigned int width, unsigned int height,
     const NameValuePairList* miscParams)
@@ -205,7 +156,7 @@ Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
     extent.height = 0;
 
     uint32_t flags = 0;// backend::SWAP_CHAIN_CONFIG_SRGB_COLORSPACE;
-    flags |= SWAP_CHAIN_CONFIG_HAS_STENCIL_BUFFER;
+    //flags |= SWAP_CHAIN_CONFIG_HAS_STENCIL_BUFFER;
     mSwapChain = new VulkanSwapChain(
         mVulkanPlatform, 
         mVulkanContext, 
@@ -1693,7 +1644,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
         vulkanProgram->getVertexInputBindings();
     std::vector<VkVertexInputAttributeDescription>& attributeDescriptions =
         vulkanProgram->getAttributeDescriptions();
-    mPipelineCache->bindFormat(VK_FORMAT_B8G8R8A8_UNORM,VK_FORMAT_D32_SFLOAT_S8_UINT); //todo
+    mPipelineCache->bindFormat(VK_FORMAT_B8G8R8A8_UNORM,VK_FORMAT_D32_SFLOAT); //todo
     mPipelineCache->bindProgram(
         vulkanProgram->getVertexShader(), 
         vulkanProgram->getGeometryShader(), 
@@ -1856,9 +1807,12 @@ void VulkanRenderSystemBase::updateDescriptorSetSampler(
 
 void VulkanRenderSystemBase::resourceBarrier(
     uint32_t numBufferBarriers,
-    BufferBarrier* pBufferBarriers
+    BufferBarrier* pBufferBarriers,
+    uint32_t numRtBarriers,
+    RenderTargetBarrier* pRtBarriers
 )
 {
+
     VkMemoryBarrier memoryBarrier = { VK_STRUCTURE_TYPE_MEMORY_BARRIER };
 
     VkAccessFlags srcAccessFlags = 0;
@@ -1868,8 +1822,7 @@ void VulkanRenderSystemBase::resourceBarrier(
     {
         BufferBarrier* pTrans = &pBufferBarriers[i];
 
-        if (RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mCurrentState &&
-            RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mNewState)
+        if (RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mCurrentState && RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mNewState)
         {
             memoryBarrier.srcAccessMask |= VK_ACCESS_SHADER_WRITE_BIT;
             memoryBarrier.dstAccessMask |= VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT;
@@ -1883,36 +1836,87 @@ void VulkanRenderSystemBase::resourceBarrier(
         srcAccessFlags |= memoryBarrier.srcAccessMask;
         dstAccessFlags |= memoryBarrier.dstAccessMask;
     }
+    VkImageMemoryBarrier imageBarriers[10];
+    uint32_t imageBarrierCount = 0;
+
+    assert_invariant(numRtBarriers <= 10);
+    for (uint32_t i = 0; i < numRtBarriers; ++i)
+    {
+        RenderTargetBarrier* pTrans = &pRtBarriers[i];
+        VulkanTexture* pTexture = (VulkanTexture*)pTrans->pRenderTarget->getTarget();
+        VkImageMemoryBarrier* pImageBarrier = NULL;
+
+        if (RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mCurrentState && RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mNewState)
+        {
+            pImageBarrier = &imageBarriers[imageBarrierCount++];
+            pImageBarrier->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            pImageBarrier->pNext = NULL;
+
+            pImageBarrier->srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+            pImageBarrier->dstAccessMask = VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT;
+            pImageBarrier->oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+            pImageBarrier->newLayout = VK_IMAGE_LAYOUT_GENERAL;
+        }
+        else
+        {
+            pImageBarrier = &imageBarriers[imageBarrierCount++];
+            pImageBarrier->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            pImageBarrier->pNext = NULL;
+
+            pImageBarrier->srcAccessMask = VulkanMappings::util_to_vk_access_flags(pTrans->mCurrentState);
+            pImageBarrier->dstAccessMask = VulkanMappings::util_to_vk_access_flags(pTrans->mNewState);
+            pImageBarrier->oldLayout = VulkanMappings::util_to_vk_image_layout(pTrans->mCurrentState);
+            pImageBarrier->newLayout = VulkanMappings::util_to_vk_image_layout(pTrans->mNewState);
+            assert_invariant(pImageBarrier->newLayout != VK_IMAGE_LAYOUT_UNDEFINED);
+        }
+
+        if (pImageBarrier)
+        {
+            pImageBarrier->image = pTexture->getVkImage();
+            pImageBarrier->subresourceRange.aspectMask = pTexture->getAspectFlag();
+            pImageBarrier->subresourceRange.baseMipLevel = pTrans->mSubresourceBarrier ? pTrans->mMipLevel : 0;
+            pImageBarrier->subresourceRange.levelCount = pTrans->mSubresourceBarrier ? 1 : VK_REMAINING_MIP_LEVELS;
+            pImageBarrier->subresourceRange.baseArrayLayer = pTrans->mSubresourceBarrier ? pTrans->mArrayLayer : 0;
+            pImageBarrier->subresourceRange.layerCount = pTrans->mSubresourceBarrier ? 1 : VK_REMAINING_ARRAY_LAYERS;
+
+            if (pTrans->mAcquire && pTrans->mCurrentState != RESOURCE_STATE_UNDEFINED)
+            {
+                pImageBarrier->srcQueueFamilyIndex = 
+                    mVulkanPlatform->getGraphicsQueueFamilyIndex();
+                pImageBarrier->dstQueueFamilyIndex = 
+                    mVulkanPlatform->getGraphicsQueueFamilyIndex();
+            }
+            else if (pTrans->mRelease && pTrans->mCurrentState != RESOURCE_STATE_UNDEFINED)
+            {
+                pImageBarrier->srcQueueFamilyIndex = 
+                    mVulkanPlatform->getGraphicsQueueFamilyIndex();
+                pImageBarrier->dstQueueFamilyIndex = 
+                    mVulkanPlatform->getGraphicsQueueFamilyIndex();
+            }
+            else
+            {
+                pImageBarrier->srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+                pImageBarrier->dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            }
+
+            srcAccessFlags |= pImageBarrier->srcAccessMask;
+            dstAccessFlags |= pImageBarrier->dstAccessMask;
+        }
+    }
 
     VkPipelineStageFlags srcStageMask = vks::tools::util_determine_pipeline_stage_flags(
         mVulkanSettings, srcAccessFlags, QUEUE_TYPE_GRAPHICS);
     VkPipelineStageFlags dstStageMask = vks::tools::util_determine_pipeline_stage_flags(
         mVulkanSettings, dstAccessFlags, QUEUE_TYPE_GRAPHICS);
 
-    if (numBufferBarriers == 2) {
-        srcAccessFlags = VK_ACCESS_SHADER_WRITE_BIT;
-        dstAccessFlags = VK_ACCESS_SHADER_READ_BIT;
-        memoryBarrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-        memoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-        srcStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-        dstStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-    }
-    else
-    {
-        srcAccessFlags = VK_ACCESS_SHADER_WRITE_BIT;
-        dstAccessFlags = VK_ACCESS_SHADER_READ_BIT;
-        memoryBarrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-        memoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-        srcStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-        dstStageMask = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
-    }
+
     if (srcAccessFlags || dstAccessFlags)
     {
         vkCmdPipelineBarrier(
             mCommandBuffer,
             srcStageMask, dstStageMask, 0, memoryBarrier.srcAccessMask ? 1 : 0,
             memoryBarrier.srcAccessMask ? &memoryBarrier : NULL, 0, NULL,
-            0, nullptr);
+            imageBarrierCount, imageBarriers);
     }
 }
 

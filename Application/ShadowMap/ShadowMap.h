@@ -2,6 +2,7 @@
 #include "ApplicationBase.h"
 #include "forgeCommon.h"
 #include "pass.h"
+#include "engine_struct.h"
 class GameCamera;
 class RenderSystem;
 class Ogre::RenderWindow;
@@ -49,6 +50,9 @@ struct FrameData
 	//for visibility shade pass
 	Handle <HwDescriptorSet> zeroDescrSetOfVbShadePass;
 	Handle <HwDescriptorSet> firstDescrSetOfVbShadePass;
+
+	//
+	Handle<HwBufferObject> frameBufferObject;
 };
 
 class ShadowMap
@@ -63,7 +67,7 @@ public:
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void update(float delta);
-	void updatePass(std::vector<PassBase*>& passlist);
+
 	FrameGraphId<FrameGraphTexture> fgPass(FrameGraph& fg);
 
 	FrameData* getFrameData(uint32_t frameIndex)
@@ -73,7 +77,9 @@ public:
 private:
 	void base1();
 	void base2();
+	void base3();
 	void updateFrameData(uint32_t i);
+	void execute(RenderSystem* rs);
 private:
 	AnimationState* mAnimationState = nullptr;
 
@@ -86,7 +92,6 @@ private:
 	RenderSystem* mRenderSystem;
 	RenderWindow* mRenderWindow;
 	RenderPipeline* mRenderPipeline;
-	std::vector<PassBase*> mPassList;
 
 	std::vector<FrameData> mFrameData;
 
@@ -116,4 +121,7 @@ private:
 	MeshInfoStruct    meshInfoStruct;
 
 	LightCpuSettings  lightCpuSettings;
+
+	FrameConstantBuffer mFrameConstantBuffer;
+
 };

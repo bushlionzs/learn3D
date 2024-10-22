@@ -279,13 +279,12 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     
     viewInfo.format = format;
 
-    VkImageAspectFlags flags = VK_IMAGE_ASPECT_COLOR_BIT;
+    mAspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
     if (this->mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
     {
-        //flags = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-        flags = VK_IMAGE_ASPECT_DEPTH_BIT;
+        mAspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
     }
-    viewInfo.subresourceRange = { flags, 0, mMipLevels, 0, mFace };
+    viewInfo.subresourceRange = { mAspectFlags, 0, mMipLevels, 0, mFace };
 
     viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;
     viewInfo.components.g = VK_COMPONENT_SWIZZLE_G;

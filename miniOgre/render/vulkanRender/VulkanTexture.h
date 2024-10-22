@@ -62,6 +62,11 @@ public:
         return mTextureSampler;
     }
 
+    VkImageAspectFlags getAspectFlag()
+    {
+        return mAspectFlags;
+    }
+
     uint32_t getMipLevels()
     {
         return mMipLevels;
@@ -137,7 +142,7 @@ private:
     // Track the image layout of each subresource using a sparse range map.
     utils::RangeMap<uint32_t, filament::backend::VulkanLayout> mSubresourceLayouts;
 
-
+    VkImageAspectFlags mAspectFlags;
 
     VmaAllocator mAllocator;
     VulkanCommands* mCommands;

@@ -1127,7 +1127,7 @@ struct RasterState {
     RasterState() noexcept { // NOLINT
         static_assert(sizeof(RasterState) == sizeof(uint64_t),
                 "RasterState size not what was intended");
-        culling = CullingMode::BACK;
+        culling = CullingMode::NONE;
         blendEquationRGB = BlendEquation::ADD;
         blendEquationAlpha = BlendEquation::ADD;
         blendFunctionSrcRGB = BlendFunction::ONE;

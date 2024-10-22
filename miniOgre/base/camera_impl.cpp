@@ -6,7 +6,7 @@
 CameraImpl::CameraImpl(Ogre::SceneManager* sceneMgr)
 {
 	mSceneManager = sceneMgr;
-    mFovy = 3.141592653 / 4.0f;
+    mFovy = 3.141592653 / 2.0f;
 
     auto config = Ogre::Root::getSingleton().getEngineConfig();
     uint32_t width = config.width;
@@ -311,7 +311,7 @@ const Ogre::Matrix4& CameraImpl::getProjectMatrix()
         else
         {
             mProjectMatrix = 
-                Ogre::Math::makePerspectiveMatrixRH(mFovy, mAspectRation, mNear, mFar);
+                Ogre::Math::makePerspectiveMatrixLH(mFovy, mAspectRation, mNear, mFar);
         }
         
         mUpdate = false;

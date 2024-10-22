@@ -52,10 +52,7 @@ public:
         Ogre::PixelFormat format, 
         uint32_t textureUsage);
 
-
     virtual void ready() {}
-
-    virtual RenderableData* createRenderableData(Ogre::Renderable* r) { return nullptr; }
 
     virtual const String& getRenderSystemName()
     {
@@ -88,7 +85,7 @@ public:
 
     virtual void beginRenderPass(
         RenderPassInfo& renderPassInfo);
-    virtual void endRenderPass();
+    virtual void endRenderPass(RenderPassInfo& renderPassInfo);
 
     virtual void bindPipeline(
         Handle<HwProgram> programHandle,
@@ -106,6 +103,11 @@ public:
         uint32_t vertexOffset,
         uint32_t firstInstance)
     {
+    }
+
+    virtual void draw(uint32_t vertexCount, uint32_t firstVertex)
+    {
+
     }
     virtual void drawIndexedIndirect(
         Handle<HwBufferObject> drawBuffer,
@@ -201,7 +203,9 @@ public:
 
     virtual void resourceBarrier(
         uint32_t numBufferBarriers, 
-        BufferBarrier* pBufferBarriers
+        BufferBarrier* pBufferBarriers,
+        uint32_t numRtBarriers, 
+        RenderTargetBarrier* pRtBarriers
     ) {}
 private:
     void renderJob(ArenaScope& arena, FrameGraphPassCallback cb);

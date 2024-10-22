@@ -8,7 +8,7 @@
 
 layout (std430, UPDATE_FREQ_NONE, binding = 4) readonly buffer vertexDataBuffer
 {
-	VertexData vertexDataBuffer_data[];
+	uint vertexDataBuffer_data[];
 };
 
 layout (std430, UPDATE_FREQ_PER_FRAME, binding = 2) readonly buffer indirectDataBuffer
@@ -23,14 +23,24 @@ CBUFFER(objectUniformBlock, UPDATE_FREQ_PER_DRAW, b0, binding = 0)
 };
 
 
+float3 LoadVertexPositionFloat3(uint vtxIndex)
+{
+    return asfloat(LoadByte4(vertexDataBuffer_data, vtxIndex * 32)).xyz;
+}
+
 float4 LoadVertex(uint index)
 {
-    return float4(vertexDataBuffer_data[index].vertexPosition, 1.0f);
+    return float4(LoadVertexPositionFloat3(index), 1.0f);
+}
+
+float2 LoadVertexUVFloat2(uint vtxIndex)
+{
+    return asfloat(LoadByte2(vertexDataBuffer_data, vtxIndex * 32 + 12)).xy;
 }
 
 float2 LoadTexCoord(uint index)
 {
-    return vertexDataBuffer_data[index].vertexTextureUV;
+    return LoadVertexUVFloat2(index);
 }
 
 
@@ -41,7 +51,8 @@ void main()
 	float4 vertexPos = LoadVertex(gl_VertexIndex);
 	gl_Position= mul(worldViewProjMat, vertexPos);
 	out_PsInAlphaTested_texCoord = LoadTexCoord(gl_VertexIndex);;
-    out_PsInAlphaTested_materialID = indirectDataBuffer_data[gl_VertexIndex];;
+    out_PsInAlphaTested_materialID = indirectDataBuffer_data[gl_VertexIndex];
+	gl_Position.y = -gl_Position.y;
 }
 #endif //VERTEX_SHADER
 
@@ -54,10 +65,29 @@ CBUFFER(PerFrameVBConstants, UPDATE_FREQ_PER_FRAME, b1, binding = 1)
 	DATA(uint, numViewports, None);
 };
 
+layout (std430, UPDATE_FREQ_PER_FRAME, binding = 2) readonly buffer indirectDataBuffer
+{
+	uint indirectDataBuffer_data[];
+};
+
+
 CBUFFER(VBConstantBuffer, UPDATE_FREQ_NONE, b2, binding = 2)
 {
     DATA(VBConstants, vbConstant[2], None);
 };
+
+RES(Tex2D(float4), diffuseMaps[ 256U ], UPDATE_FREQ_NONE, t3, binding = 6);
+
+RES(SamplerState, nearClampSampler, UPDATE_FREQ_NONE, s0, binding = 5);
+
+
+
+
+layout (std430, UPDATE_FREQ_NONE, binding = 4) readonly buffer vertexDataBuffer
+{
+	uint vertexDataBuffer_data[];
+};
+
 
 
 CBUFFER(objectUniformBlock, UPDATE_FREQ_PER_DRAW, b0, binding = 0)
@@ -66,24 +96,6 @@ CBUFFER(objectUniformBlock, UPDATE_FREQ_PER_DRAW, b0, binding = 0)
     DATA(uint, viewID, None);
 };
 
-RES(Tex2D(float4), diffuseMaps[ 256U ], UPDATE_FREQ_NONE, t3, binding = 6);
-
-RES(SamplerState, nearClampSampler, UPDATE_FREQ_NONE, s0, binding = 5);
-
-layout (std430, UPDATE_FREQ_PER_FRAME, binding = 2) readonly buffer indirectDataBuffer
-{
-	uint indirectDataBuffer_data[];
-};
-
-layout (std430, UPDATE_FREQ_NONE, binding = 3) readonly buffer vertexTexCoordBuffer
-{
-	uint vertexTexCoordBuffer_data[];
-};
-
-layout (std430, UPDATE_FREQ_NONE, binding = 4) readonly buffer vertexDataBuffer
-{
-	VertexData vertexPositionBuffer_data[];
-};
 
 STRUCT(PsInAlphaTested)
 {

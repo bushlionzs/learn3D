@@ -46,7 +46,7 @@ THE SOFTWARE.
 #endif
 
 
-//#include "Hash/MurmurHash3.h"
+#include <DriverBase.h>
 
 namespace Ogre {
     struct Vector3i
@@ -1012,6 +1012,53 @@ namespace Ogre {
         NameValuePairList   miscParams;
     };
 
+    enum BackendResourceState
+    {
+        RESOURCE_STATE_UNDEFINED = 0,
+        RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER = 0x1,
+        RESOURCE_STATE_INDEX_BUFFER = 0x2,
+        RESOURCE_STATE_RENDER_TARGET = 0x4,
+        RESOURCE_STATE_UNORDERED_ACCESS = 0x8,
+        RESOURCE_STATE_DEPTH_WRITE = 0x10,
+        RESOURCE_STATE_DEPTH_READ = 0x20,
+        RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE = 0x40,
+        RESOURCE_STATE_PIXEL_SHADER_RESOURCE = 0x80,
+        RESOURCE_STATE_SHADER_RESOURCE = 0x40 | 0x80,
+        RESOURCE_STATE_STREAM_OUT = 0x100,
+        RESOURCE_STATE_INDIRECT_ARGUMENT = 0x200,
+        RESOURCE_STATE_COPY_DEST = 0x400,
+        RESOURCE_STATE_COPY_SOURCE = 0x800,
+        RESOURCE_STATE_GENERIC_READ = (((((0x1 | 0x2) | 0x40) | 0x80) | 0x200) | 0x800),
+        RESOURCE_STATE_PRESENT = 0x1000,
+        RESOURCE_STATE_COMMON = 0x2000,
+        RESOURCE_STATE_ACCELERATION_STRUCTURE_READ = 0x4000,
+        RESOURCE_STATE_ACCELERATION_STRUCTURE_WRITE = 0x8000,
+    };
+    typedef struct BufferBarrier
+    {
+        Handle<HwBufferObject> buffer;
+        uint32_t mCurrentState; //BackendResourceState
+        uint32_t mNewState; //BackendResourceState
+        uint8_t       mBeginOnly : 1;
+        uint8_t       mEndOnly : 1;
+    } BufferBarrier;
+
+    typedef struct RenderTargetBarrier
+    {
+        Ogre::RenderTarget* pRenderTarget;
+        uint32_t mCurrentState;
+        uint32_t mNewState;
+        uint8_t       mBeginOnly : 1;
+        uint8_t       mEndOnly : 1;
+        uint8_t       mAcquire : 1;
+        uint8_t       mRelease : 1;
+        uint8_t       mQueueType : 5;
+        /// Specifiy whether following barrier targets particular subresource
+        uint8_t       mSubresourceBarrier : 1;
+        /// Following values are ignored if mSubresourceBarrier is false
+        uint8_t       mMipLevel : 7;
+        uint16_t      mArrayLayer;
+    } RenderTargetBarrier;
     /// Render window creation parameters container.
     typedef std::vector<RenderWindowDescription> RenderWindowDescriptionList;
 

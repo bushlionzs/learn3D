@@ -24,7 +24,7 @@ RES(Depth2D(float), DepthAtlasTexture, UPDATE_FREQ_NONE, t30, binding = 21);
 RES(Tex2D(float), PrerenderLodClampTexture, UPDATE_FREQ_NONE, t32, binding = 23);
 RES(Tex2D(float), ESMShadowTexture, UPDATE_FREQ_NONE, t33, binding = 24);
 RES(Tex2D(float4), vbPassTexture, UPDATE_FREQ_NONE, t18, binding = 18);
-RES(Tex2D(uint), ScreenSpaceShadowTexture, UPDATE_FREQ_NONE, t36, binding = 33);
+//RES(Tex2D(uint), ScreenSpaceShadowTexture, UPDATE_FREQ_NONE, t36, binding = 33);
 RES(Tex2D(float4), diffuseMaps[ 256U ], UPDATE_FREQ_NONE, t40, binding = 25);
 RES(Tex2D(float4), normalMaps[ 256U ], UPDATE_FREQ_NONE, t296, binding = 26);
 RES(Tex2D(float4), specularMaps[ 256U ], UPDATE_FREQ_NONE, t552, binding = 27);
@@ -42,7 +42,7 @@ CBUFFER(VBConstantBuffer, UPDATE_FREQ_NONE, b2, binding = 2)
 
 layout (std430, UPDATE_FREQ_NONE, binding = 35) readonly buffer vertexDataBuffer
 {
-	VertexData vertexDataBuffer_data[];
+	uint vertexDataBuffer_data[];
 };
 
 layout (std430, UPDATE_FREQ_NONE, binding = 6) readonly buffer meshConstantsBuffer
@@ -123,6 +123,36 @@ layout (std430, UPDATE_FREQ_PER_FRAME, binding = 5) readonly buffer indirectData
 
 #include "glslFunc.glsl"
 
+float3 LoadVertexPositionFloat3(uint vtxIndex)
+{
+    return asfloat(LoadByte4(vertexDataBuffer_data, vtxIndex * 32)).xyz;
+}
+
+float3 LoadVertex(uint index)
+{
+    return LoadVertexPositionFloat3(index);
+}
+
+float2 LoadVertexUVFloat2(uint vtxIndex)
+{
+    return asfloat(LoadByte2(vertexDataBuffer_data, vtxIndex * 32 + 24)).xy;
+}
+
+float2 LoadTexCoord(uint index)
+{
+    return LoadVertexUVFloat2(index);
+}
+
+float3 LoadVertexNormalFloat3(uint vtxIndex)
+{
+    return asfloat(LoadByte4(vertexDataBuffer_data, vtxIndex * 32 + 12)).xyz;
+}
+
+float3 LoadNormal(uint index)
+{
+    return LoadVertexNormalFloat3(index);
+}
+
 STRUCT(PsIn)
 {
 	DATA(float4, Position, SV_Position);
@@ -159,9 +189,9 @@ void main()
 	uint index2 = LoadByte(Get(filteredIndexBuffer_data), triIdx2 << 2);
 	
 
-	float3 v0pos = vertexDataBuffer_data[index0].vertexPosition;
-	float3 v1pos = vertexDataBuffer_data[index1].vertexPosition;
-	float3 v2pos = vertexDataBuffer_data[index2].vertexPosition;
+	float3 v0pos = LoadVertex(index0);
+	float3 v1pos = LoadVertex(index1);
+	float3 v2pos = LoadVertex(index2);
 
 	float4 pos0 = mul(Get(WorldViewProjMat), float4(v0pos, 1));
 	float4 pos1 = mul(Get(WorldViewProjMat), float4(v1pos, 1));
@@ -189,9 +219,9 @@ void main()
 
 
 	f3x2 texCoords = make_f3x2_cols(
-			vertexDataBuffer_data[index0 << 2].vertexTextureUV ,
-			vertexDataBuffer_data[index1 << 2].vertexTextureUV  ,
-			vertexDataBuffer_data[index2 << 2].vertexTextureUV 
+			LoadTexCoord(index0 << 2),
+			LoadTexCoord(index1 << 2),
+			LoadTexCoord(index2 << 2) 
 	);
 
 
@@ -243,9 +273,9 @@ void main()
 
 
 	float3x3 normals = make_f3x3_rows(
-		vertexDataBuffer_data[index0 << 2].vertexNormal ,
-		vertexDataBuffer_data[index1 << 2].vertexNormal ,
-		vertexDataBuffer_data[index2 << 2].vertexNormal
+		LoadNormal(index0 << 2),
+		LoadNormal(index1 << 2),
+		LoadNormal(index2 << 2)
 	);
 	float3 normal = normalize(InterpolateWithDeriv_float3x3(derivativesOut, normals));;
 
@@ -293,12 +323,7 @@ void main()
 
 	float3 lightDir = -Get(mLightDir);
 
-	if (bool(Get(mSSSEnabled)))
-	{
-		float screenSpaceShadowValue = sampleScreenSpaceShadowValue(uint2(In.Position.xy));
-		screenSpaceShadowValue = max(screenSpaceShadowValue, step(dot(lightDir, normal), 0.0f));
-		shadowFactor = min(shadowFactor, screenSpaceShadowValue);
-	}
+	
 
 	float3 HalfVec = normalize(ViewVec + lightDir);
 	float NoV = saturate(dot(normal, ViewVec));

@@ -73,7 +73,7 @@ void VoxelConeTracingApp::setup(
 
 	auto* cam = gameCamera->getCamera();
 	auto* light = sceneManager->createLight("light");
-	if(0)
+	if(1)
 	{
 		RenderPassInput input;
 		input.color = renderWindow->getColorTarget();

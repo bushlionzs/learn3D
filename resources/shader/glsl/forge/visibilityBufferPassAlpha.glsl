@@ -18,25 +18,34 @@ layout (std430, UPDATE_FREQ_PER_FRAME, binding = 2) readonly buffer indirectData
 
 layout (std430, UPDATE_FREQ_NONE, binding = 3) readonly buffer vertexDataBuffer
 {
-	VertexData vertexDataBuffer_data[];
+	uint vertexDataBuffer_data[];
 };
-
-float4 LoadVertex(uint index)
-{
-    return float4(vertexDataBuffer_data[index].vertexPosition, 1.0f);
-}
-
-float2 LoadTexCoord(uint index)
-{
-    return vertexDataBuffer_data[index].vertexTextureUV;
-}
-
 
 CBUFFER(objectUniformBlock, UPDATE_FREQ_PER_DRAW, b0, binding = 0)
 {
     DATA(float4x4, worldViewProjMat, None);
     DATA(uint, viewID, None);
 };
+
+float3 LoadVertexPositionFloat3(uint vtxIndex)
+{
+    return asfloat(LoadByte4(vertexDataBuffer_data, vtxIndex * 32)).xyz;
+}
+
+float4 LoadVertex(uint index)
+{
+    return float4(LoadVertexPositionFloat3(index), 1.0f);
+}
+
+float2 LoadVertexUVFloat2(uint vtxIndex)
+{
+    return asfloat(LoadByte2(vertexDataBuffer_data, vtxIndex * 32 + 24)).xy;
+}
+
+float2 LoadTexCoord(uint index)
+{
+    return LoadVertexUVFloat2(index);
+}
 
 
 
@@ -50,16 +59,12 @@ void main()
 	out_PsInAlphaTested_texCoord = LoadTexCoord(vertexID);
 	out_PsInAlphaTested_materialID = indirectDataBuffer_data[vertexID];
 	gl_Position= mul(worldViewProjMat, vertexPos);
+	gl_Position.y = -gl_Position.y;
 }
 #endif //VERTEX_SHADER
 
 #ifdef FRAGMENT_SHADER
-CBUFFER(PerFrameVBConstants, UPDATE_FREQ_PER_FRAME, b1, binding = 1)
-{
-	DATA(Transform, transform[ 5 ], None);
-	DATA(CullingViewPort, cullingViewports[ 5 ], None);
-	DATA(uint, numViewports, None);
-};
+
 
 CBUFFER(VBConstantBuffer, UPDATE_FREQ_NONE, b2, binding = 2)
 {
@@ -67,29 +72,30 @@ CBUFFER(VBConstantBuffer, UPDATE_FREQ_NONE, b2, binding = 2)
 };
 
 
-CBUFFER(objectUniformBlock, UPDATE_FREQ_PER_DRAW, b0, binding = 0)
-{
-    DATA(float4x4, worldViewProjMat, None);
-    DATA(uint, viewID, None);
-};
 
 RES(Tex2D(float4), diffuseMaps[ 256U ], UPDATE_FREQ_NONE, t3, binding = 6);
 
 RES(SamplerState, nearClampSampler, UPDATE_FREQ_NONE, s0, binding = 5);
+
+
+CBUFFER(PerFrameVBConstants, UPDATE_FREQ_PER_FRAME, b1, binding = 1)
+{
+	DATA(Transform, transform[ 5 ], None);
+	DATA(CullingViewPort, cullingViewports[ 5 ], None);
+	DATA(uint, numViewports, None);
+};
 
 layout (std430, UPDATE_FREQ_PER_FRAME, binding = 2) readonly buffer indirectDataBuffer
 {
 	uint indirectDataBuffer_data[];
 };
 
-layout (std430, UPDATE_FREQ_NONE, binding = 3) readonly buffer vertexTexCoordBuffer
-{
-	uint vertexTexCoordBuffer_data[];
-};
 
-layout (std430, UPDATE_FREQ_NONE, binding = 4) readonly buffer vertexDataBuffer
+
+CBUFFER(objectUniformBlock, UPDATE_FREQ_PER_DRAW, b0, binding = 0)
 {
-	VertexData vertexPositionBuffer_data[];
+    DATA(float4x4, worldViewProjMat, None);
+    DATA(uint, viewID, None);
 };
 
 STRUCT(PsInAlphaTested)

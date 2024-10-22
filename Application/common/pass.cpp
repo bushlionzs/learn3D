@@ -23,7 +23,9 @@ public:
 		for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
 		{
 			mFrameBufferObjectList[i] =
-				rs->createBufferObject(BufferObjectBinding::BufferObjectBinding_Uniform, BufferUsage::DYNAMIC, sizeof(mFrameConstantBuffer));
+				rs->createBufferObject(
+					BufferObjectBinding::BufferObjectBinding_Uniform, 
+					BufferUsage::DYNAMIC, sizeof(mFrameConstantBuffer));
 		}
 		auto width = ogreConfig.width;
 		auto height = ogreConfig.height;
@@ -92,7 +94,7 @@ public:
 			rs->drawIndexed(view->mIndexCount, 1,
 				view->mIndexLocation, view->mBaseVertexLocation, 0);
 		}
-		rs->endRenderPass();
+		rs->endRenderPass(info);
 	}
 	virtual void update(float delta)
 	{

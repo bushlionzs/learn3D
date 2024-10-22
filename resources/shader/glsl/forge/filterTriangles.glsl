@@ -17,7 +17,7 @@ layout(UPDATE_FREQ_NONE, binding = 2) uniform VBConstantBuffer
 
 layout (std430, UPDATE_FREQ_NONE, binding = 1) readonly buffer vertexDataBuffer
 {
-	VertexData vertexDataBuffer_data[];
+	uint vertexDataBuffer_data[];
 };
 
 
@@ -55,9 +55,16 @@ layout (std430, UPDATE_FREQ_PER_FRAME, binding = 8)  buffer filteredIndicesBuffe
 	uint _data[];
 } filteredIndicesBuffer[ 5 ];
 
+float3 LoadVertexPositionFloat3(uint vtxIndex)
+{
+    uint4 aa = LoadByte4(vertexDataBuffer_data, vtxIndex * 32);
+    return asfloat(aa).xyz;
+}
+
 float4 LoadVertex(uint index)
 {
-    return float4(vertexDataBuffer_data[index].vertexPosition, 1.0f);
+    return float4(LoadVertexPositionFloat3(index), 1.0f);
+    //return float4(vertexDataBuffer_data[index].vertexPosition, 1.0f);
 }
 
 
@@ -134,12 +141,19 @@ bool FilterTriangle(uint indices[3], float4 vertices[3], bool cullBackFace, floa
 	return false;
 }
 
+
+
+
 shared uint workGroupOutputSlot[ 5 ];
 shared uint workGroupIndexCount[ 5 ];
 shared FilterDispatchGroupData filterDispatchGroupData;
 NUM_THREADS( 256 , 1, 1)
 void main()
 {
+	{
+	    vec3 pos = LoadVertexPositionFloat3(0);
+		vec3 pos2 = LoadVertexPositionFloat3(11);
+	}
     const uvec3 inGroupId = uvec3(gl_LocalInvocationID);
 	const uvec3 groupId = uvec3(gl_WorkGroupID);
 	
@@ -151,7 +165,7 @@ void main()
 		filterDispatchGroupData = filterDispatchGroupDataBuffer_data[groupId.x];
 	}
 	
-	groupMemoryBarrier();
+	GroupMemoryBarrier();
 
 	bool cull[ 5 ];
 	uint threadOutputSlot[ 5 ];
@@ -187,16 +201,27 @@ void main()
 			LoadVertex(indices[1]),
 			LoadVertex(indices[2])
 		};
+		
+		for (uint i = 0; i < numViewports; ++i)
+		{
+			float4x4 worldViewProjection = transform[i].mvp;
 
+			vec4 vertices[3] =
+			{
+				mul(worldViewProjection, vert[0]),
+				mul(worldViewProjection, vert[1]),
+				mul(worldViewProjection, vert[2])
+			};
 
+			CullingViewPort viewport = cullingViewports[i];
+			cull[i] = FilterTriangle(indices, vertices, !twoSided, viewport.windowSize, viewport.sampleCount);
+			if (!cull[i])
+				AtomicAdd(workGroupIndexCount[i], 3, threadOutputSlot[i]);
+		}
 	}
 	
-	for (uint i = 0; i < numViewports; ++i)
-		{
-		    AtomicAdd(workGroupIndexCount[i], 1, threadOutputSlot[i]);
-		}
 	
-	groupMemoryBarrier();
+	GroupMemoryBarrier();
 
 	if (inGroupId.x == 0)
 	{
@@ -207,7 +232,7 @@ void main()
 		}
 	}
 
-	groupMemoryBarrier();
+	GroupMemoryBarrier();
 
 	for (uint j = 0; j < numViewports; ++j)
 	{

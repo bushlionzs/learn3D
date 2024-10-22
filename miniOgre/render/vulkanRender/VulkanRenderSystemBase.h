@@ -33,7 +33,6 @@ public:
         const std::string& name,
         Ogre::TextureProperty* texProperty);
     virtual void ready();
-    virtual RenderableData* createRenderableData(Ogre::Renderable* r);
     virtual Ogre::RenderWindow* createRenderWindow(
         const String& name, unsigned int width, unsigned int height,
         const NameValuePairList* miscParams) override;
@@ -115,7 +114,9 @@ protected:
 
     virtual void resourceBarrier(
         uint32_t numBufferBarriers,
-        BufferBarrier* pBufferBarriers
+        BufferBarrier* pBufferBarriers,
+        uint32_t numRtBarriers,
+        RenderTargetBarrier* pRtBarriers
     )  override;
 private:
     void parseInputBindingDescription(
@@ -127,13 +128,8 @@ private:
         std::vector<GlslInputDesc>& inputDesc,
         std::vector<VkVertexInputAttributeDescription>& attributeDescriptions);
 protected:
-    RenderPassInfo mCurrentRenderPassInfo;
-
     FrameConstantBuffer mFrameConstantBuffer;
     VulkanWindow* mRenderWindow;
-
-    VkImage mCurrentVKImage;
-
     VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;
 
     std::vector<Ogre::Renderable*> mRenderList;

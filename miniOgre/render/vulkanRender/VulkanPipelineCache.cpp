@@ -92,11 +92,11 @@ using namespace bluevk;
         shaderStages[0].pName = "main";
         shaderStages[1] = VkPipelineShaderStageCreateInfo{};
         shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[1].stage = VK_SHADER_STAGE_GEOMETRY_BIT;
+        shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
         shaderStages[1].pName = "main";
         shaderStages[2] = VkPipelineShaderStageCreateInfo{};
         shaderStages[2].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[2].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        shaderStages[2].stage = VK_SHADER_STAGE_GEOMETRY_BIT;
         shaderStages[2].pName = "main";
 
         VkPipelineColorBlendAttachmentState colorBlendAttachments[MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT];
@@ -152,12 +152,12 @@ using namespace bluevk;
         dynamicState.dynamicStateCount = 2;
 
         const bool hasFragmentShader = shaderStages[1].module != VK_NULL_HANDLE;
-
+        const bool hasGeometryShader = shaderStages[2].module != VK_NULL_HANDLE;
         VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
         pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineCreateInfo.layout = mPipelineRequirements.layout;
         pipelineCreateInfo.renderPass = VK_NULL_HANDLE;
-        pipelineCreateInfo.stageCount = hasFragmentShader ? SHADER_MODULE_COUNT : 1;
+        pipelineCreateInfo.stageCount = hasFragmentShader ? hasGeometryShader? SHADER_MODULE_COUNT:2 : 1;
         pipelineCreateInfo.pStages = shaderStages;
         pipelineCreateInfo.pVertexInputState = &vertexInputState;
         pipelineCreateInfo.pInputAssemblyState = &inputAssemblyState;
@@ -244,7 +244,7 @@ using namespace bluevk;
         }
         pipelineRenderingCreateInfo.pColorAttachmentFormats = colorFormat;
         pipelineRenderingCreateInfo.depthAttachmentFormat = mPipelineRequirements.depthFormat;
-        pipelineRenderingCreateInfo.stencilAttachmentFormat = mPipelineRequirements.depthFormat;
+        pipelineRenderingCreateInfo.stencilAttachmentFormat = VK_FORMAT_UNDEFINED;
 
         pipelineCreateInfo.pNext = &pipelineRenderingCreateInfo;
 
@@ -271,8 +271,8 @@ using namespace bluevk;
         VkShaderModule fragShader) noexcept
     {
         mPipelineRequirements.shaders[0] = vertexShader;
-        mPipelineRequirements.shaders[1] = geomtryShader;
-        mPipelineRequirements.shaders[2] = fragShader;
+        mPipelineRequirements.shaders[1] = fragShader;
+        mPipelineRequirements.shaders[2] = geomtryShader;
     }
 
     void VulkanPipelineCache::bindRasterState(const RasterState& rasterState) noexcept {

@@ -41,6 +41,11 @@ namespace Ogre {
         return mModel;
     }
 
+    void Renderable::updateModelMatrix(const Ogre::Matrix4& m)
+    {
+        mModel = m;
+    }
+
     Ogre::Vector3 getPosition()
     {
         return Ogre::Vector3(0.0f, 0.0f, 0.0f);

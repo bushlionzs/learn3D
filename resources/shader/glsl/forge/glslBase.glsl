@@ -262,6 +262,11 @@ vec2 getRow(in(mat2)   M, uint i) { return vec2(M[0][i], M[1][i]); }
 
 #define EARLY_FRAGMENT_TESTS layout(early_fragment_tests) in;
 
+#define GroupMemoryBarrier() { \
+    groupMemoryBarrier(); \
+    barrier(); \
+}
+
 #define clip(COND) if( (COND) < 0 ) \
 { \
     discard;\
@@ -309,7 +314,7 @@ STRUCT(MeshConstants)
 
 STRUCT(VertexData)
 {
-    DATA(float3, vertexPosition, None);
-	DATA(float3, vertexNormal, None);
-	DATA(float2, vertexTextureUV, None);
+    DATA(vec3, vertexPosition, None);
+	DATA(vec3, vertexNormal, None);
+	DATA(vec2, vertexTextureUV, None);
 };

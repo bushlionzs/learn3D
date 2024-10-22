@@ -36,6 +36,7 @@ namespace Ogre
 		static VkBool32 getCompareEnable(filament::backend::SamplerCompareMode mode);
 		static VkCompareOp getCompareOp(filament::backend::SamplerCompareFunc func);
 		static VkAccessFlags util_to_vk_access_flags(uint32_t state);
+		static VkImageLayout util_to_vk_image_layout(uint32_t state);
 	};
 }
 

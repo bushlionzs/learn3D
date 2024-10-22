@@ -138,7 +138,7 @@ void RenderSystem::beginRenderPass(RenderPassInfo& renderPassInfo)
 
 }
 
-void RenderSystem::endRenderPass()
+void RenderSystem::endRenderPass(RenderPassInfo& renderPassInfo)
 {
 
 }

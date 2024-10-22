@@ -193,12 +193,12 @@ bool GameCamera::update(float delta)
 
         if (mGoingForward)
         {
-            position += camFront * moveSpeed;
+            position -= camFront * moveSpeed;
         }
 
         if (mGoingBack)
         {
-            position -= camFront * moveSpeed;
+            position += camFront * moveSpeed;
         }
 
         if (mGoingLeft)

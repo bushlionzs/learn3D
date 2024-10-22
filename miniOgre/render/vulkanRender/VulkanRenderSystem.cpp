@@ -68,9 +68,6 @@ void VulkanRenderSystem::beginRenderPass(
 {
     VkCommandBuffer cmdBuffer = mCommands->get().buffer();
 
-    mCurrentVKImage = nullptr;
-    mCurrentRenderPassInfo = renderPassInfo;
-  
     VkRenderingAttachmentInfo colorAttachments[MAX_RENDER_TARGET_ATTACHMENTS] = {};
     VkRenderingAttachmentInfo depthAttachment = {};
 
@@ -82,7 +79,6 @@ void VulkanRenderSystem::beginRenderPass(
         colorAttachments[i].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         colorAttachments[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         Ogre::VulkanRenderTarget* rt = (Ogre::VulkanRenderTarget*)renderPassInfo.renderTargets[i].renderTarget;
-        mCurrentVKImage = rt->getImage();
 
         vks::tools::insertImageMemoryBarrier(
             cmdBuffer,
@@ -112,20 +108,16 @@ void VulkanRenderSystem::beginRenderPass(
         Ogre::VulkanRenderTarget* rt = (Ogre::VulkanRenderTarget*)renderPassInfo.depthTarget.depthStencil;
         depthAttachment.imageView = rt->getImageView();
 
-        if (renderPassInfo.shadowPass)
-        {
-            mCurrentVKImage = rt->getImage();
-        }
         vks::tools::insertImageMemoryBarrier(
             cmdBuffer,
             rt->getImage(),
             0,
             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
             VK_IMAGE_LAYOUT_UNDEFINED,
-            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+            VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
             VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
             VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
-            VkImageSubresourceRange{ VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 });
+            VkImageSubresourceRange{ VK_IMAGE_ASPECT_DEPTH_BIT , 0, 1, 0, 1 });
 
         const ClearValue* clearValue = &renderPassInfo.depthTarget.clearValue;
         depthAttachment.clearValue.depthStencil = { clearValue->depth, clearValue->stencil };
@@ -158,7 +150,7 @@ void VulkanRenderSystem::beginRenderPass(
     renderingInfo.pColorAttachments = colorAttachments;
     renderingInfo.colorAttachmentCount = renderPassInfo.renderTargetCount;
     renderingInfo.pDepthAttachment = hasDepth ? &depthAttachment : nullptr;
-    renderingInfo.pStencilAttachment = hasDepth ? &depthAttachment : nullptr;
+    renderingInfo.pStencilAttachment = nullptr;
     renderingInfo.renderArea = renderArea;
     renderingInfo.layerCount = layerCount;
 
@@ -174,45 +166,9 @@ void VulkanRenderSystem::beginRenderPass(
     bluevk::vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
 }
 
-void VulkanRenderSystem::endRenderPass()
+void VulkanRenderSystem::endRenderPass(RenderPassInfo& renderPassInfo)
 {
-    VkCommandBuffer cmdBuffer = mCommands->get().buffer();
-
-    vkCmdEndRenderingKHR(cmdBuffer);
-
-    if (mCurrentVKImage)
-    {
-        if (mCurrentRenderPassInfo.shadowPass)
-        {
-            VkImageSubresourceRange subresourceRange = {};
-            subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-            subresourceRange.baseMipLevel = 0;
-            subresourceRange.levelCount = 1;
-            subresourceRange.layerCount = 1;
-
-            vks::tools::setImageLayout(
-                cmdBuffer,
-                mCurrentVKImage,
-                VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                subresourceRange);
-            
-        }
-        else
-        {
-            vks::tools::insertImageMemoryBarrier(
-                cmdBuffer,
-                mCurrentVKImage,
-                VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                0,
-                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
-        }
-        
-    }
+    vkCmdEndRenderingKHR(mCommandBuffer);
 }
 
 
@@ -250,6 +206,13 @@ void VulkanRenderSystem::bindPipeline(
         pipelineLayout, 0, setCount, &descriptorSet[0], 0, nullptr);
 }
 
+void VulkanRenderSystem::draw(uint32_t vertexCount, uint32_t firstVertex)
+{
+    vkCmdDraw(mCommandBuffer, vertexCount, 1, firstVertex, 0);
+    incrTriangleCount(vertexCount / 3);
+    incrBatchCount(1);
+}
+
 void VulkanRenderSystem::drawIndexed(
     uint32_t indexCount,
     uint32_t instanceCount,
@@ -257,8 +220,7 @@ void VulkanRenderSystem::drawIndexed(
     uint32_t vertexOffset,
     uint32_t firstInstance)
 {
-    auto cmdBuffer = mCommands->get().buffer();
-    vkCmdDrawIndexed(cmdBuffer, indexCount, instanceCount,
+    vkCmdDrawIndexed(mCommandBuffer, indexCount, instanceCount,
         firstIndex, vertexOffset, firstInstance);
 
     incrTriangleCount(indexCount / 3);

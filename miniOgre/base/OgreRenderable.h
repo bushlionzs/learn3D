@@ -63,6 +63,7 @@ namespace Ogre {
         virtual uint64_t getSortValue();
 
         virtual const Ogre::Matrix4& getModelMatrix();
+        void updateModelMatrix(const Ogre::Matrix4& m);
 
         Ogre::OperationType getPrimitiveTopology();
 

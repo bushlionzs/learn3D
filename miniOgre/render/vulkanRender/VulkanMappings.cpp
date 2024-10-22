@@ -166,7 +166,7 @@ namespace Ogre {
         case PF_FLOAT32_GR:     return VK_FORMAT_R32G32_SFLOAT;
         case PF_DEPTH16:        return VK_FORMAT_R32_UINT;
         case PF_DEPTH32:        return VK_FORMAT_R32_UINT;
-        case PF_DEPTH32F:       return VK_FORMAT_R32_UINT;
+        case PF_DEPTH32F:       return VK_FORMAT_D32_SFLOAT;
         case PF_DEPTH24_STENCIL8:     return VK_FORMAT_D24_UNORM_S8_UINT;
         case PF_DEPTH32_STENCIL8:     return VK_FORMAT_D32_SFLOAT_S8_UINT;
         default:
@@ -181,7 +181,7 @@ namespace Ogre {
         {
         case VK_FORMAT_B8G8R8A8_UNORM:          return PF_A8R8G8B8;
         case VK_FORMAT_B8G8R8A8_SRGB:           return PF_A8R8G8B8_SRGB;
-        case VK_FORMAT_D32_SFLOAT:              return PF_DEPTH32;
+        case VK_FORMAT_D32_SFLOAT:              return PF_DEPTH32F;
         case VK_FORMAT_D32_SFLOAT_S8_UINT :     return PF_DEPTH32_STENCIL8;
         default:
             assert(false);
@@ -351,6 +351,37 @@ namespace Ogre {
         }
 
         return ret;
+    }
+
+    VkImageLayout VulkanMappings::util_to_vk_image_layout(uint32_t usage)
+    {
+        if (usage & RESOURCE_STATE_COPY_SOURCE)
+            return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+
+        if (usage & RESOURCE_STATE_COPY_DEST)
+            return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+        if (usage & RESOURCE_STATE_RENDER_TARGET)
+            return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        if (usage & RESOURCE_STATE_DEPTH_WRITE)
+            return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        else if (usage & RESOURCE_STATE_DEPTH_READ)
+            return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+
+        if (usage & RESOURCE_STATE_UNORDERED_ACCESS)
+            return VK_IMAGE_LAYOUT_GENERAL;
+
+        if (usage & RESOURCE_STATE_SHADER_RESOURCE)
+            return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+        if (usage & RESOURCE_STATE_PRESENT)
+            return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+        if (usage == RESOURCE_STATE_COMMON)
+            return VK_IMAGE_LAYOUT_GENERAL;
+
+        return VK_IMAGE_LAYOUT_UNDEFINED;
     }
 
 }

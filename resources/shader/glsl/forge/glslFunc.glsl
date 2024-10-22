@@ -131,8 +131,9 @@ struct GradientInterpolationResults
 
 float sampleScreenSpaceShadowValue(uint2 uv)
 {
-	uint shadowDepthSample = LoadTex2D(Get(ScreenSpaceShadowTexture), Get(clampBorderNearSampler), uv, 0).r;
-	return float(shadowDepthSample) /  0xFFFF ;
+	//uint shadowDepthSample = LoadTex2D(Get(ScreenSpaceShadowTexture), Get(clampBorderNearSampler), uv, 0).r;
+	//return float(shadowDepthSample) /  0xFFFF ;
+	return 0.0f;
 }
 
 float InterpolateWithDeriv_float3(BarycentricDeriv deriv, float3 v)
