@@ -16,7 +16,7 @@ struct FrameData
     //在compute shader中，保存索引对应的batchMeshIndex
 	Handle<HwBufferObject> indirectDataBuffer;
 	Handle<HwBufferObject> indirectDrawArgBuffer;
-	Handle<HwBufferObject> filterDispatchGroupDataBuffer;
+
 	Handle<HwBufferObject> perFrameConstantsBuffer;
 	
 	Handle<HwBufferObject> objectUniformBlockHandle;
@@ -98,7 +98,7 @@ private:
 	Handle<HwBufferObject> filteredIndexBuffer[NUM_CULLING_VIEWPORTS];
 
 	Handle<HwBufferObject> vbConstantsBuffer;
-
+	Handle<HwBufferObject> filterDispatchGroupDataBuffer;
 	Handle<HwBufferObject> meshConstantsBuffer;
 	Handle<HwBufferObject> renderSettingsUniformHandle;
 	Handle<HwBufferObject> esmInputConstantsHandle;

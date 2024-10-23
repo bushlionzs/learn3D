@@ -52,7 +52,6 @@ void main()
 	gl_Position= mul(worldViewProjMat, vertexPos);
 	out_PsInAlphaTested_texCoord = LoadTexCoord(gl_VertexIndex);;
     out_PsInAlphaTested_materialID = indirectDataBuffer_data[gl_VertexIndex];
-	gl_Position.y = -gl_Position.y;
 }
 #endif //VERTEX_SHADER
 

@@ -46,7 +46,8 @@ bool CEGUIManager::_initialise(Ogre::RenderTarget* window)
 	mCamera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
 	mCamera->setOrthoWindow(width, height);
 	Ogre::Vector3 eyePos = Ogre::Vector3(0, 0, 10);
-	mCamera->updateCamera(eyePos, Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_Y);
+	auto m = Ogre::Math::makeLookAtRH(eyePos, Ogre::Vector3::ZERO, Ogre::Vector3::UNIT_Y);
+	mCamera->updateViewMatrix(m);
 	InputManager::getSingleton().addListener(this);
 
 	Ogre::Root::getSingleton().addFrameListener(this);

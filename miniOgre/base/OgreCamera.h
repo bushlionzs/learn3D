@@ -41,11 +41,8 @@ namespace Ogre {
 
         void needUpdate();
         void updatePosition(const Ogre::Vector3& position);
-        void updateCamera(const Ogre::Matrix4& m);
-        void updateCamera(
-            const Ogre::Vector3& eyePos,
-            const Ogre::Vector3& targetPos,
-            const Ogre::Vector3& up);
+        void updateViewMatrix(const Ogre::Matrix4& m);
+        void updateProjectMatrix(const Ogre::Matrix4& m);
 
         Ray getCameraToViewportRay(Real screenX, Real screenY) const;
         void getCameraToViewportRay(Real screenx, Real screeny, Ray* outRay) const;

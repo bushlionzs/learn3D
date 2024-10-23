@@ -48,7 +48,7 @@ public:
 		info.renderTargets[0].renderTarget = mPassInput.color;
 		info.depthTarget.depthStencil = mPassInput.depth;
 		info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-		info.depthTarget.clearValue = { 1.0f, 0.0f };
+		info.depthTarget.clearValue = { 0.0f, 0.0f };
 		info.cam = cam;
 		static EngineRenderList engineRenerList;
 		sceneManager->getSceneRenderList(cam, engineRenerList, false);
@@ -95,6 +95,16 @@ public:
 				view->mIndexLocation, view->mBaseVertexLocation, 0);
 		}
 		rs->endRenderPass(info);
+
+		RenderTargetBarrier rtBarriers[] =
+		{
+			{
+				mPassInput.color,
+				RESOURCE_STATE_RENDER_TARGET,
+				RESOURCE_STATE_PRESENT
+			}
+		};
+		rs->resourceBarrier(0, nullptr, 1, rtBarriers);
 	}
 	virtual void update(float delta)
 	{

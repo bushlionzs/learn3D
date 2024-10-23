@@ -181,7 +181,7 @@ void SimpleApp::example1()
 	auto mat = sub->getMaterial();
 	auto tu = mat->getTextureUnit(0);
 
-	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -2.5f), Ogre::Vector3::ZERO);
+	mGameCamera->updatePosition(Ogre::Vector3(0, 0.0f, -2.5f));
 
 	mGameCamera->setMoveSpeed(5.0f);
 }

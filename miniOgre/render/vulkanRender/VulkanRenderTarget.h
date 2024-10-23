@@ -22,7 +22,7 @@ namespace Ogre
 
 		VkImageView getImageView();
 		VkImage getImage();
-
+		VkImageAspectFlags getAspectFlag();
 		virtual Ogre::OgreTexture* getTarget();
 
 	private:

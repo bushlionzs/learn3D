@@ -34,7 +34,7 @@ namespace Ogre
     const Real INFINITE_FAR_PLANE_ADJUST = 0.00001;
     const Real Math::POS_INFINITY = std::numeric_limits<Real>::infinity();
     const Real Math::NEG_INFINITY = -std::numeric_limits<Real>::infinity();
-    const Real Math::PI = Real( 4.0 * atan( 1.0 ) );
+    const Real Math::PI = 3.14159265358979323846f;
     const Real Math::TWO_PI = Real( 2.0 * PI );
     const Real Math::HALF_PI = Real( 0.5 * PI );
     const Real Math::fDeg2Rad = PI / Real(180.0);
@@ -945,7 +945,20 @@ namespace Ogre
         return m * result;
     }
 
-    Matrix4 Math::makeRotateMatrix(const float radiansX, const float radiansY)
+    Matrix4 Math::makeRotateMatrixYX(const float radiansX, const float radiansY)
+    {
+        const float cosX = cosf(radiansX), sinX = sinf(radiansX);
+        const float cosY = cosf(radiansY), sinY = sinf(radiansY);
+
+        return Ogre::Matrix4(
+            cosY, sinY * sinX, sinY * cosX, 0,
+            0, cosX, -sinX, 0,
+            -sinY, cosY * sinX, cosY * cosX, 0,
+            0, 0, 0, 1
+        );
+    }
+
+    Matrix4 Math::makeRotateMatrixXY(const float radiansX, const float radiansY)
     {
         const float cosX = cosf(radiansX), sinX = sinf(radiansX);
         const float cosY = cosf(radiansY), sinY = sinf(radiansY);
@@ -1009,8 +1022,7 @@ namespace Ogre
         Real fovy,
         Real aspect,
         Real zNear, 
-        Real zFar,
-        bool convertDepth)
+        Real zFar)
     {
         float const tanHalfFovy = tan(fovy / 2.0f);
 
@@ -1030,14 +1042,12 @@ namespace Ogre
         Real fovy,
         Real aspect,
         Real zNear,
-        Real zFar,
-        bool convertDepth)
+        Real zFar)
     {
         float const tanHalfFovy = tan(fovy / 2.0f);
 
         Matrix4 m = Matrix4::ZERO;
-        m[0][0] = 1.0f / (aspect * tanHalfFovy);
-        m[1][1] = 1.0f / (tanHalfFovy);
+
         m[3][2] = 1.0f;
 
         m[2][2] = zFar / (zFar - zNear);
@@ -1052,9 +1062,21 @@ namespace Ogre
         m[0][0] = f;
         m[1][1] = f / aspectInverse;
         return m;
-
     }
 
+    Matrix4 Math::makePerspectiveMatrixLHReverseZ(
+        float fovxRadians,
+        float aspectInverse,
+        float zNear,
+        float zFar)
+    {
+        Matrix4 m = makePerspectiveMatrixLH(fovxRadians, 1 / aspectInverse, zNear, zFar);
+        float  w = m[3][2];
+        float  z = m[2][2];
+        m[2][2] = w - z;
+        m[2][3] = -m[2][3];
+        return m;
+    }
 
     Matrix4 Math::makePerspectiveMatrix(Real left, Real right, Real bottom, Real top, Real zNear, Real zFar)
     {
@@ -1143,58 +1165,55 @@ namespace Ogre
     }
 
     Matrix4 Math::makeLookAtRH(
-        const Ogre::Vector3& camera_pos,
-        const Ogre::Vector3& target_pos,
-        const Ogre::Vector3& up_dir)
+        const Ogre::Vector3& eye,
+        const Ogre::Vector3& center,
+        const Ogre::Vector3& up)
     {
-
-        Ogre::Vector3 forward = (target_pos - camera_pos);
-        forward.normalise();
-        Ogre::Vector3 right = forward.crossProduct(up_dir);
-        right.normalise();
-        Ogre::Vector3 up = right.crossProduct(forward);
-
-        Ogre::Matrix4 view_matrix = Ogre::Matrix4::IDENTITY;
-        view_matrix[0][0] = right.x;
-        view_matrix[1][0] = right.y;
-        view_matrix[2][0] = right.z;
-        view_matrix[0][1] = up.x;
-        view_matrix[1][1] = up.y;
-        view_matrix[2][1] = up.z;
-        view_matrix[0][2] = -forward.x;
-        view_matrix[1][2] = -forward.y;
-        view_matrix[2][2] = -forward.z;
-        view_matrix[3][0] = -right.dotProduct(camera_pos);
-        view_matrix[3][1] = -up.dotProduct(camera_pos); 
-        view_matrix[3][2] = forward.dotProduct(camera_pos);
-        return view_matrix.transpose();
+        Ogre::Vector3 f = center - eye;
+        f.normalise();
+        Ogre::Vector3 s = up.crossProduct(f);
+        s.normalise();
+        Ogre::Vector3 u = f.crossProduct(s);
+        Ogre::Matrix4 Result = Ogre::Matrix4::IDENTITY;
+        Result[0][0] = s.x;
+        Result[1][0] = s.y;
+        Result[2][0] = s.z;
+        Result[0][1] = u.x;
+        Result[1][1] = u.y;
+        Result[2][1] = u.z;
+        Result[0][2] = -f.x;
+        Result[1][2] = -f.y;
+        Result[2][2] = -f.z;
+        Result[3][0] = -s.dotProduct(eye);
+        Result[3][1] = -u.dotProduct(eye);
+        Result[3][2] = -f.dotProduct(eye);
+        return Result.transpose();
     }
 
     Matrix4 Math::makeLookAtLH(
-        const Ogre::Vector3& camera_pos,
-        const Ogre::Vector3& target_pos,
-        const Ogre::Vector3& up_dir)
+        const Ogre::Vector3& eye,
+        const Ogre::Vector3& center,
+        const Ogre::Vector3& up)
     {
-        Ogre::Vector3 forward = (target_pos - camera_pos);
-        forward.normalise();
-        Ogre::Vector3 right = up_dir.crossProduct(forward);
-        right.normalise();
-        Ogre::Vector3 up = forward.crossProduct(right);
-
-        Ogre::Matrix4 view_matrix = Ogre::Matrix4::IDENTITY;
-        view_matrix[0][0] = right.x;
-        view_matrix[1][0] = right.y;
-        view_matrix[2][0] = right.z;
-        view_matrix[0][1] = up.x;
-        view_matrix[1][1] = up.y;
-        view_matrix[2][1] = up.z;
-        view_matrix[0][2] = forward.x;
-        view_matrix[1][2] = forward.y;
-        view_matrix[2][2] = forward.z;
-        view_matrix[3][0] = -right.dotProduct(camera_pos);
-        view_matrix[3][1] = -up.dotProduct(camera_pos);
-        view_matrix[3][2] = -forward.dotProduct(camera_pos);
-        return view_matrix.transpose();
+        Ogre::Vector3 f = center - eye;
+        f.normalise();
+        Ogre::Vector3 s = up.crossProduct(f);
+        s.normalise();
+        Ogre::Vector3 u = f.crossProduct(s);
+        Ogre::Matrix4 Result = Ogre::Matrix4::IDENTITY;
+        Result[0][0] = s.x;
+        Result[1][0] = s.y;
+        Result[2][0] = s.z;
+        Result[0][1] = u.x;
+        Result[1][1] = u.y;
+        Result[2][1] = u.z;
+        Result[0][2] = f.x;
+        Result[1][2] = f.y;
+        Result[2][2] = f.z;
+        Result[3][0] = -s.dotProduct(eye);
+        Result[3][1] = -u.dotProduct(eye);
+        Result[3][2] = -f.dotProduct(eye);
+        return Result.transpose();
     }
     //---------------------------------------------------------------------
     Real Math::boundingRadiusFromAABB(const AxisAlignedBox& aabb)

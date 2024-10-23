@@ -3,12 +3,6 @@
 
 #include "glslBase.glsl"
 
-STRUCT(PsInOpaque)
-{
-	DATA(float4, position, SV_Position);
-};
-
-
 #ifdef VERTEX_SHADER
 layout (std430, UPDATE_FREQ_NONE, binding = 3) readonly buffer vertexDataBuffer
 {
@@ -32,17 +26,11 @@ CBUFFER(objectUniformBlock, UPDATE_FREQ_PER_DRAW, b0, binding = 0)
 };
 
 
-
-
-
 void main()
 {
 	const uint vertexID = uint(gl_VertexIndex);
-	PsInOpaque Out;
-
 	float4 vertexPos = LoadVertex(vertexID);
 	gl_Position = mul(worldViewProjMat, vertexPos);
-	gl_Position.y = -gl_Position.y;
 }
 #endif //VERTEX_SHADER
 

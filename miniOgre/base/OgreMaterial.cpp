@@ -22,7 +22,9 @@ namespace Ogre {
         mShaderInfo.samplerFragMask = 1 | 2 | 4 | 8 | 16;
 
         mRasterState.depthWrite = true;
+        mRasterState.depthFunc = SamplerCompareFunc::GE;
         mRasterState.colorWrite = true;
+        
         mRasterState.renderTargetCount = 1;
     }
 

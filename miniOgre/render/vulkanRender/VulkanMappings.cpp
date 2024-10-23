@@ -248,7 +248,7 @@ namespace Ogre {
         case filament::backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST:
             return VK_SAMPLER_MIPMAP_MODE_NEAREST;
         case filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR:
-            return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+            return VK_SAMPLER_MIPMAP_MODE_LINEAR;
         default:
             assert(false);
             return VK_SAMPLER_MIPMAP_MODE_NEAREST;

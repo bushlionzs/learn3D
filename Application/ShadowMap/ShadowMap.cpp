@@ -28,7 +28,6 @@
 
 #define SAN_MIGUEL_OFFSETX          150.f
 #define MESH_SCALE                  10.f
-#define PI 3.14159265358979323846f
 ShadowMap::ShadowMap()
 {
 
@@ -152,7 +151,7 @@ void ShadowMap::base1()
 		mAnimationState->setLoop(true);
 	}
 
-	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, 8.0f), Ogre::Vector3::ZERO);
+	mGameCamera->updatePosition(Ogre::Vector3(0, 0.0f, 8.0f));
 	mGameCamera->setMoveSpeed(10.0f);
 
 	light = mSceneManager->createLight("shadow");
@@ -273,7 +272,7 @@ void ShadowMap::updateFrameData(uint32_t i)
         lightSourcePos[0] += (20.f);
         lightSourcePos[0] += (SAN_MIGUEL_OFFSETX);
 
-        Ogre::Matrix4 rotation = Ogre::Math::makeRotateMatrix(
+        Ogre::Matrix4 rotation = Ogre::Math::makeRotateMatrixXY(
             lightCpuSettings.mSunControl.x, lightCpuSettings.mSunControl.y);
 
         Ogre::Matrix4 translation = Ogre::Math::makeTranslateMatrix(-lightSourcePos);
@@ -300,7 +299,7 @@ void ShadowMap::updateFrameData(uint32_t i)
         lightUniformBlock.mLightPosition = Ogre::Vector4(0.0f);
         lightUniformBlock.mLightViewProj = (lightProjMatrix * lightViewMatrix).transpose();
         lightUniformBlock.mLightColor = Ogre::Vector4(1, 1, 1, 1);
-        lightUniformBlock.mLightUpVec = lightViewMatrix.getUpVec();
+        lightUniformBlock.mLightUpVec = lightViewMatrix.getUp();
         lightUniformBlock.mLightDir = newLightDir.xyz();
 
         mRenderSystem->updateBufferObject(
@@ -339,15 +338,6 @@ void ShadowMap::updateFrameData(uint32_t i)
             (const char*)&esmConstants, sizeof(esmConstants));
         mRenderSystem->updateBufferObject(renderSettingsUniformHandle,
             (const char*)&renderSetting, sizeof(renderSetting));
-
-        BufferBarrier barriers[2];
-
-        barriers[0] =
-        {
-            frameData.perFrameConstantsBuffer,
-            RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
-        };
-        mRenderSystem->resourceBarrier(1, &barriers[0], 0, nullptr);
     }
 }
 
@@ -379,9 +369,8 @@ void ShadowMap::base2()
 	sanMiguelNode->attachObject(sanMiguel);
 
     Ogre::Vector3 camPos(120.f + SAN_MIGUEL_OFFSETX, 98.f, 14.f);
-    Ogre::Vector3 camRotate = Ogre::Vector3::ZERO;
 
-	mGameCamera->updateCamera(camPos, camRotate);
+	mGameCamera->updatePosition(camPos);
 	mGameCamera->setMoveSpeed(10.0f);
 
     uint32_t visibilityBufferFilteredIndexCount[NUM_GEOMETRY_SETS] = {};
@@ -421,7 +410,7 @@ void ShadowMap::base2()
         meshConstants[i].indexOffset = indexView->mIndexLocation;
         meshConstants[i].vertexOffset = indexView->mBaseVertexLocation;
         meshConstants[i].materialID = i;
-        meshConstants[i].twoSided = 0;// (materialFlag & MATERIAL_FLAG_TWO_SIDED) ? 1 : 0;
+        meshConstants[i].twoSided =  (materialFlag & MATERIAL_FLAG_TWO_SIDED) ? 1 : 0;
     }
 
     rs->updateBufferObject(meshConstantsBuffer, (const char*)meshConstants.data(), 
@@ -453,51 +442,49 @@ void ShadowMap::base2()
 
     //group bufer
 
-    for (auto frame = 0; frame < numFrame; frame++)
+    
+    dispatchGroupCount = 0;
+    filterDispatchGroupDataBuffer =
+        rs->createBufferObject(
+            BufferObjectBinding::BufferObjectBinding_Storge,
+            BufferUsage::DYNAMIC,
+            filterDispatchGroupSize);
+    BufferHandleLockGuard lockGuard(filterDispatchGroupDataBuffer);
+
+    FilterDispatchGroupData* dispatchGroupData = (FilterDispatchGroupData*)lockGuard.data();
+
+    for (auto i = 0; i < subMeshCount; i++)
     {
-        dispatchGroupCount = 0;
-        auto filterDispatchGroupDataBuffer =
-            rs->createBufferObject(
-                BufferObjectBinding::BufferObjectBinding_Storge,
-                BufferUsage::DYNAMIC,
-                filterDispatchGroupSize);
-        mFrameData[frame].filterDispatchGroupDataBuffer = filterDispatchGroupDataBuffer;
-        BufferHandleLockGuard lockGuard(filterDispatchGroupDataBuffer);
+        auto subMesh = mesh->getSubMesh(i);
 
-        FilterDispatchGroupData* dispatchGroupData = (FilterDispatchGroupData*)lockGuard.data();
+        uint32_t triangleCount = subMesh->getIndexView()->mIndexCount / 3;
+        uint32_t numDispatchGroups = (triangleCount + computeThread - 1) / computeThread;
+        auto& mat = subMesh->getMaterial();
 
-        for (auto i = 0; i < subMeshCount; i++)
+        auto materialFlag = mat->getMaterialFlags();
+
+        uint32_t geomSet = materialFlag & MATERIAL_FLAG_ALPHA_TESTED ? GEOMSET_ALPHA_CUTOUT : GEOMSET_OPAQUE;
+        for (uint32_t groupIdx = 0; groupIdx < numDispatchGroups; ++groupIdx)
         {
-            auto subMesh = mesh->getSubMesh(i);
+            FilterDispatchGroupData& groupData = dispatchGroupData[dispatchGroupCount++];
+            const uint32_t firstTriangle = groupIdx * computeThread;
+            const uint32_t lastTriangle = std::min(firstTriangle + computeThread, triangleCount);
+            const uint32_t trianglesInGroup = lastTriangle - firstTriangle;
 
-            uint32_t triangleCount = subMesh->getIndexView()->mIndexCount / 3;
-            uint32_t numDispatchGroups = (subMesh->getIndexView()->mIndexCount / 3 + computeThread - 1) / computeThread;
-            auto& mat = subMesh->getMaterial();
+            // Fill GPU filter batch data
 
-            auto materialFlag = mat->getMaterialFlags();
+            groupData.meshIndex = i;
+            groupData.instanceDataIndex = 0;
 
-            uint32_t geomSet = materialFlag & MATERIAL_FLAG_ALPHA_TESTED ? GEOMSET_ALPHA_CUTOUT : GEOMSET_OPAQUE;
-            for (uint32_t groupIdx = 0; groupIdx < numDispatchGroups; ++groupIdx)
-            {
-                FilterDispatchGroupData& groupData = dispatchGroupData[dispatchGroupCount++];
-                const uint32_t firstTriangle = groupIdx * computeThread;
-                const uint32_t lastTriangle = std::min(firstTriangle + computeThread, triangleCount);
-                const uint32_t trianglesInGroup = lastTriangle - firstTriangle;
+            groupData.geometrySet_faceCount = 
+                ((trianglesInGroup << BATCH_FACE_COUNT_LOW_BIT) & BATCH_FACE_COUNT_MASK) |
+                ((geomSet << BATCH_GEOMETRY_LOW_BIT) & BATCH_GEOMETRY_MASK);
 
-                // Fill GPU filter batch data
-
-                groupData.meshIndex = i;
-                groupData.instanceDataIndex = 0;
-
-                groupData.geometrySet_faceCount = 
-                    ((trianglesInGroup << BATCH_FACE_COUNT_LOW_BIT) & BATCH_FACE_COUNT_MASK) |
-                    ((geomSet << BATCH_GEOMETRY_LOW_BIT) & BATCH_GEOMETRY_MASK);
-
-                // Offset relative to the start of the mesh
-                groupData.indexOffset = firstTriangle * 3;
-            }
+            // Offset relative to the start of the mesh
+            groupData.indexOffset = firstTriangle * 3;
         }
     }
+    
     
     //global data
     VBConstants constants[2];
@@ -634,7 +621,7 @@ void ShadowMap::base2()
 
                 barriers[0] =
                 {
-                    frameData->filterDispatchGroupDataBuffer,
+                    filterDispatchGroupDataBuffer,
                     RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
                 };
 
@@ -685,7 +672,7 @@ void ShadowMap::base2()
             frameData.firstDescSetOfFilter = firstDescSet;
             rs->updateDescriptorSetBuffer(firstDescSet, 1, &frameData.perFrameConstantsBuffer, 1);
 
-            rs->updateDescriptorSetBuffer(firstDescSet, 3, &frameData.filterDispatchGroupDataBuffer, 1);
+            rs->updateDescriptorSetBuffer(firstDescSet, 3, &filterDispatchGroupDataBuffer, 1);
 
             rs->updateDescriptorSetBuffer(firstDescSet, 6, &frameData.indirectDataBuffer, 1);
 
@@ -912,6 +899,7 @@ void ShadowMap::base2()
         auto vbBufferPassAlphaHandle = rs->createShaderProgram(shaderInfo, nullptr);
         backend::RasterState rasterState{};
         rasterState.depthWrite = true;
+        rasterState.depthFunc = backend::SamplerCompareFunc::GE;
         rasterState.colorWrite = true;
         rasterState.renderTargetCount = 1;
         auto vbBufferPasssPipelineHandle = rs->createPipeline(rasterState, vbBufferPassHandle);
@@ -921,7 +909,7 @@ void ShadowMap::base2()
         auto height = mRenderWindow->getHeight();
 
         visibilityBufferTarget = rs->createRenderTarget("visibilityBufferTarget",
-            width, height, Ogre::PixelFormat::PF_A8R8G8B8, Ogre::TextureUsage::COLOR_ATTACHMENT);
+            width, height, Ogre::PixelFormat::PF_A8B8G8R8, Ogre::TextureUsage::COLOR_ATTACHMENT);
 
 
 
@@ -995,7 +983,7 @@ void ShadowMap::base2()
             info.renderTargets[0].renderTarget = visibilityBufferTarget;
             info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
             info.depthTarget.depthStencil = winDepth;
-            info.depthTarget.clearValue = { 1.0f, 0.0f };
+            info.depthTarget.clearValue = { 0.0f, 0.0f };
 
             rs->pushGroupMarker("visibilityBuffer");
             rs->beginRenderPass(info);
@@ -1042,7 +1030,8 @@ void ShadowMap::base2()
         shaderInfo.shaderName = "visibilityBufferShade";
         auto programHandle = rs->createShaderProgram(shaderInfo, nullptr);
         backend::RasterState rasterState{};
-        rasterState.depthWrite = true;
+        rasterState.depthWrite = false;
+        rasterState.depthFunc = SamplerCompareFunc::A;
         rasterState.colorWrite = true;
         rasterState.renderTargetCount = 1;
         auto pipelineHandle = rs->createPipeline(rasterState, programHandle);
@@ -1053,13 +1042,13 @@ void ShadowMap::base2()
 
         samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
         samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
-        samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
+        samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
         samplerParams.wrapS = backend::SamplerWrapMode::REPEAT;
         samplerParams.wrapT = backend::SamplerWrapMode::REPEAT;
         samplerParams.wrapR = backend::SamplerWrapMode::REPEAT;
         samplerParams.compareMode = backend::SamplerCompareMode::NONE;
         samplerParams.compareFunc = backend::SamplerCompareFunc::N;
-        samplerParams.anisotropyLog2 = 0;
+        samplerParams.anisotropyLog2 = 3;
         samplerParams.padding0 = 0;
         samplerParams.padding1 = 0;
         samplerParams.padding2 = 0;
@@ -1073,6 +1062,7 @@ void ShadowMap::base2()
         samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
         samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
         samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.anisotropyLog2 = 0;
 
         auto clampMiplessLinearSamplerHandle = rs->createTextureSampler(samplerParams);
         samplerParams.filterMag = backend::SamplerFilterType::NEAREST;
@@ -1130,9 +1120,9 @@ void ShadowMap::base2()
             std::vector<OgreTexture*> diffuseList;
             std::vector<OgreTexture*> specularList;
             std::vector<OgreTexture*> normalList;
-            diffuseList.reserve(subMeshCount);
-            specularList.reserve(subMeshCount);
-            normalList.reserve(subMeshCount);
+            diffuseList.reserve(256);
+            specularList.reserve(256);
+            normalList.reserve(256);
             for (auto i = 0; i < subMeshCount; i++)
             {
                 auto* subMesh = mesh->getSubMesh(i);
@@ -1156,8 +1146,8 @@ void ShadowMap::base2()
             OgreTexture* esmShadow = esmShadowMap->getTarget();
             rs->updateDescriptorSetTexture(zeroSet, 24, &esmShadow, 1);
             rs->updateDescriptorSetTexture(zeroSet, 25, diffuseList.data(), diffuseList.size());
-            rs->updateDescriptorSetTexture(zeroSet, 26, specularList.data(), specularList.size());
-            rs->updateDescriptorSetTexture(zeroSet, 27, normalList.data(), normalList.size());
+            rs->updateDescriptorSetTexture(zeroSet, 27, specularList.data(), specularList.size());
+            rs->updateDescriptorSetTexture(zeroSet, 26, normalList.data(), normalList.size());
 
             rs->updateDescriptorSetBuffer(zeroSet, 35, &vertexDataHandle, 1);
 
@@ -1196,7 +1186,7 @@ void ShadowMap::base2()
             info.renderTargets[0].renderTarget = mRenderWindow->getColorTarget();
             info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
             info.depthTarget.depthStencil = winDepth;
-            info.depthTarget.clearValue = { 1.0f, 0.0f };
+            info.depthTarget.clearValue = { 0.0f, 0.0f };
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             rs->pushGroupMarker("shadePass");
             rs->beginRenderPass(info);
@@ -1215,8 +1205,16 @@ void ShadowMap::base2()
         mRenderPipeline->addRenderPass(shadePass);
     }
     Ogre::Vector3 camPos2(120.f + SAN_MIGUEL_OFFSETX, 98.f, 14.f);
-    mGameCamera->updateCamera(-camPos2, Ogre::Vector3(0.0, 90.0f, 0.0f));
-    mGameCamera->setMoveSpeed(10.0f);
+
+    mGameCamera->setMoveSpeed(50.0f);
+
+    Ogre::Vector3 lookAt = camPos2 + Ogre::Vector3(-1.0f, 0.1f, 0.0f);
+    mGameCamera->lookAt(camPos2, lookAt);
+    float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
+
+    Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrixLHReverseZ(
+        Ogre::Math::PI / 2.0f, aspectInverse, 0.1, 1000.f);
+    mGameCamera->getCamera()->updateProjectMatrix(m);
 
     RenderPassCallback renderCallback = [=, this](RenderPassInfo& info) {
         rs->pushGroupMarker("forwardPass");
@@ -1250,7 +1248,7 @@ void ShadowMap::base2()
         };
 
     auto mainPass = createUserDefineRenderPass(renderCallback, updatePassCallback);
-   // mRenderPipeline->addRenderPass(mainPass);
+    //mRenderPipeline->addRenderPass(mainPass);
 }
 
 void ShadowMap::execute(RenderSystem* rs)
@@ -1263,7 +1261,7 @@ void ShadowMap::execute(RenderSystem* rs)
     info.renderTargets[0].renderTarget = mRenderWindow->getColorTarget();
     info.depthTarget.depthStencil = mRenderWindow->getDepthTarget();;
     info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-    info.depthTarget.clearValue = { 1.0f, 0.0f };
+    info.depthTarget.clearValue = { 0.0f, 0.0f };
     info.cam = cam;
     static EngineRenderList engineRenerList;
     sceneManager->getSceneRenderList(cam, engineRenerList, false);
@@ -1312,6 +1310,16 @@ void ShadowMap::execute(RenderSystem* rs)
             view->mIndexLocation, view->mBaseVertexLocation, 0);
     }
     rs->endRenderPass(info);
+
+    RenderTargetBarrier rtBarriers[] =
+    {
+        {
+            mRenderWindow->getColorTarget(),
+            RESOURCE_STATE_RENDER_TARGET,
+            RESOURCE_STATE_PRESENT
+        }
+    };
+    rs->resourceBarrier(0, nullptr, 1, rtBarriers);
 }
 
 void ShadowMap::base3()
@@ -1334,6 +1342,13 @@ void ShadowMap::base3()
     auto mainPass = createStandardRenderPass(renderInput);
     mRenderPipeline->addRenderPass(mainPass);
 
-    mGameCamera->updateCamera(Ogre::Vector3(0, -5.0f, -12.0f), Ogre::Vector3::ZERO);
-    mGameCamera->setMoveSpeed(10.0f);
+    mGameCamera->setMoveSpeed(2.0f);
+    auto camPos = Ogre::Vector3(0, 5.0f, 12.0f);
+    auto lookAtPos = camPos + Ogre::Vector3(0, 1, -1);
+    mGameCamera->lookAt(camPos, lookAtPos);
+    float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
+
+    Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrixLHReverseZ(
+        Ogre::Math::PI / 2.0f, aspectInverse, 0.1, 10000.f);
+    mGameCamera->getCamera()->updateProjectMatrix(m);
 }

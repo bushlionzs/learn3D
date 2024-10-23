@@ -248,6 +248,13 @@ void VulkanTexture::createImage(
     auto device = mPlatform->getDevice();
     VK_CHECK_RESULT(vkCreateImage(device, &imageInfo, nullptr, &image));
 
+    VkDebugUtilsObjectNameInfoEXT nameInfo = {};
+    nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+    nameInfo.objectType = VK_OBJECT_TYPE_IMAGE;
+    nameInfo.objectHandle = (uint64_t)image;
+    nameInfo.pObjectName = mName.c_str();
+    vkSetDebugUtilsObjectNameEXT(device, &nameInfo);
+
     VkMemoryRequirements memRequirements;
     bluevk::vkGetImageMemoryRequirements(device, image, &memRequirements);
 

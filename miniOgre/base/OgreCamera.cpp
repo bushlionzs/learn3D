@@ -132,17 +132,14 @@ namespace Ogre {
 		mPosition = position;
 	}
 
-	void Camera::updateCamera(const Ogre::Matrix4& m)
+	void Camera::updateViewMatrix(const Ogre::Matrix4& m)
 	{
 		mCameraImpl->updateView(m);
 	}
 
-	void Camera::updateCamera(
-		const Ogre::Vector3& eyePos,
-		const Ogre::Vector3& targetPos,
-		const Ogre::Vector3& up)
+	void Camera::updateProjectMatrix(const Ogre::Matrix4& m)
 	{
-		mCameraImpl->updateView(eyePos, targetPos, up);
+		mCameraImpl->updateProject(m);
 	}
 
 	Ray Camera::getCameraToViewportRay(Real screenX, Real screenY) const

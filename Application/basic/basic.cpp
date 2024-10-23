@@ -14,6 +14,7 @@
 #include "OgreMeshManager.h"
 #include "OgreEntity.h"
 #include "OgreSubEntity.h"
+#include "OgreRoot.h"
 
 BasicApplication::BasicApplication()
 {
@@ -69,9 +70,10 @@ void BasicApplication::addCustomDirectory()
 	//ResourceManager::getSingletonPtr()->addDirectory(std::string("D:\\wow3.3.5\\Data"), "wow", true);
 }
 
-
 void BasicApplication::base1()
 {
+	
+
 	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
 	float aa = 1.0f;
@@ -95,10 +97,19 @@ void BasicApplication::base1()
 	SubEntity* subEntry = rect->getSubEntity(0);
 	auto& mat = subEntry->getMaterial();
 	ShaderInfo& info = mat->getShaderInfo();
-	info.shaderName = "testShader";
-	//mSceneManager->setSkyBox(true, "SkyLan", 10000);
-	mGameCamera->updateCamera(Ogre::Vector3(0, 0.0f, -10.f), Ogre::Vector3::ZERO);
+	//info.shaderName = "testShader";
+	mSceneManager->setSkyBox(true, "SkyLan", 5000);
+	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, -5.f), Ogre::Vector3::ZERO);
+
+	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
+
+	Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrixLHReverseZ(
+		Ogre::Math::PI / 2.0f, aspectInverse, 0.1, 10000.f);
+
+	mGameCamera->getCamera()->updateProjectMatrix(m);
 	mGameCamera->setMoveSpeed(5);
+
 
 }
 
@@ -115,10 +126,20 @@ void BasicApplication::base2()
 
 	spherenode->attachObject(sphere);
 
-	mSceneManager->setSkyBox(true, "SkyLan", 50000);
-
-	mGameCamera->updateCamera(Ogre::Vector3(2000, 0.0f, 0.0f), Ogre::Vector3(0.0f, 90.0f, 0.0f));
+	mSceneManager->setSkyBox(true, "SkyLan", 5000);
+	
+	mGameCamera->lookAt(
+		Ogre::Vector3(2000, 0.0, 0.0f), 
+		Ogre::Vector3(0.0f, 0.0f, 0.0f));
 	mGameCamera->setMoveSpeed(200);
+
+	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
+
+	Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrixLHReverseZ(
+		Ogre::Math::PI / 2.0f, aspectInverse, 0.1, 10000.f);
+
+	mGameCamera->getCamera()->updateProjectMatrix(m);
 }
 
 void BasicApplication::base3()

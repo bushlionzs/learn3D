@@ -23,14 +23,12 @@ float3 LoadVertexPositionFloat3(uint vtxIndex)
 float4 LoadVertex(uint index)
 {
     return float4(LoadVertexPositionFloat3(index), 1.0f);
-    //return float4(vertexDataBuffer_data[index].vertexPosition, 1.0f);
 }
 
 void main()
 {
 	float4 vertexPos = LoadVertex(gl_VertexIndex);
 	gl_Position= mul(worldViewProjMat, vertexPos);
-	gl_Position.y = -gl_Position.y;
 }
 #endif //VERTEX_SHADER
 

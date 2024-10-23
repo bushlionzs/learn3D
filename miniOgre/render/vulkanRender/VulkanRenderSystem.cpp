@@ -159,7 +159,13 @@ void VulkanRenderSystem::beginRenderPass(
 
     auto width = renderArea.extent.width;
     auto height = renderArea.extent.height;
-    VkViewport viewport = vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
+    VkViewport viewport{};
+    viewport.x = 0.0;
+    viewport.y = height;
+    viewport.width = width;
+    viewport.height = -(float)height;
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
     VkRect2D scissor = vks::initializers::rect2D(width, height, 0, 0);
 
     bluevk::vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);

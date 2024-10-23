@@ -64,7 +64,6 @@ float3 LoadVertexPositionFloat3(uint vtxIndex)
 float4 LoadVertex(uint index)
 {
     return float4(LoadVertexPositionFloat3(index), 1.0f);
-    //return float4(vertexDataBuffer_data[index].vertexPosition, 1.0f);
 }
 
 
@@ -215,6 +214,7 @@ void main()
 
 			CullingViewPort viewport = cullingViewports[i];
 			cull[i] = FilterTriangle(indices, vertices, !twoSided, viewport.windowSize, viewport.sampleCount);
+			cull[i] = false;
 			if (!cull[i])
 				AtomicAdd(workGroupIndexCount[i], 3, threadOutputSlot[i]);
 		}
@@ -238,7 +238,7 @@ void main()
 	{
 		if (!cull[j])
 		{
-			uint outputIndex = (workGroupOutputSlot[j] + threadOutputSlot[j]);
+			uint outputIndex = (AtomicLoad(workGroupOutputSlot[j]) + threadOutputSlot[j]);
 
 
 			StoreByte(filteredIndicesBuffer[j]._data, ( ( vbConstant[batchGeomSet].indexOffset )  + outputIndex + 0) << 2, indices[0]);

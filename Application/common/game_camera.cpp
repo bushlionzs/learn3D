@@ -38,12 +38,40 @@ void GameCamera::setRotateSpeed(Real speed)
     mRotateSpeed = speed;
 }
 
-void GameCamera::updateCamera(
-    const Ogre::Vector3& camPosition, 
-    const Ogre::Vector3& camRotate)
+void GameCamera::updatePosition(const Ogre::Vector3& camPosition)
 {
     position = camPosition;
+}
+
+void GameCamera::updateRotate(const Ogre::Vector3& camRotate)
+{
     rotation = camRotate;
+}
+
+void GameCamera::lookAt(
+    const Ogre::Vector3& camPosition,
+    const Ogre::Vector3& targetPosition,
+    const Ogre::Vector3& up)
+{
+    position = camPosition;
+    Ogre::Vector3 lookDir = targetPosition - camPosition;
+    lookDir.normalise();
+    float y = lookDir.y;
+    rotation.x = -asinf(y) ;
+
+    float x = lookDir.x;
+    float z = lookDir.z;
+    float n = sqrtf((x * x) + (z * z));
+    if (n > 0.01f)
+    {
+        // don't change the Y rotation if we're too close to vertical
+        x /= n;
+        z /= n;
+        rotation.y = atan2f(x, z) ;
+    }
+
+    rotation.y *=  180.0f / Ogre::Math::PI;
+    rotation.x *= 180.0f / Ogre::Math::PI;
 }
 
 void GameCamera::injectMouseWheel(int _absz)
@@ -178,68 +206,58 @@ void GameCamera::injectKeyRelease(KeyCode _key)
 
 bool GameCamera::update(float delta)
 {
+    float x = rotation.x / 180.f * Ogre::Math::PI;
+    float y = rotation.y / 180.f * Ogre::Math::PI;
+
+    auto m = Ogre::Math::makeRotateMatrixXY(-x, -y);
     if (mGoingForward || mGoingBack || mGoingLeft || mGoingRight || mGoingUp || mGoingDown)
     {
-        Ogre::Vector3 camFront;
-
-        float x = Ogre::Radian(Ogre::Degree(rotation.x)).valueRadians();
-        float y = Ogre::Radian(Ogre::Degree(rotation.y)).valueRadians();
-        camFront.x = -cos(x) * sin(y);
-        camFront.y = sin(x);
-        camFront.z = cos(x) * cos(y);
-        camFront.normalise();
-
+        Ogre::Vector3 right = m.getRight();
+        Ogre::Vector3 up = m.getUp();
+        Ogre::Vector3 forward = right.crossProduct(up);
         float moveSpeed = delta * mMoveSpeed;
+
+        Ogre::Vector3 move = Ogre::Vector3::ZERO;
 
         if (mGoingForward)
         {
-            position -= camFront * moveSpeed;
+            move += forward * moveSpeed;
         }
 
         if (mGoingBack)
         {
-            position += camFront * moveSpeed;
+            move -= forward * moveSpeed;
         }
 
         if (mGoingLeft)
         {
-            auto left = camFront.crossProduct(Ogre::Vector3(0.0f, 1.0f, 0.0f));
-            position -= left * moveSpeed;
+            move -= right * moveSpeed;
         }
 
 
         if (mGoingRight)
         {
-            auto left = camFront.crossProduct(Ogre::Vector3(0.0f, 1.0f, 0.0f));
-
-            position += left * moveSpeed;
+            move += right * moveSpeed;
         }
 
         if (mGoingUp)
         {
-            position += Ogre::Vector3(0.0f, 1.0f, 0.0f) * moveSpeed;
+            move += Ogre::Vector3(0.0f, 1.0f, 0.0f) * moveSpeed;
         }
 
         if (mGoingDown)
         {
-            position -= Ogre::Vector3(0.0f, 1.0f, 0.0f) * moveSpeed;
+            move -= Ogre::Vector3(0.0f, 1.0f, 0.0f) * moveSpeed;
         }
+
+        position += move;
     }
-    Ogre::Matrix4 rotM = Ogre::Matrix4::IDENTITY;
-
-    Ogre::Matrix4 transM;
-
-    rotM = Ogre::Math::makeRotateMatrix(rotM, rotation.x, Ogre::Vector3(1.0f, 0.0f, 0.0f));
-    rotM = Ogre::Math::makeRotateMatrix(rotM, rotation.y, Ogre::Vector3(0.0f, 1.0f, 0.0f));
-
-    Ogre::Vector3 translation = position;
-
-    transM = Ogre::Math::makeTranslateMatrix(translation);
-
-    Ogre::Matrix4 m = rotM * transM;
-
-    mCamera->updateCamera(m);
+  
+    
+    Ogre::Vector4 t = m * Ogre::Vector4(-position);
+    m.setTrans(t.xyz());
     mCamera->updatePosition(position);
+    mCamera->updateViewMatrix(m);
     return true;
 }
 

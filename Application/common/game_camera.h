@@ -57,10 +57,13 @@ public:
     void setMoveSpeed(Real speed);
     void setRotateSpeed(Real speed);
 
-    void updateCamera(
-        const Ogre::Vector3& camPosition, 
-        const Ogre::Vector3& camRotate);
 
+    void updatePosition(const Ogre::Vector3& camPosition);
+    void updateRotate(const Ogre::Vector3& camRotate);
+    void lookAt(
+        const Ogre::Vector3& camPosition,
+        const Ogre::Vector3& targetPosition,
+        const Ogre::Vector3& up  = Ogre::Vector3::UNIT_Y);
 
     virtual void injectMouseMove(int _absx, int _absy, int _absz);
     virtual void injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id);

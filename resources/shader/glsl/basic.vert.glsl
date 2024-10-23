@@ -43,6 +43,5 @@ void main() {
     outShadowPosH = cbPass.gShadowTransform * outPosH;
 	gl_Position = cbPass.gViewProj * outPosH;
     outTexC = texcoord;
-	gl_Position.y = -gl_Position.y;
 }
 

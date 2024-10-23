@@ -266,4 +266,13 @@ namespace Ogre
         position = Vector3( m[0][3], m[1][3], m[2][3] );
     }
 
+    Vector3 Matrix4::getRight() const
+    {
+        return Vector3(m[0][0], m[1][0], m[2][0]);
+    }
+
+    Vector3 Matrix4::getUp() const
+    {
+        return Vector3(m[1][0], m[1][1], m[1][2]);
+    }
 }

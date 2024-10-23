@@ -219,9 +219,9 @@ void main()
 
 
 	f3x2 texCoords = make_f3x2_cols(
-			LoadTexCoord(index0 << 2),
-			LoadTexCoord(index1 << 2),
-			LoadTexCoord(index2 << 2) 
+			LoadTexCoord(index0),
+			LoadTexCoord(index1),
+			LoadTexCoord(index2) 
 	);
 
 
@@ -234,8 +234,11 @@ void main()
 
 
 	uint materialID = Get(indirectDataBuffer_data)[index0];
-
-
+    outColor[0] = materialID/256.0f;
+	outColor[1] = materialID/256.0f;
+	outColor[2] = materialID/256.0f;
+	outColor[3] = 1.0f;
+	return;
 
 	GradientInterpolationResults results = Interpolate2DWithDeriv(derivativesOut,texCoords);
 
@@ -273,9 +276,9 @@ void main()
 
 
 	float3x3 normals = make_f3x3_rows(
-		LoadNormal(index0 << 2),
-		LoadNormal(index1 << 2),
-		LoadNormal(index2 << 2)
+		LoadNormal(index0),
+		LoadNormal(index1),
+		LoadNormal(index2)
 	);
 	float3 normal = normalize(InterpolateWithDeriv_float3x3(derivativesOut, normals));;
 

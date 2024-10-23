@@ -1636,7 +1636,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     vulkanRasterState.colorWriteMask = 0xf;
     vulkanRasterState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
     vulkanRasterState.colorTargetCount = rasterState.renderTargetCount;
-    vulkanRasterState.depthCompareOp = SamplerCompareFunc::LE;
+    vulkanRasterState.depthCompareOp = rasterState.depthFunc;
     vulkanRasterState.depthBiasConstantFactor = 0.0f;
     vulkanRasterState.depthBiasSlopeFactor = 0.0f;
 
@@ -1843,7 +1843,8 @@ void VulkanRenderSystemBase::resourceBarrier(
     for (uint32_t i = 0; i < numRtBarriers; ++i)
     {
         RenderTargetBarrier* pTrans = &pRtBarriers[i];
-        VulkanTexture* pTexture = (VulkanTexture*)pTrans->pRenderTarget->getTarget();
+        Ogre::VulkanRenderTarget* vulkanRenderTarget = (Ogre::VulkanRenderTarget*)pTrans->pRenderTarget;
+        
         VkImageMemoryBarrier* pImageBarrier = NULL;
 
         if (RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mCurrentState && RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mNewState)
@@ -1872,8 +1873,8 @@ void VulkanRenderSystemBase::resourceBarrier(
 
         if (pImageBarrier)
         {
-            pImageBarrier->image = pTexture->getVkImage();
-            pImageBarrier->subresourceRange.aspectMask = pTexture->getAspectFlag();
+            pImageBarrier->image = vulkanRenderTarget->getImage();
+            pImageBarrier->subresourceRange.aspectMask = vulkanRenderTarget->getAspectFlag();
             pImageBarrier->subresourceRange.baseMipLevel = pTrans->mSubresourceBarrier ? pTrans->mMipLevel : 0;
             pImageBarrier->subresourceRange.levelCount = pTrans->mSubresourceBarrier ? 1 : VK_REMAINING_MIP_LEVELS;
             pImageBarrier->subresourceRange.baseArrayLayer = pTrans->mSubresourceBarrier ? pTrans->mArrayLayer : 0;

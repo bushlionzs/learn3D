@@ -35,11 +35,9 @@ public:
         const Ogre::Vector3& position, 
         const Ogre::Quaternion& orientation);
     void updateView(
-        const Ogre::Vector3& eyePos,
-        const Ogre::Vector3& targetPos,
-        const Ogre::Vector3& up);
-    void updateView(
         const Ogre::Matrix4& view);
+    void updateProject(const Ogre::Matrix4& project);
+
     bool isVisible(const Ogre::Sphere& bound) const;
     bool isVisible(const Ogre::AxisAlignedBox& bound) const;
     bool isVisible(const Ogre::Vector3& position) const;
@@ -67,6 +65,8 @@ public:
     virtual void disableReflection(void);
     virtual void enableCustomNearClipPlane(const Ogre::Plane& plane);
     virtual void disableCustomNearClipPlane(void);
+private:
+    void updateFrustum();
 protected:
     mutable Ogre::Matrix4 mProjectMatrix;
     mutable Ogre::Matrix4 mProjMatrixRSDepth;

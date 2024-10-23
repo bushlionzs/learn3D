@@ -43,7 +43,7 @@ namespace Ogre
 			{
 				return mSwapChain->getDepth()->getVkImageView();
 			}
-			return mSwapChain->getCurrentColor()->getVkImageView();;
+			return mSwapChain->getCurrentColor()->getVkImageView();
 		}
 		return mTarget->getVkImageView();
 	}
@@ -59,6 +59,19 @@ namespace Ogre
 			return mSwapChain->getCurrentColor()->getVkImage();;
 		}
 		return mTarget->getVkImage();
+	}
+
+	VkImageAspectFlags VulkanRenderTarget::getAspectFlag()
+	{
+		if (mTarget)
+		{
+			return mTarget->getAspectFlag();
+		}
+		if (mDepth)
+		{
+			return mSwapChain->getDepth()->getAspectFlag();
+		}
+		return mSwapChain->getCurrentColor()->getAspectFlag();
 	}
 
 	Ogre::OgreTexture* VulkanRenderTarget::getTarget()
