@@ -214,7 +214,6 @@ void main()
 
 			CullingViewPort viewport = cullingViewports[i];
 			cull[i] = FilterTriangle(indices, vertices, !twoSided, viewport.windowSize, viewport.sampleCount);
-			cull[i] = false;
 			if (!cull[i])
 				AtomicAdd(workGroupIndexCount[i], 3, threadOutputSlot[i]);
 		}

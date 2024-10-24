@@ -10,7 +10,6 @@ static void setTextures(Mesh* mesh,
     uint32_t matFlags)
 {
     SubMesh* subMesh = mesh->getSubMesh(index);
-
     Ogre::Material* mat = subMesh->getMaterial().get();
     mat->setMaterialFlags(matFlags);
     std::string albedoName(albedo);

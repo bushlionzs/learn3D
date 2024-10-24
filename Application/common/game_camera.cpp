@@ -209,12 +209,15 @@ bool GameCamera::update(float delta)
     float x = rotation.x / 180.f * Ogre::Math::PI;
     float y = rotation.y / 180.f * Ogre::Math::PI;
 
-    auto m = Ogre::Math::makeRotateMatrixXY(-x, -y);
+    
     if (mGoingForward || mGoingBack || mGoingLeft || mGoingRight || mGoingUp || mGoingDown)
     {
-        Ogre::Vector3 right = m.getRight();
-        Ogre::Vector3 up = m.getUp();
-        Ogre::Vector3 forward = right.crossProduct(up);
+        auto rot = Ogre::Math::makeRotateMatrixYX(x, y);
+
+        auto right = rot.getRight();
+        auto up = rot.getUp();
+        auto forward = right.crossProduct(up);
+
         float moveSpeed = delta * mMoveSpeed;
 
         Ogre::Vector3 move = Ogre::Vector3::ZERO;
@@ -253,7 +256,7 @@ bool GameCamera::update(float delta)
         position += move;
     }
   
-    
+    auto m = Ogre::Math::makeRotateMatrixXY(-x, -y);
     Ogre::Vector4 t = m * Ogre::Vector4(-position);
     m.setTrans(t.xyz());
     mCamera->updatePosition(position);

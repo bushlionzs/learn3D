@@ -1192,10 +1192,11 @@ struct RasterState {
             //! whether front face winding direction must be inverted
             bool inverseFrontFaces                      : 1;        // 31
 
-            //! padding, must be 0
-            bool depthClamp                             : 1;        // 32
+            //
+            bool depthTest                             : 1;        // 32
 
-            uint32_t renderTargetCount;
+            uint16_t renderTargetCount;
+            uint16_t pixelFormat;
         };
         uint64_t u = 0;
     };

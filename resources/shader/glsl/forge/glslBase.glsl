@@ -111,6 +111,8 @@ ivec4 _LoadTex2D(itexture2D TEX, sampler SMP, ivec2 P, int lod) { return texelFe
 #define SampleGradTex2D(TEX, SMP, P, DX, DY) \
 textureGrad(sampler2D(TEX, SMP), P, DX, DY)
 
+#define SampleTex2D(TEX, SMP, P) \
+texture(sampler2D(TEX, SMP), P)
 
 #define make_f2x2_cols(C0, C1) f2x2(C0, C1)
 #define make_f2x2_rows(R0, R1) transpose(f2x2(R0, R1))

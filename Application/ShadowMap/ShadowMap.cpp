@@ -429,8 +429,7 @@ void ShadowMap::base2()
             rs->createBufferObject(
                 BufferObjectBinding::BufferObjectBinding_Storge | BufferObjectBinding::BufferObjectBinding_Index,
                 BufferUsage::DYNAMIC,
-                maxIndices * sizeof(uint32_t),
-                "FilteredIndexBuffer");
+                maxIndices * sizeof(uint32_t));
     }
     uint32_t computeThread = 256;
 
@@ -555,8 +554,7 @@ void ShadowMap::base2()
             rs->createBufferObject(
                 BufferObjectBinding::BufferObjectBinding_Storge,
                 BufferUsage::DYNAMIC,
-                maxIndices * sizeof(uint32_t),
-                "IndirectDataBuffer");
+                maxIndices * sizeof(uint32_t));
 
         frameData.perFrameConstantsBuffer =
             rs->createBufferObject(
@@ -585,6 +583,9 @@ void ShadowMap::base2()
     }
     
     //clear buffer pass
+    bool visibity = true;
+
+    if(visibity)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "clearBuffer";
@@ -640,6 +641,7 @@ void ShadowMap::base2()
     }
     
     //filter triangles pass
+    if(visibity)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "filterTriangles";
@@ -747,7 +749,6 @@ void ShadowMap::base2()
         Ogre::TextureUsage::DEPTH_ATTACHMENT);
 
     //draw esm shadow map
-    auto draw = false;
     if(1)
     {
         ShaderInfo shaderInfo;
@@ -759,6 +760,8 @@ void ShadowMap::base2()
         backend::RasterState rasterState{};
         rasterState.colorWrite = false;
         rasterState.depthWrite = true;
+        rasterState.depthTest = true;
+        rasterState.pixelFormat = Ogre::PixelFormat::PF_A8R8G8B8;
         rasterState.depthFunc = SamplerCompareFunc::LE;
         auto meshDepthPipelineHandle = rs->createPipeline(rasterState, meshDepthHandle);
 
@@ -899,9 +902,11 @@ void ShadowMap::base2()
         auto vbBufferPassAlphaHandle = rs->createShaderProgram(shaderInfo, nullptr);
         backend::RasterState rasterState{};
         rasterState.depthWrite = true;
+        rasterState.depthTest = true;
         rasterState.depthFunc = backend::SamplerCompareFunc::GE;
         rasterState.colorWrite = true;
         rasterState.renderTargetCount = 1;
+        rasterState.pixelFormat = Ogre::PixelFormat::PF_A8B8G8R8;
         auto vbBufferPasssPipelineHandle = rs->createPipeline(rasterState, vbBufferPassHandle);
 
         auto vbBufferPasssAlphaPipelineHandle = rs->createPipeline(rasterState, vbBufferPassAlphaHandle);
@@ -980,7 +985,7 @@ void ShadowMap::base2()
             auto* rs = Ogre::Root::getSingleton().getRenderSystem();
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             info.renderTargetCount = 1;
-            info.renderTargets[0].renderTarget = visibilityBufferTarget;
+            info.renderTargets[0].renderTarget =  visibilityBufferTarget;
             info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
             info.depthTarget.depthStencil = winDepth;
             info.depthTarget.clearValue = { 0.0f, 0.0f };
@@ -1010,13 +1015,14 @@ void ShadowMap::base2()
             rs->bindPipeline(vbBufferPassAlphaHandle, vbBufferPasssAlphaPipelineHandle, &tmp[0], 4);
             indirectBufferByteOffset =
                 GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 1, 0) * sizeof(uint32_t);
-            //rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
             
             rs->endRenderPass(info);
             rs->popGroupMarker();
             };
 
-        UpdateCallback vbUpdateCallback = [=, this](float delta) {
+        UpdateCallback vbUpdateCallback = [=, this](float delta)
+            {
             };
         auto vbPass = createUserDefineRenderPass(visibilityBufferCallback, vbUpdateCallback);
         mRenderPipeline->addRenderPass(vbPass);
@@ -1031,9 +1037,11 @@ void ShadowMap::base2()
         auto programHandle = rs->createShaderProgram(shaderInfo, nullptr);
         backend::RasterState rasterState{};
         rasterState.depthWrite = false;
+        rasterState.depthTest = false;
         rasterState.depthFunc = SamplerCompareFunc::A;
         rasterState.colorWrite = true;
         rasterState.renderTargetCount = 1;
+        rasterState.pixelFormat = Ogre::PixelFormat::PF_A8R8G8B8_SRGB;
         auto pipelineHandle = rs->createPipeline(rasterState, programHandle);
         auto zeroLayout = rs->getDescriptorSetLayout(programHandle, 0);
         auto firstLayout = rs->getDescriptorSetLayout(programHandle, 1);
@@ -1153,7 +1161,7 @@ void ShadowMap::base2()
 
             rs->updateDescriptorSetBuffer(zeroSet, 2, &vbConstantsBuffer, 1);
 
-            rs->updateDescriptorSetBuffer(firstSet, 4, &filteredIndexBuffer[frame], 1);
+            rs->updateDescriptorSetBuffer(firstSet, 4, &filteredIndexBuffer[0], 1);
             rs->updateDescriptorSetBuffer(firstSet, 5, &frameData.indirectDataBuffer, 1);
             rs->updateDescriptorSetBuffer(firstSet, 13, &frameData.objectUniformBlockHandle, 1);
             rs->updateDescriptorSetBuffer(firstSet, 14, &frameData.cameraUniformHandle, 1);
@@ -1163,8 +1171,8 @@ void ShadowMap::base2()
             rs->updateDescriptorSetBuffer(firstSet, 17, &esmInputConstantsHandle, 1);
             rs->updateDescriptorSetBuffer(firstSet, 19, &sssEnabledHandle, 1);
         }
-        auto shadePassTarget = rs->createRenderTarget("shadePassTarget",
-            ogreConfig.width, ogreConfig.height, Ogre::PixelFormat::PF_A8R8G8B8, 
+        shadePassTarget = rs->createRenderTarget("shadePassTarget",
+            ogreConfig.width, ogreConfig.height, Ogre::PixelFormat::PF_A8R8G8B8_SRGB,
             Ogre::TextureUsage::COLOR_ATTACHMENT);
         auto winDepth = mRenderWindow->getDepthTarget();
         RenderPassCallback shadeCallback = [=, this](RenderPassInfo& info) {
@@ -1179,13 +1187,13 @@ void ShadowMap::base2()
                     visibilityBufferTarget,
                     RESOURCE_STATE_RENDER_TARGET, 
                     RESOURCE_STATE_SHADER_RESOURCE 
-                } 
+                }
             };
             rs->resourceBarrier(0, nullptr, 2, rtBarriers);
             info.renderTargetCount = 1;
-            info.renderTargets[0].renderTarget = mRenderWindow->getColorTarget();
+            info.renderTargets[0].renderTarget = shadePassTarget;
             info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-            info.depthTarget.depthStencil = winDepth;
+            info.depthTarget.depthStencil = nullptr;
             info.depthTarget.clearValue = { 0.0f, 0.0f };
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             rs->pushGroupMarker("shadePass");
@@ -1204,6 +1212,87 @@ void ShadowMap::base2()
         auto shadePass = createUserDefineRenderPass(shadeCallback, updateCallback);
         mRenderPipeline->addRenderPass(shadePass);
     }
+
+    //present pass
+    if (1)
+    {
+        backend::SamplerParams samplerParams;
+
+        samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
+        samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
+        samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
+        samplerParams.wrapS = backend::SamplerWrapMode::REPEAT;
+        samplerParams.wrapT = backend::SamplerWrapMode::REPEAT;
+        samplerParams.wrapR = backend::SamplerWrapMode::REPEAT;
+        samplerParams.compareMode = backend::SamplerCompareMode::NONE;
+        samplerParams.compareFunc = backend::SamplerCompareFunc::N;
+        samplerParams.anisotropyLog2 = 0;
+        samplerParams.padding0 = 0;
+        samplerParams.padding1 = 0;
+        samplerParams.padding2 = 0;
+        auto repeatBillinearSampler = rs->createTextureSampler(samplerParams);
+        auto winDepth = mRenderWindow->getDepthTarget();
+        ShaderInfo shaderInfo;
+        shaderInfo.shaderName = "presentShade";
+        auto presentHandle = rs->createShaderProgram(shaderInfo, nullptr);
+        auto zeroLayout = rs->getDescriptorSetLayout(presentHandle, 0);
+        for (auto i = 0; i < numFrame; i++)
+        {
+            FrameData& frameData = mFrameData[i];
+            auto zeroSet = rs->createDescriptorSet(zeroLayout);
+            frameData.zeroDescrSetOfPresentPass = zeroSet;
+            auto* tex = shadePassTarget->getTarget();
+            rs->updateDescriptorSetTexture(zeroSet, 0, &tex, 1, true);
+            rs->updateDescriptorSetSampler(zeroSet, 1, repeatBillinearSampler);
+        }
+
+        backend::RasterState rasterState{};
+        rasterState.depthWrite = false;
+        rasterState.depthTest = false;
+        rasterState.depthFunc = SamplerCompareFunc::A;
+        rasterState.colorWrite = true;
+        rasterState.renderTargetCount = 1;
+        rasterState.pixelFormat = Ogre::PixelFormat::PF_A8R8G8B8_SRGB;
+        auto pipelineHandle = rs->createPipeline(rasterState, presentHandle);
+
+        RenderPassCallback presentCallback = [=, this](RenderPassInfo& info) {
+            RenderTargetBarrier rtBarriers[] =
+            {
+                {
+                    shadePassTarget,
+                    RESOURCE_STATE_RENDER_TARGET,
+                    RESOURCE_STATE_SHADER_RESOURCE
+                }
+            };
+            rs->resourceBarrier(0, nullptr, 1, rtBarriers);
+            info.renderTargetCount = 1;
+            info.renderTargets[0].renderTarget = mRenderWindow->getColorTarget();
+            info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
+            info.depthTarget.depthStencil = nullptr;
+            info.depthTarget.clearValue = { 0.0f, 0.0f };
+            auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+            rs->pushGroupMarker("presentPass");
+            rs->beginRenderPass(info);
+            auto* frameData = getFrameData(frameIndex);
+            rs->bindPipeline(presentHandle, pipelineHandle,
+                &frameData->zeroDescrSetOfPresentPass, 1);
+            rs->draw(3, 0);
+            rs->endRenderPass(info);
+            rs->popGroupMarker();
+            rtBarriers[0] =
+            {
+                mRenderWindow->getColorTarget(),
+                RESOURCE_STATE_RENDER_TARGET,
+                RESOURCE_STATE_PRESENT
+            }
+            ;
+            rs->resourceBarrier(0, nullptr, 1, rtBarriers);
+            };
+        UpdatePassCallback updateCallback = [](float delta) {
+            };
+        auto presentPass = createUserDefineRenderPass(presentCallback, updateCallback);
+        mRenderPipeline->addRenderPass(presentPass);
+    }
     Ogre::Vector3 camPos2(120.f + SAN_MIGUEL_OFFSETX, 98.f, 14.f);
 
     mGameCamera->setMoveSpeed(50.0f);
@@ -1215,40 +1304,6 @@ void ShadowMap::base2()
     Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrixLHReverseZ(
         Ogre::Math::PI / 2.0f, aspectInverse, 0.1, 1000.f);
     mGameCamera->getCamera()->updateProjectMatrix(m);
-
-    RenderPassCallback renderCallback = [=, this](RenderPassInfo& info) {
-        rs->pushGroupMarker("forwardPass");
-        execute(mRenderSystem);
-        rs->popGroupMarker();
-        };
-    
-    UpdatePassCallback updatePassCallback = [&](float delta) {
-        RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
-        auto* cam = mGameCamera->getCamera();
-        const Ogre::Matrix4& view = cam->getViewMatrix();
-        const Ogre::Matrix4& proj = cam->getProjectMatrix();
-        const Ogre::Vector3& camepos = cam->getDerivedPosition();
-
-        Ogre::Matrix4 invView = view.inverse();
-        Ogre::Matrix4 viewProj = proj * view;
-        Ogre::Matrix4 invProj = proj.inverse();
-        Ogre::Matrix4 invViewProj = viewProj.inverse();
-
-        mFrameConstantBuffer.View = view.transpose();
-        mFrameConstantBuffer.InvView = invView.transpose();
-        mFrameConstantBuffer.Proj = proj.transpose();
-        mFrameConstantBuffer.InvProj = invProj.transpose();
-        mFrameConstantBuffer.ViewProj = viewProj.transpose();
-        mFrameConstantBuffer.InvViewProj = invViewProj.transpose();
-
-        auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-        FrameData* frameData = getFrameData(frameIndex);
-        rs->updateBufferObject(frameData->frameBufferObject,
-            (const char*)&mFrameConstantBuffer, sizeof(mFrameConstantBuffer));
-        };
-
-    auto mainPass = createUserDefineRenderPass(renderCallback, updatePassCallback);
-    //mRenderPipeline->addRenderPass(mainPass);
 }
 
 void ShadowMap::execute(RenderSystem* rs)

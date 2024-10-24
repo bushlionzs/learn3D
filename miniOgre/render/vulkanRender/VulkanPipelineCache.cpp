@@ -197,10 +197,10 @@ using namespace bluevk;
         vkMs.rasterizationSamples = (VkSampleCountFlagBits)raster.rasterizationSamples;
         vkMs.sampleShadingEnable = VK_FALSE;
         vkMs.minSampleShading = 0.0f;
-        vkMs.alphaToCoverageEnable = raster.alphaToCoverageEnable;
+        vkMs.alphaToCoverageEnable = VK_FALSE;
         vkMs.alphaToOneEnable = VK_FALSE;
 
-        vkDs.depthTestEnable = VK_TRUE;
+        vkDs.depthTestEnable = raster.depthTestEnable;
         vkDs.depthWriteEnable = raster.depthWriteEnable;
         vkDs.depthCompareOp = getCompareOp(raster.depthCompareOp);
         vkDs.depthBoundsTestEnable = VK_FALSE;

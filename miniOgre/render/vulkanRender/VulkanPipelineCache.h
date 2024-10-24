@@ -68,7 +68,7 @@
             VkBool32              depthBiasEnable : 1;
             VkBool32              blendEnable : 1;
             VkBool32              depthWriteEnable : 1;
-            VkBool32              alphaToCoverageEnable : 1;
+            VkBool32              depthTestEnable : 1;
             VkBlendFactor         srcColorBlendFactor : 5; // offset = 1 byte
             VkBlendFactor         dstColorBlendFactor : 5;
             VkBlendFactor         srcAlphaBlendFactor : 5;

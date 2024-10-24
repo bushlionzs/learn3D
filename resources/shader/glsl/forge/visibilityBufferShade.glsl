@@ -234,11 +234,7 @@ void main()
 
 
 	uint materialID = Get(indirectDataBuffer_data)[index0];
-    outColor[0] = materialID/256.0f;
-	outColor[1] = materialID/256.0f;
-	outColor[2] = materialID/256.0f;
-	outColor[3] = 1.0f;
-	return;
+    
 
 	GradientInterpolationResults results = Interpolate2DWithDeriv(derivativesOut,texCoords);
 
@@ -369,6 +365,5 @@ void main()
 
 
     outColor = float4(shadedColor.xyz, 1.0f);
-
 }
 #endif //FRAGMENT_SHADER

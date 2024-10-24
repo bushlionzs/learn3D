@@ -96,7 +96,7 @@ void VulkanRenderSystem::beginRenderPass(
         colorAttachments[i].clearValue.color = { { clearValue->r, clearValue->g, clearValue->b, clearValue->a } };
     }
 
-    bool hasDepth = true;
+    bool hasDepth = renderPassInfo.depthTarget.depthStencil != nullptr;
 
     if (hasDepth)
     {

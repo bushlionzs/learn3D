@@ -150,12 +150,26 @@ Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
         OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "externalWindowHandle should be provided");
     }
 
+    bool srgb = false;
+
+    itor = miscParams->find("externalWindowHandle");
+
+    if (itor != miscParams->end())
+    {
+        srgb = true;
+    }
+    
     HWND wnd = (HWND)StringConverter::parseSizeT(itor->second);
     VkExtent2D extent;
     extent.width = 0;
     extent.height = 0;
 
-    uint32_t flags = 0;// backend::SWAP_CHAIN_CONFIG_SRGB_COLORSPACE;
+    uint32_t flags = 0;
+
+    if (srgb)
+    {
+        flags = backend::SWAP_CHAIN_CONFIG_SRGB_COLORSPACE;
+    }
     //flags |= SWAP_CHAIN_CONFIG_HAS_STENCIL_BUFFER;
     mSwapChain = new VulkanSwapChain(
         mVulkanPlatform, 
@@ -1624,7 +1638,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
 
     vulkanRasterState.blendEnable = rasterState.hasBlending();
     vulkanRasterState.depthWriteEnable = rasterState.depthWrite;
-    vulkanRasterState.alphaToCoverageEnable = rasterState.alphaToCoverage;
+    vulkanRasterState.depthTestEnable = rasterState.depthTest;
 
     vulkanRasterState.srcColorBlendFactor = getBlendFactor(rasterState.blendFunctionSrcRGB);
     vulkanRasterState.dstColorBlendFactor = getBlendFactor(rasterState.blendFunctionDstRGB);
@@ -1644,7 +1658,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
         vulkanProgram->getVertexInputBindings();
     std::vector<VkVertexInputAttributeDescription>& attributeDescriptions =
         vulkanProgram->getAttributeDescriptions();
-    mPipelineCache->bindFormat(VK_FORMAT_B8G8R8A8_UNORM,VK_FORMAT_D32_SFLOAT); //todo
+    mPipelineCache->bindFormat(VulkanMappings::_getPF((PixelFormat)rasterState.pixelFormat), VK_FORMAT_D32_SFLOAT); //todo
     mPipelineCache->bindProgram(
         vulkanProgram->getVertexShader(), 
         vulkanProgram->getGeometryShader(), 

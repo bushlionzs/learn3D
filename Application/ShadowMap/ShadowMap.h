@@ -50,7 +50,8 @@ struct FrameData
 	//for visibility shade pass
 	Handle <HwDescriptorSet> zeroDescrSetOfVbShadePass;
 	Handle <HwDescriptorSet> firstDescrSetOfVbShadePass;
-
+	//present shader
+	Handle <HwDescriptorSet> zeroDescrSetOfPresentPass;
 	//
 	Handle<HwBufferObject> frameBufferObject;
 };
@@ -107,7 +108,7 @@ private:
 
 	Ogre::RenderTarget* esmShadowMap;
 	Ogre::RenderTarget* visibilityBufferTarget;
-
+	Ogre::RenderTarget* shadePassTarget;
 
 	PerFrameVBConstants    perFrameVBConstants;
 	MeshInfoUniformBlock   meshUniformBlock;
