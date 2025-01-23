@@ -38,9 +38,9 @@ bool DX12RayTracingProgramImpl::load(const RaytracingShaderInfo& shaderInfo)
 bool DX12RayTracingProgramImpl::loadhlsl(const RaytracingShaderInfo& shaderInfo)
 {
     {
-        String* content = ShaderManager::getSingleton().getShaderContent(shaderInfo.rayTracingShaderName);
+        String* content = ShaderManager::getSingleton().getShaderContent(shaderInfo.rayGenShaderName);
         hlslToBin(shaderInfo.rayGenShaderName, *content, shaderInfo.rayGenEntryName,
-            shaderInfo.shaderMacros, &shaderInfo.args, Ogre::RayGenShader, mRayTracingCode, false);
+            shaderInfo.shaderMacros, &shaderInfo.args, Ogre::RayGenShader, mRayGenCode, false);
     }
 
     return true;
@@ -51,7 +51,7 @@ bool DX12RayTracingProgramImpl::loadhlsl(const RaytracingShaderInfo& shaderInfo)
 void DX12RayTracingProgramImpl::parseShaderInfo(const RaytracingShaderInfo& info)
 {
     {
-        if (!mRayTracingCode.empty())
+        if (!mRayGenCode.empty())
         {
             std::vector<DX12Helper::StageFlagsInfo> flagsInfoList;
             if (!info.rayGenEntryName.empty())
@@ -75,7 +75,7 @@ void DX12RayTracingProgramImpl::parseShaderInfo(const RaytracingShaderInfo& info
             }
             
             mProgramResourceList = DX12Helper::getSingleton().parseShaderResource2(flagsInfoList,
-                mRayTracingCode.c_str(), mRayTracingCode.size());
+                mRayGenCode.c_str(), mRayGenCode.size());
         }
     }
 
@@ -214,7 +214,7 @@ void DX12RayTracingProgramImpl::createRaytracingPipelineStateObject(
 
     CD3DX12_DXIL_LIBRARY_SUBOBJECT* lib = raytracingPipeline.CreateSubobject<CD3DX12_DXIL_LIBRARY_SUBOBJECT>();
 
-    const std::string* blob = getRayTracingBlob();
+    const std::string* blob = getRayGenBlob();
 
     D3D12_SHADER_BYTECODE libdxil = CD3DX12_SHADER_BYTECODE((void*)blob->data(), blob->size());
 

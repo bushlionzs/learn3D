@@ -41,7 +41,8 @@ public:
         uint32_t setCount
     ) override;
 
-    virtual void traceRay(Handle<HwRaytracingProgram> programHandle);
+    virtual void traceRay(Handle<HwRaytracingProgram> programHandle,
+        uint32_t width, uint32_t height, uint32_t depth);
     virtual void copyImage(Ogre::RenderTarget* dst, Ogre::RenderTarget* src);
     virtual uint64_t getBufferDeviceAddress(Handle<HwBufferObject> bufHandle);
 private:

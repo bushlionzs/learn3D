@@ -15,6 +15,8 @@
 #ifdef __spirv__
 #define VK_BINDING(x, y)    [[vk::binding(x, y)]]
 #define VK_PUSH_CONST       [[vk::push_constant]]
+#define RTXGI_VK_BINDING(x, y)    [[vk::binding(x, y)]]
+#define RTXGI_VK_PUSH_CONST       [[vk::push_constant]]
 #else
 #define VK_BINDING(x, y) 
 #define VK_PUSH_CONST 

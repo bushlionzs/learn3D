@@ -32,7 +32,9 @@ public:
     virtual OgreTexture* createTextureFromFile(
         const std::string& name,
         Ogre::TextureProperty* texProperty);
-    virtual Ogre::OgreTexture* createTexture(Ogre::TextureProperty* texProperty);
+    virtual Ogre::OgreTexture* createManualTexture(
+        const std::string& name,
+        Ogre::TextureProperty* texProperty)override;
     virtual void ready();
     virtual Ogre::RenderWindow* createRenderWindow(
         const CreateWindowDesc& desc) override;

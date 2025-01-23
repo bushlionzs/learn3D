@@ -1,7 +1,6 @@
 // Copyright 2020 Google LLC
 #include "base.hlsl"
-RaytracingAccelerationStructure topLevelAS VKBINDING(0, 0): register(t0);
-RWTexture2D<float4> image VKBINDING(1, 0): register(u1);
+
 
 struct UBO
 {
@@ -9,22 +8,29 @@ struct UBO
 	float4x4 projInverse;
 	float4 lightPos;
 	int vertexSize;
+	uint frame;
 };
 
-RES(CBUFFER(UBO), ubo, UPDATE_FREQ_NONE, b2, VKBINDING(2, 0));
+
 
 
 struct GeometryNode {
-	uint64_t vertexBufferDeviceAddress;
-	uint64_t indexBufferDeviceAddress;
+	float4 color;
 	uint vertexOffset;
     uint indexOffset;
 	int textureIndexBaseColor;
 	int textureIndexOcclusion;
+	uint alphaMode;
+    float alphaMaskCutoff;
+	uint padding[2];
 };
 
-RES(Buffer(GeometryNode), geometryNodes, UPDATE_FREQ_NONE, t5, VKBINDING(5, 0));
 
+RaytracingAccelerationStructure topLevelAS VKBINDING(0, 0): register(t0);
+RWTexture2D<float4> image VKBINDING(1, 0): register(u1);
+RES(CBUFFER(UBO), ubo, UPDATE_FREQ_NONE, b2, VKBINDING(2, 0));
+
+VKBINDING(5, 0) StructuredBuffer<GeometryNode> geometryNodes: register(t5, space0);
 
 VKBINDING(6, 0) ByteAddressBuffer     vertexDataBuffer[]    : register(t6, space0);
 
@@ -66,28 +72,13 @@ void rayGenMain()
 }
 
 
-float4 LoadVertexPosition(uint vtxIndex, uint offset)
-{
-    uint geometryIndex = GeometryIndex();
-    uint4 aa = LoadByte4(vertexDataBuffer[geometryIndex], vtxIndex * ubo.vertexSize + offset);
-    return asfloat(aa).xyzw;
-}
-
-
-uint LoadIndex(uint index)
-{
-    uint geometryIndex = GeometryIndex();
-    uint aa = LoadByte(indexDataBuffer[geometryIndex], index * 4);
-	return aa;
-}
-
 struct Vertex
 {
-  float3 pos;
+  float3 position;
   float3 normal;
+  float4 tangent;
   float2 uv;
   float4 color;
-
 };
 
 struct Triangle {
@@ -96,34 +87,61 @@ struct Triangle {
 	float2 uv;
 };
 
+uint3 LoadIndices(uint geometryIndex, uint primitiveIndex)
+{
+    GeometryNode geometry = geometryNodes[geometryIndex];
+    uint index = primitiveIndex * 3 + geometry.indexOffset;
+    return indexDataBuffer[geometryIndex].Load3(index * 4); 
+}
+
+void LoadVertices(uint geometryIndex, uint primitiveIndex, out Vertex vertices[3])
+{
+    // Get the indices
+	GeometryNode geometry = geometryNodes[geometryIndex];
+    uint3 indices = LoadIndices(geometryIndex, primitiveIndex);
+
+    // Load the vertices
+    uint address;
+	
+	ByteAddressBuffer vertexBuffer = vertexDataBuffer[geometryIndex];
+    for (uint i = 0; i < 3; i++)
+    {
+        vertices[i] = (Vertex)0;
+        address = (indices[i] + geometry.vertexOffset) * ubo.vertexSize;
+
+        // Load the position
+        vertices[i].position = asfloat(vertexBuffer.Load3(address));
+        address += 12;
+
+        // Load the normal
+        vertices[i].normal = asfloat(vertexBuffer.Load3(address));
+        address += 12;
+
+        // Load the tangent
+        vertices[i].tangent = asfloat(vertexBuffer.Load4(address));
+        address += 16;
+
+        // Load the texture coordinates
+        vertices[i].uv = asfloat(vertexBuffer.Load2(address));
+    }
+}
+
 Triangle unpackTriangle(uint index, Attributes attribs) {
 	Triangle tri;
-	uint triIndex = index * 3;
-    uint geometryIndex = GeometryIndex();
-	GeometryNode geometryNode = geometryNodes[geometryIndex];
 
-    triIndex += geometryNode.indexOffset;
-	// Unpack vertices
-	// Data is packed as vec4 so we can map to the glTF vertex structure from the host side
-	// We match vkglTF::Vertex: pos.xyz+normal.x, normalyz+uv.xy
-	// glm::vec3 pos;
-	// glm::vec3 normal;
-	// glm::vec2 uv;
-	// ...
-	for (uint i = 0; i < 3; i++) {
-		uint vtxIndex = LoadIndex(triIndex + i);
-		vtxIndex += geometryNode.vertexOffset;
-		float4 d0 = LoadVertexPosition(vtxIndex, 0);
-		float4 d1 = LoadVertexPosition(vtxIndex, 16);
-		tri.vertices[i].pos = d0.xyz;
-		tri.vertices[i].normal = float3(d0.w, d1.xy);
-		tri.vertices[i].uv = d1.zw;
-	}
+    uint geometryIndex = GeometryIndex();
+	uint primitiveIndex = PrimitiveIndex();
+
+	LoadVertices(geometryIndex, primitiveIndex, tri.vertices);
+
 	// Calculate values at barycentric coordinates
 	float3 barycentricCoords = float3(1.0f - attribs.bary.x - attribs.bary.y, attribs.bary.x, attribs.bary.y);
 	tri.uv = tri.vertices[0].uv * barycentricCoords.x + tri.vertices[1].uv * barycentricCoords.y + tri.vertices[2].uv * barycentricCoords.z;
 	tri.normal = tri.vertices[0].normal * barycentricCoords.x + tri.vertices[1].normal * barycentricCoords.y + tri.vertices[2].normal * barycentricCoords.z;
-	tri.vertices[0].color = float4(1.0, 1.0, 1.0, 1.0);
+	
+	GeometryNode geometry = geometryNodes[geometryIndex];
+	
+	tri.vertices[0].color = geometry.color;
 	return tri;
 }
 

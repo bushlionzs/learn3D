@@ -8,10 +8,7 @@ private:
     Ogre::Camera* mCamera = nullptr;
     SceneManager* mSceneMgr = nullptr;
 
-    Real  mYaw = 0.0f;
-    Real  mPitch = 0.0f;
-
-    Real  mDistance = 1000.0f;
+    
 
     int mLastZ = 0;
     
@@ -36,10 +33,13 @@ private:
     Real mRotateSpeed = 0.15f;
     CameraMoveType mCameraType;
 
-
+    Real  mYaw = 0.0f;
+    Real  mPitch = 0.0f;
+    Real  mDistance = 1000.0f;
     Ogre::Vector3 rotation = Ogre::Vector3::ZERO;
+    Ogre::Vector3 mRelativePosition;
     Ogre::Vector3 eyePosition = Ogre::Vector3::ZERO;
-    Ogre::Vector4 targetPosition = Ogre::Vector4::ZERO;
+    Ogre::Vector3 targetPosition = Ogre::Vector3::ZERO;
 
     bool mChanged = false;
 public:

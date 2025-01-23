@@ -49,7 +49,8 @@ OgreTexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, Te
 	return tex;
 }
 
-void Dx12RenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle)
+void Dx12RenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle,
+    uint32_t width, uint32_t height, uint32_t depth)
 {
     DX12RayTracingProgram* program = mResourceAllocator.handle_cast<DX12RayTracingProgram*>(programHandle);
     DX12RayTracingProgramImpl* impl = program->getProgramImpl();
@@ -73,11 +74,9 @@ void Dx12RenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle)
     dispatchDesc.RayGenerationShaderRecord.StartAddress = rayGenShaderTable->GetGPUVirtualAddress();
     dispatchDesc.RayGenerationShaderRecord.SizeInBytes = rayGenShaderTable->GetDesc().Width;
 
-    auto width = mRenderWindow->getWidth();
-    auto height = mRenderWindow->getHeight();
     dispatchDesc.Width = width;
     dispatchDesc.Height = height;
-    dispatchDesc.Depth = 1;
+    dispatchDesc.Depth = depth;
     m_dxrCommandList->SetPipelineState1(stateObject);
     m_dxrCommandList->DispatchRays(&dispatchDesc);
 }

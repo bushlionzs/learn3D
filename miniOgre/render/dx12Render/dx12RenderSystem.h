@@ -19,7 +19,8 @@ public:
 
     virtual Ogre::OgreTexture* createTextureFromFile(const std::string& name, Ogre::TextureProperty* texProperty) override;
 
-    virtual void traceRay(Handle<HwRaytracingProgram> programHandle);
+    virtual void traceRay(Handle<HwRaytracingProgram> programHandle,
+        uint32_t width, uint32_t height, uint32_t depth);
 
     virtual void bindPipeline(
         Handle<HwRaytracingProgram> programHandle,

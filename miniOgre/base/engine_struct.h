@@ -228,7 +228,7 @@ struct PbrMaterialConstanceBuffer
     //some constance value;
     Ogre::Vector2 metallicRoughnessValues = { 0.1f, 1.0f };
     Real occlusionStrength = 1.0f;
-    uint32_t alphaMask = 0;
+    uint32_t alphaMode = 0;
     Ogre::Vector3 emissiveFactor = { 1.0f, 1.0f, 1.0f };
     float alphaMaskCutoff = 0.0f;
     Ogre::Vector4 baseColorFactor = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -260,7 +260,6 @@ struct ShaderInfo
 
 struct RaytracingShaderInfo
 {
-    String rayTracingShaderName;
     String rayGenShaderName;
     std::string rayGenEntryName;
     String rayMissShaderName;

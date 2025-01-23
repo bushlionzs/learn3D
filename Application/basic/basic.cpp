@@ -88,8 +88,8 @@ void BasicApplication::base1()
 	ShaderInfo& info = mat->getShaderInfo();
 	//info.shaderName = "testShader";
 	//mSceneManager->setSkyBox(true, "SkyLan", 1000.0f);
-	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, 3.f), Ogre::Vector3::ZERO);
-	mGameCamera->setCameraType(CameraMoveType_FirstPerson);
+	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, -3.f), Ogre::Vector3::ZERO);
+	mGameCamera->setCameraType(CameraMoveType_LookAt);
 	mGameCamera->setMoveSpeed(5);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	Ogre::Matrix4 m;
@@ -128,14 +128,14 @@ void BasicApplication::base2()
 	Entity* sphere = mSceneManager->createEntity("sphere", name);
 	SceneNode* spherenode = root->createChildSceneNode("sphere");
 
-	sphere->setMaterialName("myrect");
+	//sphere->setMaterialName("myrect");
 
 	spherenode->attachObject(sphere);
 
 	mGameCamera->lookAt(
 		Ogre::Vector3(0.0f, 3.0f, 15.0f),
 		Ogre::Vector3(0.0f, 0.0f, 0.0f));
-	mGameCamera->setMoveSpeed(200);
+	mGameCamera->setMoveSpeed(20);
 	mGameCamera->setCameraType(CameraMoveType_LookAt);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
@@ -151,7 +151,7 @@ void BasicApplication::base2()
 	else
 	{
 		float aspect = ogreConfig.width / (float)ogreConfig.height;
-		m = Ogre::Math::makePerspectiveMatrixRH(
+		m = Ogre::Math::makePerspectiveMatrix(
 			Ogre::Math::PI / 2.0f, aspect, 0.1, 2000);
 	}
 	mGameCamera->getCamera()->updateProjectMatrix(m);

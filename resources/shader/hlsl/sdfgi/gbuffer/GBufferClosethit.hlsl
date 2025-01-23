@@ -42,7 +42,7 @@ void CHS_PRIMARY(inout PackedPayload packedPayload, BuiltInTriangleIntersectionA
     payload.shadingNormal = payload.normal;
 
     // Load the surface material
-    Material material = GetMaterial(geometry);
+    Material material = GetMaterial(GeometryIndex());
     payload.albedo = material.albedo;
     payload.opacity = material.opacity;
 

@@ -351,6 +351,7 @@ namespace Ogre
         static Matrix4 makeRotateMatrix(float degree, const Ogre::Vector3& v);
         static Matrix4 makeRotateMatrixYX(const float radiansX, const float radiansY);
         static Matrix4 makeRotateMatrixXY(const float radiansX, const float radiansY);
+        static Matrix4 yawPitchRoll(float const& yaw, float const& pitch, float const& roll);
         static Matrix4 makeScaleMatrix(const Vector3& scale);
         static Matrix4 makeViewMatrix(const Vector3& position, const Quaternion& orientation, 
             const Matrix4* reflectMatrix = 0);

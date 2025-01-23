@@ -12,6 +12,7 @@
 #define DESCRIPTORS_HLSL
 
 #include "DDGIVolumeDescGPU.h"
+#include "DDGIRootConstants.h"
 #include "Types.h"
 #include "Platform.hlsl"
 
@@ -49,6 +50,7 @@ uint HasDirectionalLight() { return GetGlobalConst(lighting, hasDirectionalLight
 uint GetNumPointLights() { return GetGlobalConst(lighting, numPointLights); }
 uint GetNumSpotLights() { return GetGlobalConst(lighting, numSpotLights); }
 
+
 //----------------------------------------------------------------------------------------------------------------
 // Root Signature Descriptors and Mappings
 // ---------------------------------------------------------------------------------------------------------------
@@ -57,31 +59,31 @@ uint GetNumSpotLights() { return GetGlobalConst(lighting, numSpotLights); }
 
 // Samplers -------------------------------------------------------------------------------------------------
 
-VK_BINDING(1, 0) SamplerState                                Samplers[]          : register(s0, space0);
+VK_BINDING(2, 0) SamplerState                                Samplers[]          : register(s0, space0);
 
 // Constant Buffers -----------------------------------------------------------------------------------------
 
-VK_BINDING(2, 0) ConstantBuffer<Camera>                      CameraCB            : register(b1, space0);
+VK_BINDING(3, 0) ConstantBuffer<Camera>                      CameraCB            : register(b2, space0);
 
 // Structured Buffers ---------------------------------------------------------------------------------------
 
-VK_BINDING(3, 0) StructuredBuffer<Light>                     Lights              : register(t2, space0);
-VK_BINDING(4, 0) StructuredBuffer<Material>                  Materials           : register(t3, space0);
-VK_BINDING(5, 0) StructuredBuffer<TLASInstance>              TLASInstances       : register(t4, space0);
-VK_BINDING(6, 0) StructuredBuffer<DDGIVolumeDescGPUPacked>   DDGIVolumes         : register(t5, space0);
-VK_BINDING(7, 0) StructuredBuffer<DDGIVolumeResourceIndices> DDGIVolumeBindless  : register(t6, space0);
+VK_BINDING(4, 0) StructuredBuffer<Light>                     Lights              : register(t2, space0);
+VK_BINDING(5, 0) StructuredBuffer<Material>                  Materials           : register(t3, space0);
+VK_BINDING(6, 0) StructuredBuffer<TLASInstance>              TLASInstances       : register(t4, space0);
+VK_BINDING(7, 0) StructuredBuffer<DDGIVolumeDescGPUPacked>   DDGIVolumes         : register(t5, space0);
+VK_BINDING(8, 0) StructuredBuffer<DDGIVolumeResourceIndices> DDGIVolumeBindless  : register(t6, space0);
 
-VK_BINDING(8, 0) RWStructuredBuffer<TLASInstance>            RWTLASInstances     : register(u5, space0);
+VK_BINDING(9, 0) RWStructuredBuffer<TLASInstance>            RWTLASInstances     : register(u5, space0);
 
 // Bindless Resources ---------------------------------------------------------------------------------------
 
-VK_BINDING(9, 0) RWTexture2D<float4>                         RWTex2D[]           : register(u6, space0);
-VK_BINDING(10, 1) RWTexture2DArray<float4>                    RWTex2DArray[]      : register(u6, space1);
-VK_BINDING(11, 0) RaytracingAccelerationStructure            TLAS[]              : register(t7, space0);
-VK_BINDING(12, 1) Texture2D                                  Tex2D[]             : register(t7, space1);
-VK_BINDING(13, 2) Texture2DArray                             Tex2DArray[]        : register(t7, space2);
-VK_BINDING(14, 3) ByteAddressBuffer                          ByteAddrBuffer[]    : register(t7, space3);
-VK_BINDING(15, 0) StructuredBuffer<GeometryData>             GeometryDatas       : register(t8, space0);
+VK_BINDING(10, 0) RWTexture2D<float4>                         RWTex2D[]           : register(u6, space0);
+VK_BINDING(11, 1) RWTexture2DArray<float4>                    RWTex2DArray[]      : register(u6, space1);
+VK_BINDING(12, 0) RaytracingAccelerationStructure            TLAS[]              : register(t7, space0);
+VK_BINDING(13, 1) Texture2D                                  Tex2D[]             : register(t7, space1);
+VK_BINDING(14, 2) Texture2DArray                             Tex2DArray[]        : register(t7, space2);
+VK_BINDING(15, 3) ByteAddressBuffer                          ByteAddrBuffer[]    : register(t7, space3);
+VK_BINDING(16, 0) StructuredBuffer<GeometryData>             GeometryDatas       : register(t8, space0);
 // Defines for Convenience ----------------------------------------------------------------------------------
 
 #define PT_OUTPUT_INDEX 0
@@ -122,7 +124,7 @@ void GetGeometryData(uint geometryIndex, out GeometryData geometry)
     geometry = GeometryDatas[geometryIndex];
 }
 
-Material GetMaterial(GeometryData geometry) { return Materials[GeometryIndex()]; }
+Material GetMaterial(uint geometryIndex) { return Materials[geometryIndex]; }
 
 StructuredBuffer<DDGIVolumeDescGPUPacked> GetDDGIVolumeConstants(uint index) { return DDGIVolumes; }
 StructuredBuffer<DDGIVolumeResourceIndices> GetDDGIVolumeResourceIndices(uint index) { return DDGIVolumeBindless; }
@@ -134,8 +136,8 @@ RaytracingAccelerationStructure GetAccelerationStructure(uint index) { return TL
 ByteAddressBuffer GetSphereIndexBuffer() { return ByteAddrBuffer[SPHERE_INDEX_BUFFER_INDEX]; }
 ByteAddressBuffer GetSphereVertexBuffer() { return ByteAddrBuffer[SPHERE_VERTEX_BUFFER_INDEX]; }
 
-ByteAddressBuffer GetIndexBuffer(uint meshIndex) { return ByteAddrBuffer[GEOMETRY_BUFFERS_INDEX + (meshIndex * 2)]; }
-ByteAddressBuffer GetVertexBuffer(uint meshIndex) { return ByteAddrBuffer[GEOMETRY_BUFFERS_INDEX + (meshIndex * 2) + 1]; }
+ByteAddressBuffer GetIndexBuffer(uint geometryIndex) { return ByteAddrBuffer[GEOMETRY_BUFFERS_INDEX + (geometryIndex * 2)]; }
+ByteAddressBuffer GetVertexBuffer(uint geometryIndex) { return ByteAddrBuffer[GEOMETRY_BUFFERS_INDEX + (geometryIndex * 2) + 1]; }
 
 // Bindless Resource Array Accessors ------------------------------------------------------------------------
 

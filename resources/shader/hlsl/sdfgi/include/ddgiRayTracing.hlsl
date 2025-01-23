@@ -296,7 +296,6 @@ void ComputeUV0Differentials(Vertex vertices[3], float3 rayDirection, float hitT
     RayDiff rd = (RayDiff)0;
 
     // Get ray direction differentials
-    //ComputeRayDirectionDifferentials(rayDirection, camera.right, camera.up, camera.resolution, rd.dDdx, rd.dDdy);
     ComputeRayDirectionDifferentials(rayDirection, GetCamera().right, GetCamera().up, GetCamera().resolution, rd.dDdx, rd.dDdy);
 
     // Get the triangle edges and face normal

@@ -9,7 +9,7 @@ GameCamera::GameCamera(Camera* camera, SceneManager* sceneMgr)
 {
     mCamera = camera;
     mSceneMgr = sceneMgr;
-
+    mChanged = true;
     mCameraType = CameraMoveType_FirstPerson;
 }
 
@@ -53,6 +53,8 @@ void GameCamera::lookAt(
     const Ogre::Vector3& targetPos,
     const Ogre::Vector3& up)
 {
+    mRelativePosition = targetPos - camPos;
+    mRelativePosition.normalise();
     eyePosition = camPos;
     targetPosition = targetPos;
     auto m = Ogre::Math::makeLookAt(camPos, targetPos, up);
@@ -268,24 +270,33 @@ bool GameCamera::update(float delta)
     }
   
     auto rotM = Ogre::Math::makeRotateMatrixXY(-x, -y);
-    //auto rotM = Ogre::Math::makeRotateMatrix(Ogre::Matrix4::IDENTITY, -x, Ogre::Vector3::UNIT_X);
-    //rotM = Ogre::Math::makeRotateMatrix(rotM, -y, Ogre::Vector3::UNIT_Y);
     Ogre::Matrix4 viewMatrix;
-    auto transM = Ogre::Math::makeTranslateMatrix(eyePosition);
+    Ogre::Matrix4 transM;
     if (mCameraType == CameraMoveType_FirstPerson)
     {
-        auto transM = Ogre::Math::makeTranslateMatrix(-eyePosition);
+        transM = Ogre::Math::makeTranslateMatrix(-eyePosition);
         viewMatrix = rotM * transM;
     }
     else
     {
-        auto transM = Ogre::Math::makeTranslateMatrix(eyePosition);
+        Ogre::Vector3 forward = Ogre::Vector3(0, 0, -1);
+
+        if (Ogre::Math::isRightHanded())
+        {
+            forward = Ogre::Vector3(0, 0, 1);
+        }
+
+        Real value = mRelativePosition.dotProduct(forward);
+        if (value < 0.0f)
+        {
+            transM = Ogre::Math::makeTranslateMatrix(-eyePosition);
+        }
+        else
+        {
+            transM = Ogre::Math::makeTranslateMatrix(eyePosition);
+        }
         viewMatrix = transM * rotM;
     }
-    /*Ogre::Vector3 camPos(0.0f, 0.1f, 1.0f);
-    Ogre::Vector3 lookAt = Ogre::Vector3::ZERO;
-    Ogre::Matrix4 look = Ogre::Math::makeLookAt(camPos, lookAt, Ogre::Vector3::UNIT_Y);
-    mCamera->updateViewMatrix(look);*/
     mCamera->updateViewMatrix(viewMatrix);
     mCamera->updatePosition(eyePosition);
     return true;

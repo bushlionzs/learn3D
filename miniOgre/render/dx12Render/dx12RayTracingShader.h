@@ -18,9 +18,9 @@ public:
     ~DX12RayTracingProgramImpl();
 
 
-    const std::string* getRayTracingBlob()
+    const std::string* getRayGenBlob()
     {
-        return mRayTracingCode.empty() ? nullptr:&mRayTracingCode;
+        return mRayGenCode.empty() ? nullptr:&mRayGenCode;
     }
     
     ID3D12RootSignature* getRootSignature()
@@ -74,7 +74,7 @@ private:
 
     std::vector <ShaderResource> mProgramResourceList;
 
-    std::string mRayTracingCode;
+    std::string mRayGenCode;
 
     ID3D12RootSignature* mRootSignature;
 

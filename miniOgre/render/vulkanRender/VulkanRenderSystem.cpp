@@ -719,9 +719,9 @@ void VulkanRenderSystem::bindPipeline(
     
 }
 
-void VulkanRenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle)
+void VulkanRenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle,
+    uint32_t width, uint32_t height, uint32_t depth)
 {
-    auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
     VulkanRaytracingProgram* program = 
         mResourceAllocator.handle_cast<VulkanRaytracingProgram*>(programHandle);
     ShaderBindingTables* shaderBindingTables = program->getShaderBindingTables();
@@ -732,9 +732,7 @@ void VulkanRenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle)
         &shaderBindingTables->miss.stridedDeviceAddressRegion,
         &shaderBindingTables->hit.stridedDeviceAddressRegion,
         &emptySbtEntry,
-        ogreConfig.width,
-        ogreConfig.height,
-        1);
+        width, height, 1);
 }
 
 void VulkanRenderSystem::copyImage(Ogre::RenderTarget* dst, Ogre::RenderTarget* src)

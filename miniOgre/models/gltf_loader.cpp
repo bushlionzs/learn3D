@@ -448,13 +448,17 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             matInfo.baseColorFactor.y = tinyMat.pbrMetallicRoughness.baseColorFactor[1];
             matInfo.baseColorFactor.z = tinyMat.pbrMetallicRoughness.baseColorFactor[2];
             matInfo.baseColorFactor.w = tinyMat.pbrMetallicRoughness.baseColorFactor[3];
+
+            matInfo.metallicRoughnessValues[0] = tinyMat.pbrMetallicRoughness.metallicFactor;
+            matInfo.metallicRoughnessValues[1] = tinyMat.pbrMetallicRoughness.roughnessFactor;
             if (tinyMat.alphaMode == "MASK")
             {
-                matInfo.alphaMask = 1;
+                matInfo.alphaMode = 2;
                 matInfo.alphaMaskCutoff = tinyMat.alphaCutoff;
             }
             else if (tinyMat.alphaMode == "BLEND")
             {
+                matInfo.alphaMode = 1;
                 mat->setMaterialFlags(MATERIAL_FLAG_ALPHA_TESTED);
                 auto& rasterState = mat->getRasterState();
                 rasterState.blendEquationRGB = BlendEquation::ADD;

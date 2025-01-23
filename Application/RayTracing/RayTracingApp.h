@@ -59,12 +59,14 @@ struct PropData
 
 
 struct GeometryNode {
-	uint64_t vertexBufferDeviceAddress;
-	uint64_t indexBufferDeviceAddress;
+	Ogre::Vector4 color;
 	uint32_t vertexOffset;
 	uint32_t indexOffset;
 	int32_t textureIndexBaseColor;
 	int32_t textureIndexOcclusion;
+	uint32_t alphaMode;
+	float alphaMaskCutoff;
+	uint32_t padding[2];
 };
 
 
@@ -93,7 +95,8 @@ public:
 		Handle <HwDescriptorSet> zeroDescriptorSetOfPresent;
 
 		//raytracing pass
-		Handle<HwDescriptorSet>zeroDescSetOfRaytracing;
+		Handle<HwDescriptorSet>zeroSetOfRaytracing;
+		Handle<HwDescriptorSet>firstSetOfRaytracing;
 	};
 	RayTracingApp();
 	~RayTracingApp();
@@ -159,4 +162,6 @@ private:
 	Ogre::RenderWindow* mRenderWindow;
 	RenderSystem* mRenderSystem;
 	RayTracingContext context;
+
+	UBO mUBO;
 };

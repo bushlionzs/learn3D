@@ -117,14 +117,13 @@ namespace Ogre {
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "duplicated texture name");
         }
 
-        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, &texProperty);
+        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createManualTexture(name, &texProperty);
 
         if (tmp == nullptr)
         {
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to create texture");
         }
 
-        tmp->load(nullptr);
         std::shared_ptr<OgreTexture> tex(tmp);
 
         mTexMap[name] = tex;

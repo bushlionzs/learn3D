@@ -12,6 +12,7 @@ namespace Ogre {
 		_width = 0;
 		_height = 0;
 		_depth = 1;
+		_face = 1;
 		_numMipmaps = 0;
 		_tex_format = Ogre::PF_R8G8B8A8;
 		_need_mipmap = true;
@@ -91,11 +92,12 @@ namespace Ogre {
 		if (texProperty)
 		{
 			mTextureProperty = *texProperty;
+			
 		}
 
 		mUsage = mTextureProperty._tex_usage;
 		mFormat = mTextureProperty._tex_format;
-		mFace = 1;
+		mFace = mTextureProperty._face;
 	}
 
 	OgreTexture::~OgreTexture()

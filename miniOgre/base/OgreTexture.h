@@ -58,6 +58,7 @@ namespace Ogre {
         uint32_t _width;
         uint32_t _height;
         uint32_t _depth;
+        uint32_t _face;
         uint32_t _numMipmaps;
         Ogre::PixelFormat _tex_format;
         bool _need_mipmap;

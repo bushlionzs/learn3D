@@ -144,9 +144,11 @@ OgreTexture* VulkanRenderSystemBase::createTextureFromFile(
     return tex;
 }
 
-Ogre::OgreTexture* VulkanRenderSystemBase::createTexture(Ogre::TextureProperty* texProperty)
+Ogre::OgreTexture* VulkanRenderSystemBase::createManualTexture(
+    const std::string& name,
+    Ogre::TextureProperty* texProperty)
 {
-    auto tex = new VulkanTexture("", mVulkanPlatform, mCommands, nullptr, texProperty);
+    auto tex = new VulkanTexture(name, mVulkanPlatform, mCommands, nullptr, texProperty);
     tex->load(nullptr);
     return tex;
 }

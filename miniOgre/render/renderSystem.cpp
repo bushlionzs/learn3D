@@ -66,7 +66,9 @@ OgreTexture* RenderSystem::createTextureFromFile(
     return nullptr;
 }
 
-Ogre::OgreTexture* RenderSystem::createTexture(Ogre::TextureProperty* texProperty)
+Ogre::OgreTexture* RenderSystem::createManualTexture(
+    const std::string& name,
+    Ogre::TextureProperty* texProperty)
 {
     return nullptr;
 }

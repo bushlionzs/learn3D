@@ -50,7 +50,7 @@ namespace Ogre
 
     Math::RandomValueProvider* Math::mRandProvider = NULL;
 
-#define LEFT_HANDED
+//#define LEFT_HANDED
     //-----------------------------------------------------------------------
     Math::Math( unsigned int trigTableSize )
     {
@@ -988,6 +988,35 @@ namespace Ogre
             cosX * -sinY, sinX, cosX * cosY, 0,
             0, 0, 0, 1
             );
+    }
+
+    Matrix4 Math::yawPitchRoll(float const& yaw, float const& pitch, float const& roll)
+    {
+        float tmp_ch = cosf(yaw);
+        float tmp_sh = sinf(yaw);
+        float tmp_cp = cosf(pitch);
+        float tmp_sp = sinf(pitch);
+        float tmp_cb = cosf(roll);
+        float tmp_sb = sinf(roll);
+
+        Matrix4 Result;
+        Result[0][0] = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
+        Result[0][1] = tmp_sb * tmp_cp;
+        Result[0][2] = -tmp_sh * tmp_cb + tmp_ch * tmp_sp * tmp_sb;
+        Result[0][3] = static_cast<float>(0);
+        Result[1][0] = -tmp_ch * tmp_sb + tmp_sh * tmp_sp * tmp_cb;
+        Result[1][1] = tmp_cb * tmp_cp;
+        Result[1][2] = tmp_sb * tmp_sh + tmp_ch * tmp_sp * tmp_cb;
+        Result[1][3] = static_cast<float>(0);
+        Result[2][0] = tmp_sh * tmp_cp;
+        Result[2][1] = -tmp_sp;
+        Result[2][2] = tmp_ch * tmp_cp;
+        Result[2][3] = static_cast<float>(0);
+        Result[3][0] = static_cast<float>(0);
+        Result[3][1] = static_cast<float>(0);
+        Result[3][2] = static_cast<float>(0);
+        Result[3][3] = static_cast<float>(1);
+        return Result;
     }
 
     Matrix4 Math::makeScaleMatrix(const Vector3& scale)

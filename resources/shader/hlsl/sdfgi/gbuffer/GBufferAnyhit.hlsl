@@ -21,7 +21,7 @@ void AHS_PRIMARY(inout PackedPayload payload, BuiltInTriangleIntersectionAttribu
     GetGeometryData(GeometryIndex(), geometry);
 
     // Load the material
-    Material material = GetMaterial(geometry);
+    Material material = GetMaterial(GeometryIndex());
 
     float alpha = material.opacity;
     if (material.alphaMode == 2)
@@ -45,7 +45,7 @@ void AHS_PRIMARY(inout PackedPayload payload, BuiltInTriangleIntersectionAttribu
         // Sample the texture
         if (material.albedoTexIdx > -1)
         {
-            alpha *= GetTex2D(material.albedoTexIdx).SampleGrad(GetAnisoWrapSampler(), v.uv0, dUVdx, dUVdy).a;
+            alpha = GetTex2D(material.albedoTexIdx).SampleGrad(GetAnisoWrapSampler(), v.uv0, dUVdx, dUVdy).a;
         }
     }
 
