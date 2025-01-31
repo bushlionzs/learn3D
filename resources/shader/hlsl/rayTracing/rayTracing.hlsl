@@ -11,13 +11,14 @@ struct UBO
 };
 
 struct GeometryNode {
-	float4 color;
-	uint vertexOffset;
-    uint indexOffset;
-	int textureIndexBaseColor;
-	int textureIndexOcclusion;
-	uint alphaMode;
-    float alphaMaskCutoff;
+	float4 color;                    // 16 bytes
+    float alphaMaskCutoff;           // 4 bytes
+    uint vertexOffset;               // 4 bytes
+    uint indexOffset;                // 4 bytes
+    int textureIndexBaseColor;       // 4 bytes
+    int textureIndexOcclusion;       // 4 bytes
+    uint alphaMode;                  // 4 bytes
+    uint padding[2];                 // 8 bytes
 };
 
 
@@ -69,7 +70,7 @@ void rayGenMain()
     float tmax = 10000.0f;
 
     float4 hitValues = float4(0, 0, 0, 0);
-    const int samples = 1;
+    const int samples = 4;
 	RayPayload payload;
 	payload.hitValue = float4(0.0, 0.0, 0.0, 0.0);
     for (int smpl = 0; smpl < samples; ++smpl)
@@ -203,19 +204,18 @@ void anyhitMain(inout RayPayload payload, in Attributes attr)
 	Triangle tri = unpackTriangle(attr);
 	GeometryNode geometryNode = geometryNodes[GeometryIndex()];
 	float4 color = geometryNode.color;
-	IgnoreHit();
+    IgnoreIntersection();
 	return;
 	if(geometryNode.textureIndexBaseColor > -1)
 	{
 	    color = textures[geometryNode.textureIndexBaseColor].SampleLevel(texSampler, tri.uv, 0);
 		
-		if(geometryNode.alphaMode == 2)
+		if(geometryNode.alphaMode > 0)
 		{
 		    IgnoreHit();
-			return;
 		    if (color.a < geometryNode.alphaMaskCutoff)
 			{
-				IgnoreHit();
+				//IgnoreHit();
 			}
 		}
 	}

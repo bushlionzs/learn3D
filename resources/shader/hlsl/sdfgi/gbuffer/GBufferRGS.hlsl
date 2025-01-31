@@ -82,7 +82,6 @@ void RayGen()
 
     // Compute direct diffuse lighting
     float3 diffuse = DirectDiffuseLighting(payload, GetGlobalConst(pt, rayNormalBias), GetGlobalConst(pt, rayViewBias), SceneTLAS, Lights);
-
     // Convert albedo to sRGB before storing
     payload.albedo = LinearToSRGB(payload.albedo);
 

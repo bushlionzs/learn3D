@@ -15,15 +15,17 @@ struct UBO
 
 
 struct GeometryNode {
-	float4 color;
-	uint vertexOffset;
-    uint indexOffset;
-	int textureIndexBaseColor;
-	int textureIndexOcclusion;
-	uint alphaMode;
-    float alphaMaskCutoff;
-	uint padding[2];
+	float4 color;                    // 16 bytes
+    float alphaMaskCutoff;           // 4 bytes
+    uint vertexOffset;               // 4 bytes
+    uint indexOffset;                // 4 bytes
+    int textureIndexBaseColor;       // 4 bytes
+    int textureIndexOcclusion;       // 4 bytes
+    uint alphaMode;                  // 4 bytes
+    uint padding[2];                 // 8 bytes
 };
+
+
 
 
 RaytracingAccelerationStructure topLevelAS VKBINDING(0, 0): register(t0);

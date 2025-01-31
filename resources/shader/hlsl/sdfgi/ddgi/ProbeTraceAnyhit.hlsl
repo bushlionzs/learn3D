@@ -12,15 +12,14 @@
 #include "ddgiRayTracing.hlsl"
 
 
-
 [shader("anyhit")]
-void AHS_PRIMARY(inout PackedPayload payload, BuiltInTriangleIntersectionAttributes attrib)
+void AHS_GI(inout PackedPayload payload, BuiltInTriangleIntersectionAttributes attrib)
 {
     // Load the intersected mesh geometry's data
     GeometryData geometry;
     GetGeometryData(GeometryIndex(), geometry);
 
-    // Load the material
+    // Load the surface material
     Material material = GetMaterial(GeometryIndex());
 
     float alpha = material.opacity;
@@ -28,15 +27,7 @@ void AHS_PRIMARY(inout PackedPayload payload, BuiltInTriangleIntersectionAttribu
     {
         // Load the vertices
         Vertex vertices[3];
-        LoadVerticesPosUV0(GeometryIndex(), PrimitiveIndex(), geometry, vertices);
-
-        // Compute texture coordinate differentials
-        float2 dUVdx, dUVdy;
-        ComputeUV0Differentials(vertices, WorldRayDirection(), RayTCurrent(), dUVdx, dUVdy);
-
-        // TODO-ACM: passing ConstantBuffer<T> to functions crashes DXC HLSL->SPIRV
-        //ConstantBuffer<Camera> camera = GetCamera();
-        //ComputeUV0Differentials(vertices, camera, WorldRayDirection(), RayTCurrent(), dUVdx, dUVdy);
+        LoadVerticesPosUV0(InstanceID(), PrimitiveIndex(), geometry, vertices);
 
         // Interpolate the triangle's texture coordinates
         float3 barycentrics = float3((1.f - attrib.barycentrics.x - attrib.barycentrics.y), attrib.barycentrics.x, attrib.barycentrics.y);
@@ -45,10 +36,14 @@ void AHS_PRIMARY(inout PackedPayload payload, BuiltInTriangleIntersectionAttribu
         // Sample the texture
         if (material.albedoTexIdx > -1)
         {
-            alpha = GetTex2D(material.albedoTexIdx).SampleGrad(GetAnisoWrapSampler(), v.uv0, dUVdx, dUVdy).a;
+            // Get the number of mip levels
+            uint width, height, numLevels;
+            GetTex2D(material.albedoTexIdx).GetDimensions(0, width, height, numLevels);
+
+            // Sample the texture
+            alpha *= GetTex2D(material.albedoTexIdx).SampleLevel(GetBilinearWrapSampler(), v.uv0, numLevels * 0.6667f).a;
         }
     }
 
     if (alpha < material.alphaCutoff) IgnoreHit();
 }
-
