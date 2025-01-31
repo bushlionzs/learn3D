@@ -206,7 +206,7 @@ namespace Ogre {
 
         mFrameLast = mFrameCurrent;
         _syncAddedRemovedFrameListeners();
-        mCurrentFrame++;
+        
         
         
 
@@ -236,6 +236,7 @@ namespace Ogre {
 
         update(delta);
         
+        mCurrentFrame++;
         return true;
     }
 

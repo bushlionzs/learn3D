@@ -41,6 +41,8 @@ void TextureUnit::setTexture(std::shared_ptr<OgreTexture> tex)
     {
         mTextures[0] = tex;
     }
+
+    mTextureProperty = *tex->getTextureProperty();
 }
 
 void TextureUnit::setTexture(uint32_t index, std::shared_ptr<OgreTexture> tex)
@@ -82,12 +84,9 @@ bool TextureUnit::updateTexture(uint32_t index, const std::string& texName)
 
 void TextureUnit::setTexture(const std::string& name, Ogre::TextureProperty* texProperty)
 {
-    if (name == "simhei12_auto_glyph_images_32")
-    {
-        int kk = 0;
-    }
     mNameList.clear();
     mNameList.push_back(name);
+    assert(!name.empty());
     if (texProperty)
     {
         mTextureProperty = *texProperty;
@@ -235,13 +234,10 @@ TextureProperty* TextureUnit::getTextureProperty()
 std::shared_ptr<TextureUnit> TextureUnit::clone(Ogre::Material* owner)
 {
     auto& name = owner->getName();
-    if (name == "SkyLan")
-    {
-        int kk = 0;
-    }
     std::shared_ptr<TextureUnit> tu = std::make_shared<TextureUnit>(owner);
 
     tu->mNameList = mNameList;
+    tu->mTextures = mTextures;
     tu->mTextureProperty = mTextureProperty;
     tu->mAnimDuration = mAnimDuration;
     tu->mRotate = mRotate;

@@ -55,6 +55,27 @@ namespace Ogre {
         }
     }
 
+    PixelFormat getClosestSupportedPF(PixelFormat ogrePF)
+    {
+        switch (ogrePF)
+        {
+        case PF_R8G8B8:
+            return PF_X8R8G8B8;
+        case PF_FLOAT16_RGB:
+            return PF_FLOAT16_RGBA;
+        case PF_FLOAT32_RGB:
+            return PF_FLOAT32_RGBA;
+        case PF_DEPTH16:
+            return PF_L16;
+        case PF_DEPTH24_STENCIL8:
+        case PF_DEPTH32:
+        case PF_DEPTH32F:
+            return PF_FLOAT32_R;
+        default:
+            return ogrePF;
+        }
+    }
+
     bool CImage::loadImageInfo(
         const uint8_t* data, 
         uint32_t byteCount, 

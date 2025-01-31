@@ -196,10 +196,10 @@ void VulkanRenderSystem::addAccelerationStructure(
             VulkanAccelerationStructure* vulkanAS = (VulkanAccelerationStructure*)pInst->pBottomAS;
             instanceDescs[i].accelerationStructureReference = vulkanAS->mASDeviceAddress;
             instanceDescs[i].flags = VulkanMappings::util_to_vk_instance_flags(pInst->mFlags);
-            instanceDescs[i].instanceShaderBindingTableRecordOffset =
-                pInst->mInstanceContributionToHitGroupIndex; // NOTE(Alex): Not sure about this...
+            instanceDescs[i].flags |= VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+            instanceDescs[i].instanceShaderBindingTableRecordOffset = 0;
             instanceDescs[i].instanceCustomIndex = pInst->mInstanceID;
-            instanceDescs[i].mask = pInst->mInstanceMask;
+            instanceDescs[i].mask = 0xff;
             memcpy(&instanceDescs[i].transform.matrix, pInst->mTransform, sizeof(float[12]));
         }
 
@@ -532,7 +532,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         shaderGroup.closestHitShader = static_cast<uint32_t>(shaderStages.size()) - 1;
         shaderGroup.intersectionShader = VK_SHADER_UNUSED_KHR;
         shaderGroup.anyHitShader = VK_SHADER_UNUSED_KHR;
-        shaderGroups.push_back(shaderGroup);
+        
         hitCount++;
         resInfo = ResourceManager::getSingleton().getResource(rayAnyHitShaderName);
         if (resInfo && !shaderInfo.rayAnyHitEntryName.empty())
@@ -551,7 +551,10 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
             shaderStages.push_back(shaderStage);
             shaderGroup.anyHitShader = static_cast<uint32_t>(shaderStages.size()) - 1;
             shaderGroups.push_back(shaderGroup);
-            hitCount++;
+        }
+        else
+        {
+            shaderGroups.push_back(shaderGroup);
         }
     }
    
@@ -640,6 +643,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
     rayTracingPipelineCI.pGroups = shaderGroups.data();
     rayTracingPipelineCI.maxPipelineRayRecursionDepth = 1;
     rayTracingPipelineCI.layout = pipelineLayout;
+    rayTracingPipelineCI.flags = VK_PIPELINE_CREATE_RAY_TRACING_SKIP_AABBS_BIT_KHR;
     VK_CHECK_RESULT(vkCreateRayTracingPipelinesKHR(
         mVulkanPlatform->getDevice(), VK_NULL_HANDLE, VK_NULL_HANDLE, 
         1, &rayTracingPipelineCI, nullptr, &pipeline));
@@ -655,12 +659,12 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
     const uint32_t handleSizeAligned = 
         vks::tools::alignedSize(
             rayTracingPipelineProperties.shaderGroupHandleSize, 
-            rayTracingPipelineProperties.shaderGroupHandleAlignment);
+            rayTracingPipelineProperties.shaderGroupBaseAlignment);
     const uint32_t groupCount = static_cast<uint32_t>(shaderGroups.size());
-    const uint32_t sbtSize = groupCount * handleSizeAligned;
-    std::vector<uint8_t> shaderHandleStorage(sbtSize);
+    uint32_t shaderGroupIdSize = rayTracingPipelineProperties.shaderGroupHandleSize;
+    std::vector<uint8_t> shaderHandleStorage(groupCount * shaderGroupIdSize);
     VK_CHECK_RESULT(vkGetRayTracingShaderGroupHandlesKHR(
-        mVulkanPlatform->getDevice(), pipeline, 0, groupCount, sbtSize, shaderHandleStorage.data()));
+        mVulkanPlatform->getDevice(), pipeline, 0, groupCount, groupCount* shaderGroupIdSize, shaderHandleStorage.data()));
     
     ShaderBindingTables* shaderBindingTables = new ShaderBindingTables;
     vulkanProgram->updateShaderBindingTables(shaderBindingTables);
@@ -675,9 +679,9 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
     memcpy(raygenData, shaderHandleStorage.data(), handleSize);
     // We are using two miss shaders, so we need to get two handles for the miss shader binding table
     void* missData = shaderBindingTables->miss.mapped;
-    memcpy(missData, shaderHandleStorage.data() + handleSizeAligned, handleSize * missCount);
+    memcpy(missData, shaderHandleStorage.data() + shaderGroupIdSize, handleSize * missCount);
     void* hitData = shaderBindingTables->hit.mapped;
-    memcpy(hitData, shaderHandleStorage.data() + handleSizeAligned * (1+ missCount), handleSize * hitCount);
+    memcpy(hitData, shaderHandleStorage.data() + shaderGroupIdSize * (1+ missCount), handleSize * hitCount);
     return program;
 }
 
@@ -765,7 +769,7 @@ VkStridedDeviceAddressRegionKHR VulkanRenderSystem::getSbtEntryStridedDeviceAddr
 {
     auto& rayTracingPipelineProperties =
         mVulkanPlatform->getRayTracingPipelineProperties();
-    const uint32_t handleSizeAligned = vks::tools::alignedSize(rayTracingPipelineProperties.shaderGroupHandleSize, rayTracingPipelineProperties.shaderGroupHandleAlignment);
+    const uint32_t handleSizeAligned = vks::tools::alignedSize(rayTracingPipelineProperties.shaderGroupHandleSize, rayTracingPipelineProperties.shaderGroupBaseAlignment);
     VkStridedDeviceAddressRegionKHR stridedDeviceAddressRegionKHR{};
     stridedDeviceAddressRegionKHR.deviceAddress = getBufferDeviceAddress(buffer);
     stridedDeviceAddressRegionKHR.stride = handleSizeAligned;

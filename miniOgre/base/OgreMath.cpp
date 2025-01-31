@@ -1079,11 +1079,11 @@ namespace Ogre
         m[1][1] = 1.0f / (tanHalfFovy);
         m[2][2] = zFar / (zNear - zFar);
 
-        m[2][3] = -1.0f;
-        m[3][2] = -(zFar * zNear) / (zFar - zNear);
+        m[3][2] = -1.0f;
+        m[2][3] = -(zFar * zNear) / (zFar - zNear);
 
 
-        return m.transpose();
+        return m;
     }
 
     Matrix4 Math::makePerspectiveMatrixLH(
@@ -1098,7 +1098,7 @@ namespace Ogre
 
         m[3][2] = 1.0f;
 
-        m[2][2] = (zFar + zNear) / (zFar - zNear);
+        m[2][2] = zFar / (zFar - zNear);
         m[2][3] = -(zFar * zNear) / (zFar - zNear);
         m[0][0] = 1.0f / (aspect * tanHalfFovy);
         m[1][1] = 1.0f / tanHalfFovy;

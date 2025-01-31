@@ -1,6 +1,8 @@
 #pragma once
 
 #include "model_loader.h"
+#include "OgreTexture.h"
+#include "tiny_gltf.h"
 
 namespace tinygltf
 {
@@ -54,6 +56,11 @@ private:
 		tinygltf::Model* pModel,
 		tinygltf::AnimationSampler& sampler,
 		int32_t frameId, Ogre::Quaternion& v);
+private:
+	void addMaterialTexture(
+		std::shared_ptr<Ogre::Material>& mat, 
+		Ogre::TextureProperty& tp,
+		const tinygltf::Image& image);
 private:
 	std::unordered_map<uint32_t, Ogre::Bone*> mBoneMap;
 	bool mBinary;

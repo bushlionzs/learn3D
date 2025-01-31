@@ -163,11 +163,14 @@ namespace Ogre {
         virtual void uploadData() {}
         virtual void blitFromMemory(
             const PixelBox& src, const Box& dstBox, uint32_t face = 0, uint32_t mipmap = 0) {}
+        virtual void uploadTextureData(const char* data, uint32_t size, TextureProperty& tp);
         void loadImage(const CImage& img);
         void loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight,
             PixelFormat format);
 
         uint32_t getDataOffset(uint32_t face, uint32_t mip);
+
+        
     private:
         
         void _loadImages(const std::vector<const CImage*>& images);

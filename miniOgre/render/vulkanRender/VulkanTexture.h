@@ -109,6 +109,7 @@ private:
     virtual void freeInternalResourcesImpl(void);
     virtual void updateTexture(const std::vector<const CImage*>& images);
     virtual void postLoad();
+    virtual void uploadTextureData(const char* data, uint32_t size, TextureProperty& tp);
 private:
     void createImage(
         uint32_t width,

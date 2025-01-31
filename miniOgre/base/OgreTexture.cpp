@@ -263,6 +263,11 @@ namespace Ogre {
 		assert(false);
 	}
 
+	void OgreTexture::uploadTextureData(const char* data, uint32_t size, TextureProperty& tp)
+	{
+		assert(false);
+	}
+
 	void OgreTexture::loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format)
 	{
 		CImage img;

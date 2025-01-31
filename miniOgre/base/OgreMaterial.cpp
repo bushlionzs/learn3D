@@ -42,6 +42,15 @@ namespace Ogre {
         return mTextureUnits.size() - 1;
     }
 
+    uint32_t Material::addTexture(const Ogre::TexturePtr& tex)
+    {
+        const String& name = tex->getName();
+        std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
+        tu->setTexture(tex);
+        mTextureUnits.push_back(tu);
+        return mTextureUnits.size() - 1;
+    }
+
     uint32_t Material::addAnimTexture(const std::vector<String>& namelist, float duration)
     {
         std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
@@ -50,14 +59,6 @@ namespace Ogre {
 
         mTextureUnits.push_back(tu);
 
-        return mTextureUnits.size() - 1;
-    }
-
-    uint32_t Material::addTexture(const Ogre::TexturePtr& tex)
-    {
-        std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
-        tu->setTexture(tex);
-        mTextureUnits.push_back(tu);
         return mTextureUnits.size() - 1;
     }
 

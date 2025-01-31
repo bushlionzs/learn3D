@@ -1,6 +1,5 @@
 #include "OgreHeader.h"
 #include "gltf_loader.h"
-#include "tiny_gltf.h"
 #include "OgreDataStream.h"
 #include "OgreMesh.h"
 #include "OgreVertexData.h"
@@ -477,7 +476,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 
                 tp._pbrType = TextureTypePbr_Albedo;
                 tp.gltfSampler();
-                mat->addTexture(baseColorImage.uri, &tp);
+                addMaterialTexture(mat, tp, baseColorImage);
                 sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_BASECOLORMAP", "1"));
             }
             
@@ -487,7 +486,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 const tinygltf::Image& occlusionImage = model.images[model.textures[occlusionIndex].source];
                 tp._pbrType = TextureTypePbr_AmbientOcclusion;
                 tp.gltfSampler();
-                mat->addTexture(occlusionImage.uri, &tp);
+                addMaterialTexture(mat, tp, occlusionImage);
                 sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_OCCLUSIONMAP", "1"));
             }
             
@@ -497,7 +496,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 const tinygltf::Image& normalImage = model.images[model.textures[normalIndex].source];
                 tp._pbrType = TextureTypePbr_NormalMap;
                 tp.gltfSampler();
-                mat->addTexture(normalImage.uri, &tp);
+                addMaterialTexture(mat, tp, normalImage);
                 sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_NORMALMAP", "1"));
             }
             else
@@ -510,7 +509,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             {
                 const tinygltf::Image& metallicRoughnessImage = model.images[model.textures[metallicRoughnessIndex].source];
                 tp._pbrType = TextureTypePbr_MetalRoughness;
-                mat->addTexture(metallicRoughnessImage.uri, &tp);
+                addMaterialTexture(mat, tp, metallicRoughnessImage);
                 sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_METALROUGHNESSMAP", "1"));
             }
             
@@ -520,7 +519,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
                 const tinygltf::Image& emissiveImage = model.images[model.textures[emissiveIndex].source];
                 tp._pbrType = TextureTypePbr_Emissive;
                 tp.gltfSampler();
-                mat->addTexture(emissiveImage.uri, &tp);
+                addMaterialTexture(mat, tp, emissiveImage);
                 sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_EMISSIVEMAP", "1"));
             }
 
@@ -1037,4 +1036,39 @@ void GltfLoader::parseQuaternionFromSampler(
     {
         assert(false);
     }
+}
+
+void GltfLoader::addMaterialTexture(
+    std::shared_ptr<Ogre::Material>& mat, 
+    TextureProperty& tp,
+    const tinygltf::Image& image)
+{
+    if (image.uri.empty())
+    {
+        if (mat->getName() == "GlassPlasticMat")
+        {
+            int kk = 0;
+        }
+        const char* data = (const char*)image.image.data();
+        uint32_t size = image.image.size();
+        RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
+        tp._width = image.width;
+        tp._height = image.height;
+        tp._tex_format = Ogre::PF_R8G8B8A8;
+        tp._need_mipmap = true;
+        tp._tex_usage = Ogre::TextureUsage::WRITEABLE;
+        if (tp._pbrType == TextureTypePbr_general)
+        {
+            int kk = 0;
+        }
+        Ogre::OgreTexture*  tex = rs->createManualTexture(image.name, &tp);
+        tex->uploadTextureData(data, size, tp);
+        Ogre::TexturePtr texPtr(tex);
+        mat->addTexture(texPtr);
+    }
+    else
+    {
+        mat->addTexture(image.uri, &tp);
+    }
+    
 }
