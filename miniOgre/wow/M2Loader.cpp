@@ -35,12 +35,11 @@ M2Loader::~M2Loader()
 
 }
 
-std::shared_ptr<Ogre::Mesh> M2Loader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream)
+bool M2Loader::loadMeshFromFile(
+	std::shared_ptr<Ogre::DataStream>& stream, Ogre::Mesh* mesh)
 {
 	mName = stream->getName();
-	std::shared_ptr<Ogre::Mesh> mesh;
-
-
+	
 	uint32_t streamLength = stream->getStreamLength();
 	
 
@@ -107,8 +106,7 @@ std::shared_ptr<Ogre::Mesh> M2Loader::loadMeshFromFile(std::shared_ptr<Ogre::Dat
 		}
 	}
 
-	mesh = std::shared_ptr<Ogre::Mesh>(mMesh);
-	return mesh;
+	return true;
 }
 
 std::string M2Loader::getTexture(uint32_t i)

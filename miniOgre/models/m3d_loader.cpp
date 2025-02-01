@@ -28,7 +28,8 @@ M3dLoader::~M3dLoader()
 }
 
 
-std::shared_ptr<Mesh> M3dLoader::loadMeshFromFile(std::shared_ptr<DataStream>& stream)
+bool M3dLoader::loadMeshFromFile(
+	std::shared_ptr<DataStream>& stream, Ogre::Mesh* mesh)
 {
 	uint32_t size = stream->getStreamLength();
 
@@ -266,7 +267,7 @@ std::shared_ptr<Mesh> M3dLoader::loadMeshFromFile(std::shared_ptr<DataStream>& s
 	}
 
 	skeleton->setBindingPose();
-	return std::shared_ptr<Mesh>(pMesh);
+	return true;
 }
 
 std::shared_ptr<Mesh> M3dLoader::loadM3dFromMemory(const char* data, uint32_t size)

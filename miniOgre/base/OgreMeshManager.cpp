@@ -11,9 +11,13 @@
 #include "OgreMaterialManager.h"
 #include "OgreResourceManager.h"
 #include "renderSystem.h"
+#include "OgreMesh.h"
 #include "m3d_loader.h"
-
-
+#include "ogre_loader.h"
+#include "gltf_loader.h"
+#include "bin_loader.h"
+#include "M2Loader.h"
+#include "fbx_loader.h"
 
 
 namespace Ogre {
@@ -27,6 +31,7 @@ struct MeshVertex
 };
 MeshManager::MeshManager()
 {
+	registerMeshLoader();
 }
 
 MeshManager::~MeshManager()
@@ -41,14 +46,41 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name)
 	{
 		return it->second;
 	}
-			
-	std::shared_ptr<Mesh> mesh = ResourceManager::getSingletonPtr()->loadMeshFromFile(name);
 	
-	if (mesh)
+	std::string suffix = getSuffix(name);
+
+	auto itor = mMeshLoaderMap.find(suffix);
+
+	if (itor == mMeshLoaderMap.end())
 	{
-		mMeshMap[name] = mesh;
-		return mesh;
+		return std::shared_ptr<Mesh>();
 	}
+
+	if (!ResourceManager::getSingleton().hasResource(name))
+	{
+		WARNING_LOG("fail to load mesh:%s", name.c_str());
+		return std::shared_ptr<Mesh>();
+	}
+	std::shared_ptr<DataStream> stream = ResourceManager::getSingleton().openResource(name);
+
+	Ogre::Mesh* pMesh = new Ogre::Mesh(name);
+	bool load = itor->second->loadMeshFromFile(stream, pMesh);
+
+	if (!load)
+	{
+		delete pMesh;
+		return std::shared_ptr<Mesh>();
+	}
+
+	if (pMesh)
+	{
+		pMesh->prepare();
+	}
+
+	std::shared_ptr<Mesh> mesh(pMesh);
+
+	mMeshMap[name] = mesh;
+
 
 	return mesh;
 }
@@ -945,5 +977,16 @@ void MeshManager::applyMesh(Mesh* pMesh, MaterialInfo& matInfo)
 		texProperty._texType = TEX_TYPE_CUBE_MAP;
 	}
 	mat->addTexture(matInfo.mTexname, &texProperty);
+}
+
+void MeshManager::registerMeshLoader()
+{
+	mMeshLoaderMap[".m3d"] = new M3dLoader;
+	mMeshLoaderMap[".mesh"] = new OgreMeshLoader;
+	mMeshLoaderMap[".gltf"] = new GltfLoader;
+	mMeshLoaderMap[".glb"] = new GltfLoader(true);
+	mMeshLoaderMap[".M2"] = new M2Loader;
+	mMeshLoaderMap[".bin"] = new BinLoader;
+	mMeshLoaderMap[".fbx"] = new FbxLoader;
 }
 }

@@ -2,26 +2,21 @@
 #include "OgreResourceManager.h"
 #include "myutils.h"
 #include "OgreMemoryStream.h"
-#include "OgreMesh.h"
-#include "m3d_loader.h"
-#include "ogre_loader.h"
-#include "gltf_loader.h"
-#include "bin_loader.h"
-#include "M2Loader.h"
-#include "fbx_loader.h"
 #include "ResourceParserManager.h"
 #include "OgreScriptLoader.h"
 #include "renderSystem.h"
 #include "OgreRoot.h"
 #include "platform_file_system.h"
-
+#include "OgreMeshManager.h"
+#include "OgreTextureManager.h"
 
 namespace Ogre {
     template<> ResourceManager* Ogre::Singleton<ResourceManager>::msSingleton = 0;
     const String ResourceManager::DEFAULT_RESOURCE_GROUP_NAME;
     ResourceManager::ResourceManager()
+        :mJobSystem(10)
     {
-        registerMeshSerializer();
+        
     }
 
     ResourceManager::~ResourceManager()
@@ -78,7 +73,7 @@ namespace Ogre {
         ResourceParserManager::getSingleton().parserAll();
     }
 
-    ResourceInfo* ResourceManager::getResource(const std::string& name, const String& group)
+    ResourceInfo* ResourceManager::getResourceInfo(const std::string& name, const String& group)
     {
         auto it = mResourceMap.find(name);
 
@@ -125,53 +120,10 @@ namespace Ogre {
         }
     }
 
-    std::shared_ptr<Mesh> ResourceManager::loadMeshFromFile(
-        const std::string& name, const String& group)
-    {
-        std::string suffix = getSuffix(name);
-
-        auto itor = mMeshMap.find(suffix);
-
-        if (itor == mMeshMap.end())
-        {
-            return std::shared_ptr<Mesh>();
-        }
-
-        if (!hasResource(name, group))
-        {
-            WARNING_LOG("fail to load mesh:%s", name.c_str());
-            return std::shared_ptr<Mesh>();
-        }
-        std::shared_ptr<DataStream> stream = openResource(name, group);
-
-
-
-
-        std::shared_ptr<Mesh> mesh = itor->second->loadMeshFromFile(stream);
-
-        if (mesh)
-        {
-            mesh->prepare();
-        }
-
-        return mesh;
-    }
-
-    void ResourceManager::registerMeshSerializer()
-    {
-        mMeshMap[".m3d"] = new M3dLoader;
-        mMeshMap[".mesh"] = new OgreMeshLoader;
-        mMeshMap[".gltf"] = new GltfLoader;
-        mMeshMap[".glb"] = new GltfLoader(true);
-        mMeshMap[".M2"] = new M2Loader;
-        mMeshMap[".bin"] = new BinLoader;
-        mMeshMap[".fbx"] = new FbxLoader;
-    }
-
     std::shared_ptr<DataStream> ResourceManager::openResource(
         const String& name, const String& group)
     {
-        ResourceInfo* res = ResourceManager::getSingletonPtr()->getResource(name);
+        ResourceInfo* res = ResourceManager::getSingletonPtr()->getResourceInfo(name);
 
         if (res == nullptr)
         {
@@ -184,9 +136,43 @@ namespace Ogre {
 
     bool ResourceManager::hasResource(const String& name, const String& group)
     {
-        ResourceInfo* res = ResourceManager::getSingletonPtr()->getResource(name);
+        ResourceInfo* res = ResourceManager::getSingletonPtr()->getResourceInfo(name);
 
         return res != nullptr;
+    }
+
+    void ResourceManager::addResource(MeshLoadDesc* pMeshDesc, SyncToken* token)
+    {
+        auto loadfunc = [](MeshLoadDesc* pMeshDesc) {
+            auto mesh = MeshManager::getSingleton().load(pMeshDesc->pFileName);
+            pMeshDesc->pMesh = mesh.get();
+            };
+        if (token)
+        {
+            auto* loadJob = utils::jobs::createJob(mJobSystem, token->rootJob, loadfunc, pMeshDesc);
+            mJobSystem.run(loadJob);
+        }
+        else
+        {
+            loadfunc(pMeshDesc);
+        }
+    }
+
+    void ResourceManager::addResource(TextureLoadDesc* pTextureDesc, SyncToken* token)
+    {
+        auto loadfunc = [](TextureLoadDesc* pTextureDesc) {
+            auto tex = TextureManager::getSingleton().load(pTextureDesc->pFileName, pTextureDesc->tp);
+            pTextureDesc->pTexture = tex.get();
+            };
+        if (token)
+        {
+            auto* loadJob = utils::jobs::createJob(mJobSystem, token->rootJob, loadfunc, pTextureDesc);
+            mJobSystem.run(loadJob);
+        }
+        else
+        {
+            loadfunc(pTextureDesc);
+        }
     }
 
     bool ResourceManager::_addResource(

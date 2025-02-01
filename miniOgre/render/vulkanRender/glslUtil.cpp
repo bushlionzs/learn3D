@@ -30,7 +30,7 @@ public:
         const char* requesting_source,
         size_t include_depth)
     {
-        ResourceInfo* resInfo = ResourceManager::getSingleton().getResource(requested_source);
+        ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(requested_source);
         assert(resInfo);
         auto& name = resInfo->_fullname;
 

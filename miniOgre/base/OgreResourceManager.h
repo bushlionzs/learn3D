@@ -2,10 +2,10 @@
 
 #include "OgreSingleton.h"
 #include "OgreTexture.h"
+#include "OgreResourceLoader.h"
+#include "OgreScriptLoader.h"
 
 class ModelLoader;
-
-#include "OgreScriptLoader.h"
 
 namespace Ogre {
 
@@ -23,21 +23,26 @@ namespace Ogre {
             bool recursive = true);
         void loadAllResource();
 
-        ResourceInfo* getResource(const String& name, const String& group = BLANKSTRING);
+        ResourceInfo* getResourceInfo(const String& name, const String& group = BLANKSTRING);
 
         std::shared_ptr<DataStream> openResource(
             const String& name, const String& group = BLANKSTRING);
 
         bool hasResource(const String& name, const String& group = BLANKSTRING);
-        std::shared_ptr<Mesh> loadMeshFromFile(
-            const std::string& name, 
-            const String& group = BLANKSTRING);
 
+        void addResource(MeshLoadDesc* pMeshDesc, SyncToken* token);
+
+        void addResource(TextureLoadDesc* pTextureDesc, SyncToken* token);
         bool _addResource(
             const String& name, 
             ResourceInfo* res, 
             bool forceUpdate = false,
             const String& group = BLANKSTRING);
+
+        utils::JobSystem& getJobSystem()
+        {
+            return mJobSystem;
+        }
         virtual void _notifyResourceLoaded(Resource* res) {}
 
         /** Notify this manager that a resource which it manages has been
@@ -49,12 +54,11 @@ namespace Ogre {
     private:
         void readDir(const String& dir, bool recursive);
 
-        void registerMeshSerializer();
     private:
         std::unordered_map<std::string, ResourceInfo*> mResourceMap;
 
         std::unordered_set<std::string> mDirectorySet;
         std::unordered_set<std::string> mDirectorySetRecursive;
-        std::unordered_map<std::string, ModelLoader*> mMeshMap;
+        utils::JobSystem mJobSystem;
     };
 }

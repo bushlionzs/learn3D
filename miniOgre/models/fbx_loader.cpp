@@ -27,8 +27,8 @@ struct FbxVertex
     Ogre::Vector2 TexC;
 };
 
-std::shared_ptr<Ogre::Mesh> FbxLoader::loadMeshFromFile(
-    std::shared_ptr<Ogre::DataStream>& stream)
+bool FbxLoader::loadMeshFromFile(
+    std::shared_ptr<Ogre::DataStream>& stream, Ogre::Mesh* mesh)
 {
     Assimp::Importer importer;
     UINT flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices 
@@ -54,7 +54,6 @@ std::shared_ptr<Ogre::Mesh> FbxLoader::loadMeshFromFile(
 
     uint32_t numMaterials = scene->mNumMaterials;
     aiMaterial** sourceMaterials = scene->mMaterials;
-    Ogre::Mesh* mesh = new Ogre::Mesh(name);
     if (scene->HasMeshes())
     {
         for (uint32_t i = 0; i < scene->mNumMeshes; i++)
@@ -149,5 +148,5 @@ std::shared_ptr<Ogre::Mesh> FbxLoader::loadMeshFromFile(
         }
     }
 
-    return std::shared_ptr<Ogre::Mesh>(mesh);
+    return true;
 }

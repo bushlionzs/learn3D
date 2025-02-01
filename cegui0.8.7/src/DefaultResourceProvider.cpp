@@ -58,7 +58,7 @@ void DefaultResourceProvider::loadRawDataContainer(const String& filename,
 
     std::string name = filename.c_str();
     //dy::to_lower(name);
-    ResourceInfo* res = Ogre::ResourceManager::getSingleton().getResource(name);
+    ResourceInfo* res = Ogre::ResourceManager::getSingleton().getResourceInfo(name);
 
     std::string& fullname = res->_fullname;
 

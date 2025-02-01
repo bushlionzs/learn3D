@@ -3,12 +3,6 @@
 #include "shader.h"
 #include "engine_struct.h"
 #include "OgreTexture.h"
-#include <DriverEnums.h>
-#include <utils/Allocator.h>
-#include <utils/JobSystem.h>
-#include <filament/Handle.h>
-#include <filament/DriverBase.h>
-#include <filament/DescriptorSetOffsetArray.h>
 #include "rayTracing.h"
 
 class GraphicsCommandList;
@@ -68,11 +62,6 @@ public:
     uint32_t getBatchCount()
     {
         return mBatchCount;
-    }
-
-    utils::JobSystem& getJobSystem()
-    {
-        return mJobSystem;
     }
     virtual void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth) {}
     virtual void setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {}
@@ -258,5 +247,5 @@ protected:
     String mRenderSystemName;
     uint32_t mRenderType;
     
-    utils::JobSystem mJobSystem;
+    
 };

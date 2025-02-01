@@ -254,14 +254,21 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 	GameCamera* gameCamera)
 {
 	example_type = 2;
-	std::string name = "Sponza.gltf";
-	//name = "FlightHelmet.gltf";
-	auto mesh = MeshManager::getSingletonPtr()->load(name);
+	MeshLoadDesc meshLoadDesc;
+
+	std::string name = "FlightHelmet.gltf";
+	meshLoadDesc.pFileName = name.c_str();
+	auto& js = ResourceManager::getSingleton().getJobSystem();
+	auto* rootJob = js.createJob();
+	SyncToken syncToken;
+	syncToken.rootJob = rootJob;
+	ResourceManager::getSingletonPtr()->addResource(&meshLoadDesc, &syncToken);
+	js.runAndWait(rootJob);
 
 	SceneNode* root = sceneManager->getRoot()->createChildSceneNode("root");
 
-    gltfEntity = sceneManager->createEntity("Sponza", name);
-	SceneNode* gltfNode = root->createChildSceneNode("Sponza");
+    gltfEntity = sceneManager->createEntity("FlightHelmet", name);
+	SceneNode* gltfNode = root->createChildSceneNode("FlightHelmet");
 
 	gltfNode->attachObject(gltfEntity);
 
@@ -279,7 +286,14 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
 	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
 	tp._samplerParams.anisotropyLog2 = 0;
-	auto environmentCube = TextureManager::getSingletonPtr()->load("papermill.ktx", &tp, true).get();
+
+	TextureLoadDesc textureLoadDesc;
+	textureLoadDesc.tp = &tp;
+	textureLoadDesc.pFileName = "papermill.ktx";
+	ResourceManager::getSingletonPtr()->addResource(&textureLoadDesc, nullptr);
+
+	auto environmentCube = textureLoadDesc.pTexture;
+
 	auto count = gltfEntity->getNumSubEntities();
 	std::vector<Ogre::Material*> matList;
 	for (auto i = 0; i < count; i++)
@@ -328,28 +342,26 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 			});
 	}
 
-	float h = 1.0f;
-	Ogre::Vector3 camPos = Ogre::Vector3(-1, h, 0);
-	Ogre::Vector3 lookAt = Ogre::Vector3(0, h, 0);
-	//camPos = Ogre::Vector3(0.0f, 0.1f, 1.0f);
-	//lookAt = Ogre::Vector3::ZERO;
+	Ogre::Vector3 camPos = Ogre::Vector3(0.0f, 0.2f, 1.2f);
+	Ogre::Vector3 lookAt = Ogre::Vector3::ZERO;
+
 	gameCamera->lookAt(camPos, lookAt);
-	gameCamera->setMoveSpeed(5);
+	gameCamera->setMoveSpeed(1);
 	gameCamera->setRotateSpeed(0.5);
-	gameCamera->setCameraType(CameraMoveType_FirstPerson);
+	gameCamera->setCameraType(CameraMoveType_LookAt);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	Ogre::Matrix4 projectMatrix;
 	if (ogreConfig.reverseDepth)
 	{
 		float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
 		projectMatrix = Ogre::Math::makePerspectiveMatrixReverseZ(
-			Ogre::Math::PI / 3.0f, aspectInverse, 0.1, 5000);
+			Ogre::Math::PI / 3.0f, aspectInverse, 0.1, 256);
 	}
 	else
 	{
 		float aspect = ogreConfig.width / (float)ogreConfig.height;
 		projectMatrix = Ogre::Math::makePerspectiveMatrix(
-			Ogre::Math::PI / 3.0f, aspect, 0.1, 5000);
+			Ogre::Math::PI / 3.0f, aspect, 0.1, 256);
 	}
 
 	gameCamera->getCamera()->updateProjectMatrix(projectMatrix);

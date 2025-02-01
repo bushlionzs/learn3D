@@ -258,7 +258,7 @@ float4 PS(VertexOut pin) : SV_Target
     baseColorSource = albedo_pbr.Sample(albedoSampler, pin.v_UV);
     float4 baseColor = SRGBtoLINEAR(baseColorSource) * pbrMaterial.u_BaseColorFactor;
 	
-	if (pbrMaterial.alpha_mask > 0)
+	if (pbrMaterial.alphaMode == 2)
 	{
 		if (baseColorSource.a < pbrMaterial.alpha_mask_cutoff)
 		{

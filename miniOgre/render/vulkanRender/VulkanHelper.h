@@ -8,6 +8,7 @@
 #include "VulkanBuffer.h"
 #include "VulkanResourceAllocator.h"
 #include "VulkanPlatform.h"
+#include "platform_mutex.h"
 
 
 
@@ -17,13 +18,6 @@ class VulkanLayoutCache;
 class VulkanPipelineCache;
 class VulkanPipelineLayoutCache;
 struct FVulkanBuffer;
-
-struct CommandHelper
-{
-    VkCommandPool _commandPool;
-    VkCommandBuffer _commandBuffer;
-};
-
 
 enum VulkanLayoutIndex
 {
@@ -69,8 +63,8 @@ public:
     VkSampler getSampler(const filament::backend::SamplerParams& samplerParams);
 
     std::shared_ptr<OgreTexture>& getDefaultTexture();
-    VkCommandBuffer beginTransferCommand();
-    void endTransferCommand(VkCommandBuffer commandBuffer);
+    TransferCommandInfo beginTransferCommand();
+    void endTransferCommand(TransferCommandInfo& commandInfo);
     uint32_t getTransferFamilyIndex();
     bool haveRayTracing()
     {
@@ -113,8 +107,9 @@ private:
     VkPhysicalDeviceMemoryProperties mPhysicalMemoryProperties;
  
 
-    VkCommandPool mSingleCommandPool;
-    VkCommandBuffer mTransfercommandBuffer = VK_NULL_HANDLE;
+    std::vector<TransferCommandInfo> mTransferCommandList;
+    mutable utils::Mutex mLock;
+    
     //default texture
 
     std::shared_ptr<OgreTexture> mDefaultTexture;

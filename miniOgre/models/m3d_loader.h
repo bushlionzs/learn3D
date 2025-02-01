@@ -50,7 +50,7 @@ public:
 	M3dLoader();
 	~M3dLoader();
 
-    virtual std::shared_ptr<Ogre::Mesh> loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream);
+    virtual bool loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogre::Mesh* mesh) override;
 	std::shared_ptr<Ogre::Mesh> loadM3dFromMemory(const char* data, uint32_t size);
 
 private:

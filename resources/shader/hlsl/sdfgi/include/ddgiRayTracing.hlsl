@@ -109,6 +109,10 @@ void LoadVertices(uint geometryIndex, uint primitiveIndex, GeometryData geometry
 
         // Load the texture coordinates
         vertices[i].uv0 = asfloat(vertexBuffer.Load2(address));
+		
+		vertices[i].position = mul(geometry.m, float4(vertices[i].position,1.0)).xyz;
+		vertices[i].normal = mul(geometry.m, float4(vertices[i].normal,1.0)).xyz;
+		vertices[i].tangent = mul(geometry.m, vertices[i].tangent);
     }
 }
 
@@ -133,6 +137,8 @@ void LoadVerticesPosUV0(uint geometryIndex, uint primitiveIndex, GeometryData ge
 
         // Load the texture coordinates
         vertices[i].uv0 = asfloat(GetVertexBuffer(geometryIndex).Load2(address));
+		
+		vertices[i].position = mul(geometry.m, float4(vertices[i].position,1.0)).xyz;
     }
 }
 

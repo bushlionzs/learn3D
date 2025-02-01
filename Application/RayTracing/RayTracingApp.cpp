@@ -583,7 +583,7 @@ void RayTracingApp::RayTracingGltf(
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	auto rootNode = sceneManager->getRoot();
 	auto root = sceneManager->getRoot();
-    std::string meshname = "FlightHelmet.gltf";
+    std::string meshname = "Sponza.gltf";
     std::shared_ptr<Mesh> mesh = MeshManager::getSingletonPtr()->load(meshname);
 
 
@@ -798,14 +798,14 @@ void RayTracingApp::RayTracingGltf(
 	renderPipeline->addRenderPass(rayTracingPass);
 
 	gameCamera->setMoveSpeed(1.0f);
-	Ogre::Vector3 camPos(0.0f, 0.1f, 1.0f);
+	Ogre::Vector3 camPos(0.0f, -1.f, 1.0f);
 	Ogre::Vector3 lookAt = Ogre::Vector3::ZERO;
 	gameCamera->lookAt(camPos, lookAt);
 	float aspect = ogreConfig.width / (float)ogreConfig.height;
 	Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrix(
 		Ogre::Math::PI / 3.0f, aspect, 0.1, 512.f);
 	gameCamera->getCamera()->updateProjectMatrix(m);
-	gameCamera->setCameraType(CameraMoveType_LookAt);
+	gameCamera->setCameraType(CameraMoveType_FirstPerson);
 }
 
 void RayTracingApp::RayTracingShadow(
@@ -1544,7 +1544,7 @@ void RayTracingApp::initRayTracingContext(RayTracingContext& context, Ogre::Enti
 
 	uint32_t geometryNodesSize = sizeof(GeometryNode) * subEntityCount;
 
-	desc.mBindingType = BufferObjectBinding_Buffer;
+	desc.mBindingType = BufferObjectBinding_Uniform;
 	desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
 	desc.bufferCreationFlags = BUFFER_CREATION_FLAG_SHADER_DEVICE_ADDRESS;
 	desc.mSize = geometryNodesSize;

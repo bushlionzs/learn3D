@@ -23,7 +23,7 @@ public:
     // ID3DInclude methods
     STDMETHODIMP Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID* ppData, UINT* pBytes) override {
 
-        ResourceInfo* resInfo = ResourceManager::getSingleton().getResource(pFileName);
+        ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(pFileName);
 
         std::string content;
         get_file_content(resInfo->_fullname.c_str(), content);

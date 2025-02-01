@@ -104,7 +104,7 @@ struct PbrMaterialBlock
 {
     float2 u_MetallicRoughnessValues;
 	float u_OcclusionStrength;
-	uint alpha_mask;
+	uint alphaMode;
     float3 u_EmissiveFactor;
 	float alpha_mask_cutoff;
 	float4 u_BaseColorFactor;
@@ -140,6 +140,6 @@ struct SkinBlock
     float4x4 gBoneTransforms[200];
 };
 
-RES(CBUFFER(MaterialBlock), cbSkinned, UPDATE_FREQ_NONE, b3, VKBINDING(3, 0));
+RES(CBUFFER(SkinBlock), cbSkinned, UPDATE_FREQ_NONE, b3, VKBINDING(3, 0));
 
 #endif

@@ -59,7 +59,7 @@ bool DX12ProgramImpl::loadglsl(const ShaderInfo& shaderInfo)
     Ogre::ShaderPrivateInfo* privateInfo =
         ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Dx12);
 
-    auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+    auto res = ResourceManager::getSingleton().getResourceInfo(privateInfo->vertexShaderName);
 
     if (res)
     {
@@ -75,7 +75,7 @@ bool DX12ProgramImpl::loadglsl(const ShaderInfo& shaderInfo)
     }
     
 
-    res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
+    res = ResourceManager::getSingleton().getResourceInfo(privateInfo->fragShaderName);
 
     if (res)
     {
@@ -90,7 +90,7 @@ bool DX12ProgramImpl::loadglsl(const ShaderInfo& shaderInfo)
             mFragByteCode);
     }
     
-    res = ResourceManager::getSingleton().getResource(privateInfo->geometryShaderName);
+    res = ResourceManager::getSingleton().getResourceInfo(privateInfo->geometryShaderName);
 
     if (res)
     {
@@ -105,7 +105,7 @@ bool DX12ProgramImpl::loadglsl(const ShaderInfo& shaderInfo)
             mGeometryByteCode);
     }
 
-    res = ResourceManager::getSingleton().getResource(privateInfo->computeShaderName);
+    res = ResourceManager::getSingleton().getResourceInfo(privateInfo->computeShaderName);
 
     if (res)
     {
@@ -127,7 +127,7 @@ bool DX12ProgramImpl::loadhlsl(const ShaderInfo& shaderInfo)
     Ogre::ShaderPrivateInfo* privateInfo =
         ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Dx12);
 
-    auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+    auto res = ResourceManager::getSingleton().getResourceInfo(privateInfo->vertexShaderName);
     
     if (res)
     {
@@ -138,7 +138,7 @@ bool DX12ProgramImpl::loadhlsl(const ShaderInfo& shaderInfo)
         int kk = 0;
     }
     
-    res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
+    res = ResourceManager::getSingleton().getResourceInfo(privateInfo->fragShaderName);
     if (res)
     {
         String* content = ShaderManager::getSingleton().getShaderContent(privateInfo->fragShaderName);
@@ -147,7 +147,7 @@ bool DX12ProgramImpl::loadhlsl(const ShaderInfo& shaderInfo)
     }
    
 
-    res = ResourceManager::getSingleton().getResource(privateInfo->geometryShaderName);
+    res = ResourceManager::getSingleton().getResourceInfo(privateInfo->geometryShaderName);
     if (res)
     {
         String* content = ShaderManager::getSingleton().getShaderContent(privateInfo->geometryShaderName);
@@ -155,7 +155,7 @@ bool DX12ProgramImpl::loadhlsl(const ShaderInfo& shaderInfo)
             shaderInfo.shaderMacros, nullptr, Ogre::GeometryShader, mGeometryByteCode, false);
     }
 
-    res = ResourceManager::getSingleton().getResource(privateInfo->computeShaderName);
+    res = ResourceManager::getSingleton().getResourceInfo(privateInfo->computeShaderName);
     if (res)
     {
         String* content = ShaderManager::getSingleton().getShaderContent(privateInfo->computeShaderName);

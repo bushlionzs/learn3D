@@ -432,7 +432,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
     // Ray generation group
     {
         shaderModuleInfo.shaderType = Ogre::ShaderType::RayGenShader;
-        ResourceInfo* resInfo = ResourceManager::getSingleton().getResource(rayGenShaderName);
+        ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(rayGenShaderName);
         assert_invariant(resInfo != nullptr);
         get_file_content(resInfo->_fullname.c_str(), content);
         glslCompileShader(resInfo->_fullname, content, shaderInfo.rayGenEntryName, 
@@ -464,7 +464,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
     // Miss group
     {
         shaderModuleInfo.shaderType = Ogre::ShaderType::MissShader;
-        ResourceInfo* resInfo = ResourceManager::getSingleton().getResource(rayMissShaderName);
+        ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(rayMissShaderName);
         assert_invariant(resInfo != nullptr);
         get_file_content(resInfo->_fullname.c_str(), content);
         glslCompileShader(resInfo->_fullname, content, shaderInfo.rayMissEntryName, 
@@ -490,7 +490,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         missCount++;
         // Second shader for shadows
 
-        resInfo = ResourceManager::getSingleton().getResource(rayShadowShaderName);
+        resInfo = ResourceManager::getSingleton().getResourceInfo(rayShadowShaderName);
         if (resInfo && !shaderInfo.rayShadowEntryName.empty())
         {
             get_file_content(resInfo->_fullname.c_str(), content);
@@ -510,7 +510,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
     // Closest hit group for doing texture lookups
     {
         shaderModuleInfo.shaderType = Ogre::ShaderType::ClosestHitShader;
-        ResourceInfo* resInfo = ResourceManager::getSingleton().getResource(rayClosethitShaderName);
+        ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(rayClosethitShaderName);
         assert_invariant(resInfo != nullptr);
         get_file_content(resInfo->_fullname.c_str(), content);
         glslCompileShader(resInfo->_fullname, content, shaderInfo.rayClosethitEntryName, 
@@ -534,7 +534,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         shaderGroup.anyHitShader = VK_SHADER_UNUSED_KHR;
         
         hitCount++;
-        resInfo = ResourceManager::getSingleton().getResource(rayAnyHitShaderName);
+        resInfo = ResourceManager::getSingleton().getResourceInfo(rayAnyHitShaderName);
         if (resInfo && !shaderInfo.rayAnyHitEntryName.empty())
         {
             shaderModuleInfo.shaderType = Ogre::ShaderType::AnyHitShader;

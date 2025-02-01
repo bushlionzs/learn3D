@@ -60,12 +60,12 @@ struct PropData
 
 struct GeometryNode {
 	Ogre::Vector4 color;
+	float alphaMaskCutoff;
 	uint32_t vertexOffset;
 	uint32_t indexOffset;
 	int32_t textureIndexBaseColor;
 	int32_t textureIndexOcclusion;
 	uint32_t alphaMode;
-	float alphaMaskCutoff;
 	uint32_t padding[2];
 };
 

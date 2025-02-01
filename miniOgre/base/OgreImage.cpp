@@ -148,20 +148,20 @@ namespace Ogre {
             if (type == backend::ImageType::ImageType_DDS ||
                 type == backend::ImageType::ImageType_KTX)
             {
-                res = ResourceManager::getSingleton().getResource(name);
+                res = ResourceManager::getSingleton().getResourceInfo(name);
             }
             else
             {
                 std::string suffix = getSuffix(name);
                 std::string basename = removeSuffix(name);
                 std::string current = basename + "_rt" + suffix;
-                res = ResourceManager::getSingleton().getResource(current);
+                res = ResourceManager::getSingleton().getResourceInfo(current);
             }
             
         }
         else
         {
-            res = ResourceManager::getSingleton().getResource(name);
+            res = ResourceManager::getSingleton().getResourceInfo(name);
         }
         
 
@@ -201,7 +201,7 @@ namespace Ogre {
         }
         else if (type == backend::ImageType::ImageType_KTX)
         {
-            auto resInfo = ResourceManager::getSingleton().getResource(name);
+            auto resInfo = ResourceManager::getSingleton().getResourceInfo(name);
             gli::texture tmp = gli::load(resInfo->_fullname.c_str());
 
             mImageInfo.width = static_cast<uint32_t>(tmp.extent().x);

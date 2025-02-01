@@ -19,7 +19,8 @@ OgreMeshLoader::~OgreMeshLoader()
 
 }
 
-std::shared_ptr<Ogre::Mesh> OgreMeshLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream)
+bool OgreMeshLoader::loadMeshFromFile(
+	std::shared_ptr<Ogre::DataStream>& stream, Ogre::Mesh* mesh)
 {
 	uint16_t headerID;
 
@@ -51,18 +52,17 @@ std::shared_ptr<Ogre::Mesh> OgreMeshLoader::loadMeshFromFile(std::shared_ptr<Ogr
 		OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, "mesh version error");
 	}
 	
-	auto pMesh = new Ogre::Mesh(stream->getName());
 
-	impl->importMesh(stream, pMesh, nullptr);
+	impl->importMesh(stream, mesh, nullptr);
 
-	int32_t subCount = pMesh->getSubMeshCount();
+	int32_t subCount = mesh->getSubMeshCount();
 
 	
 	
 
 	for (int32_t i = 0; i < subCount; i++)
 	{
-		Ogre::SubMesh* sub = pMesh->getSubMesh(i);
+		Ogre::SubMesh* sub = mesh->getSubMesh(i);
 		const std::string& name = sub->getMaterialName();
 
 		std::shared_ptr<Ogre::Material> mat =
@@ -77,6 +77,6 @@ std::shared_ptr<Ogre::Mesh> OgreMeshLoader::loadMeshFromFile(std::shared_ptr<Ogr
 		}
 	}
 
-	return std::shared_ptr<Ogre::Mesh>(pMesh);
+	return true;
 }
 

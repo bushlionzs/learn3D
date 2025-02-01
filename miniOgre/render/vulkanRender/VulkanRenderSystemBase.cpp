@@ -755,7 +755,7 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
         privateInfo->geometryShaderEntryPoint.c_str(),
         privateInfo->fragShaderEntryPoint.c_str());
 
-    auto res = ResourceManager::getSingleton().getResource(privateInfo->vertexShaderName);
+    auto res = ResourceManager::getSingleton().getResourceInfo(privateInfo->vertexShaderName);
 
     vks::tools::BingdingInfo bindingMap;
 
@@ -828,7 +828,7 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
         }
     }
 
-    res = ResourceManager::getSingleton().getResource(privateInfo->geometryShaderName);
+    res = ResourceManager::getSingleton().getResourceInfo(privateInfo->geometryShaderName);
     if (res)
     {
         String* content = ShaderManager::getSingleton().getShaderContent(privateInfo->geometryShaderName);
@@ -846,7 +846,7 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
         auto results = vks::tools::getProgramBindings(moduleInfo.spv, VK_SHADER_STAGE_GEOMETRY_BIT);
         bingingUpdate(bindingMap, results, VK_SHADER_STAGE_GEOMETRY_BIT);
     }
-    res = ResourceManager::getSingleton().getResource(privateInfo->fragShaderName);
+    res = ResourceManager::getSingleton().getResourceInfo(privateInfo->fragShaderName);
 
     if (res)
     {
@@ -983,7 +983,7 @@ Handle<HwComputeProgram> VulkanRenderSystemBase::createComputeProgram(const Shad
     Ogre::ShaderPrivateInfo* privateInfo =
         ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
 
-    auto res = ResourceManager::getSingleton().getResource(privateInfo->computeShaderName);
+    auto res = ResourceManager::getSingleton().getResourceInfo(privateInfo->computeShaderName);
     
     assert(res);
 

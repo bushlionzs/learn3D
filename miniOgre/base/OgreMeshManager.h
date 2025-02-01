@@ -5,6 +5,8 @@
 #include "OgreSceneNode.h"
 
 class MaterialInfo;
+class ModelLoader;
+
 namespace Ogre {
     class MeshManager : public Ogre::Singleton<MeshManager>
     {
@@ -75,8 +77,10 @@ namespace Ogre {
             std::vector<uint16_t>& indices);
 
         void applyMesh(Mesh* pMesh, MaterialInfo& matInfo);
-
+        void registerMeshLoader();
     private:
         std::unordered_map<std::string, std::shared_ptr<Mesh>> mMeshMap;
+
+        std::unordered_map<std::string, ModelLoader*> mMeshLoaderMap;
     };
 }

@@ -8,5 +8,5 @@ public:
     BinLoader();
     ~BinLoader();
 
-    std::shared_ptr<Ogre::Mesh> loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream);
+    virtual bool loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogre::Mesh* mesh)override;
 };

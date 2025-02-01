@@ -140,7 +140,7 @@ void VulkanTexture::createInternalResourcesImpl(void)
 
     if (mTextureProperty._tex_usage & WRITEABLE)
     {
-        VkCommandBuffer cmdBuf = VulkanHelper::getSingleton().beginTransferCommand();
+        TransferCommandInfo commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
         TextureBarrier uavBarriers[] = {
                 {
                 this,
@@ -149,8 +149,8 @@ void VulkanTexture::createInternalResourcesImpl(void)
         };
 
         auto queueFamilyIndex = VulkanHelper::getSingleton().getTransferFamilyIndex();
-        vks::tools::resourceBarrier(0, nullptr, 1, uavBarriers, 0, nullptr, QUEUE_TYPE_TRANSFER, 0, cmdBuf);
-        VulkanHelper::getSingleton().endTransferCommand(cmdBuf);
+        vks::tools::resourceBarrier(0, nullptr, 1, uavBarriers, 0, nullptr, QUEUE_TYPE_TRANSFER, 0, commandInfo.commandBuffer);
+        VulkanHelper::getSingleton().endTransferCommand(commandInfo);
     }
 }
 
@@ -218,12 +218,12 @@ void VulkanTexture::updateTexture(const std::vector<const CImage*>& images)
 
 void VulkanTexture::postLoad()
 {
-    VkCommandBuffer cb = VulkanHelper::getSingleton().beginTransferCommand();  
+    TransferCommandInfo commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
 
     if (mStagingBuffer)
     {
         vks::tools::copyBufferToImage(
-            cb,
+            commandInfo.commandBuffer,
             mStagingBuffer,
             mTextureImage,
             this
@@ -233,10 +233,10 @@ void VulkanTexture::postLoad()
 
     if (mNeedMipmaps)
     {
-        vks::tools::generateMipmaps(cb, this);
+        vks::tools::generateMipmaps(commandInfo.commandBuffer, this);
     }
 
-    VulkanHelper::getSingleton().endTransferCommand(cb);
+    VulkanHelper::getSingleton().endTransferCommand(commandInfo);
 }
 
 
@@ -522,12 +522,12 @@ void VulkanTexture::blitFromMemory(
 
 void VulkanTexture::uploadData()
 {
-    VkCommandBuffer cb = VulkanHelper::getSingleton().beginTransferCommand();
+    TransferCommandInfo commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
     vks::tools::copyBufferToImage(
-        cb,
+        commandInfo.commandBuffer,
         mStagingBuffer,
         mTextureImage,
         this
     );
-    VulkanHelper::getSingleton().endTransferCommand(cb);
+    VulkanHelper::getSingleton().endTransferCommand(commandInfo);
 }

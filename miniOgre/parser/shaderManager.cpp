@@ -242,7 +242,7 @@ namespace Ogre {
 			return &itor->second;
 		}
 
-		auto res = ResourceManager::getSingleton().getResource(name);
+		auto res = ResourceManager::getSingleton().getResourceInfo(name);
 
 		if (res == nullptr)
 		{

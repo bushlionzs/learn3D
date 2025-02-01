@@ -127,16 +127,6 @@ namespace Ogre {
 		}
 	}
 
-	void OgreTexture::preLoad()
-	{
-		
-	}
-
-	void OgreTexture::postLoad()
-	{
-
-	}
-
 	void OgreTexture::loadImpl()
 	{
 		bool cube = isCubeTexture();
@@ -157,14 +147,38 @@ namespace Ogre {
 		_loadImages({&image});
 	}
 
+	void OgreTexture::preLoad()
+	{
+
+	}
+
+	void OgreTexture::postLoad()
+	{
+
+	}
+
 	bool OgreTexture::load(utils::JobSystem::Job* job)
 	{
 		if (mLoad)
 			return true;
-		preLoad();
-		loadImpl();
-		postLoad();
 		mLoad = true;
+		auto loadfunc = [](OgreTexture* tex) {
+			tex->preLoad();
+			tex->loadImpl();
+			tex->postLoad();
+			};
+
+		if (job)
+		{
+			auto& js = ResourceManager::getSingleton().getJobSystem();
+			utils::JobSystem::Job* loadJob = utils::jobs::createJob(js, job, loadfunc, this);
+			js.run(loadJob);
+		}
+		else
+		{
+			loadfunc(this);
+		}
+		
 		return true;
 	}
 
@@ -203,59 +217,6 @@ namespace Ogre {
 		createInternalResources();
 
 		updateTexture(images);
-
-		//uint32 faces;
-		//bool multiImage; // Load from multiple images?
-		//if (images.size() > 1)
-		//{
-		//	faces = uint32(images.size());
-		//	multiImage = true;
-		//}
-		//else
-		//{
-		//	faces = images[0]->getNumFaces();
-		//	multiImage = false;
-		//}
-
-		//
-		//int32_t mip = 0;
-		//int32_t depth = 1;
-		//for (uint32 mip = 0; mip <= std::min(mNumMipmaps, mTextureProperty._numMipmaps); ++mip)
-		//{
-		//	for (uint32 i = 0; i < mFace; ++i)
-		//	{
-		//		PixelBox src;
-		//		size_t face = (depth == 1) ? i : 0; // depth = 1, then cubemap face else 3d/ array layer
-
-		//		auto buffer = getBuffer(face, mip);
-		//		Box dst(0, 0, 0, buffer->getWidth(), buffer->getHeight(), buffer->getDepth());
-
-		//		if (multiImage)
-		//		{
-		//			// Load from multiple images
-		//			src = images[i]->getPixelBox(0, mip);
-		//			// set dst layer
-		//			if (depth > 1)
-		//			{
-		//				dst.front = i;
-		//				dst.back = i + 1;
-		//			}
-		//		}
-		//		else
-		//		{
-		//			// Load from faces of images[0]
-		//			src = images[0]->getPixelBox(i, mip);
-		//		}
-
-		//		if (mTextureProperty._gamma != 1.0f) {
-		//			assert(false);
-		//		}
-		//		else
-		//		{
-		//			buffer->blitFromMemory(src, dst);
-		//		}
-		//	}
-		//}
 	}
 
 	void OgreTexture::unload()

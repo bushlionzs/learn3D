@@ -8,10 +8,12 @@
 #include <OgreIndexData.h>
 #include <OgreMesh.h>
 #include <OgreMeshManager.h>
+#include <OgreResourceManager.h>
 #include <OgreMaterialManager.h>
 #include <renderSystem.h>
 #include "renderUtil.h"
 #include "game_camera.h"
+#include "time_util.h"
 
 void initFrameResource(uint32_t frameIndex, Renderable* r)
 {
@@ -106,7 +108,8 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
                 const char* pName = "";
                 const char* samplerName = "";
                 int32_t texIndex = -1;
-                switch (texs[i]->getTextureProperty()->_pbrType)
+                TextureTypePbr pbrType = texs[i]->getTextureProperty()->_pbrType;
+                switch (pbrType)
                 {
                 case TextureTypePbr_Albedo:
                     texIndex = 0;
@@ -474,14 +477,30 @@ void renderScene(
     auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
     uint32_t index = 0;
+
+    auto& js = ResourceManager::getSingleton().getJobSystem();
+    utils::JobSystem::Job* rootJob = js.createJob();
+
+    uint32_t aa = get_tick_count();
+    
     for (auto r : renderList)
     {
         Ogre::Material* mat = r->getMaterial().get();
         if (!mat->isLoaded())
         {
-            mat->load(nullptr);
+            mat->load(rootJob);
         }
+    }
 
+    if (rootJob)
+    {
+        js.runAndWait(rootJob);
+    }
+
+    uint32_t delta = get_tick_count() - aa;
+
+    for (auto r : renderList)
+    {
         if (!r->hasFlag(frameIndex))
         {
             userDefineShader->initCallback(frameIndex, r);

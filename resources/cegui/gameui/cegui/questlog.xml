@@ -1,0 +1,146 @@
+<?xml version="1.0" ?>
+<!--TimeStamp: 2010/ 5/24  5:55 with UIEditor-->
+<GUILayout version="4">
+	<Window type="DefaultWindow" name="QuestLog">
+		<!--Comment	""	-->
+		<!--	Left=429, Top=58, Right=1024, Bottom=710	-->
+		<Property name="Size" value="{{0.581055,0},{0.848958,0}}" />
+		<Property name="Position" value="{{0.418945,0},{0.075521,0}}" />
+		
+	    <Window type="TaharezLook/StaticImage" name="QuestLog_Background" >
+			<!--Comment	""	-->
+			<!--	Left=245, Top=97, Right=329, Bottom=179	-->
+			<Property name="Size" value="{{1.000000,0},{0.806748,0}}" />
+			<Property name="Position" value="{{0.000000,0},{0.067485,0}}" />
+			<Property name="Image" value="UI_MainBoard_5/UI_MainBoard_5_Quest_Log_Board" />
+			
+		</Window>
+		<Window type="TaharezLook/StaticImage" name="QuestLog_Cover" >
+			<!--Comment	""	-->
+			<!--	Left=431, Top=150, Right=707, Bottom=624	-->
+			<Property name="Size" value="{{0.463866,0},{0.726994,0}}" />
+			<Property name="Position" value="{{0.003361,0},{0.141104,0}}" />
+			<Property name="Image" value="UI_MainBoard_5/UI_MainBoard_5_Quest_Log_Cover" />
+			<Property name="Visible" value="True" />
+		</Window>
+		<Window type="TaharezLook/Listbox" name="QuestLog_Listbox" >
+			<!--Comment	""	-->
+			<!--	Left=440, Top=171, Right=696, Bottom=508	-->
+			<Property name="Size" value="{{0.4,0},{0.516871,0}}" />
+			<Property name="Position" value="{{0.018487,0},{0.173313,0}}" />
+			<Property name="SelectionColour" vaule="FFfefcae" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="BackgroundEnabled" value="false" />
+			<Property name="FrameEnabled" value="false" />
+		</Window>
+		<Window type="TaharezLook/StaticText" name="QuestLog_Desc" >
+			<!--Comment	""	-->
+			<!--	Left=717, Top=172, Right=1016, Bottom=549	-->
+			<Property name="Size" value="{{0.502521,0},{0.578221,0}}" />
+			<Property name="Position" value="{{0.484034,0},{0.174847,0}}" />
+			<Property name="HorzFormatting" value="WordWrapLeftAligned" />
+			<Property name="VertFormatting" value="VertCentred" />
+			<Property name="TextColours" value="CFFD800" />
+			<Property name="Text" value="aaaaagdsfgsd" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="BackgroundEnabled" value="false" />
+			<Property name="FrameEnabled" value="false" />
+			
+			<Window type="TaharezLook/Label" name="DynamicButton_1" >
+				<!--Comment	"Accept"	-->
+				<!--	Left=53, Top=571, Right=140, Bottom=595	-->
+				<Property name="Size" value="{{0.6,0},{0.05,0}}" />
+				<Property name="Position" value="{{0.143631,0},{0.775811,0}}" />
+				<Property name="Text" value="option" />
+				<Property name="AlwaysOnTop" value="True" />
+				<Property name="NormalImage" value="" />
+			    <Property name="HoverImage" value="" />
+			    <Property name="PushedImage" value="" />
+			</Window>
+			
+			<Window type="TaharezLook/Label" name="DynamicButton_2" >
+				<!--Comment	"Accept"	-->
+				<!--	Left=53, Top=571, Right=140, Bottom=595	-->
+				<Property name="Size" value="{{0.6,0},{0.05,0}}" />
+				<Property name="Position" value="{{0.143631,0},{0.775811,0}}" />
+				<Property name="Text" value="option" />
+				<Property name="AlwaysOnTop" value="True" />
+				<Property name="NormalImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Normal" />
+			    <Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Hover" />
+			    <Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Questbtn_Pushed" />
+			</Window>
+			
+			<Window type="TaharezLook/StaticImage" name="DynamicImage_1" >
+				<!--Comment	"Accept"	-->
+				<!--	Left=53, Top=571, Right=140, Bottom=595	-->
+				<Property name="Size" value="{{0.3,0},{0.3,0}}" />
+				<Property name="Position" value="{{0.143631,0},{0.775811,0}}" />
+				<Property name="Text" value="option" />
+				<Property name="AlwaysOnTop" value="True" />
+				<Property name="Image" value="" />
+			</Window>
+		</Window>
+		
+		<Window type="TaharezLook/Titlebar_2" name="QuestLog_PageHeader" >
+			<!--Comment	""	-->
+			<!--	Left=649, Top=80, Right=1024, Bottom=139	-->
+			<Property name="Size" value="{{1.0,0},{0.062883,0}}" />
+			<Property name="Position" value="{{0.000000,0},{0.067485,0}}" />
+				
+			<Window type="TaharezLook/Checkbox" name="QuestLog_alreadyhave" >
+			<!--Comment	""	-->
+			<!--	Left=627, Top=115, Right=726, Bottom=143	-->
+			<Property name="Size" value="{{0.166387,0},{0.682927,0}}" />
+			<Property name="Position" value="{{0.332773,0},{0.317073,0}}" />
+			<Property name="Text" value="已结任务" />
+			<Property name="NormalImage" value="UI_MainBoard_5/UI_MainBoard_5_Mission_Checkbox2_Normal" />
+			<Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Mission_Checkbox2_Hover" />
+			<Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Mission_Checkbox2_Pushed" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="CheckMode" value="1" />
+			<Property name="Selected" value="True" />
+			<Property name="NormalTextColour" value="FFF8D383" />
+			<Property name="HoverTextColour" value="FFB5FFF0" />
+			<Property name="PushedTextColour" value="FFF8D383" />
+			</Window>
+			<Window type="TaharezLook/Checkbox" name="QuestLog_canyhave" >
+			<!--Comment	""	-->
+			<!--	Left=727, Top=115, Right=826, Bottom=143	-->
+			<Property name="Size" value="{{0.166387,0},{0.682927,0}}" />
+			<Property name="Position" value="{{0.500840,0},{0.317073,0}}" />
+			<Property name="Text" value="可接任务" />
+			<Property name="NormalImage" value="UI_MainBoard_5/UI_MainBoard_5_Mission_Checkbox1_Normal" />
+			<Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Mission_Checkbox1_Hover" />
+			<Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Mission_Checkbox1_Pushed" />
+			<Property name="AlwaysOnTop" value="True" />
+			<Property name="CheckMode" value="1" />
+			<Property name="Selected" value="False" />
+			<Property name="NormalTextColour" value="FFF8D383" />
+			<Property name="HoverTextColour" value="FFB5FFF0" />
+			<Property name="PushedTextColour" value="FFF8D383" />
+			</Window>
+			<Window type="TaharezLook/ImageButton" name="QuestLog_Helper" >
+				<!--Comment	""	-->
+				<!--	Left=666, Top=110, Right=684, Bottom=136	-->
+				<Property name="Size" value="{{0.030252,0},{0.634146,0}}" />
+				<Property name="Position" value="{{0.045333,0},{0.268293,0}}" />
+				<Property name="NormalImage" value="UI_MainBoard_5/UI_MainBoard_5_Helpbtn_Normal" />
+				<Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Helpbtn_Hover" />
+				<Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Helpbtn_Pushed" />
+				<Property name="AlwaysOnTop" value="true" />
+			</Window>
+			<Window type="TaharezLook/ImageButton" name="QuestLog_Close" >
+				<!--Comment	""	-->
+				<!--	Left=988, Top=109, Right=1017, Bottom=137	-->
+				<Property name="Size" value="{{0.048739,0},{0.682927,0}}" />
+				<Property name="Position" value="{{0.937815,0},{0.268293,0}}" />
+				<Property name="NormalImage" value="UI_MainBoard_5/UI_MainBoard_5_Closebtn_Normal" />
+				<Property name="HoverImage" value="UI_MainBoard_5/UI_MainBoard_5_Closebtn_Hover" />
+				<Property name="PushedImage" value="UI_MainBoard_5/UI_MainBoard_5_Closebtn_Pushed" />
+				<Property name="AlwaysOnTop" value="true" />
+			</Window>
+		
+		</Window>
+		
+	</Window>
+</GUILayout>

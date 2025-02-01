@@ -4,10 +4,6 @@
 #include "OgreSceneManager.h"
 #include "OgreRenderTarget.h"
 #include "OgreViewport.h"
-#include <fg/FrameGraph.h>
-#include <filament/DriverApiForward.h>
-#include <filament/CommandStream.h>
-#include <math/vec4.h>
 
 RenderSystem::RenderSystem()
 {

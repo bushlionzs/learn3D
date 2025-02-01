@@ -81,7 +81,12 @@ bool ManualApplication::appInit()
 	mRenderWindow = mRenderSystem->createRenderWindow(desc);
 
 	ResourceParserManager::getSingleton()._initialise();
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources"), "sujian", true);
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\cegui"), "", true);
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\gltf"), "", true);
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\ogre"), "", true);
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\shader"), "", true);
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\textures"), "", true);
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\forge"), "", true);
 	ResourceManager::getSingletonPtr()->loadAllResource();
 	
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(MAIN_SCENE_MANAGER);
@@ -104,6 +109,10 @@ bool ManualApplication::appInit()
 	}
 
 	TextureManager::getSingleton().load("white1x1.dds", nullptr);
+
+	utils::JobSystem& js = ResourceManager::getSingleton().getJobSystem();
+
+	js.adopt();
 	return true;
 }
 

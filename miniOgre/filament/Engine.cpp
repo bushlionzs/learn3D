@@ -41,7 +41,7 @@ namespace filament {
 
 #if UTILS_HAS_THREADING
     Engine* Engine::getEngine(void* token) {
-        return FEngine::getEngine(token);
+        return nullptr;
     }
 #endif
 

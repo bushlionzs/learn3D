@@ -325,7 +325,7 @@ void unpackHalf2x16(uint32_t packed, Ogre::Vector2& f2) {
 
 
 
-std::shared_ptr<Ogre::Mesh> BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream)
+bool BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogre::Mesh* mesh)
 {
     uint32_t size = stream->getStreamLength();
 
@@ -337,7 +337,7 @@ std::shared_ptr<Ogre::Mesh> BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::Da
 
     if (strncmp(magic, GEOMETRY_FILE_MAGIC_STR, TF_ARRAY_COUNT(magic)) != 0)
     {
-        return std::shared_ptr<Mesh>();
+        return false;
     }
 
     uint32_t geomSize = 0;
@@ -345,10 +345,9 @@ std::shared_ptr<Ogre::Mesh> BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::Da
 
     if (geomSize < 352)
     {
-        return std::shared_ptr<Mesh>();
+        return false;
     }
-    std::shared_ptr<Ogre::Mesh> mesh = std::make_shared<Ogre::Mesh>(stream->getName());
-
+    
     Geometry* geom = (Geometry*)malloc(geomSize);
 
     stream->read(geom, geomSize);
@@ -442,5 +441,5 @@ std::shared_ptr<Ogre::Mesh> BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::Da
     AxisAlignedBox box;
     box.setInfinite();
     mesh->_setBounds(box);
-    return mesh;
+    return true;
 }

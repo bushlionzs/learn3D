@@ -44,7 +44,7 @@ void BasicApplication::setup(
 	mRenderWindow = renderWindow;
 	mRenderSystem = renderSystem;
 	mRenderPipeline = renderPipeline;
-	base2();
+	base1();
 }
 
 void BasicApplication::update(float delta)
@@ -88,7 +88,7 @@ void BasicApplication::base1()
 	ShaderInfo& info = mat->getShaderInfo();
 	//info.shaderName = "testShader";
 	//mSceneManager->setSkyBox(true, "SkyLan", 1000.0f);
-	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, -3.f), Ogre::Vector3::ZERO);
+	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, 3.f), Ogre::Vector3::ZERO);
 	mGameCamera->setCameraType(CameraMoveType_LookAt);
 	mGameCamera->setMoveSpeed(5);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
@@ -97,13 +97,13 @@ void BasicApplication::base1()
 	{
 		float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
 		m = Ogre::Math::makePerspectiveMatrixReverseZ(
-			Ogre::Math::PI / 2.0f, aspectInverse, 0.1, 6000);
+			Ogre::Math::PI / 3.0f, aspectInverse, 0.1, 6000);
 	}
 	else
 	{
 		float aspect = ogreConfig.width / (float)ogreConfig.height;
 		m = Ogre::Math::makePerspectiveMatrix(
-			Ogre::Math::PI / 2.0f, aspect, 0.1, 6000);
+			Ogre::Math::PI / 3.0f, aspect, 0.1, 6000);
 
 	}
 	mGameCamera->getCamera()->updateProjectMatrix(m);

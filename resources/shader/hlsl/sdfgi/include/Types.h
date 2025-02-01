@@ -92,8 +92,10 @@ struct Vertex
 
 struct GeometryData
 {
+	float4x4 m;
 	uint vertexOffset;
     uint indexOffset;
+	uint32_t padding[14];
 };
 
 struct Camera

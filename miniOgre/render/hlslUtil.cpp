@@ -66,7 +66,7 @@ public:
 	{
 		std::string name = dy::unicode_to_acsi(pFilename);
 		name = dy::get_short_name(name);
-		ResourceInfo* res = ResourceManager::getSingleton().getResource(name);
+		ResourceInfo* res = ResourceManager::getSingleton().getResourceInfo(name);
 
 		get_file_content(res->_fullname.c_str(), content);
 		const char* kk = content.c_str();

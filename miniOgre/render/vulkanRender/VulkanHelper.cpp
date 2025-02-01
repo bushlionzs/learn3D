@@ -126,6 +126,8 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
     
     createCommandPool();
     createVulkanResourceCache();
+
+    mTransferCommandList.reserve(100);
 }
 
 void VulkanHelper::_createBuffer(
@@ -237,38 +239,60 @@ std::shared_ptr<OgreTexture>& VulkanHelper::getDefaultTexture()
     return mDefaultTexture;
 }
 
-VkCommandBuffer VulkanHelper::beginTransferCommand()
+TransferCommandInfo VulkanHelper::beginTransferCommand()
 {
-    if (mTransfercommandBuffer == VK_NULL_HANDLE)
+    std::lock_guard<utils::Mutex> const lock(mLock);
+    if (!mTransferCommandList.empty())
     {
-        VkCommandBufferAllocateInfo allocInfo = {};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = mSingleCommandPool;
+        TransferCommandInfo commandInfo = mTransferCommandList.back();
+        mTransferCommandList.pop_back();
 
-        // 
-        allocInfo.commandBufferCount = 1;
+        VkCommandBufferBeginInfo beginInfo = {};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        bluevk::vkBeginCommandBuffer(commandInfo.commandBuffer, &beginInfo);
 
-        vkAllocateCommandBuffers(mVKDevice, &allocInfo, &mTransfercommandBuffer);
+        return commandInfo;
     }
+
+
+    TransferCommandInfo commandInfo;
+    VkCommandPoolCreateInfo cmdPoolInfo = {};
+
+
+    cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    cmdPoolInfo.queueFamilyIndex = mPlatform->getTransferQueueIndex();
+    cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+    if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &commandInfo.commandPool) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to create command pool!");
+    }
+
+
+    VkCommandBufferAllocateInfo allocInfo = {};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool = commandInfo.commandPool;
+
+    // 
+    allocInfo.commandBufferCount = 1;
+
+    vkAllocateCommandBuffers(mVKDevice, &allocInfo, &commandInfo.commandBuffer);
     
-
-
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     //beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    vkBeginCommandBuffer(mTransfercommandBuffer, &beginInfo);
-    return mTransfercommandBuffer;
+    bluevk::vkBeginCommandBuffer(commandInfo.commandBuffer, &beginInfo);
+    return commandInfo;
 }
 
-void VulkanHelper::endTransferCommand(VkCommandBuffer commandBuffer)
+void VulkanHelper::endTransferCommand(TransferCommandInfo& commandInfo)
 {
-    assert_invariant(commandBuffer == mTransfercommandBuffer);
-    vkEndCommandBuffer(commandBuffer);
+    vkEndCommandBuffer(commandInfo.commandBuffer);
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffer;
+    submitInfo.pCommandBuffers = &commandInfo.commandBuffer;
 
     auto queue = mPlatform->getTransferQueue();
 
@@ -279,6 +303,9 @@ void VulkanHelper::endTransferCommand(VkCommandBuffer commandBuffer)
         OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkQueueSubmit!");
     }
     vkQueueWaitIdle(queue);
+
+    std::lock_guard<utils::Mutex> const lock(mLock);
+    mTransferCommandList.push_back(commandInfo);
 }
 
 uint32_t VulkanHelper::getTransferFamilyIndex()
@@ -289,17 +316,7 @@ uint32_t VulkanHelper::getTransferFamilyIndex()
 
 void VulkanHelper::createCommandPool()
 {
-    VkCommandPoolCreateInfo cmdPoolInfo = {};
-
-
-    cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    cmdPoolInfo.queueFamilyIndex = mPlatform->getTransferQueueIndex();
-    cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-
-    if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &mSingleCommandPool) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create command pool!");
-    }
+    
 }
 
 void VulkanHelper::createVulkanResourceCache()

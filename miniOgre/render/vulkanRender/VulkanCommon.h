@@ -133,6 +133,12 @@ struct RayTracingScratchBuffer
 };
 
 
+struct TransferCommandInfo
+{
+    VkCommandPool commandPool;
+    VkCommandBuffer commandBuffer;
+};
+
 
 #define VULKAN_FRAME_RESOURCE_COUNT 3
 #define VULKAN_TEXTURE_COUNT 6

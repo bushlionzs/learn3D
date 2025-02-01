@@ -152,37 +152,29 @@ void TextureUnit::preLoad()
 }
 void TextureUnit::_load(utils::JobSystem::Job* job)
 {
-    if (job)
+    mTextures.reserve(mNameList.size());
+    for (auto& name : mNameList)
     {
-        assert(false);
-       
+        auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty, false);
+        mTextures.push_back(tex);
     }
-    else
+
+
+    for (auto& tex : mTextures)
     {
-        mTextures.reserve(mNameList.size());
-        for (auto& name : mNameList)
-        {
-            auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty, false);
-            mTextures.push_back(tex);
-        }
-
-
-        for (auto& tex : mTextures)
-        {
-            tex->load(job);
-        }
-
-        if (mUseAnimation || mUseScroll || mRotate != Ogre::Radian(0))
-        {
-            if (!mControllerOwner)
-                mControllerOwner = std::make_shared<TextureAnimationControllerValue>(this);
-            Ogre::ControllerManager& controllerManager = Ogre::ControllerManager::getSingleton();
-            mAnimController = controllerManager.createFrameTimePassthroughController(
-                mControllerOwner);
-        }
-
-        mLoad = true;
+        tex->load(job);
     }
+
+    if (mUseAnimation || mUseScroll || mRotate != Ogre::Radian(0))
+    {
+        if (!mControllerOwner)
+            mControllerOwner = std::make_shared<TextureAnimationControllerValue>(this);
+        Ogre::ControllerManager& controllerManager = Ogre::ControllerManager::getSingleton();
+        mAnimController = controllerManager.createFrameTimePassthroughController(
+            mControllerOwner);
+    }
+
+    mLoad = true;
     
 }
 

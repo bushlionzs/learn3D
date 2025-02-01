@@ -47,7 +47,7 @@ GltfLoader::~GltfLoader()
 
 }
 
-std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream)
+bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogre::Mesh* pMesh)
 {
 	tinygltf::TinyGLTF loader;
 
@@ -82,10 +82,13 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
             data,
             size,
             base_dir);
-        assert(res);
+      
     }
 	
-    auto pMesh = new Ogre::Mesh(stream->getName());
+    if (!res)
+    {
+        return false;
+    }
 
     std::vector<uint32_t> sharedIndices;
     std::vector<GltfVertex> sharedVertexs;
@@ -575,7 +578,7 @@ std::shared_ptr<Ogre::Mesh> GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::D
         pMesh->applySkeleton(skeletonlist.front());
     }
    
-	return std::shared_ptr<Ogre::Mesh>(pMesh);
+    return true;
 }
 
 void GltfLoader::TraverseNode(
@@ -1057,10 +1060,7 @@ void GltfLoader::addMaterialTexture(
         tp._tex_format = Ogre::PF_R8G8B8A8;
         tp._need_mipmap = true;
         tp._tex_usage = Ogre::TextureUsage::WRITEABLE;
-        if (tp._pbrType == TextureTypePbr_general)
-        {
-            int kk = 0;
-        }
+
         Ogre::OgreTexture*  tex = rs->createManualTexture(image.name, &tp);
         tex->uploadTextureData(data, size, tp);
         Ogre::TexturePtr texPtr(tex);
