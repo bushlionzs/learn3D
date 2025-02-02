@@ -244,7 +244,6 @@ void VulkanRenderSystem::addAccelerationStructure(
         desc.bufferCreationFlags = BUFFER_CREATION_FLAG_OWN_MEMORY_BIT | BUFFER_CREATION_FLAG_SHADER_DEVICE_ADDRESS |
             BUFFER_CREATION_FLAG_NO_DESCRIPTOR_VIEW_CREATION;
         desc.mSize = accelerationStructureBuildSizesInfo.accelerationStructureSize;
-        pAS->instanceDescBuffer = createBufferObject(desc);
         pAS->asBufferHandle = createBufferObject(desc);
 
         VkAccelerationStructureCreateInfoKHR accelerationStructureCreate_info = {};
@@ -656,10 +655,6 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         mVulkanPlatform->getRayTracingPipelineProperties();
 
     const uint32_t handleSize = rayTracingPipelineProperties.shaderGroupHandleSize;
-    const uint32_t handleSizeAligned = 
-        vks::tools::alignedSize(
-            rayTracingPipelineProperties.shaderGroupHandleSize, 
-            rayTracingPipelineProperties.shaderGroupBaseAlignment);
     const uint32_t groupCount = static_cast<uint32_t>(shaderGroups.size());
     uint32_t shaderGroupIdSize = rayTracingPipelineProperties.shaderGroupHandleSize;
     std::vector<uint8_t> shaderHandleStorage(groupCount * shaderGroupIdSize);
@@ -769,7 +764,7 @@ VkStridedDeviceAddressRegionKHR VulkanRenderSystem::getSbtEntryStridedDeviceAddr
 {
     auto& rayTracingPipelineProperties =
         mVulkanPlatform->getRayTracingPipelineProperties();
-    const uint32_t handleSizeAligned = vks::tools::alignedSize(rayTracingPipelineProperties.shaderGroupHandleSize, rayTracingPipelineProperties.shaderGroupBaseAlignment);
+    const uint32_t handleSizeAligned = vks::tools::alignedSize(rayTracingPipelineProperties.shaderGroupHandleSize, rayTracingPipelineProperties.shaderGroupHandleAlignment);
     VkStridedDeviceAddressRegionKHR stridedDeviceAddressRegionKHR{};
     stridedDeviceAddressRegionKHR.deviceAddress = getBufferDeviceAddress(buffer);
     stridedDeviceAddressRegionKHR.stride = handleSizeAligned;

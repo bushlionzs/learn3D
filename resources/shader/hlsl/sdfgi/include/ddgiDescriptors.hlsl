@@ -79,7 +79,9 @@ VK_BINDING(9, 0) RWStructuredBuffer<TLASInstance>            RWTLASInstances    
 
 VK_BINDING(10, 0) RWTexture2D<float4>                         RWTex2D[]           : register(u6, space0);
 VK_BINDING(11, 1) RWTexture2DArray<float4>                    RWTex2DArray[]      : register(u6, space1);
+#ifdef RAYTRACING
 VK_BINDING(12, 0) RaytracingAccelerationStructure            TLAS[]              : register(t7, space0);
+#endif 
 VK_BINDING(13, 1) Texture2D                                  Tex2D[]             : register(t7, space1);
 VK_BINDING(14, 2) Texture2DArray                             Tex2DArray[]        : register(t7, space2);
 VK_BINDING(15, 3) ByteAddressBuffer                          ByteAddrBuffer[]    : register(t7, space3);
@@ -88,13 +90,15 @@ VK_BINDING(16, 0) StructuredBuffer<GeometryData>             GeometryDatas      
 
 #define PT_OUTPUT_INDEX 0
 #define PT_ACCUMULATION_INDEX 1
-#define GBUFFERA_INDEX 2
-#define GBUFFERB_INDEX 3
-#define GBUFFERC_INDEX 4
-#define GBUFFERD_INDEX 5
-#define RTAO_OUTPUT_INDEX 6
-#define RTAO_RAW_INDEX 7
-#define DDGI_OUTPUT_INDEX 8
+
+#define GBUFFERA_INDEX 0
+#define GBUFFERB_INDEX 1
+#define GBUFFERC_INDEX 2
+#define GBUFFERD_INDEX 3
+#define DDGI_OUTPUT_INDEX 4
+#define RTAO_OUTPUT_INDEX 5
+#define RTAO_RAW_INDEX 6
+
 
 #define SCENE_TLAS_INDEX 0
 #define DDGIPROBEVIS_TLAS_INDEX 1
@@ -130,9 +134,9 @@ StructuredBuffer<DDGIVolumeDescGPUPacked> GetDDGIVolumeConstants(uint index) { r
 StructuredBuffer<DDGIVolumeResourceIndices> GetDDGIVolumeResourceIndices(uint index) { return DDGIVolumeBindless; }
 
 RWStructuredBuffer<TLASInstance> GetDDGIProbeVisTLASInstances() { return RWTLASInstances; }
-
+#ifdef RAYTRACING
 RaytracingAccelerationStructure GetAccelerationStructure(uint index) { return TLAS[index]; }
-
+#endif
 ByteAddressBuffer GetSphereIndexBuffer() { return ByteAddrBuffer[SPHERE_INDEX_BUFFER_INDEX]; }
 ByteAddressBuffer GetSphereVertexBuffer() { return ByteAddrBuffer[SPHERE_VERTEX_BUFFER_INDEX]; }
 
@@ -148,78 +152,6 @@ RWTexture2DArray<float4> GetRWTex2DArray(uint index) { return RWTex2DArray[index
 Texture2DArray<float4> GetTex2DArray(uint index) { return Tex2DArray[index]; }
 
 #elif RTXGI_BINDLESS_TYPE == RTXGI_BINDLESS_TYPE_DESCRIPTOR_HEAP
-
-// Defines for Convenience ----------------------------------------------------------------------------------
-
-#define CAMERA_INDEX 0
-#define LIGHTS_INDEX 1
-#define MATERIALS_INDEX 2
-#define SCENE_TLAS_INSTANCES_INDEX 3
-#define DDGIPROBEVIS_TLAS_INSTANCES_INDEX 6
-
-#define PT_OUTPUT_INDEX 7
-#define PT_ACCUMULATION_INDEX 8
-#define GBUFFERA_INDEX 9
-#define GBUFFERB_INDEX 10
-#define GBUFFERC_INDEX 11
-#define GBUFFERD_INDEX 12
-#define RTAO_OUTPUT_INDEX 13
-#define RTAO_RAW_INDEX 14
-#define DDGI_OUTPUT_INDEX 15
-
-#define SCENE_TLAS_INDEX 52
-#define DDGIPROBEVIS_TLAS_INDEX 53
-
-#define BLUE_NOISE_INDEX 54
-
-#define SPHERE_INDEX_BUFFER_INDEX 392
-#define SPHERE_VERTEX_BUFFER_INDEX 393
-#define MESH_OFFSETS_INDEX 394
-#define GEOMETRY_DATA_INDEX 395
-#define GEOMETRY_BUFFERS_INDEX 396
-
-// Sampler Accessor Functions ------------------------------------------------------------------------------
-
-SamplerState GetBilinearWrapSampler() { return SamplerDescriptorHeap[0]; }
-SamplerState GetPointClampSampler() { return SamplerDescriptorHeap[1]; }
-SamplerState GetAnisoWrapSampler() { return SamplerDescriptorHeap[2]; }
-
-// Resource Accessor Functions ------------------------------------------------------------------------------
-
-#define GetCamera() ConstantBuffer<Camera>(ResourceDescriptorHeap[CAMERA_INDEX])
-
-StructuredBuffer<Light> GetLights() { return StructuredBuffer<Light>(ResourceDescriptorHeap[LIGHTS_INDEX]); }
-
-void GetGeometryData(uint meshIndex, uint geometryIndex, out GeometryData geometry)
-{
-    uint address = ByteAddressBuffer(ResourceDescriptorHeap[MESH_OFFSETS_INDEX]).Load(meshIndex * 4) * 12; // offset to start of mesh, GeometryData is 12 bytes
-    address += geometryIndex * 12; // offset to mesh primitive geometry
-
-    ByteAddressBuffer geometryData = ByteAddressBuffer(ResourceDescriptorHeap[GEOMETRY_DATA_INDEX]);
-    geometry.materialIndex = geometryData.Load(address);
-    geometry.indexByteAddress = geometryData.Load(address + 4);
-    geometry.vertexByteAddress = geometryData.Load(address + 8);
-}
-Material GetMaterial(GeometryData geometry) { return StructuredBuffer<Material>(ResourceDescriptorHeap[MATERIALS_INDEX]).Load(geometry.materialIndex); }
-
-StructuredBuffer<DDGIVolumeDescGPUPacked> GetDDGIVolumeConstants(uint index) { return ResourceDescriptorHeap[index]; }
-StructuredBuffer<DDGIVolumeResourceIndices> GetDDGIVolumeResourceIndices(uint index) { return ResourceDescriptorHeap[index]; }
-
-RWStructuredBuffer<TLASInstance> GetDDGIProbeVisTLASInstances() { return ResourceDescriptorHeap[DDGIPROBEVIS_TLAS_INSTANCES_INDEX]; }
-
-RaytracingAccelerationStructure GetAccelerationStructure(uint index) { return ResourceDescriptorHeap[index];}
-
-RWTexture2D<float4> GetRWTex2D(uint index) { return ResourceDescriptorHeap[index]; }
-Texture2D<float4> GetTex2D(uint index) { return ResourceDescriptorHeap[index]; }
-
-RWTexture2DArray<float4> GetRWTex2DArray(uint index) { return ResourceDescriptorHeap[index]; }
-Texture2DArray<float4> GetTex2DArray(uint index) { return ResourceDescriptorHeap[index]; }
-
-ByteAddressBuffer GetSphereIndexBuffer() { return ResourceDescriptorHeap[SPHERE_INDEX_BUFFER_INDEX]; }
-ByteAddressBuffer GetSphereVertexBuffer() { return ResourceDescriptorHeap[SPHERE_VERTEX_BUFFER_INDEX]; }
-
-ByteAddressBuffer GetIndexBuffer(uint meshIndex) { return ResourceDescriptorHeap[GEOMETRY_BUFFERS_INDEX + (meshIndex * 2)]; }
-ByteAddressBuffer GetVertexBuffer(uint meshIndex) { return ResourceDescriptorHeap[GEOMETRY_BUFFERS_INDEX + (meshIndex * 2) + 1]; }
 
 #endif // RTXGI_BINDLESS_TYPE
 

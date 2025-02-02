@@ -62,7 +62,7 @@ struct VulkanDescriptorSetLayout : public VulkanResource,HwDescriptorSetLayout {
     static constexpr uint8_t MAX_BINDING_SET = 4;
     static constexpr uint8_t MAX_BINDINGS = 25;
 
-    using VulkanLayoutKey = std::array<uint32_t, MAX_BINDINGS>;
+    using VulkanLayoutKey = std::array<uint64_t, MAX_BINDINGS>;
     struct VulkanDescriptorSetLayoutInfo
     {
         uint32_t uboCount = 0;

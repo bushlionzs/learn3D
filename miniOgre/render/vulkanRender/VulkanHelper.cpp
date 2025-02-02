@@ -127,7 +127,37 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
     createCommandPool();
     createVulkanResourceCache();
 
-    mTransferCommandList.reserve(100);
+    uint32_t queueCount = mPlatform->getTransferQueueCount();
+    mTransferCommandList.resize(queueCount);
+
+    for (uint32_t i = 0; i < queueCount; i++)
+    {
+        TransferCommandInfo*  commandInfo = new TransferCommandInfo;
+        mTransferCommandList[i] = commandInfo;
+        commandInfo->index = i;
+        VkCommandPoolCreateInfo cmdPoolInfo = {};
+
+
+        cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        cmdPoolInfo.queueFamilyIndex = mPlatform->getTransferQueueFamilyIndex();
+        cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+        if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &commandInfo->commandPool) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to create command pool!");
+        }
+
+
+        VkCommandBufferAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandPool = commandInfo->commandPool;
+
+        // 
+        allocInfo.commandBufferCount = 1;
+
+        vkAllocateCommandBuffers(mVKDevice, &allocInfo, &commandInfo->commandBuffer);
+    }
 }
 
 void VulkanHelper::_createBuffer(
@@ -239,62 +269,33 @@ std::shared_ptr<OgreTexture>& VulkanHelper::getDefaultTexture()
     return mDefaultTexture;
 }
 
-TransferCommandInfo VulkanHelper::beginTransferCommand()
+TransferCommandInfo* VulkanHelper::beginTransferCommand()
 {
     std::lock_guard<utils::Mutex> const lock(mLock);
     if (!mTransferCommandList.empty())
     {
-        TransferCommandInfo commandInfo = mTransferCommandList.back();
+        TransferCommandInfo* commandInfo = mTransferCommandList.back();
         mTransferCommandList.pop_back();
 
         VkCommandBufferBeginInfo beginInfo = {};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        bluevk::vkBeginCommandBuffer(commandInfo.commandBuffer, &beginInfo);
+        bluevk::vkBeginCommandBuffer(commandInfo->commandBuffer, &beginInfo);
 
         return commandInfo;
     }
 
-
-    TransferCommandInfo commandInfo;
-    VkCommandPoolCreateInfo cmdPoolInfo = {};
-
-
-    cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    cmdPoolInfo.queueFamilyIndex = mPlatform->getTransferQueueIndex();
-    cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-
-    if (vkCreateCommandPool(mVKDevice, &cmdPoolInfo, nullptr, &commandInfo.commandPool) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create command pool!");
-    }
-
-
-    VkCommandBufferAllocateInfo allocInfo = {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool = commandInfo.commandPool;
-
-    // 
-    allocInfo.commandBufferCount = 1;
-
-    vkAllocateCommandBuffers(mVKDevice, &allocInfo, &commandInfo.commandBuffer);
-    
-    VkCommandBufferBeginInfo beginInfo = {};
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    //beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    bluevk::vkBeginCommandBuffer(commandInfo.commandBuffer, &beginInfo);
-    return commandInfo;
+    return nullptr;
 }
 
-void VulkanHelper::endTransferCommand(TransferCommandInfo& commandInfo)
+void VulkanHelper::endTransferCommand(TransferCommandInfo* commandInfo)
 {
-    vkEndCommandBuffer(commandInfo.commandBuffer);
+    vkEndCommandBuffer(commandInfo->commandBuffer);
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandInfo.commandBuffer;
+    submitInfo.pCommandBuffers = &commandInfo->commandBuffer;
 
-    auto queue = mPlatform->getTransferQueue();
+    auto queue = mPlatform->getTransferQueue(commandInfo->index);
 
     auto result = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
 

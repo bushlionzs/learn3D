@@ -204,18 +204,16 @@ void anyhitMain(inout RayPayload payload, in Attributes attr)
 	Triangle tri = unpackTriangle(attr);
 	GeometryNode geometryNode = geometryNodes[GeometryIndex()];
 	float4 color = geometryNode.color;
-    IgnoreIntersection();
-	return;
+
 	if(geometryNode.textureIndexBaseColor > -1)
 	{
 	    color = textures[geometryNode.textureIndexBaseColor].SampleLevel(texSampler, tri.uv, 0);
 		
-		if(geometryNode.alphaMode > 0)
+		if(geometryNode.alphaMode == 2)
 		{
-		    IgnoreHit();
 		    if (color.a < geometryNode.alphaMaskCutoff)
 			{
-				//IgnoreHit();
+				IgnoreHit();
 			}
 		}
 	}

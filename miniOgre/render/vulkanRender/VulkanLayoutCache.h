@@ -13,9 +13,9 @@ public:
     using VulkanLayoutKeyHashFn = utils::hash::MurmurHashFn<key>;
     struct VulkanLayoutKeyEqual {
         bool operator()(key const& k1, key const& k2) const {
-            const uint32_t* data1 = k1.data();
-            const uint32_t* data2 = k2.data();
-            return 0 == memcmp((const void*)data1, (const void*)data2, VulkanDescriptorSetLayout::MAX_BINDINGS * sizeof(uint16_t));
+            const uint64_t* data1 = k1.data();
+            const uint64_t* data2 = k2.data();
+            return 0 == memcmp((const void*)data1, (const void*)data2, VulkanDescriptorSetLayout::MAX_BINDINGS * sizeof(uint64_t));
         }
     };
 

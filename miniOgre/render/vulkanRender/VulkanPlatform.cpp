@@ -285,12 +285,14 @@ VkInstance createInstance(
 }
 
 VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
-        VkPhysicalDeviceFeatures const& features, uint32_t graphicsQueueFamilyIndex,
-        ExtensionSet const& deviceExtensions,
+        VkPhysicalDeviceFeatures const& features, 
+    uint32_t graphicsQueueFamilyIndex,
+    uint32_t queueCount,
+    ExtensionSet const& deviceExtensions,
     const Platform::DriverConfig& driverConfig) {
     VkDevice device;
-    VkDeviceQueueCreateInfo deviceQueueCreateInfo[1] = {};
-    const float queuePriority[] = {1.0f};
+    
+    
     VkDeviceCreateInfo deviceCreateInfo = {};
     FixedCapacityVector<const char*> requestExtensions;
     requestExtensions.reserve(deviceExtensions.size() + 10);
@@ -313,11 +315,18 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
         
     }
 
-    
-    deviceQueueCreateInfo->sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    deviceQueueCreateInfo->queueFamilyIndex = graphicsQueueFamilyIndex;
-    deviceQueueCreateInfo->queueCount = 1;
-    deviceQueueCreateInfo->pQueuePriorities = &queuePriority[0];
+    std::array<float, 32> queuePriority;
+    for (uint32_t i = 0; i < 32; i++)
+    {
+        queuePriority[i] = 1.0f;
+    }
+    VkDeviceQueueCreateInfo deviceQueueCreateInfo[2] = {};
+    deviceQueueCreateInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    deviceQueueCreateInfo[0].queueFamilyIndex = graphicsQueueFamilyIndex;
+    deviceQueueCreateInfo[0].queueCount = queueCount;
+    deviceQueueCreateInfo[0].pQueuePriorities = queuePriority.data();
+
+
     deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     deviceCreateInfo.queueCreateInfoCount = 1;
     deviceCreateInfo.pQueueCreateInfos = deviceQueueCreateInfo;
@@ -357,67 +366,46 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
     robusness2Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
     robusness2Features.pNext = nullptr;
     robusness2Features.nullDescriptor = VK_TRUE;
-    {
-        /*base->pNext = (VkBaseOutStructure*) &robusness2Features;
-       base = (VkBaseOutStructure*)base->pNext;*/
-    }
-    VkPhysicalDeviceVulkan12Features vulkan12Features{};
-    vulkan12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-    vulkan12Features.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
-    {
-       // base->pNext = (VkBaseOutStructure*) & vulkan12Features;
-       // base = (VkBaseOutStructure*)base->pNext;
-    }
 
-    /*VkPhysicalDeviceFeatures2 features2 = {};
-    features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+    VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAdressFeatures = {};
+    bufferDeviceAdressFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+    bufferDeviceAdressFeatures.pNext = &robusness2Features;
+    bufferDeviceAdressFeatures.bufferDeviceAddress = VK_TRUE;
+    
 
-    VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR fragmentShaderBarycentricFeatures = {};
-    fragmentShaderBarycentricFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR;
-    fragmentShaderBarycentricFeatures.fragmentShaderBarycentric = VK_TRUE;
-    features2.pNext = &fragmentShaderBarycentricFeatures;
-    {
-        base->pNext = (VkBaseOutStructure*)&features2;
-        base = (VkBaseOutStructure*)base->pNext;
-    }*/
+    VkPhysicalDeviceRayQueryFeaturesKHR rayQueryFeatures = {};
+    rayQueryFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR;
+    rayQueryFeatures.pNext = &bufferDeviceAdressFeatures;
+    rayQueryFeatures.rayQuery = VK_TRUE;
 
-    VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures = {
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES
-    };
-    VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingPipelineFeatures = {
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR
-    };
-    VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures = {
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR
-    };
+    VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures = {};
+    accelerationStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+    accelerationStructureFeatures.pNext = &rayQueryFeatures;
+    accelerationStructureFeatures.accelerationStructure = VK_TRUE;
+    accelerationStructureFeatures.accelerationStructureCaptureReplay = VK_FALSE;
+    accelerationStructureFeatures.accelerationStructureIndirectBuild = VK_FALSE;
+    accelerationStructureFeatures.accelerationStructureHostCommands = VK_FALSE;
+    accelerationStructureFeatures.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE;
 
-    VkPhysicalDeviceDescriptorIndexingFeaturesEXT physicalDeviceDescriptorIndexingFeatures =
-    { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT };
+    VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingPipelineFeatures = {};
+    rayTracingPipelineFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
+    rayTracingPipelineFeatures.pNext = &accelerationStructureFeatures;
+    rayTracingPipelineFeatures.rayTracingPipeline = VK_TRUE;
+    rayTracingPipelineFeatures.rayTracingPipelineShaderGroupHandleCaptureReplay = VK_FALSE;
+    rayTracingPipelineFeatures.rayTracingPipelineShaderGroupHandleCaptureReplayMixed = VK_FALSE;
+    rayTracingPipelineFeatures.rayTracingPipelineTraceRaysIndirect = VK_TRUE;
+    rayTracingPipelineFeatures.rayTraversalPrimitiveCulling = VK_TRUE;
 
-    VkPhysicalDeviceRayQueryFeaturesKHR rayQueryFeatures = 
-    { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR };
+
+    VkPhysicalDeviceDescriptorIndexingFeatures descriptorIndexingFeatures = {};
+    descriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+    descriptorIndexingFeatures.pNext = &rayTracingPipelineFeatures;
+    descriptorIndexingFeatures.runtimeDescriptorArray = VK_TRUE;
+    descriptorIndexingFeatures.descriptorBindingPartiallyBound = VK_TRUE;
+
     if (driverConfig.enableRayTracing)
     {
-        bufferDeviceAddressFeatures.bufferDeviceAddress = VK_TRUE;
-        base->pNext = (VkBaseOutStructure*)&bufferDeviceAddressFeatures;
-        base = (VkBaseOutStructure*)base->pNext;
-
-        rayTracingPipelineFeatures.rayTracingPipeline = VK_TRUE;
-        base->pNext = (VkBaseOutStructure*)&rayTracingPipelineFeatures;
-        base = (VkBaseOutStructure*)base->pNext;
-        accelerationStructureFeatures.accelerationStructure = VK_TRUE;
-        base->pNext = (VkBaseOutStructure*)&accelerationStructureFeatures;
-        base = (VkBaseOutStructure*)base->pNext;
-
-        physicalDeviceDescriptorIndexingFeatures.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
-        physicalDeviceDescriptorIndexingFeatures.runtimeDescriptorArray = VK_TRUE;
-        physicalDeviceDescriptorIndexingFeatures.descriptorBindingVariableDescriptorCount = VK_TRUE;
-        base->pNext = (VkBaseOutStructure*)&physicalDeviceDescriptorIndexingFeatures;
-        base = (VkBaseOutStructure*)base->pNext;
-
-        rayQueryFeatures.rayQuery = VK_TRUE;
-        base->pNext = (VkBaseOutStructure*)&rayQueryFeatures;
-        base = (VkBaseOutStructure*)base->pNext;
+        base->pNext = (VkBaseOutStructure*)&descriptorIndexingFeatures;
     }
     
     VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, VKALLOC, &device);
@@ -476,14 +464,18 @@ uint32_t identifyGraphicsQueueFamilyIndex(VkPhysicalDevice physicalDevice) {
     return graphicsQueueFamilyIndex;
 }
 
-uint32_t identifyTransferQueueFamilyIndex(VkPhysicalDevice physicalDevice) {
+uint32_t identifyTransferQueueFamilyIndex(VkPhysicalDevice physicalDevice, uint32_t& queueCount) {
     const FixedCapacityVector<VkQueueFamilyProperties> queueFamiliesProperties
         = getPhysicalDeviceQueueFamilyPropertiesHelper(physicalDevice);
     uint32_t transferQueueFamilyIndex = INVALID_VK_INDEX;
-    for (uint32_t j = 0; j < queueFamiliesProperties.size(); ++j) {
+    uint32_t size = queueFamiliesProperties.size();
+    for (uint32_t j = 0; j < size; ++j) {
         VkQueueFamilyProperties props = queueFamiliesProperties[j];
-        if (props.queueCount != 0 && props.queueFlags & VK_QUEUE_TRANSFER_BIT) {
+        if (props.queueCount > 0 &&
+            props.queueFlags & VK_QUEUE_TRANSFER_BIT)
+        {
             transferQueueFamilyIndex = j;
+            queueCount = props.queueCount;
             break;
         }
     }
@@ -648,8 +640,9 @@ struct VulkanPlatformPrivate {
     VkQueue mGraphicsQueue = VK_NULL_HANDLE;
 
     uint32_t mTransferQueueFamilyIndex = INVALID_VK_INDEX;
-    uint32_t mTransferQueueIndex = INVALID_VK_INDEX;
-    VkQueue mTransferQueue = VK_NULL_HANDLE;
+    uint32_t mTransferQueueCount = 1;
+    uint32_t mTransferQueueStartIndex = 0;
+    VkQueue mTransferQueue[32];
     VulkanContext mContext = {};
 
     // We use a map to both map a handle (i.e. SwapChainPtr) to the concrete type and also to
@@ -770,7 +763,10 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
                       : mImpl->mGraphicsQueueFamilyIndex;
     assert_invariant(mImpl->mGraphicsQueueFamilyIndex != INVALID_VK_INDEX);
 
-
+    mImpl->mTransferQueueFamilyIndex
+        = mImpl->mTransferQueueFamilyIndex == INVALID_VK_INDEX
+        ? identifyTransferQueueFamilyIndex(mImpl->mPhysicalDevice, mImpl->mTransferQueueCount)
+        : mImpl->mTransferQueueFamilyIndex;
     // At this point, we should have a family index that points to a family that has > 0 queues for
     // graphics. In which case, we will allocate one queue for all of Filament (and assumes at least
     // one has been allocated by the client if context was shared). If the index of the target queue
@@ -778,8 +774,10 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     mImpl->mGraphicsQueueIndex
             = mImpl->mGraphicsQueueIndex == INVALID_VK_INDEX ? 0 : mImpl->mGraphicsQueueIndex;
 
-    mImpl->mTransferQueueFamilyIndex = identifyTransferQueueFamilyIndex(mImpl->mPhysicalDevice);
-    mImpl->mTransferQueueIndex = 0;
+    if (mImpl->mTransferQueueFamilyIndex == mImpl->mTransferQueueFamilyIndex)
+    {
+        mImpl->mTransferQueueStartIndex = 1;
+    }
 
     ExtensionSet deviceExts;
     // If using a shared context, we do not assume any extensions.
@@ -792,16 +790,26 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     }
     mImpl->mDevice
             = mImpl->mDevice == VK_NULL_HANDLE ? createLogicalDevice(mImpl->mPhysicalDevice,
-                      context.mPhysicalDeviceFeatures, mImpl->mGraphicsQueueFamilyIndex, deviceExts, driverConfig)
+                      context.mPhysicalDeviceFeatures, mImpl->mGraphicsQueueFamilyIndex, 
+                mImpl->mTransferQueueCount, deviceExts, driverConfig)
                                                : mImpl->mDevice;
     assert_invariant(mImpl->mDevice != VK_NULL_HANDLE);
     vkGetDeviceQueue(mImpl->mDevice, mImpl->mGraphicsQueueFamilyIndex, mImpl->mGraphicsQueueIndex,
             &mImpl->mGraphicsQueue);
     assert_invariant(mImpl->mGraphicsQueue != VK_NULL_HANDLE);
 
-    vkGetDeviceQueue(mImpl->mDevice, mImpl->mTransferQueueFamilyIndex, mImpl->mTransferQueueIndex,
-        &mImpl->mTransferQueue);
-    assert_invariant(mImpl->mTransferQueue != VK_NULL_HANDLE);
+    mImpl->mTransferQueueCount = std::min((uint32_t)32, mImpl->mTransferQueueCount);
+
+    for (uint32_t i = mImpl->mTransferQueueStartIndex; i < mImpl->mTransferQueueCount; i++)
+    {
+        uint32_t index = i - mImpl->mTransferQueueStartIndex;
+        vkGetDeviceQueue(mImpl->mDevice, mImpl->mTransferQueueFamilyIndex, i,
+            &mImpl->mTransferQueue[index]);
+
+        assert_invariant(mImpl->mTransferQueue[index] != VK_NULL_HANDLE);
+    }
+    
+
 
     if (driverConfig.enableRayTracing)
     {
@@ -931,14 +939,19 @@ uint32_t VulkanPlatform::getTransferQueueFamilyIndex() const noexcept
     return mImpl->mTransferQueueFamilyIndex;
 }
 
-uint32_t VulkanPlatform::getTransferQueueIndex() const noexcept
+
+VkQueue VulkanPlatform::getTransferQueue(uint32_t index) const noexcept
 {
-    return mImpl->mTransferQueueIndex;
+    if (index >= mImpl->mTransferQueueCount)
+    {
+        return VK_NULL_HANDLE;
+    }
+    return mImpl->mTransferQueue[index - mImpl->mTransferQueueStartIndex];
 }
 
-VkQueue VulkanPlatform::getTransferQueue() const noexcept
+uint32_t VulkanPlatform::getTransferQueueCount() const noexcept
 {
-    return mImpl->mTransferQueue;
+    return mImpl->mTransferQueueCount;
 }
 
 VkPhysicalDeviceRayTracingPipelinePropertiesKHR& VulkanPlatform::getRayTracingPipelineProperties()

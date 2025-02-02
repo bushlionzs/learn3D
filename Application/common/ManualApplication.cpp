@@ -87,6 +87,7 @@ bool ManualApplication::appInit()
 	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\shader"), "", true);
 	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\textures"), "", true);
 	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\forge"), "", true);
+	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\scene"), "", true);
 	ResourceManager::getSingletonPtr()->loadAllResource();
 	
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(MAIN_SCENE_MANAGER);

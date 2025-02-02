@@ -162,6 +162,7 @@ bool hlslToBin(
 	if (vulkan)
 	{
 		arguments.push_back(L"-D VULKAN");
+		arguments.push_back(L"-D __spirv__");
 		arguments.push_back(L"-spirv");
 		arguments.push_back(L"-fspv-target-env=vulkan1.2");
 	}

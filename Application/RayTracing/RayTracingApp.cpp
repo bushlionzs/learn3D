@@ -460,107 +460,7 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 
 	if (1)
 	{
-		backend::SamplerParams samplerParams;
-
-		samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
-		samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
-		samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-		samplerParams.wrapS = backend::SamplerWrapMode::REPEAT;
-		samplerParams.wrapT = backend::SamplerWrapMode::REPEAT;
-		samplerParams.wrapR = backend::SamplerWrapMode::REPEAT;
-		samplerParams.compareMode = backend::SamplerCompareMode::NONE;
-		samplerParams.compareFunc = backend::SamplerCompareFunc::N;
-		samplerParams.anisotropyLog2 = 0;
-		samplerParams.padding0 = 0;
-		samplerParams.padding1 = 0;
-		samplerParams.padding2 = 0;
-		auto repeatBillinearSampler = rs->createTextureSampler(samplerParams);
-		auto winDepth = renderWindow->getDepthTarget();
-		ShaderInfo shaderInfo;
-		shaderInfo.shaderName = "presentShade";
-		auto presentHandle = rs->createShaderProgram(shaderInfo, nullptr);
-		for (auto i = 0; i < numFrame; i++)
-		{
-			auto& frameData = mFrameInfoList[i];
-			auto zeroSet = rs->createDescriptorSet(presentHandle, 0);
-			frameData.zeroDescriptorSetOfPresent = zeroSet;
-			auto* tex = outPutTarget->getTarget();
-
-			descriptorData[0].mCount = 1;
-			descriptorData[0].pName = "SourceTexture";
-			descriptorData[0].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
-			descriptorData[0].ppTextures = (const OgreTexture**)&tex;
-
-			descriptorData[1].mCount = 1;
-			descriptorData[1].pName = "repeatBillinearSampler";
-			descriptorData[1].descriptorType = DESCRIPTOR_TYPE_SAMPLER;
-			descriptorData[1].ppSamplers = &repeatBillinearSampler;
-
-			rs->updateDescriptorSet(zeroSet, 2, descriptorData);
-		}
-
-		backend::RasterState rasterState{};
-		rasterState.depthWrite = false;
-		rasterState.depthTest = false;
-		rasterState.depthFunc = SamplerCompareFunc::A;
-		rasterState.colorWrite = true;
-		rasterState.renderTargetCount = 1;
-		rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
-		auto pipelineHandle = rs->createPipeline(rasterState, presentHandle);
-
-		RenderPassCallback presentCallback = [=, this](RenderPassInfo& info) {
-			{
-				RenderTargetBarrier rtBarriers[] =
-				{
-					{
-						renderWindow->getColorTarget(),
-						RESOURCE_STATE_PRESENT,
-						RESOURCE_STATE_RENDER_TARGET
-					},
-					{
-						outPutTarget,
-						RESOURCE_STATE_UNORDERED_ACCESS,
-						RESOURCE_STATE_PIXEL_SHADER_RESOURCE
-					}
-				};
-				rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
-			}
-			
-			info.renderTargetCount = 1;
-			info.renderTargets[0].renderTarget = renderWindow->getColorTarget();
-			info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-			info.depthTarget.depthStencil = nullptr;
-			info.depthTarget.clearValue = { 0.0f, 0.0f };
-			auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-			rs->pushGroupMarker("presentPass");
-			rs->beginRenderPass(info);
-			auto* frameData = getFrameInfo(frameIndex);
-			rs->bindPipeline(pipelineHandle,
-				&frameData->zeroDescriptorSetOfPresent, 1);
-			rs->draw(3, 0);
-			rs->endRenderPass(info);
-			rs->popGroupMarker();
-
-			{
-				RenderTargetBarrier rtBarriers[] =
-				{
-					{
-						renderWindow->getColorTarget(),
-						RESOURCE_STATE_RENDER_TARGET,
-						RESOURCE_STATE_PRESENT
-					},
-					{
-						outPutTarget,
-						RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-						RESOURCE_STATE_UNORDERED_ACCESS
-					}
-				};
-				rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
-			}
-			};
-		UpdatePassCallback updateCallback = [](float delta) {
-			};
-		auto presentPass = createUserDefineRenderPass(presentCallback, updateCallback);
+		PassBase* presentPass = createPresentPass(outPutTarget, mRenderWindow);
 		renderPipeline->addRenderPass(presentPass);
 	}
 
@@ -1483,6 +1383,18 @@ void RayTracingApp::initRayTracingContext(RayTracingContext& context, Ogre::Enti
 	std::vector<GeometryNode> geometryNodes;
 	geometryNodes.resize(subEntityCount);
 
+	auto& js = ResourceManager::getSingleton().getJobSystem();
+	utils::JobSystem::Job* rootJob = js.createJob();
+
+	for (uint32_t i = 0; i < subEntityCount; i++)
+	{
+		SubEntity* subEntity = entity->getSubEntity(i);
+		auto& mat = subEntity->getMaterial();
+		mat->load(rootJob);
+	}
+
+	js.runAndWait(rootJob);
+
 	for (uint32_t i = 0; i < subEntityCount; i++)
 	{
 		SubEntity* subEntity = entity->getSubEntity(i);
@@ -1491,15 +1403,15 @@ void RayTracingApp::initRayTracingContext(RayTracingContext& context, Ogre::Enti
 		auto& mat = subEntity->getMaterial();
 		auto materialFlag = mat->getMaterialFlags();
 
-		mat->load(nullptr);
+		PbrMaterialConstanceBuffer& pbrBuffer = mat->getPbrMatInfo();
 		const Ogre::Matrix4& subMatrix = subEntity->getModelMatrix();
 		TransformMatrix transformMatrix;
 
 		memcpy(&transformMatrix, (void*)&subMatrix, sizeof(transformMatrix));
 		transformMatrices.push_back(transformMatrix);
-		geomDescs[i].mFlags = (materialFlag & MATERIAL_FLAG_ALPHA_TESTED)
-			? ACCELERATION_STRUCTURE_GEOMETRY_FLAG_NO_DUPLICATE_ANYHIT_INVOCATION
-			: ACCELERATION_STRUCTURE_GEOMETRY_FLAG_OPAQUE;
+		geomDescs[i].mFlags = (pbrBuffer.alphaMode == 0)
+			? ACCELERATION_STRUCTURE_GEOMETRY_FLAG_OPAQUE
+			: ACCELERATION_STRUCTURE_GEOMETRY_FLAG_NO_DUPLICATE_ANYHIT_INVOCATION;
 		IndexDataView* indexView = subEntity->getIndexView();
 		geomDescs[i].vertexBufferHandle = vertexData->getBuffer(0);
 		geomDescs[i].mVertexCount = (uint32_t)vertexData->getVertexCount();
@@ -1536,7 +1448,7 @@ void RayTracingApp::initRayTracingContext(RayTracingContext& context, Ogre::Enti
 
 		geometryNode.vertexOffset = indexView->mBaseVertexLocation;
 		geometryNode.indexOffset = indexView->mIndexLocation;
-		PbrMaterialConstanceBuffer&  pbrBuffer = mat->getPbrMatInfo();
+		
 		geometryNode.color = pbrBuffer.baseColorFactor;
 		geometryNode.alphaMode = pbrBuffer.alphaMode;
 		geometryNode.alphaMaskCutoff = pbrBuffer.alphaMaskCutoff;

@@ -63,8 +63,8 @@ public:
     VkSampler getSampler(const filament::backend::SamplerParams& samplerParams);
 
     std::shared_ptr<OgreTexture>& getDefaultTexture();
-    TransferCommandInfo beginTransferCommand();
-    void endTransferCommand(TransferCommandInfo& commandInfo);
+    TransferCommandInfo* beginTransferCommand();
+    void endTransferCommand(TransferCommandInfo* commandInfo);
     uint32_t getTransferFamilyIndex();
     bool haveRayTracing()
     {
@@ -107,7 +107,7 @@ private:
     VkPhysicalDeviceMemoryProperties mPhysicalMemoryProperties;
  
 
-    std::vector<TransferCommandInfo> mTransferCommandList;
+    std::vector<TransferCommandInfo*> mTransferCommandList;
     mutable utils::Mutex mLock;
     
     //default texture

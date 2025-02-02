@@ -420,28 +420,12 @@ void VulkanRenderSystemBase::bindPipeline(
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
     auto pipelineLayout = vulkanProgram->getVulkanPipelineLayout();
 
-
-    if (setCount > 0)
+    for (uint32_t i = 0; i < setCount; i++)
     {
-        VkDescriptorSet descriptorSet[4];
-
-        for (auto i = 0; i < setCount; i++)
-        {
-            if (descSets[i])
-            {
-                VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(descSets[i]);
-                descriptorSet[i] = set->vkSet;
-            }
-            else
-            {
-                descriptorSet[i] = pEmptyDescriptorSet;
-            }
-        }
-
+        VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(descSets[i]);
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-            pipelineLayout, 0, setCount, &descriptorSet[0], 0, nullptr);
+            pipelineLayout, set->mSet, 1, &set->vkSet, 0, nullptr);
     }
-    
 }
 
 void VulkanRenderSystemBase::draw(uint32_t vertexCount, uint32_t firstVertex)

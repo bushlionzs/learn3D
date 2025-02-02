@@ -140,7 +140,7 @@ void VulkanTexture::createInternalResourcesImpl(void)
 
     if (mTextureProperty._tex_usage & WRITEABLE)
     {
-        TransferCommandInfo commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
+        TransferCommandInfo* commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
         TextureBarrier uavBarriers[] = {
                 {
                 this,
@@ -149,7 +149,7 @@ void VulkanTexture::createInternalResourcesImpl(void)
         };
 
         auto queueFamilyIndex = VulkanHelper::getSingleton().getTransferFamilyIndex();
-        vks::tools::resourceBarrier(0, nullptr, 1, uavBarriers, 0, nullptr, QUEUE_TYPE_TRANSFER, 0, commandInfo.commandBuffer);
+        vks::tools::resourceBarrier(0, nullptr, 1, uavBarriers, 0, nullptr, QUEUE_TYPE_TRANSFER, 0, commandInfo->commandBuffer);
         VulkanHelper::getSingleton().endTransferCommand(commandInfo);
     }
 }
@@ -218,12 +218,12 @@ void VulkanTexture::updateTexture(const std::vector<const CImage*>& images)
 
 void VulkanTexture::postLoad()
 {
-    TransferCommandInfo commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
+    TransferCommandInfo* commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
 
     if (mStagingBuffer)
     {
         vks::tools::copyBufferToImage(
-            commandInfo.commandBuffer,
+            commandInfo->commandBuffer,
             mStagingBuffer,
             mTextureImage,
             this
@@ -233,7 +233,7 @@ void VulkanTexture::postLoad()
 
     if (mNeedMipmaps)
     {
-        vks::tools::generateMipmaps(commandInfo.commandBuffer, this);
+        vks::tools::generateMipmaps(commandInfo->commandBuffer, this);
     }
 
     VulkanHelper::getSingleton().endTransferCommand(commandInfo);
@@ -522,9 +522,9 @@ void VulkanTexture::blitFromMemory(
 
 void VulkanTexture::uploadData()
 {
-    TransferCommandInfo commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
+    TransferCommandInfo* commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
     vks::tools::copyBufferToImage(
-        commandInfo.commandBuffer,
+        commandInfo->commandBuffer,
         mStagingBuffer,
         mTextureImage,
         this

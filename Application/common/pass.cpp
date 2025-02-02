@@ -12,6 +12,7 @@
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
 #include "renderUtil.h"
+#include "presentPass.h"
 
 class StandardRenderPass : public PassBase
 {
@@ -230,4 +231,12 @@ PassBase* createComputePass(
 	UpdatePassCallback updateCallback)
 {
 	return new ComputePass(userCallback, updateCallback);
+}
+
+PassBase* createPresentPass(
+	Ogre::RenderTarget* sourceTarget, 
+	RenderWindow* renderWindow,
+	const char* shaderName)
+{
+	return new PresentPass(sourceTarget, renderWindow, shaderName);
 }

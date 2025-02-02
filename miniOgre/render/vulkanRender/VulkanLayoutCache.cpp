@@ -12,7 +12,9 @@ VkDescriptorSetLayout VulkanLayoutCache::getLayout(VkDescriptorSetLayoutBinding*
     VulkanDescriptorSetLayout::VulkanLayoutKey key;
     for (auto i = 0; i < count; i++)
     {
-        key[i] = (binding[i].descriptorCount << 16) |
+        key[i] = binding[i].stageFlags;
+        key[i] <<= 32;
+        key[i] |= (binding[i].descriptorCount << 16) |
             (binding[i].binding << 8) |
             (uint8_t)binding[i].descriptorType & 0xf;
     }

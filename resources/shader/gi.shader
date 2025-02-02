@@ -324,3 +324,20 @@ shader ProbeExtraReductionCS
 		compute_shader ReductionCS.hlsl DDGIExtraReductionCS 
 	 }
 }
+
+shader CompositePass
+{
+    shader_unit
+	 {
+		shader_type directx
+		vertex_shader Composite.hlsl VS
+		frag_shader Composite.hlsl PS
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader Composite.hlsl VS
+		frag_shader  Composite.hlsl PS 
+	 }
+}

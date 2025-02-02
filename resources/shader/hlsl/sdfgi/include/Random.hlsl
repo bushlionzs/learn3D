@@ -11,6 +11,7 @@
 #ifndef RANDOM_HLSL
 #define RANDOM_HLSL
 
+#include "ddgiCommon.hlsl"
 
 uint WangHash(uint seed)
 {
@@ -103,7 +104,7 @@ float3 GetRandomCosineDirectionOnHemisphere(float3 direction, inout uint seed)
 {
     // Choose random points on the unit sphere offset along the surface normal
     // to produce a cosine distribution of random directions.
-    float a = GetRandomNumber(seed) * RTXGI_2PI;
+    float a = GetRandomNumber(seed) * TWO_PI;
     float z = GetRandomNumber(seed) * 2.f - 1.f;
     float r = sqrt(1.f - z * z);
 

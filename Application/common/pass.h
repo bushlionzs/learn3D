@@ -55,3 +55,8 @@ PassBase* createUserDefineRenderPass(
 PassBase* createComputePass(
 	ComputePassCallback userCallback,
 	UpdatePassCallback updateCallback);
+
+PassBase* createPresentPass(
+	Ogre::RenderTarget* sourceTarget, 
+	RenderWindow* renderWindow,
+	const char* shaderName = nullptr);
