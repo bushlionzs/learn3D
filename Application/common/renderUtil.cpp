@@ -15,7 +15,7 @@
 #include "game_camera.h"
 #include "time_util.h"
 
-void initFrameResource(uint32_t frameIndex, Renderable* r)
+void initFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
 {
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
@@ -26,9 +26,9 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
 
         r->updateFrameResource(frameIndex, (void*)resourceInfo);
 
-        BufferDesc desc{};
-        desc.mBindingType = BufferObjectBinding_Uniform;
-        desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
+        Ogre::BufferDesc desc{};
+        desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+        desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
         desc.bufferCreationFlags = 0;
         desc.mSize = sizeof(ObjectConstantBuffer);
         Handle<HwBufferObject> objectBufferHandle =
@@ -39,16 +39,16 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
         Handle<HwBufferObject> matBufferHandle;
         if (mat->isPbr())
         {
-            desc.mBindingType = BufferObjectBinding_Uniform;
-            desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
+            desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+            desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
             desc.bufferCreationFlags = 0;
             desc.mSize = sizeof(PbrMaterialConstanceBuffer);
             matBufferHandle = rs->createBufferObject(desc);
         }
         else
         {
-            desc.mBindingType = BufferObjectBinding_Uniform;
-            desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
+            desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+            desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
             desc.bufferCreationFlags = 0;
             desc.mSize = sizeof(GeneralMaterialConstantBuffer);
             matBufferHandle = rs->createBufferObject(desc);
@@ -62,17 +62,17 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
         resourceInfo->firstSet = rs->createDescriptorSet(programHandle, 1);
         resourceInfo->zeroShadowSet = rs->createDescriptorSet(programHandle, 0);
 
-        DescriptorData descriptorData[256];
+        Ogre::DescriptorData descriptorData[256];
         uint32_t descriptorCount = 0;
         descriptorData[descriptorCount].pName = "cbPerObject";
         descriptorData[descriptorCount].mCount = 1;
-        descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+        descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_BUFFER;
         descriptorData[descriptorCount].ppBuffers = &objectBufferHandle;
         descriptorCount++;
         const char* materialName = mat->isPbr() ? "pbrMaterial" : "cbMaterial";
         descriptorData[descriptorCount].pName = materialName;
         descriptorData[descriptorCount].mCount = 1;
-        descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+        descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_BUFFER;
         descriptorData[descriptorCount].ppBuffers = &matBufferHandle;
         descriptorCount++;
 
@@ -80,14 +80,14 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
         RawData* rawData = r->getSkinnedData();
         if (rawData)
         {
-            desc.mBindingType = BufferObjectBinding_Uniform;
-            desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
+            desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+            desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
             desc.bufferCreationFlags = 0;
             desc.mSize = sizeof(SkinnedConstantBuffer);
             resourceInfo->skinObjectHandle = rs->createBufferObject(desc);
             descriptorData[descriptorCount].pName = "cbSkinned";
             descriptorData[descriptorCount].mCount = 1;
-            descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+            descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_BUFFER;
             descriptorData[descriptorCount].ppBuffers = &resourceInfo->skinObjectHandle;
             descriptorCount++;
         }
@@ -102,85 +102,85 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
         auto& texs = mat->getAllTexureUnit();
         if (mat->isPbr())
         {
-            OgreTexture* texArray[9];
+            Ogre::OgreTexture* texArray[9];
             for (int32_t i = 0; i < texs.size(); i++)
             {
                 const char* pName = "";
                 const char* samplerName = "";
                 int32_t texIndex = -1;
-                TextureTypePbr pbrType = texs[i]->getTextureProperty()->_pbrType;
+                Ogre::TextureTypePbr pbrType = texs[i]->getTextureProperty()->_pbrType;
                 switch (pbrType)
                 {
-                case TextureTypePbr_Albedo:
+                case Ogre::TextureTypePbr_Albedo:
                     texIndex = 0;
                     pName = "albedo_pbr";
                     samplerName = "albedoSampler";
                     break;
-                case TextureTypePbr_MetalRoughness:
+                case Ogre::TextureTypePbr_MetalRoughness:
                     texIndex = 4;
                     pName = "metal_roughness_pbr";
                     samplerName = "metalRoughnessSampler";
                     break;
-                case TextureTypePbr_NormalMap:
+                case Ogre::TextureTypePbr_NormalMap:
                     texIndex = 2;
                     pName = "normal_pbr";
                     samplerName = "normalSampler";
                     break;
-                case TextureTypePbr_Emissive:
+                case Ogre::TextureTypePbr_Emissive:
                     texIndex = 3;
                     pName = "emissive_pbr";
                     samplerName = "emissiveSampler";
                     break;
-                case TextureTypePbr_AmbientOcclusion:
+                case Ogre::TextureTypePbr_AmbientOcclusion:
                     texIndex = 1;
                     pName = "ao_pbr";
                     samplerName = "aoSampler";
                     break;
-                case TextureTypePbr_Roughness:
+                case Ogre::TextureTypePbr_Roughness:
                     texIndex = 5;
                     pName = "roughness_pbr";
                     samplerName = "roughnessSampler";
                     break;
-                case TextureTypePbr_BRDF_LUT:
+                case Ogre::TextureTypePbr_BRDF_LUT:
                     texIndex = 6;
                     pName = "brdflut_pbr";
                     samplerName = "brdflutSampler";
                     break;
-                case TextureTypePbr_IBL_Diffuse:
+                case Ogre::TextureTypePbr_IBL_Diffuse:
                     texIndex = 7;
                     pName = "irradianceCube";
                     samplerName = "irradianceSampler";
                     break;
-                case TextureTypePbr_IBL_Specular:
+                case Ogre::TextureTypePbr_IBL_Specular:
                     texIndex = 8;
                     pName = "prefilteredCube";
                     samplerName = "prefilteredSampler";
                     break;
                 }
                 assert(texIndex >= 0);
-                OgreTexture* tex = texs[i]->getRaw();
+                Ogre::OgreTexture* tex = texs[i]->getRaw();
                 texArray[i] = tex;
                 descriptorData[descriptorCount].pName = pName;
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[i];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[i];
                 descriptorCount++;
 
                 descriptorData[descriptorCount].pName = samplerName;
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[i];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[i];
                 descriptorCount++;
             }
             rs->updateDescriptorSet(resourceInfo->firstSet, descriptorCount, descriptorData);
         }
         else
         {
-            OgreTexture* texArray[4];
+            Ogre::OgreTexture* texArray[4];
             int32_t texIndex = -1;
             for (int32_t i = 0; i < texs.size(); i++)
             {
-                if (texs[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
+                if (texs[i]->getTextureProperty()->_texType == Ogre::TEX_TYPE_CUBE_MAP)
                     continue;
                 texArray[++texIndex] = texs[i]->getRaw();
             }
@@ -189,14 +189,14 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
             {
                 descriptorData[descriptorCount].pName = "first";
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[0];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[0];
                 descriptorCount++;
 
                 descriptorData[descriptorCount].pName = "firstSampler";
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[0];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[0];
                 descriptorCount++;
             }
 
@@ -204,14 +204,14 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
             {
                 descriptorData[descriptorCount].pName = "second";
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[1];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[1];
                 descriptorCount++;
 
                 descriptorData[descriptorCount].pName = "secondSampler";
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[1];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[1];
                 descriptorCount++;
             }
 
@@ -219,32 +219,32 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
             {
                 descriptorData[descriptorCount].pName = "third";
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)texArray[2];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)texArray[2];
                 descriptorCount++;
 
                 descriptorData[descriptorCount].pName = "thirdSampler";
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[2];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[2];
                 descriptorCount++;
             }
 
             for (int32_t i = 0; i < texs.size(); i++)
             {
-                if (texs[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
+                if (texs[i]->getTextureProperty()->_texType == Ogre::TEX_TYPE_CUBE_MAP)
                 {
                     texArray[3] = texs[i]->getRaw();
                     descriptorData[descriptorCount].pName = "cubeMap";
                     descriptorData[descriptorCount].mCount = 1;
-                    descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                    descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[3];
+                    descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                    descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[3];
                     descriptorCount++;
 
                     descriptorData[descriptorCount].pName = "cubeSampler";
                     descriptorData[descriptorCount].mCount = 1;
-                    descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                    descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[3];
+                    descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                    descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[3];
                     descriptorCount++;
                     break;
                 }
@@ -254,7 +254,7 @@ void initFrameResource(uint32_t frameIndex, Renderable* r)
     }
 }
 
-void updateFrameResource(uint32_t frameIndex, Renderable* r)
+void updateFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
 {
     void* frameData= r->getFrameResourceInfo(frameIndex);
     FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
@@ -301,9 +301,9 @@ void updateFrameResource(uint32_t frameIndex, Renderable* r)
     }
 }
 
-void updateMaterialInfo(Renderable* r, bool updateTexture)
+void updateMaterialInfo(Ogre::Renderable* r, bool updateTexture)
 {
-    Material* mat = r->getMaterial().get();
+    Ogre::Material* mat = r->getMaterial().get();
 
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
@@ -316,7 +316,7 @@ void updateMaterialInfo(Renderable* r, bool updateTexture)
 
     if (!updateTexture)
         return;
-    DescriptorData descriptorData[256];
+    Ogre::DescriptorData descriptorData[256];
     uint32_t descriptorCount = 0;
     uint32_t index = 0;
     mat->load(nullptr);
@@ -327,7 +327,7 @@ void updateMaterialInfo(Renderable* r, bool updateTexture)
         FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
         if (mat->isPbr())
         {
-            OgreTexture* texArray[9];
+            Ogre::OgreTexture* texArray[9];
             for (int32_t i = 0; i < texs.size(); i++)
             {
                 const char* pName = "";
@@ -335,65 +335,65 @@ void updateMaterialInfo(Renderable* r, bool updateTexture)
                 int32_t texIndex = -1;
                 switch (texs[i]->getTextureProperty()->_pbrType)
                 {
-                case TextureTypePbr_Albedo:
+                case Ogre::TextureTypePbr_Albedo:
                     texIndex = 0;
                     pName = "albedo_pbr";
                     samplerName = "albedoSampler";
                     break;
-                case TextureTypePbr_MetalRoughness:
+                case Ogre::TextureTypePbr_MetalRoughness:
                     texIndex = 4;
                     pName = "metal_roughness_pbr";
                     samplerName = "metalRoughnessSampler";
                     break;
-                case TextureTypePbr_NormalMap:
+                case Ogre::TextureTypePbr_NormalMap:
                     texIndex = 2;
                     pName = "normal_pbr";
                     samplerName = "normalSampler";
                     break;
-                case TextureTypePbr_Emissive:
+                case Ogre::TextureTypePbr_Emissive:
                     texIndex = 3;
                     pName = "emissive_pbr";
                     samplerName = "emissiveSampler";
                     break;
-                case TextureTypePbr_AmbientOcclusion:
+                case Ogre::TextureTypePbr_AmbientOcclusion:
                     texIndex = 1;
                     pName = "ao_pbr";
                     samplerName = "aoSampler";
                     break;
-                case TextureTypePbr_Roughness:
+                case Ogre::TextureTypePbr_Roughness:
                     texIndex = 5;
                     pName = "roughness_pbr";
                     samplerName = "roughnessSampler";
                     break;
-                case TextureTypePbr_BRDF_LUT:
+                case Ogre::TextureTypePbr_BRDF_LUT:
                     texIndex = 6;
                     pName = "brdflut_pbr";
                     samplerName = "brdflutSampler";
                     break;
-                case TextureTypePbr_IBL_Diffuse:
+                case Ogre::TextureTypePbr_IBL_Diffuse:
                     texIndex = 7;
                     pName = "irradianceCube";
                     samplerName = "irradianceSampler";
                     break;
-                case TextureTypePbr_IBL_Specular:
+                case Ogre::TextureTypePbr_IBL_Specular:
                     texIndex = 8;
                     pName = "prefilteredCube";
                     samplerName = "prefilteredSampler";
                     break;
                 }
                 assert(texIndex >= 0);
-                OgreTexture* tex = texs[i]->getRaw();
+                Ogre::OgreTexture* tex = texs[i]->getRaw();
                 texArray[i] = tex;
                 descriptorData[descriptorCount].pName = pName;
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[i];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[i];
                 descriptorCount++;
 
                 descriptorData[descriptorCount].pName = samplerName;
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[i];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[i];
                 descriptorCount++;
             }
             rs->updateDescriptorSet(resourceInfo->firstSet, descriptorCount, descriptorData);
@@ -401,11 +401,11 @@ void updateMaterialInfo(Renderable* r, bool updateTexture)
         }
         else
         {
-            std::array<OgreTexture*, 4> texArray{};
+            std::array<Ogre::OgreTexture*, 4> texArray{};
             int32_t texIndex = -1;
             for (int32_t i = 0; i < texs.size(); i++)
             {
-                if (texs[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
+                if (texs[i]->getTextureProperty()->_texType == Ogre::TEX_TYPE_CUBE_MAP)
                     continue;
                 texArray[++texIndex] = texs[i]->getRaw();
             }
@@ -414,8 +414,8 @@ void updateMaterialInfo(Renderable* r, bool updateTexture)
             {
                 descriptorData[descriptorCount].pName = "first";
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[0];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[0];
                 descriptorCount++;
             }
 
@@ -423,8 +423,8 @@ void updateMaterialInfo(Renderable* r, bool updateTexture)
             {
                 descriptorData[descriptorCount].pName = "second";
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[1];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[1];
                 descriptorCount++;
             }
 
@@ -432,20 +432,20 @@ void updateMaterialInfo(Renderable* r, bool updateTexture)
             {
                 descriptorData[descriptorCount].pName = "third";
                 descriptorData[descriptorCount].mCount = 1;
-                descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[2];
+                descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[2];
                 descriptorCount++;
             }
 
             for (int32_t i = 0; i < texs.size(); i++)
             {
-                if (texs[i]->getTextureProperty()->_texType == TEX_TYPE_CUBE_MAP)
+                if (texs[i]->getTextureProperty()->_texType == Ogre::TEX_TYPE_CUBE_MAP)
                 {
                     texArray[3] = texs[i]->getRaw();
                     descriptorData[descriptorCount].pName = "gCubeMap";
                     descriptorData[descriptorCount].mCount = 1;
-                    descriptorData[descriptorCount].descriptorType = DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                    descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[3];
+                    descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+                    descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[3];
                     descriptorCount++;
                     break;
                 }
@@ -457,8 +457,8 @@ void updateMaterialInfo(Renderable* r, bool updateTexture)
 }
 
 void renderScene(
-    ICamera* cam,
-    SceneManager* sceneManager,
+    Ogre::ICamera* cam,
+    Ogre::SceneManager* sceneManager,
     RenderPassInfo& renderPassInfo,
     UserDefineShader* userDefineShader)
 {
@@ -468,8 +468,8 @@ void renderScene(
 }
 
 void renderScene(
-    ICamera* cam,
-    const std::vector<Renderable*>& renderList,
+    Ogre::ICamera* cam,
+    const std::vector<Ogre::Renderable*>& renderList,
     RenderPassInfo& renderPassInfo,
     UserDefineShader* userDefineShader)
 {
@@ -478,7 +478,7 @@ void renderScene(
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
     uint32_t index = 0;
 
-    auto& js = ResourceManager::getSingleton().getJobSystem();
+    auto& js = Ogre::ResourceManager::getSingleton().getJobSystem();
     utils::JobSystem::Job* rootJob = js.createJob();
 
     uint32_t aa = get_tick_count();
@@ -516,7 +516,7 @@ void renderScene(
     {
         Ogre::Material* mat = r->getMaterial().get();
         auto flags = mat->getMaterialFlags();
-        if (flags & MATERIAL_FLAG_ALPHA_TESTED)
+        if (flags & Ogre::MATERIAL_FLAG_ALPHA_TESTED)
         {
             continue;
         }
@@ -532,7 +532,7 @@ void renderScene(
         break;
         Ogre::Material* mat = r->getMaterial().get();
         auto flags = mat->getMaterialFlags();
-        if (flags & MATERIAL_FLAG_ALPHA_TESTED)
+        if (flags & Ogre::MATERIAL_FLAG_ALPHA_TESTED)
         {
             userDefineShader->drawCallback(frameIndex, r);
         }
@@ -578,8 +578,8 @@ void renderScene(
 //}
 
 void updateFrameData(
-    ICamera* camera, 
-    ICamera* light, 
+    Ogre::ICamera* camera,
+    Ogre::ICamera* light,
     FrameConstantBuffer& frameConstantBuffer)
 {
     RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
@@ -627,7 +627,7 @@ bool createManualMesh(
     std::vector<BaseVertex>& vertices,
     std::vector<uint16_t>& indices)
 {
-    Mesh* pMesh = new Ogre::Mesh(name);
+    Ogre::Mesh* pMesh = new Ogre::Mesh(name);
 
     VertexData* vd = pMesh->getVertexData();
     IndexData* id = pMesh->getIndexData();
@@ -642,20 +642,20 @@ bool createManualMesh(
     uint32_t indexSize = sizeof(indices[0]);
     id->createBuffer(indexSize, indices.size());
     id->writeData((const char*)indices.data(), indexSize * indices.size());
-    SubMesh* sub = pMesh->addSubMesh(true, true);
+    Ogre::SubMesh* sub = pMesh->addSubMesh(true, true);
 
     sub->addIndexs(indices.size(), 0, 0);
 
 
-    vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-    vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
+    vd->addElement(0, 0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+    vd->addElement(0, 0, 12, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
 
     pMesh->prepare();
 
-    auto mat = MaterialManager::getSingleton().getByName("myrect");
+    auto mat = Ogre::MaterialManager::getSingleton().getByName("myrect");
     auto subMesh = pMesh->getSubMesh(0);
 
     subMesh->setMaterial(mat);
-    std::shared_ptr<Mesh> p(pMesh);
-    return MeshManager::getSingleton().addMesh(name, p);
+    std::shared_ptr<Ogre::Mesh> p(pMesh);
+    return Ogre::MeshManager::getSingleton().addMesh(name, p);
 }

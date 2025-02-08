@@ -132,7 +132,7 @@ struct LightCpuSettings
 
 #define VIEW_CAMERA          0
 #define VIEW_SHADOW          1
-std::shared_ptr<Mesh> loadSanMiguel(const std::string& name);
+std::shared_ptr<Ogre::Mesh> loadSanMiguel(const std::string& name);
 
 #define INDIRECT_DRAW_ARGUMENTS_ELEMENTS 8
 #define SAN_MIGUEL_OFFSETX          150.f

@@ -31,7 +31,7 @@ ManualApplication::~ManualApplication()
 
 }
 
-bool ManualApplication::frameStarted(const FrameEvent& evt)
+bool ManualApplication::frameStarted(const Ogre::FrameEvent& evt)
 {
 	InputManager::getSingletonPtr()->captureInput();
 	mGameCamera->update(evt.timeSinceLastFrame);
@@ -72,7 +72,7 @@ bool ManualApplication::appInit()
 	}
 	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
 	
-	CreateWindowDesc desc;
+	Ogre::CreateWindowDesc desc;
 	desc.width = ogreConfig.width;
 	desc.height = ogreConfig.height;
 	desc.srgb = mAppInfo->useSRGB;
@@ -80,15 +80,15 @@ bool ManualApplication::appInit()
 	strncpy(desc.windowHandle, wndString.c_str(), sizeof(desc.windowHandle));
 	mRenderWindow = mRenderSystem->createRenderWindow(desc);
 
-	ResourceParserManager::getSingleton()._initialise();
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\cegui"), "", true);
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\gltf"), "", true);
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\ogre"), "", true);
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\shader"), "", true);
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\textures"), "", true);
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\forge"), "", true);
-	ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\scene"), "", true);
-	ResourceManager::getSingletonPtr()->loadAllResource();
+	Ogre::ResourceParserManager::getSingleton()._initialise();
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\cegui"), "", true);
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\gltf"), "", true);
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\ogre"), "", true);
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\shader"), "", true);
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\textures"), "", true);
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\forge"), "", true);
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\scene"), "", true);
+	Ogre::ResourceManager::getSingletonPtr()->loadAllResource();
 	
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(MAIN_SCENE_MANAGER);
 
@@ -109,9 +109,9 @@ bool ManualApplication::appInit()
 		CEGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
 
-	TextureManager::getSingleton().load("white1x1.dds", nullptr);
+	Ogre::TextureManager::getSingleton().load("white1x1.dds", nullptr);
 
-	utils::JobSystem& js = ResourceManager::getSingleton().getJobSystem();
+	utils::JobSystem& js = Ogre::ResourceManager::getSingleton().getJobSystem();
 
 	js.adopt();
 	return true;
@@ -235,7 +235,7 @@ void ManualApplication::addRenderPass(PassBase* pass)
 }
 
 void updateFrameData(
-	ICamera* camera, 
+	Ogre::ICamera* camera,
 	FrameConstantBuffer& frameConstantBuffer,
 	Handle<HwBufferObject> frameHandle)
 {
@@ -279,10 +279,10 @@ void ManualApplication::addUIPass()
 	Ogre::SceneManager* sceneManager = ceguiManager->getSceneManager();
 	FrameConstantBuffer frameConstantBuffer;
 	auto* rs = mRenderSystem;
-	auto& ogreConfig = ::Root::getSingleton().getEngineConfig();
-	BufferDesc desc{};
-	desc.mBindingType = BufferObjectBinding_Uniform;
-	desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
+	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+	Ogre::BufferDesc desc{};
+	desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+	desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_GPU_ONLY;
 	desc.bufferCreationFlags = 0;
 	desc.mSize = sizeof(frameConstantBuffer);
 	Handle<HwBufferObject> frameHandle =
@@ -295,8 +295,8 @@ void ManualApplication::addUIPass()
 
 	userDefineShader.initCallback = initFrameResource;
 
-	RenderableBindCallback bindCallback = [=, this](uint32_t frameIndex, Renderable* r) {
-		DescriptorData descriptorData;
+	RenderableBindCallback bindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r) {
+		Ogre::DescriptorData descriptorData;
 		for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
 		{
 			descriptorData.mCount = 1;
@@ -309,7 +309,7 @@ void ManualApplication::addUIPass()
 		};
 	userDefineShader.bindCallback = bindCallback;
 
-	RenderableDrawCallback drawCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+	RenderableDrawCallback drawCallback = [=](uint32_t frameIndex, Ogre::Renderable* r) {
 		void* frameData = r->getFrameResourceInfo(frameIndex);
 		FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
@@ -332,7 +332,7 @@ void ManualApplication::addUIPass()
 		};
 	userDefineShader.drawCallback = drawCallback;
 	
-	RenderPassCallback guiCallback = [=, this](RenderPassInfo& info) {		
+	RenderPassCallback guiCallback = [=](RenderPassInfo& info) {		
 		
 		info.renderTargetCount = 1;
 		info.renderTargets[0].renderTarget = mRenderWindow->getColorTarget();
@@ -341,7 +341,7 @@ void ManualApplication::addUIPass()
 		info.renderTargets[0].clearColour = { 0.0f, 0.847058f, 0.901960f, 1.000000000f };
 		info.depthTarget.depthStencil = nullptr;
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-		const std::vector<Renderable*>& renderList = ceguiManager->getRenderableList();
+		const std::vector<Ogre::Renderable*>& renderList = ceguiManager->getRenderableList();
 		
 		renderScene(cam, renderList, info, &userDefineShader);
 		};

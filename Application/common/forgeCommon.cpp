@@ -1,15 +1,17 @@
+#define USE_OGRE_MACRO
 #include "OgreHeader.h"
 #include "forgeCommon.h"
 #include "OgreMeshManager.h"
 #include "OgreMaterial.h"
-static void setTextures(Mesh* mesh,
+
+static void setTextures(Ogre::Mesh* mesh,
     int index,
     const char* albedo,
     const char* specular,
     const char* normal,
     uint32_t matFlags)
 {
-    SubMesh* subMesh = mesh->getSubMesh(index);
+    Ogre::SubMesh* subMesh = mesh->getSubMesh(index);
     Ogre::Material* mat = subMesh->getMaterial().get();
     mat->setMaterialFlags(matFlags);
     std::string albedoName(albedo);
@@ -29,38 +31,38 @@ static void setTextures(Mesh* mesh,
 #define DEFAULT_SPEC_TRANSPARENT "Default_SPEC_TRANS"
 
 
-static void SetMaterials(Mesh* mesh, bool transparentFlags)
+static void SetMaterials(Ogre::Mesh* mesh, bool transparentFlags)
 {
     int index = 0;
-    Mesh* pScene = mesh;
+    Ogre::Mesh* pScene = mesh;
     // 0	flags
     if (transparentFlags)
     {
-        setTextures(pScene, index++, "ForgeFlags", DEFAULT_SPEC, DEFAULT_NORMAL, MATERIAL_FLAG_TWO_SIDED | MATERIAL_FLAG_TRANSPARENT);
+        setTextures(pScene, index++, "ForgeFlags", DEFAULT_SPEC, DEFAULT_NORMAL, Ogre::MATERIAL_FLAG_TWO_SIDED | Ogre::MATERIAL_FLAG_TRANSPARENT);
     }
     else
     {
-        setTextures(pScene, index++, "ForgeFlags", DEFAULT_SPEC, DEFAULT_NORMAL, MATERIAL_FLAG_TWO_SIDED | MATERIAL_FLAG_ALPHA_TESTED);
+        setTextures(pScene, index++, "ForgeFlags", DEFAULT_SPEC, DEFAULT_NORMAL, Ogre::MATERIAL_FLAG_TWO_SIDED | Ogre::MATERIAL_FLAG_ALPHA_TESTED);
     }
 
     // 0	arc034
-    setTextures(pScene, index++, "arco_frente", "arco_frente_SPEC", "arco_frente_NRM", MATERIAL_FLAG_NONE);
+    setTextures(pScene, index++, "arco_frente", "arco_frente_SPEC", "arco_frente_NRM", Ogre::MATERIAL_FLAG_NONE);
 
     // 1	hugeBackWall00
     setTextures(pScene, index++, DEFAULT_ALBEDO, DEFAULT_SPEC, DEFAULT_NORMAL, MATERIAL_FLAG_NONE);
 
     // 2	leaves0379
     setTextures(pScene, index++, "citrus_limon_leaf", "citrus_limon_leaf_SPEC", "citrus_limon_leaf_NRM",
-        MATERIAL_FLAG_TWO_SIDED | MATERIAL_FLAG_ALPHA_TESTED);
+        Ogre::MATERIAL_FLAG_TWO_SIDED | Ogre::MATERIAL_FLAG_ALPHA_TESTED);
 
     // 3	hugeWallFront00
-    setTextures(pScene, index++, "Barro_2", "Barro_2_SPEC", "Barro_2_NRM", MATERIAL_FLAG_TWO_SIDED);
+    setTextures(pScene, index++, "Barro_2", "Barro_2_SPEC", "Barro_2_NRM", Ogre::MATERIAL_FLAG_TWO_SIDED);
 
     // 4	floor2nd00
-    setTextures(pScene, index++, DEFAULT_ALBEDO, DEFAULT_SPEC, DEFAULT_NORMAL, MATERIAL_FLAG_NONE);
+    setTextures(pScene, index++, DEFAULT_ALBEDO, DEFAULT_SPEC, DEFAULT_NORMAL, Ogre::MATERIAL_FLAG_NONE);
 
     // 5	leaves013
-    setTextures(pScene, index++, "HP01lef2", "HP01lef2_SPEC", DEFAULT_NORMAL, MATERIAL_FLAG_TWO_SIDED | MATERIAL_FLAG_ALPHA_TESTED);
+    setTextures(pScene, index++, "HP01lef2", "HP01lef2_SPEC", DEFAULT_NORMAL, Ogre::MATERIAL_FLAG_TWO_SIDED | Ogre::MATERIAL_FLAG_ALPHA_TESTED);
 
     // 6	leaves014
     setTextures(pScene, index++, "FL13lef4", "FL13lef4_SPEC", DEFAULT_NORMAL, MATERIAL_FLAG_TWO_SIDED | MATERIAL_FLAG_ALPHA_TESTED);

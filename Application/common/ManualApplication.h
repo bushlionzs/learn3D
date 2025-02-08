@@ -36,7 +36,7 @@ public:
 private:
 	bool appInit();
 	void render();
-	virtual bool frameStarted(const FrameEvent& evt);
+	virtual bool frameStarted(const Ogre::FrameEvent& evt);
 	void ShowFrameFrequency();
 protected:
 	ApplicationWindow* mApplicationWindow = nullptr;
@@ -44,7 +44,7 @@ protected:
 
 	uint64_t mLastFPS = 0;
 
-	SceneManager* mSceneManager = nullptr;
+	Ogre::SceneManager* mSceneManager = nullptr;
 	Ogre::Camera* mCamera = nullptr;
 	GameCamera* mGameCamera = nullptr;
 	Ogre::RenderWindow* mRenderWindow = nullptr;

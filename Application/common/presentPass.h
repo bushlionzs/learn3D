@@ -6,7 +6,7 @@ class PresentPass : public PassBase
 public:
     PresentPass(
         Ogre::RenderTarget* sourceTarget, 
-        RenderWindow* renderWindow,
+        Ogre::RenderWindow* renderWindow,
         const char* shaderName);
     ~PresentPass();
 
@@ -15,7 +15,7 @@ public:
     virtual void update(float delta)override;
 private:
     Ogre::RenderTarget* mSourceTarget;
-    RenderWindow* mRenderWindow;
+    Ogre::RenderWindow* mRenderWindow;
     std::string mShaderName;
     Handle<HwPipeline> mPipelineHandle;
 

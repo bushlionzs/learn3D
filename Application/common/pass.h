@@ -58,5 +58,5 @@ PassBase* createComputePass(
 
 PassBase* createPresentPass(
 	Ogre::RenderTarget* sourceTarget, 
-	RenderWindow* renderWindow,
+	Ogre::RenderWindow* renderWindow,
 	const char* shaderName = nullptr);

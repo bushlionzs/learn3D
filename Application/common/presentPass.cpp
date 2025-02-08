@@ -6,7 +6,7 @@
 
 PresentPass::PresentPass(
 	Ogre::RenderTarget* sourceTarget, 
-	RenderWindow* renderWindow,
+	Ogre::RenderWindow* renderWindow,
 	const char* shaderName)
 {
 	mSourceTarget = sourceTarget;
@@ -58,18 +58,18 @@ bool PresentPass::initialize()
 	mPipelineHandle = rs->createPipeline(rasterState, presentHandle);
 
 	mZeroSet = rs->createDescriptorSet(presentHandle, 0);
-	DescriptorData descriptorData[2];
+	Ogre::DescriptorData descriptorData[2];
 
 	auto* currentTaget = mSourceTarget;
-	OgreTexture* sourceTex = currentTaget->getTarget();
+	Ogre::OgreTexture* sourceTex = currentTaget->getTarget();
 	descriptorData[0].mCount = 1;
 	descriptorData[0].pName = "SourceTexture";
-	descriptorData[0].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
-	descriptorData[0].ppTextures = (const OgreTexture**)&sourceTex;
+	descriptorData[0].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
+	descriptorData[0].ppTextures = (const Ogre::OgreTexture**)&sourceTex;
 
 	descriptorData[1].mCount = 1;
 	descriptorData[1].pName = "repeatBillinearSampler";
-	descriptorData[1].descriptorType = DESCRIPTOR_TYPE_SAMPLER;
+	descriptorData[1].descriptorType = Ogre::DESCRIPTOR_TYPE_SAMPLER;
 	descriptorData[1].ppSamplers = &repeatBillinearSampler;
 	rs->updateDescriptorSet(mZeroSet, 2, descriptorData);
     return true;
@@ -78,17 +78,17 @@ bool PresentPass::initialize()
 void PresentPass::execute(RenderSystem* rs)
 {
 	{
-		RenderTargetBarrier rtBarriers[] =
+		Ogre::RenderTargetBarrier rtBarriers[] =
 		{
 			{
 				mRenderWindow->getColorTarget(),
-				RESOURCE_STATE_PRESENT,
-				RESOURCE_STATE_RENDER_TARGET
+				Ogre::RESOURCE_STATE_PRESENT,
+				Ogre::RESOURCE_STATE_RENDER_TARGET
 			},
 			{
 				mSourceTarget,
-				RESOURCE_STATE_UNORDERED_ACCESS,
-				RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+				Ogre::RESOURCE_STATE_UNORDERED_ACCESS,
+				Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 			}
 		};
 		rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
@@ -108,17 +108,17 @@ void PresentPass::execute(RenderSystem* rs)
 	rs->popGroupMarker();
 
 	{
-		RenderTargetBarrier rtBarriers[] =
+		Ogre::RenderTargetBarrier rtBarriers[] =
 		{
 			{
 				mRenderWindow->getColorTarget(),
-				RESOURCE_STATE_RENDER_TARGET,
-				RESOURCE_STATE_PRESENT
+				Ogre::RESOURCE_STATE_RENDER_TARGET,
+				Ogre::RESOURCE_STATE_PRESENT
 			},
 			{
 				mSourceTarget,
-				RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-				RESOURCE_STATE_UNORDERED_ACCESS
+				Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+				Ogre::RESOURCE_STATE_UNORDERED_ACCESS
 			}
 		};
 		rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);

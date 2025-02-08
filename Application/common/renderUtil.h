@@ -6,10 +6,10 @@
 
 class GameCamera;
 struct UserDefineShader;
-using RenderableInitCallback = std::function< void(uint32_t frameIndex, Renderable* r)>;
-using RenderableUpdateCallback = std::function< void(Renderable* r)>;
-using RenderableBindCallback = std::function< void(uint32_t frameIndex, Renderable*r)>;
-using RenderableDrawCallback = std::function< void(uint32_t frameIndex, Renderable* r)>;
+using RenderableInitCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
+using RenderableUpdateCallback = std::function< void(Ogre::Renderable* r)>;
+using RenderableBindCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable*r)>;
+using RenderableDrawCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
 
 struct UserDefineShader
 {
@@ -29,28 +29,28 @@ struct FrameResourceInfo
     bool update;
 };
 
-void initFrameResource(uint32_t frameIndex, Renderable* r);
+void initFrameResource(uint32_t frameIndex, Ogre::Renderable* r);
 
-void updateFrameResource(uint32_t frameIndex, Renderable* r);
+void updateFrameResource(uint32_t frameIndex, Ogre::Renderable* r);
 
-void updateMaterialInfo(Renderable* r, bool updateTexture);
+void updateMaterialInfo(Ogre::Renderable* r, bool updateTexture);
 
 
 void renderScene(
-    ICamera* cam,
-    SceneManager* sceneManager,
+    Ogre::ICamera* cam,
+    Ogre::SceneManager* sceneManager,
     RenderPassInfo& renderPassInfo,
     UserDefineShader* userDefineShader);
 
 void renderScene(
-    ICamera* cam,
-    const std::vector<Renderable*>& renderList,
+    Ogre::ICamera* cam,
+    const std::vector<Ogre::Renderable*>& renderList,
     RenderPassInfo& renderPassInfo,
     UserDefineShader* userDefineShader);
 
 void updateFrameData(
-    ICamera* camera,
-    ICamera* light,
+    Ogre::ICamera* camera,
+    Ogre::ICamera* light,
     FrameConstantBuffer& frameConstantBuffer);
 
 struct BaseVertex

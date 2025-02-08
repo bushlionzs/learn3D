@@ -1,5 +1,5 @@
 #pragma once
-
+#include <windows.h>
 class ApplicationBase;
 class ApplicationWindow
 {

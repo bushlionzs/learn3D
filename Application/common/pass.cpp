@@ -22,13 +22,13 @@ public:
 		mPassInput = input;
 		mRenderPassInfo.flipY = input.flipY;
 		RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
-		auto& ogreConfig = ::Root::getSingleton().getEngineConfig();
+		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 		mFrameBufferObjectList.resize(ogreConfig.swapBufferCount);
 		for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
 		{
-			BufferDesc desc{};
-			desc.mBindingType = BufferObjectBinding_Uniform;
-			desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
+			Ogre::BufferDesc desc{};
+			desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+			desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_GPU_ONLY;
 			desc.bufferCreationFlags = 0;
 			desc.mSize = sizeof(mFrameConstantBuffer);
 			mFrameBufferObjectList[i] = rs->createBufferObject(desc);
@@ -45,8 +45,8 @@ public:
 
 		mUserDefineShader.initCallback = initFrameResource;
 
-		RenderableBindCallback bindCallback = [=, this](uint32_t frameIndex, Renderable* r) {
-				DescriptorData descriptorData;
+		RenderableBindCallback bindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r) {
+			Ogre::DescriptorData descriptorData;
 				for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
 				{
 					descriptorData.mCount = 1;
@@ -59,7 +59,7 @@ public:
 			};
 		mUserDefineShader.bindCallback = bindCallback;
 
-		RenderableDrawCallback drawCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+		RenderableDrawCallback drawCallback = [=](uint32_t frameIndex, Ogre::Renderable* r) {
 			void* frameData = r->getFrameResourceInfo(frameIndex);
 			FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
 			Ogre::Material* mat = r->getMaterial().get();
@@ -86,7 +86,7 @@ public:
 
 	virtual void execute(RenderSystem* rs)
 	{
-		auto& ogreConfig = ::Root::getSingleton().getEngineConfig();
+		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 		auto& info = mRenderPassInfo;
 		auto cam = mPassInput.cam;
 		auto sceneManager = mPassInput.sceneMgr;
@@ -108,7 +108,7 @@ public:
 		updateFrameData(mPassInput.cam, nullptr);
 	}
 private:
-	void updateFrameData(ICamera* camera, ICamera* light)
+	void updateFrameData(Ogre::ICamera* camera, Ogre::ICamera* light)
 	{
 		RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
 		const Ogre::Matrix4& view = camera->getViewMatrix();
@@ -235,7 +235,7 @@ PassBase* createComputePass(
 
 PassBase* createPresentPass(
 	Ogre::RenderTarget* sourceTarget, 
-	RenderWindow* renderWindow,
+	Ogre::RenderWindow* renderWindow,
 	const char* shaderName)
 {
 	return new PresentPass(sourceTarget, renderWindow, shaderName);

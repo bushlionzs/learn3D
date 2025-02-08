@@ -6,7 +6,7 @@ class GameCamera: public InputListener
 {
 private:
     Ogre::Camera* mCamera = nullptr;
-    SceneManager* mSceneMgr = nullptr;
+    Ogre::SceneManager* mSceneMgr = nullptr;
 
     
 
@@ -31,7 +31,7 @@ private:
 
     Real mMoveSpeed = 500.0f;
     Real mRotateSpeed = 0.15f;
-    CameraMoveType mCameraType;
+    Ogre::CameraMoveType mCameraType;
 
     Real  mYaw = 0.0f;
     Real  mPitch = 0.0f;
@@ -43,7 +43,7 @@ private:
 
     bool mChanged = false;
 public:
-    GameCamera(Ogre::Camera* camera, SceneManager* sceneMgr);
+    GameCamera(Ogre::Camera* camera, Ogre::SceneManager* sceneMgr);
 
     Ogre::String getCameraString();
     Ogre::Camera* getCamera()
@@ -53,7 +53,7 @@ public:
 
     const Ogre::Vector3& getPosition() const;
 
-    void setCameraType(CameraMoveType moveType)
+    void setCameraType(Ogre::CameraMoveType moveType)
     {
         mCameraType = moveType;
     }

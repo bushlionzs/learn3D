@@ -25,7 +25,7 @@ public:
 	void update(float delta);
 
 	void addCustomDirectory();
-	void updateFrameData(ICamera* camera, FrameConstantBuffer& frameBuffer);
+	void updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer);
 private:
 	void base1();
 	void base2();
@@ -35,11 +35,11 @@ private:
 	
 	void base6();
 private:
-	AnimationState* mAnimationState = nullptr;
+	Ogre::AnimationState* mAnimationState = nullptr;
 	std::vector<FrameData> mFrameData;
-	SceneManager* mSceneManager;
+	Ogre::SceneManager* mSceneManager;
 	GameCamera* mGameCamera;
 	RenderSystem* mRenderSystem;
-	RenderWindow* mRenderWindow;
+	Ogre::RenderWindow* mRenderWindow;
 	RenderPipeline* mRenderPipeline;
 };

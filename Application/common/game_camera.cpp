@@ -5,12 +5,12 @@
 #include "OgreSceneManager.h"
 #include "OgreSceneNOde.h"
 
-GameCamera::GameCamera(Camera* camera, SceneManager* sceneMgr)
+GameCamera::GameCamera(Ogre::Camera* camera, Ogre::SceneManager* sceneMgr)
 {
     mCamera = camera;
     mSceneMgr = sceneMgr;
     mChanged = true;
-    mCameraType = CameraMoveType_FirstPerson;
+    mCameraType = Ogre::CameraMoveType_FirstPerson;
 }
 
 const Ogre::Vector3& GameCamera::getPosition() const
@@ -272,7 +272,7 @@ bool GameCamera::update(float delta)
     auto rotM = Ogre::Math::makeRotateMatrixXY(-x, -y);
     Ogre::Matrix4 viewMatrix;
     Ogre::Matrix4 transM;
-    if (mCameraType == CameraMoveType_FirstPerson)
+    if (mCameraType == Ogre::CameraMoveType_FirstPerson)
     {
         transM = Ogre::Math::makeTranslateMatrix(-eyePosition);
         viewMatrix = rotM * transM;

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "basic.h"
 #include "engine_manager.h"
 #include "myutils.h"
@@ -62,7 +62,7 @@ void BasicApplication::addCustomDirectory()
 
 void BasicApplication::base1()
 {
-	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
+	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 	float aa = 1;
 	Ogre::Vector3 leftop = Ogre::Vector3(-aa, aa, 0.0f);
 	Ogre::Vector3 leftbottom = Ogre::Vector3(-aa, -aa, 0.0f);
@@ -73,23 +73,23 @@ void BasicApplication::base1()
 
 	std::string meshName = "rect";
 	
-	auto mesh = MeshManager::getSingletonPtr()->createRect(
+	auto mesh = Ogre::MeshManager::getSingletonPtr()->createRect(
 		nullptr,
 		meshName,
 		leftop, leftbottom, righttop, rightbottom, normal);
 
-	Entity* rect = mSceneManager->createEntity("rect", meshName);
-	SceneNode* rectnode = root->createChildSceneNode("rect");
+	Ogre::Entity* rect = mSceneManager->createEntity("rect", meshName);
+	Ogre::SceneNode* rectnode = root->createChildSceneNode("rect");
 	rectnode->attachObject(rect);
 
-	SubEntity* subEntry = rect->getSubEntity(0);
+	Ogre::SubEntity* subEntry = rect->getSubEntity(0);
 	auto& mat = subEntry->getMaterial();
 
 	ShaderInfo& info = mat->getShaderInfo();
 	//info.shaderName = "testShader";
 	//mSceneManager->setSkyBox(true, "SkyLan", 1000.0f);
 	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, 3.f), Ogre::Vector3::ZERO);
-	mGameCamera->setCameraType(CameraMoveType_LookAt);
+	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
 	mGameCamera->setMoveSpeed(5);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	Ogre::Matrix4 m;
@@ -121,12 +121,12 @@ void BasicApplication::base2()
 {
 	std::string name = "Â¥À¼ÕÊÅñ04.mesh";
 	name = "vulkanscene_shadow.gltf";
-	auto mesh = MeshManager::getSingletonPtr()->load(name);
+	auto mesh = Ogre::MeshManager::getSingletonPtr()->load(name);
 
-	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
+	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-	Entity* sphere = mSceneManager->createEntity("sphere", name);
-	SceneNode* spherenode = root->createChildSceneNode("sphere");
+	Ogre::Entity* sphere = mSceneManager->createEntity("sphere", name);
+	Ogre::SceneNode* spherenode = root->createChildSceneNode("sphere");
 
 	//sphere->setMaterialName("myrect");
 
@@ -136,7 +136,7 @@ void BasicApplication::base2()
 		Ogre::Vector3(0.0f, 3.0f, 15.0f),
 		Ogre::Vector3(0.0f, 0.0f, 0.0f));
 	mGameCamera->setMoveSpeed(20);
-	mGameCamera->setCameraType(CameraMoveType_LookAt);
+	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
 
@@ -167,14 +167,14 @@ void BasicApplication::base2()
 
 void BasicApplication::base3()
 {
-	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
+	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
 	std::string meshName = "box";
-	auto mesh = MeshManager::getSingleton().createBox(meshName, 1, "mybox");
+	auto mesh = Ogre::MeshManager::getSingleton().createBox(meshName, 1, "mybox");
 
 	{
 		auto entity = mSceneManager->createEntity("box1", meshName);
-		SceneNode* node = root->createChildSceneNode("box1");
+		Ogre::SceneNode* node = root->createChildSceneNode("box1");
 		node->attachObject(entity);
 		node->setPosition(0.0f, 0.0f, -5.0f);
 	}
@@ -182,7 +182,7 @@ void BasicApplication::base3()
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
 
-	mGameCamera->setCameraType(CameraMoveType_LookAt);
+	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
 	mGameCamera->lookAt(
 		Ogre::Vector3(0.5f, 0.0f, -7),
 		Ogre::Vector3(0.0f, 0.0f, 0.0f));
@@ -216,12 +216,12 @@ void BasicApplication::base3()
 void BasicApplication::base4()
 {
 	std::string meshname = "ÃÉ¹Å¹ó×åÅ®_03.mesh";
-	auto mesh = MeshManager::getSingletonPtr()->load(meshname);
+	auto mesh = Ogre::MeshManager::getSingletonPtr()->load(meshname);
 
-	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
+	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-	Entity* gltf = mSceneManager->createEntity("gltf", meshname);
-	SceneNode* gltfnode = root->createChildSceneNode("gltf");
+	Ogre::Entity* gltf = mSceneManager->createEntity("gltf", meshname);
+	Ogre::SceneNode* gltfnode = root->createChildSceneNode("gltf");
 	gltfnode->updatechildren();
 	gltfnode->attachObject(gltf);
 
@@ -269,12 +269,12 @@ void BasicApplication::base5()
 {
 	std::string meshname = "bunny.fbx";
 	meshname = "sphere_big.fbx";
-	auto mesh = MeshManager::getSingletonPtr()->load(meshname);
+	auto mesh = Ogre::MeshManager::getSingletonPtr()->load(meshname);
 
-	SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
+	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-	Entity* gltf = mSceneManager->createEntity("fbx", meshname);
-	SceneNode* gltfnode = root->createChildSceneNode("fbx");
+	Ogre::Entity* gltf = mSceneManager->createEntity("fbx", meshname);
+	Ogre::SceneNode* gltfnode = root->createChildSceneNode("fbx");
 	gltfnode->updatechildren();
 	gltfnode->attachObject(gltf);
 
@@ -311,7 +311,7 @@ void BasicApplication::base5()
 	mRenderPipeline->addRenderPass(mainPass);
 }
 
-void BasicApplication::updateFrameData(ICamera* camera, FrameConstantBuffer& frameBuffer)
+void BasicApplication::updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer)
 {
 	RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
 	const Ogre::Matrix4& view = camera->getViewMatrix();
@@ -347,7 +347,7 @@ void BasicApplication::updateFrameData(ICamera* camera, FrameConstantBuffer& fra
 void BasicApplication::base6()
 {
 	std::string name = "Â¥À¼ÕÊÅñ04.mesh";
-	auto mesh = MeshManager::getSingletonPtr()->load(name);
+	auto mesh = Ogre::MeshManager::getSingletonPtr()->load(name);
 
 	mGameCamera->lookAt(
 		Ogre::Vector3(1000, 0.0, 0.0f),
@@ -386,30 +386,30 @@ void BasicApplication::base6()
 	rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
 	auto pipelineHandle = mRenderSystem->createPipeline(rasterState, presentHandle);
 
-	SubMesh* subMesh = mesh->getSubMesh(0);
+	Ogre::SubMesh* subMesh = mesh->getSubMesh(0);
 
 	VertexData* vertexData = subMesh->getVertexData();
 	Handle<HwBufferObject> vertexDataHandle = vertexData->getBuffer(0);
 	IndexData* indexData = subMesh->getIndexData();
 	Handle<HwBufferObject> indexDataHandle = indexData->getHandle();
 	mFrameData.resize(2);
-	DescriptorData descriptorData[16];
+	Ogre::DescriptorData descriptorData[16];
 
 	
 
-	std::shared_ptr<Material>& mat = subMesh->getMaterial();
+	std::shared_ptr<Ogre::Material>& mat = subMesh->getMaterial();
 	mat->load(nullptr);
 
-	OgreTexture* tex = mat->getTexture(0);
+	Ogre::OgreTexture* tex = mat->getTexture(0);
 
 	for (auto i = 0; i < 2; i++)
 	{
 		auto zeroSet = mRenderSystem->createDescriptorSet(presentHandle, 0);
 
 		mFrameData[i].zeroSet = zeroSet;
-		BufferDesc desc{};
-		desc.mBindingType = BufferObjectBinding_Uniform;
-		desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
+		Ogre::BufferDesc desc{};
+		desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+		desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_GPU_ONLY;
 		desc.bufferCreationFlags = 0;
 		desc.mElementCount = 0;
 		desc.mStructStride = 0;
@@ -420,22 +420,22 @@ void BasicApplication::base6()
 
 		descriptorData[0].pName = "passUniformBlock";
 		descriptorData[0].mCount = 1;
-		descriptorData[0].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+		descriptorData[0].descriptorType = Ogre::DESCRIPTOR_TYPE_BUFFER;
 		descriptorData[0].ppBuffers = &mFrameData[i].passUniformBuffer;
 
 		descriptorData[1].pName = "vertexDataBuffer";
 		descriptorData[1].mCount = 1;
-		descriptorData[1].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+		descriptorData[1].descriptorType = Ogre::DESCRIPTOR_TYPE_BUFFER;
 		descriptorData[1].ppBuffers = &vertexDataHandle;
 
 		descriptorData[2].pName = "first";
 		descriptorData[2].mCount = 1;
-		descriptorData[2].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+		descriptorData[2].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
 		descriptorData[2].ppTextures = (const Ogre::OgreTexture**)& tex;
 
 		descriptorData[3].pName = "firstSampler";
 		descriptorData[3].mCount = 1;
-		descriptorData[3].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+		descriptorData[3].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
 		descriptorData[3].ppTextures = (const Ogre::OgreTexture**)&tex;
 
 		mRenderSystem->updateDescriptorSet(zeroSet, 4, descriptorData);
