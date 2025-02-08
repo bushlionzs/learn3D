@@ -41,6 +41,22 @@ const char* getSuffix(const std::string& name)
 	return name.c_str() + pos;
 }
 
+const char* getSuffix(const char* name)
+{
+    const char* p = name;
+    const char* ret = nullptr;
+    while (*p != 0)
+    {
+        if (*p == '.')
+        {
+            ret == p;
+        }
+        p++;
+    }
+
+    return ret;
+}
+
 std::string removeSuffix(const std::string& name)
 {
     std::string tmp;

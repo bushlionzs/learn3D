@@ -15,7 +15,7 @@ struct ModuleInformation
     module_init_func init = nullptr;
     module_entry_func entry = nullptr;
     void* user_data = nullptr;
-    MessageQueue messageq;
+    dy::MessageQueue messageq;
     std::shared_ptr<Thread> thread;
 
     bool initialized() const { return !!this->thread; }
@@ -42,7 +42,7 @@ struct ModuleInformation
         this->messageq.clear();
     }
 
-    void execute(MessageNode& msg)
+    void execute(dy::MessageNode& msg)
     {
         // assert(this->entry);
         this->entry(
@@ -65,10 +65,10 @@ struct ModuleInformation
 
         auto&& msgq = pModule->messageq;
 
-        MessageList msgs;
+        dy::MessageList msgs;
         while (msgq.pop_msgs(msgs))
         {
-            MessageNode::Ptr msg;
+            dy::MessageNode::Ptr msg;
             while (!!(msg = msgs.pop()))
             {
                 pModule->execute(*msg);
@@ -144,7 +144,7 @@ public:
             return false;
         }
 
-        auto msg = MessageNode::alloc(size);
+        auto msg = dy::MessageNode::alloc(size);
         if(!msg)
         {
             return false;
@@ -170,7 +170,7 @@ public:
             return false;
         }
 
-        auto msg = MessageNode::alloc(0);
+        auto msg = dy::MessageNode::alloc(0);
         if (!msg)
         {
             return false;
@@ -184,7 +184,7 @@ public:
         return _modules[dstmodule].messageq.push_msg(std::move(msg), bIsOOB);
     }
     
-    bool post_module_msg(uint32_t dstmodule, MessageNode::Ptr msg, bool priority)
+    bool post_module_msg(uint32_t dstmodule, dy::MessageNode::Ptr msg, bool priority)
     {
         if (_stopped)
         {

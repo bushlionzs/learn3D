@@ -94,10 +94,10 @@ namespace Ogre {
     protected:
         long line;
         const char* typeName;
-        String description;
-        String source;
+        std::string description;
+        std::string source;
         const char* file;
-        String fullDesc; // storage for char* returned by what()
+        std::string fullDesc; // storage for char* returned by what()
     public:
         /** Static definitions of error codes.
             @todo
@@ -120,11 +120,11 @@ namespace Ogre {
 
         /** Default constructor.
         */
-        Exception( int number, const String& description, const String& source );
+        Exception( int number, const std::string& description, const std::string& source );
 
         /** Advanced constructor.
         */
-        Exception( int number, const String& description, const String& source, const char* type, const char* file, long line );
+        Exception( int number, const std::string& description, const std::string& source, const char* type, const char* file, long line );
 
         /** Copy constructor.
         */
@@ -143,11 +143,11 @@ namespace Ogre {
                 the place in which OGRE found the problem, and a text
                 description from the 3D rendering library, if available.
         */
-        const String& getFullDescription(void) const { return fullDesc; }
+        const std::string& getFullDescription(void) const { return fullDesc; }
 
         /** Gets the source function.
         */
-        const String &getSource() const { return source; }
+        const std::string&getSource() const { return source; }
 
         /** Gets source file name.
         */
@@ -161,7 +161,7 @@ namespace Ogre {
             getFullDescriptionto get a full description of the error including line number,
             error number and what function threw the exception.
         */
-        const String &getDescription(void) const { return description; }
+        const std::string&getDescription(void) const { return description; }
 
         /// Override std::exception::what
         const char* what() const throw() { return fullDesc.c_str(); }
@@ -178,61 +178,61 @@ namespace Ogre {
     class  UnimplementedException : public Exception 
     {
     public:
-        UnimplementedException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        UnimplementedException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
     class  FileNotFoundException : public Exception
     {
     public:
-        FileNotFoundException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        FileNotFoundException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
     class  IOException : public Exception
     {
     public:
-        IOException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        IOException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
     class  InvalidStateException : public Exception
     {
     public:
-        InvalidStateException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        InvalidStateException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
     class  InvalidParametersException : public Exception
     {
     public:
-        InvalidParametersException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        InvalidParametersException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
     class  ItemIdentityException : public Exception
     {
     public:
-        ItemIdentityException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        ItemIdentityException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
     class  InternalErrorException : public Exception
     {
     public:
-        InternalErrorException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        InternalErrorException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
     class  RenderingAPIException : public Exception
     {
     public:
-        RenderingAPIException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        RenderingAPIException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
     class  RuntimeAssertionException : public Exception
     {
     public:
-        RuntimeAssertionException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        RuntimeAssertionException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
     class  InvalidCallException : public Exception
     {
     public:
-        InvalidCallException(int inNumber, const String& inDescription, const String& inSource, const char* inFile, long inLine)
+        InvalidCallException(int inNumber, const std::string& inDescription, const std::string& inSource, const char* inFile, long inLine)
             : Exception(inNumber, inDescription, inSource, __FUNCTION__, inFile, inLine) {}
     };
 
@@ -252,8 +252,8 @@ namespace Ogre {
         ExceptionFactory() {}
         static  void _throwException(
             Exception::ExceptionCodes code, int number,
-            const String& desc, 
-            const String& src, const char* file, long line)
+            const std::string& desc,
+            const std::string& src, const char* file, long line)
         {
             switch (code)
             {
@@ -273,8 +273,8 @@ namespace Ogre {
     public:
         static  void throwException(
             Exception::ExceptionCodes code,
-            const String& desc,
-            const String& src, const char* file, long line)
+            const std::string& desc,
+            const std::string& src, const char* file, long line)
         {
             _throwException(code, code, desc, src, file, line);
         }

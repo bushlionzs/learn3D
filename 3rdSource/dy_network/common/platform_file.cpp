@@ -46,6 +46,14 @@ bool get_file_content(const char* filename, std::wstring& content, uint32_t part
     return true;
 }
 
+uint32_t get_file_size(FILE* fp)
+{
+    fseek(fp, 0, SEEK_END);
+    uint32_t size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    return size;
+}
+
 bool save_file_content(const char* filename, const std::string& content)
 {
     FILE* fp = fopen(filename, "wb");

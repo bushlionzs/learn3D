@@ -68,7 +68,7 @@ public:
     void setTexture(uint32_t index, std::shared_ptr<Ogre::OgreTexture> tex);
     bool updateTexture(uint32_t index, const std::string& texName);
     void setTexture(const std::string& name, Ogre::TextureProperty* texProperty);
-    void setAnimtexture(const std::vector<String>& namelist, float duration);
+    void setAnimtexture(const std::vector<std::string>& namelist, float duration);
     void setTextureUScale(float u);
     void setTextureVScale(float v);
     void setTextureScale(float u, float v);
@@ -115,9 +115,9 @@ public:
     void addTime(float delta);
 
     float getAnimationDuration();
-    String getFrameTextureName(uint32_t index);
+    std::string getFrameTextureName(uint32_t index);
     void setAnimatedTextureName(
-        const String& name,
+        const std::string& name,
         unsigned int numFrames,
         Real duration = 0);
 
@@ -132,7 +132,7 @@ public:
 
 private:
     std::vector<Ogre::TexturePtr> mTextures;
-    std::vector<String> mNameList;
+    std::vector<std::string> mNameList;
 
     int32_t mTextureIndex = 0;
     float mAnimDuration = 0.0f;

@@ -35,7 +35,7 @@ public:
     virtual void OnClose(NetHandle h, const session_info_t& data, void* pNetThreadData);
     virtual void on_session_release(NetHandle h, const session_info_t& data, void* pNetThreadData);
     virtual void* create_net_thread_data(uint32_t uiThreadIndex) { return NULL; }
-    virtual ILog* create_log() { return NULL; }
+    virtual IPlatformLog* create_log() { return NULL; }
     virtual bool is_flow_log_single_file() { return false; }
 
     virtual bool check_visitor(const session_info_t& data);

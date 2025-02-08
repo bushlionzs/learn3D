@@ -34,13 +34,13 @@ public:
         const Ogre::CreateWindowDesc& desc) = 0;
 
     virtual Ogre::RenderTarget* createRenderTarget(
-        const String& name,
+        const std::string& name,
         Ogre::TextureProperty& texProperty);
     virtual void clearRenderTarget(Ogre::RenderTarget*, const Ogre::Vector4& color) {}
     virtual void clearRenderTexture(Ogre::OgreTexture*, const Ogre::Vector4& color) {}
     virtual void ready() {}
 
-    virtual const String& getRenderSystemName()
+    virtual const std::string& getRenderSystemName()
     {
         return mRenderSystemName;
     }
@@ -244,7 +244,7 @@ protected:
     uint32_t mLoadResCount = 0;
 
 
-    String mRenderSystemName;
+    std::string mRenderSystemName;
     uint32_t mRenderType;
     
     

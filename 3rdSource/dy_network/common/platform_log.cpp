@@ -70,7 +70,7 @@ typedef struct tm	platform_tm_t;
 
 #define NGX_FILE_DEFAULT_ACCESS  0644
 
-ILog* g_dynetwork_log = NULL;
+IPlatformLog* g_dynetwork_log = NULL;
 
 void log_init(void);
 uint32_t log_entry(uint32_t moduleid, uint32_t msg_id, uint64_t sender, uint64_t param, void* msg, uint32_t msg_size, void* pThreadData);
@@ -99,7 +99,7 @@ void print_log(const char* fmt, ...)
     printf("%s\n", logbuffer);
 }
 
-class PlatformLog: public ILog
+class PlatformLog: public IPlatformLog
 {
 public:
     PlatformLog(bool flow_log_split = false)
@@ -628,7 +628,7 @@ void get_current_tm(platform_tm_t* pmt)
 static bool _g_log_init = false;
 static PlatformMutex _g_log_mutex;
 
-bool platform_log_init(ILog* log, const char* log_directory, bool flow_log_split)
+bool platform_log_init(IPlatformLog* log, const char* log_directory, bool flow_log_split)
 {
     if (false == _g_log_init)
     {
@@ -639,7 +639,7 @@ bool platform_log_init(ILog* log, const char* log_directory, bool flow_log_split
             _g_log_init = true;
             if (NULL == log)
             {
-                ILog* default_log = new PlatformLog(flow_log_split);
+                IPlatformLog* default_log = new PlatformLog(flow_log_split);
                 g_dynetwork_log = default_log;
                 return default_log->init(log_directory);
             }

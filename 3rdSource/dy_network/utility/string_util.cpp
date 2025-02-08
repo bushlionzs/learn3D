@@ -39,6 +39,20 @@ namespace dy
         return NULL;
     }
 
+    char const* strnstr(const char* szString, const char* szSubstring, int nSuperstringLength)
+    {
+        int nSubstringLength = (int)strlen(szSubstring);
+        if (!nSubstringLength)
+            return szString;
+
+        for (int nSubstringPos = 0; szString[nSubstringPos] && nSubstringPos <= nSuperstringLength - nSubstringLength; ++nSubstringPos)
+        {
+            if (strncmp(szString + nSubstringPos, szSubstring, nSubstringLength) == 0)
+                return szString + nSubstringPos;
+        }
+        return NULL;
+    }
+
     void to_lower(std::string& content)
     {
         for (uint32_t i = 0; i < content.size(); i++)

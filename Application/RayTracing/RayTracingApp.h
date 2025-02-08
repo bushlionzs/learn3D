@@ -72,12 +72,12 @@ struct GeometryNode {
 
 struct RayTracingContext
 {
-	AccelerationStructure* pBottomAS = nullptr;
-	AccelerationStructure* pTopAS = nullptr;
+	Ogre::AccelerationStructure* pBottomAS = nullptr;
+	Ogre::AccelerationStructure* pTopAS = nullptr;
 	Handle<HwBufferObject> geometryNodesBuffer;
 	Handle<HwBufferObject> uniformBuffer;
 	Ogre::RenderTarget* outputTarget;
-	std::vector<OgreTexture*> textureList;
+	std::vector<Ogre::OgreTexture*> textureList;
 };
 
 class RayTracingApp

@@ -25,7 +25,7 @@ enum
     PLATFORMLOG_STAT        = 7,
 };
 
-class ILog
+class IPlatformLog
 {
 public:
 #ifdef DY_NETWORK_LOG_FORMAT_CHECK
@@ -51,7 +51,7 @@ public:
     virtual void set_log_callback(void *log_ctx, p2p_log_cb cb) {}
 };
 
-bool platform_log_init(ILog* log = NULL, const char* log_directory = NULL, bool flow_log_split = false);
+bool platform_log_init(IPlatformLog* log = NULL, const char* log_directory = NULL, bool flow_log_split = false);
 void platform_log_destroy();
 void platform_setloglevel(uint32_t level);
 void platform_clean_expire_log(uint32_t day);
@@ -60,7 +60,7 @@ void platform_setlogcallback(void *log_ctx, p2p_log_cb cb);
 int create_log_directory(const char* filename);
 void print_log(const char* fmt, ...);
 
-extern ILog* g_dynetwork_log;
+extern IPlatformLog* g_dynetwork_log;
 
 #ifdef _WIN32
 #define _DY_NETWORK_LOG_CHECKER(fmt, ...)  if(0){ printf(fmt, ##__VA_ARGS__); }

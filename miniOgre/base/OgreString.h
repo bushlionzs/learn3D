@@ -44,7 +44,7 @@ namespace Ogre {
      *  @{
      */
 
-    typedef std::vector<String> StringVector;
+    typedef std::vector<std::string> StringVector;
     typedef std::shared_ptr<StringVector> StringVectorPtr;
 
     /** Utility class for manipulating Strings.  */
@@ -58,7 +58,7 @@ namespace Ogre {
             beginning or the end of the String ( the default action is
             to trim both).
         */
-        static void trim( String& str, bool left = true, bool right = true );
+        static void trim(std::string& str, bool left = true, bool right = true );
 
         /** Returns a StringVector that contains all the substrings delimited
             by the characters in the passed <code>delims</code> argument.
@@ -71,7 +71,7 @@ namespace Ogre {
             @param
             preserveDelims Flag to determine if delimiters should be saved as substrings
         */
-        static std::vector<String> split( const String& str, const String& delims = "\t\n ", unsigned int maxSplits = 0, bool preserveDelims = false);
+        static std::vector<std::string> split( const std::string& str, const std::string& delims = "\t\n ", unsigned int maxSplits = 0, bool preserveDelims = false);
 
         /** Returns a StringVector that contains all the substrings delimited
             by the characters in the passed <code>delims</code> argument,
@@ -86,19 +86,19 @@ namespace Ogre {
             maxSplits The maximum number of splits to perform (0 for unlimited splits). If this
             parameters is > 0, the splitting process will stop after this many splits, left to right.
         */
-        static std::vector<String> tokenise( const String& str, const String& delims = "\t\n ", const String& doubleDelims = "\"", unsigned int maxSplits = 0);
+        static std::vector<std::string> tokenise( const std::string& str, const std::string& delims = "\t\n ", const std::string& doubleDelims = "\"", unsigned int maxSplits = 0);
 
         /** Lower-cases all the characters in the string.
          */
-        static void toLowerCase( String& str );
+        static void toLowerCase(std::string& str );
 
         /** Upper-cases all the characters in the string.
          */
-        static void toUpperCase( String& str );
+        static void toUpperCase(std::string& str );
 
         /** Upper-cases the first letter of each word.
          */
-        static void toTitleCase( String& str );
+        static void toTitleCase(std::string& str );
 
 
         /** Returns whether the string begins with the pattern passed in.
@@ -107,7 +107,7 @@ namespace Ogre {
             @param lowerCase If true, the start of the string will be lower cased before
             comparison, pattern should also be in lower case.
         */
-        static bool startsWith(const String& str, const String& pattern, bool lowerCase = true);
+        static bool startsWith(const std::string& str, const std::string& pattern, bool lowerCase = true);
 
         /** Returns whether the string ends with the pattern passed in.
             @param str
@@ -115,11 +115,11 @@ namespace Ogre {
             @param lowerCase If true, the end of the string will be lower cased before
             comparison, pattern should also be in lower case.
         */
-        static bool endsWith(const String& str, const String& pattern, bool lowerCase = true);
+        static bool endsWith(const std::string& str, const std::string& pattern, bool lowerCase = true);
 
         /** Method for standardising paths - use forward slashes only, end with slash.
          */
-        static String standardisePath( const String &init);
+        static std::string standardisePath( const std::string&init);
         /** Returns a normalized version of a file path
             This method can be used to make file path strings which point to the same directory
             but have different texts to be normalized to the same text. The function:
@@ -131,7 +131,7 @@ namespace Ogre {
             @param init The file path to normalize.
             @param makeLowerCase If true, transforms all characters in the string to lowercase.
         */
-        static String normalizeFilePath(const String& init, bool makeLowerCase = false);
+        static std::string normalizeFilePath(const std::string& init, bool makeLowerCase = false);
 
 
         /** Method for splitting a fully qualified filename into the base name
@@ -139,23 +139,23 @@ namespace Ogre {
             @remarks
             Path is standardised as in standardisePath
         */
-        static void splitFilename(const String& qualifiedName,
-                                  String& outBasename, String& outPath);
+        static void splitFilename(const std::string& qualifiedName,
+            std::string& outBasename, std::string& outPath);
 
         /** Method for splitting a fully qualified filename into the base name,
             extension and path.
             @remarks
             Path is standardised as in standardisePath
         */
-        static void splitFullFilename(const String& qualifiedName,
-                                      String& outBasename, String& outExtention,
-                                      String& outPath);
+        static void splitFullFilename(const std::string& qualifiedName,
+            std::string& outBasename, std::string& outExtention,
+            std::string& outPath);
 
         /** Method for splitting a filename into the base name
             and extension.
         */
-        static void splitBaseFilename(const String& fullName,
-                                      String& outBasename, String& outExtention);
+        static void splitBaseFilename(const std::string& fullName,
+            std::string& outBasename, std::string& outExtention);
 
 
         /** Simple pattern-matching routine allowing a wildcard pattern.
@@ -163,15 +163,15 @@ namespace Ogre {
             @param pattern Pattern to match against; can include simple '*' wildcards
             @param caseSensitive Whether the match is case sensitive or not
         */
-        static bool match(const String& str, const String& pattern, bool caseSensitive = true);
+        static bool match(const std::string& str, const std::string& pattern, bool caseSensitive = true);
 
 
-        static bool saveStringToFile(const String str, FILE* pFile);
-        static bool loadStringFromFile(String& str, FILE* pFile);
-        static bool saveStringToMemory(const String str, char*& pCurrentPos);
-        static bool loadStringFromMemory(String& str, char*& pCurrentPos);
-        static bool saveStringToStream(const String str, std::ofstream& os);
-        static bool loadStringFromStream(String& str, std::ifstream& is);
+        static bool saveStringToFile(const std::string str, FILE* pFile);
+        static bool loadStringFromFile(std::string& str, FILE* pFile);
+        static bool saveStringToMemory(const std::string str, char*& pCurrentPos);
+        static bool loadStringFromMemory(std::string& str, char*& pCurrentPos);
+        static bool saveStringToStream(const std::string str, std::ofstream& os);
+        static bool loadStringFromStream(std::string& str, std::ifstream& is);
 
         /** Replace all instances of a sub-string with a another sub-string.
             @param source Source string
@@ -179,16 +179,16 @@ namespace Ogre {
             @param replaceWithWhat Sub-string to replace with (the new sub-string)
             @return An updated string with the sub-string replaced
         */
-        static const String replaceAll(const String& source, const String& replaceWhat, const String& replaceWithWhat);
+        static const std::string replaceAll(const std::string& source, const std::string& replaceWhat, const std::string& replaceWithWhat);
 
         /** create a string from a printf expression
            *
            * @note this function - like printf - uses a locale dependent decimal point
            */
-        static String format(const char* fmt, ...);
+        static std::string format(const char* fmt, ...);
     };
 
-    typedef ::std::hash< String > _StringHash;
+    typedef ::std::hash< std::string > _StringHash;
     /** @} */
     /** @} */
 

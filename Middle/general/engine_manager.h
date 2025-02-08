@@ -75,6 +75,6 @@ private:
     Ogre::Camera* mMainCamera;
     Ogre::Viewport* mMainViewport = nullptr;
     Terrain* mTerrain;
-    std::map<String, Orphigine::Actor*> mObjectMap;
+    std::map<std::string, Orphigine::Actor*> mObjectMap;
     
 };

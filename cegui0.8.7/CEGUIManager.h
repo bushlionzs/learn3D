@@ -19,7 +19,7 @@ enum MouseType
 class GameToolTip;
 
 class CEGUIManager : public Ogre::Singleton<CEGUIManager>,
-	public FrameListener,
+	public Ogre::FrameListener,
 	public InputListener
 {
 public:
@@ -50,7 +50,7 @@ public:
 	{
 		return mViewPort;
 	}
-	virtual bool frameStarted(const FrameEvent& evt);
+	virtual bool frameStarted(const Ogre::FrameEvent& evt);
 
 	Ogre::RenderTarget* getRenderWindows()
 	{
@@ -64,9 +64,9 @@ public:
 
 	void addRenderable(Ogre::Renderable* r);
 
-	virtual const std::vector<Renderable*>& getRenderableList();
+	virtual const std::vector<Ogre::Renderable*>& getRenderableList();
 
-	virtual const AxisAlignedBox& getBoundingBox(void) const;
+	virtual const Ogre::AxisAlignedBox& getBoundingBox(void) const;
 
 	const char* getFullIconName(const std::string& name);
 
@@ -108,5 +108,5 @@ private:
 
 	GameToolTip* mToolTip = nullptr;
 
-	std::vector<Renderable*> mRenderables;
+	std::vector<Ogre::Renderable*> mRenderables;
 };

@@ -2,7 +2,6 @@
 #include "basic.h"
 #include "platform_log.h"
 #include "ManualApplication.h"
-
 int main()
 {
 	platform_log_init();

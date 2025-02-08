@@ -168,7 +168,7 @@ unsigned WINAPI ThreadFunctionStatic(void* data)
                 WCHAR windowsThreadName[sizeof(item.mThreadName)] = { 0 };
                 mbstowcs(windowsThreadName, item.mThreadName, strlen(item.mThreadName) + 1);
                 HRESULT res = ProcAdd(GetCurrentThread(), windowsThreadName);
-                ASSERT(!FAILED(res));
+
             }
         }
 #endif
@@ -201,7 +201,7 @@ void threadSleep(unsigned mSec) { Sleep(mSec); }
 
 bool initThread(ThreadDesc* pDesc, ThreadHandle* pHandle)
 {
-    ASSERT(pHandle);
+    assert(pHandle);
     *pHandle = NULL;
 
     // Copy the contents of ThreadDesc because if the variable is in the stack we might access corrupted data.

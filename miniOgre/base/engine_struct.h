@@ -254,21 +254,21 @@ public:
 
 struct ShaderInfo
 {
-    String shaderName;
+    std::string shaderName;
     std::vector<std::pair<std::string, std::string>> shaderMacros;
 };
 
 struct RaytracingShaderInfo
 {
-    String rayGenShaderName;
+    std::string rayGenShaderName;
     std::string rayGenEntryName;
-    String rayMissShaderName;
+    std::string rayMissShaderName;
     std::string rayMissEntryName;
-    String rayShadowShaderName;
+    std::string rayShadowShaderName;
     std::string rayShadowEntryName;
-    String rayClosethitShaderName;
+    std::string rayClosethitShaderName;
     std::string rayClosethitEntryName;
-    String rayAnyHitShaderName;
+    std::string rayAnyHitShaderName;
     std::string rayAnyHitEntryName;
     std::vector<std::pair<std::string, std::string>> shaderMacros;
     std::vector<std::wstring> args;

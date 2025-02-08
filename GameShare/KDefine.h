@@ -190,7 +190,7 @@ extern USE_MODEL_TYPE			g_eUseModel;
  * extern HANDLE g_hSemaphore;
  * //
  */
-extern String					g_strCmdLine;
+extern std::string					g_strCmdLine;
 
 extern ku::CKU					gUtil;				/* 游戏辅助 */
 
@@ -218,7 +218,7 @@ extern const char				ONLINE_SERVICE_EXE[];
 extern const char				ONLINE_SERVICE_INI[];
 
 /* 记录游戏用到的信息 */
-extern String g_strKhanInfo;
+extern std::string g_strKhanInfo;
 
 /* 异常捕获 */
 #define ENABLE_EXCEPTION

@@ -7,7 +7,7 @@ uint64_t getMicroseconds();
 std::wstring to_wide_string(const std::string& input);
 
 const char* getSuffix(const std::string& name);
-
+const char* getSuffix(const char* name);
 std::string removeSuffix(const std::string& name);
 
 std::string getShortFilename(const std::string& name);

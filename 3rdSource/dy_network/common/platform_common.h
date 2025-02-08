@@ -31,7 +31,7 @@ public:
     virtual bool post_module_message(ServerLogic* server, IPlatformTask* task, 
         uint32_t messageid, bool bIsOOB = false) = 0;
 
-	virtual bool post_module_msg(uint32_t dstmodule, MessageNode::Ptr msg, bool priority = false) = 0;
+	virtual bool post_module_msg(uint32_t dstmodule, dy::MessageNode::Ptr msg, bool priority = false) = 0;
 	virtual uint32_t get_thread_idx_of_smallest_task() = 0;
     virtual uint32_t get_task_count(uint32_t dstmodule){return 0;}
     virtual void stop_module() = 0;

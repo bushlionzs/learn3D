@@ -38,7 +38,9 @@ typedef float  f32;
 typedef double f64;
 typedef unsigned char uchar;
 typedef unsigned long ulong;
+#ifndef NOT_USE_STD_STRING
 typedef std::string String;
+#endif
 
 #include "OgreException.h"
 #define ReleaseCOM(x) { if(x){ x->Release(); x = 0; } }
@@ -178,8 +180,8 @@ namespace Ogre
 
 
 
-typedef std::map<String, String> NameValuePairList;
-const String BLANKSTRING;
+typedef std::map<std::string, std::string> NameValuePairList;
+const std::string BLANKSTRING;
 
 #define _OrphigineExport
 #define DECLARE_SCRIPT_RESOURCE

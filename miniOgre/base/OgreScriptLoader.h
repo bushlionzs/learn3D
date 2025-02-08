@@ -34,13 +34,13 @@ class PackFileBase
 {
 public:
     virtual Ogre::StreamContent* getPackfile(
-        const String& name, const String& group = BLANKSTRING) = 0;
+        const std::string& name, const std::string& group = BLANKSTRING) = 0;
 };
 
 class ResourceInfo
 {
 public:
-    String _fullname;
+    std::string _fullname;
     PackFileBase* _base = nullptr;
 };
 

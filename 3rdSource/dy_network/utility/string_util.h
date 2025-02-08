@@ -23,6 +23,7 @@ namespace dy
 	std::string get_short_name(std::string& fullname);
 
 	char const* strnchr(char const* str, int ch, int which);
+	char const* strnstr(const char* szString, const char* szSubstring, int nSuperstringLength);
 	void to_lower(std::string& content);
 
 	bool hex_to_binary(const std::string& hex, std::string& output);
