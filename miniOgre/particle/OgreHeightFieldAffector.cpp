@@ -67,7 +67,7 @@ namespace Ogre
 			tmpRay.setDirection(Vector3::NEGATIVE_UNIT_Y);
 
 			Vector3 tmpIntersectsPos = Vector3(0.0f,0.0f,0.0f);
-			assert(false);
+			assert_invariant(false);
 			//EngineManager::getSingleton().getTerrainIntersects(tmpRay, tmpIntersectsPos);
 
 			tmpParticle->mPosition = Vector3(tmpParticle->mPosition.x,

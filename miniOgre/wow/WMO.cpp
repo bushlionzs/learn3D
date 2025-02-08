@@ -183,7 +183,7 @@ void WMO::finishLoading ()
   stream->read (&fourcc, 4);
   stream->read (&size, 4);
 
-  assert(fourcc == 'MOPR');
+  assert_invariant(fourcc == 'MOPR');
 
   stream->seekRelative (size);
 
@@ -687,7 +687,7 @@ void WMOGroup::load()
     wmostream->read(&fourcc, 4);
     wmostream->read(&size, 4);
 
-    assert(fourcc == 'MORB');
+    assert_invariant(fourcc == 'MORB');
 
     wmostream->seekRelative(size);
   }

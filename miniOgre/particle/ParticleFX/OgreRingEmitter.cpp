@@ -108,14 +108,14 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void RingEmitter::setInnerSizeX(Real x)
     {
-        /*assert(x > 0 && x < 1.0);*/
+        /*assert_invariant(x > 0 && x < 1.0);*/
 
         mInnerSizex = x;
     }
     //-----------------------------------------------------------------------
     void RingEmitter::setInnerSizeY(Real y)
     {
-       /* assert(y > 0 && y < 1.0);*/
+       /* assert_invariant(y > 0 && y < 1.0);*/
 
         mInnerSizey = y;
     }

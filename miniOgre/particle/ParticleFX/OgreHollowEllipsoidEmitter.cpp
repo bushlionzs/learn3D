@@ -115,7 +115,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void HollowEllipsoidEmitter::setInnerSize(Real x, Real y, Real z)
     {
-        assert((x > 0) && (x < 1.0) &&
+        assert_invariant((x > 0) && (x < 1.0) &&
             (y > 0) && (y < 1.0) &&
             (z > 0) && (z < 1.0));
 
@@ -126,21 +126,21 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void HollowEllipsoidEmitter::setInnerSizeX(Real x)
     {
-        assert(x > 0 && x < 1.0);
+        assert_invariant(x > 0 && x < 1.0);
 
         mInnerSize.x = x;
     }
     //-----------------------------------------------------------------------
     void HollowEllipsoidEmitter::setInnerSizeY(Real y)
     {
-        assert(y > 0 && y < 1.0);
+        assert_invariant(y > 0 && y < 1.0);
 
         mInnerSize.y = y;
     }
     //-----------------------------------------------------------------------
     void HollowEllipsoidEmitter::setInnerSizeZ(Real z)
     {
-        assert(z > 0 && z < 1.0);
+        assert_invariant(z > 0 && z < 1.0);
 
         mInnerSize.z = z;
     }

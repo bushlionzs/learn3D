@@ -13,7 +13,7 @@ class Dx12RenderWindow;
 class Dx12RenderSystem : public Dx12RenderSystemBase
 {
 public:
-    Dx12RenderSystem(HWND wnd);
+    Dx12RenderSystem(void* wnd);
     ~Dx12RenderSystem();
     virtual bool engineInit(bool raytracing);
 

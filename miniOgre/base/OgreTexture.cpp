@@ -221,12 +221,12 @@ namespace Ogre {
 
 	void OgreTexture::unload()
 	{
-		assert(false);
+		assert_invariant(false);
 	}
 
 	void OgreTexture::uploadTextureData(const char* data, uint32_t size, TextureProperty& tp)
 	{
-		assert(false);
+		assert_invariant(false);
 	}
 
 	void OgreTexture::loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format)
@@ -239,7 +239,7 @@ namespace Ogre {
 	uint32_t OgreTexture::getDataOffset(uint32_t face, uint32_t mip)
 	{
 		size_t idx = face * (mTextureProperty._numMipmaps + 1) + mip;
-		assert(idx < mOffsetList.size());
+		assert_invariant(idx < mOffsetList.size());
 		return mOffsetList[idx];
 	}
 }

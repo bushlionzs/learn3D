@@ -66,7 +66,7 @@ namespace Ogre {
     }
 
     RenderSystem* Root::createRenderEngine(
-        HWND wnd,
+        void* wnd,
         EngineType et)
     {
         if (et == EngineType_Dx12)
@@ -86,7 +86,7 @@ namespace Ogre {
         }
         else
         {
-            assert(false);
+            assert_invariant(false);
             return nullptr;
         }
 
@@ -158,7 +158,7 @@ namespace Ogre {
         auto itor = mSceneManagerMap.find(name);
         if (itor != mSceneManagerMap.end())
         {
-            assert(false);
+            assert_invariant(false);
         }
         SceneManager* current = new SceneManager;
         mSceneManagerMap[name] = current;

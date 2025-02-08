@@ -49,7 +49,7 @@ namespace Ogre {
 		auto itor = mSkeletonMap.find(name);
 		if (itor != mSkeletonMap.end())
 		{
-			assert(false);
+			assert_invariant(false);
 			return std::shared_ptr<Skeleton>();
 		}
 

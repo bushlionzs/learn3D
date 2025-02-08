@@ -117,14 +117,14 @@ namespace Ogre
     
         inline Real operator [] ( const size_t i ) const
         {
-            assert( i < 4 );
+            assert_invariant( i < 4 );
 
             return *(&x+i);
         }
 
         inline Real& operator [] ( const size_t i )
         {
-            assert( i < 4 );
+            assert_invariant( i < 4 );
 
             return *(&x+i);
         }
@@ -227,7 +227,7 @@ namespace Ogre
 
         inline Vector4 operator / ( const Real fScalar ) const
         {
-            assert( fScalar != 0.0 );
+            assert_invariant( fScalar != 0.0 );
 
             Real fInv = 1.0f / fScalar;
 
@@ -371,7 +371,7 @@ namespace Ogre
 
         inline Vector4& operator /= ( const Real fScalar )
         {
-            assert( fScalar != 0.0 );
+            assert_invariant( fScalar != 0.0 );
 
             Real fInv = 1.0f / fScalar;
 

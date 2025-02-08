@@ -443,13 +443,13 @@ namespace Ogre
     template <>
     inline float Math::Clamp<float>(float val, float minval, float maxval)
     {
-        assert (minval <= maxval && "Invalid clamp range");
+        assert_invariant(minval <= maxval && "Invalid clamp range");
         return std::max( std::min(val, maxval), minval );
     }
     template <>
     inline double Math::Clamp<double>(double val, double minval, double maxval)
     {
-        assert (minval <= maxval && "Invalid clamp range");
+        assert_invariant(minval <= maxval && "Invalid clamp range");
         return std::max( std::min(val, maxval), minval );
     }
 

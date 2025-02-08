@@ -69,7 +69,7 @@ namespace Ogre {
             mFrameResourceInfoList.resize(ogreConfig.swapBufferCount);
         }
         
-        assert(frameIndex < mFrameResourceInfoList.size());
+        assert_invariant(frameIndex < mFrameResourceInfoList.size());
         mFrameResourceInfoList[frameIndex] = frameData;
         return true;
     }

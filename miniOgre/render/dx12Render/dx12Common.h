@@ -1,49 +1,34 @@
 #pragma once
-
+#include <WinSock2.h>
+#include <windows.h>
+#include <dxcapi.h>
 #include "shader.h"
 #include "engine_struct.h"
-#include <windows.h>
 #include <wrl.h>
 #include <dxgi1_4.h>
 #include <d3d12.h>
 #include <d3dx12.h>
-#include <D3Dcompiler.h>
-#include <IThread.h>
+#include <d3dcompiler.h>
 #include <tsl/robin_map.h>
+#include <utils/Mutex.h>
+
 
 using namespace Microsoft::WRL;
-class Dx12Shader;
-class Dx12RenderableData;
-class Dx12Frame;
 
-enum Dx12PassState
-{
-	PassState_Normal = 0,
-	PassState_Shadow,
-	PassState_CubeMap
-};
+
+
 #define FRAME_RESOURCE_COUNT 1
 #define D3D12MA_IMPLEMENTATION
 
 #define D3D12_MAX_MIPMAP_COUNT 11
-class Dx12Pass
-{
-public:
-	Ogre::Material* mMaterial;
-	Dx12Shader* mShader;
-	Ogre::Renderable* mRenderable;
-	uint32_t  mPassState;
-	ID3D12RootSignature* mRootSignature;
-	Dx12RenderableData* mDx12RenderableData;
-	RenderListType mRenderListType;	
-};
+
 
 typedef struct DescriptorHeap
 {
     /// DX Heap
     ID3D12DescriptorHeap* pHeap;
     /// Lock for multi-threaded descriptor allocations
-    Mutex                       mMutex;
+    utils::Mutex                       mMutex;
     ID3D12Device* pDevice;
     /// Start position in the heap
     D3D12_CPU_DESCRIPTOR_HANDLE mStartCpuHandle;
@@ -171,6 +156,6 @@ public:
         HRESULT hres = (exp);                                                    \
         if (!SUCCEEDED(hres))                                                    \
         {                                                                        \
-            assert(false);                                                       \
+            assert_invariant(false);                                                       \
         }                                                                        \
     } while (0)

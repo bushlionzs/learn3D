@@ -24,12 +24,12 @@ namespace Ogre {
 	{
 		if (mNameBoneList.count(name))
 		{
-			assert(false);
+			assert_invariant(false);
 		}
 
 		if (mHandleBoneList.count(handle))
 		{
-			assert(false);
+			assert_invariant(false);
 		}
 
 		Bone* bone = new Bone(name, handle);
@@ -53,7 +53,7 @@ namespace Ogre {
 	{
 		if (mAnimationList.count(name))
 		{
-			assert(false);
+			assert_invariant(false);
 		}
 		Animation* ani = new Animation(name);
 		mAnimationList[name] = ani;

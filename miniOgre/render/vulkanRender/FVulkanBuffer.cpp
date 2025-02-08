@@ -59,7 +59,7 @@ void FVulkanBuffer::setupDescriptor(VkDeviceSize size, VkDeviceSize offset)
 */
 void FVulkanBuffer::copyTo(void* data, VkDeviceSize size)
 {
-	assert(mapped);
+	assert_invariant(mapped);
 	memcpy(mapped, data, size);
 }
 

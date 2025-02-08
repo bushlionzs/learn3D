@@ -21,7 +21,7 @@ namespace filament {
 			break;
 		}
 
-		assert(false);
+		assert_invariant(false);
 		return backend::ElementType::FLOAT3;
 	}
 
@@ -57,7 +57,7 @@ namespace filament {
 			return filament::VertexAttribute::BONE_INDICES;
 		}
 
-		assert(false);
+		assert_invariant(false);
 		return filament::VertexAttribute::POSITION;
 	}
 
@@ -82,7 +82,7 @@ namespace filament {
 		case Ogre::PF_A8R8G8B8:
 			return filament::backend::TextureFormat::RGBA8;
 		default:
-			assert(false);
+			assert_invariant(false);
 			return filament::backend::TextureFormat::RGBA8;
 		}
 	}

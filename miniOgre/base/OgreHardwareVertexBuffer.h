@@ -10,7 +10,7 @@
 class VertexElement
 {
 public:
-    VertexElement(int16_t source, int16_t index, int32_t offset, VertexElementType type, VertexElementSemantic semantic)
+    VertexElement(int16_t source, int16_t index, int32_t offset, Ogre::VertexElementType type, Ogre::VertexElementSemantic semantic)
     {
         mSource         = source;
         mIndex          = index;
@@ -19,7 +19,7 @@ public:
         mSemantic       = semantic;
     }
 
-    VertexElementSemantic  getSemantic() const
+    Ogre::VertexElementSemantic  getSemantic() const
     {
         return mSemantic;
     }
@@ -39,7 +39,7 @@ public:
         return mOffset;
     }
 
-    VertexElementType getType() const
+    Ogre::VertexElementType getType() const
     {
         return mType;
     }
@@ -63,16 +63,16 @@ public:
 
     uint32_t getLocation() const;
 
-    static uint32_t getTypeSize(VertexElementType etype);
+    static uint32_t getTypeSize(Ogre::VertexElementType etype);
 
     static uint32_t convertColourValue(const Ogre::ColourValue& src,
-        VertexElementType dst);
+        Ogre::VertexElementType dst);
 private:
     int32_t mOffset;
     int16_t mSource;
     int16_t mIndex;
-    VertexElementType mType;
-    VertexElementSemantic mSemantic;
+    Ogre::VertexElementType mType;
+    Ogre::VertexElementSemantic mSemantic;
 };
 
 

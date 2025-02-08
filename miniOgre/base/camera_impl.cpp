@@ -246,7 +246,7 @@ const Ogre::Matrix4& CameraImpl::getProjectMatrix()
 
 const Ogre::Matrix4& CameraImpl::getProjectionMatrixWithRSDepth(void) const
 {
-    assert(false);
+    assert_invariant(false);
     return mProjMatrixRSDepth;
 }
 

@@ -22,7 +22,7 @@
 #include "hlslUtil.h"
 
 
-VulkanRenderSystem::VulkanRenderSystem(HWND wnd)
+VulkanRenderSystem::VulkanRenderSystem(void* wnd)
 {
     bluevk::initialize();
 
@@ -608,7 +608,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
                     info.accelerationStructure++;
                     break;
                 default:
-                    assert(false);
+                    assert_invariant(false);
                     break;
                 }
             }

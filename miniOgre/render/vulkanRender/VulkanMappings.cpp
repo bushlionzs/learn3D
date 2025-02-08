@@ -129,7 +129,7 @@ namespace Ogre {
             return VK_FORMAT_R32G32B32_SFLOAT;
             break;
         default:
-            assert(false);
+            assert_invariant(false);
         }
         return VK_FORMAT_R32G32B32_SFLOAT;
     }
@@ -183,7 +183,7 @@ namespace Ogre {
         case PF_DEPTH24_STENCIL8:     return VK_FORMAT_D24_UNORM_S8_UINT;
         case PF_DEPTH32_STENCIL8:     return VK_FORMAT_D32_SFLOAT_S8_UINT;
         default:
-            //assert(false);
+            //assert_invariant(false);
             return VK_FORMAT_UNDEFINED;
         }
     }
@@ -197,7 +197,7 @@ namespace Ogre {
         case VK_FORMAT_D32_SFLOAT:              return PF_DEPTH32F;
         case VK_FORMAT_D32_SFLOAT_S8_UINT :     return PF_DEPTH32_STENCIL8;
         default:
-            assert(false);
+            assert_invariant(false);
             return PF_UNKNOWN;
         }
     }
@@ -218,7 +218,7 @@ namespace Ogre {
         case LOAD_ACTION_CLEAR:
             return VK_ATTACHMENT_LOAD_OP_CLEAR;
         default:
-            assert(false);
+            assert_invariant(false);
         }
     }
 
@@ -233,7 +233,7 @@ namespace Ogre {
         case STORE_ACTION_NONE:
             return VK_ATTACHMENT_STORE_OP_NONE;
         default:
-            assert(false);
+            assert_invariant(false);
         }
     }
 
@@ -247,7 +247,7 @@ namespace Ogre {
         case filament::backend::SamplerWrapMode::MIRRORED_REPEAT:
             return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
         default:
-            assert(false);
+            assert_invariant(false);
             return VK_SAMPLER_ADDRESS_MODE_REPEAT;
         }
     }
@@ -268,7 +268,7 @@ namespace Ogre {
         case filament::backend::SamplerMinFilter::LINEAR_MIPMAP_LINEAR:
             return VK_FILTER_LINEAR;
         default:
-            assert(false);
+            assert_invariant(false);
             return VK_FILTER_NEAREST;
         }
     }
@@ -280,7 +280,7 @@ namespace Ogre {
         case filament::backend::SamplerFilterType::LINEAR:
             return VK_FILTER_LINEAR;
         default:
-            assert(false);
+            assert_invariant(false);
             return VK_FILTER_NEAREST;
         }
     }
@@ -293,7 +293,7 @@ namespace Ogre {
         case filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR:
             return VK_SAMPLER_MIPMAP_MODE_LINEAR;
         default:
-            assert(false);
+            assert_invariant(false);
             return VK_SAMPLER_MIPMAP_MODE_NEAREST;
         }
     }
@@ -308,7 +308,7 @@ namespace Ogre {
             // See "Mapping of OpenGL to Vulkan filter modes" in the VK Spec.
             return FLT_MAX;
         default:
-            assert(false);
+            assert_invariant(false);
             return VK_LOD_CLAMP_NONE;
         }
     }
@@ -331,7 +331,7 @@ namespace Ogre {
         case Compare::A:  return VK_COMPARE_OP_ALWAYS;
         case Compare::N:  return VK_COMPARE_OP_NEVER;
         default:
-            assert(false);
+            assert_invariant(false);
             return VK_COMPARE_OP_LESS_OR_EQUAL;
         }
     }

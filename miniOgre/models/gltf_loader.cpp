@@ -156,7 +156,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
 
                 if (slotMap.count(itor.first) == 0)
                 {
-                    assert(false);
+                    assert_invariant(false);
                 }
 
                 int32_t dataSlot = slotMap[itor.first];
@@ -166,7 +166,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
                 int32_t stride = GetStrideFromFormat(accessor.type, accessor.componentType);
                 
 
-                assert(stride != 0);
+                assert_invariant(stride != 0);
 
                 vertexData[dataSlot].mDataStride = stride;
                 vertexData[dataSlot].mData = start;
@@ -174,11 +174,11 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
             }
 
             uint32_t tangentStride = vertexData[Vertex_Tangent].mDataStride;
-            //assert(tangentStride == 16);
+            //assert_invariant(tangentStride == 16);
             if (vertexData[Vertex_Position].mDataSize == 0 ||
                 vertexData[Vertex_Normal].mDataSize == 0)
             {
-                assert(false);
+                assert_invariant(false);
                 continue;
             }
 
@@ -197,7 +197,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
             if (positionCount != normalCount ||
                 texCount != positionCount)
             {
-                assert(false);
+                assert_invariant(false);
                 continue;
             }
 
@@ -217,7 +217,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
 
             if (weightCount && (weightCount != jointCount || weightCount != positionCount))
             {
-                assert(false);
+                assert_invariant(false);
                 continue;
             }
             
@@ -693,7 +693,7 @@ bool GltfLoader::loadSkeleton(
         skeletonlist.push_back(skeleton);
 
         loadBone(pModel, &skin, skeleton.get());
-        auto ani = skeleton->createAnimation(skin.name, 0.0f);
+        Animation* ani = skeleton->createAnimation(skin.name, 0.0f);
 
         int32_t boneCount = skeleton->getNumBones();
 
@@ -776,9 +776,9 @@ bool GltfLoader::loadBone(
         const tinygltf::Node& node = pModel->nodes[skin->joints[i]];
         for (auto child : node.children)
         {
-            auto bone = mBoneMap[child];
-            auto parent = mBoneMap[skin->joints[i]];
-            assert(parent);
+            Bone* bone = mBoneMap[child];
+            Bone* parent = mBoneMap[skin->joints[i]];
+            assert_invariant(parent);
             bone->updateParent(parent);
         }
     }
@@ -786,7 +786,7 @@ bool GltfLoader::loadBone(
 
     Ogre::Vector3 translate(0.0f, 0.0f, 0.0f);
     Ogre::Vector3 scale(1.0f, 1.0f, 1.0f);
-    Ogre::Quaternion rotate(0.0f, 0.0f, 0.0f, 1.0f);
+    Ogre::Quaternion rotate = Ogre::Quaternion::IDENTITY;
 
     const tinygltf::Node& node = pModel->nodes[skin->joints[0]];
 
@@ -837,12 +837,6 @@ bool GltfLoader::loadBone(
         bone->setPosition(localTranslate);
         bone->setOrientation(localRotate);
         bone->setScale(localScale);
-
-        int id = bone->getBoneId();
-        if (id == 7)
-        {
-            int kk = 0;
-        }
     }
 
     return true;
@@ -854,11 +848,11 @@ bool GltfLoader::loadAnimation(
     std::map<uint32_t, std::vector<tinygltf::AnimationChannel*>>& nodeToChannelMap,
     Ogre::Animation* ani)
 {
-    for(auto joint : skin->joints)
+    for(int joint : skin->joints)
     {
         auto itor = nodeToChannelMap.find(joint);
 
-        assert(itor != nodeToChannelMap.end());
+        assert_invariant(itor != nodeToChannelMap.end());
 
         int32_t boneHandle = mBoneMap[joint]->getBoneId();
   
@@ -956,7 +950,7 @@ void GltfLoader::parseTimeposFromSampler(
     unsigned char* dataStart = buffer.data.data() + bufferView.byteOffset + inputAccessor.byteOffset;
     const size_t byteStride = inputAccessor.ByteStride(bufferView);
 
-    assert(inputAccessor.type == TINYGLTF_TYPE_SCALAR);
+    assert_invariant(inputAccessor.type == TINYGLTF_TYPE_SCALAR);
 
 
     if (inputAccessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT)
@@ -969,7 +963,7 @@ void GltfLoader::parseTimeposFromSampler(
     }
     else
     {
-        assert(false);
+        assert_invariant(false);
     }
 }
 
@@ -984,7 +978,7 @@ void GltfLoader::parseVector3dFromSampler(
     unsigned char* dataStart = buffer.data.data() + bufferView.byteOffset + outputAccessor.byteOffset;
     const size_t byteStride = outputAccessor.ByteStride(bufferView);
 
-    assert(outputAccessor.type == TINYGLTF_TYPE_VEC3); 
+    assert_invariant(outputAccessor.type == TINYGLTF_TYPE_VEC3); 
 
     if (outputAccessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT)
     { 
@@ -1002,7 +996,7 @@ void GltfLoader::parseVector3dFromSampler(
     }
     else
     {
-        assert(false);
+        assert_invariant(false);
     }
 }
 
@@ -1017,7 +1011,7 @@ void GltfLoader::parseQuaternionFromSampler(
     unsigned char* dataStart = buffer.data.data() + bufferView.byteOffset + outputAccessor.byteOffset;
     const size_t byteStride = outputAccessor.ByteStride(bufferView);
 
-    assert(outputAccessor.type == TINYGLTF_TYPE_VEC4);
+    assert_invariant(outputAccessor.type == TINYGLTF_TYPE_VEC4);
 
     if (outputAccessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT)
     {
@@ -1037,7 +1031,7 @@ void GltfLoader::parseQuaternionFromSampler(
     }
     else
     {
-        assert(false);
+        assert_invariant(false);
     }
 }
 

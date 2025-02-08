@@ -26,11 +26,11 @@ public:
 
     struct M3dSubset
     {
-        UINT Id = -1;
-        UINT VertexStart = 0;
-        UINT VertexCount = 0;
-        UINT FaceStart = 0;
-        UINT FaceCount = 0;
+        uint32_t Id = -1;
+        uint32_t VertexStart = 0;
+        uint32_t VertexCount = 0;
+        uint32_t FaceStart = 0;
+        uint32_t FaceCount = 0;
     };
 
     struct M3dMaterial

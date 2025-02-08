@@ -52,7 +52,7 @@ bool DBCFile::open(Ogre::DataStream* stream)
 		return false;
 	}
 
-	//assert(header[0]=='W' && header[1]=='D' && header[2]=='B' && header[3] == 'C');
+	//assert_invariant(header[0]=='W' && header[1]=='D' && header[2]=='B' && header[3] == 'C');
 
 	stream->read(&na,4); // Number of records
 	stream->read(&nb,4); // Number of fields
@@ -74,9 +74,9 @@ bool DBCFile::open(Ogre::DataStream* stream)
 	recordCount = na;
 	fieldCount = nb;
 	stringSize = ss;
-	//assert(fieldCount*4 == recordSize);
+	//assert_invariant(fieldCount*4 == recordSize);
 	// not always true, but it works fine till now
-	assert(fieldCount*4 >= recordSize);
+	assert_invariant(fieldCount*4 >= recordSize);
 
 	data = new unsigned char[recordSize*recordCount+stringSize];
 	stringTable = data + recordSize*recordCount;
@@ -94,18 +94,18 @@ DBCFile::~DBCFile()
 
 DBCFile::Record DBCFile::getRecord(size_t id)
 {
-	//assert(data);
+	//assert_invariant(data);
 	return Record(*this, data + id*recordSize);
 }
 
 DBCFile::Iterator DBCFile::begin()
 {
-	//assert(data);
+	//assert_invariant(data);
 	return Iterator(*this, data);
 }
 DBCFile::Iterator DBCFile::end()
 {
-	//assert(data);
+	//assert_invariant(data);
 	return Iterator(*this, stringTable);
 }
 

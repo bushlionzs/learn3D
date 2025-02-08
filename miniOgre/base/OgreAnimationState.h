@@ -165,7 +165,7 @@ namespace Ogre {
       /// Get the weight for the bone identified by the given handle
       inline float getBlendMaskEntry(size_t boneHandle) const
       {
-          assert(mBlendMask && mBlendMask->size() > boneHandle);
+          assert_invariant(mBlendMask && mBlendMask->size() > boneHandle);
           return (*mBlendMask)[boneHandle];
       }
     private:

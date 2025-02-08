@@ -156,7 +156,7 @@ namespace Ogre {
         /// Array accessor operator
         float operator [] ( const size_t i ) const
         {
-            assert( i < 4 );
+            assert_invariant( i < 4 );
 
             return *(&r+i);
         }
@@ -164,7 +164,7 @@ namespace Ogre {
         /// Array accessor operator
         float& operator [] ( const size_t i )
         {
-            assert( i < 4 );
+            assert_invariant( i < 4 );
 
             return *(&r+i);
         }
@@ -244,7 +244,7 @@ namespace Ogre {
 
         ColourValue operator / (const float fScalar ) const
         {
-            assert( fScalar != 0.0 );
+            assert_invariant( fScalar != 0.0 );
 
             ColourValue kDiv;
 
@@ -301,7 +301,7 @@ namespace Ogre {
 
         ColourValue& operator /= (const float fScalar )
         {
-            assert( fScalar != 0.0 );
+            assert_invariant( fScalar != 0.0 );
 
             float fInv = 1.0f / fScalar;
 

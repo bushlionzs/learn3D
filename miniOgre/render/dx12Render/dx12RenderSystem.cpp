@@ -16,7 +16,7 @@
 
 
 
-Dx12RenderSystem::Dx12RenderSystem(HWND wnd)
+Dx12RenderSystem::Dx12RenderSystem(void* wnd)
 {
 	mRenderSystemName = "Directx12";
 }
@@ -190,14 +190,14 @@ void Dx12RenderSystem::addAccelerationStructure(
             pGeomD3D12->Type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
             if (pGeom->mIndexCount)
             {
-                ASSERT(pGeom->indexBufferHandle);
+                assert_invariant(pGeom->indexBufferHandle);
                 pGeomD3D12->Triangles.IndexBuffer = getBufferDeviceAddress(pGeom->indexBufferHandle) + pGeom->mIndexOffset;
                 pGeomD3D12->Triangles.IndexCount = pGeom->mIndexCount;
                 pGeomD3D12->Triangles.IndexFormat = (pGeom->mIndexType == INDEX_TYPE_UINT16 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT);
             }
 
-            ASSERT(pGeom->vertexBufferHandle);
-            ASSERT(pGeom->mVertexCount);
+            assert_invariant(pGeom->vertexBufferHandle);
+            assert_invariant(pGeom->mVertexCount);
 
             pGeomD3D12->Triangles.VertexBuffer.StartAddress = getBufferDeviceAddress(pGeom->vertexBufferHandle) + pGeom->mVertexOffset;
             pGeomD3D12->Triangles.VertexBuffer.StrideInBytes = pGeom->mVertexStride;
@@ -263,7 +263,7 @@ void Dx12RenderSystem::addAccelerationStructure(
         for (uint32_t i = 0; i < pDesc->mTop.mDescCount; ++i)
         {
             AccelerationStructureInstanceDesc* pInst = &pDesc->mTop.pInstanceDescs[i];
-            ASSERT(pInst->pBottomAS);
+            assert_invariant(pInst->pBottomAS);
             DX12AccelerationStructure* bottomAS = (DX12AccelerationStructure*)pInst->pBottomAS;
             
             instanceDescs[i].AccelerationStructure = getBufferDeviceAddress(bottomAS->asBufferHandle);
@@ -343,7 +343,7 @@ void Dx12RenderSystem::buildAccelerationStructure(RaytracingBuildASDesc* pDesc)
 
     ID3D12GraphicsCommandList4* dxrCmd = NULL;
     cl->QueryInterface(IID_PPV_ARGS(&dxrCmd));
-    ASSERT(dxrCmd);
+    assert_invariant(dxrCmd);
 
     dxrCmd->BuildRaytracingAccelerationStructure(&buildDesc, 0, NULL);
 

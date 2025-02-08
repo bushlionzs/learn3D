@@ -26,7 +26,7 @@
         case VES_NORMAL:
             return 1;
         default:
-            assert(false);
+            assert_invariant(false);
             return 0;
         }
     }

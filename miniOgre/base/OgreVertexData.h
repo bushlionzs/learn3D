@@ -63,8 +63,8 @@ public:
         int16_t source, 
         int16_t index, 
         int32_t offset, 
-        VertexElementType theType,
-        VertexElementSemantic semantic);
+        Ogre::VertexElementType theType,
+        Ogre::VertexElementSemantic semantic);
 
     VertexDeclaration* getVertexDeclaration() const
     {

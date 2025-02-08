@@ -111,14 +111,14 @@ namespace Ogre
 
         inline Real operator [] ( const size_t i ) const
         {
-            assert( i < 3 );
+            assert_invariant( i < 3 );
 
             return *(&x+i);
         }
 
         inline Real& operator [] ( const size_t i )
         {
-            assert( i < 3 );
+            assert_invariant( i < 3 );
 
             return *(&x+i);
         }
@@ -216,7 +216,7 @@ namespace Ogre
 
         inline Vector3 operator / ( const Real fScalar ) const
         {
-            assert( fScalar != 0.0 );
+            assert_invariant( fScalar != 0.0 );
 
             Real fInv = 1.0f / fScalar;
 
@@ -347,7 +347,7 @@ namespace Ogre
 
         inline Vector3& operator /= ( const Real fScalar )
         {
-            assert( fScalar != 0.0 );
+            assert_invariant( fScalar != 0.0 );
 
             Real fInv = 1.0f / fScalar;
 

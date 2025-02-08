@@ -36,7 +36,7 @@ SceneBlendFactor parserBlendFactor(const std::string& val)
     {
         return itor->second;
     }
-    assert(false);
+    assert_invariant(false);
     return SBF_ONE;
 }
 class CmdBlendFallback : public ParamCommand
@@ -734,7 +734,7 @@ void OgreMaterialParam::setShaderMacro(const std::string& val)
 void OgreMaterialParam::addVariable(const std::string& variable)
 {
     StringVector aa = Ogre::StringUtil::split(variable);
-    assert(aa.size() == 2);
+    assert_invariant(aa.size() == 2);
     aa[1] = string_trim(aa[1]);
     mVariablesMap[aa[0]] = aa[1];
 }

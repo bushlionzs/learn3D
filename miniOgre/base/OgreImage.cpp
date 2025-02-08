@@ -116,7 +116,7 @@ namespace Ogre {
         case backend::ImageType::ImageType_DDS:
             return DDSImage::load_simple_info((const char*)data, byteCount, imageInfo);
         default:
-            assert(false);
+            assert_invariant(false);
             return false;
             break;
         }
@@ -132,7 +132,7 @@ namespace Ogre {
         case gli::FORMAT_RGBA8_UNORM_PACK8:
             return Ogre::PF_A8B8G8R8;
         default:
-            assert(false);
+            assert_invariant(false);
         }
         return Ogre::PF_FLOAT16_RGBA;
     }
@@ -346,7 +346,7 @@ namespace Ogre {
             return true;
         }
         default:
-            assert(false);
+            assert_invariant(false);
             return false;
         }
         
@@ -445,8 +445,8 @@ namespace Ogre {
 
     const uchar* CImage::getData(uint32 x, uint32 y, uint32 z) const
     {
-        assert(mImageData);
-        assert(x < mImageInfo.width&& y < mImageInfo.height&& z < mImageInfo.depth);
+        assert_invariant(mImageData);
+        assert_invariant(x < mImageInfo.width&& y < mImageInfo.height&& z < mImageInfo.depth);
         return mImageData + mPixelSize * (z * mImageInfo.width * mImageInfo.height + mImageInfo.width * y + x);
     }
 

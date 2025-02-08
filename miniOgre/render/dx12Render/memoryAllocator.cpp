@@ -20,7 +20,6 @@ static void add_descriptor_heap(
     pHeap->pFlags = (uint32_t*)(pHeap + 1);
     pHeap->pDevice = pDevice;
 
-    initMutex(&pHeap->mMutex);
 
     D3D12_DESCRIPTOR_HEAP_DESC desc = *pDesc;
     desc.NumDescriptors = numDescriptors;
@@ -88,7 +87,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE descriptor_id_to_gpu_handle(
 
 void return_descriptor_handles(DescriptorHeap* pHeap, DxDescriptorID handle, uint32_t count)
 {
-    MutexLock lock(pHeap->mMutex);
+    std::lock_guard<utils::Mutex> const lock(pHeap->mMutex);
     return_descriptor_handles_unlocked(pHeap, handle, count);
 }
 
@@ -99,7 +98,8 @@ DxDescriptorID consume_descriptor_handles(DescriptorHeap* pHeap, uint32_t descri
         return D3D12_DESCRIPTOR_ID_NONE;
     }
 
-    MutexLock lock(pHeap->mMutex);
+    std::lock_guard<utils::Mutex> const lock(pHeap->mMutex);
+
 
     DxDescriptorID result = D3D12_DESCRIPTOR_ID_NONE;
     DxDescriptorID firstResult = D3D12_DESCRIPTOR_ID_NONE;

@@ -151,7 +151,7 @@ void M2Loader::initCommon(Ogre::DataStream* stream)
 			}
 			else
 			{
-				assert(false);
+				assert_invariant(false);
 				std::vector<uint32_t> specialTextures(mHeader.nTextures);
 
 
@@ -171,13 +171,13 @@ void M2Loader::initCommon(Ogre::DataStream* stream)
 
 				if (texdef[i].type < TEXTURE_MAX)
 				{
-					assert(false);
+					assert_invariant(false);
 				}
 
 
 				if (texdef[i].type == TEXTURE_ARMORREFLECT)
 				{
-					assert(false);
+					assert_invariant(false);
 				}
 			}
 		}

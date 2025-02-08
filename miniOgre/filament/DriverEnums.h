@@ -1345,29 +1345,29 @@ struct StencilState {
         uint8_t writeMask;                                                      // 40
     };
 
-    //! Stencil operations for front-facing polygons
-    StencilOperations front = {
-            .stencilFunc = StencilFunction::A,
-            .stencilOpStencilFail = StencilOperation::KEEP,
-            .padding0 = 0,
-            .stencilOpDepthFail = StencilOperation::KEEP,
-            .stencilOpDepthStencilPass = StencilOperation::KEEP,
-            .padding1 = 0,
-            .ref = 0,
-            .readMask = 0xff,
-            .writeMask = 0xff };
+    ////! Stencil operations for front-facing polygons
+    //StencilOperations front = {
+    //        .stencilFunc = StencilFunction::A,
+    //        .stencilOpStencilFail = StencilOperation::KEEP,
+    //        .padding0 = 0,
+    //        .stencilOpDepthFail = StencilOperation::KEEP,
+    //        .stencilOpDepthStencilPass = StencilOperation::KEEP,
+    //        .padding1 = 0,
+    //        .ref = 0,
+    //        .readMask = 0xff,
+    //        .writeMask = 0xff };
 
-    //! Stencil operations for back-facing polygons
-    StencilOperations back  = {
-            .stencilFunc = StencilFunction::A,
-            .stencilOpStencilFail = StencilOperation::KEEP,
-            .padding0 = 0,
-            .stencilOpDepthFail = StencilOperation::KEEP,
-            .stencilOpDepthStencilPass = StencilOperation::KEEP,
-            .padding1 = 0,
-            .ref = 0,
-            .readMask = 0xff,
-            .writeMask = 0xff };
+    ////! Stencil operations for back-facing polygons
+    //StencilOperations back  = {
+    //        .stencilFunc = StencilFunction::A,
+    //        .stencilOpStencilFail = StencilOperation::KEEP,
+    //        .padding0 = 0,
+    //        .stencilOpDepthFail = StencilOperation::KEEP,
+    //        .stencilOpDepthStencilPass = StencilOperation::KEEP,
+    //        .padding1 = 0,
+    //        .ref = 0,
+    //        .readMask = 0xff,
+    //        .writeMask = 0xff };
 
     //! Whether stencil-buffer writes are enabled
     bool stencilWrite = false;
@@ -1380,8 +1380,8 @@ using PushConstantVariant = std::variant<int32_t, float, bool>;
 static_assert(sizeof(StencilState::StencilOperations) == 5u,
         "StencilOperations size not what was intended");
 
-static_assert(sizeof(StencilState) == 12u,
-        "StencilState size not what was intended");
+//static_assert(sizeof(StencilState) == 12u,
+//        "StencilState size not what was intended");
 using FrameScheduledCallback = utils::Invocable<void(backend::PresentCallable)>;
 
 enum class Workaround : uint16_t {

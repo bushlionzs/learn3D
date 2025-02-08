@@ -26,7 +26,7 @@ namespace Ogre {
     {
         if (parent)
         {
-            assert(mParent == nullptr);
+            assert_invariant(mParent == nullptr);
         }
         mParent = parent;
     }

@@ -75,14 +75,14 @@ void MapTile::finishLoading()
   stream->seekRelative(4);
   stream->read(&version, 4);
 
-  assert(fourcc == 'MVER' && version == 18);
+  assert_invariant(fourcc == 'MVER' && version == 18);
 
   // - MHDR ----------------------------------------------
 
   stream->read(&fourcc, 4);
   stream->seekRelative(4);
 
-  assert(fourcc == 'MHDR');
+  assert_invariant(fourcc == 'MHDR');
 
   stream->read(&Header, sizeof(MHDR));
 
@@ -94,7 +94,7 @@ void MapTile::finishLoading()
   stream->read(&fourcc, 4);
   stream->seekRelative(4);
 
-  assert(fourcc == 'MCIN');
+  assert_invariant(fourcc == 'MCIN');
 
   for (int i = 0; i < 256; ++i)
   {
@@ -108,7 +108,7 @@ void MapTile::finishLoading()
   stream->read(&fourcc, 4);
   stream->read(&size, 4);
 
-  assert(fourcc == 'MTEX');
+  assert_invariant(fourcc == 'MTEX');
   std::string name;
   {
     char const* lCurPos = reinterpret_cast<char const*>(stream->getCurrentStreamData());
@@ -131,7 +131,7 @@ void MapTile::finishLoading()
       stream->read(&fourcc, 4);
       stream->read(&size, 4);
 
-    assert(fourcc == 'MMDX');
+    assert_invariant(fourcc == 'MMDX');
 
     {
       char const* lCurPos = reinterpret_cast<char const*>(stream->getCurrentStreamData());
@@ -158,7 +158,7 @@ void MapTile::finishLoading()
     stream->read(&fourcc, 4);
     stream->read(&size, 4);
 
-    assert(fourcc == 'MWMO');
+    assert_invariant(fourcc == 'MWMO');
 
     {
       char const* lCurPos = reinterpret_cast<char const*>(stream->getCurrentStreamData());
@@ -179,7 +179,7 @@ void MapTile::finishLoading()
     stream->read(&fourcc, 4);
     stream->read(&size, 4);
 
-    assert(fourcc == 'MDDF');
+    assert_invariant(fourcc == 'MDDF');
 
     ENTRY_MDDF const* mddf_ptr = reinterpret_cast<ENTRY_MDDF const*>(stream->getCurrentStreamData());
     for (unsigned int i = 0; i < size / sizeof(ENTRY_MDDF); ++i)
@@ -193,7 +193,7 @@ void MapTile::finishLoading()
     stream->read(&fourcc, 4);
     stream->read(&size, 4);
 
-    assert(fourcc == 'MODF');
+    assert_invariant(fourcc == 'MODF');
 
     ENTRY_MODF const* modf_ptr = reinterpret_cast<ENTRY_MODF const*>(stream->getCurrentStreamData());
     for (unsigned int i = 0; i < size / sizeof(ENTRY_MODF); ++i)
@@ -213,7 +213,7 @@ void MapTile::finishLoading()
       stream->read(&size, 4);
 
     int ofsW = Header.mh2o + 0x14 + 0x8;
-    assert(fourcc == 'MH2O');
+    assert_invariant(fourcc == 'MH2O');
 
     Water.readFromFile(stream, ofsW);
   }
@@ -226,7 +226,7 @@ void MapTile::finishLoading()
       stream->read(&fourcc, 4);
       stream->read(&size, 4);
 
-    assert(fourcc == 'MFBO');
+    assert_invariant(fourcc == 'MFBO');
 
     int16_t mMaximum[9], mMinimum[9];
     stream->read(mMaximum, sizeof(mMaximum));

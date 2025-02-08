@@ -342,7 +342,7 @@ namespace vks
 				is.read(shaderCode, size);
 				is.close();
 
-				assert(size > 0);
+				assert_invariant(size > 0);
 
 				VkShaderModule shaderModule;
 				VkShaderModuleCreateInfo moduleCreateInfo{};
@@ -386,7 +386,7 @@ namespace vks
 				glslCompileShader(strName, content, entryPoint, shaderMacros, nullptr, shaderModuleInfo);
 				break;
 			default:
-				assert(false);
+				assert_invariant(false);
 				break;
 			}
 			return shaderModuleInfo.shaderModule;
@@ -434,7 +434,7 @@ namespace vks
 				shaderModuleInfo.shaderType = Ogre::ShaderType::ClosestHitShader;
 				break;
 			default:
-				assert(false);
+				assert_invariant(false);
 				break;
 			}
 
@@ -843,7 +843,7 @@ namespace vks
 				if (strcmp(descriptorInfo.name, "$Globals") == 0)
 				{
 					//不要使用全局变量，hlsl编译成spirv时，如果有全局变量，会产生一个叫$Globals的uniform buffer
-					assert(false);
+					assert_invariant(false);
 				}
 				if (type.array.size())
 					layout.descriptorCount = type.array[0];

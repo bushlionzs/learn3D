@@ -1,4 +1,5 @@
 #include "OgreHeader.h"
+#include <windows.h>
 #include "OgreResourceManager.h"
 #include "myutils.h"
 #include "OgreMemoryStream.h"
@@ -116,7 +117,7 @@ namespace Ogre {
             ResourceInfo* resInfo = new ResourceInfo;
             *resInfo = res;
             auto i = mResourceMap.emplace(std::pair<std::string, ResourceInfo*>(FindData.cFileName, resInfo));
-            assert(i.second);
+            assert_invariant(i.second);
         }
     }
 

@@ -177,7 +177,7 @@ namespace Ogre
     //---------------------------------------------------------------------
     void AnimationState::setBlendMaskEntry(size_t boneHandle, float weight)
     {
-      assert(mBlendMask && mBlendMask->size() > boneHandle);
+      assert_invariant(mBlendMask && mBlendMask->size() > boneHandle);
       (*mBlendMask)[boneHandle] = weight;
       if (mEnabled)
         mParent->_notifyDirty();
@@ -185,7 +185,7 @@ namespace Ogre
     //---------------------------------------------------------------------
     void AnimationState::_setBlendMaskData(const float* blendMaskData) 
     {
-      assert(mBlendMask && "No BlendMask set!");
+      assert_invariant(mBlendMask && "No BlendMask set!");
       // input 0?
       if(!blendMaskData)
       {

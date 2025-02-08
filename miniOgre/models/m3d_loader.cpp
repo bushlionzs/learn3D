@@ -41,11 +41,11 @@ bool M3dLoader::loadMeshFromFile(
 
 	std::stringstream fin(content);
 
-	UINT numMaterials = 0;
-	UINT numVertices = 0;
-	UINT numTriangles = 0;
-	UINT numBones = 0;
-	UINT numAnimationClips = 0;
+	uint32_t numMaterials = 0;
+	uint32_t numVertices = 0;
+	uint32_t numTriangles = 0;
+	uint32_t numBones = 0;
+	uint32_t numAnimationClips = 0;
 
 	std::string ignore;
 
@@ -287,7 +287,7 @@ void M3dLoader::ReadMaterials(
 	std::string normalMapName;
 
 	fin >> ignore; // materials header text
-	for (UINT i = 0; i < numMaterials; ++i)
+	for (uint32_t i = 0; i < numMaterials; ++i)
 	{
 		fin >> ignore >> mats[i].Name;
 		fin >> ignore >> mats[i].DiffuseAlbedo.x >> mats[i].DiffuseAlbedo.y >> mats[i].DiffuseAlbedo.z;
@@ -347,10 +347,10 @@ void M3dLoader::ReadSkinnedVertices(
 		vertices[i].BoneWeights.y = weights[1];
 		vertices[i].BoneWeights.z = weights[2];
 
-		vertices[i].BoneIndices[0] = (BYTE)boneIndices[0];
-		vertices[i].BoneIndices[1] = (BYTE)boneIndices[1];
-		vertices[i].BoneIndices[2] = (BYTE)boneIndices[2];
-		vertices[i].BoneIndices[3] = (BYTE)boneIndices[3];
+		vertices[i].BoneIndices[0] = (uint32_t)boneIndices[0];
+		vertices[i].BoneIndices[1] = (uint32_t)boneIndices[1];
+		vertices[i].BoneIndices[2] = (uint32_t)boneIndices[2];
+		vertices[i].BoneIndices[3] = (uint32_t)boneIndices[3];
 	}
 }
 
@@ -363,7 +363,7 @@ void M3dLoader::ReadTriangles(
 	indices.resize(numTriangles * 3);
 
 	fin >> ignore; // triangles header text
-	for (UINT i = 0; i < numTriangles; ++i)
+	for (uint32_t i = 0; i < numTriangles; ++i)
 	{
 		fin >> indices[i * 3 + 0] >> indices[i * 3 + 1] >> indices[i * 3 + 2];
 	}
@@ -411,7 +411,7 @@ void M3dLoader::ReadAnimationClips(
 {
 	std::string ignore;
 	fin >> ignore; // AnimationClips header text
-	for (UINT clipIndex = 0; clipIndex < numAnimationClips; ++clipIndex)
+	for (uint32_t clipIndex = 0; clipIndex < numAnimationClips; ++clipIndex)
 	{
 		std::string clipName;
 		fin >> ignore >> clipName;
@@ -419,7 +419,7 @@ void M3dLoader::ReadAnimationClips(
 		Animation* ani = skeleton->createAnimation(clipName, 0.0f);
 	
 
-		for (UINT boneIndex = 0; boneIndex < numBones; ++boneIndex)
+		for (uint32_t boneIndex = 0; boneIndex < numBones; ++boneIndex)
 		{
 			AnimationTrack* track = ani->createNodeTrack(boneIndex, nullptr);
 			ReadBoneKeyframes(fin, numBones, track);
@@ -434,11 +434,11 @@ void M3dLoader::ReadBoneKeyframes(
 	AnimationTrack* track)
 {
 	std::string ignore;
-	UINT numKeyframes = 0;
+	uint32_t numKeyframes = 0;
 	fin >> ignore >> ignore >> numKeyframes;
 	fin >> ignore; // {
 
-	for (UINT i = 0; i < numKeyframes; ++i)
+	for (uint32_t i = 0; i < numKeyframes; ++i)
 	{
 		Real t = 0.0f;
 		DirectX::XMFLOAT3 p(0.0f, 0.0f, 0.0f);

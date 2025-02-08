@@ -1,6 +1,6 @@
 #pragma once
-#include <WinSock2.h>
-#include <windows.h>
+//#include <WinSock2.h>
+//#include <windows.h>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -23,8 +23,7 @@
 #include<cwchar>
 #include <algorithm>
 #include <array>
-#include <assert.h>
-
+#include <utils/debug.h>
 
 typedef uint16_t ushort;
 typedef uint64_t uint64;
@@ -35,6 +34,8 @@ typedef int16_t int16;
 typedef uint8_t uint8;
 typedef int8_t int8;
 typedef float Real;
+typedef float  f32;
+typedef double f64;
 typedef unsigned char uchar;
 typedef unsigned long ulong;
 typedef std::string String;
@@ -42,6 +43,13 @@ typedef std::string String;
 #include "OgreException.h"
 #define ReleaseCOM(x) { if(x){ x->Release(); x = 0; } }
 
+#ifndef FORCEINLINE
+#if (_MSC_VER >= 1200)
+#define FORCEINLINE __forceinline
+#else
+#define FORCEINLINE __inline
+#endif
+#endif
 namespace filament
 {
     class Engine;
@@ -62,6 +70,7 @@ namespace Ogre
     class Plane;
     class Sphere;
     class AxisAlignedBox;
+    class OrientedBoundingBox;
     class Affine3;
     class Matrix3;
     class Matrix4;
@@ -158,6 +167,7 @@ namespace Ogre
 #include "OgreMatrix3.h"
 #include "OgreMatrix4.h"
 #include "OgreAxisAlignedBox.h"
+#include "OgreOrientedBoundingBox.h"
 #include "OgreQuaternion.h"
 #include "OgrePlane.h"
 #include "OgreSphere.h"
@@ -180,5 +190,7 @@ const String BLANKSTRING;
 
 #define OGRE_CHECK(expr, data) if(!expr)OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, data)
 
+#ifdef USE_OGRE_MACRO
 using namespace Ogre;
+#endif
 

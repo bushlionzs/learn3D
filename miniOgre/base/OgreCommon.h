@@ -54,7 +54,7 @@ namespace Ogre {
 
     /// Fast general hashing algorithm
     inline uint32_t FastHash (const char * data, int len, uint32_t hashSoFar = 0) {
-        assert(false);
+        assert_invariant(false);
         /*uint32 ret;
         MurmurHash3_x86_32(data, len, hashSoFar, &ret);
         return ret;*/
@@ -937,7 +937,7 @@ namespace Ogre {
                 front(0),
                 back(1)
             {
-                assert(right >= left && bottom >= top && back >= front);
+                assert_invariant(right >= left && bottom >= top && back >= front);
             }
             /** Define a box from left, top, front, right, bottom and back
                 coordinates.
@@ -958,7 +958,7 @@ namespace Ogre {
                 front(ff),
                 back(bb)
             {
-                assert(right >= left && bottom >= top && back >= front);
+                assert_invariant(right >= left && bottom >= top && back >= front);
             }
             
             explicit Box(const Vector3i& size)

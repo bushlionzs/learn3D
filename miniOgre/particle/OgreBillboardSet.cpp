@@ -177,14 +177,14 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     Billboard* BillboardSet::getBillboard(unsigned int index) const
     {
-        assert(index < mActiveBillboards && "Billboard index out of bounds.");
+        assert_invariant(index < mActiveBillboards && "Billboard index out of bounds.");
         return mBillboardPool[index];
     }
 
     //-----------------------------------------------------------------------
     void BillboardSet::removeBillboard(unsigned int index)
     {
-        assert(index < mActiveBillboards && "Billboard isn't in the active list.");
+        assert_invariant(index < mActiveBillboards && "Billboard isn't in the active list.");
         std::swap(mBillboardPool[index], mBillboardPool[--mActiveBillboards]);
     }
 
@@ -517,7 +517,7 @@ namespace Ogre {
 
     void BillboardSet::setMaterial(const MaterialPtr& material)
     {
-        assert(material);
+        assert_invariant(material);
         mMaterial = material;
     }
 
@@ -620,7 +620,7 @@ namespace Ogre {
         if (!mPointRendering)
         {
             mIndexData.reset(new IndexData());
-            assert(false); //todo
+            assert_invariant(false); //todo
             mIndexData->createBuffer(2, mPoolSize * 6);
             /* Create indexes (will be the same every frame)
                Using indexes because it means 1/3 less vertex transforms (4 instead of 6)
@@ -1100,7 +1100,7 @@ namespace Ogre {
         RGBA colour = bb.mColour.getAsBYTE();
 
         // Texcoords
-        assert(bb.mUseTexcoordRect || bb.mTexcoordIndex < mTextureCoords.size());
+        assert_invariant(bb.mUseTexcoordRect || bb.mTexcoordIndex < mTextureCoords.size());
         const Ogre::FloatRect& r =
             bb.mUseTexcoordRect ? bb.mTexcoordRect : mTextureCoords[bb.mTexcoordIndex];
 
@@ -1320,7 +1320,7 @@ namespace Ogre {
         RGBA* pCol;
 
         // Texcoords
-        /*assert( bb.mUseTexcoordRect || bb.mTexcoordIndex < mTextureCoords.size() );
+        /*assert_invariant( bb.mUseTexcoordRect || bb.mTexcoordIndex < mTextureCoords.size() );
         const Ogre::FloatRect & r =
             bb.mUseTexcoordRect ? bb.mTexcoordRect : mTextureCoords[bb.mTexcoordIndex];*/
 
@@ -1563,7 +1563,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     Real BillboardSet::getSquaredViewDepth(const Camera* const cam) const
     {
-        assert(mParent);
+        assert_invariant(mParent);
         return mParent->getSquaredViewDepth(cam);
     }
    
@@ -1603,7 +1603,7 @@ namespace Ogre {
                 ++coordIndex;
             }
         }
-        assert(coordIndex == (size_t)stacks * slices);
+        assert_invariant(coordIndex == (size_t)stacks * slices);
     }
     
     //-----------------------------------------------------------------------

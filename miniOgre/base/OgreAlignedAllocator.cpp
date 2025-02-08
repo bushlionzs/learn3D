@@ -50,7 +50,7 @@ namespace Ogre {
     //---------------------------------------------------------------------
     void* AlignedMemory::allocate(size_t size, size_t alignment)
     {
-        assert(0 < alignment && alignment <= 128 && Bitwise::isPO2(alignment));
+        assert_invariant(0 < alignment && alignment <= 128 && Bitwise::isPO2(alignment));
 
         unsigned char* p = new unsigned char[size + alignment];
         size_t offset = alignment - (size_t(p) & (alignment-1));

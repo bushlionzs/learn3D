@@ -169,7 +169,7 @@ namespace Ogre {
 
     std::shared_ptr<TextureUnit>& Material::getTextureUnit(const String& name)
     {
-        assert(false);
+        assert_invariant(false);
         return mTextureUnits[0];
     }
 

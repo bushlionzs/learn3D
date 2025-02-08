@@ -22,7 +22,7 @@ VkFormat getVKFormatFromType(VertexElementType type)
         return VK_FORMAT_R8G8B8A8_UNORM;
         break;
     default:
-        assert(false);
+        assert_invariant(false);
         break;
     }
 
@@ -48,7 +48,7 @@ VkFormat getVKFormatFromType(spirv_cross::SPIRType type)
         }
         break;
     }
-    assert(false);
+    assert_invariant(false);
     return VK_FORMAT_R32G32_SFLOAT;
 }
 
@@ -60,6 +60,6 @@ int32_t getTypeSize(spirv_cross::SPIRType type)
         return sizeof(float) * type.vecsize;
         break;
     }
-    assert(false);
+    assert_invariant(false);
     return 0;
 }

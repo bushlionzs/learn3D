@@ -2,6 +2,8 @@
 #include "hlslUtil.h"
 #include "string_util.h"
 #include <platform_file.h>
+#include <WinSock2.h>
+#include <windows.h>
 #include <dxcapi.h>
 #include <wrl.h>
 #include <OgreResourceManager.h>
@@ -142,7 +144,7 @@ bool hlslToBin(
 	}
 	else
 	{
-		assert(false);
+		assert_invariant(false);
 	}
 	
 	std::wstring wShaderName = dy::acsi_to_widebyte(shaderName);
@@ -209,7 +211,7 @@ bool hlslToBin(
 		);
 	if (FAILED(hr))
 	{
-		assert(false);
+		assert_invariant(false);
 		pResult->Release();
 		return false;
 	}
@@ -222,7 +224,7 @@ bool hlslToBin(
 	{
 		const char* str = (char*)errors->GetStringPointer();
 		 OutputDebugStringA(str);
-		 assert(false);
+		 assert_invariant(false);
 		 return false;
 	}
 	const char* data = (const char*)pShaderBlob->GetBufferPointer();

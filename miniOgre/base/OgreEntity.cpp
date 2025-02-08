@@ -246,7 +246,7 @@ namespace Ogre {
         case VET_FLOAT2:
             return backend::ElementType::FLOAT2;
         }
-        assert(false);
+        assert_invariant(false);
 
         return backend::ElementType::BYTE;
     }

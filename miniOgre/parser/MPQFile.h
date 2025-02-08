@@ -1,7 +1,8 @@
 #pragma once
 
 #include "OgreScriptLoader.h"
-
+#include <WinSock2.h>
+#include <windows.h>
 class MPQArchive : public PackFileBase
 {
 public:

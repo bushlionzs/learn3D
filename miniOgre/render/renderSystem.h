@@ -31,13 +31,13 @@ public:
         const std::string&name,
         Ogre::TextureProperty* texProperty);
     virtual Ogre::RenderWindow* createRenderWindow(
-        const CreateWindowDesc& desc) = 0;
+        const Ogre::CreateWindowDesc& desc) = 0;
 
     virtual Ogre::RenderTarget* createRenderTarget(
         const String& name,
-        TextureProperty& texProperty);
+        Ogre::TextureProperty& texProperty);
     virtual void clearRenderTarget(Ogre::RenderTarget*, const Ogre::Vector4& color) {}
-    virtual void clearRenderTexture(OgreTexture*, const Ogre::Vector4& color) {}
+    virtual void clearRenderTexture(Ogre::OgreTexture*, const Ogre::Vector4& color) {}
     virtual void ready() {}
 
     virtual const String& getRenderSystemName()
@@ -91,15 +91,15 @@ public:
     virtual void copyImage(
         Ogre::RenderTarget* dst,
         Ogre::RenderTarget* src,
-        ImageCopyDesc& desc) {
+        Ogre::ImageCopyDesc& desc) {
     }
 
     virtual void copyImageToBuffer(
-        OgreTexture* image,
+        Ogre::OgreTexture* image,
         Handle<HwBufferObject> bufferHandle,
-        Extent3D extent
+        Ogre::Extent3D extent
     ) {
-        assert(false);
+        assert_invariant(false);
     }
     virtual void copyBuffer(
         Handle<HwBufferObject> src,
@@ -162,7 +162,7 @@ public:
         uint32_t byteCount,
         const char* debugName = nullptr);*/
     virtual Handle<HwBufferObject> createBufferObject(
-        BufferDesc& desc);
+        Ogre::BufferDesc& desc);
     virtual void updateBufferObject(
         Handle<HwBufferObject> boh, 
         const char* data, 
@@ -201,16 +201,16 @@ public:
     virtual void updateDescriptorSet(
         Handle<HwDescriptorSet> dsh,
         uint32_t count, 
-        const DescriptorData* pParams
+        const Ogre::DescriptorData* pParams
         ) {}
     virtual void resourceBarrier(
         uint32_t numBufferBarriers, 
-        BufferBarrier* pBufferBarriers,
+        Ogre::BufferBarrier* pBufferBarriers,
         uint32_t textureBarrierCount, 
-        TextureBarrier* pTextureBarriers,
+        Ogre::TextureBarrier* pTextureBarriers,
         uint32_t numRtBarriers, 
-        RenderTargetBarrier* pRtBarriers,
-        QueueType queueType = QUEUE_TYPE_GRAPHICS
+        Ogre::RenderTargetBarrier* pRtBarriers,
+        Ogre::QueueType queueType = Ogre::QUEUE_TYPE_GRAPHICS
     ) {}
 
 
@@ -219,17 +219,17 @@ public:
     //raytracing
 
     virtual void addAccelerationStructure(
-        const AccelerationStructureDesc* pDesc,
-        AccelerationStructure** ppAccelerationStructure) {
-        assert(false);
+        const Ogre::AccelerationStructureDesc* pDesc,
+        Ogre::AccelerationStructure** ppAccelerationStructure) {
+        assert_invariant(false);
     }
 
-    virtual void buildAccelerationStructure(RaytracingBuildASDesc* pDesc) { 
-        assert(false);
+    virtual void buildAccelerationStructure(Ogre::RaytracingBuildASDesc* pDesc) {
+        assert_invariant(false);
     }
 
     virtual void removeAccelerationStructureScratch(
-        AccelerationStructure* pAccelerationStructure) {}
+        Ogre::AccelerationStructure* pAccelerationStructure) {}
 
     virtual uint64_t getBufferDeviceAddress(Handle<HwBufferObject> bufHandle)
     {

@@ -86,7 +86,7 @@ void TextureUnit::setTexture(const std::string& name, Ogre::TextureProperty* tex
 {
     mNameList.clear();
     mNameList.push_back(name);
-    assert(!name.empty());
+    assert_invariant(!name.empty());
     if (texProperty)
     {
         mTextureProperty = *texProperty;
@@ -311,7 +311,7 @@ void TextureUnit::addEffect(TextureEffect& effect)
 //-----------------------------------------------------------------------
 void TextureUnit::createEffectController(TextureEffect& effect)
 {
-    assert(effect.controller == 0);
+    assert_invariant(effect.controller == 0);
     ControllerManager& cMgr = ControllerManager::getSingleton();
     switch (effect.type)
     {
@@ -394,7 +394,7 @@ void TextureUnit::addTime(float delta)
                 mAnimAccumulate -= mAnimDuration;
             }
 
-            assert(false);
+            assert_invariant(false);
         }
 
     }

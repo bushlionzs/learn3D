@@ -178,7 +178,7 @@ namespace Ogre {
         auto itor = mNamedNodes.find(name);
         if (itor != mNamedNodes.end())
         {
-            assert(false);
+            assert_invariant(false);
         }
         auto node = OGRE_NEW SceneNode(this, name);
         mNamedNodes[name] = node;

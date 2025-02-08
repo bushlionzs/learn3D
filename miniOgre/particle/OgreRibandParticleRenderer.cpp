@@ -259,7 +259,7 @@ namespace Ogre
 				return false;
 			}
 			//ÊôÐÔ
-			assert(mRibbonSet);
+			assert_invariant(mRibbonSet);
 			pSerializer->readData(stream,&mIsWorldSpace,1,sizeof(mIsWorldSpace));
 			Real Temp[4];
 			pSerializer->readData(stream,Temp,1,sizeof(Temp));

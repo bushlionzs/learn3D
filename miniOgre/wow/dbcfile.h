@@ -1,7 +1,7 @@
 #ifndef DBCFILE_H
 #define DBCFILE_H
 
-#include <cassert>
+#include <utils/debug.h>
 #include <string>
 #include "OgreDataStream.h"
 class DBCFile
@@ -49,31 +49,31 @@ public:
 		}
 		float getFloat(size_t field) const
 		{
-			assert(field < file.fieldCount);
+			assert_invariant(field < file.fieldCount);
 			return *reinterpret_cast<float*>(offset+field*4);
 		}
 		unsigned int getUInt(size_t field) const
 		{
-			assert(field < file.fieldCount);
+			assert_invariant(field < file.fieldCount);
 			return *reinterpret_cast<unsigned int*>(offset+(field*4));
 		}
 		int getInt(size_t field) const
 		{
-			assert(field < file.fieldCount);
+			assert_invariant(field < file.fieldCount);
 			return *reinterpret_cast<int*>(offset+field*4);
 		}
 		unsigned char getByte(size_t ofs) const
 		{
-			assert(ofs < file.recordSize);
+			assert_invariant(ofs < file.recordSize);
 			return *reinterpret_cast<unsigned char*>(offset+ofs);
 		}
 		std::string getString(size_t field) const
 		{
-			assert(field < file.fieldCount);
+			assert_invariant(field < file.fieldCount);
 			size_t stringOffset = getUInt(field);
 			if (stringOffset >= file.stringSize)
 				stringOffset = 0;
-			assert(stringOffset < file.stringSize);
+			assert_invariant(stringOffset < file.stringSize);
 			//char * tmp = (char*)file.stringTable + stringOffset;
 			//unsigned char * tmp2 = file.stringTable + stringOffset;
 			return std::string(reinterpret_cast<char*>(file.stringTable + stringOffset));

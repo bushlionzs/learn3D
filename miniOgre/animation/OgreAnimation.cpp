@@ -19,7 +19,7 @@ namespace Ogre {
 	{
 		if (mNodeTrackList.count(boneId))
 		{
-			assert(false);
+			assert_invariant(false);
 		}
 
 		AnimationTrack* track = new AnimationTrack();

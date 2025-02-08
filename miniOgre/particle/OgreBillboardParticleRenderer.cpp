@@ -228,7 +228,7 @@ namespace Ogre {
                 return false;
             }
             // Ù–‘
-            assert(mBillboardSet);
+            assert_invariant(mBillboardSet);
             BillboardType bt = BBT_POINT;
             BillboardOrigin bo = BBO_CENTER;
             BillboardRotationType br = BBR_TEXCOORD;

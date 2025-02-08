@@ -26,7 +26,7 @@ namespace Ogre {
 
     void MoveObject::_notifyAttached(Node* parent, bool isTagPoint)
     {
-        assert(!mParent || !parent);
+        assert_invariant(!mParent || !parent);
         mParent = parent;
         
     }

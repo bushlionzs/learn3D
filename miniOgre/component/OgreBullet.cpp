@@ -314,7 +314,7 @@ void VertexIndexToShape::addStaticVertexData(const VertexData* vertex_data)
     {
         const VertexElement* posElem = data->getVertexDeclaration()->findElementBySemantic(VES_POSITION);
         auto bufHandle = data->getBuffer(posElem->getSource());
-        assert(false);
+        assert_invariant(false);
         const unsigned int vSize = 0;// (unsigned int)vbuf->getVertexSize();
         BufferHandleLockGuard guard(bufHandle);
         unsigned char* vertex = (unsigned char*)(guard.data());
@@ -427,7 +427,7 @@ Vector3 VertexIndexToShape::getSize()
 //------------------------------------------------------------------------------------------------
 btConvexHullShape* VertexIndexToShape::createConvex()
 {
-    assert(mVertexCount && (mIndexCount >= 6) && ("Mesh must have some vertices and at least 6 indices (2 triangles)"));
+    assert_invariant(mVertexCount && (mIndexCount >= 6) && ("Mesh must have some vertices and at least 6 indices (2 triangles)"));
 
     btConvexHullShape* shape = new btConvexHullShape((btScalar*)&mVertexBuffer[0].x, mVertexCount, sizeof(Vector3));
 
@@ -438,7 +438,7 @@ btConvexHullShape* VertexIndexToShape::createConvex()
 //------------------------------------------------------------------------------------------------
 btBvhTriangleMeshShape* VertexIndexToShape::createTrimesh()
 {
-    assert(mVertexCount && (mIndexCount >= 6) && ("Mesh must have some vertices and at least 6 indices (2 triangles)"));
+    assert_invariant(mVertexCount && (mIndexCount >= 6) && ("Mesh must have some vertices and at least 6 indices (2 triangles)"));
 
     unsigned int numFaces = mIndexCount / 3;
 

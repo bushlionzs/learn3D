@@ -96,7 +96,7 @@ VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(const VulkanDescriptorSetLa
 }
 
 void VulkanDescriptorSet::acquire(VulkanTexture* texture) {
-    assert(false);
+    assert_invariant(false);
 }
 
 void VulkanDescriptorSet::acquire(VulkanBufferObject* bufferObject) {

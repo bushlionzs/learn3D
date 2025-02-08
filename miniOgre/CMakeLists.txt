@@ -8,6 +8,7 @@ add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-DFILAMENT_DRIVER_SUPPORTS_VULKAN)
 add_definitions(-DVK_NO_PROTOTYPES)
+add_definitions(-DUSE_OGRE_MACRO)
 endif()
 
 
@@ -52,6 +53,7 @@ add_subdir(render/vulkanRender)
 add_subdir(wow)
 #add_subdir(fg)
 add_subdir(filament)
+
 
 list(APPEND MINIOGRE_INC ${CMAKE_CURRENT_SOURCE_DIR}/animation)
 list(APPEND MINIOGRE_INC ${CMAKE_CURRENT_SOURCE_DIR}/base)

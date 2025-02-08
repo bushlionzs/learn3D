@@ -459,7 +459,7 @@ void Dx12Texture::buildDescriptorHeaps()
             {
                 int kk = 0;
             }
-            assert(mMipLevels <= D3D12_MAX_MIPMAP_COUNT);
+            assert_invariant(mMipLevels <= D3D12_MAX_MIPMAP_COUNT);
 
             for (uint32_t i = 0; i < mMipLevels; i++)
             {
@@ -512,7 +512,7 @@ void Dx12Texture::blitFromMemory(
     }
     else
     {
-        assert(false);
+        assert_invariant(false);
     }
 }
 

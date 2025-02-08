@@ -88,7 +88,7 @@ namespace Ogre {
     Vector3 SimpleSpline::interpolate(unsigned int fromIndex, Real t) const
     {
         // Bounds check
-        assert (fromIndex < mPoints.size() &&
+        assert_invariant(fromIndex < mPoints.size() &&
             "fromIndex out of bounds");
 
         if ((fromIndex + 1) == mPoints.size())
@@ -224,7 +224,7 @@ namespace Ogre {
     //---------------------------------------------------------------------
     const Vector3& SimpleSpline::getPoint(unsigned short index) const
     {
-        assert (index < mPoints.size() && "Point index is out of bounds!!");
+        assert_invariant(index < mPoints.size() && "Point index is out of bounds!!");
 
         return mPoints[index];
     }
@@ -242,7 +242,7 @@ namespace Ogre {
     //---------------------------------------------------------------------
     void SimpleSpline::updatePoint(unsigned short index, const Vector3& value)
     {
-        assert (index < mPoints.size() && "Point index is out of bounds!!");
+        assert_invariant(index < mPoints.size() && "Point index is out of bounds!!");
 
         mPoints[index] = value;
         if (mAutoCalc)

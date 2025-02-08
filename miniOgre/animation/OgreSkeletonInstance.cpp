@@ -47,7 +47,7 @@ namespace Ogre {
 
 			if (!visit[parentId])
 			{
-				assert(false);
+				assert_invariant(false);
 			}
 
 
@@ -242,7 +242,7 @@ namespace Ogre {
 	void SkeletonInstance::buildSkeletonInfo()
 	{
 		mBoneCount = mSkeleton->getNumBones();
-		assert(mBoneCount <= MAX_BONE_NUMBER);
+		assert_invariant(mBoneCount <= MAX_BONE_NUMBER);
 		mBoneTransforms.resize(mBoneCount);
 		mBoneTransformsBak.resize(mBoneCount);
 		mBoneTransformsOgre.resize(mBoneCount);

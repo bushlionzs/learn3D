@@ -113,7 +113,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void Frustum::setNearClipDistance(Real nearPlane)
     {
-        assert(nearPlane > 0, "Invalid clip distance");
+        assert_invariant(nearPlane > 0, "Invalid clip distance");
         mNearDist = nearPlane;
         invalidateFrustum();
     }
@@ -143,7 +143,7 @@ namespace Ogre {
     //---------------------------------------------------------------------
     void Frustum::setFocalLength(Real focalLength)
     {
-        assert(focalLength > 0, "Invalid focal length");
+        assert_invariant(focalLength > 0, "Invalid focal length");
         mFocalLength = focalLength;
         invalidateFrustum();
     }

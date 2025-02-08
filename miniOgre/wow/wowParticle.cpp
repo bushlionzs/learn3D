@@ -168,7 +168,7 @@ void WowParticleSystem::init(
 		break;
 	case MODELPARTICLE_EMITTER_SPLINE: // Spline? (can't be bothered to find one)
 	default:
-		assert(false);
+		assert_invariant(false);
 		break;
 	}
 
@@ -530,7 +530,7 @@ WowParticle PlaneParticleEmitter::newParticle(
 	mrot = mrot*SpreadMat;
 	
 	if (sys->flags == 1041) { // Trans Halo
-		assert(false);
+		assert_invariant(false);
 		p.pos = mat * (sys->pos + Ogre::Vector3(randfloat(-l,l), 0, randfloat(-w,w)));
 
 		const float t = randfloat(0.0f, float(2*Ogre::Math::PI));
@@ -544,12 +544,12 @@ WowParticle PlaneParticleEmitter::newParticle(
 	} 
 	else if (sys->flags == 25 ) 
 	{ // Weapon Flame
-		assert(false);
+		assert_invariant(false);
 	} 
 	else if (sys->flags == 17 )
 	{ // Weapon Glow
 		
-		assert(false);
+		assert_invariant(false);
 	} 
 	else 
 	{
@@ -594,7 +594,7 @@ WowParticle SphereParticleEmitter::newParticle(
 	size_t anim, size_t time, float w, float l, float spd, float var, float spr, float spr2)
 {
 	WowParticle p;
-	assert(false);
+	assert_invariant(false);
 	return p;
 }
 

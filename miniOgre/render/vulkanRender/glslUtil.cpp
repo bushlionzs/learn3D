@@ -31,7 +31,7 @@ public:
         size_t include_depth)
     {
         ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(requested_source);
-        assert(resInfo);
+        assert_invariant(resInfo);
         auto& name = resInfo->_fullname;
 
         auto context = new shaderc_include_result_private;
@@ -182,7 +182,7 @@ bool glslCompileShader(
 
         if (module.GetCompilationStatus() != shaderc_compilation_status_success) {
             std::string aa = module.GetErrorMessage();
-            assert(false);
+            assert_invariant(false);
             return false;
         }
 
@@ -259,7 +259,7 @@ void parserGlslInputDesc(
         auto& input = inputs[i];
         inputDesc[i]._name = glsl.get_name(input.id);
         inputDesc[i]._index = 0;
-        assert(!inputDesc[i]._name.empty());
+        assert_invariant(!inputDesc[i]._name.empty());
 
         if (inputDesc[i]._name.back() >= '0' && inputDesc[i]._name.back() <= '9')
         {

@@ -130,7 +130,7 @@ bool ParticleScriptParser::readParticle(std::stringstream& ss, ParticleSystem* p
                 bset = render->setParameter(linePart, right);
             }
 
-            assert(bset);
+            assert_invariant(bset);
 
             ss >> linePart;
         }
@@ -170,7 +170,7 @@ bool ParticleScriptParser::readEmitter(std::stringstream& ss, ParticleEmitter* e
         Ogre::StringUtil::trim(right);
         bool bset = emitter->setParameter(linePart, right);
 
-        assert(bset);
+        assert_invariant(bset);
 
         ss >> linePart;
     }
@@ -208,7 +208,7 @@ bool ParticleScriptParser::readAffector(std::stringstream& ss, ParticleAffector*
         right = SkipLine(ss);
         Ogre::StringUtil::trim(right);
         bool bset = affector->setParameter(linePart, right);
-        assert(bset);
+        assert_invariant(bset);
         ss >> linePart;
     }
     SkipLine(ss);

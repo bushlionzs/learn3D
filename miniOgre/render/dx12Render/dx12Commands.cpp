@@ -109,7 +109,7 @@ void DX12Commands::signalFence()
 {
 	if (mCurrentCommandBufferIndex < 0)
 	{
-		assert(false);
+		assert_invariant(false);
 		return;
 	}
 

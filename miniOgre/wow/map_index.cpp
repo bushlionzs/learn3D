@@ -41,14 +41,14 @@ MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
   stream->read(&version, 4);
 
   //! \todo find the correct version of WDT files.
-  assert(fourcc == 'MVER' && version == 18);
+  assert_invariant(fourcc == 'MVER' && version == 18);
 
   // - MHDR ----------------------------------------------
 
   stream->read(&fourcc, 4);
   stream->read(&size, 4);
 
-  assert(fourcc == 'MPHD');
+  assert_invariant(fourcc == 'MPHD');
 
   stream->read(&mphd, sizeof(MPHD));
 
@@ -67,7 +67,7 @@ MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
   stream->read(&fourcc, 4);
   stream->seekRelative(4);
 
-  assert(fourcc == 'MAIN');
+  assert_invariant(fourcc == 'MAIN');
 
   /// this is the theory. Sadly, we are also compiling on 64 bit machines with size_t being 8 byte, not 4. Therefore, we can't do the same thing, Blizzard does in its 32bit executable.
   //theFile.read( &(mTiles[0][0]), sizeof( 8 * 64 * 64 ) );
@@ -107,7 +107,7 @@ MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
           stream->read(&fourcc, 4);
           stream->read(&size, 4);
 
-          assert(fourcc == 'MWMO');
+          assert_invariant(fourcc == 'MWMO');
 
           globalWMOName = std::string(stream->getCurrentStreamData(), size);
           stream->seekRelative(size);
@@ -117,7 +117,7 @@ MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
           stream->read(&fourcc, 4);
           stream->read(&size, 4);
 
-          assert(fourcc == 'MODF');
+          assert_invariant(fourcc == 'MODF');
 
           stream->read(&wmoEntry, sizeof(ENTRY_MODF));
       }
@@ -418,14 +418,14 @@ uint32_t MapIndex::getHighestGUIDFromFile(const std::string& pFilename) const
     guidstream->seekRelative(4);
     guidstream->read(&version, 4);
 
-    assert(fourcc == 'MVER' && version == 18);
+    assert_invariant(fourcc == 'MVER' && version == 18);
 
     // - MHDR ----------------------------------------------
 
     guidstream->read(&fourcc, 4);
     guidstream->seekRelative(4);
 
-    assert(fourcc == 'MHDR');
+    assert_invariant(fourcc == 'MHDR');
 
     guidstream->read(&Header, sizeof(MHDR));
 
@@ -435,7 +435,7 @@ uint32_t MapIndex::getHighestGUIDFromFile(const std::string& pFilename) const
     guidstream->read(&fourcc, 4);
     guidstream->read(&size, 4);
 
-    assert(fourcc == 'MDDF');
+    assert_invariant(fourcc == 'MDDF');
 
     ENTRY_MDDF const* mddf_ptr = reinterpret_cast<ENTRY_MDDF const*>(guidstream->getCurrentStreamData());
     for (unsigned int i = 0; i < size / sizeof(ENTRY_MDDF); ++i)
@@ -449,7 +449,7 @@ uint32_t MapIndex::getHighestGUIDFromFile(const std::string& pFilename) const
     guidstream->read(&fourcc, 4);
     guidstream->read(&size, 4);
 
-    assert(fourcc == 'MODF');
+    assert_invariant(fourcc == 'MODF');
 
     ENTRY_MODF const* modf_ptr = reinterpret_cast<ENTRY_MODF const*>(guidstream->getCurrentStreamData());
     for (unsigned int i = 0; i < size / sizeof(ENTRY_MODF); ++i)
@@ -539,19 +539,19 @@ uid_fix_status MapIndex::fixUIDs (World* world, bool cancel_on_model_loading_err
       adtstream->read(&fourcc, 4);
       adtstream->seekRelative(4);
       adtstream->read(&version, 4);
-      assert(fourcc == 'MVER' && version == 18);
+      assert_invariant(fourcc == 'MVER' && version == 18);
 
       // - MHDR ----------------------------------------------
       adtstream->read(&fourcc, 4);
       adtstream->seekRelative(4);
-      assert(fourcc == 'MHDR');
+      assert_invariant(fourcc == 'MHDR');
       adtstream->read(&Header, sizeof(MHDR));
 
       // - MDDF ----------------------------------------------
       adtstream->seek(Header.mddf + 0x14);
       adtstream->read(&fourcc, 4);
       adtstream->read(&size, 4);
-      assert(fourcc == 'MDDF');
+      assert_invariant(fourcc == 'MDDF');
 
       ENTRY_MDDF const* mddf_ptr = reinterpret_cast<ENTRY_MDDF const*>(adtstream->getCurrentStreamData());
 
@@ -593,7 +593,7 @@ uid_fix_status MapIndex::fixUIDs (World* world, bool cancel_on_model_loading_err
       adtstream->seek(Header.modf + 0x14);
       adtstream->read(&fourcc, 4);
       adtstream->read(&size, 4);
-      assert(fourcc == 'MODF');
+      assert_invariant(fourcc == 'MODF');
 
       ENTRY_MODF const* modf_ptr = reinterpret_cast<ENTRY_MODF const*>(adtstream->getCurrentStreamData());
 
@@ -634,7 +634,7 @@ uid_fix_status MapIndex::fixUIDs (World* world, bool cancel_on_model_loading_err
       adtstream->seek(Header.mmdx + 0x14);
       adtstream->read(&fourcc, 4);
       adtstream->read(&size, 4);
-      assert(fourcc == 'MMDX');
+      assert_invariant(fourcc == 'MMDX');
 
       {
         char const* lCurPos = reinterpret_cast<char const*>(adtstream->getCurrentStreamData());
@@ -651,7 +651,7 @@ uid_fix_status MapIndex::fixUIDs (World* world, bool cancel_on_model_loading_err
       adtstream->seek(Header.mwmo + 0x14);
       adtstream->read(&fourcc, 4);
       adtstream->read(&size, 4);
-      assert(fourcc == 'MWMO');
+      assert_invariant(fourcc == 'MWMO');
 
       {
         char const* lCurPos = reinterpret_cast<char const*>(adtstream->getCurrentStreamData());

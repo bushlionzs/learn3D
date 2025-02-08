@@ -258,7 +258,7 @@ void DX12ProgramImpl::parseShaderInfo()
         }
         else
         {
-            assert(false);
+            assert_invariant(false);
         }
 
         index++;
@@ -350,7 +350,7 @@ void DX12ProgramImpl::updateInputDesc(VertexDeclaration* vDeclaration)
 
         if (elem.Format == DXGI_FORMAT_UNKNOWN)
         {
-            assert(false);
+            assert_invariant(false);
         } 
         elem.SemanticName = it.name;
         elem.SemanticIndex = it.semanticIndex;

@@ -20,7 +20,7 @@ namespace Ogre {
             }
             else
             {
-                assert(false);
+                assert_invariant(false);
                 mSize = 0;
                 mFirst = nullptr;
                 mEnd = nullptr;

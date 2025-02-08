@@ -245,7 +245,7 @@ namespace Ogre {
         */
         inline void setExtents( const Vector3& min, const Vector3& max )
         {
-            assert( (min.x <= max.x && min.y <= max.y && min.z <= max.z) &&
+            assert_invariant( (min.x <= max.x && min.y <= max.y && min.z <= max.z) &&
                 "The minimum corner of the box must be less than or equal to maximum corner" );
 
             mExtent = EXTENT_FINITE;
@@ -257,7 +257,7 @@ namespace Ogre {
             Real mx, Real my, Real mz,
             Real Mx, Real My, Real Mz )
         {
-            assert( (mx <= Mx && my <= My && mz <= Mz) &&
+            assert_invariant( (mx <= Mx && my <= My && mz <= Mz) &&
                 "The minimum corner of the box must be less than or equal to maximum corner" );
 
             mExtent = EXTENT_FINITE;
@@ -297,7 +297,7 @@ namespace Ogre {
         */
         inline const Vector3* getAllCorners(void) const
         {
-            assert( (mExtent == EXTENT_FINITE) && "Can't get corners of a null or infinite AAB" );
+            assert_invariant( (mExtent == EXTENT_FINITE) && "Can't get corners of a null or infinite AAB" );
 
             // The order of these items is, using right-handed co-ordinates:
             // Minimum Z face, starting with Min(all), then anticlockwise
@@ -365,7 +365,7 @@ namespace Ogre {
                 return o;
 
             default: // shut up compiler
-                assert( false && "Never reached" );
+                assert_invariant( false && "Never reached" );
                 return o;
             }
         }
@@ -422,7 +422,7 @@ namespace Ogre {
                 return;
             }
 
-            assert( false && "Never reached" );
+            assert_invariant( false && "Never reached" );
         }
 
         /** Transforms the box according to the matrix supplied.
@@ -503,7 +503,7 @@ namespace Ogre {
         */
         void transformAffine(const Matrix4& m)
         {
-            assert(m.isAffine());
+            assert_invariant(m.isAffine());
 
             // Do nothing if current null or infinite
             if ( mExtent != EXTENT_FINITE )
@@ -638,7 +638,7 @@ namespace Ogre {
                 return Math::POS_INFINITY;
 
             default: // shut up compiler
-                assert( false && "Never reached" );
+                assert_invariant( false && "Never reached" );
                 return 0.0f;
             }
         }
@@ -683,14 +683,14 @@ namespace Ogre {
                 return true;
 
             default: // shut up compiler
-                assert( false && "Never reached" );
+                assert_invariant( false && "Never reached" );
                 return false;
             }
         }
         /// Gets the centre of the box
         Vector3 getCenter(void) const
         {
-            assert( (mExtent == EXTENT_FINITE) && "Can't get center of a null or infinite AAB" );
+            assert_invariant( (mExtent == EXTENT_FINITE) && "Can't get center of a null or infinite AAB" );
 
             return Vector3(
                 (mMaximum.x + mMinimum.x) * 0.5f,
@@ -715,7 +715,7 @@ namespace Ogre {
                     Math::POS_INFINITY);
 
             default: // shut up compiler
-                assert( false && "Never reached" );
+                assert_invariant( false && "Never reached" );
                 return Vector3::ZERO;
             }
         }
@@ -737,7 +737,7 @@ namespace Ogre {
                     Math::POS_INFINITY);
 
             default: // shut up compiler
-                assert( false && "Never reached" );
+                assert_invariant( false && "Never reached" );
                 return Vector3::ZERO;
             }
         }

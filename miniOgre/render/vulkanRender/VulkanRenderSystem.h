@@ -9,7 +9,7 @@
 class VulkanRenderSystem : public VulkanRenderSystemBase
 {
 public:
-    VulkanRenderSystem(HWND wnd);
+    VulkanRenderSystem(void* wnd);
 	~VulkanRenderSystem();
 
     virtual bool engineInit(bool raytracing) override;

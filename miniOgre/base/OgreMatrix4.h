@@ -194,13 +194,13 @@ namespace Ogre
 
         inline Real* operator [] ( size_t iRow )
         {
-            assert( iRow < 4 );
+            assert_invariant( iRow < 4 );
             return m[iRow];
         }
 
         inline const Real *operator [] ( size_t iRow ) const
         {
-            assert( iRow < 4 );
+            assert_invariant( iRow < 4 );
             return m[iRow];
         }
 
@@ -661,7 +661,7 @@ namespace Ogre
         */
         inline Matrix4 concatenateAffine(const Matrix4 &m2) const
         {
-            assert(isAffine() && m2.isAffine());
+            assert_invariant(isAffine() && m2.isAffine());
 
             return Matrix4(
                 m[0][0] * m2.m[0][0] + m[0][1] * m2.m[1][0] + m[0][2] * m2.m[2][0],
@@ -691,7 +691,7 @@ namespace Ogre
         */
         inline Vector3 transformDirectionAffine(const Vector3& v) const
         {
-            assert(isAffine());
+            assert_invariant(isAffine());
 
             return Vector3(
                     m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
@@ -708,7 +708,7 @@ namespace Ogre
         */
         inline Vector3 transformAffine(const Vector3& v) const
         {
-            assert(isAffine());
+            assert_invariant(isAffine());
 
             return Vector3(
                     m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3], 
@@ -722,7 +722,7 @@ namespace Ogre
         */
         inline Vector4 transformAffine(const Vector4& v) const
         {
-            assert(isAffine());
+            assert_invariant(isAffine());
 
             return Vector4(
                 m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w, 

@@ -261,7 +261,7 @@ namespace Ogre {
         case BlendFunction::ONE_MINUS_DST_ALPHA:   return D3D12_BLEND_INV_DEST_ALPHA;
         case BlendFunction::SRC_ALPHA_SATURATE:    return D3D12_BLEND_SRC_ALPHA_SAT;
         default:
-            assert(false);
+            assert_invariant(false);
             break;
         }
     }
@@ -278,7 +278,7 @@ namespace Ogre {
         case BlendEquation::REVERSE_SUBTRACT:
             return D3D12_BLEND_OP_REV_SUBTRACT;
         default:
-            assert(false);
+            assert_invariant(false);
             break;
         }
     }
@@ -326,7 +326,7 @@ namespace Ogre {
         case D3D_SIT_UAV_RWTYPED:
             return D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
         default:
-            assert(false);
+            assert_invariant(false);
             break;
         }
     }
@@ -347,7 +347,7 @@ namespace Ogre {
         case DXGI_FORMAT_D32_FLOAT:              return PF_DEPTH32F;
         case DXGI_FORMAT_D24_UNORM_S8_UINT: return PF_DEPTH24_STENCIL8;
         default:
-            assert(false);
+            assert_invariant(false);
             return PF_UNKNOWN;
         }
     }
@@ -478,7 +478,7 @@ namespace Ogre {
         case filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR:
             return FLT_MAX;
         default:
-            assert(false);
+            assert_invariant(false);
             return 1000.0f;
         }
     }
@@ -496,7 +496,7 @@ namespace Ogre {
         case Compare::A:  return D3D12_COMPARISON_FUNC_ALWAYS;
         case Compare::N:  return D3D12_COMPARISON_FUNC_NEVER;
         default:
-            assert(false);
+            assert_invariant(false);
             return D3D12_COMPARISON_FUNC_LESS_EQUAL;
         }
     }

@@ -31,7 +31,7 @@ bool FbxLoader::loadMeshFromFile(
     std::shared_ptr<Ogre::DataStream>& stream, Ogre::Mesh* mesh)
 {
     Assimp::Importer importer;
-    UINT flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices 
+    uint32_t flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices
         | aiProcess_SortByPType | aiProcess_FlipWindingOrder;
     bool flipUVs = true;
     if (flipUVs)
@@ -46,7 +46,7 @@ bool FbxLoader::loadMeshFromFile(
 
     if (scene->HasMaterials())
     {
-        for (UINT i = 0; i < scene->mNumMaterials; i++)
+        for (uint32_t i = 0; i < scene->mNumMaterials; i++)
         {
             
         }
@@ -113,7 +113,7 @@ bool FbxLoader::loadMeshFromFile(
 
                 if (sourceFace.mNumIndices != 3)
                 {
-                    assert(false);
+                    assert_invariant(false);
                 }
             }
 

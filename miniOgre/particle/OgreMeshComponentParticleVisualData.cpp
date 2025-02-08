@@ -49,7 +49,7 @@ void MeshComponentParticleVisualData::createVisualData(const String &meshName, c
 
 	if (!meshName.empty())
 	{
-		assert(false);
+		assert_invariant(false);
 	}
 	
 	mEntity = sceneMgr->createEntity( mSceneNode->getName(), meshName );
@@ -81,7 +81,7 @@ void MeshComponentParticleVisualData::destroyVisualData(void)
 {
 	if (mInit)
 	{
-		assert(mEntity);
+		assert_invariant(mEntity);
 		assert (mSceneNode);
 		mSceneNode->getCreator()->destroyMovableObject(mEntity);
 		mEntity = NULL;
@@ -163,11 +163,11 @@ void MeshComponentParticleVisualData::setColour( const ColourValue &colour )
 //-----------------------------------------------------------------------
 void MeshComponentParticleVisualData::modifyMesh(const String &meshName)
 {
-	assert(mEntity);
+	assert_invariant(mEntity);
 	Ogre::SceneNode* parent = mEntity->getParentSceneNode();
-	assert(parent);
+	assert_invariant(parent);
 	Ogre::SceneManager* creator = parent->getCreator();
-	assert(creator);
+	assert_invariant(creator);
 	parent->detachObject(mEntity->getName());
 	creator->destroyMovableObject(mEntity);
 	mEntity = NULL;
@@ -180,7 +180,7 @@ void MeshComponentParticleVisualData::modifyMesh(const String &meshName)
 //-----------------------------------------------------------------------
 void MeshComponentParticleVisualData::modifyMaterial(const String &matName)
 {
-	assert(mEntity);
+	assert_invariant(mEntity);
 
 	if (mMaterial)
 		MaterialManager::getSingleton().remove(mMaterial->getName());

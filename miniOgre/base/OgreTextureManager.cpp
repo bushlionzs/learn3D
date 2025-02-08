@@ -161,7 +161,7 @@ namespace Ogre {
 
     bool TextureManager::unloadUnreferencedResource(const String& name)
     {
-        assert(false);
+        assert_invariant(false);
         return true;
     }
 

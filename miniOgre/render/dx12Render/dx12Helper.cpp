@@ -1,5 +1,4 @@
 #include "OgreHeader.h"
-#include <dxcapi.h>
 #include "OgreVertexDeclaration.h"
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
@@ -238,7 +237,7 @@ std::vector<ShaderResource> DX12Helper::parseShaderResource(
 		d3d12reflection->GetResourceBindingDesc(i, &desc);
 		if (strcmp(desc.Name, "$Globals") == 0)
 		{
-			assert(false);
+			assert_invariant(false);
 		}
 		resourceList.emplace_back();
 		auto& back = resourceList.back();

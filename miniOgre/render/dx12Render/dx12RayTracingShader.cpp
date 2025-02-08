@@ -113,7 +113,7 @@ void DX12RayTracingProgramImpl::parseShaderInfo(const RaytracingShaderInfo& info
         }
         else
         {
-            assert(false);
+            assert_invariant(false);
         }
 
         index++;

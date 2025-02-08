@@ -55,7 +55,7 @@ namespace Ogre {
 
     Ogre::Matrix4  buildTransform(Ogre::Vector3& scale, Ogre::Vector3& trans, Ogre::Quaternion& orientation)
     {
-        assert(false);
+        assert_invariant(false);
         Ogre::Matrix4 m2;
   
         return m2;
@@ -282,7 +282,7 @@ namespace Ogre {
             mPosition += mOrientation * d;
             break;
         case TS_WORLD:
-            assert(false);
+            assert_invariant(false);
             break;
         case TS_PARENT:
             mPosition += d;

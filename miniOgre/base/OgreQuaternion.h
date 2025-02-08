@@ -113,7 +113,7 @@ namespace Ogre {
         /// Array accessor operator
         inline Real operator [] ( const size_t i ) const
         {
-            assert( i < 4 );
+            assert_invariant( i < 4 );
 
             return *(&w+i);
         }
@@ -121,7 +121,7 @@ namespace Ogre {
         /// Array accessor operator
         inline Real& operator [] ( const size_t i )
         {
-            assert( i < 4 );
+            assert_invariant( i < 4 );
 
             return *(&w+i);
         }

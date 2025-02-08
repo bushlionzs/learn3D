@@ -16,7 +16,7 @@ int GetFormatSize(int id)
     case TINYGLTF_COMPONENT_TYPE_DOUBLE: return 8;
     }
 
-    assert(false);
+    assert_invariant(false);
     return -1;
 }
 
@@ -33,7 +33,7 @@ VertexElementType GetEngineFormat(int id)
     case TINYGLTF_COMPONENT_TYPE_FLOAT: return VET_FLOAT3;
     }
 
-    assert(false);
+    assert_invariant(false);
     return VET_SHORT2;
 }
 
@@ -52,7 +52,7 @@ VertexElementSemantic GetEngineSemantic(const std::string& semantic)
 
     if (itor == semanticMap.end())
     {
-        assert(false);
+        assert_invariant(false);
     }
 
     return itor->second;
@@ -70,7 +70,7 @@ int GetTypeSize(int type)
     case TINYGLTF_TYPE_MAT4:   return 16;
     case TINYGLTF_TYPE_SCALAR: return 1;
     }
-    assert(false);
+    assert_invariant(false);
     return 0;
 }
 
@@ -87,7 +87,7 @@ int GetComponentTypeSize(int componentType)
     case TINYGLTF_COMPONENT_TYPE_FLOAT: return 4;
     }
 
-    assert(false);
+    assert_invariant(false);
     return 0;
 }
 
@@ -146,7 +146,7 @@ DXGI_FORMAT GetFormat(int type, int id)
         case TINYGLTF_COMPONENT_TYPE_FLOAT: return DXGI_FORMAT_R32G32B32A32_FLOAT; //(FLOAT)
         }
     }
-    assert(false);
+    assert_invariant(false);
     return DXGI_FORMAT_UNKNOWN;
 }
 
@@ -206,6 +206,6 @@ int GetStrideFromFormat(int type, int id)
     }
 
 
-    assert(false);
+    assert_invariant(false);
     return 0;
 }

@@ -18,6 +18,7 @@
 #define TNT_FILAMENT_BACKEND_HANDLE_H
 
 #include <utils/compiler.h>
+#include <utils/debug.h>
 #include <stdint.h>
 #include <assert.h>
 #include <limits>
@@ -79,7 +80,7 @@ public:
 
     // initialize a handle, for internal use only.
     explicit HandleBase(HandleId id) noexcept : object(id) {
-        assert(object != nullid); // usually means an uninitialized handle is used
+        assert_invariant(object != nullid); // usually means an uninitialized handle is used
     }
 
 protected:

@@ -40,7 +40,7 @@ MapChunk::MapChunk(
       stream->read(&fourcc, 4);
       stream->read(&size, 4);
 
-    assert(fourcc == 'MCNK');
+    assert_invariant(fourcc == 'MCNK');
 
     stream->read(&header, 0x80);
 
@@ -73,7 +73,7 @@ MapChunk::MapChunk(
       stream->read(&fourcc, 4);
       stream->read(&size, 4);
 
-    assert(fourcc == 'MCVT');
+    assert_invariant(fourcc == 'MCVT');
 
     WowTerrainVertex* ttv = mWowVertices;
 
@@ -111,7 +111,7 @@ MapChunk::MapChunk(
       stream->read(&fourcc, 4);
       stream->read(&size, 4);
 
-    assert(fourcc == 'MCNR');
+    assert_invariant(fourcc == 'MCNR');
 
     char nor[3];
     WowTerrainVertex*ttn = mWowVertices;
@@ -129,7 +129,7 @@ MapChunk::MapChunk(
       stream->read(&fourcc, 4);
       stream->read(&size, 4);
 
-    assert(fourcc == 'MCSH');
+    assert_invariant(fourcc == 'MCSH');
 
 
     uint8_t compressed_shadow_map[64 * 64 / 8];
@@ -173,7 +173,7 @@ MapChunk::MapChunk(
       stream->read(&fourcc, 4);
       stream->read(&size, 4);
 
-    assert(fourcc == 'MCCV');
+    assert_invariant(fourcc == 'MCCV');
 
     if (!(header_flags.flags.has_mccv))
     {
@@ -204,7 +204,7 @@ MapChunk::MapChunk(
     stream->read(&fourcc, 4);
     stream->seekRelative(4); // ignore the size here, the valid size is in the header
 
-    assert(fourcc == 'MCLQ');
+    assert_invariant(fourcc == 'MCLQ');
 
     int layer_count = (header.sizeLiquid - 8) / sizeof(mclq);
     std::vector<mclq> layers(layer_count);

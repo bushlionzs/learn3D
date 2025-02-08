@@ -267,7 +267,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     ParticleEmitter* ParticleSystem::getEmitter(unsigned short index) const
     {
-        assert(index < mEmitters.size() && "Emitter index out of bounds!");
+        assert_invariant(index < mEmitters.size() && "Emitter index out of bounds!");
         return mEmitters[index];
     }
     //-----------------------------------------------------------------------
@@ -278,7 +278,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void ParticleSystem::removeEmitter(unsigned short index)
     {
-        assert(index < mEmitters.size() && "Emitter index out of bounds!");
+        assert_invariant(index < mEmitters.size() && "Emitter index out of bounds!");
         ParticleEmitterList::iterator ei = mEmitters.begin() + index;
         ParticleSystemManager::getSingleton()._destroyEmitter(*ei);
         mEmitters.erase(ei);
@@ -287,7 +287,7 @@ namespace Ogre {
     void ParticleSystem::removeEmitter(ParticleEmitter* emitter)
     {
         auto ei = std::find(mEmitters.begin(), mEmitters.end(), emitter);
-        assert(ei != mEmitters.end(), "Emitter is not a part of ParticleSystem!");
+        assert_invariant(ei != mEmitters.end(), "Emitter is not a part of ParticleSystem!");
         ParticleSystemManager::getSingleton()._destroyEmitter(*ei);
         mEmitters.erase(ei);
     }
@@ -312,7 +312,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     ParticleAffector* ParticleSystem::getAffector(unsigned short index) const
     {
-        assert(index < mAffectors.size() && "Affector index out of bounds!");
+        assert_invariant(index < mAffectors.size() && "Affector index out of bounds!");
         return mAffectors[index];
     }
     //-----------------------------------------------------------------------
@@ -323,7 +323,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void ParticleSystem::removeAffector(unsigned short index)
     {
-        assert(index < mAffectors.size() && "Affector index out of bounds!");
+        assert_invariant(index < mAffectors.size() && "Affector index out of bounds!");
         ParticleAffectorList::iterator ai = mAffectors.begin() + index;
         ParticleSystemManager::getSingleton()._destroyAffector(*ai);
         mAffectors.erase(ai);
@@ -901,7 +901,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void ParticleSystem::setDefaultDimensions( Real width, Real height )
     {
-        assert(width >= 0 && height >= 0 && "Particle dimensions can not be negative");
+        assert_invariant(width >= 0 && height >= 0 && "Particle dimensions can not be negative");
         mDefaultWidth = width;
         mDefaultHeight = height;
         if (mRenderer)
@@ -912,7 +912,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void ParticleSystem::setDefaultWidth(Real width)
     {
-        assert(width >= 0 && "Particle dimensions can not be negative");
+        assert_invariant(width >= 0 && "Particle dimensions can not be negative");
         mDefaultWidth = width;
         if (mRenderer)
         {
@@ -927,7 +927,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void ParticleSystem::setDefaultHeight(Real height)
     {
-        assert(height >= 0 && "Particle dimensions can not be negative");
+        assert_invariant(height >= 0 && "Particle dimensions can not be negative");
         mDefaultHeight = height;
         if (mRenderer)
         {
@@ -1066,7 +1066,7 @@ namespace Ogre {
         mMaterial = MaterialManager::getSingleton().getByName(name, groupName);
         if (!mMaterial)
         {
-            assert(false);
+            assert_invariant(false);
             mMaterial = MaterialManager::getSingleton().getDefaultMaterial();
         }
         if (mIsRendererConfigured)
@@ -1434,7 +1434,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void ParticleSystem::removeFromActiveEmittedEmitters (ParticleEmitter* emitter)
     {
-        assert(emitter && "Emitter to be removed is 0!");
+        assert_invariant(emitter && "Emitter to be removed is 0!");
         ActiveEmittedEmitterList::iterator itActiveEmit;
         for (itActiveEmit = mActiveEmittedEmitters.begin(); itActiveEmit != mActiveEmittedEmitters.end(); ++itActiveEmit)
         {

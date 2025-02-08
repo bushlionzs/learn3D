@@ -36,7 +36,7 @@ void AnimationTrack::interpolate(Real t, TransformInfo& ti)
 	}
 	else
 	{
-		for (UINT i = 0; i < mKeyFrames.size() - 1; ++i)
+		for (uint32_t i = 0; i < mKeyFrames.size() - 1; ++i)
 		{
 			if (t >= mKeyFrames[i]->mTimePos && t <= mKeyFrames[i + 1]->mTimePos)
 			{

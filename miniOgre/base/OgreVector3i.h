@@ -123,7 +123,7 @@ namespace Ogre
 
 		inline int32_t operator [] (const size_t i) const
 		{
-			assert(i < 3);
+			assert_invariant(i < 3);
 
 			if (i == 0)
 			{
@@ -138,7 +138,7 @@ namespace Ogre
 
 		inline int32_t& operator [] (const size_t i)
 		{
-			assert(i < 3);
+			assert_invariant(i < 3);
 
 			if (i == 0)
 			{

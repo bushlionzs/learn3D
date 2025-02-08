@@ -167,7 +167,7 @@ namespace Ogre
     //-----------------------------------------------------------------------
     void RibbonTrail::setNumberOfChains(size_t numChains)
     {
-        assert(numChains >= mNodeList.size());
+        assert_invariant(numChains >= mNodeList.size());
         size_t oldChains = getNumberOfChains();
 
         BillboardChain::setNumberOfChains(numChains);
@@ -394,7 +394,7 @@ namespace Ogre
     //-----------------------------------------------------------------------
     void RibbonTrail::resetTrail(size_t index, const Node* node)
     {
-        assert(index < mChainCount);
+        assert_invariant(index < mChainCount);
 
         ChainSegment& seg = mChainSegmentList[index];
         // set up this segment

@@ -32,18 +32,18 @@ public:
 #endif
     Singleton(void)
     {
-        assert(!msSingleton);
+        assert_invariant(!msSingleton);
         msSingleton = static_cast<T*>(this);
     }
     ~Singleton(void)
     {
-        assert(msSingleton);
+        assert_invariant(msSingleton);
         msSingleton = 0;
     }
     /// Get the singleton instance
     static T& getSingleton(void)
     {
-        assert(msSingleton);
+        assert_invariant(msSingleton);
         return (*msSingleton);
     }
     /// @copydoc getSingleton

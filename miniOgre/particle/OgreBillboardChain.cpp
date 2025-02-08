@@ -320,7 +320,7 @@ namespace Ogre {
         const BillboardChain::Element& dtls)
     {
         ChainSegment& seg = mChainSegmentList.at(chainIndex);
-        assert(seg.head != SEGMENT_EMPTY);
+        assert_invariant(seg.head != SEGMENT_EMPTY);
 
         size_t idx = seg.head + elementIndex;
         // adjust for the edge and start
@@ -341,7 +341,7 @@ namespace Ogre {
     BillboardChain::getChainElement(size_t chainIndex, size_t elementIndex) const
     {
         const ChainSegment& seg = mChainSegmentList.at(chainIndex);
-        assert(seg.head != SEGMENT_EMPTY);
+        assert_invariant(seg.head != SEGMENT_EMPTY);
 
         size_t idx = seg.head + elementIndex;
         // adjust for the edge and start

@@ -91,7 +91,7 @@ namespace Ogre {
     }
     ParticleSystemManager& ParticleSystemManager::getSingleton(void)
     {  
-        assert( msSingleton );  return ( *msSingleton );  
+        assert_invariant( msSingleton );  return ( *msSingleton );  
     }
     //-----------------------------------------------------------------------
     ParticleSystemManager::ParticleSystemManager()

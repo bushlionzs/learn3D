@@ -34,7 +34,7 @@ namespace Ogre {
         void setMaterial(std::shared_ptr<Material>& mat);
         std::shared_ptr<Material>& getMaterial();
 
-        void setMaterialName(std::string& name);
+        void setMaterialName(const std::string& name);
         const std::string& getMaterialName();
 
         VertexDeclaration* getVertexDeclaration()

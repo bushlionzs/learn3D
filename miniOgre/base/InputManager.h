@@ -288,14 +288,13 @@ public:
 	void addListener(InputListener* listener);
 	void removeListener(InputListener* listener);
 
-	POINT MouseGetPos();
+	Ogre::Vector2 MouseGetPos();
 
 	bool IsKeyDown(OIS::KeyCode key);
 	/*void SetCaptureType(InputCaptureType type);
 	InputCaptureType GetCaptureType();*/
 
-private:
-	static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+public:
 
 	virtual bool keyPressed(const OIS::KeyEvent& _arg);
 	virtual bool keyReleased(const OIS::KeyEvent& _arg);
@@ -309,13 +308,27 @@ private:
 	void mouseMove(int _absx, int _absy, int _absz);
 	void mousePress(int _absx, int _absy, OIS::MouseButtonID _id);
 	void mouseRelease(int _absx, int _absy, OIS::MouseButtonID _id);
+    void updateSize(int width, int height)
+    {
+        mWidth = width;
+        mHeight = height;
+    }
 
+    int getWidth()
+    {
+        return mWidth;
+    }
+
+    int getHeight()
+    {
+        return mHeight;
+    }
+    static bool msSkipMove;
 private:
-	HWND mHwnd;
-	static LRESULT msOldWindowProc;
+	void* mHwnd;
 	int mWidth;
 	int mHeight;
-	static bool msSkipMove;
+	
 	int mMouseX;
 	int mMouseY;
 	int mMouseZ;

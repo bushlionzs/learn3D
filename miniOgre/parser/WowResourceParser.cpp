@@ -1,7 +1,8 @@
 #include "OgreHeader.h"
 #include "WowResourceParser.h"
-#include <StormLib.h>
 #include "MPQFile.h"
+#include <StormLib.h>
+
 WowResourceParser::WowResourceParser()
 {
 

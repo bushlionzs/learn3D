@@ -1,5 +1,4 @@
 #pragma once
-#include <d3d12.h>
 #include <dx12Common.h>
 #include <OgreCommon.h>
 #include "engine_struct.h"

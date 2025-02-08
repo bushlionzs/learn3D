@@ -89,7 +89,7 @@ namespace Ogre
     //-----------------------------------------------------------------------
     void DepthBuffer::_notifyRenderTargetAttached( RenderTarget *renderTarget )
     {
-        assert( mAttachedRenderTargets.find( renderTarget ) == mAttachedRenderTargets.end() );
+        assert_invariant( mAttachedRenderTargets.find( renderTarget ) == mAttachedRenderTargets.end() );
 
         mAttachedRenderTargets.insert( renderTarget );
     }
@@ -97,7 +97,7 @@ namespace Ogre
     void DepthBuffer::_notifyRenderTargetDetached( RenderTarget *renderTarget )
     {
         RenderTargetSet::iterator itor = mAttachedRenderTargets.find( renderTarget );
-        assert( itor != mAttachedRenderTargets.end() );
+        assert_invariant( itor != mAttachedRenderTargets.end() );
 
         mAttachedRenderTargets.erase( itor );
     }

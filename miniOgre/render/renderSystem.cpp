@@ -111,7 +111,7 @@ void RenderSystem::present()
 Handle<HwBufferObject> RenderSystem::createBufferObject(
     BufferDesc& desc)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwBufferObject>();
 }
 
@@ -121,7 +121,7 @@ void RenderSystem::updateBufferObject(
     uint32_t size,
     uint32_t offset)
 {
-    assert(false);
+    assert_invariant(false);
 }
 
 
@@ -129,7 +129,7 @@ Handle<HwDescriptorSet> RenderSystem::createDescriptorSet(
     Handle<HwProgram> programHandle,
     uint32_t set)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwDescriptorSet>();
 }
 
@@ -137,7 +137,7 @@ Handle<HwDescriptorSet> RenderSystem::createDescriptorSet(
     Handle<HwComputeProgram> programHandle,
     uint32_t set)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwDescriptorSet>();
 }
 
@@ -145,38 +145,38 @@ Handle<HwDescriptorSet> RenderSystem::createDescriptorSet(
     Handle<HwRaytracingProgram> programHandle,
     uint32_t set)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwDescriptorSet>();
 }
 
 Handle<HwPipelineLayout> RenderSystem::createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwPipelineLayout>();
 }
 
 Handle<HwProgram> RenderSystem::createShaderProgram(const ShaderInfo& mShaderInfo, VertexDeclaration* decl)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwProgram>();
 }
 
 Handle<HwRaytracingProgram> RenderSystem::createRaytracingProgram(
     const RaytracingShaderInfo& mShaderInfo)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwRaytracingProgram>();
 }
 
 Handle<HwSampler> RenderSystem::createTextureSampler(filament::backend::SamplerParams& samplerParams)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwSampler>();
 }
 
 Handle<HwComputeProgram> RenderSystem::createComputeProgram(const ShaderInfo& shaderInfo)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwComputeProgram>();
 }
 
@@ -184,7 +184,7 @@ Handle<HwPipeline> RenderSystem::createPipeline(
     backend::RasterState& rasterState,
     Handle<HwProgram>& program)
 {
-    assert(false);
+    assert_invariant(false);
     return Handle<HwPipeline>();
 }
 

@@ -49,13 +49,13 @@ struct TextureEffect {
     TextureEffectType type;
     int subtype;
     Real arg1, arg2;
-    WaveformType waveType;
+    Ogre::WaveformType waveType;
     Real base;
     Real frequency;
     Real phase;
     Real amplitude;
-    Controller<Real>* controller;
-    const Frustum* frustum;
+    Ogre::Controller<Real>* controller;
+    const Ogre::Frustum* frustum;
 };
 
 class TextureUnit
@@ -64,8 +64,8 @@ public:
     TextureUnit(Ogre::Material* owner);
     ~TextureUnit();
 
-    void setTexture(std::shared_ptr<OgreTexture> tex);
-    void setTexture(uint32_t index, std::shared_ptr<OgreTexture> tex);
+    void setTexture(std::shared_ptr<Ogre::OgreTexture> tex);
+    void setTexture(uint32_t index, std::shared_ptr<Ogre::OgreTexture> tex);
     bool updateTexture(uint32_t index, const std::string& texName);
     void setTexture(const std::string& name, Ogre::TextureProperty* texProperty);
     void setAnimtexture(const std::vector<String>& namelist, float duration);
@@ -79,31 +79,31 @@ public:
     void preLoad();
     void _load(utils::JobSystem::Job* job);
     void _unload();
-    ResourceState getResourceState()
+    Ogre::ResourceState getResourceState()
     {
         return mResourceState;
     }
     void updateResourceState();
 
-    std::shared_ptr<OgreTexture> getTexture();
+    std::shared_ptr<Ogre::OgreTexture> getTexture();
 
-    OgreTexture* getRaw();
-    TextureProperty* getTextureProperty();
+    Ogre::OgreTexture* getRaw();
+    Ogre::TextureProperty* getTextureProperty();
 
     std::shared_ptr<TextureUnit> clone(Ogre::Material* owner);
 
     void setColourOperationEx(
-        LayerBlendOperationEx op,
-        LayerBlendSource source1 = LBS_TEXTURE,
-        LayerBlendSource source2 = LBS_CURRENT,
+        Ogre::LayerBlendOperationEx op,
+        Ogre::LayerBlendSource source1 = Ogre::LBS_TEXTURE,
+        Ogre::LayerBlendSource source2 = Ogre::LBS_CURRENT,
 
-        const ColourValue& arg1 = ColourValue::White,
-        const ColourValue& arg2 = ColourValue::White,
+        const Ogre::ColourValue& arg1 = Ogre::ColourValue::White,
+        const Ogre::ColourValue& arg2 = Ogre::ColourValue::White,
 
         Real manualBlend = 0.0);
 
     void setProjectiveTexturing(bool enable,
-        const Frustum* projectionSettings);
+        const Ogre::Frustum* projectionSettings);
     void addEffect(TextureEffect& effect);
     void removeEffect(const TextureEffectType type);
     void createEffectController(TextureEffect& effect);
@@ -123,7 +123,7 @@ public:
 
     bool isLoaded();
 
-    const Matrix4& getTextureTransform() const;
+    const Ogre::Matrix4& getTextureTransform() const;
     void recalcTextureMatrix() const;
 
     /** Texture effects in a multimap paired array
@@ -131,7 +131,7 @@ public:
     typedef std::multimap<TextureEffectType, TextureEffect, std::less<TextureEffectType> > EffectMap;
 
 private:
-    std::vector<TexturePtr> mTextures;
+    std::vector<Ogre::TexturePtr> mTextures;
     std::vector<String> mNameList;
 
     int32_t mTextureIndex = 0;
@@ -142,7 +142,7 @@ private:
     Ogre::ControllerReal* mAnimController = nullptr;
     std::shared_ptr<TextureAnimationControllerValue> mControllerOwner;
     bool mLoad = false;
-    TextureProperty mTextureProperty;
+    Ogre::TextureProperty mTextureProperty;
 
     Real mUMod, mVMod;
 
@@ -150,7 +150,7 @@ private:
     Real mUScale, mVScale;
     Ogre::Radian mRotate;
     Ogre::Radian mCurrentRotate;
-    mutable Matrix4 mTexModMatrix;
+    mutable Ogre::Matrix4 mTexModMatrix;
     mutable bool mRecalcTexMatrix = true;
 
     //
@@ -159,5 +159,5 @@ private:
     Ogre::Material* mOwner;
 
 
-    ResourceState mResourceState = ResourceState::ResourceState_None;
+    Ogre::ResourceState mResourceState = Ogre::ResourceState::ResourceState_None;
 };

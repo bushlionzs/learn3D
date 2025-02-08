@@ -95,7 +95,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     SceneQueryResult& RegionSceneQuery::getLastResults(void) const
     {
-        assert(mLastResult);
+        assert_invariant(mLastResult);
         return *mLastResult;
     }
     //-----------------------------------------------------------------------
@@ -300,7 +300,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     IntersectionSceneQueryResult& IntersectionSceneQuery::getLastResults(void) const
     {
-        assert(mLastResult);
+        assert_invariant(mLastResult);
         return *mLastResult;
     }
     //-----------------------------------------------------------------------

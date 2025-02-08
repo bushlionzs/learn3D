@@ -1,12 +1,12 @@
 #include "OgreHeader.h"
+#include <windows.h>
 #include "InputManager.h"
 #include "OgreRoot.h"
 
 
-
 template<> InputManager* Ogre::Singleton< InputManager >::msSingleton = NULL;
 
-LRESULT InputManager::msOldWindowProc = NULL;
+LRESULT msOldWindowProc = NULL;
 
 bool InputManager::msSkipMove = false;
 
@@ -80,7 +80,7 @@ static int ScanCodeToText(int _scanCode)
 
 bool gUseMouseMessage = true;
 
-LRESULT CALLBACK InputManager::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 #ifndef WM_MOUSEWHEEL
 #define WM_MOUSEWHEEL 0x020A
@@ -114,8 +114,7 @@ LRESULT CALLBACK InputManager::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	}
 	else if (WM_SIZE == uMsg)
 	{
-		InputManager::getSingleton().mWidth = GET_LOWORD(lParam);
-		InputManager::getSingleton().mHeight = GET_HIWORD(lParam);
+		InputManager::getSingleton().updateSize(GET_LOWORD(lParam), GET_HIWORD(lParam));
 	}
 	else if ((uMsg >= WM_MOUSEFIRST) && (uMsg <= __WM_REALMOUSELAST))
 	{
@@ -135,15 +134,15 @@ LRESULT CALLBACK InputManager::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 				int y = GET_HIWORD(lParam);
 
 				if (x < 0) x = 0;
-				else if (x > InputManager::getSingleton().mWidth) x = InputManager::getSingleton().mWidth;
+				else if (x > InputManager::getSingleton().getWidth()) x = InputManager::getSingleton().getWidth();
 				if (y < 0) y = 0;
-				else if (y > InputManager::getSingleton().mHeight) y = InputManager::getSingleton().mHeight;
+				else if (y > InputManager::getSingleton().getHeight()) y = InputManager::getSingleton().getHeight();
 
 				old_x = x;
 				old_y = y;
 
-				if (msSkipMove)
-					msSkipMove = false;
+				if (InputManager::msSkipMove)
+					InputManager::msSkipMove = false;
 				else
 					InputManager::getSingleton().mouseMove(old_x, old_y, old_z);
 				break;
@@ -242,13 +241,13 @@ void InputManager::createInput(size_t _handle)
 
 	if (!msOldWindowProc)
 	{
-		msOldWindowProc = GetWindowLongPtr(mHwnd, GWLP_WNDPROC);
-		SetWindowLongPtr(mHwnd, GWLP_WNDPROC, (LONG_PTR)windowProc);
+		msOldWindowProc = GetWindowLongPtr((HWND)mHwnd, GWLP_WNDPROC);
+		SetWindowLongPtr((HWND)mHwnd, GWLP_WNDPROC, (LONG_PTR)windowProc);
 	}
 
 
-	LONG_PTR style = GetWindowLongPtr(mHwnd, GWL_EXSTYLE);
-	SetWindowLongPtr(mHwnd, GWL_EXSTYLE, style | WS_EX_ACCEPTFILES);
+	LONG_PTR style = GetWindowLongPtr((HWND)mHwnd, GWL_EXSTYLE);
+	SetWindowLongPtr((HWND)mHwnd, GWL_EXSTYLE, style | WS_EX_ACCEPTFILES);
 
 	std::ostringstream windowHndStr;
 	windowHndStr << _handle;
@@ -315,7 +314,7 @@ void InputManager::onMouseCursor()
 void InputManager::setMousePosition(int _x, int _y)
 {
 	POINT point = { _x, _y };
-	::ClientToScreen(mHwnd, &point);
+	::ClientToScreen((HWND)mHwnd, &point);
 
 	msSkipMove = true;
 	::SetCursorPos(point.x, point.y);
@@ -334,9 +333,9 @@ void InputManager::removeListener(InputListener* listener)
 	listeners.erase(std::find(listeners.begin(), listeners.end(), listener));
 }
 
-POINT InputManager::MouseGetPos()
+Ogre::Vector2 InputManager::MouseGetPos()
 {
-	POINT pt;
+	Ogre::Vector2 pt;
 	pt.x = mMouseX;
 	pt.y = mMouseY;
 	return pt;

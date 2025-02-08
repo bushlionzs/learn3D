@@ -10,8 +10,8 @@ public:
     VertexDeclaration();
     ~VertexDeclaration();
 
-    const VertexElement& addElement(int16_t source, int16_t index, int32_t offset, VertexElementType theType,
-        VertexElementSemantic semantic);
+    const VertexElement& addElement(int16_t source, int16_t index, int32_t offset, Ogre::VertexElementType theType,
+        Ogre::VertexElementSemantic semantic);
 
     const VertexElementList& getElementList();
 
@@ -19,7 +19,7 @@ public:
 
     void removeAllElements();
     const VertexElement* findElementBySemantic(
-        VertexElementSemantic sem, unsigned short index = 0);
+        Ogre::VertexElementSemantic sem, unsigned short index = 0);
 
 protected:
     VertexElementList mElementList;

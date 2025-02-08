@@ -306,7 +306,7 @@ namespace Ogre {
 		auto itor = mShaderMap.find(name);
 		if (itor != mShaderMap.end())
 		{
-			assert(false);
+			assert_invariant(false);
 		}
 
 		mShaderMap[name] = sf;
@@ -330,7 +330,7 @@ namespace Ogre {
 
 		if (itor == mMacroMap.end())
 		{
-			assert(false);
+			assert_invariant(false);
 		}
 
 		return itor->second;

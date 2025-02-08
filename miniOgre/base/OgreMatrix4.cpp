@@ -163,7 +163,7 @@ namespace Ogre
     //-----------------------------------------------------------------------
     Matrix4 Matrix4::inverseAffine(void) const
     {
-        assert(isAffine());
+        assert_invariant(isAffine());
 
         Real m10 = m[1][0], m11 = m[1][1], m12 = m[1][2];
         Real m20 = m[2][0], m21 = m[2][1], m22 = m[2][2];
@@ -253,7 +253,7 @@ namespace Ogre
     //-----------------------------------------------------------------------
     void Matrix4::decomposition(Vector3& position, Vector3& scale, Quaternion& orientation) const
     {
-        assert(isAffine());
+        assert_invariant(isAffine());
 
         Matrix3 m3x3;
         extract3x3Matrix(m3x3);

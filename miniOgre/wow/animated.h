@@ -220,14 +220,14 @@ public:
 		if (seq!=-1) {
 			if (!gs)
 				return;
-			//assert(gs);
+			//assert_invariant(gs);
 		}
 
 
 		// times
 		if (b.nTimes != b.nKeys)
 			return;
-		//assert(b.nTimes == b.nKeys);
+		//assert_invariant(b.nTimes == b.nKeys);
 		sizes = b.nTimes;
 		if( b.nTimes == 0 )
 			return;
@@ -282,13 +282,13 @@ public:
 		if (seq!=-1) {
 			if (!gs)
 				return;
-			//assert(gs);
+			//assert_invariant(gs);
 		}
 
 		// times
 		if (b.nTimes != b.nKeys)
 			return;
-		//assert(b.nTimes == b.nKeys);
+		//assert_invariant(b.nTimes == b.nKeys);
 		sizes = b.nTimes;
 		if( b.nTimes == 0 )
 			return;

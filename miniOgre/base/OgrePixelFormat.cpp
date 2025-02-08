@@ -53,7 +53,7 @@ namespace Ogre {
     {
         if (PixelUtil::isCompressed(format) && (def.left != left || def.top != top || def.right != right || def.bottom != bottom))
         {
-            assert(false);
+            assert_invariant(false);
         }
 
         // Calculate new pixelbox and optionally reset origin.
@@ -96,7 +96,7 @@ namespace Ogre {
     static inline const PixelFormatDescription& getDescriptionFor(const PixelFormat fmt)
     {
         const int ord = (int)fmt;
-        assert(ord >= 0 && ord < PF_COUNT);
+        assert_invariant(ord >= 0 && ord < PF_COUNT);
 
         return _pixelFormats[ord];
     }
@@ -195,7 +195,7 @@ namespace Ogre {
             case PF_ASTC_RGBA_12X12_LDR:
                 return astc_slice_size(width, height, 12, 12) * depth;
             default:
-                assert(false);
+                assert_invariant(false);
                 return 0;
             }
         }
@@ -528,7 +528,7 @@ namespace Ogre {
                 ((uint8*)dest)[0] = (uint8)Bitwise::floatToFixed(r, 8);
                 break;
             default:
-                assert(false);
+                assert_invariant(false);
                 break;
             }
         }
@@ -662,7 +662,7 @@ namespace Ogre {
                 *a = Bitwise::fixedToFloat(((const uint8*)src)[1], 8);
                 break;
             default:
-                assert(false);
+                assert_invariant(false);
                 break;
             }
         }
@@ -689,7 +689,7 @@ namespace Ogre {
             }
             else
             {
-                assert(false);
+                assert_invariant(false);
             }
         }
 
@@ -812,7 +812,7 @@ namespace Ogre {
         // Check for compressed formats, we don't support decompression, compression or recoding
         if (PixelUtil::isCompressed(box.format))
         {
-            assert(false);
+            assert_invariant(false);
         }
 
         const size_t pixelSize = PixelUtil::getNumElemBytes(box.format);

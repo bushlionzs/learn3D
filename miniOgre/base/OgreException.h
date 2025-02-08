@@ -37,7 +37,7 @@ THE SOFTWARE.
 // RELEASE_EXCEPTIONS mode
 #if OGRE_ASSERT_MODE == 1
 #   if OGRE_DEBUG_MODE
-#       define OgreAssert( a, b ) assert( (a) && (b) )
+#       define OgreAssert( a, b ) assert_invariant( (a) && (b) )
 #   else
 #       define OgreAssert( a, b ) if( !(a) ) OGRE_EXCEPT_2( Ogre::Exception::ERR_RT_ASSERTION_FAILED, (#a " failed. " b) )
 #   endif
@@ -58,7 +58,7 @@ THE SOFTWARE.
  * To always abort instead of throwing an exception or disabling OgreAssert in Release configuration altogether,
  * set OGRE_ASSERT_MODE in CMake accordingly.
  */
-#   define OgreAssert( expr, mesg ) assert( (expr) && (mesg) )
+#   define OgreAssert( expr, mesg ) assert_invariant( (expr) && (mesg) )
 #endif
 
 #if OGRE_DEBUG_MODE

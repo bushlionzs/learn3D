@@ -39,7 +39,7 @@ namespace Ogre {
     }
     ControllerManager& ControllerManager::getSingleton(void)
     {  
-        assert( msSingleton );  return ( *msSingleton );  
+        assert_invariant( msSingleton );  return ( *msSingleton );  
     }
     //-----------------------------------------------------------------------
     ControllerManager::ControllerManager()

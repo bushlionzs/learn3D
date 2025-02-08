@@ -104,7 +104,7 @@ namespace Ogre {
 
         std::pair<ObjectMap::iterator, bool> insresult =
             mObjectsByName.insert(ObjectMap::value_type(obj->getName(), obj));
-        assert(insresult.second && "Object was not attached because an object of the "
+        assert_invariant(insresult.second && "Object was not attached because an object of the "
             "same name was already attached to this node.");
 
         // Make sure bounds get updated (must go right to the top)

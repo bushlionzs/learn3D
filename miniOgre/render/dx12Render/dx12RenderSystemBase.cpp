@@ -2,6 +2,7 @@
 #include "dx12RenderSystemBase.h"
 #define USE_PIX
 #if defined(USE_PIX)
+#include "ForgeConfig.h"
 #include <winpixeventruntime/pix3.h>
 #endif 
 #include "OgreMoveObject.h"
@@ -108,7 +109,7 @@ Ogre::RenderTarget* Dx12RenderSystemBase::createRenderTarget(
     }
     else
     {
-        assert(false);
+        assert_invariant(false);
     }
 
     Dx12RenderTarget* renderTarget = new Dx12RenderTarget(name, mCommands, &texProperty);
@@ -700,11 +701,11 @@ void Dx12RenderSystemBase::updateDescriptorSet(
         }
         if (descriptroInfo == nullptr)
         {
-            assert(false);
+            assert_invariant(false);
             continue;
         }
         dx12DescSet->addDescriptroInfo(descriptroInfo);
-        assert(descriptroInfo);
+        assert_invariant(descriptroInfo);
         const uint32_t       arrayCount = std::max(1U, pParam->mCount);
 
         switch (descriptroInfo->mType)
@@ -804,7 +805,7 @@ void Dx12RenderSystemBase::updateDescriptorSet(
         }
             break;
         default:
-            assert(false);
+            assert_invariant(false);
             break;
         }
         

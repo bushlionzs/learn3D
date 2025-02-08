@@ -121,7 +121,7 @@ DX12BufferObject::DX12BufferObject(
     }
     break;
     default:
-        assert(false);
+        assert_invariant(false);
         break;
     }
 

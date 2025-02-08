@@ -323,7 +323,7 @@ void d3dUtil::copy_descriptor_handle(
     DxDescriptorID dstId
 )
 {
-    ASSERT(pSrcHeap->mType == pDstHeap->mType);
+    assert_invariant(pSrcHeap->mType == pDstHeap->mType);
     D3D12_CPU_DESCRIPTOR_HANDLE srcHandle = descriptor_id_to_cpu_handle(pSrcHeap, srcId);
     D3D12_CPU_DESCRIPTOR_HANDLE dstHandle = descriptor_id_to_cpu_handle(pDstHeap, dstId);
     pSrcHeap->pDevice->CopyDescriptorsSimple(1, dstHandle, srcHandle, pSrcHeap->mType);
@@ -346,8 +346,6 @@ void d3dUtil::add_descriptor_heap(
     memset(pHeap, 0, allocSize);
     pHeap->pFlags = (uint32_t*)(pHeap + 1);
     pHeap->pDevice = pDevice;
-
-    initMutex(&pHeap->mMutex);
 
     D3D12_DESCRIPTOR_HEAP_DESC desc = *pDesc;
     desc.NumDescriptors = numDescriptors;

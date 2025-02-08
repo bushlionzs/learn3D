@@ -33,7 +33,7 @@ namespace Ogre {
 
 		void _initialise();
 		RenderSystem* createRenderEngine(
-			HWND wnd,
+			void* wnd,
 			EngineType et);
 		RenderSystem* getRenderSystem();
 		void addMovableObjectFactory(MovableObjectFactory* fact,

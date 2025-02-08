@@ -112,7 +112,7 @@ namespace Ogre {
         return mMaterial;
     }
 
-    void SubMesh::setMaterialName(std::string& name)
+    void SubMesh::setMaterialName(const std::string& name)
     {
         mMatName = name;
     }

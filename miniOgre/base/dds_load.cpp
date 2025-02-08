@@ -265,7 +265,7 @@ PixelFormat convertDXToOgreFormat(uint32_t dxfmt)
     case 47: // DXGI_FORMAT_X24_TYPELESS_G8_UINT
     case 55: // DXGI_FORMAT_D16_UNORM
     default:
-        assert(false);
+        assert_invariant(false);
         return PF_UNKNOWN;
     }
 }
@@ -310,7 +310,7 @@ PixelFormat convertFourCCFormat(uint32_t fourcc)
         return PF_FLOAT32_RGBA;
         // We could support 3Dc here, but only ATI cards support it, not nVidia
     default:
-        assert(false);
+        assert_invariant(false);
         return PF_UNKNOWN;
     };
 
@@ -339,7 +339,7 @@ PixelFormat convertPixelFormat(uint32_t rgbBits, uint32_t rMask,
         }
     }
 
-    assert(false);
+    assert_invariant(false);
     return PF_UNKNOWN;
 }
 //---------------------------------------------------------------------

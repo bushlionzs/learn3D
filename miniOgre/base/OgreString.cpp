@@ -27,6 +27,7 @@ THE SOFTWARE.
 */
 #include "OgreHeader.h"
 #include "OgreString.h"
+#include <stdarg.h>
 #include <iostream>
 #include <fstream>
 
@@ -583,7 +584,7 @@ namespace Ogre {
             int len = vsnprintf(pbuf, bsize, fmt, va);
             va_end(va);
 
-            assert(len >= 0);
+            assert_invariant(len >= 0);
             if (size_t(len) >= bsize)
             {
                 hbuf.resize(len + 1);

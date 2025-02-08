@@ -40,14 +40,14 @@ namespace Ogre
     //-----------------------------------------------------------------------
     Vector3 Matrix3::GetColumn (size_t iCol) const
     {
-        assert( iCol < 3 );
+        assert_invariant( iCol < 3 );
         return Vector3(m[0][iCol],m[1][iCol],
             m[2][iCol]);
     }
     //-----------------------------------------------------------------------
     void Matrix3::SetColumn(size_t iCol, const Vector3& vec)
     {
-        assert( iCol < 3 );
+        assert_invariant( iCol < 3 );
         m[0][iCol] = vec.x;
         m[1][iCol] = vec.y;
         m[2][iCol] = vec.z;

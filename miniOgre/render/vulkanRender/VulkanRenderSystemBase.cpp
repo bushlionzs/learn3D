@@ -676,7 +676,7 @@ bool VulkanRenderSystemBase::getBufferObject(Handle<HwBufferObject> boh,
     uint32_t size,
     uint32_t offset)
 {
-    assert(false);
+    assert_invariant(false);
     return true;
 }
 
@@ -905,7 +905,7 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
                     info.uboCount++;
                     break;
                 default:
-                    assert(false);
+                    assert_invariant(false);
                     break;
                 }
             }
@@ -969,7 +969,7 @@ Handle<HwComputeProgram> VulkanRenderSystemBase::createComputeProgram(const Shad
 
     auto res = ResourceManager::getSingleton().getResourceInfo(privateInfo->computeShaderName);
     
-    assert(res);
+    assert_invariant(res);
 
     String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->computeShaderName);
     VkShaderModuleInfo moduleInfo;
@@ -1180,7 +1180,7 @@ void VulkanRenderSystemBase::updateDescriptorSet(
         const VKDescriptorInfo* descriptroInfo = vulkanProgram->getDescriptor(pParam->pName);
         if (descriptroInfo == nullptr)
         {
-            assert(descriptroInfo);
+            assert_invariant(descriptroInfo);
             continue;
         }
            
@@ -1316,7 +1316,7 @@ void VulkanRenderSystemBase::updateDescriptorSet(
         }
         break;
         default:
-            assert(false);
+            assert_invariant(false);
          break;
         }
     }

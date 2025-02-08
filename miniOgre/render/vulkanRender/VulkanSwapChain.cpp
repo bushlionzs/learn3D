@@ -116,7 +116,7 @@ void VulkanSwapChain::acquire(bool& resized) {
     if ((resized = mPlatform->hasResized(swapChain))) {
         if (mFlushAndWaitOnResize) {
             mCommands->flush(false);
-            assert(false);
+            assert_invariant(false);
             //mCommands->wait(); zhousha
         }
         mPlatform->recreate(swapChain);

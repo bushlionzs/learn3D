@@ -210,7 +210,7 @@ VertexElementType BinMappingElementType(ShaderSemantic semantic)
     case SEMANTIC_TEXCOORD1:
         return VET_FLOAT2;
     default:
-        assert(false);
+        assert_invariant(false);
         break;
     }
     return VET_FLOAT3;
@@ -237,7 +237,7 @@ VertexElementSemantic BinMappingElementSemantic(ShaderSemantic semantic)
     case SEMANTIC_TEXCOORD1:
         return VES_TEXTURE_COORDINATES;
     default:
-        assert(false);
+        assert_invariant(false);
         break;
     }
     return VES_POSITION;

@@ -481,7 +481,7 @@ void OgreMeshSerializerImpl::readMeshLodLevel(
     /*pMesh->mMeshLodUsageList.resize(pMesh->mNumLods);
     for (auto* s : pMesh->getSubMeshes())
     {
-        assert(s->mLodFaceList.empty());
+        assert_invariant(s->mLodFaceList.empty());
         s->mLodFaceList.resize(pMesh->mNumLods - 1);
     }*/
     pushInnerChunk(stream);

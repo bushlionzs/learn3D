@@ -90,7 +90,7 @@ Handle<HwBufferObject> VertexData::getBuffer(int32_t index)
     {
         return slot[index].getHandle();
     }
-    assert(false);
+    assert_invariant(false);
     return Handle<HwBufferObject>();
 }
 
@@ -141,7 +141,7 @@ const VertexElement& VertexData::addElement(
 int32_t VertexData::addBindBuffer(uint32_t vertexSize, uint32_t vertexCount)
 {
     auto binding = getUnusedBinding();
-    assert(binding >= 0);
+    assert_invariant(binding >= 0);
     addBindBuffer(binding, vertexSize, vertexCount);
     return binding;
 }

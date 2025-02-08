@@ -31,7 +31,7 @@ namespace Ogre {
 		auto it = mMaterialMap.find(name);
 		if (it != mMaterialMap.end())
 		{
-			assert(false);
+			assert_invariant(false);
 		}
 
 		std::shared_ptr<Material> p = std::make_shared<Material>(name, pbr);
