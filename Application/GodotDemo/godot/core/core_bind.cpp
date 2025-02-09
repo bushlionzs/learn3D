@@ -1680,10 +1680,7 @@ void Engine::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("unregister_singleton", "name"), &Engine::unregister_singleton);
 	ClassDB::bind_method(D_METHOD("get_singleton_list"), &Engine::get_singleton_list);
 
-	ClassDB::bind_method(D_METHOD("register_script_language", "language"), &Engine::register_script_language);
-	ClassDB::bind_method(D_METHOD("unregister_script_language", "language"), &Engine::unregister_script_language);
-	ClassDB::bind_method(D_METHOD("get_script_language_count"), &Engine::get_script_language_count);
-	ClassDB::bind_method(D_METHOD("get_script_language", "index"), &Engine::get_script_language);
+
 
 	ClassDB::bind_method(D_METHOD("is_editor_hint"), &Engine::is_editor_hint);
 

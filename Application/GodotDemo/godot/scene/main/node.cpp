@@ -1905,35 +1905,7 @@ Node *Node::find_child(const String &p_pattern, bool p_recursive, bool p_owned) 
 TypedArray<Node> Node::find_children(const String &p_pattern, const String &p_type, bool p_recursive, bool p_owned) const {
 	ERR_THREAD_GUARD_V(TypedArray<Node>());
 	TypedArray<Node> ret;
-	ERR_FAIL_COND_V(p_pattern.is_empty() && p_type.is_empty(), ret);
-	_update_children_cache();
-	Node *const *cptr = data.children_cache.ptr();
-	int ccount = data.children_cache.size();
-	for (int i = 0; i < ccount; i++) {
-		if (p_owned && !cptr[i]->data.owner) {
-			continue;
-		}
-
-		if (p_pattern.is_empty() || cptr[i]->data.name.operator String().match(p_pattern)) {
-			if (p_type.is_empty() || cptr[i]->is_class(p_type)) {
-				ret.append(cptr[i]);
-			} else if (cptr[i]->get_script_instance()) {
-				Ref<Script> scr = cptr[i]->get_script_instance()->get_script();
-				while (scr.is_valid()) {
-					if ((ScriptServer::is_global_class(p_type) && ScriptServer::get_global_class_path(p_type) == scr->get_path()) || p_type == scr->get_path()) {
-						ret.append(cptr[i]);
-						break;
-					}
-
-					scr = scr->get_base_script();
-				}
-			}
-		}
-
-		if (p_recursive) {
-			ret.append_array(cptr[i]->find_children(p_pattern, p_type, true, p_owned));
-		}
-	}
+	
 
 	return ret;
 }
@@ -2531,17 +2503,8 @@ void Node::_propagate_replace_owner(Node *p_owner, Node *p_by_owner) {
 }
 
 Ref<Tween> Node::create_tween() {
-	ERR_THREAD_GUARD_V(Ref<Tween>());
-
-	SceneTree *tree = data.tree;
-	if (!tree) {
-		tree = SceneTree::get_singleton();
-	}
-	ERR_FAIL_NULL_V_MSG(tree, Ref<Tween>(), "No available SceneTree to create the Tween.");
-
-	Ref<Tween> tween = tree->create_tween();
-	tween->bind_node(this);
-	return tween;
+	
+	return Ref<Tween>();
 }
 
 void Node::set_scene_file_path(const String &p_scene_file_path) {
@@ -3661,7 +3624,7 @@ void Node::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_window"), &Node::get_window);
 	ClassDB::bind_method(D_METHOD("get_last_exclusive_window"), &Node::get_last_exclusive_window);
 	ClassDB::bind_method(D_METHOD("get_tree"), &Node::get_tree);
-	ClassDB::bind_method(D_METHOD("create_tween"), &Node::create_tween);
+
 
 	ClassDB::bind_method(D_METHOD("duplicate", "flags"), &Node::duplicate, DEFVAL(DUPLICATE_USE_INSTANTIATION | DUPLICATE_SIGNALS | DUPLICATE_GROUPS | DUPLICATE_SCRIPTS));
 	ClassDB::bind_method(D_METHOD("replace_by", "node", "keep_groups"), &Node::replace_by, DEFVAL(false));

@@ -34,7 +34,6 @@
 #include "core/core_bind.h"
 #include "core/io/file_access.h"
 #include "core/io/resource_importer.h"
-#include "core/object/script_language.h"
 #include "core/os/condition_variable.h"
 #include "core/os/os.h"
 #include "core/os/safe_binary_mutex.h"
@@ -1367,36 +1366,14 @@ void ResourceLoader::set_load_callback(ResourceLoadedCallback p_callback) {
 ResourceLoadedCallback ResourceLoader::_loaded_callback = nullptr;
 
 Ref<ResourceFormatLoader> ResourceLoader::_find_custom_resource_format_loader(const String &path) {
-	for (int i = 0; i < loader_count; ++i) {
-		if (loader[i]->get_script_instance() && loader[i]->get_script_instance()->get_script()->get_path() == path) {
-			return loader[i];
-		}
-	}
+	
 	return Ref<ResourceFormatLoader>();
 }
 
 bool ResourceLoader::add_custom_resource_format_loader(const String &script_path) {
-	if (_find_custom_resource_format_loader(script_path).is_valid()) {
-		return false;
-	}
+	
 
-	Ref<Resource> res = ResourceLoader::load(script_path);
-	ERR_FAIL_COND_V(res.is_null(), false);
-	ERR_FAIL_COND_V(!res->is_class("Script"), false);
-
-	Ref<Script> s = res;
-	StringName ibt = s->get_instance_base_type();
-	bool valid_type = ClassDB::is_parent_class(ibt, "ResourceFormatLoader");
-	ERR_FAIL_COND_V_MSG(!valid_type, false, vformat("Failed to add a custom resource loader, script '%s' does not inherit 'ResourceFormatLoader'.", script_path));
-
-	Object *obj = ClassDB::instantiate(ibt);
-	ERR_FAIL_NULL_V_MSG(obj, false, vformat("Failed to add a custom resource loader, cannot instantiate '%s'.", ibt));
-
-	Ref<ResourceFormatLoader> crl = Object::cast_to<ResourceFormatLoader>(obj);
-	crl->set_script(s);
-	ResourceLoader::add_resource_format_loader(crl);
-
-	return true;
+	return false;
 }
 
 void ResourceLoader::set_create_missing_resources_if_class_unavailable(bool p_enable) {

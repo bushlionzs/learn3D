@@ -31,7 +31,7 @@
 #ifndef DEBUGGER_MARSHALLS_H
 #define DEBUGGER_MARSHALLS_H
 
-#include "core/object/script_language.h"
+
 
 struct DebuggerMarshalls {
 	struct ScriptStackVariable {
@@ -45,7 +45,7 @@ struct DebuggerMarshalls {
 	};
 
 	struct ScriptStackDump {
-		List<ScriptLanguage::StackInfo> frames;
+
 		ScriptStackDump() {}
 
 		Array serialize();
@@ -63,7 +63,7 @@ struct DebuggerMarshalls {
 		String error;
 		String error_descr;
 		bool warning = false;
-		Vector<ScriptLanguage::StackInfo> callstack;
+
 
 		Array serialize();
 		bool deserialize(const Array &p_arr);

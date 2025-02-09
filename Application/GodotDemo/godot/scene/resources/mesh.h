@@ -37,18 +37,13 @@
 #ifndef _3D_DISABLED
 #include "scene/resources/3d/shape_3d.h"
 #endif // _3D_DISABLED
-//#include "scene/resources/material.h"
-//#include "servers/rendering_server.h"
+#include "scene/resources/material.h"
+#include "servers/rendering_server.h"
 
 class ConcavePolygonShape3D;
 class ConvexPolygonShape3D;
 class MeshConvexDecompositionSettings;
 class Shape3D;
-
-struct LOD {
-	float edge_length = 0.0f;
-	Vector<uint8_t> index_data;
-};
 
 class Mesh : public Resource {
 	GDCLASS(Mesh, Resource);
@@ -62,12 +57,12 @@ class Mesh : public Resource {
 
 public:
 	enum PrimitiveType {
-		PRIMITIVE_POINTS ,
-		PRIMITIVE_LINES ,
-		PRIMITIVE_LINE_STRIP ,
-		PRIMITIVE_TRIANGLES ,
-		PRIMITIVE_TRIANGLE_STRIP ,
-		PRIMITIVE_MAX ,
+		PRIMITIVE_POINTS = RenderingServer::PRIMITIVE_POINTS,
+		PRIMITIVE_LINES = RenderingServer::PRIMITIVE_LINES,
+		PRIMITIVE_LINE_STRIP = RenderingServer::PRIMITIVE_LINE_STRIP,
+		PRIMITIVE_TRIANGLES = RenderingServer::PRIMITIVE_TRIANGLES,
+		PRIMITIVE_TRIANGLE_STRIP = RenderingServer::PRIMITIVE_TRIANGLE_STRIP,
+		PRIMITIVE_MAX = RenderingServer::PRIMITIVE_MAX,
 	};
 
 protected:
@@ -81,6 +76,8 @@ protected:
 	GDVIRTUAL1RC_REQUIRED(Dictionary, _surface_get_lods, int)
 	GDVIRTUAL1RC_REQUIRED(uint32_t, _surface_get_format, int)
 	GDVIRTUAL1RC_REQUIRED(uint32_t, _surface_get_primitive_type, int)
+	GDVIRTUAL2_REQUIRED(_surface_set_material, int, Ref<Material>)
+	GDVIRTUAL1RC_REQUIRED(Ref<Material>, _surface_get_material, int)
 	GDVIRTUAL0RC_REQUIRED(int, _get_blend_shape_count)
 	GDVIRTUAL1RC_REQUIRED(StringName, _get_blend_shape_name, int)
 	GDVIRTUAL2_REQUIRED(_set_blend_shape_name, int, StringName)
@@ -88,28 +85,28 @@ protected:
 
 public:
 	enum {
-		NO_INDEX_ARRAY ,
-		ARRAY_WEIGHTS_SIZE 
+		NO_INDEX_ARRAY = RenderingServer::NO_INDEX_ARRAY,
+		ARRAY_WEIGHTS_SIZE = RenderingServer::ARRAY_WEIGHTS_SIZE
 	};
 	enum BlendShapeMode {
-		BLEND_SHAPE_MODE_NORMALIZED ,
-		BLEND_SHAPE_MODE_RELATIVE ,
+		BLEND_SHAPE_MODE_NORMALIZED = RS::BLEND_SHAPE_MODE_NORMALIZED,
+		BLEND_SHAPE_MODE_RELATIVE = RS::BLEND_SHAPE_MODE_RELATIVE,
 	};
 	enum ArrayType {
-		ARRAY_VERTEX ,
-		ARRAY_NORMAL ,
-		ARRAY_TANGENT ,
-		ARRAY_COLOR ,
-		ARRAY_TEX_UV ,
-		ARRAY_TEX_UV2 ,
-		ARRAY_CUSTOM0 ,
-		ARRAY_CUSTOM1 ,
-		ARRAY_CUSTOM2 ,
-		ARRAY_CUSTOM3,
-		ARRAY_BONES ,
-		ARRAY_WEIGHTS ,
-		ARRAY_INDEX ,
-		ARRAY_MAX
+		ARRAY_VERTEX = RenderingServer::ARRAY_VERTEX,
+		ARRAY_NORMAL = RenderingServer::ARRAY_NORMAL,
+		ARRAY_TANGENT = RenderingServer::ARRAY_TANGENT,
+		ARRAY_COLOR = RenderingServer::ARRAY_COLOR,
+		ARRAY_TEX_UV = RenderingServer::ARRAY_TEX_UV,
+		ARRAY_TEX_UV2 = RenderingServer::ARRAY_TEX_UV2,
+		ARRAY_CUSTOM0 = RenderingServer::ARRAY_CUSTOM0,
+		ARRAY_CUSTOM1 = RenderingServer::ARRAY_CUSTOM1,
+		ARRAY_CUSTOM2 = RenderingServer::ARRAY_CUSTOM2,
+		ARRAY_CUSTOM3 = RenderingServer::ARRAY_CUSTOM3,
+		ARRAY_BONES = RenderingServer::ARRAY_BONES,
+		ARRAY_WEIGHTS = RenderingServer::ARRAY_WEIGHTS,
+		ARRAY_INDEX = RenderingServer::ARRAY_INDEX,
+		ARRAY_MAX = RenderingServer::ARRAY_MAX
 
 	};
 
@@ -126,45 +123,45 @@ public:
 	};
 
 	enum ArrayFormat : uint64_t {
-		ARRAY_FORMAT_VERTEX ,
-		ARRAY_FORMAT_NORMAL ,
-		ARRAY_FORMAT_TANGENT,
-		ARRAY_FORMAT_COLOR ,
-		ARRAY_FORMAT_TEX_UV ,
-		ARRAY_FORMAT_TEX_UV2 ,
-		ARRAY_FORMAT_CUSTOM0 ,
-		ARRAY_FORMAT_CUSTOM1 ,
-		ARRAY_FORMAT_CUSTOM2 ,
-		ARRAY_FORMAT_CUSTOM3 ,
-		ARRAY_FORMAT_BONES ,
-		ARRAY_FORMAT_WEIGHTS ,
-		ARRAY_FORMAT_INDEX ,
+		ARRAY_FORMAT_VERTEX = RS::ARRAY_FORMAT_VERTEX,
+		ARRAY_FORMAT_NORMAL = RS::ARRAY_FORMAT_NORMAL,
+		ARRAY_FORMAT_TANGENT = RS::ARRAY_FORMAT_TANGENT,
+		ARRAY_FORMAT_COLOR = RS::ARRAY_FORMAT_COLOR,
+		ARRAY_FORMAT_TEX_UV = RS::ARRAY_FORMAT_TEX_UV,
+		ARRAY_FORMAT_TEX_UV2 = RS::ARRAY_FORMAT_TEX_UV2,
+		ARRAY_FORMAT_CUSTOM0 = RS::ARRAY_FORMAT_CUSTOM0,
+		ARRAY_FORMAT_CUSTOM1 = RS::ARRAY_FORMAT_CUSTOM1,
+		ARRAY_FORMAT_CUSTOM2 = RS::ARRAY_FORMAT_CUSTOM2,
+		ARRAY_FORMAT_CUSTOM3 = RS::ARRAY_FORMAT_CUSTOM3,
+		ARRAY_FORMAT_BONES = RS::ARRAY_FORMAT_BONES,
+		ARRAY_FORMAT_WEIGHTS = RS::ARRAY_FORMAT_WEIGHTS,
+		ARRAY_FORMAT_INDEX = RS::ARRAY_FORMAT_INDEX,
 
-		ARRAY_FORMAT_BLEND_SHAPE_MASK ,
+		ARRAY_FORMAT_BLEND_SHAPE_MASK = RS::ARRAY_FORMAT_BLEND_SHAPE_MASK,
 
-		ARRAY_FORMAT_CUSTOM_BASE,
-		ARRAY_FORMAT_CUSTOM_BITS ,
-		ARRAY_FORMAT_CUSTOM0_SHIFT ,
-		ARRAY_FORMAT_CUSTOM1_SHIFT ,
-		ARRAY_FORMAT_CUSTOM2_SHIFT ,
-		ARRAY_FORMAT_CUSTOM3_SHIFT ,
+		ARRAY_FORMAT_CUSTOM_BASE = RS::ARRAY_FORMAT_CUSTOM_BASE,
+		ARRAY_FORMAT_CUSTOM_BITS = RS::ARRAY_FORMAT_CUSTOM_BITS,
+		ARRAY_FORMAT_CUSTOM0_SHIFT = RS::ARRAY_FORMAT_CUSTOM0_SHIFT,
+		ARRAY_FORMAT_CUSTOM1_SHIFT = RS::ARRAY_FORMAT_CUSTOM1_SHIFT,
+		ARRAY_FORMAT_CUSTOM2_SHIFT = RS::ARRAY_FORMAT_CUSTOM2_SHIFT,
+		ARRAY_FORMAT_CUSTOM3_SHIFT = RS::ARRAY_FORMAT_CUSTOM3_SHIFT,
 
-		ARRAY_FORMAT_CUSTOM_MASK ,
-		ARRAY_COMPRESS_FLAGS_BASE ,
+		ARRAY_FORMAT_CUSTOM_MASK = RS::ARRAY_FORMAT_CUSTOM_MASK,
+		ARRAY_COMPRESS_FLAGS_BASE = RS::ARRAY_COMPRESS_FLAGS_BASE,
 
-		ARRAY_FLAG_USE_2D_VERTICES ,
-		ARRAY_FLAG_USE_DYNAMIC_UPDATE ,
-		ARRAY_FLAG_USE_8_BONE_WEIGHTS ,
+		ARRAY_FLAG_USE_2D_VERTICES = RS::ARRAY_FLAG_USE_2D_VERTICES,
+		ARRAY_FLAG_USE_DYNAMIC_UPDATE = RS::ARRAY_FLAG_USE_DYNAMIC_UPDATE,
+		ARRAY_FLAG_USE_8_BONE_WEIGHTS = RS::ARRAY_FLAG_USE_8_BONE_WEIGHTS,
 
-		ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY ,
-		ARRAY_FLAG_COMPRESS_ATTRIBUTES ,
+		ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY = RS::ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY,
+		ARRAY_FLAG_COMPRESS_ATTRIBUTES = RS::ARRAY_FLAG_COMPRESS_ATTRIBUTES,
 
-		ARRAY_FLAG_FORMAT_VERSION_BASE,
-		ARRAY_FLAG_FORMAT_VERSION_SHIFT,
-		ARRAY_FLAG_FORMAT_VERSION_1,
-		ARRAY_FLAG_FORMAT_VERSION_2 ,
-		ARRAY_FLAG_FORMAT_CURRENT_VERSION ,
-		ARRAY_FLAG_FORMAT_VERSION_MASK ,
+		ARRAY_FLAG_FORMAT_VERSION_BASE = RS::ARRAY_FLAG_FORMAT_VERSION_BASE,
+		ARRAY_FLAG_FORMAT_VERSION_SHIFT = RS::ARRAY_FLAG_FORMAT_VERSION_SHIFT,
+		ARRAY_FLAG_FORMAT_VERSION_1 = RS::ARRAY_FLAG_FORMAT_VERSION_1,
+		ARRAY_FLAG_FORMAT_VERSION_2 = (uint64_t)RS::ARRAY_FLAG_FORMAT_VERSION_2,
+		ARRAY_FLAG_FORMAT_CURRENT_VERSION = (uint64_t)RS::ARRAY_FLAG_FORMAT_CURRENT_VERSION,
+		ARRAY_FLAG_FORMAT_VERSION_MASK = RS::ARRAY_FLAG_FORMAT_VERSION_MASK,
 	};
 
 	virtual int get_surface_count() const;
@@ -175,6 +172,8 @@ public:
 	virtual Dictionary surface_get_lods(int p_surface) const;
 	virtual BitField<ArrayFormat> surface_get_format(int p_idx) const;
 	virtual PrimitiveType surface_get_primitive_type(int p_idx) const;
+	virtual void surface_set_material(int p_idx, const Ref<Material> &p_material);
+	virtual Ref<Material> surface_get_material(int p_idx) const;
 	virtual int get_blend_shape_count() const;
 	virtual StringName get_blend_shape_name(int p_index) const;
 	virtual void set_blend_shape_name(int p_index, const StringName &p_name);
@@ -314,6 +313,7 @@ private:
 
 		String name;
 		AABB aabb;
+		Ref<Material> material;
 		bool is_2d = false;
 	};
 	Vector<Surface> surfaces;
@@ -341,7 +341,7 @@ protected:
 public:
 	void add_surface_from_arrays(PrimitiveType p_primitive, const Array &p_arrays, const TypedArray<Array> &p_blend_shapes = TypedArray<Array>(), const Dictionary &p_lods = Dictionary(), BitField<ArrayFormat> p_flags = 0);
 
-	void add_surface(BitField<ArrayFormat> p_format, PrimitiveType p_primitive, const Vector<uint8_t> &p_array, const Vector<uint8_t> &p_attribute_array, const Vector<uint8_t> &p_skin_array, int p_vertex_count, const Vector<uint8_t> &p_index_array, int p_index_count, const AABB &p_aabb, const Vector<uint8_t> &p_blend_shape_data = Vector<uint8_t>(), const Vector<AABB> &p_bone_aabbs = Vector<AABB>(), const Vector<LOD> &p_lods = Vector<LOD>(), const Vector4 p_uv_scale = Vector4());
+	void add_surface(BitField<ArrayFormat> p_format, PrimitiveType p_primitive, const Vector<uint8_t> &p_array, const Vector<uint8_t> &p_attribute_array, const Vector<uint8_t> &p_skin_array, int p_vertex_count, const Vector<uint8_t> &p_index_array, int p_index_count, const AABB &p_aabb, const Vector<uint8_t> &p_blend_shape_data = Vector<uint8_t>(), const Vector<AABB> &p_bone_aabbs = Vector<AABB>(), const Vector<RS::SurfaceData::LOD> &p_lods = Vector<RS::SurfaceData::LOD>(), const Vector4 p_uv_scale = Vector4());
 
 	Array surface_get_arrays(int p_surface) const override;
 	TypedArray<Array> surface_get_blend_shape_arrays(int p_surface) const override;
@@ -370,6 +370,9 @@ public:
 	int surface_get_array_index_len(int p_idx) const override;
 	BitField<ArrayFormat> surface_get_format(int p_idx) const override;
 	PrimitiveType surface_get_primitive_type(int p_idx) const override;
+
+	virtual void surface_set_material(int p_idx, const Ref<Material> &p_material) override;
+	virtual Ref<Material> surface_get_material(int p_idx) const override;
 
 	int surface_find_by_name(const String &p_name) const;
 	void surface_set_name(int p_idx, const String &p_name);
@@ -420,6 +423,8 @@ public:
 	virtual Dictionary surface_get_lods(int p_surface) const override { return Dictionary(); }
 	virtual BitField<ArrayFormat> surface_get_format(int p_idx) const override { return 0; }
 	virtual PrimitiveType surface_get_primitive_type(int p_idx) const override { return PRIMITIVE_TRIANGLES; }
+	virtual void surface_set_material(int p_idx, const Ref<Material> &p_material) override {}
+	virtual Ref<Material> surface_get_material(int p_idx) const override { return Ref<Material>(); }
 	virtual int get_blend_shape_count() const override { return 0; }
 	virtual StringName get_blend_shape_name(int p_index) const override { return StringName(); }
 	virtual void set_blend_shape_name(int p_index, const StringName &p_name) override {}

@@ -523,63 +523,11 @@ Vector<Face3> Mesh::get_surface_faces(int p_surface) const {
 
 #ifndef _3D_DISABLED
 Ref<ConvexPolygonShape3D> Mesh::create_convex_shape(bool p_clean, bool p_simplify) const {
-	if (p_simplify) {
-		Ref<MeshConvexDecompositionSettings> settings = Ref<MeshConvexDecompositionSettings>();
-		settings.instantiate();
-		settings->set_max_convex_hulls(1);
-		settings->set_max_concavity(1.0);
-		Vector<Ref<Shape3D>> decomposed = convex_decompose(settings);
-		if (decomposed.size() == 1) {
-			return decomposed[0];
-		} else {
-			ERR_PRINT("Convex shape simplification failed, falling back to simpler process.");
-		}
-	}
-
-	Vector<Vector3> vertices;
-	for (int i = 0; i < get_surface_count(); i++) {
-		Array a = surface_get_arrays(i);
-		ERR_FAIL_COND_V(a.is_empty(), Ref<ConvexPolygonShape3D>());
-		Vector<Vector3> v = a[ARRAY_VERTEX];
-		vertices.append_array(v);
-	}
-
-	Ref<ConvexPolygonShape3D> shape = memnew(ConvexPolygonShape3D);
-
-	if (p_clean) {
-		Geometry3D::MeshData md;
-		Error err = ConvexHullComputer::convex_hull(vertices, md);
-		if (err == OK) {
-			shape->set_points(md.vertices);
-			return shape;
-		} else {
-			ERR_PRINT("Convex shape cleaning failed, falling back to simpler process.");
-		}
-	}
-
-	shape->set_points(vertices);
-	return shape;
+	return nullptr;
 }
 
 Ref<ConcavePolygonShape3D> Mesh::create_trimesh_shape() const {
-	Vector<Face3> faces = get_faces();
-	if (faces.size() == 0) {
-		return Ref<ConcavePolygonShape3D>();
-	}
-
-	Vector<Vector3> face_points;
-	face_points.resize(faces.size() * 3);
-
-	for (int i = 0; i < face_points.size(); i += 3) {
-		Face3 f = faces.get(i / 3);
-		face_points.set(i, f.vertex[0]);
-		face_points.set(i + 1, f.vertex[1]);
-		face_points.set(i + 2, f.vertex[2]);
-	}
-
-	Ref<ConcavePolygonShape3D> shape = memnew(ConcavePolygonShape3D);
-	shape->set_faces(face_points);
-	return shape;
+	return nullptr;
 }
 #endif // _3D_DISABLED
 
@@ -902,40 +850,7 @@ void Mesh::clear_cache() const {
 
 #ifndef _3D_DISABLED
 Vector<Ref<Shape3D>> Mesh::convex_decompose(const Ref<MeshConvexDecompositionSettings> &p_settings) const {
-	ERR_FAIL_NULL_V(convex_decomposition_function, Vector<Ref<Shape3D>>());
-
-	Ref<TriangleMesh> tm = generate_triangle_mesh();
-	ERR_FAIL_COND_V(!tm.is_valid(), Vector<Ref<Shape3D>>());
-
-	const Vector<TriangleMesh::Triangle> &triangles = tm->get_triangles();
-	int triangle_count = triangles.size();
-
-	Vector<uint32_t> indices;
-	{
-		indices.resize(triangle_count * 3);
-		uint32_t *w = indices.ptrw();
-		for (int i = 0; i < triangle_count; i++) {
-			for (int j = 0; j < 3; j++) {
-				w[i * 3 + j] = triangles[i].indices[j];
-			}
-		}
-	}
-
-	const Vector<Vector3> &vertices = tm->get_vertices();
-	int vertex_count = vertices.size();
-
-	Vector<Vector<Vector3>> decomposed = convex_decomposition_function((real_t *)vertices.ptr(), vertex_count, indices.ptr(), triangle_count, p_settings, nullptr);
-
-	Vector<Ref<Shape3D>> ret;
-
-	for (int i = 0; i < decomposed.size(); i++) {
-		Ref<ConvexPolygonShape3D> shape;
-		shape.instantiate();
-		shape->set_points(decomposed[i]);
-		ret.push_back(shape);
-	}
-
-	return ret;
+	return Vector<Ref<Shape3D>>();
 }
 #endif // _3D_DISABLED
 

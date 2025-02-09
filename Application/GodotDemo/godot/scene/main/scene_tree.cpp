@@ -45,11 +45,9 @@
 #include "node.h"
 #include "scene/animation/tween.h"
 #include "scene/debugger/scene_debugger.h"
-#include "scene/gui/control.h"
 #include "scene/main/multiplayer_api.h"
 #include "scene/main/viewport.h"
 #include "scene/resources/environment.h"
-#include "scene/resources/font.h"
 #include "scene/resources/image_texture.h"
 #include "scene/resources/material.h"
 #include "scene/resources/mesh.h"
@@ -673,30 +671,7 @@ void SceneTree::process_timers(double p_delta, bool p_physics_frame) {
 }
 
 void SceneTree::process_tweens(double p_delta, bool p_physics) {
-	_THREAD_SAFE_METHOD_
-	// This methods works similarly to how SceneTreeTimers are handled.
-	List<Ref<Tween>>::Element *L = tweens.back();
-
-	for (List<Ref<Tween>>::Element *E = tweens.front(); E;) {
-		List<Ref<Tween>>::Element *N = E->next();
-		// Don't process if paused or process mode doesn't match.
-		if (!E->get()->can_process(paused) || (p_physics == (E->get()->get_process_mode() == Tween::TWEEN_PROCESS_IDLE))) {
-			if (E == L) {
-				break;
-			}
-			E = N;
-			continue;
-		}
-
-		if (!E->get()->step(p_delta)) {
-			E->get()->clear();
-			tweens.erase(E);
-		}
-		if (E == L) {
-			break;
-		}
-		E = N;
-	}
+	
 }
 
 void SceneTree::finalize() {
@@ -724,10 +699,7 @@ void SceneTree::finalize() {
 	timers.clear();
 
 	// Cleanup tweens.
-	for (Ref<Tween> &tween : tweens) {
-		tween->clear();
-	}
-	tweens.clear();
+
 }
 
 void SceneTree::quit(int p_exit_code) {
@@ -1226,96 +1198,7 @@ void SceneTree::_add_node_to_process_group(Node *p_node, Node *p_owner) {
 }
 
 void SceneTree::_call_input_pause(const StringName &p_group, CallInputType p_call_type, const Ref<InputEvent> &p_input, Viewport *p_viewport) {
-	Vector<Node *> nodes_copy;
-	{
-		_THREAD_SAFE_METHOD_
-
-		HashMap<StringName, Group>::Iterator E = group_map.find(p_group);
-		if (!E) {
-			return;
-		}
-		Group &g = E->value;
-		if (g.nodes.is_empty()) {
-			return;
-		}
-
-		_update_group_order(g);
-
-		//copy, so copy on write happens in case something is removed from process while being called
-		//performance is not lost because only if something is added/removed the vector is copied.
-		nodes_copy = g.nodes;
-	}
-
-	int gr_node_count = nodes_copy.size();
-	Node **gr_nodes = nodes_copy.ptrw();
-
-	{
-		_THREAD_SAFE_METHOD_
-		nodes_removed_on_group_call_lock++;
-	}
-
-	Vector<ObjectID> no_context_node_ids; // Nodes may be deleted due to this shortcut input.
-
-	for (int i = gr_node_count - 1; i >= 0; i--) {
-		if (p_viewport->is_input_handled()) {
-			break;
-		}
-
-		Node *n = gr_nodes[i];
-		if (nodes_removed_on_group_call.has(n)) {
-			continue;
-		}
-
-		if (!n->can_process()) {
-			continue;
-		}
-
-		switch (p_call_type) {
-			case CALL_INPUT_TYPE_INPUT:
-				n->_call_input(p_input);
-				break;
-			case CALL_INPUT_TYPE_SHORTCUT_INPUT: {
-				const Control *c = Object::cast_to<Control>(n);
-				if (c) {
-					// If calling shortcut input on a control, ensure it respects the shortcut context.
-					// Shortcut context (based on focus) only makes sense for controls (UI), so don't need to worry about it for nodes
-					if (c->get_shortcut_context() == nullptr) {
-						no_context_node_ids.append(n->get_instance_id());
-						continue;
-					}
-					if (!c->is_focus_owner_in_shortcut_context()) {
-						continue;
-					}
-				}
-				n->_call_shortcut_input(p_input);
-				break;
-			}
-			case CALL_INPUT_TYPE_UNHANDLED_INPUT:
-				n->_call_unhandled_input(p_input);
-				break;
-			case CALL_INPUT_TYPE_UNHANDLED_KEY_INPUT:
-				n->_call_unhandled_key_input(p_input);
-				break;
-		}
-	}
-
-	for (const ObjectID &id : no_context_node_ids) {
-		if (p_viewport->is_input_handled()) {
-			break;
-		}
-		Node *n = Object::cast_to<Node>(ObjectDB::get_instance(id));
-		if (n) {
-			n->_call_shortcut_input(p_input);
-		}
-	}
-
-	{
-		_THREAD_SAFE_METHOD_
-		nodes_removed_on_group_call_lock--;
-		if (nodes_removed_on_group_call_lock == 0) {
-			nodes_removed_on_group_call.clear();
-		}
-	}
+	
 }
 
 void SceneTree::_call_group_flags(const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
@@ -1551,10 +1434,7 @@ Ref<SceneTreeTimer> SceneTree::create_timer(double p_delay_sec, bool p_process_a
 }
 
 Ref<Tween> SceneTree::create_tween() {
-	_THREAD_SAFE_METHOD_
-	Ref<Tween> tween = memnew(Tween(true));
-	tweens.push_back(tween);
-	return tween;
+	return Ref<Tween>();
 }
 
 TypedArray<Tween> SceneTree::get_processed_tweens() {
@@ -1877,19 +1757,7 @@ SceneTree::SceneTree() {
 	const int vrs_mode = GLOBAL_DEF(PropertyInfo(Variant::INT, "rendering/vrs/mode", PROPERTY_HINT_ENUM, String::utf8("Disabled,Texture,XR")), 0);
 	root->set_vrs_mode(Viewport::VRSMode(vrs_mode));
 	const String vrs_texture_path = String(GLOBAL_DEF(PropertyInfo(Variant::STRING, "rendering/vrs/texture", PROPERTY_HINT_FILE, "*.bmp,*.png,*.tga,*.webp"), String())).strip_edges();
-	if (vrs_mode == 1 && !vrs_texture_path.is_empty()) {
-		Ref<Image> vrs_image;
-		vrs_image.instantiate();
-		Error load_err = ImageLoader::load_image(vrs_texture_path, vrs_image);
-		if (load_err) {
-			ERR_PRINT("Non-existing or invalid VRS texture at '" + vrs_texture_path + "'.");
-		} else {
-			Ref<ImageTexture> vrs_texture;
-			vrs_texture.instantiate();
-			vrs_texture->create_from_image(vrs_image);
-			root->set_vrs_texture(vrs_texture);
-		}
-	}
+	
 
 	int shadowmap_size = GLOBAL_DEF(PropertyInfo(Variant::INT, "rendering/lights_and_shadows/positional_shadow/atlas_size", PROPERTY_HINT_RANGE, "256,16384"), 4096);
 	GLOBAL_DEF("rendering/lights_and_shadows/positional_shadow/atlas_size.mobile", 2048);
