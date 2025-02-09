@@ -15,6 +15,15 @@
 #include <core/io/resource_uid.h>
 #include <scene/resources/packed_scene.h>
 #include <scene/resources/resource_format_text.h>
+#include <scene/3d/node_3d.h>
+#include <scene/3d/camera_3d.h>
+#include <scene/3d/lightmap_gi.h>
+#include <scene/3d/reflection_probe.h>
+#include <scene/3d/world_environment.h>
+#include <scene/3d/mesh_instance_3d.h>
+#include <scene/main/canvas_layer.h>
+#include <servers/rendering/rendering_server_default.h>
+#include <servers/rendering/renderer_rd/renderer_compositor_rd.h>
 static ProjectSettings* globals = nullptr;
 
 class Main
@@ -92,16 +101,39 @@ static void register_scene_types()
 
     resource_loader_text.instantiate();
     ResourceLoader::add_resource_format_loader(resource_loader_text, true);
+
+    auto rendering_server = memnew(RenderingServerDefault);
+
+    RendererCompositorRD::make_current();
+    rendering_server->init();
+
+    GDREGISTER_CLASS(Object);
+
+    GDREGISTER_CLASS(Node3D);
+    GDREGISTER_CLASS(WorldEnvironment);
+    GDREGISTER_CLASS(Environment);
+    GDREGISTER_ABSTRACT_CLASS(SceneState);
+    GDREGISTER_CLASS(PackedScene);
+    GDREGISTER_CLASS(Camera3D);
+    GDREGISTER_CLASS(VisualInstance3D);
+    GDREGISTER_CLASS(LightmapGI);
+    GDREGISTER_CLASS(ReflectionProbe);
+    GDREGISTER_CLASS(MeshInstance3D);
+    GDREGISTER_CLASS(OmniLight3D);
+    GDREGISTER_CLASS(SpotLight3D);
+    GDREGISTER_CLASS(CanvasLayer);
 }
 
+void visitNode(Node* scene);
 void loadGodotProject(const String& projectDir)
 {
     if (globals == nullptr)
     {
         register_core_types();
-        register_scene_types();
+        
         globals = memnew(ProjectSettings);
         memnew(PackedData);
+        register_scene_types();
         Main();
 
         
@@ -114,10 +146,24 @@ void loadGodotProject(const String& projectDir)
 
         Ref<PackedScene> scenedata = ResourceLoader::load(game_path);
 
-        int kk = 0;
+        Node* scene = scenedata->instantiate();
+        visitNode(scene);
     }
     else
     {
         assert_invariant(false);
+    }
+}
+
+void visitNode(Node* scene)
+{
+    auto name = scene->get_name();
+    int count = scene->get_child_count();
+    for (int i = 0; i < count; i++)
+    {
+        Node* subNode = scene->get_child(i);
+
+        auto subName = subNode->get_name();
+        int kk = 0;
     }
 }

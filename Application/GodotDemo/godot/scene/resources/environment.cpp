@@ -1599,7 +1599,7 @@ void Environment::_bind_methods() {
 }
 
 Environment::Environment() {
-	environment = RS::get_singleton()->environment_create();
+	//environment = RS::get_singleton()->environment_create();
 
 	set_camera_feed_id(bg_camera_feed_id);
 
