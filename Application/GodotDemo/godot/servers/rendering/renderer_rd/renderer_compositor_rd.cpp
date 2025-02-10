@@ -303,13 +303,13 @@ RendererCompositorRD::RendererCompositorRD() {
 	singleton = this;
 
 	utilities = memnew(RendererRD::Utilities);
-	//texture_storage = memnew(RendererRD::TextureStorage);
-	//material_storage = memnew(RendererRD::MaterialStorage);
-	//mesh_storage = memnew(RendererRD::MeshStorage);
-	//light_storage = memnew(RendererRD::LightStorage);
-	//particles_storage = memnew(RendererRD::ParticlesStorage);
-	//fog = memnew(RendererRD::Fog);
-//	canvas = memnew(RendererCanvasRenderRD());
+	texture_storage = memnew(RendererRD::TextureStorage);
+	material_storage = memnew(RendererRD::MaterialStorage);
+	mesh_storage = memnew(RendererRD::MeshStorage);
+	light_storage = memnew(RendererRD::LightStorage);
+	particles_storage = memnew(RendererRD::ParticlesStorage);
+	fog = memnew(RendererRD::Fog);
+	canvas = memnew(RendererCanvasRenderRD());
 
 	String rendering_method = OS::get_singleton()->get_current_rendering_method();
 	uint64_t textures_per_stage = 2048;
@@ -321,10 +321,10 @@ RendererCompositorRD::RendererCompositorRD() {
 	} else {
 		// Fall back to our high end renderer.
 		ERR_PRINT(vformat("Cannot instantiate RenderingDevice-based renderer with renderer type '%s'. Defaulting to Forward+ renderer.", rendering_method));
-		//scene = memnew(RendererSceneRenderImplementation::RenderForwardClustered());
+		scene = memnew(RendererSceneRenderImplementation::RenderForwardClustered());
 	}
 
-	//scene->init();
+	scene->init();
 }
 
 RendererCompositorRD::~RendererCompositorRD() {

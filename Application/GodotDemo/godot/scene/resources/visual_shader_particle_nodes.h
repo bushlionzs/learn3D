@@ -32,7 +32,7 @@
 #define VISUAL_SHADER_PARTICLE_NODES_H
 
 #include "scene/resources/visual_shader.h"
-
+#include "scene/resources/mesh.h"
 class ImageTexture;
 
 // Emit nodes

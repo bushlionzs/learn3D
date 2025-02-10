@@ -145,7 +145,11 @@ public:
 	}
 
 	inline void operator=(const Vector &p_from) {
-		_cowdata._ref(p_from._cowdata);
+		if (!p_from._cowdata.is_empty())
+		{
+			_cowdata._ref(p_from._cowdata);
+		}
+		
 	}
 
 	Vector<uint8_t> to_byte_array() const {

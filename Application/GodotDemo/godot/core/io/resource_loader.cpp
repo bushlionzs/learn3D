@@ -41,6 +41,7 @@
 #include "core/string/translation_server.h"
 #include "core/variant/variant_parser.h"
 //#include "servers/rendering_server.h"
+#include <assert.h>
 
 #ifdef DEBUG_LOAD_THREADED
 #define print_lt(m_text) print_line(m_text)
@@ -292,6 +293,10 @@ Ref<Resource> ResourceLoader::_load(const String &p_path, const String &p_origin
 		if (!res.is_null()) {
 			break;
 		}
+		else
+		{
+			//assert(false);
+		}
 	}
 
 	load_paths_stack.resize(load_paths_stack.size() - 1);
@@ -356,6 +361,7 @@ void ResourceLoader::_run_load_task(void *p_userdata) {
 	}
 
 	if (res.is_null()) {
+		//assert(false);
 		print_verbose("Failed loading resource: " + remapped_path);
 	}
 

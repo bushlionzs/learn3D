@@ -35,6 +35,7 @@
 #include "core/object/script_language.h"
 #include "core/os/mutex.h"
 #include "core/version.h"
+#include <assert.h>
 
 #define OBJTYPE_RLOCK RWLockRead _rw_lockr_(lock);
 #define OBJTYPE_WLOCK RWLockWrite _rw_lockw_(lock);
@@ -626,7 +627,9 @@ bool ClassDB::_can_instantiate(ClassInfo *p_class_info) {
 }
 
 Object *ClassDB::instantiate(const StringName &p_class) {
-	return _instantiate_internal(p_class);
+	Object* obj =  _instantiate_internal(p_class);
+	assert(obj);
+	return obj;
 }
 
 Object *ClassDB::instantiate_no_placeholders(const StringName &p_class) {

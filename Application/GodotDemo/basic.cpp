@@ -80,7 +80,6 @@ void BasicApplication::base1()
 	std::string meshName = "rect";
 
 	auto mesh = Ogre::MeshManager::getSingletonPtr()->createRect(
-		nullptr,
 		meshName,
 		leftop, leftbottom, righttop, rightbottom, normal);
 

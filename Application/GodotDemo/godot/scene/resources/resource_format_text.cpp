@@ -34,6 +34,7 @@
 #include "core/io/dir_access.h"
 #include "core/io/missing_resource.h"
 #include "core/object/script_language.h"
+#include <assert.h>
 
 ///
 
@@ -143,18 +144,25 @@ Error ResourceLoaderText::_parse_ext_resource(VariantParser::Stream *p_stream, R
 		String path = ext_resources[id].path;
 		String type = ext_resources[id].type;
 		Ref<ResourceLoader::LoadToken> &load_token = ext_resources[id].load_token;
-
+		
 		if (load_token.is_valid()) { // If not valid, it's OK since then we know this load accepts broken dependencies.
 			Ref<Resource> res = ResourceLoader::_load_complete(*load_token.ptr(), &err);
 			if (res.is_null()) {
-				if (!ResourceLoader::is_cleaning_tasks()) {
-					if (ResourceLoader::get_abort_on_missing_resources()) {
-						error = ERR_FILE_MISSING_DEPENDENCIES;
-						error_text = "[ext_resource] referenced non-existent resource at: " + path;
-						_printerr();
-						err = error;
-					} else {
-						ResourceLoader::notify_dependency_error(local_path, path, type);
+				//bool script = load_token->local_path.find(".gd") > 0;//myadd
+				//bool tres = load_token->local_path.find(".tres") > 0;
+				//bool res = load_token->local_path.find(".res") > 0;
+				//if (!script && !tres&&!res)
+				{
+					if (!ResourceLoader::is_cleaning_tasks()) {
+						if (ResourceLoader::get_abort_on_missing_resources()) {
+							error = ERR_FILE_MISSING_DEPENDENCIES;
+							error_text = "[ext_resource] referenced non-existent resource at: " + path;
+							_printerr();
+							err = error;
+						}
+						else {
+							ResourceLoader::notify_dependency_error(local_path, path, type);
+						}
 					}
 				}
 			} else {
@@ -274,7 +282,10 @@ Ref<PackedScene> ResourceLoaderText::_parse_node_tag(VariantParser::ResourcePars
 			while (true) {
 				String assign;
 				Variant value;
-
+				if (local_path.find("Main.tscn") > 0)
+				{
+					int kk = 0;
+				}
 				error = VariantParser::parse_tag_assign_eof(&stream, lines, error_text, next_tag, assign, value, &parser);
 
 				if (error) {
@@ -465,6 +476,10 @@ Error ResourceLoaderText::load() {
 		ext_resources[id].path = path;
 		ext_resources[id].type = type;
 		ext_resources[id].load_token = ResourceLoader::_load_start(path, type, use_sub_threads ? ResourceLoader::LOAD_THREAD_DISTRIBUTE : ResourceLoader::LOAD_THREAD_FROM_CURRENT, cache_mode_for_external);
+		if (path.find("FPSCharacter.tscn") > 0)
+		{
+			int kk = 0;
+		}
 		if (!ext_resources[id].load_token.is_valid()) {
 			if (ResourceLoader::get_abort_on_missing_resources()) {
 				error = ERR_FILE_CORRUPT;
@@ -540,6 +555,7 @@ Error ResourceLoaderText::load() {
 				//create
 
 				Object *obj = ClassDB::instantiate(type);
+				assert(obj != nullptr);
 				if (!obj) {
 					if (ResourceLoader::is_creating_missing_resources_if_class_unavailable_enabled()) {
 						missing_resource = memnew(MissingResource);

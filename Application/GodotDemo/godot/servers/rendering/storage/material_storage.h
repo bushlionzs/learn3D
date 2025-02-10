@@ -36,6 +36,10 @@
 
 class RendererMaterialStorage {
 public:
+	RendererMaterialStorage()
+	{
+
+	}
 	virtual ~RendererMaterialStorage() {}
 
 	/* GLOBAL SHADER UNIFORM API */

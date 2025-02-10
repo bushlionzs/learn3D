@@ -186,7 +186,14 @@ public:
 
 	//these go pass-through, as they can be called from any thread
 	FUNCRIDTEX1(texture_2d, const Ref<Image> &)
-	FUNCRIDTEX2(texture_2d_layered, const Vector<Ref<Image>> &, TextureLayeredType)
+	virtual RID texture_2d_layered_create(const Vector<Ref<Image>>& p1, TextureLayeredType p2) override {
+    RID ret = RenderingServerGlobals::texture_storage->texture_allocate(); if (Thread::get_caller_id() == server_thread || RenderingServerGlobals::rasterizer->can_create_resources_async()) {
+        RenderingServerGlobals::texture_storage->texture_2d_layered_initialize(ret, p1, p2);
+    }
+    else {
+        command_queue.push(RenderingServerGlobals::texture_storage, &RendererTextureStorage::texture_2d_layered_initialize, ret, p1, p2);
+    } return ret;
+}
 	FUNCRIDTEX6(texture_3d, Image::Format, int, int, int, bool, const Vector<Ref<Image>> &)
 	FUNCRIDTEX3(texture_external, int, int, uint64_t)
 	FUNCRIDTEX1(texture_proxy, RID)
@@ -279,7 +286,14 @@ public:
 
 	/* COMMON MATERIAL API */
 
-	FUNCRIDSPLIT(material)
+		virtual RID material_create() override {
+		RID ret = RenderingServerGlobals::material_storage->material_allocate(); if (Thread::get_caller_id() != server_thread) {
+			command_queue.push(RenderingServerGlobals::material_storage, &RendererMaterialStorage::material_initialize, ret);
+		}
+		else {
+			RenderingServerGlobals::material_storage->material_initialize(ret);
+		} return ret;
+	}
 
 	virtual RID material_create_from_shader(RID p_next_pass, int p_render_priority, RID p_shader) override {
 		RID material = RSG::material_storage->material_allocate();
