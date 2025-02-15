@@ -1,3 +1,3 @@
 #pragma once 
 #include <core/string/ustring.h>
-void loadGodotProject(const String& projectDir);
+void loadGodotProject(const String& projectDir, Ogre::SceneManager* sceneManager);

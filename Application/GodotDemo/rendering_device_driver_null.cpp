@@ -8,7 +8,9 @@ Error RenderingDeviceDriverNULL::initialize(uint32_t p_device_index, uint32_t p_
 RenderingDeviceDriver::BufferID RenderingDeviceDriverNULL::buffer_create(
 	uint64_t p_size, BitField<BufferUsageBits> p_usage, MemoryAllocationType p_allocation_type)
 {
-	return RenderingDeviceDriver::BufferID();
+	char* data = (char*)malloc(p_size + sizeof(uint32_t));
+	*(uint32_t*)data = p_size;
+	return RenderingDeviceDriver::BufferID(data + sizeof(uint32_t));
 }
 
 bool RenderingDeviceDriverNULL::buffer_set_texel_format(BufferID p_buffer, DataFormat p_format)
@@ -23,12 +25,18 @@ void RenderingDeviceDriverNULL::buffer_free(BufferID p_buffer)
 
 uint64_t RenderingDeviceDriverNULL::buffer_get_allocation_size(BufferID p_buffer)
 {
-	return 0;
+	char* data = (char*)p_buffer.id;
+
+	data -= sizeof(uint32_t);
+
+	uint32_t size = *(uint32_t*)data;
+
+	return size;
 }
 
 uint8_t* RenderingDeviceDriverNULL::buffer_map(BufferID p_buffer)
 {
-	return nullptr;
+	return (uint8_t*)p_buffer.id;
 }
 
 void RenderingDeviceDriverNULL::buffer_unmap(BufferID p_buffer)
@@ -39,19 +47,22 @@ void RenderingDeviceDriverNULL::buffer_unmap(BufferID p_buffer)
 RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create(
 	const TextureFormat& p_format, const TextureView& p_view)
 {
-	return RenderingDeviceDriver::TextureID();
+	void* dummy = malloc(100);
+	return RenderingDeviceDriver::TextureID(dummy);
 }
 
 RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create_from_extension(
 	uint64_t p_native_texture, TextureType p_type,
 	DataFormat p_format, uint32_t p_array_layers, bool p_depth_stencil)
 {
-	return RenderingDeviceDriver::TextureID();
+	void* dummy = malloc(100);
+	return RenderingDeviceDriver::TextureID(dummy);
 }
 
 RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create_shared(TextureID p_original_texture, const TextureView& p_view)
 {
-	return RenderingDeviceDriver::TextureID();
+	void* dummy = malloc(100);
+	return RenderingDeviceDriver::TextureID(dummy);
 }
 
 RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create_shared_from_slice
@@ -59,7 +70,8 @@ RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create_share
 	TextureSliceType p_slice_type, uint32_t p_layer,
 	uint32_t p_layers, uint32_t p_mipmap, uint32_t p_mipmaps)
 {
-	return RenderingDeviceDriver::TextureID();
+	void* dummy = malloc(100);
+	return RenderingDeviceDriver::TextureID(dummy);
 }
 
 void RenderingDeviceDriverNULL::texture_free(TextureID p_texture)
@@ -69,7 +81,7 @@ void RenderingDeviceDriverNULL::texture_free(TextureID p_texture)
 
 uint64_t RenderingDeviceDriverNULL::texture_get_allocation_size(TextureID p_texture)
 {
-	return 0;
+	return 100;
 }
 
 void RenderingDeviceDriverNULL::texture_get_copyable_layout(TextureID p_texture,
@@ -80,7 +92,7 @@ void RenderingDeviceDriverNULL::texture_get_copyable_layout(TextureID p_texture,
 
 uint8_t* RenderingDeviceDriverNULL::texture_map(RenderingDeviceDriver::TextureID p_texture, const RenderingDeviceDriver::TextureSubresource& p_subresource)
 {
-	return nullptr;
+	return (uint8_t*)p_texture.id;
 }
 
 void RenderingDeviceDriverNULL::texture_unmap(TextureID p_texture)
@@ -100,7 +112,8 @@ bool RenderingDeviceDriverNULL::texture_can_make_shared_with_format(TextureID p_
 
 RenderingDeviceDriver::SamplerID RenderingDeviceDriverNULL::sampler_create(const RenderingDeviceDriver::SamplerState& p_state)
 {
-	return RenderingDeviceDriver::SamplerID();
+	void* dummy = malloc(100);
+	return RenderingDeviceDriver::SamplerID(dummy);
 }
 
 void RenderingDeviceDriverNULL::sampler_free(SamplerID p_sampler)
@@ -116,7 +129,8 @@ bool RenderingDeviceDriverNULL::sampler_is_format_supported_for_filter(DataForma
 RenderingDeviceDriver::VertexFormatID RenderingDeviceDriverNULL::vertex_format_create(
 	VectorView<VertexAttribute> p_vertex_attribs)
 {
-	return RenderingDeviceDriver::VertexFormatID();
+	void* dummy = malloc(100);
+	return RenderingDeviceDriver::VertexFormatID(dummy);
 }
 
 void RenderingDeviceDriverNULL::vertex_format_free(VertexFormatID p_vertex_format)
@@ -137,7 +151,7 @@ void RenderingDeviceDriverNULL::command_pipeline_barrier(
 
 RenderingDeviceDriver::FenceID RenderingDeviceDriverNULL::fence_create()
 {
-	return RenderingDeviceDriver::FenceID();
+	return RenderingDeviceDriver::FenceID(1);
 }
 
 Error RenderingDeviceDriverNULL::fence_wait(FenceID p_fence)
@@ -152,7 +166,7 @@ void RenderingDeviceDriverNULL::fence_free(FenceID p_fence)
 
 RenderingDeviceDriver::SemaphoreID RenderingDeviceDriverNULL::semaphore_create()
 {
-	return RenderingDeviceDriver::SemaphoreID();
+	return RenderingDeviceDriver::SemaphoreID(1);
 }
 
 void RenderingDeviceDriverNULL::semaphore_free(SemaphoreID p_semaphore)
@@ -163,13 +177,13 @@ void RenderingDeviceDriverNULL::semaphore_free(SemaphoreID p_semaphore)
 RenderingDeviceDriver::CommandQueueFamilyID RenderingDeviceDriverNULL::command_queue_family_get(
 	BitField<CommandQueueFamilyBits> p_cmd_queue_family_bits, RenderingContextDriver::SurfaceID p_surface)
 {
-	return RenderingDeviceDriver::CommandQueueFamilyID();
+	return RenderingDeviceDriver::CommandQueueFamilyID(1);
 }
 
 RenderingDeviceDriver::CommandQueueID RenderingDeviceDriverNULL::command_queue_create(
 	CommandQueueFamilyID p_cmd_queue_family, bool p_identify_as_main_queue)
 {
-	return RenderingDeviceDriver::CommandQueueID();
+	return RenderingDeviceDriver::CommandQueueID(2);
 }
 
 Error RenderingDeviceDriverNULL::command_queue_execute_and_present(
@@ -188,7 +202,7 @@ void RenderingDeviceDriverNULL::command_queue_free(CommandQueueID p_cmd_queue)
 RenderingDeviceDriver::CommandPoolID RenderingDeviceDriverNULL::command_pool_create(
 	CommandQueueFamilyID p_cmd_queue_family, CommandBufferType p_cmd_buffer_type)
 {
-	return RenderingDeviceDriver::CommandPoolID();
+	return RenderingDeviceDriver::CommandPoolID(1);
 }
 
 void RenderingDeviceDriverNULL::command_pool_free(CommandPoolID p_cmd_pool)
@@ -198,7 +212,7 @@ void RenderingDeviceDriverNULL::command_pool_free(CommandPoolID p_cmd_pool)
 
 RenderingDeviceDriver::CommandBufferID RenderingDeviceDriverNULL::command_buffer_create(CommandPoolID p_cmd_pool)
 {
-	return RenderingDeviceDriver::CommandBufferID();
+	return RenderingDeviceDriver::CommandBufferID(2);
 }
 
 bool RenderingDeviceDriverNULL::command_buffer_begin(CommandBufferID p_cmd_buffer)
@@ -654,7 +668,7 @@ uint64_t RenderingDeviceDriverNULL::limit_get(Limit p_limit)
 
 uint64_t RenderingDeviceDriverNULL::api_trait_get(ApiTrait p_trait)
 {
-	return 0;
+	return RenderingDeviceDriver::api_trait_get(p_trait);
 }
 
 bool RenderingDeviceDriverNULL::has_feature(Features p_feature)

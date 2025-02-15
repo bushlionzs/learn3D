@@ -39,7 +39,7 @@ void Sky::set_radiance_size(RadianceSize p_size) {
 	static const int size[RADIANCE_SIZE_MAX] = {
 		32, 64, 128, 256, 512, 1024, 2048
 	};
-	//RS::get_singleton()->sky_set_radiance_size(sky, size[radiance_size]);
+	RS::get_singleton()->sky_set_radiance_size(sky, size[radiance_size]);
 }
 
 Sky::RadianceSize Sky::get_radiance_size() const {
@@ -48,7 +48,7 @@ Sky::RadianceSize Sky::get_radiance_size() const {
 
 void Sky::set_process_mode(ProcessMode p_mode) {
 	mode = p_mode;
-	//RS::get_singleton()->sky_set_mode(sky, RS::SkyMode(mode));
+	RS::get_singleton()->sky_set_mode(sky, RS::SkyMode(mode));
 }
 
 Sky::ProcessMode Sky::get_process_mode() const {
@@ -61,7 +61,7 @@ void Sky::set_material(const Ref<Material> &p_material) {
 	if (sky_material.is_valid()) {
 		material_rid = sky_material->get_rid();
 	}
-	//RS::get_singleton()->sky_set_material(sky, material_rid);
+	RS::get_singleton()->sky_set_material(sky, material_rid);
 }
 
 Ref<Material> Sky::get_material() const {
@@ -102,10 +102,10 @@ void Sky::_bind_methods() {
 }
 
 Sky::Sky() {
-	//sky = RS::get_singleton()->sky_create();
+	sky = RS::get_singleton()->sky_create();
 }
 
 Sky::~Sky() {
 	ERR_FAIL_NULL(RenderingServer::get_singleton());
-	//RS::get_singleton()->free(sky);
+	RS::get_singleton()->free(sky);
 }

@@ -234,9 +234,13 @@ struct PbrMaterialConstanceBuffer
     Ogre::Vector4 baseColorFactor = { 1.0f, 1.0f, 1.0f, 1.0f };
     Ogre::Vector4 scaleIBLAmbient = { 1.0f, 1.0f, 1.0f, 1.0f };
     uint32_t debugRenderMode = 0;
+    uint32_t hasAlbedoMap = 0;
     uint32_t hasEmissiveMap = 0;
     uint32_t hasNormalMap = 0;
     uint32_t hasMetalRoughNessMap = 0;
+    uint32_t hasMetalMap;
+    uint32_t hasRoughNessMap = 0;
+    uint32_t hasOcclusionMap = 0;
 };
 
 struct ObjectConstantBuffer

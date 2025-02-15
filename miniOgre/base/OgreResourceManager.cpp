@@ -33,28 +33,18 @@ namespace Ogre {
         String full = CPlatformFileSystem::GetInstance()->getFullPath(dir);
         if (recursive)
         {
-            mDirectorySetRecursive.insert(full);
+            readDir(full, true);
             
         }
         else
         {
-            mDirectorySet.insert(full);
+            readDir(full, false);
         }
         
     }
 
     void ResourceManager::loadAllResource()
     {
-        for (auto& it : mDirectorySet)
-        {
-            readDir(it, false);
-        }
-
-        for (auto& it : mDirectorySetRecursive)
-        {
-            readDir(it, true);
-        }
-
         String suffix;
         for (auto& res : mResourceMap)
         {

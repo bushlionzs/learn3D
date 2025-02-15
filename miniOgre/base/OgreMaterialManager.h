@@ -17,6 +17,7 @@ namespace Ogre {
         std::shared_ptr<Material> create(const std::string& name, bool pbr = false);
         bool remove(const std::string& name);
         bool remove(uint64_t handle);
+        bool hasMaterial(const std::string& name);
         std::shared_ptr<Material> getByName(const std::string& name, const std::string& group = BLANKSTRING) const;
         bool unloadUnreferencedResource(const String& name);
     private:

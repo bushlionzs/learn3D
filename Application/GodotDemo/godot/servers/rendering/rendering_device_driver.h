@@ -145,7 +145,22 @@ public:
 	static_assert(sizeof(m_name##ID) == sizeof(void *));
 
 	// Id types declared before anything else to prevent cyclic dependencies between the different concerns.
-	DEFINE_ID(Buffer);
+	struct BufferID : public ID {
+    __forceinline explicit operator bool() const {
+        return id != 0;
+    } __forceinline BufferID& operator=(BufferID p_other) {
+        id = p_other.id; return *this;
+    } __forceinline bool operator<(const BufferID& p_other) const {
+        return id < p_other.id;
+    } __forceinline bool operator==(const BufferID& p_other) const {
+        return id == p_other.id;
+    } __forceinline bool operator!=(const BufferID& p_other) const {
+        return id != p_other.id;
+    } __forceinline BufferID(const BufferID& p_other) : ID(p_other.id) {
+    } __forceinline explicit BufferID(uint64_t p_int) : ID(p_int) {
+    } __forceinline explicit BufferID(void* p_ptr) : ID((size_t)p_ptr) {
+    } __forceinline BufferID() = default;
+}; static_assert(sizeof(BufferID) == sizeof(void*));;
 	DEFINE_ID(Texture);
 	DEFINE_ID(Sampler);
 	DEFINE_ID(VertexFormat);

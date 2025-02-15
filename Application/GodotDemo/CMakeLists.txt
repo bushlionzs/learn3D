@@ -11,6 +11,7 @@ add_definitions(-DCEGUI_STATIC)
 add_definitions(-DTYPED_METHOD_BIND)
 add_definitions(-DNOT_USE_STD_STRING)
 add_definitions(-DWINDOWS_ENABLED)
+#add_definitions(-DTOOLS_ENABLED)
 endif()
 
 

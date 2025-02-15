@@ -114,6 +114,17 @@ std::shared_ptr<Mesh> MeshManager::getByName(const std::string& name) const
     return std::shared_ptr<Mesh>();
 }
 
+bool MeshManager::hasMesh(const std::string& name)
+{
+	auto it = mMeshMap.find(name);
+
+	if (it != mMeshMap.end())
+	{
+		return true;
+	}
+	return false;
+}
+
 bool MeshManager::addMesh(const std::string& name, std::shared_ptr<Mesh>& mesh)
 {
 	auto it = mMeshMap.find(name);
@@ -229,7 +240,6 @@ std::shared_ptr<Mesh> MeshManager::createBox(
 }
 
 std::shared_ptr<Mesh> MeshManager::createRect(
-	filament::Engine* engine,
 	const std::string& name, 
 	Ogre::Vector3& leftop,
 	Ogre::Vector3& leftbottom,

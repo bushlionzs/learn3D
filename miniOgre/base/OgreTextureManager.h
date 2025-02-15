@@ -16,7 +16,6 @@ namespace Ogre {
     static const intptr_t DECODING_ERROR = 0x1;
     class TextureManager : public Ogre::Singleton<TextureManager>
     {
-        using TextureCache = tsl::robin_map<String, Texture*>;
     public:
         TextureManager();
         ~TextureManager();

@@ -17,13 +17,13 @@ namespace Ogre {
         std::shared_ptr<Mesh> createManual(const std::string& name);
         void remove(const std::string& name);
         std::shared_ptr<Mesh> getByName(const std::string& name) const;
+        bool hasMesh(const std::string& name);
         bool addMesh(const std::string& name, std::shared_ptr<Mesh>& mesh);
         std::shared_ptr<Mesh> createBox(
             const std::string& name, 
             int32_t edge_size,
             const std::string& matName);
         std::shared_ptr<Mesh> createRect(
-            filament::Engine* engine,
             const std::string& name,
             Ogre::Vector3& leftop,
             Ogre::Vector3& leftbottom,

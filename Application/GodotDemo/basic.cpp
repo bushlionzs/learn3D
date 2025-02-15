@@ -64,10 +64,10 @@ void BasicApplication::addCustomDirectory()
 void BasicApplication::base1()
 {
 	std::string projectDir = "D:\\godotProject\\Abandoned-Spaceship-Godot-Demo";
-	//SetCurrentDirectory(projectDir.c_str());
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(projectDir);
 
 	String UProjectDir = projectDir.c_str();
-	loadGodotProject(UProjectDir);
+	loadGodotProject(UProjectDir, mSceneManager);
 	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 	float aa = 1;
 	Ogre::Vector3 leftop = Ogre::Vector3(-aa, aa, 0.0f);

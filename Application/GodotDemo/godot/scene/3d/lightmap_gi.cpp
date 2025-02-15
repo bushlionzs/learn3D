@@ -139,7 +139,7 @@ void LightmapGIData::clear() {
 }
 
 void LightmapGIData::_reset_lightmap_textures() {
-	//RS::get_singleton()->lightmap_set_textures(lightmap, light_texture.is_valid() ? light_texture->get_rid() : RID(), uses_spherical_harmonics);
+	RS::get_singleton()->lightmap_set_textures(lightmap, light_texture.is_valid() ? light_texture->get_rid() : RID(), uses_spherical_harmonics);
 }
 
 void LightmapGIData::set_uses_spherical_harmonics(bool p_enable) {
@@ -293,12 +293,12 @@ void LightmapGIData::_bind_methods() {
 }
 
 LightmapGIData::LightmapGIData() {
-	//lightmap = RS::get_singleton()->lightmap_create();
+	lightmap = RS::get_singleton()->lightmap_create();
 }
 
 LightmapGIData::~LightmapGIData() {
 	ERR_FAIL_NULL(RenderingServer::get_singleton());
-	//RS::get_singleton()->free(lightmap);
+	RS::get_singleton()->free(lightmap);
 }
 
 ///////////////////////////

@@ -76,7 +76,12 @@ std::string getShortFilename(const std::string& name)
     size_t pos = name.find_last_of('\\');
     if (pos == std::string::npos)
     {
-        return name;
+        pos = name.find_last_of('/');
+        if (pos == std::string::npos)
+        {
+            return name;
+        }
+        
     }
 
     tmp = name.substr(pos + 1);

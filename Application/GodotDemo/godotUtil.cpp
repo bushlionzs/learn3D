@@ -44,6 +44,18 @@
 #include <modules/register_module_types.h>
 #include "rendering_context_driver_null.h"
 #include <core/config/engine.h>
+
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
+#include <OgreMeshManager.h>
+#include <OgreVertexData.h>
+#include <OgreIndexData.h>
+#include <OgreVertexDeclaration.h>
+#include <OgreEntity.h>
+#include <OgreSubEntity.h>
+#include <OgreMaterialManager.h>
+#include <myutils.h>
+
 static ProjectSettings* globals = nullptr;
 
 class Main
@@ -107,6 +119,16 @@ static void register_core_types()
     ResourceLoader::add_resource_format_loader(resource_format_image);
 }
 static Ref<ResourceFormatLoaderText> resource_loader_text;
+
+static bool has_server_feature_callback(const String& p_feature) {
+    if (RenderingServer::get_singleton()) {
+        if (RenderingServer::get_singleton()->has_os_feature(p_feature)) {
+            return true;
+        }
+    }
+
+    return false;
+}
 static void register_scene_types()
 {
     SceneStringNames::create();
@@ -119,13 +141,15 @@ static void register_scene_types()
     static Ref<ResourceFormatLoaderCompressedTextureLayered> resource_loader_texture_layered;
     static Ref<ResourceFormatLoaderCompressedTexture3D> resource_loader_texture_3d;
     resource_loader_stream_texture.instantiate();
-    ResourceLoader::add_resource_format_loader(resource_loader_texture_layered, true);
+    ResourceLoader::add_resource_format_loader(resource_loader_stream_texture, true);
     resource_loader_texture_layered.instantiate();
     ResourceLoader::add_resource_format_loader(resource_loader_texture_layered, true);
     resource_loader_texture_3d.instantiate();
     ResourceLoader::add_resource_format_loader(resource_loader_texture_3d, true);
     resource_loader_text.instantiate();
     ResourceLoader::add_resource_format_loader(resource_loader_text, true);
+    
+
     memnew(ShaderTypes);
     auto rendering_device = memnew(RenderingDevice);
     static RenderingContextDriverNULL renderingContext;
@@ -136,7 +160,7 @@ static void register_scene_types()
     RendererCompositorRD::make_current();
     rendering_server->init();
     rendering_server->set_render_loop_enabled(false);
-
+    OS::get_singleton()->set_has_server_feature_callback(has_server_feature_callback);
     BaseMaterial3D::init_shaders();
     GDREGISTER_CLASS(Object);
     GDREGISTER_VIRTUAL_CLASS(Resource);
@@ -216,8 +240,18 @@ static void initialize_physics()
     ERR_FAIL_NULL_MSG(physics_server_2d, "Failed to initialize PhysicsServer2D.");
     physics_server_2d->init();
 }
-void visitNode(Node* scene);
-void loadGodotProject(const String& projectDir)
+
+std::string convert_stringname_to_ascii(const String& name) {
+
+    PackedByteArray ascii_bytes = name.to_ascii_buffer();
+
+    std::string std_str;
+    std_str.assign((const char*)ascii_bytes.ptr(), ascii_bytes.size());
+    return std_str;
+}
+
+void visitNode(Node* scene, Ogre::SceneNode* sceneNode);
+void loadGodotProject(const String& projectDir, Ogre::SceneManager* sceneManager)
 {
     if (globals == nullptr)
     {
@@ -237,14 +271,14 @@ void loadGodotProject(const String& projectDir)
     Error ret = globals->setup(projectDir, String(), false, false);
     if ( ret == OK)
     {
-        String aa = "D:\\godotProject\\Abandoned-Spaceship-Godot-Demo\\models\\objects\\barrel.tscn";
-        //resource_loader_text->load(aa, aa);
         String game_path = GLOBAL_GET("application/run/main_scene");
-
+        game_path = "res://Models/Outside/Tree.tscn";
         Ref<PackedScene> scenedata = ResourceLoader::load(game_path);
 
         Node* scene = scenedata->instantiate();
-        visitNode(scene);
+        std::string sceneNodeName = convert_stringname_to_ascii(scene->get_name());
+        Ogre::SceneNode* root = sceneManager->getRoot()->createChildSceneNode(sceneNodeName);
+        visitNode(scene, root);
     }
     else
     {
@@ -252,15 +286,164 @@ void loadGodotProject(const String& projectDir)
     }
 }
 
-void visitNode(Node* scene)
+struct GodotVertex
 {
-    auto name = scene->get_name();
+    Ogre::Vector3 vertex;
+    Ogre::Vector3 normal;
+    Ogre::Vector4 tangent;
+    Ogre::Vector2 uv;
+};
+
+void visitNode(Node* scene, Ogre::SceneNode* sceneNode)
+{
+    auto name = sceneNode->getName();
     int count = scene->get_child_count();
+
+    const String& className = scene->get_class();
+
+    if (className == "MeshInstance3D")
+    {
+        MeshInstance3D* meshInstance3d = Object::cast_to<MeshInstance3D>(scene);
+
+        Ref<Mesh> mesh = meshInstance3d->get_mesh();
+
+        if (mesh.is_valid())
+        {
+            const String& meshName = mesh->get_name();
+
+            std::string ogreMeshName = convert_stringname_to_ascii(meshName);
+
+            if (!Ogre::MeshManager::getSingleton().hasMesh(ogreMeshName))
+            {
+                std::shared_ptr<Ogre::Mesh>ogreMesh = std::make_shared<Ogre::Mesh>(ogreMeshName);
+
+                Ogre::MeshManager::getSingleton().addMesh(ogreMeshName, ogreMesh);
+                int surfaceCount = mesh->get_surface_count();
+
+                for (int i = 0; i < surfaceCount; i++)
+                {
+                    Ogre::SubMesh* subMesh = ogreMesh->addSubMesh(false, false);
+                    Array surface_data = mesh->surface_get_arrays(i);
+                    int arraySize = surface_data.size();
+
+                    PackedVector2Array uv_coords = surface_data[Mesh::ARRAY_TEX_UV];
+                    PackedVector3Array vertices = surface_data[Mesh::ARRAY_VERTEX];
+                    PackedVector3Array normals = surface_data[Mesh::ARRAY_NORMAL];
+                    PackedVector3Array tangents = surface_data[Mesh::ARRAY_TANGENT];
+                    PackedInt32Array indices = surface_data[Mesh::ARRAY_INDEX];
+                    
+                    assert(uv_coords.size() == vertices.size());
+                    assert(uv_coords.size() == normals.size());
+
+                    uint32_t vertexCount = vertices.size();
+
+                    VertexData* vertexData = subMesh->getVertexData();
+                    IndexData* indexData = subMesh->getIndexData();
+
+                    std::vector<GodotVertex> vertexList(vertexCount);
+
+                    for (uint32_t j = 0; j < vertexCount; j++)
+                    {
+                        vertexList[j].vertex.x = vertices[j].x;
+                        vertexList[j].vertex.y = vertices[j].y;
+                        vertexList[j].vertex.z = vertices[j].z;
+
+                        vertexList[j].normal.x = normals[j].x;
+                        vertexList[j].normal.y = normals[j].y;
+                        vertexList[j].normal.z = normals[j].z;
+
+                        vertexList[j].uv.x = uv_coords[j].x;
+                        vertexList[j].uv.y = uv_coords[j].y;
+                    }
+                    vertexData->addBindBuffer(sizeof(GodotVertex), vertexCount);
+                    vertexData->writeBindBufferData(0, (const char*)vertexList.data(), sizeof(GodotVertex) * vertexCount);
+                    vertexData->addElement(0, 0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+                    vertexData->addElement(0, 0, 12, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
+                    vertexData->addElement(0, 0, 24, Ogre::VET_FLOAT4, Ogre::VES_TANGENT);
+                    vertexData->addElement(0, 0, 40, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+                    indexData->createBuffer(4, indices.size());
+                    indexData->writeData((const char*)indices.ptr(), indices.size());
+
+                    //
+                    Ref<Material> mat = mesh->surface_get_material(i);
+
+                    Ref<StandardMaterial3D> standard_mat = Object::cast_to<StandardMaterial3D>(mat.ptr());
+                    String matName = standard_mat->get_path();
+
+                    std::string ogreMatName = convert_stringname_to_ascii(matName);
+
+                    if (!Ogre::MaterialManager::getSingleton().hasMaterial(ogreMatName))
+                    {
+                        std::shared_ptr<Ogre::Material> ogreMat = 
+                            Ogre::MaterialManager::getSingleton().create(ogreMatName, true);
+
+                        ShaderInfo& shaderInfo = ogreMat->getShaderInfo();
+                        shaderInfo.shaderName = "pbr";
+                        shaderInfo.shaderMacros.push_back(std::pair<std::string, std::string>("PBR", "1"));
+
+                        PbrMaterialConstanceBuffer& matInfo = ogreMat->getPbrMatInfo();
+                        Ogre::TextureProperty texProperty;
+                        String texName;
+                        std::string ogreTexName;
+                        Ref<Texture2D> albedo_texture = 
+                            standard_mat->get_texture(StandardMaterial3D::TEXTURE_ALBEDO);
+                        if (albedo_texture.is_valid())
+                        {
+                            texName = albedo_texture->get_path();
+                            ogreTexName = getShortFilename(convert_stringname_to_ascii(texName));
+                            texProperty._pbrType = Ogre::TextureTypePbr_Albedo;
+                            ogreMat->addTexture(ogreTexName, &texProperty);
+                            matInfo.hasAlbedoMap = 1;
+                        }
+                        
+
+                        Ref<Texture2D> normal_texture =
+                            standard_mat->get_texture(StandardMaterial3D::TEXTURE_NORMAL);
+                        if (normal_texture.is_valid())
+                        {
+                            texName = normal_texture->get_path();
+                            ogreTexName = getShortFilename(convert_stringname_to_ascii(texName));
+                            texProperty._pbrType = Ogre::TextureTypePbr_NormalMap;
+                            ogreMat->addTexture(ogreTexName, &texProperty);
+                            matInfo.hasNormalMap = 1;
+                        }
+                        
+
+                        Ref<Texture2D> roughness_texture =
+                            standard_mat->get_texture(StandardMaterial3D::TEXTURE_ROUGHNESS);
+                        if (normal_texture.is_valid())
+                        {
+                            texName = roughness_texture->get_path();
+                            ogreTexName = getShortFilename(convert_stringname_to_ascii(texName));
+                            texProperty._pbrType = Ogre::TextureTypePbr_Roughness;
+                            ogreMat->addTexture(ogreTexName, &texProperty);
+                            matInfo.hasRoughNessMap = 1;
+                        }   
+                    }
+
+                    std::shared_ptr<Ogre::Material> ogreMat = Ogre::MaterialManager::getSingleton().getByName(ogreMatName);
+                    subMesh->setMaterial(ogreMat);
+                }
+            }
+            
+            std::shared_ptr<Ogre::Mesh> ogreMesh = Ogre::MeshManager::getSingleton().getByName(ogreMeshName);
+
+            const StringName& instanceName = meshInstance3d->get_name();
+
+            std::string entityName = convert_stringname_to_ascii(instanceName);
+
+            Ogre::Entity* entity = new Ogre::Entity(entityName, ogreMesh);
+
+            sceneNode->attachObject(entity);
+        }
+    }
+    
     for (int i = 0; i < count; i++)
     {
         Node* subNode = scene->get_child(i);
-
-        auto subName = subNode->get_name();
-        int kk = 0;
+        const StringName& name = subNode->get_name();
+        std::string sceneNodeName = convert_stringname_to_ascii(name);
+        Ogre::SceneNode* subSceneNode = sceneNode->createChildSceneNode(sceneNodeName);
+        visitNode(subNode, subSceneNode);
     }
 }

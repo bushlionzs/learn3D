@@ -289,6 +289,10 @@ Ref<Resource> ResourceLoader::_load(const String &p_path, const String &p_origin
 			continue;
 		}
 		found = true;
+		if (p_path.find(".res") > 0)
+		{
+			int kk = 0;
+		}
 		res = loader[i]->load(p_path, original_path, r_error, p_use_sub_threads, r_progress, p_cache_mode);
 		if (!res.is_null()) {
 			break;
@@ -303,6 +307,10 @@ Ref<Resource> ResourceLoader::_load(const String &p_path, const String &p_origin
 	res_ref_overrides.erase(load_nesting);
 	load_nesting--;
 
+	if (!found)
+	{
+		int kk = 0;
+	}
 	if (!res.is_null()) {
 		return res;
 	}

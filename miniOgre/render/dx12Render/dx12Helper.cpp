@@ -485,7 +485,6 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 	std::string meshName = "mipmapMesh";
 
 	auto mesh = MeshManager::getSingletonPtr()->createRect(
-		nullptr,
 		meshName,
 		leftop, leftbottom, righttop, rightbottom, normal);
 	auto* subMesh = mesh->getSubMesh(0);

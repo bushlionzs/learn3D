@@ -26,6 +26,15 @@ namespace Ogre {
 		return mDefaultMaterail;
 	}
 
+	bool MaterialManager::remove(const std::string& name)
+	{
+		return false;
+	}
+	bool MaterialManager::remove(uint64_t handle)
+	{
+		return false;
+	}
+
 	std::shared_ptr<Material> MaterialManager::create(const std::string& name, bool pbr)
 	{
 		auto it = mMaterialMap.find(name);
@@ -39,12 +48,13 @@ namespace Ogre {
 		return p;
 	}
 
-	bool MaterialManager::remove(const std::string& name)
+	bool MaterialManager::hasMaterial(const std::string& name)
 	{
-		return false;
-	}
-	bool MaterialManager::remove(uint64_t handle)
-	{
+		auto it = mMaterialMap.find(name);
+		if (it != mMaterialMap.end())
+		{
+			return true;
+		}
 		return false;
 	}
 

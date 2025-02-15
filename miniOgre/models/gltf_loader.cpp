@@ -480,7 +480,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
                 tp._pbrType = TextureTypePbr_Albedo;
                 tp.gltfSampler();
                 addMaterialTexture(mat, tp, baseColorImage);
-                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_BASECOLORMAP", "1"));
+                matInfo.hasAlbedoMap = 1;
             }
             
             int32_t occlusionIndex = tinyMat.occlusionTexture.index;
@@ -490,7 +490,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
                 tp._pbrType = TextureTypePbr_AmbientOcclusion;
                 tp.gltfSampler();
                 addMaterialTexture(mat, tp, occlusionImage);
-                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_OCCLUSIONMAP", "1"));
+                matInfo.hasOcclusionMap = 1;
             }
             
             int32_t normalIndex = tinyMat.normalTexture.index;
@@ -500,7 +500,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
                 tp._pbrType = TextureTypePbr_NormalMap;
                 tp.gltfSampler();
                 addMaterialTexture(mat, tp, normalImage);
-                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_NORMALMAP", "1"));
+                matInfo.hasNormalMap = 1;
             }
             else
             {
@@ -513,7 +513,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
                 const tinygltf::Image& metallicRoughnessImage = model.images[model.textures[metallicRoughnessIndex].source];
                 tp._pbrType = TextureTypePbr_MetalRoughness;
                 addMaterialTexture(mat, tp, metallicRoughnessImage);
-                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_METALROUGHNESSMAP", "1"));
+                matInfo.hasMetalRoughNessMap = 1;
             }
             
             int32_t emissiveIndex = tinyMat.emissiveTexture.index;
@@ -523,7 +523,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
                 tp._pbrType = TextureTypePbr_Emissive;
                 tp.gltfSampler();
                 addMaterialTexture(mat, tp, emissiveImage);
-                sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("HAS_EMISSIVEMAP", "1"));
+                matInfo.hasEmissiveMap = 1;
             }
 
             sinfo.shaderMacros.push_back(std::pair<std::string, std::string>("PBR", "1"));
