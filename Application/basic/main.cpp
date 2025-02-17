@@ -2,16 +2,18 @@
 #include "basic.h"
 #include "platform_log.h"
 #include "ManualApplication.h"
+#include <time_util.h>
 int main()
 {
 	platform_log_init();
 	BasicApplication instance;
-
 	AppInfo info;
 	info.useSRGB = false;
 	info.engineType = EngineType_Vulkan;
 	//info.engineType = EngineType_Dx12;
 	ManualApplication app;
+	
+	
 
 	info.setup = [&instance, &app](RenderSystem* rs, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
 		instance.setup(&app, rs, win, sceneManager, gameCamera);

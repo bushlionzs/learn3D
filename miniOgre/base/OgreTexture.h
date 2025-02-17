@@ -4,6 +4,7 @@
 #include "OgreHardwarePixelBuffer.h"
 #include "OgreImage.h"
 #include <utils/JobSystem.h>
+#include <filament/DriverEnums.h>
 
 namespace Ogre {
     enum TextureTypePbr

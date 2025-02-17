@@ -12,8 +12,7 @@ namespace Ogre
     class RenderWindow;
     class SceneManager;
 }
-using namespace filament::backend;
-using namespace filament;
+
 
 
 class PassBase;

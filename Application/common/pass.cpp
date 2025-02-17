@@ -66,7 +66,7 @@ public:
 			
 			auto programHandle = mat->getProgram();
 			auto piplineHandle = mat->getPipeline();
-			Handle<HwDescriptorSet> descriptorSet[2];
+			filament::backend::Handle<filament::backend::HwDescriptorSet> descriptorSet[2];
 			descriptorSet[0] = resourceInfo->zeroSet;
 			descriptorSet[1] = resourceInfo->firstSet;
 			rs->bindPipeline(piplineHandle, descriptorSet, 2);
@@ -86,6 +86,18 @@ public:
 
 	virtual void execute(RenderSystem* rs)
 	{
+		{
+			Ogre::RenderTargetBarrier rtBarriers[] =
+			{
+				{
+					mPassInput.color,
+					Ogre::RESOURCE_STATE_PRESENT,
+					Ogre::RESOURCE_STATE_RENDER_TARGET
+				}
+			};
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		}
+
 		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 		auto& info = mRenderPassInfo;
 		auto cam = mPassInput.cam;
@@ -102,6 +114,18 @@ public:
 		info.depthTarget.clearValue = { depthValue, 0.0f };
 
 		renderScene(cam, sceneManager, mRenderPassInfo, &mUserDefineShader);
+
+		{
+			Ogre::RenderTargetBarrier rtBarriers[] =
+			{
+				{
+					mPassInput.color,
+					Ogre::RESOURCE_STATE_RENDER_TARGET,
+					Ogre::RESOURCE_STATE_PRESENT
+				}
+			};
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		}
 	}
 	virtual void update(float delta)
 	{
@@ -159,7 +183,7 @@ private:
 	RenderPassInput mPassInput;
 	RenderPassInfo mRenderPassInfo;
 	FrameConstantBuffer mFrameConstantBuffer;
-	std::vector<Handle<HwBufferObject>> mFrameBufferObjectList;
+	std::vector<filament::backend::Handle<filament::backend::HwBufferObject>> mFrameBufferObjectList;
 	UserDefineShader mUserDefineShader;
 };
 

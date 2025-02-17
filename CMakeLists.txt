@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.18)
 set(CMAKE_CXX_STANDARD 20)
 set(ROOT_INC ${CMAKE_CURRENT_SOURCE_DIR})
 project(learn3D_cmake)
+
+add_compile_definitions(_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR=1)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 add_subdirectory(3rdSource/zlib zlib)

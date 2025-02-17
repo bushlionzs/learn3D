@@ -36,6 +36,11 @@ uint64_t RenderingDeviceDriverNULL::buffer_get_allocation_size(BufferID p_buffer
 
 uint8_t* RenderingDeviceDriverNULL::buffer_map(BufferID p_buffer)
 {
+	uint64_t  size = buffer_get_allocation_size(p_buffer);
+	if (size == 125460)
+	{
+		int kk = 0;
+	}
 	return (uint8_t*)p_buffer.id;
 }
 

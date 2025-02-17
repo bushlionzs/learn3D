@@ -29,7 +29,7 @@ THE SOFTWARE.
 // Common stuff
 
 #include <map>
-#include <DriverBase.h>
+
 
 #if OGRE_CPU == OGRE_CPU_X86
     #include <xmmintrin.h>
@@ -66,6 +66,15 @@ namespace Ogre {
     {
         return FastHash((const char*)&data, sizeof(T), hashSoFar);
     }
+
+    enum ImageType : uint8_t {
+        ImageType_UnSupported,
+        ImageType_PNG,
+        ImageType_JPG,
+        ImageType_DDS,
+        ImageType_BLP,
+        ImageType_KTX
+    };
 
     enum VertexPass
     {
@@ -1099,6 +1108,42 @@ namespace Ogre {
         RESOURCE_MEMORY_USAGE_MAX_ENUM = 0x7FFFFFFF
     } ResourceMemoryUsage;
 
+    typedef enum DescriptorType
+    {
+        DESCRIPTOR_TYPE_UNDEFINED = 0,
+        DESCRIPTOR_TYPE_SAMPLER = 0x01,
+        // SRV Read only texture
+        DESCRIPTOR_TYPE_TEXTURE = (DESCRIPTOR_TYPE_SAMPLER << 1),
+        DESCRIPTOR_TYPE_TEXTURE_SAMPLER = (DESCRIPTOR_TYPE_TEXTURE << 1),
+        /// UAV Texture
+        DESCRIPTOR_TYPE_RW_TEXTURE = (DESCRIPTOR_TYPE_TEXTURE_SAMPLER << 1),
+        // SRV Read only buffer
+        DESCRIPTOR_TYPE_BUFFER = (DESCRIPTOR_TYPE_RW_TEXTURE << 1),
+        DESCRIPTOR_TYPE_BUFFER_RAW = (DESCRIPTOR_TYPE_BUFFER | (DESCRIPTOR_TYPE_BUFFER << 1)),
+        /// UAV Buffer
+        DESCRIPTOR_TYPE_RW_BUFFER = (DESCRIPTOR_TYPE_BUFFER << 2),
+        DESCRIPTOR_TYPE_RW_BUFFER_RAW = (DESCRIPTOR_TYPE_RW_BUFFER | (DESCRIPTOR_TYPE_RW_BUFFER << 1)),
+        /// Uniform buffer
+        DESCRIPTOR_TYPE_UNIFORM_BUFFER = (DESCRIPTOR_TYPE_RW_BUFFER << 2),
+        /// Push constant / Root constant
+        DESCRIPTOR_TYPE_ROOT_CONSTANT = (DESCRIPTOR_TYPE_UNIFORM_BUFFER << 1),
+        /// IA
+        DESCRIPTOR_TYPE_VERTEX_BUFFER = (DESCRIPTOR_TYPE_ROOT_CONSTANT << 1),
+        DESCRIPTOR_TYPE_INDEX_BUFFER = (DESCRIPTOR_TYPE_VERTEX_BUFFER << 1),
+        DESCRIPTOR_TYPE_INDIRECT_BUFFER = (DESCRIPTOR_TYPE_INDEX_BUFFER << 1),
+        /// Cubemap SRV
+        DESCRIPTOR_TYPE_TEXTURE_CUBE = (DESCRIPTOR_TYPE_TEXTURE | (DESCRIPTOR_TYPE_INDIRECT_BUFFER << 1)),
+        /// RTV / DSV per mip slice
+        DESCRIPTOR_TYPE_RENDER_TARGET_MIP_SLICES = (DESCRIPTOR_TYPE_INDIRECT_BUFFER << 2),
+        /// RTV / DSV per array slice
+        DESCRIPTOR_TYPE_RENDER_TARGET_ARRAY_SLICES = (DESCRIPTOR_TYPE_RENDER_TARGET_MIP_SLICES << 1),
+        /// RTV / DSV per depth slice
+        DESCRIPTOR_TYPE_RENDER_TARGET_DEPTH_SLICES = (DESCRIPTOR_TYPE_RENDER_TARGET_ARRAY_SLICES << 1),
+        DESCRIPTOR_TYPE_INDIRECT_COMMAND_BUFFER = (DESCRIPTOR_TYPE_RENDER_TARGET_DEPTH_SLICES << 1),
+        /// Raytracing acceleration structure
+        DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE = (DESCRIPTOR_TYPE_INDIRECT_COMMAND_BUFFER << 1),
+    } DescriptorType;
+
     typedef struct BufferDesc
     {
         /// Size of the buffer (in bytes)
@@ -1202,50 +1247,10 @@ namespace Ogre {
     };
 
 
-    
-
-    typedef enum DescriptorType
-    {
-        DESCRIPTOR_TYPE_UNDEFINED = 0,
-        DESCRIPTOR_TYPE_SAMPLER = 0x01,
-        // SRV Read only texture
-        DESCRIPTOR_TYPE_TEXTURE = (DESCRIPTOR_TYPE_SAMPLER << 1),
-        DESCRIPTOR_TYPE_TEXTURE_SAMPLER = (DESCRIPTOR_TYPE_TEXTURE << 1),
-        /// UAV Texture
-        DESCRIPTOR_TYPE_RW_TEXTURE = (DESCRIPTOR_TYPE_TEXTURE_SAMPLER << 1),
-        // SRV Read only buffer
-        DESCRIPTOR_TYPE_BUFFER = (DESCRIPTOR_TYPE_RW_TEXTURE << 1),
-        DESCRIPTOR_TYPE_BUFFER_RAW = (DESCRIPTOR_TYPE_BUFFER | (DESCRIPTOR_TYPE_BUFFER << 1)),
-        /// UAV Buffer
-        DESCRIPTOR_TYPE_RW_BUFFER = (DESCRIPTOR_TYPE_BUFFER << 2),
-        DESCRIPTOR_TYPE_RW_BUFFER_RAW = (DESCRIPTOR_TYPE_RW_BUFFER | (DESCRIPTOR_TYPE_RW_BUFFER << 1)),
-        /// Uniform buffer
-        DESCRIPTOR_TYPE_UNIFORM_BUFFER = (DESCRIPTOR_TYPE_RW_BUFFER << 2),
-        /// Push constant / Root constant
-        DESCRIPTOR_TYPE_ROOT_CONSTANT = (DESCRIPTOR_TYPE_UNIFORM_BUFFER << 1),
-        /// IA
-        DESCRIPTOR_TYPE_VERTEX_BUFFER = (DESCRIPTOR_TYPE_ROOT_CONSTANT << 1),
-        DESCRIPTOR_TYPE_INDEX_BUFFER = (DESCRIPTOR_TYPE_VERTEX_BUFFER << 1),
-        DESCRIPTOR_TYPE_INDIRECT_BUFFER = (DESCRIPTOR_TYPE_INDEX_BUFFER << 1),
-        /// Cubemap SRV
-        DESCRIPTOR_TYPE_TEXTURE_CUBE = (DESCRIPTOR_TYPE_TEXTURE | (DESCRIPTOR_TYPE_INDIRECT_BUFFER << 1)),
-        /// RTV / DSV per mip slice
-        DESCRIPTOR_TYPE_RENDER_TARGET_MIP_SLICES = (DESCRIPTOR_TYPE_INDIRECT_BUFFER << 2),
-        /// RTV / DSV per array slice
-        DESCRIPTOR_TYPE_RENDER_TARGET_ARRAY_SLICES = (DESCRIPTOR_TYPE_RENDER_TARGET_MIP_SLICES << 1),
-        /// RTV / DSV per depth slice
-        DESCRIPTOR_TYPE_RENDER_TARGET_DEPTH_SLICES = (DESCRIPTOR_TYPE_RENDER_TARGET_ARRAY_SLICES << 1),
-        DESCRIPTOR_TYPE_INDIRECT_COMMAND_BUFFER = (DESCRIPTOR_TYPE_RENDER_TARGET_DEPTH_SLICES << 1),
-        /// Raytracing acceleration structure
-        DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE = (DESCRIPTOR_TYPE_INDIRECT_COMMAND_BUFFER << 1),
-    } DescriptorType;
-
-    
-
    
     typedef struct BufferBarrier
     {
-        Handle<HwBufferObject> buffer;
+        filament::backend::Handle<filament::backend::HwBufferObject> buffer;
         uint32_t mCurrentState; //BackendResourceState
         uint32_t mNewState; //BackendResourceState
         uint8_t       mBeginOnly : 1;
@@ -1297,8 +1302,8 @@ namespace Ogre {
         union
         {
             const OgreTexture** ppTextures;
-            const Handle<HwBufferObject>* ppBuffers;
-            const Handle<HwSampler>* ppSamplers;
+            const filament::backend::Handle<filament::backend::HwBufferObject>* ppBuffers;
+            const filament::backend::Handle<filament::backend::HwSampler>* ppSamplers;
             AccelerationStructure* pAS;
         };
        

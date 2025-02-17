@@ -8,8 +8,8 @@ namespace Ogre
 {
     struct AccelerationStructure
     {
-        Handle<HwBufferObject> asBufferHandle;
-        Handle<HwBufferObject> instanceDescBuffer;
+        filament::backend::Handle<filament::backend::HwBufferObject> asBufferHandle;
+        filament::backend::Handle<filament::backend::HwBufferObject> instanceDescBuffer;
     };
 
 
@@ -60,9 +60,9 @@ namespace Ogre
 
     typedef struct AccelerationStructureGeometryDesc
     {
-        Handle<HwBufferObject> vertexBufferHandle;
-        Handle<HwBufferObject> indexBufferHandle;
-        Handle< HwBufferObject> transformBufferHandle;
+        filament::backend::Handle<filament::backend::HwBufferObject> vertexBufferHandle;
+        filament::backend::Handle<filament::backend::HwBufferObject> indexBufferHandle;
+        filament::backend::Handle< filament::backend::HwBufferObject> transformBufferHandle;
         uint32_t                           mVertexOffset;
         uint32_t                           mVertexCount;
         uint32_t                           mVertexStride;

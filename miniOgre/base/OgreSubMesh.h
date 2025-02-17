@@ -61,23 +61,6 @@ namespace Ogre {
         {
             return mParent;
         }
-
-        void updateBuffer(VertexBuffer* vb, IndexBuffer* ib)
-        {
-            mVertexBuffer = vb;
-            mIndexBuffer = ib;
-        }
-
-        VertexBuffer* getVertexBuffer()
-        {
-            return mVertexBuffer;
-        }
-
-        IndexBuffer* getIndexBuffer()
-        {
-            return mIndexBuffer;
-        }
-
         void setUserDefineData(void* data)
         {
             mUserDefineData = data;
@@ -106,9 +89,6 @@ namespace Ogre {
 
         bool mSharedVertices = false;
         bool mSharedIndex = false;
-
-        VertexBuffer* mVertexBuffer = nullptr;
-        IndexBuffer* mIndexBuffer = nullptr;
 
         std::vector<VertexBoneAssignment> mBoneAssignments;
 

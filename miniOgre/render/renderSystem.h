@@ -9,8 +9,6 @@ class GraphicsCommandList;
 class RenderableData;
 class VertexDeclaration;
 
-using namespace filament::backend;
-
 namespace Ogre
 {
     class RenderWindow;
@@ -70,21 +68,21 @@ public:
     virtual void endRenderPass(RenderPassInfo& renderPassInfo);
 
     virtual void bindPipeline(
-        Handle<HwPipeline> pipelineHandle,
-        const Handle<HwDescriptorSet>* descSets,
+        filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle,
+        const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
         uint32_t setCount)
     {
     }
 
     virtual void bindPipeline(
-        Handle<HwRaytracingProgram> programHandle,
-        const Handle<HwDescriptorSet>* descSets,
+        filament::backend::Handle<filament::backend::HwRaytracingProgram> programHandle,
+        const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
         uint32_t setCount
     ) {
     }
 
     virtual void traceRay(
-        Handle<HwRaytracingProgram> programHandle,
+        filament::backend::Handle<filament::backend::HwRaytracingProgram> programHandle,
         uint32_t width, uint32_t height, uint32_t depth
     ) {}
 
@@ -96,15 +94,15 @@ public:
 
     virtual void copyImageToBuffer(
         Ogre::OgreTexture* image,
-        Handle<HwBufferObject> bufferHandle,
+        filament::backend::Handle<filament::backend::HwBufferObject> bufferHandle,
         Ogre::Extent3D extent
     ) {
         assert_invariant(false);
     }
     virtual void copyBuffer(
-        Handle<HwBufferObject> src,
+        filament::backend::Handle<filament::backend::HwBufferObject> src,
         uint32_t srcOffset,
-        Handle<HwBufferObject> dst,
+        filament::backend::Handle<filament::backend::HwBufferObject> dst,
         uint32_t dstOffset,
         uint32_t size
     ) {}
@@ -122,7 +120,7 @@ public:
 
     }
     virtual void drawIndexedIndirect(
-        Handle<HwBufferObject> drawBuffer,
+        filament::backend::Handle<filament::backend::HwBufferObject> drawBuffer,
         uint32_t offset,
         uint32_t drawCount,
         uint32_t stride
@@ -131,8 +129,8 @@ public:
     }
 
     virtual void bindComputePipeline(
-        Handle<HwComputeProgram> pipelineHandle,
-        const Handle<HwDescriptorSet>* descSets,
+        filament::backend::Handle<filament::backend::HwComputeProgram> pipelineHandle,
+        const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
         uint32_t setCount)
     {
     }
@@ -149,57 +147,57 @@ public:
     virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color = Ogre::Vector3i(0,0,0)) {}
     virtual void popGroupMarker() {}
     virtual void bindVertexBuffer(
-        Handle<HwBufferObject> bufHandle, 
+        filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
         uint32_t binding,
         uint32_t vertexSize) {}
-    virtual void bindIndexBuffer(Handle<HwBufferObject> bufHandle, uint32_t indexSize) {}
-    virtual void* lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes) { return nullptr; }
-    virtual void unlockBuffer(Handle<HwBufferObject> bufHandle) {}
+    virtual void bindIndexBuffer(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle, uint32_t indexSize) {}
+    virtual void* lockBuffer(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes) { return nullptr; }
+    virtual void unlockBuffer(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle) {}
     /*virtual Handle<HwBufferObject> createBufferObject(
         BufferObjectBinding bindingType,
         ResourceMemoryUsage memoryUsage,
         uint32_t bufferCreationFlags,
         uint32_t byteCount,
         const char* debugName = nullptr);*/
-    virtual Handle<HwBufferObject> createBufferObject(
+    virtual filament::backend::Handle<filament::backend::HwBufferObject> createBufferObject(
         Ogre::BufferDesc& desc);
     virtual void updateBufferObject(
-        Handle<HwBufferObject> boh, 
+        filament::backend::Handle<filament::backend::HwBufferObject> boh,
         const char* data, 
         uint32_t size,
         uint32_t offset = 0);
-    virtual bool getBufferObject(Handle<HwBufferObject> boh,
+    virtual bool getBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> boh,
         const char* data,
         uint32_t size,
         uint32_t offset = 0) {
         return false;
     }
-    virtual Handle<HwDescriptorSet> createDescriptorSet(
-        Handle<HwProgram> programHandle, 
+    virtual filament::backend::Handle<filament::backend::HwDescriptorSet> createDescriptorSet(
+        filament::backend::Handle<filament::backend::HwProgram> programHandle,
         uint32_t set);
-    virtual Handle<HwDescriptorSet> createDescriptorSet(
-        Handle<HwComputeProgram> programHandle,
+    virtual filament::backend::Handle<filament::backend::HwDescriptorSet> createDescriptorSet(
+        filament::backend::Handle<filament::backend::HwComputeProgram> programHandle,
         uint32_t set);
-    virtual Handle<HwDescriptorSet> createDescriptorSet(
-        Handle<HwRaytracingProgram> programHandle,
+    virtual filament::backend::Handle<filament::backend::HwDescriptorSet> createDescriptorSet(
+        filament::backend::Handle<filament::backend::HwRaytracingProgram> programHandle,
         uint32_t set);
-    virtual Handle<HwPipelineLayout> createPipelineLayout(std::array<Handle<HwDescriptorSetLayout>, 4>& layouts);
-    virtual Handle<HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo, VertexDeclaration* decl);
-    virtual Handle<HwRaytracingProgram> createRaytracingProgram(const RaytracingShaderInfo& mShaderInfo);
+    virtual filament::backend::Handle<filament::backend::HwPipelineLayout> createPipelineLayout(std::array<filament::backend::Handle<filament::backend::HwDescriptorSetLayout>, 4>& layouts);
+    virtual filament::backend::Handle<filament::backend::HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo, VertexDeclaration* decl);
+    virtual filament::backend::Handle<filament::backend::HwRaytracingProgram> createRaytracingProgram(const RaytracingShaderInfo& mShaderInfo);
     virtual void updatePushConstants(
-        Handle<HwProgram> program,
+        filament::backend::Handle<filament::backend::HwProgram> program,
         uint32_t offset, 
         const char* data,
         uint32_t size) {}
-    virtual Handle<HwSampler> createTextureSampler(filament::backend::SamplerParams& samplerParams);
-    virtual Handle<HwComputeProgram> createComputeProgram(const ShaderInfo& shaderInfo);
-    virtual Handle<HwPipeline> createPipeline(
-        backend::RasterState& rasterState,
-        Handle<HwProgram>& program
+    virtual filament::backend::Handle<filament::backend::HwSampler> createTextureSampler(filament::backend::SamplerParams& samplerParams);
+    virtual filament::backend::Handle<filament::backend::HwComputeProgram> createComputeProgram(const ShaderInfo& shaderInfo);
+    virtual filament::backend::Handle<filament::backend::HwPipeline> createPipeline(
+        filament::backend::RasterState& rasterState,
+        filament::backend::Handle<filament::backend::HwProgram>& program
         );
 
     virtual void updateDescriptorSet(
-        Handle<HwDescriptorSet> dsh,
+        filament::backend::Handle<filament::backend::HwDescriptorSet> dsh,
         uint32_t count, 
         const Ogre::DescriptorData* pParams
         ) {}
@@ -231,12 +229,12 @@ public:
     virtual void removeAccelerationStructureScratch(
         Ogre::AccelerationStructure* pAccelerationStructure) {}
 
-    virtual uint64_t getBufferDeviceAddress(Handle<HwBufferObject> bufHandle)
+    virtual uint64_t getBufferDeviceAddress(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle)
     {
         return 0;
     }
     //destroy
-    virtual void destroyBufferObject(Handle<HwBufferObject> bufHandle) {}
+    virtual void destroyBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle) {}
 protected:
 	
     uint32_t mBatchCount = 0;

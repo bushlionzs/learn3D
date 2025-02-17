@@ -1,6 +1,6 @@
 #pragma once
 #include "OgrePixelFormat.h"
-#include <filament/DriverEnums.h>
+//#include <filament/DriverEnums.h>
 namespace Ogre {
 	enum ImageFlags
 	{
@@ -14,19 +14,19 @@ namespace Ogre {
 	public:
 		CImage();
 		virtual ~CImage();
-		static backend::ImageType getImageType(const std::string& name);
+		static Ogre::ImageType getImageType(const std::string& name);
 		static bool loadImageInfo(
 			const uint8_t* data, 
 			uint32_t byteCount, 
 			ImageInfo& imageInfo,
-			backend::ImageType type);
+			Ogre::ImageType type);
 		static bool loadImageInfo(
 			const std::string& name,
 			ImageInfo& imageInfo,
 			bool cube);
 		static void freeImageData(void* data);
 		bool loadImage(const std::string& name, bool cube = false);
-		bool loadImage(const uint8_t* data, uint32_t byteCount, backend::ImageType type);
+		bool loadImage(const uint8_t* data, uint32_t byteCount, Ogre::ImageType type);
 		bool loadImage(DataStreamPtr& stream);
 		bool loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format);
 		unsigned char* getImageData();

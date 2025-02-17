@@ -61,7 +61,7 @@ namespace Ogre
         Handle<HwProgram> programHandle = rs->createShaderProgram(shaderInfo, decl);
 
         
-        backend::RasterState rasterState{};
+        filament::backend::RasterState rasterState{};
         rasterState.colorWrite = true;
         rasterState.renderTargetCount = 1;
         rasterState.depthWrite = false;
@@ -242,12 +242,12 @@ namespace Ogre
         texProperty._height = dim;
         texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
         texProperty._tex_format = PF_FLOAT16_GR;
-        texProperty._samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
-        texProperty._samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
-        texProperty._samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-        texProperty._samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        texProperty._samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        texProperty._samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        texProperty._samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
+        texProperty._samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
+        texProperty._samplerParams.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
+        texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
         texProperty._samplerParams.anisotropyLog2 = 0;
         texProperty._need_mipmap = false;
         Ogre::RenderTarget* rt = rs->createRenderTarget(name, texProperty);

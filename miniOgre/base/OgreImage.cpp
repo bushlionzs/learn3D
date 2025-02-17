@@ -26,32 +26,32 @@ namespace Ogre {
         freeMemory();
     }
 
-    backend::ImageType CImage::getImageType(const std::string& name)
+    Ogre::ImageType CImage::getImageType(const std::string& name)
     {
         std::string suffix = getSuffix(name);
         if (suffix == ".dds")
         {
-            return backend::ImageType::ImageType_DDS;
+            return Ogre::ImageType_DDS;
         }
         else if (suffix == ".ktx")
         {
-            return backend::ImageType::ImageType_KTX;
+            return Ogre::ImageType_KTX;
         }
         else if (suffix == ".blp")
         {
-            return backend::ImageType::ImageType_BLP;
+            return Ogre::ImageType_BLP;
         }
         else if (suffix == ".png")
         {
-            return backend::ImageType::ImageType_PNG;
+            return Ogre::ImageType_PNG;
         }
         else if (suffix == ".jpg")
         {
-            return backend::ImageType::ImageType_JPG;
+            return Ogre::ImageType_JPG;
         }
         else
         {
-            return backend::ImageType::ImageType_UnSupported;
+            return Ogre::ImageType_UnSupported;
         }
     }
 
@@ -80,12 +80,12 @@ namespace Ogre {
         const uint8_t* data, 
         uint32_t byteCount, 
         ImageInfo& imageInfo,
-        backend::ImageType type)
+        Ogre::ImageType type)
     {
         switch (type)
         {
-        case backend::ImageType::ImageType_PNG:
-        case backend::ImageType::ImageType_JPG:
+        case Ogre::ImageType::ImageType_PNG:
+        case Ogre::ImageType::ImageType_JPG:
         {
             int width;
             int height;
@@ -113,7 +113,7 @@ namespace Ogre {
             return true;
         }
             
-        case backend::ImageType::ImageType_DDS:
+        case Ogre::ImageType::ImageType_DDS:
             return DDSImage::load_simple_info((const char*)data, byteCount, imageInfo);
         default:
             assert_invariant(false);
@@ -142,11 +142,11 @@ namespace Ogre {
         bool cube)
     {
         ResourceInfo* res = nullptr;
-        backend::ImageType type = CImage::getImageType(name);
+        Ogre::ImageType type = CImage::getImageType(name);
         if (cube)
         {
-            if (type == backend::ImageType::ImageType_DDS ||
-                type == backend::ImageType::ImageType_KTX)
+            if (type == Ogre::ImageType::ImageType_DDS ||
+                type == Ogre::ImageType::ImageType_KTX)
             {
                 res = ResourceManager::getSingleton().getResourceInfo(name);
             }
@@ -185,7 +185,7 @@ namespace Ogre {
         uint32_t nrComponents = 0;
 
         unsigned char* data = nullptr;
-        if (type == backend::ImageType::ImageType_DDS)
+        if (type == Ogre::ImageType::ImageType_DDS)
         {
             std::shared_ptr<DataStream> stream
                 = ResourceManager::getSingleton().openResource(name);
@@ -199,7 +199,7 @@ namespace Ogre {
                 mImageInfo = *imageData;
             }
         }
-        else if (type == backend::ImageType::ImageType_KTX)
+        else if (type == Ogre::ImageType::ImageType_KTX)
         {
             auto resInfo = ResourceManager::getSingleton().getResourceInfo(name);
             gli::texture tmp = gli::load(resInfo->_fullname.c_str());
@@ -215,7 +215,7 @@ namespace Ogre {
             memcpy(data, tmp.data(), mImageInfo.size);
             int kk = 0;
         }
-        else if (type == backend::ImageType::ImageType_BLP)
+        else if (type == Ogre::ImageType::ImageType_BLP)
         {
             std::shared_ptr<DataStream> stream
                 = ResourceManager::getSingleton().openResource(name);
@@ -282,15 +282,15 @@ namespace Ogre {
     {
         const uint8_t* data = (const uint8_t*)stream->getStreamData();
         uint32_t size = stream->getStreamLength();
-        return loadImage(data, size, backend::ImageType::ImageType_PNG);
+        return loadImage(data, size, Ogre::ImageType::ImageType_PNG);
     }
 
-    bool CImage::loadImage(const uint8_t* data, uint32_t byteCount, backend::ImageType type)
+    bool CImage::loadImage(const uint8_t* data, uint32_t byteCount, Ogre::ImageType type)
     {
         switch (type)
         {
-        case backend::ImageType::ImageType_PNG:
-        case backend::ImageType::ImageType_JPG:
+        case Ogre::ImageType::ImageType_PNG:
+        case Ogre::ImageType::ImageType_JPG:
         {
             mImageInfo.face = 1;
             uint32_t nrComponents = 0;
@@ -327,7 +327,7 @@ namespace Ogre {
 
             return true;
         }
-        case backend::ImageType::ImageType_DDS:
+        case Ogre::ImageType::ImageType_DDS:
         {
             DDSImage ddsload;
             MemoryDataStream sm((const char*)data, byteCount);

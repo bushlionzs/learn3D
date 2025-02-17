@@ -20,12 +20,12 @@ struct UserDefineShader
 
 struct FrameResourceInfo
 {
-    Handle<HwDescriptorSet> zeroSet;
-    Handle<HwDescriptorSet> firstSet;
-    Handle<HwDescriptorSet> zeroShadowSet;
-    Handle<HwBufferObject>  modelObjectHandle;
-    Handle<HwBufferObject>  matObjectHandle;
-    Handle<HwBufferObject>  skinObjectHandle;
+    filament::backend::Handle<filament::backend::HwDescriptorSet> zeroSet;
+    filament::backend::Handle<filament::backend::HwDescriptorSet> firstSet;
+    filament::backend::Handle<filament::backend::HwDescriptorSet> zeroShadowSet;
+    filament::backend::Handle<filament::backend::HwBufferObject>  modelObjectHandle;
+    filament::backend::Handle<filament::backend::HwBufferObject>  matObjectHandle;
+    filament::backend::Handle<filament::backend::HwBufferObject>  skinObjectHandle;
     bool update;
 };
 

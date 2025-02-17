@@ -24,7 +24,6 @@ public:
 		GameCamera* gameCamera);
 	void update(float delta);
 
-	void addCustomDirectory();
 	void updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer);
 private:
 	void base1();

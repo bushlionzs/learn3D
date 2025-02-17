@@ -1,5 +1,5 @@
 #pragma once
-#include <DriverBase.h>
+
 namespace Ogre {
     enum HardwareBufferUsage : uint8_t
     {
@@ -150,12 +150,12 @@ namespace Ogre {
     class BufferHandleLockGuard
     {
     public:
-        BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle);
+        BufferHandleLockGuard(filament::backend::Handle<filament::backend::HwBufferObject> bufferHandle);
         ~BufferHandleLockGuard();
 
         void* data();
     private:
-        Handle<HwBufferObject> mBufferHandle;
+        filament::backend::Handle<filament::backend::HwBufferObject> mBufferHandle;
         void* mBufferData;
     };
 }

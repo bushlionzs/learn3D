@@ -30,15 +30,15 @@ bool PresentPass::initialize()
 {
 	RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
 
-	backend::SamplerParams samplerParams;
-	samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
-	samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
-	samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	samplerParams.wrapS = backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapT = backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapR = backend::SamplerWrapMode::REPEAT;
-	samplerParams.compareMode = backend::SamplerCompareMode::NONE;
-	samplerParams.compareFunc = backend::SamplerCompareFunc::N;
+	filament::backend::SamplerParams samplerParams;
+	samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
+	samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
+	samplerParams.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
+	samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
+	samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+	samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+	samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
+	samplerParams.compareFunc = filament::backend::SamplerCompareFunc::N;
 	samplerParams.anisotropyLog2 = 0;
 	samplerParams.padding0 = 0;
 	samplerParams.padding1 = 0;
@@ -48,10 +48,10 @@ bool PresentPass::initialize()
 	ShaderInfo shaderInfo;
 	shaderInfo.shaderName = mShaderName.c_str();
 	auto presentHandle = rs->createShaderProgram(shaderInfo, nullptr);
-	backend::RasterState rasterState{};
+	filament::backend::RasterState rasterState{};
 	rasterState.depthWrite = false;
 	rasterState.depthTest = false;
-	rasterState.depthFunc = SamplerCompareFunc::A;
+	rasterState.depthFunc = filament::backend::SamplerCompareFunc::A;
 	rasterState.colorWrite = true;
 	rasterState.renderTargetCount = 1;
 	rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;

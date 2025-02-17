@@ -18,7 +18,9 @@
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
 #include "OgreVertexDeclaration.h"
+#include "OgreTextureManager.h"
 #include "godotUtil.h"
+#include "pbrUtil.h"
 
 BasicApplication::BasicApplication()
 {
@@ -45,6 +47,7 @@ void BasicApplication::setup(
 	mRenderWindow = renderWindow;
 	mRenderSystem = renderSystem;
 	mRenderPipeline = renderPipeline;
+	ibl_init();
 	base1();
 }
 
@@ -60,41 +63,70 @@ void BasicApplication::addCustomDirectory()
 {
 	//ResourceManager::getSingletonPtr()->addDirectory(std::string("D:\\wow3.3.5\\Data"), "wow", true);
 }
-#include <windows.h>
+
+void BasicApplication::ibl_init()
+{
+	Ogre::TextureProperty tp;
+	tp._need_mipmap = false;
+	tp._texType = Ogre::TEX_TYPE_CUBE_MAP;
+	tp._tex_addr_mod = Ogre::TAM_CLAMP;
+	tp._samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
+	tp._samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
+	tp._samplerParams.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
+	tp._samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
+	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
+	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+	tp._samplerParams.anisotropyLog2 = 0;
+
+	TextureLoadDesc textureLoadDesc;
+	textureLoadDesc.tp = &tp;
+	textureLoadDesc.pFileName = "papermill.ktx";
+	Ogre::ResourceManager::getSingletonPtr()->addResource(&textureLoadDesc, nullptr);
+
+	auto environmentCube = textureLoadDesc.pTexture;
+	{
+		std::string brdfLutName = "brdflut";
+		brdfTarget = Ogre::generateBRDFLUT(brdfLutName);
+		Ogre::TextureManager::getSingleton().addTexture(brdfLutName, brdfTarget->getTarget());
+		tp._pbrType = Ogre::TextureTypePbr_BRDF_LUT;
+
+	
+	}
+
+	{
+		std::string prefilteredenvName = "prefilteredMap";
+		prefilteredTarget = generateCubeMap(prefilteredenvName, environmentCube, 
+			Ogre::PF_FLOAT32_RGBA, 512, Ogre::CubeType_Prefiltered);
+		Ogre::TextureManager::getSingleton().addTexture(prefilteredenvName, prefilteredTarget->getTarget());
+		tp._pbrType = Ogre::TextureTypePbr_IBL_Specular;
+
+	}
+
+	{
+		std::string irradianceName = "IrradianceMap";
+		irradianceTarget = generateCubeMap(irradianceName, environmentCube, 
+			Ogre::PF_FLOAT32_RGBA, 64, Ogre::CubeType_Irradiance);
+		Ogre::TextureManager::getSingleton().addTexture(irradianceName, irradianceTarget->getTarget());
+		tp._pbrType = Ogre::TextureTypePbr_IBL_Diffuse;
+
+	}
+}
 void BasicApplication::base1()
 {
 	std::string projectDir = "D:\\godotProject\\Abandoned-Spaceship-Godot-Demo";
 	Ogre::ResourceManager::getSingletonPtr()->addDirectory(projectDir);
 
 	String UProjectDir = projectDir.c_str();
-	loadGodotProject(UProjectDir, mSceneManager);
-	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
-	float aa = 1;
-	Ogre::Vector3 leftop = Ogre::Vector3(-aa, aa, 0.0f);
-	Ogre::Vector3 leftbottom = Ogre::Vector3(-aa, -aa, 0.0f);
-	Ogre::Vector3 righttop = Ogre::Vector3(aa, aa, 0.0f);
-	Ogre::Vector3 rightbottom = Ogre::Vector3(aa, -aa, 0.0f);
-	Ogre::Vector3 normal = Ogre::Vector3(0.0f, 0.0f, 1.0f);
+	GodotContext context;
+	context.sceneManager = mSceneManager;
+	context.brdfTexName = "brdflut";
+	context.prefilteredTexName = "prefilteredMap";
+	context.irradianceTexName = "IrradianceMap";
 
-
-	std::string meshName = "rect";
-
-	auto mesh = Ogre::MeshManager::getSingletonPtr()->createRect(
-		meshName,
-		leftop, leftbottom, righttop, rightbottom, normal);
-
-	Ogre::Entity* rect = mSceneManager->createEntity("rect", meshName);
-	Ogre::SceneNode* rectnode = root->createChildSceneNode("rect");
-	rectnode->attachObject(rect);
-
-	Ogre::SubEntity* subEntry = rect->getSubEntity(0);
-	auto& mat = subEntry->getMaterial();
-
-	ShaderInfo& info = mat->getShaderInfo();
-	//info.shaderName = "testShader";
-	//mSceneManager->setSkyBox(true, "SkyLan", 1000.0f);
-	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, 3.f), Ogre::Vector3::ZERO);
-	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
+	loadGodotProject(UProjectDir, context);
+	
+	mGameCamera->lookAt(Ogre::Vector3(-0.2, 5.28, 8.14), Ogre::Vector3(-0.2, 5.28, 0.0));
+	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
 	mGameCamera->setMoveSpeed(5);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	Ogre::Matrix4 m;

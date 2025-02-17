@@ -161,35 +161,13 @@ void ManualApplication::render()
 	mRenderSystem->frameStart();
 	Ogre::Root::getSingleton()._fireFrameStarted();
 
-	{
-		/*RenderTargetBarrier rtBarriers[] =
-		{
-			{
-				mRenderWindow->getColorTarget(),
-				RESOURCE_STATE_PRESENT,
-				RESOURCE_STATE_RENDER_TARGET
-			}
-		};
-		mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);*/
-	}
-	
 
 	for (auto pass : mPassList)
 	{
 		pass->execute(mRenderSystem);
 	}
 
-	{
-		/*RenderTargetBarrier rtBarriers[] =
-		{
-			{
-				mRenderWindow->getColorTarget(),
-				RESOURCE_STATE_RENDER_TARGET,
-				RESOURCE_STATE_PRESENT
-			}
-		};
-		mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);*/
-	}
+	
 	
 
 	mRenderSystem->present();
@@ -237,7 +215,7 @@ void ManualApplication::addRenderPass(PassBase* pass)
 void updateFrameData(
 	Ogre::ICamera* camera,
 	FrameConstantBuffer& frameConstantBuffer,
-	Handle<HwBufferObject> frameHandle)
+	filament::backend::Handle<filament::backend::HwBufferObject> frameHandle)
 {
 	RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
 	const Ogre::Matrix4& view = camera->getViewMatrix();
@@ -285,7 +263,7 @@ void ManualApplication::addUIPass()
 	desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_GPU_ONLY;
 	desc.bufferCreationFlags = 0;
 	desc.mSize = sizeof(frameConstantBuffer);
-	Handle<HwBufferObject> frameHandle =
+	filament::backend::Handle<filament::backend::HwBufferObject> frameHandle =
 		rs->createBufferObject(desc);
 
 	updateFrameData(cam, frameConstantBuffer, frameHandle);
@@ -316,7 +294,7 @@ void ManualApplication::addUIPass()
 
 		auto programHandle = mat->getProgram();
 		auto piplineHandle = mat->getPipeline();
-		Handle<HwDescriptorSet> descriptorSet[2];
+		filament::backend::Handle<filament::backend::HwDescriptorSet> descriptorSet[2];
 		descriptorSet[0] = resourceInfo->zeroSet;
 		descriptorSet[1] = resourceInfo->firstSet;
 		rs->bindPipeline(piplineHandle, descriptorSet, 2);

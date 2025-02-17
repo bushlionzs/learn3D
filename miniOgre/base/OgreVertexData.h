@@ -13,13 +13,13 @@ public:
     void createBuffer(uint32_t vertexSize, uint32_t vertexCount);
     void writeData(const char* data, uint32_t size);
 
-    Handle<HwBufferObject> getHandle()
+    filament::backend::Handle<filament::backend::HwBufferObject> getHandle()
     {
         return mVertexBufferHandle;
     }
 private:
     //std::shared_ptr<Ogre::HardwareVertexBuffer> hardwareVertexBuffer;
-    Handle<HwBufferObject> mVertexBufferHandle;
+    filament::backend::Handle<filament::backend::HwBufferObject> mVertexBufferHandle;
     friend class VertexData;
 };
 
@@ -37,7 +37,7 @@ public:
     {
         return mVertexCount == 0;
     }
-    Handle<HwBufferObject> getBuffer(int32_t index);
+    filament::backend::Handle<filament::backend::HwBufferObject> getBuffer(int32_t index);
 
     uint32_t getBufferCount();
 

@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <array>
 #include <utils/debug.h>
-
+#include <DriverBase.h>
 typedef uint16_t ushort;
 typedef uint64_t uint64;
 typedef uint32_t uint32;
@@ -52,14 +52,6 @@ typedef std::string String;
 #define FORCEINLINE __inline
 #endif
 #endif
-namespace filament
-{
-    class IndexBuffer;
-    class VertexBuffer;
-}
-
-using namespace filament;
-
 namespace Ogre
 {
     class Degree;
@@ -191,5 +183,14 @@ const std::string BLANKSTRING;
 
 #ifdef USE_OGRE_MACRO
 using namespace Ogre;
+namespace filament
+{
+    namespace backend
+    {
+
+    }
+}
+using namespace filament;
+using namespace filament::backend;
 #endif
 

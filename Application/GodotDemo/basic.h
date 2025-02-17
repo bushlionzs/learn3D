@@ -10,8 +10,8 @@ class BasicApplication
 public:
 	struct FrameData
 	{
-		Handle<HwDescriptorSet> zeroSet;
-		Handle<HwBufferObject> passUniformBuffer;
+		filament::backend::Handle<filament::backend::HwDescriptorSet> zeroSet;
+		filament::backend::Handle<filament::backend::HwBufferObject> passUniformBuffer;
 	};
 	BasicApplication();
 	~BasicApplication();
@@ -28,7 +28,7 @@ public:
 	void updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer);
 private:
 	void base1();
-	
+	void ibl_init();
 private:
 	Ogre::AnimationState* mAnimationState = nullptr;
 	std::vector<FrameData> mFrameData;
@@ -37,4 +37,7 @@ private:
 	RenderSystem* mRenderSystem;
 	Ogre::RenderWindow* mRenderWindow;
 	RenderPipeline* mRenderPipeline;
+	Ogre::RenderTarget* brdfTarget;
+	Ogre::RenderTarget* prefilteredTarget;
+	Ogre::RenderTarget* irradianceTarget;
 };

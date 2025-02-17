@@ -44,7 +44,10 @@ void BasicApplication::setup(
 	mRenderWindow = renderWindow;
 	mRenderSystem = renderSystem;
 	mRenderPipeline = renderPipeline;
-	base1();
+
+	std::string dir = "D:\\godotProject\\Abandoned-Spaceship-Godot-Demo\\Models";
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(dir, "", false);
+	base2();
 }
 
 void BasicApplication::update(float delta)
@@ -53,11 +56,6 @@ void BasicApplication::update(float delta)
 	{
 		mAnimationState->addTime(delta);
 	}
-}
-
-void BasicApplication::addCustomDirectory()
-{
-	//ResourceManager::getSingletonPtr()->addDirectory(std::string("D:\\wow3.3.5\\Data"), "wow", true);
 }
 
 void BasicApplication::base1()
@@ -74,7 +72,6 @@ void BasicApplication::base1()
 	std::string meshName = "rect";
 	
 	auto mesh = Ogre::MeshManager::getSingletonPtr()->createRect(
-		nullptr,
 		meshName,
 		leftop, leftbottom, righttop, rightbottom, normal);
 
@@ -90,7 +87,7 @@ void BasicApplication::base1()
 	//mSceneManager->setSkyBox(true, "SkyLan", 1000.0f);
 	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, 3.f), Ogre::Vector3::ZERO);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
-	mGameCamera->setMoveSpeed(5);
+	mGameCamera->setMoveSpeed(50);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	Ogre::Matrix4 m;
 	if (ogreConfig.reverseDepth)
@@ -120,13 +117,13 @@ void BasicApplication::base1()
 void BasicApplication::base2()
 {
 	std::string name = "Â¥À¼ÕÊÅñ04.mesh";
-	name = "vulkanscene_shadow.gltf";
+	name = "SpaceCraftHangar.glb";
 	auto mesh = Ogre::MeshManager::getSingletonPtr()->load(name);
 
 	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
-	Ogre::Entity* sphere = mSceneManager->createEntity("sphere", name);
-	Ogre::SceneNode* spherenode = root->createChildSceneNode("sphere");
+	Ogre::Entity* sphere = mSceneManager->createEntity(name, name);
+	Ogre::SceneNode* spherenode = root->createChildSceneNode(name);
 
 	//sphere->setMaterialName("myrect");
 
@@ -377,7 +374,7 @@ void BasicApplication::base6()
 	shaderInfo.shaderName = "basic2";
 	auto presentHandle = mRenderSystem->createShaderProgram(shaderInfo, nullptr);
 
-	backend::RasterState rasterState{};
+	filament::backend::RasterState rasterState{};
 	rasterState.depthWrite = false;
 	rasterState.depthTest = false;
 	rasterState.depthFunc = SamplerCompareFunc::A;

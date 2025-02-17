@@ -66,8 +66,8 @@ namespace Ogre {
 
         void setBlendState(Ogre::ColourBlendState& state);
 
-        void setCullMode(backend::CullingMode mode);
-        backend::CullingMode getCullMode();
+        void setCullMode(filament::backend::CullingMode mode);
+        filament::backend::CullingMode getCullMode();
 
         bool isPbr() const
         {
@@ -115,7 +115,7 @@ namespace Ogre {
             mState = rs;
         }
 
-        RasterState& getRasterState()
+        filament::backend::RasterState& getRasterState()
         {
             return mRasterState;
         }
@@ -124,11 +124,11 @@ namespace Ogre {
         {
             mVertexDeclaration = decl;
         }
-        Handle<HwPipeline> getPipeline()
+        filament::backend::Handle<filament::backend::HwPipeline> getPipeline()
         {
             return mPipelineHandle;
         }
-        Handle<HwProgram> getProgram()
+        filament::backend::Handle<filament::backend::HwProgram> getProgram()
         {
             return mProgramHandle;
         }
@@ -158,11 +158,11 @@ namespace Ogre {
 
         
         
-        RasterState mRasterState;
-        Handle<HwPipeline> mPipelineHandle;
-        Handle<HwProgram> mProgramHandle;
-        Handle<HwDescriptorSetLayout> mUboLayoutHandle;
-        Handle<HwDescriptorSetLayout> mSamplerLayoutHandle;
+        filament::backend::RasterState mRasterState;
+        filament::backend::Handle<filament::backend::HwPipeline> mPipelineHandle;
+        filament::backend::Handle<filament::backend::HwProgram> mProgramHandle;
+        filament::backend::Handle<filament::backend::HwDescriptorSetLayout> mUboLayoutHandle;
+        filament::backend::Handle<filament::backend::HwDescriptorSetLayout> mSamplerLayoutHandle;
 
         VertexDeclaration* mVertexDeclaration = nullptr;
     };

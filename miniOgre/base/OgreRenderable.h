@@ -12,8 +12,6 @@ class IndexDataView;
 class RenderableData;
 
 
-using namespace filament;
-
 namespace Ogre {
     class Renderable
     {

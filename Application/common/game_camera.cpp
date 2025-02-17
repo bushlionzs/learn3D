@@ -227,7 +227,7 @@ bool GameCamera::update(float delta)
         mChanged = true;
         auto rot = Ogre::Math::makeRotateMatrixYX(x, y);
 
-        auto right = rot.getRight();
+        auto right = -rot.getRight();
         auto up = rot.getUp();
         auto forward = right.crossProduct(up);
 

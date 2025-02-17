@@ -6,8 +6,6 @@
 #include <OgreCommon.h>
 
 
-using namespace filament::backend;
-
 enum RenderListType
 {
     RenderListType_Opaque = 0,
@@ -163,8 +161,8 @@ struct RenderPassInfo
 
 struct ComputePassInfo
 {
-    std::vector<Handle<HwDescriptorSet>> descSets;
-    Handle<HwComputeProgram> programHandle;
+    std::vector<filament::backend::Handle<filament::backend::HwDescriptorSet>> descSets;
+    filament::backend::Handle<filament::backend::HwComputeProgram> programHandle;
     Ogre::Vector3i computeGroup;
 };
 
@@ -238,7 +236,7 @@ struct PbrMaterialConstanceBuffer
     uint32_t hasEmissiveMap = 0;
     uint32_t hasNormalMap = 0;
     uint32_t hasMetalRoughNessMap = 0;
-    uint32_t hasMetalMap;
+    uint32_t hasMetalMap = 0;
     uint32_t hasRoughNessMap = 0;
     uint32_t hasOcclusionMap = 0;
 };

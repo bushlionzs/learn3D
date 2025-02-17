@@ -28,7 +28,7 @@ public:
 	{
 		return mUseCEGUI;
 	}
-
+	void addCustomDirectory() {}
 	virtual void OnSize(uint32_t width, uint32_t height);
 
 	void addRenderPass(PassBase* pass);

@@ -145,8 +145,6 @@ struct TransferCommandInfo
 #define VULKAN_TEXTURE_COUNT 6
 #define VULKAN_COMMAND_THREAD 4
 
-using namespace filament::backend;
-
 VkFormat getVKFormatFromType(VertexElementType type);
 
 VkFormat getVKFormatFromType(spirv_cross::SPIRType type);

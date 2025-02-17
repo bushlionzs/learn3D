@@ -17,7 +17,7 @@ private:
     Ogre::RenderTarget* mSourceTarget;
     Ogre::RenderWindow* mRenderWindow;
     std::string mShaderName;
-    Handle<HwPipeline> mPipelineHandle;
+    filament::backend::Handle<filament::backend::HwPipeline> mPipelineHandle;
 
-    Handle<HwDescriptorSet> mZeroSet;
+    filament::backend::Handle<filament::backend::HwDescriptorSet> mZeroSet;
 };

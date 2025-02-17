@@ -251,6 +251,11 @@ void Object::set(const StringName &p_name, const Variant &p_value, bool *r_valid
 
 	// Try built-in setter.
 	{
+		String tmp = p_name;
+		if (tmp.find("paint_color") > 0)
+		{
+			int kk = 0;
+		}
 		if (ClassDB::set_property(this, p_name, p_value, r_valid)) {
 			return;
 		}
