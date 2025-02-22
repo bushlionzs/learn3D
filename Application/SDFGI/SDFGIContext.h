@@ -4,7 +4,7 @@
 #include "DDGIVolume.h"
 #include "pass.h"
 #include "Configs.h"
-
+class DDGIVolume;
 struct SDFGIContext
 {
     AccelerationStructure* pBottomAS;
@@ -33,20 +33,23 @@ struct SDFGIContext
     Handle<HwBufferObject> mLightBufferHandle; //Light
 
     Handle<HwBufferObject> mDDGIVolumeResourceIndicesHandle;
+
+    std::vector<DDGIVolumeDescGPUPacked> mVolumeDescGPUPacked;
     Handle<HwBufferObject> mDDGIVolumeDescGPUPackedHandle;
 
     Ogre::RenderTarget* mGBufferTargetA;
     Ogre::RenderTarget* mGBufferTargetB;
     Ogre::RenderTarget* mGBufferTargetC;
     Ogre::RenderTarget* mGBufferTargetD;
-    Ogre::RenderTarget* mOutputView;
+    Ogre::RenderTarget* mIndirectTarget;
 
     Handle<HwBufferObject> mVolumeConstantsHandle;
 
     std::vector<DDGIVolumeDesc> volumeDescs;
-    std::vector<DDGIVolumeBase*> volumes;
+    std::vector<DDGIVolume*> volumes;
 
     Configs::Config mConfig;
+
 };
 
 #define RTXGI_BINDLESS_TYPE_RESOURCE_ARRAYS 0

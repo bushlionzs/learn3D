@@ -27,7 +27,7 @@ void GBuffer::execute(RenderSystem* rs)
 {
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
     rs->pushGroupMarker("GBuffer", Ogre::Vector3i(0.0, 0.0, 1.0f));
-    rs->bindPipeline(mProgramHandle, setlist.data(), setlist.size());
+    rs->bindPipeline(mProgramHandle, &mGBufferZeroSet, 1);
     rs->traceRay(mProgramHandle, ogreConfig.width, ogreConfig.height, 1);
     rs->popGroupMarker();
 }
@@ -56,12 +56,7 @@ bool GBuffer::loadAndCompileShaders()
     mProgramHandle = rs->createRaytracingProgram(shaderInfo);
 
     mGBufferZeroSet = rs->createDescriptorSet(mProgramHandle, 0);
-    mGBufferFirstSet = rs->createDescriptorSet(mProgramHandle, 1);
-    mGBufferThirdSet = rs->createDescriptorSet(mProgramHandle, 3);
 
-    setlist.push_back(mGBufferZeroSet);
-    setlist.push_back(mGBufferFirstSet);
-    setlist.push_back(mGBufferThirdSet);
 
     return true;
 }
@@ -138,7 +133,7 @@ void GBuffer::updateDescriptorSet()
     descriptorData[0].pName = "Tex2D";
     descriptorData[0].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
     descriptorData[0].ppTextures = (const OgreTexture**)tex2D.data();
-    rs->updateDescriptorSet(mGBufferFirstSet, 1, descriptorData);
+    rs->updateDescriptorSet(mGBufferZeroSet, 1, descriptorData);
 
     std::vector<Handle<HwBufferObject>> buffers;
     buffers.push_back(mContext.geometryBufferHandle);
@@ -154,5 +149,5 @@ void GBuffer::updateDescriptorSet()
     descriptorData[0].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
     descriptorData[0].ppBuffers = buffers.data();
 
-    rs->updateDescriptorSet(mGBufferThirdSet, 1, descriptorData);
+    rs->updateDescriptorSet(mGBufferZeroSet, 1, descriptorData);
 }

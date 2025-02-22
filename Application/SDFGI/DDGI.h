@@ -16,6 +16,7 @@ private:
     bool loadAndCompileShaders();
 
     void updateDescriptorSet();
+    void updateDescriptorSetOfComputeShader();
 
     bool CreateDDGIVolumeResourceIndicesBuffer(uint32_t volumeCount);
     bool CreateDDGIVolumeConstantsBuffer(uint32_t volumeCount);
@@ -36,18 +37,21 @@ private:
         DDGIVolumeResources& volumeResources);
 private:
     Handle<HwRaytracingProgram> mProgramHandle;
-    std::vector< Handle<HwDescriptorSet>> setlist;
     Handle<HwDescriptorSet> mProbeTracingZeroSet;
-    Handle<HwDescriptorSet> mProbeTracingFirstSet;
-    Handle<HwDescriptorSet> mProbeTracingSecondSet;
-    Handle<HwDescriptorSet> mProbeTracingThirdSet;
+    Handle<HwComputeProgram> mIndirectHandle;
+    Handle<HwDescriptorSet> mIndirectZeroSet;
+    
+
 
     SDFGIContext& mContext;
 
     
 
     Handle<HwComputeProgram> mProbeBlendingIrradianceHandle;
+    Handle<HwDescriptorSet> mBlendingIrradianceDescriptorSet;
+
     Handle<HwComputeProgram> mProbeBlendingDistanceHandle;
+    Handle<HwDescriptorSet> mBlendingDistanceDescriptorSet;
 
     Handle<HwComputeProgram> mProbeRelocationUpdateHandle;
     Handle<HwComputeProgram> mProbeRelocationResetHandle;
@@ -58,17 +62,6 @@ private:
     Handle<HwComputeProgram> mProbeVariabilityReductionHandle;
     Handle<HwComputeProgram> mProbeExtraReductionHandle;
 
+    
 
-    /////
-    // Shader Modules
-    Handle<HwComputeProgram> probeBlendingIrradianceModule;             // Probe blending (irradiance) shader module
-    Handle<HwComputeProgram> probeBlendingDistanceModule;               // Probe blending (distance) shader module
-
-    // Pipelines
-    Handle<HwPipeline> probeBlendingIrradiancePipeline;           // Probe blending (irradiance) compute pipeline
-    Handle<HwPipeline> probeBlendingDistancePipeline;             // Probe blending (distance) compute pipeline
-
-    ProbeRelocationPipeline     probeRelocation;                                     // Probe Relocation pipelines
-    ProbeClassificationPipeline probeClassification;                                 // Probe Classification pipelines
-    ProbeVariabilityPipeline    probeVariabilityPipelines;                           // Probe Variability pipelines
 };

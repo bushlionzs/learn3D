@@ -5,6 +5,7 @@
 #include <OgreRenderTarget.h>
 #include"DDGIVolumeImpl.h"
 #include <OgreResourceManager.h>
+#include "SDFGI_util.h"
 
 DDGIPass::DDGIPass(SDFGIContext& context)
     :mContext(context)
@@ -16,7 +17,7 @@ bool DDGIPass::initialize()
 {
     if (!loadAndCompileShaders())
         return false;
-    
+   
     uint32_t numVolumes = mContext.mConfig.ddgi.volumes.size();
 
     CreateDDGIVolumeResourceIndicesBuffer(numVolumes);
@@ -30,34 +31,260 @@ bool DDGIPass::initialize()
         {
             return false;
         }
+    }
 
+
+    updateDescriptorSet();
+    updateDescriptorSetOfComputeShader();
+
+    std::vector<Ogre::TextureBarrier> textureBarriers;
+    for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
+    {
+        DDGIVolume* volume = static_cast<DDGIVolume*>(mContext.volumes[volumeIndex]);
+
+        textureBarriers.push_back(
+            { 
+                volume->GetProbeDistance(),
+                Ogre::RESOURCE_STATE_UNDEFINED,
+                Ogre::RESOURCE_STATE_COPY_DEST
+            });
+
+        textureBarriers.push_back(
+            {
+                volume->GetProbeIrradiance(),
+                Ogre::RESOURCE_STATE_UNDEFINED,
+                Ogre::RESOURCE_STATE_COPY_DEST
+            });
+
+        textureBarriers.push_back(
+            {
+                volume->GetProbeData(),
+                Ogre::RESOURCE_STATE_UNDEFINED,
+                Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+            });
+
+        textureBarriers.push_back(
+            {
+                volume->GetProbeRayData(),
+                Ogre::RESOURCE_STATE_UNDEFINED,
+                Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+            });
+
+        textureBarriers.push_back(
+            {
+                mContext.mIndirectTarget->getTarget(),
+                Ogre::RESOURCE_STATE_UNDEFINED,
+                Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+            });
+        
+    }
+
+    RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
+    rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+
+    for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
+    {
         DDGIVolume* volume = static_cast<DDGIVolume*>(mContext.volumes[volumeIndex]);
         volume->ClearProbes();
     }
 
-    updateDescriptorSet();
+    textureBarriers.clear();
+    for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
+    {
+        DDGIVolume* volume = static_cast<DDGIVolume*>(mContext.volumes[volumeIndex]);
 
-    setlist.push_back(mProbeTracingZeroSet);
-    setlist.push_back(mProbeTracingFirstSet);
-    setlist.push_back(mProbeTracingSecondSet);
-    setlist.push_back(mProbeTracingThirdSet);
+        textureBarriers.push_back(
+            {
+                volume->GetProbeDistance(),
+                Ogre::RESOURCE_STATE_COPY_DEST,
+                Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+                
+            });
+
+        textureBarriers.push_back(
+            {
+                volume->GetProbeIrradiance(),
+                Ogre::RESOURCE_STATE_COPY_DEST,
+                Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+            });
+    }
+
+    rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
 
     return true;
 }
 
 void DDGIPass::update(float delta)
 {
+    RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
+    uint32_t numVolumes = mContext.volumes.size();
+    for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
+    {
+        DDGIVolume* volume = static_cast<DDGIVolume*>(mContext.volumes[volumeIndex]);
+        volume->Update();
+        DDGIRootConstants rootConstants = volume->GetPushConstants();
 
+        rs->updateBufferObject(mContext.mDDGIHandle, (const char*)&rootConstants, sizeof(rootConstants));
+    }
+
+    uint64_t frameIndex =  Ogre::Root::getSingleton().getCurrentFrameIndex();
+    DDGIVolume** volumes = mContext.volumes.data();
+    UploadDDGIVolumeResourceIndices(frameIndex, numVolumes, volumes);
+    UploadDDGIVolumeConstants(frameIndex, numVolumes, mContext.volumes.data());
 }
 
 void DDGIPass::execute(RenderSystem* rs)
 {
-    return;
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-    rs->pushGroupMarker("probeTracePass", Ogre::Vector3i(0.0, 0.0, 1.0f));
-    rs->bindPipeline(mProgramHandle, setlist.data(), setlist.size());
-    rs->traceRay(mProgramHandle, ogreConfig.width, ogreConfig.height, 1);
-    rs->popGroupMarker();
+    
+    uint32_t numVolumes = mContext.mConfig.ddgi.volumes.size();
+
+    std::vector<Ogre::TextureBarrier> textureBarriers;
+
+    if (1)
+    {
+        for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
+        {
+            DDGIVolume* volume = static_cast<DDGIVolume*>(mContext.volumes[volumeIndex]);
+
+            textureBarriers.clear();
+            textureBarriers.push_back(
+                {
+                    volume->GetProbeRayData(),
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+                    RESOURCE_STATE_UNORDERED_ACCESS
+                }
+            );
+
+            rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+
+            uint32_t width, height, depth;
+            volume->GetRayDispatchDimensions(width, height, depth);
+
+            rs->pushGroupMarker("probeTracePass", Ogre::Vector3i(0.0, 0.0, 1.0f));
+            rs->bindPipeline(mProgramHandle, &mProbeTracingZeroSet, 1);
+            rs->traceRay(mProgramHandle, width, height, depth);
+            rs->popGroupMarker();
+
+            textureBarriers.clear();
+            textureBarriers.push_back(
+                {
+                    volume->GetProbeRayData(),
+                    RESOURCE_STATE_UNORDERED_ACCESS,
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+                }
+            );
+
+            rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+        }
+    }
+    
+
+    if (1)
+    {
+        for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
+        {
+            DDGIVolume* volume = static_cast<DDGIVolume*>(mContext.volumes[volumeIndex]);
+
+            textureBarriers.clear();
+            textureBarriers.push_back(
+                {
+                    volume->GetProbeIrradiance(),
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+                    RESOURCE_STATE_UNORDERED_ACCESS
+                }
+            );
+            rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+            uint32_t probeCountX, probeCountY, probeCountZ;
+            GetDDGIVolumeProbeCounts(volume->GetDesc(), probeCountX, probeCountY, probeCountZ);
+
+            rs->pushGroupMarker("Probe Irradiance", Ogre::Vector3i(0.0, 0.0, 1.0f));
+            rs->bindComputePipeline(mProbeBlendingIrradianceHandle, &mBlendingIrradianceDescriptorSet, 1);
+            rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ);
+            rs->popGroupMarker();
+
+            textureBarriers.clear();
+            textureBarriers.push_back(
+                {
+                    volume->GetProbeIrradiance(),
+                    RESOURCE_STATE_UNORDERED_ACCESS,
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+                }
+            );
+            rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+        }
+
+        for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
+        {
+            DDGIVolume* volume = static_cast<DDGIVolume*>(mContext.volumes[volumeIndex]);
+            textureBarriers.clear();
+            textureBarriers.push_back(
+                {
+                    volume->GetProbeDistance(),
+                     RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+                    RESOURCE_STATE_UNORDERED_ACCESS
+                }
+            );
+            rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+            uint32_t probeCountX, probeCountY, probeCountZ;
+            GetDDGIVolumeProbeCounts(volume->GetDesc(), probeCountX, probeCountY, probeCountZ);
+
+            rs->pushGroupMarker("Probe Distance", Ogre::Vector3i(0.0, 0.0, 1.0f));
+            rs->bindComputePipeline(mProbeBlendingDistanceHandle, &mBlendingDistanceDescriptorSet, 1);
+            rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ);
+            rs->popGroupMarker();
+
+            textureBarriers.clear();
+            textureBarriers.push_back(
+                {
+                    volume->GetProbeDistance(),
+                    RESOURCE_STATE_UNORDERED_ACCESS,
+                     RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+                }
+            );
+            rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+        }
+    }
+    
+
+    if (1)
+    {
+        rs->pushGroupMarker("Indirect Lighting", Ogre::Vector3i(0.0, 0.0, 1.0f));
+
+        textureBarriers.clear();
+        textureBarriers.push_back(
+            {
+                mContext.mIndirectTarget->getTarget(),
+                RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+                RESOURCE_STATE_UNORDERED_ACCESS
+            }
+        );
+
+        rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+
+        rs->bindComputePipeline(mIndirectHandle, &mIndirectZeroSet, 1);
+
+        uint32_t groupsX = DivRoundUp(ogreConfig.width, 8);
+        uint32_t groupsY = DivRoundUp(ogreConfig.height, 4);
+
+        rs->dispatchComputeShader(groupsX, groupsY, 1);
+        
+
+        textureBarriers.clear();
+        textureBarriers.push_back(
+            {
+                mContext.mIndirectTarget->getTarget(),
+                RESOURCE_STATE_UNORDERED_ACCESS,
+                 RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+            }
+        );
+       
+        rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+
+        rs->popGroupMarker();
+    }
+    
+    
 }
 
 bool DDGIPass::loadAndCompileShaders()
@@ -94,16 +321,85 @@ bool DDGIPass::loadAndCompileShaders()
     mProgramHandle = rs->createRaytracingProgram(shaderInfo);
 
     mProbeTracingZeroSet = rs->createDescriptorSet(mProgramHandle, 0);
-    mProbeTracingFirstSet = rs->createDescriptorSet(mProgramHandle, 1);
-    mProbeTracingSecondSet = rs->createDescriptorSet(mProgramHandle, 2);
-    mProbeTracingThirdSet = rs->createDescriptorSet(mProgramHandle, 3);
+   
+
+    uint32_t numVolumes = mContext.volumes.size();
+    ShaderInfo computeShaderInfo;
+    computeShaderInfo.shaderName = "IndirectCS";
+    addMacro(computeShaderInfo, "HLSL", "1");
+    addMacro(computeShaderInfo, "RAYTRACING", "1");
+    addMacro(computeShaderInfo, "RTXGI_PUSH_CONSTS_TYPE", "2");
+    addMacro(computeShaderInfo, "RTXGI_PUSH_CONSTS_STRUCT_NAME", "GlobalConstants");
+    addMacro(computeShaderInfo, "RTXGI_PUSH_CONSTS_VARIABLE_NAME", "GlobalConst");
+    addMacro(computeShaderInfo, "RTXGI_PUSH_CONSTS_FIELD_DDGI_VOLUME_INDEX_NAME", "ddgi_volumeIndex");
+    addMacro(computeShaderInfo, "RTXGI_PUSH_CONSTS_FIELD_DDGI_REDUCTION_INPUT_SIZE_X_NAME", "ddgi_reductionInputSizeX");
+    addMacro(computeShaderInfo, "RTXGI_PUSH_CONSTS_FIELD_DDGI_REDUCTION_INPUT_SIZE_Y_NAME", "ddgi_reductionInputSizeY");
+    addMacro(computeShaderInfo, "RTXGI_PUSH_CONSTS_FIELD_DDGI_REDUCTION_INPUT_SIZE_Z_NAME", "ddgi_reductionInputSizeZ");
+    addMacro(computeShaderInfo, "RTXGI_BINDLESS_TYPE", "RTXGI_BINDLESS_TYPE_RESOURCE_ARRAYS");
+    addMacro(computeShaderInfo, "RTXGI_COORDINATE_SYSTEM", "RTXGI_COORDINATE_SYSTEM");
+    addMacro(computeShaderInfo, "RTXGI_COORDINATE_SYSTEM", "RTXGI_COORDINATE_SYSTEM");
+    addMacro(computeShaderInfo, "RTXGI_DDGI_NUM_VOLUMES", std::to_string(numVolumes));
+    addMacro(computeShaderInfo, "THGP_DIM_X", "8");
+    addMacro(computeShaderInfo, "THGP_DIM_Y", "4");
+    mIndirectHandle = rs->createComputeProgram(computeShaderInfo);
+    mIndirectZeroSet = rs->createDescriptorSet(mIndirectHandle, 0);
+    
 
     return true;
 }
 
+void DDGIPass::updateDescriptorSetOfComputeShader()
+{
+    DescriptorData descriptorData[4];
+
+    descriptorData[0].mCount = 1;
+    descriptorData[0].pName = "DDGI";
+    descriptorData[0].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+    descriptorData[0].ppBuffers = &mContext.mDDGIHandle;
+
+    descriptorData[1].mCount = 1;
+    descriptorData[1].pName = "DDGIVolumes";
+    descriptorData[1].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+    descriptorData[1].ppBuffers = &mContext.mDDGIVolumeDescGPUPackedHandle;
+
+    descriptorData[2].mCount = 1;
+    descriptorData[2].pName = "DDGIVolumeBindless";
+    descriptorData[2].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+    descriptorData[2].ppBuffers = &mContext.mDDGIVolumeResourceIndicesHandle;
+
+
+    std::vector<OgreTexture*> rwTex2DArray;
+
+
+    rwTex2DArray.clear();
+
+    uint32_t numVolumes = mContext.volumes.size();
+    for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
+    {
+        // Add the DDGIVolume texture arrays
+        const DDGIVolume* volume = static_cast<DDGIVolume*>(mContext.volumes[volumeIndex]);
+        rwTex2DArray.push_back(volume->GetProbeRayData());
+        rwTex2DArray.push_back(volume->GetProbeIrradiance());
+        rwTex2DArray.push_back(volume->GetProbeDistance());
+        rwTex2DArray.push_back(volume->GetProbeData());
+        rwTex2DArray.push_back(volume->GetProbeVariability());
+        rwTex2DArray.push_back(volume->GetProbeVariabilityAverage());
+    }
+
+    descriptorData[3].mCount = rwTex2DArray.size();
+    descriptorData[3].pName = "RWTex2DArray";
+    descriptorData[3].descriptorType = DESCRIPTOR_TYPE_RW_TEXTURE;
+    descriptorData[3].ppTextures = (const OgreTexture**)rwTex2DArray.data();
+
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
+    rs->updateDescriptorSet(mBlendingIrradianceDescriptorSet, 4, descriptorData);
+    rs->updateDescriptorSet(mBlendingDistanceDescriptorSet, 4, descriptorData);
+}
+
 void DDGIPass::updateDescriptorSet()
 {
-    DescriptorData descriptorData[16];
+    DescriptorData descriptorData[32];
 
     descriptorData[0].mCount = 3;
     descriptorData[0].pName = "Samplers";
@@ -146,7 +442,7 @@ void DDGIPass::updateDescriptorSet()
         mContext.mGBufferTargetB->getTarget(),
         mContext.mGBufferTargetC->getTarget(),
         mContext.mGBufferTargetD->getTarget(),
-        mContext.mOutputView->getTarget(),
+        mContext.mIndirectTarget->getTarget(),
         nullptr,
         nullptr
     };
@@ -167,11 +463,20 @@ void DDGIPass::updateDescriptorSet()
     descriptorData[descriptorIndex].pAS = mContext.pTopAS;
     descriptorIndex++;
 
-    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-    assert(descriptorIndex <= 16);
-    rs->updateDescriptorSet(mProbeTracingZeroSet, descriptorIndex, descriptorData);
+    descriptorData[descriptorIndex].mCount = 1;
+    descriptorData[descriptorIndex].pName = "DDGI";
+    descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+    descriptorData[descriptorIndex].ppBuffers = &mContext.mDDGIHandle;
+    descriptorIndex++;
 
-    descriptorIndex = 0;
+    descriptorData[descriptorIndex].mCount = 1;
+    descriptorData[descriptorIndex].pName = "GlobalConst";
+    descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+    descriptorData[descriptorIndex].ppBuffers = &mContext.mGlobalConstHandle;
+    descriptorIndex++;
+
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+    
     if (numVolumes > 0)
     {
         rwTex2DArray.clear();
@@ -207,8 +512,6 @@ void DDGIPass::updateDescriptorSet()
     descriptorData[descriptorIndex].ppTextures = (const OgreTexture**)tex2D.data();
     descriptorIndex++;
 
-    rs->updateDescriptorSet(mProbeTracingFirstSet, descriptorIndex, descriptorData);
-    descriptorIndex = 0;
     std::vector<OgreTexture*> tex2DArray;
     if (numVolumes > 0)
     {
@@ -230,8 +533,7 @@ void DDGIPass::updateDescriptorSet()
         descriptorData[descriptorIndex].ppTextures = (const OgreTexture**)tex2DArray.data();
         descriptorIndex++;
     }
-    rs->updateDescriptorSet(mProbeTracingSecondSet, descriptorIndex, descriptorData);
-
+    
     std::vector<Handle<HwBufferObject>> buffers;
     buffers.push_back(mContext.geometryBufferHandle);
     buffers.push_back(mContext.geometryBufferHandle);
@@ -241,13 +543,21 @@ void DDGIPass::updateDescriptorSet()
         buffers.push_back(mContext.mVertexBufferList[i]);
     }
 
-    descriptorData[0].mCount = buffers.size();
-    descriptorData[0].pName = "ByteAddrBuffer";
-    descriptorData[0].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
-    descriptorData[0].ppBuffers = buffers.data();
+    descriptorData[descriptorIndex].mCount = buffers.size();
+    descriptorData[descriptorIndex].pName = "ByteAddrBuffer";
+    descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
+    descriptorData[descriptorIndex].ppBuffers = buffers.data();
+    descriptorIndex++;
+
+    rs->updateDescriptorSet(mProbeTracingZeroSet, descriptorIndex, descriptorData);
 
 
-    rs->updateDescriptorSet(mProbeTracingThirdSet, 1, descriptorData);
+    descriptorData[0].mCount = rwTex2D.size();
+    descriptorData[0].pName = "RWTex2D";
+    descriptorData[0].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+    descriptorData[0].ppTextures = (const OgreTexture**)rwTex2D.data();
+
+    rs->updateDescriptorSet(mIndirectZeroSet, 1, descriptorData);
 }
 
 bool DDGIPass::CreateDDGIVolumeResourceIndicesBuffer(uint32_t volumeCount)
@@ -279,6 +589,8 @@ bool DDGIPass::CreateDDGIVolumeConstantsBuffer(uint32_t volumeCount)
     desc.mElementCount = volumeCount * 2;
     desc.mSize = desc.mStructStride * desc.mElementCount;
     mContext.mDDGIVolumeDescGPUPackedHandle = rs->createBufferObject(desc);
+
+    mContext.mVolumeDescGPUPacked.resize(volumeCount);
     return true;
 }
 
@@ -302,7 +614,6 @@ bool DDGIPass::CreateDDGIVolume(
 
     DDGIVolumeDesc& volumeDesc = mContext.volumeDescs[volumeConfig.index];
     GetDDGIVolumeDesc(volumeConfig, volumeDesc);
-
     DDGIVolumeResources volumeResources;
     GetDDGIVolumeResources(volumeDesc, volumeResources);
 
@@ -364,6 +675,8 @@ void DDGIPass::GetDDGIVolumeDesc(const Configs::DDGIVolume& config, DDGIVolumeDe
     {
         volumeDesc.movementType = EDDGIVolumeMovementType::Default;
     }
+
+    volumeDesc.probeClassificationEnabled = false;
 }
 
 bool DDGIPass::GetDDGIVolumeResources(
@@ -372,7 +685,7 @@ bool DDGIPass::GetDDGIVolumeResources(
 {
     CompileDDGIVolumeShaders(volumeDesc);
 
-    volumeResources.constantsBuffer = mContext.mGlobalConstHandle;
+    volumeResources.constantsBuffer = mContext.mDDGIVolumeDescGPUPackedHandle;
 
     volumeResources.bindless.enabled = (bool)RTXGI_DDGI_BINDLESS_RESOURCES;
 
@@ -426,7 +739,8 @@ void DDGIPass::CompileDDGIVolumeShaders(const DDGIVolumeDesc& volumeDesc)
 
     mProbeBlendingIrradianceHandle = rs->createComputeProgram(shaderInfo);
 
-    
+    mBlendingIrradianceDescriptorSet = rs->createDescriptorSet(mProbeBlendingIrradianceHandle, 0);
+
     // Probe Blending (distance)
     shaderInfo.shaderMacros.clear();
     AddCommonShaderDefines(shaderInfo, volumeDesc, true);
@@ -439,54 +753,54 @@ void DDGIPass::CompileDDGIVolumeShaders(const DDGIVolumeDesc& volumeDesc)
 #endif
     addMacro(shaderInfo, "RTXGI_DDGI_BLEND_SCROLL_SHARED_MEMORY", std::to_string(volumeDesc.probeBlendingUseScrollSharedMemory));
     mProbeBlendingDistanceHandle = rs->createComputeProgram(shaderInfo);
+    mBlendingDistanceDescriptorSet = rs->createDescriptorSet(mProbeBlendingDistanceHandle, 0);
+    //// Probe Relocation
+    //{
+    //    //update
+    //    shaderInfo.shaderName = "ProbeRelocationUpdateCS";
+    //    shaderInfo.shaderMacros.clear();
+    //    AddCommonShaderDefines(shaderInfo, volumeDesc, true);
+    //    mProbeRelocationUpdateHandle = rs->createComputeProgram(shaderInfo);
 
-    // Probe Relocation
-    {
-        //update
-        shaderInfo.shaderName = "ProbeRelocationUpdateCS";
-        shaderInfo.shaderMacros.clear();
-        AddCommonShaderDefines(shaderInfo, volumeDesc, true);
-        mProbeRelocationUpdateHandle = rs->createComputeProgram(shaderInfo);
+    //    //reset
 
-        //reset
+    //    shaderInfo.shaderName = "ProbeRelocationResetCS";
+    //    shaderInfo.shaderMacros.clear();
+    //    AddCommonShaderDefines(shaderInfo, volumeDesc, true);
+    //    mProbeRelocationResetHandle = rs->createComputeProgram(shaderInfo);
+    //}
+    //
+    //// Probe Classification
+    //{
+    //    //update
+    //    shaderInfo.shaderName = "ProbeClassificationUpdateCS";
+    //    shaderInfo.shaderMacros.clear();
+    //    AddCommonShaderDefines(shaderInfo, volumeDesc, true);
+    //    mProbeRelocationUpdateHandle = rs->createComputeProgram(shaderInfo);
 
-        shaderInfo.shaderName = "ProbeRelocationResetCS";
-        shaderInfo.shaderMacros.clear();
-        AddCommonShaderDefines(shaderInfo, volumeDesc, true);
-        mProbeRelocationResetHandle = rs->createComputeProgram(shaderInfo);
-    }
-    
-    // Probe Classification
-    {
-        //update
-        shaderInfo.shaderName = "ProbeClassificationUpdateCS";
-        shaderInfo.shaderMacros.clear();
-        AddCommonShaderDefines(shaderInfo, volumeDesc, true);
-        mProbeRelocationUpdateHandle = rs->createComputeProgram(shaderInfo);
+    //    //reset
 
-        //reset
+    //    shaderInfo.shaderName = "ProbeClassificationResetCS";
+    //    shaderInfo.shaderMacros.clear();
+    //    AddCommonShaderDefines(shaderInfo, volumeDesc, true);
+    //    mProbeRelocationResetHandle = rs->createComputeProgram(shaderInfo);
+    //}
 
-        shaderInfo.shaderName = "ProbeClassificationResetCS";
-        shaderInfo.shaderMacros.clear();
-        AddCommonShaderDefines(shaderInfo, volumeDesc, true);
-        mProbeRelocationResetHandle = rs->createComputeProgram(shaderInfo);
-    }
+    //// Probe variability reduction
+    //shaderInfo.shaderName = "ProbeVariabilityReductionCS";
+    //shaderInfo.shaderMacros.clear();
+    //AddCommonShaderDefines(shaderInfo, volumeDesc, true);
+    //addMacro(shaderInfo, "RTXGI_DDGI_PROBE_NUM_INTERIOR_TEXELS", numIrradianceInteriorTexels);
+    //addMacro(shaderInfo, "RTXGI_DDGI_WAVE_LANE_COUNT", waveLaneCount);
+    //mProbeVariabilityReductionHandle = rs->createComputeProgram(shaderInfo);
 
-    // Probe variability reduction
-    shaderInfo.shaderName = "ProbeVariabilityReductionCS";
-    shaderInfo.shaderMacros.clear();
-    AddCommonShaderDefines(shaderInfo, volumeDesc, true);
-    addMacro(shaderInfo, "RTXGI_DDGI_PROBE_NUM_INTERIOR_TEXELS", numIrradianceInteriorTexels);
-    addMacro(shaderInfo, "RTXGI_DDGI_WAVE_LANE_COUNT", waveLaneCount);
-    mProbeVariabilityReductionHandle = rs->createComputeProgram(shaderInfo);
-
-    // Extra reduction passes
-    shaderInfo.shaderName = "ProbeExtraReductionCS";
-    shaderInfo.shaderMacros.clear();
-    AddCommonShaderDefines(shaderInfo, volumeDesc, true);
-    addMacro(shaderInfo, "RTXGI_DDGI_PROBE_NUM_INTERIOR_TEXELS", numIrradianceInteriorTexels);
-    addMacro(shaderInfo, "RTXGI_DDGI_WAVE_LANE_COUNT", waveLaneCount);
-    mProbeExtraReductionHandle = rs->createComputeProgram(shaderInfo);
+    //// Extra reduction passes
+    //shaderInfo.shaderName = "ProbeExtraReductionCS";
+    //shaderInfo.shaderMacros.clear();
+    //AddCommonShaderDefines(shaderInfo, volumeDesc, true);
+    //addMacro(shaderInfo, "RTXGI_DDGI_PROBE_NUM_INTERIOR_TEXELS", numIrradianceInteriorTexels);
+    //addMacro(shaderInfo, "RTXGI_DDGI_WAVE_LANE_COUNT", waveLaneCount);
+    //mProbeExtraReductionHandle = rs->createComputeProgram(shaderInfo);
 }
 
 void DDGIPass::AddCommonShaderDefines(
@@ -545,11 +859,13 @@ bool DDGIPass::CreateDDGIVolumeResources(
             GetDDGIVolumeTextureDimensions(volumeDesc, EDDGIVolumeTextureType::RayData, width, height, arraySize);
            
             TextureProperty texProperty;
+            texProperty._texType = TEX_TYPE_2D_ARRAY;
             texProperty._tex_format = volumeDesc.probeRayDataFormat;
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
             texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+            texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeRayData = 
                 rs->createManualTexture("ProbeRayData", &texProperty);
         }
@@ -559,11 +875,13 @@ bool DDGIPass::CreateDDGIVolumeResources(
             GetDDGIVolumeTextureDimensions(volumeDesc, EDDGIVolumeTextureType::Irradiance, width, height, arraySize);
             
             TextureProperty texProperty;
+            texProperty._texType = TEX_TYPE_2D_ARRAY;
             texProperty._tex_format = volumeDesc.probeIrradianceFormat;
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
             texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+            texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeIrradiance =
                 rs->createManualTexture("ProbeIrradianceTexture", &texProperty);
         }
@@ -573,11 +891,13 @@ bool DDGIPass::CreateDDGIVolumeResources(
             GetDDGIVolumeTextureDimensions(volumeDesc, EDDGIVolumeTextureType::Distance, width, height, arraySize);
             
             TextureProperty texProperty;
+            texProperty._texType = TEX_TYPE_2D_ARRAY;
             texProperty._tex_format = volumeDesc.probeDistanceFormat;
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
             texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+            texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeDistance =
                 rs->createManualTexture("ProbeDistanceTexture", &texProperty);
         }
@@ -588,11 +908,13 @@ bool DDGIPass::CreateDDGIVolumeResources(
             if (width <= 0 || height <= 0) return false;
           
             TextureProperty texProperty;
+            texProperty._texType = TEX_TYPE_2D_ARRAY;
             texProperty._tex_format = volumeDesc.probeDataFormat;
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
             texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+            texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeData =
                 rs->createManualTexture("ProbeDataTexture", &texProperty);
         }
@@ -603,11 +925,13 @@ bool DDGIPass::CreateDDGIVolumeResources(
             if (width <= 0 || height <= 0) return false;
             
             TextureProperty texProperty;
+            texProperty._texType = TEX_TYPE_2D_ARRAY;
             texProperty._tex_format = volumeDesc.probeVariabilityFormat;
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
             texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+            texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeVariability =
                 rs->createManualTexture("ProbeVariabilityTexture", &texProperty);
         }
@@ -618,11 +942,13 @@ bool DDGIPass::CreateDDGIVolumeResources(
             if (width <= 0 || height <= 0) return false;
          
             TextureProperty texProperty;
+            texProperty._texType = TEX_TYPE_2D_ARRAY;
             texProperty._tex_format = volumeDesc.probeVariabilityFormat;
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
             texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+            texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeVariabilityAverage =
                 rs->createManualTexture("ProbeVariabilityAverageTexture", &texProperty);
 
@@ -633,6 +959,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
             desc.mElementCount = 2;
             desc.mStructStride = sizeof(float);
             desc.mSize = desc.mElementCount * desc.mStructStride;
+            texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeVariabilityReadback = rs->createBufferObject(desc);
      
         }

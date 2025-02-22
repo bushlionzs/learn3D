@@ -52,14 +52,8 @@ bool CompositePass::initialize()
 	mPipelineHandle = rs->createPipeline(rasterState, presentHandle);
 
 	mCompositeZeroSet = rs->createDescriptorSet(presentHandle, 0);
-	mCompositeFirstSet = rs->createDescriptorSet(presentHandle, 1);
-	mCompositeSecondSet = rs->createDescriptorSet(presentHandle, 2);
-	mCompositeThirdSet = rs->createDescriptorSet(presentHandle, 3);
 
-	setlist.push_back(mCompositeZeroSet);
-	setlist.push_back(mCompositeFirstSet);
-	setlist.push_back(mCompositeSecondSet);
-	setlist.push_back(mCompositeThirdSet);
+
 
 	DescriptorData descriptorData[2];
 
@@ -75,7 +69,7 @@ bool CompositePass::initialize()
 		mContext.mGBufferTargetB->getTarget(),
 		mContext.mGBufferTargetC->getTarget(),
 		mContext.mGBufferTargetD->getTarget(),
-		mContext.mOutputView->getTarget(),
+		mContext.mIndirectTarget->getTarget(),
 		nullptr,
 		nullptr
 	};
@@ -111,7 +105,7 @@ void CompositePass::execute(RenderSystem* rs)
 	auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 	rs->pushGroupMarker("compositePass");
 	rs->beginRenderPass(info);
-	rs->bindPipeline(mPipelineHandle, setlist.data(), setlist.size());
+	rs->bindPipeline(mPipelineHandle, &mCompositeZeroSet, 1);
 	rs->draw(3, 0);
 	rs->endRenderPass(info);
 	rs->popGroupMarker();

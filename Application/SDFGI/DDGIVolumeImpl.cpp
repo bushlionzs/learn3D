@@ -98,8 +98,7 @@
             Handle<HwBufferObject> indicesBuffer = volume->GetResourceIndicesBuffer();
 
             const DDGIVolumeResourceIndices gpuDesc = volume->GetResourceIndices();
-            rs->updateBufferObject(indicesBuffer, (const char*)&gpuDesc,
-                sizeof(DDGIVolumeResourceIndices), srcOffset);
+            rs->updateBufferObject(indicesBuffer, (const char*)&gpuDesc, sizeof(gpuDesc), srcOffset);
             }
 
         return ERTXGIStatus::OK;
@@ -107,6 +106,7 @@
 
     ERTXGIStatus UploadDDGIVolumeConstants(uint32_t bufferingIndex, uint32_t numVolumes, DDGIVolume** volumes)
     {
+        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
         // Copy the constants for each volume
         for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
         {
@@ -128,7 +128,7 @@
 
             const DDGIVolumeDescGPUPacked gpuDesc = volume->GetDescGPUPacked();
 
-            auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+            
             auto constantsBuffer = volume->GetConstantsBuffer();
             rs->updateBufferObject(constantsBuffer, (const char*)&gpuDesc, 
                 sizeof(DDGIVolumeDescGPUPacked), srcOffset);

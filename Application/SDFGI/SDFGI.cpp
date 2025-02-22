@@ -23,6 +23,7 @@
 #include "GBuffer.h"
 #include "DDGI.h"
 #include "Composite.h"
+#include "presentPass.h"
 
 
 void addMacro(RaytracingShaderInfo& shaderInfo, std::string first, std::string second)
@@ -110,6 +111,7 @@ void SDFGIApp::update(float delta)
 		(const char*)&cameraInfo, sizeof(cameraInfo));
 
 	mContext.mGlobalConstants.app.frameNumber = Ogre::Root::getSingleton().getCurrentFrame();
+	mContext.mGlobalConstants.composite.useFlags = COMPOSITE_FLAG_USE_DDGI;
 	mRenderSystem->updateBufferObject(mContext.mGlobalConstHandle,
 		(const char*)&mContext.mGlobalConstants, sizeof(mContext.mGlobalConstants));
 }
@@ -288,11 +290,6 @@ void SDFGIApp::initScene()
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f };
 
-	/*transformMatrix = {
-		0.008f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.008f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.008f, 0.0f };*/
-
 	AccelerationStructureInstanceDesc instanceDesc = {};
 	instanceDesc.mFlags = ACCELERATION_STRUCTURE_INSTANCE_FLAG_NONE;
 	instanceDesc.mInstanceContributionToHitGroupIndex = 0;
@@ -420,7 +417,7 @@ void SDFGIApp::initResource()
 
 	mContext.mGBufferTargetD = mRenderSystem->createRenderTarget("targetD", texProperty);
 	texProperty._tex_format = PF_FLOAT16_RGBA;
-	mContext.mOutputView = mRenderSystem->createRenderTarget("outputView", texProperty);
+	mContext.mIndirectTarget = mRenderSystem->createRenderTarget("outputView", texProperty);
 
 	RenderTargetBarrier rtBarriers[] =
 	{
@@ -493,10 +490,13 @@ void SDFGIApp::addPass()
 
 	{
 		DDGIPass* pass = new DDGIPass(mContext);
-		//assert(pass->initialize());
-		//mRenderPipeline->addRenderPass(pass);
+		assert(pass->initialize());
+		mRenderPipeline->addRenderPass(pass);
 	}
-	
+
+	/*PassBase* presentPass = new PresentPass(mContext.mIndirectTarget, mRenderWindow);
+	presentPass->initialize();
+	mRenderPipeline->addRenderPass(presentPass);*/
 	
 	PassBase* compositePass = new CompositePass(mRenderWindow, mContext);
 	compositePass->initialize();

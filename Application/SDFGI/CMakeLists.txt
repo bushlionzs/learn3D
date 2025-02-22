@@ -9,6 +9,7 @@ add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D__WINDOWS__)
 add_definitions(-DCEGUI_STATIC)
+add_definitions(-DUSE_OGRE_MACRO)
 endif()
 
 

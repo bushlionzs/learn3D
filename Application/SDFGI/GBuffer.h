@@ -17,10 +17,7 @@ private:
 private:
     Handle<HwRaytracingProgram> mProgramHandle;
 
-    std::vector< Handle<HwDescriptorSet>> setlist;
     Handle<HwDescriptorSet> mGBufferZeroSet;
-    Handle<HwDescriptorSet> mGBufferFirstSet;
-    Handle<HwDescriptorSet> mGBufferThirdSet;
 
     SDFGIContext& mContext;
 };

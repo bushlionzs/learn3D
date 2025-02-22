@@ -22,3 +22,9 @@ Ogre::Matrix3 EulerAnglesToRotationMatrix(const Ogre::Vector3& eulerAngles)
 
     return rotation;
 }
+
+uint32_t DivRoundUp(uint32_t x, uint32_t y)
+{
+    if (x % y) return 1 + x / y;
+    else return x / y;
+}
