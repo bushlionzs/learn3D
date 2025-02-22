@@ -269,19 +269,10 @@ struct AppConsts
     uint32_t   frameNumber;    // updated every frame, used for random number generation
     Ogre::Vector3 skyRadiance;
 
-    uint32_t data[4] = {};
     static uint32_t GetNum32BitValues() { return 4; }
     static uint32_t GetSizeInBytes() { return GetNum32BitValues() * 4; }
     static uint32_t GetAlignedNum32BitValues() { return 4; }
     static uint32_t GetAlignedSizeInBytes() { return GetAlignedNum32BitValues() * 4; }
-    uint32_t* GetData()
-    {
-        data[0] = frameNumber;
-        data[1] = *(uint32_t*)&skyRadiance.x;
-        data[2] = *(uint32_t*)&skyRadiance.y;
-        data[3] = *(uint32_t*)&skyRadiance.z;
-        return data;
-    }
 };
 
 struct PathTraceConsts
@@ -291,19 +282,10 @@ struct PathTraceConsts
     uint32_t  numBounces;
     uint32_t  samplesPerPixel;
 
-    uint32_t data[4];
     static uint32_t GetNum32BitValues() { return 4; }
     static uint32_t GetSizeInBytes() { return GetNum32BitValues() * 4; }
     static uint32_t GetAlignedNum32BitValues() { return 4; }
     static uint32_t GetAlignedSizeInBytes() { return GetAlignedNum32BitValues() * 4; }
-    uint32_t* GetData()
-    {
-        data[0] = *(uint32_t*)&rayNormalBias;
-        data[1] = *(uint32_t*)&rayViewBias;
-        data[2] = numBounces;
-        data[3] = samplesPerPixel;
-        return data;
-    }
 
     // Pack the progressive accumulation bool into the last bit of numBounces
     void SetProgressive(bool value)
@@ -331,19 +313,10 @@ struct LightingConsts
     uint32_t numSpotLights;         // spot lights start at 1 + numPointLights
     uint32_t lightingPad0;
 
-    uint32_t data[3] = {};
     static uint32_t GetNum32BitValues() { return 3; }
     static uint32_t GetSizeInBytes() { return GetNum32BitValues() * 4; }
     static uint32_t GetAlignedNum32BitValues() { return 4; }
     static uint32_t GetAlignedSizeInBytes() { return GetAlignedNum32BitValues() * 4; }
-    uint32_t* GetData()
-    {
-        data[0] = hasDirectionalLight;
-        data[1] = numPointLights;
-        data[2] = numSpotLights;
-        //data[3] = 0; // empty, for alignment
-        return data;
-    }
 };
 
 struct RTAOConsts
@@ -362,32 +335,11 @@ struct RTAOConsts
     float filterDistKernel3;
     float filterDistKernel4;
     float filterDistKernel5;
-
-    uint32_t data[14] = {};
+    uint32_t data[2];
     static uint32_t GetNum32BitValues() { return 14; }
     static uint32_t GetSizeInBytes() { return GetNum32BitValues() * 4; }
     static uint32_t GetAlignedNum32BitValues() { return 16; }
     static uint32_t GetAlignedSizeInBytes() { return GetAlignedNum32BitValues() * 4; }
-    uint32_t* GetData()
-    {
-        data[0]  = *(uint32_t*)&rayLength;
-        data[1]  = *(uint32_t*)&rayNormalBias;
-        data[2]  = *(uint32_t*)&rayViewBias;
-        data[3]  = *(uint32_t*)&power;
-        data[4]  = *(uint32_t*)&filterDistanceSigma;
-        data[5]  = *(uint32_t*)&filterDepthSigma;
-        data[6]  = filterBufferWidth;
-        data[7]  = filterBufferHeight;
-        data[8]  = *(uint32_t*)&filterDistKernel0;
-        data[9]  = *(uint32_t*)&filterDistKernel1;
-        data[10] = *(uint32_t*)&filterDistKernel2;
-        data[11] = *(uint32_t*)&filterDistKernel3;
-        data[12] = *(uint32_t*)&filterDistKernel4;
-        data[13] = *(uint32_t*)&filterDistKernel5;
-        //data[14] = 0; // empty, for alignment
-        //data[15] = 0; // empty, for alignment
-        return data;
-    }
 };
 
 struct CompositeConsts
@@ -400,14 +352,7 @@ struct CompositeConsts
     static uint32_t GetSizeInBytes() { return GetNum32BitValues() * 4; }
     static uint32_t GetAlignedNum32BitValues() { return 4; }
     static uint32_t GetAlignedSizeInBytes() { return GetAlignedNum32BitValues() * 4; }
-    uint32_t* GetData()
-    {
-        data[0] = useFlags;
-        data[1] = showFlags;
-        //data[2] = 0; // empty, for alignment
-        //data[3] = 0; // empty, for alignment;
-        return data;
-    }
+
 };
 
 struct PostProcessConsts
@@ -420,14 +365,7 @@ struct PostProcessConsts
     static uint32_t GetSizeInBytes() { return GetNum32BitValues() * 4; }
     static uint32_t GetAlignedNum32BitValues() { return 4; }
     static uint32_t GetAlignedSizeInBytes() { return GetAlignedNum32BitValues() * 4; }
-    uint32_t* GetData()
-    {
-        data[0] = useFlags;
-        data[1] = *(uint32_t*)&exposure;
-        //data[2] = 0; // empty, alignment padding
-        //data[3] = 0; // empty, alignment padding
-        return data;
-    }
+    
 };
 
 struct DDGIVisConsts
@@ -445,28 +383,13 @@ struct DDGIVisConsts
     float probeDataTextureScale;
     float probeVariabilityTextureScale;
     float probeVariabilityTextureThreshold;
+    uint32_t data[2];
 
-    uint32_t data[10];
     static uint32_t GetNum32BitValues() { return 10; }
     static uint32_t GetSizeInBytes() { return GetNum32BitValues() * 4; }
     static uint32_t GetAlignedNum32BitValues() { return 12; }
     static uint32_t GetAlignedSizeInBytes() { return GetAlignedNum32BitValues() * 4; }
-    uint32_t* GetData()
-    {
-        data[0] = instanceOffset;
-        data[1] = probeType;
-        data[2] = *(uint32_t*)&probeRadius;
-        data[3] = *(uint32_t*)&distanceDivisor;
-        data[4] = *(uint32_t*)&rayDataTextureScale;
-        data[5] = *(uint32_t*)&irradianceTextureScale;
-        data[6] = *(uint32_t*)&distanceTextureScale;
-        data[7] = *(uint32_t*)&probeDataTextureScale;
-        data[8] = *(uint32_t*)&probeVariabilityTextureScale;
-        data[9] = *(uint32_t*)&probeVariabilityTextureThreshold;
-        //data[10/11] = 0; // empty, alignment padding
-
-        return data;
-    }
+   
 };
 
 struct GlobalConstants             // Added directly to the Root Signature (D3D12) or VkPipelineLayout Push Constants (Vulkan)

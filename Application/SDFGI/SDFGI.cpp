@@ -110,10 +110,11 @@ void SDFGIApp::update(float delta)
 	mRenderSystem->updateBufferObject(mContext.mCameraBufferHandle,
 		(const char*)&cameraInfo, sizeof(cameraInfo));
 
-	mContext.mGlobalConstants.app.frameNumber = Ogre::Root::getSingleton().getCurrentFrame();
-	mContext.mGlobalConstants.composite.useFlags = COMPOSITE_FLAG_USE_DDGI;
-	mRenderSystem->updateBufferObject(mContext.mGlobalConstHandle,
-		(const char*)&mContext.mGlobalConstants, sizeof(mContext.mGlobalConstants));
+	GlobalConstants& globalConstants = mContext.mGlobalConstants;
+	globalConstants.app.frameNumber = Ogre::Root::getSingleton().getCurrentFrame();
+	
+	//mContext.mGlobalConstants.composite.useFlags = COMPOSITE_FLAG_USE_DDGI;
+	mRenderSystem->updateBufferObject(mContext.mGlobalConstHandle,(const char*)&globalConstants, globalConstants.GetAlignedSizeInBytes());
 }
 
 void SDFGIApp::initScene()
@@ -363,7 +364,8 @@ void SDFGIApp::initResource()
 	desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
 	desc.bufferCreationFlags = BUFFER_CREATION_FLAG_ACCELERATION_STRUCTURE_BUILD_INPUT |
 		BUFFER_CREATION_FLAG_SHADER_DEVICE_ADDRESS;
-	desc.mStructStride = sizeof(GlobalConstants);
+	desc.mStructStride = GlobalConstants::GetAlignedSizeInBytes();
+	uint32_t aa = sizeof(GlobalConstants);
 	desc.mElementCount = 1;
 	desc.mSize = desc.mStructStride * desc.mElementCount;
 	mContext.mGlobalConstHandle = mRenderSystem->createBufferObject(desc);
@@ -372,10 +374,14 @@ void SDFGIApp::initResource()
 	desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
 	desc.bufferCreationFlags = BUFFER_CREATION_FLAG_ACCELERATION_STRUCTURE_BUILD_INPUT |
 		BUFFER_CREATION_FLAG_SHADER_DEVICE_ADDRESS;
-	desc.mStructStride = sizeof(DDGIRootConstants);
+	desc.mStructStride = DDGIRootConstants::GetAlignedSizeInBytes();
 	desc.mElementCount = 1;
 	desc.mSize = desc.mStructStride * desc.mElementCount;
 	mContext.mDDGIHandle = mRenderSystem->createBufferObject(desc);
+
+	DDGIRootConstants ddgiRootConstant;
+	memset(&ddgiRootConstant, 0, sizeof(ddgiRootConstant));
+	mRenderSystem->updateBufferObject(mContext.mDDGIHandle, (const char*)&ddgiRootConstant, sizeof(ddgiRootConstant));
 	////
 	desc.mBindingType = BufferObjectBinding_Uniform;
 	desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
@@ -446,17 +452,14 @@ void SDFGIApp::initResource()
 	mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, rtBarriers);
 
 	GlobalConstants& globalConstants = mContext.mGlobalConstants;
-	memset(&globalConstants, 0, sizeof(globalConstants));
-	globalConstants.app.frameNumber = Ogre::Root::getSingleton().getCurrentFrame();
+	memset(&globalConstants, 0, GlobalConstants::GetAlignedSizeInBytes());
+
 	globalConstants.app.skyRadiance =
 	{
 		 0.1f, 0.1f, 0.1f
 	};
 	globalConstants.pt.rayNormalBias = 0.01f;
 	globalConstants.lights.hasDirectionalLight = true;
-
-	mRenderSystem->updateBufferObject(mContext.mGlobalConstHandle,
-		(const char*)&globalConstants, globalConstants.GetSizeInBytes());
 
 	//lights
 	mContext.mlights.emplace_back();
@@ -494,13 +497,13 @@ void SDFGIApp::addPass()
 		mRenderPipeline->addRenderPass(pass);
 	}
 
-	/*PassBase* presentPass = new PresentPass(mContext.mIndirectTarget, mRenderWindow);
+	PassBase* presentPass = new PresentPass(mContext.mGBufferTargetD, mRenderWindow);
 	presentPass->initialize();
-	mRenderPipeline->addRenderPass(presentPass);*/
+	mRenderPipeline->addRenderPass(presentPass);
 	
-	PassBase* compositePass = new CompositePass(mRenderWindow, mContext);
+	/*PassBase* compositePass = new CompositePass(mRenderWindow, mContext);
 	compositePass->initialize();
-	mRenderPipeline->addRenderPass(compositePass);
+	mRenderPipeline->addRenderPass(compositePass);*/
 }
 
 

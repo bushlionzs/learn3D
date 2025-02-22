@@ -180,7 +180,7 @@ void DDGIPass::execute(RenderSystem* rs)
     }
     
 
-    if (1)
+    if (0)
     {
         for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
         {
@@ -247,7 +247,7 @@ void DDGIPass::execute(RenderSystem* rs)
     }
     
 
-    if (1)
+    if (0)
     {
         rs->pushGroupMarker("Indirect Lighting", Ogre::Vector3i(0.0, 0.0, 1.0f));
 
