@@ -1258,10 +1258,26 @@ void VulkanRenderSystemBase::updateDescriptorSet(
             for (uint32_t arr = 0; arr < arrayCount; ++arr)
             {
                 uint32_t index = arr + bufferCount;
-                VulkanBufferObject* vbo = mResourceAllocator.handle_cast<VulkanBufferObject*>(pParam->ppBuffers[arr]);
-                bufferInfos[index].offset = 0;
-                bufferInfos[index].range = VK_WHOLE_SIZE;
-                bufferInfos[index].buffer = vbo->buffer.getGpuBuffer();
+                if (pParam->descriptorType == DESCRIPTOR_TYPE_BUFFER_VIEW)
+                {
+                    VulkanBufferObject* vbo = mResourceAllocator.handle_cast<VulkanBufferObject*>(pParam->pBufferView[arr].buffer);
+                    bufferInfos[index].offset = pParam->pBufferView[arr].offset;
+
+                    if (bufferInfos[index].offset == 80)
+                    {
+                        int kk = 0;
+                    }
+                    bufferInfos[index].range = VK_WHOLE_SIZE;
+                    bufferInfos[index].buffer = vbo->buffer.getGpuBuffer();
+                }
+                else
+                {
+                    VulkanBufferObject* vbo = mResourceAllocator.handle_cast<VulkanBufferObject*>(pParam->ppBuffers[arr]);
+                    bufferInfos[index].offset = 0;
+                    bufferInfos[index].range = VK_WHOLE_SIZE;
+                    bufferInfos[index].buffer = vbo->buffer.getGpuBuffer();
+                }
+                
             }
 
             descriptorWrite[write_index].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -1276,6 +1292,7 @@ void VulkanRenderSystemBase::updateDescriptorSet(
             bufferCount += arrayCount;
         }
         break;
+        
         case VK_DESCRIPTOR_TYPE_SAMPLER:
         {
             VkDescriptorType type = descriptroInfo->layoutBinding.descriptorType;
@@ -1338,6 +1355,10 @@ void VulkanRenderSystemBase::resourceBarrier(
     QueueType queueType
 )
 {
+    if (mCommandBuffer == nullptr)
+    {
+        mCommandBuffer = mCommands->get().buffer();
+    }
     vks::tools::resourceBarrier(
         numBufferBarriers, pBufferBarriers,
         numTextureBarriers, pTextureBarriers,
@@ -1367,6 +1388,23 @@ void VulkanRenderSystemBase::destroyBufferObject(Handle<HwBufferObject> bufHandl
     VulkanBufferObject* bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
 
     mResourceAllocator.destruct<VulkanBufferObject>(bufHandle);
+}
+
+uint32_t VulkanRenderSystemBase::getAlignmentSize(BufferObjectBinding bufferType)
+{
+    //todo
+    switch (bufferType)
+    {
+    case BufferObjectBinding_Uniform:
+        return 256;
+        break;
+    case BufferObjectBinding_Storge:
+        return 16;
+    default:
+        assert_invariant(false);
+        break;
+    }
+    return 16;
 }
 
 void VulkanRenderSystemBase::parseInputBindingDescription(

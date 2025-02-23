@@ -129,11 +129,7 @@ namespace Ogre {
 
 	void OgreTexture::loadImpl()
 	{
-		bool cube = isCubeTexture();
-		if (cube)
-		{
-			mFace = 6;
-		}
+		mFace = mTextureProperty._face;
 
 		if (!mTextureProperty.haveImageFile())
 		{
@@ -143,7 +139,7 @@ namespace Ogre {
 		}
 
 		CImage image;
-		image.loadImage(mName, cube);
+		image.loadImage(mName, false);
 		_loadImages({&image});
 	}
 

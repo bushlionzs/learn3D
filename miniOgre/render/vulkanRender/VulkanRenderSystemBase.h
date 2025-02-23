@@ -154,6 +154,8 @@ protected:
 
 
     virtual void destroyBufferObject(Handle<HwBufferObject> bufHandle);
+
+    virtual uint32_t getAlignmentSize(BufferObjectBinding bufferType);
 private:
     
     void parseInputBindingDescription(

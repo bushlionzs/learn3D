@@ -149,6 +149,8 @@ namespace Ogre
 #define OGRE_COMPILER OGRE_COMPILER_MSVC
 #define OGRE_SIMD_ALIGNMENT  16
 #define RESTRICT_ALIAS __restrict
+typedef std::map<std::string, std::string> NameValuePairList;
+const std::string BLANKSTRING;
 
 #include "OgreMemoryAllocatorConfig.h"
 #include "OgreMath.h"
@@ -164,13 +166,13 @@ namespace Ogre
 #include "OgreSphere.h"
 #include "OgreRay.h"
 #include "OgreMemoryStream.h"
+#include "OgreRoot.h"
 #include "platform_log.h"
 
 
 
 
-typedef std::map<std::string, std::string> NameValuePairList;
-const std::string BLANKSTRING;
+
 
 #define _OrphigineExport
 #define DECLARE_SCRIPT_RESOURCE

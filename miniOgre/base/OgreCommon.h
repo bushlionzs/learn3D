@@ -1120,8 +1120,9 @@ namespace Ogre {
         // SRV Read only buffer
         DESCRIPTOR_TYPE_BUFFER = (DESCRIPTOR_TYPE_RW_TEXTURE << 1),
         DESCRIPTOR_TYPE_BUFFER_RAW = (DESCRIPTOR_TYPE_BUFFER | (DESCRIPTOR_TYPE_BUFFER << 1)),
+        DESCRIPTOR_TYPE_BUFFER_VIEW = DESCRIPTOR_TYPE_BUFFER << 2,
         /// UAV Buffer
-        DESCRIPTOR_TYPE_RW_BUFFER = (DESCRIPTOR_TYPE_BUFFER << 2),
+        DESCRIPTOR_TYPE_RW_BUFFER = (DESCRIPTOR_TYPE_BUFFER_VIEW << 1),
         DESCRIPTOR_TYPE_RW_BUFFER_RAW = (DESCRIPTOR_TYPE_RW_BUFFER | (DESCRIPTOR_TYPE_RW_BUFFER << 1)),
         /// Uniform buffer
         DESCRIPTOR_TYPE_UNIFORM_BUFFER = (DESCRIPTOR_TYPE_RW_BUFFER << 2),
@@ -1292,6 +1293,13 @@ namespace Ogre {
     } RenderTargetBarrier;
 
     struct AccelerationStructure;
+
+    struct BufferView
+    {
+        filament::backend::Handle<filament::backend::HwBufferObject> buffer;
+        uint32_t offset;
+    };
+
     typedef struct DescriptorData
     {
         const char* pName;
@@ -1303,6 +1311,7 @@ namespace Ogre {
         {
             const OgreTexture** ppTextures;
             const filament::backend::Handle<filament::backend::HwBufferObject>* ppBuffers;
+            BufferView* pBufferView;
             const filament::backend::Handle<filament::backend::HwSampler>* ppSamplers;
             AccelerationStructure* pAS;
         };

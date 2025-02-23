@@ -70,7 +70,7 @@ void* VulkanBuffer::lock(uint32_t offset, uint32_t numBytes)
 void VulkanBuffer::unlock(VkCommandBuffer cmdbuf)
 {
     vmaUnmapMemory(mAllocator, mCurrentStage->memory);
-    vmaFlushAllocation(mAllocator, mCurrentStage->memory, mUpdatedOffset, mUpdatedBytes);
+    vmaFlushAllocation(mAllocator, mCurrentStage->memory, 0, mUpdatedBytes);
     
 
     VkBufferCopy region{
@@ -128,7 +128,7 @@ void VulkanBuffer::loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint
     vmaMapMemory(mAllocator, stage->memory, &mapped);
     memcpy(mapped, cpuData, numBytes);
     vmaUnmapMemory(mAllocator, stage->memory);
-    vmaFlushAllocation(mAllocator, stage->memory, byteOffset, numBytes);
+    vmaFlushAllocation(mAllocator, stage->memory, 0, numBytes);
 
     // If there was a previous update, then we need to make sure the following write is properly
     // synced with the previous read.
@@ -144,6 +144,17 @@ void VulkanBuffer::loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint
         } else if (mUsage & VK_BUFFER_USAGE_INDEX_BUFFER_BIT) {
             srcAccess = VK_ACCESS_INDEX_READ_BIT;
             srcStage = VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+        }
+        else if (mUsage & VK_BUFFER_USAGE_STORAGE_BUFFER_BIT)
+        {
+            srcAccess = VK_ACCESS_SHADER_READ_BIT;
+            srcStage = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | 
+                VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT |
+                VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+        }
+        else
+        {
+            assert_invariant(false);
         }
 
         VkBufferMemoryBarrier barrier{
@@ -165,6 +176,9 @@ void VulkanBuffer::loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint
             .dstOffset = byteOffset,
             .size = numBytes,
     };
+
+    assert_invariant(byteOffset + numBytes <= mBufferBytes);
+    
     vkCmdCopyBuffer(cmdbuf, stage->buffer, mGpuBuffer, 1, &region);
 
 	mUpdatedOffset = byteOffset;
@@ -188,7 +202,10 @@ void VulkanBuffer::loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint
         dstStageMask |=
                 (VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
     } else if (mUsage & VK_BUFFER_USAGE_STORAGE_BUFFER_BIT) {
-        // TODO: implement me
+        dstAccessMask |= VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
+        dstStageMask |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT |
+            VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT |
+            VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
     }
 
     VkBufferMemoryBarrier barrier{

@@ -235,6 +235,8 @@ public:
     }
     //destroy
     virtual void destroyBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle) {}
+
+    virtual uint32_t getAlignmentSize(Ogre::BufferObjectBinding bufferType) { return 0; }
 protected:
 	
     uint32_t mBatchCount = 0;

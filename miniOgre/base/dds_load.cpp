@@ -591,12 +591,12 @@ bool DDSImage::load(DataStream* stream)
 
     if (header.caps.caps2 & DDSCAPS2_CUBEMAP)
     {
-        imgData->flags |= IF_CUBEMAP;
+        imgData->flags |= Ogre::IF_CUBEMAP;
         imgData->face = 6;
     }
     else if (header.caps.caps2 & DDSCAPS2_VOLUME)
     {
-        imgData->flags |= IF_3D_TEXTURE;
+        imgData->flags |= Ogre::IF_3D_TEXTURE;
         imgData->depth = header.depth;
     }
     // Pixel format
@@ -683,7 +683,7 @@ bool DDSImage::load(DataStream* stream)
             // Use original format
             imgData->format = sourceFormat;
             // Keep DXT data compressed
-            imgData->flags |= IF_COMPRESSED;
+            imgData->flags |= Ogre::IF_COMPRESSED;
         }
     }
     else // not compressed

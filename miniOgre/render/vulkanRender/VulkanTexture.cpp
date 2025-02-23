@@ -138,7 +138,7 @@ void VulkanTexture::createInternalResourcesImpl(void)
 
     _createSurfaceList();
 
-    if (mTextureProperty._tex_usage & WRITEABLE)
+    /*if (mTextureProperty._tex_usage & WRITEABLE)
     {
         TransferCommandInfo* commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
         TextureBarrier uavBarriers[] = {
@@ -151,7 +151,7 @@ void VulkanTexture::createInternalResourcesImpl(void)
         auto queueFamilyIndex = VulkanHelper::getSingleton().getTransferFamilyIndex();
         vks::tools::resourceBarrier(0, nullptr, 1, uavBarriers, 0, nullptr, QUEUE_TYPE_TRANSFER, 0, commandInfo->commandBuffer);
         VulkanHelper::getSingleton().endTransferCommand(commandInfo);
-    }
+    }*/
 }
 
 
@@ -293,12 +293,22 @@ void VulkanTexture::createImage(
     
     VkImageCreateInfo imageInfo = {};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    imageInfo.imageType = VK_IMAGE_TYPE_2D;
-    
-    if (mTextureProperty._texType == TEX_TYPE_3D)
+
+    switch (mTextureProperty._texType)
     {
+    case TEX_TYPE_2D:
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        break;
+    case TEX_TYPE_2D_ARRAY:
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        break;
+    case TEX_TYPE_3D:
         imageInfo.imageType = VK_IMAGE_TYPE_3D;
+        break;
+    default:
+        assert_invariant(false);
     }
+    
     imageInfo.extent = { width, height, mTextureProperty._depth };
 
     imageInfo.mipLevels = mMipLevels;
@@ -370,11 +380,19 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     }
     else
     {
-        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        if (mTextureProperty._texType == TEX_TYPE_3D)
+        switch (mTextureProperty._texType)
         {
+        case TEX_TYPE_2D:
+            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            break;
+        case TEX_TYPE_2D_ARRAY:
+            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+            break;
+        case TEX_TYPE_3D:
             viewInfo.viewType = VK_IMAGE_VIEW_TYPE_3D;
+            break;
         }
+       
     }
     
     viewInfo.format = format;

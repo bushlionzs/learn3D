@@ -42,7 +42,7 @@ VulkanSwapChain::VulkanSwapChain(VulkanPlatform* platform, VulkanContext const& 
       mAcquired(false),
       mIsFirstRenderPass(true) {
     swapChain = mPlatform->createSwapChain(nativeWindow, flags, extent);
-
+    mCurrentSwapIndex = 0;
     update();
 }
 
@@ -65,9 +65,26 @@ void VulkanSwapChain::update() {
     texProperty._width = bundle.extent.width;
     texProperty._height = bundle.extent.height;
     texProperty._tex_format = VulkanMappings::getPixelFormat(bundle.colorFormat);
+    
+
     for (auto const color: bundle.colors) {
         mColors.push_back(std::make_unique<VulkanTexture>("", mPlatform, mCommands, color, &texProperty));
     }
+
+    VulkanCommandBuffer& commands = mCommands->get();
+    VkImageSubresourceRange const subresources{
+                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                .baseMipLevel = 0,
+                .levelCount = 1,
+                .baseArrayLayer = 0,
+                .layerCount = 1,
+    };
+
+    for (auto& color : mColors)
+    {
+        color->transitionLayout(commands.buffer(), subresources, VulkanLayout::PRESENT);
+    }
+    
     texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
     texProperty._tex_format = VulkanMappings::getPixelFormat(bundle.depthFormat);
     mDepth = std::make_unique<VulkanTexture>("", mPlatform, mCommands, bundle.depth, &texProperty);
@@ -76,7 +93,7 @@ void VulkanSwapChain::update() {
 }
 
 void VulkanSwapChain::present() {
-    if (!mHeadless && mTransitionSwapChainImageLayoutForPresent) {
+    /*if (!mHeadless && mTransitionSwapChainImageLayoutForPresent) {
         VulkanCommandBuffer& commands = mCommands->get();
         VkImageSubresourceRange const subresources{
                 .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -86,7 +103,7 @@ void VulkanSwapChain::present() {
                 .layerCount = 1,
         };
         mColors[mCurrentSwapIndex]->transitionLayout(commands.buffer(), subresources, VulkanLayout::PRESENT);
-    }
+    }*/
 
     mCommands->flush(false);
     
