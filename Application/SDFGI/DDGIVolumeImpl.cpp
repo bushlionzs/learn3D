@@ -86,10 +86,10 @@
                 return ERTXGIStatus::ERROR_DDGI_INVALID_RESOURCE_INDICES_BUFFER;
 
             // Offset to the resource indices data to write to (e.g. double buffering)
-            uint64_t bufferOffset = volume->GetResourceIndicesBufferSizeInBytes() * bufferingIndex;
+            uint64_t bufferOffset = numVolumes * DDGIVolumeResourceIndices::GetAlignedSizeInBytes() * bufferingIndex;
 
             // Offset to the volume in current resource indices buffer
-            uint32_t volumeOffset = (volume->GetIndex() * (uint32_t)sizeof(DDGIVolumeResourceIndices));
+            uint32_t volumeOffset = volume->GetIndex() * DDGIVolumeResourceIndices::GetAlignedSizeInBytes();
 
             // Offset to the volume resource indices in the upload buffer
             uint64_t srcOffset = (bufferOffset + volumeOffset);
@@ -98,6 +98,11 @@
             Handle<HwBufferObject> indicesBuffer = volume->GetResourceIndicesBuffer();
 
             const DDGIVolumeResourceIndices gpuDesc = volume->GetResourceIndices();
+
+            if (srcOffset == 128)
+            {
+                int kk = 0;
+            }
             rs->updateBufferObject(indicesBuffer, (const char*)&gpuDesc, sizeof(gpuDesc), srcOffset);
             }
 
@@ -118,10 +123,10 @@
                 return ERTXGIStatus::ERROR_DDGI_INVALID_CONSTANTS_BUFFER;
             
             // Offset to the constants data to write to (e.g. double buffering)
-            uint64_t bufferOffset = volume->GetConstantsBufferSizeInBytes() * bufferingIndex;
+            uint64_t bufferOffset = numVolumes * DDGIVolumeDescGPUPacked::GetAlignedSizeInBytes() * bufferingIndex;
 
             // Offset to the volume in current constants buffer
-            uint32_t volumeOffset = (volume->GetIndex() * (uint32_t)sizeof(DDGIVolumeDescGPUPacked));
+            uint32_t volumeOffset = volume->GetIndex() * DDGIVolumeDescGPUPacked::GetAlignedSizeInBytes();
 
             // Offset to the volume constants in the upload buffer
             uint64_t srcOffset = (bufferOffset + volumeOffset);

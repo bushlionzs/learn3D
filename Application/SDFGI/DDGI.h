@@ -36,8 +36,8 @@ private:
         const DDGIVolumeDesc& volumeDesc,
         DDGIVolumeResources& volumeResources);
 private:
-    Handle<HwRaytracingProgram> mProgramHandle;
-    Handle<HwDescriptorSet> mProbeTracingZeroSet;
+    Handle<HwRaytracingProgram> mProbeTracingHandle;
+    std::vector<Handle<HwDescriptorSet>> mProbeTracingZeroSets;
     Handle<HwComputeProgram> mIndirectHandle;
     Handle<HwDescriptorSet> mIndirectZeroSet;
     

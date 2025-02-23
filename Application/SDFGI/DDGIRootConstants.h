@@ -26,10 +26,15 @@ struct DDGIRootConstants
     uint32_t  reductionInputSizeY;
     uint32_t  reductionInputSizeZ;
 
-    static uint32_t GetNum32BitValues() { return 6; }
-    static uint32_t GetSizeInBytes() { return GetNum32BitValues() * 4; }
-    static uint32_t GetAlignedNum32BitValues() { return 8; }
-    static uint32_t GetAlignedSizeInBytes() { return GetAlignedNum32BitValues() * 4; }
+
+    static uint32_t GetAlignedSizeInBytes() 
+    { 
+        uint32_t size = sizeof(DDGIRootConstants);
+
+        uint32_t alignmentSize = CalcConstantBufferByteSize(size);
+
+        return alignmentSize;
+    }
 };
 
 #endif // RTXGI_DDGI_ROOT_CONSTANTS_H

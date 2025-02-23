@@ -26,10 +26,68 @@ void GBuffer::update(float delta)
 void GBuffer::execute(RenderSystem* rs)
 {
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+
+    {
+        std::vector<Ogre::TextureBarrier> textureBarriers =
+        {
+            {
+                    mContext.mGBufferTargetA->getTarget(),
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+                    RESOURCE_STATE_UNORDERED_ACCESS
+             },
+            {
+                    mContext.mGBufferTargetB->getTarget(),
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+                    RESOURCE_STATE_UNORDERED_ACCESS
+             },
+            {
+                    mContext.mGBufferTargetC->getTarget(),
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+                    RESOURCE_STATE_UNORDERED_ACCESS
+             },
+            {
+                    mContext.mGBufferTargetD->getTarget(),
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+                    RESOURCE_STATE_UNORDERED_ACCESS
+             }
+        };
+
+        rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+    }
+    uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
     rs->pushGroupMarker("GBuffer", Ogre::Vector3i(0.0, 0.0, 1.0f));
-    rs->bindPipeline(mProgramHandle, &mGBufferZeroSet, 1);
+    rs->bindPipeline(mProgramHandle, &mGBufferZeroSets[frameIndex], 1);
     rs->traceRay(mProgramHandle, ogreConfig.width, ogreConfig.height, 1);
     rs->popGroupMarker();
+
+    {
+        std::vector<Ogre::TextureBarrier> textureBarriers =
+        {
+            {
+                    mContext.mGBufferTargetA->getTarget(),
+                    RESOURCE_STATE_UNORDERED_ACCESS,
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+             },
+            {
+                    mContext.mGBufferTargetB->getTarget(),
+                    RESOURCE_STATE_UNORDERED_ACCESS,
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+             },
+            {
+                    mContext.mGBufferTargetC->getTarget(),
+                    RESOURCE_STATE_UNORDERED_ACCESS,
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+             },
+            {
+                    mContext.mGBufferTargetD->getTarget(),
+                    RESOURCE_STATE_UNORDERED_ACCESS,
+                    RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+             }
+        };
+
+        rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+    }
+    
 }
 
 bool GBuffer::loadAndCompileShaders()
@@ -54,10 +112,11 @@ bool GBuffer::loadAndCompileShaders()
     RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
 
     mProgramHandle = rs->createRaytracingProgram(shaderInfo);
-
-    mGBufferZeroSet = rs->createDescriptorSet(mProgramHandle, 0);
-
-
+    mGBufferZeroSets.resize(mContext.frameCount);
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        mGBufferZeroSets[i] = rs->createDescriptorSet(mProgramHandle, 0);
+    }
     return true;
 }
 
@@ -65,9 +124,11 @@ void GBuffer::updateDescriptorSet()
 {
     DescriptorData descriptorData[16];
 
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+    
     descriptorData[0].mCount = 1;
     descriptorData[0].pName = "GlobalConst";
-    descriptorData[0].descriptorType = DESCRIPTOR_TYPE_SAMPLER;
+    descriptorData[0].descriptorType = DESCRIPTOR_TYPE_BUFFER;
     descriptorData[0].ppBuffers = &mContext.mGlobalConstHandle;
 
     descriptorData[1].mCount = 3;
@@ -117,23 +178,18 @@ void GBuffer::updateDescriptorSet()
     descriptorData[8].descriptorType = DESCRIPTOR_TYPE_BUFFER;
     descriptorData[8].ppBuffers = &mContext.geometryBufferHandle;
 
-    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-    rs->updateDescriptorSet(mGBufferZeroSet, 9, descriptorData);
-
-
+  
     std::vector<OgreTexture*> tex2D;
-    //tex2D.push_back(nullptr);
-    //tex2D.push_back(nullptr);
+
 
     for (auto tex : mContext.sceneTextureList)
     {
         tex2D.push_back(tex);
     }
-    descriptorData[0].mCount = tex2D.size();
-    descriptorData[0].pName = "Tex2D";
-    descriptorData[0].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
-    descriptorData[0].ppTextures = (const OgreTexture**)tex2D.data();
-    rs->updateDescriptorSet(mGBufferZeroSet, 1, descriptorData);
+    descriptorData[9].mCount = tex2D.size();
+    descriptorData[9].pName = "Tex2D";
+    descriptorData[9].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+    descriptorData[9].ppTextures = (const OgreTexture**)tex2D.data();
 
     std::vector<Handle<HwBufferObject>> buffers;
     buffers.push_back(mContext.geometryBufferHandle);
@@ -144,10 +200,31 @@ void GBuffer::updateDescriptorSet()
         buffers.push_back(mContext.mVertexBufferList[i]);
     }
 
-    descriptorData[0].mCount = buffers.size();
-    descriptorData[0].pName = "ByteAddrBuffer";
-    descriptorData[0].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
-    descriptorData[0].ppBuffers = buffers.data();
+    descriptorData[10].mCount = buffers.size();
+    descriptorData[10].pName = "ByteAddrBuffer";
+    descriptorData[10].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
+    descriptorData[10].ppBuffers = buffers.data();
 
-    rs->updateDescriptorSet(mGBufferZeroSet, 1, descriptorData);
+
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        BufferView globalConstBufferView;
+        globalConstBufferView.buffer = mContext.mGlobalConstHandle;
+        globalConstBufferView.offset = GlobalConstants::GetAlignedSizeInBytes() * i;
+        descriptorData[0].mCount = 1;
+        descriptorData[0].pName = "GlobalConst";
+        descriptorData[0].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
+        descriptorData[0].pBufferView = &globalConstBufferView;
+
+        BufferView cameraCBBufferView;
+        cameraCBBufferView.buffer = mContext.mCameraBufferHandle;
+        cameraCBBufferView.offset = SDFGICameraInfo::GetAlignedSizeInBytes() * i;
+        descriptorData[2].mCount = 1;
+        descriptorData[2].pName = "CameraCB";
+        descriptorData[2].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
+        descriptorData[2].pBufferView = &cameraCBBufferView;
+
+        rs->updateDescriptorSet(mGBufferZeroSets[i], 11, descriptorData);
+    }
+    
 }

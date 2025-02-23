@@ -28,3 +28,27 @@ uint32_t DivRoundUp(uint32_t x, uint32_t y)
     if (x % y) return 1 + x / y;
     else return x / y;
 }
+
+uint32_t  CalcConstantBufferByteSize(uint32_t byteSize)
+{
+    static uint32_t alignmentSize = 0;
+    if (alignmentSize == 0)
+    {
+        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+        alignmentSize = rs->getAlignmentSize(BufferObjectBinding_Uniform);
+    }
+
+    return (byteSize + alignmentSize - 1) & ~(alignmentSize - 1);
+    //return (byteSize + alignmentSize) & ~alignmentSize;
+}
+
+uint32_t  CalcStoreBufferByteSize(uint32_t byteSize)
+{
+    static uint32_t alignmentSize = 0;
+    if (alignmentSize == 0)
+    {
+        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+        alignmentSize = rs->getAlignmentSize(BufferObjectBinding_Storge);
+    }
+    return (byteSize + alignmentSize) & ~alignmentSize;
+}

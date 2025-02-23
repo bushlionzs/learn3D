@@ -17,7 +17,7 @@ private:
     RenderWindow* mRenderWindow;
     Handle<HwPipeline> mPipelineHandle;
 
-    Handle<HwDescriptorSet> mCompositeZeroSet;
+    std::vector<Handle<HwDescriptorSet>> mCompositeZeroSets;
 
 
     SDFGIContext& mContext;

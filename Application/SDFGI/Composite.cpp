@@ -51,17 +51,15 @@ bool CompositePass::initialize()
 	rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
 	mPipelineHandle = rs->createPipeline(rasterState, presentHandle);
 
-	mCompositeZeroSet = rs->createDescriptorSet(presentHandle, 0);
+	mCompositeZeroSets.resize(mContext.frameCount);
 
-
+	for (uint32_t i = 0; i < mContext.frameCount; i++)
+	{
+		mCompositeZeroSets[i] = rs->createDescriptorSet(presentHandle, 0);
+	}
+	
 
 	DescriptorData descriptorData[2];
-
-	
-	descriptorData[0].mCount = 1;
-	descriptorData[0].pName = "GlobalConst";
-	descriptorData[0].descriptorType = DESCRIPTOR_TYPE_SAMPLER;
-	descriptorData[0].ppBuffers = &mContext.mGlobalConstHandle;
 
 	std::array<OgreTexture*, 7> rwTex2D =
 	{
@@ -74,12 +72,24 @@ bool CompositePass::initialize()
 		nullptr
 	};
 
-	descriptorData[1].mCount = rwTex2D.size();
-	descriptorData[1].pName = "RWTex2D";
-	descriptorData[1].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
-	descriptorData[1].ppTextures = (const OgreTexture**)rwTex2D.data();
+	descriptorData[0].mCount = rwTex2D.size();
+	descriptorData[0].pName = "RWTex2D";
+	descriptorData[0].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+	descriptorData[0].ppTextures = (const OgreTexture**)rwTex2D.data();
 
-	rs->updateDescriptorSet(mCompositeZeroSet, 2, descriptorData);
+	for (uint32_t i = 0; i < mContext.frameCount; i++)
+	{
+		BufferView globalConstBufferView;
+		globalConstBufferView.buffer = mContext.mGlobalConstHandle;
+		globalConstBufferView.offset = GlobalConstants::GetAlignedSizeInBytes()* i;
+		descriptorData[1].mCount = 1;
+		descriptorData[1].pName = "GlobalConst";
+		descriptorData[1].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
+		descriptorData[1].pBufferView = &globalConstBufferView;
+
+		rs->updateDescriptorSet(mCompositeZeroSets[i], 2, descriptorData);
+	}
+	
 	return true;
 }
 
@@ -105,7 +115,7 @@ void CompositePass::execute(RenderSystem* rs)
 	auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 	rs->pushGroupMarker("compositePass");
 	rs->beginRenderPass(info);
-	rs->bindPipeline(mPipelineHandle, &mCompositeZeroSet, 1);
+	rs->bindPipeline(mPipelineHandle, &mCompositeZeroSets[frameIndex], 1);
 	rs->draw(3, 0);
 	rs->endRenderPass(info);
 	rs->popGroupMarker();

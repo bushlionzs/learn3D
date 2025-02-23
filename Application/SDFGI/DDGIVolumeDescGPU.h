@@ -9,7 +9,7 @@
 */
 
 #pragma once
-
+#include "SDFGI_util.h"
 /**
  * Describes the location (i.e. index) of DDGIVolume resources
  * on the D3D descriptor heap or in bindless resource arrays.
@@ -31,6 +31,18 @@ struct DDGIVolumeResourceIndices
     uint32_t     probeVariabilityAverageUAVIndex;    // Index of the probe variability average UAV on the descriptor heap or in a RWTexture2DArray resource Array
     uint32_t     probeVariabilityAverageSRVIndex;    // Index of the probe variability average SRV on the descriptor heap or in a Texture2DArray resource array
     //------------------------------------------------- 48B
+
+    uint32_t pad[4];
+    static uint32_t GetAlignedSizeInBytes()
+    {
+        uint32_t size = sizeof(DDGIVolumeResourceIndices);
+
+        uint32_t alignmentSize = CalcStoreBufferByteSize(size);
+
+        assert_invariant(size == alignmentSize);
+
+        return alignmentSize;
+    }
 };
 
 /**
@@ -70,6 +82,17 @@ struct DDGIVolumeDescGPUPacked
     //------------------------------------------------- 112B
     uint32_t    reserved[4];      // 16B reserved for future use
     //------------------------------------------------- 128B
+
+    static uint32_t GetAlignedSizeInBytes()
+    {
+        uint32_t size = sizeof(DDGIVolumeDescGPUPacked);
+
+        uint32_t alignmentSize = CalcStoreBufferByteSize(size);
+
+        assert_invariant(size == alignmentSize);
+
+        return alignmentSize;
+    }
 };
 
 /**
@@ -117,6 +140,17 @@ struct DDGIVolumeDescGPU
     bool     probeRelocationEnabled;             // whether probe relocation is enabled for this volume
     bool     probeClassificationEnabled;         // whether probe classification is enabled for this volume
     bool     probeVariabilityEnabled;            // whether probe variability is enabled for this volume
+
+    static uint32_t GetAlignedSizeInBytes()
+    {
+        uint32_t size = sizeof(DDGIVolumeDescGPU);
+
+        uint32_t alignmentSize = CalcStoreBufferByteSize(size);
+
+        assert_invariant(size == alignmentSize);
+
+        return alignmentSize;
+    }
 };
 
 

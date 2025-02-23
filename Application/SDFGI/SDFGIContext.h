@@ -50,6 +50,7 @@ struct SDFGIContext
 
     Configs::Config mConfig;
 
+    uint32_t frameCount;
 };
 
 #define RTXGI_BINDLESS_TYPE_RESOURCE_ARRAYS 0

@@ -17,7 +17,7 @@ private:
 private:
     Handle<HwRaytracingProgram> mProgramHandle;
 
-    Handle<HwDescriptorSet> mGBufferZeroSet;
+    std::vector<Handle<HwDescriptorSet>> mGBufferZeroSets;
 
     SDFGIContext& mContext;
 };

@@ -12,6 +12,7 @@
 
 #include <OgreHeader.h>
 #include "rayTracing.h"
+#include "SDFGI_util.h"
 
 enum COMPOSITE_USE_FLAGS
 {
@@ -232,7 +233,16 @@ struct SDFGICameraInfo
     Ogre::Vector3 forward;
     float  pad0;
     Ogre::Vector2 resolution;
-    float  pad1;
+    Ogre::Vector2  pad1;
+
+    static uint32_t GetAlignedSizeInBytes()
+    {
+        uint32_t size = sizeof(SDFGICameraInfo);
+
+        uint32_t alignmentSize = CalcConstantBufferByteSize(size);
+
+        return alignmentSize;
+    }
 };
 
 struct SDFGILight
@@ -246,6 +256,16 @@ struct SDFGILight
     float   umbraAngle;          // Spot
     float   penumbraAngle;       // Spot
     Ogre::Vector2  pad0;
+    static uint32_t GetAlignedSizeInBytes()
+    {
+        uint32_t size = sizeof(SDFGILight);
+
+        uint32_t alignmentSize = CalcStoreBufferByteSize(size);
+
+        assert_invariant(size == alignmentSize);
+
+        return alignmentSize;
+    }
 };
 
 struct SDFDIMaterial
@@ -262,6 +282,17 @@ struct SDFDIMaterial
     int    roughnessMetallicTexIdx; // R: Occlusion, G: Roughness, B: Metallic
     int    normalTexIdx;            // Tangent space XYZ
     int    emissiveTexIdx;          // RGB [0-1]
+
+    static uint32_t GetAlignedSizeInBytes()
+    {
+        uint32_t size = sizeof(SDFDIMaterial);
+
+        uint32_t alignmentSize = CalcStoreBufferByteSize(size);
+
+        assert_invariant(size == alignmentSize);
+
+        return alignmentSize;
+    }
 };
 
 struct AppConsts
@@ -403,48 +434,13 @@ struct GlobalConstants             // Added directly to the Root Signature (D3D1
     DDGIVisConsts     ddgivis;     // 12 32-bit values,  48 bytes
                                     // 48 32-bit values, 192 bytes
 
-    static uint32_t GetNum32BitValues()
-    {
-        return (AppConsts::GetNum32BitValues() +
-            PathTraceConsts::GetNum32BitValues() +
-            LightingConsts::GetNum32BitValues() +
-            RTAOConsts::GetNum32BitValues() +
-            CompositeConsts::GetNum32BitValues() +
-            PostProcessConsts::GetNum32BitValues() +
-            DDGIVisConsts::GetNum32BitValues());
-    }
-
-    static uint32_t GetSizeInBytes()
-    {
-        return (AppConsts::GetSizeInBytes() +
-            PathTraceConsts::GetSizeInBytes() +
-            LightingConsts::GetSizeInBytes() +
-            RTAOConsts::GetSizeInBytes() +
-            CompositeConsts::GetSizeInBytes() +
-            PostProcessConsts::GetSizeInBytes() +
-            DDGIVisConsts::GetSizeInBytes());
-    }
-
-    static uint32_t GetAlignedNum32BitValues()
-    {
-        return (AppConsts::GetAlignedNum32BitValues() +
-            PathTraceConsts::GetAlignedNum32BitValues() +
-            LightingConsts::GetAlignedNum32BitValues() +
-            RTAOConsts::GetAlignedNum32BitValues() +
-            CompositeConsts::GetAlignedNum32BitValues() +
-            PostProcessConsts::GetAlignedNum32BitValues() +
-            DDGIVisConsts::GetAlignedNum32BitValues());
-    }
-
     static uint32_t GetAlignedSizeInBytes()
     {
-        return (AppConsts::GetAlignedSizeInBytes() +
-            PathTraceConsts::GetAlignedSizeInBytes() +
-            LightingConsts::GetAlignedSizeInBytes() +
-            RTAOConsts::GetAlignedSizeInBytes() +
-            CompositeConsts::GetAlignedSizeInBytes() +
-            PostProcessConsts::GetAlignedSizeInBytes() +
-            DDGIVisConsts::GetAlignedSizeInBytes());
+        uint32_t size =  sizeof(GlobalConstants);
+
+        uint32_t alignmentSize = CalcConstantBufferByteSize(size);
+
+        return alignmentSize;
     }
 
 };

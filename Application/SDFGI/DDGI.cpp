@@ -118,19 +118,23 @@ void DDGIPass::update(float delta)
 {
     RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
     uint32_t numVolumes = mContext.volumes.size();
-    for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
-    {
-        DDGIVolume* volume = static_cast<DDGIVolume*>(mContext.volumes[volumeIndex]);
-        volume->Update();
-        DDGIRootConstants rootConstants = volume->GetPushConstants();
-
-        rs->updateBufferObject(mContext.mDDGIHandle, (const char*)&rootConstants, sizeof(rootConstants));
-    }
-
+ 
     uint64_t frameIndex =  Ogre::Root::getSingleton().getCurrentFrameIndex();
     DDGIVolume** volumes = mContext.volumes.data();
-    UploadDDGIVolumeResourceIndices(frameIndex, numVolumes, volumes);
-    UploadDDGIVolumeConstants(frameIndex, numVolumes, mContext.volumes.data());
+    
+    static bool test = false;
+    if (!test)
+    {
+        UploadDDGIVolumeResourceIndices(0, numVolumes, volumes);
+        UploadDDGIVolumeConstants(0, numVolumes, mContext.volumes.data());
+
+        /*UploadDDGIVolumeResourceIndices(1, numVolumes, volumes);
+        UploadDDGIVolumeConstants(1, numVolumes, mContext.volumes.data());*/
+        test = true;
+    }
+    
+
+    
 }
 
 void DDGIPass::execute(RenderSystem* rs)
@@ -138,7 +142,7 @@ void DDGIPass::execute(RenderSystem* rs)
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
     
     uint32_t numVolumes = mContext.mConfig.ddgi.volumes.size();
-
+    uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
     std::vector<Ogre::TextureBarrier> textureBarriers;
 
     if (1)
@@ -162,8 +166,8 @@ void DDGIPass::execute(RenderSystem* rs)
             volume->GetRayDispatchDimensions(width, height, depth);
 
             rs->pushGroupMarker("probeTracePass", Ogre::Vector3i(0.0, 0.0, 1.0f));
-            rs->bindPipeline(mProgramHandle, &mProbeTracingZeroSet, 1);
-            rs->traceRay(mProgramHandle, width, height, depth);
+            rs->bindPipeline(mProbeTracingHandle, &mProbeTracingZeroSets[frameIndex], 1);
+            rs->traceRay(mProbeTracingHandle, width, height, depth);
             rs->popGroupMarker();
 
             textureBarriers.clear();
@@ -318,9 +322,15 @@ bool DDGIPass::loadAndCompileShaders()
 
     RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
 
-    mProgramHandle = rs->createRaytracingProgram(shaderInfo);
+    mProbeTracingHandle = rs->createRaytracingProgram(shaderInfo);
 
-    mProbeTracingZeroSet = rs->createDescriptorSet(mProgramHandle, 0);
+    mProbeTracingZeroSets.resize(mContext.frameCount);
+
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        mProbeTracingZeroSets[i] = rs->createDescriptorSet(mProbeTracingHandle, 0);
+    }
+    
    
 
     uint32_t numVolumes = mContext.volumes.size();
@@ -342,9 +352,9 @@ bool DDGIPass::loadAndCompileShaders()
     addMacro(computeShaderInfo, "THGP_DIM_X", "8");
     addMacro(computeShaderInfo, "THGP_DIM_Y", "4");
     mIndirectHandle = rs->createComputeProgram(computeShaderInfo);
-    mIndirectZeroSet = rs->createDescriptorSet(mIndirectHandle, 0);
-    
 
+    mIndirectZeroSet = rs->createDescriptorSet(mIndirectHandle, 0);
+   
     return true;
 }
 
@@ -454,26 +464,23 @@ void DDGIPass::updateDescriptorSet()
     uint32_t numVolumes = mContext.volumes.size();
     std::vector<OgreTexture*> rwTex2DArray;
 
-    uint32_t descriptorIndex = 7;
-    
-   
-    descriptorData[descriptorIndex].mCount = 1;
-    descriptorData[descriptorIndex].pName = "TLAS";
-    descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE;
-    descriptorData[descriptorIndex].pAS = mContext.pTopAS;
-    descriptorIndex++;
+    descriptorData[8].mCount = 1;
+    descriptorData[8].pName = "TLAS";
+    descriptorData[8].descriptorType = DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE;
+    descriptorData[8].pAS = mContext.pTopAS;
 
-    descriptorData[descriptorIndex].mCount = 1;
-    descriptorData[descriptorIndex].pName = "DDGI";
-    descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-    descriptorData[descriptorIndex].ppBuffers = &mContext.mDDGIHandle;
-    descriptorIndex++;
 
-    descriptorData[descriptorIndex].mCount = 1;
-    descriptorData[descriptorIndex].pName = "GlobalConst";
-    descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-    descriptorData[descriptorIndex].ppBuffers = &mContext.mGlobalConstHandle;
-    descriptorIndex++;
+    descriptorData[9].mCount = 1;
+    descriptorData[9].pName = "DDGI";
+    descriptorData[9].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+    descriptorData[9].ppBuffers = &mContext.mDDGIHandle;
+
+
+    descriptorData[10].mCount = 1;
+    descriptorData[10].pName = "GlobalConst";
+    descriptorData[10].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+    descriptorData[10].ppBuffers = &mContext.mGlobalConstHandle;
+
 
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
     
@@ -491,11 +498,10 @@ void DDGIPass::updateDescriptorSet()
             rwTex2DArray.push_back(volume->GetProbeVariability());
             rwTex2DArray.push_back(volume->GetProbeVariabilityAverage());
         }
-        descriptorData[descriptorIndex].mCount = rwTex2DArray.size();
-        descriptorData[descriptorIndex].pName = "RWTex2DArray";
-        descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_RW_TEXTURE;
-        descriptorData[descriptorIndex].ppTextures = (const OgreTexture**)rwTex2DArray.data();
-        descriptorIndex++;
+        descriptorData[11].mCount = rwTex2DArray.size();
+        descriptorData[11].pName = "RWTex2DArray";
+        descriptorData[11].descriptorType = DESCRIPTOR_TYPE_RW_TEXTURE;
+        descriptorData[11].ppTextures = (const OgreTexture**)rwTex2DArray.data();
     }
 
     std::vector<OgreTexture*> tex2D;
@@ -506,11 +512,11 @@ void DDGIPass::updateDescriptorSet()
     {
         tex2D.push_back(tex);
     }
-    descriptorData[descriptorIndex].mCount = tex2D.size();
-    descriptorData[descriptorIndex].pName = "Tex2D";
-    descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
-    descriptorData[descriptorIndex].ppTextures = (const OgreTexture**)tex2D.data();
-    descriptorIndex++;
+    descriptorData[12].mCount = tex2D.size();
+    descriptorData[12].pName = "Tex2D";
+    descriptorData[12].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+    descriptorData[12].ppTextures = (const OgreTexture**)tex2D.data();
+
 
     std::vector<OgreTexture*> tex2DArray;
     if (numVolumes > 0)
@@ -527,11 +533,10 @@ void DDGIPass::updateDescriptorSet()
             tex2DArray.push_back(volume->GetProbeVariability());
             tex2DArray.push_back(volume->GetProbeVariabilityAverage());
         }
-        descriptorData[descriptorIndex].mCount = tex2DArray.size();
-        descriptorData[descriptorIndex].pName = "Tex2DArray";
-        descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_RW_TEXTURE;
-        descriptorData[descriptorIndex].ppTextures = (const OgreTexture**)tex2DArray.data();
-        descriptorIndex++;
+        descriptorData[13].mCount = tex2DArray.size();
+        descriptorData[13].pName = "Tex2DArray";
+        descriptorData[13].descriptorType = DESCRIPTOR_TYPE_RW_TEXTURE;
+        descriptorData[13].ppTextures = (const OgreTexture**)tex2DArray.data();
     }
     
     std::vector<Handle<HwBufferObject>> buffers;
@@ -543,20 +548,61 @@ void DDGIPass::updateDescriptorSet()
         buffers.push_back(mContext.mVertexBufferList[i]);
     }
 
-    descriptorData[descriptorIndex].mCount = buffers.size();
-    descriptorData[descriptorIndex].pName = "ByteAddrBuffer";
-    descriptorData[descriptorIndex].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
-    descriptorData[descriptorIndex].ppBuffers = buffers.data();
-    descriptorIndex++;
+    descriptorData[14].mCount = buffers.size();
+    descriptorData[14].pName = "ByteAddrBuffer";
+    descriptorData[14].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
+    descriptorData[14].ppBuffers = buffers.data();
 
-    rs->updateDescriptorSet(mProbeTracingZeroSet, descriptorIndex, descriptorData);
+    descriptorData[15].mCount = rwTex2D.size();
+    descriptorData[15].pName = "RWTex2D";
+    descriptorData[15].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+    descriptorData[15].ppTextures = (const OgreTexture**)rwTex2D.data();
 
+    uint32_t volumeCount = mContext.volumes.size();
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        BufferView cameraCBBufferView;
+        cameraCBBufferView.buffer = mContext.mCameraBufferHandle;
+        cameraCBBufferView.offset = SDFGICameraInfo::GetAlignedSizeInBytes() * i;
+        descriptorData[1].mCount = 1;
+        descriptorData[1].pName = "CameraCB";
+        descriptorData[1].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
+        descriptorData[1].pBufferView = &cameraCBBufferView;
+
+        BufferView volumesView;
+        volumesView.buffer = mContext.mDDGIVolumeDescGPUPackedHandle;
+        volumesView.offset = DDGIVolumeDescGPUPacked::GetAlignedSizeInBytes() * volumeCount * i;
+        descriptorData[5].mCount = 1;
+        descriptorData[5].pName = "DDGIVolumes";
+        descriptorData[5].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
+        descriptorData[5].pBufferView = &volumesView;
+
+        BufferView volumeBindlessView;
+        volumeBindlessView.buffer = mContext.mDDGIVolumeResourceIndicesHandle;
+        volumeBindlessView.offset = DDGIVolumeResourceIndices::GetAlignedSizeInBytes() * volumeCount * i;
+
+        descriptorData[6].mCount = 1;
+        descriptorData[6].pName = "DDGIVolumeBindless";
+        descriptorData[6].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
+        descriptorData[6].pBufferView = &volumeBindlessView;
+
+        BufferView globalConstBufferView;
+        globalConstBufferView.buffer = mContext.mGlobalConstHandle;
+        globalConstBufferView.offset = GlobalConstants::GetAlignedSizeInBytes()* i;
+
+        descriptorData[10].mCount = 1;
+        descriptorData[10].pName = "GlobalConst";
+        descriptorData[10].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
+        descriptorData[10].pBufferView = &globalConstBufferView;
+
+        rs->updateDescriptorSet(mProbeTracingZeroSets[i], 16, descriptorData);
+    }
+    
 
     descriptorData[0].mCount = rwTex2D.size();
     descriptorData[0].pName = "RWTex2D";
     descriptorData[0].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
     descriptorData[0].ppTextures = (const OgreTexture**)rwTex2D.data();
-
     rs->updateDescriptorSet(mIndirectZeroSet, 1, descriptorData);
 }
 
@@ -568,10 +614,10 @@ bool DDGIPass::CreateDDGIVolumeResourceIndicesBuffer(uint32_t volumeCount)
     desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
     desc.bufferCreationFlags = BUFFER_CREATION_FLAG_ACCELERATION_STRUCTURE_BUILD_INPUT |
         BUFFER_CREATION_FLAG_SHADER_DEVICE_ADDRESS;
-    desc.mElementCount = volumeCount * 2;
-    desc.mStructStride = sizeof(DDGIVolumeResourceIndices);
+    desc.mElementCount = volumeCount * mContext.frameCount;
+    desc.mStructStride = DDGIVolumeResourceIndices::GetAlignedSizeInBytes();
     desc.mSize = desc.mElementCount * desc.mStructStride;
-
+    desc.pName = "DDGIVolumeBindless";
     mContext.mDDGIVolumeResourceIndicesHandle = rs->createBufferObject(desc);
 
     return true;
@@ -585,9 +631,10 @@ bool DDGIPass::CreateDDGIVolumeConstantsBuffer(uint32_t volumeCount)
     desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
     desc.bufferCreationFlags = BUFFER_CREATION_FLAG_ACCELERATION_STRUCTURE_BUILD_INPUT |
         BUFFER_CREATION_FLAG_SHADER_DEVICE_ADDRESS;
-    desc.mStructStride = sizeof(DDGIVolumeDescGPUPacked);
-    desc.mElementCount = volumeCount * 2;
+    desc.mStructStride = DDGIVolumeDescGPUPacked::GetAlignedSizeInBytes();
+    desc.mElementCount = volumeCount * mContext.frameCount;
     desc.mSize = desc.mStructStride * desc.mElementCount;
+    desc.pName = "DDGIVolumes";
     mContext.mDDGIVolumeDescGPUPackedHandle = rs->createBufferObject(desc);
 
     mContext.mVolumeDescGPUPacked.resize(volumeCount);
