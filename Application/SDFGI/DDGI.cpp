@@ -122,19 +122,10 @@ void DDGIPass::update(float delta)
     uint64_t frameIndex =  Ogre::Root::getSingleton().getCurrentFrameIndex();
     DDGIVolume** volumes = mContext.volumes.data();
     
-    static bool test = false;
-    if (!test)
-    {
-        UploadDDGIVolumeResourceIndices(0, numVolumes, volumes);
-        UploadDDGIVolumeConstants(0, numVolumes, mContext.volumes.data());
 
-        /*UploadDDGIVolumeResourceIndices(1, numVolumes, volumes);
-        UploadDDGIVolumeConstants(1, numVolumes, mContext.volumes.data());*/
-        test = true;
-    }
-    
+    UploadDDGIVolumeResourceIndices(&mContext, frameIndex, numVolumes, volumes);
+    UploadDDGIVolumeConstants(&mContext, frameIndex, numVolumes, mContext.volumes.data());
 
-    
 }
 
 void DDGIPass::execute(RenderSystem* rs)
@@ -360,6 +351,7 @@ bool DDGIPass::loadAndCompileShaders()
 
 void DDGIPass::updateDescriptorSetOfComputeShader()
 {
+    return;
     DescriptorData descriptorData[4];
 
     descriptorData[0].mCount = 1;
@@ -370,14 +362,12 @@ void DDGIPass::updateDescriptorSetOfComputeShader()
     descriptorData[1].mCount = 1;
     descriptorData[1].pName = "DDGIVolumes";
     descriptorData[1].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-    descriptorData[1].ppBuffers = &mContext.mDDGIVolumeDescGPUPackedHandle;
+    descriptorData[1].ppBuffers = &mContext.mDDGIVolumeDescGPUPackedHandles[0];
 
     descriptorData[2].mCount = 1;
     descriptorData[2].pName = "DDGIVolumeBindless";
     descriptorData[2].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-    descriptorData[2].ppBuffers = &mContext.mDDGIVolumeResourceIndicesHandle;
-
-
+    descriptorData[2].ppBuffers = &mContext.mDDGIVolumeResourceIndicesHandles[0];    
     std::vector<OgreTexture*> rwTex2DArray;
 
 
@@ -409,6 +399,8 @@ void DDGIPass::updateDescriptorSetOfComputeShader()
 
 void DDGIPass::updateDescriptorSet()
 {
+    uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+
     DescriptorData descriptorData[32];
 
     descriptorData[0].mCount = 3;
@@ -436,15 +428,6 @@ void DDGIPass::updateDescriptorSet()
     descriptorData[4].descriptorType = DESCRIPTOR_TYPE_BUFFER;
     descriptorData[4].ppBuffers = &mContext.pTopAS->instanceDescBuffer;
 
-    descriptorData[5].mCount = 1;
-    descriptorData[5].pName = "DDGIVolumes";
-    descriptorData[5].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-    descriptorData[5].ppBuffers = &mContext.mDDGIVolumeDescGPUPackedHandle;
-
-    descriptorData[6].mCount = 1;
-    descriptorData[6].pName = "DDGIVolumeBindless";
-    descriptorData[6].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-    descriptorData[6].ppBuffers = &mContext.mDDGIVolumeResourceIndicesHandle;
 
     std::array<OgreTexture*, 7> rwTex2D =
     {
@@ -569,22 +552,16 @@ void DDGIPass::updateDescriptorSet()
         descriptorData[1].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
         descriptorData[1].pBufferView = &cameraCBBufferView;
 
-        BufferView volumesView;
-        volumesView.buffer = mContext.mDDGIVolumeDescGPUPackedHandle;
-        volumesView.offset = DDGIVolumeDescGPUPacked::GetAlignedSizeInBytes() * volumeCount * i;
+
         descriptorData[5].mCount = 1;
         descriptorData[5].pName = "DDGIVolumes";
-        descriptorData[5].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
-        descriptorData[5].pBufferView = &volumesView;
-
-        BufferView volumeBindlessView;
-        volumeBindlessView.buffer = mContext.mDDGIVolumeResourceIndicesHandle;
-        volumeBindlessView.offset = DDGIVolumeResourceIndices::GetAlignedSizeInBytes() * volumeCount * i;
+        descriptorData[5].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+        descriptorData[5].ppBuffers = &mContext.mDDGIVolumeDescGPUPackedHandles[frameIndex];;
 
         descriptorData[6].mCount = 1;
         descriptorData[6].pName = "DDGIVolumeBindless";
-        descriptorData[6].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
-        descriptorData[6].pBufferView = &volumeBindlessView;
+        descriptorData[6].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+        descriptorData[6].ppBuffers = &mContext.mDDGIVolumeResourceIndicesHandles[frameIndex];
 
         BufferView globalConstBufferView;
         globalConstBufferView.buffer = mContext.mGlobalConstHandle;
@@ -614,12 +591,18 @@ bool DDGIPass::CreateDDGIVolumeResourceIndicesBuffer(uint32_t volumeCount)
     desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
     desc.bufferCreationFlags = BUFFER_CREATION_FLAG_ACCELERATION_STRUCTURE_BUILD_INPUT |
         BUFFER_CREATION_FLAG_SHADER_DEVICE_ADDRESS;
-    desc.mElementCount = volumeCount * mContext.frameCount;
+    desc.mElementCount = volumeCount;
     desc.mStructStride = DDGIVolumeResourceIndices::GetAlignedSizeInBytes();
     desc.mSize = desc.mElementCount * desc.mStructStride;
     desc.pName = "DDGIVolumeBindless";
-    mContext.mDDGIVolumeResourceIndicesHandle = rs->createBufferObject(desc);
+    mContext.mDDGIVolumeResourceIndicesHandles.resize(mContext.frameCount);
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        mContext.mDDGIVolumeResourceIndicesHandles[i] = rs->createBufferObject(desc);
+    }
+    
 
+    mContext.mVolumeResourceIndices.resize(volumeCount);
     return true;
 }
 
@@ -632,11 +615,15 @@ bool DDGIPass::CreateDDGIVolumeConstantsBuffer(uint32_t volumeCount)
     desc.bufferCreationFlags = BUFFER_CREATION_FLAG_ACCELERATION_STRUCTURE_BUILD_INPUT |
         BUFFER_CREATION_FLAG_SHADER_DEVICE_ADDRESS;
     desc.mStructStride = DDGIVolumeDescGPUPacked::GetAlignedSizeInBytes();
-    desc.mElementCount = volumeCount * mContext.frameCount;
+    desc.mElementCount = volumeCount;
     desc.mSize = desc.mStructStride * desc.mElementCount;
     desc.pName = "DDGIVolumes";
-    mContext.mDDGIVolumeDescGPUPackedHandle = rs->createBufferObject(desc);
-
+    mContext.mDDGIVolumeDescGPUPackedHandles.resize(mContext.frameCount);
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        mContext.mDDGIVolumeDescGPUPackedHandles[i] = rs->createBufferObject(desc);
+    }
+   
     mContext.mVolumeDescGPUPacked.resize(volumeCount);
     return true;
 }
@@ -731,12 +718,6 @@ bool DDGIPass::GetDDGIVolumeResources(
     DDGIVolumeResources& volumeResources)
 {
     CompileDDGIVolumeShaders(volumeDesc);
-
-    volumeResources.constantsBuffer = mContext.mDDGIVolumeDescGPUPackedHandle;
-
-    volumeResources.bindless.enabled = (bool)RTXGI_DDGI_BINDLESS_RESOURCES;
-
-    volumeResources.bindless.resourceIndicesBuffer = mContext.mDDGIVolumeResourceIndicesHandle;
 
     DDGIVolumeResourceIndices& resourceIndices = volumeResources.bindless.resourceIndices;
 

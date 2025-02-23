@@ -31,11 +31,11 @@ struct SDFGIContext
     Handle<HwBufferObject> mCameraBufferHandle;
     std::vector<SDFGILight> mlights;
     Handle<HwBufferObject> mLightBufferHandle; //Light
-
-    Handle<HwBufferObject> mDDGIVolumeResourceIndicesHandle;
+    std::vector<DDGIVolumeResourceIndices> mVolumeResourceIndices;
+    std::vector<Handle<HwBufferObject>> mDDGIVolumeResourceIndicesHandles;
 
     std::vector<DDGIVolumeDescGPUPacked> mVolumeDescGPUPacked;
-    Handle<HwBufferObject> mDDGIVolumeDescGPUPackedHandle;
+    std::vector<Handle<HwBufferObject>> mDDGIVolumeDescGPUPackedHandles;
 
     Ogre::RenderTarget* mGBufferTargetA;
     Ogre::RenderTarget* mGBufferTargetB;

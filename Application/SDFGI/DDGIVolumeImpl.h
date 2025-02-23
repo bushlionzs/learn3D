@@ -212,9 +212,15 @@ public:
     Ogre::PixelFormat GetProbeVariabilityFormat() const { return m_desc.probeVariabilityFormat; }
 
     // Texture Arrays
-    OgreTexture* GetProbeRayData() const { return m_probeRayData; }
-    OgreTexture* GetProbeIrradiance() const { return m_probeIrradiance; }
-    OgreTexture* GetProbeDistance() const { return m_probeDistance; }
+    OgreTexture* GetProbeRayData() const { 
+        return m_probeRayData; 
+    }
+    OgreTexture* GetProbeIrradiance() const { 
+        return m_probeIrradiance; 
+    }
+    OgreTexture* GetProbeDistance() const { 
+        return m_probeDistance; 
+    }
     OgreTexture* GetProbeData() const { return m_probeData; }
     OgreTexture* GetProbeVariability() const { return m_probeVariability; }
     OgreTexture* GetProbeVariabilityAverage() const { return m_probeVariabilityAverage; }
@@ -462,18 +468,26 @@ private:
 //------------------------------------------------------------------------
 // Public RTXGI Vulkan namespace DDGIVolume Functions
 //------------------------------------------------------------------------
-
+struct SDFGIContext;
 /**
     * Uploads resource indices for one or more volumes to the GPU.
     * This function is for convenience and isn't necessary if you upload volume resource indices yourself.
     */
-ERTXGIStatus UploadDDGIVolumeResourceIndices(uint32_t bufferingIndex, uint32_t numVolumes, DDGIVolume** volumes);
+ERTXGIStatus UploadDDGIVolumeResourceIndices(
+    SDFGIContext* context,
+    uint32_t bufferingIndex, 
+    uint32_t numVolumes, 
+    DDGIVolume** volumes);
 
 /**
     * Uploads constants for one or more volumes to the GPU.
     * This function is for convenience and isn't necessary if you upload volume constants yourself.
     */
-ERTXGIStatus UploadDDGIVolumeConstants(uint32_t bufferingIndex, uint32_t numVolumes, DDGIVolume** volumes);
+ERTXGIStatus UploadDDGIVolumeConstants(
+    SDFGIContext* context,
+    uint32_t bufferingIndex, 
+    uint32_t numVolumes, 
+    DDGIVolume** volumes);
 
 /**
     * Updates one or more volume's probes using data in the volume's radiance texture.

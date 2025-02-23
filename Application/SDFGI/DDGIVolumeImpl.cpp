@@ -15,11 +15,7 @@
 #include <string>
 #include <vector>
 #include <OgreRoot.h>
-
-
-
-
-
+#include "SDFGIContext.h"
     //------------------------------------------------------------------------
     // Private RTXGI Namespace Helper Functions
     //------------------------------------------------------------------------
@@ -73,72 +69,48 @@
 
     
 
-    ERTXGIStatus UploadDDGIVolumeResourceIndices(uint32_t bufferingIndex, uint32_t numVolumes, DDGIVolume** volumes)
+    ERTXGIStatus UploadDDGIVolumeResourceIndices(
+        SDFGIContext* context,
+        uint32_t bufferingIndex, 
+        uint32_t numVolumes, 
+        DDGIVolume** volumes)
     {
         // Copy the resource indices for each volume
         for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
         {
             // Get the volume
             const DDGIVolume* volume = volumes[volumeIndex];
+            context->mVolumeResourceIndices[volumeIndex] = volume->GetResourceIndices();   
+        }
 
-            // Validate the upload and device buffers
-            if (!volume->GetResourceIndicesBuffer())
-                return ERTXGIStatus::ERROR_DDGI_INVALID_RESOURCE_INDICES_BUFFER;
-
-            // Offset to the resource indices data to write to (e.g. double buffering)
-            uint64_t bufferOffset = numVolumes * DDGIVolumeResourceIndices::GetAlignedSizeInBytes() * bufferingIndex;
-
-            // Offset to the volume in current resource indices buffer
-            uint32_t volumeOffset = volume->GetIndex() * DDGIVolumeResourceIndices::GetAlignedSizeInBytes();
-
-            // Offset to the volume resource indices in the upload buffer
-            uint64_t srcOffset = (bufferOffset + volumeOffset);
-
-            auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-            Handle<HwBufferObject> indicesBuffer = volume->GetResourceIndicesBuffer();
-
-            const DDGIVolumeResourceIndices gpuDesc = volume->GetResourceIndices();
-
-            if (srcOffset == 128)
-            {
-                int kk = 0;
-            }
-            rs->updateBufferObject(indicesBuffer, (const char*)&gpuDesc, sizeof(gpuDesc), srcOffset);
-            }
+        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+        rs->updateBufferObject(context->mDDGIVolumeResourceIndicesHandles[bufferingIndex],
+            (const char*)context->mVolumeResourceIndices.data(),
+            DDGIVolumeResourceIndices::GetAlignedSizeInBytes() * numVolumes);
 
         return ERTXGIStatus::OK;
     }
 
-    ERTXGIStatus UploadDDGIVolumeConstants(uint32_t bufferingIndex, uint32_t numVolumes, DDGIVolume** volumes)
+    ERTXGIStatus UploadDDGIVolumeConstants(
+        SDFGIContext* context,
+        uint32_t bufferingIndex,
+        uint32_t numVolumes,
+        DDGIVolume** volumes)
     {
-        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
         // Copy the constants for each volume
         for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
         {
             // Get the volume
             const DDGIVolume* volume = volumes[volumeIndex];
 
-            // Validate the upload and device buffers
-            if (!volume->GetConstantsBuffer())
-                return ERTXGIStatus::ERROR_DDGI_INVALID_CONSTANTS_BUFFER;
-            
-            // Offset to the constants data to write to (e.g. double buffering)
-            uint64_t bufferOffset = numVolumes * DDGIVolumeDescGPUPacked::GetAlignedSizeInBytes() * bufferingIndex;
+            context->mVolumeDescGPUPacked[volumeIndex] = volume->GetDescGPUPacked();
 
-            // Offset to the volume in current constants buffer
-            uint32_t volumeOffset = volume->GetIndex() * DDGIVolumeDescGPUPacked::GetAlignedSizeInBytes();
-
-            // Offset to the volume constants in the upload buffer
-            uint64_t srcOffset = (bufferOffset + volumeOffset);
-
-            const DDGIVolumeDescGPUPacked gpuDesc = volume->GetDescGPUPacked();
-
-            
-            auto constantsBuffer = volume->GetConstantsBuffer();
-            rs->updateBufferObject(constantsBuffer, (const char*)&gpuDesc, 
-                sizeof(DDGIVolumeDescGPUPacked), srcOffset);
            }
 
+            auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+            rs->updateBufferObject(context->mDDGIVolumeDescGPUPackedHandles[bufferingIndex],
+                (const char*)context->mVolumeDescGPUPacked.data(),
+                DDGIVolumeResourceIndices::GetAlignedSizeInBytes() * numVolumes);
         return ERTXGIStatus::OK;
     }
 
@@ -523,16 +495,6 @@
         // Validate the probe counts
         if (desc.probeCounts.x <= 0 || desc.probeCounts.y <= 0 || desc.probeCounts.z <= 0) return ERTXGIStatus::ERROR_DDGI_INVALID_PROBE_COUNTS;
 
-        // Validate the resource indices buffer (when necessary)
-        if(resources.bindless.enabled)
-        {
-            if(!resources.bindless.resourceIndicesBuffer)
-                return ERTXGIStatus::ERROR_DDGI_INVALID_RESOURCE_INDICES_BUFFER;
-        }
-
-        // Validate the constants buffer
-        if (!resources.constantsBuffer) 
-            return ERTXGIStatus::ERROR_DDGI_INVALID_CONSTANTS_BUFFER;
 
         // Validate the resource structures
         if (resources.managed.enabled && resources.unmanaged.enabled) 
