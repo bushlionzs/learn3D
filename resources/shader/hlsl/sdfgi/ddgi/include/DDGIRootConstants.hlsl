@@ -10,22 +10,15 @@
 
 #include "DDGIRootConstants.h"
 
-#ifndef __spirv__ // D3D12
 
-   
+VK_BINDING(1, 0) ConstantBuffer<DDGIRootConstants> DDGI : register(b1, space0);
+uint GetDDGIVolumeIndex() { return DDGI.volumeIndex; }
+uint3 GetReductionInputSize() { return uint3(DDGI.reductionInputSizeX, DDGI.reductionInputSizeY, DDGI.reductionInputSizeZ); }
 
-#else // VULKAN
 
-   
 
-	VK_BINDING(1, 0) ConstantBuffer<DDGIRootConstants> DDGI : register(b1, space0);
-	uint GetDDGIVolumeIndex() { return DDGI.volumeIndex; }
-	uint3 GetReductionInputSize() { return uint3(DDGI.reductionInputSizeX, DDGI.reductionInputSizeY, DDGI.reductionInputSizeZ); }
 
-    
+uint GetDDGIVolumeConstantsIndex() { return DDGI.volumeConstantsIndex; }
+uint GetDDGIVolumeResourceIndicesIndex() { return DDGI.volumeResourceIndicesIndex; }
 
-    // These functions are not relevant in Vulkan since descriptor heap style bindless is not available
-    uint GetDDGIVolumeConstantsIndex() { return 0; }
-    uint GetDDGIVolumeResourceIndicesIndex() { return 0; }
 
-#endif

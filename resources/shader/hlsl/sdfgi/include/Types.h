@@ -272,16 +272,6 @@ struct GlobalConstants             // Added directly to the Root Signature (D3D1
 	float  ddgivis_probeVariabilityTextureScale;
 	float  ddgivis_probeVariabilityTextureThreshold;
 	uint2  ddgivis_pad;
-
-#ifdef __spirv__
-	// DDGIRootConstants
-	uint   ddgi_volumeIndex;
-	uint2  ddgi_pad0;
-	uint   ddgi_reductionInputSizeX;
-	uint   ddgi_reductionInputSizeY;
-	uint   ddgi_reductionInputSizeZ;
-	uint2  ddgi_pad1;
-#endif
 };
 
 #endif // TYPES_H

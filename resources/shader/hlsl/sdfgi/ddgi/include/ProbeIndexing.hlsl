@@ -22,11 +22,7 @@
  */
 int DDGIGetProbesPerPlane(int3 probeCounts)
 {
-#if RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT || RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT
     return (probeCounts.x * probeCounts.z);
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT_Z_UP || RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT_Z_UP
-    return (probeCounts.x * probeCounts.y);
-#endif
 }
 
 /**
@@ -34,11 +30,7 @@ int DDGIGetProbesPerPlane(int3 probeCounts)
  */
 int DDGIGetPlaneIndex(int3 probeCoords)
 {
-#if RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT_Z_UP || RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT_Z_UP
-    return probeCoords.z;
-#else
     return probeCoords.y;
-#endif
 }
 
 /**
@@ -46,13 +38,7 @@ int DDGIGetPlaneIndex(int3 probeCoords)
  */
 int DDGIGetProbeIndexInPlane(int3 probeCoords, int3 probeCounts)
 {
-#if RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT || RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT
     return probeCoords.x + (probeCounts.x * probeCoords.z);
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT_Z_UP
-    return probeCoords.y + (probeCounts.y * probeCoords.x);
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT_Z_UP
-    return probeCoords.x + (probeCounts.x * probeCoords.y);
-#endif
 }
 
 /**
@@ -62,11 +48,7 @@ int DDGIGetProbeIndexInPlane(int3 probeCoords, int3 probeCounts)
  */
 int DDGIGetProbeIndexInPlane(uint3 texCoords, int3 probeCounts, int probeNumTexels)
 {
-#if RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT || RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT || RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT_Z_UP
     return int(texCoords.x / probeNumTexels) + (probeCounts.x * int(texCoords.y / probeNumTexels));
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT_Z_UP
-    return int(texCoords.x / probeNumTexels) + (probeCounts.y * int(texCoords.y / probeNumTexels));
-#endif
 }
 
 //------------------------------------------------------------------------
@@ -109,19 +91,10 @@ int3 DDGIGetProbeCoords(int probeIndex, DDGIVolumeDescGPU volume)
 {
     int3 probeCoords;
 
-#if RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT || RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT
     probeCoords.x = probeIndex % volume.probeCounts.x;
     probeCoords.y = probeIndex / (volume.probeCounts.x * volume.probeCounts.z);
     probeCoords.z = (probeIndex / volume.probeCounts.x) % volume.probeCounts.z;
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT_Z_UP
-    probeCoords.x = (probeIndex / volume.probeCounts.y) % volume.probeCounts.x;
-    probeCoords.y = probeIndex % volume.probeCounts.y;
-    probeCoords.z = probeIndex / (volume.probeCounts.x * volume.probeCounts.y);
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT_Z_UP
-    probeCoords.x = probeIndex % volume.probeCounts.x;
-    probeCoords.y = (probeIndex / volume.probeCounts.x) % volume.probeCounts.y;
-    probeCoords.z = probeIndex / (volume.probeCounts.y * volume.probeCounts.x);
-#endif
+
 
     return probeCoords;
 }
@@ -188,16 +161,9 @@ uint3 DDGIGetProbeTexelCoords(int probeIndex, DDGIVolumeDescGPU volume)
     int probesPerPlane = DDGIGetProbesPerPlane(volume.probeCounts);
     int planeIndex = int(probeIndex / probesPerPlane);
 
-#if RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT || RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT
     int x = (probeIndex % volume.probeCounts.x);
     int y = (probeIndex / volume.probeCounts.x) % volume.probeCounts.z;
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT_Z_UP
-    int x = (probeIndex % volume.probeCounts.y);
-    int y = (probeIndex / volume.probeCounts.y) % volume.probeCounts.x;
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT_Z_UP
-    int x = (probeIndex % volume.probeCounts.x);
-    int y = (probeIndex / volume.probeCounts.x) % volume.probeCounts.y;
-#endif
+
 
     return uint3(x, y, planeIndex);
 }
@@ -217,16 +183,8 @@ float3 DDGIGetProbeUV(int probeIndex, float2 octantCoordinates, int numProbeInte
     // Add the border texels to get the total texels per probe
     float numProbeTexels = (numProbeInteriorTexels + 2.f);
 
-#if RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT || RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT
     float textureWidth = numProbeTexels * volume.probeCounts.x;
     float textureHeight = numProbeTexels * volume.probeCounts.z;
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_LEFT_Z_UP
-    float textureWidth = numProbeTexels * volume.probeCounts.y;
-    float textureHeight = numProbeTexels * volume.probeCounts.x;
-#elif RTXGI_COORDINATE_SYSTEM == RTXGI_COORDINATE_SYSTEM_RIGHT_Z_UP
-    float textureWidth = numProbeTexels * volume.probeCounts.x;
-    float textureHeight = numProbeTexels * volume.probeCounts.y;
-#endif
 
     // Move to the center of the probe and move to the octant texel before normalizing
     float2 uv = float2(coords.x * numProbeTexels, coords.y * numProbeTexels) + (numProbeTexels * 0.5f);

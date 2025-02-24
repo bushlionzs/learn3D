@@ -77,9 +77,9 @@ void CHS_GI(inout PackedPayload packedPayload, BuiltInTriangleIntersectionAttrib
     packedPayload = PackPayload(payload);
 }
 
-[shader("closesthit")]
-void CHS_VISIBILITY(inout PackedPayload packedPayload, BuiltInTriangleIntersectionAttributes attrib)
-{
-    packedPayload.hitT = RayTCurrent();
-}
+//[shader("closesthit")]
+//void CHS_VISIBILITY(inout PackedPayload packedPayload, BuiltInTriangleIntersectionAttributes attrib)
+//{
+  //  packedPayload.hitT = RayTCurrent();
+//}
 

@@ -22,6 +22,8 @@ struct DDGIRootConstants
     uint  reductionInputSizeX;
     uint  reductionInputSizeY;
     uint  reductionInputSizeZ;
+	
+	uint2 pad;
 };
 
 #endif // RTXGI_DDGI_ROOT_CONSTANTS_H

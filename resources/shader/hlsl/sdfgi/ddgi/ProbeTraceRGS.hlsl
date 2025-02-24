@@ -82,37 +82,11 @@ void RayGen()
 
     // Get the acceleration structure
     RaytracingAccelerationStructure SceneTLAS = GetAccelerationStructure(SCENE_TLAS_INDEX);
+	
+	// Get the ray data texture array
+    RWTexture2DArray<float4> RayData = GetRWTex2DArray(resourceIndices.rayDataUAVIndex);
+	
 
-#if GFX_NVAPI
-    if (GetPTShaderExecutionReordering())
-    {
-        NvHitObject hit;
-        NvTraceRayHitObject(
-            SceneTLAS,
-            RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
-            0xFF,
-            0,
-            0,
-            0,
-            ray,
-            packedPayload,
-            hit);
-        NvReorderThread(hit, 0, 0);
-        NvInvokeHitObject(SceneTLAS, hit, packedPayload);
-    }
-    else
-    {
-        TraceRay(
-            SceneTLAS,
-            RAY_FLAG_CULL_BACK_FACING_TRIANGLES,
-            0xFF,
-            0,
-            0,
-            0,
-            ray,
-            packedPayload);
-    }
-#else
     // Trace the Probe Ray
     TraceRay(
         SceneTLAS,
@@ -123,11 +97,9 @@ void RayGen()
         0,
         ray,
         packedPayload);
-#endif
 
-    // Get the ray data texture array
-    RWTexture2DArray<float4> RayData = GetRWTex2DArray(resourceIndices.rayDataUAVIndex);
-
+    
+	
     // The ray missed. Store the miss radiance, set the hit distance to a large value, and exit early.
     if (packedPayload.hitT < 0.f)
     {

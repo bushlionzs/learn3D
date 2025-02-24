@@ -78,13 +78,13 @@ VK_BINDING(9, 0) RWStructuredBuffer<TLASInstance>            RWTLASInstances    
 // Bindless Resources ---------------------------------------------------------------------------------------
 
 VK_BINDING(10, 0) RWTexture2D<float4>                         RWTex2D[]           : register(u6, space0);
-VK_BINDING(11, 1) RWTexture2DArray<float4>                    RWTex2DArray[]      : register(u6, space1);
+VK_BINDING(11, 0) RWTexture2DArray<float4>                    RWTex2DArray[]      : register(u6, space1);
 #ifdef RAYTRACING
 VK_BINDING(12, 0) RaytracingAccelerationStructure            TLAS[]              : register(t7, space0);
 #endif 
-VK_BINDING(13, 1) Texture2D                                  Tex2D[]             : register(t7, space1);
-VK_BINDING(14, 2) Texture2DArray                             Tex2DArray[]        : register(t7, space2);
-VK_BINDING(15, 3) ByteAddressBuffer                          ByteAddrBuffer[]    : register(t7, space3);
+VK_BINDING(13, 0) Texture2D                                  Tex2D[]             : register(t7, space1);
+VK_BINDING(14, 0) Texture2DArray                             Tex2DArray[]        : register(t7, space2);
+VK_BINDING(15, 0) ByteAddressBuffer                          ByteAddrBuffer[]    : register(t7, space3);
 VK_BINDING(16, 0) StructuredBuffer<GeometryData>             GeometryDatas       : register(t8, space0);
 // Defines for Convenience ----------------------------------------------------------------------------------
 
