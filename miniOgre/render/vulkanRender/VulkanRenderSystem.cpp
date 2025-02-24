@@ -731,7 +731,7 @@ void VulkanRenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle,
         &shaderBindingTables->miss.stridedDeviceAddressRegion,
         &shaderBindingTables->hit.stridedDeviceAddressRegion,
         &emptySbtEntry,
-        width, height, 1);
+        width, height, depth);
 }
 
 void VulkanRenderSystem::copyImage(Ogre::RenderTarget* dst, Ogre::RenderTarget* src)
