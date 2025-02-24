@@ -281,51 +281,27 @@ void DDGIProbeBlendingCS(
     // Get the volume's index
     uint volumeIndex = GetDDGIVolumeIndex();
 
-#if RTXGI_DDGI_BINDLESS_RESOURCES
-    #if RTXGI_BINDLESS_TYPE == RTXGI_BINDLESS_TYPE_DESCRIPTOR_HEAP
-        // Get the DDGIVolume constants structured buffer from the descriptor heap (SM6.6+ only)
-        StructuredBuffer<DDGIVolumeDescGPUPacked> DDGIVolumes = ResourceDescriptorHeap[GetDDGIVolumeConstantsIndex()];
-    #endif
-#endif
 
     // Get the volume's constants
     DDGIVolumeDescGPU volume = UnpackDDGIVolumeDescGPU(DDGIVolumes[volumeIndex]);
 
     // Get the volume's resources
-#if RTXGI_DDGI_BINDLESS_RESOURCES
-    #if RTXGI_BINDLESS_TYPE == RTXGI_BINDLESS_TYPE_DESCRIPTOR_HEAP
 
-        // Get the volume's resource indices from the descriptor heap (SM6.6+ only)
-        StructuredBuffer<DDGIVolumeResourceIndices> DDGIVolumeBindless = ResourceDescriptorHeap[GetDDGIVolumeResourceIndicesIndex()];
-        DDGIVolumeResourceIndices resourceIndices = DDGIVolumeBindless[volumeIndex];
 
-        // Get the volume's texture array UAVs from the descriptor heap (SM6.6+ only)
-        RWTexture2DArray<float4> RayData = ResourceDescriptorHeap[resourceIndices.rayDataUAVIndex];
-        #if RTXGI_DDGI_BLEND_RADIANCE
-            RWTexture2DArray<float4> Output = ResourceDescriptorHeap[resourceIndices.probeIrradianceUAVIndex];
-            RWTexture2DArray<float4> ProbeVariability = ResourceDescriptorHeap[resourceIndices.probeVariabilityUAVIndex];
-        #else
-            RWTexture2DArray<float4> Output = ResourceDescriptorHeap[resourceIndices.probeDistanceUAVIndex];
-        #endif
-        RWTexture2DArray<float4> ProbeData = ResourceDescriptorHeap[resourceIndices.probeDataUAVIndex];
+	// Get the volume's resource indices
+	DDGIVolumeResourceIndices resourceIndices = DDGIVolumeBindless[volumeIndex];
 
-    #elif RTXGI_BINDLESS_TYPE == RTXGI_BINDLESS_TYPE_RESOURCE_ARRAYS
+	// Get the volume's texture array UAVs
+	RWTexture2DArray<float4> RayData = RWTex2DArray[resourceIndices.rayDataUAVIndex];
+	#if RTXGI_DDGI_BLEND_RADIANCE
+		RWTexture2DArray<float4> Output = RWTex2DArray[resourceIndices.probeIrradianceUAVIndex];
+		RWTexture2DArray<float4> ProbeVariability = RWTex2DArray[resourceIndices.probeVariabilityUAVIndex];
+	#else
+		RWTexture2DArray<float4> Output = RWTex2DArray[resourceIndices.probeDistanceUAVIndex];
+	#endif
+	RWTexture2DArray<float4> ProbeData = RWTex2DArray[resourceIndices.probeDataUAVIndex];
 
-        // Get the volume's resource indices
-        DDGIVolumeResourceIndices resourceIndices = DDGIVolumeBindless[volumeIndex];
 
-        // Get the volume's texture array UAVs
-        RWTexture2DArray<float4> RayData = RWTex2DArray[resourceIndices.rayDataUAVIndex];
-        #if RTXGI_DDGI_BLEND_RADIANCE
-            RWTexture2DArray<float4> Output = RWTex2DArray[resourceIndices.probeIrradianceUAVIndex];
-            RWTexture2DArray<float4> ProbeVariability = RWTex2DArray[resourceIndices.probeVariabilityUAVIndex];
-        #else
-            RWTexture2DArray<float4> Output = RWTex2DArray[resourceIndices.probeDistanceUAVIndex];
-        #endif
-        RWTexture2DArray<float4> ProbeData = RWTex2DArray[resourceIndices.probeDataUAVIndex];
-
-    #endif
-#endif
 
     // Find the probe index for this thread
     int probeIndex = DDGIGetProbeIndex(DispatchThreadID, RTXGI_DDGI_PROBE_NUM_TEXELS, volume);

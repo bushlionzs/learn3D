@@ -78,14 +78,12 @@ float4 PS(PSInput input) : SV_TARGET
         // Load indirect lighting from DDGI
         if (useFlags & COMPOSITE_FLAG_USE_DDGI)
         {
-		    return float4(0.2f, 0.0f, 0.f, 1.f);
             // Add direct and indirect lighting
             RWTexture2D<float4> DDGIOutput = GetRWTex2D(DDGI_OUTPUT_INDEX);
             float3 indirect = DDGIOutput.Load(input.position.xy).rgb;
             color += indirect;
         }
-		
-		
+
 		
         if (useFlags & COMPOSITE_FLAG_USE_RTAO)
         {

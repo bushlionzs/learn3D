@@ -99,7 +99,6 @@ void RayGen()
         packedPayload);
 
     
-	
     // The ray missed. Store the miss radiance, set the hit distance to a large value, and exit early.
     if (packedPayload.hitT < 0.f)
     {
