@@ -15,10 +15,13 @@ DDGIPass::DDGIPass(SDFGIContext& context)
 
 bool DDGIPass::initialize()
 {
+    mDDGIFrameDatas.resize(mContext.frameCount);
     if (!loadAndCompileShaders())
         return false;
    
     uint32_t numVolumes = mContext.mConfig.ddgi.volumes.size();
+
+    
 
     CreateDDGIVolumeResourceIndicesBuffer(numVolumes);
     CreateDDGIVolumeConstantsBuffer(numVolumes);
@@ -33,6 +36,7 @@ bool DDGIPass::initialize()
         }
     }
 
+    loadIndirectShader();
 
     updateDescriptorSet();
     updateDescriptorSetOfComputeShader();
@@ -111,6 +115,8 @@ bool DDGIPass::initialize()
 
     rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
 
+    
+
     return true;
 }
 
@@ -157,7 +163,7 @@ void DDGIPass::execute(RenderSystem* rs)
             volume->GetRayDispatchDimensions(width, height, depth);
 
             rs->pushGroupMarker("probeTracePass", Ogre::Vector3i(0.0, 0.0, 1.0f));
-            rs->bindPipeline(mProbeTracingHandle, &mProbeTracingZeroSets[frameIndex], 1);
+            rs->bindPipeline(mProbeTracingHandle, &mDDGIFrameDatas[frameIndex].probeTracingZeroSet, 1);
             rs->traceRay(mProbeTracingHandle, width, height, depth);
             rs->popGroupMarker();
 
@@ -175,7 +181,7 @@ void DDGIPass::execute(RenderSystem* rs)
     }
     
 
-    if (0)
+    if (1)
     {
         for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
         {
@@ -194,7 +200,7 @@ void DDGIPass::execute(RenderSystem* rs)
             GetDDGIVolumeProbeCounts(volume->GetDesc(), probeCountX, probeCountY, probeCountZ);
 
             rs->pushGroupMarker("Probe Irradiance", Ogre::Vector3i(0.0, 0.0, 1.0f));
-            rs->bindComputePipeline(mProbeBlendingIrradianceHandle, &mBlendingIrradianceDescriptorSet, 1);
+            rs->bindComputePipeline(mProbeBlendingIrradianceHandle, &mDDGIFrameDatas[frameIndex].blendingIrradianceDescriptorSet, 1);
             rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ);
             rs->popGroupMarker();
 
@@ -225,7 +231,7 @@ void DDGIPass::execute(RenderSystem* rs)
             GetDDGIVolumeProbeCounts(volume->GetDesc(), probeCountX, probeCountY, probeCountZ);
 
             rs->pushGroupMarker("Probe Distance", Ogre::Vector3i(0.0, 0.0, 1.0f));
-            rs->bindComputePipeline(mProbeBlendingDistanceHandle, &mBlendingDistanceDescriptorSet, 1);
+            rs->bindComputePipeline(mProbeBlendingDistanceHandle, &mDDGIFrameDatas[frameIndex].blendingDistanceDescriptorSet, 1);
             rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ);
             rs->popGroupMarker();
 
@@ -242,7 +248,7 @@ void DDGIPass::execute(RenderSystem* rs)
     }
     
 
-    if (0)
+    if (1)
     {
         rs->pushGroupMarker("Indirect Lighting", Ogre::Vector3i(0.0, 0.0, 1.0f));
 
@@ -257,7 +263,7 @@ void DDGIPass::execute(RenderSystem* rs)
 
         rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
 
-        rs->bindComputePipeline(mIndirectHandle, &mIndirectZeroSet, 1);
+        rs->bindComputePipeline(mIndirectHandle, &mDDGIFrameDatas[frameIndex].mIndirectZeroSet, 1);
 
         uint32_t groupsX = DivRoundUp(ogreConfig.width, 8);
         uint32_t groupsY = DivRoundUp(ogreConfig.height, 4);
@@ -296,8 +302,7 @@ bool DDGIPass::loadAndCompileShaders()
     addMacro(shaderInfo, "RTXGI_PUSH_CONSTS_FIELD_DDGI_REDUCTION_INPUT_SIZE_Y_NAME", "ddgi_reductionInputSizeY");
     addMacro(shaderInfo, "RTXGI_PUSH_CONSTS_FIELD_DDGI_REDUCTION_INPUT_SIZE_Z_NAME", "ddgi_reductionInputSizeZ");
     addMacro(shaderInfo, "RTXGI_BINDLESS_TYPE", "RTXGI_BINDLESS_TYPE_RESOURCE_ARRAYS");
-    addMacro(shaderInfo, "RTXGI_COORDINATE_SYSTEM", "RTXGI_COORDINATE_SYSTEM");
-
+    addMacro(shaderInfo, "RTXGI_COORDINATE_SYSTEM", std::to_string(RTXGI_COORDINATE_SYSTEM));
 
     shaderInfo.rayGenShaderName = "ProbeTraceRGS.hlsl";
     shaderInfo.rayGenEntryName = "RayGen";
@@ -315,15 +320,21 @@ bool DDGIPass::loadAndCompileShaders()
 
     mProbeTracingHandle = rs->createRaytracingProgram(shaderInfo);
 
-    mProbeTracingZeroSets.resize(mContext.frameCount);
 
     for (uint32_t i = 0; i < mContext.frameCount; i++)
     {
-        mProbeTracingZeroSets[i] = rs->createDescriptorSet(mProbeTracingHandle, 0);
+        mDDGIFrameDatas[i].probeTracingZeroSet = rs->createDescriptorSet(mProbeTracingHandle, 0);
     }
     
    
 
+    
+   
+    return true;
+}
+
+void DDGIPass::loadIndirectShader()
+{
     uint32_t numVolumes = mContext.volumes.size();
     ShaderInfo computeShaderInfo;
     computeShaderInfo.shaderName = "IndirectCS";
@@ -342,17 +353,20 @@ bool DDGIPass::loadAndCompileShaders()
     addMacro(computeShaderInfo, "RTXGI_DDGI_NUM_VOLUMES", std::to_string(numVolumes));
     addMacro(computeShaderInfo, "THGP_DIM_X", "8");
     addMacro(computeShaderInfo, "THGP_DIM_Y", "4");
+
+    RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
     mIndirectHandle = rs->createComputeProgram(computeShaderInfo);
 
-    mIndirectZeroSet = rs->createDescriptorSet(mIndirectHandle, 0);
-   
-    return true;
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        mDDGIFrameDatas[i].mIndirectZeroSet = rs->createDescriptorSet(mIndirectHandle, 0);
+    }
+     
 }
 
 void DDGIPass::updateDescriptorSetOfComputeShader()
 {
-    return;
-    DescriptorData descriptorData[4];
+    DescriptorData descriptorData[10];
 
     descriptorData[0].mCount = 1;
     descriptorData[0].pName = "DDGI";
@@ -391,10 +405,30 @@ void DDGIPass::updateDescriptorSetOfComputeShader()
     descriptorData[3].descriptorType = DESCRIPTOR_TYPE_RW_TEXTURE;
     descriptorData[3].ppTextures = (const OgreTexture**)rwTex2DArray.data();
 
+    /*std::array<OgreTexture*, 7> rwTex2D =
+    {
+        mContext.mGBufferTargetA->getTarget(),
+        mContext.mGBufferTargetB->getTarget(),
+        mContext.mGBufferTargetC->getTarget(),
+        mContext.mGBufferTargetD->getTarget(),
+        mContext.mIndirectTarget->getTarget(),
+        nullptr,
+        nullptr
+    };
+    descriptorData[4].mCount = rwTex2D.size();
+    descriptorData[4].pName = "Tex2DArray";
+    descriptorData[4].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+    descriptorData[4].ppTextures = (const OgreTexture**)rwTex2D.data();*/
+
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 
-    rs->updateDescriptorSet(mBlendingIrradianceDescriptorSet, 4, descriptorData);
-    rs->updateDescriptorSet(mBlendingDistanceDescriptorSet, 4, descriptorData);
+
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        rs->updateDescriptorSet(mDDGIFrameDatas[i].blendingIrradianceDescriptorSet, 4, descriptorData);
+        rs->updateDescriptorSet(mDDGIFrameDatas[i].blendingDistanceDescriptorSet, 4, descriptorData);
+    }
+    
 }
 
 void DDGIPass::updateDescriptorSet()
@@ -541,6 +575,11 @@ void DDGIPass::updateDescriptorSet()
     descriptorData[15].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
     descriptorData[15].ppTextures = (const OgreTexture**)rwTex2D.data();
 
+    descriptorData[16].mCount = 1;
+    descriptorData[16].pName = "GeometryDatas";
+    descriptorData[16].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+    descriptorData[16].ppBuffers = &mContext.geometryBufferHandle;
+
     uint32_t volumeCount = mContext.volumes.size();
     for (uint32_t i = 0; i < mContext.frameCount; i++)
     {
@@ -572,7 +611,7 @@ void DDGIPass::updateDescriptorSet()
         descriptorData[10].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
         descriptorData[10].pBufferView = &globalConstBufferView;
 
-        rs->updateDescriptorSet(mProbeTracingZeroSets[i], 16, descriptorData);
+        rs->updateDescriptorSet(mDDGIFrameDatas[i].probeTracingZeroSet, 17, descriptorData);
     }
     
 
@@ -580,7 +619,42 @@ void DDGIPass::updateDescriptorSet()
     descriptorData[0].pName = "RWTex2D";
     descriptorData[0].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
     descriptorData[0].ppTextures = (const OgreTexture**)rwTex2D.data();
-    rs->updateDescriptorSet(mIndirectZeroSet, 1, descriptorData);
+
+    descriptorData[1].mCount = tex2DArray.size();
+    descriptorData[1].pName = "Tex2DArray";
+    descriptorData[1].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+    descriptorData[1].ppTextures = (const OgreTexture**)tex2DArray.data();
+
+    descriptorData[2].mCount = 3;
+    descriptorData[2].pName = "Samplers";
+    descriptorData[2].descriptorType = DESCRIPTOR_TYPE_SAMPLER;
+    descriptorData[2].ppSamplers = &mContext.mSamplerHandle[0];
+
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        BufferView cameraCBBufferView;
+        cameraCBBufferView.buffer = mContext.mCameraBufferHandle;
+        cameraCBBufferView.offset = SDFGICameraInfo::GetAlignedSizeInBytes() * i;
+        descriptorData[3].mCount = 1;
+        descriptorData[3].pName = "CameraCB";
+        descriptorData[3].descriptorType = DESCRIPTOR_TYPE_BUFFER_VIEW;
+        descriptorData[3].pBufferView = &cameraCBBufferView;
+
+
+        descriptorData[4].mCount = 1;
+        descriptorData[4].pName = "DDGIVolumes";
+        descriptorData[4].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+        descriptorData[4].ppBuffers = &mContext.mDDGIVolumeDescGPUPackedHandles[frameIndex];;
+
+        descriptorData[5].mCount = 1;
+        descriptorData[5].pName = "DDGIVolumeBindless";
+        descriptorData[5].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+        descriptorData[5].ppBuffers = &mContext.mDDGIVolumeResourceIndicesHandles[frameIndex];
+
+        rs->updateDescriptorSet(mDDGIFrameDatas[i].mIndirectZeroSet, 6, descriptorData);
+    }
+
+    
 }
 
 bool DDGIPass::CreateDDGIVolumeResourceIndicesBuffer(uint32_t volumeCount)
@@ -767,13 +841,13 @@ void DDGIPass::CompileDDGIVolumeShaders(const DDGIVolumeDesc& volumeDesc)
 
     mProbeBlendingIrradianceHandle = rs->createComputeProgram(shaderInfo);
 
-    mBlendingIrradianceDescriptorSet = rs->createDescriptorSet(mProbeBlendingIrradianceHandle, 0);
+    
 
     // Probe Blending (distance)
     shaderInfo.shaderMacros.clear();
     AddCommonShaderDefines(shaderInfo, volumeDesc, true);
     addMacro(shaderInfo, "RTXGI_DDGI_BLEND_RADIANCE", "0");
-    addMacro(shaderInfo, "RTXGI_DDGI_PROBE_NUM_TEXELS", numIrradianceTexels);
+    addMacro(shaderInfo, "RTXGI_DDGI_PROBE_NUM_TEXELS", numDistanceTexels);
     addMacro(shaderInfo, "RTXGI_DDGI_PROBE_NUM_INTERIOR_TEXELS", numDistanceInteriorTexels);
     addMacro(shaderInfo, "RTXGI_DDGI_BLEND_SHARED_MEMORY", std::to_string(RTXGI_DDGI_BLEND_SHARED_MEMORY));
 #if RTXGI_DDGI_BLEND_SHARED_MEMORY
@@ -781,7 +855,13 @@ void DDGIPass::CompileDDGIVolumeShaders(const DDGIVolumeDesc& volumeDesc)
 #endif
     addMacro(shaderInfo, "RTXGI_DDGI_BLEND_SCROLL_SHARED_MEMORY", std::to_string(volumeDesc.probeBlendingUseScrollSharedMemory));
     mProbeBlendingDistanceHandle = rs->createComputeProgram(shaderInfo);
-    mBlendingDistanceDescriptorSet = rs->createDescriptorSet(mProbeBlendingDistanceHandle, 0);
+
+    for (uint32_t i = 0; i < mContext.frameCount; i++)
+    {
+        mDDGIFrameDatas[i].blendingIrradianceDescriptorSet = rs->createDescriptorSet(mProbeBlendingIrradianceHandle, 0);
+        mDDGIFrameDatas[i].blendingDistanceDescriptorSet = rs->createDescriptorSet(mProbeBlendingDistanceHandle, 0);
+    }
+    
     //// Probe Relocation
     //{
     //    //update

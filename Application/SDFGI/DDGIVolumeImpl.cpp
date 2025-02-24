@@ -102,15 +102,16 @@
         {
             // Get the volume
             const DDGIVolume* volume = volumes[volumeIndex];
-
-            context->mVolumeDescGPUPacked[volumeIndex] = volume->GetDescGPUPacked();
-
+            DDGIVolumeDescGPUPacked packed = volume->GetDescGPUPacked();
+            context->mVolumeDescGPUPacked[volumeIndex] = packed;
+            DDGIVolumeDescGPU aa = UnpackDDGIVolumeDescGPU(packed);
+            int kk = 0;
            }
 
             auto* rs = Ogre::Root::getSingleton().getRenderSystem();
             rs->updateBufferObject(context->mDDGIVolumeDescGPUPackedHandles[bufferingIndex],
                 (const char*)context->mVolumeDescGPUPacked.data(),
-                DDGIVolumeResourceIndices::GetAlignedSizeInBytes() * numVolumes);
+                DDGIVolumeDescGPUPacked::GetAlignedSizeInBytes() * numVolumes);
         return ERTXGIStatus::OK;
     }
 

@@ -14,7 +14,7 @@ public:
     virtual void execute(RenderSystem* rs);
 private:
     bool loadAndCompileShaders();
-
+    void loadIndirectShader();
     void updateDescriptorSet();
     void updateDescriptorSetOfComputeShader();
 
@@ -36,10 +36,22 @@ private:
         const DDGIVolumeDesc& volumeDesc,
         DDGIVolumeResources& volumeResources);
 private:
+    struct DDGIFrameData
+    {
+        Handle<HwDescriptorSet> probeTracingZeroSet;
+        Handle<HwDescriptorSet> blendingIrradianceDescriptorSet;
+        Handle<HwDescriptorSet> blendingDistanceDescriptorSet;
+        Handle<HwComputeProgram> probeRelocationResetHandle;
+        Handle<HwComputeProgram> probeClassificationResetHandle;
+        Handle<HwComputeProgram> probeExtraReductionHandle;
+        Handle<HwDescriptorSet> mIndirectZeroSet;
+    };
+
+    std::vector<DDGIFrameData> mDDGIFrameDatas;
     Handle<HwRaytracingProgram> mProbeTracingHandle;
-    std::vector<Handle<HwDescriptorSet>> mProbeTracingZeroSets;
+
     Handle<HwComputeProgram> mIndirectHandle;
-    Handle<HwDescriptorSet> mIndirectZeroSet;
+    
     
 
 
@@ -48,19 +60,19 @@ private:
     
 
     Handle<HwComputeProgram> mProbeBlendingIrradianceHandle;
-    Handle<HwDescriptorSet> mBlendingIrradianceDescriptorSet;
+    
 
     Handle<HwComputeProgram> mProbeBlendingDistanceHandle;
-    Handle<HwDescriptorSet> mBlendingDistanceDescriptorSet;
+    
 
     Handle<HwComputeProgram> mProbeRelocationUpdateHandle;
-    Handle<HwComputeProgram> mProbeRelocationResetHandle;
+    
 
     Handle<HwComputeProgram> mProbeClassificationUpdateHandle;
-    Handle<HwComputeProgram> mProbeClassificationResetHandle;
+    
 
     Handle<HwComputeProgram> mProbeVariabilityReductionHandle;
-    Handle<HwComputeProgram> mProbeExtraReductionHandle;
+    
 
     
 

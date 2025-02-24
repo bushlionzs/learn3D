@@ -112,7 +112,7 @@ void SDFGIApp::update(float delta)
 	GlobalConstants& globalConstants = mContext.mGlobalConstants;
 	globalConstants.app.frameNumber = Ogre::Root::getSingleton().getCurrentFrame();
 	
-	//mContext.mGlobalConstants.composite.useFlags = COMPOSITE_FLAG_USE_DDGI;
+	mContext.mGlobalConstants.composite.useFlags = COMPOSITE_FLAG_USE_DDGI;
 	mRenderSystem->updateBufferObject(mContext.mGlobalConstHandle,
 		(const char*)&globalConstants, sizeof(globalConstants),
 		frameIndex * globalConstants.GetAlignedSizeInBytes());
@@ -498,7 +498,11 @@ void SDFGIApp::addPass()
 		mRenderPipeline->addRenderPass(pass);
 	}
 
-	/*PassBase* presentPass = new PresentPass(mContext.mGBufferTargetD, mRenderWindow);
+	
+
+	/*Ogre::OgreTexture* source = mContext.mGBufferTargetD->getTarget();
+	source = mContext.volumes[0]->GetProbeRayData();
+	PassBase* presentPass = new PresentPass(source, mRenderWindow);
 	presentPass->initialize();
 	mRenderPipeline->addRenderPass(presentPass);*/
 	
