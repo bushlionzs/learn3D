@@ -152,10 +152,11 @@ Ogre::OgreTexture* VulkanRenderSystemBase::createManualTexture(
     tex->load(nullptr);
     return tex;
 }
-
+#include "compressonator.h"
 void VulkanRenderSystemBase::ready()
 {
     VulkanHelper::getSingleton().loadDefaultResources();
+    CMP_InitFramework();
 }
 
 Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
@@ -217,7 +218,7 @@ void VulkanRenderSystemBase::clearRenderTexture(OgreTexture* tex, const Ogre::Ve
     subresourceRange.baseMipLevel = 0;
     subresourceRange.levelCount = tex->getNumMipmaps();
     subresourceRange.baseArrayLayer = 0;
-    subresourceRange.layerCount = 1;
+    subresourceRange.layerCount = tex->getFace();
     VkCommandBuffer cb = mCommands->get().buffer();
 
     VulkanTexture* vulkanTexture = (VulkanTexture*)tex;

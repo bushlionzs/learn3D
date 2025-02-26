@@ -1,4 +1,4 @@
-//#include "stdafx.h"
+#include "OgreHeader.h"
 #include "basic.h"
 #include "engine_manager.h"
 #include "myutils.h"
@@ -47,7 +47,7 @@ void BasicApplication::setup(
 
 	std::string dir = "D:\\godotProject\\Abandoned-Spaceship-Godot-Demo\\Models";
 	Ogre::ResourceManager::getSingletonPtr()->addDirectory(dir, "", false);
-	base2();
+	base1();
 }
 
 void BasicApplication::update(float delta)
@@ -133,7 +133,7 @@ void BasicApplication::base2()
 		Ogre::Vector3(0.0f, 3.0f, 15.0f),
 		Ogre::Vector3(0.0f, 0.0f, 0.0f));
 	mGameCamera->setMoveSpeed(20);
-	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
+	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
 

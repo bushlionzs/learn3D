@@ -54,9 +54,9 @@ struct DDGIVolumeDescGPUPacked
     Ogre::Vector3   origin;
     float    probeHysteresis;
     //------------------------------------------------- 16B
-    Ogre::Quaternion   rotation;
+    Ogre::Vector4   rotation;
     //------------------------------------------------- 32B
-    Ogre::Quaternion   probeRayRotation;
+    Ogre::Vector4   probeRayRotation;
     //------------------------------------------------- 48B
     float    probeMaxRayDistance;
     float    probeNormalBias;
@@ -102,8 +102,8 @@ struct DDGIVolumeDescGPU
 {
     Ogre::Vector3   origin;                             // world-space location of the volume center
 
-    Ogre::Quaternion   rotation;                           // rotation quaternion for the volume
-    Ogre::Quaternion   probeRayRotation;                   // rotation quaternion for probe rays
+    Ogre::Vector4   rotation;                           // rotation quaternion for the volume
+    Ogre::Vector4   probeRayRotation;                   // rotation quaternion for probe rays
 
     uint32_t     movementType;                       // type of movement the volume allows. 0: default, 1: infinite scrolling
 

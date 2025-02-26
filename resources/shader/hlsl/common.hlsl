@@ -110,9 +110,13 @@ struct PbrMaterialBlock
 	float4 u_BaseColorFactor;
 	float4 u_ScaleIBLAmbient;
     uint debugRenderMode;
+	uint hasAlbedoMap;
 	uint hasEmissiveMap;
     uint hasNormalMap;
     uint hasMetalRoughNessMap;
+	uint hasMetalMap;
+	uint hasRoughNessMap;
+	uint hasOcclusionMap;
 };
 
 RES(CBUFFER(PbrMaterialBlock), pbrMaterial, UPDATE_FREQ_NONE, b2, VKBINDING(2, 0));

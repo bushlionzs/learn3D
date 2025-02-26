@@ -97,7 +97,7 @@ void RayGen()
         0,
         ray,
         packedPayload);
-
+	
     
     // The ray missed. Store the miss radiance, set the hit distance to a large value, and exit early.
     if (packedPayload.hitT < 0.f)
@@ -109,7 +109,8 @@ void RayGen()
 
     // Unpack the payload
     Payload payload = UnpackPayload(packedPayload);
-
+	
+		
     // The ray hit a surface backface
     if (payload.hitKind == HIT_KIND_TRIANGLE_BACK_FACE)
     {
@@ -168,5 +169,6 @@ void RayGen()
 
     // Store the final ray radiance and hit distance
     float3 radiance = diffuse + ((min(payload.albedo, float3(maxAlbedo, maxAlbedo, maxAlbedo)) / PI) * irradiance);
+	radiance = diffuse;
     DDGIStoreProbeRayFrontfaceHit(RayData, outputCoords, volume, saturate(radiance), payload.hitT);
 }

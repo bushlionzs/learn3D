@@ -113,6 +113,10 @@ void SDFGIApp::update(float delta)
 	globalConstants.app.frameNumber = Ogre::Root::getSingleton().getCurrentFrame();
 	
 	mContext.mGlobalConstants.composite.useFlags = COMPOSITE_FLAG_USE_DDGI;
+	mContext.mGlobalConstants.post.useFlags =
+		POSTPROCESS_FLAG_USE_EXPOSURE |
+		POSTPROCESS_FLAG_USE_TONEMAPPING |
+		POSTPROCESS_FLAG_USE_GAMMA;
 	mRenderSystem->updateBufferObject(mContext.mGlobalConstHandle,
 		(const char*)&globalConstants, sizeof(globalConstants),
 		frameIndex * globalConstants.GetAlignedSizeInBytes());
@@ -461,7 +465,7 @@ void SDFGIApp::initResource()
 	};
 	globalConstants.pt.rayNormalBias = 0.01f;
 	globalConstants.lights.hasDirectionalLight = true;
-
+	globalConstants.post.exposure = 2.0f;
 	//lights
 	mContext.mlights.emplace_back();
 	SDFGILight& light = mContext.mlights.back();

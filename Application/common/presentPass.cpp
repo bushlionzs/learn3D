@@ -5,11 +5,11 @@
 #include "presentPass.h"
 
 PresentPass::PresentPass(
-	Ogre::RenderTarget* sourceTarget, 
+	Ogre::OgreTexture* source,
 	Ogre::RenderWindow* renderWindow,
 	const char* shaderName)
 {
-	mSourceTarget = sourceTarget;
+	mSourceTexture = source;
 	mRenderWindow = renderWindow;
 	if (shaderName)
 	{
@@ -60,12 +60,11 @@ bool PresentPass::initialize()
 	mZeroSet = rs->createDescriptorSet(presentHandle, 0);
 	Ogre::DescriptorData descriptorData[2];
 
-	auto* currentTaget = mSourceTarget;
-	Ogre::OgreTexture* sourceTex = currentTaget->getTarget();
+
 	descriptorData[0].mCount = 1;
 	descriptorData[0].pName = "SourceTexture";
 	descriptorData[0].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
-	descriptorData[0].ppTextures = (const Ogre::OgreTexture**)&sourceTex;
+	descriptorData[0].ppTextures = (const Ogre::OgreTexture**)&mSourceTexture;
 
 	descriptorData[1].mCount = 1;
 	descriptorData[1].pName = "repeatBillinearSampler";
@@ -78,20 +77,20 @@ bool PresentPass::initialize()
 void PresentPass::execute(RenderSystem* rs)
 {
 	{
-		Ogre::RenderTargetBarrier rtBarriers[] =
+		Ogre::TextureBarrier texBarriers[] =
 		{
 			{
-				mRenderWindow->getColorTarget(),
+				mRenderWindow->getColorTarget()->getTarget(),
 				Ogre::RESOURCE_STATE_PRESENT,
 				Ogre::RESOURCE_STATE_RENDER_TARGET
 			},
 			{
-				mSourceTarget,
+				mSourceTexture,
 				Ogre::RESOURCE_STATE_UNORDERED_ACCESS,
 				Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+		rs->resourceBarrier(0, nullptr, 2, texBarriers, 0, nullptr);
 	}
 	RenderPassInfo info;
 	info.renderTargetCount = 1;
@@ -108,20 +107,20 @@ void PresentPass::execute(RenderSystem* rs)
 	rs->popGroupMarker();
 
 	{
-		Ogre::RenderTargetBarrier rtBarriers[] =
+		Ogre::TextureBarrier texBarriers[] =
 		{
 			{
-				mRenderWindow->getColorTarget(),
+				mRenderWindow->getColorTarget()->getTarget(),
 				Ogre::RESOURCE_STATE_RENDER_TARGET,
 				Ogre::RESOURCE_STATE_PRESENT
 			},
 			{
-				mSourceTarget,
+				mSourceTexture,
 				Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 				Ogre::RESOURCE_STATE_UNORDERED_ACCESS
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+		rs->resourceBarrier(0, nullptr, 2, texBarriers, 0, nullptr);
 	}
 }
 

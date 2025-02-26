@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "ogreheader.h"
 #include <string_util.h>
 #include "PbrMaterial.h"
 #include "engine_manager.h"

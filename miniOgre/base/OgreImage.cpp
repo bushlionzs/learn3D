@@ -12,6 +12,7 @@
 #include "OgreBlp.h"
 #include <gli/gli.hpp>
 #include <platform_file.h>
+#include <compressonator.h>
 
 namespace Ogre {
 
@@ -239,39 +240,107 @@ namespace Ogre {
                 data = stbi_load_from_memory(stream_data, size,
                     (int*)&mImageInfo.width, (int*)&mImageInfo.height, (int*)&nrComponents, 0);
                 mImageInfo.format = format[nrComponents - 1];
-
-                
-                if (nrComponents == 2)
-                {
-                   /* std::unordered_set<uint32_t> aa;
-                    for (uint32_t i = 0; i < mImageInfo.width * mImageInfo.height; i++)
-                    {
-                        auto color = data[i * 2];
-                        auto alpha = data[i * 2 + 1];
-                        if (alpha != 0)
-                        {
-                            aa.insert(alpha);
-                        }
-                    }*/
-                    int kk = 0;
-                }
             }
-            
-
-            mPixelSize = nrComponents;
-            
-            
+         
+            mPixelSize = nrComponents;   
         }
 
-
-       // mNumMipmaps = 0;
         mImageData = data;
 
         mImageDataSize = calculateSize(mImageInfo);
-
-        if (mImageInfo.format == PF_L8)
+        bool compress = true;
+        if (compress)
         {
-            int kk = 0;
+            //compressonator lib crash in multi-thread, so add a mutex
+            static std::mutex _mutex;
+            std::unique_lock<std::mutex> lock(_mutex);
+            if (mImageInfo.format == Ogre::PF_BYTE_RGBA)
+            {
+                CMP_MipSet mipSet = {};
+                uint32_t width = mImageInfo.width;
+                uint32_t height = mImageInfo.height;
+                mipSet.m_nWidth = width;
+                mipSet.m_nHeight = height;
+                mipSet.m_nDepth = 1;
+                mipSet.m_format = CMP_FORMAT_RGBA_8888;
+                mipSet.m_nMipLevels = 1;
+
+                
+                uint32_t maxMipLevels = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
+                mipSet.m_nMaxMipLevels = maxMipLevels;
+                CMP_MipLevel dummy[20];
+                mipSet.m_pMipLevelTable = (CMP_MipLevelTable*)malloc(sizeof(CMP_MipLevel*)* maxMipLevels);
+                for (uint32_t i = 0; i < maxMipLevels; i++)
+                {
+                    mipSet.m_pMipLevelTable[i] = &dummy[i];
+                }
+                CMP_MipLevel* mipLevel = mipSet.m_pMipLevelTable[0];
+                mipLevel->m_nWidth = width;
+                mipLevel->m_nHeight = height;
+                mipLevel->m_dwLinearSize = mImageDataSize;
+                mipLevel->m_pbData = (CMP_BYTE*)malloc(mImageDataSize);
+                memcpy(mipLevel->m_pbData, data, mImageDataSize);
+
+                CMP_INT result = CMP_GenerateMIPLevels(&mipSet, 1);
+                if (result != CMP_OK)
+                {
+                    assert_invariant(false);
+                }
+
+                
+
+                delete mImageData;
+                mImageInfo.format = PF_BC7_UNORM;
+                mImageInfo.num_mipmaps  = maxMipLevels - 1;
+                mImageDataSize = calculateSize(mImageInfo);
+                mImageData = (unsigned char*)malloc(mImageDataSize);
+                
+
+                uint32_t offset = 0;
+                for (uint32_t i = 0; i < maxMipLevels; i++)
+                {
+                    CMP_MipLevel* level = mipSet.m_pMipLevelTable[i];
+                    CMP_Texture srcTexture = { 0 };
+                    srcTexture.dwSize = sizeof(CMP_Texture);
+                    srcTexture.dwWidth = width;
+                    srcTexture.dwHeight = height;
+                    srcTexture.format = CMP_FORMAT_RGBA_8888;
+                    srcTexture.dwDataSize = level->m_dwLinearSize;
+                    srcTexture.pData = (CMP_BYTE*)level->m_pbData;
+
+                    CMP_Texture dstTexture = { 0 };
+                    dstTexture.dwSize = sizeof(CMP_Texture);
+                    dstTexture.dwWidth = width;
+                    dstTexture.dwHeight = height;
+                    dstTexture.format = CMP_FORMAT_BC7;
+                    dstTexture.pData = mImageData + offset;
+                    dstTexture.dwDataSize = CMP_CalculateBufferSize(&dstTexture);
+                    
+                    offset += dstTexture.dwDataSize;
+
+                    CMP_CompressOptions options = { 0 };
+                    options.dwSize = sizeof(CMP_CompressOptions);
+                    options.nCompressionSpeed = CMP_Speed_Normal;
+
+
+                    result = CMP_ConvertTexture(&srcTexture, &dstTexture, &options, nullptr);
+                    if (result != CMP_OK)
+                    {
+                        assert_invariant(false);
+                    }
+
+                    if(width > 1)width >>= 1;
+                    if(height > 1)height >>= 1;
+                }
+
+                
+                for (uint32_t i = 0; i < maxMipLevels; i++)
+                {
+                    CMP_MipLevel* level = mipSet.m_pMipLevelTable[i];
+                    free(level->m_pbData);
+                }
+                free(mipSet.m_pMipLevelTable);
+            }
         }
         
 

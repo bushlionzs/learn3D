@@ -49,7 +49,7 @@ private:
 	CEGUI::Window* mRoot = nullptr;
 	std::vector<Ogre::Entity*> matBallList;
 	uint32_t example_type = 1;
-	Entity* gltfEntity = nullptr;
+	Ogre::Entity* gltfEntity = nullptr;
 	Ogre::OgreTexture* prefilteredMap = nullptr;
 	Ogre::OgreTexture* irradianceMap = nullptr;
 	Ogre::OgreTexture* brdf = nullptr;

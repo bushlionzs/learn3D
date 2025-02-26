@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "ogreheader.h"
 #include <pbrWindow.h>
 #include "PbrMaterial.h"
 

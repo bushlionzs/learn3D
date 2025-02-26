@@ -108,11 +108,11 @@ struct DDGIVolumeDesc
     float           probeNormalBias = 0.1f;                 // A small offset along the surface normal applied to the shaded surface point to avoid numerical instabilities when determining visibility
 
     // Format type for probe texture atlases
-    Ogre::PixelFormat probeRayDataFormat;            // Texel format for the ray data texture, used with GetDDGIVolumeTextureFormat()
-    Ogre::PixelFormat probeIrradianceFormat;         // Texel format for the irradiance texture, used with GetDDGIVolumeTextureFormat()
-    Ogre::PixelFormat probeDistanceFormat;           // Texel format for the distance texture, used with GetDDGIVolumeTextureFormat()
-    Ogre::PixelFormat probeDataFormat;               // Texel format for the probe data texture, used with GetDDGIVolumeTextureFormat()
-    Ogre::PixelFormat probeVariabilityFormat;        // Texel format index for the probe variability texture, used with GetDDGIVolumeTextureFormat()
+    EDDGIVolumeTextureFormat probeRayDataFormat;            // Texel format for the ray data texture, used with GetDDGIVolumeTextureFormat()
+    EDDGIVolumeTextureFormat probeIrradianceFormat;         // Texel format for the irradiance texture, used with GetDDGIVolumeTextureFormat()
+    EDDGIVolumeTextureFormat probeDistanceFormat;           // Texel format for the distance texture, used with GetDDGIVolumeTextureFormat()
+    EDDGIVolumeTextureFormat probeDataFormat;               // Texel format for the probe data texture, used with GetDDGIVolumeTextureFormat()
+    EDDGIVolumeTextureFormat probeVariabilityFormat;        // Texel format index for the probe variability texture, used with GetDDGIVolumeTextureFormat()
 
     // Using shared memory for scroll tests in probe blending can be a performance win on some hardware by reducing the compute workload
     bool            probeBlendingUseScrollSharedMemory = false;
@@ -399,12 +399,12 @@ protected:
 
     DDGIVolumeDesc m_desc;                                                 // Properties of the volume
     // Quaternion defining the orientation of the volume (constructed from m_rotationMatrix)
-    Ogre::Quaternion         m_rotationQuaternion = { 0.f, 0.f, 0.f, 1.f };          
+    Ogre::Vector4         m_rotationQuaternion = { 0.f, 0.f, 0.f, 1.f };          
     // Matrix defining the orientation of the volume
     Ogre::Matrix3       m_rotationMatrix = Ogre::Matrix3::IDENTITY;
 
     // Quaternion defining the orientation of probe rays (constructed from m_probeRayRotationMatrix)
-    Ogre::Quaternion         m_probeRayRotationQuaternion = { 0.f, 0.f, 0.f, 1.f };  
+    Ogre::Vector4         m_probeRayRotationQuaternion = { 0.f, 0.f, 0.f, 1.f };
     // Matrix defining the orientation of probe rays, updated every time Update() is called
     Ogre::Matrix3       m_probeRayRotationMatrix = Ogre::Matrix3::IDENTITY;
     // The anchor position for a scrolling volume to target for it's effective origin

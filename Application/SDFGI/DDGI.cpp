@@ -127,7 +127,10 @@ void DDGIPass::update(float delta)
  
     uint64_t frameIndex =  Ogre::Root::getSingleton().getCurrentFrameIndex();
     DDGIVolume** volumes = mContext.volumes.data();
-    
+    for (uint32_t i = 0; i < numVolumes; i++)
+    {
+        volumes[i]->Update();
+    }
 
     UploadDDGIVolumeResourceIndices(&mContext, frameIndex, numVolumes, volumes);
     UploadDDGIVolumeConstants(&mContext, frameIndex, numVolumes, mContext.volumes.data());
@@ -405,20 +408,6 @@ void DDGIPass::updateDescriptorSetOfComputeShader()
     descriptorData[3].descriptorType = DESCRIPTOR_TYPE_RW_TEXTURE;
     descriptorData[3].ppTextures = (const OgreTexture**)rwTex2DArray.data();
 
-    /*std::array<OgreTexture*, 7> rwTex2D =
-    {
-        mContext.mGBufferTargetA->getTarget(),
-        mContext.mGBufferTargetB->getTarget(),
-        mContext.mGBufferTargetC->getTarget(),
-        mContext.mGBufferTargetD->getTarget(),
-        mContext.mIndirectTarget->getTarget(),
-        nullptr,
-        nullptr
-    };
-    descriptorData[4].mCount = rwTex2D.size();
-    descriptorData[4].pName = "Tex2DArray";
-    descriptorData[4].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
-    descriptorData[4].ppTextures = (const OgreTexture**)rwTex2D.data();*/
 
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 
@@ -946,6 +935,26 @@ void DDGIPass::AddCommonShaderDefines(
     addMacro(shaderInfo, "RTXGI_DDGI_DEBUG_BORDER_COPY_INDEXING", std::to_string(RTXGI_DDGI_DEBUG_BORDER_COPY_INDEXING));
 }
 
+Ogre::PixelFormat mappingPixFormat(EDDGIVolumeTextureFormat ddgiTextureFormat)
+{
+    switch (ddgiTextureFormat)
+    {
+    case EDDGIVolumeTextureFormat::U32:
+        return Ogre::PixelFormat::PF_A2B10G10R10;
+    case EDDGIVolumeTextureFormat::F32x2:
+        return Ogre::PixelFormat::PF_FLOAT32_GR;
+    case EDDGIVolumeTextureFormat::F16x2:
+        return Ogre::PixelFormat::PF_FLOAT16_GR;
+    case EDDGIVolumeTextureFormat::F16x4:
+        return Ogre::PixelFormat::PF_FLOAT16_RGBA;
+    case EDDGIVolumeTextureFormat::F16:
+        return Ogre::PixelFormat::PF_FLOAT16_R;
+    default:
+        assert_invariant(false);
+    }
+
+    return Ogre::PixelFormat::PF_FLOAT16_RGBA;
+}
 bool DDGIPass::CreateDDGIVolumeResources(
     const DDGIVolumeDesc& volumeDesc,
     DDGIVolumeResources& volumeResources)
@@ -968,7 +977,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
            
             TextureProperty texProperty;
             texProperty._texType = TEX_TYPE_2D_ARRAY;
-            texProperty._tex_format = volumeDesc.probeRayDataFormat;
+            texProperty._tex_format = mappingPixFormat(volumeDesc.probeRayDataFormat);
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
@@ -984,7 +993,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
             
             TextureProperty texProperty;
             texProperty._texType = TEX_TYPE_2D_ARRAY;
-            texProperty._tex_format = volumeDesc.probeIrradianceFormat;
+            texProperty._tex_format = mappingPixFormat(volumeDesc.probeIrradianceFormat);
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
@@ -1000,7 +1009,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
             
             TextureProperty texProperty;
             texProperty._texType = TEX_TYPE_2D_ARRAY;
-            texProperty._tex_format = volumeDesc.probeDistanceFormat;
+            texProperty._tex_format = mappingPixFormat(volumeDesc.probeDistanceFormat);
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
@@ -1017,7 +1026,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
           
             TextureProperty texProperty;
             texProperty._texType = TEX_TYPE_2D_ARRAY;
-            texProperty._tex_format = volumeDesc.probeDataFormat;
+            texProperty._tex_format = mappingPixFormat(volumeDesc.probeDataFormat);
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
@@ -1034,7 +1043,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
             
             TextureProperty texProperty;
             texProperty._texType = TEX_TYPE_2D_ARRAY;
-            texProperty._tex_format = volumeDesc.probeVariabilityFormat;
+            texProperty._tex_format = mappingPixFormat(volumeDesc.probeVariabilityFormat);
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
@@ -1051,7 +1060,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
          
             TextureProperty texProperty;
             texProperty._texType = TEX_TYPE_2D_ARRAY;
-            texProperty._tex_format = volumeDesc.probeVariabilityFormat;
+            texProperty._tex_format = mappingPixFormat(volumeDesc.probeVariabilityFormat);
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;

@@ -108,7 +108,8 @@ float4 PS(PSInput input) : SV_TARGET
         if (ppUseFlags & POSTPROCESS_FLAG_USE_GAMMA) return float4(ambientOcclusion.xxx, 1.f);
         return float4(LinearToSRGB(ambientOcclusion.xxx), 1.f);
     }
-
+	
+	showFlags = COMPOSITE_FLAG_SHOW_DDGI_INDIRECT;
     if ((useFlags & COMPOSITE_FLAG_USE_DDGI) && (showFlags & COMPOSITE_FLAG_SHOW_DDGI_INDIRECT))
     {
         // Show only the indirect lighting from DDGI
@@ -120,7 +121,6 @@ float4 PS(PSInput input) : SV_TARGET
     // Early out, no post processing
     if (ppUseFlags == POSTPROCESS_FLAG_USE_NONE)
 	{
-	    //return float4(0.2, 0.0, 0.0, 1.f);
 	    return float4(color, 1.f);
 	}
 	

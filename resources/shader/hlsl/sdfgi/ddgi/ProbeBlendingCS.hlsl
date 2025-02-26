@@ -477,7 +477,10 @@ void DDGIProbeBlendingCS(
         // Irradiance.hlsl line 138).
         result.rgb *= 1.f / (2.f * max(result.a, epsilon));
         result.a = 1.f;
-
+		
+		result.rgb = pow(result.rgb, (1.f / volume.probeIrradianceEncodingGamma));
+		Output[DispatchThreadID] = result;
+        return;
         // Get the irradiance mean stored in the probe
         float3 probeIrradianceMean = Output[DispatchThreadID].rgb;
 
@@ -489,7 +492,8 @@ void DDGIProbeBlendingCS(
     #if RTXGI_DDGI_BLEND_RADIANCE
         // Tone-mapping gamma adjustment
         result.rgb = pow(result.rgb, (1.f / volume.probeIrradianceEncodingGamma));
-
+		Output[DispatchThreadID] = result;
+        return;
         // Get the difference between the current irradiance and the irradiance mean stored in the probe
         float3 delta = (result.rgb - probeIrradianceMean.rgb);
 

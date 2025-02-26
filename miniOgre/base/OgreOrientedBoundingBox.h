@@ -6,7 +6,7 @@ namespace Ogre {
     {
     public:
         Vector3 origin;
-        Quaternion rotation;
+        Vector4 rotation;
         Vector3 e;          
     public:
         inline OrientedBoundingBox() 

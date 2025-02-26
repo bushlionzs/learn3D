@@ -12,7 +12,6 @@
 
 
 #include <DDGIVolume.h>
-#include <OgrePixelFormat.h>
 #include "ddgiTypes.h"
 
 namespace Configs
@@ -22,11 +21,11 @@ namespace Configs
 
     struct DDGIVolumeTextures
     {
-        Ogre::PixelFormat rayDataFormat;
-        Ogre::PixelFormat irradianceFormat;
-        Ogre::PixelFormat distanceFormat;
-        Ogre::PixelFormat dataFormat;
-        Ogre::PixelFormat variabilityFormat;
+        EDDGIVolumeTextureFormat rayDataFormat;
+        EDDGIVolumeTextureFormat irradianceFormat;
+        EDDGIVolumeTextureFormat distanceFormat;
+        EDDGIVolumeTextureFormat dataFormat;
+        EDDGIVolumeTextureFormat variabilityFormat;
     };
 
     struct DDGIVolume

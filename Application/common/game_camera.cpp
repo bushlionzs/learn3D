@@ -225,11 +225,10 @@ bool GameCamera::update(float delta)
     if (mGoingForward || mGoingBack || mGoingLeft || mGoingRight || mGoingUp || mGoingDown)
     {
         mChanged = true;
-        auto rot = Ogre::Math::makeRotateMatrixYX(x, y);
-
-        auto right = -rot.getRight();
+        auto rot = mCamera->getViewMatrix();
+        auto right = rot.getRight();
         auto up = rot.getUp();
-        auto forward = right.crossProduct(up);
+        auto forward = -rot.getForward();
 
         float moveSpeed = delta * mMoveSpeed;
 

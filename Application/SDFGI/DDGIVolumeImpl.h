@@ -205,11 +205,11 @@ public:
     uint64_t GetConstantsBufferSizeInBytes() const { return m_constantsBufferSizeInBytes; }
 
     // Texture Arrays Format
-    Ogre::PixelFormat GetRayDataFormat() const { return m_desc.probeRayDataFormat; }
-    Ogre::PixelFormat GetIrradianceFormat() const { return m_desc.probeIrradianceFormat; }
-    Ogre::PixelFormat GetDistanceFormat() const { return m_desc.probeDistanceFormat; }
-    Ogre::PixelFormat GetProbeDataFormat() const { return m_desc.probeDataFormat; }
-    Ogre::PixelFormat GetProbeVariabilityFormat() const { return m_desc.probeVariabilityFormat; }
+    EDDGIVolumeTextureFormat GetRayDataFormat() const { return m_desc.probeRayDataFormat; }
+    EDDGIVolumeTextureFormat GetIrradianceFormat() const { return m_desc.probeIrradianceFormat; }
+    EDDGIVolumeTextureFormat GetDistanceFormat() const { return m_desc.probeDistanceFormat; }
+    EDDGIVolumeTextureFormat GetProbeDataFormat() const { return m_desc.probeDataFormat; }
+    EDDGIVolumeTextureFormat GetProbeVariabilityFormat() const { return m_desc.probeVariabilityFormat; }
 
     // Texture Arrays
     OgreTexture* GetProbeRayData() const { 
@@ -343,23 +343,23 @@ public:
     }
 
     // Texture Array Format
-    void SetRayDataFormat(Ogre::PixelFormat format) 
+    void SetRayDataFormat(EDDGIVolumeTextureFormat format)
     { 
         m_desc.probeRayDataFormat = format; 
     }
-    void SetIrradianceFormat(Ogre::PixelFormat format)
+    void SetIrradianceFormat(EDDGIVolumeTextureFormat format)
     { 
         m_desc.probeIrradianceFormat = format; 
     }
-    void SetDistanceFormat(Ogre::PixelFormat format)
+    void SetDistanceFormat(EDDGIVolumeTextureFormat format)
     { 
         m_desc.probeDistanceFormat = format; 
     }
-    void SetProbeDataFormat(Ogre::PixelFormat format)
+    void SetProbeDataFormat(EDDGIVolumeTextureFormat format)
     { 
         m_desc.probeDataFormat = format; 
     }
-    void SetProbeVariabilityFromat(Ogre::PixelFormat format)
+    void SetProbeVariabilityFromat(EDDGIVolumeTextureFormat format)
     { 
         m_desc.probeVariabilityFormat = format; 
     }

@@ -132,9 +132,9 @@ namespace Configs
         destination = (ELightType)stoi(source);
     }
 
-    void Store(std::string source, Ogre::PixelFormat& destination)
+    void Store(std::string source, EDDGIVolumeTextureFormat& destination)
     {
-        destination = (Ogre::PixelFormat)stoi(source);
+        destination = (EDDGIVolumeTextureFormat)stoi(source);
     }
 
     void Store(std::string source, EDDGIVolumeProbeVisType& destination)

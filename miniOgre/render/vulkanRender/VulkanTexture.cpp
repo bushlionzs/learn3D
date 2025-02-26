@@ -137,21 +137,6 @@ void VulkanTexture::createInternalResourcesImpl(void)
     createTextureSampler();
 
     _createSurfaceList();
-
-    /*if (mTextureProperty._tex_usage & WRITEABLE)
-    {
-        TransferCommandInfo* commandInfo = VulkanHelper::getSingleton().beginTransferCommand();
-        TextureBarrier uavBarriers[] = {
-                {
-                this,
-                RESOURCE_STATE_UNDEFINED,
-                RESOURCE_STATE_UNORDERED_ACCESS},
-        };
-
-        auto queueFamilyIndex = VulkanHelper::getSingleton().getTransferFamilyIndex();
-        vks::tools::resourceBarrier(0, nullptr, 1, uavBarriers, 0, nullptr, QUEUE_TYPE_TRANSFER, 0, commandInfo->commandBuffer);
-        VulkanHelper::getSingleton().endTransferCommand(commandInfo);
-    }*/
 }
 
 
@@ -297,6 +282,7 @@ void VulkanTexture::createImage(
     switch (mTextureProperty._texType)
     {
     case TEX_TYPE_2D:
+    case TEX_TYPE_CUBE_MAP:
         imageInfo.imageType = VK_IMAGE_TYPE_2D;
         break;
     case TEX_TYPE_2D_ARRAY:

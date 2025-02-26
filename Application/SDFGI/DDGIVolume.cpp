@@ -293,55 +293,55 @@ uint32_t DDGIVolumeBase::GetGPUMemoryUsedInBytes() const
     uint32_t numDistanceTexelsPerProbe = (m_desc.probeNumDistanceTexels * m_desc.probeNumDistanceTexels);
 
     // Get the number of bytes per ray data texel
-    if (m_desc.probeRayDataFormat == PF_FLOAT32_GR)
+    if (m_desc.probeRayDataFormat == EDDGIVolumeTextureFormat::F32x2)
     {
         numRayDataBytesPerTexel = 8;
     }
-    else if (m_desc.probeRayDataFormat == PF_FLOAT32_RGBA)
+    else if (m_desc.probeRayDataFormat == EDDGIVolumeTextureFormat::F32x4)
     {
         numRayDataBytesPerTexel = 16;
     }
 
     // Get the number of bytes per irradiance texel
-    if (m_desc.probeIrradianceFormat == PF_A2B10G10R10)
+    if (m_desc.probeIrradianceFormat == EDDGIVolumeTextureFormat::U32)
     {
         numIrradianceBytesPerTexel = 4;
     }
-    else if (m_desc.probeIrradianceFormat == PF_FLOAT16_RGBA)
+    else if (m_desc.probeIrradianceFormat == EDDGIVolumeTextureFormat::F16x4)
     {
         numIrradianceBytesPerTexel = 8;
     }
-    else if (m_desc.probeIrradianceFormat == PF_FLOAT32_RGBA)
+    else if (m_desc.probeIrradianceFormat == EDDGIVolumeTextureFormat::F32x4)
     {
         numIrradianceBytesPerTexel = 16;
     }
 
     // Get the number of bytes per distance texel
-    if (m_desc.probeDistanceFormat == PF_FLOAT16_GR)
+    if (m_desc.probeDistanceFormat == EDDGIVolumeTextureFormat::F16x2)
     {
         numDistanceBytesPerTexel = 4;
     }
-    else if (m_desc.probeIrradianceFormat == PF_FLOAT32_GR)
+    else if (m_desc.probeIrradianceFormat == EDDGIVolumeTextureFormat::F32x2)
     {
         numDistanceBytesPerTexel = 8;
     }
 
     // Get the number of bytes per probe data texel
-    if (m_desc.probeDataFormat == PF_FLOAT16_RGBA)
+    if (m_desc.probeDataFormat == EDDGIVolumeTextureFormat::F16x4)
     {
         numProbeDataBytesPerTexel = 8;
     }
-    else if (m_desc.probeDataFormat == PF_FLOAT32_RGBA)
+    else if (m_desc.probeDataFormat == EDDGIVolumeTextureFormat::F32x4)
     {
         numProbeDataBytesPerTexel = 16;
     }
 
     // Get the number of bytes per probe variability texel
-    if (m_desc.probeVariabilityFormat == PF_FLOAT16_R)
+    if (m_desc.probeVariabilityFormat == EDDGIVolumeTextureFormat::F16)
     {
         numProbeVariabilityBytesPerTexel = 2;
     }
-    else if (m_desc.probeVariabilityFormat == PF_FLOAT32_R)
+    else if (m_desc.probeVariabilityFormat == EDDGIVolumeTextureFormat::F32)
     {
         numProbeVariabilityBytesPerTexel = 4;
     }
@@ -400,7 +400,12 @@ void DDGIVolumeBase::SetEulerAngles(const Ogre::Vector3& eulerAngles)
         m_desc.eulerAngles = eulerAngles;
         assert(false);
         //m_rotationMatrix.FromAngleAxis(eulerAngles); to do
-        m_rotationQuaternion.FromRotationMatrix(m_rotationMatrix);
+        Ogre::Quaternion quat;
+        quat.FromRotationMatrix(m_rotationMatrix);
+        m_rotationQuaternion.x = quat.x;
+        m_rotationQuaternion.y = quat.y;
+        m_rotationQuaternion.z = quat.z;
+        m_rotationQuaternion.w = quat.w;
     }
 }
 
@@ -418,6 +423,7 @@ void DDGIVolumeBase::SeedRNG(const int seed)
 
 float DDGIVolumeBase::GetRandomFloat()
 {
+    return 0.1f;
     return s_distribution(m_rng);
 }
 
@@ -510,7 +516,12 @@ void DDGIVolumeBase::ComputeRandomRotation()
 
     m_probeRayRotationMatrix = transform;
 
-    m_probeRayRotationQuaternion.FromRotationMatrix(m_probeRayRotationMatrix);
+    Ogre::Quaternion quat;
+    quat.FromRotationMatrix(m_probeRayRotationMatrix);
+    m_probeRayRotationQuaternion.x = quat.x;
+    m_probeRayRotationQuaternion.y = quat.y;
+    m_probeRayRotationQuaternion.z = quat.z;
+    m_probeRayRotationQuaternion.w = quat.w;
 }
 
 Ogre::Vector3i DDGIVolumeBase::GetProbeGridCoords(int probeIndex) const

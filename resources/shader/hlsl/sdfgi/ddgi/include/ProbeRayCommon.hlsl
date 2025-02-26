@@ -19,9 +19,14 @@
 
 void DDGIStoreProbeRayMiss(RWTexture2DArray<float4> RayData, uint3 coords, DDGIVolumeDescGPU volume, float3 radiance)
 {
-    RayData[coords] = float4(asfloat(RTXGIFloat3ToUint(radiance)), 1e27f, 0.f, 0.f);
-	RayData[coords] = float4(0.2, 0.2, 0.f, 0.f);
-    
+    if (volume.probeRayDataFormat == RTXGI_DDGI_VOLUME_TEXTURE_FORMAT_F32x4)
+    {
+        RayData[coords] = float4(radiance, 1e27f);
+    }
+    else if (volume.probeRayDataFormat == RTXGI_DDGI_VOLUME_TEXTURE_FORMAT_F32x2)
+    {
+        RayData[coords] = float4(asfloat(RTXGIFloat3ToUint(radiance)), 1e27f, 0.f, 0.f);
+    }
 }
 
 void DDGIStoreProbeRayFrontfaceHit(RWTexture2DArray<float4> RayData, uint3 coords, DDGIVolumeDescGPU volume, float3 radiance, float hitT)

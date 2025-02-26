@@ -227,47 +227,52 @@ VertexOut VS(VertexIn vIn)
 
 float4 PS(VertexOut pin) : SV_Target
 {
-    // Metallic and Roughness material properties are packed together
-    // In glTF, these factors can be specified by fixed scalar values
-    // or from a metallic-roughness map
-#ifdef HAS_METALROUGHNESSMAP
-    // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
-    // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
-    float4 mrSample = metal_roughness_pbr.Sample(metalRoughnessSampler, pin.v_UV);
-	float metalness = mrSample.b;
-    float roughness = mrSample.g;
-#else
     float roughness = pbrMaterial.u_MetallicRoughnessValues.y;
     float metalness = pbrMaterial.u_MetallicRoughnessValues.x;
+	
+	if(pbrMaterial.hasMetalRoughNessMap > 0)
+	{
+	// Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
+    // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
+	    float4 mrSample = metal_roughness_pbr.Sample(metalRoughnessSampler, pin.v_UV);
+	    metalness = mrSample.b;
+        roughness = mrSample.g;
+	}
+    
+    
+ 
 	roughness = clamp(roughness, 0.04, 1.0);
     metalness = clamp(metalness, 0.0, 1.0);
-#endif
+
   
 
-    #ifdef HAS_METALMAP
-        metalness = metal_roughness_pbr.Sample(metalRoughnessSampler, pin.v_UV).r;
-    #endif
-
-    #ifdef HAS_ROUGHNESSMAP
-        roughness = roughness_pbr.Sample(roughnessSampler, pin.v_UV).r;
-    #endif
-
-    // The albedo may be defined from a base texture or a flat color
-	float4 baseColorSource = float4(1.0f, 1.0f, 1.0f, 1.0f);
-#ifdef HAS_BASECOLORMAP
-    baseColorSource = albedo_pbr.Sample(albedoSampler, pin.v_UV);
-    float4 baseColor = SRGBtoLINEAR(baseColorSource) * pbrMaterial.u_BaseColorFactor;
-	
-	if (pbrMaterial.alphaMode == 2)
+    if(pbrMaterial.hasMetalMap > 0)
 	{
-		if (baseColorSource.a < pbrMaterial.alpha_mask_cutoff)
-		{
-			discard;
-		}
+	    metalness = metal_roughness_pbr.Sample(metalRoughnessSampler, pin.v_UV).r;
 	}
-#else
-    float4 baseColor = pbrMaterial.u_BaseColorFactor;
-#endif
+ 
+    if(pbrMaterial.hasRoughNessMap > 0)
+	{
+	    roughness = roughness_pbr.Sample(roughnessSampler, pin.v_UV).r;
+	}
+    
+	float4 baseColorSource = pbrMaterial.u_BaseColorFactor;
+	float4 baseColor = baseColorSource;
+    if( pbrMaterial.hasAlbedoMap > 0)
+	{
+        baseColorSource = albedo_pbr.Sample(albedoSampler, pin.v_UV);
+		baseColor = SRGBtoLINEAR(baseColorSource) * pbrMaterial.u_BaseColorFactor;
+		
+		if (pbrMaterial.alphaMode == 2)
+		{
+			if (baseColorSource.a < pbrMaterial.alpha_mask_cutoff)
+			{
+				discard;
+			}
+		}    
+	}
+    
+	
     float3 f0 = float3(0.04, 0.04, 0.04);
 	
 	float alphaRoughness = roughness * roughness;
@@ -284,11 +289,12 @@ float4 PS(VertexOut pin) : SV_Target
 	
 	float3 inWorldPos = pin.PosW;
 	float3 inNormal = pin.NormalW;
-#ifdef HAS_NORMALMAP
-	float3 n = getPbrNormal(inWorldPos, inNormal, pin.v_UV);
-#else
-    float3 n = inNormal;
-#endif
+	float3 n = inNormal;
+	if( pbrMaterial.hasNormalMap > 0)
+	{
+	    n = getPbrNormal(inWorldPos, inNormal, pin.v_UV);
+	}
+
     //n.y *= -1.0f;
 	
 	float3 v = normalize(cbPass.gEyePosW - inWorldPos);        // Vector from surface point to camera
@@ -340,15 +346,19 @@ float4 PS(VertexOut pin) : SV_Target
 #endif
     // Apply optional PBR terms for additional (optional) shading
 	float ao = 0.0f;
-#ifdef HAS_OCCLUSIONMAP
-	ao = ao_pbr.Sample(aoSampler, pin.v_UV).r;
-    color = lerp(color, color * ao, pbrMaterial.u_OcclusionStrength);
-#endif
+    if( pbrMaterial.hasOcclusionMap > 0)
+	{
+        ao = ao_pbr.Sample(aoSampler, pin.v_UV).r;
+        color = lerp(color, color * ao, pbrMaterial.u_OcclusionStrength);    
+	}
+	
 
-#ifdef HAS_EMISSIVEMAP
-	float3 emissive = emissive_pbr.Sample(emissiveSampler ,pin.v_UV).rgb * pbrMaterial.u_EmissiveFactor;
-    color += emissive;
-#endif
+    if( pbrMaterial.hasEmissiveMap > 0)
+	{
+	    float3 emissive = emissive_pbr.Sample(emissiveSampler ,pin.v_UV).rgb * pbrMaterial.u_EmissiveFactor;
+        color += emissive;
+	}
+
     
 	float4 outColor = float4(color, baseColor.a);
 		

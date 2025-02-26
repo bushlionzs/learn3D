@@ -262,5 +262,5 @@ PassBase* createPresentPass(
 	Ogre::RenderWindow* renderWindow,
 	const char* shaderName)
 {
-	return new PresentPass(sourceTarget, renderWindow, shaderName);
+	return new PresentPass(sourceTarget->getTarget(), renderWindow, shaderName);
 }

@@ -534,7 +534,12 @@
         // Store the volume rotation
         m_rotationMatrix = EulerAnglesToRotationMatrix(desc.eulerAngles);
 
-        m_rotationQuaternion.FromRotationMatrix(m_rotationMatrix);
+        Ogre::Quaternion quat;
+        quat.FromRotationMatrix(m_rotationMatrix);
+        m_rotationQuaternion.x = quat.x;
+        m_rotationQuaternion.y = quat.y;
+        m_rotationQuaternion.z = quat.z;
+        m_rotationQuaternion.w = quat.w;
         // Set the default scroll anchor to the origin
         m_probeScrollAnchor = m_desc.origin;
 

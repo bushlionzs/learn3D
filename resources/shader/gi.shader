@@ -325,6 +325,21 @@ shader ProbeExtraReductionCS
 	 }
 }
 
+shader IndirectCS
+{
+     shader_unit
+	 {
+		shader_type directx
+		compute_shader IndirectCS.hlsl CS 
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		compute_shader IndirectCS.hlsl CS 
+	 }
+}
+
 shader CompositePass
 {
     shader_unit
