@@ -511,8 +511,6 @@ void DDGIPass::updateDescriptorSet()
     }
 
     std::vector<OgreTexture*> tex2D;
-    tex2D.push_back(nullptr);
-    tex2D.push_back(nullptr);
 
     for (auto tex : mContext.sceneTextureList)
     {
