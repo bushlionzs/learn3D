@@ -58,7 +58,7 @@ void CHS_GI(inout PackedPayload packedPayload, BuiltInTriangleIntersectionAttrib
         payload.opacity *= bco.a;
     }
 
-	payload.albedo = float3(0.137, 0.573, 0.719);
+	//payload.albedo = float3(0.137, 0.573, 0.719);
     // Shading normal
     if (material.normalTexIdx > -1)
     {
@@ -73,7 +73,7 @@ void CHS_GI(inout PackedPayload packedPayload, BuiltInTriangleIntersectionAttrib
         payload.shadingNormal = (payload.shadingNormal * 2.f) - 1.f;    // Transform to [-1, 1]
         payload.shadingNormal = mul(payload.shadingNormal, TBN);        // Transform tangent-space normal to world-space
     }
-
+	
     // Pack the payload
     packedPayload = PackPayload(payload);
 }

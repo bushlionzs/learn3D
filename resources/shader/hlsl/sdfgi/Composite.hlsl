@@ -109,7 +109,7 @@ float4 PS(PSInput input) : SV_TARGET
         return float4(LinearToSRGB(ambientOcclusion.xxx), 1.f);
     }
 	
-	showFlags = COMPOSITE_FLAG_SHOW_DDGI_INDIRECT;
+	//showFlags = COMPOSITE_FLAG_SHOW_DDGI_INDIRECT;
     if ((useFlags & COMPOSITE_FLAG_USE_DDGI) && (showFlags & COMPOSITE_FLAG_SHOW_DDGI_INDIRECT))
     {
         // Show only the indirect lighting from DDGI

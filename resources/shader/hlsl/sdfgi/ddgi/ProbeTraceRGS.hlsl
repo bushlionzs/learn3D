@@ -169,6 +169,5 @@ void RayGen()
 
     // Store the final ray radiance and hit distance
     float3 radiance = diffuse + ((min(payload.albedo, float3(maxAlbedo, maxAlbedo, maxAlbedo)) / PI) * irradiance);
-	radiance = diffuse;
     DDGIStoreProbeRayFrontfaceHit(RayData, outputCoords, volume, saturate(radiance), payload.hitT);
 }
