@@ -25,7 +25,7 @@ void CHS_GI(inout PackedPayload packedPayload, BuiltInTriangleIntersectionAttrib
 
     // Load the triangle's vertices
     Vertex vertices[3];
-    LoadVertices(InstanceID(), PrimitiveIndex(), geometry, vertices);
+    LoadVertices(GeometryIndex(), PrimitiveIndex(), geometry, vertices);
 
     // Interpolate the triangle's attributes for the hit location (position, normal, tangent, texture coordinates)
     float3 barycentrics = float3((1.f - attrib.barycentrics.x - attrib.barycentrics.y), attrib.barycentrics.x, attrib.barycentrics.y);
@@ -53,12 +53,12 @@ void CHS_GI(inout PackedPayload packedPayload, BuiltInTriangleIntersectionAttrib
         GetTex2D(material.albedoTexIdx).GetDimensions(0, width, height, numLevels);
 
         // Sample the albedo texture
-        float4 bco = GetTex2D(2).SampleLevel(GetBilinearWrapSampler(), v.uv0, numLevels / 2.f);
+        float4 bco = GetTex2D(material.albedoTexIdx).SampleLevel(GetBilinearWrapSampler(), v.uv0, numLevels / 2.f);
         payload.albedo *= bco.rgb;
         payload.opacity *= bco.a;
     }
 
-	//payload.albedo = float3(0.137, 0.573, 0.719);
+	payload.albedo = float3(0.137, 0.573, 0.719);
     // Shading normal
     if (material.normalTexIdx > -1)
     {

@@ -165,10 +165,8 @@ float3 EvaluateDirectionalLight(
     Light directionalLight = lights[0];
 
     float visibility = LightVisibility(payload, -directionalLight.direction, 1e27f, normalBias, viewBias, bvh);
-	visibility = 1.0f;
     // Early out, the light isn't visible from the surface
     if (visibility <= 0.f) return float3(0.0f, 0.f, 0.f);
-    visibility = 1.0f;
     // Compute lighting
     float3 lightDirection = -normalize(directionalLight.direction);
     float  nol = max(dot(payload.shadingNormal, lightDirection), 0.f);
@@ -202,7 +200,6 @@ float3 DirectDiffuseLighting(
     {
         lighting += EvaluatePointLight(payload, normalBias, viewBias, bvh, lights);
     }
-	return brdf;
     return (brdf * lighting);
 }
 

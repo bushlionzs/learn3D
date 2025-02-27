@@ -478,9 +478,6 @@ void DDGIProbeBlendingCS(
         result.rgb *= 1.f / (2.f * max(result.a, epsilon));
         result.a = 1.f;
 		
-		result.rgb = pow(result.rgb, (1.f / volume.probeIrradianceEncodingGamma));
-		Output[DispatchThreadID] = result;
-        return;
         // Get the irradiance mean stored in the probe
         float3 probeIrradianceMean = Output[DispatchThreadID].rgb;
 
