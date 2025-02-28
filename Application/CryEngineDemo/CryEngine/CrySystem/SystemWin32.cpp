@@ -1,0 +1,1172 @@
+// Copyright 2004-2021 Crytek GmbH / Crytek Group. All rights reserved.
+
+#include "StdAfx.h"
+#include "System.h"
+#include <time.h>
+
+#include <CryNetwork/INetwork.h>
+#include <Cry3DEngine/I3DEngine.h>
+#include <CryRenderer/IRenderer.h>
+#include <CrySystem/File/ICryPak.h>
+#include <CryEntitySystem/IEntitySystem.h>
+#include <CryInput/IInput.h>
+#include <CrySystem/ILog.h>
+#include <CryScriptSystem/IScriptSystem.h>
+#include <CryAnimation/ICryAnimation.h>
+#include <CryCore/Platform/CryLibrary.h>
+#include <CryGame/IGameFramework.h>
+#include <CryCore/Platform/IPlatformOS.h>
+#include <CryString/StringUtils.h>
+#include <CrySystem/Scaleform/IScaleformHelper.h>
+
+#if CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE
+	#include <unistd.h>
+#endif
+
+#if CRY_PLATFORM_WINDOWS
+	#include <float.h>
+	#include <CryCore/Platform/CryWindows.h>
+	#include <shellapi.h> // Needed for ShellExecute.
+	#include <Aclapi.h>
+	#include <tlhelp32.h>
+
+// HAX to resolve IEntity redefinition
+	#define __IEntity_INTERFACE_DEFINED__
+	#include <shlobj.h>
+#endif
+
+#if CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE
+	#include <pwd.h>
+#endif
+
+
+
+#include "XML/XmlUtils.h"
+#include "CryPak.h"
+
+#if CRY_PLATFORM_WINDOWS
+LINK_SYSTEM_LIBRARY("wininet.lib")
+LINK_SYSTEM_LIBRARY("Winmm.lib")
+#endif
+
+#if CRY_PLATFORM_APPLE
+	#include "SystemUtilsApple.h"
+#endif
+
+extern CMTSafeHeap* g_pPakHeap;
+
+// this is the list of modules that can be loaded into the game process
+// Each array element contains 2 strings: the name of the module (case-insensitive)
+// and the name of the group the module belongs to
+//////////////////////////////////////////////////////////////////////////
+const char g_szGroupCore[] = "CryEngine";
+const char* g_szModuleGroups[][2] = {
+	{ "Sandbox.exe",         g_szGroupCore },
+	{ "CrySystem.dll",       g_szGroupCore },
+	{ "CryScriptSystem.dll", g_szGroupCore },
+	{ "CryNetwork.dll",      g_szGroupCore },
+	{ "CryPhysics.dll",      g_szGroupCore },
+	{ "CryMovie.dll",        g_szGroupCore },
+	{ "CryInput.dll",        g_szGroupCore },
+	{ "CryAudioSystem.dll",  g_szGroupCore },
+	{ "CryFont.dll",         g_szGroupCore },
+	{ "CryAISystem.dll",     g_szGroupCore },
+	{ "CryEntitySystem.dll", g_szGroupCore },
+	{ "Cry3DEngine.dll",     g_szGroupCore },
+	{ "Game.dll",            g_szGroupCore },
+	{ "CryAction.dll",       g_szGroupCore },
+	{ "CryAnimation.dll",    g_szGroupCore },
+	{ "CryRenderD3D11.dll",  g_szGroupCore },
+	{ "CryRenderD3D12.dll",  g_szGroupCore },
+	{ "CryRenderVulkan.dll", g_szGroupCore },
+	{ "CryFlowGraph.dll",    g_szGroupCore }
+};
+
+//! dumps the memory usage statistics to the log
+//////////////////////////////////////////////////////////////////////////
+void CSystem::DumpMemoryUsageStatistics(bool bUseKB)
+{
+	//	CResourceCollector ResourceCollector;
+
+	//	TickMemStats(nMSP_ForDump,&ResourceCollector);
+	TickMemStats(nMSP_ForDump);
+
+
+
+	//int iSizeInM = m_env.p3DEngine->GetTerrainSize();
+
+	//	ResourceCollector.ComputeDependencyCnt();
+
+	//	int iTerrainSectorSize = m_env.p3DEngine->GetTerrainSectorSize();
+
+	//	if(iTerrainSectorSize)
+	//		ResourceCollector.LogData(*GetILog(),AABB(Vec3(0,0,0),Vec3(iSizeInM,iSizeInM,0)),iSizeInM/iTerrainSectorSize);
+
+	// since we've recalculated this mem stats for dumping, we'll want to calculate it anew the next time it's rendered
+	SAFE_DELETE(m_pMemStats);
+}
+
+// collects the whole memory statistics into the given sizer object
+//////////////////////////////////////////////////////////////////////////
+
+#if CRY_PLATFORM_WINDOWS
+	#pragma pack(push,1)
+const struct PEHeader_DLL
+{
+	DWORD                 signature;
+	IMAGE_FILE_HEADER     _head;
+	IMAGE_OPTIONAL_HEADER opt_head;
+	IMAGE_SECTION_HEADER* section_header;  // actual number in NumberOfSections
+};
+	#pragma pack(pop)
+#endif
+
+const SmallModuleInfo* FindModuleInfo(std::vector<SmallModuleInfo>& vec, const char* name)
+{
+	for (size_t i = 0; i < vec.size(); ++i)
+	{
+		if (!vec[i].name.compareNoCase(name))
+			return &vec[i];
+	}
+
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::CollectMemInfo(SCryEngineStatsGlobalMemInfo& m_stats)
+{
+	
+}
+
+void CSystem::CollectMemStats(ICrySizer* pSizer, MemStatsPurposeEnum nPurpose, std::vector<SmallModuleInfo>* pStats)
+{
+	
+}
+
+//////////////////////////////////////////////////////////////////////////
+const char* CSystem::GetUserName()
+{
+#if CRY_PLATFORM_WINDOWS
+	static const int iNameBufferSize = 1024;
+	static char szNameBuffer[iNameBufferSize];
+	memset(szNameBuffer, 0, iNameBufferSize);
+
+	DWORD dwSize = iNameBufferSize;
+	wchar_t nameW[iNameBufferSize];
+	::GetUserNameW(nameW, &dwSize);
+	cry_strcpy(szNameBuffer, CryStringUtils::WStrToUTF8(nameW));
+	return szNameBuffer;
+#elif CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID
+	static uid_t uid = geteuid();
+	static struct passwd* pw = getpwuid(uid);
+	if (pw)
+	{
+		return  (pw->pw_name);
+	}
+	else
+	{
+		return NULL;
+	}
+#elif CRY_PLATFORM_APPLE
+	static const int iNameBufferSize = 1024;
+	static char szNameBuffer[iNameBufferSize];
+	if (AppleGetUserName(szNameBuffer, iNameBufferSize))
+		return szNameBuffer;
+	else
+		return "";
+#else
+	return "";
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////
+int CSystem::GetApplicationInstance()
+{
+#if CRY_PLATFORM_WINDOWS
+	if (m_iApplicationInstance == -1)
+	{
+		string suffix;
+		for (int instance = 0;; ++instance)
+		{
+			suffix.Format("(%d)", instance);
+
+			CreateMutex(NULL, TRUE, "CrytekApplication" + suffix);
+			// search for duplicates
+			if (GetLastError() != ERROR_ALREADY_EXISTS)
+			{
+				m_iApplicationInstance = instance;
+				break;
+			}
+		}
+	}
+
+	return m_iApplicationInstance;
+#elif CRY_PLATFORM_LINUX
+	if (m_iApplicationInstance == -1)
+	{
+		string path;
+		for (int i = 0; i < std::numeric_limits<int>::max(); ++i)
+		{
+			path.Format("/tmp/CrytekApplication%d.lock", i);
+
+			int fd = open(path.c_str(), O_CREAT | O_RDWR, 0666);
+			CRY_ASSERT(fd >= 0, "Failed to create mutex file, errno %d", errno);
+			if (fd >= 0)
+			{
+				flock lock;
+				memset(&lock, 0, sizeof(lock));
+				lock.l_type = F_WRLCK;
+				lock.l_whence = SEEK_SET;
+				lock.l_start = 0;
+				lock.l_len = 0; // Lock entire file
+				if (fcntl(fd, F_SETLK, &lock) != -1)
+				{
+					// We're not calling close in case of success as
+					// that would release the lock on the file
+					m_iApplicationInstance = i;
+					break;
+				}
+				else
+				{
+					close(fd);
+				}
+			}
+		}
+	}
+
+	// Set a valid value in case something went wrong
+	if (m_iApplicationInstance == -1)
+	{
+		m_iApplicationInstance = 0;
+		CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_ERROR, "Unable to tetermine application ID");
+	}
+
+	return m_iApplicationInstance;
+#else
+	return 0;
+#endif
+}
+
+// refreshes the m_pMemStats if necessary; creates it if it's not created
+//////////////////////////////////////////////////////////////////////////
+void CSystem::TickMemStats(MemStatsPurposeEnum nPurpose, IResourceCollector* pResourceCollector)
+{
+	
+}
+
+//#define __HASXP
+
+// these 2 functions are duplicated in System.cpp in editor
+//////////////////////////////////////////////////////////////////////////
+#if !(CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID)
+extern int CryStats(char* buf);
+#endif
+int        CSystem::DumpMMStats(bool log)
+{
+#if CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID
+	return 0;
+#else
+	if (log)
+	{
+		char buf[1024];
+		int n = CryStats(buf);
+		GetILog()->Log("%s", buf);
+		return n;
+	}
+	else
+	{
+		return CryStats(NULL);
+	};
+#endif
+};
+
+//////////////////////////////////////////////////////////////////////////
+struct CryDbgModule
+{
+	HANDLE      heap;
+	WIN_HMODULE handle;
+	string      name;
+	DWORD       dwSize;
+};
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::DebugStats(bool checkpoint, bool leaks)
+{
+#if CRY_PLATFORM_WINDOWS
+	std::vector<CryDbgModule> dbgmodules;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Use windows Performance Monitoring API to enumerate all modules of current process.
+	//////////////////////////////////////////////////////////////////////////
+	HANDLE hSnapshot;
+	hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
+	if (hSnapshot != INVALID_HANDLE_VALUE)
+	{
+		MODULEENTRY32 me;
+		memset(&me, 0, sizeof(me));
+		me.dwSize = sizeof(me);
+
+		if (Module32First(hSnapshot, &me))
+		{
+			// the sizes of each module group
+			do
+			{
+				CryDbgModule module;
+				module.handle = me.hModule;
+				module.name = me.szModule;
+				module.dwSize = me.modBaseSize;
+				dbgmodules.push_back(module);
+			}
+			while (Module32Next(hSnapshot, &me));
+		}
+		CloseHandle(hSnapshot);
+	}
+	//////////////////////////////////////////////////////////////////////////
+
+	#ifdef _DEBUG
+	ILog* log = GetILog();
+	int extrastats[10], totalal = 0, totalbl = 0;
+	#endif
+
+	int nolib = 0;
+	int totalUsedInModules = 0;
+	int countedMemoryModules = 0;
+	for (int i = 0; i < (int)(dbgmodules.size()); i++)
+	{
+		if (!dbgmodules[i].handle)
+		{
+			CryLogAlways("WARNING: <CrySystem> CSystem::DebugStats: NULL handle for %s", dbgmodules[i].name.c_str());
+			nolib++;
+			continue;
+		}
+		;
+
+		typedef int (* PFN_MODULEMEMORY)();
+		PFN_MODULEMEMORY fpCryModuleGetAllocatedMemory = (PFN_MODULEMEMORY)::GetProcAddress((HMODULE)dbgmodules[i].handle, "CryModuleGetAllocatedMemory");
+		if (fpCryModuleGetAllocatedMemory)
+		{
+			int allocatedMemory = fpCryModuleGetAllocatedMemory();
+			totalUsedInModules += allocatedMemory;
+			countedMemoryModules++;
+			CryLogAlways("%8d K used in Module %s: ", allocatedMemory / 1024, dbgmodules[i].name.c_str());
+		}
+
+	#ifdef _DEBUG
+		typedef void (* PFNUSAGESUMMARY)(ILog* log, const char*, int*);
+		typedef void (* PFNCHECKPOINT)();
+		PFNUSAGESUMMARY fpu = (PFNUSAGESUMMARY)::GetProcAddress((HMODULE)dbgmodules[i].handle, "UsageSummary");
+		PFNCHECKPOINT fpc = (PFNCHECKPOINT)::GetProcAddress((HMODULE)dbgmodules[i].handle, "CheckPoint");
+		if (fpu && fpc)
+		{
+			if (checkpoint) fpc();
+			else
+			{
+				extrastats[2] = (int)leaks;
+				fpu(log, dbgmodules[i].name.c_str(), extrastats);
+				totalal += extrastats[0];
+				totalbl += extrastats[1];
+			};
+
+		}
+		else
+		{
+			CryLogAlways("WARNING: <CrySystem> CSystem::DebugStats: could not retrieve function from DLL %s", dbgmodules[i].name.c_str());
+			nolib++;
+		};
+	#endif
+
+		typedef HANDLE (* PFNGETDLLHEAP)();
+		PFNGETDLLHEAP fpg = (PFNGETDLLHEAP)::GetProcAddress((HMODULE)dbgmodules[i].handle, "GetDLLHeap");
+		if (fpg)
+		{
+			dbgmodules[i].heap = fpg();
+		}
+		;
+	}
+	;
+
+	CryLogAlways("-------------------------------------------------------");
+	CryLogAlways("%8d K Total Memory Allocated in %d Modules", totalUsedInModules / 1024, countedMemoryModules);
+	#ifdef _DEBUG
+	CryLogAlways("$8GRAND TOTAL: %d k, %d blocks (%d dlls not included)", totalal / 1024, totalbl, nolib);
+	CryLogAlways("estimated debugalloc overhead: between %d k and %d k", totalbl * 36 / 1024, totalbl * 72 / 1024);
+	#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Get HeapQueryInformation pointer if on windows XP.
+	//////////////////////////////////////////////////////////////////////////
+	typedef BOOL (WINAPI * FUNC_HeapQueryInformation)(HANDLE, HEAP_INFORMATION_CLASS, PVOID, SIZE_T, PSIZE_T);
+	FUNC_HeapQueryInformation pFnHeapQueryInformation = NULL;
+	HMODULE hKernelInstance = CryLoadLibrary("Kernel32.dll");
+	if (hKernelInstance)
+	{
+		pFnHeapQueryInformation = (FUNC_HeapQueryInformation)(::GetProcAddress(hKernelInstance, "HeapQueryInformation"));
+	}
+	//////////////////////////////////////////////////////////////////////////
+
+	const int MAXHANDLES = 100;
+	HANDLE handles[MAXHANDLES];
+	int realnumh = GetProcessHeaps(MAXHANDLES, handles);
+	char hinfo[1024];
+	PROCESS_HEAP_ENTRY phe;
+	CryLogAlways("$6--------------------- dump of windows heaps ---------------------");
+	int nTotalC = 0, nTotalCP = 0, nTotalUC = 0, nTotalUCP = 0, totalo = 0;
+	for (int i = 0; i < realnumh; i++)
+	{
+		HANDLE hHeap = handles[i];
+		HeapCompact(hHeap, 0);
+		hinfo[0] = 0;
+		if (pFnHeapQueryInformation)
+		{
+			pFnHeapQueryInformation(hHeap, HeapCompatibilityInformation, hinfo, 1024, NULL);
+		}
+		else
+		{
+			for (int m = 0; m < (int)(dbgmodules.size()); m++)
+			{
+				if (dbgmodules[m].heap == handles[i])
+				{
+					cry_strcpy(hinfo, dbgmodules[m].name.c_str());
+				}
+			}
+		}
+		phe.lpData = NULL;
+		int nCommitted = 0, nUncommitted = 0, nOverhead = 0;
+		int nCommittedPieces = 0, nUncommittedPieces = 0;
+#if defined(USE_CRY_ASSERT)
+		int nPrevRegionIndex = -1;
+#endif
+		while (HeapWalk(hHeap, &phe))
+		{
+			if (phe.wFlags & PROCESS_HEAP_REGION)
+			{
+				assert(++nPrevRegionIndex == phe.iRegionIndex);
+				nCommitted += phe.Region.dwCommittedSize;
+				nUncommitted += phe.Region.dwUnCommittedSize;
+				assert(phe.cbData == 0 || (phe.wFlags & PROCESS_HEAP_ENTRY_BUSY));
+			}
+			else if (phe.wFlags & PROCESS_HEAP_UNCOMMITTED_RANGE)
+				nUncommittedPieces += phe.cbData;
+			else
+				//if (phe.wFlags & PROCESS_HEAP_ENTRY_BUSY)
+				nCommittedPieces += phe.cbData;
+
+			{
+				/*
+				   MEMORY_BASIC_INFORMATION mbi;
+				   if (VirtualQuery(phe.lpData, &mbi,sizeof(mbi)) == sizeof(mbi))
+				   {
+				   if (mbi.State == MEM_COMMIT)
+				   nCommittedPieces += phe.cbData;//mbi.RegionSize;
+				   //else
+				   //	nUncommitted += mbi.RegionSize;
+				   }
+				   else
+				   nCommittedPieces += phe.cbData;
+				 */
+			}
+
+			nOverhead += phe.cbOverhead;
+		}
+		;
+
+		CryLogAlways("* heap %8x: %6d (or ~%6d) K in use, %6d..%6d K uncommitted, %6d K overhead (%s)\n",
+		             handles[i], nCommittedPieces / 1024, nCommitted / 1024, nUncommittedPieces / 1024, nUncommitted / 1024, nOverhead / 1024, hinfo);
+
+		nTotalC += nCommitted;
+		nTotalCP += nCommittedPieces;
+		nTotalUC += nUncommitted;
+		nTotalUCP += nUncommittedPieces;
+		totalo += nOverhead;
+	}
+	;
+	CryLogAlways("$6----------------- total in heaps: %d megs committed (win stats shows ~%d) (%d..%d uncommitted, %d k overhead) ---------------------", nTotalCP / 1024 / 1024, nTotalC / 1024 / 1024, nTotalUCP / 1024 / 1024, nTotalUC / 1024 / 1024, totalo / 1024);
+
+#endif // CRY_PLATFORM_WINDOWS
+};
+
+#if CRY_PLATFORM_WINDOWS
+struct DumpHeap32Stats
+{
+	DumpHeap32Stats() : dwFree(0), dwMoveable(0), dwFixed(0), dwUnknown(0)
+	{}
+	void operator+=(const DumpHeap32Stats& right)
+	{
+		dwFree += right.dwFree;
+		dwMoveable += right.dwMoveable;
+		dwFixed += right.dwFixed;
+		dwUnknown += right.dwUnknown;
+	}
+	DWORD dwFree;
+	DWORD dwMoveable;
+	DWORD dwFixed;
+	DWORD dwUnknown;
+};
+
+#pragma warning(push)
+#pragma warning(disable: 4244) //conversion' conversion from 'type1' to 'type2', possible loss of data
+static void DumpHeap32(const HEAPLIST32& hl, DumpHeap32Stats& stats)
+{
+	HEAPENTRY32 he;
+	memset(&he, 0, sizeof(he));
+	he.dwSize = sizeof(he);
+
+	if (Heap32First(&he, hl.th32ProcessID, hl.th32HeapID))
+	{
+		DumpHeap32Stats heap;
+		do
+		{
+			if (he.dwFlags & LF32_FREE)
+				heap.dwFree += he.dwBlockSize;
+			else if (he.dwFlags & LF32_MOVEABLE)
+				heap.dwMoveable += he.dwBlockSize;
+			else if (he.dwFlags & LF32_FIXED)
+			{
+				heap.dwFixed += he.dwBlockSize;
+			}
+			else
+				heap.dwUnknown += he.dwBlockSize;
+		}
+		while (Heap32Next(&he));
+
+		CryLogAlways("%08X  %6d %6d %6d (%d)", hl.th32HeapID, heap.dwFixed / 0x400, heap.dwFree / 0x400, heap.dwMoveable / 0x400, heap.dwUnknown / 0x400);
+		stats += heap;
+	}
+	else
+		CryLogAlways("%08X  empty or invalid");
+}
+#pragma warning(pop)
+
+//////////////////////////////////////////////////////////////////////////
+class CStringOrder
+{
+public:
+	bool operator()(const char* szLeft, const char* szRight) const { return stricmp(szLeft, szRight) < 0; }
+};
+typedef std::map<const char*, unsigned, CStringOrder> StringToSizeMap;
+void AddSize(StringToSizeMap& mapSS, const char* szString, unsigned nSize)
+{
+	StringToSizeMap::iterator it = mapSS.find(szString);
+	if (it == mapSS.end())
+		mapSS.insert(StringToSizeMap::value_type(szString, nSize));
+	else
+		it->second += nSize;
+}
+
+//////////////////////////////////////////////////////////////////////////
+const char* GetModuleGroup(const char* szString)
+{
+	for (unsigned i = 0; i < CRY_ARRAY_COUNT(g_szModuleGroups); ++i)
+		if (stricmp(szString, g_szModuleGroups[i][0]) == 0)
+			return g_szModuleGroups[i][1];
+	return "Other";
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::GetExeSizes(ICrySizer* pSizer, MemStatsPurposeEnum nPurpose)
+{
+	HANDLE hSnapshot;
+	hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
+	if (hSnapshot == INVALID_HANDLE_VALUE)
+	{
+		CryLogAlways("Cannot get the module snapshot, error code %d", GetLastError());
+		return;
+	}
+
+	DWORD dwProcessID = GetCurrentProcessId();
+
+	MODULEENTRY32 me;
+	memset(&me, 0, sizeof(me));
+	me.dwSize = sizeof(me);
+
+	if (Module32First(hSnapshot, &me))
+	{
+		// the sizes of each module group
+		StringToSizeMap mapGroupSize;
+
+		do
+		{
+			dwProcessID = me.th32ProcessID;
+			const char* szGroup = GetModuleGroup(me.szModule);
+			SIZER_COMPONENT_NAME(pSizer, szGroup);
+			if (nPurpose == nMSP_ForDump)
+			{
+				SIZER_COMPONENT_NAME(pSizer, me.szModule);
+				pSizer->AddObject(me.modBaseAddr, static_cast<size_t>(me.modBaseSize));
+			}
+			else
+				pSizer->AddObject(me.modBaseAddr, static_cast<size_t>(me.modBaseSize));
+		}
+		while (Module32Next(hSnapshot, &me));
+	}
+	else
+		CryLogAlways("No modules to dump");
+
+	CloseHandle(hSnapshot);
+}
+
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::DumpWinHeaps()
+{
+#if CRY_PLATFORM_WINDOWS
+	//
+	// Retrieve modules and log them; remember the process id
+
+	HANDLE hSnapshot;
+	hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
+	if (hSnapshot == INVALID_HANDLE_VALUE)
+	{
+		CryLogAlways("Cannot get the module snapshot, error code %d", GetLastError());
+		return;
+	}
+
+	DWORD dwProcessID = GetCurrentProcessId();
+
+	MODULEENTRY32 me;
+	memset(&me, 0, sizeof(me));
+	me.dwSize = sizeof(me);
+
+	if (Module32First(hSnapshot, &me))
+	{
+		// the sizes of each module group
+		StringToSizeMap mapGroupSize;
+		DWORD dwTotalModuleSize = 0;
+		CryLogAlways("base        size  module");
+		do
+		{
+			dwProcessID = me.th32ProcessID;
+			const char* szGroup = GetModuleGroup(me.szModule);
+			CryLogAlways("%08X %8X  %25s   - %s", me.modBaseAddr, me.modBaseSize, me.szModule, stricmp(szGroup, "Other") ? szGroup : "");
+			dwTotalModuleSize += me.modBaseSize;
+			AddSize(mapGroupSize, szGroup, me.modBaseSize);
+		}
+		while (Module32Next(hSnapshot, &me));
+
+		CryLogAlways("------------------------------------");
+		for (StringToSizeMap::iterator it = mapGroupSize.begin(); it != mapGroupSize.end(); ++it)
+			CryLogAlways("         %6.3f Mbytes  - %s", double(it->second) / 0x100000, it->first);
+		CryLogAlways("------------------------------------");
+		CryLogAlways("         %6.3f Mbytes  - TOTAL", double(dwTotalModuleSize) / 0x100000);
+		CryLogAlways("------------------------------------");
+	}
+	else
+		CryLogAlways("No modules to dump");
+
+	CloseHandle(hSnapshot);
+
+	//
+	// Retrieve the heaps and dump each of them with a special function
+
+	hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPHEAPLIST, 0);
+	if (hSnapshot == INVALID_HANDLE_VALUE)
+	{
+		CryLogAlways("Cannot get the heap LIST snapshot, error code %d", GetLastError());
+		return;
+	}
+
+	HEAPLIST32 hl;
+	memset(&hl, 0, sizeof(hl));
+	hl.dwSize = sizeof(hl);
+
+	CryLogAlways("__Heap__   fixed   free   move (unknown)");
+	if (Heap32ListFirst(hSnapshot, &hl))
+	{
+		DumpHeap32Stats stats;
+		do
+		{
+			DumpHeap32(hl, stats);
+		}
+		while (Heap32ListNext(hSnapshot, &hl));
+
+		CryLogAlways("-------------------------------------------------");
+		CryLogAlways("$6          %6.3f %6.3f %6.3f (%.3f) Mbytes", double(stats.dwFixed) / 0x100000, double(stats.dwFree) / 0x100000, double(stats.dwMoveable) / 0x100000, double(stats.dwUnknown) / 0x100000);
+		CryLogAlways("-------------------------------------------------");
+	}
+	else
+		CryLogAlways("No heaps to dump");
+
+	CloseHandle(hSnapshot);
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::FatalError(const char* format, ...)
+{
+	// format message
+	va_list ArgList;
+	char szBuffer[MAX_WARNING_LENGTH];
+	const char* sPrefix = "";
+	cry_strcpy(szBuffer, sPrefix);
+	va_start(ArgList, format);
+	cry_vsprintf(szBuffer + strlen(szBuffer), sizeof(szBuffer) - strlen(szBuffer), format, ArgList);
+	va_end(ArgList);
+
+	// get system error message before any attempt to write into log
+	const char* szSysErrorMessage = CryGetLastSystemErrorMessage();
+
+	CryLogAlways("=============================================================================");
+	CryLogAlways("*ERROR");
+	CryLogAlways("=============================================================================");
+	// write both messages into log
+	CryLogAlways("%s", szBuffer);
+
+	if (szSysErrorMessage)
+		CryLogAlways("<CrySystem> Last System Error: %s", szSysErrorMessage);
+
+	assert(szBuffer[0] >= ' ');
+	//	strcpy(szBuffer,szBuffer+1);	// remove verbosity tag since it is not supported by ::MessageBox
+
+	LogSystemInfo();
+
+	CollectMemStats(0, nMSP_ForCrashLog);
+
+	OutputDebugString(szBuffer);
+
+	if (!g_cvars.sys_no_crash_dialog)
+	{
+		CryMessageBox(szBuffer,"CRYENGINE FATAL ERROR", eMB_Error);
+	}
+
+
+	CryDebugBreak();
+
+	// app can not continue
+#if !defined(_DEBUG)
+	#if CRY_PLATFORM_WINDOWS
+	_flushall();
+	#endif
+
+	#ifdef CRY_USE_CRASHRPT
+	// we don't want to catch the abort we're about to call
+	CCrashRpt::UninstallHandler();
+	#endif
+	std::abort();
+#endif
+}
+
+void CSystem::ReportBug(const char* format, ...)
+{
+#if CRY_PLATFORM_WINDOWS
+	va_list ArgList;
+	char szBuffer[MAX_WARNING_LENGTH];
+	const char* sPrefix = "";
+	cry_strcpy(szBuffer, sPrefix);
+	va_start(ArgList, format);
+	cry_vsprintf(szBuffer + strlen(szBuffer), sizeof(szBuffer) - strlen(szBuffer), format, ArgList);
+	va_end(ArgList);
+
+#endif
+}
+
+// tries to log the call stack . for DEBUG purposes only
+//////////////////////////////////////////////////////////////////////////
+void CSystem::LogCallStack()
+{
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::debug_GetCallStack(const char** pFunctions, int& nCount)
+{
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::debug_LogCallStack(int nMaxFuncs, int nFlags)
+{
+	if (nMaxFuncs > 32)
+		nMaxFuncs = 32;
+	// Print call stack for each find.
+	const char* funcs[32];
+	int nCount = nMaxFuncs;
+	int nCurFrame = 0;
+	if (m_env.pRenderer)
+		nCurFrame = (int)m_env.pRenderer->GetFrameID(false);
+	CryLogAlways("    ----- CallStack (Frame: %d) -----", nCurFrame);
+	GetISystem()->debug_GetCallStack(funcs, nCount);
+	for (int i = 1; i < nCount; i++) // start from 1 to skip this function.
+	{
+		CryLogAlways("    %02d) %s", i, funcs[i]);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Support relaunching for windows media center edition.
+//////////////////////////////////////////////////////////////////////////
+#if CRY_PLATFORM_WINDOWS
+bool CSystem::ReLaunchMediaCenter()
+{
+	// Skip if not running on a Media Center
+	if (GetSystemMetrics(SM_MEDIACENTER) == 0)
+		return false;
+
+	// Get the path to Media Center
+	char szExpandedPath[MAX_PATH];
+	if (!ExpandEnvironmentStrings("%SystemRoot%\\ehome\\ehshell.exe", szExpandedPath, MAX_PATH))
+		return false;
+
+	// Skip if ehshell.exe doesn't exist
+	if (GetFileAttributes(szExpandedPath) == 0xFFFFFFFF)
+		return false;
+
+	// Launch ehshell.exe
+	INT_PTR result = (INT_PTR)ShellExecute(NULL, TEXT("open"), szExpandedPath, NULL, NULL, SW_SHOWNORMAL);
+	return (result > 32);
+}
+#else
+bool CSystem::ReLaunchMediaCenter()
+{
+	return false;
+}
+#endif // CRY_PLATFORM_WINDOWS
+
+//////////////////////////////////////////////////////////////////////////
+#if CRY_PLATFORM_WINDOWS
+void CSystem::LogSystemInfo()
+{
+	//////////////////////////////////////////////////////////////////////
+	// Write the system informations to the log
+	//////////////////////////////////////////////////////////////////////
+
+	char szBuffer[1024];
+	char szProfileBuffer[128];
+	char szLanguageBuffer[64];
+	//char szCPUModel[64];
+
+	MEMORYSTATUSEX MemoryStatus;
+	MemoryStatus.dwLength = sizeof(MemoryStatus);
+
+	DEVMODE DisplayConfig;
+	OSVERSIONINFO OSVerInfo;
+	OSVerInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+
+	CryLogAlways(szBuffer);
+
+	// log user name
+	CryLog("User name: \"%s\"", GetUserName());
+
+	// log system language
+	GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, LOCALE_SENGLANGUAGE, szLanguageBuffer, sizeof(szLanguageBuffer));
+	cry_sprintf(szBuffer, "System language: %s", szLanguageBuffer);
+	CryLogAlways(szBuffer);
+
+	// log Windows directory
+	GetWindowsDirectory(szBuffer, sizeof(szBuffer));
+	string str = "Windows Directory: \"";
+	str += szBuffer;
+	str += "\"";
+	CryLogAlways(str);
+
+	//////////////////////////////////////////////////////////////////////
+	// Send system time & date
+	//////////////////////////////////////////////////////////////////////
+
+	str = "Local time is ";
+	_strtime(szBuffer);
+	str += szBuffer;
+	str += " ";
+	_strdate(szBuffer);
+	str += szBuffer;
+	cry_sprintf(szBuffer, ", system running for %d minutes", GetTickCount() / 60000);
+	str += szBuffer;
+	CryLogAlways(str);
+
+	//////////////////////////////////////////////////////////////////////
+	// Send system memory status
+	//////////////////////////////////////////////////////////////////////
+
+	GlobalMemoryStatusEx(&MemoryStatus);
+	cry_sprintf(szBuffer, "%I64dMB physical memory installed, %I64dMB available, %I64dMB virtual memory installed, %ld percent of memory in use",
+	            MemoryStatus.ullTotalPhys / 1048576 + 1,
+	            MemoryStatus.ullAvailPhys / 1048576,
+	            MemoryStatus.ullTotalVirtual / 1048576,
+	            MemoryStatus.dwMemoryLoad);
+	CryLogAlways(szBuffer);
+
+	if (GetISystem()->GetIMemoryManager())
+	{
+		IMemoryManager::SProcessMemInfo memCounters;
+		GetISystem()->GetIMemoryManager()->GetProcessMemInfo(memCounters);
+
+		uint64 PagefileUsage = memCounters.PagefileUsage;
+		uint64 PeakPagefileUsage = memCounters.PeakPagefileUsage;
+		uint64 WorkingSetSize = memCounters.WorkingSetSize;
+		cry_sprintf(szBuffer, "PageFile usage: %I64dMB, Working Set: %I64dMB, Peak PageFile usage: %I64dMB,",
+		            (uint64)PagefileUsage / (1024 * 1024),
+		            (uint64)WorkingSetSize / (1024 * 1024),
+		            (uint64)PeakPagefileUsage / (1024 * 1024));
+		CryLogAlways(szBuffer);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	// Send display settings
+	//////////////////////////////////////////////////////////////////////
+
+	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &DisplayConfig);
+	GetPrivateProfileString("boot.description", "display.drv",
+	                        "(Unknown graphics card)", szProfileBuffer, sizeof(szProfileBuffer),
+	                        "system.ini");
+	cry_sprintf(szBuffer, "Current display mode is %dx%dx%d, %s",
+	            DisplayConfig.dmPelsWidth, DisplayConfig.dmPelsHeight,
+	            DisplayConfig.dmBitsPerPel, szProfileBuffer);
+	CryLogAlways(szBuffer);
+
+	//////////////////////////////////////////////////////////////////////
+	// Send input device configuration
+	//////////////////////////////////////////////////////////////////////
+
+	str = "";
+	// Detect the keyboard type
+	switch (GetKeyboardType(0))
+	{
+	case 1:
+		str = "IBM PC/XT (83-key)";
+		break;
+	case 2:
+		str = "ICO (102-key)";
+		break;
+	case 3:
+		str = "IBM PC/AT (84-key)";
+		break;
+	case 4:
+		str = "IBM enhanced (101/102-key)";
+		break;
+	case 5:
+		str = "Nokia 1050";
+		break;
+	case 6:
+		str = "Nokia 9140";
+		break;
+	case 7:
+		str = "Japanese";
+		break;
+	default:
+		str = "Unknown";
+		break;
+	}
+
+	// Any mouse attached ?
+	if (!GetSystemMetrics(SM_MOUSEPRESENT))
+		CryLogAlways(str + " keyboard and no mouse installed");
+	else
+	{
+		cry_sprintf(szBuffer, " keyboard and %i+ button mouse installed",
+		            GetSystemMetrics(SM_CMOUSEBUTTONS));
+		CryLogAlways(str + szBuffer);
+	}
+
+	CryLogAlways("--------------------------------------------------------------------------------");
+}
+#else
+void CSystem::LogSystemInfo()
+{
+}
+#endif
+
+#if CRY_PLATFORM_WINDOWS
+//////////////////////////////////////////////////////////////////////////
+bool CSystem::GetWinGameFolder(char* szMyDocumentsPath, int maxPathSize)
+{
+	bool bSucceeded = false;
+	// check Vista and later OS first
+
+	HMODULE shell32 = LoadLibraryA("Shell32.dll");
+	if (shell32)
+	{
+		typedef long (__stdcall * T_SHGetKnownFolderPath)(REFKNOWNFOLDERID rfid, unsigned long dwFlags, void* hToken, wchar_t** ppszPath);
+		T_SHGetKnownFolderPath _SHGetKnownFolderPath = (T_SHGetKnownFolderPath)GetProcAddress(shell32, "SHGetKnownFolderPath");
+		if (_SHGetKnownFolderPath)
+		{
+			// We must be running Vista or newer
+			wchar_t* wMyDocumentsPath;
+			HRESULT hr = _SHGetKnownFolderPath(FOLDERID_SavedGames, KF_FLAG_CREATE | KF_FLAG_DONT_UNEXPAND, NULL, &wMyDocumentsPath);
+			bSucceeded = SUCCEEDED(hr);
+			if (bSucceeded)
+			{
+				// Convert from UNICODE to UTF-8
+				cry_strcpy(szMyDocumentsPath, maxPathSize, CryStringUtils::WStrToUTF8(wMyDocumentsPath));
+				CoTaskMemFree(wMyDocumentsPath);
+			}
+		}
+		FreeLibrary(shell32);
+	}
+
+	if (!bSucceeded)
+	{
+		// check pre-vista OS if not succeeded before
+		wchar_t wMyDocumentsPath[MAX_PATH];
+		bSucceeded = SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, NULL, 0, wMyDocumentsPath));
+		if (bSucceeded)
+		{
+			cry_strcpy(szMyDocumentsPath, maxPathSize, CryStringUtils::WStrToUTF8(wMyDocumentsPath));
+		}
+	}
+
+	return bSucceeded;
+}
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::ChangeUserPath(const char* sUserPath)
+{
+	string userFolder = sUserPath;
+
+#if CRY_PLATFORM_WINDOWS
+	bool folderCreated = false;
+
+	#if defined(DEDICATED_SERVER)
+	userFolder = "";              // Enforce userfolder as empty which will cause USER%d creation if root is not specified
+	if (!(m_root.empty()))
+	{
+		m_sys_user_folder->Set(m_root.c_str());
+		userFolder = m_root.c_str();
+		folderCreated = true;
+	}
+	else
+	#endif // defined(DEDICATED_SERVER)
+	{
+		if (userFolder.empty())
+		{
+			userFolder = "USER";
+			m_env.pCryPak->MakeDir(userFolder.c_str());
+		}
+		else
+		{
+			char szMyDocumentsPath[MAX_PATH];
+			if (GetWinGameFolder(szMyDocumentsPath, MAX_PATH))
+			{
+				string mydocs = string(szMyDocumentsPath) + "\\" + userFolder;
+				mydocs = PathUtil::RemoveSlash(mydocs);
+				mydocs = PathUtil::ToDosPath(mydocs);
+				userFolder = mydocs;
+				m_env.pCryPak->MakeDir(mydocs);
+				folderCreated = true;
+			}
+		}
+	}
+
+	if (!folderCreated)
+	{
+		// pick a unique dir name for this instance
+		int instance = GetApplicationInstance();
+		if (instance != 0)
+		{
+			userFolder.Format("USER(%d)", instance);
+			m_sys_user_folder->Set(userFolder.c_str());
+		}
+
+		// Make the userFolder path absolute
+		char cwdBuffer[MAX_PATH];
+		CryGetCurrentDirectory(MAX_PATH, cwdBuffer);
+		string tempBuffer;
+		tempBuffer.Format("%s\\%s", cwdBuffer, userFolder.c_str());
+		tempBuffer = PathUtil::RemoveSlash(tempBuffer);
+		tempBuffer = PathUtil::ToDosPath(tempBuffer);
+		userFolder = tempBuffer;
+
+		gEnv->pCryPak->MakeDir(userFolder.c_str());
+	}
+
+#elif CRY_PLATFORM_DURANGO
+	userFolder = "USER";
+	m_env.pCryPak->MakeDir(userFolder.c_str());
+	m_sys_user_folder->Set(userFolder.c_str());
+#elif CRY_PLATFORM_ANDROID
+	userFolder = CryGetUserStoragePath();
+	m_sys_user_folder->Set(userFolder.c_str());
+	m_env.pCryPak->MakeDir(userFolder.c_str());
+#elif CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID
+	if (userFolder.empty())
+	{
+		userFolder = "USER";
+		m_env.pCryPak->MakeDir(userFolder.c_str());
+	}
+	else
+	{
+		//TODO: Use Cocoa Shared Application folder to store info on Mac OS X
+		const char* home = getenv("HOME");
+		if (home != NULL)
+		{
+			string mydocs = string(home) + "/" + userFolder;
+			mydocs = PathUtil::RemoveSlash(mydocs);
+			userFolder = mydocs;
+			m_env.pCryPak->MakeDir(userFolder.c_str());
+		}
+	}
+#elif CRY_PLATFORM_ORBIS
+	userFolder = PathUtil::Make(m_env.pSystem->GetRootFolder(), "user");
+	m_env.pCryPak->MakeDir(userFolder);
+#endif
+
+	m_env.pCryPak->SetAlias("%USER%", userFolder.c_str(), true);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CSystem::DetectGameFolderAccessRights()
+{
+	// This code is trying to figure out if the current folder we are now running under have write access.
+	// By default assume folder is not writable.
+	// If folder is writable game.log is saved there, otherwise it is saved in user documents folder.
+
+#if CRY_PLATFORM_WINDOWS
+
+	DWORD DesiredAccess = FILE_GENERIC_WRITE;
+	DWORD GrantedAccess = 0;
+	DWORD dwRes = 0;
+	PACL pDACL = NULL;
+	PSECURITY_DESCRIPTOR pSD = NULL;
+	HANDLE hClientToken = 0;
+	PRIVILEGE_SET PrivilegeSet;
+	DWORD PrivilegeSetLength = sizeof(PrivilegeSet);
+	BOOL bAccessStatus = FALSE;
+
+	// Get a pointer to the existing DACL.
+	dwRes = GetNamedSecurityInfo(".", SE_FILE_OBJECT,
+	                             DACL_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION,
+	                             NULL, NULL, &pDACL, NULL, &pSD);
+
+	if (ERROR_SUCCESS != dwRes)
+	{
+		//
+		assert(0);
+	}
+
+	if (!ImpersonateSelf(SecurityIdentification))
+		return;
+	if (!OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, TRUE, &hClientToken) && hClientToken != 0)
+		return;
+
+	GENERIC_MAPPING GenMap;
+	GenMap.GenericRead = FILE_GENERIC_READ;
+	GenMap.GenericWrite = FILE_GENERIC_WRITE;
+	GenMap.GenericExecute = FILE_GENERIC_EXECUTE;
+	GenMap.GenericAll = FILE_ALL_ACCESS;
+
+	MapGenericMask(&DesiredAccess, &GenMap);
+	if (!AccessCheck(pSD, hClientToken, DesiredAccess, &GenMap, &PrivilegeSet, &PrivilegeSetLength, &GrantedAccess, &bAccessStatus))
+	{
+		RevertToSelf();
+		CloseHandle(hClientToken);
+		return;
+	}
+	CloseHandle(hClientToken);
+	RevertToSelf();
+
+	if (bAccessStatus)
+	{
+		m_bGameFolderWritable = true;
+	}
+#elif CRY_PLATFORM_MOBILE
+	char cwd[PATH_MAX];
+
+	if (getcwd(cwd, PATH_MAX) != NULL)
+	{
+		if (0 == access(cwd, W_OK))
+		{
+			m_bGameFolderWritable = true;
+		}
+	}
+#endif
+}
