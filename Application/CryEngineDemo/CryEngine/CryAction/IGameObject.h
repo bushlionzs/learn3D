@@ -10,7 +10,7 @@
 
 #include <CryNetwork/INetEntity.h>
 #include <CryNetwork/SerializeFwd.h>
-#include "IActionMapManager.h"
+#include <CryAction/IActionMapManager.h>
 #include <CryMemory/PoolAllocator.h>
 #include <CryFlowGraph/IFlowSystem.h>
 #include <CryNetwork/Rmi.h>

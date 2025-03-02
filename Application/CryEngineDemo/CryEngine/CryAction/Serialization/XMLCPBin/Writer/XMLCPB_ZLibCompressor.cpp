@@ -261,6 +261,7 @@ static CCompressorThread* s_pCompressorThread;
 
 bool InitializeCompressorThread()
 {
+	return true;
 	if (s_pCompressorThread)
 		return false;
 

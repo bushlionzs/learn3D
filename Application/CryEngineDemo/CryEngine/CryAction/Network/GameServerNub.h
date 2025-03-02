@@ -3,7 +3,7 @@
 #pragma once
 
 #include <map>
-
+#include <CryNetwork/INetwork.h>
 typedef std::map<uint16, class CGameServerChannel*> TServerChannelMap;
 class CGameContext;
 

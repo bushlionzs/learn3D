@@ -1,0 +1,49 @@
+// Copyright 2011-2021 Crytek GmbH / Crytek Group. All rights reserved.
+
+#pragma once
+
+#include <CrySystem/Scaleform/IFlashPlayer.h>
+
+class CIntroMovieRenderer : public ILoadtimeCallback, public IFSCommandHandler
+{
+protected:
+
+	enum EVideoStatus
+	{
+		eVideoStatus_PrePlaying = 0,
+		eVideoStatus_Playing    = 1,
+		eVideoStatus_Stopped    = 2,
+		eVideoStatus_Finished   = 3,
+		eVideoStatus_Error      = 4,
+	};
+
+public:
+
+	CIntroMovieRenderer() = default;
+	virtual ~CIntroMovieRenderer() = default;
+
+	bool Initialize();
+	void WaitForCompletion();
+
+	// ILoadtimeCallback
+	virtual void LoadtimeUpdate(float deltaTime);
+	virtual bool LoadtimeRender();
+	// ~ILoadtimeCallback
+
+	// IFSCommandHandler
+	virtual void HandleFSCommand(const char* pCommand, const char* pArgs, void* pUserData = 0) {}
+	// ~IFSCommandHandler
+
+protected:
+
+	void         UpdateViewport();
+	void         SetViewportIfChanged(const int x, const int y, const int width, const int height, const float pixelAR);
+	int          GetSubtitleChannelForSystemLanguage();
+
+	EVideoStatus GetCurrentStatus();
+
+	//////////////////////////////////////////////////////////////////////////
+
+	std::shared_ptr<IFlashPlayer> m_pFlashPlayer;
+
+};

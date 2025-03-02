@@ -10,7 +10,7 @@
 
 #define TRACK_THREADED_ACCESS_TO_RENDERNODES
 #include "CGF/CryHeaders.h"
-//#include <CryRenderer/IRenderer.h>
+#include <CryRenderer/IRenderer.h>
 
 #define SUPP_HMAP_OCCL
 
@@ -237,6 +237,7 @@ struct IShadowCaster
 	virtual ~IShadowCaster(){}
 	virtual bool                       HasOcclusionmap(int nLod, IRenderNode* pLightOwner)           { return false; }
 	virtual void                       Render(const SRendParams& RendParams, const SRenderingPassInfo& passInfo) = 0;
+	virtual CLodValue                  ComputeLod(int wantedLod, const SRenderingPassInfo& passInfo) { return CLodValue(wantedLod); }
 	virtual const AABB                 GetBBox() const = 0;
 	virtual void                       FillBBox(AABB& aabb) const = 0;
 	virtual struct ICharacterInstance* GetEntityCharacter(Matrix34A* pMatrix = NULL, bool bReturnOnlyVisible = false) = 0;
@@ -822,7 +823,7 @@ struct SVegetationSpriteLightInfo
 	SVegetationSpriteLightInfo() { m_vSunDir = Vec3(0, 0, 0); m_MipFactor = 0.0f; }
 
 	float        m_MipFactor;
-
+	IDynTexture* m_pDynTexture;
 
 	void         SetLightingData(const Vec3& vSunDir)
 	{

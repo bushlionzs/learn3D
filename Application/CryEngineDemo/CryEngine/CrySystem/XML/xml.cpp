@@ -19,7 +19,7 @@
 #define FLOAT_FMT  "%.8g"
 #define DOUBLE_FMT "%.17g"
 
-#include "CrySystem/SimpleStringPool.h"
+#include "../SimpleStringPool.h"
 
 // Global counter for memory allocated in XML string pools.
 size_t CSimpleStringPool::g_nTotalAllocInXmlStringPools = 0;

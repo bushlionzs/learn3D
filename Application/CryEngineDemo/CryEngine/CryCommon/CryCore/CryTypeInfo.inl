@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #if !defined(CRY_PLATFORM_IMPL_H_FILE)
-#error This file is not allowed to be used directly, use platform_impl.h instead.
+	#error This file is not allowed to be used directly, use platform_impl.h instead.
 #endif
 
 #include "CryTypeInfo.h"
@@ -87,7 +87,7 @@ TYPE_INFO_BASIC(double)
 
 TYPE_INFO_BASIC(string)
 
-const CTypeInfo& PtrTypeInfo()
+const CTypeInfo &PtrTypeInfo()
 {
 	static CTypeInfo Info(TYPE_INFO_NAME(void*), sizeof(void*), alignof(void*));
 	return Info;
@@ -163,7 +163,7 @@ bool ClampedIntFromString(T& val, const char* s)
 		return true;
 	}
 
-	uint digit = (uint8)*s - '0';
+	uint digit = (uint8) * s - '0';
 	if (digit > 9)
 	{
 		// No digits.
@@ -191,35 +191,35 @@ bool ClampedIntFromString(T& val, const char* s)
 	return true;
 }
 
-bool   FromString(int64& val, const char* s) { return ClampedIntFromString(val, s); }
-bool   FromString(uint64& val, const char* s) { return ClampedIntFromString(val, s); }
+bool   FromString(int64& val, const char* s)          { return ClampedIntFromString(val, s); }
+bool   FromString(uint64& val, const char* s)         { return ClampedIntFromString(val, s); }
 
-bool   FromString(long& val, const char* s) { return ClampedIntFromString(val, s); }
-bool   FromString(unsigned long& val, const char* s) { return ClampedIntFromString(val, s); }
+bool   FromString(long& val, const char* s)           { return ClampedIntFromString(val, s); }
+bool   FromString(unsigned long& val, const char* s)  { return ClampedIntFromString(val, s); }
 
-string ToString(int const& val) { return ToString(long(val)); }
-bool   FromString(int& val, const char* s) { return ClampedIntFromString(val, s); }
+string ToString(int const& val)                       { return ToString(long(val)); }
+bool   FromString(int& val, const char* s)            { return ClampedIntFromString(val, s); }
 
-string ToString(unsigned int const& val) { return ToString((unsigned long)(val)); }
-bool   FromString(unsigned int& val, const char* s) { return ClampedIntFromString(val, s); }
+string ToString(unsigned int const& val)              { return ToString((unsigned long)(val)); }
+bool   FromString(unsigned int& val, const char* s)   { return ClampedIntFromString(val, s); }
 
-string ToString(short const& val) { return ToString(long(val)); }
-bool   FromString(short& val, const char* s) { return ClampedIntFromString(val, s); }
+string ToString(short const& val)                     { return ToString(long(val)); }
+bool   FromString(short& val, const char* s)          { return ClampedIntFromString(val, s); }
 
-string ToString(unsigned short const& val) { return ToString((unsigned long)(val)); }
+string ToString(unsigned short const& val)            { return ToString((unsigned long)(val)); }
 bool   FromString(unsigned short& val, const char* s) { return ClampedIntFromString(val, s); }
 
-string ToString(char const& val) { return ToString(long(val)); }
-bool   FromString(char& val, const char* s) { return ClampedIntFromString(val, s); }
+string ToString(char const& val)                      { return ToString(long(val)); }
+bool   FromString(char& val, const char* s)           { return ClampedIntFromString(val, s); }
 
-string ToString(wchar_t const& val) { return ToString(long(val)); }
-bool   FromString(wchar_t& val, const char* s) { return ClampedIntFromString(val, s); }
+string ToString(wchar_t const& val)                   { return ToString(long(val)); }
+bool   FromString(wchar_t& val, const char* s)        { return ClampedIntFromString(val, s); }
 
-string ToString(signed char const& val) { return ToString(long(val)); }
-bool   FromString(signed char& val, const char* s) { return ClampedIntFromString(val, s); }
+string ToString(signed char const& val)               { return ToString(long(val)); }
+bool   FromString(signed char& val, const char* s)    { return ClampedIntFromString(val, s); }
 
-string ToString(unsigned char const& val) { return ToString((unsigned long)(val)); }
-bool   FromString(unsigned char& val, const char* s) { return ClampedIntFromString(val, s); }
+string ToString(unsigned char const& val)             { return ToString((unsigned long)(val)); }
+bool   FromString(unsigned char& val, const char* s)  { return ClampedIntFromString(val, s); }
 
 float  NumToFromString(float val, int digits, bool floating, char buffer[], int buf_size)
 {
@@ -412,7 +412,8 @@ cstr CTypeInfo::CVarInfo::GetComment() const
 		do
 		{
 			++send;
-		} while (*send == ' ');
+		}
+		while (*send == ' ');
 		return send;
 	}
 	else
@@ -627,9 +628,9 @@ bool CStructInfo::ToValue(const void* data, void* value, const CTypeInfo& typeVa
 
 /*									,				1,		,2		1,2
 
-	Top											1			,2		1,2				; strip trail commas
-	Child	Named							1			(,2)	(1,2)			; strip trail commas, paren if internal commas
-		  Nameless	,				1,		,2		1,2				;
+    Top											1			,2		1,2				; strip trail commas
+    Child	Named							1			(,2)	(1,2)			; strip trail commas, paren if internal commas
+          Nameless	,				1,		,2		1,2				;
  */
 
 static void StripCommas(string& str)
@@ -840,7 +841,7 @@ static EEndian ByteOrder()
 		return eBigEndian;
 	default:
 		assert(0);
-		return (EEndian)-1;
+		return (EEndian) - 1;
 	}
 }
 

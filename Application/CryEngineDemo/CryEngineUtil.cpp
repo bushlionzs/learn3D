@@ -1,5 +1,5 @@
-#include <Cry3DEngine/CGF/ReadOnlyChunkFile.h>
-#include <Cry3DEngine/CGF/CGFLoader.h>
+#include <CryEngine/Cry3DEngine/CGF/ReadOnlyChunkFile.h>
+#include <CryEngine/Cry3DEngine/CGF/CGFLoader.h>
 #include <OgreHeader.h>
 #include <OgreMeshManager.h>
 #include <OgreMesh.h>
@@ -8,7 +8,7 @@
 #include <OgreIndexData.h>
 #include <OgreVertexDeclaration.h>
 #include <OgreMaterialManager.h>
-#include <CrySystem/XML/xml.h>
+#include <CryEngine/CrySystem/XML/xml.h>
 struct CryEngineVertex
 {
 	Ogre::Vector3 Pos;
@@ -165,9 +165,14 @@ void addCryEngineMaterial(const std::string& matName, const std::string& matFile
 	}
 }
 
-#include <CrySystem/CryPak.h>
+#include <CryEngine/CrySystem/CryPak.h>
 #include <CrySystem/SystemInitParams.h>
-#include <CrySystem/System.h>
+#include <CryEngine/CrySystem/System.h>
+#include <CryEngine/CryAction/CryAction.h>
+#include <CryEngine/CryAction/LevelSystem.h>
+#include <CrySystem/File/IResourceManager.h>
+#include <CryRenderer/IRenderer.h>
+#include <CryEngine/Cry3DEngine/ObjMan.h>
 void loadCryEngineLevel(struct CryEngineContext& context)
 {
 	SSystemInitParams startupParams;
@@ -175,6 +180,25 @@ void loadCryEngineLevel(struct CryEngineContext& context)
 	strncpy(startupParams.szSystemCmdLine, cmdline, sizeof(startupParams.szSystemCmdLine) - 1);
 	std::unique_ptr<CSystem> pSystem = stl::make_unique<CSystem>(startupParams);
 	pSystem->Initialize(startupParams);
+	startupParams.pSystem = pSystem.get();
+	new CCryAction(const_cast<SSystemInitParams&>(startupParams));
 	ICryPak* pak = pSystem->GetIPak();
-	pak->FOpen("D:\\CryEngine\\ThirdPerson\\Assets\\Levels\\asset_zoo\\mission_mission0.xml", "rb");
+	ILevelSystem* levelSystem = CCryAction::GetCryAction()->GetILevelSystem();
+	levelSystem->PrepareNextLevel("asset_zoo");
+
+	XmlNodeRef m_xmlLevelData = pSystem->LoadXmlFromFile("D:/CryEngine/ThirdPerson/Assets/Levels/asset_zoo/LevelData.xml");
+	IResourceList* pResList = pSystem->GetIResourceManager()->GetLevelResourceList();
+	CObjManager* pObjManager = nullptr;
+	for (const char* szResFileName = pResList->GetFirst(); szResFileName != nullptr; szResFileName = pResList->GetNext())
+	{
+		const char* szFileExt = PathUtil::GetExt(szResFileName);
+		const bool isCgf = cry_stricmp(szFileExt, CRY_GEOMETRY_FILE_EXT) == 0;
+
+		if (isCgf)
+		{
+		    pObjManager->LoadStatObj(szResFileName, NULL, nullptr, false, 0);
+		}
+	}
+	//levelSystem->LoadLevel("asset_zoo");
+	//FILE* f = pak->FOpen("D:\\CryEngine\\ThirdPerson\\Assets\\Levels\\asset_zoo\\mission_mission0.xml", "rb");
 }

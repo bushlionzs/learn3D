@@ -11,7 +11,8 @@
 #include <Cry3DEngine/IMaterial.h>
 #include <Cry3DEngine/IRenderNode.h>
 #include <CryCore/Containers/CryArray.h>
-//#include <CryRenderer/RenderObject.h>
+#include <CryRenderer/RenderObject.h>
+#include <CryRenderer/IRenderer.h>
 //Do not add any headers here!
 
 class CContentCGF;

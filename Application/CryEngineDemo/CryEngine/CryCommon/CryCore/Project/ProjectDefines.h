@@ -258,7 +258,7 @@ extern void SliceAndSleep(const char* pFunc, int line);
 // Modules   : Renderer, Engine
 // Platform  : DX11
 #if CRY_PLATFORM_WINDOWS || CRY_PLATFORM_DURANGO || CRY_PLATFORM_ORBIS
-	#define FEATURE_SVO_GI
+	//#define FEATURE_SVO_GI
 	#if CRY_PLATFORM_WINDOWS
 		#define FEATURE_SVO_GI_ALLOW_HQ
 	#endif
@@ -300,12 +300,20 @@ extern void SliceAndSleep(const char* pFunc, int line);
 
 // #define SUPPORT_XTEA_PAK_ENCRYPTION                             //! C2 Style. Compromised - do not use.
 // #define SUPPORT_STREAMCIPHER_PAK_ENCRYPTION                     //! C2 DLC Style - by Mark Tully.
-
+#if !CRY_PLATFORM_DURANGO
+	//#define SUPPORT_RSA_AND_STREAMCIPHER_PAK_ENCRYPTION //C3/Warface Style - By Timur Davidenko and integrated by Rob Jessop
+#endif
 #if (!defined(_RELEASE) || defined(PERFORMANCE_BUILD)) && !defined(SUPPORT_UNSIGNED_PAKS)
 	#define SUPPORT_UNSIGNED_PAKS //Enable to load paks that aren't RSA signed
 #endif                          //!_RELEASE || PERFORMANCE_BUILD
+#if !CRY_PLATFORM_DURANGO
+	//#define SUPPORT_RSA_PAK_SIGNING //RSA signature verification
+#endif
 
-
+#if defined(SUPPORT_RSA_AND_STREAMCIPHER_PAK_ENCRYPTION) || defined(SUPPORT_RSA_PAK_SIGNING)
+//! Use LibTomMath and LibTomCrypt for cryptography.
+	//#define INCLUDE_LIBTOMCRYPT
+#endif
 
 //! This enables checking of CRCs on archived files when they are loaded fully and synchronously in CryPak.
 //! Computes a CRC of the decompressed data and compares it to the CRC stored in the archive CDR for that file.

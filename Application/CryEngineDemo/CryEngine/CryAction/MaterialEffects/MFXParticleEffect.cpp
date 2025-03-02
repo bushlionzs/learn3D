@@ -3,9 +3,6 @@
 #include "StdAfx.h"
 
 #include <CryParticleSystem/ParticleParams.h>
-#ifndef _LIB
-	#include <CryParticleSystem/ParticleParams_TypeInfo.h>
-#endif
 #include "MFXParticleEffect.h"
 #include "MaterialEffectsCVars.h"
 #include "IActorSystem.h"

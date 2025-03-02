@@ -19,6 +19,8 @@
 		#define WIN32_LEAN_AND_MEAN
 	#endif
 
+// Do not define min/max in windows.h
+	#define NOMINMAX
 
 // Prevents <Windows.h> from #including <Winsock.h>
 // Manually define your <Winsock2.h> inclusion point elsewhere instead.
@@ -27,8 +29,7 @@
 	#endif
 
 	#if defined(_WINDOWS_) && !defined(CRY_INCLUDE_WINDOWS_VIA_MFC_OR_ATL_INCLUDES)
-		//#error "<windows.h> has been included by other means than CryWindows.h"
-//zhousha
+		#error "<windows.h> has been included by other means than CryWindows.h"
 	#endif
 
 	#include <windows.h>

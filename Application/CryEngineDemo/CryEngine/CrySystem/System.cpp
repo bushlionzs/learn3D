@@ -24,7 +24,7 @@
 #include <CryRenderer/IRenderer.h>
 #include <CrySystem/File/ICryPak.h>
 #include <CrySystem/ConsoleRegistration.h>
-#include <CrySystem/JobManager/JobManager.h>
+#include <JobManager/JobManager.h>
 #include <CryEntitySystem/IEntitySystem.h>
 #include <CryInput/IInput.h>
 #include <CrySystem/ILog.h>
@@ -80,8 +80,8 @@
 #include <CryString/StringUtils.h>
 #include <CrySystem/Scaleform/IFlashUI.h>
 
-#include <CryAction/ILevelSystem.h>
-#include <CryAction/IViewSystem.h>
+#include <../CryAction/ILevelSystem.h>
+#include <../CryAction/IViewSystem.h>
 
 
 #if CRY_PLATFORM_WINDOWS

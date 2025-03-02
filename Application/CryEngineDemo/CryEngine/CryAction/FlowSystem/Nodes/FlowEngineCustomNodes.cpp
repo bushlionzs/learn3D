@@ -5,7 +5,6 @@
 #include "StdAfx.h"
 
 #include <CryFlowGraph/IFlowBaseNode.h>
-#include <CrySandbox/IEditorGame.h>
 #include <CryString/CryPath.h>
 #include <CrySystem/File/ICryPak.h>
 #include <ILevelSystem.h>
@@ -321,7 +320,7 @@ private:
 					TSzNames fileSzNames;
 					UpdateSzNamesFromStringNames(fileSzNames, fileNames);
 
-					pGameToEditor->SetUIEnums(LAYERSWITCHNODE_UICONFIG_NAME, &fileSzNames[0], static_cast<int>(fileSzNames.size()));
+					//pGameToEditor->SetUIEnums(LAYERSWITCHNODE_UICONFIG_NAME, &fileSzNames[0], static_cast<int>(fileSzNames.size()));
 				}
 			}
 		}

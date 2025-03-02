@@ -12,7 +12,7 @@
 #include <CryNetwork/INotificationNetwork.h>
 #include <CryRenderer/IRenderAuxGeom.h>
 #include <CrySystem/ConsoleRegistration.h>
-#include <CrySystem/XConsoleVariable.h>
+#include <XConsoleVariable.h>
 #include <regex>
 #include <fstream>
 #include <sstream>

@@ -2,7 +2,6 @@
 
 #include "StdAfx.h"
 #include "LevelSystem.h"
-#include <CryMovie/IMovieSystem.h>
 #include <CryRenderer/IRenderAuxGeom.h>
 #include <CryGame/IGameTokens.h>
 #include "TimeOfDayScheduler.h"
@@ -1470,17 +1469,7 @@ public:
 			if (gEnv->pAISystem)
 				gEnv->pAISystem->Reset(IAISystem::RESET_ENTER_GAME);
 
-			//////////////////////////////////////////////////////////////////////////
-			// Movie system must be loaded after entities.
-			//////////////////////////////////////////////////////////////////////////
-			if (IMovieSystem* pMovieSys = gEnv->pMovieSystem)
-			{
-				ILevelInfo* pLevelInfo = m_levelSystem.m_pLoadingLevelInfo;
-				string movieXml = pLevelInfo->GetPath() + string("/moviedata.xml");
-				pMovieSys->Load(movieXml, pLevelInfo->GetDefaultGameType()->name);
-				pMovieSys->Reset(true, false); // bSeekAllToStart needs to be false here as it's only of interest in the editor (double checked with Timur Davidenko)
-			}
-
+	
 			CCryAction::GetCryAction()->GetIMaterialEffects()->PreLoadAssets();
 
 			gEnv->pFlowSystem->Reset(false);
@@ -1781,6 +1770,7 @@ void CLevelSystem::PrepareNextLevel(const char* levelName)
 	}
 
 	// force a Lua deep garbage collection
+	if(gEnv->pScriptSystem)
 	{
 		gEnv->pScriptSystem->ForceGarbageCollection();
 	}
@@ -2341,11 +2331,6 @@ void CLevelSystem::UnLoadLevel()
 		gEnv->pAISystem->Reset(IAISystem::RESET_UNLOAD_LEVEL);
 	}
 
-	if (gEnv->pMovieSystem)
-	{
-		gEnv->pMovieSystem->Reset(false, false);
-		gEnv->pMovieSystem->RemoveAllSequences();
-	}
 
 	// Delete engine resources
 	if (p3DEngine)

@@ -17,7 +17,6 @@
 #include <CrySystem/File/CryFile.h>
 #include <IActorSystem.h>
 #include <ILevelSystem.h>
-#include <CryMovie/IMovieSystem.h>
 #include "IMovementController.h"
 #include <CrySystem/Profilers/IStatoscope.h>
 #include <CrySystem/VR/IHMDManager.h>
@@ -657,8 +656,6 @@ void CTimeDemoRecorder::Record(bool bEnable)
 	if (bEnable == m_bRecording)
 		return;
 
-	if (gEnv->pMovieSystem)
-		gEnv->pMovieSystem->StopAllSequences();
 
 	m_bRecording = bEnable;
 	m_bPlaying = false;
@@ -1975,8 +1972,6 @@ void CTimeDemoRecorder::StartSession()
 	}
 	//////////////////////////////////////////////////////////////////////////
 
-	if (gEnv->pMovieSystem)
-		gEnv->pMovieSystem->StopAllCutScenes();
 
 	if (m_demo_ai == 0)
 	{

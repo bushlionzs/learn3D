@@ -14,7 +14,6 @@
 #include "IItemSystem.h"
 #include "IGameRulesSystem.h"
 #include "IVehicleSystem.h"
-#include <CryMovie/IMovieSystem.h>
 #include "IPlayerProfiles.h"
 #include <CrySystem/IStreamEngine.h>
 #include "MaterialEffects/MaterialEffects.h"
@@ -756,10 +755,6 @@ ELoadGameResult CGameSerialize::LoadGame(CCryAction* pCryAction, const char* met
 	pCryAction->NotifyGameFrameworkListeners(loadEnvironment.m_pLoadGame.Get());
 
 	checkpoint.Check("FrameWork Listeners");
-
-	// reset movie system, don't play any sequences
-	if (gEnv->pMovieSystem)
-		gEnv->pMovieSystem->Reset(false, false);
 
 	checkpoint.Check("MovieSystem");
 

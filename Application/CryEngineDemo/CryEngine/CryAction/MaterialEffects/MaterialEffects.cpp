@@ -51,6 +51,7 @@ namespace MaterialEffectsUtils
 {
 int FindSurfaceIdByName(const char* surfaceTypeName)
 {
+	return -1;
 	CRY_ASSERT(surfaceTypeName != NULL);
 
 	ISurfaceType* pSurfaceType = gEnv->p3DEngine->GetMaterialManager()->GetSurfaceTypeManager()->GetSurfaceTypeByName(surfaceTypeName);

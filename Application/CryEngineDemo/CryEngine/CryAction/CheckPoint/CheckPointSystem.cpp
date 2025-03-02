@@ -26,7 +26,6 @@
 #include "IActorSystem.h"
 #include "IPlayerProfiles.h"
 #include "IVehicleSystem.h"
-#include <CryMovie/IMovieSystem.h>
 #include <CryString/CryPath.h>
 
 //statics
@@ -551,10 +550,6 @@ void CCheckpointSystem::ResetEngine()
 		gEnv->pAISystem->Reset(IAISystem::RESET_ENTER_GAME);
 	}
 
-	//flow system
-
-	//reset trackview
-	gEnv->pMovieSystem->Reset(true, true);
 
 	//entity system
 	SEntityEvent event;

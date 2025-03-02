@@ -58,8 +58,8 @@ struct CStructInfo : CTypeInfo
 	virtual void                    SwapEndian(void* pData, size_t nCount, bool bWriting) const;
 	virtual void                    GetMemoryUsage(ICrySizer* pSizer, void const* data) const;
 
-	virtual const CVarInfo* NextSubVar(const CVarInfo* pPrev, bool bRecurseBase = false) const;
-	virtual const CVarInfo* FindSubVar(cstr name) const;
+	virtual const CVarInfo*         NextSubVar(const CVarInfo* pPrev, bool bRecurseBase = false) const;
+	virtual const CVarInfo*         FindSubVar(cstr name) const;
 
 	virtual CTypeInfo const* const* NextTemplateType(CTypeInfo const* const* pPrev) const
 	{
@@ -84,8 +84,7 @@ struct TTypeInfo : CTypeInfo
 {
 	TTypeInfo(cstr name)
 		: CTypeInfo(name, sizeof(T), alignof(T))
-	{
-	}
+	{}
 
 	virtual bool ToValue(const void* data, void* value, const CTypeInfo& typeVal) const
 	{
@@ -122,8 +121,7 @@ struct TTypeInfo : CTypeInfo
 	}
 
 	virtual void GetMemoryUsage(ICrySizer* pSizer, void const* data) const
-	{
-	}
+	{}
 };
 
 //! Template TypeInfo for modified types (e.g. compressed, range-limited).
@@ -132,13 +130,10 @@ struct TProxyTypeInfo : CTypeInfo
 {
 	TProxyTypeInfo(cstr name)
 		: CTypeInfo(name, sizeof(S), alignof(S))
-	{
-	}
+	{}
 
 	virtual bool IsType(CTypeInfo const& Info) const
-	{
-		return &Info == this || ValTypeInfo().IsType(Info);
-	}
+	{ return &Info == this || ValTypeInfo().IsType(Info); }
 
 	virtual bool ToValue(const void* data, void* value, const CTypeInfo& typeVal) const
 	{
@@ -189,20 +184,14 @@ struct TProxyTypeInfo : CTypeInfo
 
 	//! Forward additional TypeInfo functions.
 	virtual bool GetLimit(ENumericLimit eLimit, float& fVal) const
-	{
-		return ValTypeInfo().GetLimit(eLimit, fVal);
-	}
+	{ return ValTypeInfo().GetLimit(eLimit, fVal); }
 	virtual cstr EnumElem(uint nIndex) const
-	{
-		return ValTypeInfo().EnumElem(nIndex);
-	}
+	{ return ValTypeInfo().EnumElem(nIndex); }
 
 protected:
 
 	static const CTypeInfo& ValTypeInfo()
-	{
-		return TypeInfo((T*)0);
-	}
+	{ return TypeInfo((T*)0); }
 };
 
 //! Customisation for string.
@@ -238,24 +227,23 @@ void TTypeInfo<string >::GetMemoryUsage(ICrySizer* pSizer, void const* data) con
 template<class T> struct TIntTraits
 {
 	static const bool bSIGNED
-		= T(-1) < T(0);
+	  = T(-1) < T(0);
 
 	static const T nMIN_FACTOR
-		= bSIGNED ? T(-1) : T(0);
+	  = bSIGNED ? T(-1) : T(0);
 
 	static const size_t nPOS_BITS
-		= sizeof(T) * 8 - bSIGNED;
+	  = sizeof(T) * 8 - bSIGNED;
 
 	static const T nMIN
-		= bSIGNED ? T(T(1) << T(sizeof(T) * 8 - 1)) : T(0);
+	  = bSIGNED ? T(T(1) << T(sizeof(T) * 8 - 1)) : T(0);
 
 	static const T nMAX
-		= ~nMIN;
+	  = ~nMIN;
 };
 
 template<uint S> struct TIntType
-{
-};
+{};
 
 template<> struct TIntType<1>
 {
@@ -360,13 +348,10 @@ struct TIntTypeInfo : TTypeInfo<T>
 {
 	TIntTypeInfo(cstr name)
 		: TTypeInfo<T>(name)
-	{
-	}
+	{}
 
 	virtual bool IsType(CTypeInfo const& Info) const
-	{
-		return &Info == this || &Info == (TIntTraits<T>::bSIGNED ? &TypeInfo((int*)0) : &TypeInfo((uint*)0));
-	}
+	{ return &Info == this || &Info == (TIntTraits<T>::bSIGNED ? &TypeInfo((int*)0) : &TypeInfo((uint*)0)); }
 
 	virtual bool GetLimit(ENumericLimit eLimit, float& fVal) const
 	{
@@ -381,13 +366,9 @@ struct TIntTypeInfo : TTypeInfo<T>
 
 	//! Override to allow int conversion.
 	virtual bool FromValue(void* data, const void* value, const CTypeInfo& typeVal) const
-	{
-		return ConvertInt(*(T*)data, value, typeVal);
-	}
+	{ return ConvertInt(*(T*)data, value, typeVal); }
 	virtual bool ToValue(const void* data, void* value, const CTypeInfo& typeVal) const
-	{
-		return ConvertInt(value, typeVal, *(const T*)data);
-	}
+	{ return ConvertInt(value, typeVal, *(const T*)data); }
 };
 
 //! Store any type, such as an enum, in a small int.
@@ -403,9 +384,7 @@ struct TRangedType
 	}
 
 	operator T() const
-	{
-		return m_Val;
-	}
+	{ return m_Val; }
 
 	CUSTOM_STRUCT_INFO(CCustomInfo)
 
@@ -413,13 +392,9 @@ protected:
 	T           m_Val;
 
 	static bool HasMin()
-	{
-		return nMIN > INT_MIN;
-	}
+	{ return nMIN > INT_MIN; }
 	static bool HasMax()
-	{
-		return nMAX < INT_MAX;
-	}
+	{ return nMAX < INT_MAX; }
 
 	static bool CheckRange(T& val)
 	{
@@ -440,9 +415,8 @@ protected:
 	struct CCustomInfo : TProxyTypeInfo<T, TThis>
 	{
 		CCustomInfo()
-			: TProxyTypeInfo<T, TThis>(::TypeInfo((T*)0).Name)
-		{
-		}
+			: TProxyTypeInfo<T, TThis>(::TypeInfo((T*) 0).Name)
+		{}
 
 		virtual bool GetLimit(ENumericLimit eLimit, float& fVal) const
 		{
@@ -473,13 +447,9 @@ struct TSmall
 	}
 
 	inline   operator T() const
-	{
-		return T(T(m_Val) + nOffset);
-	}
+	{ return T(T(m_Val) + nOffset); }
 	inline T operator+() const
-	{
-		return T(T(m_Val) + nOffset);
-	}
+	{ return T(T(m_Val) + nOffset); }
 
 	CUSTOM_STRUCT_INFO(CCustomInfo)
 
@@ -490,8 +460,7 @@ protected:
 	{
 		CCustomInfo()
 			: TProxyTypeInfo<T, TThis>("TSmall<>")
-		{
-		}
+		{}
 
 		virtual bool GetLimit(ENumericLimit eLimit, float& fVal) const
 		{
@@ -515,8 +484,7 @@ struct TFixed
 
 	inline TFixed()
 		: m_Store(0)
-	{
-	}
+	{}
 
 	inline TFixed(float fIn)
 	{
@@ -527,39 +495,23 @@ struct TFixed
 
 	// Conversion.
 	inline       operator float() const
-	{
-		return FromStore(m_Store);
-	}
+	{ return FromStore(m_Store); }
 	inline float operator+() const
-	{
-		return FromStore(m_Store);
-	}
+	{ return FromStore(m_Store); }
 	inline bool  operator!() const
-	{
-		return !m_Store;
-	}
+	{ return !m_Store; }
 
 	inline bool operator==(const TFixed& x) const
-	{
-		return m_Store == x.m_Store;
-	}
+	{ return m_Store == x.m_Store; }
 	inline bool operator==(float x) const
-	{
-		return m_Store == TFixed(x);
-	}
+	{ return m_Store == TFixed(x); }
 	inline S    GetStore() const
-	{
-		return m_Store;
-	}
+	{ return m_Store; }
 
 	static S     GetMaxStore()
-	{
-		return nQUANT;
-	}
+	{ return nQUANT; }
 	static float GetMaxValue()
-	{
-		return float(nLIMIT);
-	}
+	{ return float(nLIMIT); }
 
 	CUSTOM_STRUCT_INFO(CCustomInfo)
 
@@ -572,21 +524,16 @@ protected:
 	static const int    nMIN = TIntTraits<S>::nMIN_FACTOR * nLIMIT;
 
 	static inline float ToStore(float f)
-	{
-		return f * float(nQUANT) / float(nLIMIT);
-	}
+	{ return f * float(nQUANT) / float(nLIMIT); }
 	static inline float FromStore(float f)
-	{
-		return f * float(nLIMIT) / float(nQUANT);
-	}
+	{ return f * float(nLIMIT) / float(nQUANT); }
 
 	//! TypeInfo implementation.
 	struct CCustomInfo : TProxyTypeInfo<float, TThis>
 	{
 		CCustomInfo()
 			: TProxyTypeInfo<float, TThis>("TFixed<>")
-		{
-		}
+		{}
 
 		virtual bool GetLimit(ENumericLimit eLimit, float& fVal) const
 		{
@@ -624,46 +571,30 @@ struct TFloat
 
 	ILINE TFloat()
 		: m_Store(0)
-	{
-	}
+	{}
 
 	ILINE TFloat(float fIn)
 		: m_Store(FromFloat(fIn))
-	{
-	}
+	{}
 
 	ILINE       operator float() const
-	{
-		return ToFloat(m_Store);
-	}
+	{ return ToFloat(m_Store); }
 	ILINE float operator+() const
-	{
-		return ToFloat(m_Store);
-	}
+	{ return ToFloat(m_Store); }
 
 	ILINE bool operator!() const
-	{
-		return !m_Store;
-	}
+	{ return !m_Store; }
 
 	ILINE bool operator==(TFloat x) const
-	{
-		return m_Store == x.m_Store;
-	}
+	{ return m_Store == x.m_Store; }
 	ILINE bool operator==(float x) const
-	{
-		return float(*this) == x;
-	}
+	{ return float(*this) == x; }
 
 	inline TFloat& operator*=(float x)
-	{
-		return *this = *this * x;
-	}
+	{ return *this = *this * x; }
 
 	ILINE uint32 partial_float_conversion() const
-	{
-		return (0 == m_Store) ? 0 : ToFloatCore(m_Store);
-	}
+	{ return (0 == m_Store) ? 0 : ToFloatCore(m_Store); }
 
 	STATIC_CONST(float, fMAX, ToFloat(TIntTraits<S>::nMAX));
 	STATIC_CONST(float, fPOS_MIN, ToFloat(1 << nMANT_BITS));
@@ -683,7 +614,7 @@ protected:
 	static const S   nMANT_MASK = (S(1) << nMANT_BITS) - 1;
 	static const S   nEXP_MASK = ~S(nMANT_MASK | nSIGN_MASK);
 	static const int nEXP_MAX = 1 << (nEXP_BITS - 1),
-		nEXP_MIN = 1 - nEXP_MAX;
+	                 nEXP_MIN = 1 - nEXP_MAX;
 
 	STATIC_CONST(float, fROUNDER, 1.f + fPOS_MIN() * 0.5f);
 
@@ -701,7 +632,7 @@ protected:
 		// Convert exp.
 		int32 iExp = (uBits >> 23) & 0xFF;
 		iExp -= 127 + nEXP_MIN;
-		IF(iExp < 0, 0)
+		IF (iExp < 0, 0)
 			// Underflow.
 			return 0;
 
@@ -709,15 +640,15 @@ protected:
 		uint32 uMant = uBits >> (23 - nMANT_BITS);
 
 		S bits = (uMant & nMANT_MASK)
-			| (iExp << nMANT_BITS)
-			| ((uBits >> (32 - nBITS)) & nSIGN_MASK);
+		         | (iExp << nMANT_BITS)
+		         | ((uBits >> (32 - nBITS)) & nSIGN_MASK);
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 		fIn = clamp_tpl(fIn, fMIN(), fMAX());
 		float fErr = fabs(ToFloat(bits) - fIn);
 		float fMaxErr = fabs(fIn) / float(1 << nMANT_BITS);
 		assert(fErr <= fMaxErr);
-#endif
+	#endif
 
 		return bits;
 	}
@@ -726,8 +657,8 @@ protected:
 	{
 		// Extract FP components.
 		uint32 uBits = bits & nMANT_MASK,
-			uExp = (bits & ~nSIGN_MASK) >> nMANT_BITS,
-			uSign = bits & nSIGN_MASK;
+		       uExp = (bits & ~nSIGN_MASK) >> nMANT_BITS,
+		       uSign = bits & nSIGN_MASK;
 
 		// Shift to 32-bit.
 		uBits <<= 23 - nMANT_BITS;
@@ -739,7 +670,7 @@ protected:
 
 	static ILINE float ToFloat(S bits)
 	{
-		IF(bits == 0, 0)
+		IF (bits == 0, 0)
 			return 0.f;
 
 		uint32 uBits = ToFloatCore(bits);
@@ -751,8 +682,7 @@ protected:
 	{
 		CCustomInfo()
 			: TProxyTypeInfo<float, TThis>("TFloat<>")
-		{
-		}
+		{}
 
 		virtual bool GetLimit(ENumericLimit eLimit, float& fVal) const
 		{
@@ -786,7 +716,7 @@ ILINE T partial_float_cast(const SFloat16& s) { return static_cast<T>(s.partial_
 template<typename T>
 ILINE T partial_float_cast(const UFloat16& u) { return static_cast<T>(u.partial_float_conversion()); }
 
-#ifdef _DEBUG
+	#ifdef _DEBUG
 
 //! Classes for unit tests.
 template<class T2, class T>
@@ -821,7 +751,7 @@ void TestType(T val)
 	TestTypes<T>(val);
 }
 
-#endif // _DEBUG
+	#endif // _DEBUG
 
 #endif // COMPRESSED_FLOATS
 
@@ -833,12 +763,12 @@ void TestType(T val)
 /*
    interface EnumDef
    {
-	typedef TInt;
-	uint Count();
-	TInt Value(uint i);
-	cstr Name(uint i);
-	bool MatchName(uint i, cstr str);
-	cstr ToName(TInt value);
+    typedef TInt;
+    uint Count();
+    TInt Value(uint i);
+    cstr Name(uint i);
+    bool MatchName(uint i, cstr str);
+    cstr ToName(TInt value);
    } const
  */
 
@@ -917,17 +847,11 @@ struct CSimpleEnumDef
 
 	//! TEnumDef implementations.
 	ILINE uint        Count() const
-	{
-		return asNames.size();
-	}
+	{ return asNames.size(); }
 	ILINE static uint Value(uint i)
-	{
-		return i;
-	}
+	{ return i; }
 	ILINE cstr        Name(uint i) const
-	{
-		return asNames[i];
-	}
+	{ return asNames[i]; }
 	ILINE bool        MatchName(uint i, cstr str) const
 	{
 		cstr name = asNames[i];
@@ -994,17 +918,11 @@ struct CEnumDef
 
 	//! TEnumDef implementations.
 	ILINE uint   Count() const
-	{
-		return Elems.size();
-	}
+	{ return Elems.size(); }
 	ILINE TValue Value(uint i) const
-	{
-		return Elems[i].Value;
-	}
+	{ return Elems[i].Value; }
 	ILINE cstr   Name(uint i) const
-	{
-		return *Elems[i].Name ? Elems[i].Name + nPrefixLength : "";
-	}
+	{ return *Elems[i].Name ? Elems[i].Name + nPrefixLength : ""; }
 	bool         MatchName(uint i, cstr str) const;
 	cstr         ToName(TValue val) const;
 

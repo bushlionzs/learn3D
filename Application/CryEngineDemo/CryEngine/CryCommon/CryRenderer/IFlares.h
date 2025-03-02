@@ -2,7 +2,7 @@
 
 #pragma once
 
-//#include <CrySandbox/IFuncVariable.h> // <> required for Interfuscator
+
 #include <CrySystem/XML/IXml.h>       // <> required for Interfuscator
 #include <CryCore/smartptr.h>
 #include <CryCore/Containers/CryArray.h>
@@ -167,7 +167,6 @@ public:
 	virtual void                SetOpticsReference(IOpticsElementBase* pReference) {}
 	virtual IOpticsElementBase* GetOpticsReference() const                         { return NULL; }
 	// </interfuscator:shuffle>
-
 
 
 protected:

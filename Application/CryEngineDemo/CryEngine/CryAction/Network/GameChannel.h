@@ -15,7 +15,7 @@
 #define __GAMECHANNEL_H__
 
 #pragma once
-
+#include <CryNetwork/INetwork.h>
 class CGameContext;
 class CPhysicsSync;
 

@@ -800,7 +800,7 @@ protected:
 };
 
 #if defined(CRY_ENABLE_RC_HELPER)
-//#include <CryCore/ToolsHelpers/ResourceCompilerHelper.h>
+#include <CryCore/ToolsHelpers/ResourceCompilerHelper.h>
 //! Listener for asynchronous texture compilation.
 //! Connects the listener to the task-queue of pending compilation requests.
 enum ERcExitCode;

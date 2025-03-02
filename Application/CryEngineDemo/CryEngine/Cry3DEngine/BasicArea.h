@@ -1,0 +1,87 @@
+// Copyright 2004-2021 Crytek GmbH / Crytek Group. All rights reserved.
+
+#pragma once
+
+class COctreeNode;
+
+#define COPY_MEMBER_SAVE(_dst, _src, _name) { (_dst)->_name = (_src)->_name; }
+#define COPY_MEMBER_LOAD(_dst, _src, _name) { (_dst)->_name = (_src)->_name; }
+
+enum EObjList
+{
+	DYNAMIC_OBJECTS = 0,
+	STATIC_OBJECTS,
+	PROC_OBJECTS,
+	ENTITY_LISTS_NUM
+};
+
+struct SRNInfo
+{
+	SRNInfo()
+	{
+		memset(this, 0, sizeof(*this));
+	}
+
+	SRNInfo(IRenderNode* _pNode)
+	{
+		fMaxViewDist = _pNode->m_fWSMaxViewDist;
+		AABB aabbBox = _pNode->GetBBox();
+		objSphere.center = aabbBox.GetCenter();
+		objSphere.radius = aabbBox.GetRadius();
+		pNode = _pNode;
+		nRType = _pNode->GetRenderNodeType();
+
+		/*#ifdef _DEBUG
+		    erType = _pNode->GetRenderNodeType();
+		    cry_strcpy(szName, _pNode->GetName());
+		 #endif*/
+	}
+
+	bool operator==(const IRenderNode* _pNode) const { return (pNode == _pNode); }
+	bool operator==(const SRNInfo& rOther) const     { return (pNode == rOther.pNode); }
+
+	float        fMaxViewDist;
+	Sphere       objSphere;
+	IRenderNode* pNode;
+	EERType      nRType;
+	/*#ifdef _DEBUG
+	   EERType erType;
+	   char szName[32];
+	 #endif*/
+};
+
+#define UPDATE_PTR_AND_SIZE(_pData, _nDataSize, _SIZE_PLUS) \
+  {                                                         \
+    _pData += (_SIZE_PLUS);                                 \
+    _nDataSize -= (_SIZE_PLUS);                             \
+    assert(_nDataSize >= 0);                                \
+  }                                                         \
+
+enum EAreaType
+{
+	eAreaType_Undefined,
+	eAreaType_OcNode,
+	eAreaType_VisArea
+};
+
+struct CBasicArea : public Cry3DEngineBase
+{
+	CBasicArea()
+	{
+		m_boxArea.min = m_boxArea.max = Vec3(0, 0, 0);
+		m_pObjectsTree = NULL;
+	}
+
+	~CBasicArea();
+
+	bool         IsObjectsTreeValid()              { return m_pObjectsTree != nullptr; }
+	COctreeNode* GetObjectsTree()                  { return m_pObjectsTree; }
+	void         SetObjectsTree(COctreeNode* node) { m_pObjectsTree = node; }
+
+	AABB m_boxArea;                  // bbox containing everything in sector including child sectors
+	AABB m_boxStatics;               // bbox containing only objects in STATIC_OBJECTS list of this node and height-map
+
+private:
+
+	COctreeNode* m_pObjectsTree;
+};

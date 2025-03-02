@@ -16,15 +16,15 @@
 #include <CryExtension/CryCreateClassInstance.h>
 #include <CryGame/IGameStartup.h>
 #include <CrySystem/ConsoleRegistration.h>
-#include <CrySystem/CmdLine.h>
+#include <CmdLine.h>
 #include <CrySystem/SystemInitParams.h>
-#include <CrySystem/ProjectManager.h>
-#include <CrySystem/ExtensionSystem/CryPluginManager.h>
-#include <CrySystem/JobManager/JobManager.h>
-#include <CryCommon/CryThreading/IThreadManager.h>
-#include <CryCommon/CryThreading/IThreadConfigManager.h>
-#include <CrySystem/WindowsConsole.h>
-#include <CrySystem/XConsole.h>
+#include <ProjectManager.h>
+#include <ExtensionSystem/CryPluginManager.h>
+#include <JobManager/JobManager.h>
+#include <CryThreading/IThreadManager.h>
+#include <CryThreading/IThreadConfigManager.h>
+#include <WindowsConsole.h>
+#include <XConsole.h>
 
 #if (CRY_PLATFORM_APPLE || CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID) && !defined(DEDICATED_SERVER)
 	#include <dlfcn.h>

@@ -2524,7 +2524,6 @@ bool CCryPak::OpenPackCommon(const char* szBindRoot, const char* szFullPath, uns
 
 	if (desc.pArchive->GetClassId() == CryArchive::gClassId)
 	{
-		m_pLog->LogWithType(IMiniLog::eComment, "Opening pak file %s to %s", szFullPath, szBindRoot ? szBindRoot : "<NIL>");
 		desc.pZip = static_cast<CryArchive*>((ICryArchive*)desc.pArchive)->GetCache();
 
 		//Append the pak to the end but before any override paks

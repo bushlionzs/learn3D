@@ -3,10 +3,9 @@
 #pragma once
 
 #include "View.h"
-#include <CryMovie/IMovieSystem.h>
 #include <ILevelSystem.h>
 
-class CViewSystem : public IViewSystem, public IMovieUser, public ILevelSystemListener
+class CViewSystem : public IViewSystem,public ILevelSystemListener
 {
 
 private:
@@ -53,12 +52,7 @@ public:
 	virtual void UpdateAudioListeners() override;
 	//~IViewSystem
 
-	//IMovieUser
-	virtual void SetActiveCamera(const SCameraParams& Params) override;
-	virtual void BeginCutScene(IAnimSequence* pSeq, unsigned long dwFlags, bool bResetFX) override;
-	virtual void EndCutScene(IAnimSequence* pSeq, unsigned long dwFlags) override;
-	virtual void SendGlobalEvent(const char* pszEvent) override;
-	//~IMovieUser
+
 
 	// ILevelSystemListener
 	virtual bool OnLoadingStart(ILevelInfo* pLevel) override;

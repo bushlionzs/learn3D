@@ -10,7 +10,7 @@
 
 // Currently enable type info for all platforms.
 #if !defined(ENABLE_TYPE_INFO)
-#define ENABLE_TYPE_INFO
+	#define ENABLE_TYPE_INFO
 #endif
 #ifdef ENABLE_TYPE_INFO
 
@@ -21,24 +21,24 @@ inline const CTypeInfo& TypeInfo(const T* t);
 
 namespace Detail
 {
-	template<typename T, bool bIsEnum = std::is_enum<T>::value>
-	struct SEnumHelper
+template<typename T, bool bIsEnum = std::is_enum<T>::value>
+struct SEnumHelper
+{
+	static const CTypeInfo& TypeInfo(const T* t)
 	{
-		static const CTypeInfo& TypeInfo(const T* t)
-		{
-			return t->TypeInfo();
-		}
-	};
+		return t->TypeInfo();
+	}
+};
 
-	template<typename T>
-	struct SEnumHelper<T, true>
+template<typename T>
+struct SEnumHelper<T, true>
+{
+	static const CTypeInfo& TypeInfo(const T* t)
 	{
-		static const CTypeInfo& TypeInfo(const T* t)
-		{
-			const typename std::underlying_type<T>::type u = *t;
-			return ::TypeInfo(&u);
-		}
-	};
+		const typename std::underlying_type<T>::type u = *t;
+		return ::TypeInfo(&u);
+	}
+};
 }
 
 //! If TypeInfo exists for T, it is accessed via TypeInfo(T*).
@@ -50,37 +50,37 @@ inline const CTypeInfo& TypeInfo(const T* t)
 }
 
 //! Declare a class's TypeInfo member.
-#define STRUCT_INFO \
+	#define STRUCT_INFO \
 	  const CTypeInfo &TypeInfo() const
 
-#define NULL_STRUCT_INFO \
+	#define NULL_STRUCT_INFO \
 	  const CTypeInfo &TypeInfo() const { return *(CTypeInfo*)0; }
 
 //! Declare an override for a type without TypeInfo() member (e.g. basic type).
-#define DECLARE_TYPE_INFO(Type) \
+	#define DECLARE_TYPE_INFO(Type) \
 	  template<> const CTypeInfo &TypeInfo(const Type*)
 
 //! Template version.
-#define DECLARE_TYPE_INFO_T(Type) \
+	#define DECLARE_TYPE_INFO_T(Type) \
 	  template<class T> const CTypeInfo &TypeInfo(const Type<T>*)
 
 //! Type info declaration, with additional prototypes for string conversions.
-#define BASIC_TYPE_INFO(Type)                 \
+	#define BASIC_TYPE_INFO(Type)                 \
 	  string ToString(Type const & val);          \
 	  bool FromString(Type & val, const char* s); \
 	  DECLARE_TYPE_INFO(Type)
 
-#define CUSTOM_STRUCT_INFO(Struct)  \
+	#define CUSTOM_STRUCT_INFO(Struct)  \
 	  const CTypeInfo &TypeInfo() const \
 	  { static Struct Info; return Info; }
 
 #else // ENABLE_TYPE_INFO
 
-#define STRUCT_INFO
-#define NULL_STRUCT_INFO
-#define DECLARE_TYPE_INFO(Type)
-#define DECLARE_TYPE_INFO_T(Type)
-#define BASIC_TYPE_INFO(T)
+	#define STRUCT_INFO
+	#define NULL_STRUCT_INFO
+	#define DECLARE_TYPE_INFO(Type)
+	#define DECLARE_TYPE_INFO_T(Type)
+	#define BASIC_TYPE_INFO(T)
 
 #endif // ENABLE_TYPE_INFO
 
@@ -118,7 +118,7 @@ BASIC_TYPE_INFO(double);
 DECLARE_TYPE_INFO(string);
 
 //! All pointers share same TypeInfo.
-const CTypeInfo& PtrTypeInfo();
+const CTypeInfo&        PtrTypeInfo();
 template<class T>
 inline const CTypeInfo& TypeInfo(T** t)
 {

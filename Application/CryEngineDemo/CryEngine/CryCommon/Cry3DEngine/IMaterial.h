@@ -7,7 +7,7 @@
 #include <CryRenderer/Tarray.h>
 #include <CryThreading/CryThread.h>
 #include <Cry3DEngine/CGF/CryHeaders.h>
-
+#include <CryRenderer/IShader.h>
 class CCamera;
 class ICrySizer;
 
@@ -134,7 +134,7 @@ struct IMaterialHelpers
 	virtual ~IMaterialHelpers() {}
 
 	//////////////////////////////////////////////////////////////////////////
-	virtual EEfResTextures FindTexSlot(const char* texName) const = 0;
+	virtual enum EEfResTextures FindTexSlot(const char* texName) const = 0;
 	virtual const char*    FindTexName(EEfResTextures texSlot) const = 0;
 	virtual const char*    LookupTexName(EEfResTextures texSlot) const = 0;
 	virtual const char*    LookupTexEnum(EEfResTextures texSlot) const = 0;
