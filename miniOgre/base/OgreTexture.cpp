@@ -139,7 +139,7 @@ namespace Ogre {
 		}
 
 		CImage image;
-		image.loadImage(mName, false);
+		image.loadImage(mName);
 		_loadImages({&image});
 	}
 
@@ -228,7 +228,7 @@ namespace Ogre {
 	void OgreTexture::loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format)
 	{
 		CImage img;
-		img.loadRawData(stream, uWidth, uHeight, format);
+		img.loadRawData(*stream.get(), uWidth, uHeight, format);
 		loadImage(img);
 	}
 

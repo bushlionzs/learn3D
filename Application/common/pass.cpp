@@ -75,10 +75,20 @@ public:
 			VertexData* vertexData = r->getVertexData();
 			IndexData* indexData = r->getIndexData();
 			vertexData->bind(nullptr);
-			indexData->bind();
-			IndexDataView* view = r->getIndexView();
-			rs->drawIndexed(view->mIndexCount, 1,
-				view->mIndexLocation, view->mBaseVertexLocation, 0);
+			if (indexData)
+			{
+				indexData->bind();
+				IndexDataView* view = r->getIndexView();
+				rs->drawIndexed(view->mIndexCount, 1,
+					view->mIndexLocation, view->mBaseVertexLocation, 0);
+			}
+			else
+			{
+				assert_invariant(false);
+				/*IndexDataView* view = r->getIndexView();
+				uint32_t vertexCount = vertexData->getVertexCount();
+				rs->draw(vertexCount, view->mBaseVertexLocation);*/
+			}
 			};
 		mUserDefineShader.drawCallback = drawCallback;
 		mRenderPassInfo.passName = "generalPass";
@@ -112,7 +122,7 @@ public:
 			depthValue = 0.0f;
 		}
 		info.depthTarget.clearValue = { depthValue, 0.0f };
-
+		mRenderPassInfo.flipY = false;
 		renderScene(cam, sceneManager, mRenderPassInfo, &mUserDefineShader);
 
 		{

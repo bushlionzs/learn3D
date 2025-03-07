@@ -501,7 +501,7 @@ private:
 	bool InitInput(const SSystemInitParams& startupParams);
 
 	bool InitRenderer(SSystemInitParams& startupParams) { return true; }
-	bool InitPhysics(const SSystemInitParams& startupParams) { return true; }
+	bool InitPhysics(const SSystemInitParams& startupParams);
 	bool InitPhysicsRenderer(const SSystemInitParams& startupParams);
 
 	bool InitFont(const SSystemInitParams& startupParams);
@@ -540,7 +540,11 @@ private:
 
 
 	//////////////////////////////////////////////////////////////////////////
-
+	//////////////////////////////////////////////////////////////////////////
+	// Threading functions.
+	//////////////////////////////////////////////////////////////////////////
+	void InitThreadSystem();
+	void ShutDownThreadSystem();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helper functions.

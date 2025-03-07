@@ -146,7 +146,11 @@ void Cry3DEngineBase::PrintComment(const char* szText, ...)
 
 	va_list args;
 	va_start(args, szText);
-	GetLog()->LogV(IMiniLog::eComment, szText, args);
+	if (GetLog())
+	{
+		GetLog()->LogV(IMiniLog::eComment, szText, args);
+	}
+	
 	va_end(args);
 }
 
@@ -157,10 +161,10 @@ void Cry3DEngineBase::PrintMessage(const char* szText, ...)
 
 	va_list args;
 	va_start(args, szText);
-	GetLog()->LogV(GetCVars()->e_3dEngineLogAlways ? IMiniLog::eAlways : IMiniLog::eMessage, szText, args);
+	//GetLog()->LogV(GetCVars()->e_3dEngineLogAlways ? IMiniLog::eAlways : IMiniLog::eMessage, szText, args);
 	va_end(args);
 
-	GetLog()->UpdateLoadingScreen(0);
+	//GetLog()->UpdateLoadingScreen(0);
 }
 
 void Cry3DEngineBase::PrintMessagePlus(const char* szText, ...)
@@ -173,9 +177,9 @@ void Cry3DEngineBase::PrintMessagePlus(const char* szText, ...)
 	va_start(arglist, szText);
 	cry_vsprintf(buf, szText, arglist);
 	va_end(arglist);
-	GetLog()->LogPlus(buf);
+	//GetLog()->LogPlus(buf);
 
-	GetLog()->UpdateLoadingScreen(0);
+	//GetLog()->UpdateLoadingScreen(0);
 }
 
 float Cry3DEngineBase::GetCurTimeSec()
@@ -196,7 +200,11 @@ void Cry3DEngineBase::Warning(const char* format, ...)
 	m_pSystem->WarningV(VALIDATOR_MODULE_3DENGINE, VALIDATOR_WARNING, 0, 0, format, args);
 	va_end(args);
 
-	GetLog()->UpdateLoadingScreen(0);
+	if (GetLog())
+	{
+		GetLog()->UpdateLoadingScreen(0);
+	}
+	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -210,7 +218,10 @@ void Cry3DEngineBase::Error(const char* format, ...)
 	m_pSystem->WarningV(VALIDATOR_MODULE_3DENGINE, VALIDATOR_ERROR, 0, 0, format, args);
 	va_end(args);
 
-	GetLog()->UpdateLoadingScreen(0);
+	if (GetLog())
+	{
+		GetLog()->UpdateLoadingScreen(0);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -221,8 +232,11 @@ void Cry3DEngineBase::FileWarning(int flags, const char* file, const char* forma
 	// Call to validating warning of system.
 	m_pSystem->WarningV(VALIDATOR_MODULE_3DENGINE, VALIDATOR_WARNING, flags | VALIDATOR_FLAG_FILE, file, format, args);
 	va_end(args);
-
-	GetLog()->UpdateLoadingScreen(0);
+	if (GetLog())
+	{
+		GetLog()->UpdateLoadingScreen(0);
+	}
+	
 }
 
 IMaterial* Cry3DEngineBase::MakeSystemMaterialFromShader(const char* sShaderName, SInputShaderResources* Res)

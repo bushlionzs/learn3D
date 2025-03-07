@@ -75,7 +75,63 @@ namespace Ogre {
         return nullptr;
     }
 
-    void ResourceManager::readDir(const std::string& dir, bool recursive)
+    void ResourceManager::traverseDir(
+        const String& dir,
+        const char* filter,
+        std::vector<std::string>& resultList,
+        bool recursive)
+    {
+        WIN32_FIND_DATAA FindData;
+        char namebuf[1024];
+
+        sprintf(namebuf, "%s\\*.*", dir.c_str());
+        
+        HANDLE handle = FindFirstFile(namebuf, &FindData);
+
+        ResourceInfo res;
+        while (FindNextFile(handle, &FindData))
+        {
+            if (FindData.cFileName[0] == '.')
+                continue;
+
+
+            res._fullname = dir;
+            res._fullname += "/";
+            res._fullname += FindData.cFileName;
+
+            if (FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            {
+                if (recursive)
+                {
+                    std::string subdir = res._fullname;
+                    traverseDir(subdir, filter, resultList, true);
+                }
+
+                continue;
+            }
+
+            auto pos = res._fullname.find_last_of(".");
+            if (pos != std::string::npos)
+            {
+                const char* name = res._fullname.c_str();
+                const char* suffix = name + pos;
+                if (filter[0])
+                {
+                    if (strcmp(suffix, filter) == 0)
+                    {
+                        resultList.push_back(res._fullname);
+                    }
+                }
+                else
+                {
+                    resultList.push_back(res._fullname);
+                }
+            }
+            
+        }
+    }
+
+    void ResourceManager::readDir(const String& dir, bool recursive)
     {
         WIN32_FIND_DATAA FindData;
         char namebuf[1024];
@@ -166,7 +222,7 @@ namespace Ogre {
         }
     }
 
-    bool ResourceManager::_addResource(
+    bool ResourceManager::addResource(
         const String& name,
         ResourceInfo* res,
         bool forceUpdate,
@@ -175,14 +231,34 @@ namespace Ogre {
         auto itor = mResourceMap.find(name);
         if (itor != mResourceMap.end())
         {
-            //OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "resource already exist!");
-            if(!forceUpdate)
+            
+            if (!forceUpdate)
+            {
+                OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "resource already exist!");
                 return false;
+            }
             delete itor->second;
             itor->second = res;
             return true;
         }
 
+        mResourceMap[name] = res;
+        return true;
+    }
+
+    bool ResourceManager::addResource(
+        const String& name,
+        const String& fullname)
+    {
+        auto itor = mResourceMap.find(name);
+        if (itor != mResourceMap.end())
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "resource already exist!");
+            return false;
+        }
+        ResourceInfo* res = new ResourceInfo;
+        res->_fullname = fullname;
+        res->_base = nullptr;
         mResourceMap[name] = res;
         return true;
     }

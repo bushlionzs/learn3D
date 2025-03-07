@@ -43,7 +43,7 @@ void CReadOnlyChunkFile::CloseFile()
 {
 	if (m_hFile)
 	{
-		fclose(m_hFile);
+		gEnv->pCryPak->FClose(m_hFile);
 		m_hFile = 0;
 	}
 }
@@ -172,7 +172,7 @@ bool CReadOnlyChunkFile::Read(const char* filename)
 	CloseFile();
 	FreeBuffer();
 
-	m_hFile = fopen(filename, "rb");
+	m_hFile = gEnv->pCryPak->FOpen(filename, "rb", (m_bNoWarningMode ? ICryPak::FOPEN_HINT_QUIET : 0));
 	if (!m_hFile)
 	{
 		m_LastError.Format("Failed to open file '%s'", filename);
@@ -180,13 +180,13 @@ bool CReadOnlyChunkFile::Read(const char* filename)
 	}
 
 	size_t nFileSize = 0;
-	m_bCopyFileData = true;
+
 	if (m_bCopyFileData)
 	{
-		nFileSize = get_file_size(m_hFile);
+		nFileSize = gEnv->pCryPak->FGetSize(m_hFile);
 		m_pFileBuffer = new char[nFileSize];
 		m_bOwnFileBuffer = true;
-		if (fread(m_pFileBuffer, 1, nFileSize, m_hFile) != nFileSize)
+		if (gEnv->pCryPak->FReadRawAll(m_pFileBuffer, nFileSize, m_hFile) != nFileSize)
 		{
 			m_LastError.Format("Failed to read %u bytes from file '%s'", (uint)nFileSize, filename);
 			return false;

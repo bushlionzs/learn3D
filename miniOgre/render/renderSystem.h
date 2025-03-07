@@ -8,6 +8,10 @@
 class GraphicsCommandList;
 class RenderableData;
 class VertexDeclaration;
+struct RenderPassInfo;
+struct ComputePassInfo;
+struct ShaderInfo;
+struct RaytracingShaderInfo;
 
 namespace Ogre
 {

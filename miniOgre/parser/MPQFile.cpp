@@ -59,7 +59,7 @@ void MPQArchive::load()
                 ResourceInfo* res = new ResourceInfo();
                 res->_fullname = current;
                 res->_base = this;
-                bool add = ResourceManager::getSingleton()._addResource(current, res, forceUpdate);
+                bool add = ResourceManager::getSingleton().addResource(current, res, forceUpdate);
                 if (!add)
                 {
                     delete res;
@@ -84,7 +84,7 @@ void MPQArchive::load()
             res->_fullname = current;
             res->_base = this;
             
-            ResourceManager::getSingleton()._addResource(current, res, forceUpdate);
+            ResourceManager::getSingleton().addResource(current, res, forceUpdate);
             current.clear();
         }
 

@@ -407,7 +407,8 @@ IMaterial* CMatMan::LoadMaterial(const char* sMtlName, bool bMakeIfNotFound, boo
 //////////////////////////////////////////////////////////////////////////
 IMaterial* CMatMan::MakeMaterialFromXml(const char* sMtlName, const char* sMtlFilename, XmlNodeRef node, bool bForcePureChild, uint16 sortPrio, IMaterial* pExistingMtl, unsigned long nLoadingFlags, IMaterial* pParentMtl)
 {
-	CMatMan* pMatMan = static_cast<CMatMan*>(gEnv->p3DEngine->GetMaterialManager());
+	
+	CMatMan* pMatMan = Cry3DEngineBase::m_pMatMan;
 
 	int mtlFlags = 0;
 	CryFixedStringT<128> shaderName;

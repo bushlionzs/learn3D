@@ -492,13 +492,13 @@ void SDFGIApp::addPass()
 	
 	{
 		GBuffer* pass = new GBuffer(mContext);
-		assert(pass->initialize());
+		pass->initialize();
 	    mRenderPipeline->addRenderPass(pass);
 	}
 
 	{
 		DDGIPass* pass = new DDGIPass(mContext);
-		assert(pass->initialize());
+		pass->initialize();
 		mRenderPipeline->addRenderPass(pass);
 	}
 

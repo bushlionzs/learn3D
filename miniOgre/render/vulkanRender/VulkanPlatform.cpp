@@ -723,7 +723,8 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     bluevk::bindInstance(mImpl->mInstance);
 
 
-    if (driverConfig.enalbeDebug)
+    //if (driverConfig.enalbeDebug)
+    if(0)
     {
         VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
         debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;

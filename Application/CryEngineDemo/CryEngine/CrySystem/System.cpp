@@ -28,6 +28,7 @@
 #include <CryEntitySystem/IEntitySystem.h>
 #include <CryInput/IInput.h>
 #include <CrySystem/ILog.h>
+#include <StreamEngine/StreamEngine.h>
 #include <CrySystem/SystemInitParams.h>
 #include <CryAudio/IAudioSystem.h>
 #include <CryAnimation/ICryAnimation.h>
@@ -352,6 +353,8 @@ CSystem::CSystem(const SSystemInitParams& startupParams)
 
 	m_PlatformOSCreateFlags = 0;
 
+	InitThreadSystem();
+
 	// create job manager
 	m_env.pJobManager = GetJobManagerInterface();
 
@@ -428,7 +431,7 @@ void CSystem::FreeLib(WIN_HMODULE hLibModule)
 //////////////////////////////////////////////////////////////////////////
 IStreamEngine* CSystem::GetStreamEngine()
 {
-	return nullptr;
+	return m_pStreamEngine;
 }
 
 //////////////////////////////////////////////////////////////////////////

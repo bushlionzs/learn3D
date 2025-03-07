@@ -1,202 +1,243 @@
 // Copyright 2004-2021 Crytek GmbH / Crytek Group. All rights reserved.
 
+/*************************************************************************
+   CryGame Source File.
+   -------------------------------------------------------------------------
+   $Id$
+   $DateTime$
+   Description:	include file for standard system include files,	or project
+				specific include files that are used frequently, but are
+				changed infrequently
+
+   -------------------------------------------------------------------------
+   History:
+   - 20:7:2004   10:51 : Created by Marco Koegler
+
+*************************************************************************/
+#if !defined(AFX_STDAFX_H__B36C365D_F0EA_4545_B3BC_1E0EAB3B5E42__INCLUDED_)
+#define AFX_STDAFX_H__B36C365D_F0EA_4545_B3BC_1E0EAB3B5E42__INCLUDED_
+
+//#define _CRTDBG_MAP_ALLOC
+
+#if _MSC_VER > 1000
 #pragma once
+#endif // _MSC_VER > 1000
 
-//#define DEFINE_MODULE_NAME "CrySystem"
-#include <CryCore/Platform/platform.h>
 #include <CryCore/Project/CryModuleDefs.h>
-#define eCryModule eCryM_System
-#include <CryCore/Assert/CryAssert.h>
-#define USE_PCH
-#ifdef USE_PCH
+#define eCryModule  eCryM_GameFramework
+#define RWI_NAME_TAG "RayWorldIntersection(Action)"
+#define PWI_NAME_TAG "PrimitiveWorldIntersection(Action)"
 
-// Ensure included first to prevent windows.h from being included by certain standard library headers, e.g. <future> on Durango
-#include <CryCore/Platform/CryWindows.h>
+#define CRYACTION_EXPORTS
 
-#include <algorithm>
-#include <array>
-#include <atomic>
-#include <bitset>
-#include <cassert>
-#include <cctype>
-#include <cerrno>
-#include <cfenv>
-#include <cfloat>
-#include <chrono>
-#include <cinttypes>
-#include <climits>
-#include <clocale>
-#include <cmath>
-#include <codecvt>
-#include <complex>
-#include <condition_variable>
-#include <csetjmp>
-#include <csignal>
-#include <cstdarg>
-#include <cstddef>
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <cwchar>
-#include <cwctype>
-#include <deque>
-#include <exception>
-#include <forward_list>
-#include <fstream>
-#include <functional>
-#include <future>
-#include <initializer_list>
-#include <iomanip>
-#include <ios>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <iterator>
-#include <limits>
-#include <list>
-#include <locale>
-#include <map>
+// Insert your headers here
+#include <CryCore/Platform/platform.h>
+
 #include <memory>
-#include <mutex>
-#include <new>
-#include <numeric>
-#include <ostream>
-#include <queue>
-#include <random>
-#include <ratio>
-#include <regex>
-#include <scoped_allocator>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <stdexcept>
-#include <streambuf>
-#include <string>
-#include <system_error>
-#include <thread>
-#include <tuple>
-#include <type_traits>
-#include <typeindex>
-#include <typeinfo>
-#include <unordered_map>
-#include <unordered_set>
-#include <utility>
-#include <valarray>
 #include <vector>
+#include <map>
+#include <queue>
 
-//////////////////////////////////////////////////////////////////////////
-// CRT
-//////////////////////////////////////////////////////////////////////////
+inline void GameWarning(const char*, ...) PRINTF_PARAMS(1, 2);
 
-#include <cstring>
-#include <stdio.h>
-#include <stdarg.h>
-
-#if !CRY_PLATFORM_LINUX && !CRY_PLATFORM_ANDROID && !CRY_PLATFORM_APPLE && !CRY_PLATFORM_ORBIS
-#include <memory.h>
-#include <malloc.h>
-#endif
-#include <fcntl.h>
-
-#if !CRY_PLATFORM_ORBIS && !CRY_PLATFORM_APPLE && !CRY_PLATFORM_ANDROID
-#if CRY_PLATFORM_LINUX
-#include <sys/io.h>
-#else
-#include <io.h>
-#endif
-#endif
-#include <cmath>
-
-#if CRY_PLATFORM_WINDOWS
-#include <winsock2.h>
-#include <shlobj.h>
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-// CRY Stuff ////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
+#include <CryCore/Project/ProjectDefines.h>
+#include <CryCore/StlUtils.h>
 #include <CryMath/Cry_Math.h>
 #include <CryMath/Cry_Camera.h>
 #include <CryMath/Random.h>
-#include <CryMath/Range.h>
-#include <CryMath/Angle.h>
-#include <CryMath/ISplines.h>
-#include <CryMath/Rotation.h>
-#include <CryMath/Transform.h>
+#include <CrySystem/ISystem.h>
+#include <CryNetwork/INetwork.h>
+#include <CryInput/IInput.h>
+#include <CryScriptSystem/IScriptSystem.h>
+#include <CryEntitySystem/IEntitySystem.h>
+#include <CryNetwork/NetHelpers.h>
+#include <CrySystem/File/ICryPak.h>
+#include <CrySystem/IConsole.h>
+#include <CrySystem/ITimer.h>
+#include <CrySystem/ILog.h>
+#include <CryNetwork/IRemoteControl.h>
+#include <CryNetwork/ISimpleHttpServer.h>
+#include <CryAction.h>
+#include <CryGame/IGameFramework.h>
+#include <IActorSystem.h>
+#include <IAnimatedCharacter.h>
+#include <CryGame/IGame.h>
+#include <IItem.h>
+#include <IItemSystem.h>
+#include <IViewSystem.h>
+#include <IVehicleSystem.h>
+#include <CryFlowGraph/IFlowSystem.h>
+#include <IGameplayRecorder.h>
+#include <CryGame/GameUtils.h>
 
-#include <CryMemory/CrySizer.h>
-#include <CryMemory/AddressHelpers.h>
-#include <CryMemory/HeapAllocator.h>
-#include <CryMemory/BucketAllocator.h>
-#include <CryMemory/STLGlobalAllocator.h>
 
-//#include <CryCore/BoostHelpers.h>
+#include<CryEngine/Cry3DEngine/Cry3DEngineBase.h>
+#include<CryEngine/Cry3DEngine/cvars.h>
+#include<CryEngine/Cry3DEngine/Array2d.h>
+#include <CrySystem/IStreamEngine.h>
+#include<CryEngine/Cry3DEngine/terrain_sector.h>
+#include<CryEngine/Cry3DEngine/ObjectsTree.h>
+#include<CryEngine/Cry3DEngine/3dEngine.h>
+const int nThreadsNum = 3;
 
-#include <CryCore/smartptr.h>
-#include <CryCore/CryEnumMacro.h>
-#include <CryCore/StlUtils.h>
-#include <CryCore/stridedptr.h>
-#include <CryCore/functor.h>
-//#include <CryCore/RingBuffer.h>
-#include <CryCore/SmallFunction.h>
-#include <CryCore/BitMask.h>
-#include <CryCore/CryVariant.h>
-#include <CryCore/optional.h>
-#include <CryCore/CountedValue.h>
-#include <CryCore/CryCustomTypes.h>
-#include <CryCore/CryTypeInfo.h>
-#include <CryCore/Containers/CryArray.h>
-#include <CryCore/Containers/CryFixedArray.h>
-#include <CryCore/Containers/CryListenerSet.h>
-#include <CryCore/Containers/MiniQueue.h>
-#include <CryCore/Containers/VectorSet.h>
-#include <CryCore/Containers/VectorMap.h>
-//#include <CryCore/ToolsHelpers/ResourceCompilerHelper.h>
-//#include <CryCore/ToolsHelpers/SettingsManagerHelpers.h>
-#include <CryCore/TypeInfo_impl.h>
+#define FUNCTION_PROFILER_3DENGINE CRY_PROFILE_FUNCTION(PROFILE_3DENGINE)
 
-#include <CryString/CryString.h>
-#include <CryString/CryFixedString.h>
-#include <CryString/CryName.h>
-#include <CryString/CryPath.h>
+template<class T>
+void AddToPtr(byte*& pPtr, T& rObj, EEndian eEndian)
+{
+	PREFAST_SUPPRESS_WARNING(6326) static_assert((sizeof(T) % 4) == 0, "Invalid type size!");
+	assert(!((INT_PTR)pPtr & 3));
+	memcpy(pPtr, &rObj, sizeof(rObj));
+	SwapEndian(*(T*)pPtr, eEndian);
+	pPtr += sizeof(rObj);
+	assert(!((INT_PTR)pPtr & 3));
+}
 
-#include <CrySerialization/STL.h>
-#include <CrySerialization/DynArray.h>
-#include <CrySerialization/Color.h>
-#include <CrySerialization/ColorImpl.h>
-#include <CrySerialization/Math.h>
-#include <CrySerialization/MathImpl.h>
+template<class T>
+void AddToPtr(byte*& pPtr, int& nDataSize, T& rObj, EEndian eEndian)
+{
+	PREFAST_SUPPRESS_WARNING(6326) static_assert((sizeof(T) % 4) == 0, "Invalid type size!");
+	assert(!((INT_PTR)pPtr & 3));
+	memcpy(pPtr, &rObj, sizeof(rObj));
+	SwapEndian(*(T*)pPtr, eEndian);
+	pPtr += sizeof(rObj);
+	nDataSize -= sizeof(rObj);
+	assert(nDataSize >= 0);
+	assert(!((INT_PTR)pPtr & 3));
+}
 
-#include <CryExtension/ClassWeaver.h>
-#include <CryExtension/Conversion.h>
-#include <CryExtension/RegFactoryNode.h>
+inline void FixAlignment(byte*& pPtr, int& nDataSize)
+{
+	while ((UINT_PTR)pPtr & 3)
+	{
+		*pPtr = 222;
+		pPtr++;
+		nDataSize--;
+	}
+}
 
-#include <CryRenderer/IScaleform.h> // expensive header
-#include <CryRenderer/IRenderer.h> // expensive header
+inline void FixAlignment(byte*& pPtr)
+{
+	while ((UINT_PTR)pPtr & 3)
+	{
+		*pPtr = 222;
+		pPtr++;
+	}
+}
 
-#ifdef INCLUDE_SCALEFORM3_SDK
-#include <GRefCount.h>
-#include <GMemory.h>
-#include <GMemoryHeap.h>
-#include <GAtomic.h>
-#include <GStats.h>
-#include <GTimer.h>
-#include <GList.h>
-#include <GSysAllocMalloc.h>
-#include <GArray.h>
-#include <GAllocator.h>
-#include <GMath.h>
-#include <GFxPlayerStats.h>
-#include <GColor.h>
-#include <GColorMacros.h>
-#include <GMatrix2D.h>
-#include <GTypes2DF.h>
-#include <GMatrix3D.h>
-#include <GPoint3.h>
-#include <GImage.h>
-#include <GRendererEventHandler.h>
+template<class T>
+void AddToPtr(byte*& pPtr, int& nDataSize, const T* pArray, int nElemNum, EEndian eEndian, bool bFixAlignment = false)
+{
+	assert(!((INT_PTR)pPtr & 3));
+	memcpy(pPtr, pArray, nElemNum * sizeof(T));
+	SwapEndian((T*)pPtr, nElemNum, eEndian);
+	pPtr += nElemNum * sizeof(T);
+	nDataSize -= nElemNum * sizeof(T);
+	assert(nDataSize >= 0);
+
+	if (bFixAlignment)
+		FixAlignment(pPtr, nDataSize);
+	else
+		assert(!((INT_PTR)pPtr & 3));
+}
+
+template<class T>
+void AddToPtr(byte*& pPtr, const T* pArray, int nElemNum, EEndian eEndian, bool bFixAlignment = false)
+{
+	assert(!((INT_PTR)pPtr & 3));
+	memcpy(pPtr, pArray, nElemNum * sizeof(T));
+	SwapEndian((T*)pPtr, nElemNum, eEndian);
+	pPtr += nElemNum * sizeof(T);
+
+	if (bFixAlignment)
+		FixAlignment(pPtr);
+	else
+		assert(!((INT_PTR)pPtr & 3));
+}
+
+struct TriangleIndex
+{
+	TriangleIndex() { ZeroStruct(*this); }
+	uint16& operator[](const int& n) { assert(n >= 0 && n < 3); return idx[n]; }
+	const uint16& operator[](const int& n) const { assert(n >= 0 && n < 3); return idx[n]; }
+	uint16        idx[3];
+	uint16        nCull;
+};
+
+#pragma warning(disable: 4018)  // conditional expression is constant
+#pragma warning(disable: 4018)  // conditional expression is constant
+#pragma warning(disable: 4503)  // decorated name length exceeded, name was truncated
+#pragma warning(disable: 4189)  // decorated name length exceeded, name was truncated
+#if !defined(_RELEASE)
+#define ENABLE_NETDEBUG 1
 #endif
 
-#endif // USE_PCH
+//////////////////////////////////////////////////////////////////////////
+//! Reports a Game Warning to validator with WARNING severity.
+inline void GameWarning(const char* format, ...)
+{
+	if (!format)
+		return;
+
+	va_list args;
+	va_start(args, format);
+	GetISystem()->WarningV(VALIDATOR_MODULE_GAME, VALIDATOR_WARNING, 0, 0, format, args);
+	va_end(args);
+}
+
+#if 1
+#define NET_USE_SIMPLE_BREAKAGE 1
+#else// deprecated and won't compile
+#define NET_USE_SIMPLE_BREAKAGE 0
+#endif
+
+#if !defined(RELEASE)
+#define CRYACTION_AI_VERBOSITY
+#endif
+
+#ifdef CRYACTION_AI_VERBOSITY
+#define AIWarningID     gEnv->pAISystem->Warning
+#define AIErrorID       gEnv->pAISystem->Error
+#define AILogProgressID gEnv->pAISystem->LogProgress
+#define AILogEventID    gEnv->pAISystem->LogEvent
+#define AILogCommentID  gEnv->pAISystem->LogComment
+#else
+#define AIWarningID     (void)
+#define AIErrorID       (void)
+#define AILogProgressID (void)
+#define AILogEventID    (void)
+#define AILogCommentID  (void)
+#endif
+
+inline bool IsClientActor(EntityId id)
+{
+	IActor* pActor = CCryAction::GetCryAction()->GetClientActor();
+	if (pActor && pActor->GetEntity()->GetId() == id)
+		return true;
+	return false;
+}
+
+template<typename T> bool inline GetAttr(const XmlNodeRef& node, const char* key, T& val)
+{
+	return node->getAttr(key, val);
+}
+
+bool inline GetTimeAttr(const XmlNodeRef& node, const char* key, time_t& val)
+{
+	const char* pVal = node->getAttr(key);
+	if (!pVal)
+		return false;
+	val = GameUtils::stringToTime(pVal);
+	return true;
+}
+
+template<> bool inline GetAttr(const XmlNodeRef& node, const char* key, string& val)
+{
+	const char* pVal = node->getAttr(key);
+	if (!pVal)
+		return false;
+	val = pVal;
+	return true;
+}
+
+#endif // !defined(AFX_STDAFX_H__B36C365D_F0EA_4545_B3BC_1E0EAB3B5E42__INCLUDED_)

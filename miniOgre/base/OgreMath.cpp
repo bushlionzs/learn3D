@@ -50,7 +50,7 @@ namespace Ogre
 
     Math::RandomValueProvider* Math::mRandProvider = NULL;
 
-//#define LEFT_HANDED
+#define LEFT_HANDED
     //-----------------------------------------------------------------------
     Math::Math( unsigned int trigTableSize )
     {

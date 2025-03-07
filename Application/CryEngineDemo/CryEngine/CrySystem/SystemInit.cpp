@@ -18,6 +18,7 @@
 #include <CrySystem/ConsoleRegistration.h>
 #include <CmdLine.h>
 #include <CrySystem/SystemInitParams.h>
+#include<StreamEngine/StreamEngine.h>
 #include <ProjectManager.h>
 #include <ExtensionSystem/CryPluginManager.h>
 #include <JobManager/JobManager.h>
@@ -1112,7 +1113,33 @@ void CSystem::InitResourceCacheFolder()
 //////////////////////////////////////////////////////////////////////////
 bool CSystem::InitStreamEngine()
 {
-	
+	CRY_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
+	MEMSTAT_CONTEXT(EMemStatContextType::Other, "Init Stream Engine");
+
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing Stream Engine...");
+
+	m_pStreamEngine = new CStreamEngine();
+
+	return true;
+}
+
+bool CSystem::InitPhysics(const SSystemInitParams& startupParams)
+{
+	CRY_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
+	MEMSTAT_CONTEXT(EMemStatContextType::Physics, "Init Physics");
+
+	m_env.pPhysicalWorld = CreatePhysicalWorld(this);
+
+
+	if (!m_env.pPhysicalWorld)
+	{
+		CryFatalError("Error creating Physics System!");
+		return false;
+	}
+	//m_env.pPhysicalWorld->Init();	// don't need a second Init, the world is created initialized
+	if (!m_env.IsDedicated())
+		m_env.pPhysicalWorld->GetPhysVars()->bMultithreaded = 1;
 
 	return true;
 }

@@ -21,6 +21,11 @@ namespace dy
 
 
 	std::string get_short_name(std::string& fullname);
+	std::string get_short_name(const char* fullname);
+
+	const char* getSuffix(const std::string& name);
+	const char* getSuffix(const char* name);
+	std::string removeSuffix(const std::string& name);
 
 	char const* strnchr(char const* str, int ch, int which);
 	char const* strnstr(const char* szString, const char* szSubstring, int nSuperstringLength);

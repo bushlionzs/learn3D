@@ -9,6 +9,25 @@ namespace Ogre {
 		IF_3D_TEXTURE = 0x00000004
 	};
 
+	class  ImageInfo
+	{
+	public:
+		ImageInfo() :
+			height(0), width(0), depth(1), size(0), face(1),
+			num_mipmaps(0), flags(0), format(PF_UNKNOWN)
+		{
+		}
+		uint32_t height;
+		uint32_t width;
+		uint32_t depth;
+		uint32_t face;
+		size_t size;
+		uint32_t nrComponents;
+		int32_t num_mipmaps;
+		uint32_t flags;
+		char* imageData;
+		PixelFormat format;
+	};
 	class CImage
 	{
 	public:
@@ -20,15 +39,15 @@ namespace Ogre {
 			uint32_t byteCount, 
 			ImageInfo& imageInfo,
 			Ogre::ImageType type);
-		static bool loadImageInfo(
+		/*static bool loadImageInfo(
 			const std::string& name,
 			ImageInfo& imageInfo,
-			bool cube);
+			bool cube);*/
 		static void freeImageData(void* data);
-		bool loadImage(const std::string& name, bool cube = false);
+		bool loadImage(const std::string& name);
 		bool loadImage(const uint8_t* data, uint32_t byteCount, Ogre::ImageType type);
-		bool loadImage(DataStreamPtr& stream);
-		bool loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format);
+		bool loadImage(DataStream& stream, Ogre::ImageType type);
+		bool loadRawData(DataStream& stream, ushort uWidth, ushort uHeight, PixelFormat format);
 		unsigned char* getImageData();
 		uint32_t getSize();
 		uint32_t getRowSpan();
@@ -37,7 +56,11 @@ namespace Ogre {
 		int getDepth() const;
 		int getNumFaces() const;
 		int getNumMipmaps() const;
-		bool hasAlpha();
+
+		const ImageInfo& getImageInfo()
+		{
+			return mImageInfo;
+		}
 		Ogre::PixelFormat getFormat() const;
 		Ogre::PixelBox getPixelBox(uint32 face = 0, uint32 mipmap = 0) const;
 		Ogre::ColourValue getColourAt(uint32 x, uint32 y, uint32 z) const;
@@ -60,14 +83,20 @@ namespace Ogre {
 		void convertRawData(void* from, void* to, size_t _size, int _format);
 		void freeMemory();
 
-
+		bool loadDDS(DataStream& stream, ImageInfo& imageInfo);
+		bool loadSTB(DataStream& stream, ImageInfo& imageInfo);
+		bool loadKTX(DataStream& stream, ImageInfo& imageInfo);
+		bool loadBLP(DataStream& stream, ImageInfo& imageInfo);
+		bool loadTIF(DataStream& stream, ImageInfo& imageInfo);
 	private:
 		ImageInfo mImageInfo;
 		int32_t mFlags;
-		unsigned char* mImageData;
+		char* mImageData;
 		uint32_t mPixelSize;
 		uint32_t mImageDataSize;
 		/// A bool to determine if we delete the buffer or the calling app does
 		bool mAutoDelete;
+		using LoadPicFunc = std::function< bool(DataStream& stream, ImageInfo& imageInfo)>;
+		std::unordered_map<Ogre::ImageType, LoadPicFunc> mLoadPicMap;
 	};
 }

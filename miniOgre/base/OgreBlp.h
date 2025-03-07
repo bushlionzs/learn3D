@@ -21,7 +21,7 @@ class OgreBlpImage
 public:
 	OgreBlpImage();
 	~OgreBlpImage();
-	bool load(std::shared_ptr<DataStream>& stream);
+	bool load(DataStream& stream);
 	ImageInfo* getImageInfo()
 	{
 		return &mImageData;
@@ -33,9 +33,9 @@ public:
 	}
 private:
 	void loadFromCompressedData(BLPHeader const* lHeader, 
-		std::shared_ptr<DataStream>& stream);
+		DataStream& stream);
 	void loadFromUncompressedData(
-		BLPHeader const* lHeader, std::shared_ptr<DataStream>& stream);
+		BLPHeader const* lHeader, DataStream & stream);
 private:
 	ImageInfo mImageData;
 	char* mBlpData;

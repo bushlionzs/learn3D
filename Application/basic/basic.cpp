@@ -60,6 +60,7 @@ void BasicApplication::update(float delta)
 
 void BasicApplication::base1()
 {
+	bool b = PixelUtil::isCompressed(PFG_BC1_UNORM_SRGB);
 	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 	float aa = 1;
 	Ogre::Vector3 leftop = Ogre::Vector3(-aa, aa, 0.0f);

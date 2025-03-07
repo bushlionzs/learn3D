@@ -107,9 +107,9 @@ set( MyFavLib_LIBRARIES
 )
 	
 target_link_libraries(${MINIOGRE_LIB_NAME} ${MyFavLib_LIBRARIES}  
-compressonator
 SpirvTools 
-utils 
+utils
+tiff
 bluevk 
 VulkanMemoryAllocator
 dxgi

@@ -97,24 +97,58 @@ namespace Ogre {
 
     PixelFormat VulkanMappings::_getClosestSupportedPF(PixelFormat ogrePF)
     {
-        if (_getPF(ogrePF) != VK_FORMAT_UNDEFINED)
-        {
-            return ogrePF;
-        }
         switch (ogrePF)
         {
+        case PF_R8:
+        case PF_L16:
+        case PF_A8:
+        case PF_BYTE_LA:
+        case PF_R3G3B2:
+        case PF_A1R5G5B5:
+        case PF_R5G6B5:
+        case PF_A4R4G4B4:
         case PF_R8G8B8:
-            return PF_X8R8G8B8;
+        case PF_A8R8G8B8:
+        case PF_A8B8G8R8:
+        case PF_X8R8G8B8:
+        case PF_A8R8G8B8_SRGB:
+        case PF_A8B8G8R8_SRGB:
+        case PF_X8B8G8R8:
+        case PF_A2B10G10R10:
+        case PF_A2R10G10B10:
+        case PF_R11G11B10_FLOAT:
+        case PF_FLOAT16_R:
+        case PF_FLOAT16_GR:
+        case PF_FLOAT16_RGBA:
+        case PF_FLOAT32_R:
+        case PF_FLOAT32_RGBA:
+        case PF_SHORT_RGBA:
+        case PF_DXT1:
+        case PF_DXT2:
+        case PF_DXT3:
+        case PF_DXT4:
+        case PF_DXT5:
+        case PFG_BC1_UNORM:
+        case PFG_BC1_UNORM_SRGB:
+        case PFG_BC3_UNORM:
+        case PFG_BC3_UNORM_SRGB:
+        case PF_BC4_SNORM:
+        case PF_BC4_UNORM:
+        case PF_BC5_SNORM:
+        case PF_BC5_UNORM:
+        case PF_BC6H_UF16:
+        case PF_BC7_UNORM:
+        case PF_R16G16_SINT:
+        case PF_FLOAT32_GR:
+        case PF_DEPTH32:
+        case PF_DEPTH32F:
+        case PF_DEPTH24_STENCIL8:
+        case PF_DEPTH32_STENCIL8:
+            return ogrePF;
         case PF_FLOAT16_RGB:
             return PF_FLOAT16_RGBA;
         case PF_FLOAT32_RGB:
             return PF_FLOAT32_RGBA;
-        case PF_DEPTH16:
-            return PF_L16;
-        case PF_DEPTH24_STENCIL8:
-        case PF_DEPTH32:
-        case PF_DEPTH32F:
-            return PF_FLOAT32_R;
         case PF_UNKNOWN:
         default:
             return PF_A8B8G8R8;
@@ -167,6 +201,8 @@ namespace Ogre {
         case PF_DXT3:           return VK_FORMAT_BC2_UNORM_BLOCK;
         case PF_DXT4:           return VK_FORMAT_BC2_UNORM_BLOCK;
         case PF_DXT5:           return VK_FORMAT_BC3_UNORM_BLOCK;
+        case PFG_BC1_UNORM:             return VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
+        case PFG_BC1_UNORM_SRGB:        return VK_FORMAT_BC1_RGBA_SRGB_BLOCK;
         case PFG_BC3_UNORM:             return VK_FORMAT_BC3_UNORM_BLOCK;
         case PFG_BC3_UNORM_SRGB:        return VK_FORMAT_BC3_SRGB_BLOCK;
         case PF_BC4_SNORM:      return VK_FORMAT_BC4_UNORM_BLOCK;
@@ -183,7 +219,7 @@ namespace Ogre {
         case PF_DEPTH24_STENCIL8:     return VK_FORMAT_D24_UNORM_S8_UINT;
         case PF_DEPTH32_STENCIL8:     return VK_FORMAT_D32_SFLOAT_S8_UINT;
         default:
-            //assert_invariant(false);
+            assert_invariant(false);
             return VK_FORMAT_UNDEFINED;
         }
     }

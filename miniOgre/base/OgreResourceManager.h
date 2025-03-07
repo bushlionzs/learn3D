@@ -33,12 +33,14 @@ namespace Ogre {
         void addResource(MeshLoadDesc* pMeshDesc, SyncToken* token);
 
         void addResource(TextureLoadDesc* pTextureDesc, SyncToken* token);
-        bool _addResource(
+        bool addResource(
             const String& name, 
             ResourceInfo* res, 
             bool forceUpdate = false,
             const String& group = BLANKSTRING);
-
+        bool addResource(
+            const String& name,
+            const String& fullname);
         utils::JobSystem& getJobSystem()
         {
             return mJobSystem;
@@ -51,6 +53,12 @@ namespace Ogre {
         virtual void _notifyResourceUnloaded(Resource* res) {}
 
         virtual void _notifyResourceTouched(Resource* res) {}
+
+        static void traverseDir(
+            const String& dir, 
+            const char* filter, 
+            std::vector<std::string>& resultList, 
+            bool recursive);
     private:
         void readDir(const String& dir, bool recursive);
 

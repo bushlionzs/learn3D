@@ -63,8 +63,6 @@ void BasicApplication::addCustomDirectory()
 
 void BasicApplication::base1()
 {
-
-
 	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 	float aa = 1;
 	Ogre::Vector3 leftop = Ogre::Vector3(-aa, aa, 0.0f);
@@ -73,6 +71,8 @@ void BasicApplication::base1()
 	Ogre::Vector3 rightbottom = Ogre::Vector3(aa, -aa, 0.0f);
 	Ogre::Vector3 normal = Ogre::Vector3(0.0f, 0.0f, 1.0f);
 	CryEngineContext context;
+	context.sceneManager = mSceneManager;
+	context.root = root;
 	loadCryEngineLevel(context);
 	std::string meshName = "rect";
 	auto mesh = Ogre::MeshManager::getSingletonPtr()->createRect(
@@ -89,9 +89,21 @@ void BasicApplication::base1()
 	ShaderInfo& info = mat->getShaderInfo();
 	//info.shaderName = "testShader";
 	//mSceneManager->setSkyBox(true, "SkyLan", 1000.0f);
-	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, 3.f), Ogre::Vector3::ZERO);
-	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
-	mGameCamera->setMoveSpeed(5);
+	Ogre::Matrix4 cameraWorldMatrix = 
+	{
+		1, 0, 0, 0,
+		0, 0, 1, 0,
+		0, 1, 0, 0,
+		0, 0, 0, 1
+	};
+
+	//mGameCamera->updateWorldMatrix(cameraWorldMatrix);
+	mGameCamera->lookAt(
+		Ogre::Vector3(83.33, 41.79557, 59.02676), 
+		Ogre::Vector3(83.33, 42.79557, 59.02676));
+	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
+	mGameCamera->setMoveSpeed(100);
+	mGameCamera->setRotateSpeed(0.01f);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	Ogre::Matrix4 m;
 	if (ogreConfig.reverseDepth)

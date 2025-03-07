@@ -41,6 +41,9 @@ private:
     Ogre::Vector3 eyePosition = Ogre::Vector3::ZERO;
     Ogre::Vector3 targetPosition = Ogre::Vector3::ZERO;
 
+
+    Ogre::Quaternion mLookOrientation;
+    Ogre::Matrix4 mWorldMatrix;
     bool mChanged = false;
 public:
     GameCamera(Ogre::Camera* camera, Ogre::SceneManager* sceneMgr);
@@ -49,6 +52,11 @@ public:
     Ogre::Camera* getCamera()
     {
         return mCamera;
+    }
+
+    void updateWorldMatrix(const Ogre::Matrix4& m)
+    {
+        mWorldMatrix = m;
     }
 
     const Ogre::Vector3& getPosition() const;
@@ -83,4 +91,9 @@ public:
 
     bool changed();
     void updateChanged(bool change);
+
+private:
+    inline Ogre::Vector3 createAnglesYPR(const Ogre::Quaternion& q);
+
+    inline Ogre::Quaternion createOrientationYPR(const Ogre::Vector3& ypr);
 };

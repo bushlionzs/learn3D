@@ -15,10 +15,10 @@ OgreBlpImage::~OgreBlpImage()
 
 }
 
-bool OgreBlpImage::load(std::shared_ptr<DataStream>& stream)
+bool OgreBlpImage::load(DataStream& stream)
 {
 	BLPHeader header;
-	stream->read(&header, sizeof(header));
+	stream.read(&header, sizeof(header));
 
 	mImageData.width = header.resx;
 	mImageData.height = header.resy;
@@ -42,7 +42,7 @@ bool OgreBlpImage::load(std::shared_ptr<DataStream>& stream)
 
 extern size_t calculateSize(uint32 mipmaps, uint32 faces, uint32 width, uint32 height, uint32 depth,
 	PixelFormat format);
-void OgreBlpImage::loadFromCompressedData(BLPHeader const* lHeader, std::shared_ptr<DataStream>& stream)
+void OgreBlpImage::loadFromCompressedData(BLPHeader const* lHeader, DataStream& stream)
 {
 	const PixelFormat alphatypes[] = {
 		PF_DXT1,
@@ -82,7 +82,7 @@ void OgreBlpImage::loadFromCompressedData(BLPHeader const* lHeader, std::shared_
 		mImageData.width, mImageData.height, mImageData.depth, mImageData.format);
 	mBlpData = new char[mImageData.size];
 	uint32_t offset = 0;
-	char const* lData = stream->getStreamData();
+	char const* lData = stream.getStreamData();
 	for (int i = 0; i <= mImageData.num_mipmaps; i++)
 	{
 		char const* start = lData + lHeader->offsets[i];
@@ -95,7 +95,7 @@ void OgreBlpImage::loadFromCompressedData(BLPHeader const* lHeader, std::shared_
 }
 
 void OgreBlpImage::loadFromUncompressedData(
-	BLPHeader const* lHeader, std::shared_ptr<DataStream>& stream)
+	BLPHeader const* lHeader, DataStream& stream)
 {
 	int alphabits = lHeader->attr_1_alphadepth;
 	bool hasalpha = alphabits != 0;
@@ -124,10 +124,10 @@ void OgreBlpImage::loadFromUncompressedData(
 		mImageData.width, mImageData.height, mImageData.depth, mImageData.format);
 	mBlpData = new char[mImageData.size];
 
-	char const* lData = stream->getStreamData();
+	char const* lData = stream.getStreamData();
 
-	unsigned int const* pal = reinterpret_cast<unsigned int const*>(stream->getStreamData() + sizeof(BLPHeader));
-	uint32_t streamLength = stream->getStreamLength();
+	unsigned int const* pal = reinterpret_cast<unsigned int const*>(stream.getStreamData() + sizeof(BLPHeader));
+	uint32_t streamLength = stream.getStreamLength();
 	uint32_t offset = 0;
 	unsigned char const* buf;
 	unsigned int* p;

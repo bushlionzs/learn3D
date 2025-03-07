@@ -64,12 +64,7 @@ void PackfileParser::parseScript(
 
 		mPackMap[res->_fullname] = dummy;
 
-		if (res->_fullname == "char_race.tab")
-		{
-			int kk = 0;
-		}
-		
-		ResourceManager::getSingleton()._addResource(res->_fullname, res);
+		ResourceManager::getSingleton().addResource(res->_fullname, res);
 	}
 }
 

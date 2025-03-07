@@ -26,6 +26,8 @@ namespace Ogre {
         VertexData* getVertexData();
         IndexData* getIndexData();
 
+        void releaseIndexData();
+
         void addBoneAssignment(const VertexBoneAssignment& vertBoneAssign);
 
         void prepare();

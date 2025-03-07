@@ -106,6 +106,7 @@ void OnWidthChanged(ICVar* var)
 	}
 }
 
+
 /////////////////////////////////////////////////////////////////////////////////
 void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 {

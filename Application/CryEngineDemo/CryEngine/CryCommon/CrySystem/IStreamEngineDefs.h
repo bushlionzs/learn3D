@@ -195,11 +195,11 @@ struct SStreamEngineStatistics
 
 	struct SAsset
 	{
-		std::string m_sName;
+		CryStringLocal m_sName;
 		int            m_nSize;
 		const bool operator<(const SAsset& a) const { return m_nSize > a.m_nSize; }
 		SAsset() {}
-		SAsset(const std::string& sName, const int nSize) : m_sName(sName), m_nSize(nSize) {}
+		SAsset(const CryStringLocal& sName, const int nSize) : m_sName(sName), m_nSize(nSize) {}
 
 		friend void swap(SAsset& a, SAsset& b)
 		{

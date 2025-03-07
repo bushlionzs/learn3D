@@ -12,14 +12,13 @@
 #include "OgreViewport.h"
 #include "OgreRenderable.h"
 #include "GameTableManager.h"
-#include "CEGUIManager.h"
 #include "OgreTextureManager.h"
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
 #include <ResourceParserManager.h>
 #include "renderUtil.h"
 #include "pass.h"
-
+//#include "CEGUIManager.h"
 
 
 ManualApplication::ManualApplication()
@@ -105,8 +104,8 @@ bool ManualApplication::appInit()
 	{
 		/*ShowCursor(FALSE);
 		SetCursor(NULL);*/
-		new CEGUIManager;
-		CEGUIManager::getSingleton()._initialise(mRenderWindow);
+		//new CEGUIManager;
+		//CEGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
 
 	Ogre::TextureManager::getSingleton().load("white1x1.dds", nullptr);
@@ -252,7 +251,7 @@ void updateFrameData(
 void ManualApplication::addUIPass()
 {
 	return;
-	CEGUIManager* ceguiManager = CEGUIManager::getSingletonPtr();
+	/*CEGUIManager* ceguiManager = CEGUIManager::getSingletonPtr();
 	Ogre::Camera*  cam = ceguiManager->getCamera();
 	Ogre::SceneManager* sceneManager = ceguiManager->getSceneManager();
 	FrameConstantBuffer frameConstantBuffer;
@@ -326,5 +325,5 @@ void ManualApplication::addUIPass()
 	UpdatePassCallback updateCallback = [](float delta) {
 		};
 	auto guiPass = createUserDefineRenderPass(guiCallback, updateCallback);
-	addRenderPass(guiPass);
+	addRenderPass(guiPass);*/
 }

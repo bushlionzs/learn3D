@@ -73,7 +73,8 @@ namespace Ogre {
         ImageType_JPG,
         ImageType_DDS,
         ImageType_BLP,
-        ImageType_KTX
+        ImageType_KTX,
+        ImageType_TIF
     };
 
     enum VertexPass

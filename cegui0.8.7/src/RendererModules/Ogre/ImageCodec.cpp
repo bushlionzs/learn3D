@@ -57,14 +57,13 @@ Texture* OgreImageCodec::load(const RawDataContainer& data, Texture* result)
     using namespace Ogre;
 
     // wrap the buffer of the RawDataContainer with an Ogre::MemoryDataStream.
-    DataStreamPtr stream(
-        OGRE_NEW MemoryDataStream(
+    MemoryDataStream stream(
             (const char*)(data.getDataPtr()),
-            data.getSize()));
+            data.getSize());
 
     // load the image
     Ogre::CImage image;
-    image.loadImage(stream);
+    image.loadImage(stream, Ogre::ImageType::ImageType_PNG);
 
     const PixelFormat ogre_pf = image.getFormat();
     const Texture::PixelFormat cegui_pf =

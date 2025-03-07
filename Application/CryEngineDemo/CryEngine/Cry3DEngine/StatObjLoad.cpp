@@ -687,7 +687,11 @@ void CStatObj::LoadCGF_Prepare(const char* filename, bool isLod)
 {
 	PrintComment("Loading %s", filename);
 	if (!isLod)
-		GetConsole()->TickProgressBar();
+	{
+		if(GetConsole())
+			GetConsole()->TickProgressBar();
+	}
+		
 
 	m_nRenderTrisCount = m_nLoadedTrisCount = 0;
 	m_nLoadedVertexCount = 0;
@@ -780,6 +784,7 @@ bool CStatObj::LoadCGF(IChunkFile* chunkFile, const char* filename, bool isLod, 
 			if (!pFirstMeshNode)
 			{
 				pFirstMeshNode = pNode;
+				uint32_t vertexCount = pNode->pMesh->GetVertexCount();
 				pFirstMesh = pNode->pMesh;
 			}
 		}

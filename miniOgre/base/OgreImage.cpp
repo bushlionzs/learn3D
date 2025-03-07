@@ -12,14 +12,23 @@
 #include "OgreBlp.h"
 #include <gli/gli.hpp>
 #include <platform_file.h>
+#ifdef COMPRESS_IMAGE
 #include <compressonator.h>
-
+#endif
 namespace Ogre {
 
     CImage::CImage()
     {
         mImageData = nullptr;
         mPixelSize = 0;
+
+        mLoadPicMap[Ogre::ImageType_DDS] = std::bind(&CImage::loadDDS, this, std::placeholders::_1, std::placeholders::_2);
+        mLoadPicMap[Ogre::ImageType_PNG] = std::bind(&CImage::loadSTB, this, std::placeholders::_1, std::placeholders::_2);
+        mLoadPicMap[Ogre::ImageType_JPG] = std::bind(&CImage::loadSTB, this, std::placeholders::_1, std::placeholders::_2);
+        mLoadPicMap[Ogre::ImageType_BLP] = std::bind(&CImage::loadBLP, this, std::placeholders::_1, std::placeholders::_2);
+        mLoadPicMap[Ogre::ImageType_KTX] = std::bind(&CImage::loadKTX, this, std::placeholders::_1, std::placeholders::_2);
+        mLoadPicMap[Ogre::ImageType_TIF] = std::bind(&CImage::loadTIF, this, std::placeholders::_1, std::placeholders::_2);
+
     }
 
     CImage::~CImage()
@@ -49,6 +58,10 @@ namespace Ogre {
         else if (suffix == ".jpg")
         {
             return Ogre::ImageType_JPG;
+        }
+        else if (suffix == ".tif")
+        {
+            return Ogre::ImageType_TIF;
         }
         else
         {
@@ -137,7 +150,7 @@ namespace Ogre {
         }
         return Ogre::PF_FLOAT16_RGBA;
     }
-    bool CImage::loadImageInfo(
+    /*bool CImage::loadImageInfo(
         const std::string& name,
         ImageInfo& imageInfo,
         bool cube)
@@ -173,83 +186,41 @@ namespace Ogre {
         uint32_t byteCount = content.size();
         
         return CImage::loadImageInfo((const uint8_t*)data, byteCount, imageInfo, type);
-    }
+    }*/
 
     void CImage::freeImageData(void* data)
     {
         stbi_image_free(data);
     }
 
-    bool CImage::loadImage(const std::string& name, bool cube)
+    bool CImage::loadImage(const std::string& name)
     {
-        auto type = getImageType(name);
+        Ogre::ImageType type = getImageType(name);
+
+        assert_invariant(type != ImageType_UnSupported);
+
+        auto func = mLoadPicMap[type];
+
+        std::shared_ptr<DataStream> stream
+            = ResourceManager::getSingleton().openResource(name);
+        assert_invariant(stream.get());
+        return loadImage(*stream.get(), type);
+    }
+
+    bool CImage::loadImage(DataStream& stream, Ogre::ImageType type)
+    {
+        auto func = mLoadPicMap[type];
+        bool load = func(stream, mImageInfo);
+
+        assert_invariant(load);
         uint32_t nrComponents = 0;
 
-        unsigned char* data = nullptr;
-        if (type == Ogre::ImageType::ImageType_DDS)
-        {
-            std::shared_ptr<DataStream> stream
-                = ResourceManager::getSingleton().openResource(name);
-            DDSImage ddsload;
-            if (ddsload.load(stream.get()))
-            {
-                data = ddsload.data();
-                nrComponents = 4;
-
-                ImageInfo* imageData = ddsload.getImageInfo();
-                mImageInfo = *imageData;
-            }
-        }
-        else if (type == Ogre::ImageType::ImageType_KTX)
-        {
-            auto resInfo = ResourceManager::getSingleton().getResourceInfo(name);
-            gli::texture tmp = gli::load(resInfo->_fullname.c_str());
-
-            mImageInfo.width = static_cast<uint32_t>(tmp.extent().x);
-            mImageInfo.height = static_cast<uint32_t>(tmp.extent().y);
-            mImageInfo.num_mipmaps = static_cast<uint32_t>(tmp.levels()) - 1;
-            mImageInfo.face = tmp.faces();
-            mImageInfo.size = tmp.size();
-            auto ktxFormat = tmp.format();
-            mImageInfo.format = translateKtxFormat(ktxFormat);
-            data = new unsigned char[mImageInfo.size];
-            memcpy(data, tmp.data(), mImageInfo.size);
-            int kk = 0;
-        }
-        else if (type == Ogre::ImageType::ImageType_BLP)
-        {
-            std::shared_ptr<DataStream> stream
-                = ResourceManager::getSingleton().openResource(name);
-            OgreBlpImage blpImage;
-            blpImage.load(stream);
-            data = blpImage.data();
-            ImageInfo* imageData = blpImage.getImageInfo();
-
-            mImageInfo = *imageData;
-        }
-        else
-        {
-            mImageInfo.face = 1;
-            PixelFormat format[4] = { Ogre::PF_L8, Ogre::PF_BYTE_LA, Ogre::PF_BYTE_RGB, Ogre::PF_BYTE_RGBA };
-            {
-                std::shared_ptr<DataStream> stream
-                    = ResourceManager::getSingleton().openResource(name);
-
-                const stbi_uc* stream_data = (const stbi_uc*)stream->getStreamData();
-                uint32_t size = stream->getStreamLength();
-                data = stbi_load_from_memory(stream_data, size,
-                    (int*)&mImageInfo.width, (int*)&mImageInfo.height, (int*)&nrComponents, 0);
-                mImageInfo.format = format[nrComponents - 1];
-            }
-         
-            mPixelSize = nrComponents;   
-        }
-
-        mImageData = data;
+        mImageData = mImageInfo.imageData;
 
         mImageDataSize = calculateSize(mImageInfo);
-        bool compress = true;
-        if (compress)
+
+#ifdef COMPRESS_IMAGE
+        if (true)
         {
             //compressonator lib crash in multi-thread, so add a mutex
             static std::mutex _mutex;
@@ -265,11 +236,11 @@ namespace Ogre {
                 mipSet.m_format = CMP_FORMAT_RGBA_8888;
                 mipSet.m_nMipLevels = 1;
 
-                
+
                 uint32_t maxMipLevels = static_cast<uint32_t>(floor(log2(std::max(width, height))) + 1.0);
                 mipSet.m_nMaxMipLevels = maxMipLevels;
                 CMP_MipLevel dummy[20];
-                mipSet.m_pMipLevelTable = (CMP_MipLevelTable*)malloc(sizeof(CMP_MipLevel*)* maxMipLevels);
+                mipSet.m_pMipLevelTable = (CMP_MipLevelTable*)malloc(sizeof(CMP_MipLevel*) * maxMipLevels);
                 for (uint32_t i = 0; i < maxMipLevels; i++)
                 {
                     mipSet.m_pMipLevelTable[i] = &dummy[i];
@@ -277,9 +248,29 @@ namespace Ogre {
                 CMP_MipLevel* mipLevel = mipSet.m_pMipLevelTable[0];
                 mipLevel->m_nWidth = width;
                 mipLevel->m_nHeight = height;
-                mipLevel->m_dwLinearSize = mImageDataSize;
-                mipLevel->m_pbData = (CMP_BYTE*)malloc(mImageDataSize);
-                memcpy(mipLevel->m_pbData, data, mImageDataSize);
+
+                uint32_t imageDataSize = mImageDataSize;
+                if (mImageInfo.format == Ogre::PF_BYTE_RGB)
+                {
+                    imageDataSize = mImageDataSize * 4 / 3;
+                }
+                mipLevel->m_dwLinearSize = imageDataSize;
+                mipLevel->m_pbData = (CMP_BYTE*)malloc(imageDataSize);
+
+                if (mImageInfo.format == Ogre::PF_BYTE_RGBA)
+                {
+                    memcpy(mipLevel->m_pbData, data, imageDataSize);
+                }
+                else
+                {
+                    CMP_BYTE* rgbaData = mipLevel->m_pbData;
+                    for (int i = 0; i < width * height; i++) {
+                        rgbaData[i * 4 + 0] = data[i * 3 + 0]; // R
+                        rgbaData[i * 4 + 1] = data[i * 3 + 1]; // G
+                        rgbaData[i * 4 + 2] = data[i * 3 + 2]; // B
+                        rgbaData[i * 4 + 3] = 255;                // A
+                    }
+                }
 
                 CMP_INT result = CMP_GenerateMIPLevels(&mipSet, 1);
                 if (result != CMP_OK)
@@ -287,14 +278,14 @@ namespace Ogre {
                     assert_invariant(false);
                 }
 
-                
+
 
                 delete mImageData;
                 mImageInfo.format = PF_BC7_UNORM;
-                mImageInfo.num_mipmaps  = maxMipLevels - 1;
+                mImageInfo.num_mipmaps = maxMipLevels - 1;
                 mImageDataSize = calculateSize(mImageInfo);
                 mImageData = (unsigned char*)malloc(mImageDataSize);
-                
+
 
                 uint32_t offset = 0;
                 for (uint32_t i = 0; i < maxMipLevels; i++)
@@ -315,7 +306,7 @@ namespace Ogre {
                     dstTexture.format = CMP_FORMAT_BC7;
                     dstTexture.pData = mImageData + offset;
                     dstTexture.dwDataSize = CMP_CalculateBufferSize(&dstTexture);
-                    
+
                     offset += dstTexture.dwDataSize;
 
                     CMP_CompressOptions options = { 0 };
@@ -329,11 +320,11 @@ namespace Ogre {
                         assert_invariant(false);
                     }
 
-                    if(width > 1)width >>= 1;
-                    if(height > 1)height >>= 1;
+                    if (width > 1)width >>= 1;
+                    if (height > 1)height >>= 1;
                 }
 
-                
+
                 for (uint32_t i = 0; i < maxMipLevels; i++)
                 {
                     CMP_MipLevel* level = mipSet.m_pMipLevelTable[i];
@@ -342,91 +333,23 @@ namespace Ogre {
                 free(mipSet.m_pMipLevelTable);
             }
         }
-        
+#endif
 
-        return true;
-    }
-
-    bool CImage::loadImage(DataStreamPtr& stream)
-    {
-        const uint8_t* data = (const uint8_t*)stream->getStreamData();
-        uint32_t size = stream->getStreamLength();
-        return loadImage(data, size, Ogre::ImageType::ImageType_PNG);
+        return load;
     }
 
     bool CImage::loadImage(const uint8_t* data, uint32_t byteCount, Ogre::ImageType type)
     {
-        switch (type)
-        {
-        case Ogre::ImageType::ImageType_PNG:
-        case Ogre::ImageType::ImageType_JPG:
-        {
-            mImageInfo.face = 1;
-            uint32_t nrComponents = 0;
-            auto imagedata = stbi_load_from_memory(data, byteCount,
-                (int*)&mImageInfo.width, (int*)&mImageInfo.height, (int*)&nrComponents, 0);
-
-            if (nullptr == imagedata)
-            {
-                return false;
-            }
-
-            mPixelSize = nrComponents;
-            if (nrComponents == 3)
-            {
-                mImageInfo.format = Ogre::PF_BYTE_RGB;
-            }
-            else if (nrComponents == 4)
-            {
-                mImageInfo.format = Ogre::PF_BYTE_RGBA;
-            }
-            else if (nrComponents == 2)
-            {
-                mImageInfo.format = Ogre::PF_BYTE_LA;
-            }
-            else if (nrComponents == 1)
-            {
-                mImageInfo.format = Ogre::PF_L8;
-            }
-
-            // mNumMipmaps = 0;
-            mImageData = (unsigned char*)imagedata;
-
-            mImageDataSize = calculateSize(mImageInfo);
-
-            return true;
-        }
-        case Ogre::ImageType::ImageType_DDS:
-        {
-            DDSImage ddsload;
-            MemoryDataStream sm((const char*)data, byteCount);
-            if (ddsload.load(&sm))
-            {
-                data = ddsload.data();
-
-                ImageInfo* imageData = ddsload.getImageInfo();
-
-                mImageInfo = *imageData;
-
-                mImageData = (unsigned char*)data;
-
-                mImageDataSize = calculateSize(mImageInfo);
-            }
-            return true;
-        }
-        default:
-            assert_invariant(false);
-            return false;
-        }
-        
+        MemoryDataStream stream((const char*)data, byteCount);
+        return loadImage(stream, type);
     }
 
-    bool CImage::loadRawData(DataStreamPtr& stream, ushort uWidth, ushort uHeight, PixelFormat format)
+    bool CImage::loadRawData(DataStream& stream, ushort uWidth, ushort uHeight, PixelFormat format)
     {
-        const char* data = stream->getStreamData();
-        uint32_t size = stream->getStreamLength();
+        const char* data = stream.getStreamData();
+        uint32_t size = stream.getStreamLength();
 
-        mImageData = (unsigned char*)malloc(size);
+        mImageData = (char*)malloc(size);
         memcpy(mImageData, data, size);
         mImageInfo.format = format;
 
@@ -470,7 +393,7 @@ namespace Ogre {
 
     unsigned char* CImage::getImageData()
     {
-        return mImageData;
+        return (unsigned char*)mImageData;
     }
 
     uint32_t CImage::getSize()
@@ -480,7 +403,7 @@ namespace Ogre {
 
     Ogre::PixelBox CImage::getPixelBox(uint32 face, uint32 mipmap) const
     {
-        uint8* offset = mImageData;
+        uint8* offset = (uint8*)mImageData;
         uint32 width = mImageInfo.width, height = mImageInfo.height, depth = mImageInfo.depth;
         uint32 numMips = mImageInfo.num_mipmaps;
 
@@ -516,7 +439,7 @@ namespace Ogre {
     {
         assert_invariant(mImageData);
         assert_invariant(x < mImageInfo.width&& y < mImageInfo.height&& z < mImageInfo.depth);
-        return mImageData + mPixelSize * (z * mImageInfo.width * mImageInfo.height + mImageInfo.width * y + x);
+        return (uchar*)mImageData + mPixelSize * (z * mImageInfo.width * mImageInfo.height + mImageInfo.width * y + x);
     }
 
     void CImage::convertRawData(void* from, void* to, size_t _size, int _format)
@@ -564,7 +487,7 @@ namespace Ogre {
         OgreAssert(numFaces == 6 || numFaces == 1, "Invalid number of faces");
 
         mImageDataSize = calculateSize(mImageInfo);
-        mImageData = data;
+        mImageData = (char*)data;
         mAutoDelete = autoDelete;
 
         return *this;
@@ -596,5 +519,162 @@ namespace Ogre {
     void CImage::save(const String& filename)
     {
 
+    }
+
+    bool CImage::loadDDS(DataStream& stream, ImageInfo& imageInfo)
+    {
+        DDSImage ddsload;
+        if (ddsload.load(&stream))
+        {
+            ImageInfo* imageData = ddsload.getImageInfo();
+            mImageInfo = *imageData;
+
+            imageInfo.imageData = (char*)ddsload.data();
+            imageInfo.nrComponents = 4;
+        }
+        else
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool CImage::loadSTB(DataStream& stream, ImageInfo& imageInfo)
+    {
+        mImageInfo.face = 1;
+        PixelFormat format[4] = { Ogre::PF_L8, Ogre::PF_BYTE_LA, Ogre::PF_BYTE_RGB, Ogre::PF_BYTE_RGBA };
+
+        const stbi_uc* stream_data = (const stbi_uc*)stream.getStreamData();
+        uint32_t size = stream.getStreamLength();
+        imageInfo.imageData = (char*)stbi_load_from_memory(stream_data, size,
+            (int*)&mImageInfo.width, (int*)&mImageInfo.height, (int*)&imageInfo.nrComponents, 0);
+        mImageInfo.format = format[imageInfo.nrComponents - 1];
+
+        return true;
+    }
+
+    bool CImage::loadKTX(DataStream& stream, ImageInfo& imageInfo)
+    {
+        const char* data = stream.getStreamData();
+        uint32_t size = stream.getStreamLength();
+
+        gli::texture tmp = gli::load(data, size);
+        assert_invariant(!tmp.empty());
+        mImageInfo.width = static_cast<uint32_t>(tmp.extent().x);
+        mImageInfo.height = static_cast<uint32_t>(tmp.extent().y);
+        mImageInfo.num_mipmaps = static_cast<uint32_t>(tmp.levels()) - 1;
+        mImageInfo.face = tmp.faces();
+        mImageInfo.size = tmp.size();
+        auto ktxFormat = tmp.format();
+        mImageInfo.format = translateKtxFormat(ktxFormat);
+        imageInfo.imageData = new char[mImageInfo.size];
+        memcpy(imageInfo.imageData, tmp.data(), mImageInfo.size);
+
+        return true;
+    }
+
+    bool CImage::loadBLP(DataStream& stream, ImageInfo& imageInfo)
+    {
+        OgreBlpImage blpImage;
+        bool load = blpImage.load(stream);
+        assert_invariant(load);
+        ImageInfo* imageData = blpImage.getImageInfo();
+        mImageInfo = *imageData;
+        imageInfo.imageData = (char*)blpImage.data();
+        return true;
+    }
+
+
+    extern "C" {
+        #include <tiffio.h>
+    }
+    struct mem_buffer {
+        const uint8_t* data;  
+        size_t size;        
+        size_t pos;           
+    };
+
+    static tmsize_t tiff_mem_read(thandle_t tif, void* buffer, tmsize_t size) {
+        mem_buffer* mb = static_cast<mem_buffer*>(tif);
+        const size_t bytes_left = mb->size - mb->pos;
+        const size_t bytes_to_copy = std::min(static_cast<size_t>(size), bytes_left);
+
+        if (bytes_to_copy > 0) {
+            memcpy(buffer, mb->data + mb->pos, bytes_to_copy);
+            mb->pos += bytes_to_copy;
+        }
+        return static_cast<tmsize_t>(bytes_to_copy);
+    }
+
+    static tmsize_t tiff_mem_write(thandle_t tif, void* buffer, tmsize_t size) {
+        return 0;
+    }
+
+    static int tiff_mem_close(thandle_t tif) {
+        return 0;
+    }
+
+    static toff_t tiff_mem_seek(thandle_t tif, toff_t offset, int whence) {
+        mem_buffer* mb = static_cast<mem_buffer*>(tif);
+        switch (whence) {
+        case SEEK_SET: mb->pos = offset; break;
+        case SEEK_CUR: mb->pos += offset; break;
+        case SEEK_END: mb->pos = mb->size + offset; break;
+        default: return static_cast<toff_t>(-1);
+        }
+        return static_cast<toff_t>(mb->pos);
+    }
+
+    static toff_t tiff_mem_size(thandle_t tif) {
+        mem_buffer* mb = static_cast<mem_buffer*>(TIFFClientdata((TIFF*)tif));
+        return static_cast<toff_t>(mb->size);
+    }
+
+    bool CImage::loadTIF(DataStream& stream, ImageInfo& imageInfo)
+    {
+        const uint8_t* data = (const uint8_t*)stream.getStreamData();
+        uint32_t size = stream.getStreamLength();
+        mem_buffer mb = { data, size, 0};
+
+        TIFF* tif = TIFFClientOpen(
+            "memory", "r",
+            reinterpret_cast<thandle_t>(&mb),
+            tiff_mem_read,    // 读回调
+            tiff_mem_write,     // 写回调（只读）
+            tiff_mem_seek,    // seek 回调
+            tiff_mem_close,   // 关闭回调
+            tiff_mem_size,    // 大小回调
+            nullptr,     // 无 map 回调
+            nullptr      // 无 unmap 回调
+        );
+
+        TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &imageInfo.width);
+        TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &imageInfo.height);
+        imageInfo.nrComponents = 0;
+        TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &imageInfo.nrComponents);
+
+        
+        
+        uint16_t orientation = ORIENTATION_TOPLEFT;
+        TIFFGetField(tif, TIFFTAG_ORIENTATION, &orientation);
+
+        size_t bytesPerRow = TIFFScanlineSize(tif);
+
+        imageInfo.imageData = new char[bytesPerRow * imageInfo.height ];
+
+        for (uint32_t row = 0; row < imageInfo.height; ++row) {
+            uint32_t targetRow = (orientation == ORIENTATION_BOTLEFT) ? (imageInfo.height - row - 1) : row;
+            TIFFReadScanline(tif, imageInfo.imageData + targetRow * bytesPerRow, row);
+        }
+
+        if (imageInfo.nrComponents == 3)
+        {
+            imageInfo.format = Ogre::PF_BYTE_RGB;
+        }
+        else
+        {
+            imageInfo.format = Ogre::PF_BYTE_RGBA;
+        }
+        return true;
     }
 }

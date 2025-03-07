@@ -95,6 +95,11 @@ namespace Ogre {
         return mIndexData;
     }
 
+    void Mesh::releaseIndexData()
+    {
+        mIndexData = nullptr;
+    }
+
     void Mesh::addBoneAssignment(const VertexBoneAssignment& vertBoneAssign)
     {
         mBoneAssignments.push_back(vertBoneAssign);

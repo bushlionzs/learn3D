@@ -2,7 +2,7 @@
 
 #include "OgreHeader.h"
 #include <World.h>
-#include <Brush.h> // brush
+#include <wowBrush.h> // brush
 #include <ChunkWater.hpp>
 #include <dbcfile.h>
 #include <MapChunk.h>

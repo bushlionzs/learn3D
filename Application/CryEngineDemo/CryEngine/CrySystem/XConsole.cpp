@@ -1870,7 +1870,8 @@ void CXConsole::AddCommand(const char* szCommand, ConsoleCommandFunc func, int n
 	}
 	else
 	{
-		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::AddCommand(): console command [%s] is already registered", szCommand);
+		if(gEnv->pLog)
+		    gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::AddCommand(): console command [%s] is already registered", szCommand);
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
 		gEnv->pSystem->debug_LogCallStack();
 #endif

@@ -127,6 +127,10 @@ bool MeshManager::hasMesh(const std::string& name)
 
 bool MeshManager::addMesh(const std::string& name, std::shared_ptr<Mesh>& mesh)
 {
+	if (name == "objects/beach/bush_beach01.cgf")
+	{
+		int kk = 0;
+	}
 	auto it = mMeshMap.find(name);
 
 	if (it != mMeshMap.end())

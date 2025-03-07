@@ -27,6 +27,59 @@ namespace dy
         return fullname.substr(iPos, fullname.length() - iPos);
     }
 
+    std::string get_short_name(const char* fullname)
+    {
+        std::string result = fullname;
+        std::string::size_type iPos = result.find_last_of("/\\");
+        if (iPos == std::string::npos)
+        {
+            return fullname;
+        }
+
+        iPos++;
+        return result.substr(iPos, result.length() - iPos);
+    }
+
+    const char* getSuffix(const std::string& name)
+    {
+        size_t pos = name.find_last_of('.');
+        if (pos == std::string::npos)
+        {
+            return name.c_str() + name.size();
+        }
+
+        return name.c_str() + pos;
+    }
+
+    const char* getSuffix(const char* name)
+    {
+        const char* p = name;
+        const char* ret = nullptr;
+        while (*p != 0)
+        {
+            if (*p == '.')
+            {
+                ret == p;
+            }
+            p++;
+        }
+
+        return ret;
+    }
+
+    std::string removeSuffix(const std::string& name)
+    {
+        std::string tmp;
+        size_t pos = name.find_last_of('.');
+        if (pos == std::string::npos)
+        {
+            return name;
+        }
+
+        tmp = name.substr(0, pos);
+        return tmp;
+    }
+
     char const* strnchr(char const* str, int ch, int which)
     {
         for (int i = 0; i < which; i++)
