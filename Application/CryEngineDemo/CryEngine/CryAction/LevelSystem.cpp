@@ -1276,10 +1276,7 @@ public:
 			// Reset the camera to (0,0,0) which is the invalid/uninitialised state
 			CCamera defaultCam;
 			m_levelSystem.m_pSystem->SetViewCamera(defaultCam);
-			{
-				IGameTokenSystem* pGameTokenSystem = CCryAction::GetCryAction()->GetIGameTokenSystem();
-				pGameTokenSystem->Reset();
-			}
+
 
 			m_levelSystem.m_pLoadingLevelInfo = pLevelInfo;
 			if (!m_levelSystem.OnLoadingStart(pLevelInfo))
@@ -1307,12 +1304,6 @@ public:
 				m_pSpamDelay->Set(0.0f);
 			}
 
-			// load all GameToken libraries this level uses incl. LevelLocal
-			{
-				IGameTokenSystem* pGameTokenSystem = CCryAction::GetCryAction()->GetIGameTokenSystem();
-				ILevelInfo* pLevelInfo = m_levelSystem.m_pLoadingLevelInfo;
-				pGameTokenSystem->LoadLibs(pLevelInfo->GetPath() + string("/GameTokens/*.xml"));
-			}
 		}
 
 		NEXT_STEP(EStep::EntitySystemLayers)

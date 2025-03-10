@@ -7,6 +7,7 @@
 // -------------------------------------------------------------------------
 
 #include <CryCore/BaseTypes.h>
+#include <algorithm>
 
 struct bitmaskPtr
 {
@@ -25,7 +26,7 @@ struct bitmaskPtr
 		{
 			uint* newData = 0;
 			if (newSize)
-				memcpy(newData = (new uint[newSize + 1]) + 1, data, min(newSize, (int)size) * sizeof(uint));
+				memcpy(newData = (new uint[newSize + 1]) + 1, data, std::min(newSize, (int)size) * sizeof(uint));
 			setptr(newData);
 			if (newSize)
 				newData[-1] = 1, refCounted = 1;

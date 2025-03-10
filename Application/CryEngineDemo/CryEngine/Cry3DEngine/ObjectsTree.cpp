@@ -3482,13 +3482,13 @@ void CObjManager::CoverageBufferDebugDraw()
 //////////////////////////////////////////////////////////////////////////
 bool CObjManager::LoadOcclusionMesh(const char* pFileName)
 {
-	return false;
+	return m_CullThread.LoadLevel(pFileName);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CObjManager::PushIntoCullQueue(const SCheckOcclusionJobData& rCheckOcclusionData)
 {
-	
+	m_CullThread.CreateOcclusionJob(rCheckOcclusionData);
 }
 
 //////////////////////////////////////////////////////////////////////////

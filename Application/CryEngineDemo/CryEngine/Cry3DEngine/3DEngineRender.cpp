@@ -1413,11 +1413,15 @@ void C3DEngine::RenderInternal(const int nRenderFlags, const SRenderingPassInfo&
 	}
 
 	// Update particle system as late as possible, only renderer is dependent on it.
-	m_pPartManager->GetLightProfileCounts().ResetFrameTicks();
-	if (passInfo.IsGeneralPass() && m_pPartManager)
+	if (m_pPartManager)
 	{
-		m_pPartManager->Update();
+		m_pPartManager->GetLightProfileCounts().ResetFrameTicks();
+		if (passInfo.IsGeneralPass())
+		{
+			m_pPartManager->Update();
+		}
 	}
+
 
 	if (passInfo.IsGeneralPass() && passInfo.RenderClouds())
 	{
@@ -1871,7 +1875,7 @@ void C3DEngine::RenderScene(const int nRenderFlags, const SRenderingPassInfo& pa
 
 	if (passInfo.IsGeneralPass())
 	{
-		m_pMergedMeshesManager->Update(passInfo);
+		//m_pMergedMeshesManager->Update(passInfo);
 	}
 
 	// unload old meshes

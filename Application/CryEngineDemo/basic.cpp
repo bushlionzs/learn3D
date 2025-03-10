@@ -100,7 +100,8 @@ void BasicApplication::base1()
 	//mGameCamera->updateWorldMatrix(cameraWorldMatrix);
 	mGameCamera->lookAt(
 		Ogre::Vector3(83.33, 41.79557, 59.02676), 
-		Ogre::Vector3(83.33, 42.79557, 59.02676));
+		Ogre::Vector3(83.33, 42.79557, 59.02676),
+		Ogre::Vector3(0, 0, 1));
 	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
 	mGameCamera->setMoveSpeed(100);
 	mGameCamera->setRotateSpeed(0.01f);

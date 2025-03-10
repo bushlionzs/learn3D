@@ -1155,9 +1155,22 @@ bool CSystem::InitFont(const SSystemInitParams& startupParams)
 //////////////////////////////////////////////////////////////////////////
 bool CSystem::Init3DEngine(const SSystemInitParams& startupParams)
 {
-	
+	Cry3DEngineBase::m_p3DEngine = new C3DEngine(this);
+	gEnv->p3DEngine = Cry3DEngineBase::m_p3DEngine;
 
-	return true;
+	if (!m_env.p3DEngine)
+	{
+		CryFatalError("Error creating 3D Engine!");
+		return false;
+	}
+
+	if (!m_env.p3DEngine->Init())
+	{
+		CryFatalError("Error initializing 3D Engine!");
+		return false;
+	}
+	m_pProcess = m_env.p3DEngine;
+	m_pProcess->SetFlags(PROC_3DENGINE);
 }
 
 //////////////////////////////////////////////////////////////////////////

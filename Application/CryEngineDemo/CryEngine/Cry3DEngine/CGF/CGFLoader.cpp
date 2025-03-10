@@ -88,7 +88,7 @@ CContentCGF* CLoaderCGF::LoadCGF(const char* filename, IChunkFile& chunkFile, IL
 bool CLoaderCGF::LoadCGF(CContentCGF* pContentCGF, const char* filename, IChunkFile& chunkFile, ILoaderCGFListener* pListener, uint32 loadingFlags)
 {
 	FUNCTION_PROFILER_3DENGINE;
-	if (strstr(filename, "cliff1.cgf"))
+	if (strstr(filename, "cloud1.cgf"))
 	{
 		int kk = 0;
 	}

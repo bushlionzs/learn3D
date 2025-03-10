@@ -1320,7 +1320,7 @@ bool CTerrainNode::CheckUpdateDiffuseMap()
 		CheckLeafData();
 
 		if (m_eTexStreamingStatus == ecss_NotLoaded)
-			StartSectorTexturesStreaming(Get3DEngine()->IsTerrainSyncLoad());
+			StartSectorTexturesStreaming(true);
 
 		if (m_eTexStreamingStatus != ecss_Ready)
 			return false;

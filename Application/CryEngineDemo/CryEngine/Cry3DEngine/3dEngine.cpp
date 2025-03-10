@@ -37,7 +37,6 @@
 #include "WaterVolumeRenderNode.h"
 #include "WaterWaveRenderNode.h"
 #include "DistanceCloudRenderNode.h"
-#include "WaterWaveRenderNode.h"
 #include "RopeRenderNode.h"
 #include "RenderMeshMerger.h"
 #include "PhysCallbacks.h"
@@ -65,11 +64,7 @@
 threadID Cry3DEngineBase::m_nMainThreadId = 0;
 bool Cry3DEngineBase::m_bRenderTypeEnabled[eERType_TypesNum];
 ISystem* Cry3DEngineBase::m_pSystem = 0;
-#if !defined(DEDICATED_SERVER)
 IRenderer* Cry3DEngineBase::m_pRenderer = 0;
-#else
-IRenderer* const Cry3DEngineBase::m_pRenderer = 0;
-#endif
 ITimer* Cry3DEngineBase::m_pTimer = 0;
 ILog* Cry3DEngineBase::m_pLog = 0;
 IPhysicalWorld* Cry3DEngineBase::m_pPhysicalWorld = 0;
@@ -478,7 +473,7 @@ void C3DEngine::RemoveEntInFoliage(int i, IPhysicalEntity* pent)
 
 bool C3DEngine::Init()
 {
-	m_pPartManager = CreateParticleManager(!gEnv->IsDedicated());
+	//m_pPartManager = CreateParticleManager(!gEnv->IsDedicated());
 	m_pSystem->SetIParticleManager(m_pPartManager);
 
 	m_pOpticsManager = new COpticsManager;
@@ -1987,14 +1982,6 @@ void C3DEngine::FreeRenderNodeState(IRenderNode* pEnt)
 
 	m_pObjManager->RemoveFromRenderAllObjectDebugInfo(pEnt);
 
-#if !defined(_RELEASE)
-	if (gEnv->pRenderer)
-	{
-		//As render nodes can be deleted in many places, it's possible that the map of render nodes used by stats gathering (r_stats 6, perfHUD, debug gun, Statoscope) could get aliased.
-		//Ensure that this node is removed from the map to prevent a dereference after deletion.
-		gEnv->pRenderer->ForceRemoveNodeFromDrawCallsMap(pEnt);
-	}
-#endif
 
 	m_lstAlwaysVisible.Delete(pEnt);
 
@@ -5005,8 +4992,8 @@ SRenderNodeTempData* C3DEngine::CheckAndCreateRenderNodeTempData(IRenderNode* pR
 	if (!pTempData)
 		return nullptr;
 
-	if (!m_visibleNodesManager.SetLastSeenFrame(pTempData, passInfo))
-		pTempData = nullptr;
+	/*if (!m_visibleNodesManager.SetLastSeenFrame(pTempData, passInfo))
+		pTempData = nullptr;*/
 
 	return pTempData;
 }
@@ -6215,7 +6202,7 @@ CDebugDrawListMgr::TAssetInfo::TAssetInfo(const I3DEngine::SObjectInfoToAddToDeb
 	numVerts = objInfo.numVerts;
 	texMemory = objInfo.texMemory;
 	meshMemory = objInfo.meshMemory;
-	drawCalls = gEnv->pRenderer->GetDrawCallsPerNode(objInfo.pRenderNode);
+
 	numInstances = 1;
 	ID = UNDEFINED_ASSET_ID;
 }

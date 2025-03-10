@@ -65,17 +65,18 @@ bool JobManager::ThreadBackEnd::CThreadBackEnd::Init(uint32 nSysMaxWorker)
 
 	m_arrWorkerThreads.resize(m_nNumWorkerThreads);
 
+	m_nNumWorkerThreads = 1;
 	for (uint32 i = 0; i < m_nNumWorkerThreads; ++i)
 	{
 		const bool isTempWorker = i >= numPersistentWorkerThreads;
 		m_arrWorkerThreads[i] = new CThreadBackEndWorkerThread(this, m_Semaphore, m_JobQueue, i, isTempWorker);
 
-		//const char* name = !isTempWorker ? "Worker" : "Helper";
+		const char* name = !isTempWorker ? "Worker" : "Helper";
 
-		/*if (!gEnv->pThreadManager->SpawnThread(m_arrWorkerThreads[i], "JobSystem_%s_%u", name, i))
+		if (!gEnv->pThreadManager->SpawnThread(m_arrWorkerThreads[i], "JobSystem_%s_%u", name, i))
 		{
 			CryFatalError("Error spawning \"JobSystem_%s_%u\" thread.", name, i);
-		}*/
+		}
 	}
 #if defined(JOBMANAGER_SUPPORT_STATOSCOPE)
 	m_pBackEndWorkerProfiler = new JobManager::CWorkerBackEndProfiler;

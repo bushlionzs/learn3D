@@ -30,7 +30,7 @@
 #include <CryEngine/Cry3DEngine/3dEngine.h>
 #include <CryEngine/Cry3DEngine/MaterialHelpers.h>
 #include <CryString/CryPath.h>
-
+#include <CryEngineRenderer.h>
 struct CryEngineVertex
 {
 	Ogre::Vector3 Pos;
@@ -312,10 +312,7 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 				haveMat = false;
 			}
 		}
-		if (cgfName == "objects/plattforms/rocket.cgf")
-		{
-			int kk = 0;
-		}
+
 		auto& baseWhiteMat = Ogre::MaterialManager::getSingleton().getByName("BaseWhite");
 		for (uint32_t subIndex = 0; subIndex < subSize; subIndex++)
 		{
@@ -404,6 +401,7 @@ void loadCryEngineLevel(CryEngineContext& context)
 	LPSTR cmdline = GetCommandLineA();
 	strncpy(startupParams.szSystemCmdLine, cmdline, sizeof(startupParams.szSystemCmdLine) - 1);
 	CSystem* pSystem = new CSystem(startupParams);
+	
 	pSystem->Initialize(startupParams);
 	startupParams.pSystem = pSystem;
 	new CCryAction(const_cast<SSystemInitParams&>(startupParams));
@@ -416,8 +414,11 @@ void loadCryEngineLevel(CryEngineContext& context)
 	Cry3DEngineBase::m_pObjManager = new CObjManager;
 	Cry3DEngineBase::m_pMatMan = new CMatMan;
 	Cry3DEngineBase::m_pSystem = pSystem;
-	Cry3DEngineBase::m_p3DEngine = new C3DEngine(pSystem);
-	Cry3DEngineBase::m_p3DEngine->Init();
+	
+
+	Cry3DEngineBase::m_pRenderer = new CRenderer();
+	gEnv->pRenderer = Cry3DEngineBase::m_pRenderer;
+	
 	CryPathString mtlFilename;
 	CryPathString mtlName;
 
@@ -437,32 +438,42 @@ void loadCryEngineLevel(CryEngineContext& context)
 
 		if (isCgf)
 		{
-			Ogre::Mesh* ogreMesh = loadCGF(szResFileName);
+			/*Ogre::Mesh* ogreMesh = loadCGF(szResFileName);
 			
 			bool add = Ogre::MeshManager::getSingleton().addMesh(szResFileName, std::shared_ptr<Ogre::Mesh>(ogreMesh));
 
-			assert_invariant(add);
+			assert_invariant(add);*/
 		}
 	}
 
 	//load terrain
 	XmlNodeRef m_xmlLevelData = pSystem->LoadXmlFromFile(levelDataPath.c_str());
 	XmlNodeRef nodeRef = m_xmlLevelData->findChild("SurfaceTypes");
+
+	//bool load = levelSystem->LoadLevel("asset_zoo");
+
+	Cry3DEngineBase::m_p3DEngine->SetLevelPath(levelPath.c_str());
 	bool loadTerrain = LoadTerrain(nodeRef, context);
     
 	assert_invariant(loadTerrain);
-
-	for (uint32_t i = 0; i < context.pStatObjTable->size(); i++)
+	Cry3DEngineBase::m_p3DEngine->LoadVisAreas(&context.pStatObjTable, &context.pMatTable);
 	{
-		IStatObj* statObj = context.pStatObjTable->at(i);
-		std::string name = statObj->GetFilePath();
+		auto graphicsPipelineKey = SGraphicsPipelineKey::BaseGraphicsPipelineKey;
 
-		dy::to_lower(name);
-
-		//printf("name:%s\n", name.c_str());
+		CCamera* cam = new CCamera;
+		cam->SetPosition(Vec3(83.33, 41.79557, 59.02676));
+		uint32_t width = 1600;
+		uint32_t height = 900;
+		float aspect = width / (float)height;
+		float fov = Ogre::Math::PI / 3.0f;
+		cam->SetFrustum(width, height, fov, 0.1, 1024, aspect);
+		pSystem->SetViewCamera(*cam);
+		pSystem->SetSystemGlobalState(ESYSTEM_GLOBAL_STATE_LEVEL_LOAD_COMPLETE);
+		pSystem->Render(graphicsPipelineKey);
 	}
-
 	
+	
+
 	COctreeNode* octreeNode = Cry3DEngineBase::m_p3DEngine->m_pObjectsTree;
 	PodArray<IRenderNode*> lstObjects;
 	octreeNode->GetObjects(lstObjects, nullptr);
@@ -470,8 +481,16 @@ void loadCryEngineLevel(CryEngineContext& context)
 	for (uint32_t i = 0; i < objectSize; i++)
 	{
 		IRenderNode* renderNode = lstObjects.GetAt(i);
-		
+		IRenderMesh* renderMesh = renderNode->GetRenderMesh(0);
 		IStatObj* statObj = renderNode->GetEntityStatObj();
+
+		if (statObj == nullptr)
+		{
+			continue;
+		}
+	
+		IRenderMesh* renderMesh2 = statObj->GetRenderMesh();
+
 		std::string name = statObj->GetFilePath();
 
 		dy::to_lower(name);
@@ -493,7 +512,35 @@ void loadCryEngineLevel(CryEngineContext& context)
 		Vec3 vec = renderNode->GetPos();
 		
 		entityNode->setPosition(Ogre::Vector3(vec.x, vec.y, vec.z));
+
+		EERType type = renderNode->GetRenderNodeType();
+		if (type == eERType_Brush)
+		{
+			IBrush* brush = (IBrush*)renderNode;
+			float scale = brush->GetScale();
+			entityNode->setScale(Ogre::Vector3(scale, scale, scale));
+
+			const Matrix34& m = brush->GetMatrix();
+
+			Ogre::Matrix3 rotMat;
+			
+			auto column0 = m.GetColumn(0).GetNormalized();
+			auto column1 = m.GetColumn(1).GetNormalized();
+			auto column2 = m.GetColumn(2).GetNormalized();
+
+			rotMat.SetColumn(0, Ogre::Vector3(column0.x, column0.y, column0.z));
+			rotMat.SetColumn(1, Ogre::Vector3(column1.x, column1.y, column1.z));
+			rotMat.SetColumn(2, Ogre::Vector3(column2.x, column2.y, column2.z));
+			
+			Ogre::Quaternion q;
+			q.FromRotationMatrix(rotMat);
+
+			entityNode->setOrientation(q);
+		}
 	}
+
+	
+	
 }
 
 bool LoadTerrain(XmlNodeRef pDoc, CryEngineContext& context)
@@ -548,5 +595,6 @@ bool LoadTerrain(XmlNodeRef pDoc, CryEngineContext& context)
 			}
 		}
 	}
+
 	return true;
 }

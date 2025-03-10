@@ -414,7 +414,11 @@ public:
 	//! Refresh object ( reload shaders or/and object geometry )
 	virtual void Refresh(int nFlags) final;
 
-	virtual IRenderMesh* GetRenderMesh() const final { return m_pRenderMesh; }
+	virtual IRenderMesh* GetRenderMesh() const final 
+	{ 
+		return m_pRenderMesh; 
+	}
+
 	void SetRenderMesh(_smart_ptr<IRenderMesh>& pRM);
 
 	virtual const char* GetFilePath() final                       { return m_szFileName.c_str(); }

@@ -495,10 +495,6 @@ void CSystem::Render(const SGraphicsPipelineKey& graphicsPipelineKey)
 	if (m_bIgnoreUpdates)
 		return;
 
-	//check what is the current process
-	if (!m_pProcess)
-		return; //should never happen
-
 	CRY_PROFILE_FUNCTION(PROFILE_SYSTEM);
 	MEMSTAT_CONTEXT(EMemStatContextType::Other, "CSystem::Render");
 
@@ -516,7 +512,9 @@ void CSystem::Render(const SGraphicsPipelineKey& graphicsPipelineKey)
 			{
 				if (m_env.p3DEngine && !m_env.IsFMVPlaying())
 				{
-					if ((!IsEquivalent(m_ViewCamera.GetPosition(), Vec3(0, 0, 0), VEC_EPSILON) && (!IsLoading())) || // never pass undefined camera to p3DEngine->RenderWorld()
+					bool b = IsEquivalent(m_ViewCamera.GetPosition(), Vec3(0, 0, 0), VEC_EPSILON);
+					bool loading = IsLoading();
+					if ((!b && (!loading)) || // never pass undefined camera to p3DEngine->RenderWorld()
 					    m_env.IsDedicated() || m_env.pRenderer->IsPost3DRendererEnabled())
 					{
 						m_env.p3DEngine->RenderWorld(nRenderingFlags, SRenderingPassInfo::CreateGeneralPassRenderingInfo(graphicsPipelineKey, m_ViewCamera), __FUNCTION__);

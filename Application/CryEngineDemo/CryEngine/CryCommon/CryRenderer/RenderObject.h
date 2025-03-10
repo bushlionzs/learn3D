@@ -484,7 +484,7 @@ public:
 	uint16              m_failedCompilations [eRenderPass_NumTypes] = { 0, 0 };
 	bool                m_isCompiledForPass  [eRenderPass_NumTypes] = { false, false };
 	
-protected:
+public:
 	IPermanentRenderObject() = default;
 };
 

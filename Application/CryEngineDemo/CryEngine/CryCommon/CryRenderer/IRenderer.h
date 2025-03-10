@@ -1269,7 +1269,6 @@ struct IRenderer//: public IRendererCallbackServer
 	//! \note This function is is thread safe.
 	virtual bool                   EF_ReloadFile_Request(const char* szFileName) = 0;
 
-	virtual _smart_ptr<IImageFile> EF_LoadImage(const char* szFileName, uint32 nFlags) = 0;
 
 	//! Remaps shader gen mask to common global mask.
 	virtual uint64                EF_GetRemapedShaderMaskGen(const char* name, uint64 nMaskGen = 0, bool bFixup = 0) = 0;
@@ -1330,7 +1329,10 @@ struct IRenderer//: public IRendererCallbackServer
 	virtual bool WriteTIFToDisk(const void* pData, int width, int height, int bytesPerChannel, int numChannels, bool bFloat, const char* szPreset, const char* szFileName) = 0;
 
 	//! Stores GBuffers region to atlas textures.
-	virtual bool StoreGBufferToAtlas(const RectI& rcDst, int nSrcWidth, int nSrcHeight, int nDstWidth, int nDstHeight, ITexture* pDataD, ITexture* pDataN, CGraphicsPipeline* pGraphicsPipeline) = 0;
+	virtual bool StoreGBufferToAtlas(const RectI& rcDst, int nSrcWidth, int nSrcHeight, int nDstWidth, int nDstHeight, ITexture* pDataD, ITexture* pDataN, CGraphicsPipeline* pGraphicsPipeline) 
+	{
+		return true;
+	}
 
 	//! Create new RE (RenderElement) of type (edt).
 	virtual CRenderElement* EF_CreateRE(EDataType edt) = 0;
@@ -1704,12 +1706,6 @@ struct IRenderer//: public IRendererCallbackServer
 	//! Debug draw call info (per mesh).
 	typedef std::map<IRenderMesh*, IRenderer::SDrawCallCountInfo> RNDrawcallsMapMesh;
 
-#if !defined(_RELEASE)
-	//! Get draw call info for frame.
-	virtual RNDrawcallsMapMesh& GetDrawCallsInfoPerMesh(bool mainThread = true) = 0;
-	virtual int                 GetDrawCallsPerNode(IRenderNode* pRenderNode) = 0;
-	virtual void                ForceRemoveNodeFromDrawCallsMap(IRenderNode* pNode) = 0;
-#endif
 
 	virtual void CollectDrawCallsInfo(bool status) = 0;
 	virtual void CollectDrawCallsInfoPerNode(bool status) = 0;

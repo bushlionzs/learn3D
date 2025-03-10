@@ -258,12 +258,12 @@ bool GameCamera::update(float delta)
 
         if (mGoingUp)
         {
-            move += Ogre::Vector3(0.0f, 1.0f, 0.0f) * moveSpeed;
+            move += up * moveSpeed;
         }
 
         if (mGoingDown)
         {
-            move -= Ogre::Vector3(0.0f, 1.0f, 0.0f) * moveSpeed;
+            move -= up * moveSpeed;
         }
 
         eyePosition += move;
