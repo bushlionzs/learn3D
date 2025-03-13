@@ -1,11 +1,12 @@
 #define _DISABLE_EXTENDED_ALIGNED_STORAGE 1
 #include <OgreHeader.h>
 #include "CryEngineUtil.h"
-
+#include "CryEngineCommon.h"
 #include <CryEngine/Cry3DEngine/CGF/ReadOnlyChunkFile.h>
 #include <CryEngine/Cry3DEngine/CGF/CGFLoader.h>
 #include <OgreMeshManager.h>
 #include <OgreMesh.h>
+#include <OgreSubEntity.h>
 #include <OgreSubMesh.h>
 #include <OgreVertexData.h>
 #include <OgreIndexData.h>
@@ -31,14 +32,9 @@
 #include <CryEngine/Cry3DEngine/MaterialHelpers.h>
 #include <CryString/CryPath.h>
 #include <CryEngineRenderer.h>
-struct CryEngineVertex
-{
-	Ogre::Vector3 Pos;
-	Ogre::Vector3 Normal;
-	Ogre::Vector2 TexC;
-	Ogre::Vector4 BoneWeights;
-	uint32_t BoneIndices[4];
-};
+#include <CryEngineMesh.h>
+#include <CryEngineShader.h>
+
 #pragma warning(disable:4189)
 
 class Listener : public ILoaderCGFListener
@@ -117,9 +113,15 @@ CryEngineMaterial* loadCryEngineMaterial(const char* mtlName)
 {
 	CryEngineMaterial* mat = new CryEngineMaterial;
 
-	std::string shortname = dy::get_short_name(mtlName);
-	mat->name = dy::removeSuffix(shortname);
+	std::string matName = mtlName;
+	dy::to_lower(matName);
+	mat->name = dy::removeSuffix(matName);
 
+	auto pos = mat->name.find("assets/");
+	if (pos != std::string::npos)
+	{
+		mat->name = mat->name.substr(pos + 7, mat->name.length());
+	}
 	XmlParser parser(false);
 	XmlNodeRef mtlNode = parser.ParseFile(mtlName, true);
 	int mtlFlags = 0;
@@ -200,12 +202,18 @@ CryEngineMaterial* loadCryEngineMaterial(const char* mtlName)
 			}
 		}
 	}
-	
-
-	
 
 	return mat;
 }
+
+struct CryEngineVertex
+{
+	Ogre::Vector3 Pos;
+	Ogre::Vector3 Normal;
+	Ogre::Vector2 TexC;
+	Ogre::Vector4 BoneWeights;
+	uint32_t BoneIndices[4];
+};
 
 Ogre::Mesh* loadCGF(const std::string& cgfName)
 {
@@ -229,14 +237,14 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 
 	for (int i = 0; i < 1; i++)
 	{
-		CNodeCGF* node = cgfContent.GetNode(i);	
+		CNodeCGF* node = cgfContent.GetNode(i);
 		CMesh* mesh = node->pMesh;
-			
-		int vertexCount = mesh->GetVertexCount();
-		
-		VertexData*  vertexData = ogreMesh->getVertexData();
 
-		
+		int vertexCount = mesh->GetVertexCount();
+
+		VertexData* vertexData = ogreMesh->getVertexData();
+
+
 		VertexDeclaration* decl = vertexData->getVertexDeclaration();
 
 		decl->addElement(0, 0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
@@ -270,8 +278,8 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 				vertex.Pos = Ogre::Vector3(vec.x, vec.y, vec.z);
 				//vertex.Pos = Ogre::Vector3(vec.x, vec.z, vec.y);
 			}
-			
-			
+
+
 			Vec2 uv = mesh->m_pTexCoord[vIndex].GetUV();
 			vertex.TexC = Ogre::Vector2(uv.x, uv.y);
 
@@ -281,21 +289,21 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 
 			if (mesh->m_pBoneMapping)
 			{
-				vertex.BoneIndices[0] = mesh->m_pBoneMapping[i].boneIds[0];
-				vertex.BoneIndices[1] = mesh->m_pBoneMapping[i].boneIds[1];
-				vertex.BoneIndices[2] = mesh->m_pBoneMapping[i].boneIds[2];
-				vertex.BoneIndices[3] = mesh->m_pBoneMapping[i].boneIds[3];
-				vertex.BoneWeights[0] = mesh->m_pBoneMapping[i].weights[0];
-				vertex.BoneWeights[1] = mesh->m_pBoneMapping[i].weights[1];
-				vertex.BoneWeights[2] = mesh->m_pBoneMapping[i].weights[2];
-				vertex.BoneWeights[3] = mesh->m_pBoneMapping[i].weights[3];
+				vertex.BoneIndices[0] = mesh->m_pBoneMapping[0].boneIds[0];
+				vertex.BoneIndices[1] = mesh->m_pBoneMapping[1].boneIds[1];
+				vertex.BoneIndices[2] = mesh->m_pBoneMapping[2].boneIds[2];
+				vertex.BoneIndices[3] = mesh->m_pBoneMapping[3].boneIds[3];
+				vertex.BoneWeights[0] = mesh->m_pBoneMapping[0].weights[0];
+				vertex.BoneWeights[1] = mesh->m_pBoneMapping[1].weights[1];
+				vertex.BoneWeights[2] = mesh->m_pBoneMapping[2].weights[2];
+				vertex.BoneWeights[3] = mesh->m_pBoneMapping[3].weights[3];
 			}
 		}
 
 		vertexData->writeBindBufferData(0, (const char*)vertexList.data(), vertexCount * sizeof(CryEngineVertex));
 
 		uint32_t subSize = mesh->m_subsets.size();
-		
+
 		if (strstr(node->pMaterial->name, "ground1"))
 		{
 			int kk = 0;
@@ -320,7 +328,7 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 			Ogre::SubMesh* subMesh = ogreMesh->addSubMesh(true, true);
 			subMesh->addIndexs(subset.nNumIndices, subset.nFirstIndexId, 0);
 
-			
+
 			if (haveMat)
 			{
 				CryEngineSubMaterial& subMat = itor->second->subMaterials[subset.nMatID];
@@ -343,7 +351,7 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 			{
 				subMesh->setMaterial(baseWhiteMat);
 			}
-			
+
 		}
 		int indexCount = mesh->GetIndexCount();
 		if (indexCount > 0)
@@ -356,13 +364,11 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 		{
 			ogreMesh->releaseIndexData();
 		}
-		
+
 	}
 
 	return ogreMesh;
 }
-
-
 
 bool LoadTerrain(XmlNodeRef pDoc, CryEngineContext& context);
 void loadCryEngineLevel(CryEngineContext& context)
@@ -467,45 +473,128 @@ void loadCryEngineLevel(CryEngineContext& context)
 		float aspect = width / (float)height;
 		float fov = Ogre::Math::PI / 3.0f;
 		cam->SetFrustum(width, height, fov, 0.1, 1024, aspect);
+		
 		pSystem->SetViewCamera(*cam);
-		pSystem->SetSystemGlobalState(ESYSTEM_GLOBAL_STATE_LEVEL_LOAD_COMPLETE);
-		pSystem->Render(graphicsPipelineKey);
+
+		for (uint32_t i = 0; i < 2; i++)
+		{
+			pSystem->GetStreamEngine()->Update();
+			pSystem->SetSystemGlobalState(ESYSTEM_GLOBAL_STATE_LEVEL_LOAD_COMPLETE);
+			pSystem->Render(graphicsPipelineKey);
+
+			CrySleep(1000);
+		}
+		
 	}
 	
 	
-
 	COctreeNode* octreeNode = Cry3DEngineBase::m_p3DEngine->m_pObjectsTree;
 	PodArray<IRenderNode*> lstObjects;
 	octreeNode->GetObjects(lstObjects, nullptr);
 	uint32_t objectSize = lstObjects.size();
+	std::set<std::string> shaderSet;
 	for (uint32_t i = 0; i < objectSize; i++)
 	{
 		IRenderNode* renderNode = lstObjects.GetAt(i);
-		IRenderMesh* renderMesh = renderNode->GetRenderMesh(0);
+
 		IStatObj* statObj = renderNode->GetEntityStatObj();
 
 		if (statObj == nullptr)
 		{
 			continue;
 		}
-	
-		IRenderMesh* renderMesh2 = statObj->GetRenderMesh();
+
+		const char* path = statObj->GetFilePath();
+		if (strstr(path, "house2.cgf"))
+		{
+			int kk = 0;
+		}
+		IMaterial* mat = statObj->GetMaterial();
+		CryEngineMesh* renderMesh = (CryEngineMesh*)statObj->GetRenderMesh();
+
+		if (renderMesh == nullptr)
+			continue;
 
 		std::string name = statObj->GetFilePath();
 
 		dy::to_lower(name);
 
-//		printf("name:%s\n", name.c_str());
+		Ogre::Mesh* ogreMesh = renderMesh->getOgreMesh();
 
-		auto meshPtr = Ogre::MeshManager::getSingleton().getByName(name);
-
-		if (!meshPtr)
-		{
-			printf("unkown name:%s\n", name.c_str());
-			continue;
-		}
 		std::string entityName = name + std::to_string(i);
-		Ogre::Entity* entity = context.sceneManager->createEntity(entityName, name);
+		Ogre::Entity* entity = context.sceneManager->createEntity(entityName, ogreMesh);
+
+		const char* matName = mat->GetName();
+
+		auto itor = materialMap.find(matName);
+		assert(itor != materialMap.end());
+
+		CryEngineMaterial* sourceMat = itor->second;
+		
+		auto& baseWhiteMat = Ogre::MaterialManager::getSingleton().getByName("BaseWhite");
+		for (uint32_t subIndex = 0; subIndex < entity->getNumSubEntities(); subIndex++)
+		{
+			Ogre::SubEntity* subEntity = entity->getSubEntity(subIndex);
+
+			int matId = renderMesh->getMatId(subIndex);
+			IMaterial* subMat = mat->GetSubMtl(matId);
+			if (subMat == nullptr)
+			{
+				subMat = mat;
+			}
+			SShaderItem& shaderItem = subMat->GetShaderItem();
+
+			RenderShaderResources* shaderResources = (RenderShaderResources*)shaderItem.m_pShaderResources;
+
+			shaderSet.insert(shaderItem.m_pShader->GetName());
+			std::vector<std::string>& texs = shaderResources->getTextureNames();
+
+			if (texs[EFTT_DIFFUSE].empty())
+			{
+				subEntity->setMaterial(baseWhiteMat);
+			}
+			else
+			{
+				const char* matName = subMat->GetName();
+				Ogre::Material* mat = new Ogre::Material(matName, false);
+				if (texs[EFTT_DIFFUSE] == "BlackCM.dds")
+				{
+					int kk = 0;
+				}
+				std::string shortname = dy::get_short_name(texs[EFTT_DIFFUSE].c_str());
+				mat->addTexture(shortname);
+				GeneralMaterialConstantBuffer& matInfo = mat->getMatInfo();
+
+				auto& diffuse = shaderResources->getDiffuse();
+				matInfo.DiffuseAlbedo = Ogre::Vector4(diffuse.r, diffuse.g, diffuse.b, 1.0f);
+				subEntity->setMaterial(std::shared_ptr<Ogre::Material>(mat));
+
+				mat->getShaderInfo().shaderName = "basic";
+			}
+			/*CryEngineSubMaterial& subMat = itor->second->subMaterials[matId];
+			if (subMat.texs[EFTT_DIFFUSE].texName.empty())
+			{
+				subEntity->setMaterial(baseWhiteMat);
+			}
+			else
+			{
+				Ogre::Material* mat = new Ogre::Material(subMat.name, false);
+				if (subMat.texs[EFTT_DIFFUSE].texName == "BlackCM.dds")
+				{
+					int kk = 0;
+				}
+				mat->addTexture(subMat.texs[EFTT_DIFFUSE].texName);
+				GeneralMaterialConstantBuffer& matInfo = mat->getMatInfo();
+				matInfo.DiffuseAlbedo = subMat.diffuse;
+				subEntity->setMaterial(std::shared_ptr<Ogre::Material>(mat));
+
+				mat->getShaderInfo().shaderName = "basic";
+			}*/
+			
+
+		}
+
+
 		Ogre::SceneNode* entityNode = context.root->createChildSceneNode(entityName);
 		entityNode->attachObject(entity);
 

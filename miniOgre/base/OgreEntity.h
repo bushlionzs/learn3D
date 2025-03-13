@@ -19,7 +19,7 @@ namespace Ogre {
         typedef std::vector<MoveObject*> ChildObjectList;
         typedef std::set<Entity*> EntitySet;
         Entity();
-        Entity(const std::string& name, const std::shared_ptr<Mesh>& mesh);
+        Entity(const std::string& name, Mesh* mesh);
         ~Entity();
 
         virtual const std::vector<Renderable*>& getRenderableList();
@@ -61,7 +61,7 @@ namespace Ogre {
         SkeletonInstance* getSkeleton(void) const;
 
         Real getBoundingRadius(void) const;
-        const MeshPtr& getMesh(void) const
+        Ogre::Mesh* getMesh(void) const
         {
             return mMesh;
         }
@@ -77,10 +77,10 @@ namespace Ogre {
         void refreshAvailableAnimationState(void);
     private:
         SubEntity* createSubEntity(SubMesh* sub);
-        virtual void buildSubEntityList(std::shared_ptr<Mesh>& mesh, std::vector<Renderable*>* sublist);
+        virtual void buildSubEntityList(Mesh* mesh, std::vector<Renderable*>* sublist);
     protected:
         std::vector<Renderable*> mSubEntityList;
-        std::shared_ptr<Mesh> mMesh;
+        Ogre::Mesh* mMesh;
         bool mTransparent = false;
         bool mMirror = false;
 

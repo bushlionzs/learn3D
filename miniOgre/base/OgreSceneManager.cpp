@@ -146,6 +146,15 @@ namespace Ogre {
         return entity;
     }
 
+    Entity* SceneManager::createEntity(
+        const std::string& name,
+        Ogre::Mesh* mesh,
+        bool suppressSkeletalAnimation)
+    {
+        Entity* entity = new Entity(name, mesh);
+        return entity;
+    }
+
     MoveObject* SceneManager::createMovableObject(const String& name,
         const String& typeName, const NameValuePairList* params)
     {

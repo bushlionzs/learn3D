@@ -190,6 +190,10 @@ IMaterialManager* CMatInfo::GetMaterialManager()
 //////////////////////////////////////////////////////////////////////////
 void CMatInfo::SetName(const char* sName)
 {
+	if (strcmp(sName, "objects/sky/cloud") == 0)
+	{
+		m_sMaterialName = sName;
+	}
 	m_sMaterialName = sName;
 	m_sUniqueMaterialName = m_sMaterialName;
 	if (m_shaderItem.m_pShaderResources)

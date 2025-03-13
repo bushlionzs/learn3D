@@ -22,7 +22,7 @@ namespace Ogre {
         mSharedSkeletonEntities = nullptr;
         mAnimationState = nullptr;
     }
-    Entity::Entity(const std::string& name, const std::shared_ptr<Mesh>& mesh)
+    Entity::Entity(const std::string& name, Mesh* mesh)
         :MoveObject(name)
     {
         mMesh = mesh;
@@ -251,7 +251,7 @@ namespace Ogre {
         return backend::ElementType::BYTE;
     }
     void Entity::buildSubEntityList(
-        std::shared_ptr<Mesh>& mesh, 
+        Mesh* mesh,
         std::vector<Renderable*>* sublist)
     {
         int32_t numSubMeshes = mesh->getSubMeshCount();
@@ -259,23 +259,25 @@ namespace Ogre {
         for (int32_t i = 0; i < numSubMeshes; ++i)
         {
             SubMesh* subMesh = mesh->getSubMesh(i);
-
-            std::shared_ptr<Material>& mat = subMesh->getMaterial();
-            newMatName = mName + "_" + mat->getName() + std::to_string(i);
-            newMatName = mat->getName();
-            std::shared_ptr<Material> newMat = mat->clone(newMatName);
-
             SubEntity* subEnt = createSubEntity(subMesh);
-            if (i == 5)
-            {
-                int kk = 0;
-            }
+            
             const Ogre::Vector3& position = subMesh->getPosition();
             const Ogre::Vector3& scale = subMesh->getScale();
             const Ogre::Quaternion& q = subMesh->getRotate();
             subEnt->setLocalMatrix(position, scale, q);
-            subEnt->setMaterial(newMat);
+            
             sublist->push_back(subEnt);
+
+            std::shared_ptr<Material>& mat = subMesh->getMaterial();
+
+            if (mat)
+            {
+                newMatName = mName + "_" + mat->getName() + std::to_string(i);
+                newMatName = mat->getName();
+                std::shared_ptr<Material> newMat = mat->clone(newMatName);
+                subEnt->setMaterial(newMat);
+            }
+            
         }
 
         //skeleton
@@ -328,7 +330,7 @@ namespace Ogre {
                 "EntityFactory::createInstance");
         }
 
-        return OGRE_NEW Entity(name, pMesh);
+        return OGRE_NEW Entity(name, pMesh.get());
 
     }
 }

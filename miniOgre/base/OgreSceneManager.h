@@ -42,7 +42,14 @@ namespace Ogre {
             EngineRenderList& renderList,
             bool shadow);
         void update(float timeSinceLastFrame);
-        Entity* createEntity(const std::string& name, const std::string& meshName, bool suppressSkeletalAnimation = true);
+        Entity* createEntity(
+            const std::string& name, 
+            const std::string& meshName, 
+            bool suppressSkeletalAnimation = true);
+        Entity* createEntity(
+            const std::string& name,
+            Ogre::Mesh* mesh,
+            bool suppressSkeletalAnimation = true);
         SceneNode* getRoot();
         SceneNode* createSceneNode(const String& name);
         
