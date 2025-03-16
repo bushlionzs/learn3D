@@ -480,7 +480,7 @@ void CObjManager::ProcessObjectsStreaming(const SRenderingPassInfo& passInfo)
 	float fTimeStart = GetTimer()->GetAsyncCurTime();
 
 	bool bSyncLoad = Get3DEngine()->IsStatObjSyncLoad();
-
+	bSyncLoad = true;
 	if (!m_bCameraPrecacheOverridden)
 	{
 		SObjManPrecacheCamera& precachePoint = m_vStreamPreCacheCameras[0];

@@ -112,7 +112,7 @@ public:
 
 	virtual EVertexModifier            GetVertexModificator()
 	{
-		EVertexModifier aa;
+		static EVertexModifier aa;
 		return aa;
 	}
 

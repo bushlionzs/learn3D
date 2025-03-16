@@ -779,8 +779,8 @@ void CTerrainNode::BuildIndices(CStripsInfo& si, const SRenderingPassInfo& passI
 bool CTerrainNode::RenderSector(const SRenderingPassInfo& passInfo)
 {
 	FUNCTION_PROFILER_3DENGINE;
-
-	IRenderMesh* pRenderMesh = (m_nTreeLevel >= GetCVars()->e_TerrainMeshInstancingMinLod) ? GetSharedRenderMesh() : GetLeafData()->m_pRenderMesh;
+	STerrainNodeLeafData* leaf = GetLeafData();
+	IRenderMesh* pRenderMesh = (m_nTreeLevel >= GetCVars()->e_TerrainMeshInstancingMinLod) ? GetSharedRenderMesh() : leaf->m_pRenderMesh;
 
 	bool bDetailLayersReady = passInfo.IsShadowPass() ||
 	                          !m_lstSurfaceTypeInfo.Count() ||

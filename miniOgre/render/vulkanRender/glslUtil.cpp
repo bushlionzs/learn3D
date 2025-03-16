@@ -309,44 +309,6 @@ void spvToHlsl(
     compiler.set_hlsl_options(options);
     SPIRV_CROSS_NAMESPACE::HLSLVertexAttributeRemap attr;
 
-    std::string shortname = getShortFilename(name);
-    if (shaderType == ShaderType::VertexShader)
-    {
-        {
-            const auto& semanticList = ShaderManager::getSingleton().getVertexInputMapping(shortname);
-
-            for (auto& obj : semanticList)
-            {
-                attr.location = obj.location;
-                attr.semantic = obj.semantic;
-                compiler.add_vertex_attribute_remap(attr);
-            }
-        }
-
-        {
-            const auto& semanticList = ShaderManager::getSingleton().getVertexOutputMapping(shortname);
-
-            for (auto& obj : semanticList)
-            {
-                attr.location = obj.location;
-                attr.semantic = obj.semantic;
-                compiler.add_vertex_attribute_remap_output(attr);
-            }
-        }
-       
-    }
-    else if (shaderType == ShaderType::PixelShader)
-    {
-        const auto& semanticList = ShaderManager::getSingleton().getPixelInputMapping(shortname);
-
-        for (auto& obj : semanticList)
-        {
-            attr.location = obj.location;
-            attr.semantic = obj.semantic;
-            compiler.add_vertex_attribute_remap(attr);
-        }
-    }
-    
     // Брвы HLSL ДњТы
     hlslSource = compiler.compile();
 }

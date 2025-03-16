@@ -1,0 +1,25 @@
+# Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
+
+clang_flags = ['-Wno-constant-conversion', '-Wno-null-dereference', '-Wno-array-bounds', '-Wno-shift-negative-value' ]
+
+def build(bld):
+
+	bld.CryEngineModule(
+		target      = 'CryPhysics',
+		vs_filter   = 'CryEngine',		
+		file_list   = 'cryphysics.waf_files',
+
+		pch_debug         = '../StdAfx.cpp',
+		pch_profile       = '../StdAfx.cpp',
+		
+		orbis_cxxflags  = clang_flags,
+		linux_cxxflags  = clang_flags,
+		android_cxxflags  = clang_flags,
+	)
+
+	bld.CryResourceCompilerModule(
+		target      = 'CryPhysicsRC',
+		vs_filter   = 'RC',		
+		file_list   = 'cryphysics.waf_files',
+		pch         = 'StdAfx.cpp',
+	)

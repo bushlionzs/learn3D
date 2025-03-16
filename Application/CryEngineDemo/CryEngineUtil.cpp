@@ -6,6 +6,7 @@
 #include <CryEngine/Cry3DEngine/CGF/CGFLoader.h>
 #include <OgreMeshManager.h>
 #include <OgreMesh.h>
+#include <OgreCamera.h>
 #include <OgreSubEntity.h>
 #include <OgreSubMesh.h>
 #include <OgreVertexData.h>
@@ -34,7 +35,8 @@
 #include <CryEngineRenderer.h>
 #include <CryEngineMesh.h>
 #include <CryEngineShader.h>
-
+#include <CryEngineRenderView.h>
+#include "game_camera.h"
 #pragma warning(disable:4189)
 
 class Listener : public ILoaderCGFListener
@@ -370,6 +372,23 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 	return ogreMesh;
 }
 
+Matrix34 translateMatrix(const Ogre::Matrix4& source)
+{
+	auto f1 = source[0][0];
+	auto f2 = source[0][1];
+	auto f3 = source[0][2];
+	auto f4 = source[0][3];
+	auto f5 = source[1][0];
+	auto f6 = source[1][1];
+	auto f7 = source[1][2];
+	auto f8 = source[1][3];
+	auto f9 = source[2][0];
+	auto f10 = source[2][1];
+	auto f11 = source[2][2];
+	auto f12 = source[2][3];
+	Matrix34 m(f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12);
+	return m;
+}
 bool LoadTerrain(XmlNodeRef pDoc, CryEngineContext& context);
 void loadCryEngineLevel(CryEngineContext& context)
 {
@@ -421,8 +440,8 @@ void loadCryEngineLevel(CryEngineContext& context)
 	Cry3DEngineBase::m_pMatMan = new CMatMan;
 	Cry3DEngineBase::m_pSystem = pSystem;
 	
-
-	Cry3DEngineBase::m_pRenderer = new CRenderer();
+	CRenderer* renderer = new CRenderer();
+	Cry3DEngineBase::m_pRenderer = renderer;
 	gEnv->pRenderer = Cry3DEngineBase::m_pRenderer;
 	
 	CryPathString mtlFilename;
@@ -466,23 +485,29 @@ void loadCryEngineLevel(CryEngineContext& context)
 	{
 		auto graphicsPipelineKey = SGraphicsPipelineKey::BaseGraphicsPipelineKey;
 
-		CCamera* cam = new CCamera;
-		cam->SetPosition(Vec3(83.33, 41.79557, 59.02676));
+		CCamera cam;
+		
+		Ogre::Camera* ogreCam = context.gameCamera->getCamera();
+		const Ogre::Matrix4& ogreM = ogreCam->getViewMatrix();
+		
+		Matrix34 m = translateMatrix(ogreM);
+		cam.SetMatrix(m);
+		//cam.SetPosition(Vec3(83.33, 41.79557, 59.02676));
 		uint32_t width = 1600;
 		uint32_t height = 900;
 		float aspect = width / (float)height;
 		float fov = Ogre::Math::PI / 3.0f;
-		cam->SetFrustum(width, height, fov, 0.1, 1024, aspect);
+		cam.SetFrustum(width, height, fov, 0.1, 1024, aspect);
 		
-		pSystem->SetViewCamera(*cam);
+		pSystem->SetViewCamera(cam);
 
-		for (uint32_t i = 0; i < 2; i++)
+		for (uint32_t i = 0; i < 3; i++)
 		{
 			pSystem->GetStreamEngine()->Update();
 			pSystem->SetSystemGlobalState(ESYSTEM_GLOBAL_STATE_LEVEL_LOAD_COMPLETE);
 			pSystem->Render(graphicsPipelineKey);
 
-			CrySleep(1000);
+			CrySleep(500);
 		}
 		
 	}
@@ -524,18 +549,15 @@ void loadCryEngineLevel(CryEngineContext& context)
 		std::string entityName = name + std::to_string(i);
 		Ogre::Entity* entity = context.sceneManager->createEntity(entityName, ogreMesh);
 
-		const char* matName = mat->GetName();
-
-		auto itor = materialMap.find(matName);
-		assert(itor != materialMap.end());
-
-		CryEngineMaterial* sourceMat = itor->second;
 		
 		auto& baseWhiteMat = Ogre::MaterialManager::getSingleton().getByName("BaseWhite");
 		for (uint32_t subIndex = 0; subIndex < entity->getNumSubEntities(); subIndex++)
 		{
 			Ogre::SubEntity* subEntity = entity->getSubEntity(subIndex);
-
+			if (subEntity->getMaterial().get())
+			{
+				continue;
+			}
 			int matId = renderMesh->getMatId(subIndex);
 			IMaterial* subMat = mat->GetSubMtl(matId);
 			if (subMat == nullptr)
@@ -557,10 +579,7 @@ void loadCryEngineLevel(CryEngineContext& context)
 			{
 				const char* matName = subMat->GetName();
 				Ogre::Material* mat = new Ogre::Material(matName, false);
-				if (texs[EFTT_DIFFUSE] == "BlackCM.dds")
-				{
-					int kk = 0;
-				}
+
 				std::string shortname = dy::get_short_name(texs[EFTT_DIFFUSE].c_str());
 				mat->addTexture(shortname);
 				GeneralMaterialConstantBuffer& matInfo = mat->getMatInfo();
@@ -569,29 +588,10 @@ void loadCryEngineLevel(CryEngineContext& context)
 				matInfo.DiffuseAlbedo = Ogre::Vector4(diffuse.r, diffuse.g, diffuse.b, 1.0f);
 				subEntity->setMaterial(std::shared_ptr<Ogre::Material>(mat));
 
+				const char* shaderName = shaderItem.m_pShader->GetName();
+				mat->getShaderInfo().shaderName = shaderName;
 				mat->getShaderInfo().shaderName = "basic";
 			}
-			/*CryEngineSubMaterial& subMat = itor->second->subMaterials[matId];
-			if (subMat.texs[EFTT_DIFFUSE].texName.empty())
-			{
-				subEntity->setMaterial(baseWhiteMat);
-			}
-			else
-			{
-				Ogre::Material* mat = new Ogre::Material(subMat.name, false);
-				if (subMat.texs[EFTT_DIFFUSE].texName == "BlackCM.dds")
-				{
-					int kk = 0;
-				}
-				mat->addTexture(subMat.texs[EFTT_DIFFUSE].texName);
-				GeneralMaterialConstantBuffer& matInfo = mat->getMatInfo();
-				matInfo.DiffuseAlbedo = subMat.diffuse;
-				subEntity->setMaterial(std::shared_ptr<Ogre::Material>(mat));
-
-				mat->getShaderInfo().shaderName = "basic";
-			}*/
-			
-
 		}
 
 
@@ -627,9 +627,42 @@ void loadCryEngineLevel(CryEngineContext& context)
 			entityNode->setOrientation(q);
 		}
 	}
+}
 
-	
-	
+void updateCryEngineLevel(CryEngineContext& context)
+{
+	gEnv->nMainFrameID++;
+	CSystem* pSystem = (CSystem*)Cry3DEngineBase::m_pSystem;
+
+	CCamera cam = pSystem->GetViewCamera();
+
+	const Ogre::Matrix4& ogreM = context.gameCamera->getCamera()->getViewMatrix();
+
+	Matrix34 m = translateMatrix(ogreM);
+	cam.SetMatrix(m);
+	pSystem->SetViewCamera(cam);
+	for (uint32_t i = 0; i < 1; i++)
+	{
+		pSystem->GetStreamEngine()->Update();
+		pSystem->SetSystemGlobalState(ESYSTEM_GLOBAL_STATE_LEVEL_LOAD_COMPLETE);
+		auto graphicsPipelineKey = SGraphicsPipelineKey::BaseGraphicsPipelineKey;
+		pSystem->Render(graphicsPipelineKey);
+	}
+	auto* renderer = (CRenderer*)Cry3DEngineBase::m_pRenderer;
+	CRenderView* renderView = renderer->GetOrCreateRenderView(IRenderView::eViewType_Default);
+
+	auto& terrainNodeList = renderView->getTerrainNodeList();
+
+	for (uint32_t i = 0; i < terrainNodeList.size(); i++)
+	{
+		if (terrainNodeList[i]->getOgreState())
+			continue;
+		terrainNodeList[i]->updateOgreState(true);
+		std::string entityName = "terrainNode" + std::to_string(i);
+		Ogre::Entity* entity = context.sceneManager->createEntity(entityName, terrainNodeList[i]->getOgreMesh());
+		Ogre::SceneNode* entityNode = context.root->createChildSceneNode(entityName);
+		entityNode->attachObject(entity);
+	}
 }
 
 bool LoadTerrain(XmlNodeRef pDoc, CryEngineContext& context)

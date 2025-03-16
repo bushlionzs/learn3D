@@ -33,11 +33,17 @@ namespace Ogre {
 		ShaderTypeInfo shaderInfo[EngineType_Count];
 	};
 
-	struct ShaderMappingInfo
+	struct ShaderTechnique
 	{
-		uint32_t location;
-		std::string semantic;
+		std::string name;
+		ShaderFormat shaderFormat;
 	};
+
+	struct ShaderConfig
+	{
+		std::vector<ShaderTechnique> techniques;
+	};
+
 	class ShaderManager : public Ogre::Singleton<ShaderManager>, public ScriptLoader
 	{
 	public:
@@ -52,47 +58,29 @@ namespace Ogre {
 
 		ShaderPrivateInfo* getShader(
 			const String& name, 
-			EngineType renderSystem);
+			EngineType renderSystem,
+			const char* technique = nullptr);
 
 		String* getShaderContent(const String& name);
 
 		void addMacro(const String& name);
 		int32_t getMacroIndex(const String& name);
 
-		const std::vector<ShaderMappingInfo>& getVertexInputMapping(
-			const std::string& shaderFileName);
-
-		const std::vector<ShaderMappingInfo>& getVertexOutputMapping(
-			const std::string& shaderFileName);
-
-		const std::vector<ShaderMappingInfo>& getPixelInputMapping(
-			const std::string& shaderFileName);
 	private:
 		void parseShaderImpl(const String& content);
 		bool readShaderUnit(
 			std::stringstream& ss,
-			ShaderFormat* shaderFormat);
-		enum MappingType
-		{
-			VertexInput,
-			VertexOutput,
-			PixelInput
-		};
-		bool readMappingInfo(std::stringstream& ss, std::string& name, MappingType mappingType);
-		void addShader(const String& name, ShaderFormat* sf);
+			ShaderConfig* shaderInfo);
+		bool readTechnique(std::stringstream& ss, ShaderConfig* shaderInfo);
+
+		void addShader(const String& name, ShaderConfig* shaderInfo);
+
+		bool isComment(const String& linePart);
 	private:
-		std::unordered_map<String, ShaderFormat*> mShaderMap;
 		std::unordered_map<String, String> mShaderContentMap;
 
 		std::unordered_map<String, uint32_t> mMacroMap;
-
+		std::unordered_map<String, ShaderConfig*> mShaderTechniqueMap;
 		uint64_t mMacroValue = 1;
-
-
-		std::unordered_map<String, std::vector<ShaderMappingInfo>> mVertexInputMap;
-		std::unordered_map<String, std::vector<ShaderMappingInfo>> mVertexOutputMap;
-		std::unordered_map<String, std::vector<ShaderMappingInfo>> mPixelOutputMap;
-
-		std::vector<ShaderMappingInfo> mDummy;
 	};
 }

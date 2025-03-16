@@ -6,9 +6,11 @@ void addCryEngineMaterial(const std::string& matName, const std::string& matFile
 
 struct IStatObj;
 struct IMaterial;
+class GameCamera;
 struct CryEngineContext
 {
     Ogre::SceneManager* sceneManager;
+    GameCamera* gameCamera;
     Ogre::SceneNode* root;
     std::string levelName;
     std::string projectName = "D:/CryEngine/Breeze/Breeze.cryproject";
@@ -19,4 +21,6 @@ struct CryEngineContext
 };
 
 void loadCryEngineLevel(CryEngineContext& context);
+
+void updateCryEngineLevel(CryEngineContext& context);
 

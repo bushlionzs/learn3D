@@ -10,7 +10,10 @@
 #include <OgreVertexData.h>
 #include <OgreIndexData.h>
 #include <OgreVertexDeclaration.h>
-
+#include <CryEngineShader.h>
+#include <OgreMaterial.h>
+#include <OgreMaterialManager.h>
+#include <string_util.h>
 struct CryEngineVertex
 {
 	Ogre::Vector3 Pos;
@@ -460,110 +463,161 @@ void CryEngineMesh::AddRenderElements(
 	IMaterial* pIMatInfo, CRenderObject* pObj, const SRenderingPassInfo& passInfo,
 	int nList, int nAW)
 {
-	if (m_nVerts == 0)
-	{
-		return;
-	}
-
 	uint32_t nVerts = GetVertexContainer()->m_nVerts;
 	uint32_t chunkSize = m_Chunks.size();
 	if (nVerts == 0 || !chunkSize || !pIMatInfo)
 		return;
-
-	assert(!mAddRenderElement);
-
-	mAddRenderElement = true;
-
-	auto ogreMesh = new Ogre::Mesh(mSourceName);
-
-	int vertexCount = m_nVerts;
-
-	VertexData* vertexData = ogreMesh->getVertexData();
-
-
-	VertexDeclaration* decl = vertexData->getVertexDeclaration();
-
-	decl->addElement(0, 0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-	decl->addElement(0, 0, 12, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
-	decl->addElement(0, 0, 24, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
-	decl->addElement(0, 0, 32, Ogre::VET_FLOAT4, Ogre::VES_BLEND_WEIGHTS);
-	decl->addElement(0, 0, 48, Ogre::VET_UINT4, Ogre::VES_BLEND_INDICES);
-
-	vertexData->addBindBuffer(sizeof(CryEngineVertex), vertexCount);
-
-	std::vector<CryEngineVertex> vertexList;
-	vertexList.resize(vertexCount);
-	Ogre::Matrix4 transformMatrix =
-	{
-		1, 0, 0, 0,
-		0, 0, 1, 0,
-		0, 1, 0, 0,
-		0, 0, 0, 1
-	};
-
-	SVF_P3S_C4B_T2S* datas = nullptr;
-	Vec3* normals = nullptr;
-	auto itor = mVerticesMap.find(VSF_GENERAL);
-	if (itor != mVerticesMap.end())
-	{
-		std::vector<char>& mem = itor->second;
-		datas = (SVF_P3S_C4B_T2S*)mem.data();
-	}
-
-	itor = mVerticesMap.find(VSF_NORMALS);
-
-	if (itor != mVerticesMap.end())
-	{
-		std::vector<char>& mem = itor->second;
-		normals = (Vec3*)mem.data();
-	}
-	for (int vIndex = 0; vIndex < vertexCount; vIndex++)
-	{
-		CryEngineVertex& vertex = vertexList[vIndex];
-		{
-			Vec3 vec = datas[vIndex].xyz.ToVec3();
-			vertex.Pos = Ogre::Vector3(vec.x, vec.y, vec.z);
-
-			Vec2 uv = datas[vIndex].st.ToVec2();
-			vertex.TexC = Ogre::Vector2(uv.x, uv.y);
-		}
-		
-		if(normals)
-		{
-			vertex.Normal = Ogre::Vector3(normals[vIndex].x, normals[vIndex].y,
-				normals[vIndex].z);
-		}
 	
-	}
-
-	vertexData->writeBindBufferData(0, (const char*)vertexList.data(), vertexCount * sizeof(CryEngineVertex));
-
-	uint32_t subSize = m_Chunks.size();
-
-	matIds.resize(subSize);
-
-	for (uint32_t i = 0; i < subSize; i++)
+	if (!mCreateMesh)
 	{
-		CRenderChunk& chunk = m_Chunks[i];
-		matIds[i] = chunk.m_nMatID;
+		mCreateMesh = true;
 
-		Ogre::SubMesh* subMesh = ogreMesh->addSubMesh(true, true);
-		subMesh->addIndexs(chunk.nNumIndices, chunk.nFirstIndexId, 0);
-	}
+		auto ogreMesh = new Ogre::Mesh(mSourceName);
 
-	int indexCount = mIndexData.size();
-	if (indexCount > 0)
-	{
-		IndexData* indexData = ogreMesh->getIndexData();
-		indexData->createBuffer(indexCount, 4);
-		indexData->writeData((const char*)mIndexData.data(), indexCount * 4);
-	}
-	else
-	{
-		ogreMesh->releaseIndexData();
-	}
+		int vertexCount = nVerts;
 
-	mOgreMesh = ogreMesh;
+		VertexData* vertexData = ogreMesh->getVertexData();
+
+
+		VertexDeclaration* decl = vertexData->getVertexDeclaration();
+
+		decl->addElement(0, 0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+		decl->addElement(0, 0, 12, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
+		decl->addElement(0, 0, 24, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+		decl->addElement(0, 0, 32, Ogre::VET_FLOAT4, Ogre::VES_BLEND_WEIGHTS);
+		decl->addElement(0, 0, 48, Ogre::VET_UINT4, Ogre::VES_BLEND_INDICES);
+		vertexData->setVertexCount(vertexCount);
+		vertexData->addBindBuffer(sizeof(CryEngineVertex), vertexCount);
+
+		std::vector<CryEngineVertex> vertexList;
+		vertexList.resize(vertexCount);
+		Ogre::Matrix4 transformMatrix =
+		{
+			1, 0, 0, 0,
+			0, 0, 1, 0,
+			0, 1, 0, 0,
+			0, 0, 0, 1
+		};
+
+		CryEngineMesh* cryEngineMesh = GetVertexContainer();
+		std::unordered_map<int32_t, std::vector<char>>& verticesMap = cryEngineMesh->mVerticesMap;
+
+		SVF_P2S_N4B_C4B_T1F* datas = nullptr;
+		Vec3* normals = nullptr;
+		auto itor = verticesMap.find(VSF_GENERAL);
+		if (itor != verticesMap.end())
+		{
+			std::vector<char>& mem = itor->second;
+			datas = (SVF_P2S_N4B_C4B_T1F*)mem.data();
+		}
+
+		itor = verticesMap.find(VSF_NORMALS);
+
+		if (itor != verticesMap.end())
+		{
+			std::vector<char>& mem = itor->second;
+			normals = (Vec3*)mem.data();
+		}
+
+		const CRenderObject::SInstanceInfo& ll = pObj->GetInstanceInfo();
+
+		for (int vIndex = 0; vIndex < vertexCount; vIndex++)
+		{
+			CryEngineVertex& vertex = vertexList[vIndex];
+			{
+				CryHalf2 xy = datas[vIndex].xy;
+				float x = CryConvertHalfToFloat(xy.x);
+				float y = CryConvertHalfToFloat(xy.y);
+				Vec3 v(x, y, datas[vIndex].z);
+				v = ll.m_Matrix * v;
+				vertex.Pos = Ogre::Vector3(v.x, v.y, v.z);
+
+				vertex.Normal = Ogre::Vector3(datas[vIndex].normal.x, datas[vIndex].normal.y,
+					datas[vIndex].normal.z);
+				vertex.TexC = Ogre::Vector2::ZERO;
+				/*Vec2 uv = datas[vIndex].st.ToVec2();
+				vertex.TexC = Ogre::Vector2(uv.x, uv.y);*/
+			}
+		}
+
+		vertexData->writeBindBufferData(0, (const char*)vertexList.data(), vertexCount * sizeof(CryEngineVertex));
+
+		uint32_t subSize = m_Chunks.size();
+
+		matIds.resize(subSize);
+
+		for (uint32_t i = 0; i < subSize; i++)
+		{
+			CRenderChunk& chunk = m_Chunks[i];
+			matIds[i] = chunk.m_nMatID;
+
+			Ogre::SubMesh* subMesh = ogreMesh->addSubMesh(true, true);
+			subMesh->addIndexs(chunk.nNumIndices, chunk.nFirstIndexId, 0);
+		}
+
+		int indexCount = mIndexData.size();
+		if (indexCount > 0)
+		{
+			IndexData* indexData = ogreMesh->getIndexData();
+			indexData->createBuffer(indexCount, 4);
+			indexData->writeData((const char*)mIndexData.data(), indexCount * 4);
+		}
+		else
+		{
+			ogreMesh->releaseIndexData();
+		}
+		const Matrix34& m = pObj->GetMatrix();
+		Vec3 scale = m.GetScale();
+
+		if (scale.x > 1.0)
+		{
+			int kk = 0;
+		}
+
+		//material
+		auto& baseWhiteMat = Ogre::MaterialManager::getSingleton().getByName("BaseWhite");
+		for (uint32_t i = 0; i < subSize; i++)
+		{
+			Ogre::SubMesh* subMesh = ogreMesh->getSubMesh(i);
+			IMaterial* subMat = pIMatInfo->GetSubMtl(matIds[i]);
+			if (subMat == nullptr)
+			{
+				subMat = pIMatInfo;
+			}
+			SShaderItem& shaderItem = subMat->GetShaderItem();
+
+			RenderShaderResources* shaderResources = (RenderShaderResources*)shaderItem.m_pShaderResources;
+
+			std::vector<std::string>& texs = shaderResources->getTextureNames();
+			if (texs[EFTT_DIFFUSE].empty())
+			{
+				subMesh->setMaterial(baseWhiteMat);
+			}
+			else
+			{
+				const char* matName = subMat->GetName();
+				Ogre::Material* mat = new Ogre::Material(matName, false);
+
+				std::string shortname = dy::get_short_name(texs[EFTT_DIFFUSE].c_str());
+				mat->addTexture(shortname);
+				GeneralMaterialConstantBuffer& matInfo = mat->getMatInfo();
+
+				auto& diffuse = shaderResources->getDiffuse();
+				matInfo.DiffuseAlbedo = Ogre::Vector4(diffuse.r, diffuse.g, diffuse.b, 1.0f);
+				subMesh->setMaterial(std::shared_ptr<Ogre::Material>(mat));
+
+				const char* shaderName = shaderItem.m_pShader->GetName();
+				mat->getShaderInfo().shaderName = shaderName;
+				mat->getShaderInfo().shaderName = "basic";
+			}
+		}
+
+		mOgreMesh = ogreMesh;
+
+		CRenderView* renderView = passInfo.GetRenderView();
+
+		renderView->addTerrainMesh(this);
+	}
 }
 
 void CryEngineMesh::SetREUserData(float* pfCustomData, float fFogScale, float fAlpha)

@@ -285,7 +285,9 @@ bool CTerrainNode::CheckVis(bool bAllInside, bool bAllowRenderIntoCBuffer, const
 	}
 	else
 	{
-		if (Get3DEngine()->IsStatObjBufferRenderTasksAllowed() && passInfo.IsGeneralPass())
+		bool IsStatObjBufferRenderTasksAllowed = Get3DEngine()->IsStatObjBufferRenderTasksAllowed();
+		bool IsGeneralPass = passInfo.IsGeneralPass();
+		if (IsStatObjBufferRenderTasksAllowed && IsGeneralPass)
 		{
 			GetObjManager()->PushIntoCullQueue(SCheckOcclusionJobData::CreateTerrainJobData(this, boxWS, distance, passCullMask));
 		}

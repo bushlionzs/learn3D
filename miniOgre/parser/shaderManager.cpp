@@ -42,9 +42,6 @@ namespace Ogre {
 
 		std::string name;
 
-
-		
-
 		while (!ss.eof()) {
 			// Skip commented lines
 			if (linePart == partComment) {
@@ -55,9 +52,12 @@ namespace Ogre {
 			if (linePart == "shader")
 			{
 				ss >> name;
-
-				ShaderFormat* shaderFormat = new ShaderFormat;
-				addShader(name, shaderFormat);
+				if (name == "basic")
+				{
+					int kk = 0;
+				}
+				ShaderConfig* shaderInfo = new ShaderConfig;
+				addShader(name, shaderInfo);
 				do
 				{
 					ss >> linePart;
@@ -73,41 +73,10 @@ namespace Ogre {
 					}
 
 					if (linePart == "shader_unit") {
-						readShaderUnit(ss, shaderFormat);
+						readShaderUnit(ss, shaderInfo);
 					}
-
-
-					ss >> linePart;
-				}
-			}
-			else if (linePart == "shaderMapping")
-			{
-				ss >> name;
-				do
-				{
-					ss >> linePart;
-				} while (linePart != partBlockStart);
-
-				ss >> linePart;
-
-				while (linePart != partBlockEnd) {
-					// Skip commented lines
-					if (linePart == partComment) {
-						SkipLine(ss);
-						continue;
-					}
-
-					if (linePart == "vertexShaderInput") 
-					{
-						readMappingInfo(ss, name, VertexInput);
-					}
-					else if (linePart == "vertexShaderOutput")
-					{
-						readMappingInfo(ss, name, VertexOutput);
-					}
-					else if (linePart == "PixelShaderInput")
-					{
-						readMappingInfo(ss, name, PixelInput);
+					else if (linePart == "technique") {
+						readTechnique(ss, shaderInfo);
 					}
 
 
@@ -124,8 +93,14 @@ namespace Ogre {
 
 	bool ShaderManager::readShaderUnit(
 		std::stringstream& ss,
-		ShaderFormat* shaderFormat)
+		ShaderConfig* shaderInfo)
 	{
+		if (shaderInfo->techniques.empty())
+		{
+			shaderInfo->techniques.emplace_back();
+		}
+		ShaderTechnique& technique = shaderInfo->techniques.back();
+		ShaderFormat* shaderFormat = &technique.shaderFormat;
 		static std::map<String, EngineType> enginetype_map =
 		{
 			{"directx", EngineType_Dx12},
@@ -145,8 +120,10 @@ namespace Ogre {
 		std::map<String, String> keyvalueMap;
 		while (linePart != partBlockEnd) {
 			// Skip commented lines
-			if (linePart == partComment) {
+			if (isComment(linePart)) 
+			{
 				SkipLine(ss);
+				ss >> linePart;
 				continue;
 			}
 
@@ -209,7 +186,10 @@ namespace Ogre {
 					shaderFormat->shaderInfo[EngineType_Dx12].privateInfo.geometryShaderEntryPoint = aa[1];
 				}
 			}
-			
+			else
+			{
+				assert_invariant(false);
+			}
 		}
 		return true;
 	}
@@ -221,13 +201,28 @@ namespace Ogre {
 
 	ShaderPrivateInfo* ShaderManager::getShader(
 		const String& name,
-		EngineType renderSystem)
+		EngineType renderSystem,
+		const char* technique)
 	{
-		auto itor = mShaderMap.find(name);
+		auto itor = mShaderTechniqueMap.find(name);
 
-		if (itor != mShaderMap.end())
+		if (itor != mShaderTechniqueMap.end())
 		{
-			return &itor->second->shaderInfo[renderSystem].privateInfo;
+			ShaderConfig* shaderInfo = itor->second;
+			if (technique == nullptr)
+			{
+				return &shaderInfo->techniques[0].shaderFormat.shaderInfo[renderSystem].privateInfo;
+			}
+			else
+			{
+				for (auto& obj : shaderInfo->techniques)
+				{
+					if (obj.name == technique)
+					{
+						return &obj.shaderFormat.shaderInfo[renderSystem].privateInfo;
+					}
+				}
+			}
 		}
 
 		return nullptr;
@@ -256,60 +251,106 @@ namespace Ogre {
 		return &itor->second;
 	}
 
-	bool ShaderManager::readMappingInfo(
-		std::stringstream& ss, std::string& name, MappingType mappingType)
+
+	bool ShaderManager::readTechnique(std::stringstream& ss, ShaderConfig* shaderInfo)
 	{
-		std::string first;
-		std::string second;
+		shaderInfo->techniques.emplace_back();
+		ShaderTechnique& technique = shaderInfo->techniques.back();
+		ShaderFormat* shaderFormat = &technique.shaderFormat;
+		ss >> technique.name;
+		std::string linePart;
+		std::map<String, String> keyvalueMap;
 
-		std::unordered_map<String, std::vector<ShaderMappingInfo>>* pMap = nullptr;
-		if (mappingType == VertexInput)
+		while (linePart != partBlockStart)
 		{
-			pMap = &mVertexInputMap;
-		}
-		else if (mappingType == VertexOutput)
-		{
-			pMap = &mVertexOutputMap;
-		}
-		else if (mappingType == PixelInput)
-		{
-			pMap = &mPixelOutputMap;
+			SkipLine(ss);
+			ss >> linePart;
 		}
 
-
-		std::unordered_map<String, std::vector<ShaderMappingInfo>>& shaderMap = *pMap;
-		do
-		{
-			ss >> first;
-		} while (first != partBlockStart);
-
-		ss >> first ;
-		ShaderMappingInfo info;
-		while (first != partBlockEnd) {
+		ss >> linePart;
+		while (linePart != partBlockEnd) {
 			// Skip commented lines
-			if (first == partComment) {
+			if (isComment(linePart)) {
 				SkipLine(ss);
+				ss >> linePart;
 				continue;
 			}
 
-			ss >> second;
-			info.location = atoi(first.c_str());
-			info.semantic = second;
-			shaderMap[name].push_back(info);
-			ss >> first;
+			
+			std::string val = SkipLine(ss);
+			Ogre::StringUtil::trim(val);
+			if (!linePart.empty() && !val.empty())
+			{
+				keyvalueMap[linePart] = val;
+			}
+		    
+			ss >> linePart;
 		}
+
+		for (auto& pair : keyvalueMap)
+		{
+			std::vector<String> aa = Ogre::StringUtil::split(pair.second);
+			if (pair.first == "vertex_shader")
+			{
+				shaderFormat->shaderInfo[EngineType_Dx12].privateInfo.vertexShaderName = aa[0];
+				shaderFormat->shaderInfo[EngineType_Dx12].privateInfo.vertexShaderEntryPoint = aa[1];
+				shaderFormat->shaderInfo[EngineType_Vulkan].privateInfo.vertexShaderName = aa[0];
+				shaderFormat->shaderInfo[EngineType_Vulkan].privateInfo.vertexShaderEntryPoint = aa[1];
+				
+			}
+			else if (pair.first == "frag_shader")
+			{
+			    shaderFormat->shaderInfo[EngineType_Dx12].privateInfo.fragShaderName = aa[0];
+			    shaderFormat->shaderInfo[EngineType_Dx12].privateInfo.fragShaderEntryPoint = aa[1];
+				shaderFormat->shaderInfo[EngineType_Vulkan].privateInfo.fragShaderName = aa[0];
+				shaderFormat->shaderInfo[EngineType_Vulkan].privateInfo.fragShaderEntryPoint = aa[1];
+			}
+			else if (pair.first == "compute_shader")
+			{	
+			    shaderFormat->shaderInfo[EngineType_Dx12].privateInfo.computeShaderName = aa[0];
+			    shaderFormat->shaderInfo[EngineType_Dx12].privateInfo.computeShaderEntryPoint = aa[1];
+				shaderFormat->shaderInfo[EngineType_Vulkan].privateInfo.computeShaderName = aa[0];
+				shaderFormat->shaderInfo[EngineType_Vulkan].privateInfo.computeShaderEntryPoint = aa[1];
+			}
+			else if (pair.first == "geometry_shader")
+			{	
+				shaderFormat->shaderInfo[EngineType_Dx12].privateInfo.geometryShaderName = aa[0];
+				shaderFormat->shaderInfo[EngineType_Dx12].privateInfo.geometryShaderEntryPoint = aa[1];
+				shaderFormat->shaderInfo[EngineType_Vulkan].privateInfo.geometryShaderName = aa[0];
+				shaderFormat->shaderInfo[EngineType_Vulkan].privateInfo.geometryShaderEntryPoint = aa[1];
+			}
+			else
+			{
+				assert_invariant(false);
+			}
+		}
+
+
+
 		return true;
 	}
 
-	void ShaderManager::addShader(const String& name, ShaderFormat* sf)
+	void ShaderManager::addShader(const String& name, ShaderConfig* shaderInfo)
 	{
-		auto itor = mShaderMap.find(name);
-		if (itor != mShaderMap.end())
+		auto itor = mShaderTechniqueMap.find(name);
+		if (itor != mShaderTechniqueMap.end())
 		{
 			assert_invariant(false);
 		}
 
-		mShaderMap[name] = sf;
+		mShaderTechniqueMap[name] = shaderInfo;
+	}
+
+	bool ShaderManager::isComment(const String& linePart)
+	{
+		if (linePart.size() >= 2)
+		{
+			if (linePart[0] == '/' && linePart[1] == '/')
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void ShaderManager::addMacro(const String& name)
@@ -336,40 +377,5 @@ namespace Ogre {
 		return itor->second;
 	}
 
-	const std::vector<ShaderMappingInfo>& ShaderManager::getVertexInputMapping(
-		const std::string& shaderFileName)
-	{
-		auto itor = mVertexInputMap.find(shaderFileName);
-		if (itor != mVertexInputMap.end())
-		{
-			return itor->second;
-		}
-
-		return mDummy;
-	}
-
-	const std::vector<ShaderMappingInfo>& ShaderManager::getVertexOutputMapping(
-		const std::string& shaderFileName)
-	{
-		auto itor = mVertexOutputMap.find(shaderFileName);
-		if (itor != mVertexOutputMap.end())
-		{
-			return itor->second;
-		}
-
-		return mDummy;
-	}
-
-	const std::vector<ShaderMappingInfo>& ShaderManager::getPixelInputMapping(
-		const std::string& shaderFileName)
-	{
-		auto itor = mPixelOutputMap.find(shaderFileName);
-		if (itor != mPixelOutputMap.end())
-		{
-			return itor->second;
-		}
-
-		return mDummy;
-	}
 }
 

@@ -60,6 +60,8 @@ void GameCamera::lookAt(
     eyePosition = camPos;
     targetPosition = targetPos;
    
+    Ogre::Matrix4 viewMatrix = Ogre::Math::makeLookAt(camPos, targetPos, up);
+    mCamera->updateViewMatrix(viewMatrix);
 
     Ogre::Vector3 lookDir = targetPos - camPos;
     lookDir.normalise();

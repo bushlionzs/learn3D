@@ -14,6 +14,7 @@ struct SGraphicsPipelinePassContext;
 
 enum EObjectCompilationOptions : uint8;
 
+class CryEngineMesh;
 //////////////////////////////////////////////////////////////////////////
 // Contain information about view need to render
 struct SRenderViewInfo
@@ -254,6 +255,17 @@ public:
 	virtual RenderLightIndex GetLightsCount(eDeferredLightType lightType) const final;
 	virtual SRenderLight& GetLight(eDeferredLightType lightType, RenderLightIndex nLightId) final;
 
+
+	void addTerrainMesh(CryEngineMesh* mesh)
+	{
+		mTerrainMeshList.push_back(mesh);
+	}
+
+	std::vector<CryEngineMesh*>& getTerrainNodeList()
+	{
+		return mTerrainMeshList;
+	}
+
 	RenderLightsList&     GetLightsArray(eDeferredLightType lightType);
 	SRenderLight*         AddLightAtIndex(eDeferredLightType lightType, const SRenderLight& light, RenderLightIndex index = -1);
 
@@ -359,6 +371,8 @@ private:
 	}
 
 private:
+	//
+	std::vector<CryEngineMesh*> mTerrainMeshList;
 	EUsageMode      m_usageMode;
 	const EViewType m_viewType;
 	string          m_name;

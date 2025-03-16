@@ -20,14 +20,16 @@
 #include <CryEngineMesh.h>
 #include <CryEngineRenderView.h>
 #include <CryEngineShader.h>
+
 #define PROCESS_TEXTURES_IN_PARALLEL
 
 #if CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID
 	#include <CrySystem/ILog.h>
 #endif
 #include <CryRenderer/IShader.h>
-
 #include <OgreHeader.h>
+#include <shaderManager.h>
+
 
 namespace
 {
@@ -102,6 +104,12 @@ CRenderer::CRenderer()
 	for (auto& tex : mTextures)
 	{
 		tex = nullptr;
+	}
+
+	mRenderViewList.resize(IRenderView::eViewType_Count);
+	for (auto& obj : mRenderViewList)
+	{
+		obj = nullptr;
 	}
 }
 
@@ -601,12 +609,16 @@ void CRenderer::ResumeDevice()
 
 CRenderView* CRenderer::GetOrCreateRenderView(IRenderView::EViewType Type)
 {
-	return m_pRenderViewPool[Type].GetOrCreateOneElement();
+	if (mRenderViewList[Type] == nullptr)
+	{
+		mRenderViewList[Type] = new CRenderView("", Type);
+	}
+	return mRenderViewList[Type];
 }
 
 void CRenderer::ReturnRenderView(CRenderView* pRenderView)
 {
-	
+	pRenderView->Clear();
 }
 
 void CRenderer::DeleteRenderViews()
@@ -826,6 +838,16 @@ SShaderItem CRenderer::EF_LoadShaderItem(const char* szName, bool bShare, int fl
 	item.m_pShader = new RenderShader(szName);
 	auto diffuse = Res->m_LMaterial.m_Diffuse;
 	shaderResources->setDiffuse(diffuse);
+
+	item.m_nPreprocessFlags = FB_GENERAL;
+    auto* zPrePass = 
+		Ogre::ShaderManager::getSingleton().getShader(szName, EngineType_Dx12, "ZPrePass");
+
+	if (zPrePass)
+	{
+		item.m_nPreprocessFlags |= FB_ZPREPASS;
+	}
+
 	return item;
 }
 

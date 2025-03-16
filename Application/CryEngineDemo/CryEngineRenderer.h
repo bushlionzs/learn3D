@@ -1687,6 +1687,8 @@ protected:
 	std::shared_ptr<CGraphicsPipeline> m_pActiveGraphicsPipeline;
 	std::map<SGraphicsPipelineKey, std::shared_ptr<CGraphicsPipeline>> m_graphicsPipelines;
 
+	std::vector<CRenderView*> mRenderViewList;
+
 public: // TEMPORARY PUBLIC
 	friend struct SRenderThread;
 	//////////////////////////////////////////////////////////////////////////

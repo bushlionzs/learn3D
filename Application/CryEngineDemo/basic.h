@@ -27,13 +27,7 @@ public:
 	void addCustomDirectory();
 	void updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer);
 private:
-	void base1();
-	void base2();
-	void base3();
-	void base4();
-	void base5();
-	
-	void base6();
+	void cryEngineInit();
 private:
 	Ogre::AnimationState* mAnimationState = nullptr;
 	std::vector<FrameData> mFrameData;
@@ -41,5 +35,6 @@ private:
 	GameCamera* mGameCamera;
 	RenderSystem* mRenderSystem;
 	Ogre::RenderWindow* mRenderWindow;
-	RenderPipeline* mRenderPipeline;
+	RenderPipeline* mRenderPipeline; 
+	Ogre::SceneNode* mRoot;
 };

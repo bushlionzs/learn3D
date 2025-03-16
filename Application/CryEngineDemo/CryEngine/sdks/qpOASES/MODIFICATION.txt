@@ -1,0 +1,2 @@
+Modified by Crytek to add dynamic library import/export mechanism to classes.
+To link a custom qpOASES to CRYENGINE you must also export the appropriate class symbols (At minimum: QProblem/QProblemB).

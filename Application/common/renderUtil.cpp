@@ -475,7 +475,11 @@ void renderScene(
 {
     EngineRenderList renderList;
     sceneManager->getSceneRenderList(cam, renderList, false);
-    renderScene(cam, renderList.mOpaqueList, renderPassInfo, userDefineShader);
+    if (!renderList.mOpaqueList.empty())
+    {
+        renderScene(cam, renderList.mOpaqueList, renderPassInfo, userDefineShader);
+    }
+    
 }
 
 void renderScene(

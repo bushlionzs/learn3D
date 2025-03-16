@@ -169,6 +169,16 @@ public:
 	{
 		return matIds[index];
 	}
+
+	void updateOgreState(bool add)
+	{
+		mAddToOgre = add;
+	}
+
+	bool getOgreState()
+	{
+		return mAddToOgre;
+	}
 private:
 	int   m_nRefCounter;
 	uint16 m_nFlags;
@@ -205,5 +215,7 @@ private:
 
 	std::unordered_map<int32_t, std::vector<char>> mVerticesMap;
 	std::vector<vtx_idx> mIndexData;
-	bool mAddRenderElement = false;
+	bool mCreateMesh = false;
+
+	bool mAddToOgre = false;
 };
