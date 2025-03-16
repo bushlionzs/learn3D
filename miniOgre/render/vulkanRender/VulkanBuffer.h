@@ -26,8 +26,12 @@ namespace filament::backend {
 // Encapsulates a Vulkan buffer, its attached DeviceMemory and a staging area.
 class VulkanBuffer {
 public:
-    VulkanBuffer(VmaAllocator allocator, VulkanStagePool& stagePool, VkBufferUsageFlags usage,
-            uint32_t numBytes);
+    VulkanBuffer(
+        VmaAllocator allocator, 
+        VulkanStagePool& stagePool, 
+        VkBufferUsageFlags usage,
+        uint32_t numBytes,
+        bool cpu_to_gpu = false);
     ~VulkanBuffer();
     void* lock(uint32_t offset, uint32_t numBytes);
     void unlock(VkCommandBuffer cmdbuf);
@@ -55,6 +59,8 @@ private:
 	uint32_t mUpdatedOffset = 0;
     uint32_t mUpdatedBytes = 0;
     uint32_t mBufferBytes = 0;
+
+    bool mCpuToGpu;
 };
 
 } // namespace filament::backend

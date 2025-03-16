@@ -879,7 +879,11 @@ bool CStatObj::LoadCGF(IChunkFile* chunkFile, const char* filename, bool isLod, 
 			if (pFirstMesh)
 			{
 				// Assign mesh to this static object.
-				_smart_ptr<IRenderMesh> pRenderMesh = MakeRenderMesh(pFirstMesh, !m_bCanUnload);
+				if (strstr(filename, "turning_plattform.cgf"))
+				{
+					int kk = 0;
+				}
+				_smart_ptr<IRenderMesh> pRenderMesh = MakeRenderMesh(pFirstMesh, true);
 				SetRenderMesh(pRenderMesh);
 				pMainMesh = m_pRenderMesh;
 				bRenderMeshLoaded |= (m_pRenderMesh != nullptr);
@@ -1492,6 +1496,7 @@ _smart_ptr<IRenderMesh> CStatObj::MakeRenderMesh(CMesh* pMesh, bool bDoRenderMes
 #ifdef MESH_TESSELLATION_ENGINE
 				nFlags |= FSM_ENABLE_NORMALSTREAM;
 #endif
+
 				nRenderMeshSize = pOutRenderMesh->SetMesh(*pMesh, 0, nFlags, nullptr, true);
 				if (nRenderMeshSize == ~0U)
 					return nullptr;

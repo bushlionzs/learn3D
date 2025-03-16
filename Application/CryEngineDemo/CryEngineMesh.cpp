@@ -197,7 +197,7 @@ size_t CryEngineMesh::SetMesh_Int(
 	int vertexCount = mesh.GetVertexCount();
 
 	VertexData* vertexData = ogreMesh->getVertexData();
-
+	
 
 	VertexDeclaration* decl = vertexData->getVertexDeclaration();
 
@@ -592,6 +592,7 @@ void CryEngineMesh::AddRenderElements(
 			if (texs[EFTT_DIFFUSE].empty())
 			{
 				subMesh->setMaterial(baseWhiteMat);
+				return;
 			}
 			else
 			{
@@ -599,6 +600,7 @@ void CryEngineMesh::AddRenderElements(
 				Ogre::Material* mat = new Ogre::Material(matName, false);
 
 				std::string shortname = dy::get_short_name(texs[EFTT_DIFFUSE].c_str());
+				dy::to_lower(shortname);
 				mat->addTexture(shortname);
 				GeneralMaterialConstantBuffer& matInfo = mat->getMatInfo();
 

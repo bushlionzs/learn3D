@@ -62,7 +62,7 @@ void GameCamera::lookAt(
    
     Ogre::Matrix4 viewMatrix = Ogre::Math::makeLookAt(camPos, targetPos, up);
     mCamera->updateViewMatrix(viewMatrix);
-
+    mCamera->updatePosition(camPos);
     Ogre::Vector3 lookDir = targetPos - camPos;
     lookDir.normalise();
     float y = lookDir.y;
@@ -231,7 +231,7 @@ bool GameCamera::update(float delta)
         auto rot = mCamera->getViewMatrix();
         auto right = rot.getRight();
         auto up = rot.getUp();
-        auto forward = rot.getForward();
+        auto forward = -rot.getForward();
 
         float moveSpeed = delta * mMoveSpeed;
 
@@ -271,7 +271,7 @@ bool GameCamera::update(float delta)
         eyePosition += move;
     }
   
-    auto rotM = Ogre::Math::makeRotateMatrixXY(-x, -y);
+    auto rotM = Ogre::Math::makeRotateMatrixXY(x, y);
     Ogre::Matrix4 viewMatrix;
     Ogre::Matrix4 transM;
     if (mCameraType == Ogre::CameraMoveType_FirstPerson)
@@ -300,7 +300,12 @@ bool GameCamera::update(float delta)
         }
         viewMatrix = transM * rotM;
     }
+    
     mCamera->updateViewMatrix(mWorldMatrix * viewMatrix);
+    /*lookAt(
+        Ogre::Vector3(95, 148.5, 34),
+        Ogre::Vector3(95, 149.5, 34),
+        Ogre::Vector3(0, 0, 1));*/
     mCamera->updatePosition(eyePosition);
     return true;
 }

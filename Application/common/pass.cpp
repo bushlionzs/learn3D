@@ -122,7 +122,7 @@ public:
 			depthValue = 0.0f;
 		}
 		info.depthTarget.clearValue = { depthValue, 0.0f };
-		mRenderPassInfo.flipY = false;
+		mRenderPassInfo.flipY = true;
 		renderScene(cam, sceneManager, mRenderPassInfo, &mUserDefineShader);
 
 		{

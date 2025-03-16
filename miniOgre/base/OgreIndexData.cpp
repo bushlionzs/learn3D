@@ -38,7 +38,7 @@ void IndexData::createBuffer(uint32_t indexSize, uint32_t indexCount)
     }
     BufferDesc desc{};
     desc.mBindingType = BufferObjectBinding_Index;
-    desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
+    desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
     desc.bufferCreationFlags = bufferCreationFlags;
     desc.mElementCount = indexCount;
     desc.mStructStride = indexSize;

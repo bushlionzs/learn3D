@@ -372,26 +372,38 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 	return ogreMesh;
 }
 
-Matrix34 translateMatrix(const Ogre::Matrix4& source)
+Matrix34 translateMatrix(Ogre::Camera* ogreCam)
 {
-	auto f1 = source[0][0];
-	auto f2 = source[0][1];
-	auto f3 = source[0][2];
-	auto f4 = source[0][3];
-	auto f5 = source[1][0];
-	auto f6 = source[1][1];
-	auto f7 = source[1][2];
-	auto f8 = source[1][3];
-	auto f9 = source[2][0];
-	auto f10 = source[2][1];
-	auto f11 = source[2][2];
-	auto f12 = source[2][3];
-	Matrix34 m(f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12);
+	auto& position = ogreCam->getDerivedPosition();
+	auto& viewMatrix = ogreCam->getViewMatrix();
+	auto& forward = viewMatrix.getForward();
+	auto& right = viewMatrix.getRight();
+	Matrix34 m;
+	m.SetIdentity();
+	m.SetTranslation(Vec3(position.x, position.y, position.z));
+	m.SetColumn(1, Vec3(-forward.x, -forward.y, -forward.z));
+	m.SetColumn(2, Vec3(0, 0, 1));
+	m.SetColumn(0, Vec3(right.x, right.y, right.z));
 	return m;
 }
 bool LoadTerrain(XmlNodeRef pDoc, CryEngineContext& context);
+
+static void test()
+{
+	auto ogreM = Ogre::Math::makeLookAt(
+		{ 95, 148.5, 34},
+		{ 35, 20, 34 },
+		{ 0, 0, 1 });
+	Matrix44A cryM;
+	mathMatrixLookAt(&cryM, { 95, 148.5, 34 },
+		{ 35, 20, 34 },
+		{ 0, 0, 1 });
+
+	int kk = 0;
+}
 void loadCryEngineLevel(CryEngineContext& context)
 {
+	test();
 	std::string rootPath = PathUtil::GetPathWithoutFilename(context.projectName.c_str());
 	rootPath.pop_back();
 	std::string levelPath = rootPath + "/Assets/Levels/asset_zoo/";
@@ -411,11 +423,13 @@ void loadCryEngineLevel(CryEngineContext& context)
 		else if (strcmp(suffix, ".dds") == 0)
 		{
 			std::string shortname = dy::get_short_name(name);
+			dy::to_lower(shortname);
 			Ogre::ResourceManager::getSingleton().addResource(shortname, name);
 		}
 		else if (strcmp(suffix, ".tif") == 0)
 		{
 			std::string shortname = dy::get_short_name(name);
+			dy::to_lower(shortname);
 			Ogre::ResourceManager::getSingleton().addResource(shortname, name);
 		}
 	}
@@ -434,7 +448,27 @@ void loadCryEngineLevel(CryEngineContext& context)
 	ILevelSystem* levelSystem = CCryAction::GetCryAction()->GetILevelSystem();
 	levelSystem->PrepareNextLevel("asset_zoo");
 
-	
+	string enginePath = PathUtil::GetEnginePath();
+
+	if (!enginePath.empty())
+	{
+		std::vector<std::string> filenameList;
+		std::string path = enginePath.c_str();
+		path += "/Engine";
+		Ogre::ResourceManager::getSingleton().traverseDir(path, "", filenameList, true);
+
+		for (auto& name : filenameList)
+		{
+			const char* suffix = dy::getSuffix(name);
+			if (strcmp(suffix, ".dds") == 0)
+			{
+				std::string shortname = dy::get_short_name(name);
+				dy::to_lower(shortname);
+				Ogre::ResourceManager::getSingleton().addResource(shortname, name, false);
+			}
+		}
+	}
+
 	IResourceList* pResList = pSystem->GetIResourceManager()->GetLevelResourceList();
 	Cry3DEngineBase::m_pObjManager = new CObjManager;
 	Cry3DEngineBase::m_pMatMan = new CMatMan;
@@ -488,16 +522,15 @@ void loadCryEngineLevel(CryEngineContext& context)
 		CCamera cam;
 		
 		Ogre::Camera* ogreCam = context.gameCamera->getCamera();
-		const Ogre::Matrix4& ogreM = ogreCam->getViewMatrix();
 		
-		Matrix34 m = translateMatrix(ogreM);
+		Matrix34 m = translateMatrix(ogreCam);
 		cam.SetMatrix(m);
 		//cam.SetPosition(Vec3(83.33, 41.79557, 59.02676));
 		uint32_t width = 1600;
 		uint32_t height = 900;
 		float aspect = width / (float)height;
 		float fov = Ogre::Math::PI / 3.0f;
-		cam.SetFrustum(width, height, fov, 0.1, 1024, aspect);
+		cam.SetFrustum(width, height, fov, 0.1, 10000, aspect);
 		
 		pSystem->SetViewCamera(cam);
 
@@ -530,15 +563,19 @@ void loadCryEngineLevel(CryEngineContext& context)
 		}
 
 		const char* path = statObj->GetFilePath();
-		if (strstr(path, "house2.cgf"))
-		{
-			int kk = 0;
-		}
+		
 		IMaterial* mat = statObj->GetMaterial();
 		CryEngineMesh* renderMesh = (CryEngineMesh*)statObj->GetRenderMesh();
 
 		if (renderMesh == nullptr)
+		{
+			if (strstr(path, "turning_plattform.cgf"))
+			{
+				int kk = 0;
+			}
 			continue;
+		}
+			
 
 		std::string name = statObj->GetFilePath();
 
@@ -581,6 +618,7 @@ void loadCryEngineLevel(CryEngineContext& context)
 				Ogre::Material* mat = new Ogre::Material(matName, false);
 
 				std::string shortname = dy::get_short_name(texs[EFTT_DIFFUSE].c_str());
+				dy::to_lower(shortname);
 				mat->addTexture(shortname);
 				GeneralMaterialConstantBuffer& matInfo = mat->getMatInfo();
 
@@ -636,10 +674,11 @@ void updateCryEngineLevel(CryEngineContext& context)
 
 	CCamera cam = pSystem->GetViewCamera();
 
-	const Ogre::Matrix4& ogreM = context.gameCamera->getCamera()->getViewMatrix();
-
-	Matrix34 m = translateMatrix(ogreM);
+	
+	Matrix34 m = translateMatrix(context.gameCamera->getCamera());
+	
 	cam.SetMatrix(m);
+	Matrix34_tpl<f64>mCam34 = cam.GetMatrix();
 	pSystem->SetViewCamera(cam);
 	for (uint32_t i = 0; i < 1; i++)
 	{

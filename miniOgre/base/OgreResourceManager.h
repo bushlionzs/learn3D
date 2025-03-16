@@ -40,7 +40,8 @@ namespace Ogre {
             const String& group = BLANKSTRING);
         bool addResource(
             const String& name,
-            const String& fullname);
+            const String& fullname,
+            bool check = true);
         utils::JobSystem& getJobSystem()
         {
             return mJobSystem;

@@ -382,7 +382,8 @@ VulkanBufferObject::VulkanBufferObject(VmaAllocator allocator, VulkanStagePool& 
     BufferDesc& desc)
     : HwBufferObject(desc.mSize),
       VulkanResource(VulkanResourceType::BUFFER_OBJECT),
-      buffer(allocator, stagePool, getBufferObjectUsage(desc.mBindingType, desc.bufferCreationFlags), desc.mSize),
+      buffer(allocator, stagePool, getBufferObjectUsage(desc.mBindingType, 
+          desc.bufferCreationFlags), desc.mSize, desc.mMemoryUsage == RESOURCE_MEMORY_USAGE_CPU_TO_GPU),
       bindingType(desc.mBindingType) {}
 
 VulkanTimerQuery::VulkanTimerQuery(std::tuple<uint32_t, uint32_t> indices)
