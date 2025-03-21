@@ -498,11 +498,12 @@ Handle<HwBufferObject> Dx12RenderSystemBase::createBufferObject(
 void Dx12RenderSystemBase::updateBufferObject(
     Handle<HwBufferObject> boh,
     const char* data,
-    uint32_t size)
+    uint32_t size,
+    uint32_t offset)
 {
     DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(boh);
     auto* cmdList = mCommands->get();
-    bo->copyData(cmdList, data, size);
+    bo->copyData(cmdList, data, size, offset);
 }
 
 Handle<HwDescriptorSetLayout> Dx12RenderSystemBase::getDescriptorSetLayout(

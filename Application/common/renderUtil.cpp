@@ -231,7 +231,7 @@ void initFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
                 descriptorData[descriptorCount].pName = "third";
                 descriptorData[descriptorCount].mCount = 1;
                 descriptorData[descriptorCount].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
-                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)texArray[2];
+                descriptorData[descriptorCount].ppTextures = (const Ogre::OgreTexture**)&texArray[2];
                 descriptorCount++;
 
                 descriptorData[descriptorCount].pName = "thirdSampler";

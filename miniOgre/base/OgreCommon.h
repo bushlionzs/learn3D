@@ -74,7 +74,8 @@ namespace Ogre {
         ImageType_DDS,
         ImageType_BLP,
         ImageType_KTX,
-        ImageType_TIF
+        ImageType_TIF,
+        ImageType_TGA
     };
 
     enum VertexPass
@@ -1249,7 +1250,12 @@ namespace Ogre {
     };
 
 
-   
+#define DIFFUSE_TEXTURE "diffuse_texture"
+#define NORMAL_TEXTURE "normal_texture"
+#define SPECULAR_TEXTURE "specular_texure"
+#define EMISSIVE_TEXTURE "emissive_texture"
+#define OPACITY_TEXTURE "opacity_texture"
+
     typedef struct BufferBarrier
     {
         filament::backend::Handle<filament::backend::HwBufferObject> buffer;

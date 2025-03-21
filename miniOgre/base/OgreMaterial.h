@@ -30,7 +30,7 @@ namespace Ogre {
         Material(const std::string& name, bool pbr = false);
         ~Material();
 
-        uint32_t addTexture(const std::string& name, Ogre::TextureProperty* texProperty = nullptr);
+        uint32_t addTexture(const std::string& texFileName, Ogre::TextureProperty* texProperty = nullptr);
         uint32_t addTexture(const Ogre::TexturePtr& tex);
         uint32_t addAnimTexture(const std::vector<String>& namelist, float duration);
         
@@ -40,7 +40,9 @@ namespace Ogre {
 
         std::shared_ptr<Material> clone(const String& name);
         std::shared_ptr<TextureUnit>& getTextureUnit(uint32_t index);
-        std::shared_ptr<TextureUnit>& getTextureUnit(const String& name);
+        std::shared_ptr<TextureUnit>& getTextureUnit(const char* name);
+
+        bool hasTextureUnit(const char* name);
        
         int32_t getTextureUnitCount();
         std::vector<std::shared_ptr<TextureUnit>>& getAllTexureUnit();
@@ -58,8 +60,17 @@ namespace Ogre {
         void update(Real delta);
         void setFresnelR0(Ogre::Vector3& fresnelR0);
         void setRoughness(Real roughness);
-        void setDiffuseAlbedo(Ogre::Vector4& diffuseAlbedo);
 
+        const Ogre::Vector3& getDiffuseColor();
+        void setDiffuseColor(const Ogre::Vector3& diffuseColor);
+        const Ogre::Vector3& getSpecularColor();
+        void setSpecularColor(const Ogre::Vector3& specularColor);
+        const Ogre::Vector3& getEmissiveColor();
+        void setEmissiveColor(const Ogre::Vector3& emissiveColor);
+        float getOpacity();
+        void setOpacity(float opacity);
+        float getShininess();
+        void setShininess(float shininess);
         bool hasAnimation();
         Ogre::Vector2 getTexAnimationOffset();
         const Ogre::ColourBlendState& getBlendState() const;
@@ -149,6 +160,12 @@ namespace Ogre {
         ShaderInfo mShaderInfo;
         PbrMaterialConstanceBuffer mPbrMatInfo;
         GeneralMaterialConstantBuffer mMatInfo;
+
+        Ogre::Vector3 mDiffuseColor = Ogre::Vector3(1.0f);
+        Ogre::Vector3 mSpecularColor = Ogre::Vector3(1.0f);
+        Ogre::Vector3 mEmissiveColor = Ogre::Vector3(0.0f);
+        float mOpacity = 1.0f;
+        float mShininess = 0.0f;
         bool mPbr;
         bool mLoad = false;
 

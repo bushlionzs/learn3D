@@ -47,7 +47,7 @@ void BasicApplication::setup(
 
 	std::string dir = "D:\\godotProject\\Abandoned-Spaceship-Godot-Demo\\Models";
 	Ogre::ResourceManager::getSingletonPtr()->addDirectory(dir, "", false);
-	base1();
+	base6();
 }
 
 void BasicApplication::update(float delta)
@@ -344,14 +344,24 @@ void BasicApplication::updateFrameData(Ogre::ICamera* camera, FrameConstantBuffe
 
 void BasicApplication::base6()
 {
-	std::string name = "Â¥À¼ÕÊÅñ04.mesh";
+	std::string name = "sponza.obj";
 	auto mesh = Ogre::MeshManager::getSingletonPtr()->load(name);
 
-	mGameCamera->lookAt(
-		Ogre::Vector3(1000, 0.0, 0.0f),
-		Ogre::Vector3(0.0f, 0.0f, 0.0f));
-	mGameCamera->setMoveSpeed(200);
+	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 
+	Ogre::Entity* sphere = mSceneManager->createEntity(name, name);
+	Ogre::SceneNode* spherenode = root->createChildSceneNode(name);
+
+	//sphere->setMaterialName("myrect");
+
+	spherenode->attachObject(sphere);
+
+	mGameCamera->lookAt(
+		Ogre::Vector3(0.0f, 3.0f, 15.0f),
+		Ogre::Vector3(0.0f, 0.0f, 0.0f));
+	mGameCamera->setMoveSpeed(100);
+	mGameCamera->setRotateSpeed(0.02);
+	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
 
@@ -361,110 +371,21 @@ void BasicApplication::base6()
 	{
 		float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
 		m = Ogre::Math::makePerspectiveMatrixReverseZ(
-			Ogre::Math::PI / 2.0f, aspectInverse, 0.1, 2000);
+			Ogre::Math::PI / 3.0f, aspectInverse, 0.1, 2000);
 	}
 	else
 	{
 		float aspect = ogreConfig.width / (float)ogreConfig.height;
 		m = Ogre::Math::makePerspectiveMatrix(
-			Ogre::Math::PI / 2.0f, aspect, 0.1, 2000);
+			Ogre::Math::PI / 3.0f, aspect, 0.1, 2000);
 	}
 	mGameCamera->getCamera()->updateProjectMatrix(m);
 
-	ShaderInfo shaderInfo;
-	shaderInfo.shaderName = "basic2";
-	auto presentHandle = mRenderSystem->createShaderProgram(shaderInfo, nullptr);
-
-	filament::backend::RasterState rasterState{};
-	rasterState.depthWrite = false;
-	rasterState.depthTest = false;
-	rasterState.depthFunc = SamplerCompareFunc::A;
-	rasterState.colorWrite = true;
-	rasterState.renderTargetCount = 1;
-	rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
-	auto pipelineHandle = mRenderSystem->createPipeline(rasterState, presentHandle);
-
-	Ogre::SubMesh* subMesh = mesh->getSubMesh(0);
-
-	VertexData* vertexData = subMesh->getVertexData();
-	Handle<HwBufferObject> vertexDataHandle = vertexData->getBuffer(0);
-	IndexData* indexData = subMesh->getIndexData();
-	Handle<HwBufferObject> indexDataHandle = indexData->getHandle();
-	mFrameData.resize(2);
-	Ogre::DescriptorData descriptorData[16];
-
-	
-
-	std::shared_ptr<Ogre::Material>& mat = subMesh->getMaterial();
-	mat->load(nullptr);
-
-	Ogre::OgreTexture* tex = mat->getTexture(0);
-
-	for (auto i = 0; i < 2; i++)
-	{
-		auto zeroSet = mRenderSystem->createDescriptorSet(presentHandle, 0);
-
-		mFrameData[i].zeroSet = zeroSet;
-		Ogre::BufferDesc desc{};
-		desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
-		desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_GPU_ONLY;
-		desc.bufferCreationFlags = 0;
-		desc.mElementCount = 0;
-		desc.mStructStride = 0;
-		desc.mSize = sizeof(FrameConstantBuffer);
-		desc.pName = "FrameConstantBuffer";
-		auto passUniformBuffer = mRenderSystem->createBufferObject(desc);
-		mFrameData[i].passUniformBuffer = passUniformBuffer;
-
-		descriptorData[0].pName = "passUniformBlock";
-		descriptorData[0].mCount = 1;
-		descriptorData[0].descriptorType = Ogre::DESCRIPTOR_TYPE_BUFFER;
-		descriptorData[0].ppBuffers = &mFrameData[i].passUniformBuffer;
-
-		descriptorData[1].pName = "vertexDataBuffer";
-		descriptorData[1].mCount = 1;
-		descriptorData[1].descriptorType = Ogre::DESCRIPTOR_TYPE_BUFFER;
-		descriptorData[1].ppBuffers = &vertexDataHandle;
-
-		descriptorData[2].pName = "first";
-		descriptorData[2].mCount = 1;
-		descriptorData[2].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
-		descriptorData[2].ppTextures = (const Ogre::OgreTexture**)& tex;
-
-		descriptorData[3].pName = "firstSampler";
-		descriptorData[3].mCount = 1;
-		descriptorData[3].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
-		descriptorData[3].ppTextures = (const Ogre::OgreTexture**)&tex;
-
-		mRenderSystem->updateDescriptorSet(zeroSet, 4, descriptorData);
-	}
-
-	uint32_t indexCount = indexData->getIndexCount();
-	uint32_t indexSize = indexData->getIndexSize();
-	RenderPassCallback presentCallback = [=, this](RenderPassInfo& info) {
-		info.renderTargetCount = 1;
-		info.renderTargets[0].renderTarget = mRenderWindow->getColorTarget();
-		info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-		info.depthTarget.depthStencil = nullptr;
-		info.depthTarget.clearValue = { 0.0f, 0.0f };
-		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-		mRenderSystem->bindIndexBuffer(indexDataHandle, indexSize);
-		mRenderSystem->pushGroupMarker("presentPass");
-		mRenderSystem->beginRenderPass(info);
-		mRenderSystem->bindPipeline(pipelineHandle,
-			&mFrameData[frameIndex].zeroSet, 1);
-		mRenderSystem->drawIndexed(indexCount, 1, 0, 0, 0);
-		mRenderSystem->endRenderPass(info);
-		mRenderSystem->popGroupMarker();
-		};
-	Ogre::Camera* cam = mGameCamera->getCamera();
-	UpdatePassCallback updateCallback = [=, this](float delta) {
-		FrameConstantBuffer frameBuffer;
-		this->updateFrameData(cam, frameBuffer);
-		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-		mRenderSystem->updateBufferObject(mFrameData[frameIndex].passUniformBuffer,
-			(const char*)&frameBuffer, sizeof(frameBuffer));
-		};
-	auto presentPass = createUserDefineRenderPass(presentCallback, updateCallback);
-	mRenderPipeline->addRenderPass(presentPass);
+	RenderPassInput input;
+	input.color = mRenderWindow->getColorTarget();
+	input.depth = mRenderWindow->getDepthTarget();
+	input.cam = mGameCamera->getCamera();
+	input.sceneMgr = mSceneManager;
+	auto mainPass = createStandardRenderPass(input);
+	mRenderPipeline->addRenderPass(mainPass);
 }

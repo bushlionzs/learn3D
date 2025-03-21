@@ -30,7 +30,7 @@ private:
 
 
     Real mMoveSpeed = 500.0f;
-    Real mRotateSpeed = 0.15f;
+    Real mRotateSpeed = 0.03f;
     Ogre::CameraMoveType mCameraType;
 
     Real  mYaw = 0.0f;

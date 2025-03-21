@@ -117,13 +117,13 @@ std::string UTF8ToGBK(const char* strUTF8)
     return strTemp;
 }
 
-void ai_trim_left(std::string& s) {
+static void ai_trim_left(std::string& s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
         return !std::isspace(ch);
     }));
 }
 
-void ai_trim_right(std::string& s) {
+static void ai_trim_right(std::string& s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
         return !std::isspace(ch);
     }).base(), s.end());

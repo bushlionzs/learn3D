@@ -733,7 +733,7 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
     VulkanShaderProgram* vulkanProgram = mResourceAllocator.construct<VulkanShaderProgram>(program, shaderInfo.shaderName);
 
     Ogre::ShaderPrivateInfo* privateInfo =
-        ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan);
+        ShaderManager::getSingleton().getShader(shaderInfo.shaderName, EngineType_Vulkan, shaderInfo.technique);
     vulkanProgram->updateEntryFunc(
         privateInfo->vertexShaderEntryPoint.c_str(),
         privateInfo->geometryShaderEntryPoint.c_str(),

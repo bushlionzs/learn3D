@@ -104,6 +104,14 @@ void BasicApplication::cryEngineInit()
 	input.sceneMgr = mSceneManager;
 	auto mainPass = createStandardRenderPass(input);
 	mRenderPipeline->addRenderPass(mainPass);
+
+
+	auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
+	ShaderInfo shaderInfo;
+	shaderInfo.shaderName = "Illum";
+	shaderInfo.technique = "ZPass";
+	auto zPrePassHandle = rs->createShaderProgram(shaderInfo, nullptr);
 }
 
 

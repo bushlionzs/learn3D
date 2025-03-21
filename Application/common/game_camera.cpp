@@ -302,10 +302,6 @@ bool GameCamera::update(float delta)
     }
     
     mCamera->updateViewMatrix(mWorldMatrix * viewMatrix);
-    /*lookAt(
-        Ogre::Vector3(95, 148.5, 34),
-        Ogre::Vector3(95, 149.5, 34),
-        Ogre::Vector3(0, 0, 1));*/
     mCamera->updatePosition(eyePosition);
     return true;
 }

@@ -258,6 +258,7 @@ struct ShaderInfo
 {
     std::string shaderName;
     std::vector<std::pair<std::string, std::string>> shaderMacros;
+    const char* technique = nullptr;
 };
 
 struct RaytracingShaderInfo

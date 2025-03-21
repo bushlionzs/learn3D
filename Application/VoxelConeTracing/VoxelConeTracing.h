@@ -11,8 +11,8 @@
 
 struct VctFrameResourceInfo
 {
-	Handle<HwDescriptorSet> zeroSet;
-	Handle<HwDescriptorSet> firstSet;
+	Handle<HwDescriptorSet> sceneGeometryZeroSet;
+	Handle<HwDescriptorSet> sceneGeometryFirstSet;
 	Handle<HwDescriptorSet> zeroShadowSet;
 	Handle<HwBufferObject>  modelObjectHandle;
 	Handle<HwBufferObject>  matObjectHandle;
@@ -23,10 +23,21 @@ struct VctFrameResourceInfo
 
 struct VctFrameData
 {
-	Handle <HwDescriptorSet> mipmapPrepareZeroSet;
-	Handle <HwDescriptorSet> mipmapResultZeroSet[VCT_MIPS];
-	Handle<HwBufferObject>   mipmapBlockHandle[VCT_MIPS];
 	Handle <HwDescriptorSet> tracingConeZeroSet;
+};
+
+struct ObjMaterialBlock
+{
+	uint32_t u_hasDiffuseTexture;
+	uint32_t u_hasNormalMap;
+	uint32_t u_hasSpecularMap;
+	uint32_t u_hasOpacityMap;
+	uint32_t u_hasEmissionMap;
+	uint32_t u_shininess;
+	uint32_t padding[2];
+	Ogre::Vector4 emissionColor;
+	Ogre::Vector4 specularColor;
+	Ogre::Vector4 color;
 };
 
 struct VoxelizationBlock
@@ -110,7 +121,7 @@ private:
 	Handle<HwBufferObject>  MipmapBlockHandle;
 	Handle<HwBufferObject> tracingVoxelizationBlockHandle;
 	Handle<HwBufferObject> tracingMainBlockHandle;
-	std::vector<VctFrameData> mComputeFrameData;
+	std::vector<VctFrameData> mFrameDatas;
 	
 	Ogre::Vector3 mLightPos;
 	Ogre::Vector3 mLightTarget;

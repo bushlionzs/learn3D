@@ -169,7 +169,7 @@ bool M3dLoader::loadMeshFromFile(
 		m->addTexture(mat.DiffuseMapName);
 		m->setFresnelR0(mat.FresnelR0);
 		m->setRoughness(mat.Roughness);
-		m->setDiffuseAlbedo(mat.DiffuseAlbedo);
+		m->setDiffuseColor(mat.DiffuseAlbedo.xyz());
 		si.shaderName = "basic";
 		si.shaderMacros.push_back(std::pair<std::string,std::string>("SKINNED","1"));
 		m->addShader(si);

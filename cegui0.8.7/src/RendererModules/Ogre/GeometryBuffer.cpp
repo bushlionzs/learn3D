@@ -106,7 +106,7 @@ namespace CEGUI
         _rd_view.mVertexStart = vertexStart;
         _rd_view.mVertexCount = vertexCount;
         
-        auto& tu = mMaterial->getTextureUnit(0);
+        auto& tu = mMaterial->getTextureUnit((uint32_t)0);
         Ogre::TexturePtr src = tu->getTexture();
         if (src.get() != tex.get())
         {
@@ -123,7 +123,7 @@ namespace CEGUI
         mIndexDataView.mIndexCount = vertexCount;
         mIndexDataView.mIndexLocation = vertexStart;
 
-        auto& tu = mMaterial->getTextureUnit(0);
+        auto& tu = mMaterial->getTextureUnit((uint32_t)0);
 
         std::string tmp(texName.c_str());
         tu->updateTexture(0, tmp);

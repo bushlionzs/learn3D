@@ -18,13 +18,15 @@
         case VES_BLEND_INDICES:
             return 5;
         case VES_TANGENT:
-            return 4;
+            return 9;
         case VES_TEXTURE_COORDINATES:
             return 3;
         case VES_DIFFUSE:
             return 2;
         case VES_NORMAL:
             return 1;
+        case VES_BINORMAL:
+            return 8;
         default:
             assert_invariant(false);
             return 0;

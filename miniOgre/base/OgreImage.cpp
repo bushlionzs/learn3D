@@ -25,6 +25,7 @@ namespace Ogre {
         mLoadPicMap[Ogre::ImageType_DDS] = std::bind(&CImage::loadDDS, this, std::placeholders::_1, std::placeholders::_2);
         mLoadPicMap[Ogre::ImageType_PNG] = std::bind(&CImage::loadSTB, this, std::placeholders::_1, std::placeholders::_2);
         mLoadPicMap[Ogre::ImageType_JPG] = std::bind(&CImage::loadSTB, this, std::placeholders::_1, std::placeholders::_2);
+        mLoadPicMap[Ogre::ImageType_TGA] = std::bind(&CImage::loadSTB, this, std::placeholders::_1, std::placeholders::_2);
         mLoadPicMap[Ogre::ImageType_BLP] = std::bind(&CImage::loadBLP, this, std::placeholders::_1, std::placeholders::_2);
         mLoadPicMap[Ogre::ImageType_KTX] = std::bind(&CImage::loadKTX, this, std::placeholders::_1, std::placeholders::_2);
         mLoadPicMap[Ogre::ImageType_TIF] = std::bind(&CImage::loadTIF, this, std::placeholders::_1, std::placeholders::_2);
@@ -62,6 +63,10 @@ namespace Ogre {
         else if (suffix == ".tif")
         {
             return Ogre::ImageType_TIF;
+        }
+        else if (suffix == ".tga")
+        {
+            return Ogre::ImageType_TGA;
         }
         else
         {

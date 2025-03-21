@@ -110,13 +110,14 @@ target_link_libraries(${MINIOGRE_LIB_NAME} ${MyFavLib_LIBRARIES}
 SpirvTools 
 utils
 tiff
-bluevk 
+bluevk
+zlibstatic
+assimp
 VulkanMemoryAllocator
 dxgi
 dxguid
 d3d12
 d3d11
-assimp-vc140-mt
 WinPixEventRuntime
 D3DCompiler
 dxcompiler)

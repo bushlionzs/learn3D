@@ -106,7 +106,7 @@ namespace Ogre {
 					auto mat = MaterialManager::getSingleton().getByName(name);
 					if (mat)
 					{
-						auto texUnit = mat->getTextureUnit(0);
+						auto texUnit = mat->getTextureUnit((uint32_t)0);
 						texUnit->setTextureScale(u, v);
 					}
 				}

@@ -56,6 +56,7 @@ namespace Ogre {
     public:
         TextureType _texType;
         TextureTypePbr _pbrType;
+        std::string textureTypeName;
         uint32_t _width;
         uint32_t _height;
         uint32_t _depth;

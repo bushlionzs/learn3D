@@ -280,6 +280,8 @@ namespace Ogre {
             return VK_SAMPLER_ADDRESS_MODE_REPEAT;
         case filament::backend::SamplerWrapMode::CLAMP_TO_EDGE:
             return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+        case filament::backend::SamplerWrapMode::CLAMP_TO_BODY:
+            return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
         case filament::backend::SamplerWrapMode::MIRRORED_REPEAT:
             return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
         default:

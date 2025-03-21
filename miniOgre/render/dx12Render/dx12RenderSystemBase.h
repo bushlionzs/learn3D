@@ -90,7 +90,8 @@ public:
     virtual void updateBufferObject(
         Handle<HwBufferObject> boh,
         const char* data,
-        uint32_t size);
+        uint32_t size,
+        uint32_t offset = 0);
     virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t set);
     virtual Handle<HwDescriptorSet> createDescriptorSet(
         Handle<HwProgram> programHandle,

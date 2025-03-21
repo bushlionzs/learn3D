@@ -139,10 +139,11 @@ DX12BufferObject::DX12BufferObject(
 void DX12BufferObject::copyData(
     ID3D12GraphicsCommandList* cmdList,
     const char* data, 
-    uint32_t size)
+    uint32_t size,
+    uint32_t offset)
 {
     void* mapData = lock(0, size);
-    memcpy(mapData, data, size);
+    memcpy((char*)mapData + offset, data, size);
     unlock(cmdList);
 
     

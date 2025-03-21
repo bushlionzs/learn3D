@@ -11,14 +11,13 @@
 #include "OgreMaterialManager.h"
 #include "OgreResourceManager.h"
 #include "renderSystem.h"
-#include "OgreMesh.h"
 #include "m3d_loader.h"
 #include "ogre_loader.h"
 #include "gltf_loader.h"
 #include "bin_loader.h"
 #include "M2Loader.h"
 #include "fbx_loader.h"
-
+#include "obj_loader.h"
 
 namespace Ogre {
 
@@ -1002,5 +1001,6 @@ void MeshManager::registerMeshLoader()
 	mMeshLoaderMap[".M2"] = new M2Loader;
 	mMeshLoaderMap[".bin"] = new BinLoader;
 	mMeshLoaderMap[".fbx"] = new FbxLoader;
+	mMeshLoaderMap[".obj"] = new ObjLoader;
 }
 }

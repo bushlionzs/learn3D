@@ -32,11 +32,11 @@ namespace Ogre {
 
     }
 
-    uint32_t Material::addTexture(const std::string& name, Ogre::TextureProperty* texProperty)
+    uint32_t Material::addTexture(const std::string& texFileName, Ogre::TextureProperty* texProperty)
     {
         std::shared_ptr<TextureUnit> tu(new TextureUnit(this));
 
-        tu->setTexture(name, texProperty);
+        tu->setTexture(texFileName, texProperty);
 
         mTextureUnits.push_back(tu);
         return mTextureUnits.size() - 1;
@@ -167,10 +167,32 @@ namespace Ogre {
         return mTextureUnits[index];
     }
 
-    std::shared_ptr<TextureUnit>& Material::getTextureUnit(const String& name)
+    std::shared_ptr<TextureUnit>& Material::getTextureUnit(const char* name)
     {
-        assert_invariant(false);
-        return mTextureUnits[0];
+        for (auto& tu : mTextureUnits)
+        {
+            TextureProperty* tp = tu->getTextureProperty();
+            if (tp->textureTypeName == name)
+            {
+                return tu;
+            }
+        }
+
+        static std::shared_ptr<TextureUnit> nullTU;
+        return nullTU;
+    }
+
+    bool Material::hasTextureUnit(const char* name)
+    {
+        for (auto& tu : mTextureUnits)
+        {
+            TextureProperty* tp = tu->getTextureProperty();
+            if (tp->textureTypeName == name)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     int32_t Material::getTextureUnitCount()
@@ -263,10 +285,56 @@ namespace Ogre {
 
     }
 
-    void Material::setDiffuseAlbedo(Ogre::Vector4& diffuseAlbedo)
+    const Ogre::Vector3& Material::getDiffuseColor()
     {
-
+        return mDiffuseColor;
     }
+    
+    void Material::setDiffuseColor(const Ogre::Vector3& diffuseColor)
+    {
+        mDiffuseColor = diffuseColor;
+    }
+
+    const Ogre::Vector3& Material::getSpecularColor()
+    {
+        return mSpecularColor;
+    }
+
+    void Material::setSpecularColor(const Ogre::Vector3& specularColor)
+    {
+        mSpecularColor = specularColor;
+    }
+
+    const Ogre::Vector3& Material::getEmissiveColor()
+    {
+        return mEmissiveColor;
+    }
+
+    void Material::setEmissiveColor(const Ogre::Vector3& emissiveColor)
+    {
+        mEmissiveColor = emissiveColor;
+    }
+
+    float Material::getOpacity()
+    {
+        return mOpacity;
+    }
+
+    void Material::setOpacity(float opacity)
+    {
+        mOpacity = opacity;
+    }
+
+    float Material::getShininess()
+    {
+        return mShininess;
+    }
+
+    void Material::setShininess(float shininess)
+    {
+        mShininess = shininess;
+    }
+
 
     bool Material::hasAnimation()
     {

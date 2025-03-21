@@ -10,7 +10,7 @@ struct DX12BufferObject : public HwBufferObject {
         BufferDesc& desc,
         DxDescriptorID id
         );
-    void copyData(ID3D12GraphicsCommandList* cmdList, const char* data, uint32_t size);
+    void copyData(ID3D12GraphicsCommandList* cmdList, const char* data, uint32_t size, uint32_t offset);
     D3D12_GPU_VIRTUAL_ADDRESS getGPUVirtualAddress();
     D3D12_CPU_DESCRIPTOR_HANDLE getGpuHandle()
     {
