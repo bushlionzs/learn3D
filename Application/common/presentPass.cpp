@@ -86,7 +86,7 @@ void PresentPass::execute(RenderSystem* rs)
 			},
 			{
 				mSourceTexture,
-				Ogre::RESOURCE_STATE_UNORDERED_ACCESS,
+				Ogre::RESOURCE_STATE_RENDER_TARGET,
 				Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 			}
 		};
@@ -117,7 +117,7 @@ void PresentPass::execute(RenderSystem* rs)
 			{
 				mSourceTexture,
 				Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-				Ogre::RESOURCE_STATE_UNORDERED_ACCESS
+				Ogre::RESOURCE_STATE_RENDER_TARGET
 			}
 		};
 		rs->resourceBarrier(0, nullptr, 2, texBarriers, 0, nullptr);

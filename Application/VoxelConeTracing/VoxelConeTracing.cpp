@@ -55,7 +55,7 @@ void VoxelConeTracingApp::setup(
 	SceneNode* sponzaNode = rootNode->createChildSceneNode(meshname);
 	sponzaNode->attachObject(sponza);
 
-	auto h = 7.0f;
+	auto h = 20.0f;
 	auto camPos = Ogre::Vector3(0.0f, h, 33.0f);
 	auto targetPos = Ogre::Vector3(0.0f, h, 0.0f);
 	gameCamera->lookAt(camPos, targetPos);
@@ -64,7 +64,7 @@ void VoxelConeTracingApp::setup(
 
 	float aspect = ogreConfig.width / (float)ogreConfig.height;
 	Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrix(
-		Ogre::Math::PI / 3.0f, aspect, 0.1, 1000.0f);
+		Ogre::Math::PI / 3.0f, aspect, 0.1, 10000.0f);
 
 	gameCamera->getCamera()->updateProjectMatrix(m);
 
@@ -140,12 +140,21 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		descriptorData[0].ppBuffers = &tmp[frameIndex];
 		
 		mRenderSystem->updateDescriptorSet(resourceInfo->sceneGeometryZeroSet, 1, descriptorData);
-
-		
-
 		};
 	userDefineShader.bindCallback = bindCallback;
 
+	RenderableUpdateCallback renderUpdateCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+		void* frameData = r->getFrameResourceInfo(frameIndex);
+		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
+		ObjectConstantBuffer objectBuffer;
+		const auto& modelMatrix = r->getModelMatrix();
+
+		objectBuffer.world = modelMatrix.transpose();
+		objectBuffer.diffuseColor = r->getColor();
+		mRenderSystem->updateBufferObject(resourceInfo->modelObjectHandle,
+			(const char*)&objectBuffer, sizeof(objectBuffer));
+		};
+	userDefineShader.updateCallback = renderUpdateCallback;
 	RenderableDrawCallback drawCallback = [=, this](uint32_t frameIndex, Renderable* r) {
 		void* frameData = r->getFrameResourceInfo(frameIndex);
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
@@ -195,12 +204,6 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		mRenderSystem->updateBufferObject(
 			frameIndex? firstFrameBufferHandle:zeroFrameBufferHandle, 
 			(const char*)pFrameBuffer, sizeof(mFrameConstantBuffer));
-		EngineRenderList renderList;
-		mSceneManager->getSceneRenderList(mGameCamera->getCamera(), renderList, false);
-		for (auto r : renderList.mOpaqueList)
-		{
-			updateFrameResource(frameIndex, r);
-		}
 		};
 
 
@@ -466,7 +469,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8R8G8B8;
 	texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
 	texProperty._need_mipmap = false;
-	mVoxelizationContext.diffuseTarget = mRenderSystem->createRenderTarget("albedoTarget", texProperty);
+	mVoxelizationContext.diffuseTarget = mRenderSystem->createRenderTarget("diffuseTarget", texProperty);
 	mVoxelizationContext.normalTarget = mRenderSystem->createRenderTarget("normalTarget", texProperty);
 	mVoxelizationContext.specularTarget = mRenderSystem->createRenderTarget("specularTarget", texProperty);
 	mVoxelizationContext.emissiveTarget = mRenderSystem->createRenderTarget("emissiveTarget", texProperty);
@@ -648,7 +651,7 @@ void VoxelConeTracingApp::initFrameResource(uint32_t frameIndex, Renderable* r)
 		Ogre::Material* mat = r->getMaterial().get();
 		Handle<HwBufferObject> matBufferHandle;
 		desc.mBindingType = BufferObjectBinding_Uniform;
-		desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
+		desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
 		desc.bufferCreationFlags = 0;
 		desc.mSize = sizeof(ObjMaterialBlock);
 		matBufferHandle = rs->createBufferObject(desc);

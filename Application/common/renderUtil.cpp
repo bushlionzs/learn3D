@@ -522,8 +522,8 @@ void renderScene(
             r->setFlag(frameIndex, true);
             userDefineShader->bindCallback(frameIndex, r);
         }
-
-        updateFrameResource(frameIndex, r);
+        userDefineShader->updateCallback(frameIndex, r);
+        //updateFrameResource(frameIndex, r);
     }
 
     rs->beginRenderPass(renderPassInfo);

@@ -7,7 +7,7 @@
 class GameCamera;
 struct UserDefineShader;
 using RenderableInitCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
-using RenderableUpdateCallback = std::function< void(Ogre::Renderable* r)>;
+using RenderableUpdateCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
 using RenderableBindCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable*r)>;
 using RenderableDrawCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
 
@@ -16,6 +16,7 @@ struct UserDefineShader
     RenderableInitCallback initCallback;
     RenderableDrawCallback drawCallback;
     RenderableBindCallback bindCallback;
+    RenderableUpdateCallback updateCallback;
 };
 
 struct FrameResourceInfo

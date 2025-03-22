@@ -181,6 +181,7 @@ struct LightInfo
     Ogre::Vector3 Position = { 0.0f, 0.0f, 0.0f };  // point/spot light only
     float SpotPower = 64.0f;                            // spot light only
     Ogre::Vector3 lightColor = {1.0f, 1.0f, 1.0f};
+    float pad;
 };
 
 struct FrameConstantBuffer
