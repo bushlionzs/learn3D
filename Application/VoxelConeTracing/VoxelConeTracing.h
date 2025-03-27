@@ -11,33 +11,30 @@
 
 struct VctFrameResourceInfo
 {
-	Handle<HwDescriptorSet> sceneGeometryZeroSet;
-	Handle<HwDescriptorSet> sceneGeometryFirstSet;
+	Handle<HwDescriptorSet> zeroSet;
+	Handle<HwDescriptorSet> firstSet;
 	Handle<HwDescriptorSet> zeroShadowSet;
 	Handle<HwBufferObject>  modelObjectHandle;
 	Handle<HwBufferObject>  matObjectHandle;
 	Handle<HwBufferObject>  skinObjectHandle;
 	bool update;
-	Handle<HwDescriptorSet> zeroSetOfVoxelization;	
+	Handle<HwDescriptorSet> zeroSetOfVoxelization;
+
+	
+	
 };
 
 struct VctFrameData
 {
+	Handle<HwBufferObject> voxelizationBlockHandle;
+	Handle<HwBufferObject> directionalLightBlockHandle;
+	Handle <HwDescriptorSet> mipmapPrepareZeroSet;
+	Handle <HwDescriptorSet> mipmapResultZeroSet[VCT_MIPS];
+	Handle<HwBufferObject>   mipmapBlockHandle[VCT_MIPS];
 	Handle <HwDescriptorSet> tracingConeZeroSet;
-};
 
-struct ObjMaterialBlock
-{
-	uint32_t u_hasDiffuseTexture;
-	uint32_t u_hasNormalMap;
-	uint32_t u_hasSpecularMap;
-	uint32_t u_hasOpacityMap;
-	uint32_t u_hasEmissionMap;
-	uint32_t u_shininess;
-	uint32_t padding[2];
-	Ogre::Vector4 emissionColor;
-	Ogre::Vector4 specularColor;
-	Ogre::Vector4 color;
+	Handle<HwBufferObject> zeroLightingContantBlockHandle;
+	Handle<HwDescriptorSet> zeroSetOfLightingPass;
 };
 
 struct VoxelizationBlock
@@ -66,6 +63,43 @@ struct MipmapBlock
 	int MipLevel;
 };
 
+struct LightingConstant
+{
+	Ogre::Matrix4 InvViewProjection;
+	Ogre::Matrix4 ShadowViewProjection;
+	Ogre::Vector4 CameraPos;
+	Ogre::Vector4 ScreenSize;
+	Ogre::Vector2 ShadowTexelSize;
+	float ShadowIntensity;
+	float pad0;
+};
+
+struct DirectionalLight
+{
+	Ogre::Vector4 LightDirection;
+	Ogre::Vector4 LightColor;
+	float LightIntensity;
+	Ogre::Vector3 pad1;
+};
+
+struct IlluminationFlags
+{
+	int useDirect;
+	int useShadows;
+	int useRSM;
+	int useLPV;
+	int useVCT;
+	int useVCTDebug;
+	int useDXRReflections;
+	int useDXRAmbientOcclusion;
+	int useSSAO;
+	float rsmGIPower;
+	float lpvGIPower;
+	float vctGIPower;
+	float dxrReflectionsBlend;
+	int showOnlyAO;
+};
+
 class VoxelConeTracingApp
 {
 public:
@@ -84,6 +118,7 @@ private:
 	void shadowPass();
 	void voxelizationPass();
 	void computePass();
+	void lightingPass();
 	void initScene();
 	void addEntry(
 		const std::string& entryName,
@@ -97,13 +132,14 @@ private:
 	static const uint32_t sceneGeometryPassBit = 3;
 	static const uint32_t shadowPassBit = 5;
 	static const uint32_t voxelizationPassBit = 7;
+	static const uint32_t lightingPassBit = 9;
 	SceneManager* mSceneManager = nullptr;
 	GameCamera* mGameCamera = nullptr;
 	RenderSystem* mRenderSystem = nullptr;
 	RenderWindow* mRenderWindow = nullptr;
 	RenderPipeline* mRenderPipeline;
 	FrameConstantBuffer mFrameConstantBuffer;
-	
+
 	VoxelizationContext mVoxelizationContext;
 
 	Handle<HwProgram> mSceneGeometryProgramHandle;
@@ -117,12 +153,22 @@ private:
 
 	Handle<HwComputeProgram> mMipmapPrepareHandle;
 	Handle<HwComputeProgram> mMipmapMainHandle;
+
 	Handle<HwComputeProgram> mTracingConeHandle;
+	
+	Handle< HwProgram> mVCTLightingProgramHandle;
+	Handle< HwPipeline> mVCTLightingPipelineHandle;
+	Handle<HwDescriptorSet> mLightingPassDescriptorSet[2];
+
+
 	Handle<HwBufferObject>  MipmapBlockHandle;
 	Handle<HwBufferObject> tracingVoxelizationBlockHandle;
 	Handle<HwBufferObject> tracingMainBlockHandle;
-	std::vector<VctFrameData> mFrameDatas;
-	
+
+
+
+	std::vector<VctFrameData> mComputeFrameData;
+
 	Ogre::Vector3 mLightPos;
 	Ogre::Vector3 mLightTarget;
 
@@ -132,4 +178,8 @@ private:
 	VoxelizationBlock mVoxelizationBlock;
 
 	VCTMainBlock mVctMainBlock;
+
+	Ogre::Vector3 mLightDirection;
+	Ogre::Camera* mShadowCamera;
+	float mTotalTime = 0.0f;
 };

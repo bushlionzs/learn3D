@@ -1222,6 +1222,16 @@ namespace Ogre {
         VET_COLOUR_ABGR = VET_UBYTE4_NORM,  ///< @deprecated use VET_UBYTE4_NORM
     };
 
+    enum PRIMITIVE_TOPOLOGY_TYPE
+    {
+        PRIMITIVE_TOPOLOGY_UNDEFINED = 0,
+        PRIMITIVE_TOPOLOGY_POINTLIST = 1,
+        PRIMITIVE_TOPOLOGY_LINELIST = 2,
+        PRIMITIVE_TOPOLOGY_LINESTRIP = 3,
+        PRIMITIVE_TOPOLOGY_TRIANGLELIST = 4,
+        PRIMITIVE_TOPOLOGY_TRIANGLESTRIP = 5
+    };
+
     enum VertexElementSemantic {
         /// Position, typically VET_FLOAT3
         VES_POSITION = 1,

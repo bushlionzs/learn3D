@@ -59,10 +59,12 @@ private:
 
     uint32_t mByteCount;
 };
-
+class DX12ProgramImpl;
 struct DX12Pipeline : public HwPipeline
 {
-    DX12Pipeline() {}
+    DX12Pipeline(DX12ProgramImpl* program)
+        :mDX12ProgramImpl(program)
+    {}
     ~DX12Pipeline() {}
 
     void updatePipeline(ID3D12PipelineState* pipeline)
@@ -74,8 +76,15 @@ struct DX12Pipeline : public HwPipeline
     {
         return mPipeline;
     }
+
+    DX12ProgramImpl* getProgram()
+    {
+        return mDX12ProgramImpl;
+    }
 private:
     ID3D12PipelineState* mPipeline;
+
+    DX12ProgramImpl* mDX12ProgramImpl;
 };
 
 class DX12ProgramImpl;

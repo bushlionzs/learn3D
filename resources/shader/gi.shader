@@ -20,13 +20,15 @@ shader vctShadowPass
    shader_unit
 	 {
 		shader_type directx
-		vertex_shader shadowMapping.hlsl VSOnlyMain
+		vertex_shader shadowMapping.hlsl VS
+		frag_shader  shadowMapping.hlsl PS 
 	 }
 	 
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader shadowMapping.hlsl VSOnlyMain
+		vertex_shader shadowMapping.hlsl VS
+		frag_shader  shadowMapping.hlsl PS 
 	 }
 }
 
@@ -94,6 +96,44 @@ shader tracingConePass
 	 }
 }
 
+shader vctLightingPass
+{
+    shader_unit
+	 {
+		shader_type directx
+		vertex_shader VCTLighting.hlsl VSMain
+		frag_shader  VCTLighting.hlsl PSMain 
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader VCTLighting.hlsl VSMain
+		frag_shader  VCTLighting.hlsl PSMain 
+	 }
+}
+
+//vxgi
+
+shader clearVoxelPass
+{
+    shader_unit
+	 {
+		shader_type directx
+		compute_shader clear6FacesClipmapImage3D.hlsl CSMain
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		compute_shader clear6FacesClipmapImage3D.hlsl CSMain
+	 }
+}
+
+
+
+
+//ddgi
 shader VctLighting
 {
     shader_unit

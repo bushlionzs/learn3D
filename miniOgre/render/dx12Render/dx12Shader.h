@@ -92,6 +92,7 @@ private:
     void parseShaderInfo();
     void updateInputDesc(VertexDeclaration* vDeclaration);
 private:
+    std::string mName;
     std::vector<D3D12_INPUT_ELEMENT_DESC> mInputDesc;
     
     uint32_t mInputSize = 0;

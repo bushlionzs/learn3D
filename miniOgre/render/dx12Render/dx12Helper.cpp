@@ -532,7 +532,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		rs->setViewport(0, 0, width, height, 0.0f, 1.0f);
 		rs->setScissor(0, 0, width, height);
 		rs->beginRenderPass(renderPassInfo);
-		rs->bindPipeline(mMipmapHandle, mMipmapPipelineHandle, &mMipMapDescSet, 1);
+		rs->bindPipeline(mMipmapPipelineHandle, &mMipMapDescSet, 1);
 		vertexData->bind(nullptr);
 		indexData->bind();
 		IndexDataView* indexView = subMesh->getIndexView();

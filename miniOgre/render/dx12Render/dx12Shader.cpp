@@ -19,6 +19,7 @@ DX12ProgramImpl::DX12ProgramImpl(
     const ShaderInfo& info,
     VertexDeclaration* decl)
 {
+    mName = info.shaderName;
     load(info);
     updateInputDesc(decl);
     parseShaderInfo();

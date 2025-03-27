@@ -50,7 +50,6 @@ public:
     virtual void endRenderPass(RenderPassInfo& renderPassInfo);
 
     virtual void bindPipeline(
-        Handle<HwProgram> programHandle,
         Handle<HwPipeline> pipelineHandle,
         const Handle<HwDescriptorSet>* descSets,
         uint32_t setCount);
@@ -75,7 +74,7 @@ public:
 
     virtual void dispatchComputeShader();
 
-    virtual void pushGroupMarker(const char* maker);
+    virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color = Ogre::Vector3i(0, 0, 0));
     virtual void popGroupMarker();
 
     virtual void bindVertexBuffer(

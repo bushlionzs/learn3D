@@ -24,6 +24,8 @@ struct FbxVertex
 {
     Ogre::Vector3 Pos;
     Ogre::Vector3 Normal;
+    Ogre::Vector3 tangent;
+    Ogre::Vector3 bitangent;
     Ogre::Vector2 TexC;
 };
 
@@ -70,6 +72,8 @@ bool FbxLoader::loadMeshFromFile(
             aiVector3D* sourceVertices = sourceMesh->mVertices;
             aiVector3D* sourceNormals = sourceMesh->mNormals;
             aiVector3D* sourceTexcoords = sourceMesh->mTextureCoords[0];
+            aiVector3D* sourceTangents = sourceMesh->mTangents;
+            aiVector3D* sourceBitangents = sourceMesh->mBitangents;
             aiColor4D* sourceColors = sourceMesh->mColors[0];
             for (uint32_t index = 0; index < numVertices; index++)
             {
@@ -82,6 +86,14 @@ bool FbxLoader::loadMeshFromFile(
                 vertex.Normal.x = sourceNormals[index].x;
                 vertex.Normal.y = sourceNormals[index].y; 
                 vertex.Normal.z = sourceNormals[index].z;
+
+                vertex.tangent = sourceTangents[index].x;
+                vertex.tangent = sourceTangents[index].y;
+                vertex.tangent = sourceTangents[index].z;
+
+                vertex.bitangent = sourceBitangents[index].x;
+                vertex.bitangent = sourceBitangents[index].y;
+                vertex.bitangent = sourceBitangents[index].z;
 
                 vertex.TexC.x = sourceTexcoords[index].x;
                 vertex.TexC.y = sourceTexcoords[index].y;

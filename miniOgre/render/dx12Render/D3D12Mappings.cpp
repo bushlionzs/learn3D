@@ -461,7 +461,14 @@ namespace Ogre {
             {
                 switch (params.mipMapMode) {
                 case backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST:
+                {
+                    if (params.useComparison)
+                    {
+                        return D3D12_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+                    }
                     return D3D12_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+                }
+                    
                 case backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR:
                     return D3D12_FILTER_MIN_MAG_MIP_LINEAR;
                 }

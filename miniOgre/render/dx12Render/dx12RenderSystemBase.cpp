@@ -300,15 +300,13 @@ void Dx12RenderSystemBase::endRenderPass(RenderPassInfo& renderPassInfo)
 }
 
 void Dx12RenderSystemBase::bindPipeline(
-    Handle<HwProgram> programHandle,
     Handle<HwPipeline> pipelineHandle,
     const Handle<HwDescriptorSet>* descSets,
     uint32_t setCount)
 {
     DX12Pipeline* dx12Pipeline = mResourceAllocator.handle_cast<DX12Pipeline*>(pipelineHandle);
     ID3D12PipelineState* pso = dx12Pipeline->getPipeline();
-    DX12Program* dx12Program = mResourceAllocator.handle_cast<DX12Program*>(programHandle);
-    DX12ProgramImpl* dx12ProgramImpl = dx12Program->getProgramImpl();
+    DX12ProgramImpl* dx12ProgramImpl = dx12Pipeline->getProgram();
     ID3D12GraphicsCommandList* cl = mCommands->get();
 
     auto rootSignature = dx12ProgramImpl->getRootSignature();
@@ -428,11 +426,11 @@ void Dx12RenderSystemBase::dispatchComputeShader()
 {
 }
 
-void Dx12RenderSystemBase::pushGroupMarker(const char* maker) 
+void Dx12RenderSystemBase::pushGroupMarker(const char* maker, const Ogre::Vector3i& color)
 {
 #if defined(USE_PIX)
     ID3D12GraphicsCommandList* cl = mCommands->get();
-    PIXBeginEvent(cl, PIX_COLOR((BYTE)(255), (BYTE)(255), (BYTE)0), maker);
+    PIXBeginEvent(cl, PIX_COLOR((BYTE)(color.x), (BYTE)(color.y), (BYTE)color.z), maker);
 #endif
 }
 void Dx12RenderSystemBase::popGroupMarker() 
@@ -590,10 +588,10 @@ Handle<HwPipeline> Dx12RenderSystemBase::createPipeline(
 )
 {
     Handle<HwPipeline> pipelineHandle = mResourceAllocator.allocHandle<DX12Pipeline>();
-
-    DX12Pipeline* dx12Pipeline = mResourceAllocator.construct<DX12Pipeline>(pipelineHandle);
     DX12Program* dx12Program = mResourceAllocator.handle_cast<DX12Program*>(program);
     DX12ProgramImpl* dx12ProgramImpl = dx12Program->getProgramImpl();
+    DX12Pipeline* dx12Pipeline = mResourceAllocator.construct<DX12Pipeline>(pipelineHandle, dx12ProgramImpl);
+    
     DX12PipelineCache::RasterState dx12RasterState;
 
     dx12RasterState.cullMode = D3D12Mappings::getCullMode(rasterState.culling);

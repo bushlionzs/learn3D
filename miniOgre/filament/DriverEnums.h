@@ -1016,7 +1016,7 @@ struct SamplerParams { // NOLINT
     SamplerWrapMode wrapR           : 2;    //!< r-coordinate wrap mode (CLAMP_TO_EDGE)
     uint8_t anisotropyLog2          : 3;    //!< anisotropy level (0)
     SamplerCompareMode compareMode  : 1;    //!< sampler compare mode (NONE)
-    uint8_t padding0                : 2;    //!< reserved. must be 0.
+    uint8_t useComparison : 2;    //
 
     SamplerCompareFunc compareFunc  : 3;    //!< sampler comparison function (LE)
     
@@ -1032,7 +1032,6 @@ struct SamplerParams { // NOLINT
 
     struct EqualTo {
         bool operator()(SamplerParams lhs, SamplerParams rhs) const noexcept {
-            assert_invariant(lhs.padding0 == 0);
             assert_invariant(lhs.padding1 == 0);
             assert_invariant(lhs.padding2 == 0);
             auto* pLhs = reinterpret_cast<uint32_t const*>(reinterpret_cast<char const*>(&lhs));
@@ -1043,7 +1042,6 @@ struct SamplerParams { // NOLINT
 
     struct LessThan {
         bool operator()(SamplerParams lhs, SamplerParams rhs) const noexcept {
-            assert_invariant(lhs.padding0 == 0);
             assert_invariant(lhs.padding1 == 0);
             assert_invariant(lhs.padding2 == 0);
             auto* pLhs = reinterpret_cast<uint32_t const*>(reinterpret_cast<char const*>(&lhs));
@@ -1225,7 +1223,8 @@ struct RasterState {
             //
             bool depthTest                             : 1;        // 32
 
-            uint16_t renderTargetCount;
+            uint8_t topology;
+            uint8_t renderTargetCount;
             uint16_t pixelFormat[8];
             float                 depthBiasConstantFactor; // offset = 8 bytes
             float                 depthBiasSlopeFactor;    // offset = 12 bytes
