@@ -1,4 +1,21 @@
 #include "common.hlsl"
+
+VKBINDING(0, 0) ConstantBuffer<ObjectBlock> cbPerObject : register(b0, space0);
+VKBINDING(1, 0) ConstantBuffer<PassBlock> cbPass : register(b1, space0);
+VKBINDING(2, 0) ConstantBuffer<MaterialBlock> cbMaterial : register(b2, space0);
+
+Texture2D first        VKBINDING(0, 1): register(t0,space1);
+Texture2D second       VKBINDING(1, 1): register(t1,space1);
+Texture2D third        VKBINDING(2, 1): register(t2,space1);
+Texture2D gShadowMap   VKBINDING(3, 1): register(t3,space1);
+TextureCube gCubeMap   VKBINDING(4, 1): register(t4,space1);
+
+SamplerState firstSampler       VKBINDING(5, 1): register(s0,space1);
+SamplerState secondSampler      VKBINDING(6, 1): register(s1,space1);
+SamplerState thirdSampler       VKBINDING(7, 1): register(s2,space1);
+SamplerState shadowSampler      VKBINDING(8, 1): register(s3,space1);
+SamplerState cubeSampler        VKBINDING(9, 1): register(s4,space1);
+
 struct VertexIn
 {
 	VKLOCATION(0) float3 PosL    : POSITION;

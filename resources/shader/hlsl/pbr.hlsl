@@ -1,5 +1,28 @@
 #include "common.hlsl"
 
+VK_BINDING(0, 0) ConstantBuffer<ObjectBlock> cbPerObject : register(b0, space0);
+VK_BINDING(1, 0) ConstantBuffer<PassBlock> cbPass : register(b1, space0);
+VK_BINDING(2, 0) ConstantBuffer<PbrMaterialBlock> pbrMaterial : register(b2, space0);
+
+Texture2D albedo_pbr           VKBINDING(0, 1): register(t0,space1);
+Texture2D ao_pbr               VKBINDING(1, 1): register(t1,space1);
+Texture2D normal_pbr           VKBINDING(2, 1): register(t2,space1);
+Texture2D emissive_pbr         VKBINDING(3, 1): register(t3,space1);
+Texture2D metal_roughness_pbr  VKBINDING(4, 1): register(t4,space1);
+Texture2D roughness_pbr        VKBINDING(5, 1): register(t5,space1);
+Texture2D brdflut_pbr              VKBINDING(6, 1): register(t6,space1);
+TextureCube irradianceCube     VKBINDING(7, 1): register(t7,space1);
+TextureCube prefilteredCube    VKBINDING(8, 1): register(t8,space1);
+
+SamplerState albedoSampler           VKBINDING(9, 1): register(s0,space1);
+SamplerState aoSampler               VKBINDING(10, 1): register(s1,space1);
+SamplerState normalSampler           VKBINDING(11, 1): register(s2,space1);
+SamplerState emissiveSampler         VKBINDING(12, 1): register(s3,space1);
+SamplerState metalRoughnessSampler   VKBINDING(13, 1): register(s4,space1);
+SamplerState roughnessSampler        VKBINDING(14, 1): register(s5,space1);
+SamplerState brdflutSampler          VKBINDING(15, 1): register(s6,space1);
+SamplerState irradianceSampler       VKBINDING(16, 1): register(s7,space1);
+SamplerState prefilteredSampler      VKBINDING(17, 1): register(s8,space1);
 
 // The MIT License
 // Copyright (c) 2016-2017 Mohamad Moneimne and Contributors

@@ -1,4 +1,3 @@
-#include "base.hlsl"
 // Defaults for number of lights.
 #ifndef MAX_NUM_DIR_LIGHTS
     #define MAX_NUM_DIR_LIGHTS 1
@@ -30,39 +29,7 @@ struct Light {
 #define VKLOCATION(l)
 #endif
 
-#ifdef PBR
-Texture2D albedo_pbr           VKBINDING(0, 1): register(t0,space1);
-Texture2D ao_pbr               VKBINDING(1, 1): register(t1,space1);
-Texture2D normal_pbr           VKBINDING(2, 1): register(t2,space1);
-Texture2D emissive_pbr         VKBINDING(3, 1): register(t3,space1);
-Texture2D metal_roughness_pbr  VKBINDING(4, 1): register(t4,space1);
-Texture2D roughness_pbr        VKBINDING(5, 1): register(t5,space1);
-Texture2D brdflut_pbr              VKBINDING(6, 1): register(t6,space1);
-TextureCube irradianceCube     VKBINDING(7, 1): register(t7,space1);
-TextureCube prefilteredCube    VKBINDING(8, 1): register(t8,space1);
 
-SamplerState albedoSampler           VKBINDING(9, 1): register(s0,space1);
-SamplerState aoSampler               VKBINDING(10, 1): register(s1,space1);
-SamplerState normalSampler           VKBINDING(11, 1): register(s2,space1);
-SamplerState emissiveSampler         VKBINDING(12, 1): register(s3,space1);
-SamplerState metalRoughnessSampler   VKBINDING(13, 1): register(s4,space1);
-SamplerState roughnessSampler        VKBINDING(14, 1): register(s5,space1);
-SamplerState brdflutSampler          VKBINDING(15, 1): register(s6,space1);
-SamplerState irradianceSampler       VKBINDING(16, 1): register(s7,space1);
-SamplerState prefilteredSampler      VKBINDING(17, 1): register(s8,space1);
-#else
-Texture2D first        VKBINDING(0, 1): register(t0,space1);
-Texture2D second       VKBINDING(1, 1): register(t1,space1);
-Texture2D third        VKBINDING(2, 1): register(t2,space1);
-Texture2D gShadowMap   VKBINDING(3, 1): register(t3,space1);
-TextureCube gCubeMap   VKBINDING(4, 1): register(t4,space1);
-
-SamplerState firstSampler       VKBINDING(5, 1): register(s0,space1);
-SamplerState secondSampler      VKBINDING(6, 1): register(s1,space1);
-SamplerState thirdSampler       VKBINDING(7, 1): register(s2,space1);
-SamplerState shadowSampler      VKBINDING(8, 1): register(s3,space1);
-SamplerState cubeSampler        VKBINDING(9, 1): register(s4,space1);
-#endif //PBR
 
 // Constant data that varies per frame.
 
@@ -73,7 +40,6 @@ struct ObjectBlock
 	float4 diffuseColor;
 };
 
-RES(CBUFFER(ObjectBlock), cbPerObject, UPDATE_FREQ_NONE, b0, VKBINDING(0, 0));
 
 struct PassBlock
 {
@@ -96,10 +62,8 @@ struct PassBlock
 	uint numDirLights;
 };
 
-RES(CBUFFER(PassBlock), cbPass, UPDATE_FREQ_NONE, b1, VKBINDING(1, 0));
 
 
-#ifdef PBR
 struct PbrMaterialBlock
 {
     float2 u_MetallicRoughnessValues;
@@ -119,9 +83,20 @@ struct PbrMaterialBlock
 	uint hasOcclusionMap;
 };
 
-RES(CBUFFER(PbrMaterialBlock), pbrMaterial, UPDATE_FREQ_NONE, b2, VKBINDING(2, 0));
+struct ObjMaterialBlock
+{
+	uint u_hasDiffuseTexture;
+	uint u_hasNormalMap;
+	uint u_hasSpecularMap;
+	uint u_hasOpacityMap;
+	uint u_hasEmissionMap;
+	uint u_shininess;
+	float2 u_clipmapResolution;
+	float4 u_emissionColor;
+	float4 u_specularColor;
+	float4 u_color;
+};
 
-#else
 struct MaterialBlock
 {
     float4   gDiffuseAlbedo;
@@ -134,16 +109,12 @@ struct MaterialBlock
 	uint     MatPad1;
 	uint     MatPad2;
 };
-RES(CBUFFER(MaterialBlock), cbMaterial, UPDATE_FREQ_NONE, b2, VKBINDING(2, 0));
 
-#endif //PBR
 
-#ifdef SKINNED
 struct SkinBlock
 {
     float4x4 gBoneTransforms[200];
 };
 
-RES(CBUFFER(SkinBlock), cbSkinned, UPDATE_FREQ_NONE, b3, VKBINDING(3, 0));
 
-#endif
+
