@@ -1,4 +1,4 @@
-#include "base.hlsl"
+#include "common.hlsl"
 
 RWTexture3D<float4> voxelTextureSrcPosX : register(u0);
 RWTexture3D<float4> voxelTextureSrcNegX : register(u1);
@@ -20,7 +20,7 @@ struct MipmapBlock
     int MipLevel;
 };
 
-RES(CBUFFER(MipmapBlock), MipmapCB, UPDATE_FREQ_NONE, b0, VKBINDING(0, 0));
+VKBINDING(0, 0) ConstantBuffer<MipmapBlock> MipmapCB : register(b0, space0);
 
 static const int3 anisoOffsets[8] =
 {
@@ -54,45 +54,77 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
     float4 values[8];
     
     int3 sourcePos = DTid * 2;
-    
+    int i = 0;
+	
+	
     [unroll]
-    for (int i = 0; i < 8; i++)
-        values[i] = voxelTextureSrcPosX.Load(int4(sourcePos + anisoOffsets[i], MipmapCB.MipLevel - 1));
+    for (i = 0; i < 8; i++)
+	{
+	    int3 pos = sourcePos + anisoOffsets[i];
+	    int mipLevel = max((int)MipmapCB.MipLevel - 1, 0);
+	    values[i] = voxelTextureSrcPosX.Load(pos);
+	}
+        
     voxelTextureResultPosX[DTid] =
         (values[4] + values[0] * (1 - values[4].a) + values[5] + values[1] * (1 - values[5].a) +
         values[6] + values[2] * (1 - values[6].a) + values[7] + values[3] * (1 - values[7].a)) * 0.25f;
     
     [unroll]
-    for (int i = 0; i < 8; i++)
-        values[i] = voxelTextureSrcNegX.Load(int4(sourcePos + anisoOffsets[i], MipmapCB.MipLevel - 1));
+    for (i = 0; i < 8; i++)
+	{
+	   int3 pos = sourcePos + anisoOffsets[i];
+	   int mipLevel = max((int)MipmapCB.MipLevel - 1, 0);
+	   values[i] = voxelTextureSrcNegX.Load(pos);
+	}
+        
     voxelTextureResultNegX[DTid] =
         (values[0] + values[4] * (1 - values[0].a) + values[1] + values[5] * (1 - values[1].a) +
 		values[2] + values[6] * (1 - values[2].a) + values[3] + values[7] * (1 - values[3].a)) * 0.25f;
     
     [unroll]
-    for (int i = 0; i < 8; i++)
-        values[i] = voxelTextureSrcPosY.Load(int4(sourcePos + anisoOffsets[i], MipmapCB.MipLevel - 1));
+    for (i = 0; i < 8; i++)
+	{
+	    int3 pos = sourcePos + anisoOffsets[i];
+	    int mipLevel = max((int)MipmapCB.MipLevel - 1, 0);
+	    values[i] = voxelTextureSrcPosY.Load(pos);
+	}
+        
     voxelTextureResultPosY[DTid] =
 	    (values[2] + values[0] * (1 - values[2].a) + values[3] + values[1] * (1 - values[3].a) +
     	values[7] + values[5] * (1 - values[7].a) + values[6] + values[4] * (1 - values[6].a)) * 0.25f;
     
     [unroll]
-    for (int i = 0; i < 8; i++)
-        values[i] = voxelTextureSrcNegY.Load(int4(sourcePos + anisoOffsets[i], MipmapCB.MipLevel - 1));
+    for (i = 0; i < 8; i++)
+	{
+	    int3 pos = sourcePos + anisoOffsets[i];
+	    int mipLevel = max((int)MipmapCB.MipLevel - 1, 0);
+	    values[i] = voxelTextureSrcNegY.Load(pos);
+	}
+        
     voxelTextureResultNegY[DTid] =
 	    (values[0] + values[2] * (1 - values[0].a) + values[1] + values[3] * (1 - values[1].a) +
     	values[5] + values[7] * (1 - values[5].a) + values[4] + values[6] * (1 - values[4].a)) * 0.25f;
     
     [unroll]
-    for (int i = 0; i < 8; i++)
-        values[i] = voxelTextureSrcPosZ.Load(int4(sourcePos + anisoOffsets[i], MipmapCB.MipLevel - 1));
+    for (i = 0; i < 8; i++)
+	{
+	    int3 pos = sourcePos + anisoOffsets[i];
+	    int mipLevel = max((int)MipmapCB.MipLevel - 1, 0);
+	    values[i] = voxelTextureSrcPosZ.Load(pos);
+	}
+        
     voxelTextureResultPosZ[DTid] =
 	    (values[1] + values[0] * (1 - values[1].a) + values[3] + values[2] * (1 - values[3].a) +
     	values[5] + values[4] * (1 - values[5].a) + values[7] + values[6] * (1 - values[7].a)) * 0.25f;
     
     [unroll]
-    for (int i = 0; i < 8; i++)
-        values[i] = voxelTextureSrcNegZ.Load(int4(sourcePos + anisoOffsets[i], MipmapCB.MipLevel - 1));
+    for (i = 0; i < 8; i++)
+	{
+	    int3 pos = sourcePos + anisoOffsets[i];
+	    int mipLevel = max((int)MipmapCB.MipLevel - 1, 0);
+	    values[i] = voxelTextureSrcNegZ.Load(pos);
+	}
+        
     voxelTextureResultNegZ[DTid] =
 	    (values[0] + values[1] * (1 - values[0].a) + values[2] + values[3] * (1 - values[2].a) +
     	values[4] + values[5] * (1 - values[4].a) + values[6] + values[7] * (1 - values[6].a)) * 0.25f;

@@ -1,12 +1,9 @@
+#include "common.hlsl"
 #include "VCTCommon.hlsl"
 
-SamplerState BilinearSampler : register(s0);
-SamplerComparisonState PcfShadowMapSampler : register(s1);
-SamplerState samplerLPV : register(s2);
-
-cbuffer LightingConstantBuffer : register(b0)
+struct LightingConstant
 {
-	float4x4 InvViewProjection;
+    float4x4 InvViewProjection;
     float4x4 ShadowViewProjection;
 	float4 CameraPos;
 	float4 ScreenSize;
@@ -15,7 +12,9 @@ cbuffer LightingConstantBuffer : register(b0)
     float pad0;
 };
 
-cbuffer LightsConstantBuffer : register(b1)
+VKBINDING(0, 0) ConstantBuffer<LightingConstant> LightingConstantBuffer : register(b0, space0);
+
+struct DirectionalLight
 {
     float4 LightDirection;
     float4 LightColor;
@@ -23,15 +22,10 @@ cbuffer LightsConstantBuffer : register(b1)
     float3 pad1;
 };
 
-cbuffer LPVConstantBuffer : register(b2)
-{
-    float4x4 worldToLPV;
-    float LPVCutoff;
-    float LPVPower;
-    float LPVAttenuation;
-}
 
-cbuffer IlluminationFlagsBuffer : register(b3)
+VKBINDING(1, 0) ConstantBuffer<DirectionalLight> DirectionalLightBuffer : register(b1, space0);
+
+struct IlluminationFlags
 {
     int useDirect;
     int useShadows;
@@ -47,34 +41,14 @@ cbuffer IlluminationFlagsBuffer : register(b3)
     float vctGIPower;
     float dxrReflectionsBlend;
     int showOnlyAO;
-}
-
-struct VSInput
-{
-	float4 position : POSITION;
-	float2 uv : TEXCOORD;
 };
 
-struct PSInput
-{
-	float2 uv : TEXCOORD;
-	float4 position : SV_POSITION;
-};
 
-struct PSOutput
-{
-	float4 diffuse : SV_Target0;
-};
+VKBINDING(2, 0) ConstantBuffer<IlluminationFlags> IlluminationFlagsBuffer : register(b2, space0);
 
-PSInput VSMain(VSInput input)
-{
-	PSInput result;
 
-	result.position = float4(input.position.xyz, 1);
-	result.uv = input.uv;
-    
-	return result;
-}
+SamplerState BilinearSampler : register(s0);
+SamplerComparisonState PcfShadowMapSampler : register(s1);
 
 Texture2D<float4> albedoBuffer : register(t0);
 Texture2D<float4> normalBuffer : register(t1);
@@ -90,13 +64,42 @@ Texture2D<float> dxrAmbientOcclusionBuffer : register(t11);
 
 Texture2D<float> ssaoBuffer : register(t12);
 
+
+
+struct VSInput
+{
+	float4 position : POSITION;
+	float2 uv : TEXCOORD;
+};
+
+struct PSInput
+{
+    float4 position : SV_POSITION;
+	float2 uv : TEXCOORD;
+};
+
+struct PSOutput
+{
+	float4 diffuse : SV_Target0;
+};
+
+PSInput VSMain(VSInput input)
+{
+	PSInput result;
+    result.position = float4(input.position.xyz, 1);
+    result.uv = input.uv;
+    return result;
+}
+
+
+
 float CalculateShadow(float3 ShadowCoord)
 {   
     const float Dilation = 2.0;
-    float d1 = Dilation * ShadowTexelSize.x * 0.125;
-    float d2 = Dilation * ShadowTexelSize.x * 0.875;
-    float d3 = Dilation * ShadowTexelSize.x * 0.625;
-    float d4 = Dilation * ShadowTexelSize.x * 0.375;
+    float d1 = Dilation * LightingConstantBuffer.ShadowTexelSize.x * 0.125;
+    float d2 = Dilation * LightingConstantBuffer.ShadowTexelSize.x * 0.875;
+    float d3 = Dilation * LightingConstantBuffer.ShadowTexelSize.x * 0.625;
+    float d4 = Dilation * LightingConstantBuffer.ShadowTexelSize.x * 0.375;
     float result = (
         2.0 *
             shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy, ShadowCoord.z) +
@@ -205,7 +208,6 @@ PSOutput PSMain(PSInput input)
 	PSOutput output = (PSOutput)0;
     float2 inPos = input.position.xy;    
     
-    float depth = depthBuffer[inPos].x;
     float3 normal = normalize(normalBuffer[inPos].rgb);
     float4 albedo = albedoBuffer[inPos];
     float4 worldPos = worldPosBuffer[inPos];
@@ -225,46 +227,46 @@ PSOutput PSMain(PSInput input)
     
     
     //VCT
-    if (useVCT)
+    if (IlluminationFlagsBuffer.useVCT)
     {
         uint gWidth = 0;
         uint gHeight = 0;
         albedoBuffer.GetDimensions(gWidth, gHeight);
         float4 vct = vctBuffer.Sample(BilinearSampler, inPos * float2(1.0f / gWidth, 1.0f / gHeight));
         
-        indirectLighting += vct.rgb * vctGIPower;
-        if (!useVCTDebug)
+        indirectLighting += vct.rgb * IlluminationFlagsBuffer.vctGIPower;
+        if (!IlluminationFlagsBuffer.useVCTDebug)
             ao = 1.0f - vct.a;
     }  
     
-    if (useSSAO)
+    if (IlluminationFlagsBuffer.useSSAO)
     {
         float ssao = ssaoBuffer[inPos];
         ao = 1.0f - ssao;
     }
     
-    if (useDXRAmbientOcclusion)
+    if (IlluminationFlagsBuffer.useDXRAmbientOcclusion)
     {
         float rtao = dxrAmbientOcclusionBuffer[inPos];
         ao = rtao;
     }
     
     float shadow = 1.0f;
-    if (useShadows)
+    if (IlluminationFlagsBuffer.useShadows)
     {
-        float4 lightSpacePos = mul(ShadowViewProjection, worldPos);
+        float4 lightSpacePos = mul(LightingConstantBuffer.ShadowViewProjection, worldPos);
         float4 shadowcoord = lightSpacePos / lightSpacePos.w;
         shadowcoord.rg = shadowcoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
         shadow = CalculateShadow(shadowcoord.rgb);
     }
     
-    if (useDirect)
+    if (IlluminationFlagsBuffer.useDirect)
     {
-        float3 viewDir = normalize(CameraPos.xyz - worldPos.xyz);
+        float3 viewDir = normalize(LightingConstantBuffer.CameraPos.xyz - worldPos.xyz);
 
-        float3 lightDir = LightDirection.xyz;
-        float3 lightColor = LightColor.xyz;
-        float lightIntensity = LightIntensity;
+        float3 lightDir = DirectionalLightBuffer.LightDirection.xyz;
+        float3 lightColor = DirectionalLightBuffer.LightColor.xyz;
+        float lightIntensity = DirectionalLightBuffer.LightIntensity;
         float NdotL = saturate(dot(normal.xyz, lightDir));
             
         float roughness = albedo.a;
@@ -277,9 +279,9 @@ PSOutput PSMain(PSInput input)
         directLighting = max(direct, 0.0f) * NdotL * lightIntensity * lightColor;
     }
     
-    output.diffuse.rgb = ao * indirectLighting + (directLighting + (useDXRReflections ? lerp(reflectionsDXR, directLighting * albedo.a, dxrReflectionsBlend) : 0.0f)) * shadow;;
+    output.diffuse.rgb = ao * indirectLighting + (directLighting + (IlluminationFlagsBuffer.useDXRReflections ? lerp(reflectionsDXR, directLighting * albedo.a, IlluminationFlagsBuffer.dxrReflectionsBlend) : 0.0f)) * shadow;;
     output.diffuse.rgb = saturate(output.diffuse.rgb);
-    if (showOnlyAO)
+    if (IlluminationFlagsBuffer.showOnlyAO)
         output.diffuse.rgb = float3(ao.xxx);
     
     return output;
