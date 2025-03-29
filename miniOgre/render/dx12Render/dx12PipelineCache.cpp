@@ -135,6 +135,8 @@ DX12PipelineCache::DX12PipelineCacheEntry* DX12PipelineCache::createPipeline()
     psoDesc.RasterizerState.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
     psoDesc.RasterizerState.MultisampleEnable = FALSE;
     psoDesc.RasterizerState.SlopeScaledDepthBias = mPipelineRequirements.rasterState.depthBiasSlopeFactor;
+    psoDesc.RasterizerState.DepthBias = mPipelineRequirements.rasterState.depthBias;
+    psoDesc.RasterizerState.DepthClipEnable = psoDesc.RasterizerState.DepthBias > 0.1f;
 
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);

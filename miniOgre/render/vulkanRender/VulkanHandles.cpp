@@ -103,6 +103,13 @@ void VulkanDescriptorSet::acquire(VulkanBufferObject* bufferObject) {
     mResources.acquire(bufferObject);
 }
 
+void VulkanDescriptorSet::updateVulkanProgram(VulkanProgram* vulkanProgram)
+{
+    mVulkanProgram = vulkanProgram;
+
+    mVulkanProgram->getDescriptor("aabb");
+}
+
 PushConstantDescription::PushConstantDescription(backend::Program const& program) noexcept {
     mRangeCount = 0;
     for (auto stage : { ShaderStage::VERTEX, ShaderStage::FRAGMENT, ShaderStage::COMPUTE }) {

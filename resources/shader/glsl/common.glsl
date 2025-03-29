@@ -16,6 +16,8 @@ struct Light {
     float FalloffEnd;   // point/spot light only
     vec3 Position;    // point light only
     float SpotPower;    // spot light only
+	vec3 lightColor;
+	float pad;
 	mat4 viewProj;
 };
 
@@ -151,5 +153,7 @@ layout(set=1, binding = 6) uniform sampler secondSampler;
 layout(set=1, binding = 7) uniform sampler thirdSampler;
 layout(set=1, binding = 8) uniform sampler shadowSampler;
 layout(set=1, binding = 9) uniform sampler cubeSampler;
+
+
 
 #endif //PBR

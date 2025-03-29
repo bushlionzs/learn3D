@@ -33,6 +33,8 @@ shader basic2
 		shader_type vulkan
 		vertex_shader basic2.hlsl VS
 		frag_shader basic2.hlsl PS
+		//vertex_shader scene.vert.glsl main
+		//frag_shader scene.frag.glsl main
 	 }
 }
 
@@ -322,8 +324,8 @@ shader shadow
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader shadow.glsl vs
-		frag_shader shadow.glsl ps
+		vertex_shader shadow.hlsl vs
+		frag_shader shadow.hlsl ps
 	 }
 }
 

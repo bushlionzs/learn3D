@@ -37,18 +37,39 @@ namespace Ogre {
         Ogre::Vector3 getLightUp();
         Ogre::Vector3 getLightDirection();
 
+
+        void updateDirection(const Ogre::Vector3& dir)
+        {
+            mDirection = dir;
+        }
+
+        void updatePosition(const Ogre::Vector3& position)
+        {
+            mPosition = position;
+        }
+
+        void updateViewMatrix(const Ogre::Matrix4& viewMatrix)
+        {
+            mViewMatrix = viewMatrix;
+        }
+
+        void updateProjectMatrix(const Ogre::Matrix4& projectMatrix)
+        {
+            mProjMatrix = projectMatrix;
+        }
+
     public:
         Ogre::Vector3 Strength = { 0.5f, 0.5f, 0.5f };
         float FalloffStart = 1.0f;                          // point/spot light only
-        Ogre::Vector3 Direction = { 0.0f, -1.0f, 0.0f };// directional/spot light only
+        Ogre::Vector3 mDirection = { 0.0f, -1.0f, 0.0f };// directional/spot light only
         float FalloffEnd = 10.0f;                           // point/spot light only
-        Ogre::Vector3 Position = { 0.0f, 0.0f, 0.0f };  // point/spot light only
+        Ogre::Vector3 mPosition = { 0.0f, 0.0f, 0.0f };  // point/spot light only
         float SpotPower = 64.0f;                            // spot light only
 
         uint32_t mLightNumber = 0;
         LightType mLightType = LightType_Direction;
         //for shadow only
-        mutable Ogre::Vector3 mPosition;
+
         mutable Ogre::Matrix4 mViewMatrix;
         mutable Ogre::Matrix4 mProjMatrix;
     };

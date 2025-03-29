@@ -27,7 +27,7 @@ public:
         D3D12_BLEND_OP         colorBlendOp : 4;        // offset = 6 bytes
         D3D12_BLEND_OP         alphaBlendOp : 4;
         D3D12_COMPARISON_FUNC    depthCompareOp;          // offset = 7 bytes
-        float                 depthBiasConstantFactor; // offset = 8 bytes
+        uint32_t                 depthBias; // offset = 8 bytes
         float                 depthBiasSlopeFactor;    // offset = 12 bytes
     };
 

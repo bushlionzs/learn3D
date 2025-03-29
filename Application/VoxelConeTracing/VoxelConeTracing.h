@@ -12,7 +12,6 @@
 struct VctFrameResourceInfo
 {
 	Handle<HwDescriptorSet> zeroSet;
-	Handle<HwDescriptorSet> firstSet;
 	Handle<HwDescriptorSet> zeroShadowSet;
 	Handle<HwBufferObject>  modelObjectHandle;
 	Handle<HwBufferObject>  matObjectHandle;

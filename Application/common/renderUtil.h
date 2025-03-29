@@ -6,7 +6,10 @@
 
 class GameCamera;
 struct UserDefineShader;
-using RenderableInitCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
+using RenderableInitCallback = std::function< void(
+    uint32_t frameIndex, 
+    Ogre::Renderable* r,
+    filament::backend::Handle<filament::backend::HwProgram> shadowHandle)>;
 using RenderableUpdateCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
 using RenderableBindCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable*r)>;
 using RenderableDrawCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
@@ -17,6 +20,7 @@ struct UserDefineShader
     RenderableDrawCallback drawCallback;
     RenderableBindCallback bindCallback;
     RenderableUpdateCallback updateCallback;
+    filament::backend::Handle<filament::backend::HwProgram> shadowHandle;
 };
 
 struct FrameResourceInfo
@@ -30,7 +34,10 @@ struct FrameResourceInfo
     bool update;
 };
 
-void initFrameResource(uint32_t frameIndex, Ogre::Renderable* r);
+void initFrameResource(
+    uint32_t frameIndex, 
+    Ogre::Renderable* r, 
+    filament::backend::Handle<filament::backend::HwProgram> shadowHandle);
 
 void updateFrameResource(uint32_t frameIndex, Ogre::Renderable* r);
 

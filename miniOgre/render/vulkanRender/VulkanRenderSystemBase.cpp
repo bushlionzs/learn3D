@@ -397,6 +397,15 @@ void VulkanRenderSystemBase::beginRenderPass(
 
         bluevk::vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
         bluevk::vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+
+        if (renderPassInfo.shadowPass)
+        {
+            /*vkCmdSetDepthBias(
+                cmdBuffer,
+                1.25,
+                0.0f,
+                1.75);*/
+        }
     }
 }
 
@@ -679,18 +688,38 @@ bool VulkanRenderSystemBase::getBufferObject(Handle<HwBufferObject> boh,
     assert_invariant(false);
     return true;
 }
-
+static std::set< VulkanShaderProgram*> aa;
 Handle<HwDescriptorSet> VulkanRenderSystemBase::createDescriptorSet(
     Handle<HwProgram> programHandle,
     uint32_t set)
 {
-    Handle<HwDescriptorSet> dsh = mResourceAllocator.allocHandle<VulkanDescriptorSet>();
+    
     VulkanShaderProgram* vulkanProgram = mResourceAllocator.handle_cast<VulkanShaderProgram*>(programHandle);
+    const char* name = vulkanProgram->name.c_str();
+    
+    if (strcmp(name, "vctShadowPass") == 0)
+    {
+        aa.insert(vulkanProgram);
+        if (aa.size() > 1)
+        {
+            int kk = 0;
+        }
+    }
+
+    
     Handle<HwDescriptorSetLayout> layoutHandle = vulkanProgram->getLayout(set);
+
+    if (!layoutHandle)
+    {
+        return Handle <HwDescriptorSet>();
+    }
+
+    Handle<HwDescriptorSet> dsh = mResourceAllocator.allocHandle<VulkanDescriptorSet>();
     VulkanDescriptorSetLayout* layout = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(layoutHandle);
     VkDescriptorSet vkSet = mDescriptorInfinitePool->obtainSet(layout);
     VulkanDescriptorSet* vulkanDescSet = mResourceAllocator.construct<VulkanDescriptorSet>(dsh, &mResourceAllocator, vkSet, set);
     vulkanDescSet->updateVulkanProgram(vulkanProgram);
+    vulkanDescSet->updateName(name);
     return dsh;
 }
 
@@ -1119,20 +1148,28 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     vulkanRasterState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
     vulkanRasterState.colorTargetCount = rasterState.renderTargetCount;
     vulkanRasterState.depthCompareOp = rasterState.depthFunc;
-    vulkanRasterState.depthBiasConstantFactor = 0.0f;
-    vulkanRasterState.depthBiasSlopeFactor = 0.0f;
-
+    vulkanRasterState.depthBiasConstantFactor = rasterState.depthBiasConstantFactor;
+    vulkanRasterState.depthBiasSlopeFactor = rasterState.depthBiasSlopeFactor;
+    vulkanRasterState.depthBiasEnable = rasterState.depthBiasConstantFactor > 0.1f;
     std::vector<VkVertexInputBindingDescription>& vertexInputBindings =
         vulkanProgram->getVertexInputBindings();
     std::vector<VkVertexInputAttributeDescription>& attributeDescriptions =
         vulkanProgram->getAttributeDescriptions();
-    PixelFormat format = (PixelFormat)rasterState.pixelFormat[0];
-    if (format == PF_UNKNOWN)
+
+    VkFormat colorFormat[8];
+    for (uint32_t i = 0; i < 8; i++)
     {
-        format = mRenderWindow->getColorFormat();
+        PixelFormat format = (PixelFormat)rasterState.pixelFormat[i];
+        if (format == PF_UNKNOWN)
+        {
+            format = mRenderWindow->getColorFormat();
+        }
+        VkFormat vkFormat = VulkanMappings::_getPF(format);
+        colorFormat[i] = vkFormat;
     }
     
-    VkFormat colorFormat = VulkanMappings::_getPF(format);
+    
+    
     mPipelineCache->bindFormat(colorFormat, VK_FORMAT_D32_SFLOAT);
     mPipelineCache->bindProgram(
         vulkanProgram->getVertexShader(), 
@@ -1163,6 +1200,10 @@ void VulkanRenderSystemBase::updateDescriptorSet(
     const DescriptorData* pParams
 )
 {
+    if (0 == count)
+    {
+        return;
+    }
     VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
     VulkanProgram* vulkanProgram = set->getVulkanProgram();
     VkDescriptorImageInfo imageInfos[MAX_HANDLE_COUNT * 4];

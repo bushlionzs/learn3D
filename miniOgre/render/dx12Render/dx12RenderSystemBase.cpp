@@ -614,7 +614,7 @@ Handle<HwPipeline> Dx12RenderSystemBase::createPipeline(
     dx12RasterState.colorTargetCount = rasterState.renderTargetCount;
     dx12RasterState.depthCompareOp = D3D12Mappings::getComparisonFunc(rasterState.depthFunc);
     dx12RasterState.depthBiasSlopeFactor = rasterState.depthBiasSlopeFactor;
-    dx12RasterState.depthBiasConstantFactor = rasterState.depthBiasConstantFactor;
+    dx12RasterState.depthBias = static_cast<int>(rasterState.depthBiasConstantFactor / (1.0f / (1 << 24)));
 
     DXGI_FORMAT colorFormat[8] = {};
     for (uint32_t i = 0; i < rasterState.renderTargetCount; i++)
@@ -694,13 +694,9 @@ void Dx12RenderSystemBase::updateDescriptorSet(
     {
         const DescriptorData* pParam = pParams + i;
         const DescriptorInfo* descriptroInfo = dx12ProgramImpl->getDescriptor(pParam->pName);
-        if (strcmp(pParam->pName, "RenderTarget") == 0)
-        {
-            int kk = 0;
-        }
         if (descriptroInfo == nullptr)
         {
-            assert_invariant(false);
+            //assert_invariant(false);
             continue;
         }
         dx12DescSet->addDescriptroInfo(descriptroInfo);

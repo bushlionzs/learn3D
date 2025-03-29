@@ -156,6 +156,7 @@ struct RenderPassInfo
     uint32_t            extent[2];
     bool viewport = true;
     bool flipY = true;
+    bool shadowPass = false;
     const char* passName = nullptr;
 };
 
@@ -182,6 +183,8 @@ struct LightInfo
     float SpotPower = 64.0f;                            // spot light only
     Ogre::Vector3 lightColor = {1.0f, 1.0f, 1.0f};
     float pad;
+
+    Ogre::Matrix4 lightViewProject;
 };
 
 struct FrameConstantBuffer

@@ -137,6 +137,18 @@ material BaseWhite
 	}
 }
 
+material NoTexture
+{
+    technique
+	{
+		pass
+		{
+			lighting off
+			shader basic2
+		}
+	}
+}
+
 
 
 material mysphere

@@ -348,11 +348,11 @@ VkSampler VulkanHelper::getSampler(const filament::backend::SamplerParams& param
             .addressModeW = VulkanMappings::getWrapMode(params.wrapR),
             .anisotropyEnable = params.anisotropyLog2 == 0 ? VK_FALSE : VK_TRUE,
             .maxAnisotropy = params.anisotropyLog2 == 0?0.0f:(float)(1u << params.anisotropyLog2),
-            .compareEnable = VulkanMappings::getCompareEnable(params.compareMode),
+            .compareEnable = VulkanMappings::getCompareEnable(params),
             .compareOp = VulkanMappings::getCompareOp(params.compareFunc),
             .minLod = 0.0f,
             .maxLod = VulkanMappings::getMaxLod(params.mipMapMode),
-            .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+            .borderColor = VK_BORDER_COLOR_INT_OPAQUE_WHITE,
             .unnormalizedCoordinates = VK_FALSE
     };
 

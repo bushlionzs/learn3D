@@ -1154,6 +1154,11 @@ struct RasterState {
         blendFunctionSrcAlpha = BlendFunction::ONE;
         blendFunctionDstRGB = BlendFunction::ZERO;
         blendFunctionDstAlpha = BlendFunction::ZERO;
+
+        for (uint32_t i = 0; i < 8; i++)
+        {
+            pixelFormat[i] = 0;
+        }
     }
 
     bool operator == (RasterState rhs) const noexcept { return u == rhs.u; }

@@ -63,5 +63,7 @@ private:
 		const tinygltf::Image& image);
 private:
 	std::unordered_map<uint32_t, Ogre::Bone*> mBoneMap;
+
+	std::vector<Matrix4> mTransforms;
 	bool mBinary;
 };

@@ -184,11 +184,11 @@ public:
 
     void acquire(VulkanBufferObject* texture);
 
-    void updateVulkanProgram(VulkanProgram* vulkanProgram)
+    void updateVulkanProgram(VulkanProgram* vulkanProgram);
+    void updateName(const char* name)
     {
-        mVulkanProgram = vulkanProgram;
+        strncpy(mName, name, sizeof(mName) - 1);
     }
-
     VulkanProgram* getVulkanProgram()
     {
         return mVulkanProgram;
@@ -200,6 +200,7 @@ private:
     VulkanAcquireOnlyResourceManager mResources;
     OnRecycle mOnRecycleFn;
     VulkanProgram* mVulkanProgram;
+    char mName[32];
 };
 
 struct VulkanPipelineLayout : public VulkanResource, HwPipelineLayout {

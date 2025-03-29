@@ -92,7 +92,7 @@ void VoxelConeTracingApp::setup(
 
 	if (1)
 	{
-		computePass();
+		//computePass();
 	}
 
 	if (1)
@@ -111,10 +111,11 @@ void VoxelConeTracingApp::setup(
 
 void VoxelConeTracingApp::update(float delta)
 {
-	mTotalTime += delta;
-    float v = sin(mTotalTime * 1.0f);
-	//v = 0.9468;
 	mLightDirection = Ogre::Vector3(0.191, 1.0f, 0.574f);
+	mTotalTime += delta;
+    float v = sin(mTotalTime * 0.2f);
+
+	v = 0.5;
 	mLightDirection.x = v;
 
 	Ogre::Vector3 eyePositon = Ogre::Vector3::ZERO;
@@ -165,7 +166,7 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		descriptorData[0].mCount = 1;
 		descriptorData[0].pName = "cbPass";
 		descriptorData[0].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-		descriptorData[0].ppBuffers = &zeroFrameBufferHandle;
+		descriptorData[0].ppBuffers = &tmp[frameIndex];
 
 		mRenderSystem->updateDescriptorSet(resourceInfo->zeroSet, 1, descriptorData);
 
@@ -177,10 +178,7 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
 
-		Handle<HwDescriptorSet> descriptorSet[2];
-		descriptorSet[0] = resourceInfo->zeroSet;
-		descriptorSet[1] = resourceInfo->firstSet;
-		mRenderSystem->bindPipeline(mSceneGeometryPipelineHandle, descriptorSet, 2);
+		mRenderSystem->bindPipeline(mSceneGeometryPipelineHandle, &resourceInfo->zeroSet, 1);
 
 
 		VertexData* vertexData = r->getVertexData();
@@ -224,7 +222,19 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		mSceneManager->getSceneRenderList(mGameCamera->getCamera(), renderList, false);
 		for (auto r : renderList.mOpaqueList)
 		{
-			updateFrameResource(frameIndex, r);
+			void* frameData = r->getFrameResourceInfo(frameIndex);
+			VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
+			if (resourceInfo)
+			{
+				ObjectConstantBuffer objectBuffer;
+				const auto& modelMatrix = r->getModelMatrix();
+
+				objectBuffer.world = modelMatrix.transpose();
+				objectBuffer.diffuseColor = r->getColor();
+				mRenderSystem->updateBufferObject(resourceInfo->modelObjectHandle,
+					(const char*)&objectBuffer, sizeof(objectBuffer));
+			}
+			
 		}
 		};
 
@@ -271,7 +281,7 @@ void VoxelConeTracingApp::shadowPass()
 		descriptorData.mCount = 1;
 		descriptorData.pName = "cbPass";
 		descriptorData.ppBuffers = &tmp[frameIndex];
-		FrameResourceInfo* resourceInfo = (FrameResourceInfo*)r->getFrameResourceInfo(frameIndex);
+		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)r->getFrameResourceInfo(frameIndex);
 		mRenderSystem->updateDescriptorSet(resourceInfo->zeroShadowSet, 1, &descriptorData);
 		};
 	userDefineShader.bindCallback = bindCallback;
@@ -300,8 +310,33 @@ void VoxelConeTracingApp::shadowPass()
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
 		info.passName = "vctShadowPass";
 		mRenderSystem->pushGroupMarker("vctShadowPass");
+		{
+			RenderTargetBarrier rtBarriers[] =
+			{
+				{
+					 context->depthTarget,
+					 RESOURCE_STATE_UNDEFINED,
+					 RESOURCE_STATE_DEPTH_WRITE
+				}
+			};
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		}
+		
+
 		renderScene(lightCam, mSceneManager,
 			info, pUserDefineShader);
+
+		{
+			RenderTargetBarrier rtBarriers[] =
+			{
+				{
+					 context->depthTarget,
+					 RESOURCE_STATE_DEPTH_WRITE,
+					 RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+				}
+			};
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		}
 		mRenderSystem->popGroupMarker();
 		};
 
@@ -385,32 +420,45 @@ void VoxelConeTracingApp::voxelizationPass()
 		info.passName = "VoxelizationPass";
 		info.extent[0] = VCT_SCENE_VOLUME_SIZE;
 		info.extent[1] = VCT_SCENE_VOLUME_SIZE;
-		RenderTargetBarrier rtBarriers[] =
-		{
-			{
-				 context->depthTarget,
-				RESOURCE_STATE_DEPTH_WRITE,
-				RESOURCE_STATE_SHADER_RESOURCE
-			}
-		};
-		mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		
 		mRenderSystem->pushGroupMarker("VoxelizationPass");
+		{
+			RenderTargetBarrier rtBarriers[] = {
+			{
+				 context->voxelizationTarget,
+				 RESOURCE_STATE_SHADER_RESOURCE,
+				  RESOURCE_STATE_COPY_DEST
+			}
+			};
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		}
 		mRenderSystem->clearRenderTarget(context->voxelizationTarget, Ogre::Vector4::ZERO);
-		rtBarriers[0] = {
-			context->voxelizationTarget,
-			RESOURCE_STATE_UNORDERED_ACCESS,
-			RESOURCE_STATE_UNORDERED_ACCESS
-		};
-		mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		{
+			RenderTargetBarrier rtBarriers[] = {
+			{
+				 context->voxelizationTarget,
+				 RESOURCE_STATE_COPY_DEST,
+				  RESOURCE_STATE_UNORDERED_ACCESS
+			}
+			};
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		}
+		
 		renderScene(mGameCamera->getCamera(), mSceneManager,
 			info, pUserDefineShader);
+
+		{
+			RenderTargetBarrier rtBarriers[] = {
+			{
+				 context->voxelizationTarget,
+				 RESOURCE_STATE_UNORDERED_ACCESS,
+				  RESOURCE_STATE_SHADER_RESOURCE
+			}
+			};
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		}
 		mRenderSystem->popGroupMarker();
-		rtBarriers[0] = {
-			context->depthTarget,
-				RESOURCE_STATE_SHADER_RESOURCE,
-				RESOURCE_STATE_DEPTH_WRITE
-		};
-		mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		
 		};
 	
 	UpdatePassCallback updateCallback = [=, this](float delta) {
@@ -689,7 +737,7 @@ void VoxelConeTracingApp::lightingPass()
 	shaderInfo.shaderName = "vctLightingPass";
 
 	VertexDeclaration decl;
-	decl.addElement(0, 0, 0, VET_FLOAT4, VES_POSITION);
+	decl.addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
 	decl.addElement(0, 0, 12, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
 	mVCTLightingProgramHandle = mRenderSystem->createShaderProgram(shaderInfo, &decl);
@@ -732,7 +780,7 @@ void VoxelConeTracingApp::lightingPass()
 	params.wrapR = backend::SamplerWrapMode::REPEAT;
 	params.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
 	params.compareFunc = backend::SamplerCompareFunc::LE;
-	params.anisotropyLog2 = 4;
+	params.anisotropyLog2 = 0;
 	params.useComparison = 1;
 	params.padding1 = 0;
 	params.padding2 = 0;
@@ -798,47 +846,55 @@ void VoxelConeTracingApp::lightingPass()
 	Ogre::OgreTexture* albedoTexture = mVoxelizationContext.albedoTarget->getTarget();
 	descriptorData[4].pName = "albedoBuffer";
 	descriptorData[4].mCount = 1;
+	descriptorData[4].mLevel = 0;
 	descriptorData[4].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[4].ppTextures = (const OgreTexture**)&albedoTexture;
 
 	Ogre::OgreTexture* normalTexture = mVoxelizationContext.normalTarget->getTarget();
 	descriptorData[5].pName = "normalBuffer";
 	descriptorData[5].mCount = 1;
+	descriptorData[4].mLevel = 0;
 	descriptorData[5].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[5].ppTextures = (const OgreTexture**)&normalTexture;
 
 	Ogre::OgreTexture* worldPosTexture = mVoxelizationContext.worldPosTarget->getTarget();
 	descriptorData[6].pName = "worldPosBuffer";
 	descriptorData[6].mCount = 1;
+	descriptorData[4].mLevel = 0;
 	descriptorData[6].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[6].ppTextures = (const OgreTexture**)&worldPosTexture;
 
 	Ogre::OgreTexture* shadowTexture = mVoxelizationContext.depthTarget->getTarget();
 	descriptorData[7].pName = "shadowBuffer";
 	descriptorData[7].mCount = 1;
+	descriptorData[4].mLevel = 0;
 	descriptorData[7].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[7].ppTextures = (const OgreTexture**)&shadowTexture;
 
 	Ogre::OgreTexture* vctTexture = mVoxelizationContext.tracingResultTarget->getTarget();
 	descriptorData[8].pName = "vctBuffer";
 	descriptorData[8].mCount = 1;
+	descriptorData[4].mLevel = 0;
 	descriptorData[8].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[8].ppTextures = (const OgreTexture**)&vctTexture;
 
 
 	descriptorData[9].pName = "dxrReflectionsBuffer";
 	descriptorData[9].mCount = 1;
+	descriptorData[4].mLevel = 0;
 	descriptorData[9].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[9].ppTextures = (const OgreTexture**)&defaultTex;
 
 
 	descriptorData[10].pName = "dxrAmbientOcclusionBuffer";
 	descriptorData[10].mCount = 1;
+	descriptorData[4].mLevel = 0;
 	descriptorData[10].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[10].ppTextures = (const OgreTexture**)&defaultTex;
 
 	descriptorData[11].pName = "ssaoBuffer";
 	descriptorData[11].mCount = 1;
+	descriptorData[4].mLevel = 0;
 	descriptorData[11].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[11].ppTextures = (const OgreTexture**)&defaultTex;
 
@@ -871,15 +927,15 @@ void VoxelConeTracingApp::lightingPass()
 	
 	struct FullscreenVertex
 	{
-		Ogre::Vector4 position;
+		Ogre::Vector3 position;
 		Ogre::Vector2 uv;
 	};
 	FullscreenVertex quadVertices[] =
 	{
-		{ { -1.0f, -1.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } },       // Bottom left.
-		{ { -1.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } },        // Top left.
-		{ { 1.0f, -1.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } },        // Bottom right.
-		{ { 1.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } },         // Top right.
+		{ { -1.0f, -1.0f, 0.0f},{ 0.0f, 1.0f } },       // Bottom left.
+		{ { -1.0f, 1.0f, 0.0f },{ 0.0f, 0.0f } },        // Top left.
+		{ { 1.0f, -1.0f, 0.0f },{ 1.0f, 1.0f } },        // Bottom right.
+		{ { 1.0f, 1.0f, 0.0f },{ 0.0f, 1.0f } },         // Top right.
 	};
 
 	desc.mBindingType = BufferObjectBinding_Vertex;
@@ -917,6 +973,29 @@ void VoxelConeTracingApp::lightingPass()
 		info.extent[1] = VCT_SCENE_VOLUME_SIZE;
 
 		mRenderSystem->pushGroupMarker("lightingPass");
+		{
+			RenderTargetBarrier rtBarriers[] =
+			{
+				{
+					 context->albedoTarget,
+					RESOURCE_STATE_RENDER_TARGET,
+					RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+				},
+				{
+					 context->normalTarget,
+					RESOURCE_STATE_RENDER_TARGET,
+					RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+				},
+				{
+					 context->worldPosTarget,
+					RESOURCE_STATE_RENDER_TARGET,
+					RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+				},
+			};
+
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers);
+		}
+		
 		mRenderSystem->beginRenderPass(info);
 		uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		VctFrameData* frameData = &mComputeFrameData[frameIndex];
@@ -925,8 +1004,31 @@ void VoxelConeTracingApp::lightingPass()
 		mRenderSystem->bindVertexBuffer(vertexHandle, 0, sizeof(FullscreenVertex));
 		mRenderSystem->bindIndexBuffer(indexHandle, 2);
 		mRenderSystem->drawIndexed(6, 1, 0, 0, 0);
-		mRenderSystem->popGroupMarker();
 		mRenderSystem->endRenderPass(info);
+
+		{
+			RenderTargetBarrier rtBarriers[] =
+			{
+				{
+					 context->albedoTarget,
+					 RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+					RESOURCE_STATE_RENDER_TARGET
+				},
+				{
+					 context->normalTarget,
+					 RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+					RESOURCE_STATE_RENDER_TARGET
+				},
+				{
+					 context->worldPosTarget,
+					 RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+					RESOURCE_STATE_RENDER_TARGET
+				},
+			};
+
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers);
+		}
+		mRenderSystem->popGroupMarker();
 		};
 
 	
@@ -1033,7 +1135,7 @@ void VoxelConeTracingApp::initScene()
 	backend::RasterState rasterState{};
 	rasterState.depthBiasConstantFactor = 0.0f;
 	rasterState.depthBiasSlopeFactor = 0.0f;
-	auto targetCount = 4;
+	auto targetCount = 3;
 	rasterState.depthFunc = SamplerCompareFunc::LE;
 	rasterState.renderTargetCount = targetCount;
 	rasterState.depthWrite = true;
@@ -1041,7 +1143,6 @@ void VoxelConeTracingApp::initScene()
 	rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8B8G8R8;
 	rasterState.pixelFormat[1] = Ogre::PixelFormat::PF_RGBA16_SNORM;
 	rasterState.pixelFormat[2] = Ogre::PixelFormat::PF_FLOAT32_RGBA;
-	rasterState.pixelFormat[3] = Ogre::PixelFormat::PF_A8R8G8B8;
 	mSceneGeometryPipelineHandle = mRenderSystem->createPipeline(rasterState, mSceneGeometryProgramHandle);
 
 	//
@@ -1085,8 +1186,8 @@ void VoxelConeTracingApp::initScene()
 	params.wrapR = backend::SamplerWrapMode::REPEAT;
 	params.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
 	params.compareFunc = backend::SamplerCompareFunc::LE;
-	params.anisotropyLog2 = 4;
-	params.useComparison = 0;
+	params.anisotropyLog2 = 0;
+	params.useComparison = 1;
 	params.padding1 = 0;
 	params.padding2 = 0;
 	Handle<HwSampler>samplerHandle = mRenderSystem->createTextureSampler(params);
@@ -1442,54 +1543,63 @@ void VoxelConeTracingApp::initScene()
 	OgreTexture* normalTexture = mVoxelizationContext.normalTarget->getTarget();
 	descriptorData[1].pName = "normalBuffer";
 	descriptorData[1].mCount = 1;
+	descriptorData[1].mLevel = 0;
 	descriptorData[1].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[1].ppTextures = (const OgreTexture**)&normalTexture;
 
 	OgreTexture* worldPosTexture = mVoxelizationContext.worldPosTarget->getTarget();
 	descriptorData[2].pName = "worldPosBuffer";
 	descriptorData[2].mCount = 1;
+	descriptorData[2].mLevel = 0;
 	descriptorData[2].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[2].ppTextures = (const OgreTexture**)&worldPosTexture;
 
 	OgreTexture* posxTexture = mVoxelizationContext.posxResultTarget->getTarget();
 	descriptorData[3].pName = "voxelTexturePosX";
 	descriptorData[3].mCount = 1;
+	descriptorData[3].mLevel = 0;
 	descriptorData[3].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[3].ppTextures = (const OgreTexture**)&posxTexture;
 
 	OgreTexture* negxTexture = mVoxelizationContext.negxResultTarget->getTarget();
 	descriptorData[4].pName = "voxelTextureNegX";
 	descriptorData[4].mCount = 1;
+	descriptorData[4].mLevel = 0;
 	descriptorData[4].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[4].ppTextures = (const OgreTexture**)&negxTexture;
 
 	OgreTexture* posyTexture = mVoxelizationContext.posyResultTarget->getTarget();
 	descriptorData[5].pName = "voxelTexturePosY";
 	descriptorData[5].mCount = 1;
+	descriptorData[5].mLevel = 0;
 	descriptorData[5].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[5].ppTextures = (const OgreTexture**)&posyTexture;
 
 	OgreTexture* negyTexture = mVoxelizationContext.negyResultTarget->getTarget();
 	descriptorData[6].pName = "voxelTextureNegY";
 	descriptorData[6].mCount = 1;
+	descriptorData[6].mLevel = 0;
 	descriptorData[6].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[6].ppTextures = (const OgreTexture**)&negyTexture;
 
 	OgreTexture* poszTexture = mVoxelizationContext.poszResultTarget->getTarget();
 	descriptorData[7].pName = "voxelTexturePosZ";
 	descriptorData[7].mCount = 1;
+	descriptorData[7].mLevel = 0;
 	descriptorData[7].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[7].ppTextures = (const OgreTexture**)&poszTexture;
 
 	OgreTexture* negzTexture = mVoxelizationContext.negzResultTarget->getTarget();
 	descriptorData[8].pName = "voxelTextureNegZ";
 	descriptorData[8].mCount = 1;
+	descriptorData[8].mLevel = 0;
 	descriptorData[8].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[8].ppTextures = (const OgreTexture**)&negzTexture;
 
 	OgreTexture* voxelizationTexture = mVoxelizationContext.voxelizationTarget->getTarget();
 	descriptorData[9].pName = "voxelTexture";
 	descriptorData[9].mCount = 1;
+	descriptorData[9].mLevel = 0;
 	descriptorData[9].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
 	descriptorData[9].ppTextures = (const OgreTexture**)&voxelizationTexture;
 
@@ -1590,10 +1700,8 @@ void VoxelConeTracingApp::initFrameResource(uint32_t frameIndex, Renderable* r)
 
 
 		resourceInfo->zeroSet = rs->createDescriptorSet(mSceneGeometryProgramHandle, 0);
-		resourceInfo->firstSet = rs->createDescriptorSet(mSceneGeometryProgramHandle, 1);
 		resourceInfo->zeroShadowSet = rs->createDescriptorSet(mShadowProgramHandle, 0);
 		resourceInfo->zeroSetOfVoxelization = rs->createDescriptorSet(mVoxellizationProgramHandle, 0);
-
 		DescriptorData descriptorData[256];
 		uint32_t descriptorCount = 0;
 		descriptorData[descriptorCount].pName = "cbPerObject";
@@ -1731,7 +1839,7 @@ void VoxelConeTracingApp::initFrameResource(uint32_t frameIndex, Renderable* r)
 				descriptorData[descriptorCount].ppTextures = (const OgreTexture**)&texArray[i];
 				descriptorCount++;
 			}
-			rs->updateDescriptorSet(resourceInfo->firstSet, descriptorCount, descriptorData);
+			rs->updateDescriptorSet(resourceInfo->zeroSet, descriptorCount, descriptorData);
 		}
 		else
 		{
@@ -1810,7 +1918,7 @@ void VoxelConeTracingApp::initFrameResource(uint32_t frameIndex, Renderable* r)
 			}
 			if (descriptorCount)
 			{
-				rs->updateDescriptorSet(resourceInfo->firstSet, descriptorCount, descriptorData);
+				rs->updateDescriptorSet(resourceInfo->zeroSet, descriptorCount, descriptorData);
 			}
 		}
 	}

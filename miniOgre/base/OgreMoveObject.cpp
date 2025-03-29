@@ -64,7 +64,6 @@ namespace Ogre {
     void MoveObject::setPosition(Ogre::Vector3& pos)
     {
         mPosition = pos;
-        mLocal.makeTransform(pos, Ogre::Vector3(1.0f, 1.0f, 1.0f), Ogre::Quaternion(0.0f, 0.0f, 0.0f, 1.0f));
     }
 
     void MoveObject::setCastShadows(bool cast)

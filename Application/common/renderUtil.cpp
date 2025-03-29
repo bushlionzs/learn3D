@@ -16,7 +16,10 @@
 #include "game_camera.h"
 #include "time_util.h"
 
-void initFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
+void initFrameResource(
+    uint32_t frameIndex, 
+    Ogre::Renderable* r,
+    filament::backend::Handle<filament::backend::HwProgram> shadowHandle)
 {
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
@@ -61,7 +64,7 @@ void initFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
         
         resourceInfo->zeroSet = rs->createDescriptorSet(programHandle, 0);
         resourceInfo->firstSet = rs->createDescriptorSet(programHandle, 1);
-        resourceInfo->zeroShadowSet = rs->createDescriptorSet(programHandle, 0);
+        resourceInfo->zeroShadowSet = rs->createDescriptorSet(shadowHandle, 0);
 
         Ogre::DescriptorData descriptorData[256];
         uint32_t descriptorCount = 0;
@@ -94,7 +97,7 @@ void initFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
         }
 
         rs->updateDescriptorSet(resourceInfo->zeroSet, descriptorCount, descriptorData);
-        rs->updateDescriptorSet(resourceInfo->zeroShadowSet, descriptorCount, descriptorData);
+        rs->updateDescriptorSet(resourceInfo->zeroShadowSet, descriptorCount - 1, descriptorData);
 
         //update texture
         uint32_t index = 0;
@@ -288,7 +291,7 @@ void updateFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
     const auto& modelMatrix = r->getModelMatrix();
 
     objectBuffer.world = modelMatrix.transpose();
-    objectBuffer.diffuseColor = r->getColor();
+    objectBuffer.diffuseColor = mat->getDiffuseColor();
     rs->updateBufferObject(resourceInfo->modelObjectHandle,
         (const char*)&objectBuffer, sizeof(objectBuffer));
 
@@ -518,12 +521,20 @@ void renderScene(
     {
         if (!r->hasFlag(frameIndex))
         {
-            userDefineShader->initCallback(frameIndex, r);
+            userDefineShader->initCallback(frameIndex, r, userDefineShader->shadowHandle);
             r->setFlag(frameIndex, true);
         }
         userDefineShader->bindCallback(frameIndex, r);
-        userDefineShader->updateCallback(frameIndex, r);
 
+        if (userDefineShader->updateCallback)
+        {
+            userDefineShader->updateCallback(frameIndex, r);
+        }
+        else
+        {
+            int kk = 0;
+        }
+       
     }
 
     rs->beginRenderPass(renderPassInfo);

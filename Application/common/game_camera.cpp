@@ -282,7 +282,7 @@ bool GameCamera::update(float delta)
     else
     {
         auto view = mCamera->getViewMatrix();
-        Ogre::Vector3 forward = view.getForward();
+        /*Ogre::Vector3 forward = view.getForward();
 
         if (Ogre::Math::isRightHanded())
         {
@@ -297,7 +297,8 @@ bool GameCamera::update(float delta)
         else
         {
             transM = Ogre::Math::makeTranslateMatrix(eyePosition);
-        }
+        }*/
+        transM = Ogre::Math::makeTranslateMatrix(eyePosition);
         viewMatrix = transM * rotM;
     }
     

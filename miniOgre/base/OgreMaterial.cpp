@@ -24,6 +24,8 @@ namespace Ogre {
         mRasterState.colorWrite = true;
         mRasterState.pixelFormat[0] = Ogre::PixelFormat::PF_UNKNOWN;
         mRasterState.renderTargetCount = 1;
+        mRasterState.depthBiasConstantFactor = 0.0f;
+        mRasterState.depthBiasSlopeFactor = 0.0f;
     }
 
 

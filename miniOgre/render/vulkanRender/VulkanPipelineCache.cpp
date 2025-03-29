@@ -240,7 +240,7 @@ using namespace bluevk;
         VkFormat colorFormat[MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT];
         for (auto i = 0; i < colorBlendState.attachmentCount; i++)
         {
-            colorFormat[i] = mPipelineRequirements.colorFormat;
+            colorFormat[i] = mPipelineRequirements.colorFormat[i];
         }
         pipelineRenderingCreateInfo.pColorAttachmentFormats = colorFormat;
         pipelineRenderingCreateInfo.depthAttachmentFormat = mPipelineRequirements.depthFormat;
@@ -290,9 +290,12 @@ using namespace bluevk;
         mPipelineRequirements.rasterState = rasterState;
     }
 
-    void VulkanPipelineCache::bindFormat(VkFormat colorFormat, VkFormat depthFormat)
+    void VulkanPipelineCache::bindFormat(VkFormat colorFormat[8], VkFormat depthFormat)
     {
-        mPipelineRequirements.colorFormat = colorFormat;
+        for (uint32_t i = 0; i < 8; i++)
+        {
+            mPipelineRequirements.colorFormat[i] = colorFormat[i];
+        }
         mPipelineRequirements.depthFormat = depthFormat;
     }
     

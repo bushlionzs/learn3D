@@ -48,7 +48,6 @@ const Ogre::Matrix4& Light::getProjectMatrix() const
 
 const Ogre::Vector3& Light::getDerivedPosition() const
 {
-	mPosition = mViewMatrix.getTrans();
 	return mPosition;
 }
 
@@ -95,10 +94,7 @@ Ogre::Vector3 Light::getLightUp()
 
 Ogre::Vector3 Light::getLightDirection()
 {
-	const Ogre::Quaternion& q = mParent->_getDerivedOrientation();
-	Matrix3 rot;
-	q.ToRotationMatrix(rot);
-	return rot.GetColumn(2);
+	return mDirection;
 }
 
 }

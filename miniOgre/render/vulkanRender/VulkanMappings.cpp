@@ -149,6 +149,8 @@ namespace Ogre {
             return PF_FLOAT16_RGBA;
         case PF_FLOAT32_RGB:
             return PF_FLOAT32_RGBA;
+        case PF_RGBA16_SNORM:
+            return PF_RGBA16_SNORM;
         case PF_UNKNOWN:
         default:
             return PF_A8B8G8R8;
@@ -213,11 +215,13 @@ namespace Ogre {
         case PF_BC7_UNORM:      return VK_FORMAT_BC7_UNORM_BLOCK;
         case PF_R16G16_SINT:    return VK_FORMAT_R16G16_SINT;
         case PF_FLOAT32_GR:     return VK_FORMAT_R32G32_SFLOAT;
+        case PF_RGBA16_SNORM: return VK_FORMAT_R16G16B16A16_SNORM;
         case PF_DEPTH16:        return VK_FORMAT_R32_UINT;
         case PF_DEPTH32:        return VK_FORMAT_R32_UINT;
         case PF_DEPTH32F:       return VK_FORMAT_D32_SFLOAT;
         case PF_DEPTH24_STENCIL8:     return VK_FORMAT_D24_UNORM_S8_UINT;
         case PF_DEPTH32_STENCIL8:     return VK_FORMAT_D32_SFLOAT_S8_UINT;
+        
         default:
             assert_invariant(false);
             return VK_FORMAT_UNDEFINED;
@@ -351,9 +355,9 @@ namespace Ogre {
         }
     }
 
-    VkBool32 VulkanMappings::getCompareEnable(filament::backend::SamplerCompareMode mode)
+    VkBool32 VulkanMappings::getCompareEnable(const filament::backend::SamplerParams& params)
     {
-        return mode == filament::backend::SamplerCompareMode::NONE ? VK_FALSE : VK_TRUE;
+        return params.useComparison > 0;
     }
 
     VkCompareOp VulkanMappings::getCompareOp(filament::backend::SamplerCompareFunc func)

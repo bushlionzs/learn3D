@@ -7,6 +7,8 @@ if (WIN32)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D__WINDOWS__)
+add_definitions(-DCEGUI_STATIC)
+add_definitions(-DUSE_OGRE_MACRO)
 endif()
 
 
@@ -40,10 +42,6 @@ endmacro()
 add_subdir(.)
 add_subdir(../common)
 
-
-
-
-
 add_executable(${PROJECT_NAME} ${GAMECLIENT_SRC_LIST})
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${ROOT_INC}/bin)
@@ -64,22 +62,15 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
-target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
-MyGUI Middle stormlib OIS LinearMath BulletCollision BulletDynamics BulletSoftBody
+	
+target_link_libraries(${PROJECT_NAME}  GameUtil  miniOgre 
+CEGUI expat  stormlib OIS freetype dy_network 
 tinyxmld
-vulkan-1
-avcodec
-avdevice
-avfilter
-avformat
-avutil
-postproc
-swresample
-swscale
+pcre
 dxgi
 dxguid
 d3d12
-d3d11
 D3DCompiler
 Shlwapi
-winmm)
+winmm
+dbghelp)

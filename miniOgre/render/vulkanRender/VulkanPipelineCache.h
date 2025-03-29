@@ -118,7 +118,7 @@
             const char* fragShaderFuncName
         )noexcept;
         void bindRasterState(const RasterState& rasterState) noexcept;
-        void bindFormat(VkFormat colorFormat, VkFormat depthFormat);
+        void bindFormat(VkFormat colorFormat[8], VkFormat depthFormat);
         void bindPrimitiveTopology(VkPrimitiveTopology topology) noexcept;
 
         void bindVertexArray(
@@ -194,7 +194,7 @@
         struct PipelineKey {                                                          // size : offset
             VkShaderModule shaders[SHADER_MODULE_COUNT];                              //  24  : 0
             VkFormat depthFormat;                                                     //  4   : 16
-            VkFormat colorFormat;                                                     //  4   : 20
+            VkFormat colorFormat[8];                                                     //  4   : 20
             uint16_t topology;                                                        //  2   : 24
             uint16_t subpassIndex;                                                    //  2   : 26
             VertexInputAttributeDescription vertexAttributes[VERTEX_ATTRIBUTE_COUNT]; //  128 : 28
@@ -204,7 +204,7 @@
             VkPipelineLayout layout;                                                  //  8   : 304
         };
 
-        static_assert(sizeof(PipelineKey) == 320, "PipelineKey must not have implicit padding.");
+        static_assert(sizeof(PipelineKey) == 352, "PipelineKey must not have implicit padding.");
 
         using PipelineHashFn = utils::hash::MurmurHashFn<PipelineKey>;
 

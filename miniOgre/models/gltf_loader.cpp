@@ -94,6 +94,8 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
     std::vector<GltfVertex> sharedVertexs;
 
     bool useShared = false;
+
+    bool preTransform = true;
     if (useShared)
     {
         sharedIndices.reserve(1000000);
@@ -103,6 +105,15 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
     uint32_t vertexOffset = 0;
     uint32_t indexOffset = 0;
     uint32_t meshIndex = 0;
+
+    const tinygltf::Scene& scene = model.scenes[model.defaultScene > -1 ? model.defaultScene : 0];
+    mTransforms.resize(1000);
+    for (size_t i = 0; i < scene.nodes.size(); i++)
+    {
+        const tinygltf::Node node = model.nodes[scene.nodes[i]];
+        TraverseNode(pMesh, nullptr, node, model);
+    }
+
 	for (auto & mesh :model.meshes)
 	{
 		const tinygltf::Mesh& tm = mesh;
@@ -224,10 +235,6 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
             auto subMesh = pMesh->addSubMesh(useShared, useShared);
             subMesh->setUserDefineData((void*)meshIndex);
             std::vector<uint32_t> indices(accessor.count);
-            if (accessor.count == 36)
-            {
-                int kk = 0;
-            }
 
             int32_t stride = GetStrideFromFormat(accessor.type, accessor.componentType);
             const char* start = (const char*)buffer.data.data() + bView.byteOffset + accessor.byteOffset;
@@ -290,20 +297,26 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
                     mVertexBuffer[i].Tangent = Ogre::Vector3::ZERO;
                 }
                 
+                if (preTransform)
+                {
+                    mVertexBuffer[i].Pos = mTransforms[meshIndex] * mVertexBuffer[i].Pos;
+                    mVertexBuffer[i].Normal = mTransforms[meshIndex] * mVertexBuffer[i].Normal;
+                    mVertexBuffer[i].Normal.normalise();
+                    mVertexBuffer[i].Tangent = mTransforms[meshIndex] * mVertexBuffer[i].Tangent;
+
+                    if (false)
+                    {
+                        mVertexBuffer[i].Pos.y = -mVertexBuffer[i].Pos.y;
+                        mVertexBuffer[i].Normal.y = -mVertexBuffer[i].Normal.y;
+                    }
+                }
                 if (useShared)
                 {
                     sharedVertexs.emplace_back();
                     GltfVertex& vertex = sharedVertexs.back();
-                    vertex.Pos = Ogre::Vector3(gltfPosition[0], gltfPosition[1], gltfPosition[2]);
-                    vertex.Normal = Ogre::Vector3(gltfNormal[0], gltfNormal[1], gltfNormal[2]);
-                    if (gltfTangent)
-                    {
-                        vertex.Tangent = Ogre::Vector4(gltfTangent[0], gltfTangent[1], gltfTangent[2], gltfTangent[3]);
-                    }
-                    else
-                    {
-                        vertex.Tangent = Ogre::Vector3::ZERO;
-                    }
+                    vertex.Pos = mVertexBuffer[i].Pos;
+                    vertex.Normal = mVertexBuffer[i].Normal;
+                    vertex.Tangent = mVertexBuffer[i].Tangent;
                 }
                 
                 gltfPosition += 3;
@@ -432,6 +445,17 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
             }
             
             vd->addBoneInfo(assignInfoList);
+
+            if (!preTransform)
+            {
+                Ogre::Vector3 translation;
+                Ogre::Vector3 scale;
+                Ogre::Quaternion q;
+                mTransforms[meshIndex].decomposition(translation, scale, q);
+                subMesh->setPosition(translation);
+                subMesh->setRotate(q);
+                subMesh->setScale(scale);
+            }
             
             ShaderInfo sinfo;
             sinfo.shaderName = "pbr";
@@ -560,12 +584,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
         indexData->createBuffer(4, sharedIndices.size());
         indexData->writeData((const char*)sharedIndices.data(), sharedIndices.size() * 4);
     }
-    const tinygltf::Scene& scene = model.scenes[model.defaultScene > -1 ? model.defaultScene : 0];
-    for (size_t i = 0; i < scene.nodes.size(); i++) 
-    {
-        const tinygltf::Node node = model.nodes[scene.nodes[i]];
-        TraverseNode(pMesh, nullptr, node, model);
-    }
+    
     
 
     std::vector<std::shared_ptr<Ogre::Skeleton>> skeletonlist;
@@ -637,17 +656,13 @@ void GltfLoader::TraverseNode(
             p = p->parent;
         }
 
-        Ogre::Vector3 translation;
+
+        mTransforms[node.mesh] = m;
+        /*Ogre::Vector3 translation;
         Ogre::Vector3 scale;
         Ogre::Quaternion q;
         m.decomposition(translation, scale, q);
-        /*auto q = m.extractQuaternion();
-        auto translation = m.getTrans();
-        auto scale = Ogre::Vector3(1.0f);*/
-        if (scale.y < 0.2)
-        {
-            int kk = 0;
-        }
+        
 
         uint32_t subMeshCount = mesh->getSubMeshCount();
         for (uint32_t i = 0; i < subMeshCount; i++)
@@ -660,7 +675,7 @@ void GltfLoader::TraverseNode(
                 subMesh->setRotate(q);
                 subMesh->setScale(scale);
             }
-        }
+        }*/
     }
 }
 
