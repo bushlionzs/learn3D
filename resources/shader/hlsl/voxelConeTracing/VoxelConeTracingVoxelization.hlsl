@@ -8,7 +8,8 @@ struct VoxelizationBlock
     float WorldVoxelScale;
 };
 
-RES(CBUFFER(VoxelizationBlock), VoxelizationCB, UPDATE_FREQ_NONE, b0, VKBINDING(0, 0));
+VKBINDING(0, 0) ConstantBuffer<VoxelizationBlock> VoxelizationCB : register(b0, space0);
+
 
 struct ObjectBlock
 {
@@ -17,7 +18,8 @@ struct ObjectBlock
 	float4 diffuseColor;
 };
 
-RES(CBUFFER(ObjectBlock), cbPerObject, UPDATE_FREQ_NONE, b1, VKBINDING(1, 0));
+VKBINDING(1, 0) ConstantBuffer<ObjectBlock> cbPerObject : register(b1, space0);
+
 
 struct VS_IN
 {
@@ -37,10 +39,10 @@ struct PS_IN
     float3 voxelPos : VOXEL_POSITION;
 };
 
-RWTexture3D<float4> outputTexture VKBINDING(2,0): register(u0);
-Texture2D<float> shadowBuffer VKBINDING(3,0): register(t0);
+VKBINDING(2, 0) RWTexture3D<float4> outputTexture: register(u0);
+VKBINDING(3, 0) Texture2D<float> shadowBuffer: register(t0);
 
-SamplerState PcfShadowMapSampler VKBINDING(4,0): register(s0);
+VKBINDING(4, 0) SamplerComparisonState PcfShadowMapSampler: register(s0);
 
 GS_IN VSMain(VS_IN input)
 {
@@ -112,17 +114,12 @@ void PSMain(PS_IN input)
     shadowcoord.rg = shadowcoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 	
 	
-	float4 depthColor = shadowBuffer.Sample(PcfShadowMapSampler, shadowcoord.xy);
+	float shadow = shadowBuffer.SampleCmpLevelZero(
+		PcfShadowMapSampler,    
+		shadowcoord.xy,
+		shadowcoord.z
+	);
 	
-	float shadow;
-	if(depthColor.r <= shadowcoord.z)
-	{
-	    shadow = 0.0f;
-	}
-	else
-	{
-	    shadow = 1.0f;
-	}
 
 
     outputTexture[finalVoxelPos] = colorRes * float4(shadow, shadow, shadow, 1.0f);

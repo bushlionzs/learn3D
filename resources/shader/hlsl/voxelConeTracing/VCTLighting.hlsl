@@ -47,29 +47,28 @@ struct IlluminationFlags
 VKBINDING(2, 0) ConstantBuffer<IlluminationFlags> IlluminationFlagsBuffer : register(b2, space0);
 
 
-SamplerState BilinearSampler : register(s0);
-SamplerComparisonState PcfShadowMapSampler : register(s1);
+VKBINDING(3, 0) SamplerState BilinearSampler : register(s0);
+VKBINDING(4, 0) SamplerComparisonState PcfShadowMapSampler : register(s1);
 
-Texture2D<float4> albedoBuffer : register(t0);
-Texture2D<float4> normalBuffer : register(t1);
-Texture2D<float4> worldPosBuffer : register(t2);
-Texture2D<float> depthBuffer : register(t3);
-Texture2D<float> shadowBuffer : register(t4);
+VKBINDING(5, 0) Texture2D<float4> albedoBuffer : register(t0);
+VKBINDING(6, 0) Texture2D<float4> normalBuffer : register(t1);
+VKBINDING(7, 0) Texture2D<float4> worldPosBuffer : register(t2);
+VKBINDING(9, 0) Texture2D<float> shadowBuffer : register(t4);
 
 
-Texture2D<float4> vctBuffer : register(t9);
+VKBINDING(10, 0) Texture2D<float4> vctBuffer : register(t9);
 
-Texture2D<float4> dxrReflectionsBuffer : register(t10);
-Texture2D<float> dxrAmbientOcclusionBuffer : register(t11);
+VKBINDING(11, 0) Texture2D<float4> dxrReflectionsBuffer : register(t10);
+VKBINDING(12, 0) Texture2D<float> dxrAmbientOcclusionBuffer : register(t11);
 
-Texture2D<float> ssaoBuffer : register(t12);
+VKBINDING(13, 0) Texture2D<float> ssaoBuffer : register(t12);
 
 
 
 struct VSInput
 {
-	float4 position : POSITION;
-	float2 uv : TEXCOORD;
+	VKLOCATION(0) float3 position : POSITION;
+	VKLOCATION(3) float2 uv : TEXCOORD;
 };
 
 struct PSInput
@@ -91,7 +90,17 @@ PSInput VSMain(VSInput input)
     return result;
 }
 
-
+float sampleShadow(float2 uv, float depth)
+{
+    float v = shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, uv, depth);
+	if(v < 0.00001)
+	{
+	    return 0.0f;
+	}
+	
+	return 1.0f;
+	
+}
 
 float CalculateShadow(float3 ShadowCoord)
 {   
@@ -100,17 +109,18 @@ float CalculateShadow(float3 ShadowCoord)
     float d2 = Dilation * LightingConstantBuffer.ShadowTexelSize.x * 0.875;
     float d3 = Dilation * LightingConstantBuffer.ShadowTexelSize.x * 0.625;
     float d4 = Dilation * LightingConstantBuffer.ShadowTexelSize.x * 0.375;
+	
+	float v = sampleShadow(ShadowCoord.xy, ShadowCoord.z);
     float result = (
-        2.0 *
-            shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy, ShadowCoord.z) +
-            shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy + float2(-d2, d1), ShadowCoord.z) +
-            shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy + float2(-d1, -d2), ShadowCoord.z) +
-            shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy + float2(d2, -d1), ShadowCoord.z) +
-            shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy + float2(d1, d2), ShadowCoord.z) +
-            shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy + float2(-d4, d3), ShadowCoord.z) +
-            shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy + float2(-d3, -d4), ShadowCoord.z) +
-            shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy + float2(d4, -d3), ShadowCoord.z) +
-            shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, ShadowCoord.xy + float2(d3, d4), ShadowCoord.z)
+        2.0 *v +
+            sampleShadow(ShadowCoord.xy + float2(-d2, d1), ShadowCoord.z) +
+            sampleShadow(ShadowCoord.xy + float2(-d1, -d2), ShadowCoord.z) +
+            sampleShadow(ShadowCoord.xy + float2(d2, -d1), ShadowCoord.z) +
+            sampleShadow(ShadowCoord.xy + float2(d1, d2), ShadowCoord.z) +
+            sampleShadow(ShadowCoord.xy + float2(-d4, d3), ShadowCoord.z) +
+            sampleShadow(ShadowCoord.xy + float2(-d3, -d4), ShadowCoord.z) +
+            sampleShadow(ShadowCoord.xy + float2(d4, -d3), ShadowCoord.z) +
+            sampleShadow(ShadowCoord.xy + float2(d3, d4), ShadowCoord.z)
         ) / 10.0;
     
     return result * result;
@@ -234,7 +244,7 @@ PSOutput PSMain(PSInput input)
         albedoBuffer.GetDimensions(gWidth, gHeight);
         float4 vct = vctBuffer.Sample(BilinearSampler, inPos * float2(1.0f / gWidth, 1.0f / gHeight));
         
-        indirectLighting += vct.rgb * IlluminationFlagsBuffer.vctGIPower;
+        //indirectLighting += vct.rgb * IlluminationFlagsBuffer.vctGIPower;
         if (!IlluminationFlagsBuffer.useVCTDebug)
             ao = 1.0f - vct.a;
     }  
@@ -252,11 +262,19 @@ PSOutput PSMain(PSInput input)
     }
     
     float shadow = 1.0f;
+	
+	static const float4x4 biasMat = float4x4(
+	0.5, 0.0, 0.0, 0.5,
+	0.0, 0.5, 0.0, 0.5,
+	0.0, 0.0, 1.0, 0.0,
+	0.0, 0.0, 0.0, 1.0 );
+	
     if (IlluminationFlagsBuffer.useShadows)
     {
         float4 lightSpacePos = mul(LightingConstantBuffer.ShadowViewProjection, worldPos);
+		//lightSpacePos = mul(biasMat, lightSpacePos);
         float4 shadowcoord = lightSpacePos / lightSpacePos.w;
-        shadowcoord.rg = shadowcoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+        //shadowcoord.rg = shadowcoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
         shadow = CalculateShadow(shadowcoord.rgb);
     }
     

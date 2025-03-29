@@ -1,4 +1,4 @@
-#include "base.hlsl"
+#include "common.hlsl"
 #include "VCTCommon.hlsl"
 
 #define NUM_CONES 6
@@ -21,21 +21,21 @@ static const float diffuseConeWeights[] =
 static const float specularOneDegree = 0.0174533f; //in radians
 static const int specularMaxDegreesCount = 2;
 
-Texture2D<float4> albedoBuffer : register(t0);
-Texture2D<float4> normalBuffer : register(t1);
-Texture2D<float4> worldPosBuffer : register(t2);
+VKBINDING(0, 0) Texture2D<float4> albedoBuffer : register(t0);
+VKBINDING(1, 0) Texture2D<float4> normalBuffer : register(t1);
+VKBINDING(2, 0) Texture2D<float4> worldPosBuffer : register(t2);
 
-Texture3D<float4> voxelTexturePosX : register(t3);
-Texture3D<float4> voxelTextureNegX : register(t4);
-Texture3D<float4> voxelTexturePosY : register(t5);
-Texture3D<float4> voxelTextureNegY : register(t6);
-Texture3D<float4> voxelTexturePosZ : register(t7);
-Texture3D<float4> voxelTextureNegZ : register(t8);
-Texture3D<float4> voxelTexture : register(t9);
+VKBINDING(3, 0) Texture3D<float4> voxelTexturePosX : register(t3);
+VKBINDING(4, 0) Texture3D<float4> voxelTextureNegX : register(t4);
+VKBINDING(5, 0) Texture3D<float4> voxelTexturePosY : register(t5);
+VKBINDING(6, 0) Texture3D<float4> voxelTextureNegY : register(t6);
+VKBINDING(7, 0) Texture3D<float4> voxelTexturePosZ : register(t7);
+VKBINDING(8, 0) Texture3D<float4> voxelTextureNegZ : register(t8);
+VKBINDING(9, 0) Texture3D<float4> voxelTexture : register(t9);
 
-RWTexture2D<float4> result : register(u0);
+VKBINDING(10, 0) RWTexture2D<float4> result : register(u0);
 
-SamplerState LinearSampler : register(s0);
+VKBINDING(11, 0) SamplerState LinearSampler : register(s0);
 
 struct VoxelizationBlock
 {
@@ -45,7 +45,8 @@ struct VoxelizationBlock
     float WorldVoxelScale;
 };
 
-RES(CBUFFER(VoxelizationBlock), VoxelizationCB, UPDATE_FREQ_NONE, b0, VKBINDING(0, 0));
+VKBINDING(12, 0) ConstantBuffer<VoxelizationBlock> VoxelizationCB : register(b0, space0);
+
 
 struct VCTMainBlock
 {
@@ -59,7 +60,8 @@ struct VCTMainBlock
     float VoxelSampleOffset;
 };
 
-RES(CBUFFER(VCTMainBlock), VCTMainCB, UPDATE_FREQ_NONE, b1, VKBINDING(1, 0));
+VKBINDING(13, 0) ConstantBuffer<VCTMainBlock> VCTMainCB : register(b1, space0);
+
 
 float4 GetAnisotropicSample(float3 uv, float3 weight, float lod, bool posX, bool posY, bool posZ)
 {

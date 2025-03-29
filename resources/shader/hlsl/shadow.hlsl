@@ -5,31 +5,29 @@
 // Include common HLSL code.
 #include "common.hlsl"
 
+VKBINDING(0, 0) ConstantBuffer<ObjectBlock> cbPerObject : register(b0, space0);
+VKBINDING(1, 0) ConstantBuffer<PassBlock> cbPass : register(b1, space0);
+
 struct VertexIn
 {
-	float3 PosL    : POSITION;
-	float2 TexC    : TEXCOORD;
+	VKLOCATION(0) float3 PosL    : POSITION;
 };
 
 struct VertexOut
 {
 	float4 PosH    : SV_POSITION;
-	float2 TexC    : TEXCOORD;
 };
 
 VertexOut vs(VertexIn vIn)
 {
     VertexOut vOut;
-    vOut.PosH = mul(gWorldViewProj, float4(vIn.PosL, 1.0f));
-    vOut.TexC = vIn.TexC;
-	
+	float4 posW = mul(cbPerObject.gWorld, float4(vIn.PosL, 1.0f));
+    vOut.PosH = mul(cbPass.gShadowTransform, posW);
     return vOut;
 }
 
-float4 ps(VertexOut pin) : SV_Target
+void ps()
 {
-	//return float4(1.0, 0.0, 0.0, 1.0f);
-	return float4(gShadowMap[0].Sample(gsamLinearWrap, pin.TexC).rrr, 1.0f);
 }
 
 

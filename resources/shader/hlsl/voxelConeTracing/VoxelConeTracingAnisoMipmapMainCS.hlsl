@@ -1,18 +1,18 @@
 #include "common.hlsl"
 
-RWTexture3D<float4> voxelTextureSrcPosX : register(u0);
-RWTexture3D<float4> voxelTextureSrcNegX : register(u1);
-RWTexture3D<float4> voxelTextureSrcPosY : register(u2);
-RWTexture3D<float4> voxelTextureSrcNegY : register(u3);
-RWTexture3D<float4> voxelTextureSrcPosZ : register(u4);
-RWTexture3D<float4> voxelTextureSrcNegZ : register(u5);
+VKBINDING(0, 0) RWTexture3D<float4> voxelTextureSrcPosX : register(u0);
+VKBINDING(1, 0) RWTexture3D<float4> voxelTextureSrcNegX : register(u1);
+VKBINDING(2, 0) RWTexture3D<float4> voxelTextureSrcPosY : register(u2);
+VKBINDING(3, 0) RWTexture3D<float4> voxelTextureSrcNegY : register(u3);
+VKBINDING(4, 0) RWTexture3D<float4> voxelTextureSrcPosZ : register(u4);
+VKBINDING(5, 0) RWTexture3D<float4> voxelTextureSrcNegZ : register(u5);
 
-RWTexture3D<float4> voxelTextureResultPosX : register(u6);
-RWTexture3D<float4> voxelTextureResultNegX : register(u7);
-RWTexture3D<float4> voxelTextureResultPosY : register(u8);
-RWTexture3D<float4> voxelTextureResultNegY : register(u9);
-RWTexture3D<float4> voxelTextureResultPosZ : register(u10);
-RWTexture3D<float4> voxelTextureResultNegZ : register(u11);
+VKBINDING(6, 0) RWTexture3D<float4> voxelTextureResultPosX : register(u6);
+VKBINDING(7, 0) RWTexture3D<float4> voxelTextureResultNegX : register(u7);
+VKBINDING(8, 0) RWTexture3D<float4> voxelTextureResultPosY : register(u8);
+VKBINDING(9, 0) RWTexture3D<float4> voxelTextureResultNegY : register(u9);
+VKBINDING(10, 0) RWTexture3D<float4> voxelTextureResultPosZ : register(u10);
+VKBINDING(11, 0) RWTexture3D<float4> voxelTextureResultNegZ : register(u11);
 
 struct MipmapBlock
 {
@@ -20,7 +20,7 @@ struct MipmapBlock
     int MipLevel;
 };
 
-VKBINDING(0, 0) ConstantBuffer<MipmapBlock> MipmapCB : register(b0, space0);
+VKBINDING(12, 0) ConstantBuffer<MipmapBlock> MipmapCB : register(b0, space0);
 
 static const int3 anisoOffsets[8] =
 {

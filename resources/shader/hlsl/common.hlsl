@@ -11,15 +11,7 @@
     #define NUM_SPOT_LIGHTS 0
 #endif
 
-struct Light {
-    float3 Strength;
-    float FalloffStart; // point/spot light only
-    float3 Direction;   // directional/spot light only
-    float FalloffEnd;   // point/spot light only
-    float3 Position;    // point light only
-    float SpotPower;    // spot light only
-	float3 LightColor;
-};
+#include "LightingUtil.hlsl"
 
 #ifdef VULKAN
 #define VKBINDING(r,s) [[vk::binding(r, s)]]

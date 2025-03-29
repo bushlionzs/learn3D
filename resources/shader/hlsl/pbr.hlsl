@@ -1,8 +1,8 @@
 #include "common.hlsl"
 
-VK_BINDING(0, 0) ConstantBuffer<ObjectBlock> cbPerObject : register(b0, space0);
-VK_BINDING(1, 0) ConstantBuffer<PassBlock> cbPass : register(b1, space0);
-VK_BINDING(2, 0) ConstantBuffer<PbrMaterialBlock> pbrMaterial : register(b2, space0);
+VKBINDING(0, 0) ConstantBuffer<ObjectBlock> cbPerObject : register(b0, space0);
+VKBINDING(1, 0) ConstantBuffer<PassBlock> cbPass : register(b1, space0);
+VKBINDING(2, 0) ConstantBuffer<PbrMaterialBlock> pbrMaterial : register(b2, space0);
 
 Texture2D albedo_pbr           VKBINDING(0, 1): register(t0,space1);
 Texture2D ao_pbr               VKBINDING(1, 1): register(t1,space1);
@@ -220,7 +220,7 @@ struct VertexIn
 {
 	VKLOCATION(0) float3 PosL    : POSITION;
     VKLOCATION(1) float3 NormalL : NORMAL;
-	VKLOCATION(4) float4 tangent : TANGENT;
+	VKLOCATION(9) float4 tangent : TANGENT;
 	VKLOCATION(3) float2 TexC    : TEXCOORD;
 };
 

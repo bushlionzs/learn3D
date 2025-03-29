@@ -1,13 +1,13 @@
-#include "base.hlsl"
+#include "common.hlsl"
 
-Texture3D<float4> voxelTexture : register(t0);
+VKBINDING(0, 0) Texture3D<float4> voxelTexture : register(t0);
 
-RWTexture3D<float4> voxelTextureResultPosX : register(u0);
-RWTexture3D<float4> voxelTextureResultNegX : register(u1);
-RWTexture3D<float4> voxelTextureResultPosY : register(u2);
-RWTexture3D<float4> voxelTextureResultNegY : register(u3);
-RWTexture3D<float4> voxelTextureResultPosZ : register(u4);
-RWTexture3D<float4> voxelTextureResultNegZ : register(u5);
+VKBINDING(1, 0) RWTexture3D<float4> voxelTextureResultPosX : register(u0);
+VKBINDING(2, 0) RWTexture3D<float4> voxelTextureResultNegX : register(u1);
+VKBINDING(3, 0) RWTexture3D<float4> voxelTextureResultPosY : register(u2);
+VKBINDING(4, 0) RWTexture3D<float4> voxelTextureResultNegY : register(u3);
+VKBINDING(5, 0) RWTexture3D<float4> voxelTextureResultPosZ : register(u4);
+VKBINDING(6, 0) RWTexture3D<float4> voxelTextureResultNegZ : register(u5);
 
 struct MipmapBlock
 {
@@ -15,7 +15,8 @@ struct MipmapBlock
     int MipLevel;
 };
 
-RES(CBUFFER(MipmapBlock), MipmapCB, UPDATE_FREQ_NONE, b0, VKBINDING(0, 0));
+VKBINDING(7, 0) ConstantBuffer<MipmapBlock> MipmapCB : register(b0, space0);
+
 
 static const int3 anisoOffsets[8] =
 {

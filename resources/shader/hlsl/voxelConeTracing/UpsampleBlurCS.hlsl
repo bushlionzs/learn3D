@@ -1,16 +1,20 @@
 // Generic upsampling and blurring CS shader
 //
 // Modified version of https://github.com/microsoft/DirectX-Graphics-Samples/blob/master/MiniEngine/Core/Shaders/UpsampleAndBlurCS.hlsl
+#include "common.hlsl"
 
-cbuffer UpsampleAndBlurCbuffer : register(b0)
+struct UpsampleAndBlur
 {
     bool Upsample = true;
 };
 
-Texture2D<float4> Input : register(t0);
-RWTexture2D<float4> Output : register(u0);
+VKBINDING(0, 0) ConstantBuffer<UpsampleAndBlur> UpsampleAndBlurCbuffer : register(b0, space0);
 
-SamplerState BilinearSampler : register(s0);
+
+VKBINDING(1, 0) Texture2D<float4> Input : register(t0);
+VKBINDING(2, 0) RWTexture2D<float4> Output : register(u0);
+
+VKBINDING(3, 0) SamplerState BilinearSampler : register(s0);
 
 // The guassian blur weights (derived from Pascal's triangle)
 static const float Weights5[3] = { 6.0f / 16.0f, 4.0f / 16.0f, 1.0f / 16.0f };
