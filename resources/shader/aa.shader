@@ -31,10 +31,10 @@ shader basic2
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader basic2.hlsl VS
-		frag_shader basic2.hlsl PS
-		//vertex_shader scene.vert.glsl main
-		//frag_shader scene.frag.glsl main
+		//vertex_shader basic2.hlsl VS
+		//frag_shader basic2.hlsl PS
+		vertex_shader scene.vert.glsl main
+		frag_shader scene.frag.glsl main
 	 }
 }
 

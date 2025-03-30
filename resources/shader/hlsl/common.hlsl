@@ -27,9 +27,11 @@
 
 struct ObjectBlock
 {
-    column_major  float4x4 gWorld;
-	column_major float4x4 gProjector;
+    float4x4 gWorld;
+	float4x4 gProjector;
 	float4 diffuseColor;
+	uint useShadow;
+	uint padding[3];
 };
 
 
@@ -106,6 +108,13 @@ struct MaterialBlock
 struct SkinBlock
 {
     float4x4 gBoneTransforms[200];
+};
+
+#define SHADOW_MAP_CASCADE_COUNT 4
+struct cascadeBlock
+{
+    float4x4 matrices[SHADOW_MAP_CASCADE_COUNT];
+	float4 cascadeSplits;
 };
 
 

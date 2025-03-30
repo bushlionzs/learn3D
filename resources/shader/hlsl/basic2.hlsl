@@ -5,7 +5,7 @@ VKBINDING(1, 0) ConstantBuffer<PassBlock> cbPass : register(b1, space0);
 VKBINDING(2, 0) ConstantBuffer<MaterialBlock> cbMaterial : register(b2, space0);
 
 VKBINDING(3, 1) Texture2D shadowMap : register(t1,space1);
-VKBINDING(4, 1) SamplerComparisonState shadowMapSampler : register(s1, space1);
+VKBINDING(4, 1) SamplerState shadowMapSampler : register(s1, space1);
 
 struct VertexIn
 {
@@ -50,17 +50,41 @@ VertexOut VS(VertexIn input)
 
 float textureProj(float4 shadowCoord, float2 off)
 {
+    float shadow = 1.0;
 	if ( shadowCoord.z > -1.0 && shadowCoord.z < 1.0 )
 	{		
-		float v = shadowMap.SampleCmpLevelZero(shadowMapSampler, shadowCoord.xy + off, shadowCoord.z);
-		if(v < 0.001)
+		float dist = shadowMap.Sample( shadowMapSampler, shadowCoord.xy + off ).r;
+		if ( shadowCoord.w > 0.0 && dist < shadowCoord.z )
 		{
-			return 0.0f;
+			shadow = ambient;
 		}
-		
-		return 1.0f;
 	}
-	return 1.0f;
+	return shadow;
+}
+
+
+float filterPCF(float4 sc)
+{
+	int2 texDim;
+	shadowMap.GetDimensions(texDim.x, texDim.y);
+	float scale = 1.5;
+	float dx = scale * 1.0 / float(texDim.x);
+	float dy = scale * 1.0 / float(texDim.y);
+
+	float shadowFactor = 0.0;
+	int count = 0;
+	int range = 1;
+
+	for (int x = -range; x <= range; x++)
+	{
+		for (int y = -range; y <= range; y++)
+		{
+			shadowFactor += textureProj(sc, float2(dx*x, dy*y));
+			count++;
+		}
+
+	}
+	return shadowFactor / count;
 }
 
 float4 PS(VertexOut input) : SV_Target
@@ -69,9 +93,10 @@ float4 PS(VertexOut input) : SV_Target
     float4 lightSpacePos = mul(lightViewProj, input.worldPos);
 	float4 shadowcoord = lightSpacePos / lightSpacePos.w;
 	shadowcoord.rg = shadowcoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-    float shadow = textureProj(shadowcoord, float2(0.0, 0.0));
+    float shadow = filterPCF(shadowcoord);
 	float3 N = normalize(input.Normal);
 	float3 L = normalize(input.LightVec);
+	//L = normalize(cbPass.gDirLights[0].Direction);
 	float3 V = normalize(input.ViewVec);
 	float3 R = normalize(-reflect(L, N));
 	float3 diffuse = max(dot(N, L), ambient) * input.Color;
