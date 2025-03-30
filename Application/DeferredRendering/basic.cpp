@@ -55,7 +55,7 @@ void BasicApplication::update(float delta)
 	float angle = glm::radians(mTotalTime * 360.0f);
 	float radius = 20.0f;
 	mLightPosition = Ogre::Vector3(cos(angle) * radius, -radius, sin(angle) * radius);
-	mLightDirection = mLightPosition;
+	mLightDirection = -mLightPosition;
 	mLightDirection.normalise();
 	mGameCamera->updateCascades(mLightDirection);
 
@@ -216,7 +216,7 @@ void BasicApplication::base2()
 		shaderInfo.shaderName = "basic";
 	}
 
-	float h = -1.14f;
+	float h = 1.14f;
 	mGameCamera->lookAt(
 		Ogre::Vector3(-0.12f, h, -2.25f),
 		Ogre::Vector3(-0.12f, h, -3.25f));
