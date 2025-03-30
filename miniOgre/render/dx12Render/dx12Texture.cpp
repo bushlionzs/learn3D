@@ -132,7 +132,7 @@ void Dx12Texture::_createTex()
     }
     else if (mTextureProperty._texType == TEX_TYPE_2D_ARRAY)
     {
-        texDesc.DepthOrArraySize = 1;
+        texDesc.DepthOrArraySize = mFace;
     }
     else
     {
@@ -436,6 +436,14 @@ void Dx12Texture::buildDescriptorHeaps()
             srvDesc.TextureCube.MipLevels = mTex->GetDesc().MipLevels;
             srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
         }
+        else if (mTextureProperty._texType == TEX_TYPE_2D_ARRAY)
+        {
+            srvDesc.Format = D3D12Mappings::util_to_dx12_srv_format(mTex->GetDesc().Format);
+            srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
+            srvDesc.Texture2DArray.FirstArraySlice = 0;
+            srvDesc.Texture2DArray.ArraySize = mFace;
+            srvDesc.Texture2DArray.MipLevels = mTex->GetDesc().MipLevels;
+        }
         else
         {
             srvDesc.Format = D3D12Mappings::util_to_dx12_srv_format(mTex->GetDesc().Format);
@@ -450,7 +458,10 @@ void Dx12Texture::buildDescriptorHeaps()
             srvDesc.Texture2D.MipLevels = mTex->GetDesc().MipLevels;
         }
 
-
+        if (mFace == 4)
+        {
+            int kk = 0;
+        }
         DescriptorHeapContext* context = DX12Helper::getSingleton().getHeapContext();
 
         if (mNeedSrv)
@@ -487,13 +498,14 @@ void Dx12Texture::buildDescriptorHeaps()
            
             D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
             dsvDesc.Format = mTex->GetDesc().Format;
-            dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+            dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2DARRAY;
             for (uint32_t i = 0; i < mFace; i++)
             {
                 auto cpuHandle = descriptor_id_to_cpu_handle(
                     context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], 
-                    mTargetDescriptorID);
-                //dsvDesc.Texture2D.MipSlice = i;
+                    mTargetDescriptorID + i);
+                dsvDesc.Texture2DArray.FirstArraySlice = i;
+                dsvDesc.Texture2DArray.ArraySize = 1;
                 device->CreateDepthStencilView(mTex.Get(), &dsvDesc, cpuHandle);
             }
             

@@ -249,7 +249,7 @@ void Dx12RenderSystemBase::beginRenderPass(RenderPassInfo& renderPassInfo)
         Dx12RenderTarget* depthTarget = (Dx12RenderTarget*)renderPassInfo.depthTarget.depthStencil;
         auto* tex = depthTarget->getTarget();
         DxDescriptorID srcid = tex->getTargetDescriptorId();
-        //srcid += renderPassInfo.depthTarget.depthIndex;
+        srcid += renderPassInfo.depthTarget.depthIndex;
         depthHandle = descriptor_id_to_cpu_handle(mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], srcid);
         cl->ClearDepthStencilView(depthHandle, D3D12_CLEAR_FLAG_DEPTH,
             renderPassInfo.depthTarget.clearValue.depth, renderPassInfo.depthTarget.clearValue.stencil, 0, nullptr);
