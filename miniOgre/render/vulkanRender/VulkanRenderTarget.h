@@ -20,7 +20,7 @@ namespace Ogre
 		~VulkanRenderTarget();
 
 
-		VkImageView getImageView();
+		VkImageView getImageView(uint32_t index);
 		VkImage getImage();
 		VkImageAspectFlags getAspectFlag();
 		virtual Ogre::OgreTexture* getTarget();

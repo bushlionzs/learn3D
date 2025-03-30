@@ -2,6 +2,21 @@
 #include "InputManager.h"
 #include "engine_struct.h"
 
+struct CameraInfo
+{
+    float nearClip;
+    float farClip;
+    float fovRadians;
+    float aspect;
+    float aspectInverse;
+};
+
+struct Cascade {
+    float splitDepth;
+    Ogre::Matrix4 lightViewMatrix;
+    Ogre::Matrix4 lightOrthoMatrix;
+    Ogre::Matrix4 lightViewProjMatrix;
+};
 class GameCamera: public InputListener
 {
 private:
@@ -42,9 +57,9 @@ private:
     Ogre::Vector3 targetPosition = Ogre::Vector3::ZERO;
 
 
-    Ogre::Quaternion mLookOrientation;
-    Ogre::Matrix4 mWorldMatrix;
     bool mChanged = false;
+    CameraInfo mCameraInfo;
+    std::array<Cascade, SHADOW_MAP_CASCADE_COUNT> cascades;
 public:
     GameCamera(Ogre::Camera* camera, Ogre::SceneManager* sceneMgr);
 
@@ -54,11 +69,7 @@ public:
         return mCamera;
     }
 
-    void updateWorldMatrix(const Ogre::Matrix4& m)
-    {
-        mWorldMatrix = m;
-    }
-
+    
     const Ogre::Vector3& getPosition() const;
 
     void setCameraType(Ogre::CameraMoveType moveType)
@@ -91,9 +102,17 @@ public:
 
     bool changed();
     void updateChanged(bool change);
+    void updateCameraInfo(const CameraInfo& cameraInfo);
+    void updateCascades(const Ogre::Vector3& lightDirection);
 
+    Cascade* getCascade(uint32_t index)
+    {
+        return &cascades[index];
+    }
 private:
     inline Ogre::Vector3 createAnglesYPR(const Ogre::Quaternion& q);
 
     inline Ogre::Quaternion createOrientationYPR(const Ogre::Vector3& ypr);
+
+    
 };

@@ -132,8 +132,15 @@ void VulkanTexture::createInternalResourcesImpl(void)
         int kk = 0;
     }
     
+    if (mTextureProperty._texType == TEX_TYPE_2D_ARRAY)
+    {
+        mTextureImageArrayView = createImageViewArray(mTextureImage, mVulkanFormat);
+    }
+    
+     mTextureImageView = createImageView(mTextureImage, mVulkanFormat);
+    
+    
 
-    mTextureImageView = createImageView(mTextureImage, mVulkanFormat);
     createTextureSampler();
 
     _createSurfaceList();
@@ -403,6 +410,43 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     return imageView;
 }
 
+std::vector<VkImageView> VulkanTexture::createImageViewArray(VkImage image, VkFormat format)
+{
+    auto device = mPlatform->getDevice();
+    VkImageViewCreateInfo viewInfo = {};
+    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.image = image;
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+    viewInfo.format = format;
+
+    mAspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
+    if (this->mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    {
+        mAspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
+    }
+    viewInfo.subresourceRange = { mAspectFlags, 0, mMipLevels, 0, 1 };
+
+    viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+    viewInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+    viewInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+    viewInfo.components.a = VK_COMPONENT_SWIZZLE_A;
+    
+    std::vector<VkImageView> views;
+    views.reserve(mFace);
+    for (uint32_t i = 0; i < mFace; i++)
+    {
+        VkImageView imageView;
+        viewInfo.subresourceRange.baseArrayLayer = i;
+        if (vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to create texture image view!");
+        }
+        views.push_back(imageView);
+    }
+    
+
+    return views;
+}
 void VulkanTexture::createTextureSampler()
 {
     mTextureSampler = VulkanHelper::getSingleton().getSampler(mTextureProperty._samplerParams);

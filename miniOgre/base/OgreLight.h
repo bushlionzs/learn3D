@@ -7,6 +7,8 @@ namespace Ogre {
     {
         LightType_Direction = 0
     };
+
+
     class Light: public MoveObject, public ICamera
     {
     public:
@@ -33,7 +35,6 @@ namespace Ogre {
 
         void setLightType(LightType type, uint32_t lightNumber);
         LightType getLightType();
-        uint32_t getLightNumber();
         Ogre::Vector3 getLightUp();
         Ogre::Vector3 getLightDirection();
 

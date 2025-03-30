@@ -340,14 +340,18 @@ namespace Ogre {
         }
     }
 
-    float VulkanMappings::getMaxLod(filament::backend::SamplerMipMapMode mipMapMode)
+    float VulkanMappings::getMaxLod(const filament::backend::SamplerParams& params)
     {
-        switch (mipMapMode) {
+        switch (params.mipMapMode) {
         case filament::backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST:
             return FLT_MAX;
         case filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR:
             // The Vulkan spec recommends a max LOD of 0.25 to "disable" mipmapping.
             // See "Mapping of OpenGL to Vulkan filter modes" in the VK Spec.
+            if (params.maxLod > 0)
+            {
+                return params.maxLod;
+            }
             return FLT_MAX;
         default:
             assert_invariant(false);

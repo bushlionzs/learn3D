@@ -11,8 +11,6 @@ GameCamera::GameCamera(Ogre::Camera* camera, Ogre::SceneManager* sceneMgr)
     mSceneMgr = sceneMgr;
     mChanged = true;
     mCameraType = Ogre::CameraMoveType_FirstPerson;
-
-    mWorldMatrix = Ogre::Matrix4::IDENTITY;
 }
 
 const Ogre::Vector3& GameCamera::getPosition() const
@@ -83,8 +81,6 @@ void GameCamera::lookAt(
             rotation.y -= Ogre::Math::PI;
         }
     }
-
-    mLookOrientation = createOrientationYPR(rotation);
 }
 
 void GameCamera::injectMouseWheel(int _absz)
@@ -231,7 +227,7 @@ bool GameCamera::update(float delta)
         auto rot = mCamera->getViewMatrix();
         auto right = rot.getRight();
         auto up = rot.getUp();
-        auto forward = -rot.getForward();
+        auto forward = rot.getForward();
 
         float moveSpeed = delta * mMoveSpeed;
 
@@ -276,7 +272,7 @@ bool GameCamera::update(float delta)
     Ogre::Matrix4 transM;
     if (mCameraType == Ogre::CameraMoveType_FirstPerson)
     {
-        transM = Ogre::Math::makeTranslateMatrix(-eyePosition);
+        transM = Ogre::Math::makeTranslateMatrix(eyePosition);
         viewMatrix = rotM * transM;
     }
     else
@@ -301,8 +297,8 @@ bool GameCamera::update(float delta)
         transM = Ogre::Math::makeTranslateMatrix(eyePosition);
         viewMatrix = transM * rotM;
     }
-    
-    mCamera->updateViewMatrix(mWorldMatrix * viewMatrix);
+    Ogre::Vector3 pos = viewMatrix.getTrans();
+    mCamera->updateViewMatrix(viewMatrix);
     mCamera->updatePosition(eyePosition);
     return true;
 }
@@ -365,4 +361,96 @@ Ogre::Quaternion GameCamera::createOrientationYPR(const Ogre::Vector3& ypr)
     c[2][1] = sx;
     c[2][2] = cy * cx;
     return c;
+}
+
+void GameCamera::updateCameraInfo(const CameraInfo& cameraInfo)
+{
+    mCameraInfo = cameraInfo;
+}
+
+void GameCamera::updateCascades(const Ogre::Vector3& lightDirection)
+{
+    float cascadeSplits[SHADOW_MAP_CASCADE_COUNT];
+
+    float nearClip = mCameraInfo.nearClip;
+    float farClip = mCameraInfo.farClip;
+    float clipRange = farClip - nearClip;
+
+    float minZ = nearClip;
+    float maxZ = nearClip + clipRange;
+
+    float range = maxZ - minZ;
+    float ratio = maxZ / minZ;
+
+    float cascadeSplitLambda = 0.95f;
+    // Calculate split depths based on view camera frustum
+    // Based on method presented in https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch10.html
+    for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++) {
+        float p = (i + 1) / static_cast<float>(SHADOW_MAP_CASCADE_COUNT);
+        float log = minZ * std::pow(ratio, p);
+        float uniform = minZ + range * p;
+        float d = cascadeSplitLambda * (log - uniform) + uniform;
+        cascadeSplits[i] = (d - nearClip) / clipRange;
+    }
+
+    // Calculate orthographic projection matrix for each cascade
+    float lastSplitDist = 0.0;
+    for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++) {
+        float splitDist = cascadeSplits[i];
+
+        Ogre::Vector3 frustumCorners[8] = {
+            Ogre::Vector3(-1.0f,  1.0f, 0.0f),
+            Ogre::Vector3(1.0f,  1.0f, 0.0f),
+            Ogre::Vector3(1.0f, -1.0f, 0.0f),
+            Ogre::Vector3(-1.0f, -1.0f, 0.0f),
+            Ogre::Vector3(-1.0f,  1.0f,  1.0f),
+            Ogre::Vector3(1.0f,  1.0f,  1.0f),
+            Ogre::Vector3(1.0f, -1.0f,  1.0f),
+            Ogre::Vector3(-1.0f, -1.0f,  1.0f),
+        };
+        const Ogre::Matrix4& proj = mCamera->getProjectMatrix();
+        const Ogre::Matrix4& view = mCamera->getViewMatrix();
+        // Project frustum corners into world space
+        Ogre::Matrix4 invCam = (proj * view).inverse();
+        for (uint32_t j = 0; j < 8; j++) {
+            Ogre::Vector4 invCorner = invCam * Ogre::Vector4(frustumCorners[j]);
+            invCorner = invCorner / invCorner.w;
+            frustumCorners[j] = Ogre::Vector3(invCorner.ptr());
+        }
+
+        for (uint32_t j = 0; j < 4; j++) {
+            Ogre::Vector3 dist = frustumCorners[j + 4] - frustumCorners[j];
+            frustumCorners[j + 4] = frustumCorners[j] + (dist * splitDist);
+            frustumCorners[j] = frustumCorners[j] + (dist * lastSplitDist);
+        }
+
+        // Get frustum center
+        Ogre::Vector3 frustumCenter = Ogre::Vector3::ZERO;
+        for (uint32_t j = 0; j < 8; j++) {
+            frustumCenter += frustumCorners[j];
+        }
+        frustumCenter /= 8.0f;
+
+        float radius = 0.0f;
+        for (uint32_t j = 0; j < 8; j++) {
+            float distance = (frustumCorners[j] - frustumCenter).length();
+            radius = std::max(radius, distance);
+        }
+        radius = std::ceil(radius * 16.0f) / 16.0f;
+
+        Ogre::Vector3 maxExtents = Ogre::Vector3(radius);
+        Ogre::Vector3 minExtents = -maxExtents;
+
+        Ogre::Vector3 lightDir = lightDirection;
+        lightDir.normalise();
+        cascades[i].lightViewMatrix = Ogre::Math::makeLookAt(
+            frustumCenter - lightDir * -minExtents.z, frustumCenter, Ogre::Vector3::UNIT_Y);
+        cascades[i].lightOrthoMatrix = Ogre::Math::makeOrthoRH(
+            minExtents.x, maxExtents.x, minExtents.y, maxExtents.y, 0.0f, maxExtents.z - minExtents.z);
+
+        // Store split distance and matrix in cascade
+        cascades[i].splitDepth = (nearClip + splitDist * clipRange) * -1.0f;
+        cascades[i].lightViewProjMatrix = cascades[i].lightOrthoMatrix * cascades[i].lightViewMatrix;
+        lastSplitDist = cascadeSplits[i];
+    }
 }

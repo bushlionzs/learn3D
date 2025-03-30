@@ -294,12 +294,6 @@ namespace Ogre {
         {
             mLightList.push_back(pair.second);
         }
-
-        std::sort(mLightList.begin(), mLightList.end(),
-            [](Light* a, Light* b)
-        {
-            return a->getLightNumber() < b->getLightNumber();
-        });
         return l;
     }
 

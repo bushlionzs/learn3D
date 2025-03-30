@@ -130,6 +130,10 @@ void Dx12Texture::_createTex()
     {
         texDesc.DepthOrArraySize = mFace;
     }
+    else if (mTextureProperty._texType == TEX_TYPE_2D_ARRAY)
+    {
+        texDesc.DepthOrArraySize = 1;
+    }
     else
     {
         texDesc.DepthOrArraySize = 1;
@@ -349,6 +353,58 @@ void Dx12Texture::updateTexture(const std::vector<const CImage*>& images)
     mTexUpload->Unmap(0, nullptr);
 }
 
+
+void Dx12Texture::uploadTextureData(const char* data, uint32_t size, TextureProperty& tp)
+{
+    updateLayoutInfos();
+    BYTE* pData;
+    HRESULT hr = mTexUpload->Map(0, NULL, reinterpret_cast<void**>(&pData));
+
+    PixelFormat imageFormat = tp._tex_format;
+    std::string mem;
+    const char* sourceData = data;
+    if (mFormat != imageFormat)
+    {
+        uint32_t memSize = PixelUtil::getMemorySize(tp._width, tp._height, 1, mFormat);
+        
+        mem.resize(memSize);
+
+        PixelBox dstBox = PixelBox(tp._width, tp._height, 1, mFormat, mem.data());
+        PixelBox src(tp._width, tp._height, tp._depth, tp._tex_format, (void*)data);
+        PixelUtil::bulkPixelConversion(src, dstBox);
+
+        sourceData = mem.data();
+    }
+    
+    D3D12_SUBRESOURCE_DATA srcData;
+    srcData.pData = sourceData;
+    srcData.RowPitch = PixelUtil::getMemorySize(
+        tp._width,
+        1,
+        1,
+        mFormat);
+    srcData.SlicePitch = PixelUtil::getMemorySize(
+        tp._width,
+        tp._height,
+        1,
+        mFormat);
+
+    uint32_t i = 0;
+
+    D3D12_MEMCPY_DEST DestData = { pData + pLayouts[i].Offset, pLayouts[i].Footprint.RowPitch, pLayouts[i].Footprint.RowPitch * pNumRows[i] };
+    MemcpySubresource(&DestData, &srcData, (SIZE_T)pRowSizesInBytes[i], pNumRows[i], pLayouts[i].Footprint.Depth);
+
+
+    mTexUpload->Unmap(0, nullptr);
+
+    uploadData();
+
+    if (mNeedMipmaps)
+    {
+        generateMipmaps();
+    }
+}
+
 void Dx12Texture::postLoad()
 {
     if (!mTextureProperty.haveImageFile())
@@ -399,10 +455,6 @@ void Dx12Texture::buildDescriptorHeaps()
 
         if (mNeedSrv)
         {
-            if (mName == "voxelTextureNegX")
-            {
-
-            }
             mDescriptors = consume_descriptor_handles(
                 context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV], 1);
             auto cpuHandle = descriptor_id_to_cpu_handle(
@@ -431,13 +483,20 @@ void Dx12Texture::buildDescriptorHeaps()
         else if (mTextureProperty._tex_usage & (uint32_t)Ogre::TextureUsage::DEPTH_ATTACHMENT)
         {
             mTargetDescriptorID = consume_descriptor_handles(
-                context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], 1);
-            auto cpuHandle = descriptor_id_to_cpu_handle(
-                context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], mTargetDescriptorID);
+                context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], mFace);
+           
             D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
             dsvDesc.Format = mTex->GetDesc().Format;
             dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-            device->CreateDepthStencilView(mTex.Get(), &dsvDesc, cpuHandle);
+            for (uint32_t i = 0; i < mFace; i++)
+            {
+                auto cpuHandle = descriptor_id_to_cpu_handle(
+                    context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], 
+                    mTargetDescriptorID);
+                //dsvDesc.Texture2D.MipSlice = i;
+                device->CreateDepthStencilView(mTex.Get(), &dsvDesc, cpuHandle);
+            }
+            
         }
         else if (mTextureProperty._tex_usage & (uint32_t)Ogre::TextureUsage::WRITEABLE)
         {
@@ -571,6 +630,8 @@ void Dx12Texture::uploadData()
         D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
     cl->ResourceBarrier(1, &barrier);
 }
+
+
 
 bool Dx12Texture::need_midmap()
 {

@@ -35,7 +35,7 @@ namespace Ogre
 
 	}
 
-	VkImageView VulkanRenderTarget::getImageView()
+	VkImageView VulkanRenderTarget::getImageView(uint32_t index)
 	{
 		if (mSwapChain)
 		{
@@ -45,7 +45,7 @@ namespace Ogre
 			}
 			return mSwapChain->getCurrentColor()->getVkImageView();
 		}
-		return mTarget->getVkImageView();
+		return mTarget->getVkImageViewEx(index);
 	}
 
 	VkImage VulkanRenderTarget::getImage()

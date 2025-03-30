@@ -59,7 +59,9 @@ public:
     virtual void blitFromMemory(
         const PixelBox& src, const Box& dstBox, uint32_t face, uint32_t mipmap)override;
     virtual void uploadData()override;
+    virtual void uploadTextureData(const char* data, uint32_t size, TextureProperty& tp)override;
     void generateMipmaps();
+    
 private:
     virtual void createInternalResourcesImpl(void);
     virtual void freeInternalResourcesImpl(void);

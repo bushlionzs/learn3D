@@ -79,11 +79,6 @@ LightType Light::getLightType()
 	return mLightType;
 }
 
-uint32_t Light::getLightNumber()
-{
-	return mLightNumber;
-}
-
 Ogre::Vector3 Light::getLightUp()
 {
 	const Ogre::Quaternion& q = mParent->_getDerivedOrientation();

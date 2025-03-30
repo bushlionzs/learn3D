@@ -304,7 +304,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
                     mVertexBuffer[i].Normal.normalise();
                     mVertexBuffer[i].Tangent = mTransforms[meshIndex] * mVertexBuffer[i].Tangent;
 
-                    if (false)
+                    if (true)
                     {
                         mVertexBuffer[i].Pos.y = -mVertexBuffer[i].Pos.y;
                         mVertexBuffer[i].Normal.y = -mVertexBuffer[i].Normal.y;
@@ -485,14 +485,16 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
             else if (tinyMat.alphaMode == "BLEND")
             {
                 matInfo.alphaMode = 1;
-                mat->setMaterialFlags(MATERIAL_FLAG_ALPHA_TESTED);
                 auto& rasterState = mat->getRasterState();
+
+                /*mat->setMaterialFlags(MATERIAL_FLAG_ALPHA_TESTED);
+                
                 rasterState.blendEquationRGB = BlendEquation::ADD;
                 rasterState.blendEquationAlpha = BlendEquation::ADD;
                 rasterState.blendFunctionSrcRGB = BlendFunction::SRC_COLOR;
                 rasterState.blendFunctionDstRGB = BlendFunction::ONE_MINUS_SRC_COLOR;
                 rasterState.blendFunctionSrcAlpha = BlendFunction::SRC_ALPHA;
-                rasterState.blendFunctionDstAlpha = BlendFunction::ONE_MINUS_SRC_ALPHA;
+                rasterState.blendFunctionDstAlpha = BlendFunction::ONE_MINUS_SRC_ALPHA;*/
             }
             
             TextureProperty tp;
@@ -1057,16 +1059,12 @@ void GltfLoader::addMaterialTexture(
 {
     if (image.uri.empty())
     {
-        if (mat->getName() == "GlassPlasticMat")
-        {
-            int kk = 0;
-        }
         const char* data = (const char*)image.image.data();
         uint32_t size = image.image.size();
         RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
         tp._width = image.width;
         tp._height = image.height;
-        tp._tex_format = Ogre::PF_R8G8B8A8;
+        tp._tex_format = Ogre::PF_A8B8G8R8;
         tp._need_mipmap = true;
         tp._tex_usage = Ogre::TextureUsage::WRITEABLE;
 

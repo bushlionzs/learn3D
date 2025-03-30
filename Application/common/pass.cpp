@@ -4,6 +4,7 @@
 #include "pass.h"
 #include "engine_struct.h"
 #include "renderSystem.h"
+#include "game_camera.h"
 #include "OgreSceneManager.h"
 #include "OgreRenderable.h"
 #include "OgreMaterial.h"
@@ -25,7 +26,10 @@ public:
 		RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
 		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 		mFrameBufferObjectList.resize(ogreConfig.swapBufferCount);
-		for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
+		mCascadeInfoList.resize(ogreConfig.swapBufferCount);
+
+		mShadowBufferList.resize(ogreConfig.swapBufferCount * SHADOW_MAP_CASCADE_COUNT);
+		for (auto i = 0; i < mFrameBufferObjectList.size(); i++)
 		{
 			Ogre::BufferDesc desc{};
 			desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
@@ -33,6 +37,26 @@ public:
 			desc.bufferCreationFlags = 0;
 			desc.mSize = sizeof(mFrameConstantBuffer);
 			mFrameBufferObjectList[i] = rs->createBufferObject(desc);
+		}
+
+		for (auto i = 0; i < mShadowBufferList.size(); i++)
+		{
+			Ogre::BufferDesc desc{};
+			desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+			desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_GPU_ONLY;
+			desc.bufferCreationFlags = 0;
+			desc.mSize = sizeof(mFrameConstantBuffer);
+			mShadowBufferList[i] = rs->createBufferObject(desc);
+		}
+
+		for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
+		{
+			Ogre::BufferDesc desc{};
+			desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+			desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_GPU_ONLY;
+			desc.bufferCreationFlags = 0;
+			desc.mSize = sizeof(cascadeInfo);
+			mCascadeInfoList[i] = rs->createBufferObject(desc);
 		}
 		auto width = ogreConfig.width;
 		auto height = ogreConfig.height;
@@ -56,19 +80,23 @@ public:
 		params.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
 		params.compareFunc = backend::SamplerCompareFunc::LE;
 		params.anisotropyLog2 = 0;
-		params.useComparison = 1;
-		params.padding1 = 0;
+		params.useComparison = 0;
+		params.maxLod = 1;
 		params.padding2 = 0;
 		Handle<HwSampler> shadowMapSampler = rs->createTextureSampler(params);
-		RenderableBindCallback bindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r) {
+		RenderableBindCallback bindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void*) {
 			Ogre::DescriptorData descriptorData[2];
 				
 			descriptorData[0].mCount = 1;
 			descriptorData[0].pName = "cbPass";
 			descriptorData[0].ppBuffers = &mFrameBufferObjectList[frameIndex];
+
+			descriptorData[1].mCount = 1;
+			descriptorData[1].pName = "cascadeInfo";
+			descriptorData[1].ppBuffers = &mCascadeInfoList[frameIndex];
 			FrameResourceInfo* resourceInfo = (FrameResourceInfo*)r->getFrameResourceInfo(frameIndex);
 			auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-			rs->updateDescriptorSet(resourceInfo->zeroSet, 1, descriptorData);
+			rs->updateDescriptorSet(resourceInfo->zeroSet, 2, descriptorData);
 			if (passInput->shadowMapTarget)
 			{
 				Ogre::OgreTexture* shadowTexture = passInput->shadowMapTarget->getTarget();
@@ -95,7 +123,7 @@ public:
 			mUserDefineShader.updateCallback = updateFrameResource;
 		}
 		
-		RenderableDrawCallback drawCallback = [=](uint32_t frameIndex, Ogre::Renderable* r) {
+		RenderableDrawCallback drawCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void* param) {
 			void* frameData = r->getFrameResourceInfo(frameIndex);
 			FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
 			Ogre::Material* mat = r->getMaterial().get();
@@ -161,26 +189,41 @@ public:
 		rasterState.renderTargetCount = 0;
 		rasterState.depthBiasConstantFactor = 1.25f;
 		rasterState.depthBiasSlopeFactor = 1.75f;
+
 		Handle<HwPipeline> shadowPipelineHandle = rs->createPipeline(rasterState, shadowProgramHandle);
 
-		RenderableBindCallback shadowBindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r) {
-			Ogre::DescriptorData descriptorData;
-			for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
-			{
-				descriptorData.mCount = 1;
-				descriptorData.pName = "cbPass";
-				descriptorData.ppBuffers = &mFrameBufferObjectList[i];
+		RenderableBindCallback shadowBindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void* param) {
+			    uint64_t index = (uint64_t)param;
+			    Ogre::DescriptorData descriptorData[3];
+				descriptorData[0].mCount = 1;
+				descriptorData[0].pName = "cbPass";
+				descriptorData[0].ppBuffers = &mShadowBufferList[frameIndex * SHADOW_MAP_CASCADE_COUNT + index];
+				descriptorData[0].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+
+				const std::shared_ptr<Material>& mat = r->getMaterial();
+
+				OgreTexture* tex = mat->getTexture(0);
+
+				descriptorData[1].mCount = 1;
+				descriptorData[1].pName = "colorMapTexture";
+				descriptorData[1].ppTextures = (const OgreTexture**)&tex;
+				descriptorData[1].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+
+				descriptorData[2].mCount = 1;
+				descriptorData[2].pName = "colorMapSampler";
+				descriptorData[2].ppTextures = (const OgreTexture**)&tex;
+				descriptorData[2].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+
 				FrameResourceInfo* resourceInfo = (FrameResourceInfo*)r->getFrameResourceInfo(frameIndex);
 				auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-				rs->updateDescriptorSet(resourceInfo->zeroShadowSet, 1, &descriptorData);
-			}
+				rs->updateDescriptorSet(resourceInfo->zeroShadowSet[index], 3, descriptorData);
 			};
 		mUserDefineShaderOfShadow.bindCallback = shadowBindCallback;
-		RenderableDrawCallback shadowDrawCallback = [=](uint32_t frameIndex, Ogre::Renderable* r) {
+		RenderableDrawCallback shadowDrawCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void* param) {
 			void* frameData = r->getFrameResourceInfo(frameIndex);
 			FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
-			
-			rs->bindPipeline(shadowPipelineHandle, &resourceInfo->zeroShadowSet, 1);
+			uint64_t index = (uint64_t)param;
+			rs->bindPipeline(shadowPipelineHandle, &resourceInfo->zeroShadowSet[index], 1);
 			
 			VertexData* vertexData = r->getVertexData();
 			IndexData* indexData = r->getIndexData();
@@ -219,7 +262,7 @@ public:
 			{
 				{
 					mPassInput.shadowMapTarget,
-					Ogre::RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE | RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+					RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 					Ogre::RESOURCE_STATE_DEPTH_WRITE
 				}
 			};
@@ -231,6 +274,7 @@ public:
 		auto sceneManager = mPassInput.sceneMgr;
 		info.renderTargetCount = 0;
 		info.depthTarget.depthStencil = mPassInput.shadowMapTarget;
+		
 		info.shadowPass = true;
 		float depthValue = 1.0f;
 		if (ogreConfig.reverseDepth)
@@ -238,7 +282,14 @@ public:
 			depthValue = 0.0f;
 		}
 		info.depthTarget.clearValue = { depthValue, 0.0f };
-		renderScene(cam, sceneManager, mRenderPassInfo, &mUserDefineShaderOfShadow);
+
+		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+		{
+			info.depthTarget.depthIndex = i;
+			mUserDefineShaderOfShadow.param = (void*)(uint64_t)i;
+			renderScene(cam, sceneManager, mRenderPassInfo, &mUserDefineShaderOfShadow);
+		}
+		
 
 		{
 			Ogre::RenderTargetBarrier rtBarriers[] =
@@ -246,7 +297,7 @@ public:
 				{
 					mPassInput.shadowMapTarget,
 					Ogre::RESOURCE_STATE_DEPTH_WRITE,
-					Ogre::RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE | RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+					RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 				}
 			};
 			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
@@ -274,6 +325,7 @@ public:
 		info.renderTargetCount = 1;
 		info.renderTargets[0].renderTarget = mPassInput.color;
 		info.depthTarget.depthStencil = mPassInput.depth;
+		info.depthTarget.depthIndex = 0;
 		info.renderTargets[0].clearColour = { 0.0, 0.0, 0.0, 1.000000000f };
 		float depthValue = 1.0f;
 		if (ogreConfig.reverseDepth)
@@ -298,6 +350,7 @@ public:
 	virtual void update(float delta)
 	{
 		updateFrameData(mPassInput.cam, mPassInput.light);
+		updateCascadeMatrices();
 	}
 private:
 	void updateFrameData(Ogre::ICamera* camera, Light* light)
@@ -345,12 +398,37 @@ private:
 		rs->updateBufferObject(mFrameBufferObjectList[frameIndex], 
 			(const char*)&mFrameConstantBuffer, sizeof(mFrameConstantBuffer));
 
+		if (mPassInput.cascadeMatrices)
+		{
+			for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+			{
+				mFrameConstantBuffer.ShadowTransform = mPassInput.cascadeMatrices->matrices[i];
+				rs->updateBufferObject(mShadowBufferList[frameIndex * SHADOW_MAP_CASCADE_COUNT + i],
+					(const char*)&mFrameConstantBuffer, sizeof(mFrameConstantBuffer));
+			}
+		}
+		
+
+	}
+	void updateCascadeMatrices()
+	{
+		if (mPassInput.cascadeMatrices)
+		{
+			auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+			RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
+			rs->updateBufferObject(mCascadeInfoList[frameIndex],
+				(const char*)mPassInput.cascadeMatrices,
+				sizeof(cascadeInfo));
+		}
+		
 	}
 private:
 	RenderPassInput mPassInput;
 	RenderPassInfo mRenderPassInfo;
 	FrameConstantBuffer mFrameConstantBuffer;
 	std::vector<filament::backend::Handle<filament::backend::HwBufferObject>> mFrameBufferObjectList;
+	std::vector<filament::backend::Handle<filament::backend::HwBufferObject>> mShadowBufferList;
+	std::vector<filament::backend::Handle<filament::backend::HwBufferObject>> mCascadeInfoList;
 	UserDefineShader mUserDefineShader;
 	UserDefineShader mUserDefineShaderOfShadow;
 };

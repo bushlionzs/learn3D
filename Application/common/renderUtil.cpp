@@ -64,9 +64,15 @@ void initFrameResource(
         
         resourceInfo->zeroSet = rs->createDescriptorSet(programHandle, 0);
         resourceInfo->firstSet = rs->createDescriptorSet(programHandle, 1);
-        resourceInfo->zeroShadowSet = rs->createDescriptorSet(shadowHandle, 0);
 
-        Ogre::DescriptorData descriptorData[256];
+        for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+        {
+            resourceInfo->zeroShadowSet[i] = rs->createDescriptorSet(shadowHandle, 0);
+        }
+        
+
+
+        Ogre::DescriptorData descriptorData[16];
         uint32_t descriptorCount = 0;
         descriptorData[descriptorCount].pName = "cbPerObject";
         descriptorData[descriptorCount].mCount = 1;
@@ -97,7 +103,12 @@ void initFrameResource(
         }
 
         rs->updateDescriptorSet(resourceInfo->zeroSet, descriptorCount, descriptorData);
-        rs->updateDescriptorSet(resourceInfo->zeroShadowSet, descriptorCount - 1, descriptorData);
+
+        for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+        {
+            rs->updateDescriptorSet(resourceInfo->zeroShadowSet[i], descriptorCount - 1, descriptorData);
+        }
+        
 
         //update texture
         uint32_t index = 0;
@@ -292,6 +303,7 @@ void updateFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
 
     objectBuffer.world = modelMatrix.transpose();
     objectBuffer.diffuseColor = mat->getDiffuseColor();
+    objectBuffer.useShadow = r->haveShadow();
     rs->updateBufferObject(resourceInfo->modelObjectHandle,
         (const char*)&objectBuffer, sizeof(objectBuffer));
 
@@ -524,7 +536,7 @@ void renderScene(
             userDefineShader->initCallback(frameIndex, r, userDefineShader->shadowHandle);
             r->setFlag(frameIndex, true);
         }
-        userDefineShader->bindCallback(frameIndex, r);
+        userDefineShader->bindCallback(frameIndex, r, userDefineShader->param);
 
         if (userDefineShader->updateCallback)
         {
@@ -546,7 +558,7 @@ void renderScene(
         {
             continue;
         }
-        userDefineShader->drawCallback(frameIndex, r);
+        userDefineShader->drawCallback(frameIndex, r, userDefineShader->param);
     }
 
     auto& kk = renderList.back();
@@ -555,12 +567,11 @@ void renderScene(
 
     for (auto r : renderList)
     {
-        break;
         Ogre::Material* mat = r->getMaterial().get();
         auto flags = mat->getMaterialFlags();
         if (flags & Ogre::MATERIAL_FLAG_ALPHA_TESTED)
         {
-            userDefineShader->drawCallback(frameIndex, r);
+            userDefineShader->drawCallback(frameIndex, r, userDefineShader->param);
         }
     }
 

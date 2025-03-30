@@ -97,6 +97,7 @@ typedef struct BindDepthTargetDesc
 {
     Ogre::RenderTarget* depthStencil;
     ClearValue      clearValue;
+    uint32_t depthIndex;
 } BindDepthTargetDesc;
 
 enum
@@ -250,6 +251,8 @@ struct ObjectConstantBuffer
     Ogre::Matrix4 world = Ogre::Matrix4::IDENTITY;
     Ogre::Matrix4 projector = Ogre::Matrix4::IDENTITY;
     Ogre::Vector4 diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    uint32_t useShadow;
+    uint32_t padding[3];
 };
 
 class SkinnedConstantBuffer
@@ -288,6 +291,13 @@ public:
     uint32_t boneIndices[4];
 };
 
+#define SHADOW_MAP_CASCADE_COUNT 4
+
+struct cascadeInfo
+{
+    Ogre::Matrix4 matrices[SHADOW_MAP_CASCADE_COUNT];
+    float cascadeSplits[SHADOW_MAP_CASCADE_COUNT];
+};
 
 enum EngineType
 {

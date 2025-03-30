@@ -4,6 +4,7 @@
 #include <engine_struct.h>
 class GameCamera;
 class RenderSystem;
+
 namespace Ogre
 {
 	class RenderWindow;
@@ -21,7 +22,7 @@ struct RenderPassInput
 	Ogre::ICamera* cam = nullptr;
 	Ogre::Light* light = nullptr;
 	Ogre::RenderTarget* shadowMapTarget = nullptr;
-	bool shadowPass = false;
+	cascadeInfo* cascadeMatrices = nullptr;
 	bool flipY = true;
 };
 

@@ -19,6 +19,8 @@ namespace Ogre {
 
         mColor = Ogre::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
         mFlags = 0;
+
+        mHaveShadow = false;
     }
 
     Renderable::~Renderable()

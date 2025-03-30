@@ -11,8 +11,8 @@ using RenderableInitCallback = std::function< void(
     Ogre::Renderable* r,
     filament::backend::Handle<filament::backend::HwProgram> shadowHandle)>;
 using RenderableUpdateCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
-using RenderableBindCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable*r)>;
-using RenderableDrawCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
+using RenderableBindCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable*r, void* )>;
+using RenderableDrawCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r, void*)>;
 
 struct UserDefineShader
 {
@@ -21,13 +21,14 @@ struct UserDefineShader
     RenderableBindCallback bindCallback;
     RenderableUpdateCallback updateCallback;
     filament::backend::Handle<filament::backend::HwProgram> shadowHandle;
+    void* param;
 };
 
 struct FrameResourceInfo
 {
     filament::backend::Handle<filament::backend::HwDescriptorSet> zeroSet;
     filament::backend::Handle<filament::backend::HwDescriptorSet> firstSet;
-    filament::backend::Handle<filament::backend::HwDescriptorSet> zeroShadowSet;
+    filament::backend::Handle<filament::backend::HwDescriptorSet> zeroShadowSet[SHADOW_MAP_CASCADE_COUNT];
     filament::backend::Handle<filament::backend::HwBufferObject>  modelObjectHandle;
     filament::backend::Handle<filament::backend::HwBufferObject>  matObjectHandle;
     filament::backend::Handle<filament::backend::HwBufferObject>  skinObjectHandle;

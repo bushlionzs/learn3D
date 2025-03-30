@@ -18,7 +18,9 @@ public:
     virtual bool engineInit(bool raytracing);
 
     virtual Ogre::OgreTexture* createTextureFromFile(const std::string& name, Ogre::TextureProperty* texProperty) override;
-
+    virtual Ogre::OgreTexture* createManualTexture(
+        const std::string& name,
+        Ogre::TextureProperty* texProperty)override;
     virtual void traceRay(Handle<HwRaytracingProgram> programHandle,
         uint32_t width, uint32_t height, uint32_t depth);
 

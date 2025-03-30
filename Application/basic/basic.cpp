@@ -47,7 +47,7 @@ void BasicApplication::setup(
 
 	std::string dir = "D:\\godotProject\\Abandoned-Spaceship-Godot-Demo\\Models";
 	Ogre::ResourceManager::getSingletonPtr()->addDirectory(dir, "", false);
-	base6();
+	base1();
 }
 
 void BasicApplication::update(float delta)
@@ -86,7 +86,7 @@ void BasicApplication::base1()
 	ShaderInfo& info = mat->getShaderInfo();
 	//info.shaderName = "testShader";
 	//mSceneManager->setSkyBox(true, "SkyLan", 1000.0f);
-	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, 3.f), Ogre::Vector3::ZERO);
+	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, -3.f), Ogre::Vector3::ZERO);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
 	mGameCamera->setMoveSpeed(50);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();

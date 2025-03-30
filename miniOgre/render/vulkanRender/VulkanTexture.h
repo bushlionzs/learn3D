@@ -47,6 +47,15 @@ public:
         return mTextureImageView;
     }
 
+    VkImageView getVkImageViewEx(uint32_t index)
+    {
+        if (mTextureProperty._texType == TEX_TYPE_2D_ARRAY)
+        {
+            return mTextureImageArrayView[index];
+        }
+        return mTextureImageView;
+    }
+
     VkImage getVkImage()
     {
         return mTextureImage;
@@ -121,6 +130,7 @@ private:
         VkImage& image,
         VkDeviceMemory& imageMemory);
     VkImageView createImageView(VkImage image, VkFormat format);
+    std::vector<VkImageView> createImageViewArray(VkImage image, VkFormat format);
     void createTextureSampler();
 
     
@@ -134,6 +144,7 @@ private:
     VkDeviceMemory mTextureImageMemory;
 
     VkImageView mTextureImageView;
+    std::vector<VkImageView> mTextureImageArrayView;
     VkSampler mTextureSampler;
 
     VkFormat mVulkanFormat = VK_FORMAT_UNDEFINED;

@@ -303,7 +303,7 @@ void VulkanRenderSystemBase::beginRenderPass(
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
             VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
 
-        colorAttachments[i].imageView = rt->getImageView();
+        colorAttachments[i].imageView = rt->getImageView(0);
         const ClearValue* clearValue = &renderPassInfo.renderTargets[i].clearColour;
         colorAttachments[i].clearValue.color = { { clearValue->r, clearValue->g, clearValue->b, clearValue->a } };
     }
@@ -318,9 +318,9 @@ void VulkanRenderSystemBase::beginRenderPass(
         depthAttachment.storeOp = VulkanMappings::getVkAttachmentStoreOp(renderPassInfo.depthStoreAction);
 
         Ogre::VulkanRenderTarget* rt = (Ogre::VulkanRenderTarget*)renderPassInfo.depthTarget.depthStencil;
-        depthAttachment.imageView = rt->getImageView();
+        depthAttachment.imageView = rt->getImageView(renderPassInfo.depthTarget.depthIndex);
 
-        vks::tools::insertImageMemoryBarrier(
+        /*vks::tools::insertImageMemoryBarrier(
             cmdBuffer,
             rt->getImage(),
             0,
@@ -329,7 +329,7 @@ void VulkanRenderSystemBase::beginRenderPass(
             VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
             VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
             VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
-            VkImageSubresourceRange{ VK_IMAGE_ASPECT_DEPTH_BIT , 0, 1, 0, 1 });
+            VkImageSubresourceRange{ VK_IMAGE_ASPECT_DEPTH_BIT , 0, 1, 0, 1 });*/
 
         const ClearValue* clearValue = &renderPassInfo.depthTarget.clearValue;
         depthAttachment.clearValue.depthStencil = { clearValue->depth, clearValue->stencil };

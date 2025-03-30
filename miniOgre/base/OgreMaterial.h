@@ -85,6 +85,11 @@ namespace Ogre {
             return mPbr;
         }
 
+        void setPbr(bool pbr)
+        {
+            mPbr = pbr;
+        }
+
         const String& getName() const
         {
             return mMaterialName;

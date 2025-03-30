@@ -41,7 +41,7 @@ bool PresentPass::initialize()
 	samplerParams.compareFunc = filament::backend::SamplerCompareFunc::N;
 	samplerParams.anisotropyLog2 = 0;
 	samplerParams.useComparison = 0;
-	samplerParams.padding1 = 0;
+	samplerParams.maxLod = 0;
 	samplerParams.padding2 = 0;
 	auto repeatBillinearSampler = rs->createTextureSampler(samplerParams);
 

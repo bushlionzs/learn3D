@@ -76,6 +76,15 @@ namespace Ogre {
             return mObjectType;
         }
 
+        bool haveShadow()
+        {
+            return mHaveShadow;
+        }
+        void setShadow(bool shadow)
+        {
+            mHaveShadow = shadow;
+        }
+
         void setColor(const Ogre::Vector4& color);
         const Ogre::Vector4& getColor() const;
 
@@ -87,6 +96,7 @@ namespace Ogre {
         uint64_t mSortValue;
         ObjectType mObjectType;
         Ogre::Vector4 mColor;
+        bool mHaveShadow;
         std::vector<void*> mFrameResourceInfoList;
         std::bitset<64>  mFlags;
     };

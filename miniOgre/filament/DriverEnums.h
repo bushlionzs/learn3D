@@ -1020,7 +1020,7 @@ struct SamplerParams { // NOLINT
 
     SamplerCompareFunc compareFunc  : 3;    //!< sampler comparison function (LE)
     
-    uint8_t padding1                : 5;    //!< reserved. must be 0.
+    uint8_t maxLod                : 5;    
     uint8_t padding2                : 8;    //!< reserved. must be 0.
 
     struct Hasher {
@@ -1032,7 +1032,6 @@ struct SamplerParams { // NOLINT
 
     struct EqualTo {
         bool operator()(SamplerParams lhs, SamplerParams rhs) const noexcept {
-            assert_invariant(lhs.padding1 == 0);
             assert_invariant(lhs.padding2 == 0);
             auto* pLhs = reinterpret_cast<uint32_t const*>(reinterpret_cast<char const*>(&lhs));
             auto* pRhs = reinterpret_cast<uint32_t const*>(reinterpret_cast<char const*>(&rhs));
@@ -1042,7 +1041,6 @@ struct SamplerParams { // NOLINT
 
     struct LessThan {
         bool operator()(SamplerParams lhs, SamplerParams rhs) const noexcept {
-            assert_invariant(lhs.padding1 == 0);
             assert_invariant(lhs.padding2 == 0);
             auto* pLhs = reinterpret_cast<uint32_t const*>(reinterpret_cast<char const*>(&lhs));
             auto* pRhs = reinterpret_cast<uint32_t const*>(reinterpret_cast<char const*>(&rhs));

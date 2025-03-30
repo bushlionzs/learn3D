@@ -49,6 +49,22 @@ OgreTexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, Te
 	return tex;
 }
 
+Ogre::OgreTexture* Dx12RenderSystem::createManualTexture(
+    const std::string& name,
+    Ogre::TextureProperty* texProperty)
+{
+    Dx12Texture* tex = new Dx12Texture(
+        name, texProperty, mCommands, true);
+
+    if (!tex->load(nullptr))
+    {
+        delete tex;
+        return nullptr;
+    }
+
+    return tex;
+}
+
 void Dx12RenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle,
     uint32_t width, uint32_t height, uint32_t depth)
 {
