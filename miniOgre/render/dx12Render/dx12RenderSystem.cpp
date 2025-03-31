@@ -366,7 +366,7 @@ void Dx12RenderSystem::buildAccelerationStructure(RaytracingBuildASDesc* pDesc)
     if (pDesc->mIssueRWBarrier)
     {
         BufferBarrier barrier = { as->asBufferHandle, RESOURCE_STATE_ACCELERATION_STRUCTURE_WRITE, RESOURCE_STATE_ACCELERATION_STRUCTURE_READ };
-        resourceBarrier(1, &barrier, 0, NULL, 0, NULL);
+        resourceBarrier(1, &barrier, 0, NULL, 0, NULL, QUEUE_TYPE_GRAPHICS);
     }
 
     dxrCmd->Release();

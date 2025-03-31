@@ -56,8 +56,8 @@ void VoxelConeTracingApp::setup(
 	sponzaNode->attachObject(sponza);*/
 
 	auto h = 7.0f;
-	auto camPos = Ogre::Vector3(0.0f, h, 33.0f);
-	auto targetPos = Ogre::Vector3(0.0f, h, 0.0f);
+	auto camPos = Ogre::Vector3(0.0f, -h, -33.0f);
+	auto targetPos = Ogre::Vector3(0.0f, -h, -34.0f);
 	gameCamera->lookAt(camPos, targetPos);
 	gameCamera->setMoveSpeed(20);
 
@@ -92,7 +92,7 @@ void VoxelConeTracingApp::setup(
 
 	if (1)
 	{
-		//computePass();
+		computePass();
 	}
 
 	if (1)
@@ -113,11 +113,11 @@ void VoxelConeTracingApp::update(float delta)
 {
 	mLightDirection = Ogre::Vector3(0.191, 1.0f, 0.574f);
 	mTotalTime += delta;
-    float v = sin(mTotalTime * 0.2f);
+    float v = sin(mTotalTime);
 
-	v = 0.5;
+	//v = 0.5;
 	mLightDirection.x = v;
-
+	mLightDirection.normalise();
 	Ogre::Vector3 eyePositon = Ogre::Vector3::ZERO;
 	Ogre::Vector3 targetPos = eyePositon - mLightDirection;
 	mLightView = Ogre::Math::makeLookAtRH(
@@ -151,7 +151,7 @@ void VoxelConeTracingApp::sceneGeometryPass()
 	static UserDefineShader userDefineShader;
 	userDefineShader.initCallback = std::bind(
 		&VoxelConeTracingApp::initFrameResource, this, std::placeholders::_1, std::placeholders::_2);
-	RenderableBindCallback bindCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+	RenderableBindCallback bindCallback = [=, this](uint32_t frameIndex, Renderable* r, void*) {
 		if (r->hasFlag(sceneGeometryPassBit + frameIndex))
 		{
 			return;
@@ -173,7 +173,7 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		};
 	userDefineShader.bindCallback = bindCallback;
 
-	RenderableDrawCallback drawCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+	RenderableDrawCallback drawCallback = [=, this](uint32_t frameIndex, Renderable* r, void*) {
 		void* frameData = r->getFrameResourceInfo(frameIndex);
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
@@ -190,7 +190,23 @@ void VoxelConeTracingApp::sceneGeometryPass()
 			view->mIndexLocation, view->mBaseVertexLocation, 0);
 		};
 	userDefineShader.drawCallback = drawCallback;
-	userDefineShader.updateCallback = updateFrameResource;
+
+	RenderableUpdateCallback renderUpdateCallback = [=, this](uint32_t frameIndex, Renderable* r)
+		{
+			void* frameData = r->getFrameResourceInfo(frameIndex);
+			VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
+			Ogre::Material* mat = r->getMaterial().get();
+			ObjectConstantBuffer objectBuffer;
+			const auto& modelMatrix = r->getModelMatrix();
+
+			objectBuffer.world = modelMatrix.transpose();
+			objectBuffer.diffuseColor = r->getColor();
+			objectBuffer.haveTexture = false;
+			objectBuffer.useShadow = false;
+			mRenderSystem->updateBufferObject(resourceInfo->modelObjectHandle,
+				(const char*)&objectBuffer, sizeof(objectBuffer));
+		};
+	userDefineShader.updateCallback = renderUpdateCallback;
 	UserDefineShader* pUserDefineShader = &userDefineShader;
 	RenderPassCallback sceneGeometryPassCallback = [=, this](RenderPassInfo& info) {
 		info.renderTargetCount = 3;
@@ -201,7 +217,7 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		info.renderTargets[2].renderTarget = mVoxelizationContext.worldPosTarget;
 		info.renderTargets[2].clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
 		info.depthTarget.depthStencil = mVoxelizationContext.depthTarget;
-
+		info.depthTarget.depthIndex = 0;
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
 		info.passName = "sceneGeometryPass";
 
@@ -267,7 +283,7 @@ void VoxelConeTracingApp::shadowPass()
 	static UserDefineShader userDefineShader;
 	userDefineShader.initCallback = std::bind(
 		&VoxelConeTracingApp::initFrameResource, this, std::placeholders::_1, std::placeholders::_2);
-	RenderableBindCallback bindCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+	RenderableBindCallback bindCallback = [=, this](uint32_t frameIndex, Renderable* r, void*) {
 		if (r->hasFlag(shadowPassBit + frameIndex))
 		{
 			return;
@@ -285,7 +301,7 @@ void VoxelConeTracingApp::shadowPass()
 		mRenderSystem->updateDescriptorSet(resourceInfo->zeroShadowSet, 1, &descriptorData);
 		};
 	userDefineShader.bindCallback = bindCallback;
-	RenderableDrawCallback drawCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+	RenderableDrawCallback drawCallback = [=, this](uint32_t frameIndex, Renderable* r, void*) {
 		void* frameData = r->getFrameResourceInfo(frameIndex);
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
@@ -302,12 +318,16 @@ void VoxelConeTracingApp::shadowPass()
 			view->mIndexLocation, view->mBaseVertexLocation, 0);
 		};
 	userDefineShader.drawCallback = drawCallback;
-	userDefineShader.updateCallback = updateFrameResource;
+
+	RenderableUpdateCallback renderUpdateCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+		};
+	userDefineShader.updateCallback = renderUpdateCallback;
 	UserDefineShader* pUserDefineShader = &userDefineShader;
 	RenderPassCallback shadowPassCallback = [=, this](RenderPassInfo& info) {
 		info.renderTargetCount = 0;
 		info.depthTarget.depthStencil = mVoxelizationContext.depthTarget;
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
+		info.depthTarget.depthIndex = 0;
 		info.passName = "vctShadowPass";
 		mRenderSystem->pushGroupMarker("vctShadowPass");
 		{
@@ -376,7 +396,7 @@ void VoxelConeTracingApp::voxelizationPass()
 	static UserDefineShader userDefineShader;
 	userDefineShader.initCallback = std::bind(
 		&VoxelConeTracingApp::initFrameResource, this, std::placeholders::_1, std::placeholders::_2);
-	RenderableBindCallback bindCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+	RenderableBindCallback bindCallback = [=, this](uint32_t frameIndex, Renderable* r, void*) {
 		if (r->hasFlag(voxelizationPassBit + frameIndex))
 		{
 			return;
@@ -392,7 +412,7 @@ void VoxelConeTracingApp::voxelizationPass()
 		mRenderSystem->updateDescriptorSet(resourceInfo->zeroSetOfVoxelization, 1, &descriptorData);
 		};
 	userDefineShader.bindCallback = bindCallback;
-	RenderableDrawCallback drawCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+	RenderableDrawCallback drawCallback = [=, this](uint32_t frameIndex, Renderable* r, void*) {
 		void* frameData = r->getFrameResourceInfo(frameIndex);
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
@@ -410,7 +430,10 @@ void VoxelConeTracingApp::voxelizationPass()
 			view->mIndexLocation, view->mBaseVertexLocation, 0);
 		};
 	userDefineShader.drawCallback = drawCallback;
-	userDefineShader.updateCallback = updateFrameResource;
+
+	RenderableUpdateCallback renderUpdateCallback = [=, this](uint32_t frameIndex, Renderable* r) {
+		};
+	userDefineShader.updateCallback = renderUpdateCallback;
 	UserDefineShader* pUserDefineShader = &userDefineShader;
 	RenderPassCallback voxelizationPassCallback = [=, this](RenderPassInfo& info) {
 		VoxelizationContext* context = &this->mVoxelizationContext;
@@ -768,7 +791,7 @@ void VoxelConeTracingApp::lightingPass()
 	params.compareFunc = backend::SamplerCompareFunc::LE;
 	params.anisotropyLog2 = 4;
 	params.useComparison = 0;
-	params.padding1 = 0;
+	params.maxLod = 0;
 	params.padding2 = 0;
 	mVoxelizationContext.BilinearSampler = mRenderSystem->createTextureSampler(params);
 
@@ -782,7 +805,7 @@ void VoxelConeTracingApp::lightingPass()
 	params.compareFunc = backend::SamplerCompareFunc::LE;
 	params.anisotropyLog2 = 0;
 	params.useComparison = 1;
-	params.padding1 = 0;
+	params.maxLod = 0;
 	params.padding2 = 0;
 	mVoxelizationContext.PcfShadowMapSampler = mRenderSystem->createTextureSampler(params);
 
@@ -1188,7 +1211,7 @@ void VoxelConeTracingApp::initScene()
 	params.compareFunc = backend::SamplerCompareFunc::LE;
 	params.anisotropyLog2 = 0;
 	params.useComparison = 1;
-	params.padding1 = 0;
+	params.maxLod = 0;
 	params.padding2 = 0;
 	Handle<HwSampler>samplerHandle = mRenderSystem->createTextureSampler(params);
 	mVoxelizationContext.voxelizationSampler = samplerHandle;
@@ -1519,7 +1542,7 @@ void VoxelConeTracingApp::initScene()
 	params.compareFunc = backend::SamplerCompareFunc::LE;
 	params.anisotropyLog2 = 4;
 	params.useComparison = 0;
-	params.padding1 = 0;
+	params.maxLod = 0;
 	params.padding2 = 0;
 	mVoxelizationContext.tracingSampler = mRenderSystem->createTextureSampler(params);
 

@@ -87,12 +87,15 @@ VertexOut VS(VertexIn vIn)
 #endif
     vOut.UV = mul(cbMaterial.gTexTransform, float4(vIn.TexC, 0.0f, 1.0f)).xy;
 	vOut.WorldPos = posW.xyz;
+#ifdef VULKAN
+	//vOut.Pos.y = -vOut.Pos.y;
+#endif
     return vOut;
 }
 
 static const float4x4 biasMat = float4x4(
 	0.5, 0.0, 0.0, 0.5,
-	0.0, 0.5, 0.0, 0.5,
+	0.0, -0.5, 0.0, 0.5,
 	0.0, 0.0, 1.0, 0.0,
 	0.0, 0.0, 0.0, 1.0
 );
@@ -102,7 +105,7 @@ static const float4x4 biasMat = float4x4(
 float textureProj(float4 shadowCoord, float2 off, uint cascadeIndex)
 {
     float shadow = 1.0;
-	float bias = 0.01;
+	float bias = 0.005;
 	if ( shadowCoord.z > -1.0 && shadowCoord.z < 1.0 )
 	{		
 		float dist = shadowMap.Sample(shadowMapSampler, float3(shadowCoord.xy + off, cascadeIndex)).r;
@@ -141,6 +144,10 @@ float filterPCF(float4 sc, uint cascadeIndex)
 
 float4 PS(VertexOut input) : SV_Target
 {
+	if(cbPerObject.haveTexture == 0)
+	{
+	    return cbPerObject.diffuseColor;
+	}
     float4 color = first.Sample(firstSampler, input.UV) * cbMaterial.gDiffuseAlbedo;
 	if (color.a < 0.5) {
 		clip(-1);
@@ -159,9 +166,7 @@ float4 PS(VertexOut input) : SV_Target
 		
 		float4x4 lightViewProj = cascadeInfo.matrices[cascadeIndex];
 		float4 shadowCoord = mul(lightViewProj, float4(input.WorldPos, 1.0));
-		
-		shadowCoord = mul(biasMat, shadowCoord);
-		
+		shadowCoord.rg = shadowCoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 		shadow = textureProj(shadowCoord/shadowCoord.w, float2(0.0, 0.0), cascadeIndex);
 	}
 	

@@ -74,7 +74,7 @@ bool FbxLoader::loadMeshFromFile(
             aiVector3D* sourceTexcoords = sourceMesh->mTextureCoords[0];
             aiVector3D* sourceTangents = sourceMesh->mTangents;
             aiVector3D* sourceBitangents = sourceMesh->mBitangents;
-            aiColor4D* sourceColors = sourceMesh->mColors[0];
+            
             for (uint32_t index = 0; index < numVertices; index++)
             {
                 FbxVertex& vertex = vertexList.at(index);
@@ -104,7 +104,9 @@ bool FbxLoader::loadMeshFromFile(
             
             vertexData->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
             vertexData->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-            vertexData->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);
+            vertexData->addElement(0, 0, 24, VET_FLOAT3, VES_TANGENT);
+            vertexData->addElement(0, 0, 36, VET_FLOAT3, VES_BINORMAL);
+            vertexData->addElement(0, 0, 48, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
             vertexData->addBindBuffer(0, sizeof(FbxVertex), numVertices);
 
@@ -139,10 +141,11 @@ bool FbxLoader::loadMeshFromFile(
 
             aiString name;
             sourceMat->Get(AI_MATKEY_NAME, name);
-
+            aiColor3D color;
+            sourceMat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
             std::string matName = name.C_Str();
             std::shared_ptr<Ogre::Material> mat = std::make_shared<Ogre::Material>(matName, false);
-
+            mat->setDiffuseColor(Ogre::Vector3(color.r, color.g, color.b));
             for (aiTextureType aiType = aiTextureType_DIFFUSE; aiType < aiTextureType_UNKNOWN;
                 aiType = aiTextureType((uint32_t)aiType + 1))
             {
@@ -155,7 +158,7 @@ bool FbxLoader::loadMeshFromFile(
 
             subMesh->setMaterial(mat);
             ShaderInfo info;
-            info.shaderName = "fbx";
+            info.shaderName = "basic";
             mat->addShader(info);
         }
     }

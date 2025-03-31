@@ -197,6 +197,11 @@ namespace Ogre {
         return false;
     }
 
+    bool Material::hasTexture()
+    {
+        return !mTextureUnits.empty();
+    }
+
     int32_t Material::getTextureUnitCount()
     {
         return mTextureUnits.size();
@@ -381,6 +386,9 @@ namespace Ogre {
         mShaderInfo = rhs.mShaderInfo;
         mPbrMatInfo = rhs.mPbrMatInfo;
         mMatInfo = rhs.mMatInfo;
+        mDiffuseColor = rhs.mDiffuseColor;
+        mSpecularColor = rhs.mSpecularColor;
+        mEmissiveColor = rhs.mEmissiveColor;
         mPbr = rhs.mPbr;
         mLoad = false;
         for (auto tu : rhs.mTextureUnits)

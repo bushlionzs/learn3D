@@ -301,10 +301,9 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
                 {
                     mVertexBuffer[i].Pos = mTransforms[meshIndex] * mVertexBuffer[i].Pos;
                     mVertexBuffer[i].Normal = mTransforms[meshIndex] * mVertexBuffer[i].Normal;
-                    mVertexBuffer[i].Normal.normalise();
                     mVertexBuffer[i].Tangent = mTransforms[meshIndex] * mVertexBuffer[i].Tangent;
 
-                    if (true)
+                    if (false)
                     {
                         mVertexBuffer[i].Pos.y = -mVertexBuffer[i].Pos.y;
                         mVertexBuffer[i].Normal.y = -mVertexBuffer[i].Normal.y;

@@ -252,7 +252,8 @@ struct ObjectConstantBuffer
     Ogre::Matrix4 projector = Ogre::Matrix4::IDENTITY;
     Ogre::Vector4 diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     uint32_t useShadow;
-    uint32_t padding[3];
+    uint32_t haveTexture;
+    uint32_t padding[2];
 };
 
 class SkinnedConstantBuffer

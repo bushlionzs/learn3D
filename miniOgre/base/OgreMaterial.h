@@ -43,7 +43,8 @@ namespace Ogre {
         std::shared_ptr<TextureUnit>& getTextureUnit(const char* name);
 
         bool hasTextureUnit(const char* name);
-       
+        bool hasTexture();
+
         int32_t getTextureUnitCount();
         std::vector<std::shared_ptr<TextureUnit>>& getAllTexureUnit();
         OgreTexture* getPbrTexture(TextureTypePbr type);

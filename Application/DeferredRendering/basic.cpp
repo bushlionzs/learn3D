@@ -51,11 +51,11 @@ void BasicApplication::update(float delta)
 {
 	Ogre::Matrix4 lightViewMatrix;
 	mTotalTime += delta;
-	mTotalTime = 0.5f;
-	float angle = glm::radians(mTotalTime * 360.0f);
+	//mTotalTime = 0.5f;
+	float angle = glm::radians(mTotalTime * 36.0f);
 	float radius = 20.0f;
 	mLightPosition = Ogre::Vector3(cos(angle) * radius, -radius, sin(angle) * radius);
-	mLightDirection = -mLightPosition;
+	mLightDirection = mLightPosition;
 	mLightDirection.normalise();
 	mGameCamera->updateCascades(mLightDirection);
 
@@ -155,7 +155,6 @@ void BasicApplication::base1()
 	texProperty._height = 2048;
 	texProperty._tex_format = Ogre::PixelFormat::PF_DEPTH32F;
 	texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
-	input.flipY = true;
 	auto mainPass = createStandardRenderPass(input);
 	mRenderPipeline->addRenderPass(mainPass);
 }
@@ -177,9 +176,9 @@ void BasicApplication::base2()
 
 	const std::vector<Ogre::Vector3> positions = {
 			Ogre::Vector3(0.0f, 0.0f, 0.0f),
-			Ogre::Vector3(1.25f, 0.25f, 1.25f),
-			Ogre::Vector3(-1.25f, -0.2f, 1.25f),
-			Ogre::Vector3(1.25f, 0.1f, -1.25f),
+			Ogre::Vector3(1.25f, -0.15f, 1.25f),
+			Ogre::Vector3(-1.25f, -0.25f, 1.25f),
+			Ogre::Vector3(1.25f, -0.25f, -1.25f),
 			Ogre::Vector3(-1.25f, -0.25f, -1.25f),
 	};
 
@@ -216,10 +215,10 @@ void BasicApplication::base2()
 		shaderInfo.shaderName = "basic";
 	}
 
-	float h = 1.14f;
+	float h = -1.14f;
 	mGameCamera->lookAt(
-		Ogre::Vector3(-0.12f, h, -2.25f),
-		Ogre::Vector3(-0.12f, h, -3.25f));
+		Ogre::Vector3(-0.12f, h, -5.25f),
+		Ogre::Vector3(-0.12f, h, -6.25f));
 	mGameCamera->setMoveSpeed(3);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
@@ -257,7 +256,7 @@ void BasicApplication::base2()
 	input.cam = mGameCamera->getCamera();
 	input.sceneMgr = mSceneManager;
 	input.light = mLight;
-	input.flipY = false;
+	input.flipY = true;
 	input.cascadeMatrices = &mCascadeInfo;
 	TextureProperty texProperty;
 	texProperty._need_mipmap = false;

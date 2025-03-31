@@ -120,8 +120,9 @@ public:
         uint32_t textureBarrierCount,
         TextureBarrier* pTextureBarriers,
         uint32_t numRtBarriers,
-        RenderTargetBarrier* pRtBarriers
-    );
+        RenderTargetBarrier* pRtBarriers,
+        Ogre::QueueType queueType = QUEUE_TYPE_GRAPHICS
+    )override;
 
 
     virtual void beginCmd();
@@ -142,4 +143,6 @@ protected:
     bool mSetDescriptorHeaps;
 
     ID3D12CommandSignature* mDrawIndexCommandSignature = nullptr;
+
+    ID3D12PipelineState* mLastPipelineState = nullptr;
 };

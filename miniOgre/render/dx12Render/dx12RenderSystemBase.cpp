@@ -142,6 +142,8 @@ void Dx12RenderSystemBase::frameStart()
         mDescriptorHeapContext->pSamplerHeaps[0]->pHeap
     };
     cl->SetDescriptorHeaps(2, heaps);
+
+    mLastPipelineState = nullptr;
 }
 
 void Dx12RenderSystemBase::frameEnd()
@@ -312,14 +314,20 @@ void Dx12RenderSystemBase::bindPipeline(
 
     auto rootSignature = dx12ProgramImpl->getRootSignature();
     cl->SetGraphicsRootSignature(rootSignature);
-    cl->SetPipelineState(pso);
+    //if (mLastPipelineState != pso)
+    {
+        
+        cl->SetPipelineState(pso);
+        mLastPipelineState = pso;
+    }
+    
     cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     for (uint32_t i = 0; i < setCount; i++)
     {
         if (!descSets[i])
             continue;
         DX12DescriptorSet* dset = mResourceAllocator.handle_cast<DX12DescriptorSet*>(descSets[i]);
-        std::vector<const DescriptorInfo*> descriptorInfos = dset->getDescriptorInfos();
+        const std::vector<const DescriptorInfo*>& descriptorInfos = dset->getDescriptorInfos();
         auto cbvSrvUavHandle = dset->getCbvSrvUavHandle();
         auto samplerHandle = dset->getSamplerHandle();
         for (auto descriptorInfo : descriptorInfos)
@@ -332,14 +340,9 @@ void Dx12RenderSystemBase::bindPipeline(
             }
             else
             {
-                if (strcmp(descriptorInfo->pName, "shadowBuffer") == 0)
-                {
-                    int kk = 0;
-                }
                 auto gpuHandle = descriptor_id_to_gpu_handle(
                     mDescriptorHeapContext->mCbvSrvUavHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV], cbvSrvUavHandle + descriptorInfo->mSetIndex);
                 cl->SetGraphicsRootDescriptorTable(descriptorInfo->mRootIndex, gpuHandle);
-                int kk = 0;
             }
             
         }
@@ -489,8 +492,9 @@ Handle<HwBufferObject> Dx12RenderSystemBase::createBufferObject(
     Handle<HwBufferObject> boh = mResourceAllocator.allocHandle<DX12BufferObject>();
     DxDescriptorID id = consume_descriptor_handles(
         mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV], 1);
+    bool cpu_to_gpu = desc.mMemoryUsage == RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
     DX12BufferObject* bufferObject = mResourceAllocator.construct<DX12BufferObject>(
-        boh, mDescriptorHeapContext, desc, id);
+        boh, mDescriptorHeapContext, desc, id, cpu_to_gpu);
     return boh;
 }
 
@@ -614,8 +618,8 @@ Handle<HwPipeline> Dx12RenderSystemBase::createPipeline(
     dx12RasterState.rasterizationSamples = DX12Helper::getSingleton().hasMsaa() ? 4 : 1;
     dx12RasterState.colorTargetCount = rasterState.renderTargetCount;
     dx12RasterState.depthCompareOp = D3D12Mappings::getComparisonFunc(rasterState.depthFunc);
-    dx12RasterState.depthBiasSlopeFactor = rasterState.depthBiasSlopeFactor;
-    dx12RasterState.depthBias = static_cast<int>(rasterState.depthBiasConstantFactor / (1.0f / (1 << 24)));
+    dx12RasterState.depthBiasSlopeFactor = 0.0f;
+    dx12RasterState.depthBias = 0.0f;
 
     DXGI_FORMAT colorFormat[8] = {};
     for (uint32_t i = 0; i < rasterState.renderTargetCount; i++)
@@ -811,7 +815,8 @@ void Dx12RenderSystemBase::updateDescriptorSet(
 void Dx12RenderSystemBase::resourceBarrier(
     uint32_t numBufferBarriers, BufferBarrier* pBufferBarriers, 
     uint32_t numTextureBarriers, TextureBarrier* pTextureBarriers, 
-    uint32_t numRtBarriers, RenderTargetBarrier* pRtBarriers
+    uint32_t numRtBarriers, RenderTargetBarrier* pRtBarriers,
+    Ogre::QueueType queueType
 )
 {
     D3D12_RESOURCE_BARRIER* barriers =

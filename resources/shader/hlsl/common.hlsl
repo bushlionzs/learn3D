@@ -31,7 +31,8 @@ struct ObjectBlock
 	float4x4 gProjector;
 	float4 diffuseColor;
 	uint useShadow;
-	uint padding[3];
+	uint haveTexture;
+	uint padding[2];
 };
 
 

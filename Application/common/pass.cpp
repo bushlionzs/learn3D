@@ -262,7 +262,7 @@ public:
 			{
 				{
 					mPassInput.shadowMapTarget,
-					RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+					RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE | RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 					Ogre::RESOURCE_STATE_DEPTH_WRITE
 				}
 			};
@@ -285,23 +285,26 @@ public:
 
 		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 		{
+			
 			info.depthTarget.depthIndex = i;
 			mUserDefineShaderOfShadow.param = (void*)(uint64_t)i;
 			renderScene(cam, sceneManager, mRenderPassInfo, &mUserDefineShaderOfShadow);
+
+			
 		}
 		
-
 		{
 			Ogre::RenderTargetBarrier rtBarriers[] =
 			{
 				{
 					mPassInput.shadowMapTarget,
 					Ogre::RESOURCE_STATE_DEPTH_WRITE,
-					RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+					RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE | RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 				}
 			};
 			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
 		}
+		
 	}
 
 	void draw(RenderSystem* rs)

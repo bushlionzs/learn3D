@@ -304,6 +304,7 @@ void updateFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
     objectBuffer.world = modelMatrix.transpose();
     objectBuffer.diffuseColor = mat->getDiffuseColor();
     objectBuffer.useShadow = r->haveShadow();
+    objectBuffer.haveTexture = mat->hasTexture();
     rs->updateBufferObject(resourceInfo->modelObjectHandle,
         (const char*)&objectBuffer, sizeof(objectBuffer));
 

@@ -14,8 +14,10 @@
 DX12BufferObject::DX12BufferObject(
     DescriptorHeapContext* context,
     BufferDesc& desc,
-    DxDescriptorID id
-   )
+    DxDescriptorID id,
+    bool cpu_to_gpu
+   ):
+    mCpuToGpu(cpu_to_gpu)
 {
     mDescriptorHeapContext = context;
     mBufferObjectBinding = desc.mBindingType;

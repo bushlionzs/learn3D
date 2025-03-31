@@ -8,7 +8,8 @@ struct DX12BufferObject : public HwBufferObject {
     DX12BufferObject(
         DescriptorHeapContext* context,
         BufferDesc& desc,
-        DxDescriptorID id
+        DxDescriptorID id,
+        bool cpu_to_gpu
         );
     void copyData(ID3D12GraphicsCommandList* cmdList, const char* data, uint32_t size, uint32_t offset);
     D3D12_GPU_VIRTUAL_ADDRESS getGPUVirtualAddress();
@@ -58,6 +59,8 @@ private:
     DescriptorHeapContext* mDescriptorHeapContext;
 
     uint32_t mByteCount;
+
+    bool mCpuToGpu;
 };
 class DX12ProgramImpl;
 struct DX12Pipeline : public HwPipeline
@@ -198,7 +201,7 @@ public:
         mDescriptorInfos.push_back(descriptroInfo);
     }
 
-    std::vector<const DescriptorInfo*> getDescriptorInfos()
+    const std::vector<const DescriptorInfo*>& getDescriptorInfos()
     {
         return mDescriptorInfos;
     }
