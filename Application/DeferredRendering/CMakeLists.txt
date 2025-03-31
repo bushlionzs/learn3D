@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 
-project(DeferredRendering)
+project(cascadeShadowMap)
 
 
 if (WIN32)
