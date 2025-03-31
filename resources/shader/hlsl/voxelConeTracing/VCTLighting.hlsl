@@ -92,7 +92,8 @@ PSInput VSMain(VSInput input)
 
 float sampleShadow(float2 uv, float depth)
 {
-    float v = shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, uv, depth);
+    float bias = 0.005;
+    float v = shadowBuffer.SampleCmpLevelZero(PcfShadowMapSampler, uv, depth - bias);
 	if(v < 0.00001)
 	{
 	    return 0.0f;
@@ -244,7 +245,7 @@ PSOutput PSMain(PSInput input)
         albedoBuffer.GetDimensions(gWidth, gHeight);
         float4 vct = vctBuffer.Sample(BilinearSampler, inPos * float2(1.0f / gWidth, 1.0f / gHeight));
         
-        //indirectLighting += vct.rgb * IlluminationFlagsBuffer.vctGIPower;
+        indirectLighting += vct.rgb * IlluminationFlagsBuffer.vctGIPower;
         if (!IlluminationFlagsBuffer.useVCTDebug)
             ao = 1.0f - vct.a;
     }  
@@ -263,18 +264,13 @@ PSOutput PSMain(PSInput input)
     
     float shadow = 1.0f;
 	
-	static const float4x4 biasMat = float4x4(
-	0.5, 0.0, 0.0, 0.5,
-	0.0, 0.5, 0.0, 0.5,
-	0.0, 0.0, 1.0, 0.0,
-	0.0, 0.0, 0.0, 1.0 );
+
 	
     if (IlluminationFlagsBuffer.useShadows)
     {
         float4 lightSpacePos = mul(LightingConstantBuffer.ShadowViewProjection, worldPos);
-		//lightSpacePos = mul(biasMat, lightSpacePos);
         float4 shadowcoord = lightSpacePos / lightSpacePos.w;
-        //shadowcoord.rg = shadowcoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+        shadowcoord.rg = shadowcoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
         shadow = CalculateShadow(shadowcoord.rgb);
     }
     

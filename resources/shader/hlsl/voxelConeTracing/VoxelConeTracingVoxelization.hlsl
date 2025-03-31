@@ -117,7 +117,7 @@ void PSMain(PS_IN input)
 	float shadow = shadowBuffer.SampleCmpLevelZero(
 		PcfShadowMapSampler,    
 		shadowcoord.xy,
-		shadowcoord.z
+		shadowcoord.z - 0.005
 	);
 	
 
