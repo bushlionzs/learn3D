@@ -77,9 +77,7 @@ public:
 private:
 	void base1();
 	void base2();
-	void base3();
 	void updateFrameData(uint32_t i);
-	void execute(RenderSystem* rs);
 private:
 	AnimationState* mAnimationState = nullptr;
 

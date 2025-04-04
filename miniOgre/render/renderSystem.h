@@ -139,13 +139,15 @@ public:
     {
     }
 
-    virtual void dispatchComputeShader(int32_t x, int32_t y, int32_t z) {}
+    virtual void dispatchComputeShader(int32_t x, int32_t y, int32_t z) 
+    {
+        assert_invariant(false);
+    }
 
     virtual void beginComputePass(
         ComputePassInfo& computePassInfo);
     virtual void endComputePass();
 
-    virtual void dispatchComputeShader();
     virtual void present();
 
     virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color = Ogre::Vector3i(0,0,0)) {}

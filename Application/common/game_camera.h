@@ -69,6 +69,10 @@ public:
         return mCamera;
     }
 
+    CameraInfo& getCameraInfo()
+    {
+        return mCameraInfo;
+    }
     
     const Ogre::Vector3& getPosition() const;
 

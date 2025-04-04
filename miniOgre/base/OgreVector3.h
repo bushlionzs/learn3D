@@ -86,6 +86,11 @@ namespace Ogre
         {
         }
 
+        inline explicit Vector3(const Vector3i& other)
+            : x(other[0]), y(other[1]), z(other[2])
+        {
+        }
+
         inline explicit Vector3( const Real scaler )
             : x( scaler )
             , y( scaler )
@@ -771,6 +776,10 @@ namespace Ogre
 
         }
 
+        float maxElem()
+        {
+            return std::max(std::max(x, y), z);
+        }
         /** Returns whether this vector is within a positional tolerance
             of another vector, also take scale of the vectors into account.
         @param rhs The vector to compare with

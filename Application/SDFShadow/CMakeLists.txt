@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 
-project(ShadowMap)
+project(SDFShadow)
 
 
 if (WIN32)
@@ -42,10 +42,6 @@ endmacro()
 add_subdir(.)
 add_subdir(../common)
 
-
-
-
-
 add_executable(${PROJECT_NAME} ${GAMECLIENT_SRC_LIST})
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${ROOT_INC}/bin)
@@ -60,21 +56,15 @@ target_include_directories(${PROJECT_NAME}
 	${GAMESHARE_INC}
 	${MIDDLE_INC}
 	${MINIOGRE_INC}
+	${MYGUI_INC}
 	${ROOT_INC}/3rd/OIS/include
 )
 
 target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
-
-target_link_libraries(${PROJECT_NAME}
-GameUtil
-miniOgre 
-CEGUI 
-expat  
-stormlib 
-OIS 
-freetype 
-dy_network 
+	
+target_link_libraries(${PROJECT_NAME}  GameUtil  miniOgre 
+CEGUI expat  stormlib OIS freetype dy_network 
 tinyxmld
 pcre
 dxgi

@@ -7,18 +7,12 @@
 PresentPass::PresentPass(
 	Ogre::OgreTexture* source,
 	Ogre::RenderWindow* renderWindow,
-	const char* shaderName)
+	bool useSRGB)
 {
 	mSourceTexture = source;
 	mRenderWindow = renderWindow;
-	if (shaderName)
-	{
-		mShaderName = shaderName;
-	}
-	else
-	{
-		mShaderName = "presentShade";
-	}
+	mShaderName = "presentShade";
+	mUseSRGB = useSRGB;
 }
 
 PresentPass::~PresentPass()
@@ -54,7 +48,17 @@ bool PresentPass::initialize()
 	rasterState.depthFunc = filament::backend::SamplerCompareFunc::A;
 	rasterState.colorWrite = true;
 	rasterState.renderTargetCount = 1;
-	rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
+	EngineConfig& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+
+	if (mUseSRGB)
+	{
+		rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8_SRGB;
+	}
+	else
+	{
+		rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
+	}
+	
 	mPipelineHandle = rs->createPipeline(rasterState, presentHandle);
 
 	mZeroSet = rs->createDescriptorSet(presentHandle, 0);
@@ -83,14 +87,9 @@ void PresentPass::execute(RenderSystem* rs)
 				mRenderWindow->getColorTarget()->getTarget(),
 				Ogre::RESOURCE_STATE_PRESENT,
 				Ogre::RESOURCE_STATE_RENDER_TARGET
-			},
-			{
-				mSourceTexture,
-				Ogre::RESOURCE_STATE_RENDER_TARGET,
-				Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 2, texBarriers, 0, nullptr);
+		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr);
 	}
 	RenderPassInfo info;
 	info.renderTargetCount = 1;
@@ -113,14 +112,9 @@ void PresentPass::execute(RenderSystem* rs)
 				mRenderWindow->getColorTarget()->getTarget(),
 				Ogre::RESOURCE_STATE_RENDER_TARGET,
 				Ogre::RESOURCE_STATE_PRESENT
-			},
-			{
-				mSourceTexture,
-				Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-				Ogre::RESOURCE_STATE_RENDER_TARGET
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 2, texBarriers, 0, nullptr);
+		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr);
 	}
 }
 

@@ -272,7 +272,7 @@ bool GameCamera::update(float delta)
     Ogre::Matrix4 transM;
     if (mCameraType == Ogre::CameraMoveType_FirstPerson)
     {
-        transM = Ogre::Math::makeTranslateMatrix(eyePosition);
+        transM = Ogre::Math::makeTranslateMatrix(-eyePosition);
         viewMatrix = rotM * transM;
     }
     else

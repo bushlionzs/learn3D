@@ -103,8 +103,6 @@ void BasicApplication::base1()
 
 	Ogre::Vector3 camTarget = Ogre::Vector3(0.0f, h, -13.5f);
 	mGameCamera->lookAt(camPosition, camTarget);
-
-	
 	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
 	mGameCamera->setMoveSpeed(50);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();

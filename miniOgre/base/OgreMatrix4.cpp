@@ -280,4 +280,18 @@ namespace Ogre
     {
         return Vector3(m[2][0], m[2][1], m[2][2]);
     }
+
+    Vector3 Matrix4::getCol0()
+    {
+        return Vector3(m[0][0], m[1][0], m[2][0]);
+    }
+
+    Vector3 Matrix4::getCol1() 
+    {
+        return Vector3(m[0][1], m[1][1], m[2][1]);
+    }
+    Vector3 Matrix4::getCol2()
+    {
+        return Vector3(m[0][2], m[1][2], m[2][2]);
+    }
 }

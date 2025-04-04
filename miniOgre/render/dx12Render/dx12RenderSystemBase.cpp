@@ -426,7 +426,7 @@ void Dx12RenderSystemBase::endComputePass()
 
 }
 
-void Dx12RenderSystemBase::dispatchComputeShader()
+void Dx12RenderSystemBase::dispatchComputeShader(int32_t x, int32_t y, int32_t z)
 {
 }
 

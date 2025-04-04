@@ -50,7 +50,7 @@ namespace Ogre
 
     Math::RandomValueProvider* Math::mRandProvider = NULL;
 
-//#define LEFT_HANDED
+#define LEFT_HANDED
     //-----------------------------------------------------------------------
     Math::Math( unsigned int trigTableSize )
     {
@@ -1095,13 +1095,13 @@ namespace Ogre
         float const tanHalfFovy = tan(fovy / 2.0f);
 
         Matrix4 m = Matrix4::ZERO;
-
-        m[3][2] = 1.0f;
-
-        m[2][2] = zFar / (zFar - zNear);
-        m[2][3] = -(zFar * zNear) / (zFar - zNear);
         m[0][0] = 1.0f / (aspect * tanHalfFovy);
         m[1][1] = 1.0f / tanHalfFovy;
+        m[2][2] = zFar / (zFar - zNear);
+
+        m[3][2] = 1.0f;
+        m[2][3] = -(zFar * zNear) / (zFar - zNear);
+        
         return m;
     }
 

@@ -198,6 +198,7 @@ Ogre::RenderTarget* VulkanRenderSystemBase::createRenderTarget(
         texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
         texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
     }
+
     Ogre::VulkanRenderTarget* renderTarget = new Ogre::VulkanRenderTarget(
         name, mVulkanPlatform, mCommands, texProperty);
     return renderTarget;
@@ -431,6 +432,8 @@ void VulkanRenderSystemBase::bindPipeline(
 
     for (uint32_t i = 0; i < setCount; i++)
     {
+        if (!descSets[i])
+            continue;
         VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(descSets[i]);
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
             pipelineLayout, set->mSet, 1, &set->vkSet, 0, nullptr);
@@ -1163,6 +1166,12 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
         if (format == PF_UNKNOWN)
         {
             format = mRenderWindow->getColorFormat();
+        }
+
+        if (format == PF_A8R8G8B8 || 
+            format == PF_A8B8G8R8)
+        {
+            int kk = 0;
         }
         VkFormat vkFormat = VulkanMappings::_getPF(format);
         colorFormat[i] = vkFormat;

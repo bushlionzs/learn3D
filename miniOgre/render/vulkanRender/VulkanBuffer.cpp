@@ -16,8 +16,9 @@
 
 #include "VulkanBuffer.h"
 #include "VulkanMemory.h"
-
 #include <utils/Panic.h>
+#include <OgreHeader.h>
+#include <OgreRoot.h>
 
 using namespace bluevk;
 
@@ -46,7 +47,7 @@ VulkanBuffer::VulkanBuffer(
         .usage = usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT
     };
 
-    if (usage | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT)
+    if (usage & VK_BUFFER_USAGE_STORAGE_BUFFER_BIT)
     {
         int kk = 0;
     }
@@ -247,8 +248,12 @@ void VulkanBuffer::loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint
             dstAccessMask |= VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
             dstStageMask |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT |
                 VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT |
-                VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT |
-                VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR;
+                VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+            if (Ogre::Root::getSingleton().getEngineConfig().enableRaytracing)
+            {
+                dstStageMask |= VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR;
+            }
+                
         }
 
         VkBufferMemoryBarrier barrier{

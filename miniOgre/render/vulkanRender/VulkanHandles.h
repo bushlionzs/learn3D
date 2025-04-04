@@ -749,6 +749,11 @@ inline  VkBufferUsageFlags getBufferObjectUsage(
         flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
     }
 
+    if (bindingType & BufferObjectBinding::BufferObjectBinding_Buffer)
+    {
+        flags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+    }
+
     if (bindingType & BufferObjectBinding::BufferObjectBinding_Storge)
     {
         flags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;

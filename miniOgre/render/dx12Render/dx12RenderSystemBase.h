@@ -72,7 +72,7 @@ public:
         ComputePassInfo& computePassInfo);
     virtual void endComputePass();
 
-    virtual void dispatchComputeShader();
+    virtual void dispatchComputeShader(int32_t x, int32_t y, int32_t z);
 
     virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color = Ogre::Vector3i(0, 0, 0));
     virtual void popGroupMarker();

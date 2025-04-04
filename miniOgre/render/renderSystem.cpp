@@ -98,11 +98,6 @@ void RenderSystem::endComputePass()
 
 }
 
-void RenderSystem::dispatchComputeShader()
-{
-
-}
-
 void RenderSystem::present()
 {
 

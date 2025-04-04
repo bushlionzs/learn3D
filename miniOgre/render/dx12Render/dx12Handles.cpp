@@ -36,7 +36,8 @@ DX12BufferObject::DX12BufferObject(
     //D3D12_RESOURCE_STATE_COMMON
     D3D12_RESOURCE_STATES state = D3D12Mappings::util_to_dx12_resource_state(desc.mStartState);
 
-    if (BufferObjectBinding_Storge == mBufferObjectBinding)
+    if (BufferObjectBinding_Storge == mBufferObjectBinding ||
+        BufferObjectBinding_InDirectBuffer == mBufferObjectBinding)
     {
         bufferDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
     }
@@ -95,7 +96,7 @@ DX12BufferObject::DX12BufferObject(
     }
     break;
     case BufferObjectBinding_Storge:
-    
+    case BufferObjectBinding_InDirectBuffer:
     {
         D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
         uavDesc.Format = DXGI_FORMAT_UNKNOWN;

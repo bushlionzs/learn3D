@@ -94,6 +94,11 @@ namespace Ogre
         {
         }
 
+        inline explicit Vector4(const Vector3& rhs, float fw)
+            : x(rhs.x), y(rhs.y), z(rhs.z), w(fw)
+        {
+        }
+
         /** Swizzle-like narrowing operations
         */
         inline Vector3 xyz() const

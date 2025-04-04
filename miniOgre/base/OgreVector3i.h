@@ -72,6 +72,14 @@ namespace Ogre
 				z - scalar);
 		}
 
+		inline Vector3i operator -  (const Vector3i& other) const
+		{
+			return Vector3i(
+				x - other.x,
+				y - other.y,
+				z - other.z);
+		}
+
 		inline Vector3i& operator = (const Vector3i& other)
 		{
 			x = other.x;

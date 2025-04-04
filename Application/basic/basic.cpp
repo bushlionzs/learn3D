@@ -309,38 +309,6 @@ void BasicApplication::base5()
 	mRenderPipeline->addRenderPass(mainPass);
 }
 
-void BasicApplication::updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer)
-{
-	RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
-	const Ogre::Matrix4& view = camera->getViewMatrix();
-	const Ogre::Matrix4& proj = camera->getProjectMatrix();
-	const Ogre::Vector3& camepos = camera->getDerivedPosition();
-	Ogre::Matrix4 invView = view.inverse();
-	Ogre::Matrix4 viewProj = proj * view;
-	Ogre::Matrix4 invProj = proj.inverse();
-	Ogre::Matrix4 invViewProj = viewProj.inverse();
-
-	frameBuffer.View = view.transpose();
-	frameBuffer.InvView = invView.transpose();
-	frameBuffer.Proj = proj.transpose();
-	frameBuffer.InvProj = invProj.transpose();
-	frameBuffer.ViewProj = viewProj.transpose();
-	frameBuffer.InvViewProj = invViewProj.transpose();
-
-	frameBuffer.EyePosW = camepos;
-
-	
-	frameBuffer.Shadow = 0;
-	frameBuffer.directionLights[0].Direction = Ogre::Vector3(0.739942074, 0.642787576, 0.198266909);
-	frameBuffer.directionLights[0].Direction.normalise();
-
-
-
-	frameBuffer.TotalTime += Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-	frameBuffer.DeltaTime = Ogre::Root::getSingleton().getFrameEvent().timeSinceLastFrame;
-
-	auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-}
 
 void BasicApplication::base6()
 {
