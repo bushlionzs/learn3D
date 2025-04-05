@@ -14,7 +14,7 @@
 DX12BufferObject::DX12BufferObject(
     DescriptorHeapContext* context,
     BufferDesc& desc,
-    DxDescriptorID id,
+    DescriptorHeap* pHeap,
     bool cpu_to_gpu
    ):
     mCpuToGpu(cpu_to_gpu)
@@ -22,7 +22,7 @@ DX12BufferObject::DX12BufferObject(
     mDescriptorHeapContext = context;
     mBufferObjectBinding = desc.mBindingType;
     mMemoryUsage = desc.mMemoryUsage;
-    mDescriptorID = id;
+    mDescriptorID = consume_descriptor_handles(pHeap, 1);
     mByteCount = desc.mSize;
 
     if (BufferObjectBinding_Uniform == mBufferObjectBinding)
@@ -55,8 +55,7 @@ DX12BufferObject::DX12BufferObject(
         nullptr,
         IID_PPV_ARGS(BufferGPU.GetAddressOf())));
 
-    auto cpuHandle = descriptor_id_to_cpu_handle(
-        context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV], id);
+    auto cpuHandle = descriptor_id_to_cpu_handle(pHeap, mDescriptorID);
 
     switch (mBufferObjectBinding)
     {
@@ -111,8 +110,29 @@ DX12BufferObject::DX12BufferObject(
             uavDesc.Buffer.StructureByteStride = 0;
             uavDesc.Buffer.Flags |= D3D12_BUFFER_UAV_FLAG_RAW;
         }
-        dx12Device->CreateUnorderedAccessView(BufferGPU.Get(), nullptr, &uavDesc, cpuHandle);
-        int kk = 0;
+
+        mDescriptorIDOfWrite = consume_descriptor_handles(pHeap, 1);
+
+        auto writeCpuHandle = descriptor_id_to_cpu_handle(pHeap, mDescriptorIDOfWrite);
+        dx12Device->CreateUnorderedAccessView(BufferGPU.Get(), 
+            nullptr, &uavDesc, writeCpuHandle);
+        
+        D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+        srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+        srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+        srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+        srvDesc.Buffer.NumElements = desc.mElementCount;
+        srvDesc.Buffer.StructureByteStride = desc.mStructStride;
+        srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+        if (desc.raw)
+        {
+            srvDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+            srvDesc.Buffer.NumElements = mByteCount / 4;
+            srvDesc.Buffer.StructureByteStride = 0;
+            srvDesc.Buffer.Flags |= D3D12_BUFFER_SRV_FLAG_RAW;
+        }
+
+        dx12Device->CreateShaderResourceView(BufferGPU.Get(), &srvDesc, cpuHandle);
     }
         break;
     case BufferObjectBinding_Uniform:

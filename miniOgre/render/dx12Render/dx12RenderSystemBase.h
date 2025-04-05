@@ -68,9 +68,10 @@ public:
         uint32_t drawCount,
         uint32_t stride
     );
-    virtual void beginComputePass(
-        ComputePassInfo& computePassInfo);
-    virtual void endComputePass();
+    virtual void bindComputePipeline(
+        filament::backend::Handle<filament::backend::HwComputeProgram> pipelineHandle,
+        const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
+        uint32_t setCount)override;
 
     virtual void dispatchComputeShader(int32_t x, int32_t y, int32_t z);
 

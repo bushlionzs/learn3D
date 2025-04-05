@@ -411,7 +411,7 @@ void ShadowMap::base2()
 
     for (auto i = 0; i < NUM_CULLING_VIEWPORTS; i++)
     {
-        desc.mBindingType = BufferObjectBinding_Index;
+        desc.mBindingType = BufferObjectBinding_Storge;
         desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
         desc.bufferCreationFlags = 0;
         desc.mElementCount = maxIndices;
@@ -625,7 +625,7 @@ void ShadowMap::base2()
 
             descriptorData[0].pName = "indirectDrawArgs";
             descriptorData[0].mCount = 1;
-            descriptorData[0].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+            descriptorData[0].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
             descriptorData[0].ppBuffers = &mFrameData[i].indirectDrawArgBuffer;
 
             descriptorData[1].pName = "VBConstantBuffer";
@@ -638,18 +638,16 @@ void ShadowMap::base2()
         }
         
 
-        ComputePassCallback callback = [clearBufferProgramHandle, rs, this](ComputePassInfo& info) {
-            info.programHandle = clearBufferProgramHandle;
-            info.computeGroup = Ogre::Vector3i(1, 1, 1);
+        ComputePassCallback callback = [clearBufferProgramHandle, rs, this]() {
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             FrameData* frameData = this->getFrameData(frameIndex);
             if (frameData->update)
                 return;
-            info.descSets.clear();
-            info.descSets.push_back(frameData->clearBufferDescrSet);
             rs->pushGroupMarker("clearBuffer");
-            rs->beginComputePass(info);
-            rs->endComputePass();
+            rs->bindComputePipeline(clearBufferProgramHandle,
+                &frameData->clearBufferDescrSet, 1);
+            rs->dispatchComputeShader(1, 1, 1);
+            
             rs->popGroupMarker();
             // Clear Buffers Synchronization 
             {
@@ -691,7 +689,7 @@ void ShadowMap::base2()
 
             descriptorData[0].pName = "indirectDrawArgs";
             descriptorData[0].mCount = 1;
-            descriptorData[0].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+            descriptorData[0].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
             descriptorData[0].ppBuffers = &frameData.indirectDrawArgBuffer;
 
             descriptorData[1].pName = "vertexDataBuffer";
@@ -731,31 +729,30 @@ void ShadowMap::base2()
 
             descriptorData[2].pName = "indirectDataBuffer";
             descriptorData[2].mCount = 1;
-            descriptorData[2].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+            descriptorData[2].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
             descriptorData[2].ppBuffers = &frameData.indirectDataBuffer;
 
             descriptorData[3].pName = "filteredIndicesBuffer";
             descriptorData[3].mCount = NUM_CULLING_VIEWPORTS;
-            descriptorData[3].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+            descriptorData[3].descriptorType = DESCRIPTOR_TYPE_RW_BUFFER;
             descriptorData[3].ppBuffers = &filteredIndexBuffer[0];
 
             rs->updateDescriptorSet(firstDescSet, 4, descriptorData);
         }
-        ComputePassCallback callback = [=, this](ComputePassInfo& info) {
+        ComputePassCallback callback = [=, this]() {
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             auto* frameData = this->getFrameData(frameIndex);
             if (frameData->update)
                 return;
            // frameData->update = true;
-            info.programHandle = filterTrianglesProgramHandle;
-            info.computeGroup = Ogre::Vector3i(dispatchGroupCount, 1, 1);
-            info.descSets.clear();
-            info.descSets.push_back(frameData->zeroDescSetOfFilter);
-            info.descSets.push_back(frameData->firstDescSetOfFilter);
+            
             auto* rs = Ogre::Root::getSingleton().getRenderSystem();
             rs->pushGroupMarker("filterTriangles");
-            rs->beginComputePass(info);
-            rs->endComputePass();
+            Handle <HwDescriptorSet> ds[2];
+            ds[0] = frameData->zeroDescSetOfFilter;
+            ds[1] = frameData->firstDescSetOfFilter;
+            rs->bindComputePipeline(filterTrianglesProgramHandle, ds, 2);
+            rs->dispatchComputeShader(dispatchGroupCount, 1, 1);
             rs->popGroupMarker();
             {
                 const uint32_t numBarriers = NUM_CULLING_VIEWPORTS + 2;
@@ -917,6 +914,7 @@ void ShadowMap::base2()
 
                 descriptorData[0].pName = "diffuseMaps";
                 descriptorData[0].mCount = diffuseList.size();
+                descriptorData[0].mLevel = 0;
                 descriptorData[0].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
                 descriptorData[0].ppTextures = (const OgreTexture**)diffuseList.data();
 
@@ -968,9 +966,8 @@ void ShadowMap::base2()
             {
                 tmp[0] = frameData->zeroDescrSetOfShadowPassAlpha;
                 tmp[1] = frameData->firstDescrSetOfShadowPassAlpha;
-                tmp[2] = Handle<HwDescriptorSet>();
-                tmp[3] = frameData->thirdDescrSetOfShadowPassAlpha;
-                rs->bindPipeline(meshDepthAlphaPipelineHandle, &tmp[0], 4);
+                tmp[2] = frameData->thirdDescrSetOfShadowPassAlpha;
+                rs->bindPipeline(meshDepthAlphaPipelineHandle, &tmp[0], 3);
 
 
                 indirectBufferByteOffset =
@@ -982,6 +979,18 @@ void ShadowMap::base2()
 
             rs->endRenderPass(info);
 
+            {
+                RenderTargetBarrier rtBarriers[] =
+                {
+                    {
+                        esmShadowMap,
+                        RESOURCE_STATE_DEPTH_WRITE,
+                        RESOURCE_STATE_SHADER_RESOURCE
+                    }
+                };
+                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+            }
+            
             rs->popGroupMarker();
             };
 
@@ -1109,7 +1118,6 @@ void ShadowMap::base2()
             rs->bindIndexBuffer(filteredIndexBuffer[VIEW_CAMERA], 4);
             FrameData* frameData = this->getFrameData(frameIndex);
 
-            auto nullSet = Handle<HwDescriptorSet>();
             Handle<HwDescriptorSet> tmp[4];
             tmp[0] = frameData->zeroDescrSetOfVbPass;
             tmp[1] = frameData->thirdDescrSetOfVbPass;
@@ -1381,11 +1389,6 @@ void ShadowMap::base2()
         RenderPassCallback shadeCallback = [=, this](RenderPassInfo& info) {
             RenderTargetBarrier rtBarriers[] = 
             { 
-                {
-                    esmShadowMap,
-                    RESOURCE_STATE_DEPTH_WRITE,
-                    RESOURCE_STATE_SHADER_RESOURCE
-                },
                 { 
                     visibilityBufferTarget,
                     RESOURCE_STATE_RENDER_TARGET, 
@@ -1397,7 +1400,7 @@ void ShadowMap::base2()
                         RESOURCE_STATE_RENDER_TARGET
                 }
             };
-            rs->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers);
+            rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
             info.renderTargetCount = 1;
             info.renderTargets[0].renderTarget = shadePassTarget;
             info.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -1448,7 +1451,6 @@ void ShadowMap::base2()
     float fovxRadians = Ogre::Math::PI / 3.0f;
     float znear = 0.1f;
     float zfar = 1000.0f;
-    auto xx = glm::perspectiveLH_ZO(fovxRadians, aspect, znear, zfar);
     Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrixReverseZ(
         fovxRadians, aspectInverse, znear, zfar);
     mGameCamera->getCamera()->updateProjectMatrix(m);

@@ -505,39 +505,6 @@ void VulkanRenderSystemBase::dispatchComputeShader(int32_t x, int32_t y, int32_t
     vkCmdDispatch(mCommandBuffer, x, y, z);
 }
 
-void VulkanRenderSystemBase::beginComputePass(ComputePassInfo& computePassInfo)
-{
-    VulkanComputeProgram* program = mResourceAllocator.handle_cast<VulkanComputeProgram*>(computePassInfo.programHandle);
-
-    auto pipeline = program->getPipeline();
-    auto pipelineLayout = program->getPipelineLayout();
-    VkCommandBuffer commandBuffer = mCommands->get().buffer();
-
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
-
-    VkDescriptorSet descriptorSet[4];
-    uint32_t index = 0;
-    for (auto& ds : computePassInfo.descSets)
-    {
-        VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(ds);
-        descriptorSet[index] = set->vkSet;
-        index++;
-    }
-
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
-        pipelineLayout, 0, index, &descriptorSet[0], 0, nullptr);
-
-
-
-    vkCmdDispatch(commandBuffer,
-        computePassInfo.computeGroup.x, computePassInfo.computeGroup.y, computePassInfo.computeGroup.z);
-
-}
-
-void VulkanRenderSystemBase::endComputePass()
-{
-
-}
 
 void VulkanRenderSystemBase::present()
 {

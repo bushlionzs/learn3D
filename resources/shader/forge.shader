@@ -95,7 +95,6 @@ shader filterTriangles
 	 shader_unit
 	 {
 		shader_type vulkan
-		//compute_shader filterTriangles.glsl main
 		compute_shader filterTriangles.hlsl CS
 	 }
 }
@@ -148,8 +147,6 @@ shader visibilityBuffer
 	 shader_unit
 	 {
 		shader_type vulkan
-		//vertex_shader visibilityBufferPass.glsl main
-		//frag_shader  visibilityBufferPass.glsl main 
 		vertex_shader visibilityBufferPass.hlsl VS
 		frag_shader  visibilityBufferPass.hlsl PS 
 	 }
@@ -249,3 +246,30 @@ shader RayQuery
 	 }
 }
 
+shader updateRegion3DTexture
+{
+    shader_unit
+	 {
+		shader_type directx 
+		compute_shader updateRegion3DTexture.comp.hlsl CS_MAIN
+	 }
+    shader_unit
+	 {
+		shader_type vulkan 
+		compute_shader updateRegion3DTexture.comp.hlsl CS_MAIN
+	 }
+}
+
+shader visualizeSDFMesh
+{
+    shader_unit
+	 {
+		shader_type directx 
+		compute_shader visualizeSDFMesh.comp.hlsl CS_MAIN
+	 }
+    shader_unit
+	 {
+		shader_type vulkan 
+		compute_shader visualizeSDFMesh.comp.hlsl CS_MAIN
+	 }
+}

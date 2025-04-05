@@ -485,7 +485,7 @@ public:
 
 	void execute(RenderSystem* rs)
 	{
-		mCallback(mComputePassInfo);
+		mCallback();
 	}
 
 	void update(float delta)
@@ -494,7 +494,6 @@ public:
 			mUpdateCallback(delta);
 	}
 private:
-	ComputePassInfo mComputePassInfo;
 	ComputePassCallback mCallback;
 	UpdatePassCallback  mUpdateCallback;
 };

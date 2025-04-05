@@ -144,9 +144,6 @@ public:
         assert_invariant(false);
     }
 
-    virtual void beginComputePass(
-        ComputePassInfo& computePassInfo);
-    virtual void endComputePass();
 
     virtual void present();
 

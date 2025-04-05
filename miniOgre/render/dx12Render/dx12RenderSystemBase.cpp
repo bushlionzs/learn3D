@@ -383,19 +383,21 @@ void Dx12RenderSystemBase::drawIndexedIndirect(
     cl->ExecuteIndirect(mDrawIndexCommandSignature, drawCount, bufferObject->getResource(), offset, NULL, 0);
 }
 
-void Dx12RenderSystemBase::beginComputePass(
-    ComputePassInfo& computePassInfo)
+void Dx12RenderSystemBase::bindComputePipeline(
+    filament::backend::Handle<filament::backend::HwComputeProgram> pipelineHandle,
+    const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
+    uint32_t setCount)
 {
     ID3D12GraphicsCommandList* cl = mCommands->get();
 
-    DX12ComputeProgram* program = 
-        mResourceAllocator.handle_cast<DX12ComputeProgram*>(computePassInfo.programHandle);
+    DX12ComputeProgram* program =
+        mResourceAllocator.handle_cast<DX12ComputeProgram*>(pipelineHandle);
 
     cl->SetPipelineState(program->getPSO());
     cl->SetComputeRootSignature(program->getProgramImpl()->getRootSignature());
-    for (auto& ds : computePassInfo.descSets)
+    for (uint32_t i = 0; i < setCount; i++)
     {
-        DX12DescriptorSet* dset = mResourceAllocator.handle_cast<DX12DescriptorSet*>(ds);
+        DX12DescriptorSet* dset = mResourceAllocator.handle_cast<DX12DescriptorSet*>(descSets[i]);
         std::vector<const DescriptorInfo*> descriptorInfos = dset->getDescriptorInfos();
         auto cbvSrvUavHandle = dset->getCbvSrvUavHandle();
         auto samplerHandle = dset->getSamplerHandle();
@@ -416,18 +418,12 @@ void Dx12RenderSystemBase::beginComputePass(
             }
         }
     }
-
-    cl->Dispatch(computePassInfo.computeGroup.x, 
-        computePassInfo.computeGroup.y, computePassInfo.computeGroup.z);
-}
-
-void Dx12RenderSystemBase::endComputePass()
-{
-
 }
 
 void Dx12RenderSystemBase::dispatchComputeShader(int32_t x, int32_t y, int32_t z)
 {
+    ID3D12GraphicsCommandList* cl = mCommands->get();
+    cl->Dispatch(x, y, z);
 }
 
 void Dx12RenderSystemBase::pushGroupMarker(const char* maker, const Ogre::Vector3i& color)
@@ -485,16 +481,19 @@ void Dx12RenderSystemBase::unlockBuffer(Handle<HwBufferObject> boh)
     auto* cmdList = mCommands->get();
     bo->unlock(cmdList);
 }
+extern "C" void SetObjectName(ID3D12Object* pObject, const char* pName);
 
 Handle<HwBufferObject> Dx12RenderSystemBase::createBufferObject(
     BufferDesc& desc)
 {
     Handle<HwBufferObject> boh = mResourceAllocator.allocHandle<DX12BufferObject>();
-    DxDescriptorID id = consume_descriptor_handles(
-        mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV], 1);
+    DescriptorHeap* pHeap = mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV];
     bool cpu_to_gpu = desc.mMemoryUsage == RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
     DX12BufferObject* bufferObject = mResourceAllocator.construct<DX12BufferObject>(
-        boh, mDescriptorHeapContext, desc, id, cpu_to_gpu);
+        boh, mDescriptorHeapContext, desc, pHeap, cpu_to_gpu);
+
+    ID3D12Resource* resource = bufferObject->getResource();
+    SetObjectName(resource, desc.pName);
     return boh;
 }
 
@@ -704,6 +703,11 @@ void Dx12RenderSystemBase::updateDescriptorSet(
             //assert_invariant(false);
             continue;
         }
+
+        if (strcmp(pParam->pName, "indirectDataBuffer") == 0)
+        {
+            int kk = 0;
+        }
         dx12DescSet->addDescriptroInfo(descriptroInfo);
         assert_invariant(descriptroInfo);
         const uint32_t       arrayCount = std::max(1U, pParam->mCount);
@@ -714,7 +718,7 @@ void Dx12RenderSystemBase::updateDescriptorSet(
         {
             DX12AccelerationStructure* as = (DX12AccelerationStructure*)pParam->pAS;
             DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(as->asBufferHandle);
-            DxDescriptorID id = bo->getDescriptorID();
+            DxDescriptorID id = bo->getDescriptorID(false);
             d3dUtil::copy_descriptor_handle(
                 mDescriptorHeapContext->mCPUDescriptorHeaps[0],
                 id,
@@ -756,15 +760,20 @@ void Dx12RenderSystemBase::updateDescriptorSet(
         case D3D_SIT_UAV_RWBYTEADDRESS:
         
         {
+            bool write = pParam->descriptorType == DESCRIPTOR_TYPE_RW_BUFFER;
+
             for (uint32_t arr = 0; arr < arrayCount; ++arr)
             {
                 auto& boh = pParam->ppBuffers[arr];
                 DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(boh);
-                DxDescriptorID srcId = bo->getDescriptorID();
+                DxDescriptorID srcId = bo->getDescriptorID(write);
+
+                DescriptorHeap* heap = mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV];
+                DescriptorHeap* dstHeap = mDescriptorHeapContext->mCbvSrvUavHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV];
                 d3dUtil::copy_descriptor_handle(
-                    mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV],
+                    heap,
                     srcId,
-                    mDescriptorHeapContext->mCbvSrvUavHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV],
+                    dstHeap,
                     cbvSrvUavHandle + descriptroInfo->mSetIndex + arr
                 );
             }

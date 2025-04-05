@@ -87,17 +87,6 @@ void RenderSystem::endRenderPass(RenderPassInfo& renderPassInfo)
 
 }
 
-void RenderSystem::beginComputePass(
-    ComputePassInfo& computePassInfo)
-{
-
-}
-
-void RenderSystem::endComputePass()
-{
-
-}
-
 void RenderSystem::present()
 {
 

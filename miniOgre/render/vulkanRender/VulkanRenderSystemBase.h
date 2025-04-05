@@ -75,10 +75,6 @@ public:
 
     void dispatchComputeShader(int32_t x, int32_t y, int32_t z);
 
-    virtual void beginComputePass(
-        ComputePassInfo& computePassInfo) override;
-    virtual void endComputePass() override;
-
     virtual void present() override;
 
     virtual void copyImage(

@@ -30,7 +30,7 @@ struct RenderPassInput
 
 
 using RenderPassCallback = std::function< void(RenderPassInfo& info)>;
-using ComputePassCallback = std::function< void(ComputePassInfo& info)>;
+using ComputePassCallback = std::function< void()>;
 using UpdatePassCallback = std::function<void(float delta)>;
 
 class PassBase

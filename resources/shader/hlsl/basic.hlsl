@@ -152,23 +152,25 @@ float4 PS(VertexOut input) : SV_Target
 	if (color.a < 0.5) {
 		clip(-1);
 	}
-	
-	float shadow = 1.0f;
-	if(cbPerObject.useShadow == 1)
+	if(cbPerObject.useShadow == 0)
 	{
-	    uint cascadeIndex = 0;
-		for(uint i = 0; i < SHADOW_MAP_CASCADE_COUNT - 1; ++i) {
-			if(input.ViewPos.z < cascadeInfo.cascadeSplits[i]) {
-				cascadeIndex = i + 1;
-			}
-		}
-		
-		
-		float4x4 lightViewProj = cascadeInfo.matrices[cascadeIndex];
-		float4 shadowCoord = mul(lightViewProj, float4(input.WorldPos, 1.0));
-		shadowCoord.rg = shadowCoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-		shadow = textureProj(shadowCoord/shadowCoord.w, float2(0.0, 0.0), cascadeIndex);
+	    return color;
 	}
+	float shadow = 1.0f;
+	
+	uint cascadeIndex = 0;
+	for(uint i = 0; i < SHADOW_MAP_CASCADE_COUNT - 1; ++i) {
+		if(input.ViewPos.z < cascadeInfo.cascadeSplits[i]) {
+			cascadeIndex = i + 1;
+		}
+	}
+	
+	
+	float4x4 lightViewProj = cascadeInfo.matrices[cascadeIndex];
+	float4 shadowCoord = mul(lightViewProj, float4(input.WorldPos, 1.0));
+	shadowCoord.rg = shadowCoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	shadow = textureProj(shadowCoord/shadowCoord.w, float2(0.0, 0.0), cascadeIndex);
+
 	
 	
 	

@@ -8,7 +8,7 @@ struct DX12BufferObject : public HwBufferObject {
     DX12BufferObject(
         DescriptorHeapContext* context,
         BufferDesc& desc,
-        DxDescriptorID id,
+        DescriptorHeap* pHeap,
         bool cpu_to_gpu
         );
     void copyData(ID3D12GraphicsCommandList* cmdList, const char* data, uint32_t size, uint32_t offset);
@@ -35,8 +35,10 @@ struct DX12BufferObject : public HwBufferObject {
         return BufferGPU.Get();
     }
 
-    DxDescriptorID getDescriptorID()
+    DxDescriptorID getDescriptorID(bool write)
     {
+        if (write)
+            return mDescriptorIDOfWrite;
         return mDescriptorID;
     }
 
@@ -56,6 +58,7 @@ private:
     D3D12_CPU_DESCRIPTOR_HANDLE mGpuHandle;
 
     DxDescriptorID mDescriptorID;
+    DxDescriptorID mDescriptorIDOfWrite;
     DescriptorHeapContext* mDescriptorHeapContext;
 
     uint32_t mByteCount;
