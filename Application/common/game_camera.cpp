@@ -229,6 +229,11 @@ bool GameCamera::update(float delta)
         auto up = rot.getUp();
         auto forward = rot.getForward();
 
+        if (Ogre::Math::isRightHanded())
+        {
+            forward = -forward;
+        }
+
         float moveSpeed = delta * mMoveSpeed;
 
         Ogre::Vector3 move = Ogre::Vector3::ZERO;

@@ -329,13 +329,14 @@ void Dx12RenderSystemBase::bindPipeline(
         DX12DescriptorSet* dset = mResourceAllocator.handle_cast<DX12DescriptorSet*>(descSets[i]);
         const std::vector<const DescriptorInfo*>& descriptorInfos = dset->getDescriptorInfos();
         auto cbvSrvUavHandle = dset->getCbvSrvUavHandle();
-        auto samplerHandle = dset->getSamplerHandle();
+        
         for (auto descriptorInfo : descriptorInfos)
         {
             if (descriptorInfo->mType == D3D_SIT_SAMPLER)
             {
+                auto samplerHandle = dset->getSamplerHandle(descriptorInfo->mSetIndex);
                 auto gpuHandle = descriptor_id_to_gpu_handle(
-                    mDescriptorHeapContext->pSamplerHeaps[0], samplerHandle + descriptorInfo->mSetIndex);
+                    mDescriptorHeapContext->pSamplerHeaps[0], samplerHandle);
                 cl->SetGraphicsRootDescriptorTable(descriptorInfo->mRootIndex, gpuHandle);
             }
             else
@@ -400,13 +401,14 @@ void Dx12RenderSystemBase::bindComputePipeline(
         DX12DescriptorSet* dset = mResourceAllocator.handle_cast<DX12DescriptorSet*>(descSets[i]);
         std::vector<const DescriptorInfo*> descriptorInfos = dset->getDescriptorInfos();
         auto cbvSrvUavHandle = dset->getCbvSrvUavHandle();
-        auto samplerHandle = dset->getSamplerHandle();
+
         for (auto descriptorInfo : descriptorInfos)
         {
             if (descriptorInfo->mType == D3D_SIT_SAMPLER)
             {
+                auto samplerHandle = dset->getSamplerHandle(descriptorInfo->mSetIndex);
                 auto gpuHandle = descriptor_id_to_gpu_handle(
-                    mDescriptorHeapContext->pSamplerHeaps[0], samplerHandle + descriptorInfo->mSetIndex);
+                    mDescriptorHeapContext->pSamplerHeaps[0], samplerHandle);
                 cl->SetComputeRootDescriptorTable(descriptorInfo->mRootIndex, gpuHandle);
             }
             else
@@ -575,14 +577,6 @@ Handle<HwDescriptorSet> Dx12RenderSystemBase::createDescriptorSet(
 
     DxDescriptorID cbvSrvUavHandle = consume_descriptor_handles(mDescriptorHeapContext->mCbvSrvUavHeaps[0], cbvSrvUavDescCount);
     dx12DescSet->updateCbvSrvUavHandle(cbvSrvUavHandle, cbvSrvUavDescCount);
-
-    uint32_t samplerCount = programImpl->getSamplerCount(set);
-
-    if (samplerCount > 0)
-    {
-        DxDescriptorID samplerHandle = consume_descriptor_handles(mDescriptorHeapContext->pSamplerHeaps[0], samplerCount);
-        dx12DescSet->updateSamplerHandle(samplerHandle, samplerCount);
-    }
     return dsh;
 }
 
@@ -672,14 +666,6 @@ Handle<HwDescriptorSet> Dx12RenderSystemBase::createDescriptorSet(
 
     DxDescriptorID cbvSrvUavHandle = consume_descriptor_handles(mDescriptorHeapContext->mCbvSrvUavHeaps[0], cbvSrvUavDescCount);
     dx12DescSet->updateCbvSrvUavHandle(cbvSrvUavHandle, cbvSrvUavDescCount);
-
-    uint32_t samplerCount = dx12ProgramImpl->getSamplerCount(set);
-
-    if (samplerCount > 0)
-    {
-        DxDescriptorID samplerHandle = consume_descriptor_handles(mDescriptorHeapContext->pSamplerHeaps[0], samplerCount);
-        dx12DescSet->updateSamplerHandle(samplerHandle, samplerCount);
-    }
     return dsh;
 }
 
@@ -781,19 +767,15 @@ void Dx12RenderSystemBase::updateDescriptorSet(
             break;
         case D3D_SIT_SAMPLER:
         {
-            DxDescriptorID samplerHandle = dx12DescSet->getSamplerHandle();
+            assert_invariant(arrayCount == 1);
+            
             for (uint32_t arr = 0; arr < arrayCount; ++arr)
             {
                 if (pParam->descriptorType == DESCRIPTOR_TYPE_SAMPLER)
                 {
                     DX12Sampler* sampler = mResourceAllocator.handle_cast<DX12Sampler*>(pParam->ppSamplers[arr]);
                     DxDescriptorID srcId = sampler->getDescriptorID();
-                    d3dUtil::copy_descriptor_handle(
-                        mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER],
-                        srcId,
-                        mDescriptorHeapContext->pSamplerHeaps[0],
-                        samplerHandle + descriptroInfo->mSetIndex + arr
-                    );
+                    dx12DescSet->updateSamplerHandle(descriptroInfo->mSetIndex, srcId);
                 }
                 else
                 {
@@ -801,12 +783,7 @@ void Dx12RenderSystemBase::updateDescriptorSet(
 
                     DxDescriptorID srcId = dx12Texture->getSamplerDescriptorID();
 
-                    d3dUtil::copy_descriptor_handle(
-                        mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER],
-                        srcId,
-                        mDescriptorHeapContext->pSamplerHeaps[0],
-                        samplerHandle + descriptroInfo->mSetIndex + arr
-                    );
+                    dx12DescSet->updateSamplerHandle(descriptroInfo->mSetIndex, srcId);
                 }
                 
                 

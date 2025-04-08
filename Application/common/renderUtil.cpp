@@ -72,7 +72,7 @@ void initFrameResource(
         
 
 
-        Ogre::DescriptorData descriptorData[16];
+        Ogre::DescriptorData descriptorData[128];
         uint32_t descriptorCount = 0;
         descriptorData[descriptorCount].pName = "cbPerObject";
         descriptorData[descriptorCount].mCount = 1;
@@ -179,6 +179,11 @@ void initFrameResource(
             for (int i = 0; i < PBR_TEXTURE_COUNT; i++)
             {
                 Ogre::OgreTexture* tex = mat->getPbrTexture(texInfo[i].pbrType);
+
+                if (texInfo[i].pbrType == Ogre::TextureTypePbr_Emissive && tex)
+                {
+                    int kk = 0;
+                }
                 if (tex == nullptr)
                 {
                     tex = defaultTex.get();

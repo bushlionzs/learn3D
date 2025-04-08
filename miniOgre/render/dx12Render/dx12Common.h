@@ -21,6 +21,7 @@ using namespace Microsoft::WRL;
 #define D3D12MA_IMPLEMENTATION
 
 #define D3D12_MAX_MIPMAP_COUNT 11
+#define D3D12_MAX_SAMPLER_COUNT 10
 
 
 typedef struct DescriptorHeap

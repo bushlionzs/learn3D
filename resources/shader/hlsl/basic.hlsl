@@ -8,13 +8,17 @@ VKBINDING(3, 0) ConstantBuffer<cascadeBlock> cascadeInfo : register(b3, space0);
 VKBINDING(0, 1) Texture2D first            : register(t0,space1);
 VKBINDING(1, 1) Texture2D second           : register(t1,space1);
 VKBINDING(2, 1) Texture2D third            : register(t2,space1);
+#ifdef CAST_SHADOW
 VKBINDING(3, 1) Texture2DArray shadowMap   : register(t3,space1);
+#endif
 VKBINDING(4, 1) TextureCube cubeMap        : register(t4,space1);
 
 VKBINDING(5, 1) SamplerState firstSampler       : register(s0,space1);
 VKBINDING(6, 1) SamplerState secondSampler      : register(s1,space1);
 VKBINDING(7, 1) SamplerState thirdSampler       : register(s2,space1);
+#ifdef CAST_SHADOW
 VKBINDING(8, 1) SamplerState shadowMapSampler   : register(s3,space1);
+#endif
 VKBINDING(9, 1) SamplerState cubeSampler        : register(s4,space1);
 
 struct VertexIn
@@ -101,7 +105,7 @@ static const float4x4 biasMat = float4x4(
 );
 
 #define ambient 0.1
-
+#ifdef CAST_SHADOW
 float textureProj(float4 shadowCoord, float2 off, uint cascadeIndex)
 {
     float shadow = 1.0;
@@ -141,6 +145,7 @@ float filterPCF(float4 sc, uint cascadeIndex)
 	}
 	return shadowFactor / count;
 }
+#endif
 
 float4 PS(VertexOut input) : SV_Target
 {
@@ -154,10 +159,12 @@ float4 PS(VertexOut input) : SV_Target
 	}
 	if(cbPerObject.useShadow == 0)
 	{
+	    //return float4(1.0f, 0.0f, 0.0f, 1.0f);
 	    return color;
 	}
 	float shadow = 1.0f;
 	
+	#ifdef CAST_SHADOW
 	uint cascadeIndex = 0;
 	for(uint i = 0; i < SHADOW_MAP_CASCADE_COUNT - 1; ++i) {
 		if(input.ViewPos.z < cascadeInfo.cascadeSplits[i]) {
@@ -170,7 +177,8 @@ float4 PS(VertexOut input) : SV_Target
 	float4 shadowCoord = mul(lightViewProj, float4(input.WorldPos, 1.0));
 	shadowCoord.rg = shadowCoord.rg * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 	shadow = textureProj(shadowCoord/shadowCoord.w, float2(0.0, 0.0), cascadeIndex);
-
+	
+	#endif
 	
 	
 	

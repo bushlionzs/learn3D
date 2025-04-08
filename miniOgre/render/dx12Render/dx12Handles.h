@@ -189,14 +189,14 @@ public:
         mCbvSrvUavDescCount = cbvSrvUavDescCount;
     }
 
-    DxDescriptorID getSamplerHandle()
+    DxDescriptorID getSamplerHandle(uint32_t slot)
     {
-        return mSamplerHandle;
+        return mSamplerHandle[slot];
     }
-    void updateSamplerHandle(DxDescriptorID samplerHanlde, uint32_t samplerCount)
+    void updateSamplerHandle(uint32_t slot, DxDescriptorID samplerHanlde)
     {
-        mSamplerHandle = samplerHanlde;
-        mSamplerCount = samplerCount;
+        assert_invariant(slot < D3D12_MAX_SAMPLER_COUNT);
+        mSamplerHandle[slot] = samplerHanlde;
     }
 
     void addDescriptroInfo(const DescriptorInfo* descriptroInfo)
@@ -215,8 +215,7 @@ private:
     DxDescriptorID       mCbvSrvUavHandle;
     uint32_t mCbvSrvUavDescCount;
 
-    DxDescriptorID mSamplerHandle;
-    uint32_t mSamplerCount;
+    DxDescriptorID mSamplerHandle[D3D12_MAX_SAMPLER_COUNT];
     std::vector<const DescriptorInfo*> mDescriptorInfos;
 };
 

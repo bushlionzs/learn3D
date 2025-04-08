@@ -24,6 +24,7 @@ namespace Ogre
         RenderSystem* rs = Root::getSingleton().getRenderSystem();
         texProperty._width = dim;
         texProperty._height = dim;
+        texProperty._face = 6;
         texProperty._tex_format = format;
         Ogre::RenderTarget* rt = rs->createRenderTarget(name, texProperty);
         OgreTexture* cubeTexture = rt->getTarget();
@@ -104,6 +105,7 @@ namespace Ogre
         texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
         texProperty._tex_format = format;
         texProperty._texType = TEX_TYPE_2D;
+        texProperty._need_mipmap = false;
         auto outPutTarget = rs->createRenderTarget("outputTarget", texProperty);
 
         RenderPassInfo renderPassInfo;
@@ -118,7 +120,7 @@ namespace Ogre
         RenderTargetBarrier uavBarriers[] = {
                {
                rt,
-               RESOURCE_STATE_GENERIC_READ,
+               RESOURCE_STATE_COMMON,
                RESOURCE_STATE_COPY_DEST},
         };
 
@@ -182,7 +184,7 @@ namespace Ogre
                     {
                         outPutTarget,
                         RESOURCE_STATE_RENDER_TARGET,
-                        RESOURCE_STATE_GENERIC_READ
+                        RESOURCE_STATE_PRESENT
                     }
                 };
                 rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
@@ -207,7 +209,7 @@ namespace Ogre
                 rtBarriers[0] =
                 {
                     outPutTarget,
-                    RESOURCE_STATE_GENERIC_READ,
+                    RESOURCE_STATE_PRESENT,
                     RESOURCE_STATE_RENDER_TARGET
                 };
                 rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);

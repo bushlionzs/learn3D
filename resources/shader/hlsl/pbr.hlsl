@@ -10,7 +10,7 @@ Texture2D normal_pbr           VKBINDING(2, 1): register(t2,space1);
 Texture2D emissive_pbr         VKBINDING(3, 1): register(t3,space1);
 Texture2D metal_roughness_pbr  VKBINDING(4, 1): register(t4,space1);
 Texture2D roughness_pbr        VKBINDING(5, 1): register(t5,space1);
-Texture2D brdflut_pbr              VKBINDING(6, 1): register(t6,space1);
+Texture2D brdflut_pbr          VKBINDING(6, 1): register(t6,space1);
 TextureCube irradianceCube     VKBINDING(7, 1): register(t7,space1);
 TextureCube prefilteredCube    VKBINDING(8, 1): register(t8,space1);
 
@@ -363,10 +363,14 @@ float4 PS(VertexOut pin) : SV_Target
 	float3 color = directColor;
     // Calculate lighting contribution from image based lighting source (IBL)
 	float3 ibl = float3(0.0f, 0.0f, 0.0f);
-#ifdef USE_IBL
-	ibl = getIBLContribution(pbrInputs, n, reflection);
-    color += ibl;
-#endif
+	
+	if(pbrMaterial.hasIBL > 0)
+	{
+        ibl = getIBLContribution(pbrInputs, n, reflection);
+        color += ibl;    
+	}
+	
+
     // Apply optional PBR terms for additional (optional) shading
 	float ao = 0.0f;
     if( pbrMaterial.hasOcclusionMap > 0)

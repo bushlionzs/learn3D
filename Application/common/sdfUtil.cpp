@@ -5,7 +5,7 @@
 
 bool GenerateVolumeDataFromFile(SDFVolumeData** ppOutVolumeData, MeshInfo* pMeshInfo)
 {
-    ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(pMeshInfo->name);
+    ResourceInfo* resInfo = Ogre::ResourceManager::getSingleton().getResourceInfo(pMeshInfo->name);
 
     if (nullptr == resInfo)
     {
@@ -13,7 +13,7 @@ bool GenerateVolumeDataFromFile(SDFVolumeData** ppOutVolumeData, MeshInfo* pMesh
         return false;
     }
 
-    Ogre::DataStreamPtr stream = ResourceManager::getSingleton().openResource(pMeshInfo->name);
+    Ogre::DataStreamPtr stream = Ogre::ResourceManager::getSingleton().openResource(pMeshInfo->name);
 
 
     *ppOutVolumeData = new(SDFVolumeData);
@@ -84,12 +84,12 @@ void loadBakedSDFData(
 }
 
 
-Vector3 calculateAABBExtent(const Ogre::AxisAlignedBox* ownerAABB)
+Ogre::Vector3 calculateAABBExtent(const Ogre::AxisAlignedBox* ownerAABB)
 { 
     return 0.5f * (ownerAABB->getMaximum() - ownerAABB->getMinimum());
 }
 
-Vector3 calculateAABBCenter(const AxisAlignedBox* ownerAABB) 
+Ogre::Vector3 calculateAABBCenter(const Ogre::AxisAlignedBox* ownerAABB) 
 { 
     return (ownerAABB->getMaximum() + ownerAABB->getMinimum()) * 0.5f;
 }

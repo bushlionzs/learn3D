@@ -137,6 +137,9 @@ namespace Ogre {
             {
                 switch (mTextureUnits[i]->getTextureProperty()->_pbrType)
                 {
+                case TextureTypePbr_Albedo:
+                    mPbrMatInfo.hasAlbedoMap = 1;
+                    break;
                 case TextureTypePbr_MetalRoughness:
                     mPbrMatInfo.hasMetalRoughNessMap = 1;
                     break;
@@ -145,6 +148,11 @@ namespace Ogre {
                     break;
                 case TextureTypePbr_Emissive:
                     mPbrMatInfo.hasEmissiveMap = 1;
+                    break;
+                case TextureTypePbr_BRDF_LUT:
+                case TextureTypePbr_IBL_Diffuse:
+                case TextureTypePbr_IBL_Specular:
+                    mPbrMatInfo.hasIBL = 1;
                     break;
                 }
             }

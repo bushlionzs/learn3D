@@ -3,14 +3,14 @@
 struct MeshInfo
 {
     const char* name = nullptr;
-    uint32_t materialFlags = MATERIAL_FLAG_NONE;
+    uint32_t materialFlags = Ogre::MATERIAL_FLAG_NONE;
     float         twoSidedWorldSpaceBias = 0.0f;
     bool          sdfGenerated = false;
 };
 struct SDFVolumeData;
 struct SDFVolumeTextureNode
 {
-    Vector3i          mAtlasAllocationCoord;
+    Ogre::Vector3i          mAtlasAllocationCoord;
     SDFVolumeData* mSDFVolumeData;
     // the coordinate of this node inside the volume texture atlases
     // not in texel space
@@ -28,14 +28,14 @@ struct SDFVolumeData
 {
     std::vector<float> mSDFVolumeList;
     // Size of the distance volume
-    Vector3i mSDFVolumeSize;
+    Ogre::Vector3i mSDFVolumeSize;
     // Local Space of the Bounding Box volume
     Ogre::AxisAlignedBox  mLocalBoundingBox;
 
     // stores the min & the maximum distances found in the volume
     // in the space of the world voxel volume
     // x stores the minimum while y stores the maximum
-    Vector2  mDistMinMax;
+    Ogre::Vector2  mDistMinMax;
     //
     bool  mIsTwoSided;
     //
@@ -207,6 +207,6 @@ struct SDFVolumeTextureAtlas
     std::vector<SDFVolumeTextureNode*> mPendingNodeQueue;
 };
 
-Vector3 calculateAABBExtent(const Ogre::AxisAlignedBox* ownerAABB);
+Ogre::Vector3 calculateAABBExtent(const Ogre::AxisAlignedBox* ownerAABB);
 
-Vector3 calculateAABBCenter(const AxisAlignedBox* ownerAABB);
+Ogre::Vector3 calculateAABBCenter(const Ogre::AxisAlignedBox* ownerAABB);

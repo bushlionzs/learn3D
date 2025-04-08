@@ -244,6 +244,7 @@ struct PbrMaterialConstanceBuffer
     uint32_t hasMetalMap = 0;
     uint32_t hasRoughNessMap = 0;
     uint32_t hasOcclusionMap = 0;
+    uint32_t hasIBL = 0;
 };
 
 struct ObjectConstantBuffer

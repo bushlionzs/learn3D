@@ -76,6 +76,7 @@ struct PbrMaterialBlock
 	uint hasMetalMap;
 	uint hasRoughNessMap;
 	uint hasOcclusionMap;
+	uint hasIBL;
 };
 
 struct ObjMaterialBlock

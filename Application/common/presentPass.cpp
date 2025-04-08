@@ -48,7 +48,7 @@ bool PresentPass::initialize()
 	rasterState.depthFunc = filament::backend::SamplerCompareFunc::A;
 	rasterState.colorWrite = true;
 	rasterState.renderTargetCount = 1;
-	EngineConfig& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+	Ogre::EngineConfig& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 
 	if (mUseSRGB)
 	{

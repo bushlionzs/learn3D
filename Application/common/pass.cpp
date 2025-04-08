@@ -71,19 +71,19 @@ public:
 		mUserDefineShader.initCallback = initFrameResource;
 		RenderPassInput* passInput = &mPassInput;
 		filament::backend::SamplerParams params{};
-		params.filterMag = backend::SamplerFilterType::LINEAR;
-		params.filterMin = backend::SamplerFilterType::LINEAR;
-		params.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-		params.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-		params.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-		params.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-		params.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
-		params.compareFunc = backend::SamplerCompareFunc::LE;
+		params.filterMag = filament::backend::SamplerFilterType::LINEAR;
+		params.filterMin = filament::backend::SamplerFilterType::LINEAR;
+		params.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
+		params.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+		params.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+		params.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+		params.compareMode = filament::backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
+		params.compareFunc = filament::backend::SamplerCompareFunc::LE;
 		params.anisotropyLog2 = 0;
 		params.useComparison = 0;
 		params.maxLod = 1;
 		params.padding2 = 0;
-		Handle<HwSampler> shadowMapSampler = rs->createTextureSampler(params);
+		filament::backend::Handle<filament::backend::HwSampler> shadowMapSampler = rs->createTextureSampler(params);
 		RenderableBindCallback bindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void*) {
 			Ogre::DescriptorData descriptorData[2];
 				
@@ -91,23 +91,27 @@ public:
 			descriptorData[0].pName = "cbPass";
 			descriptorData[0].ppBuffers = &mFrameBufferObjectList[frameIndex];
 
-			descriptorData[1].mCount = 1;
-			descriptorData[1].pName = "cascadeInfo";
-			descriptorData[1].ppBuffers = &mCascadeInfoList[frameIndex];
+			
 			FrameResourceInfo* resourceInfo = (FrameResourceInfo*)r->getFrameResourceInfo(frameIndex);
 			auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-			rs->updateDescriptorSet(resourceInfo->zeroSet, 2, descriptorData);
+			rs->updateDescriptorSet(resourceInfo->zeroSet, 1, descriptorData);
 			if (passInput->shadowMapTarget)
 			{
+				descriptorData[0].mCount = 1;
+				descriptorData[0].pName = "cascadeInfo";
+				descriptorData[0].ppBuffers = &mCascadeInfoList[frameIndex];
+				rs->updateDescriptorSet(resourceInfo->zeroSet, 1, descriptorData);
 				Ogre::OgreTexture* shadowTexture = passInput->shadowMapTarget->getTarget();
 				descriptorData[0].mCount = 1;
 				descriptorData[0].pName = "shadowMap";
-				descriptorData[0].ppTextures = (const OgreTexture**)&shadowTexture;
+				descriptorData[0].ppTextures = (const Ogre::OgreTexture**)&shadowTexture;
 
 				descriptorData[1].mCount = 1;
 				descriptorData[1].pName = "shadowMapSampler";
 				descriptorData[1].ppSamplers = &shadowMapSampler;
-				descriptorData[1].descriptorType = DESCRIPTOR_TYPE_SAMPLER;
+				descriptorData[1].descriptorType = Ogre::DESCRIPTOR_TYPE_SAMPLER;
+
+
 				rs->updateDescriptorSet(resourceInfo->firstSet, 2, descriptorData);
 			}
 			
@@ -174,23 +178,23 @@ public:
 		ShaderInfo shaderInfo;
 		shaderInfo.shaderName = "shadow";
 		VertexDeclaration decl;
-		decl.addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
-		decl.addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
-		decl.addElement(0, 0, 24, VET_FLOAT4, VES_TANGENT);
-		decl.addElement(0, 0, 40, VET_FLOAT2, VES_TEXTURE_COORDINATES);
-		Handle<HwProgram> shadowProgramHandle = rs->createShaderProgram(shaderInfo, &decl);
+		decl.addElement(0, 0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+		decl.addElement(0, 0, 12, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
+		decl.addElement(0, 0, 24, Ogre::VET_FLOAT4, Ogre::VES_TANGENT);
+		decl.addElement(0, 0, 40, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+		filament::backend::Handle<filament::backend::HwProgram> shadowProgramHandle = rs->createShaderProgram(shaderInfo, &decl);
 
 		filament::backend::RasterState rasterState;
 		rasterState.depthWrite = true;
 		rasterState.depthTest = true;
-		rasterState.depthFunc = SamplerCompareFunc::LE;
+		rasterState.depthFunc = filament::backend::SamplerCompareFunc::LE;
 		rasterState.colorWrite = true;
 		rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_UNKNOWN;
 		rasterState.renderTargetCount = 0;
 		rasterState.depthBiasConstantFactor = 1.25f;
 		rasterState.depthBiasSlopeFactor = 1.75f;
 
-		Handle<HwPipeline> shadowPipelineHandle = rs->createPipeline(rasterState, shadowProgramHandle);
+		filament::backend::Handle<filament::backend::HwPipeline> shadowPipelineHandle = rs->createPipeline(rasterState, shadowProgramHandle);
 
 		RenderableBindCallback shadowBindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void* param) {
 			    uint64_t index = (uint64_t)param;
@@ -198,21 +202,21 @@ public:
 				descriptorData[0].mCount = 1;
 				descriptorData[0].pName = "cbPass";
 				descriptorData[0].ppBuffers = &mShadowBufferList[frameIndex * SHADOW_MAP_CASCADE_COUNT + index];
-				descriptorData[0].descriptorType = DESCRIPTOR_TYPE_BUFFER;
+				descriptorData[0].descriptorType = Ogre::DESCRIPTOR_TYPE_BUFFER;
 
-				const std::shared_ptr<Material>& mat = r->getMaterial();
+				const std::shared_ptr<Ogre::Material>& mat = r->getMaterial();
 
-				OgreTexture* tex = mat->getTexture(0);
+				Ogre::OgreTexture* tex = mat->getTexture(0);
 
 				descriptorData[1].mCount = 1;
 				descriptorData[1].pName = "colorMapTexture";
-				descriptorData[1].ppTextures = (const OgreTexture**)&tex;
-				descriptorData[1].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+				descriptorData[1].ppTextures = (const Ogre::OgreTexture**)&tex;
+				descriptorData[1].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
 
 				descriptorData[2].mCount = 1;
 				descriptorData[2].pName = "colorMapSampler";
-				descriptorData[2].ppTextures = (const OgreTexture**)&tex;
-				descriptorData[2].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
+				descriptorData[2].ppTextures = (const Ogre::OgreTexture**)&tex;
+				descriptorData[2].descriptorType = Ogre::DESCRIPTOR_TYPE_TEXTURE;
 
 				FrameResourceInfo* resourceInfo = (FrameResourceInfo*)r->getFrameResourceInfo(frameIndex);
 				auto* rs = Ogre::Root::getSingleton().getRenderSystem();
@@ -262,7 +266,7 @@ public:
 			{
 				{
 					mPassInput.shadowMapTarget,
-					RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE | RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+					Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 					Ogre::RESOURCE_STATE_DEPTH_WRITE
 				}
 			};
@@ -299,7 +303,7 @@ public:
 				{
 					mPassInput.shadowMapTarget,
 					Ogre::RESOURCE_STATE_DEPTH_WRITE,
-					RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE | RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+					Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 				}
 			};
 			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
@@ -356,7 +360,7 @@ public:
 		updateCascadeMatrices();
 	}
 private:
-	void updateFrameData(Ogre::ICamera* camera, Light* light)
+	void updateFrameData(Ogre::ICamera* camera, Ogre::Light* light)
 	{
 		RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
 		const Ogre::Matrix4& view = camera->getViewMatrix();

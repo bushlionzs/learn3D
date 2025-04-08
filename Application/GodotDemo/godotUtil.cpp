@@ -307,7 +307,7 @@ void loadGodotProject(const String& projectDir, GodotContext& context)
         std::string sceneNodeName = convert_stringname_to_ascii(scene->get_name());
         Ogre::SceneNode* root = context.sceneManager->getRoot()->createChildSceneNode(sceneNodeName);
 
-        //Node* node = findNode(scene, "SpaceCraftHangar");
+        Node* node = findNode(scene, "SpaceCraftHangar");
         visitNode(scene, root, context);
     }
     else
@@ -567,15 +567,21 @@ void visitNode(Node* godotNode, Ogre::SceneNode* sceneNode, GodotContext& contex
                         {
                             updateMaterial(shader_mat, ogreMat.get());
                         }
-                        Ogre::TextureProperty texProperty;
-                        texProperty._pbrType = Ogre::TextureTypePbr_BRDF_LUT;
-                        ogreMat->addTexture(context.brdfTexName, &texProperty);
+                        if (true)
+                        {
+                            Ogre::TextureProperty texProperty;
+                            texProperty._pbrType = Ogre::TextureTypePbr_BRDF_LUT;
+                            ogreMat->addTexture(context.brdfTexName, &texProperty);
 
-                        texProperty._pbrType = Ogre::TextureTypePbr_IBL_Specular;
-                        ogreMat->addTexture(context.prefilteredTexName, &texProperty);
+                            texProperty._pbrType = Ogre::TextureTypePbr_IBL_Diffuse;
+                            ogreMat->addTexture(context.irradianceTexName, &texProperty);
 
-                        texProperty._pbrType = Ogre::TextureTypePbr_IBL_Diffuse;
-                        ogreMat->addTexture(context.prefilteredTexName, &texProperty);
+                            texProperty._pbrType = Ogre::TextureTypePbr_IBL_Specular;
+                            ogreMat->addTexture(context.prefilteredTexName, &texProperty);
+
+                            
+                        }
+                        
                     }
 
                     std::shared_ptr<Ogre::Material> ogreMat = Ogre::MaterialManager::getSingleton().getByName(ogreMatName);
@@ -589,7 +595,7 @@ void visitNode(Node* godotNode, Ogre::SceneNode* sceneNode, GodotContext& contex
 
             std::string entityName = convert_stringname_to_ascii(instanceName);
 
-            Ogre::Entity* entity = new Ogre::Entity(entityName, ogreMesh);
+            Ogre::Entity* entity = new Ogre::Entity(entityName, ogreMesh.get());
 
             sceneNode->attachObject(entity);
         }

@@ -17,7 +17,7 @@ template<> DX12Helper* Ogre::Singleton<DX12Helper>::msSingleton = 0;
 
 DescriptorHeapProperties gCpuDescriptorHeapProperties[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES] = {
 	{ 1024 * 256, D3D12_DESCRIPTOR_HEAP_FLAG_NONE }, // CBV SRV UAV
-	{ 2048, D3D12_DESCRIPTOR_HEAP_FLAG_NONE },       // Sampler
+	{ 1024 * 256, D3D12_DESCRIPTOR_HEAP_FLAG_NONE },       // Sampler
 	{ 512, D3D12_DESCRIPTOR_HEAP_FLAG_NONE },        // RTV
 	{ 512, D3D12_DESCRIPTOR_HEAP_FLAG_NONE },        // DSV
 };
@@ -377,7 +377,7 @@ DxDescriptorID DX12Helper::getSampler(
 	if (UTILS_LIKELY(iter != mSamplersCache.end())) {
 		return iter->second;
 	}
-	struct DescriptorHeap* heap = mDescriptorHeapContext.mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER];
+	struct DescriptorHeap* heap = mDescriptorHeapContext.pSamplerHeaps[0];
 	D3D12_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.AddressU = D3D12Mappings::getWrapMode(params.wrapS);
 	samplerDesc.AddressV = D3D12Mappings::getWrapMode(params.wrapT);
@@ -425,15 +425,15 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		mMipmapPipelineHandle = rs->createPipeline(rasterState, mMipmapHandle);
 
 		Ogre::TextureProperty texProperty;
-		texProperty._width = 1024;
-		texProperty._height = 1024;
+		texProperty._width = tex->getWidth();
+		texProperty._height = tex->getHeight();
 		texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
 		texProperty._tex_format = PF_A8B8G8R8;
+		texProperty._need_mipmap = false;
+		mMipmapTarget = rs->createRenderTarget("mipmapTarget", texProperty);
 
-		mMipmapTarget = rs->createRenderTarget("outputTarget", texProperty);
 
-
-		TextureManager::getSingleton().addTexture("outputTarget", mMipmapTarget->getTarget());
+		TextureManager::getSingleton().addTexture("mipmapTarget", mMipmapTarget->getTarget());
 
 		mMipMapDescSet = rs->createDescriptorSet(mMipmapHandle, 0);
 		BufferDesc desc{};
@@ -524,9 +524,10 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		
 		RenderTargetBarrier uavBarriers[] = {
 				   {
-				   mMipmapTarget,
-				   RESOURCE_STATE_UNDEFINED,
-				   RESOURCE_STATE_RENDER_TARGET},
+				       mMipmapTarget,
+				       RESOURCE_STATE_UNDEFINED,
+				       RESOURCE_STATE_RENDER_TARGET
+			      },
 		};
 		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers);
 		rs->setViewport(0, 0, width, height, 0.0f, 1.0f);
