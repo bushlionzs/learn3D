@@ -272,7 +272,7 @@ void ProceduralSkyMaterial::_update_shader() {
 	MutexLock shader_lock(shader_mutex);
 	if (shader_cache[0].is_null()) {
 		for (int i = 0; i < 2; i++) {
-			//shader_cache[i] = RS::get_singleton()->shader_create();
+			shader_cache[i] = RS::get_singleton()->shader_create();
 
 			// Add a comment to describe the shader origin (useful when converting to ShaderMaterial).
 			RS::get_singleton()->shader_set_code(shader_cache[i], vformat(R"(

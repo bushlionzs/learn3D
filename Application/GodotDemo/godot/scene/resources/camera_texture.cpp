@@ -53,11 +53,21 @@ void CameraTexture::_on_format_changed() {
 }
 
 int CameraTexture::get_width() const {
-	return 0;
+	Ref<CameraFeed> feed = CameraServer::get_singleton()->get_feed_by_id(camera_feed_id);
+	if (feed.is_valid()) {
+		return feed->get_base_width();
+	} else {
+		return 0;
+	}
 }
 
 int CameraTexture::get_height() const {
-	return 0;
+	Ref<CameraFeed> feed = CameraServer::get_singleton()->get_feed_by_id(camera_feed_id);
+	if (feed.is_valid()) {
+		return feed->get_base_height();
+	} else {
+		return 0;
+	}
 }
 
 bool CameraTexture::has_alpha() const {
@@ -65,7 +75,15 @@ bool CameraTexture::has_alpha() const {
 }
 
 RID CameraTexture::get_rid() const {
-	return RID();
+	Ref<CameraFeed> feed = CameraServer::get_singleton()->get_feed_by_id(camera_feed_id);
+	if (feed.is_valid()) {
+		return feed->get_texture(which_feed);
+	} else {
+		if (_texture.is_null()) {
+			_texture = RenderingServer::get_singleton()->texture_2d_placeholder_create();
+		}
+		return _texture;
+	}
 }
 
 Ref<Image> CameraTexture::get_image() const {
@@ -73,7 +91,22 @@ Ref<Image> CameraTexture::get_image() const {
 }
 
 void CameraTexture::set_camera_feed_id(int p_new_id) {
-	
+	Ref<CameraFeed> feed = CameraServer::get_singleton()->get_feed_by_id(camera_feed_id);
+	if (feed.is_valid()) {
+		if (feed->is_connected("format_changed", callable_mp(this, &CameraTexture::_on_format_changed))) {
+			feed->disconnect("format_changed", callable_mp(this, &CameraTexture::_on_format_changed));
+		}
+	}
+
+	camera_feed_id = p_new_id;
+
+	feed = CameraServer::get_singleton()->get_feed_by_id(camera_feed_id);
+	if (feed.is_valid()) {
+		feed->connect("format_changed", callable_mp(this, &CameraTexture::_on_format_changed));
+	}
+
+	notify_property_list_changed();
+	callable_mp((Resource *)this, &Resource::emit_changed).call_deferred();
 }
 
 int CameraTexture::get_camera_feed_id() const {
@@ -91,11 +124,21 @@ CameraServer::FeedImage CameraTexture::get_which_feed() const {
 }
 
 void CameraTexture::set_camera_active(bool p_active) {
-	
+	Ref<CameraFeed> feed = CameraServer::get_singleton()->get_feed_by_id(camera_feed_id);
+	if (feed.is_valid()) {
+		feed->set_active(p_active);
+		notify_property_list_changed();
+		callable_mp((Resource *)this, &Resource::emit_changed).call_deferred();
+	}
 }
 
 bool CameraTexture::get_camera_active() const {
-	return false;
+	Ref<CameraFeed> feed = CameraServer::get_singleton()->get_feed_by_id(camera_feed_id);
+	if (feed.is_valid()) {
+		return feed->is_active();
+	} else {
+		return false;
+	}
 }
 
 CameraTexture::CameraTexture() {}

@@ -102,7 +102,7 @@ Rect2 StyleBox::get_draw_rect(const Rect2 &p_rect) const {
 }
 
 CanvasItem *StyleBox::get_current_item_drawn() const {
-	return nullptr;
+	return CanvasItem::get_current_item_drawn();
 }
 
 bool StyleBox::test_mask(const Point2 &p_point, const Rect2 &p_rect) const {

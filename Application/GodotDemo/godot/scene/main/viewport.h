@@ -33,7 +33,6 @@
 
 #include "scene/main/node.h"
 #include "scene/resources/texture.h"
-#include "servers/display_server.h"
 
 #ifndef _3D_DISABLED
 class Camera3D;
@@ -46,6 +45,7 @@ class AudioListener2D;
 class Camera2D;
 class CanvasItem;
 class CanvasLayer;
+class Control;
 class Label;
 class SceneTreeTimer;
 class Viewport;
@@ -344,15 +344,72 @@ private:
 		bool pending_window_update = false;
 	};
 
+	// VRS
+	VRSMode vrs_mode = VRS_DISABLED;
+	VRSUpdateMode vrs_update_mode = VRS_UPDATE_ONCE;
+	Ref<Texture2D> vrs_texture;
+
+	struct GUI {
+		bool mouse_in_viewport = false;
+		HashMap<int, ObjectID> touch_focus;
+		Control *mouse_focus = nullptr;
+		Control *mouse_click_grabber = nullptr;
+		BitField<MouseButtonMask> mouse_focus_mask;
+		Control *key_focus = nullptr;
+		Control *mouse_over = nullptr;
+		LocalVector<Control *> mouse_over_hierarchy;
+		bool sending_mouse_enter_exit_notifications = false;
+		Window *subwindow_over = nullptr; // mouse_over and subwindow_over are mutually exclusive. At all times at least one of them is nullptr.
+		Window *windowmanager_window_over = nullptr; // Only used in root Viewport.
+		Control *drag_mouse_over = nullptr;
+		Control *tooltip_control = nullptr;
+		Window *tooltip_popup = nullptr;
+		Label *tooltip_label = nullptr;
+		String tooltip_text;
+		Point2 tooltip_pos;
+		Point2 last_mouse_pos;
+		Point2 drag_accum;
+		bool drag_attempted = false;
+		Variant drag_data; // Only used in root-Viewport and SubViewports, that are not children of a SubViewportContainer.
+		ObjectID drag_preview_id;
+		Ref<SceneTreeTimer> tooltip_timer;
+		double tooltip_delay = 0.0;
+		bool roots_order_dirty = false;
+		List<Control *> roots;
+		HashSet<ObjectID> canvas_parents_with_dirty_order;
+		int canvas_sort_index = 0; //for sorting items with canvas as root
+		bool dragging = false; // Is true in the viewport in which dragging started while dragging is active.
+		bool global_dragging = false; // Is true while dragging is active. Only used in root-Viewport and SubViewports that are not children of a SubViewportContainer.
+		bool drag_successful = false;
+		Control *target_control = nullptr; // Control that the mouse is over in the innermost nested Viewport. Only used in root-Viewport and SubViewports, that are not children of a SubViewportContainer.
+		bool embed_subwindows_hint = false;
+
+		Window *subwindow_focused = nullptr;
+		Window *currently_dragged_subwindow = nullptr;
+		SubWindowDrag subwindow_drag = SUB_WINDOW_DRAG_DISABLED;
+		Vector2 subwindow_drag_from;
+		Vector2 subwindow_drag_pos;
+		Rect2i subwindow_drag_close_rect;
+		bool subwindow_drag_close_inside = false;
+		SubWindowResize subwindow_resize_mode;
+		Rect2i subwindow_resize_from_rect;
+
+		Vector<SubWindow> sub_windows; // Don't obtain references or pointers to the elements, as their location can change.
+	} gui;
+
 	DefaultCanvasItemTextureFilter default_canvas_item_texture_filter = DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_LINEAR;
 	DefaultCanvasItemTextureRepeat default_canvas_item_texture_repeat = DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_DISABLED;
 
 	bool disable_input = false;
 
+	void _gui_call_input(Control *p_control, const Ref<InputEvent> &p_input);
+	void _gui_call_notification(Control *p_control, int p_what);
 
 	void _gui_sort_roots();
+	Control *_gui_find_control_at_pos(CanvasItem *p_node, const Point2 &p_global, const Transform2D &p_xform);
 
 	void _gui_input_event(Ref<InputEvent> p_event);
+	void _perform_drop(Control *p_control = nullptr);
 	void _gui_cleanup_internal_state(Ref<InputEvent> p_event);
 
 	void _push_unhandled_input_internal(const Ref<InputEvent> &p_event);
@@ -361,22 +418,31 @@ private:
 
 	friend class Control;
 
-
+	List<Control *>::Element *_gui_add_root_control(Control *p_control);
 
 	void _gui_remove_root_control(List<Control *>::Element *RI);
 
+	String _gui_get_tooltip(Control *p_control, const Vector2 &p_pos, Control **r_tooltip_owner = nullptr);
+	void _gui_cancel_tooltip();
+	void _gui_show_tooltip();
 
+	void _gui_remove_control(Control *p_control);
+	void _gui_hide_control(Control *p_control);
+	void _gui_update_mouse_over();
 
-	
+	void _gui_force_drag(Control *p_base, const Variant &p_data, Control *p_control);
+	void _gui_set_drag_preview(Control *p_base, Control *p_control);
+	Control *_gui_get_drag_preview();
 
 	void _gui_remove_focus_for_window(Node *p_window);
-
-
-
+	void _gui_unfocus_control(Control *p_control);
+	bool _gui_control_has_focus(const Control *p_control);
+	void _gui_control_grab_focus(Control *p_control);
+	void _gui_grab_click_focus(Control *p_control);
 	void _post_gui_grab_click_focus();
 	void _gui_accept_event();
 
-
+	bool _gui_drop(Control *p_at_control, Point2 p_at_pos, bool p_just_check);
 
 	friend class CanvasLayer;
 	void _canvas_layer_add(CanvasLayer *p_canvas_layer);
@@ -416,7 +482,7 @@ protected:
 	Size2i _get_size_2d_override() const;
 	bool _is_size_allocated() const;
 
-
+	void _notification(int p_what);
 	void _process_picking();
 	static void _bind_methods();
 	void _validate_property(PropertyInfo &p_property) const;
@@ -531,7 +597,8 @@ public:
 	int gui_get_canvas_sort_index();
 
 	void gui_release_focus();
-
+	Control *gui_get_focus_owner() const;
+	Control *gui_get_hovered_control() const;
 
 	PackedStringArray get_configuration_warnings() const override;
 
@@ -559,6 +626,7 @@ public:
 	bool gui_is_drag_successful() const;
 	void gui_cancel_drag();
 
+	Control *gui_find_control(const Point2 &p_global);
 
 	void set_sdf_oversize(SDFOversize p_sdf_oversize);
 	SDFOversize get_sdf_oversize() const;
@@ -575,10 +643,17 @@ public:
 	// VRS
 
 	void set_vrs_mode(VRSMode p_vrs_mode);
-	
+	VRSMode get_vrs_mode() const;
+
+	void set_vrs_update_mode(VRSUpdateMode p_vrs_update_mode);
+	VRSUpdateMode get_vrs_update_mode() const;
+
+	void set_vrs_texture(Ref<Texture2D> p_texture);
+	Ref<Texture2D> get_vrs_texture() const;
 
 	virtual DisplayServer::WindowID get_window_id() const = 0;
 
+	void set_embedding_subwindows(bool p_embed);
 	bool is_embedding_subwindows() const;
 	TypedArray<Window> get_embedded_subwindows() const;
 	void subwindow_set_popup_safe_rect(Window *p_window, const Rect2i &p_rect);

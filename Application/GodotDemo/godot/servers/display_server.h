@@ -36,7 +36,7 @@
 #include "core/os/os.h"
 #include "core/variant/callable.h"
 
-
+#include "display/native_menu.h"
 
 class Texture2D;
 class Image;
@@ -47,6 +47,11 @@ class DisplayServer : public Object {
 	static DisplayServer *singleton;
 	static bool hidpi_allowed;
 
+#ifndef DISABLE_DEPRECATED
+	mutable HashMap<String, RID> menu_names;
+
+	RID _get_rid_from_name(NativeMenu *p_nmenu, const String &p_menu_root) const;
+#endif
 
 	LocalVector<ObjectID> additional_outputs;
 

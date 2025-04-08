@@ -196,6 +196,7 @@ private:
 		Ref<StyleBox> embedded_border;
 		Ref<StyleBox> embedded_unfocused_border;
 
+		Ref<Font> title_font;
 		int title_font_size = 0;
 		Color title_color;
 		int title_height = 0;

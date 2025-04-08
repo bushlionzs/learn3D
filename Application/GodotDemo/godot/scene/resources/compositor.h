@@ -33,7 +33,7 @@
 
 #include "core/io/resource.h"
 #include "core/object/gdvirtual.gen.inc"
-
+#include "servers/rendering/storage/render_data.h"
 
 /* Compositor Effect */
 
@@ -65,6 +65,7 @@ protected:
 	static void _bind_methods();
 	void _validate_property(PropertyInfo &p_property) const;
 
+	GDVIRTUAL2(_render_callback, int, const RenderData *)
 
 public:
 	virtual RID get_rid() const override { return rid; }

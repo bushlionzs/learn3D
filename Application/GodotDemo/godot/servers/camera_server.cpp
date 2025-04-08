@@ -65,31 +65,73 @@ int CameraServer::get_free_id() {
 	bool id_exists = true;
 	int newid = 0;
 
-	
+	// find a free id
+	while (id_exists) {
+		newid++;
+		id_exists = false;
+		for (int i = 0; i < feeds.size() && !id_exists; i++) {
+			if (feeds[i]->get_id() == newid) {
+				id_exists = true;
+			};
+		};
+	};
 
 	return newid;
 };
 
 int CameraServer::get_feed_index(int p_id) {
-	
+	for (int i = 0; i < feeds.size(); i++) {
+		if (feeds[i]->get_id() == p_id) {
+			return i;
+		};
+	};
 
 	return -1;
 };
 
 Ref<CameraFeed> CameraServer::get_feed_by_id(int p_id) {
-	return nullptr;
+	int index = get_feed_index(p_id);
+
+	if (index == -1) {
+		return nullptr;
+	} else {
+		return feeds[index];
+	}
 };
 
 void CameraServer::add_feed(const Ref<CameraFeed> &p_feed) {
-	
+	ERR_FAIL_COND(p_feed.is_null());
+
+	// add our feed
+	feeds.push_back(p_feed);
+
+	print_verbose("CameraServer: Registered camera " + p_feed->get_name() + " with ID " + itos(p_feed->get_id()) + " and position " + itos(p_feed->get_position()) + " at index " + itos(feeds.size() - 1));
+
+	// let whomever is interested know
+	emit_signal(SNAME("camera_feed_added"), p_feed->get_id());
 };
 
 void CameraServer::remove_feed(const Ref<CameraFeed> &p_feed) {
-	
+	for (int i = 0; i < feeds.size(); i++) {
+		if (feeds[i] == p_feed) {
+			int feed_id = p_feed->get_id();
+
+			print_verbose("CameraServer: Removed camera " + p_feed->get_name() + " with ID " + itos(feed_id) + " and position " + itos(p_feed->get_position()));
+
+			// remove it from our array, if this results in our feed being unreferenced it will be destroyed
+			feeds.remove_at(i);
+
+			// let whomever is interested know
+			emit_signal(SNAME("camera_feed_removed"), feed_id);
+			return;
+		};
+	};
 };
 
 Ref<CameraFeed> CameraServer::get_feed(int p_index) {
-	return nullptr;
+	ERR_FAIL_INDEX_V(p_index, feeds.size(), nullptr);
+
+	return feeds[p_index];
 };
 
 int CameraServer::get_feed_count() {
@@ -98,13 +140,23 @@ int CameraServer::get_feed_count() {
 
 TypedArray<CameraFeed> CameraServer::get_feeds() {
 	TypedArray<CameraFeed> return_feeds;
-	
+	int cc = get_feed_count();
+	return_feeds.resize(cc);
+
+	for (int i = 0; i < feeds.size(); i++) {
+		return_feeds[i] = get_feed(i);
+	};
 
 	return return_feeds;
 };
 
 RID CameraServer::feed_texture(int p_id, CameraServer::FeedImage p_texture) {
-	return RID();
+	int index = get_feed_index(p_id);
+	ERR_FAIL_COND_V(index == -1, RID());
+
+	Ref<CameraFeed> feed = get_feed(index);
+
+	return feed->get_texture(p_texture);
 };
 
 CameraServer::CameraServer() {

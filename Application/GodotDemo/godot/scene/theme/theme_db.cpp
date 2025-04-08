@@ -32,12 +32,14 @@
 
 #include "core/config/project_settings.h"
 #include "core/io/resource_loader.h"
+#include "scene/gui/control.h"
 #include "scene/main/node.h"
 #include "scene/main/window.h"
+#include "scene/resources/font.h"
 #include "scene/resources/style_box.h"
 #include "scene/resources/texture.h"
 #include "scene/theme/default_theme.h"
-
+#include "servers/text_server.h"
 
 // Default engine theme creation and configuration.
 
@@ -50,6 +52,9 @@ void ThemeDB::initialize_theme() {
 	String project_theme_path = GLOBAL_DEF_RST_BASIC(PropertyInfo(Variant::STRING, "gui/theme/custom", PROPERTY_HINT_FILE, "*.tres,*.res,*.theme", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), "");
 	String project_font_path = GLOBAL_DEF_RST_BASIC(PropertyInfo(Variant::STRING, "gui/theme/custom_font", PROPERTY_HINT_FILE, "*.tres,*.res,*.otf,*.ttf,*.woff,*.woff2,*.fnt,*.font,*.pfb,*.pfm", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), "");
 
+	TextServer::FontAntialiasing font_antialiasing = (TextServer::FontAntialiasing)(int)GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "gui/theme/default_font_antialiasing", PROPERTY_HINT_ENUM, "None,Grayscale,LCD Subpixel", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), 1);
+	TextServer::Hinting font_hinting = (TextServer::Hinting)(int)GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "gui/theme/default_font_hinting", PROPERTY_HINT_ENUM, "None,Light,Normal", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), TextServer::HINTING_LIGHT);
+	TextServer::SubpixelPositioning font_subpixel_positioning = (TextServer::SubpixelPositioning)(int)GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "gui/theme/default_font_subpixel_positioning", PROPERTY_HINT_ENUM, "Disabled,Auto,One Half of a Pixel,One Quarter of a Pixel", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), TextServer::SUBPIXEL_POSITIONING_AUTO);
 
 	const bool font_msdf = GLOBAL_DEF_RST("gui/theme/default_font_multichannel_signed_distance_field", false);
 	const bool font_generate_mipmaps = GLOBAL_DEF_RST("gui/theme/default_font_generate_mipmaps", false);
@@ -68,18 +73,28 @@ void ThemeDB::initialize_theme() {
 		}
 	}
 
-	
+	Ref<Font> project_font;
+	if (!project_font_path.is_empty()) {
+		project_font = ResourceLoader::load(project_font_path);
+		if (project_font.is_valid()) {
+			set_fallback_font(project_font);
+		} else {
+			ERR_PRINT("Error loading custom project font '" + project_font_path + "'");
+		}
+	}
 
 	// Always generate the default theme to serve as a fallback for all required theme definitions.
 
-
+	if (RenderingServer::get_singleton()) {
+		make_default_theme(default_theme_scale, project_font, font_subpixel_positioning, font_hinting, font_antialiasing, font_msdf, font_generate_mipmaps);
+	}
 
 	_init_default_theme_context();
 }
 
 void ThemeDB::initialize_theme_noproject() {
 	if (RenderingServer::get_singleton()) {
-	
+		make_default_theme(1.0, Ref<Font>());
 	}
 
 	_init_default_theme_context();
@@ -93,6 +108,7 @@ void ThemeDB::finalize_theme() {
 	_finalize_theme_contexts();
 	default_theme.unref();
 
+	fallback_font.unref();
 	fallback_icon.unref();
 	fallback_stylebox.unref();
 }
@@ -130,7 +146,18 @@ float ThemeDB::get_fallback_base_scale() {
 	return fallback_base_scale;
 }
 
+void ThemeDB::set_fallback_font(const Ref<Font> &p_font) {
+	if (fallback_font == p_font) {
+		return;
+	}
 
+	fallback_font = p_font;
+	emit_signal(SNAME("fallback_changed"));
+}
+
+Ref<Font> ThemeDB::get_fallback_font() {
+	return fallback_font;
+}
 
 void ThemeDB::set_fallback_font_size(int p_font_size) {
 	if (fallback_font_size == p_font_size) {
@@ -217,7 +244,27 @@ void ThemeDB::destroy_theme_context(Node *p_node) {
 }
 
 void ThemeDB::_propagate_theme_context(Node *p_from_node, ThemeContext *p_context) {
-	
+	Control *from_control = Object::cast_to<Control>(p_from_node);
+	Window *from_window = from_control ? nullptr : Object::cast_to<Window>(p_from_node);
+
+	if (from_control) {
+		from_control->set_theme_context(p_context);
+	} else if (from_window) {
+		from_window->set_theme_context(p_context);
+	}
+
+	for (int i = 0; i < p_from_node->get_child_count(); i++) {
+		Node *child_node = p_from_node->get_child(i);
+
+		// If the child is the root of another global context, stop the propagation
+		// in this branch.
+		if (theme_contexts.has(child_node)) {
+			theme_contexts[child_node]->parent = p_context;
+			continue;
+		}
+
+		_propagate_theme_context(child_node, p_context);
+	}
 }
 
 void ThemeDB::_init_default_theme_context() {
@@ -373,7 +420,8 @@ void ThemeDB::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_fallback_base_scale", "base_scale"), &ThemeDB::set_fallback_base_scale);
 	ClassDB::bind_method(D_METHOD("get_fallback_base_scale"), &ThemeDB::get_fallback_base_scale);
-
+	ClassDB::bind_method(D_METHOD("set_fallback_font", "font"), &ThemeDB::set_fallback_font);
+	ClassDB::bind_method(D_METHOD("get_fallback_font"), &ThemeDB::get_fallback_font);
 	ClassDB::bind_method(D_METHOD("set_fallback_font_size", "font_size"), &ThemeDB::set_fallback_font_size);
 	ClassDB::bind_method(D_METHOD("get_fallback_font_size"), &ThemeDB::get_fallback_font_size);
 	ClassDB::bind_method(D_METHOD("set_fallback_icon", "icon"), &ThemeDB::set_fallback_icon);
@@ -416,6 +464,7 @@ ThemeDB::~ThemeDB() {
 	default_theme.unref();
 	project_theme.unref();
 
+	fallback_font.unref();
 	fallback_icon.unref();
 	fallback_stylebox.unref();
 

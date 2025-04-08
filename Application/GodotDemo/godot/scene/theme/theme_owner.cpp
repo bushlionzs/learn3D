@@ -30,7 +30,7 @@
 
 #include "theme_owner.h"
 
-
+#include "scene/gui/control.h"
 #include "scene/main/window.h"
 #include "scene/theme/theme_db.h"
 
@@ -40,7 +40,11 @@ void ThemeOwner::set_owner_node(Node *p_node) {
 	owner_control = nullptr;
 	owner_window = nullptr;
 
-	
+	Control *c = Object::cast_to<Control>(p_node);
+	if (c) {
+		owner_control = c;
+		return;
+	}
 
 	Window *w = Object::cast_to<Window>(p_node);
 	if (w) {
@@ -50,8 +54,11 @@ void ThemeOwner::set_owner_node(Node *p_node) {
 }
 
 Node *ThemeOwner::get_owner_node() const {
-
-	
+	if (owner_control) {
+		return owner_control;
+	} else if (owner_window) {
+		return owner_window;
+	}
 	return nullptr;
 }
 
@@ -87,7 +94,14 @@ void ThemeOwner::_owner_context_changed() {
 		return;
 	}
 
+	Control *c = Object::cast_to<Control>(holder);
+	Window *w = c == nullptr ? Object::cast_to<Window>(holder) : nullptr;
 
+	if (c) {
+		c->notification(Control::NOTIFICATION_THEME_CHANGED);
+	} else if (w) {
+		w->notification(Window::NOTIFICATION_THEME_CHANGED);
+	}
 }
 
 ThemeContext *ThemeOwner::_get_active_owner_context() const {
@@ -108,7 +122,15 @@ void ThemeOwner::assign_theme_on_parented(Node *p_for_node) {
 
 	Node *parent = p_for_node->get_parent();
 
-	
+	Control *parent_c = Object::cast_to<Control>(parent);
+	if (parent_c && parent_c->has_theme_owner_node()) {
+		propagate_theme_changed(p_for_node, parent_c->get_theme_owner_node(), false, true);
+	} else {
+		Window *parent_w = Object::cast_to<Window>(parent);
+		if (parent_w && parent_w->has_theme_owner_node()) {
+			propagate_theme_changed(p_for_node, parent_w->get_theme_owner_node(), false, true);
+		}
+	}
 }
 
 void ThemeOwner::clear_theme_on_unparented(Node *p_for_node) {
@@ -118,17 +140,113 @@ void ThemeOwner::clear_theme_on_unparented(Node *p_for_node) {
 
 	Node *parent = p_for_node->get_parent();
 
-	
+	Control *parent_c = Object::cast_to<Control>(parent);
+	if (parent_c && parent_c->has_theme_owner_node()) {
+		propagate_theme_changed(p_for_node, nullptr, false, true);
+	} else {
+		Window *parent_w = Object::cast_to<Window>(parent);
+		if (parent_w && parent_w->has_theme_owner_node()) {
+			propagate_theme_changed(p_for_node, nullptr, false, true);
+		}
+	}
 }
 
 void ThemeOwner::propagate_theme_changed(Node *p_to_node, Node *p_owner_node, bool p_notify, bool p_assign) {
-	
+	Control *c = Object::cast_to<Control>(p_to_node);
+	Window *w = c == nullptr ? Object::cast_to<Window>(p_to_node) : nullptr;
+
+	if (!c && !w) {
+		// Theme inheritance chains are broken by nodes that aren't Control or Window.
+		return;
+	}
+
+	bool assign = p_assign;
+	if (c) {
+		if (c != p_owner_node && c->get_theme().is_valid()) {
+			// Has a theme, so we don't want to change the theme owner,
+			// but we still want to propagate in case this child has theme items
+			// it inherits from the theme this node uses.
+			// See https://github.com/godotengine/godot/issues/62844.
+			assign = false;
+		}
+
+		if (assign) {
+			c->set_theme_owner_node(p_owner_node);
+		}
+
+		if (p_notify) {
+			c->notification(Control::NOTIFICATION_THEME_CHANGED);
+		}
+	} else if (w) {
+		if (w != p_owner_node && w->get_theme().is_valid()) {
+			// Same as above.
+			assign = false;
+		}
+
+		if (assign) {
+			w->set_theme_owner_node(p_owner_node);
+		}
+
+		if (p_notify) {
+			w->notification(Window::NOTIFICATION_THEME_CHANGED);
+		}
+	}
+
+	for (int i = 0; i < p_to_node->get_child_count(); i++) {
+		propagate_theme_changed(p_to_node->get_child(i), p_owner_node, p_notify, assign);
+	}
 }
 
 // Theme lookup.
 
 void ThemeOwner::get_theme_type_dependencies(const Node *p_for_node, const StringName &p_theme_type, Vector<StringName> &r_result) const {
-	
+	const Control *for_c = Object::cast_to<Control>(p_for_node);
+	const Window *for_w = Object::cast_to<Window>(p_for_node);
+	ERR_FAIL_COND_MSG(!for_c && !for_w, "Only Control and Window nodes and derivatives can be polled for theming.");
+
+	StringName type_name = p_for_node->get_class_name();
+	StringName type_variation;
+	if (for_c) {
+		type_variation = for_c->get_theme_type_variation();
+	} else if (for_w) {
+		type_variation = for_w->get_theme_type_variation();
+	}
+
+	// If we are looking for dependencies of the current class (or a variation of it), check relevant themes.
+	if (p_theme_type == StringName() || p_theme_type == type_name || p_theme_type == type_variation) {
+		// We need one theme that can give us a valid dependency chain. It must be complete
+		// (i.e. variations can depend on other variations, but only within the same theme,
+		// and eventually the chain must lead to native types).
+
+		// First, look through themes owned by nodes in the tree.
+		Node *owner_node = get_owner_node();
+
+		while (owner_node) {
+			Ref<Theme> owner_theme = _get_owner_node_theme(owner_node);
+			if (owner_theme.is_valid() && owner_theme->get_type_variation_base(type_variation) != StringName()) {
+				owner_theme->get_type_dependencies(type_name, type_variation, r_result);
+				return;
+			}
+
+			owner_node = _get_next_owner_node(owner_node);
+		}
+
+		// Second, check global contexts.
+		ThemeContext *global_context = _get_active_owner_context();
+		for (const Ref<Theme> &theme : global_context->get_themes()) {
+			if (theme.is_valid() && theme->get_type_variation_base(type_variation) != StringName()) {
+				theme->get_type_dependencies(type_name, type_variation, r_result);
+				return;
+			}
+		}
+
+		// If nothing was found, get the native dependencies for the current class.
+		ThemeDB::get_singleton()->get_native_type_dependencies(type_name, r_result);
+		return;
+	}
+
+	// Otherwise, get the native dependencies for the provided theme type.
+	ThemeDB::get_singleton()->get_native_type_dependencies(p_theme_type, r_result);
 }
 
 Variant ThemeOwner::get_theme_item_in_types(Theme::DataType p_data_type, const StringName &p_name, const Vector<StringName> &p_theme_types) {
@@ -233,7 +351,35 @@ float ThemeOwner::get_theme_default_base_scale() {
 	return ThemeDB::get_singleton()->get_fallback_base_scale();
 }
 
+Ref<Font> ThemeOwner::get_theme_default_font() {
+	// First, look through each control or window node in the branch, until no valid parent can be found.
+	// Only nodes with a theme resource attached are considered.
+	// For each theme resource see if their assigned theme has the default value defined and valid.
+	Node *owner_node = get_owner_node();
 
+	while (owner_node) {
+		Ref<Theme> owner_theme = _get_owner_node_theme(owner_node);
+
+		if (owner_theme.is_valid() && owner_theme->has_default_font()) {
+			return owner_theme->get_default_font();
+		}
+
+		owner_node = _get_next_owner_node(owner_node);
+	}
+
+	// Second, check global themes from the appropriate context.
+	ThemeContext *global_context = _get_active_owner_context();
+	for (const Ref<Theme> &theme : global_context->get_themes()) {
+		if (theme.is_valid()) {
+			if (theme->has_default_font()) {
+				return theme->get_default_font();
+			}
+		}
+	}
+
+	// Finally, if no match exists, return the universal default.
+	return ThemeDB::get_singleton()->get_fallback_font();
+}
 
 int ThemeOwner::get_theme_default_font_size() {
 	// First, look through each control or window node in the branch, until no valid parent can be found.
@@ -241,22 +387,56 @@ int ThemeOwner::get_theme_default_font_size() {
 	// For each theme resource see if their assigned theme has the default value defined and valid.
 	Node *owner_node = get_owner_node();
 
-	
+	while (owner_node) {
+		Ref<Theme> owner_theme = _get_owner_node_theme(owner_node);
 
-	
+		if (owner_theme.is_valid() && owner_theme->has_default_font_size()) {
+			return owner_theme->get_default_font_size();
+		}
+
+		owner_node = _get_next_owner_node(owner_node);
+	}
+
+	// Second, check global themes from the appropriate context.
+	ThemeContext *global_context = _get_active_owner_context();
+	for (const Ref<Theme> &theme : global_context->get_themes()) {
+		if (theme.is_valid()) {
+			if (theme->has_default_font_size()) {
+				return theme->get_default_font_size();
+			}
+		}
+	}
 
 	// Finally, if no match exists, return the universal default.
 	return ThemeDB::get_singleton()->get_fallback_font_size();
 }
 
 Ref<Theme> ThemeOwner::_get_owner_node_theme(Node *p_owner_node) const {
-	
+	const Control *owner_c = Object::cast_to<Control>(p_owner_node);
+	if (owner_c) {
+		return owner_c->get_theme();
+	}
+
+	const Window *owner_w = Object::cast_to<Window>(p_owner_node);
+	if (owner_w) {
+		return owner_w->get_theme();
+	}
 
 	return Ref<Theme>();
 }
 
 Node *ThemeOwner::_get_next_owner_node(Node *p_from_node) const {
-	
+	Node *parent = p_from_node->get_parent();
+
+	Control *parent_c = Object::cast_to<Control>(parent);
+	if (parent_c) {
+		return parent_c->get_theme_owner_node();
+	} else {
+		Window *parent_w = Object::cast_to<Window>(parent);
+		if (parent_w) {
+			return parent_w->get_theme_owner_node();
+		}
+	}
 
 	return nullptr;
 }

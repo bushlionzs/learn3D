@@ -58,7 +58,17 @@ RID World3D::get_space() const {
 }
 
 RID World3D::get_navigation_map() const {
-	
+	if (navigation_map.is_null()) {
+		navigation_map = NavigationServer3D::get_singleton()->map_create();
+		NavigationServer3D::get_singleton()->map_set_active(navigation_map, true);
+		NavigationServer3D::get_singleton()->map_set_cell_size(navigation_map, GLOBAL_GET("navigation/3d/default_cell_size"));
+		NavigationServer3D::get_singleton()->map_set_cell_height(navigation_map, GLOBAL_GET("navigation/3d/default_cell_height"));
+		NavigationServer3D::get_singleton()->map_set_up(navigation_map, GLOBAL_GET("navigation/3d/default_up"));
+		NavigationServer3D::get_singleton()->map_set_merge_rasterizer_cell_scale(navigation_map, GLOBAL_GET("navigation/3d/merge_rasterizer_cell_scale"));
+		NavigationServer3D::get_singleton()->map_set_use_edge_connections(navigation_map, GLOBAL_GET("navigation/3d/use_edge_connections"));
+		NavigationServer3D::get_singleton()->map_set_edge_connection_margin(navigation_map, GLOBAL_GET("navigation/3d/default_edge_connection_margin"));
+		NavigationServer3D::get_singleton()->map_set_link_connection_radius(navigation_map, GLOBAL_GET("navigation/3d/default_link_connection_radius"));
+	}
 	return navigation_map;
 }
 
@@ -161,13 +171,13 @@ World3D::World3D() {
 World3D::~World3D() {
 	ERR_FAIL_NULL(RenderingServer::get_singleton());
 	ERR_FAIL_NULL(PhysicsServer3D::get_singleton());
-
+	ERR_FAIL_NULL(NavigationServer3D::get_singleton());
 
 	RenderingServer::get_singleton()->free(scenario);
 	if (space.is_valid()) {
 		PhysicsServer3D::get_singleton()->free(space);
 	}
 	if (navigation_map.is_valid()) {
-	
+		NavigationServer3D::get_singleton()->free(navigation_map);
 	}
 }

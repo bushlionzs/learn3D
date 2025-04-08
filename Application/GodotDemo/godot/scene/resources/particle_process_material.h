@@ -33,7 +33,6 @@
 
 #include "core/templates/rid.h"
 #include "core/templates/self_list.h"
-#include "core/templates/rb_set.h"
 #include "scene/resources/curve_texture.h"
 #include "scene/resources/material.h"
 

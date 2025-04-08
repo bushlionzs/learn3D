@@ -52,8 +52,8 @@ class Node2D : public CanvasItem {
 	void _update_xform_values() const;
 
 protected:
-	//void _notification(int p_notification);
-	//static void _bind_methods();
+	void _notification(int p_notification);
+	static void _bind_methods();
 
 public:
 #ifdef TOOLS_ENABLED
@@ -72,7 +72,7 @@ public:
 
 	virtual void _edit_set_rect(const Rect2 &p_edit_rect) override;
 #endif
-	virtual void reparent(Node* p_parent, bool p_keep_global_transform = true) override {}
+	virtual void reparent(Node *p_parent, bool p_keep_global_transform = true) override;
 
 	void set_position(const Point2 &p_pos);
 	void set_rotation(real_t p_radians);
@@ -115,10 +115,7 @@ public:
 
 	Transform2D get_relative_transform_to_parent(const Node *p_parent) const;
 
-	Transform2D get_transform() const override
-	{
-		return Transform2D();
-	}
+	Transform2D get_transform() const override;
 
 	Node2D() {}
 };

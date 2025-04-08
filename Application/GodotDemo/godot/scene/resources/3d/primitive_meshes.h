@@ -31,9 +31,9 @@
 #ifndef PRIMITIVE_MESHES_H
 #define PRIMITIVE_MESHES_H
 
-
+#include "scene/resources/font.h"
 #include "scene/resources/mesh.h"
-
+#include "servers/text_server.h"
 
 ///@TODO probably should change a few integers to unsigned integers...
 
@@ -594,8 +594,10 @@ private:
 	String xl_text;
 
 	int font_size = 16;
-	
+	Ref<Font> font_override;
 
+	TextServer::AutowrapMode autowrap_mode = TextServer::AUTOWRAP_OFF;
+	BitField<TextServer::JustificationFlag> jst_flags = TextServer::JUSTIFICATION_WORD_BOUND | TextServer::JUSTIFICATION_KASHIDA | TextServer::JUSTIFICATION_SKIP_LAST_LINE | TextServer::JUSTIFICATION_DO_NOT_SKIP_SINGLE_LINE;
 	float width = 500.0;
 	float line_spacing = 0.f;
 	Point2 lbl_offset;
@@ -604,7 +606,8 @@ private:
 	VerticalAlignment vertical_alignment = VERTICAL_ALIGNMENT_CENTER;
 	bool uppercase = false;
 	String language;
-	
+	TextServer::Direction text_direction = TextServer::DIRECTION_AUTO;
+	TextServer::StructuredTextParser st_parser = TextServer::STRUCTURED_TEXT_DEFAULT;
 	Array st_args;
 
 	real_t depth = 0.05;
@@ -616,7 +619,7 @@ private:
 	mutable bool dirty_font = true;
 	mutable bool dirty_cache = true;
 
-
+	void _generate_glyph_mesh_data(const GlyphMeshKey &p_key, const Glyph &p_glyph) const;
 	void _font_changed();
 
 protected:
@@ -640,6 +643,9 @@ public:
 	void set_text(const String &p_string);
 	String get_text() const;
 
+	void set_font(const Ref<Font> &p_font);
+	Ref<Font> get_font() const;
+	Ref<Font> _get_font_or_default() const;
 
 	void set_font_size(int p_size);
 	int get_font_size() const;
@@ -647,12 +653,20 @@ public:
 	void set_line_spacing(float p_size);
 	float get_line_spacing() const;
 
-	
+	void set_autowrap_mode(TextServer::AutowrapMode p_mode);
+	TextServer::AutowrapMode get_autowrap_mode() const;
+
+	void set_justification_flags(BitField<TextServer::JustificationFlag> p_flags);
+	BitField<TextServer::JustificationFlag> get_justification_flags() const;
+
+	void set_text_direction(TextServer::Direction p_text_direction);
+	TextServer::Direction get_text_direction() const;
 
 	void set_language(const String &p_language);
 	String get_language() const;
 
-
+	void set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser);
+	TextServer::StructuredTextParser get_structured_text_bidi_override() const;
 
 	void set_structured_text_bidi_override_options(Array p_args);
 	Array get_structured_text_bidi_override_options() const;

@@ -75,7 +75,7 @@ public:
 	bool has_theme_item_in_types(Theme::DataType p_data_type, const StringName &p_name, const Vector<StringName> &p_theme_types);
 
 	float get_theme_default_base_scale();
-
+	Ref<Font> get_theme_default_font();
 	int get_theme_default_font_size();
 
 	ThemeOwner(Node *p_holder) { holder = p_holder; }

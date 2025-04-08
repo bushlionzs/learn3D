@@ -37,7 +37,7 @@
 
 #include <functional>
 
-
+class Font;
 class Node;
 class StyleBox;
 class Texture2D;
@@ -83,7 +83,7 @@ class ThemeDB : public Object {
 	// Universal default values, final fallback for every theme.
 
 	float fallback_base_scale = 1.0;
-
+	Ref<Font> fallback_font;
 	int fallback_font_size = 16;
 	Ref<Texture2D> fallback_icon;
 	Ref<StyleBox> fallback_stylebox;
@@ -145,6 +145,8 @@ public:
 	void set_fallback_base_scale(float p_base_scale);
 	float get_fallback_base_scale();
 
+	void set_fallback_font(const Ref<Font> &p_font);
+	Ref<Font> get_fallback_font();
 
 	void set_fallback_font_size(int p_font_size);
 	int get_fallback_font_size();

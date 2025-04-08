@@ -32,6 +32,7 @@
 #define THEME_H
 
 #include "core/io/resource.h"
+#include "scene/resources/font.h"
 #include "scene/resources/style_box.h"
 #include "scene/resources/texture.h"
 
@@ -48,6 +49,7 @@ class Theme : public Resource {
 public:
 	using ThemeIconMap = HashMap<StringName, Ref<Texture2D>>;
 	using ThemeStyleMap = HashMap<StringName, Ref<StyleBox>>;
+	using ThemeFontMap = HashMap<StringName, Ref<Font>>;
 	using ThemeFontSizeMap = HashMap<StringName, int>;
 	using ThemeColorMap = HashMap<StringName, Color>;
 	using ThemeConstantMap = HashMap<StringName, int>;
@@ -93,10 +95,12 @@ protected:
 
 	// Default values configurable for each individual theme.
 	float default_base_scale = 0.0;
+	Ref<Font> default_font;
 	int default_font_size = -1;
 
 	HashMap<StringName, ThemeIconMap> icon_map;
 	HashMap<StringName, ThemeStyleMap> style_map;
+	HashMap<StringName, ThemeFontMap> font_map;
 	HashMap<StringName, ThemeFontSizeMap> font_size_map;
 	HashMap<StringName, ThemeColorMap> color_map;
 	HashMap<StringName, ThemeConstantMap> constant_map;
@@ -118,7 +122,13 @@ public:
 	float get_default_base_scale() const;
 	bool has_default_base_scale() const;
 
-	
+	void set_default_font(const Ref<Font> &p_default_font);
+	Ref<Font> get_default_font() const;
+	bool has_default_font() const;
+
+	void set_default_font_size(int p_font_size);
+	int get_default_font_size() const;
+	bool has_default_font_size() const;
 
 	void set_icon(const StringName &p_name, const StringName &p_theme_type, const Ref<Texture2D> &p_icon);
 	virtual Ref<Texture2D> get_icon(const StringName &p_name, const StringName &p_theme_type) const;
@@ -141,6 +151,28 @@ public:
 	void add_stylebox_type(const StringName &p_theme_type);
 	void remove_stylebox_type(const StringName &p_theme_type);
 	void get_stylebox_type_list(List<StringName> *p_list) const;
+
+	void set_font(const StringName &p_name, const StringName &p_theme_type, const Ref<Font> &p_font);
+	virtual Ref<Font> get_font(const StringName &p_name, const StringName &p_theme_type) const;
+	bool has_font(const StringName &p_name, const StringName &p_theme_type) const;
+	bool has_font_nocheck(const StringName &p_name, const StringName &p_theme_type) const;
+	void rename_font(const StringName &p_old_name, const StringName &p_name, const StringName &p_theme_type);
+	void clear_font(const StringName &p_name, const StringName &p_theme_type);
+	void get_font_list(const StringName &p_theme_type, List<StringName> *p_list) const;
+	void add_font_type(const StringName &p_theme_type);
+	void remove_font_type(const StringName &p_theme_type);
+	void get_font_type_list(List<StringName> *p_list) const;
+
+	void set_font_size(const StringName &p_name, const StringName &p_theme_type, int p_font_size);
+	virtual int get_font_size(const StringName &p_name, const StringName &p_theme_type) const;
+	bool has_font_size(const StringName &p_name, const StringName &p_theme_type) const;
+	bool has_font_size_nocheck(const StringName &p_name, const StringName &p_theme_type) const;
+	void rename_font_size(const StringName &p_old_name, const StringName &p_name, const StringName &p_theme_type);
+	void clear_font_size(const StringName &p_name, const StringName &p_theme_type);
+	void get_font_size_list(const StringName &p_theme_type, List<StringName> *p_list) const;
+	void add_font_size_type(const StringName &p_theme_type);
+	void remove_font_size_type(const StringName &p_theme_type);
+	void get_font_size_type_list(List<StringName> *p_list) const;
 
 	void set_color(const StringName &p_name, const StringName &p_theme_type, const Color &p_color);
 	virtual Color get_color(const StringName &p_name, const StringName &p_theme_type) const;

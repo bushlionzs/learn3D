@@ -32,6 +32,7 @@
 #define LABEL_SETTINGS_H
 
 #include "core/io/resource.h"
+#include "font.h"
 
 /*************************************************************************/
 
@@ -40,7 +41,8 @@ class LabelSettings : public Resource {
 
 	real_t line_spacing = 3;
 
-
+	Ref<Font> font;
+	int font_size = Font::DEFAULT_FONT_SIZE;
 	Color font_color = Color(1, 1, 1);
 
 	int outline_size = 0;
@@ -59,6 +61,8 @@ public:
 	void set_line_spacing(real_t p_spacing);
 	real_t get_line_spacing() const;
 
+	void set_font(const Ref<Font> &p_font);
+	Ref<Font> get_font() const;
 
 	void set_font_size(int p_size);
 	int get_font_size() const;

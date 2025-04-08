@@ -38,7 +38,11 @@ void LabelSettings::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_line_spacing", "spacing"), &LabelSettings::set_line_spacing);
 	ClassDB::bind_method(D_METHOD("get_line_spacing"), &LabelSettings::get_line_spacing);
 
+	ClassDB::bind_method(D_METHOD("set_font", "font"), &LabelSettings::set_font);
+	ClassDB::bind_method(D_METHOD("get_font"), &LabelSettings::get_font);
 
+	ClassDB::bind_method(D_METHOD("set_font_size", "size"), &LabelSettings::set_font_size);
+	ClassDB::bind_method(D_METHOD("get_font_size"), &LabelSettings::get_font_size);
 
 	ClassDB::bind_method(D_METHOD("set_font_color", "color"), &LabelSettings::set_font_color);
 	ClassDB::bind_method(D_METHOD("get_font_color"), &LabelSettings::get_font_color);
@@ -86,6 +90,33 @@ real_t LabelSettings::get_line_spacing() const {
 	return line_spacing;
 }
 
+void LabelSettings::set_font(const Ref<Font> &p_font) {
+	if (font != p_font) {
+		if (font.is_valid()) {
+			font->disconnect_changed(callable_mp(this, &LabelSettings::_font_changed));
+		}
+		font = p_font;
+		if (font.is_valid()) {
+			font->connect_changed(callable_mp(this, &LabelSettings::_font_changed), CONNECT_REFERENCE_COUNTED);
+		}
+		emit_changed();
+	}
+}
+
+Ref<Font> LabelSettings::get_font() const {
+	return font;
+}
+
+void LabelSettings::set_font_size(int p_size) {
+	if (font_size != p_size) {
+		font_size = p_size;
+		emit_changed();
+	}
+}
+
+int LabelSettings::get_font_size() const {
+	return font_size;
+}
 
 void LabelSettings::set_font_color(const Color &p_color) {
 	if (font_color != p_color) {

@@ -38,6 +38,8 @@
 #include "core/templates/rid.h"
 #include "core/variant/typed_array.h"
 #include "core/variant/variant.h"
+#include "servers/display_server.h"
+#include "servers/rendering/rendering_device.h"
 
 // Helper macros for code outside of the rendering server, but that is
 // called by the rendering server.
