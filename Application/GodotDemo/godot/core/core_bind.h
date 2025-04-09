@@ -35,6 +35,7 @@
 #include "core/io/image.h"
 #include "core/io/resource_loader.h"
 #include "core/io/resource_saver.h"
+#include "core/object/script_language.h"
 #include "core/os/os.h"
 #include "core/os/semaphore.h"
 #include "core/os/thread.h"
@@ -263,6 +264,69 @@ public:
 	OS() { singleton = this; }
 };
 
+class Geometry2D : public Object {
+	GDCLASS(Geometry2D, Object);
+
+	static Geometry2D *singleton;
+
+protected:
+	static void _bind_methods();
+
+public:
+	static Geometry2D *get_singleton();
+	Variant segment_intersects_segment(const Vector2 &p_from_a, const Vector2 &p_to_a, const Vector2 &p_from_b, const Vector2 &p_to_b);
+	Variant line_intersects_line(const Vector2 &p_from_a, const Vector2 &p_dir_a, const Vector2 &p_from_b, const Vector2 &p_dir_b);
+	Vector<Vector2> get_closest_points_between_segments(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2);
+	Vector2 get_closest_point_to_segment(const Vector2 &p_point, const Vector2 &p_a, const Vector2 &p_b);
+	Vector2 get_closest_point_to_segment_uncapped(const Vector2 &p_point, const Vector2 &p_a, const Vector2 &p_b);
+	bool point_is_inside_triangle(const Vector2 &s, const Vector2 &a, const Vector2 &b, const Vector2 &c) const;
+
+	bool is_point_in_circle(const Vector2 &p_point, const Vector2 &p_circle_pos, real_t p_circle_radius);
+	real_t segment_intersects_circle(const Vector2 &p_from, const Vector2 &p_to, const Vector2 &p_circle_pos, real_t p_circle_radius);
+
+	bool is_polygon_clockwise(const Vector<Vector2> &p_polygon);
+	bool is_point_in_polygon(const Point2 &p_point, const Vector<Vector2> &p_polygon);
+	Vector<int> triangulate_polygon(const Vector<Vector2> &p_polygon);
+	Vector<int> triangulate_delaunay(const Vector<Vector2> &p_points);
+	Vector<Point2> convex_hull(const Vector<Point2> &p_points);
+	TypedArray<PackedVector2Array> decompose_polygon_in_convex(const Vector<Vector2> &p_polygon);
+
+	enum PolyBooleanOperation {
+		OPERATION_UNION,
+		OPERATION_DIFFERENCE,
+		OPERATION_INTERSECTION,
+		OPERATION_XOR
+	};
+	// 2D polygon boolean operations.
+	TypedArray<PackedVector2Array> merge_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b); // Union (add).
+	TypedArray<PackedVector2Array> clip_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b); // Difference (subtract).
+	TypedArray<PackedVector2Array> intersect_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b); // Common area (multiply).
+	TypedArray<PackedVector2Array> exclude_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b); // All but common area (xor).
+
+	// 2D polyline vs polygon operations.
+	TypedArray<PackedVector2Array> clip_polyline_with_polygon(const Vector<Vector2> &p_polyline, const Vector<Vector2> &p_polygon); // Cut.
+	TypedArray<PackedVector2Array> intersect_polyline_with_polygon(const Vector<Vector2> &p_polyline, const Vector<Vector2> &p_polygon); // Chop.
+
+	// 2D offset polygons/polylines.
+	enum PolyJoinType {
+		JOIN_SQUARE,
+		JOIN_ROUND,
+		JOIN_MITER
+	};
+	enum PolyEndType {
+		END_POLYGON,
+		END_JOINED,
+		END_BUTT,
+		END_SQUARE,
+		END_ROUND
+	};
+	TypedArray<PackedVector2Array> offset_polygon(const Vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type = JOIN_SQUARE);
+	TypedArray<PackedVector2Array> offset_polyline(const Vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type = JOIN_SQUARE, PolyEndType p_end_type = END_SQUARE);
+
+	Dictionary make_atlas(const Vector<Size2> &p_rects);
+
+	Geometry2D() { singleton = this; }
+};
 
 class Geometry3D : public Object {
 	GDCLASS(Geometry3D, Object);
@@ -526,10 +590,10 @@ class EngineDebugger : public Object {
 
 protected:
 	static void _bind_methods();
-	//static EngineDebugger *singleton;
+	static EngineDebugger *singleton;
 
 public:
-	//static EngineDebugger *get_singleton() { return singleton; }
+	static EngineDebugger *get_singleton() { return singleton; }
 
 	bool is_active();
 
@@ -564,7 +628,7 @@ public:
 	void remove_breakpoint(int p_line, const StringName &p_source);
 	void clear_breakpoints();
 
-	EngineDebugger() { /*singleton = this; */}
+	EngineDebugger() { singleton = this; }
 	~EngineDebugger();
 };
 
@@ -578,6 +642,9 @@ VARIANT_BITFIELD_CAST(core_bind::ResourceSaver::SaverFlags);
 VARIANT_ENUM_CAST(core_bind::OS::RenderingDriver);
 VARIANT_ENUM_CAST(core_bind::OS::SystemDir);
 
+VARIANT_ENUM_CAST(core_bind::Geometry2D::PolyBooleanOperation);
+VARIANT_ENUM_CAST(core_bind::Geometry2D::PolyJoinType);
+VARIANT_ENUM_CAST(core_bind::Geometry2D::PolyEndType);
 
 VARIANT_ENUM_CAST(core_bind::Thread::Priority);
 

@@ -32,7 +32,6 @@
 
 #include "core/config/project_settings.h"
 
-
 RendererCompositor *RendererCompositor::singleton = nullptr;
 
 RendererCompositor *(*RendererCompositor::_create_func)() = nullptr;
@@ -49,7 +48,6 @@ bool RendererCompositor::is_xr_enabled() const {
 RendererCompositor::RendererCompositor() {
 	ERR_FAIL_COND_MSG(singleton != nullptr, "A RendererCompositor singleton already exists.");
 	singleton = this;
-
 }
 
 RendererCompositor::~RendererCompositor() {

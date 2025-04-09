@@ -599,7 +599,11 @@ void Area3D::set_audio_bus_name(const StringName &p_audio_bus) {
 }
 
 StringName Area3D::get_audio_bus_name() const {
-	
+	for (int i = 0; i < AudioServer::get_singleton()->get_bus_count(); i++) {
+		if (AudioServer::get_singleton()->get_bus_name(i) == audio_bus) {
+			return audio_bus;
+		}
+	}
 	return SceneStringName(Master);
 }
 
@@ -616,7 +620,11 @@ void Area3D::set_reverb_bus_name(const StringName &p_audio_bus) {
 }
 
 StringName Area3D::get_reverb_bus_name() const {
-	
+	for (int i = 0; i < AudioServer::get_singleton()->get_bus_count(); i++) {
+		if (AudioServer::get_singleton()->get_bus_name(i) == reverb_bus) {
+			return reverb_bus;
+		}
+	}
 	return SceneStringName(Master);
 }
 
@@ -638,7 +646,16 @@ float Area3D::get_reverb_uniformity() const {
 
 void Area3D::_validate_property(PropertyInfo &p_property) const {
 	if (p_property.name == "audio_bus_name" || p_property.name == "reverb_bus_name") {
-		
+		String options;
+		for (int i = 0; i < AudioServer::get_singleton()->get_bus_count(); i++) {
+			if (i > 0) {
+				options += ",";
+			}
+			String name = AudioServer::get_singleton()->get_bus_name(i);
+			options += name;
+		}
+
+		p_property.hint_string = options;
 	} else if (p_property.name.begins_with("gravity") && p_property.name != "gravity_space_override") {
 		if (gravity_space_override == SPACE_OVERRIDE_DISABLED) {
 			p_property.usage = PROPERTY_USAGE_NO_EDITOR;

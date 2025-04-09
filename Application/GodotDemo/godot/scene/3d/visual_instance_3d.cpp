@@ -233,7 +233,7 @@ VisualInstance3D::VisualInstance3D() {
 
 VisualInstance3D::~VisualInstance3D() {
 	ERR_FAIL_NULL(RenderingServer::get_singleton());
-	//RenderingServer::get_singleton()->free(instance);
+	RenderingServer::get_singleton()->free(instance);
 }
 
 void GeometryInstance3D::set_material_override(const Ref<Material> &p_material) {

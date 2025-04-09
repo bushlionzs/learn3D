@@ -186,14 +186,7 @@ public:
 
 	//these go pass-through, as they can be called from any thread
 	FUNCRIDTEX1(texture_2d, const Ref<Image> &)
-	virtual RID texture_2d_layered_create(const Vector<Ref<Image>>& p1, TextureLayeredType p2) override {
-    RID ret = RenderingServerGlobals::texture_storage->texture_allocate(); if (Thread::get_caller_id() == server_thread || RenderingServerGlobals::rasterizer->can_create_resources_async()) {
-        RenderingServerGlobals::texture_storage->texture_2d_layered_initialize(ret, p1, p2);
-    }
-    else {
-        command_queue.push(RenderingServerGlobals::texture_storage, &RendererTextureStorage::texture_2d_layered_initialize, ret, p1, p2);
-    } return ret;
-}
+	FUNCRIDTEX2(texture_2d_layered, const Vector<Ref<Image>> &, TextureLayeredType)
 	FUNCRIDTEX6(texture_3d, Image::Format, int, int, int, bool, const Vector<Ref<Image>> &)
 	FUNCRIDTEX3(texture_external, int, int, uint64_t)
 	FUNCRIDTEX1(texture_proxy, RID)
@@ -286,14 +279,7 @@ public:
 
 	/* COMMON MATERIAL API */
 
-		virtual RID material_create() override {
-		RID ret = RenderingServerGlobals::material_storage->material_allocate(); if (Thread::get_caller_id() != server_thread) {
-			command_queue.push(RenderingServerGlobals::material_storage, &RendererMaterialStorage::material_initialize, ret);
-		}
-		else {
-			RenderingServerGlobals::material_storage->material_initialize(ret);
-		} return ret;
-	}
+	FUNCRIDSPLIT(material)
 
 	virtual RID material_create_from_shader(RID p_next_pass, int p_render_priority, RID p_shader) override {
 		RID material = RSG::material_storage->material_allocate();
@@ -691,7 +677,7 @@ public:
 
 	FUNC2(viewport_set_clear_mode, RID, ViewportClearMode)
 
-
+	FUNC3(viewport_attach_to_screen, RID, const Rect2 &, int)
 	FUNC2(viewport_set_render_direct_to_screen, RID, bool)
 
 	FUNC2(viewport_set_scaling_3d_mode, RID, ViewportScaling3DMode)
@@ -747,8 +733,9 @@ public:
 	FUNC2(viewport_set_measure_render_time, RID, bool)
 	FUNC1RC(double, viewport_get_measured_render_time_cpu, RID)
 	FUNC1RC(double, viewport_get_measured_render_time_gpu, RID)
+	FUNC1RC(RID, viewport_find_from_screen_attachment, DisplayServer::WindowID)
 
-
+	FUNC2(call_set_vsync_mode, DisplayServer::VSyncMode, DisplayServer::WindowID)
 
 	FUNC2(viewport_set_vrs_mode, RID, ViewportVRSMode)
 	FUNC2(viewport_set_vrs_update_mode, RID, ViewportVRSUpdateMode)
@@ -787,14 +774,7 @@ public:
 
 	/* ENVIRONMENT */
 
-		virtual RID environment_create() override {
-		RID ret = RenderingServerGlobals::scene->environment_allocate(); if (Thread::get_caller_id() != server_thread) {
-			command_queue.push(RenderingServerGlobals::scene, &RenderingMethod::environment_initialize, ret);
-		}
-		else {
-			RenderingServerGlobals::scene->environment_initialize(ret);
-		} return ret;
-	}
+	FUNCRIDSPLIT(environment)
 
 	FUNC2(environment_set_background, RID, EnvironmentBG)
 	FUNC2(environment_set_sky, RID, RID)
@@ -1117,7 +1097,7 @@ public:
 #endif
 
 	virtual uint64_t get_rendering_info(RenderingInfo p_info) override;
-
+	virtual RenderingDevice::DeviceType get_video_adapter_type() const override;
 
 	virtual void set_frame_profiling_enabled(bool p_enable) override;
 	virtual Vector<FrameProfileArea> get_frame_profile() override;

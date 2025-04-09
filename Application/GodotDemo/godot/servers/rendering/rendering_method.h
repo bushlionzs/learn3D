@@ -35,7 +35,6 @@
 #include "servers/rendering_server.h"
 
 
-
 class RenderingMethod {
 public:
 	virtual RID camera_allocate() = 0;

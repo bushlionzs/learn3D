@@ -34,6 +34,9 @@
 #include "core/config/project_settings.h"
 #include "core/object/worker_thread_pool.h"
 #include "core/variant/typed_array.h"
+#include "servers/rendering/rendering_server_globals.h"
+#include "servers/rendering/shader_language.h"
+#include "servers/rendering/shader_warnings.h"
 
 RenderingServer *RenderingServer::singleton = nullptr;
 RenderingServer *(*RenderingServer::create_func)() = nullptr;
@@ -1808,8 +1811,79 @@ Rect2 RenderingServer::debug_canvas_item_get_rect(RID p_item) {
 }
 
 int RenderingServer::global_shader_uniform_type_get_shader_datatype(GlobalShaderParameterType p_type) {
-	
-	return 0;
+	switch (p_type) {
+		case RS::GLOBAL_VAR_TYPE_BOOL:
+			return ShaderLanguage::TYPE_BOOL;
+		case RS::GLOBAL_VAR_TYPE_BVEC2:
+			return ShaderLanguage::TYPE_BVEC2;
+		case RS::GLOBAL_VAR_TYPE_BVEC3:
+			return ShaderLanguage::TYPE_BVEC3;
+		case RS::GLOBAL_VAR_TYPE_BVEC4:
+			return ShaderLanguage::TYPE_BVEC4;
+		case RS::GLOBAL_VAR_TYPE_INT:
+			return ShaderLanguage::TYPE_INT;
+		case RS::GLOBAL_VAR_TYPE_IVEC2:
+			return ShaderLanguage::TYPE_IVEC2;
+		case RS::GLOBAL_VAR_TYPE_IVEC3:
+			return ShaderLanguage::TYPE_IVEC3;
+		case RS::GLOBAL_VAR_TYPE_IVEC4:
+			return ShaderLanguage::TYPE_IVEC4;
+		case RS::GLOBAL_VAR_TYPE_RECT2I:
+			return ShaderLanguage::TYPE_IVEC4;
+		case RS::GLOBAL_VAR_TYPE_UINT:
+			return ShaderLanguage::TYPE_UINT;
+		case RS::GLOBAL_VAR_TYPE_UVEC2:
+			return ShaderLanguage::TYPE_UVEC2;
+		case RS::GLOBAL_VAR_TYPE_UVEC3:
+			return ShaderLanguage::TYPE_UVEC3;
+		case RS::GLOBAL_VAR_TYPE_UVEC4:
+			return ShaderLanguage::TYPE_UVEC4;
+		case RS::GLOBAL_VAR_TYPE_FLOAT:
+			return ShaderLanguage::TYPE_FLOAT;
+		case RS::GLOBAL_VAR_TYPE_VEC2:
+			return ShaderLanguage::TYPE_VEC2;
+		case RS::GLOBAL_VAR_TYPE_VEC3:
+			return ShaderLanguage::TYPE_VEC3;
+		case RS::GLOBAL_VAR_TYPE_VEC4:
+			return ShaderLanguage::TYPE_VEC4;
+		case RS::GLOBAL_VAR_TYPE_COLOR:
+			return ShaderLanguage::TYPE_VEC4;
+		case RS::GLOBAL_VAR_TYPE_RECT2:
+			return ShaderLanguage::TYPE_VEC4;
+		case RS::GLOBAL_VAR_TYPE_MAT2:
+			return ShaderLanguage::TYPE_MAT2;
+		case RS::GLOBAL_VAR_TYPE_MAT3:
+			return ShaderLanguage::TYPE_MAT3;
+		case RS::GLOBAL_VAR_TYPE_MAT4:
+			return ShaderLanguage::TYPE_MAT4;
+		case RS::GLOBAL_VAR_TYPE_TRANSFORM_2D:
+			return ShaderLanguage::TYPE_MAT3;
+		case RS::GLOBAL_VAR_TYPE_TRANSFORM:
+			return ShaderLanguage::TYPE_MAT4;
+		case RS::GLOBAL_VAR_TYPE_SAMPLER2D:
+			return ShaderLanguage::TYPE_SAMPLER2D;
+		case RS::GLOBAL_VAR_TYPE_SAMPLER2DARRAY:
+			return ShaderLanguage::TYPE_SAMPLER2DARRAY;
+		case RS::GLOBAL_VAR_TYPE_SAMPLER3D:
+			return ShaderLanguage::TYPE_SAMPLER3D;
+		case RS::GLOBAL_VAR_TYPE_SAMPLERCUBE:
+			return ShaderLanguage::TYPE_SAMPLERCUBE;
+		default:
+			return ShaderLanguage::TYPE_MAX; // Invalid or not found.
+	}
+}
+
+RenderingDevice *RenderingServer::get_rendering_device() const {
+	// Return the rendering device we're using globally.
+	return RenderingDevice::get_singleton();
+}
+
+RenderingDevice *RenderingServer::create_local_rendering_device() const {
+	RenderingDevice *device = RenderingDevice::get_singleton();
+	if (!device) {
+		return nullptr;
+	}
+	return device->create_local_device();
 }
 
 static Vector<Ref<Image>> _get_imgvec(const TypedArray<Image> &p_layers) {
@@ -2711,6 +2785,7 @@ void RenderingServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("viewport_set_size", "viewport", "width", "height"), &RenderingServer::viewport_set_size);
 	ClassDB::bind_method(D_METHOD("viewport_set_active", "viewport", "active"), &RenderingServer::viewport_set_active);
 	ClassDB::bind_method(D_METHOD("viewport_set_parent_viewport", "viewport", "parent_viewport"), &RenderingServer::viewport_set_parent_viewport);
+	ClassDB::bind_method(D_METHOD("viewport_attach_to_screen", "viewport", "rect", "screen"), &RenderingServer::viewport_attach_to_screen, DEFVAL(Rect2()), DEFVAL(DisplayServer::MAIN_WINDOW_ID));
 	ClassDB::bind_method(D_METHOD("viewport_set_render_direct_to_screen", "viewport", "enabled"), &RenderingServer::viewport_set_render_direct_to_screen);
 	ClassDB::bind_method(D_METHOD("viewport_set_canvas_cull_mask", "viewport", "canvas_cull_mask"), &RenderingServer::viewport_set_canvas_cull_mask);
 
@@ -3343,6 +3418,7 @@ void RenderingServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_rendering_info", "info"), &RenderingServer::get_rendering_info);
 	ClassDB::bind_method(D_METHOD("get_video_adapter_name"), &RenderingServer::get_video_adapter_name);
 	ClassDB::bind_method(D_METHOD("get_video_adapter_vendor"), &RenderingServer::get_video_adapter_vendor);
+	ClassDB::bind_method(D_METHOD("get_video_adapter_type"), &RenderingServer::get_video_adapter_type);
 	ClassDB::bind_method(D_METHOD("get_video_adapter_api_version"), &RenderingServer::get_video_adapter_api_version);
 
 	ClassDB::bind_method(D_METHOD("make_sphere_mesh", "latitudes", "longitudes", "radius"), &RenderingServer::make_sphere_mesh);
@@ -3389,7 +3465,8 @@ void RenderingServer::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("force_sync"), &RenderingServer::sync);
 	ClassDB::bind_method(D_METHOD("force_draw", "swap_buffers", "frame_step"), &RenderingServer::draw, DEFVAL(true), DEFVAL(0.0));
-
+	ClassDB::bind_method(D_METHOD("get_rendering_device"), &RenderingServer::get_rendering_device);
+	ClassDB::bind_method(D_METHOD("create_local_rendering_device"), &RenderingServer::create_local_rendering_device);
 
 	ClassDB::bind_method(D_METHOD("is_on_render_thread"), &RenderingServer::is_on_render_thread);
 	ClassDB::bind_method(D_METHOD("call_on_render_thread", "callable"), &RenderingServer::call_on_render_thread);

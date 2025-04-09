@@ -912,6 +912,7 @@ public:
 	virtual void viewport_set_parent_viewport(RID p_viewport, RID p_parent_viewport) = 0;
 	virtual void viewport_set_canvas_cull_mask(RID p_viewport, uint32_t p_canvas_cull_mask) = 0;
 
+	virtual void viewport_attach_to_screen(RID p_viewport, const Rect2 &p_rect = Rect2(), DisplayServer::WindowID p_screen = DisplayServer::MAIN_WINDOW_ID) = 0;
 	virtual void viewport_set_render_direct_to_screen(RID p_viewport, bool p_enable) = 0;
 
 	virtual void viewport_set_scaling_3d_mode(RID p_viewport, ViewportScaling3DMode p_scaling_3d_mode) = 0;
@@ -1077,6 +1078,7 @@ public:
 	virtual double viewport_get_measured_render_time_cpu(RID p_viewport) const = 0;
 	virtual double viewport_get_measured_render_time_gpu(RID p_viewport) const = 0;
 
+	virtual RID viewport_find_from_screen_attachment(DisplayServer::WindowID p_id = DisplayServer::MAIN_WINDOW_ID) const = 0;
 
 	enum ViewportVRSMode {
 		VIEWPORT_VRS_DISABLED,
@@ -1719,6 +1721,7 @@ public:
 	virtual uint64_t get_rendering_info(RenderingInfo p_info) = 0;
 	virtual String get_video_adapter_name() const = 0;
 	virtual String get_video_adapter_vendor() const = 0;
+	virtual RenderingDevice::DeviceType get_video_adapter_type() const = 0;
 	virtual String get_video_adapter_api_version() const = 0;
 
 	struct FrameProfileArea {
@@ -1765,12 +1768,16 @@ public:
 
 	virtual void set_debug_generate_wireframes(bool p_generate) = 0;
 
+	virtual void call_set_vsync_mode(DisplayServer::VSyncMode p_mode, DisplayServer::WindowID p_window) = 0;
+
 	virtual bool is_low_end() const = 0;
 
 	virtual void set_print_gpu_profile(bool p_enable) = 0;
 
 	virtual Size2i get_maximum_viewport_size() const = 0;
 
+	RenderingDevice *get_rendering_device() const;
+	RenderingDevice *create_local_rendering_device() const;
 
 	bool is_render_loop_enabled() const;
 	void set_render_loop_enabled(bool p_enabled);

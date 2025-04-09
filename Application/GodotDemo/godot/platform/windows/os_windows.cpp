@@ -30,13 +30,12 @@
 
 #include "os_windows.h"
 
-//#include "display_server_windows.h"
-//#include "joypad_windows.h"
-//#include "lang_table.h"
-//#include "windows_terminal_logger.h"
+#include "display_server_windows.h"
+#include "joypad_windows.h"
+#include "lang_table.h"
+#include "windows_terminal_logger.h"
 #include "windows_utils.h"
-#include <mmsystem.h>
-#include <mmdeviceapi.h>
+
 #include "core/debugger/engine_debugger.h"
 #include "core/debugger/script_debugger.h"
 #include "core/io/marshalls.h"
@@ -45,10 +44,10 @@
 #include "drivers/windows/dir_access_windows.h"
 #include "drivers/windows/file_access_windows.h"
 #include "drivers/windows/file_access_windows_pipe.h"
-//#include "main/main.h"
-//#include "servers/audio_server.h"
-//#include "servers/rendering/rendering_server_default.h"
-//#include "servers/text_server.h"
+#include "main/main.h"
+#include "servers/audio_server.h"
+#include "servers/rendering/rendering_server_default.h"
+#include "servers/text_server.h"
 
 #include <avrt.h>
 #include <bcrypt.h>
@@ -158,7 +157,18 @@ void RedirectIOToConsole() {
 }
 
 BOOL WINAPI HandlerRoutine(_In_ DWORD dwCtrlType) {
-	return FALSE;
+	if (!EngineDebugger::is_active()) {
+		return FALSE;
+	}
+
+	switch (dwCtrlType) {
+		case CTRL_C_EVENT:
+			EngineDebugger::get_script_debugger()->set_depth(-1);
+			EngineDebugger::get_script_debugger()->set_lines_left(1);
+			return TRUE;
+		default:
+			return FALSE;
+	}
 }
 
 void OS_Windows::alert(const String &p_alert, const String &p_title) {
@@ -218,7 +228,7 @@ void OS_Windows::initialize() {
 	current_pi.pi.hProcess = GetCurrentProcess();
 	process_map->insert(GetCurrentProcessId(), current_pi);
 
-
+	IPUnix::make_default();
 	main_loop = nullptr;
 
 	HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown **>(&dwrite_factory));
@@ -512,7 +522,7 @@ String OS_Windows::get_name() const {
 String OS_Windows::get_distribution_name() const {
 	return get_name();
 }
-typedef HRESULT(WINAPI* RtlGetVersionPtr)(OSVERSIONINFOW* lpVersionInformation);
+
 String OS_Windows::get_version() const {
 	RtlGetVersionPtr version_ptr = (RtlGetVersionPtr)GetProcAddress(GetModuleHandle("ntdll.dll"), "RtlGetVersion");
 	if (version_ptr != nullptr) {
@@ -527,8 +537,102 @@ String OS_Windows::get_version() const {
 }
 
 Vector<String> OS_Windows::get_video_adapter_driver_info() const {
-	return Vector<String>();
-	//myremove
+	if (RenderingServer::get_singleton() == nullptr) {
+		return Vector<String>();
+	}
+
+	static Vector<String> info;
+	if (!info.is_empty()) {
+		return info;
+	}
+
+	REFCLSID clsid = CLSID_WbemLocator; // Unmarshaler CLSID
+	REFIID uuid = IID_IWbemLocator; // Interface UUID
+	IWbemLocator *wbemLocator = nullptr; // to get the services
+	IWbemServices *wbemServices = nullptr; // to get the class
+	IEnumWbemClassObject *iter = nullptr;
+	IWbemClassObject *pnpSDriverObject[1]; // contains driver name, version, etc.
+	String driver_name;
+	String driver_version;
+
+	const String device_name = RenderingServer::get_singleton()->get_video_adapter_name();
+	if (device_name.is_empty()) {
+		return Vector<String>();
+	}
+
+	HRESULT hr = CoCreateInstance(clsid, nullptr, CLSCTX_INPROC_SERVER, uuid, (LPVOID *)&wbemLocator);
+	if (hr != S_OK) {
+		return Vector<String>();
+	}
+	BSTR resource_name = SysAllocString(L"root\\CIMV2");
+	hr = wbemLocator->ConnectServer(resource_name, nullptr, nullptr, nullptr, 0, nullptr, nullptr, &wbemServices);
+	SysFreeString(resource_name);
+
+	SAFE_RELEASE(wbemLocator) // from now on, use `wbemServices`
+	if (hr != S_OK) {
+		SAFE_RELEASE(wbemServices)
+		return Vector<String>();
+	}
+
+	const String gpu_device_class_query = vformat("SELECT * FROM Win32_PnPSignedDriver WHERE DeviceName = \"%s\"", device_name);
+	BSTR query = SysAllocString((const WCHAR *)gpu_device_class_query.utf16().get_data());
+	BSTR query_lang = SysAllocString(L"WQL");
+	hr = wbemServices->ExecQuery(query_lang, query, WBEM_FLAG_RETURN_IMMEDIATELY | WBEM_FLAG_FORWARD_ONLY, nullptr, &iter);
+	SysFreeString(query_lang);
+	SysFreeString(query);
+	if (hr == S_OK) {
+		ULONG resultCount;
+		hr = iter->Next(5000, 1, pnpSDriverObject, &resultCount); // Get exactly 1. Wait max 5 seconds.
+
+		if (hr == S_OK && resultCount > 0) {
+			VARIANT dn;
+			VariantInit(&dn);
+
+			BSTR object_name = SysAllocString(L"DriverName");
+			hr = pnpSDriverObject[0]->Get(object_name, 0, &dn, nullptr, nullptr);
+			SysFreeString(object_name);
+			if (hr == S_OK) {
+				String d_name = String(V_BSTR(&dn));
+				if (d_name.is_empty()) {
+					object_name = SysAllocString(L"DriverProviderName");
+					hr = pnpSDriverObject[0]->Get(object_name, 0, &dn, nullptr, nullptr);
+					SysFreeString(object_name);
+					if (hr == S_OK) {
+						driver_name = String(V_BSTR(&dn));
+					}
+				} else {
+					driver_name = d_name;
+				}
+			} else {
+				object_name = SysAllocString(L"DriverProviderName");
+				hr = pnpSDriverObject[0]->Get(object_name, 0, &dn, nullptr, nullptr);
+				SysFreeString(object_name);
+				if (hr == S_OK) {
+					driver_name = String(V_BSTR(&dn));
+				}
+			}
+
+			VARIANT dv;
+			VariantInit(&dv);
+			object_name = SysAllocString(L"DriverVersion");
+			hr = pnpSDriverObject[0]->Get(object_name, 0, &dv, nullptr, nullptr);
+			SysFreeString(object_name);
+			if (hr == S_OK) {
+				driver_version = String(V_BSTR(&dv));
+			}
+			for (ULONG i = 0; i < resultCount; i++) {
+				SAFE_RELEASE(pnpSDriverObject[i])
+			}
+		}
+	}
+
+	SAFE_RELEASE(wbemServices)
+	SAFE_RELEASE(iter)
+
+	info.push_back(driver_name);
+	info.push_back(driver_version);
+
+	return info;
 }
 
 bool OS_Windows::get_user_prefers_integrated_gpu() const {
@@ -1333,8 +1437,7 @@ DWRITE_FONT_STRETCH OS_Windows::_stretch_to_dw(int p_stretch) const {
 }
 
 Vector<String> OS_Windows::get_system_font_path_for_text(const String &p_font_name, const String &p_text, const String &p_locale, const String &p_script, int p_weight, int p_stretch, bool p_italic) const {
-	return Vector<String>();
-	/*if (!dwrite2_init) {
+	if (!dwrite2_init) {
 		return Vector<String>();
 	}
 
@@ -1420,7 +1523,7 @@ Vector<String> OS_Windows::get_system_font_path_for_text(const String &p_font_na
 		}
 		ret.push_back(fpath);
 	}
-	return ret;*/
+	return ret;
 }
 
 String OS_Windows::get_system_font_path(const String &p_font_name, int p_weight, int p_stretch, bool p_italic) const {
@@ -1611,7 +1714,28 @@ Error OS_Windows::shell_show_in_file_manager(String p_path, bool p_open_folder) 
 }
 
 String OS_Windows::get_locale() const {
-	
+	const _WinLocale *wl = &_win_locales[0];
+
+	LANGID langid = GetUserDefaultUILanguage();
+	String neutral;
+	int lang = PRIMARYLANGID(langid);
+	int sublang = SUBLANGID(langid);
+
+	while (wl->locale) {
+		if (wl->main_lang == lang && wl->sublang == SUBLANG_NEUTRAL) {
+			neutral = wl->locale;
+		}
+
+		if (lang == wl->main_lang && sublang == wl->sublang) {
+			return String(wl->locale).replace("-", "_");
+		}
+
+		wl++;
+	}
+
+	if (!neutral.is_empty()) {
+		return String(neutral).replace("-", "_");
+	}
 
 	return "en";
 }
@@ -1643,7 +1767,12 @@ void OS_Windows::run() {
 
 	main_loop->initialize();
 
-	
+	while (true) {
+		DisplayServer::get_singleton()->process_events(); // get rid of pending events
+		if (Main::iteration()) {
+			break;
+		}
+	}
 
 	main_loop->finalize();
 }
@@ -1907,6 +2036,7 @@ OS_Windows::OS_Windows(HINSTANCE _hInstance) {
 	AudioDriverManager::add_driver(&driver_xaudio2);
 #endif
 
+	DisplayServerWindows::register_windows_driver();
 
 	// Enable ANSI escape code support on Windows 10 v1607 (Anniversary Update) and later.
 	// This lets the engine and projects use ANSI escape codes to color text just like on macOS and Linux.
@@ -1921,6 +2051,10 @@ OS_Windows::OS_Windows(HINSTANCE _hInstance) {
 		// Windows 8.1 or below, or Windows 10 prior to Anniversary Update.
 		print_verbose("Can't set the ENABLE_VIRTUAL_TERMINAL_PROCESSING Windows console mode. `print_rich()` will not work as expected.");
 	}
+
+	Vector<Logger *> loggers;
+	loggers.push_back(memnew(WindowsTerminalLogger));
+	_set_logger(memnew(CompositeLogger(loggers)));
 }
 
 OS_Windows::~OS_Windows() {

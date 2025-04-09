@@ -33,8 +33,8 @@
 
 #include "core/config/project_settings.h"
 #include "core/crypto/crypto_core.h"
-//#include "core/debugger/engine_debugger.h"
-//#include "core/debugger/script_debugger.h"
+#include "core/debugger/engine_debugger.h"
+#include "core/debugger/script_debugger.h"
 #include "core/io/file_access_compressed.h"
 #include "core/io/file_access_encrypted.h"
 #include "core/io/marshalls.h"
@@ -720,6 +720,254 @@ void OS::_bind_methods() {
 	BIND_ENUM_CONSTANT(SYSTEM_DIR_MUSIC);
 	BIND_ENUM_CONSTANT(SYSTEM_DIR_PICTURES);
 	BIND_ENUM_CONSTANT(SYSTEM_DIR_RINGTONES);
+}
+
+////// Geometry2D //////
+
+Geometry2D *Geometry2D::singleton = nullptr;
+
+Geometry2D *Geometry2D::get_singleton() {
+	return singleton;
+}
+
+bool Geometry2D::is_point_in_circle(const Vector2 &p_point, const Vector2 &p_circle_pos, real_t p_circle_radius) {
+	return ::Geometry2D::is_point_in_circle(p_point, p_circle_pos, p_circle_radius);
+}
+
+real_t Geometry2D::segment_intersects_circle(const Vector2 &p_from, const Vector2 &p_to, const Vector2 &p_circle_pos, real_t p_circle_radius) {
+	return ::Geometry2D::segment_intersects_circle(p_from, p_to, p_circle_pos, p_circle_radius);
+}
+
+Variant Geometry2D::segment_intersects_segment(const Vector2 &p_from_a, const Vector2 &p_to_a, const Vector2 &p_from_b, const Vector2 &p_to_b) {
+	Vector2 result;
+	if (::Geometry2D::segment_intersects_segment(p_from_a, p_to_a, p_from_b, p_to_b, &result)) {
+		return result;
+	} else {
+		return Variant();
+	}
+}
+
+Variant Geometry2D::line_intersects_line(const Vector2 &p_from_a, const Vector2 &p_dir_a, const Vector2 &p_from_b, const Vector2 &p_dir_b) {
+	Vector2 result;
+	if (::Geometry2D::line_intersects_line(p_from_a, p_dir_a, p_from_b, p_dir_b, result)) {
+		return result;
+	} else {
+		return Variant();
+	}
+}
+
+Vector<Vector2> Geometry2D::get_closest_points_between_segments(const Vector2 &p1, const Vector2 &q1, const Vector2 &p2, const Vector2 &q2) {
+	Vector2 r1, r2;
+	::Geometry2D::get_closest_points_between_segments(p1, q1, p2, q2, r1, r2);
+	Vector<Vector2> r = { r1, r2 };
+	return r;
+}
+
+Vector2 Geometry2D::get_closest_point_to_segment(const Vector2 &p_point, const Vector2 &p_a, const Vector2 &p_b) {
+	Vector2 s[2] = { p_a, p_b };
+	return ::Geometry2D::get_closest_point_to_segment(p_point, s);
+}
+
+Vector2 Geometry2D::get_closest_point_to_segment_uncapped(const Vector2 &p_point, const Vector2 &p_a, const Vector2 &p_b) {
+	Vector2 s[2] = { p_a, p_b };
+	return ::Geometry2D::get_closest_point_to_segment_uncapped(p_point, s);
+}
+
+bool Geometry2D::point_is_inside_triangle(const Vector2 &s, const Vector2 &a, const Vector2 &b, const Vector2 &c) const {
+	return ::Geometry2D::is_point_in_triangle(s, a, b, c);
+}
+
+bool Geometry2D::is_polygon_clockwise(const Vector<Vector2> &p_polygon) {
+	return ::Geometry2D::is_polygon_clockwise(p_polygon);
+}
+
+bool Geometry2D::is_point_in_polygon(const Point2 &p_point, const Vector<Vector2> &p_polygon) {
+	return ::Geometry2D::is_point_in_polygon(p_point, p_polygon);
+}
+
+Vector<int> Geometry2D::triangulate_polygon(const Vector<Vector2> &p_polygon) {
+	return ::Geometry2D::triangulate_polygon(p_polygon);
+}
+
+Vector<int> Geometry2D::triangulate_delaunay(const Vector<Vector2> &p_points) {
+	return ::Geometry2D::triangulate_delaunay(p_points);
+}
+
+Vector<Point2> Geometry2D::convex_hull(const Vector<Point2> &p_points) {
+	return ::Geometry2D::convex_hull(p_points);
+}
+
+TypedArray<PackedVector2Array> Geometry2D::decompose_polygon_in_convex(const Vector<Vector2> &p_polygon) {
+	Vector<Vector<Point2>> decomp = ::Geometry2D::decompose_polygon_in_convex(p_polygon);
+
+	TypedArray<PackedVector2Array> ret;
+
+	for (int i = 0; i < decomp.size(); ++i) {
+		ret.push_back(decomp[i]);
+	}
+	return ret;
+}
+
+TypedArray<PackedVector2Array> Geometry2D::merge_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b) {
+	Vector<Vector<Point2>> polys = ::Geometry2D::merge_polygons(p_polygon_a, p_polygon_b);
+
+	TypedArray<PackedVector2Array> ret;
+
+	for (int i = 0; i < polys.size(); ++i) {
+		ret.push_back(polys[i]);
+	}
+	return ret;
+}
+
+TypedArray<PackedVector2Array> Geometry2D::clip_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b) {
+	Vector<Vector<Point2>> polys = ::Geometry2D::clip_polygons(p_polygon_a, p_polygon_b);
+
+	TypedArray<PackedVector2Array> ret;
+
+	for (int i = 0; i < polys.size(); ++i) {
+		ret.push_back(polys[i]);
+	}
+	return ret;
+}
+
+TypedArray<PackedVector2Array> Geometry2D::intersect_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b) {
+	Vector<Vector<Point2>> polys = ::Geometry2D::intersect_polygons(p_polygon_a, p_polygon_b);
+
+	TypedArray<PackedVector2Array> ret;
+
+	for (int i = 0; i < polys.size(); ++i) {
+		ret.push_back(polys[i]);
+	}
+	return ret;
+}
+
+TypedArray<PackedVector2Array> Geometry2D::exclude_polygons(const Vector<Vector2> &p_polygon_a, const Vector<Vector2> &p_polygon_b) {
+	Vector<Vector<Point2>> polys = ::Geometry2D::exclude_polygons(p_polygon_a, p_polygon_b);
+
+	TypedArray<PackedVector2Array> ret;
+
+	for (int i = 0; i < polys.size(); ++i) {
+		ret.push_back(polys[i]);
+	}
+	return ret;
+}
+
+TypedArray<PackedVector2Array> Geometry2D::clip_polyline_with_polygon(const Vector<Vector2> &p_polyline, const Vector<Vector2> &p_polygon) {
+	Vector<Vector<Point2>> polys = ::Geometry2D::clip_polyline_with_polygon(p_polyline, p_polygon);
+
+	TypedArray<PackedVector2Array> ret;
+
+	for (int i = 0; i < polys.size(); ++i) {
+		ret.push_back(polys[i]);
+	}
+	return ret;
+}
+
+TypedArray<PackedVector2Array> Geometry2D::intersect_polyline_with_polygon(const Vector<Vector2> &p_polyline, const Vector<Vector2> &p_polygon) {
+	Vector<Vector<Point2>> polys = ::Geometry2D::intersect_polyline_with_polygon(p_polyline, p_polygon);
+
+	TypedArray<PackedVector2Array> ret;
+
+	for (int i = 0; i < polys.size(); ++i) {
+		ret.push_back(polys[i]);
+	}
+	return ret;
+}
+
+TypedArray<PackedVector2Array> Geometry2D::offset_polygon(const Vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type) {
+	Vector<Vector<Point2>> polys = ::Geometry2D::offset_polygon(p_polygon, p_delta, ::Geometry2D::PolyJoinType(p_join_type));
+
+	TypedArray<PackedVector2Array> ret;
+
+	for (int i = 0; i < polys.size(); ++i) {
+		ret.push_back(polys[i]);
+	}
+	return ret;
+}
+
+TypedArray<PackedVector2Array> Geometry2D::offset_polyline(const Vector<Vector2> &p_polygon, real_t p_delta, PolyJoinType p_join_type, PolyEndType p_end_type) {
+	Vector<Vector<Point2>> polys = ::Geometry2D::offset_polyline(p_polygon, p_delta, ::Geometry2D::PolyJoinType(p_join_type), ::Geometry2D::PolyEndType(p_end_type));
+
+	TypedArray<PackedVector2Array> ret;
+
+	for (int i = 0; i < polys.size(); ++i) {
+		ret.push_back(polys[i]);
+	}
+	return ret;
+}
+
+Dictionary Geometry2D::make_atlas(const Vector<Size2> &p_rects) {
+	Dictionary ret;
+
+	Vector<Size2i> rects;
+	for (int i = 0; i < p_rects.size(); i++) {
+		rects.push_back(p_rects[i]);
+	}
+
+	Vector<Point2i> result;
+	Size2i size;
+
+	::Geometry2D::make_atlas(rects, result, size);
+
+	Vector<Point2> r_result;
+	for (int i = 0; i < result.size(); i++) {
+		r_result.push_back(result[i]);
+	}
+
+	ret["points"] = r_result;
+	ret["size"] = size;
+
+	return ret;
+}
+
+void Geometry2D::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("is_point_in_circle", "point", "circle_position", "circle_radius"), &Geometry2D::is_point_in_circle);
+	ClassDB::bind_method(D_METHOD("segment_intersects_circle", "segment_from", "segment_to", "circle_position", "circle_radius"), &Geometry2D::segment_intersects_circle);
+	ClassDB::bind_method(D_METHOD("segment_intersects_segment", "from_a", "to_a", "from_b", "to_b"), &Geometry2D::segment_intersects_segment);
+	ClassDB::bind_method(D_METHOD("line_intersects_line", "from_a", "dir_a", "from_b", "dir_b"), &Geometry2D::line_intersects_line);
+
+	ClassDB::bind_method(D_METHOD("get_closest_points_between_segments", "p1", "q1", "p2", "q2"), &Geometry2D::get_closest_points_between_segments);
+
+	ClassDB::bind_method(D_METHOD("get_closest_point_to_segment", "point", "s1", "s2"), &Geometry2D::get_closest_point_to_segment);
+
+	ClassDB::bind_method(D_METHOD("get_closest_point_to_segment_uncapped", "point", "s1", "s2"), &Geometry2D::get_closest_point_to_segment_uncapped);
+
+	ClassDB::bind_method(D_METHOD("point_is_inside_triangle", "point", "a", "b", "c"), &Geometry2D::point_is_inside_triangle);
+
+	ClassDB::bind_method(D_METHOD("is_polygon_clockwise", "polygon"), &Geometry2D::is_polygon_clockwise);
+	ClassDB::bind_method(D_METHOD("is_point_in_polygon", "point", "polygon"), &Geometry2D::is_point_in_polygon);
+	ClassDB::bind_method(D_METHOD("triangulate_polygon", "polygon"), &Geometry2D::triangulate_polygon);
+	ClassDB::bind_method(D_METHOD("triangulate_delaunay", "points"), &Geometry2D::triangulate_delaunay);
+	ClassDB::bind_method(D_METHOD("convex_hull", "points"), &Geometry2D::convex_hull);
+	ClassDB::bind_method(D_METHOD("decompose_polygon_in_convex", "polygon"), &Geometry2D::decompose_polygon_in_convex);
+
+	ClassDB::bind_method(D_METHOD("merge_polygons", "polygon_a", "polygon_b"), &Geometry2D::merge_polygons);
+	ClassDB::bind_method(D_METHOD("clip_polygons", "polygon_a", "polygon_b"), &Geometry2D::clip_polygons);
+	ClassDB::bind_method(D_METHOD("intersect_polygons", "polygon_a", "polygon_b"), &Geometry2D::intersect_polygons);
+	ClassDB::bind_method(D_METHOD("exclude_polygons", "polygon_a", "polygon_b"), &Geometry2D::exclude_polygons);
+
+	ClassDB::bind_method(D_METHOD("clip_polyline_with_polygon", "polyline", "polygon"), &Geometry2D::clip_polyline_with_polygon);
+	ClassDB::bind_method(D_METHOD("intersect_polyline_with_polygon", "polyline", "polygon"), &Geometry2D::intersect_polyline_with_polygon);
+
+	ClassDB::bind_method(D_METHOD("offset_polygon", "polygon", "delta", "join_type"), &Geometry2D::offset_polygon, DEFVAL(JOIN_SQUARE));
+	ClassDB::bind_method(D_METHOD("offset_polyline", "polyline", "delta", "join_type", "end_type"), &Geometry2D::offset_polyline, DEFVAL(JOIN_SQUARE), DEFVAL(END_SQUARE));
+
+	ClassDB::bind_method(D_METHOD("make_atlas", "sizes"), &Geometry2D::make_atlas);
+
+	BIND_ENUM_CONSTANT(OPERATION_UNION);
+	BIND_ENUM_CONSTANT(OPERATION_DIFFERENCE);
+	BIND_ENUM_CONSTANT(OPERATION_INTERSECTION);
+	BIND_ENUM_CONSTANT(OPERATION_XOR);
+
+	BIND_ENUM_CONSTANT(JOIN_SQUARE);
+	BIND_ENUM_CONSTANT(JOIN_ROUND);
+	BIND_ENUM_CONSTANT(JOIN_MITER);
+
+	BIND_ENUM_CONSTANT(END_POLYGON);
+	BIND_ENUM_CONSTANT(END_JOINED);
+	BIND_ENUM_CONSTANT(END_BUTT);
+	BIND_ENUM_CONSTANT(END_SQUARE);
+	BIND_ENUM_CONSTANT(END_ROUND);
 }
 
 ////// Geometry3D //////
@@ -1578,27 +1826,19 @@ Vector<String> Engine::get_singleton_list() const {
 }
 
 Error Engine::register_script_language(ScriptLanguage *p_language) {
-	return FAILED;
-	//myremove
-	//return ScriptServer::register_language(p_language);
+	return ScriptServer::register_language(p_language);
 }
 
 Error Engine::unregister_script_language(const ScriptLanguage *p_language) {
-	return FAILED;
-	//myremove
-	//return ScriptServer::unregister_language(p_language);
+	return ScriptServer::unregister_language(p_language);
 }
 
 int Engine::get_script_language_count() {
-	return 0;
-	//myremove
-	//return ScriptServer::get_language_count();
+	return ScriptServer::get_language_count();
 }
 
 ScriptLanguage *Engine::get_script_language(int p_index) const {
-	return nullptr;
-	//myremove
-	//return ScriptServer::get_language(p_index);
+	return ScriptServer::get_language(p_index);
 }
 
 void Engine::set_editor_hint(bool p_enabled) {
@@ -1680,7 +1920,10 @@ void Engine::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("unregister_singleton", "name"), &Engine::unregister_singleton);
 	ClassDB::bind_method(D_METHOD("get_singleton_list"), &Engine::get_singleton_list);
 
-
+	ClassDB::bind_method(D_METHOD("register_script_language", "language"), &Engine::register_script_language);
+	ClassDB::bind_method(D_METHOD("unregister_script_language", "language"), &Engine::unregister_script_language);
+	ClassDB::bind_method(D_METHOD("get_script_language_count"), &Engine::get_script_language_count);
+	ClassDB::bind_method(D_METHOD("get_script_language", "index"), &Engine::get_script_language);
 
 	ClassDB::bind_method(D_METHOD("is_editor_hint"), &Engine::is_editor_hint);
 
@@ -1706,80 +1949,73 @@ Engine *Engine::singleton = nullptr;
 ////// EngineDebugger //////
 
 bool EngineDebugger::is_active() {
-	return false;
-	//return ::EngineDebugger::is_active();
+	return ::EngineDebugger::is_active();
 }
 
 void EngineDebugger::register_profiler(const StringName &p_name, Ref<EngineProfiler> p_profiler) {
-	/*ERR_FAIL_COND(p_profiler.is_null());
+	ERR_FAIL_COND(p_profiler.is_null());
 	ERR_FAIL_COND_MSG(p_profiler->is_bound(), "Profiler already registered.");
 	ERR_FAIL_COND_MSG(profilers.has(p_name) || has_profiler(p_name), "Profiler name already in use: " + p_name);
 	Error err = p_profiler->bind(p_name);
 	ERR_FAIL_COND_MSG(err != OK, "Profiler failed to register with error: " + itos(err));
-	profilers.insert(p_name, p_profiler);*/
+	profilers.insert(p_name, p_profiler);
 }
 
 void EngineDebugger::unregister_profiler(const StringName &p_name) {
-	/*ERR_FAIL_COND_MSG(!profilers.has(p_name), "Profiler not registered: " + p_name);
+	ERR_FAIL_COND_MSG(!profilers.has(p_name), "Profiler not registered: " + p_name);
 	profilers[p_name]->unbind();
-	profilers.erase(p_name);*/
+	profilers.erase(p_name);
 }
 
 bool EngineDebugger::is_profiling(const StringName &p_name) {
-	return false;
-	//myremove
-	/*return ::EngineDebugger::is_profiling(p_name);*/
+	return ::EngineDebugger::is_profiling(p_name);
 }
 
 bool EngineDebugger::has_profiler(const StringName &p_name) {
-	return false;
-	//myremove
-	//return ::EngineDebugger::has_profiler(p_name);
+	return ::EngineDebugger::has_profiler(p_name);
 }
 
 void EngineDebugger::profiler_add_frame_data(const StringName &p_name, const Array &p_data) {
-	//::EngineDebugger::profiler_add_frame_data(p_name, p_data);
+	::EngineDebugger::profiler_add_frame_data(p_name, p_data);
 }
 
 void EngineDebugger::profiler_enable(const StringName &p_name, bool p_enabled, const Array &p_opts) {
-	/*if (::EngineDebugger::get_singleton()) {
+	if (::EngineDebugger::get_singleton()) {
 		::EngineDebugger::get_singleton()->profiler_enable(p_name, p_enabled, p_opts);
-	}*/
+	}
 }
 
 void EngineDebugger::register_message_capture(const StringName &p_name, const Callable &p_callable) {
-	/*ERR_FAIL_COND_MSG(captures.has(p_name) || has_capture(p_name), "Capture already registered: " + p_name);
+	ERR_FAIL_COND_MSG(captures.has(p_name) || has_capture(p_name), "Capture already registered: " + p_name);
 	captures.insert(p_name, p_callable);
 	Callable &c = captures[p_name];
 	::EngineDebugger::Capture capture(&c, &EngineDebugger::call_capture);
-	::EngineDebugger::register_message_capture(p_name, capture);*/
+	::EngineDebugger::register_message_capture(p_name, capture);
 }
 
 void EngineDebugger::unregister_message_capture(const StringName &p_name) {
-	/*ERR_FAIL_COND_MSG(!captures.has(p_name), "Capture not registered: " + p_name);
+	ERR_FAIL_COND_MSG(!captures.has(p_name), "Capture not registered: " + p_name);
 	::EngineDebugger::unregister_message_capture(p_name);
-	captures.erase(p_name);*/
+	captures.erase(p_name);
 }
 
 bool EngineDebugger::has_capture(const StringName &p_name) {
-	return false;
-	//myremove
-	//return ::EngineDebugger::has_capture(p_name);
+	return ::EngineDebugger::has_capture(p_name);
 }
 
 void EngineDebugger::send_message(const String &p_msg, const Array &p_data) {
-	/*ERR_FAIL_COND_MSG(!::EngineDebugger::is_active(), "Can't send message. No active debugger");
-	::EngineDebugger::get_singleton()->send_message(p_msg, p_data);*/
+	ERR_FAIL_COND_MSG(!::EngineDebugger::is_active(), "Can't send message. No active debugger");
+	::EngineDebugger::get_singleton()->send_message(p_msg, p_data);
 }
 
 void EngineDebugger::debug(bool p_can_continue, bool p_is_error_breakpoint) {
-	/*ERR_FAIL_COND_MSG(!::EngineDebugger::is_active(), "Can't send debug. No active debugger");
-	::EngineDebugger::get_singleton()->debug(p_can_continue, p_is_error_breakpoint);*/
+	ERR_FAIL_COND_MSG(!::EngineDebugger::is_active(), "Can't send debug. No active debugger");
+	::EngineDebugger::get_singleton()->debug(p_can_continue, p_is_error_breakpoint);
 }
 
 void EngineDebugger::script_debug(ScriptLanguage *p_lang, bool p_can_continue, bool p_is_error_breakpoint) {
-	/*ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't send debug. No active debugger");
-	::EngineDebugger::get_script_debugger()->debug(p_lang, p_can_continue, p_is_error_breakpoint);*/
+	ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't send debug. No active debugger");
+	::EngineDebugger::get_script_debugger()->debug(p_lang, p_can_continue, p_is_error_breakpoint);
 }
 
 Error EngineDebugger::call_capture(void *p_user, const String &p_cmd, const Array &p_data, bool &r_captured) {
@@ -1799,77 +2035,66 @@ Error EngineDebugger::call_capture(void *p_user, const String &p_cmd, const Arra
 }
 
 void EngineDebugger::line_poll() {
-	/*ERR_FAIL_COND_MSG(!::EngineDebugger::is_active(), "Can't poll. No active debugger");
-	::EngineDebugger::get_singleton()->line_poll();*/
+	ERR_FAIL_COND_MSG(!::EngineDebugger::is_active(), "Can't poll. No active debugger");
+	::EngineDebugger::get_singleton()->line_poll();
 }
 
 void EngineDebugger::set_lines_left(int p_lines) {
-	//myremove
-	/*ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't set lines left. No active debugger");
-	::EngineDebugger::get_script_debugger()->set_lines_left(p_lines);*/
+	ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't set lines left. No active debugger");
+	::EngineDebugger::get_script_debugger()->set_lines_left(p_lines);
 }
 
 int EngineDebugger::get_lines_left() const {
-	return 0;
-	//myremove
-	/*ERR_FAIL_COND_V_MSG(!::EngineDebugger::get_script_debugger(), 0, "Can't get lines left. No active debugger");
-	return ::EngineDebugger::get_script_debugger()->get_lines_left();*/
+	ERR_FAIL_COND_V_MSG(!::EngineDebugger::get_script_debugger(), 0, "Can't get lines left. No active debugger");
+	return ::EngineDebugger::get_script_debugger()->get_lines_left();
 }
 
 void EngineDebugger::set_depth(int p_depth) {
-	//myremove
-	/*ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't set depth. No active debugger");
-	::EngineDebugger::get_script_debugger()->set_depth(p_depth);*/
+	ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't set depth. No active debugger");
+	::EngineDebugger::get_script_debugger()->set_depth(p_depth);
 }
 
 int EngineDebugger::get_depth() const {
-	return 0;
-	//myremove
-	/*ERR_FAIL_COND_V_MSG(!::EngineDebugger::get_script_debugger(), 0, "Can't get depth. No active debugger");
-	return ::EngineDebugger::get_script_debugger()->get_depth();*/
+	ERR_FAIL_COND_V_MSG(!::EngineDebugger::get_script_debugger(), 0, "Can't get depth. No active debugger");
+	return ::EngineDebugger::get_script_debugger()->get_depth();
 }
 
 bool EngineDebugger::is_breakpoint(int p_line, const StringName &p_source) const {
-	return false;
-	//myremove
-	/*ERR_FAIL_COND_V_MSG(!::EngineDebugger::get_script_debugger(), false, "Can't check breakpoint. No active debugger");
-	return ::EngineDebugger::get_script_debugger()->is_breakpoint(p_line, p_source);*/
+	ERR_FAIL_COND_V_MSG(!::EngineDebugger::get_script_debugger(), false, "Can't check breakpoint. No active debugger");
+	return ::EngineDebugger::get_script_debugger()->is_breakpoint(p_line, p_source);
 }
 
 bool EngineDebugger::is_skipping_breakpoints() const {
-	return false;
-	//myremove
-	/*ERR_FAIL_COND_V_MSG(!::EngineDebugger::get_script_debugger(), false, "Can't check skipping breakpoint. No active debugger");
-	return ::EngineDebugger::get_script_debugger()->is_skipping_breakpoints();*/
+	ERR_FAIL_COND_V_MSG(!::EngineDebugger::get_script_debugger(), false, "Can't check skipping breakpoint. No active debugger");
+	return ::EngineDebugger::get_script_debugger()->is_skipping_breakpoints();
 }
 
 void EngineDebugger::insert_breakpoint(int p_line, const StringName &p_source) {
-	//myremove
-	/*ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't insert breakpoint. No active debugger");
-	::EngineDebugger::get_script_debugger()->insert_breakpoint(p_line, p_source);*/
+	ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't insert breakpoint. No active debugger");
+	::EngineDebugger::get_script_debugger()->insert_breakpoint(p_line, p_source);
 }
 
 void EngineDebugger::remove_breakpoint(int p_line, const StringName &p_source) {
-	/*ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't remove breakpoint. No active debugger");
-	::EngineDebugger::get_script_debugger()->remove_breakpoint(p_line, p_source);*/
+	ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't remove breakpoint. No active debugger");
+	::EngineDebugger::get_script_debugger()->remove_breakpoint(p_line, p_source);
 }
 
 void EngineDebugger::clear_breakpoints() {
-	/*ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't clear breakpoints. No active debugger");
-	::EngineDebugger::get_script_debugger()->clear_breakpoints();*/
+	ERR_FAIL_COND_MSG(!::EngineDebugger::get_script_debugger(), "Can't clear breakpoints. No active debugger");
+	::EngineDebugger::get_script_debugger()->clear_breakpoints();
 }
 
 EngineDebugger::~EngineDebugger() {
-	/*for (const KeyValue<StringName, Callable> &E : captures) {
+	for (const KeyValue<StringName, Callable> &E : captures) {
 		::EngineDebugger::unregister_message_capture(E.key);
 	}
-	captures.clear();*/
+	captures.clear();
 }
 
-//EngineDebugger *EngineDebugger::singleton = nullptr;
+EngineDebugger *EngineDebugger::singleton = nullptr;
 
 void EngineDebugger::_bind_methods() {
-	/*ClassDB::bind_method(D_METHOD("is_active"), &EngineDebugger::is_active);
+	ClassDB::bind_method(D_METHOD("is_active"), &EngineDebugger::is_active);
 
 	ClassDB::bind_method(D_METHOD("register_profiler", "name", "profiler"), &EngineDebugger::register_profiler);
 	ClassDB::bind_method(D_METHOD("unregister_profiler", "name"), &EngineDebugger::unregister_profiler);
@@ -1900,7 +2125,7 @@ void EngineDebugger::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_skipping_breakpoints"), &EngineDebugger::is_skipping_breakpoints);
 	ClassDB::bind_method(D_METHOD("insert_breakpoint", "line", "source"), &EngineDebugger::insert_breakpoint);
 	ClassDB::bind_method(D_METHOD("remove_breakpoint", "line", "source"), &EngineDebugger::remove_breakpoint);
-	ClassDB::bind_method(D_METHOD("clear_breakpoints"), &EngineDebugger::clear_breakpoints);*/
+	ClassDB::bind_method(D_METHOD("clear_breakpoints"), &EngineDebugger::clear_breakpoints);
 }
 
 } // namespace core_bind

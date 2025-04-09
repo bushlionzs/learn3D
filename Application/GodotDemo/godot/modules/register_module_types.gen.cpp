@@ -34,6 +34,7 @@
 
 #include "modules/modules_enabled.gen.h"
 #include "modules/gdscript/register_types.h"
+#include "modules/jsonrpc/register_types.h"
 
 
 void initialize_modules(ModuleInitializationLevel p_level) {

@@ -287,6 +287,9 @@ uint64_t RenderingServerDefault::get_rendering_info(RenderingInfo p_info) {
 	return RSG::utilities->get_rendering_info(p_info);
 }
 
+RenderingDevice::DeviceType RenderingServerDefault::get_video_adapter_type() const {
+	return RSG::utilities->get_video_adapter_type();
+}
 
 void RenderingServerDefault::set_frame_profiling_enabled(bool p_enable) {
 	RSG::utilities->capturing_timestamps = p_enable;
