@@ -289,7 +289,7 @@ public:
 		uint64_t depth_pitch = 0;
 		uint64_t layer_pitch = 0;
 	};
-
+	virtual bool isUserDefine() { return false; }
 	virtual TextureID texture_create(const TextureFormat &p_format, const TextureView &p_view) = 0;
 	virtual TextureID texture_create_from_extension(uint64_t p_native_texture, TextureType p_type, DataFormat p_format, uint32_t p_array_layers, bool p_depth_stencil) = 0;
 	// texture_create_shared_*() can only use original, non-view textures as original. RenderingDevice is responsible for ensuring that.
