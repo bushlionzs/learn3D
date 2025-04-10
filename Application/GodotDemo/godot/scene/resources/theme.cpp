@@ -372,7 +372,10 @@ void Theme::get_icon_type_list(List<StringName> *p_list) const {
 
 // Styleboxes.
 void Theme::set_stylebox(const StringName &p_name, const StringName &p_theme_type, const Ref<StyleBox> &p_style) {
-	ERR_FAIL_COND_MSG(!is_valid_item_name(p_name), vformat("Invalid item name: '%s'", p_name));
+	if (!is_valid_item_name(p_name)) {
+		_err_print_error(__FUNCTION__, "D:\\project\\learn3D\\Application\\GodotDemo\\godot\\scene\\resources\\theme.cpp", 375, "Condition \"" "!is_valid_item_name(p_name)" "\" is true.", vformat("Invalid item name: '%s'", p_name)); return;
+	}
+	else ((void)0);
 	ERR_FAIL_COND_MSG(!is_valid_type_name(p_theme_type), vformat("Invalid type name: '%s'", p_theme_type));
 
 	bool existing = false;

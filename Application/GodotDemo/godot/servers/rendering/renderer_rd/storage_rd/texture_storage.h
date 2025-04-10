@@ -39,7 +39,6 @@
 #include "servers/rendering/rendering_server_default.h"
 #include "servers/rendering/storage/texture_storage.h"
 #include "servers/rendering/storage/utilities.h"
-#include "servers/rendering/rendering_device.h"
 
 namespace RendererRD {
 

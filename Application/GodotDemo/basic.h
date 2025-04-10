@@ -28,6 +28,7 @@ public:
 	void updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer);
 private:
 	void base1();
+	void base2();
 	void ibl_init();
 private:
 	Ogre::AnimationState* mAnimationState = nullptr;

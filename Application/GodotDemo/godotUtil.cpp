@@ -1,8 +1,6 @@
-#include <OgreHeader.h>
 #include "godotUtil.h"
 #include <core/config/project_settings.h>
 #include <core/string/string_name.h>
-#include <platform/windows/os_windows.h>
 #include <core/os/memory.h>
 #include <core/io/file_access_pack.h>
 #include <core/io/missing_resource.h>
@@ -39,7 +37,7 @@
 #include <scene/resources/curve_texture.h>
 #include <scene/resources/3d/primitive_meshes.h>
 #include <scene/resources/particle_process_material.h>
-
+#include <scene/gui/video_stream_player.h>
 #include <scene/main/viewport.h>
 #include <servers/rendering/rendering_server_default.h>
 #include <servers/rendering/renderer_rd/renderer_compositor_rd.h>
@@ -47,10 +45,15 @@
 #include <servers/physics_server_2d.h>
 #include <servers/physics_server_3d_dummy.h>
 #include <servers/physics_server_2d_dummy.h>
+#include <servers/navigation_server_3d_dummy.h>
+#include <servers/text/text_server_dummy.h>
 #include <modules/register_module_types.h>
 #include "rendering_context_driver_null.h"
 #include <core/config/engine.h>
-
+#include <editor/project_manager.h>
+#include <editor/progress_dialog.h>
+#include <platform/windows/os_windows.h>
+#include <OgreHeader.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreMeshManager.h>
@@ -61,15 +64,69 @@
 #include <OgreSubEntity.h>
 #include <OgreMaterialManager.h>
 #include <myutils.h>
-
 static ProjectSettings* globals = nullptr;
-
+static Input* input = nullptr;
 class Main
 {
+private:
+    String text_driver = "";
+    int text_driver_idx = -1;
+    
 public:
         Main()
     {
             OS::get_singleton()->initialize();
+            auto tsman = memnew(TextServerManager);
+            if (tsman) {
+                Ref<TextServerDummy> ts;
+                ts.instantiate();
+                tsman->add_interface(ts);
+            }
+
+            input = memnew(Input);
+            OS::get_singleton()->initialize_joypads();
+
+            text_driver = GLOBAL_GET("internationalization/rendering/text_driver");
+
+            uint32_t count = TextServerManager::get_singleton()->get_interface_count();
+            for (int i = 0; i < count; i++) {
+                if (TextServerManager::get_singleton()->get_interface(i)->get_name() == text_driver) {
+                    text_driver_idx = i;
+                    break;
+                }
+            }
+
+            if (text_driver_idx < 0) {
+                /* If not selected, use one with the most features available. */
+                int max_features = 0;
+                for (int i = 0; i < TextServerManager::get_singleton()->get_interface_count(); i++) {
+                    uint32_t features = TextServerManager::get_singleton()->get_interface(i)->get_features();
+                    int feature_number = 0;
+                    while (features) {
+                        feature_number += features & 1;
+                        features >>= 1;
+                    }
+                    if (feature_number >= max_features) {
+                        max_features = feature_number;
+                        text_driver_idx = i;
+                    }
+                }
+            }
+
+            if (text_driver_idx >= 0) {
+                Ref<TextServer> ts = TextServerManager::get_singleton()->get_interface(text_driver_idx);
+                TextServerManager::get_singleton()->set_primary_interface(ts);
+                if (ts->has_feature(TextServer::FEATURE_USE_SUPPORT_DATA)) {
+                    ts->load_support_data("res://" + ts->get_support_data_filename());
+                }
+            }
+            else {
+                assert_invariant(false);
+            }
+
+            auto navigation_server_3d = memnew(NavigationServer3DDummy);
+
+            navigation_server_3d->init();
     }
 };
 static void register_core_types()
@@ -224,9 +281,9 @@ static void register_scene_types()
     GDREGISTER_CLASS(SubViewport);
     GDREGISTER_CLASS(ViewportTexture);
 
-    /*GDREGISTER_CLASS(VideoStreamPlayer);
+    GDREGISTER_CLASS(VideoStreamPlayer);
     GDREGISTER_VIRTUAL_CLASS(VideoStreamPlayback);
-    GDREGISTER_VIRTUAL_CLASS(VideoStream);*/
+    GDREGISTER_VIRTUAL_CLASS(VideoStream);
 }
 static void initialize_physics() 
 {
@@ -277,24 +334,29 @@ std::string convert_stringname_to_ascii(const String& name) {
 
 void visitNode(Node* scene, Ogre::SceneNode* sceneNode, GodotContext& context);
 Node* findNode(Node* godotNode, const char* name);
-void loadGodotProject(const String& projectDir, GodotContext& context)
+
+void godotInit()
 {
     if (globals == nullptr)
     {
         memnew(Engine);
-        
+
         register_core_types();
         globals = memnew(ProjectSettings);
-        
+
         memnew(PackedData);
         register_scene_types();
         initialize_physics();
         initialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
         Main();
 
-        
+       
     }
-    
+}
+
+void loadGodotProject(const String& projectDir, GodotContext& context)
+{
+    godotInit();
     Error ret = globals->setup(projectDir, String(), false, false);
     if ( ret == OK)
     {
@@ -308,7 +370,7 @@ void loadGodotProject(const String& projectDir, GodotContext& context)
         Ogre::SceneNode* root = context.sceneManager->getRoot()->createChildSceneNode(sceneNodeName);
 
         Node* node = findNode(scene, "SpaceCraftHangar");
-        visitNode(scene, root, context);
+        visitNode(node, root, context);
     }
     else
     {
@@ -629,4 +691,12 @@ void visitNode(Node* godotNode, Ogre::SceneNode* sceneNode, GodotContext& contex
         Ogre::SceneNode* subSceneNode = sceneNode->createChildSceneNode(sceneNodeName);
         visitNode(subNode, subSceneNode, context);
     }
+}
+
+
+void godotProjectSetting()
+{
+    ProjectManager* pmanager = memnew(ProjectManager());
+    ProgressDialog* progress_dialog = memnew(ProgressDialog);
+    pmanager->add_child(progress_dialog);
 }

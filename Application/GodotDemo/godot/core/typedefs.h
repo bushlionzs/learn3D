@@ -37,7 +37,7 @@
  * Basic definitions and simple functions to be used everywhere.
  */
 
-// Include first in case the platform needs to pre-define/include some things.
+ // Include first in case the platform needs to pre-define/include some things.
 #include "platform_config.h"
 
 // Should be available everywhere.
@@ -45,7 +45,7 @@
 #include <cstdint>
 
 // Ensure that C++ standard is at least C++17. If on MSVC, also ensures that the `Zc:__cplusplus` flag is present.
-//static_assert(__cplusplus >= 201703L);//zhousha
+//static_assert(__cplusplus >= 201703L);
 
 // Turn argument to string constant:
 // https://gcc.gnu.org/onlinedocs/cpp/Stringizing.html#Stringizing
@@ -131,7 +131,7 @@ constexpr auto CLAMP(const T m_a, const T2 m_min, const T3 m_max) {
 #ifndef SWAP
 #define SWAP(m_x, m_y) __swap_tmpl((m_x), (m_y))
 template <typename T>
-inline void __swap_tmpl(T &x, T &y) {
+inline void __swap_tmpl(T& x, T& y) {
 	T aux = x;
 	x = y;
 	y = aux;
@@ -256,7 +256,7 @@ static inline uint64_t BSWAP64(uint64_t x) {
 // Generic comparator used in Map, List, etc.
 template <typename T>
 struct Comparator {
-	_ALWAYS_INLINE_ bool operator()(const T &p_a, const T &p_b) const { return (p_a < p_b); }
+	_ALWAYS_INLINE_ bool operator()(const T& p_a, const T& p_b) const { return (p_a < p_b); }
 };
 
 // Global lock macro, relies on the static Mutex::_global_mutex.

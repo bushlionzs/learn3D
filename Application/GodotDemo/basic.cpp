@@ -47,7 +47,7 @@ void BasicApplication::setup(
 	mRenderWindow = renderWindow;
 	mRenderSystem = renderSystem;
 	mRenderPipeline = renderPipeline;
-	ibl_init();
+	
 	base1();
 }
 
@@ -113,6 +113,7 @@ void BasicApplication::ibl_init()
 }
 void BasicApplication::base1()
 {
+	ibl_init();
 	std::string projectDir = "D:\\godotProject\\Abandoned-Spaceship-Godot-Demo";
 	Ogre::ResourceManager::getSingletonPtr()->addDirectory(projectDir);
 
@@ -152,5 +153,11 @@ void BasicApplication::base1()
 	input.sceneMgr = mSceneManager;
 	auto mainPass = createStandardRenderPass(input);
 	mRenderPipeline->addRenderPass(mainPass);
+}
+
+void BasicApplication::base2()
+{
+	godotInit();
+	godotProjectSetting();
 }
 

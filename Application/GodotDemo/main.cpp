@@ -3,7 +3,7 @@
 #include "platform_log.h"
 #include "ManualApplication.h"
 #include <atomic>
-int main()
+int main2()
 {
 	platform_log_init();
 	BasicApplication instance;

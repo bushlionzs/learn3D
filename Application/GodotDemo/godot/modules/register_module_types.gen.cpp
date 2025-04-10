@@ -35,7 +35,10 @@
 #include "modules/modules_enabled.gen.h"
 #include "modules/gdscript/register_types.h"
 #include "modules/jsonrpc/register_types.h"
-
+#include "modules/glslang/register_types.h"
+#include "modules/freetype/register_types.h"
+#include "modules/svg/register_types.h"
+#include "modules/text_server_adv/register_types.h"
 
 void initialize_modules(ModuleInitializationLevel p_level) {
 #ifdef MODULE_ASTCENC_ENABLED

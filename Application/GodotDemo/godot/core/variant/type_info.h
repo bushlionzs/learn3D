@@ -32,7 +32,6 @@
 #define TYPE_INFO_H
 
 #include "core/typedefs.h"
-
 #include <type_traits>
 
 namespace GodotTypeInfo {

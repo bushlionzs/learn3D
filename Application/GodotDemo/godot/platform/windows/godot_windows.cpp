@@ -149,86 +149,88 @@ char *wc_to_utf8(const wchar_t *wc) {
 	return ubuf;
 }
 
-//int widechar_main(int argc, wchar_t **argv) {
-//	OS_Windows os(nullptr);
-//
-//	setlocale(LC_CTYPE, "");
-//
-//	char **argv_utf8 = new char *[argc];
-//
-//	for (int i = 0; i < argc; ++i) {
-//		argv_utf8[i] = wc_to_utf8(argv[i]);
-//	}
-//
-//	TEST_MAIN_PARAM_OVERRIDE(argc, argv_utf8)
-//
-//	Error err = Main::setup(argv_utf8[0], argc - 1, &argv_utf8[1]);
-//
-//	if (err != OK) {
-//		for (int i = 0; i < argc; ++i) {
-//			delete[] argv_utf8[i];
-//		}
-//		delete[] argv_utf8;
-//
-//		if (err == ERR_HELP) { // Returned by --help and --version, so success.
-//			return EXIT_SUCCESS;
-//		}
-//		return EXIT_FAILURE;
-//	}
-//
-//	if (Main::start() == EXIT_SUCCESS) {
-//		os.run();
-//	} else {
-//		os.set_exit_code(EXIT_FAILURE);
-//	}
-//	Main::cleanup();
-//
-//	for (int i = 0; i < argc; ++i) {
-//		delete[] argv_utf8[i];
-//	}
-//	delete[] argv_utf8;
-//
-//	return os.get_exit_code();
-//}
+int widechar_main(int argc, wchar_t **argv) {
+	OS_Windows os(nullptr);
 
-//int _main() {
-//	LPWSTR *wc_argv;
-//	int argc;
-//	int result;
-//
-//	wc_argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-//
-//	if (nullptr == wc_argv) {
-//		wprintf(L"CommandLineToArgvW failed\n");
-//		return 0;
-//	}
-//
-//	result = widechar_main(argc, wc_argv);
-//
-//	LocalFree(wc_argv);
-//	return result;
-//}
-//
-//int main(int argc, char **argv) {
-//	// override the arguments for the test handler / if symbol is provided
-//	// TEST_MAIN_OVERRIDE
-//
-//	// _argc and _argv are ignored
-//	// we are going to use the WideChar version of them instead
-//#if defined(CRASH_HANDLER_EXCEPTION) && defined(_MSC_VER)
-//	__try {
-//		return _main();
-//	} __except (CrashHandlerException(GetExceptionInformation())) {
-//		return 1;
-//	}
-//#else
-//	return _main();
-//#endif
-//}
-//
-//HINSTANCE godot_hinstance = nullptr;
-//
-//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-//	godot_hinstance = hInstance;
-//	return main(0, nullptr);
-//}
+	setlocale(LC_CTYPE, "");
+
+	char **argv_utf8 = new char *[argc];
+
+	for (int i = 0; i < argc; ++i) {
+		argv_utf8[i] = wc_to_utf8(argv[i]);
+	}
+
+	TEST_MAIN_PARAM_OVERRIDE(argc, argv_utf8)
+
+	Error err = Main::setup(argv_utf8[0], argc - 1, &argv_utf8[1]);
+
+	if (err != OK) {
+		for (int i = 0; i < argc; ++i) {
+			delete[] argv_utf8[i];
+		}
+		delete[] argv_utf8;
+
+		if (err == ERR_HELP) { // Returned by --help and --version, so success.
+			return EXIT_SUCCESS;
+		}
+		return EXIT_FAILURE;
+	}
+
+	if (Main::start() == EXIT_SUCCESS) {
+		os.run();
+	} else {
+		os.set_exit_code(EXIT_FAILURE);
+	}
+	Main::cleanup();
+
+	for (int i = 0; i < argc; ++i) {
+		delete[] argv_utf8[i];
+	}
+	delete[] argv_utf8;
+
+	return os.get_exit_code();
+}
+
+int _main() {
+	LPWSTR *wc_argv;
+	int argc;
+	int result;
+
+	wc_argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+	if (nullptr == wc_argv) {
+		wprintf(L"CommandLineToArgvW failed\n");
+		return 0;
+	}
+
+	result = widechar_main(argc, wc_argv);
+
+	LocalFree(wc_argv);
+	return result;
+}
+
+int main(int argc, char **argv) {
+	// override the arguments for the test handler / if symbol is provided
+	// TEST_MAIN_OVERRIDE
+
+	// _argc and _argv are ignored
+	// we are going to use the WideChar version of them instead
+#if defined(CRASH_HANDLER_EXCEPTION) && defined(_MSC_VER)
+	__try {
+		extern int main2();
+		return main2();
+		return _main();
+	} __except (CrashHandlerException(GetExceptionInformation())) {
+		return 1;
+	}
+#else
+	return _main();
+#endif
+}
+
+HINSTANCE godot_hinstance = nullptr;
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	godot_hinstance = hInstance;
+	return main(0, nullptr);
+}

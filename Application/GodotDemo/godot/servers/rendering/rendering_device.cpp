@@ -249,13 +249,6 @@ RenderingDevice::Buffer *RenderingDevice::_get_buffer_from_owner(RID p_buffer) {
 }
 
 Error RenderingDevice::_buffer_initialize(Buffer *p_buffer, const uint8_t *p_data, size_t p_data_size, uint32_t p_required_align) {
-	if (1)//myadd
-	{
-		uint8_t* data_ptr = driver->buffer_map(p_buffer->driver_id);
-		memcpy(data_ptr, p_data, p_data_size);
-		driver->buffer_unmap(p_buffer->driver_id);
-		return OK;
-	}
 	uint32_t transfer_worker_offset;
 	TransferWorker *transfer_worker = _acquire_transfer_worker(p_data_size, p_required_align, transfer_worker_offset);
 	p_buffer->transfer_worker_index = transfer_worker->index;
@@ -623,18 +616,6 @@ Vector<uint8_t> RenderingDevice::buffer_get_data(RID p_buffer, uint32_t p_offset
 
 	_check_transfer_worker_buffer(buffer);
 
-	if (1)
-	{
-		//myadd
-		Vector<uint8_t> buffer_data;
-		{
-			uint8_t* buffer_mem = driver->buffer_map(buffer->driver_id);
-			buffer_data.resize(p_size);
-			uint8_t* w = buffer_data.ptrw();
-			memcpy(w, buffer_mem, p_size);
-		}
-		return buffer_data;
-	}
 	RDD::BufferID tmp_buffer = driver->buffer_create(buffer->size, RDD::BUFFER_USAGE_TRANSFER_TO_BIT, RDD::MEMORY_ALLOCATION_TYPE_CPU);
 	ERR_FAIL_COND_V(!tmp_buffer, Vector<uint8_t>());
 
@@ -2884,7 +2865,7 @@ String RenderingDevice::_shader_uniform_debug(RID p_shader, int p_set) {
 }
 
 String RenderingDevice::shader_get_binary_cache_key() const {
-	return String();
+	return driver->shader_get_binary_cache_key();
 }
 
 Vector<uint8_t> RenderingDevice::shader_compile_binary_from_spirv(const Vector<ShaderStageSPIRVData> &p_spirv, const String &p_shader_name) {

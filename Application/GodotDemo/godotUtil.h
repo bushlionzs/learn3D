@@ -1,5 +1,11 @@
 #pragma once 
 #include <core/string/ustring.h>
+#include <string>
+namespace Ogre
+{
+    class SceneManager;
+};
+
 struct GodotContext
 {
     Ogre::SceneManager* sceneManager;
@@ -8,4 +14,8 @@ struct GodotContext
     std::string irradianceTexName;
 };
 
+void godotInit();
+
 void loadGodotProject(const String& projectDir, GodotContext& context);
+
+void godotProjectSetting();

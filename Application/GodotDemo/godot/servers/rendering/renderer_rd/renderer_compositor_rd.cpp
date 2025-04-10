@@ -122,7 +122,7 @@ void RendererCompositorRD::initialize() {
 		blit.shader_version = blit.shader.version_create();
 
 		for (int i = 0; i < BLIT_MODE_MAX; i++) {
-			//blit.pipelines[i] = RD::get_singleton()->render_pipeline_create(blit.shader.version_get_shader(blit.shader_version, i), RD::get_singleton()->screen_get_framebuffer_format(DisplayServer::MAIN_WINDOW_ID), RD::INVALID_ID, RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), i == BLIT_MODE_NORMAL_ALPHA ? RenderingDevice::PipelineColorBlendState::create_blend() : RenderingDevice::PipelineColorBlendState::create_disabled(), 0);
+			blit.pipelines[i] = RD::get_singleton()->render_pipeline_create(blit.shader.version_get_shader(blit.shader_version, i), RD::get_singleton()->screen_get_framebuffer_format(DisplayServer::MAIN_WINDOW_ID), RD::INVALID_ID, RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), i == BLIT_MODE_NORMAL_ALPHA ? RenderingDevice::PipelineColorBlendState::create_blend() : RenderingDevice::PipelineColorBlendState::create_disabled(), 0);
 		}
 
 		//create index array for copy shader
@@ -138,10 +138,10 @@ void RendererCompositorRD::initialize() {
 			p16[4] = 2;
 			p16[5] = 3;
 		}
-		//blit.index_buffer = RD::get_singleton()->index_buffer_create(6, RenderingDevice::INDEX_BUFFER_FORMAT_UINT16, pv);
-		//blit.array = RD::get_singleton()->index_array_create(blit.index_buffer, 0, 6);
+		blit.index_buffer = RD::get_singleton()->index_buffer_create(6, RenderingDevice::INDEX_BUFFER_FORMAT_UINT16, pv);
+		blit.array = RD::get_singleton()->index_array_create(blit.index_buffer, 0, 6);
 
-		//blit.sampler = RD::get_singleton()->sampler_create(RD::SamplerState());
+		blit.sampler = RD::get_singleton()->sampler_create(RD::SamplerState());
 	}
 }
 
@@ -197,7 +197,7 @@ void RendererCompositorRD::set_boot_image(const Ref<Image> &p_image, const Color
 		uset = RD::get_singleton()->uniform_set_create(uniforms, blit.shader.version_get_shader(blit.shader_version, BLIT_MODE_NORMAL), 0);
 	}
 
-	Size2 window_size ;
+	Size2 window_size = DisplayServer::get_singleton()->window_get_size();
 
 	Rect2 imgrect(0, 0, p_image->get_width(), p_image->get_height());
 	Rect2 screenrect;
@@ -263,7 +263,7 @@ RendererCompositorRD::RendererCompositorRD() {
 	framebuffer_cache = memnew(FramebufferCacheRD);
 
 	{
-		String shader_cache_dir;
+		String shader_cache_dir = Engine::get_singleton()->get_shader_cache_path();
 		if (shader_cache_dir.is_empty()) {
 			shader_cache_dir = "user://";
 		}
@@ -312,10 +312,13 @@ RendererCompositorRD::RendererCompositorRD() {
 	canvas = memnew(RendererCanvasRenderRD());
 
 	String rendering_method = OS::get_singleton()->get_current_rendering_method();
-	uint64_t textures_per_stage = 2048;
+	uint64_t textures_per_stage = RD::get_singleton()->limit_get(RD::LIMIT_MAX_TEXTURES_PER_SHADER_STAGE);
 
 	if (rendering_method == "mobile" || textures_per_stage < 48) {
-		
+		if (rendering_method == "forward_plus") {
+			WARN_PRINT_ONCE("Platform supports less than 48 textures per stage which is less than required by the Clustered renderer. Defaulting to Mobile renderer.");
+		}
+		scene = memnew(RendererSceneRenderImplementation::RenderForwardMobile());
 	} else if (rendering_method == "forward_plus") {
 		scene = memnew(RendererSceneRenderImplementation::RenderForwardClustered());
 	} else {

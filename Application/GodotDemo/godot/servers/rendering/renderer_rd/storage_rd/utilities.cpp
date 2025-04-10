@@ -314,7 +314,9 @@ String Utilities::get_video_adapter_vendor() const {
 	return RenderingDevice::get_singleton()->get_device_vendor_name();
 }
 
-
+RenderingDevice::DeviceType Utilities::get_video_adapter_type() const {
+	return RenderingDevice::get_singleton()->get_device_type();
+}
 
 String Utilities::get_video_adapter_api_version() const {
 	return RenderingDevice::get_singleton()->get_device_api_version();

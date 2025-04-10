@@ -6152,6 +6152,10 @@ DisplayServerWindows::DisplayServerWindows(const String &p_rendering_driver, Win
 
 #if defined(RD_ENABLED)
 #if defined(VULKAN_ENABLED)
+	if (rendering_driver.is_empty())
+	{
+		rendering_driver = "vulkan";
+	}
 	if (rendering_driver == "vulkan") {
 		rendering_context = memnew(RenderingContextDriverVulkanWindows);
 		tested_drivers.set_flag(DRIVER_ID_RD_VULKAN);
