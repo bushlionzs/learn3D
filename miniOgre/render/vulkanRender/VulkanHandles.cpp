@@ -22,8 +22,12 @@
 #include "VulkanMemory.h"
 #include "VulkanResourceAllocator.h"
 #include "VulkanUtility.h"
+#include "glslUtil.h"
+#include "VulkanHelper.h"
+#include "VulkanPipelineLayoutCache.h"
 #include <VulkanPlatform.h>
-#include <VulkanHelper.h>
+#include "VulkanPipelineCache.h"
+#include "VulkanLayoutCache.h"
 
 #include <utils/Panic.h>    // ASSERT_POSTCONDITION
 
@@ -170,6 +174,135 @@ VulkanShaderProgram::~VulkanShaderProgram() {
     
 }
 
+void VulkanShaderProgram::parseVertexInfo(VertexDeclaration* decl)
+{
+    vks::tools::parseAttributeDescriptions(decl, mInputDesc, mAttributeDescriptions);
+    vks::tools::parseInputBindingDescription(decl, mInputDesc, mVertexInputBindings);
+}
+
+void VulkanShaderProgram::updateShaderInfo(const VulkanShaderInfo& vulkanShaderInfo)
+{
+    updateVertexShader(vulkanShaderInfo.vertexShaderModule);
+    updateFragmentShader(vulkanShaderInfo.fragShaderModule);
+    updateGeometryShader(vulkanShaderInfo.geometryShaderModule);
+    
+    parserGlslInputDesc(vulkanShaderInfo.vertexSpv, mInputDesc);
+    
+
+    vks::tools::BingdingInfo bindingMap;
+
+    std::vector<vks::tools::PushConstants> constantsList;
+    vks::tools::BingdingInfo results = vks::tools::getProgramBindings(
+        vulkanShaderInfo.vertexSpv,
+        VK_SHADER_STAGE_VERTEX_BIT,
+        &constantsList);
+
+    for (auto& pair : results)
+    {
+        for (auto& layoutBingding : pair.second)
+        {
+            bindingMap[pair.first].push_back(layoutBingding);
+        }
+    }
+
+    if(!vulkanShaderInfo.geometrySpv.empty())
+    {
+        auto results = vks::tools::getProgramBindings(
+            vulkanShaderInfo.geometrySpv,
+            VK_SHADER_STAGE_GEOMETRY_BIT);
+        vks::tools::bingingUpdate(bindingMap, results, VK_SHADER_STAGE_GEOMETRY_BIT);
+    }
+
+    if (!vulkanShaderInfo.fragSpv.empty())
+    {
+        constantsList.clear();
+        auto results = vks::tools::getProgramBindings(
+            vulkanShaderInfo.fragSpv,
+            VK_SHADER_STAGE_FRAGMENT_BIT,
+            &constantsList);
+        vks::tools::bingingUpdate(bindingMap, results, VK_SHADER_STAGE_FRAGMENT_BIT);
+    }
+
+    updateDescriptorInfo(bindingMap);
+
+    VkDescriptorSetLayoutBinding toBind[VulkanDescriptorSetLayout::MAX_BINDINGS];
+    uint32_t bindIndex = 0;
+    VulkanPipelineLayoutCache::PipelineLayoutKey keys;
+
+    auto pEmptyDescriptorSetLayout = VulkanHelper::getSingleton().getEmptyDescriptorSetLayout();
+    for (auto set = 0; set < VulkanDescriptorSetLayout::MAX_BINDING_SET; set++)
+    {
+        bindIndex = 0;
+
+        auto itor = bindingMap.find(set);
+
+        if (itor != bindingMap.end())
+        {
+            for (auto& obj : itor->second)
+            {
+                toBind[bindIndex] = obj.layoutBinding;
+                bindIndex++;
+            }
+        }
+
+        if (bindIndex == 0)
+        {
+            keys.setLayout[set] = pEmptyDescriptorSetLayout;
+        }
+        else
+        {
+            VulkanDescriptorSetLayout::VulkanDescriptorSetLayoutInfo info;
+
+            for (auto i = 0; i < bindIndex; i++)
+            {
+                switch (toBind[i].descriptorType)
+                {
+                case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
+                    info.combinedImage++;
+                    break;
+                case VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE:
+                    info.inputAttachmentCount++;
+                    break;
+                case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
+                    info.storeImage++;
+                    break;
+                case VK_DESCRIPTOR_TYPE_SAMPLER:
+                    info.samplerCount++;
+                    break;
+                case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+                    info.storeCount++;
+                    break;
+                case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+                    info.uboCount++;
+                    break;
+                default:
+                    assert_invariant(false);
+                    break;
+                }
+            }
+
+            Handle<HwDescriptorSetLayout> layoutHandle =
+                vulkanShaderInfo.resourceAllocator->allocHandle<VulkanDescriptorSetLayout>();
+            VulkanDescriptorSetLayout* vulkanLayout =
+                vulkanShaderInfo.resourceAllocator->construct<VulkanDescriptorSetLayout>(layoutHandle, info);
+
+
+            VkDescriptorSetLayout vkLayout = vulkanShaderInfo.vulkanLayoutCache->getLayout(&toBind[0], bindIndex);
+            vulkanLayout->setVkLayout(vkLayout);
+
+            keys.setLayout[set] = vkLayout;
+
+            updateLayout(set, layoutHandle);
+        }
+    }
+
+    keys.pushConstant->size = 0;
+    keys.pushConstant->stage = 0;
+
+    VkPipelineLayout vulkanPipelineLayout = vulkanShaderInfo.pipelineLayoutCache->getLayout(keys);
+    updateVulkanPipelineLayout(vulkanPipelineLayout);
+}
+
 VulkanTextureSampler::VulkanTextureSampler(backend::SamplerParams& samplerParams)
     :VulkanResource(VulkanResourceType::SAMPLER_GROUP)
 {
@@ -179,6 +312,13 @@ VulkanTextureSampler::VulkanTextureSampler(backend::SamplerParams& samplerParams
 VulkanTextureSampler::~VulkanTextureSampler()
 {
 
+}
+
+VulkanShader::VulkanShader() :
+    VulkanResource(VulkanResourceType::PROGRAM)
+{
+    shaderProgram = nullptr;
+    computeProgram = nullptr;
 }
 
 VulkanRaytracingProgram::VulkanRaytracingProgram(const std::string& name)noexcept
@@ -206,6 +346,112 @@ VulkanComputeProgram::VulkanComputeProgram(const std::string& name) noexcept
 
 VulkanComputeProgram::~VulkanComputeProgram() {
 
+}
+
+void VulkanComputeProgram::upateShaderInfo(const VulkanComputeShaderInfo& shaderInfo)
+{
+    updateComputeShader(shaderInfo.computeShaderModule);
+    auto results = vks::tools::getProgramBindings(
+        shaderInfo.computeSpv,
+        VK_SHADER_STAGE_COMPUTE_BIT);
+    updateDescriptorInfo(results);
+
+    auto pEmptyDescriptorSetLayout = VulkanHelper::getSingleton().getEmptyDescriptorSetLayout();
+    std::array<VkDescriptorSetLayout, 4> layoutlist;
+
+    for (auto set = 0; set < 4; set++)
+    {
+        auto itor = results.find(set);
+        if (itor == results.end())
+        {
+            layoutlist[set] = pEmptyDescriptorSetLayout;
+            continue;
+        }
+
+        VkDescriptorSetLayoutBinding binding[VulkanDescriptorSetLayout::MAX_BINDINGS];
+        uint32_t size = itor->second.size();
+        for (uint32_t i = 0; i < size; i++)
+        {
+            binding[i] = itor->second[i].layoutBinding;
+        }
+        VkDescriptorSetLayoutCreateInfo dlinfo = {
+            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+            .pNext = nullptr,
+            .bindingCount = (uint32_t)itor->second.size(),
+            .pBindings = binding,
+        };
+
+        //todo: use layout cache
+        VkDescriptorSetLayout vkLayout;
+        vkCreateDescriptorSetLayout(shaderInfo.device, &dlinfo, VKALLOC, &vkLayout);
+        layoutlist[set] = vkLayout;
+        updateSetLayout(vkLayout);
+        DescriptorSetLayout layoutInfo;
+        Handle<HwDescriptorSetLayout> dslh = shaderInfo.resourceAllocator->allocHandle<VulkanDescriptorSetLayout>();
+        VulkanDescriptorSetLayout::VulkanDescriptorSetLayoutInfo info;
+        for (auto& binding : itor->second)
+        {
+            switch (binding.layoutBinding.descriptorType)
+            {
+            case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
+                info.combinedImage++;
+                break;
+            case VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE:
+                info.inputAttachmentCount++;
+                break;
+            case VK_DESCRIPTOR_TYPE_SAMPLER:
+                info.samplerCount++;
+                break;
+            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+                info.storeCount++;
+                break;
+            case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+                info.uboCount++;
+                break;
+            }
+        }
+        VulkanDescriptorSetLayout* uboLayout = shaderInfo.resourceAllocator->construct<VulkanDescriptorSetLayout>(dslh, info);
+        uboLayout->setVkLayout(vkLayout);
+        updateSetLayoutHandle(set, dslh);
+    }
+
+    VkPipelineLayout pipelineLayout;
+    VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo =
+        vks::initializers::pipelineLayoutCreateInfo(
+            layoutlist.data(),
+            results.size());
+
+
+    if (vkCreatePipelineLayout(shaderInfo.device, &pPipelineLayoutCreateInfo,
+        nullptr, &pipelineLayout) != VK_SUCCESS)
+    {
+        assert_invariant(!results.empty() && "vkCreatePipelineLayout failed.");
+    }
+
+    updatePipelineLayout(pipelineLayout);
+
+    VkPipelineShaderStageCreateInfo stage{};
+    stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    stage.pNext = NULL;
+    stage.flags = 0;
+    stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+    stage.module = shaderInfo.computeShaderModule;
+    stage.pName = shaderInfo.computeShaderEntryPoint;
+    stage.pSpecializationInfo = nullptr;
+
+    VkComputePipelineCreateInfo create_info{};
+    create_info.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+    create_info.pNext = NULL;
+    create_info.flags = 0;
+    create_info.stage = stage;
+    create_info.layout = pipelineLayout;
+    create_info.basePipelineHandle = 0;
+    create_info.basePipelineIndex = 0;
+    VkPipeline pipeline;
+    vkCreateComputePipelines(shaderInfo.device, NULL, 1, &create_info,
+        nullptr, &pipeline);
+
+    updatePipeline(pipeline);
 }
 
 VulkanPipeline::VulkanPipeline(VkPipeline pipeline, VulkanProgram* program)
@@ -392,6 +638,42 @@ VulkanBufferObject::VulkanBufferObject(VmaAllocator allocator, VulkanStagePool& 
       buffer(allocator, stagePool, getBufferObjectUsage(desc.mBindingType, 
           desc.bufferCreationFlags), desc.mSize, desc.mMemoryUsage == RESOURCE_MEMORY_USAGE_CPU_TO_GPU),
       bindingType(desc.mBindingType) {}
+
+
+VulkanSemaphore::VulkanSemaphore(VkDevice device)
+    :VulkanResource(VulkanResourceType::SEMAPHORE) 
+{
+    VkSemaphoreCreateInfo sci{ .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
+    vkCreateSemaphore(device, &sci, nullptr, &semaphore);
+}
+
+VulkanCommandQueue::VulkanCommandQueue(
+    VkQueue queue
+)
+    :VulkanResource(VulkanResourceType::COMMAND_QUEUE)
+{
+    vkQueue = queue;
+}
+
+VulkanCommandBuffer2::VulkanCommandBuffer2(VulkanResourceAllocator* allocator, VkDevice device, uint32_t queueFamilyIndex)
+    :VulkanResource(VulkanResourceType::COMMAND_BUFFER)
+{
+    VkCommandPoolCreateInfo createInfo = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+            .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT
+                     | VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
+            .queueFamilyIndex = queueFamilyIndex,
+    };
+    vkCreateCommandPool(device, &createInfo, VKALLOC, &pool);
+
+    const VkCommandBufferAllocateInfo allocateInfo{
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+            .commandPool = pool,
+            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            .commandBufferCount = 1,
+    };
+    vkAllocateCommandBuffers(device, &allocateInfo, &commandBuffer);
+}
 
 VulkanTimerQuery::VulkanTimerQuery(std::tuple<uint32_t, uint32_t> indices)
     : VulkanThreadSafeResource(VulkanResourceType::TIMER_QUERY),

@@ -305,6 +305,16 @@ bool GameCamera::update(float delta)
     Ogre::Vector3 pos = viewMatrix.getTrans();
     mCamera->updateViewMatrix(viewMatrix);
     mCamera->updatePosition(eyePosition);
+
+    auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+    if (ogreConfig.width != mCameraInfo.width ||
+        ogreConfig.height != ogreConfig.height)
+    {
+        mCameraInfo.width = ogreConfig.width;
+        mCameraInfo.height = ogreConfig.height;
+        updateProjectMatrix();
+    }
+
     return true;
 }
 
@@ -320,7 +330,7 @@ void GameCamera::updateChanged(bool change)
 Ogre::String GameCamera::getCameraString()
 {
     char buffer[256];
-    snprintf(buffer, sizeof(buffer), "x:%d,y:%d,yaw:%f,pitch:%f", 
+    snprintf(buffer, sizeof(buffer), "x:%d,y:%d,yaw:%f,pitch:%f",
         mMousePickX, mMousePickY, mYaw, mPitch);
     return Ogre::String(buffer);
 }
@@ -339,13 +349,13 @@ Ogre::Vector3 GameCamera::createAnglesYPR(const Ogre::Quaternion& q)
     {
         return Ogre::Vector3(0, atan2f(m[2][1], l), 0);
     }
-        
+
 }
 
 template<typename T>
-void sincos(T angle, T* pSin, T* pCos) 
-{ 
-    *pSin = sin(angle); *pCos = cos(angle); 
+void sincos(T angle, T* pSin, T* pCos)
+{
+    *pSin = sin(angle); *pCos = cos(angle);
 }
 Ogre::Quaternion GameCamera::createOrientationYPR(const Ogre::Vector3& ypr)
 {
@@ -370,7 +380,36 @@ Ogre::Quaternion GameCamera::createOrientationYPR(const Ogre::Vector3& ypr)
 
 void GameCamera::updateCameraInfo(const CameraInfo& cameraInfo)
 {
+    bool change = false;
+    if (cameraInfo.width != mCameraInfo.width || 
+        cameraInfo.height != mCameraInfo.height)
+        {
+            change = true;
+        }
     mCameraInfo = cameraInfo;
+
+    if (change)
+    {
+        updateProjectMatrix();
+    }   
+}
+
+void GameCamera::updateProjectMatrix()
+{
+    Ogre::Matrix4 m;
+    if (mCameraInfo.reverseDepth)
+    {
+        float aspectInverse = mCameraInfo.height / (float)mCameraInfo.width;
+        m = Ogre::Math::makePerspectiveMatrixReverseZ(
+            mCameraInfo.fovRadians, aspectInverse, mCameraInfo.nearClip, mCameraInfo.farClip);
+    }
+    else
+    {
+        float aspect = mCameraInfo.width / (float)mCameraInfo.height;
+        m = Ogre::Math::makePerspectiveMatrix(
+            mCameraInfo.fovRadians, aspect, mCameraInfo.nearClip, mCameraInfo.farClip);
+    }
+    mCamera->updateProjectMatrix(m);
 }
 
 void GameCamera::updateCascades(const Ogre::Vector3& lightDirection)

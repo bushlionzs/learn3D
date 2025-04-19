@@ -89,7 +89,12 @@ typedef union ClearValue
 
 typedef struct BindRenderTargetDesc
 {
-    Ogre::RenderTarget* renderTarget;
+    union
+    {
+        Ogre::RenderTarget* renderTarget;
+        Ogre::OgreTexture* texture;
+    }target;
+    bool isTexture = false;
     ClearValue clearColour;
 } BindRenderTargetDesc;
 
@@ -159,6 +164,7 @@ struct RenderPassInfo
     bool flipY = true;
     bool shadowPass = false;
     const char* passName = nullptr;
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh;
 };
 
 struct ComputePassInfo

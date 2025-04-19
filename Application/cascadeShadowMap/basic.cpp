@@ -197,7 +197,7 @@ void BasicApplication::base2()
 			std::shared_ptr<Material>& mat = subEntity->getMaterial();
 			mat->setPbr(false);
 			ShaderInfo& shaderInfo = mat->getShaderInfo();
-
+			shaderInfo.shaderMacros.push_back(std::pair<std::string, std::string>("CAST_SHADOW", "1"));
 			shaderInfo.shaderName = "basic";
 		}
 	}
@@ -209,14 +209,14 @@ void BasicApplication::base2()
 		std::shared_ptr<Material>& mat = subEntity->getMaterial();
 		mat->setPbr(false);
 		ShaderInfo&  shaderInfo = mat->getShaderInfo();
-		
+		shaderInfo.shaderMacros.push_back(std::pair<std::string, std::string>("CAST_SHADOW", "1"));
 		shaderInfo.shaderName = "basic";
 	}
 
-	float h = -1.14f;
+	float h = 1.14f;
 	mGameCamera->lookAt(
 		Ogre::Vector3(-0.12f, h, -5.25f),
-		Ogre::Vector3(-0.12f, h, -6.25f));
+		Ogre::Vector3(-0.12f, h, -4.25f));
 	mGameCamera->setMoveSpeed(3);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();

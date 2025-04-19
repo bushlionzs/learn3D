@@ -35,6 +35,7 @@ public:
     ~VulkanBuffer();
     void* lock(uint32_t offset, uint32_t numBytes);
     void unlock(VkCommandBuffer cmdbuf);
+    void clearBuffer(VkCommandBuffer cmdbuf);
     void loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint32_t byteOffset,
             uint32_t numBytes);
     

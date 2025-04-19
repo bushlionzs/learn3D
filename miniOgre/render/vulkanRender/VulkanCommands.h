@@ -190,6 +190,7 @@ namespace filament::backend {
         // Creates a "current" command buffer if none exists, otherwise returns the current one.
         VulkanCommandBuffer& get();
 
+        bool wait();
         // Submits the current command buffer if it exists, then sets "current" to null.
         // If there are no outstanding commands then nothing happens and this returns false.
         bool flush(bool waitCmd);

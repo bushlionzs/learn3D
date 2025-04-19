@@ -20,7 +20,7 @@ IndexData::~IndexData()
 void IndexData::bind()
 {
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-    rs->bindIndexBuffer(mIndexBufferHandle, mIndexSize);
+    rs->bindIndexBuffer(mIndexBufferHandle, mIndexSize, 0);
 }
 
 void IndexData::createBuffer(uint32_t indexSize, uint32_t indexCount)

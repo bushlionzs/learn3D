@@ -493,7 +493,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 
 	RenderPassInfo renderPassInfo;
 	renderPassInfo.renderTargetCount = 1;
-	renderPassInfo.renderTargets[0].renderTarget = mMipmapTarget;
+	renderPassInfo.renderTargets[0].target.renderTarget = mMipmapTarget;
 	renderPassInfo.depthTarget.depthStencil = nullptr;
 	renderPassInfo.renderTargets[0].clearColour = { 1.0f, 0.0f, 0.0f, 1.0f };
 	renderPassInfo.viewport = false;
@@ -566,6 +566,8 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		copyRegion.extent.width = width;
 		copyRegion.extent.height = height;
 		copyRegion.extent.depth = 1;
+		copyRegion.srcOffset = Ogre::Vector3i(0);
+		copyRegion.dstOffset = Ogre::Vector3i(0);
 		rs->copyImage(tex, srcTexture, copyRegion);
 
 		rtBarriers[0] =

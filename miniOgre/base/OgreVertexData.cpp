@@ -46,7 +46,7 @@ BufferHandleLockGuard::BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle
     mBufferHandle = bufferHandle;
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 
-    mBufferData = rs->lockBuffer(mBufferHandle, 0, UINT32_MAX);
+    mBufferData = rs->bufferMap(mBufferHandle);
 }
 
 void* BufferHandleLockGuard::data()
@@ -57,7 +57,7 @@ void* BufferHandleLockGuard::data()
 BufferHandleLockGuard::~BufferHandleLockGuard()
 {
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-    rs->unlockBuffer(mBufferHandle);
+    rs->bufferUnmap(mBufferHandle);
 }
 
 VertexData::VertexData()

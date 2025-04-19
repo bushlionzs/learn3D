@@ -74,6 +74,24 @@ namespace Ogre
 		return mSwapChain->getCurrentColor()->getAspectFlag();
 	}
 
+	uint32 VulkanRenderTarget::getWidth(void) const
+	{
+		if (mSwapChain)
+		{
+			return mSwapChain->getExtent().width;
+		}
+		return mWidth;
+	}
+
+	uint32 VulkanRenderTarget::getHeight(void) const
+	{
+		if (mSwapChain)
+		{
+			return mSwapChain->getExtent().height;
+		}
+		return mHeight;
+	}
+
 	Ogre::OgreTexture* VulkanRenderTarget::getTarget()
 	{
 		if (mSwapChain)

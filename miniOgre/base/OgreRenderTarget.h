@@ -93,8 +93,8 @@ namespace Ogre {
         const String& getName(void) const;
 
 
-        uint32 getWidth(void) const;
-        uint32 getHeight(void) const;
+        virtual uint32 getWidth(void) const;
+        virtual  uint32 getHeight(void) const;
 
         
         virtual Ogre::OgreTexture* getTarget()

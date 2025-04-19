@@ -158,6 +158,12 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
 
         vkAllocateCommandBuffers(mVKDevice, &allocInfo, &commandInfo->commandBuffer);
     }
+
+    VkDescriptorSetLayoutCreateInfo layoutCreateInfo = {};
+    layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    vkCreateDescriptorSetLayout(mVKDevice, &layoutCreateInfo,
+        nullptr,
+        &pEmptyDescriptorSetLayout);
 }
 
 void VulkanHelper::_createBuffer(

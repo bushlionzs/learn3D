@@ -127,6 +127,8 @@ namespace vks
 		VkShaderModule loadShaderAssic(const char* fileName, VkDevice device, Ogre::ShaderType type);
 
 		VkShaderModule loadShaderMemory(const std::string& code, VkDevice device);
+		VkShaderModule loadShaderMemory(
+			const uint8_t*data, uint32_t size, VkDevice device);
 
 		VkPipelineShaderStageCreateInfo loadShader(
 			const std::string& fileName, 
@@ -164,11 +166,27 @@ namespace vks
 			uint32_t size;
 			VkShaderStageFlags stage;
 		};
-		BingdingInfo getProgramBindings(
-			const std::string& blob, 
+
+		void bingingUpdate(
+			vks::tools::BingdingInfo& bindingMap,
+			vks::tools::BingdingInfo& results,
+			VkShaderStageFlagBits flagBits);
+
+		BingdingInfo getProgramBindings( 
+			const std::string& blob,
 			VkShaderStageFlags stageFlags,
 			std::vector<PushConstants>* pushConstantsList = nullptr);
 		
+		void parseInputBindingDescription(
+			VertexDeclaration* decl,
+			std::vector<GlslInputDesc>& inputDesc,
+			std::vector<VkVertexInputBindingDescription>& vertexInputBindings);
+
+		void parseAttributeDescriptions(
+			VertexDeclaration* decl,
+			std::vector<GlslInputDesc>& inputDesc,
+			std::vector<VkVertexInputAttributeDescription>& attributeDescriptions);
+
 		VkPipelineStageFlags util_determine_pipeline_stage_flags(
 			VulkanSettings* settings,
 			VkAccessFlags accessFlags,

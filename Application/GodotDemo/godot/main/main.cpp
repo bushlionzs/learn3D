@@ -4523,6 +4523,10 @@ bool Main::iteration() {
 		navigation_process_ticks = MAX(navigation_process_ticks, OS::get_singleton()->get_ticks_usec() - navigation_begin); // keep the largest one for reference
 		navigation_process_max = MAX(OS::get_singleton()->get_ticks_usec() - navigation_begin, navigation_process_max);
 
+		if (message_queue == nullptr)
+		{
+			message_queue = memnew(MessageQueue);
+		}
 		message_queue->flush();
 
 #ifndef _3D_DISABLED
@@ -4605,6 +4609,10 @@ bool Main::iteration() {
 		}
 
 		Engine::get_singleton()->_fps = frames;
+		if (performance == nullptr)
+		{
+			performance = memnew(Performance);
+		}
 		performance->set_process_time(USEC_TO_SEC(process_max));
 		performance->set_physics_process_time(USEC_TO_SEC(physics_process_max));
 		performance->set_navigation_process_time(USEC_TO_SEC(navigation_process_max));

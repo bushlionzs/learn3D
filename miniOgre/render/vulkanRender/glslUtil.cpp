@@ -231,7 +231,7 @@ bool glslCompileShader(
         if (itor == gShaderCacheMap.end())
         {
             gShaderCacheMap[key].shaderModule = shader;
-            parserGlslInputDesc(result, shaderModuleInfo.inputDesc);
+            parserGlslInputDesc(result.data(), shaderModuleInfo.inputDesc);
             gShaderCacheMap[key].inputDesc = shaderModuleInfo.inputDesc;
             gShaderCacheMap[key].spv = result;
             shaderModuleInfo.shaderModule = shader;
@@ -247,7 +247,8 @@ void parserGlslInputDesc(
     const std::string& code,
     std::vector<GlslInputDesc>& inputDesc)
 {
-    spirv_cross::CompilerGLSL  glsl((const uint32_t*)code.data(), code.size()/4);
+    assert_invariant(code.size() % 4 == 0);
+    spirv_cross::CompilerGLSL  glsl((const uint32_t*)code.data(), code.size() / 4);
 
     auto inputs = glsl.get_shader_resources().stage_inputs;
 

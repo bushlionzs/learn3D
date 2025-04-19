@@ -4,6 +4,7 @@
 #include "pass.h"
 #include "game_camera.h"
 #include "DriverBase.h"
+#include "ApplicationBase.h"
 
 class BasicApplication
 {
@@ -26,6 +27,8 @@ public:
 
 	void addCustomDirectory();
 	void updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer);
+
+	void preInit(AppInfo* appInfo);
 private:
 	void base1();
 	void base2();

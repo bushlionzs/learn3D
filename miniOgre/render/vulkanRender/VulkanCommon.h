@@ -1,7 +1,4 @@
 #pragma once
-//#include <vulkan/vulkan.h>
-//#include <vulkan/vulkan_beta.h>
-//#include <vulkan/vulkan_win32.h>
 #include <optional>
 #include "OgreHardwareVertexBuffer.h"
 #include "engine_struct.h"
@@ -11,6 +8,7 @@
 #include <DriverEnums.h>
 #include <VulkanUtility.h>
 #include <VulkanBuffer.h>
+#include "VulkanResourceAllocator.h"
 #include <vk_mem_alloc.h>
 #include <tsl/robin_map.h>
 #include <utils/FixedCapacityVector.h>
@@ -140,6 +138,31 @@ struct TransferCommandInfo
     VkCommandBuffer commandBuffer;
 };
 
+class VulkanPipelineLayoutCache;
+class VulkanLayoutCache;
+
+struct VulkanShaderInfo
+{
+    filament::backend::VulkanResourceAllocator* resourceAllocator;
+    VulkanPipelineLayoutCache* pipelineLayoutCache;
+    VulkanLayoutCache* vulkanLayoutCache;
+    VertexDeclaration* decl;
+    VkShaderModule vertexShaderModule = VK_NULL_HANDLE;
+    std::string vertexSpv;
+    VkShaderModule fragShaderModule = VK_NULL_HANDLE;
+    std::string fragSpv;
+    VkShaderModule geometryShaderModule = VK_NULL_HANDLE;
+    std::string geometrySpv;
+};
+
+struct VulkanComputeShaderInfo
+{
+    filament::backend::VulkanResourceAllocator* resourceAllocator;
+    VkDevice device;
+    VkShaderModule computeShaderModule;
+    const char* computeShaderEntryPoint;
+    std::string computeSpv;
+};
 
 #define VULKAN_FRAME_RESOURCE_COUNT 3
 #define VULKAN_TEXTURE_COUNT 6

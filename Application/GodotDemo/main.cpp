@@ -13,8 +13,16 @@ int main2()
 	info.engineType = EngineType_Vulkan;
 	//info.engineType = EngineType_Dx12;
 	ManualApplication app;
+	info.preInit = [&instance](AppInfo* info)
+		{
+			instance.preInit(info);
+		};
 
-	info.setup = [&instance, &app](RenderSystem* rs, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
+	info.setup = [&instance, &app](
+		RenderSystem* rs, 
+		Ogre::RenderWindow* win, 
+		Ogre::SceneManager* sceneManager, 
+		GameCamera* gameCamera) {
 		instance.setup(&app, rs, win, sceneManager, gameCamera);
 		};
 
@@ -25,8 +33,6 @@ int main2()
 		};
 
 	app.run(info);
-
-	std::atomic<uint32_t> value;
 
 	return 0;
 }

@@ -16,20 +16,24 @@ namespace Ogre
 
 
 class PassBase;
+struct AppInfo;
+using PreInitCallback = std::function<void(AppInfo* appInfo)>;
 using SetupCallback = std::function<void(RenderSystem*, Ogre::RenderWindow*, Ogre::SceneManager*, GameCamera*)>;
 using CleanupCallback = std::function<void()>;
 using UpdateCallback = std::function<void(float)>;
-
+using LoopCallback = std::function<void()>;
 struct AppInfo
 {
-    SetupCallback setup;
-    CleanupCallback cleanup;
-    UpdateCallback update;
-
+    PreInitCallback preInit = nullptr;
+    SetupCallback setup = nullptr;
+    CleanupCallback cleanup = nullptr;
+    UpdateCallback update = nullptr;
+    LoopCallback loopback = nullptr;
     EngineType engineType = EngineType_Vulkan;
     bool enableRayTracing = false;
     bool useCEGUI = false;
     bool useSRGB = false;
+    int64_t appWnd = 0;
 };
 
 

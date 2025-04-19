@@ -291,11 +291,22 @@ void VulkanRenderSystemBase::beginRenderPass(
         colorAttachments[i].imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
         colorAttachments[i].loadOp = VulkanMappings::getVkAttachmentLoadOp(renderPassInfo.renderLoadAction);
         colorAttachments[i].storeOp = VulkanMappings::getVkAttachmentStoreOp(renderPassInfo.renderStoreAction);
-        Ogre::VulkanRenderTarget* rt = (Ogre::VulkanRenderTarget*)renderPassInfo.renderTargets[i].renderTarget;
+        
+        VulkanTexture* vulkanTexture = nullptr;
+        if (renderPassInfo.renderTargets[i].isTexture)
+        {
+            vulkanTexture = (VulkanTexture*)renderPassInfo.renderTargets[i].target.texture;
+        }
+        else
+        {
+            Ogre::VulkanRenderTarget* rt = (Ogre::VulkanRenderTarget*)renderPassInfo.renderTargets[i].target.renderTarget;
+            vulkanTexture = (VulkanTexture*)rt->getTarget();
+        }
+        
 
         vks::tools::insertImageMemoryBarrier(
             cmdBuffer,
-            rt->getImage(),
+            vulkanTexture->getVkImage(),
             0,
             VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
             VK_IMAGE_LAYOUT_UNDEFINED,
@@ -304,7 +315,7 @@ void VulkanRenderSystemBase::beginRenderPass(
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
             VkImageSubresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
 
-        colorAttachments[i].imageView = rt->getImageView(0);
+        colorAttachments[i].imageView = vulkanTexture->getVkImageView();
         const ClearValue* clearValue = &renderPassInfo.renderTargets[i].clearColour;
         colorAttachments[i].clearValue.color = { { clearValue->r, clearValue->g, clearValue->b, clearValue->a } };
     }
@@ -343,8 +354,18 @@ void VulkanRenderSystemBase::beginRenderPass(
     uint32_t layerCount = 0;
     if (renderPassInfo.renderTargetCount)
     {
-        renderArea.extent.width = renderPassInfo.renderTargets[0].renderTarget->getWidth();
-        renderArea.extent.height = renderPassInfo.renderTargets[0].renderTarget->getHeight();
+        VulkanTexture* vulkanTexture = nullptr;
+        if (renderPassInfo.renderTargets[0].isTexture)
+        {
+            vulkanTexture = (VulkanTexture*)renderPassInfo.renderTargets[0].target.texture;
+        }
+        else
+        {
+            Ogre::VulkanRenderTarget* rt = (Ogre::VulkanRenderTarget*)renderPassInfo.renderTargets[0].target.renderTarget;
+            vulkanTexture = (VulkanTexture*)rt->getTarget();
+        }
+        renderArea.extent.width = vulkanTexture->getWidth();
+        renderArea.extent.height = vulkanTexture->getHeight();
         layerCount = 1;
     }
     else if (hasDepth)
@@ -440,9 +461,22 @@ void VulkanRenderSystemBase::bindPipeline(
     }
 }
 
-void VulkanRenderSystemBase::draw(uint32_t vertexCount, uint32_t firstVertex)
+void VulkanRenderSystemBase::draw(uint32_t vertexCount,
+    uint32_t instanceCount,
+    uint32_t firstVertex,
+    uint32_t firstInstance,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
-    vkCmdDraw(mCommandBuffer, vertexCount, 1, firstVertex, 0);
+    if (cbh)
+    {
+        VulkanCommandBuffer2* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*cbh);
+        vkCmdDraw(vulkanBufferObject->commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
+    }
+    else
+    {
+        vkCmdDraw(mCommandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
+    }
+    
     incrTriangleCount(vertexCount / 3);
     incrBatchCount(1);
 }
@@ -452,10 +486,21 @@ void VulkanRenderSystemBase::drawIndexed(
     uint32_t instanceCount,
     uint32_t firstIndex,
     uint32_t vertexOffset,
-    uint32_t firstInstance)
+    uint32_t firstInstance,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
-    vkCmdDrawIndexed(mCommandBuffer, indexCount, instanceCount,
-        firstIndex, vertexOffset, firstInstance);
+    if (cbh)
+    {
+        VulkanCommandBuffer2* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*cbh);
+        vkCmdDrawIndexed(vulkanBufferObject->commandBuffer, indexCount, instanceCount,
+            firstIndex, vertexOffset, firstInstance);
+    }
+    else
+    {
+        vkCmdDrawIndexed(mCommandBuffer, indexCount, instanceCount,
+            firstIndex, vertexOffset, firstInstance);
+    }
+    
 
     incrTriangleCount(indexCount / 3);
 
@@ -466,10 +511,21 @@ void VulkanRenderSystemBase::drawIndexedIndirect(
     Handle<HwBufferObject> drawBuffer,
     uint32_t offset,
     uint32_t drawCount,
-    uint32_t stride
+    uint32_t stride,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh
 )
 {
-    auto cmdBuffer = mCommands->get().buffer();
+    VkCommandBuffer cmdBuffer;
+    if (cbh)
+    {
+        VulkanCommandBuffer2* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*cbh);
+        cmdBuffer = vulkanBufferObject->commandBuffer;
+    }
+    else
+    {
+        cmdBuffer = mCommands->get().buffer();
+    }
+   
     VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(drawBuffer);
     VkBuffer vkBuf = vulkanBufferObject->buffer.getGpuBuffer();
     vkCmdDrawIndexedIndirect(cmdBuffer, vkBuf, offset, drawCount, stride);
@@ -539,12 +595,41 @@ void VulkanRenderSystemBase::copyImage(
         1, &copyRegion);
 }
 
+void VulkanRenderSystemBase::copyImage(
+    Ogre::OgreTexture* dst,
+    Ogre::OgreTexture* src,
+    Ogre::ImageCopyDesc& desc)
+{
+    VkImageCopy copyRegion{};
+    copyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    copyRegion.srcSubresource.baseArrayLayer = desc.srcSubresource.baseArrayLayer;
+    copyRegion.srcSubresource.layerCount = desc.srcSubresource.layerCount;
+    copyRegion.srcSubresource.mipLevel = desc.srcSubresource.mipLevel;
+
+    copyRegion.srcOffset = { desc.srcOffset.x, desc.srcOffset.y, desc.srcOffset.z};
+    copyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    copyRegion.dstSubresource.baseArrayLayer = desc.dstSubresource.baseArrayLayer;
+    copyRegion.dstSubresource.layerCount = desc.dstSubresource.layerCount;
+    copyRegion.dstSubresource.mipLevel = desc.dstSubresource.mipLevel;
+    copyRegion.dstOffset = { desc.dstOffset.x, desc.dstOffset.y, desc.dstOffset.z };
+    copyRegion.extent.width = desc.extent.width;
+    copyRegion.extent.height = desc.extent.height;
+    copyRegion.extent.depth = desc.extent.depth;
+    VulkanTexture* srcImage = (VulkanTexture*)src;
+    VulkanTexture* dstImage = (VulkanTexture*)dst;
+    vkCmdCopyImage(mCommandBuffer, srcImage->getVkImage(),
+        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+        dstImage->getVkImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        1, &copyRegion);
+}
+
 void VulkanRenderSystemBase::copyBuffer(
     Handle<HwBufferObject> src,
     uint32_t srcOffset,
     Handle<HwBufferObject> dst,
     uint32_t dstOffset,
-    uint32_t size
+    uint32_t size,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh
 )
 {
     VkBuffer dstBuffer = mResourceAllocator.handle_cast<VulkanBufferObject*>(dst)->buffer.getGpuBuffer();
@@ -555,7 +640,14 @@ void VulkanRenderSystemBase::copyBuffer(
     copyRegion.dstOffset = dstOffset;
     copyRegion.size = size;   
 
-    vkCmdCopyBuffer(mCommandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+    VkCommandBuffer cmdBuf = mCommandBuffer;
+    if (cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*cbh);
+        cmdBuf = cb->commandBuffer;
+    }
+
+    vkCmdCopyBuffer(cmdBuf, srcBuffer, dstBuffer, 1, &copyRegion);
 }
 
 void VulkanRenderSystemBase::pushGroupMarker(const char* maker, const Ogre::Vector3i& color)
@@ -582,13 +674,20 @@ void VulkanRenderSystemBase::popGroupMarker()
     }
 }
 
-void* VulkanRenderSystemBase::lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes)
+void VulkanRenderSystemBase::getFamilyInfo(FamilyInfo& desc)
+{
+    desc.graphicsQueueFamilyIndex = mVulkanPlatform->getGraphicsQueueFamilyIndex();
+    desc.transferQueueFamilyIndex = mVulkanPlatform->getTransferQueueFamilyIndex();
+    desc.transferQueueCount = mVulkanPlatform->getTransferQueueCount();
+}
+
+void* VulkanRenderSystemBase::bufferMap(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes)
 {
     VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
     return vulkanBufferObject->buffer.lock(offset, numBytes);
 }
 
-void VulkanRenderSystemBase::unlockBuffer(Handle<HwBufferObject> bufHandle)
+void VulkanRenderSystemBase::bufferUnmap(Handle<HwBufferObject> bufHandle)
 {
     VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
     vulkanBufferObject->buffer.unlock(mCommands->get().buffer());
@@ -597,11 +696,11 @@ void VulkanRenderSystemBase::unlockBuffer(Handle<HwBufferObject> bufHandle)
 void VulkanRenderSystemBase::bindVertexBuffer(
     Handle<HwBufferObject> bufferHandle, 
     uint32_t binding,
-    uint32_t vertexSize)
+    uint32_t offset)
 {
     VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufferHandle);
 
-    VkDeviceSize offsets[1] = { 0 };
+    VkDeviceSize offsets[1] = { offset };
     auto cmdBuffer = mCommands->get().buffer();
 
     VkBuffer vkBuffer = vulkanBufferObject->buffer.getGpuBuffer();
@@ -609,14 +708,17 @@ void VulkanRenderSystemBase::bindVertexBuffer(
 
 }
 
-void VulkanRenderSystemBase::bindIndexBuffer(Handle<HwBufferObject> bufferHandle, uint32_t indexSize)
+void VulkanRenderSystemBase::bindIndexBuffer(
+    Handle<HwBufferObject> bufferHandle, 
+    uint32_t indexSize,
+    uint32_t offset)
 {
     VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufferHandle);
     auto cmdBuffer = mCommands->get().buffer();
 
     VkBuffer vkBuffer = vulkanBufferObject->buffer.getGpuBuffer();
 
-    vkCmdBindIndexBuffer(cmdBuffer, vkBuffer, 0, indexSize==2? VK_INDEX_TYPE_UINT16: VK_INDEX_TYPE_UINT32);
+    vkCmdBindIndexBuffer(cmdBuffer, vkBuffer, offset, indexSize==2? VK_INDEX_TYPE_UINT16: VK_INDEX_TYPE_UINT32);
 }
 
 Handle<HwBufferObject> VulkanRenderSystemBase::createBufferObject(
@@ -648,6 +750,28 @@ void VulkanRenderSystemBase::updateBufferObject(
     VulkanCommandBuffer& commands = mCommands->get();
     VulkanBufferObject* bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
     bo->buffer.loadFromCpu(commands.buffer(), data, offset, size);
+}
+
+bool VulkanRenderSystemBase::getBufferInfo(
+    filament::backend::Handle<filament::backend::HwBufferObject> boh,
+    Ogre::BufferDesc& desc)
+{
+    VulkanBufferObject* bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
+    desc.mSize = bo->buffer.getBufferBytes();
+    return true;
+}
+
+void VulkanRenderSystemBase::clearBufferObject(
+    filament::backend::Handle<filament::backend::HwBufferObject> boh,
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh
+)
+{
+    VulkanBufferObject* bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
+
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+
+    bo->buffer.clearBuffer(cb->commandBuffer);
+
 }
 
 bool VulkanRenderSystemBase::getBufferObject(Handle<HwBufferObject> boh,
@@ -740,44 +864,7 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
 
     auto res = ResourceManager::getSingleton().getResourceInfo(privateInfo->vertexShaderName);
 
-    vks::tools::BingdingInfo bindingMap;
-
-    auto bingingUpdate = [](
-        vks::tools::BingdingInfo& bindingMap,
-        vks::tools::BingdingInfo& results,
-        VkShaderStageFlagBits flagBits
-        )
-        {
-            auto findLayout = [](
-                std::vector<VKDescriptorInfo>& bindingList,
-                VKDescriptorInfo binding)
-                {
-                    for (auto i = 0; i < bindingList.size(); i++)
-                    {
-                        if (bindingList.at(i).layoutBinding.binding == binding.layoutBinding.binding)
-                        {
-                            return i;
-                        }
-                    }
-                    return -1;
-                };
-            for (auto& pair : results)
-            {
-                auto& bingdingList = bindingMap[pair.first];
-                for (auto& layoutBingding : pair.second)
-                {
-                    auto i = findLayout(bingdingList, layoutBingding);
-                    if (i >= 0)
-                    {
-                        bingdingList[i].layoutBinding.stageFlags |= flagBits;
-                    }
-                    else
-                    {
-                        bingdingList.push_back(layoutBingding);
-                    }
-                }
-            }
-        };
+    VulkanShaderInfo vulkanShaderInfo;
 
     String* vertexContent = ShaderManager::getSingleton().getShaderContent(privateInfo->vertexShaderName);
     VkShaderModuleInfo moduleInfo;
@@ -789,27 +876,9 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
         shaderInfo.shaderMacros,
         nullptr,
         moduleInfo);
-    
-    vulkanProgram->updateVertexShader(moduleInfo.shaderModule);
-    std::vector<VkVertexInputAttributeDescription>& attributeDescriptions =
-        vulkanProgram->getAttributeDescriptions();
-    this->parseAttributeDescriptions(decl, moduleInfo.inputDesc, attributeDescriptions);
-    std::vector<VkVertexInputBindingDescription>& vertexInputBindings =
-        vulkanProgram->getVertexInputBindings();
-    this->parseInputBindingDescription(decl, moduleInfo.inputDesc, vertexInputBindings);
 
-    std::vector<vks::tools::PushConstants> constantsList;
-    auto results = vks::tools::getProgramBindings(
-        moduleInfo.spv, 
-        VK_SHADER_STAGE_VERTEX_BIT,
-        &constantsList);
-    for (auto& pair : results)
-    {
-        for (auto& layoutBingding : pair.second)
-        {
-            bindingMap[pair.first].push_back(layoutBingding);
-        }
-    }
+    vulkanShaderInfo.vertexSpv.swap(moduleInfo.spv);
+    vulkanShaderInfo.vertexShaderModule = moduleInfo.shaderModule;
 
     res = ResourceManager::getSingleton().getResourceInfo(privateInfo->geometryShaderName);
     if (res)
@@ -824,10 +893,9 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
             shaderInfo.shaderMacros,
             nullptr,
             moduleInfo);
-        vulkanProgram->updateGeometryShader(moduleInfo.shaderModule);
 
-        auto results = vks::tools::getProgramBindings(moduleInfo.spv, VK_SHADER_STAGE_GEOMETRY_BIT);
-        bingingUpdate(bindingMap, results, VK_SHADER_STAGE_GEOMETRY_BIT);
+        vulkanShaderInfo.geometrySpv.swap(moduleInfo.spv);
+        vulkanShaderInfo.geometryShaderModule = moduleInfo.shaderModule;
     }
     res = ResourceManager::getSingleton().getResourceInfo(privateInfo->fragShaderName);
 
@@ -844,90 +912,16 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
             shaderInfo.shaderMacros,
             nullptr,
             moduleInfo);
-        vulkanProgram->updateFragmentShader(moduleInfo.shaderModule);
-        constantsList.clear();
-        auto results = vks::tools::getProgramBindings(
-            moduleInfo.spv, 
-            VK_SHADER_STAGE_FRAGMENT_BIT,
-            &constantsList);
-        bingingUpdate(bindingMap, results, VK_SHADER_STAGE_FRAGMENT_BIT);
+        
+        vulkanShaderInfo.fragSpv.swap(moduleInfo.spv);
+        vulkanShaderInfo.fragShaderModule = moduleInfo.shaderModule;
     }
     
-    vulkanProgram->updateDescriptorInfo(bindingMap);
-
-    VkDescriptorSetLayoutBinding toBind[VulkanDescriptorSetLayout::MAX_BINDINGS];
-    uint32_t bindIndex = 0;
-    VulkanPipelineLayoutCache::PipelineLayoutKey keys;
-    for (auto set = 0; set < VulkanDescriptorSetLayout::MAX_BINDING_SET; set++)
-    {
-        bindIndex = 0;
-        
-        auto itor = bindingMap.find(set);
-
-        if (itor != bindingMap.end())
-        {
-            for (auto& obj : itor->second)
-            {
-                toBind[bindIndex] = obj.layoutBinding;
-                bindIndex++;
-            }
-        }
-        
-        if(bindIndex == 0)
-        {
-            keys.setLayout[set] = pEmptyDescriptorSetLayout;
-        }
-        else
-        {
-            VulkanDescriptorSetLayout::VulkanDescriptorSetLayoutInfo info;
-
-            for (auto i = 0; i < bindIndex; i++)
-            {
-                switch (toBind[i].descriptorType)
-                {
-                case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
-                    info.combinedImage++;
-                    break;
-                case VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE:
-                    info.inputAttachmentCount++;
-                    break;
-                case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
-                    info.storeImage++;
-                    break;
-                case VK_DESCRIPTOR_TYPE_SAMPLER:
-                    info.samplerCount++;
-                    break;
-                case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
-                    info.storeCount++;
-                    break;
-                case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
-                    info.uboCount++;
-                    break;
-                default:
-                    assert_invariant(false);
-                    break;
-                }
-            }
-            Handle<HwDescriptorSetLayout> layoutHandle = 
-                mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
-            VulkanDescriptorSetLayout* vulkanLayout = 
-                mResourceAllocator.construct<VulkanDescriptorSetLayout>(layoutHandle, info);
-            
-            
-            VkDescriptorSetLayout vkLayout = mVulkanLayoutCache->getLayout(&toBind[0], bindIndex);
-            vulkanLayout->setVkLayout(vkLayout);
-
-            keys.setLayout[set] = vkLayout;
-
-            vulkanProgram->updateLayout(set, layoutHandle);
-        }
-    }
-
-    keys.pushConstant->size = 0;
-    keys.pushConstant->stage = 0;
-   
-    VkPipelineLayout vulkanPipelineLayout = mPipelineLayoutCache->getLayout(keys);
-    vulkanProgram->updateVulkanPipelineLayout(vulkanPipelineLayout);
+    vulkanShaderInfo.resourceAllocator = &mResourceAllocator;
+    vulkanShaderInfo.pipelineLayoutCache = mPipelineLayoutCache;
+    vulkanShaderInfo.vulkanLayoutCache = mVulkanLayoutCache;
+    vulkanShaderInfo.decl = decl;
+    vulkanProgram->updateShaderInfo(vulkanShaderInfo);
     
     return program;
 }
@@ -980,108 +974,15 @@ Handle<HwComputeProgram> VulkanRenderSystemBase::createComputeProgram(const Shad
         shaderInfo.shaderMacros,
         nullptr,
         moduleInfo);
-    vulkanProgram->updateComputeShader(moduleInfo.shaderModule);
 
-    auto results = vks::tools::getProgramBindings(moduleInfo.spv, VK_SHADER_STAGE_COMPUTE_BIT);
-    vulkanProgram->updateDescriptorInfo(results);
-   
-    assert_invariant(!results.empty() && "Need at least one binding for descriptor set layout.");
-
-    std::array<VkDescriptorSetLayout, 4> layoutlist;
-
-    for (auto set = 0; set < 4; set++)
-    {
-        auto itor = results.find(set);
-        if (itor == results.end())
-        {
-            layoutlist[set] = pEmptyDescriptorSetLayout;
-            continue;
-        }
-
-        VkDescriptorSetLayoutBinding binding[VulkanDescriptorSetLayout::MAX_BINDINGS];
-        uint32_t size = itor->second.size();
-        for (uint32_t i = 0; i < size; i++)
-        {
-            binding[i] = itor->second[i].layoutBinding;
-        }
-        VkDescriptorSetLayoutCreateInfo dlinfo = {
-            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-            .pNext = nullptr,
-            .bindingCount = (uint32_t)itor->second.size(),
-            .pBindings = binding,
-        };
-
-        //todo: use layout cache
-        VkDescriptorSetLayout vkLayout;
-        vkCreateDescriptorSetLayout(mVulkanPlatform->getDevice(), &dlinfo, VKALLOC, &vkLayout);
-        layoutlist[set] = vkLayout;
-        vulkanProgram->updateSetLayout(vkLayout);
-        DescriptorSetLayout layoutInfo;
-        Handle<HwDescriptorSetLayout> dslh = mResourceAllocator.allocHandle<VulkanDescriptorSetLayout>();
-        VulkanDescriptorSetLayout::VulkanDescriptorSetLayoutInfo info;
-        for (auto& binding : itor->second)
-        {
-            switch (binding.layoutBinding.descriptorType)
-            {
-            case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
-                info.combinedImage++;
-                break;
-            case VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE:
-                info.inputAttachmentCount++;
-                break;
-            case VK_DESCRIPTOR_TYPE_SAMPLER:
-                info.samplerCount++;
-                break;
-            case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
-                info.storeCount++;
-                break;
-            case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
-                info.uboCount++;
-                break;
-            }
-        }
-        VulkanDescriptorSetLayout* uboLayout = mResourceAllocator.construct<VulkanDescriptorSetLayout>(dslh, info);
-        uboLayout->setVkLayout(vkLayout);
-        vulkanProgram->updateSetLayoutHandle(set, dslh);
-    }
+    VulkanComputeShaderInfo vulkanShaderInfo;
+    vulkanShaderInfo.computeShaderEntryPoint = privateInfo->computeShaderEntryPoint.c_str();
+    vulkanShaderInfo.computeShaderModule = moduleInfo.shaderModule;
+    vulkanShaderInfo.computeSpv.swap(moduleInfo.spv);
+    vulkanShaderInfo.device = mVulkanPlatform->getDevice();
+    vulkanShaderInfo.resourceAllocator = &mResourceAllocator;
+    vulkanProgram->upateShaderInfo(vulkanShaderInfo);
     
-    VkPipelineLayout pipelineLayout;
-    VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo =
-        vks::initializers::pipelineLayoutCreateInfo(
-            layoutlist.data(),
-            results.size());
-
-
-    if (vkCreatePipelineLayout(mVulkanPlatform->getDevice(), &pPipelineLayoutCreateInfo,
-        nullptr, &pipelineLayout) != VK_SUCCESS)
-    {
-        assert_invariant(!results.empty() && "vkCreatePipelineLayout failed.");
-    }
-
-    vulkanProgram->updatePipelineLayout(pipelineLayout);
-
-    VkPipelineShaderStageCreateInfo stage{};
-    stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    stage.pNext = NULL;
-    stage.flags = 0;
-    stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-    stage.module = moduleInfo.shaderModule;
-    stage.pName = privateInfo->computeShaderEntryPoint.c_str();
-    stage.pSpecializationInfo = nullptr;
-
-    VkComputePipelineCreateInfo create_info{};
-    create_info.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-    create_info.pNext = NULL;
-    create_info.flags = 0;
-    create_info.stage = stage;
-    create_info.layout = pipelineLayout;
-    create_info.basePipelineHandle = 0;
-    create_info.basePipelineIndex = 0;
-    VkPipeline pipeline;
-    vkCreateComputePipelines(mVulkanPlatform->getDevice(), NULL, 1, &create_info,
-        nullptr, &pipeline);
-
-    vulkanProgram->updatePipeline(pipeline);
     return program;
 }
 
@@ -1111,13 +1012,13 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     vulkanRasterState.dstColorBlendFactor = getBlendFactor(rasterState.blendFunctionDstRGB);
     vulkanRasterState.srcAlphaBlendFactor = getBlendFactor(rasterState.blendFunctionSrcAlpha);
     vulkanRasterState.dstAlphaBlendFactor = getBlendFactor(rasterState.blendFunctionDstAlpha);
-    vulkanRasterState.colorBlendOp = rasterState.blendEquationRGB;
-    vulkanRasterState.alphaBlendOp = rasterState.blendEquationAlpha;
+    vulkanRasterState.colorBlendOp = (Ogre::BlendEquation)rasterState.blendEquationRGB;
+    vulkanRasterState.alphaBlendOp = (Ogre::BlendEquation)rasterState.blendEquationAlpha;
 
     vulkanRasterState.colorWriteMask = 0xf;
     vulkanRasterState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
     vulkanRasterState.colorTargetCount = rasterState.renderTargetCount;
-    vulkanRasterState.depthCompareOp = rasterState.depthFunc;
+    vulkanRasterState.depthCompareOp = CMPF_LESS;
     vulkanRasterState.depthBiasConstantFactor = rasterState.depthBiasConstantFactor;
     vulkanRasterState.depthBiasSlopeFactor = rasterState.depthBiasSlopeFactor;
     vulkanRasterState.depthBiasEnable = rasterState.depthBiasConstantFactor > 0.1f;
@@ -1424,92 +1325,280 @@ uint32_t VulkanRenderSystemBase::getAlignmentSize(BufferObjectBinding bufferType
     return 16;
 }
 
-void VulkanRenderSystemBase::parseInputBindingDescription(
-    VertexDeclaration* decl,
-    std::vector<GlslInputDesc>& inputDesc,
-    std::vector<VkVertexInputBindingDescription>& vertexInputBindings)
+Handle<HwFence> VulkanRenderSystemBase::createFence()
 {
-    vertexInputBindings.clear();
-    if (decl)
-    {
-        for (uint32_t binding = 0; binding < 10; binding++)
-        {
-            int32_t stride = decl->getVertexSize(binding);
+    Handle<HwFence> fh = mResourceAllocator.allocHandle<VulkanFence>();
 
-            if (stride <= 0)
-                continue;
-            vertexInputBindings.emplace_back();
-            vertexInputBindings.back().binding = binding;
-            vertexInputBindings.back().stride = stride;
-            vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-        }
+    VulkanFence* fence = mResourceAllocator.construct<VulkanFence>(fh);
+
+    return fh;
+}
+
+void VulkanRenderSystemBase::waitFence(Handle<HwFence> fh)
+{
+    VulkanFence* fence = mResourceAllocator.handle_cast<VulkanFence*>(fh);
+    auto device = mVulkanPlatform->getDevice();
+    auto vkFence = fence->fence->getFence();
+    VkResult fence_status = vkGetFenceStatus(device, vkFence);
+    if (fence_status == VK_NOT_READY) {
+        VkResult err = vkWaitForFences(device, 1, &vkFence, VK_TRUE, UINT64_MAX);
+        assert_invariant(err == VK_SUCCESS);
+    }
+
+    VkResult err = vkResetFences(device, 1, &vkFence);
+    assert_invariant(err == VK_SUCCESS);
+}
+
+Handle<HwSemaphore> VulkanRenderSystemBase::createSemaphore()
+{
+    Handle<HwSemaphore> sh = mResourceAllocator.allocHandle<HwSemaphore>();
+
+    VulkanSemaphore* semaphore = mResourceAllocator.construct<VulkanSemaphore>(sh, mVulkanPlatform->getDevice());
+
+    return sh;
+}
+
+Handle<HwCommandBuffer> VulkanRenderSystemBase::createCommandBuffer(uint32_t queueFamilyIndex)
+{
+    Handle<HwCommandBuffer> cbh = mResourceAllocator.allocHandle<HwCommandBuffer>();
+
+    VulkanCommandBuffer2* cb = mResourceAllocator.construct<VulkanCommandBuffer2>(
+        cbh, &mResourceAllocator, mVulkanPlatform->getDevice(), queueFamilyIndex);
+
+    return cbh;
+}
+
+void VulkanRenderSystemBase::beginCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+
+    const VkCommandBufferBeginInfo binfo{
+                .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+                .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+    };
+    
+    vkBeginCommandBuffer(cb->commandBuffer, &binfo);
+}
+
+void VulkanRenderSystemBase::endCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    vkEndCommandBuffer(cb->commandBuffer);
+}
+
+void VulkanRenderSystemBase::clearCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    //vkClearCommandBuffer(cb->commandBuffer);
+}
+
+Handle<HwCommandQueue> VulkanRenderSystemBase::createCommandQueue(uint32_t familyIndex, uint32_t queueIndex)
+{
+    Handle<HwCommandQueue> cqh = mResourceAllocator.allocHandle<HwCommandQueue>();
+
+    VkQueue queue = VK_NULL_HANDLE;
+
+    if (familyIndex == mVulkanPlatform->getGraphicsQueueFamilyIndex())
+    {
+        queue = mVulkanPlatform->getGraphicsQueue();
     }
     else
     {
-        int32_t stride = 0;
-        for (auto i = 0; i < inputDesc.size(); i++)
-        {
-            auto& input = inputDesc[i];
-
-            stride += getTypeSize(input._type);
-        }
-
-       
-        vertexInputBindings.emplace_back();
-        vertexInputBindings.back().binding = 0;
-        vertexInputBindings.back().stride = stride;
-        vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-        
+        queue = mVulkanPlatform->getTransferQueue(queueIndex);
     }
+
+    VulkanCommandQueue* cq = mResourceAllocator.construct<VulkanCommandQueue>(
+        cqh, queue);
+    return cqh;
 }
 
-void VulkanRenderSystemBase::parseAttributeDescriptions(
-    VertexDeclaration* decl,
-    std::vector<GlslInputDesc>& inputDesc,
-    std::vector<VkVertexInputAttributeDescription>& attributeDescriptions)
+Handle<HwSwapChain> VulkanRenderSystemBase::createSwapChain()
 {
+    Handle<HwSwapChain> sch = mResourceAllocator.allocHandle<VulkanSwapChain>();
 
-    attributeDescriptions.resize(inputDesc.size());
-    if (decl == nullptr)
+    //VulkanSwapChain* swapChain = mResourceAllocator.construct<VulkanSwapChain>(sch);
+
+    return sch;
+}
+
+void VulkanRenderSystemBase::swapChainAcquire(
+    filament::backend::Handle<filament::backend::HwSwapChain> sch,
+    SwapChainInfo& scInfo)
+{
+    bool resized = false;
+    mSwapChain->acquire(resized);
+
+    scInfo.color = mSwapChain->getCurrentColor();
+    scInfo.depth = mSwapChain->getDepth();
+}
+
+
+Handle<HwShader> VulkanRenderSystemBase::createShader(Ogre::ShaderDesc& desc)
+{
+    Handle<HwShader> sh = mResourceAllocator.allocHandle<HwShader>();
+
+    VulkanShader* cq = mResourceAllocator.construct<VulkanShader>(sh);
+    auto device = mVulkanPlatform->getDevice();
+    if (desc.computeBin.empty())
     {
-        uint32_t offset = 0;
-        for (auto i = 0; i < inputDesc.size(); i++)
-        {
-            auto& input = inputDesc[i];
-            attributeDescriptions[i].binding = 0;
-            attributeDescriptions[i].location = input._location;
-            attributeDescriptions[i].format = getVKFormatFromType(input._type);
-            attributeDescriptions[i].offset = offset;
-            offset += getTypeSize(input._type);
-        }
-        return;
+        VulkanShaderProgram* shaderProgram = new VulkanShaderProgram(desc.name);
+        cq->shaderProgram = shaderProgram;
+        
+        VulkanShaderInfo shaderInfo;
+        shaderInfo.vertexShaderModule = vks::tools::loadShaderMemory(desc.vertexBin, device);
+        shaderInfo.vertexSpv = desc.vertexBin;
+
+        shaderInfo.fragShaderModule = vks::tools::loadShaderMemory(desc.fragBin, device);
+        shaderInfo.fragSpv = desc.fragBin;
+        
+        shaderInfo.resourceAllocator = &mResourceAllocator;
+        shaderInfo.pipelineLayoutCache = mPipelineLayoutCache;
+        shaderInfo.vulkanLayoutCache = mVulkanLayoutCache;
+        shaderInfo.decl = desc.decl;
+        shaderProgram->updateShaderInfo(shaderInfo);
+    }
+    else
+    {
+        VulkanComputeProgram* computeProgram = new VulkanComputeProgram(desc.name);
+        cq->computeProgram = computeProgram;
+
+        VulkanComputeShaderInfo shaderInfo;
+        shaderInfo.computeShaderEntryPoint = "main";
+        shaderInfo.computeShaderModule = vks::tools::loadShaderMemory(desc.computeBin, device);
+        shaderInfo.computeSpv = desc.computeBin;
+        shaderInfo.device = device;
+        shaderInfo.resourceAllocator = &mResourceAllocator;
+        computeProgram->upateShaderInfo(shaderInfo);
+    }
+    return sh;
+}
+
+Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
+    Ogre::PipelineCreateInfo& pipelineCreateInfo,
+    Handle<HwShader>& shader
+)
+{
+    Handle<HwPipeline> ph = mResourceAllocator.allocHandle<HwPipeline>();
+    VulkanShader* vulkanShader = mResourceAllocator.handle_cast<VulkanShader*>(shader);
+
+    VulkanShaderProgram* vulkanProgram = vulkanShader->shaderProgram;
+    VkPipelineLayout pipelineLayout = vulkanProgram->getVulkanPipelineLayout();
+    VulkanPipelineCache::RasterState vulkanRasterState;
+    
+    RasterizationStateInfo& rasterizationState = pipelineCreateInfo.rasterizationState;
+    DepthStencilStateInfo& depthStencilState = pipelineCreateInfo.depthStencilState;
+    ColorBlendStateInfo& colorBlendState = pipelineCreateInfo.colorBlendState;
+    RenderTargetInfo& renderTarget = pipelineCreateInfo.renderTarget;
+    //depth
+    vulkanRasterState.depthBiasEnable = rasterizationState.depthBiasEnable;
+    vulkanRasterState.depthWriteEnable = depthStencilState.depthWriteEnable;
+    vulkanRasterState.depthTestEnable = depthStencilState.depthTestEnable;
+    vulkanRasterState.depthCompareOp = depthStencilState.depthCompareOp;
+    vulkanRasterState.depthBiasConstantFactor = rasterizationState.depthBiasConstantFactor;
+    vulkanRasterState.depthBiasSlopeFactor = rasterizationState.depthBiasSlopeFactor;
+
+    //blend
+    vulkanRasterState.blendEnable = colorBlendState.blendEnable;
+    
+    if (vulkanRasterState.blendEnable)
+    {
+        vulkanRasterState.srcColorBlendFactor = VulkanMappings::getBlendFactor(colorBlendState.blendFunctionSrcRGB);
+        vulkanRasterState.dstColorBlendFactor = VulkanMappings::getBlendFactor(colorBlendState.blendFunctionDstRGB);
+        vulkanRasterState.srcAlphaBlendFactor = VulkanMappings::getBlendFactor(colorBlendState.blendFunctionSrcAlpha);
+        vulkanRasterState.dstAlphaBlendFactor = VulkanMappings::getBlendFactor(colorBlendState.blendFunctionDstAlpha);
+        vulkanRasterState.colorBlendOp = colorBlendState.blendEquationRGB;
+        vulkanRasterState.alphaBlendOp = colorBlendState.blendEquationAlpha;
     }
     
-    int32_t i = 0;
-    auto& elementlist = decl->getElementList();
-    for (GlslInputDesc& input : inputDesc)
-    {
-        bool find = false;
+    vulkanRasterState.cullMode = VulkanMappings::getCullMode(pipelineCreateInfo.rasterizationState.cullMode);
+    vulkanRasterState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    vulkanRasterState.colorWriteMask = 0xf;
+    vulkanRasterState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+    vulkanRasterState.colorTargetCount = renderTarget.renderTargetCount;
+    
+    vulkanProgram->parseVertexInfo(pipelineCreateInfo.decl);
 
-        
-        for (auto& elem : elementlist)
+    std::vector<VkVertexInputBindingDescription>& vertexInputBindings =
+        vulkanProgram->getVertexInputBindings();
+    std::vector<VkVertexInputAttributeDescription>& attributeDescriptions =
+        vulkanProgram->getAttributeDescriptions();
+
+    VkFormat colorFormat[8];
+    for (uint32_t i = 0; i < 8; i++)
+    {
+        PixelFormat format = (PixelFormat)renderTarget.pixelFormat[i];
+        if (format == PF_UNKNOWN)
         {
-            if (input._location == elem .getLocation())
-            {
-                attributeDescriptions[i].binding = elem.getSource();
-                attributeDescriptions[i].location = input._location;
-                attributeDescriptions[i].format = getVKFormatFromType(elem.getType());
-                attributeDescriptions[i].offset = elem.getOffset();
-                i++;
-                find = true;
-                break;
-            }
+            format = mRenderWindow->getColorFormat();
         }
 
-
-        if (!find)
+        if (format == PF_A8R8G8B8 ||
+            format == PF_A8B8G8R8)
         {
-            OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "can not find input param");
+            int kk = 0;
+        }
+        VkFormat vkFormat = VulkanMappings::_getPF(format);
+        colorFormat[i] = vkFormat;
+    }
+
+
+
+    mPipelineCache->bindFormat(colorFormat, VK_FORMAT_D32_SFLOAT);
+    mPipelineCache->bindProgram(
+        vulkanProgram->getVertexShader(),
+        vulkanProgram->getGeometryShader(),
+        vulkanProgram->getFragmentShader());
+    mPipelineCache->bindRasterState(vulkanRasterState);
+    mPipelineCache->bindPrimitiveTopology(VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    mPipelineCache->bindLayout(pipelineLayout);
+    mPipelineCache->bindVertexArray(
+        attributeDescriptions.data(),
+        attributeDescriptions.size(),
+        vertexInputBindings.data(),
+        vertexInputBindings.size());
+    mPipelineCache->updateEntryFunc(
+        vulkanProgram->getVertexShaderFuncName(),
+        vulkanProgram->getGeomtryShaderFuncName(),
+        vulkanProgram->getFragShaderFuncName());
+    VkPipeline pipeline = mPipelineCache->getPipeline();
+
+    VulkanPipeline* vulkanPipeline = mResourceAllocator.construct<VulkanPipeline>(
+        ph, pipeline, vulkanProgram);
+    return ph;
+}
+
+void VulkanRenderSystemBase::bingingUpdate(
+    vks::tools::BingdingInfo& bindingMap,
+    vks::tools::BingdingInfo& results,
+    VkShaderStageFlagBits flagBits)
+{
+    auto findLayout = [](
+        std::vector<VKDescriptorInfo>& bindingList,
+        VKDescriptorInfo binding)
+        {
+            for (auto i = 0; i < bindingList.size(); i++)
+            {
+                if (bindingList.at(i).layoutBinding.binding == binding.layoutBinding.binding)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        };
+    for (auto& pair : results)
+    {
+        auto& bingdingList = bindingMap[pair.first];
+        for (auto& layoutBingding : pair.second)
+        {
+            auto i = findLayout(bingdingList, layoutBingding);
+            if (i >= 0)
+            {
+                bingdingList[i].layoutBinding.stageFlags |= flagBits;
+            }
+            else
+            {
+                bingdingList.push_back(layoutBingding);
+            }
         }
     }
 }

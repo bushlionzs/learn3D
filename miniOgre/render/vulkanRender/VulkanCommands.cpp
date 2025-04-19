@@ -206,6 +206,26 @@ namespace filament::backend {
         return *currentbuf;
     }
 
+    bool VulkanCommands::wait()
+    {
+        int8_t  index = mLastCommandBufferIndex;
+        if (index >= 0)
+        {
+            VulkanCommandBuffer const* currentbuf = mStorage[index].get();
+
+            auto& cmdfence = currentbuf->fence;
+            auto& fence = cmdfence->getFence();
+            VkResult result = vkWaitForFences(mDevice, 1, &fence, VK_TRUE, UINT64_MAX);
+            assert_invariant(result == VK_SUCCESS);
+            
+        }
+        else
+        {
+            assert_invariant(false);
+        }
+        return true;
+    }
+
     bool VulkanCommands::flush(bool waitCmd) {
         // It's perfectly fine to call flush when no commands have been written.
         if (mCurrentCommandBufferIndex < 0) {

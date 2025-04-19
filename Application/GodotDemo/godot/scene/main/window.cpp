@@ -710,6 +710,18 @@ void Window::_rect_changed_callback(const Rect2i &p_callback) {
 
 void Window::_propagate_window_notification(Node *p_node, int p_notification) {
 	p_node->notification(p_notification);
+	Window* current = Object::cast_to<Window>(p_node);
+	if (current)
+	{
+		StringName aa = current->get_name();
+		if (aa == "root")
+		{
+			int kk = 0;
+		}
+		int kk = 0;
+	}
+	
+	
 	for (int i = 0; i < p_node->get_child_count(); i++) {
 		Node *child = p_node->get_child(i);
 		Window *window = Object::cast_to<Window>(child);

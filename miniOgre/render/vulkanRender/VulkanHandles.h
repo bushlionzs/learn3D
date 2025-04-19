@@ -253,6 +253,14 @@ struct VulkanTextureSampler : public HwSampler, VulkanResource {
 private:
     VkSampler mVkSampler;
 };
+struct VulkanShaderProgram;
+struct VulkanComputeProgram;
+struct VulkanShader : public VulkanResource, HwShader
+{
+    VulkanShader();
+    VulkanShaderProgram* shaderProgram;
+    VulkanComputeProgram* computeProgram;
+};
 
 struct VulkanProgram :public VulkanResource
 {
@@ -294,6 +302,8 @@ struct VulkanShaderProgram : public VulkanProgram, HwProgram {
 
     ~VulkanShaderProgram();
 
+    void parseVertexInfo(VertexDeclaration* decl);
+    void updateShaderInfo(const VulkanShaderInfo& info);
     inline VkShaderModule getVertexShader() const {
         return mShaders[0];
     }
@@ -390,6 +400,7 @@ private:
     VkShaderModule mShaders[MAX_SHADER_MODULES];
     VkPipelineLayout mPipelineLayout;
     Handle<HwDescriptorSetLayout> mLayouts[4];
+    std::vector<GlslInputDesc> mInputDesc;
     std::vector<VkVertexInputBindingDescription> mVertexInputBindings;
     std::vector<VkVertexInputAttributeDescription> mAttributeDescriptions;
     uint32_t mPushConstantsSize;
@@ -450,6 +461,9 @@ struct VulkanComputeProgram : public VulkanProgram, HwComputeProgram{
     VulkanComputeProgram(const std::string& name) noexcept;
 
     ~VulkanComputeProgram();
+
+    void upateShaderInfo(const VulkanComputeShaderInfo& shaderInfo);
+
     void updateComputeShader(VkShaderModule shaderModule)
     {
         mShader = shaderModule;
@@ -687,6 +701,25 @@ struct VulkanFence : public HwFence, VulkanResource {
           fence(fence) {}
 
     std::shared_ptr<VulkanCmdFence> fence;
+};
+
+struct VulkanSemaphore : public HwSemaphore, VulkanResource {
+    VulkanSemaphore(VkDevice device);
+
+    VkSemaphore semaphore;
+};
+
+struct VulkanCommandQueue : public HwCommandQueue, VulkanResource {
+    VulkanCommandQueue(VkQueue queue);
+
+    VkQueue vkQueue;
+};
+
+struct VulkanCommandBuffer2 : public HwCommandBuffer, VulkanResource {
+    VulkanCommandBuffer2(VulkanResourceAllocator* allocator, VkDevice device, uint32_t queueFamilyIndex);
+
+    VkCommandBuffer commandBuffer;
+    VkCommandPool pool;
 };
 
 struct VulkanTimerQuery : public HwTimerQuery, VulkanThreadSafeResource {

@@ -48,7 +48,7 @@ void BasicApplication::setup(
 	mRenderSystem = renderSystem;
 	mRenderPipeline = renderPipeline;
 	
-	base1();
+	base2();
 }
 
 void BasicApplication::update(float delta)
@@ -155,9 +155,16 @@ void BasicApplication::base1()
 	mRenderPipeline->addRenderPass(mainPass);
 }
 
+void BasicApplication::preInit(AppInfo* appInfo)
+{
+	GodotContext context; 
+	godotInit(context);
+	appInfo->appWnd = context.godotWnd;
+	appInfo->loopback = godotLoop;
+}
+
 void BasicApplication::base2()
 {
-	godotInit();
 	godotProjectSetting();
 }
 

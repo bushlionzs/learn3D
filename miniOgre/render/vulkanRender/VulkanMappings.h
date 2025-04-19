@@ -46,6 +46,9 @@ namespace Ogre
 			AccelerationStructureBuildFlags flags);
 
 		static VkAccelerationStructureTypeKHR ToVkASType(AccelerationStructureType type);
+
+		static VkCullModeFlags getCullMode(CullingMode mode);
+		static VkBlendFactor getBlendFactor(BlendFunction mode);
 	};
 }
 

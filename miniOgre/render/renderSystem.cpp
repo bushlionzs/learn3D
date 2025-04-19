@@ -108,6 +108,13 @@ void RenderSystem::updateBufferObject(
     assert_invariant(false);
 }
 
+void RenderSystem::clearBufferObject(
+    filament::backend::Handle<filament::backend::HwBufferObject> boh,
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh
+)
+{
+    assert_invariant(false);
+}
 
 Handle<HwDescriptorSet> RenderSystem::createDescriptorSet(
     Handle<HwProgram> programHandle,
@@ -167,6 +174,77 @@ Handle<HwComputeProgram> RenderSystem::createComputeProgram(const ShaderInfo& sh
 Handle<HwPipeline> RenderSystem::createPipeline(
     backend::RasterState& rasterState,
     Handle<HwProgram>& program)
+{
+    assert_invariant(false);
+    return Handle<HwPipeline>();
+}
+
+filament::backend::Handle<filament::backend::HwFence> RenderSystem::createFence()
+{
+    assert_invariant(false);
+    return Handle<HwFence>();
+}
+
+void RenderSystem::waitFence(filament::backend::Handle<filament::backend::HwFence> fh)
+{
+    assert_invariant(false);
+}
+
+filament::backend::Handle<filament::backend::HwSemaphore> RenderSystem::createSemaphore()
+{
+    assert_invariant(false);
+    return Handle<HwSemaphore>();
+}
+
+filament::backend::Handle<filament::backend::HwCommandBuffer> RenderSystem::createCommandBuffer(uint32_t queueFamilyIndex)
+{
+    assert_invariant(false);
+    return Handle<HwCommandBuffer>();
+}
+
+void RenderSystem::beginCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    assert_invariant(false);
+}
+
+void RenderSystem::endCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    assert_invariant(false);
+}
+
+void RenderSystem::clearCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    assert_invariant(false);
+}
+
+filament::backend::Handle<filament::backend::HwCommandQueue> RenderSystem::createCommandQueue(uint32_t familyIndex, uint32_t queueIndex)
+{
+    assert_invariant(false);
+    return Handle<HwCommandQueue>();
+}
+
+
+filament::backend::Handle<filament::backend::HwSwapChain> RenderSystem::createSwapChain()
+{
+    assert_invariant(false);
+    return Handle<HwSwapChain>();
+}
+
+void RenderSystem::swapChainAcquire(Handle<HwSwapChain> sch, SwapChainInfo& scInfo)
+{
+    assert_invariant(false);
+}
+
+Handle<HwShader> RenderSystem::createShader(Ogre::ShaderDesc& desc)
+{
+    assert_invariant(false);
+    return Handle<HwShader>();
+}
+
+Handle<HwPipeline> RenderSystem::createPipeline(
+    Ogre::PipelineCreateInfo& pipelineCreateInfo,
+    filament::backend::Handle<filament::backend::HwShader>& shader
+)
 {
     assert_invariant(false);
     return Handle<HwPipeline>();

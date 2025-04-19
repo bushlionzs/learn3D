@@ -89,6 +89,11 @@ public:
      {
          return mLayoutCache;
      }
+     VkDescriptorSetLayout getEmptyDescriptorSetLayout()
+     {
+         return pEmptyDescriptorSetLayout;
+     }
+     
 private:
     void createCommandPool();
     void createVulkanResourceCache();
@@ -145,4 +150,6 @@ private:
 
     VkPhysicalDeviceFeatures deviceFeatures{};
     VkPhysicalDeviceDescriptorIndexingFeaturesEXT physicalDeviceDescriptorIndexingFeatures{};
+
+    VkDescriptorSetLayout  pEmptyDescriptorSetLayout;
 };

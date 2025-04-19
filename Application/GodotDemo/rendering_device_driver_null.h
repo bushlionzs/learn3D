@@ -12,12 +12,42 @@
 #endif
 
 #include "servers/rendering/rendering_device_driver.h"
+#include "Handle.h"
+#include <vector>
+
+class RenderSystem;
+
+namespace Ogre
+{
+	class OgreTexture;
+}
 
 class RenderingContextDriverNULL;
 
 class RenderingDeviceDriverNULL : public RenderingDeviceDriver {
-	
+	struct FrameBufferInfo
+	{
+		bool isSwapChain = false;
+		std::vector< Ogre::OgreTexture*> textureList;
+		uint32_t width;
+		uint32_t height;
+	};
+
+	struct SwapChainPrivateInfo
+	{
+		std::vector<FrameBufferInfo*> swapChainFrame;
+		filament::backend::Handle<filament::backend::HwSwapChain> sch;
+	};
+
+	struct ShaderPrivateInfo
+	{
+		char header[4];
+		uint32_t version;
+		uint32_t total;  //include header
+	};
 public:
+	
+
 	Error virtual initialize(uint32_t p_device_index, uint32_t p_frame_count) override final;
 	virtual bool isUserDefine()
 	{
@@ -241,6 +271,7 @@ public:
 	private:
 		RenderingDeviceDriver::MultiviewCapabilities mMultiviewCapabilities;
 		RenderingDeviceDriver::Capabilities mCapabilities;
+		RenderSystem* mRenderSystem;
 };
 
 

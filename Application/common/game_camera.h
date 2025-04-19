@@ -7,8 +7,9 @@ struct CameraInfo
     float nearClip;
     float farClip;
     float fovRadians;
-    float aspect;
-    float aspectInverse;
+    bool reverseDepth;
+    uint32_t width = 0;
+    uint32_t height = 0;
 };
 
 struct Cascade {
@@ -107,6 +108,7 @@ public:
     bool changed();
     void updateChanged(bool change);
     void updateCameraInfo(const CameraInfo& cameraInfo);
+    void updateProjectMatrix();
     void updateCascades(const Ogre::Vector3& lightDirection);
 
     Cascade* getCascade(uint32_t index)

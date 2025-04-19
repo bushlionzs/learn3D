@@ -284,7 +284,7 @@ float4 PS(VertexOut pin) : SV_Target
     if( pbrMaterial.hasAlbedoMap > 0)
 	{
         baseColorSource = albedo_pbr.Sample(albedoSampler, pin.v_UV);
-		baseColor = SRGBtoLINEAR(baseColorSource) * pbrMaterial.u_BaseColorFactor;
+		baseColor = SRGBtoLINEAR(baseColorSource);
 		
 		if (pbrMaterial.alphaMode == 2)
 		{
@@ -295,7 +295,6 @@ float4 PS(VertexOut pin) : SV_Target
 		}    
 	}
     
-	
     float3 f0 = float3(0.04, 0.04, 0.04);
 	
 	float alphaRoughness = roughness * roughness;

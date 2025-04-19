@@ -528,4 +528,31 @@ namespace Ogre {
             type ? VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR
             : VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR;
     }
+
+    VkCullModeFlags VulkanMappings::getCullMode(CullingMode mode)
+    {
+        switch (mode) {
+        case CullingMode::CULL_MODE_NONE:           return VK_CULL_MODE_NONE;
+        case CullingMode::CULL_MODE_FRONT:          return VK_CULL_MODE_FRONT_BIT;
+        case CullingMode::CULL_MODE_BACK:           return VK_CULL_MODE_BACK_BIT;
+        default: return VK_CULL_MODE_FRONT_AND_BACK;
+        }
+    }
+
+    VkBlendFactor VulkanMappings::getBlendFactor(BlendFunction mode)
+    {
+        switch (mode) {
+        case BlendFunction::ZERO:                  return VK_BLEND_FACTOR_ZERO;
+        case BlendFunction::ONE:                   return VK_BLEND_FACTOR_ONE;
+        case BlendFunction::SRC_COLOR:             return VK_BLEND_FACTOR_SRC_COLOR;
+        case BlendFunction::ONE_MINUS_SRC_COLOR:   return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+        case BlendFunction::DST_COLOR:             return VK_BLEND_FACTOR_DST_COLOR;
+        case BlendFunction::ONE_MINUS_DST_COLOR:   return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+        case BlendFunction::SRC_ALPHA:             return VK_BLEND_FACTOR_SRC_ALPHA;
+        case BlendFunction::ONE_MINUS_SRC_ALPHA:   return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        case BlendFunction::DST_ALPHA:             return VK_BLEND_FACTOR_DST_ALPHA;
+        case BlendFunction::ONE_MINUS_DST_ALPHA:   return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+        case BlendFunction::SRC_ALPHA_SATURATE:    return VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
+        }
+    }
 }

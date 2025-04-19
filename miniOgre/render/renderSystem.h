@@ -4,6 +4,7 @@
 #include "engine_struct.h"
 #include "OgreTexture.h"
 #include "rayTracing.h"
+#include "OgreCommon.h"
 
 class GraphicsCommandList;
 class RenderableData;
@@ -76,13 +77,16 @@ public:
         const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
         uint32_t setCount)
     {
+        assert_invariant(false);
     }
 
     virtual void bindPipeline(
         filament::backend::Handle<filament::backend::HwRaytracingProgram> programHandle,
         const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
         uint32_t setCount
-    ) {
+    ) 
+    {
+        assert_invariant(false);
     }
 
     virtual void traceRay(
@@ -93,7 +97,17 @@ public:
     virtual void copyImage(
         Ogre::RenderTarget* dst,
         Ogre::RenderTarget* src,
-        Ogre::ImageCopyDesc& desc) {
+        Ogre::ImageCopyDesc& desc)
+    {
+        assert_invariant(false);
+    }
+
+    virtual void copyImage(
+        Ogre::OgreTexture* dst,
+        Ogre::OgreTexture* src,
+        Ogre::ImageCopyDesc& desc) 
+    {
+        assert_invariant(false);
     }
 
     virtual void copyImageToBuffer(
@@ -108,28 +122,42 @@ public:
         uint32_t srcOffset,
         filament::backend::Handle<filament::backend::HwBufferObject> dst,
         uint32_t dstOffset,
-        uint32_t size
-    ) {}
+        uint32_t size,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh
+    ) 
+    {
+        assert_invariant(false);
+    }
     virtual void drawIndexed(
         uint32_t indexCount,
         uint32_t instanceCount,
         uint32_t firstIndex,
         uint32_t vertexOffset,
-        uint32_t firstInstance)
+        uint32_t firstInstance,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh = nullptr)
     {
+        assert_invariant(false);
     }
 
-    virtual void draw(uint32_t vertexCount, uint32_t firstVertex)
+    virtual void draw(
+        uint32_t vertexCount, 
+        uint32_t instanceCount , 
+        uint32_t firstVertex,
+        uint32_t firstInstance,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh = nullptr
+        )
     {
-
+        assert_invariant(false);
     }
     virtual void drawIndexedIndirect(
         filament::backend::Handle<filament::backend::HwBufferObject> drawBuffer,
         uint32_t offset,
         uint32_t drawCount,
-        uint32_t stride
+        uint32_t stride,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh = nullptr
     ) 
     {
+        assert_invariant(false);
     }
 
     virtual void bindComputePipeline(
@@ -137,6 +165,7 @@ public:
         const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
         uint32_t setCount)
     {
+        assert_invariant(false);
     }
 
     virtual void dispatchComputeShader(int32_t x, int32_t y, int32_t z) 
@@ -147,21 +176,34 @@ public:
 
     virtual void present();
 
-    virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color = Ogre::Vector3i(0,0,0)) {}
-    virtual void popGroupMarker() {}
+    virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color = Ogre::Vector3i(0,0,0))
+    {
+        assert_invariant(false);
+    }
+    virtual void popGroupMarker() 
+    {
+        assert_invariant(false);
+    }
+
+    virtual void getFamilyInfo(Ogre::FamilyInfo& desc)
+    {
+        assert_invariant(false);
+    }
     virtual void bindVertexBuffer(
         filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
         uint32_t binding,
-        uint32_t vertexSize) {}
-    virtual void bindIndexBuffer(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle, uint32_t indexSize) {}
-    virtual void* lockBuffer(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes) { return nullptr; }
-    virtual void unlockBuffer(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle) {}
-    /*virtual Handle<HwBufferObject> createBufferObject(
-        BufferObjectBinding bindingType,
-        ResourceMemoryUsage memoryUsage,
-        uint32_t bufferCreationFlags,
-        uint32_t byteCount,
-        const char* debugName = nullptr);*/
+        uint32_t vertexSize) 
+    {
+        assert_invariant(false);
+    }
+    virtual void bindIndexBuffer(
+        filament::backend::Handle<filament::backend::HwBufferObject> bufHandle, 
+        uint32_t indexSize,
+        uint32_t offset) 
+    {
+        assert_invariant(false);
+    }
+
     virtual filament::backend::Handle<filament::backend::HwBufferObject> createBufferObject(
         Ogre::BufferDesc& desc);
     virtual void updateBufferObject(
@@ -169,6 +211,30 @@ public:
         const char* data, 
         uint32_t size,
         uint32_t offset = 0);
+    virtual bool getBufferInfo(
+        filament::backend::Handle<filament::backend::HwBufferObject> boh,
+        Ogre::BufferDesc& desc)
+    {
+        assert_invariant(false);
+        return false;
+    }
+
+    virtual void clearBufferObject(
+        filament::backend::Handle<filament::backend::HwBufferObject> boh,
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh
+    );
+
+    virtual uint8_t* bufferMap(filament::backend::Handle<filament::backend::HwBufferObject> boh)
+    {
+        assert_invariant(false);
+        return nullptr;
+    }
+
+    virtual void bufferUnmap(filament::backend::Handle<filament::backend::HwBufferObject> boh)
+    {
+        assert_invariant(false);
+    }
+
     virtual bool getBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> boh,
         const char* data,
         uint32_t size,
@@ -203,7 +269,10 @@ public:
         filament::backend::Handle<filament::backend::HwDescriptorSet> dsh,
         uint32_t count, 
         const Ogre::DescriptorData* pParams
-        ) {}
+        ) 
+    {
+        assert_invariant(false);
+    }
     virtual void resourceBarrier(
         uint32_t numBufferBarriers, 
         Ogre::BufferBarrier* pBufferBarriers,
@@ -212,11 +281,20 @@ public:
         uint32_t numRtBarriers, 
         Ogre::RenderTargetBarrier* pRtBarriers,
         Ogre::QueueType queueType = Ogre::QUEUE_TYPE_GRAPHICS
-    ) {}
+    ) 
+    {
+        assert_invariant(false);
+    }
 
 
-    virtual void beginCmd() {}
-    virtual void flushCmd(bool waitCmd) {}
+    virtual void beginCmd()
+    {
+        assert_invariant(false);
+    }
+    virtual void flushCmd(bool waitCmd)
+    {
+        assert_invariant(false);
+    }
     //raytracing
 
     virtual void addAccelerationStructure(
@@ -240,6 +318,28 @@ public:
     virtual void destroyBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> bufHandle) {}
 
     virtual uint32_t getAlignmentSize(Ogre::BufferObjectBinding bufferType) { return 0; }
+
+    //
+
+    virtual filament::backend::Handle<filament::backend::HwFence> createFence();
+    virtual void waitFence(filament::backend::Handle<filament::backend::HwFence> fh);
+
+    virtual filament::backend::Handle<filament::backend::HwSemaphore> createSemaphore();
+    virtual filament::backend::Handle<filament::backend::HwCommandBuffer> createCommandBuffer(uint32_t queueFamilyIndex);
+    virtual void beginCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh);
+    virtual void endCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh);
+    virtual void clearCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh);
+    virtual filament::backend::Handle<filament::backend::HwCommandQueue> createCommandQueue(
+        uint32_t familyIndex, uint32_t queueIndex);
+    virtual filament::backend::Handle<filament::backend::HwSwapChain> createSwapChain();
+    virtual void swapChainAcquire(
+        filament::backend::Handle<filament::backend::HwSwapChain> sch,
+        Ogre::SwapChainInfo& scInfo);
+    virtual filament::backend::Handle<filament::backend::HwShader> createShader(Ogre::ShaderDesc& desc);
+    virtual filament::backend::Handle<filament::backend::HwPipeline> createPipeline(
+        Ogre::PipelineCreateInfo& pipelineCreateInfo,
+        filament::backend::Handle<filament::backend::HwShader>& shader
+    );
 protected:
 	
     uint32_t mBatchCount = 0;

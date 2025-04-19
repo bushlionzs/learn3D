@@ -12,10 +12,12 @@ struct GodotContext
     std::string brdfTexName;
     std::string prefilteredTexName;
     std::string irradianceTexName;
+    int64_t godotWnd;
 };
 
-void godotInit();
-
+void godotInit(GodotContext& context);
+void godotLoop();
 void loadGodotProject(const String& projectDir, GodotContext& context);
+
 
 void godotProjectSetting();

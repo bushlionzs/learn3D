@@ -150,6 +150,13 @@ void VulkanBuffer::unlock(VkCommandBuffer cmdbuf)
     mUpdatedOffset = 0;
 }
 
+void VulkanBuffer::clearBuffer(VkCommandBuffer cmdbuf)
+{
+    void* data = lock(0, mBufferBytes);
+    memset(data, 0, mBufferBytes);
+    unlock(cmdbuf);
+}
+
 void VulkanBuffer::loadFromCpu(VkCommandBuffer cmdbuf, const void* cpuData, uint32_t byteOffset,
         uint32_t numBytes) {
     if (mCpuToGpu)

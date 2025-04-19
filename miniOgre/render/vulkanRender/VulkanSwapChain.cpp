@@ -66,7 +66,9 @@ void VulkanSwapChain::update() {
     texProperty._height = bundle.extent.height;
     texProperty._tex_format = VulkanMappings::getPixelFormat(bundle.colorFormat);
     
-
+    EngineConfig& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+    ogreConfig.width = bundle.extent.width;
+    ogreConfig.height = bundle.extent.height;
     for (auto const color: bundle.colors) {
         mColors.push_back(std::make_unique<VulkanTexture>("", mPlatform, mCommands, color, &texProperty));
     }
@@ -131,11 +133,8 @@ void VulkanSwapChain::acquire(bool& resized) {
 
     // Check if the swapchain should be resized.
     if ((resized = mPlatform->hasResized(swapChain))) {
-        if (mFlushAndWaitOnResize) {
-            mCommands->flush(false);
-            assert_invariant(false);
-            //mCommands->wait(); zhousha
-        }
+        VkDevice device = mPlatform->getDevice();
+        vkDeviceWaitIdle(device);
         mPlatform->recreate(swapChain);
         update();
     }

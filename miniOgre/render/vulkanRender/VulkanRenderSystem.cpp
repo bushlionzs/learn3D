@@ -381,42 +381,6 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
 
     vks::tools::BingdingInfo bindingMap;
 
-    auto bingingUpdate = [](
-        vks::tools::BingdingInfo& bindingMap,
-        vks::tools::BingdingInfo& results,
-        VkShaderStageFlagBits flagBits
-        )
-        {
-            auto findLayout = [](
-                std::vector<VKDescriptorInfo>& bindingList,
-                VKDescriptorInfo binding)
-                {
-                    for (auto i = 0; i < bindingList.size(); i++)
-                    {
-                        if (bindingList.at(i).layoutBinding.binding == binding.layoutBinding.binding)
-                        {
-                            return i;
-                        }
-                    }
-                    return -1;
-                };
-            for (auto& pair : results)
-            {
-                auto& bingdingList = bindingMap[pair.first];
-                for (auto& layoutBingding : pair.second)
-                {
-                    auto i = findLayout(bingdingList, layoutBingding);
-                    if (i >= 0)
-                    {
-                        bingdingList[i].layoutBinding.stageFlags |= flagBits;
-                    }
-                    else
-                    {
-                        bingdingList.push_back(layoutBingding);
-                    }
-                }
-            }
-        };
 
     uint32_t missCount = 0;
     uint32_t hitCount = 0;
@@ -443,7 +407,9 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         shaderStage.pName = shaderInfo.rayGenEntryName.c_str();
         shaderStages.push_back(shaderStage);
 
-        auto results = vks::tools::getProgramBindings(shaderModuleInfo.spv, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+        auto results = vks::tools::getProgramBindings(
+            shaderModuleInfo.spv,
+            VK_SHADER_STAGE_RAYGEN_BIT_KHR);
         for (auto& pair : results)
         {
             for (auto& layoutBingding : pair.second)
@@ -475,7 +441,9 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         shaderStage.pName = shaderInfo.rayMissEntryName.c_str();
         shaderStages.push_back(shaderStage);
 
-        auto results = vks::tools::getProgramBindings(shaderModuleInfo.spv, VK_SHADER_STAGE_MISS_BIT_KHR);
+        auto results = vks::tools::getProgramBindings(
+            shaderModuleInfo.spv,
+            VK_SHADER_STAGE_MISS_BIT_KHR);
         bingingUpdate(bindingMap, results, VK_SHADER_STAGE_MISS_BIT_KHR);
 
         VkRayTracingShaderGroupCreateInfoKHR shaderGroup{};
@@ -521,7 +489,9 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         shaderStage.pName = shaderInfo.rayClosethitEntryName.c_str();
         shaderStages.push_back(shaderStage);
 
-        auto results = vks::tools::getProgramBindings(shaderModuleInfo.spv, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+        auto results = vks::tools::getProgramBindings(
+            shaderModuleInfo.spv, 
+            VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
         bingingUpdate(bindingMap, results, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 
         VkRayTracingShaderGroupCreateInfoKHR shaderGroup{};
@@ -540,7 +510,9 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
             get_file_content(resInfo->_fullname.c_str(), content);
             glslCompileShader(resInfo->_fullname, content, shaderInfo.rayAnyHitEntryName, 
                 shaderInfo.shaderMacros, &shaderInfo.args, shaderModuleInfo);
-            results = vks::tools::getProgramBindings(shaderModuleInfo.spv, VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
+            results = vks::tools::getProgramBindings(
+                shaderModuleInfo.spv, 
+                VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
             bingingUpdate(bindingMap, results, VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
             shaderStage = {};
             shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;

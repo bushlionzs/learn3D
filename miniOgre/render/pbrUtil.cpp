@@ -110,7 +110,7 @@ namespace Ogre
 
         RenderPassInfo renderPassInfo;
         renderPassInfo.renderTargetCount = 1;
-        renderPassInfo.renderTargets[0].renderTarget = outPutTarget;
+        renderPassInfo.renderTargets[0].target.renderTarget = outPutTarget;
         renderPassInfo.depthTarget.depthStencil = nullptr;
         renderPassInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
         renderPassInfo.viewport = false;
@@ -204,6 +204,8 @@ namespace Ogre
                 copyRegion.extent.width = width;
                 copyRegion.extent.height = height;
                 copyRegion.extent.depth = 1;
+                copyRegion.srcOffset = Ogre::Vector3i(0);
+                copyRegion.dstOffset = Ogre::Vector3i(0);
                 rs->copyImage(rt, outPutTarget, copyRegion);
 
                 rtBarriers[0] =
@@ -267,7 +269,7 @@ namespace Ogre
         Handle<HwPipeline> pipelineHandle = rs->createPipeline(rasterState, programHandle);
         RenderPassInfo renderPassInfo;
         renderPassInfo.renderTargetCount = 1;
-        renderPassInfo.renderTargets[0].renderTarget = rt;
+        renderPassInfo.renderTargets[0].target.renderTarget = rt;
         renderPassInfo.depthTarget.depthStencil = nullptr;
         renderPassInfo.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 1.000000000f };
         rs->beginCmd();
@@ -282,7 +284,7 @@ namespace Ogre
 
         rs->beginRenderPass(renderPassInfo);
         rs->bindPipeline(pipelineHandle, nullptr, 0);
-        rs->draw(3, 0);
+        rs->draw(3, 1, 0, 0);
         rs->endRenderPass(renderPassInfo);
 
         uavBarriers[0] = {

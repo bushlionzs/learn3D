@@ -235,7 +235,7 @@ void Dx12RenderSystemBase::beginRenderPass(RenderPassInfo& renderPassInfo)
     D3D12_CPU_DESCRIPTOR_HANDLE renderTargetHandle[8];
     for (auto i = 0; i < renderPassInfo.renderTargetCount; i++)
     {
-        Dx12RenderTarget* colorTarget = (Dx12RenderTarget*)renderPassInfo.renderTargets[i].renderTarget;
+        Dx12RenderTarget* colorTarget = (Dx12RenderTarget*)renderPassInfo.renderTargets->target.renderTarget;
         auto* tex = colorTarget->getTarget();
         DxDescriptorID srcid = tex->getTargetDescriptorId();
         DescriptorHeap* heap = mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_RTV];
@@ -261,7 +261,7 @@ void Dx12RenderSystemBase::beginRenderPass(RenderPassInfo& renderPassInfo)
 
     if (hasColor)
     {
-        Dx12RenderTarget* colorTarget = (Dx12RenderTarget*)renderPassInfo.renderTargets[0].renderTarget;
+        Dx12RenderTarget* colorTarget = (Dx12RenderTarget*)renderPassInfo.renderTargets[0].target.renderTarget;
         width = colorTarget->getWidth();
         height = colorTarget->getHeight();
     }
@@ -600,12 +600,12 @@ Handle<HwPipeline> Dx12RenderSystemBase::createPipeline(
 
     dx12RasterState.depthWriteEnable = rasterState.depthWrite?TRUE:FALSE;
     dx12RasterState.depthTestEnable = rasterState.depthTest;
-    dx12RasterState.srcColorBlendFactor = D3D12Mappings::getBlendFactor(rasterState.blendFunctionSrcRGB);
-    dx12RasterState.dstColorBlendFactor = D3D12Mappings::getBlendFactor(rasterState.blendFunctionDstRGB);
-    dx12RasterState.srcAlphaBlendFactor = D3D12Mappings::getBlendFactor(rasterState.blendFunctionSrcAlpha);
-    dx12RasterState.dstAlphaBlendFactor = D3D12Mappings::getBlendFactor(rasterState.blendFunctionDstAlpha);
-    dx12RasterState.colorBlendOp = D3D12Mappings::getBlendOp(rasterState.blendEquationRGB);
-    dx12RasterState.alphaBlendOp = D3D12Mappings::getBlendOp(rasterState.blendEquationAlpha);
+    dx12RasterState.srcColorBlendFactor = D3D12Mappings::getBlendFactor((Ogre::BlendFunction)rasterState.blendFunctionSrcRGB);
+    dx12RasterState.dstColorBlendFactor = D3D12Mappings::getBlendFactor((Ogre::BlendFunction)rasterState.blendFunctionDstRGB);
+    dx12RasterState.srcAlphaBlendFactor = D3D12Mappings::getBlendFactor((Ogre::BlendFunction)rasterState.blendFunctionSrcAlpha);
+    dx12RasterState.dstAlphaBlendFactor = D3D12Mappings::getBlendFactor((Ogre::BlendFunction)rasterState.blendFunctionDstAlpha);
+    dx12RasterState.colorBlendOp = D3D12Mappings::getBlendOp((Ogre::BlendEquation)rasterState.blendEquationRGB);
+    dx12RasterState.alphaBlendOp = D3D12Mappings::getBlendOp((Ogre::BlendEquation)rasterState.blendEquationAlpha);
 
     dx12RasterState.colorWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
     dx12RasterState.rasterizationSamples = DX12Helper::getSingleton().hasMsaa() ? 4 : 1;

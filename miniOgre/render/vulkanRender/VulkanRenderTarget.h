@@ -23,6 +23,8 @@ namespace Ogre
 		VkImageView getImageView(uint32_t index);
 		VkImage getImage();
 		VkImageAspectFlags getAspectFlag();
+		virtual uint32 getWidth(void) const;
+		virtual  uint32 getHeight(void) const;
 		virtual Ogre::OgreTexture* getTarget();
 
 	private:

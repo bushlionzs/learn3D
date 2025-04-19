@@ -187,6 +187,26 @@ struct HwSampler : public HwBase {
 
 };
 
+struct HwSemaphore : public HwBase
+{
+
+};
+
+struct HwCommandBuffer : public HwBase
+{
+
+};
+
+struct HwCommandQueue : public HwBase
+{
+
+};
+
+struct HwShader : public HwBase
+{
+
+};
+
 /*
     * Base class of all Driver implementations
     */

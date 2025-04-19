@@ -1,7 +1,7 @@
 #include "OgreHeader.h"
 #include "application_window.h"
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	ApplicationWindow* wnd = (ApplicationWindow*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	if (wnd)

@@ -93,7 +93,7 @@ void PresentPass::execute(RenderSystem* rs)
 	}
 	RenderPassInfo info;
 	info.renderTargetCount = 1;
-	info.renderTargets[0].renderTarget = mRenderWindow->getColorTarget();
+	info.renderTargets[0].target.renderTarget = mRenderWindow->getColorTarget();
 	info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
 	info.depthTarget.depthStencil = nullptr;
 	info.depthTarget.clearValue = { 0.0f, 0.0f };
@@ -101,7 +101,7 @@ void PresentPass::execute(RenderSystem* rs)
 	rs->pushGroupMarker("presentPass");
 	rs->beginRenderPass(info);
 	rs->bindPipeline(mPipelineHandle, &mZeroSet, 1);
-	rs->draw(3, 0);
+	rs->draw(3, 1, 0, 0);
 	rs->endRenderPass(info);
 	rs->popGroupMarker();
 

@@ -653,6 +653,8 @@ void RayTracingApp::RayTracingGltf(
 		copyDesc.extent.width = context.outputTarget->getWidth();
 		copyDesc.extent.height = context.outputTarget->getHeight();
 		copyDesc.extent.depth = 1;
+		copyDesc.srcOffset = Ogre::Vector3i(0);
+		copyDesc.dstOffset = Ogre::Vector3i(0);
 		rs->copyImage(renderWindow->getColorTarget(), context.outputTarget, copyDesc);
 
 		{
@@ -851,6 +853,9 @@ void RayTracingApp::RayTracingShadow(
 		copyDesc.extent.width = context.outputTarget->getWidth();
 		copyDesc.extent.height = context.outputTarget->getHeight();
 		copyDesc.extent.depth = 1;
+
+		copyDesc.srcOffset = Ogre::Vector3i(0);
+		copyDesc.dstOffset = Ogre::Vector3i(0);
 		mRenderSystem->copyImage(renderWindow->getColorTarget(), context.outputTarget, copyDesc);
 
 		{
@@ -1115,6 +1120,9 @@ void RayTracingApp::RayTracingBox(
 			copyDesc.extent.width = context.outputTarget->getWidth();
 			copyDesc.extent.height = context.outputTarget->getHeight();
 			copyDesc.extent.depth = 1;
+
+			copyDesc.srcOffset = Ogre::Vector3i(0);
+			copyDesc.dstOffset = Ogre::Vector3i(0);
 			rs->copyImage(renderWindow->getColorTarget(), context.outputTarget, copyDesc);
 
 			{
@@ -1303,6 +1311,9 @@ void RayTracingApp::RayTracingBasic(
 		copyDesc.extent.width = context.outputTarget->getWidth();
 		copyDesc.extent.height = context.outputTarget->getHeight();
 		copyDesc.extent.depth = 1;
+
+		copyDesc.srcOffset = Ogre::Vector3i(0);
+		copyDesc.dstOffset = Ogre::Vector3i(0);
 		rs->copyImage(renderWindow->getColorTarget(), context.outputTarget, copyDesc);
 
 		{

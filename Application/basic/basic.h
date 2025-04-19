@@ -23,8 +23,6 @@ public:
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void update(float delta);
-
-	void updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer);
 private:
 	void base1();
 	void base2();

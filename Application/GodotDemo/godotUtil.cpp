@@ -1,6 +1,7 @@
 #include "godotUtil.h"
 #include <core/config/project_settings.h>
 #include <core/string/string_name.h>
+#include <core/string/translation_server.h>
 #include <core/os/memory.h>
 #include <core/io/file_access_pack.h>
 #include <core/io/missing_resource.h>
@@ -11,6 +12,7 @@
 #include <core/io/resource_importer.h>
 #include <core/io/image_loader.h>
 #include <core/io/resource_uid.h>
+#include <core/input/input_map.h>
 
 #include <scene/3d/node_3d.h>
 #include <scene/3d/camera_3d.h>
@@ -29,7 +31,7 @@
 #include <scene/resources/3d/box_shape_3d.h>
 #include <scene/resources/3d/concave_polygon_shape_3d.h>
 #include <scene/resources/3d/capsule_shape_3d.h>
-
+#include <scene/theme/theme_db.h>
 #include <scene/resources/packed_scene.h>
 #include <scene/resources/resource_format_text.h>
 #include <scene/resources/compressed_texture.h>
@@ -37,6 +39,12 @@
 #include <scene/resources/curve_texture.h>
 #include <scene/resources/3d/primitive_meshes.h>
 #include <scene/resources/particle_process_material.h>
+#include <scene/resources/text_line.h>
+#include <scene/resources/text_paragraph.h>
+#include <scene/resources/style_box.h>
+#include <scene/resources/style_box_flat.h>
+#include <scene/resources/style_box_texture.h>
+#include <scene/resources/style_box_line.h>
 #include <scene/gui/video_stream_player.h>
 #include <scene/main/viewport.h>
 #include <servers/rendering/rendering_server_default.h>
@@ -46,12 +54,16 @@
 #include <servers/physics_server_3d_dummy.h>
 #include <servers/physics_server_2d_dummy.h>
 #include <servers/navigation_server_3d_dummy.h>
+#include <servers/navigation_server_2d_dummy.h>
 #include <servers/text/text_server_dummy.h>
 #include <modules/register_module_types.h>
 #include "rendering_context_driver_null.h"
 #include <core/config/engine.h>
+#include <godot/main/performance.h>
 #include <editor/project_manager.h>
 #include <editor/progress_dialog.h>
+#include <editor/editor_paths.h>
+
 #include <platform/windows/os_windows.h>
 #include <OgreHeader.h>
 #include <OgreSceneManager.h>
@@ -66,16 +78,45 @@
 #include <myutils.h>
 static ProjectSettings* globals = nullptr;
 static Input* input = nullptr;
+static int audio_driver_idx = -1;
+static DisplayServer::WindowMode window_mode = DisplayServer::WINDOW_MODE_WINDOWED;
+static DisplayServer::VSyncMode window_vsync_mode = DisplayServer::VSYNC_ENABLED;
+static uint32_t window_flags = 0;
+static Size2i window_size = Size2i(1152, 648);
+static int init_screen = DisplayServer::SCREEN_PRIMARY;
+static ThemeDB* theme_db = nullptr;
+static PhysicsServer2D* physics_server_2d = nullptr;
+static NavigationServer2D* navigation_server_2d = nullptr;
+static PhysicsServer3D* physics_server_3d = nullptr;
+static NavigationServer3D* navigation_server_3d = nullptr;
+static AudioServer* audio_server = nullptr;
+static DisplayServer* display_server = nullptr;
+static MainLoop* main_loop = nullptr;
+static MessageQueue* message_queue = nullptr;
+static bool has_server_feature_callback(const String& p_feature) {
+    if (RenderingServer::get_singleton()) {
+        if (RenderingServer::get_singleton()->has_os_feature(p_feature)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 class Main
 {
 private:
     String text_driver = "";
     int text_driver_idx = -1;
-    
+    String display_driver = "";
+    String rendering_driver = "";
+    String audio_driver = "";
+    Vector2i* window_position = nullptr;
 public:
         Main()
     {
             OS::get_singleton()->initialize();
+            auto ip = IP::create();
             auto tsman = memnew(TextServerManager);
             if (tsman) {
                 Ref<TextServerDummy> ts;
@@ -127,7 +168,160 @@ public:
             auto navigation_server_3d = memnew(NavigationServer3DDummy);
 
             navigation_server_3d->init();
+
+            memnew(ShaderTypes);
+
+            auto translation_server = memnew(TranslationServer);
+            
+            GDREGISTER_CLASS(Performance);
+            //engine->add_singleton(Engine::Singleton("Performance", performance));
+
+            initializeDisplayServer();
+            initializeAudioDriver();
+            initialize_navigation_server();
+            initialize_physics();
+            auto rendering_device = memnew(RenderingDevice);
+            static RenderingContextDriverNULL renderingContext;
+            rendering_device->initialize(&renderingContext);
+            memnew(MessageQueue);
+            auto rendering_server = memnew(RenderingServerDefault);
+            
+            RendererCompositorRD::make_current();
+            rendering_server->init();
+            rendering_server->set_render_loop_enabled(true);
+            theme_db->initialize_theme();
+            OS::get_singleton()->set_has_server_feature_callback(has_server_feature_callback);
+            BaseMaterial3D::init_shaders();
+            ParticleProcessMaterial::init_shaders();
+
+            EditorPaths::create();
+
+            String main_loop_type = "SceneTree";
+
+            Object* ml = ClassDB::instantiate(main_loop_type);
+
+            main_loop = Object::cast_to<MainLoop>(ml);
+
+            OS::get_singleton()->set_main_loop(main_loop);
+
+            message_queue = memnew(MessageQueue);
     }
+
+        void initializeDisplayServer()
+        {
+            OS::get_singleton()->benchmark_begin_measure("Servers", "Display");
+
+            if (display_driver.is_empty()) {
+                display_driver = GLOBAL_GET("display/display_server/driver");
+            }
+
+            int display_driver_idx = -1;
+
+            if (display_driver.is_empty() || display_driver == "default") {
+                display_driver_idx = 0;
+            }
+            else {
+                for (int i = 0; i < DisplayServer::get_create_function_count(); i++) {
+                    String name = DisplayServer::get_create_function_name(i);
+                    if (display_driver == name) {
+                        display_driver_idx = i;
+                        break;
+                    }
+                }
+
+                if (display_driver_idx < 0) {
+                    // If the requested driver wasn't found, pick the first entry.
+                    // If all else failed it would be the headless server.
+                    display_driver_idx = 0;
+                }
+            }
+            DisplayServer::Context displayContext = DisplayServer::CONTEXT_PROJECTMAN;
+            Error err;
+            rendering_driver = "userDefine";
+            display_server = DisplayServer::create(
+                display_driver_idx, rendering_driver, window_mode, window_vsync_mode,
+                window_flags, window_position, window_size, init_screen, displayContext, err);
+            
+        }
+        void  initializeAudioDriver()
+        {
+            audio_driver = GLOBAL_GET("audio/driver/driver");
+            if (audio_driver_idx < 0) {
+                // If the requested driver wasn't found, pick the first entry.
+                // If all else failed it would be the dummy driver (no sound).
+                audio_driver_idx = 0;
+            }
+            AudioDriverManager::initialize(audio_driver_idx);
+            audio_server = memnew(AudioServer);
+            audio_server->init();
+        }
+        void initialize_navigation_server() {
+            ERR_FAIL_COND(navigation_server_3d != nullptr);
+            ERR_FAIL_COND(navigation_server_2d != nullptr);
+
+            // Init 3D Navigation Server
+            navigation_server_3d = NavigationServer3DManager::new_default_server();
+
+            // Fall back to dummy if no default server has been registered.
+            if (!navigation_server_3d) {
+                navigation_server_3d = memnew(NavigationServer3DDummy);
+            }
+
+            // Should be impossible, but make sure it's not null.
+            ERR_FAIL_NULL_MSG(navigation_server_3d, "Failed to initialize NavigationServer3D.");
+            navigation_server_3d->init();
+
+            // Init 2D Navigation Server
+            navigation_server_2d = NavigationServer2DManager::new_default_server();
+            if (!navigation_server_2d) {
+                navigation_server_2d = memnew(NavigationServer2DDummy);
+            }
+
+            ERR_FAIL_NULL_MSG(navigation_server_2d, "Failed to initialize NavigationServer2D.");
+            navigation_server_2d->init();
+        }
+
+        void initialize_physics() {
+#ifndef _3D_DISABLED
+            /// 3D Physics Server
+            physics_server_3d = PhysicsServer3DManager::get_singleton()->new_server(
+                GLOBAL_GET(PhysicsServer3DManager::setting_property_name));
+            if (!physics_server_3d) {
+                // Physics server not found, Use the default physics
+                physics_server_3d = PhysicsServer3DManager::get_singleton()->new_default_server();
+            }
+
+            // Fall back to dummy if no default server has been registered.
+            if (!physics_server_3d) {
+                WARN_PRINT(vformat("Falling back to dummy PhysicsServer3D; 3D physics functionality will be disabled. If this is intended, set the %s project setting to Dummy.", PhysicsServer3DManager::setting_property_name));
+                physics_server_3d = memnew(PhysicsServer3DDummy);
+            }
+
+            // Should be impossible, but make sure it's not null.
+            ERR_FAIL_NULL_MSG(physics_server_3d, "Failed to initialize PhysicsServer3D.");
+            physics_server_3d->init();
+#endif // _3D_DISABLED
+
+            // 2D Physics server
+            physics_server_2d = PhysicsServer2DManager::get_singleton()->new_server(
+                GLOBAL_GET(PhysicsServer2DManager::get_singleton()->setting_property_name));
+            if (!physics_server_2d) {
+                // Physics server not found, Use the default physics
+                physics_server_2d = PhysicsServer2DManager::get_singleton()->new_default_server();
+            }
+
+            // Fall back to dummy if no default server has been registered.
+            if (!physics_server_2d) {
+                WARN_PRINT(vformat("Falling back to dummy PhysicsServer2D; 2D physics functionality will be disabled. If this is intended, set the %s project setting to Dummy.", PhysicsServer2DManager::setting_property_name));
+                physics_server_2d = memnew(PhysicsServer2DDummy);
+            }
+
+            // Should be impossible, but make sure it's not null.
+            ERR_FAIL_NULL_MSG(physics_server_2d, "Failed to initialize PhysicsServer2D.");
+            physics_server_2d->init();
+        }
+
+        static bool Main::iteration2();
 };
 static void register_core_types()
 {
@@ -190,18 +384,51 @@ static void register_core_types()
 
     resource_format_image.instantiate();
     ResourceLoader::add_resource_format_loader(resource_format_image);
+
+    
+}
+
+#include <editor/editor_string_names.h>
+#include <editor/plugins/editor_plugin.h>
+#include <editor/editor_translation_parser.h>
+#include <editor/import/editor_import_plugin.h>
+#include <editor/editor_script.h>
+#include <editor/editor_data.h>
+#include <editor/gui/editor_file_dialog.h>
+#include <editor/editor_settings.h>
+
+static void register_editor_types() {
+    EditorStringNames::create();
+
+    GDREGISTER_CLASS(EditorPaths);
+    GDREGISTER_CLASS(EditorPlugin);
+    GDREGISTER_CLASS(EditorTranslationParserPlugin);
+    GDREGISTER_CLASS(EditorImportPlugin);
+    GDREGISTER_CLASS(EditorScript);
+    GDREGISTER_CLASS(EditorSelection);
+    GDREGISTER_CLASS(EditorFileDialog);
+    GDREGISTER_CLASS(EditorSettings);
+    /*GDREGISTER_CLASS(EditorNode3DGizmo);
+    GDREGISTER_CLASS(EditorNode3DGizmoPlugin);
+    GDREGISTER_ABSTRACT_CLASS(EditorResourcePreview);
+    GDREGISTER_CLASS(EditorResourcePreviewGenerator);
+    GDREGISTER_CLASS(EditorResourceTooltipPlugin);
+    GDREGISTER_ABSTRACT_CLASS(EditorFileSystem);
+    GDREGISTER_CLASS(EditorFileSystemDirectory);
+    GDREGISTER_CLASS(EditorVCSInterface);
+    GDREGISTER_ABSTRACT_CLASS(ScriptEditor);
+    GDREGISTER_ABSTRACT_CLASS(ScriptEditorBase);
+    GDREGISTER_CLASS(EditorSyntaxHighlighter);
+    GDREGISTER_ABSTRACT_CLASS(EditorInterface);
+    GDREGISTER_CLASS(EditorExportPlugin);
+    GDREGISTER_ABSTRACT_CLASS(EditorExportPlatform);
+    GDREGISTER_ABSTRACT_CLASS(EditorExportPlatformPC);
+    GDREGISTER_CLASS(EditorExportPlatformExtension);
+    GDREGISTER_ABSTRACT_CLASS(EditorExportPreset);*/
 }
 static Ref<ResourceFormatLoaderText> resource_loader_text;
 
-static bool has_server_feature_callback(const String& p_feature) {
-    if (RenderingServer::get_singleton()) {
-        if (RenderingServer::get_singleton()->has_os_feature(p_feature)) {
-            return true;
-        }
-    }
 
-    return false;
-}
 static void register_scene_types()
 {
     SceneStringNames::create();
@@ -224,19 +451,7 @@ static void register_scene_types()
     ResourceLoader::add_resource_format_loader(resource_loader_text, true);
     resource_loader_shader.instantiate();
     ResourceLoader::add_resource_format_loader(resource_loader_shader, true);
-    memnew(ShaderTypes);
-    auto rendering_device = memnew(RenderingDevice);
-    static RenderingContextDriverNULL renderingContext;
-    rendering_device->initialize(&renderingContext);
-    memnew(MessageQueue);
-    auto rendering_server = memnew(RenderingServerDefault);
-
-    RendererCompositorRD::make_current();
-    rendering_server->init();
-    rendering_server->set_render_loop_enabled(false);
-    OS::get_singleton()->set_has_server_feature_callback(has_server_feature_callback);
-    BaseMaterial3D::init_shaders();
-    ParticleProcessMaterial::init_shaders();
+    
     GDREGISTER_CLASS(Object);
     GDREGISTER_VIRTUAL_CLASS(Resource);
     GDREGISTER_CLASS(Node3D);
@@ -284,6 +499,27 @@ static void register_scene_types()
     GDREGISTER_CLASS(VideoStreamPlayer);
     GDREGISTER_VIRTUAL_CLASS(VideoStreamPlayback);
     GDREGISTER_VIRTUAL_CLASS(VideoStream);
+
+    GDREGISTER_CLASS(SceneTree);
+
+    GDREGISTER_ABSTRACT_CLASS(Font);
+    GDREGISTER_CLASS(FontFile);
+    GDREGISTER_CLASS(FontVariation);
+    GDREGISTER_CLASS(SystemFont);
+
+    GDREGISTER_CLASS(Curve);
+
+    GDREGISTER_CLASS(LabelSettings);
+
+    GDREGISTER_CLASS(TextLine);
+    GDREGISTER_CLASS(TextParagraph);
+
+    GDREGISTER_VIRTUAL_CLASS(StyleBox);
+    GDREGISTER_CLASS(StyleBoxEmpty);
+    GDREGISTER_CLASS(StyleBoxTexture);
+    GDREGISTER_CLASS(StyleBoxFlat);
+    GDREGISTER_CLASS(StyleBoxLine);
+    GDREGISTER_CLASS(Theme);
 }
 static void initialize_physics() 
 {
@@ -335,28 +571,236 @@ std::string convert_stringname_to_ascii(const String& name) {
 void visitNode(Node* scene, Ogre::SceneNode* sceneNode, GodotContext& context);
 Node* findNode(Node* godotNode, const char* name);
 
-void godotInit()
+void godotInit(GodotContext& context)
 {
     if (globals == nullptr)
     {
         memnew(Engine);
 
         register_core_types();
+        auto input_map = memnew(InputMap);
         globals = memnew(ProjectSettings);
+        theme_db = memnew(ThemeDB);
+        
+        register_editor_types();
+       
 
         memnew(PackedData);
         register_scene_types();
         initialize_physics();
         initialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
+        initialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
         Main();
 
-       
+        Vector<DisplayServer::WindowID> winIds = display_server->get_window_list();
+        context.godotWnd = display_server->window_get_native_handle(DisplayServer::WINDOW_HANDLE, winIds[0]);
+
     }
+}
+
+#include <main/main_timer_sync.h>
+static uint64_t iterating = 0;
+static uint64_t last_ticks = 0;
+static MainTimerSync main_timer_sync;
+static int fixed_fps = -1;
+static uint64_t frames;
+static uint64_t frame;
+static uint64_t physics_process_max = 0;
+static uint64_t process_max = 0;
+static uint64_t navigation_process_max = 0;
+bool  force_redraw_requested = false;
+static uint64_t quit_after = 0;
+
+bool Main::iteration2()
+{
+    iterating++;
+
+    const uint64_t ticks = OS::get_singleton()->get_ticks_usec();
+    Engine::get_singleton()->_frame_ticks = ticks;
+    main_timer_sync.set_cpu_ticks_usec(ticks);
+    main_timer_sync.set_fixed_fps(fixed_fps);
+
+    const uint64_t ticks_elapsed = ticks - last_ticks;
+
+    const int physics_ticks_per_second = Engine::get_singleton()->get_physics_ticks_per_second();
+    const double physics_step = 1.0 / physics_ticks_per_second;
+
+    const double time_scale = Engine::get_singleton()->get_time_scale();
+
+    MainFrameTime advance = main_timer_sync.advance(physics_step, physics_ticks_per_second);
+    double process_step = advance.process_step;
+    double scaled_step = process_step * time_scale;
+
+    Engine::get_singleton()->_process_step = process_step;
+    Engine::get_singleton()->_physics_interpolation_fraction = advance.interpolation_fraction;
+
+    uint64_t physics_process_ticks = 0;
+    uint64_t process_ticks = 0;
+    uint64_t navigation_process_ticks = 0;
+
+    frame += ticks_elapsed;
+
+    last_ticks = ticks;
+
+    const int max_physics_steps = Engine::get_singleton()->get_max_physics_steps_per_frame();
+    if (fixed_fps == -1 && advance.physics_steps > max_physics_steps) {
+        process_step -= (advance.physics_steps - max_physics_steps) * physics_step;
+        advance.physics_steps = max_physics_steps;
+    }
+
+    bool exit = false;
+
+    // process all our active interfaces
+
+    NavigationServer2D::get_singleton()->sync();
+    NavigationServer3D::get_singleton()->sync();
+
+    for (int iters = 0; iters < advance.physics_steps; ++iters) {
+        if (Input::get_singleton()->is_agile_input_event_flushing()) {
+            Input::get_singleton()->flush_buffered_events();
+        }
+
+        Engine::get_singleton()->_in_physics = true;
+        Engine::get_singleton()->_physics_frames++;
+
+        uint64_t physics_begin = OS::get_singleton()->get_ticks_usec();
+
+        // Prepare the fixed timestep interpolated nodes BEFORE they are updated
+        // by the physics server, otherwise the current and previous transforms
+        // may be the same, and no interpolation takes place.
+        OS::get_singleton()->get_main_loop()->iteration_prepare();
+
+#ifndef _3D_DISABLED
+        PhysicsServer3D::get_singleton()->sync();
+        PhysicsServer3D::get_singleton()->flush_queries();
+#endif // _3D_DISABLED
+
+        PhysicsServer2D::get_singleton()->sync();
+        PhysicsServer2D::get_singleton()->flush_queries();
+
+        if (OS::get_singleton()->get_main_loop()->physics_process(physics_step * time_scale)) {
+#ifndef _3D_DISABLED
+            PhysicsServer3D::get_singleton()->end_sync();
+#endif // _3D_DISABLED
+            PhysicsServer2D::get_singleton()->end_sync();
+
+            Engine::get_singleton()->_in_physics = false;
+            exit = true;
+            break;
+        }
+
+        uint64_t navigation_begin = OS::get_singleton()->get_ticks_usec();
+
+        NavigationServer3D::get_singleton()->process(physics_step * time_scale);
+
+        navigation_process_ticks = MAX(navigation_process_ticks, OS::get_singleton()->get_ticks_usec() - navigation_begin); // keep the largest one for reference
+        navigation_process_max = MAX(OS::get_singleton()->get_ticks_usec() - navigation_begin, navigation_process_max);
+
+        message_queue->flush();
+
+#ifndef _3D_DISABLED
+        PhysicsServer3D::get_singleton()->end_sync();
+        PhysicsServer3D::get_singleton()->step(physics_step * time_scale);
+#endif // _3D_DISABLED
+
+        PhysicsServer2D::get_singleton()->end_sync();
+        PhysicsServer2D::get_singleton()->step(physics_step * time_scale);
+
+        message_queue->flush();
+
+        OS::get_singleton()->get_main_loop()->iteration_end();
+
+        physics_process_ticks = MAX(physics_process_ticks, OS::get_singleton()->get_ticks_usec() - physics_begin); // keep the largest one for reference
+        physics_process_max = MAX(OS::get_singleton()->get_ticks_usec() - physics_begin, physics_process_max);
+
+        Engine::get_singleton()->_in_physics = false;
+    }
+
+    if (Input::get_singleton()->is_agile_input_event_flushing()) {
+        Input::get_singleton()->flush_buffered_events();
+    }
+
+    uint64_t process_begin = OS::get_singleton()->get_ticks_usec();
+
+    if (OS::get_singleton()->get_main_loop()->process(process_step * time_scale)) {
+        exit = true;
+    }
+    message_queue->flush();
+
+    RenderingServer::get_singleton()->sync(); //sync if still drawing from previous frames.
+
+    if ((DisplayServer::get_singleton()->can_any_window_draw() || 
+        DisplayServer::get_singleton()->has_additional_outputs()) &&
+        RenderingServer::get_singleton()->is_render_loop_enabled()) {
+        if ((!force_redraw_requested) && OS::get_singleton()->is_in_low_processor_usage_mode()) {
+            if (RenderingServer::get_singleton()->has_changed()) {
+                RenderingServer::get_singleton()->draw(true, scaled_step); // flush visual commands
+                Engine::get_singleton()->increment_frames_drawn();
+            }
+        }
+        else {
+            RenderingServer::get_singleton()->draw(true, scaled_step); // flush visual commands
+            Engine::get_singleton()->increment_frames_drawn();
+            force_redraw_requested = false;
+        }
+    }
+
+    process_ticks = OS::get_singleton()->get_ticks_usec() - process_begin;
+    process_max = MAX(process_ticks, process_max);
+    uint64_t frame_time = OS::get_singleton()->get_ticks_usec() - ticks;
+
+    for (int i = 0; i < ScriptServer::get_language_count(); i++) {
+        ScriptServer::get_language(i)->frame();
+    }
+
+    AudioServer::get_singleton()->update();
+
+
+    frames++;
+    Engine::get_singleton()->_process_frames++;
+
+
+    iterating--;
+
+
+#ifdef TOOLS_ENABLED
+    bool quit_after_timeout = false;
+#endif
+    if ((quit_after > 0) && (Engine::get_singleton()->_process_frames >= quit_after)) {
+#ifdef TOOLS_ENABLED
+        quit_after_timeout = true;
+#endif
+        exit = true;
+    }
+
+
+    if (fixed_fps != -1) {
+        return exit;
+    }
+
+    OS::get_singleton()->add_frame_delay(DisplayServer::get_singleton()->window_can_draw());
+
+    return exit;
+}
+
+void godotLoop()
+{
+    set_current_thread_safe_for_nodes(true);
+    main_loop->initialize();
+
+    while (true) {
+        DisplayServer::get_singleton()->process_events(); // get rid of pending events
+        if (Main::iteration2()) {
+            break;
+        }
+    }
+
+    main_loop->finalize();
 }
 
 void loadGodotProject(const String& projectDir, GodotContext& context)
 {
-    godotInit();
+    godotInit(context);
     Error ret = globals->setup(projectDir, String(), false, false);
     if ( ret == OK)
     {
@@ -699,4 +1143,6 @@ void godotProjectSetting()
     ProjectManager* pmanager = memnew(ProjectManager());
     ProgressDialog* progress_dialog = memnew(ProgressDialog);
     pmanager->add_child(progress_dialog);
+    SceneTree* sml = Object::cast_to<SceneTree>(main_loop);
+    sml->get_root()->add_child(pmanager);
 }

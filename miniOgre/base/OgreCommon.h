@@ -48,7 +48,7 @@ THE SOFTWARE.
 
 
 
-
+class VertexDeclaration;
 namespace Ogre {
     
 
@@ -306,28 +306,15 @@ namespace Ogre {
         FOG_LINEAR
     };
 
-    /** Hardware culling modes based on vertex winding.
-        This setting applies to how the hardware API culls triangles it is sent.
-    @par
-        A typical way for the rendering engine to cull triangles is based on the 'vertex winding' of
-        triangles. Vertex winding refers to the direction in which the vertices are passed or indexed
-        to in the rendering operation as viewed from the camera, and will wither be clockwise or
-        anticlockwise (that's 'counterclockwise' for you Americans out there ;) The default is
-        CULL_CLOCKWISE i.e. that only triangles whose vertices are passed/indexed in anticlockwise order
-        are rendered - this is a common approach and is used in 3D studio models for example. You can
-        alter this culling mode if you wish but it is not advised unless you know what you are doing.
-    @par
-        You may wish to use the CULL_NONE option for mesh data that you cull yourself where the vertex
-        winding is uncertain.
-    */
+    
     enum CullingMode
     {
         /// Hardware never culls triangles and renders everything it receives.
-        CULL_NONE = 1,
+        CULL_MODE_NONE = 0,
         /// Hardware culls triangles whose vertices are listed clockwise in the view (default).
-        CULL_CLOCKWISE = 2,
+        CULL_MODE_FRONT = 1,
         /// Hardware culls triangles whose vertices are listed anticlockwise in the view.
-        CULL_ANTICLOCKWISE = 3
+        CULL_MODE_BACK = 2
     };
 
     /** Enumerates the wave types usable with the Ogre engine. */
@@ -1046,8 +1033,136 @@ namespace Ogre {
     struct ImageCopyDesc
     {
         ImageSubresourceLayer srcSubresource;
+        Ogre::Vector3i srcOffset;
         ImageSubresourceLayer dstSubresource;
+        Ogre::Vector3i dstOffset;
         Extent3D extent;
+        
+    };
+
+    struct FamilyInfo
+    {
+        uint32_t graphicsQueueFamilyIndex;
+        uint32_t transferQueueFamilyIndex;
+        uint32_t transferQueueCount;
+    };
+
+    struct SwapChainInfo
+    {
+        Ogre::OgreTexture* color;
+        Ogre::OgreTexture* depth;
+        uint32_t imageIndex;
+    };
+
+   
+
+    struct ShaderDesc
+    {
+        std::string vertexBin;
+        std::string fragBin;
+        std::string computeBin;
+        std::string name;
+
+        VertexDeclaration* decl;
+    };
+
+    enum PRIMITIVE_TOPOLOGY_TYPE
+    {
+        PRIMITIVE_TOPOLOGY_UNDEFINED = 0,
+        PRIMITIVE_TOPOLOGY_POINTLIST = 1,
+        PRIMITIVE_TOPOLOGY_LINELIST = 2,
+        PRIMITIVE_TOPOLOGY_LINESTRIP = 3,
+        PRIMITIVE_TOPOLOGY_TRIANGLELIST = 4,
+        PRIMITIVE_TOPOLOGY_TRIANGLESTRIP = 5
+    };
+
+    enum  BlendEquation{
+        ADD,                    //!< the fragment is added to the color buffer
+        SUBTRACT,               //!< the fragment is subtracted from the color buffer
+        REVERSE_SUBTRACT,       //!< the color buffer is subtracted from the fragment
+        MIN,                    //!< the min between the fragment and color buffer
+        MAX                     //!< the max between the fragment and color buffer
+    };
+
+    enum  BlendFunction  {
+        ZERO,                   //!< f(src, dst) = 0
+        ONE,                    //!< f(src, dst) = 1
+        SRC_COLOR,              //!< f(src, dst) = src
+        ONE_MINUS_SRC_COLOR,    //!< f(src, dst) = 1-src
+        DST_COLOR,              //!< f(src, dst) = dst
+        ONE_MINUS_DST_COLOR,    //!< f(src, dst) = 1-dst
+        SRC_ALPHA,              //!< f(src, dst) = src.a
+        ONE_MINUS_SRC_ALPHA,    //!< f(src, dst) = 1-src.a
+        DST_ALPHA,              //!< f(src, dst) = dst.a
+        ONE_MINUS_DST_ALPHA,    //!< f(src, dst) = 1-dst.a
+        SRC_ALPHA_SATURATE      //!< f(src, dst) = (1,1,1) * min(src.a, 1 - dst.a), 1
+    };
+
+    struct RasterizationStateInfo {
+        bool depthClampEnable= false;
+        bool discardPrimitives = false;
+        bool wireframe = false;
+        CullingMode cullMode = CULL_MODE_NONE;
+        //PolygonFrontFace front_face = POLYGON_FRONT_FACE_CLOCKWISE;
+        bool depthBiasEnable = false;
+        float depthBiasConstantFactor = 0.0f;
+        float depthBiasClamp = 0.0f;
+        float depthBiasSlopeFactor = 0.0f;
+        float lineWidth = 1.0f;
+        uint32_t patchControlPoints = 1;
+    };
+
+    struct MultisampleStateInfo {
+        uint32_t sampleCount = 1;
+        bool enable_sample_shading = false;
+        float min_sample_shading = 0.0f;
+        std::vector<uint32_t> sample_mask;
+        bool enable_alpha_to_coverage = false;
+        bool enable_alpha_to_one = false;
+    };
+
+    struct DepthStencilStateInfo {
+        bool depthTestEnable = false;
+        bool depthWriteEnable = false;
+        CompareFunction depthCompareOp = CMPF_ALWAYS_PASS;
+        bool enable_depth_range = false;
+        float depth_range_min = 0;
+        float depth_range_max = 0;
+        bool enable_stencil = false;
+    };
+
+    struct ColorBlendStateInfo{
+        bool blendEnable = false;
+        //! blend equation for the red, green and blue components
+        BlendEquation blendEquationRGB : 3;        //  5
+        //! blend equation for the alpha component
+        BlendEquation blendEquationAlpha : 3;        //  8
+
+        //! blending function for the source color
+        BlendFunction blendFunctionSrcRGB : 4;        // 12
+        //! blending function for the source alpha
+        BlendFunction blendFunctionSrcAlpha : 4;        // 16
+        //! blending function for the destination color
+        BlendFunction blendFunctionDstRGB : 4;        // 20
+        //! blending function for the destination alpha
+        BlendFunction blendFunctionDstAlpha : 4;        // 24
+    };
+
+    struct RenderTargetInfo
+    {
+        uint8_t renderTargetCount;
+        uint16_t pixelFormat[8];
+    };
+
+    struct PipelineCreateInfo
+    {
+        VertexDeclaration* decl;
+        PRIMITIVE_TOPOLOGY_TYPE topology;
+        RasterizationStateInfo rasterizationState;
+        MultisampleStateInfo multisampleState;
+        DepthStencilStateInfo depthStencilState;
+        ColorBlendStateInfo colorBlendState;
+        RenderTargetInfo renderTarget;
     };
 
     struct CreateWindowDesc
@@ -1222,15 +1337,7 @@ namespace Ogre {
         VET_COLOUR_ABGR = VET_UBYTE4_NORM,  ///< @deprecated use VET_UBYTE4_NORM
     };
 
-    enum PRIMITIVE_TOPOLOGY_TYPE
-    {
-        PRIMITIVE_TOPOLOGY_UNDEFINED = 0,
-        PRIMITIVE_TOPOLOGY_POINTLIST = 1,
-        PRIMITIVE_TOPOLOGY_LINELIST = 2,
-        PRIMITIVE_TOPOLOGY_LINESTRIP = 3,
-        PRIMITIVE_TOPOLOGY_TRIANGLELIST = 4,
-        PRIMITIVE_TOPOLOGY_TRIANGLESTRIP = 5
-    };
+   
 
     enum VertexElementSemantic {
         /// Position, typically VET_FLOAT3

@@ -111,7 +111,7 @@ SpirvTools
 utils
 tiff
 bluevk
-zlibstatic
+zlib
 assimp
 VulkanMemoryAllocator
 dxgi

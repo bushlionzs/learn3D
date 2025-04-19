@@ -7,6 +7,7 @@
 */
 
 #include "OgreHeader.h"
+#include "OgreVertexDeclaration.h"
 #include "VulkanTools.h"
 #include "VulkanTexture.h"
 #include "VulkanHelper.h"
@@ -399,6 +400,20 @@ namespace vks
 			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 			moduleCreateInfo.codeSize = code.size();
 			moduleCreateInfo.pCode = (uint32_t*)code.data();
+
+			VK_CHECK_RESULT(vkCreateShaderModule(device, &moduleCreateInfo, NULL, &shaderModule));
+
+			return shaderModule;
+		}
+
+		VkShaderModule loadShaderMemory(
+			const uint8_t* data, uint32_t size, VkDevice device)
+		{
+			VkShaderModule shaderModule;
+			VkShaderModuleCreateInfo moduleCreateInfo{};
+			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			moduleCreateInfo.codeSize = size;
+			moduleCreateInfo.pCode = (uint32_t*)data;
 
 			VK_CHECK_RESULT(vkCreateShaderModule(device, &moduleCreateInfo, NULL, &shaderModule));
 
@@ -809,12 +824,49 @@ namespace vks
 				subresourceRange);
 		}
 
+		void bingingUpdate(
+			vks::tools::BingdingInfo& bindingMap,
+			vks::tools::BingdingInfo& results,
+			VkShaderStageFlagBits flagBits)
+		{
+			auto findLayout = [](
+				std::vector<VKDescriptorInfo>& bindingList,
+				VKDescriptorInfo binding)
+				{
+					for (auto i = 0; i < bindingList.size(); i++)
+					{
+						if (bindingList.at(i).layoutBinding.binding == binding.layoutBinding.binding)
+						{
+							return i;
+						}
+					}
+					return -1;
+				};
+			for (auto& pair : results)
+			{
+				auto& bingdingList = bindingMap[pair.first];
+				for (auto& layoutBingding : pair.second)
+				{
+					auto i = findLayout(bingdingList, layoutBingding);
+					if (i >= 0)
+					{
+						bingdingList[i].layoutBinding.stageFlags |= flagBits;
+					}
+					else
+					{
+						bingdingList.push_back(layoutBingding);
+					}
+				}
+			}
+		}
+
 		BingdingInfo getProgramBindings(
-			const std::string& blob, 
+			const std::string& blob,
 			VkShaderStageFlags stageFlags,
 			std::vector<PushConstants>* pushConstantsList)
 		{
 			
+			assert_invariant(blob.size() % 4 == 0);
 			BingdingInfo result;
 			spirv_cross::CompilerGLSL  glsl((const uint32_t*)blob.data(), blob.size() / 4);
 
@@ -1114,6 +1166,96 @@ namespace vks
 			
 
 			return result;
+		}
+
+		void parseInputBindingDescription(
+			VertexDeclaration* decl,
+			std::vector<GlslInputDesc>& inputDesc,
+			std::vector<VkVertexInputBindingDescription>& vertexInputBindings)
+		{
+			vertexInputBindings.clear();
+			if (decl)
+			{
+				for (uint32_t binding = 0; binding < 10; binding++)
+				{
+					int32_t stride = decl->getVertexSize(binding);
+
+					if (stride <= 0)
+						continue;
+					vertexInputBindings.emplace_back();
+					vertexInputBindings.back().binding = binding;
+					vertexInputBindings.back().stride = stride;
+					vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+				}
+			}
+			else
+			{
+				int32_t stride = 0;
+				for (auto i = 0; i < inputDesc.size(); i++)
+				{
+					auto& input = inputDesc[i];
+
+					stride += getTypeSize(input._type);
+				}
+
+
+				vertexInputBindings.emplace_back();
+				vertexInputBindings.back().binding = 0;
+				vertexInputBindings.back().stride = stride;
+				vertexInputBindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+			}
+		}
+
+		void parseAttributeDescriptions(
+			VertexDeclaration* decl,
+			std::vector<GlslInputDesc>& inputDesc,
+			std::vector<VkVertexInputAttributeDescription>& attributeDescriptions)
+		{
+
+			attributeDescriptions.resize(inputDesc.size());
+			if (decl == nullptr)
+			{
+				uint32_t offset = 0;
+				for (auto i = 0; i < inputDesc.size(); i++)
+				{
+					auto& input = inputDesc[i];
+					attributeDescriptions[i].binding = 0;
+					attributeDescriptions[i].location = input._location;
+					attributeDescriptions[i].format = getVKFormatFromType(input._type);
+					attributeDescriptions[i].offset = offset;
+					offset += getTypeSize(input._type);
+				}
+				return;
+			}
+
+			int32_t i = 0;
+			auto& elementlist = decl->getElementList();
+			for (GlslInputDesc& input : inputDesc)
+			{
+				bool find = false;
+
+
+				for (auto& elem : elementlist)
+				{
+					if (input._location == elem.getLocation())
+					{
+						attributeDescriptions[i].binding = elem.getSource();
+						attributeDescriptions[i].location = input._location;
+						attributeDescriptions[i].format = getVKFormatFromType(elem.getType());
+						attributeDescriptions[i].offset = elem.getOffset();
+						i++;
+						find = true;
+						break;
+					}
+				}
+
+
+				if (!find)
+				{
+					OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "can not find input param");
+				}
+			}
 		}
 
 		VkPipelineStageFlags util_determine_pipeline_stage_flags(

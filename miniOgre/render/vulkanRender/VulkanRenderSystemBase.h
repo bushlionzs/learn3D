@@ -54,18 +54,25 @@ public:
         Handle<HwPipeline> pipelineHandle,
         const Handle<HwDescriptorSet>* descSets,
         uint32_t setCount) override;
-    virtual void draw(uint32_t vertexCount, uint32_t firstVertex) override;
+    virtual void draw(uint32_t vertexCount,
+        uint32_t instanceCount,
+        uint32_t firstVertex,
+        uint32_t firstInstance,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh
+    ) override;
     virtual void drawIndexed(
         uint32_t indexCount,
         uint32_t instanceCount,
         uint32_t firstIndex,
         uint32_t vertexOffset,
-        uint32_t firstInstance);
+        uint32_t firstInstance,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh);
     virtual void drawIndexedIndirect(
         Handle<HwBufferObject> drawBuffer,
         uint32_t offset,
         uint32_t drawCount,
-        uint32_t stride
+        uint32_t stride,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh
     );
 
     void bindComputePipeline(
@@ -80,24 +87,35 @@ public:
     virtual void copyImage(
         Ogre::RenderTarget* dst,
         Ogre::RenderTarget* src,
-        ImageCopyDesc& desc);
+        ImageCopyDesc& desc) override;
+
+    virtual void copyImage(
+        Ogre::OgreTexture* dst,
+        Ogre::OgreTexture* src,
+        Ogre::ImageCopyDesc& desc) override;
+
     virtual void copyBuffer(
         Handle<HwBufferObject> src,
         uint32_t srcOffset,
         Handle<HwBufferObject> dst,
         uint32_t dstOffset,
-        uint32_t size
-    );
+        uint32_t size,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh
+    ) override;
 protected:
     virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color)override;
     virtual void popGroupMarker();
-    virtual void* lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes);
-    virtual void unlockBuffer(Handle<HwBufferObject> bufHandle);
+    virtual void getFamilyInfo(FamilyInfo& desc)override;
+    virtual void* bufferMap(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes);
+    virtual void bufferUnmap(Handle<HwBufferObject> bufHandle);
     virtual void bindVertexBuffer(
         Handle<HwBufferObject> bufHandle, 
         uint32_t binding,
-        uint32_t vertexSize);
-    virtual void bindIndexBuffer(Handle<HwBufferObject>, uint32_t indexSize);
+        uint32_t offset);
+    virtual void bindIndexBuffer(
+        Handle<HwBufferObject>, 
+        uint32_t indexSize,
+        uint32_t offset) override;
     virtual Handle<HwBufferObject> createBufferObject(
         BufferDesc& desc) override;
 
@@ -106,6 +124,14 @@ protected:
         const char* data, 
         uint32_t size,
         uint32_t offset) override;
+    virtual bool getBufferInfo(
+        filament::backend::Handle<filament::backend::HwBufferObject> boh,
+        Ogre::BufferDesc& desc)override;
+
+    virtual void clearBufferObject(
+        filament::backend::Handle<filament::backend::HwBufferObject> boh,
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh
+    )override;
     bool getBufferObject(Handle<HwBufferObject> boh,
         const char* data,
         uint32_t size,
@@ -152,16 +178,33 @@ protected:
     virtual void destroyBufferObject(Handle<HwBufferObject> bufHandle);
 
     virtual uint32_t getAlignmentSize(BufferObjectBinding bufferType);
-private:
-    
-    void parseInputBindingDescription(
-        VertexDeclaration* decl,
-        std::vector<GlslInputDesc>& inputDesc,
-        std::vector<VkVertexInputBindingDescription>& vertexInputBindings);
-    void parseAttributeDescriptions(
-        VertexDeclaration* vd,
-        std::vector<GlslInputDesc>& inputDesc,
-        std::vector<VkVertexInputAttributeDescription>& attributeDescriptions);
+
+    virtual Handle<HwFence> createFence() override;
+    virtual void waitFence(Handle<HwFence> fh) override;
+
+    virtual Handle<HwSemaphore> createSemaphore()override;
+    virtual Handle<HwCommandBuffer> createCommandBuffer(uint32_t queueFamilyIndex) override;
+    virtual void beginCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh) override;
+    virtual void endCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh) override;
+    virtual void clearCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh) override;
+    virtual Handle<HwCommandQueue> createCommandQueue(uint32_t familyIndex, uint32_t queueIndex)override;
+
+    virtual Handle<HwSwapChain> createSwapChain() override;
+    virtual void swapChainAcquire(
+        filament::backend::Handle<filament::backend::HwSwapChain> sch,
+        SwapChainInfo& scInfo) override;
+
+    virtual Handle<HwShader> createShader(Ogre::ShaderDesc& desc) override;
+
+    virtual Handle<HwPipeline> createPipeline(
+        Ogre::PipelineCreateInfo& pipelineCreateInfo,
+        Handle<HwShader>& shader
+    )override;
+protected:
+    void bingingUpdate(
+        vks::tools::BingdingInfo& bindingMap,
+        vks::tools::BingdingInfo& results,
+        VkShaderStageFlagBits flagBits);
 protected:
     VulkanWindow* mRenderWindow;
     VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;

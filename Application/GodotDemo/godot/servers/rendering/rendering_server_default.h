@@ -185,7 +185,14 @@ public:
 	}
 
 	//these go pass-through, as they can be called from any thread
-	FUNCRIDTEX1(texture_2d, const Ref<Image> &)
+	virtual RID texture_2d_create(const Ref<Image>& p1) override {
+		RID ret = RenderingServerGlobals::texture_storage->texture_allocate(); if (Thread::get_caller_id() == server_thread || RenderingServerGlobals::rasterizer->can_create_resources_async()) {
+			RenderingServerGlobals::texture_storage->texture_2d_initialize(ret, p1);
+		}
+		else {
+			command_queue.push(RenderingServerGlobals::texture_storage, &RendererTextureStorage::texture_2d_initialize, ret, p1);
+		} return ret;
+	}
 	FUNCRIDTEX2(texture_2d_layered, const Vector<Ref<Image>> &, TextureLayeredType)
 	FUNCRIDTEX6(texture_3d, Image::Format, int, int, int, bool, const Vector<Ref<Image>> &)
 	FUNCRIDTEX3(texture_external, int, int, uint64_t)

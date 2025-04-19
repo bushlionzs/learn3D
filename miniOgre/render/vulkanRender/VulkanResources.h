@@ -49,8 +49,11 @@ namespace filament::backend {
 
         // Below are resources that are managed manually (i.e. not ref counted).
         FENCE = 13,
-        HEAP_ALLOCATED = 14,
-        END_TYPE = 15,  // A placeholder
+        SEMAPHORE = 14,
+        COMMAND_QUEUE = 15,
+        COMMAND_BUFFER = 16,
+        HEAP_ALLOCATED = 17,
+        END_TYPE = 18,  // A placeholder
     };
 
 #define IS_HEAP_ALLOC_TYPE(f)                                                                      \

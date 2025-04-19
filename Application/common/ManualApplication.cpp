@@ -54,9 +54,18 @@ bool ManualApplication::appInit()
 	ogreConfig.width = 1600;
 	ogreConfig.height = 900;
 	ogreConfig.enableRaytracing = mAppInfo->enableRayTracing;
-	mApplicationWindow->createWindow(ogreConfig.width, ogreConfig.height);
+	HWND wnd;
+	if (mAppInfo->appWnd)
+	{
+		wnd = (HWND)mAppInfo->appWnd;
+	}
+	else
+	{	
+		mApplicationWindow->createWindow(ogreConfig.width, ogreConfig.height);
+
+		wnd = mApplicationWindow->getWnd();
+	}
 	
-	HWND wnd = mApplicationWindow->getWnd();
 
 	if (!InputManager::getSingletonPtr())
 	{
@@ -124,37 +133,51 @@ void ManualApplication::run(AppInfo& info)
 {
 	mAppInfo = &info;
 	mUseCEGUI = mAppInfo->useCEGUI;
+	if (info.preInit)
+	{
+		info.preInit(mAppInfo);
+	}
+	
 	appInit();
 	info.setup(mRenderSystem, mRenderWindow, mSceneManager, mGameCamera);
 	MSG msg;
 	mRenderSystem->ready();
 	printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-	while (true)
+
+	if (info.loopback)
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		info.loopback();
+	}
+	else
+	{
+		while (true)
 		{
-			if (msg.message == WM_QUIT)
-				break;
-
-			if (msg.message == WM_SIZE)
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
-				int kk = 0;
-			}
+				if (msg.message == WM_QUIT)
+					break;
 
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			
-			if (msg.message == WM_QUIT)
-			{
-				break;
+				if (msg.message == WM_SIZE)
+				{
+					int kk = 0;
+				}
+
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+
+				if (msg.message == WM_QUIT)
+				{
+					break;
+				}
 			}
-		}
-		else
-		{
-			render();
-			ShowFrameFrequency();
+			else
+			{
+				render();
+				ShowFrameFrequency();
+			}
 		}
 	}
+	
 }
 
 void ManualApplication::render()
