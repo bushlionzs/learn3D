@@ -4,13 +4,16 @@
 
 
 #include "servers/rendering/rendering_context_driver.h"
+#include <functional>
 
-
+using RenderingContextCallback = std::function<void(int64_t wnd)>;
 
 class RenderingContextDriverNULL : public RenderingContextDriver {
 public:
 	RenderingContextDriverNULL();
 	virtual ~RenderingContextDriverNULL() override;
+	
+	static void setRenderingContextCallback(RenderingContextCallback cb);
 public:
 	virtual Error initialize() override;
 	virtual const Device& device_get(uint32_t p_device_index) const override;

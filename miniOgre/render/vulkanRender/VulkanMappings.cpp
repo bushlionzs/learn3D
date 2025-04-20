@@ -259,6 +259,7 @@ namespace Ogre {
             return VK_ATTACHMENT_LOAD_OP_CLEAR;
         default:
             assert_invariant(false);
+            return VK_ATTACHMENT_LOAD_OP_CLEAR;
         }
     }
 
@@ -274,6 +275,7 @@ namespace Ogre {
             return VK_ATTACHMENT_STORE_OP_NONE;
         default:
             assert_invariant(false);
+            return VK_ATTACHMENT_STORE_OP_NONE;
         }
     }
 
@@ -382,59 +384,59 @@ namespace Ogre {
         }
     }
 
-    VkAccessFlags VulkanMappings::util_to_vk_access_flags(uint32_t state)
+    VkAccessFlags VulkanMappings::util_to_vk_access_flags(BitField<BackendResourceState> state)
     {
         VkAccessFlags ret = 0;
-        if (state & RESOURCE_STATE_COPY_SOURCE)
+        if (state.has_flag(RESOURCE_STATE_COPY_SOURCE))
         {
             ret |= VK_ACCESS_TRANSFER_READ_BIT;
         }
-        if (state & RESOURCE_STATE_COPY_DEST)
+        if (state.has_flag(RESOURCE_STATE_COPY_DEST))
         {
             ret |= VK_ACCESS_TRANSFER_WRITE_BIT;
         }
-        if (state & RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER)
+        if (state.has_flag(RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER))
         {
             ret |= VK_ACCESS_UNIFORM_READ_BIT | VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
         }
-        if (state & RESOURCE_STATE_INDEX_BUFFER)
+        if (state.has_flag(RESOURCE_STATE_INDEX_BUFFER))
         {
             ret |= VK_ACCESS_INDEX_READ_BIT;
         }
-        if (state & RESOURCE_STATE_UNORDERED_ACCESS)
+        if (state.has_flag(RESOURCE_STATE_UNORDERED_ACCESS))
         {
             ret |= VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
         }
-        if (state & RESOURCE_STATE_INDIRECT_ARGUMENT)
+        if (state.has_flag(RESOURCE_STATE_INDIRECT_ARGUMENT))
         {
             ret |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
         }
-        if (state & RESOURCE_STATE_RENDER_TARGET)
+        if (state.has_flag(RESOURCE_STATE_RENDER_TARGET))
         {
             ret |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
         }
-        if (state & RESOURCE_STATE_DEPTH_WRITE)
+        if (state.has_flag(RESOURCE_STATE_DEPTH_WRITE))
         {
             ret |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
         }
-        if (state & RESOURCE_STATE_DEPTH_READ)
+        if (state.has_flag(RESOURCE_STATE_DEPTH_READ))
         {
             ret |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
         }
-        if (state & RESOURCE_STATE_SHADER_RESOURCE)
+        if (state.has_flag(RESOURCE_STATE_SHADER_RESOURCE))
         {
             ret |= VK_ACCESS_SHADER_READ_BIT;
         }
-        if (state & RESOURCE_STATE_PRESENT)
+        if (state.has_flag(RESOURCE_STATE_PRESENT))
         {
             ret |= VK_ACCESS_MEMORY_READ_BIT;
         }
 
-        if (state & RESOURCE_STATE_ACCELERATION_STRUCTURE_READ)
+        if (state.has_flag(RESOURCE_STATE_ACCELERATION_STRUCTURE_READ))
         {
             ret |= VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
         }
-        if (state & RESOURCE_STATE_ACCELERATION_STRUCTURE_WRITE)
+        if (state.has_flag(RESOURCE_STATE_ACCELERATION_STRUCTURE_WRITE))
         {
             ret |= VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
         }
@@ -442,29 +444,29 @@ namespace Ogre {
         return ret;
     }
 
-    VkImageLayout VulkanMappings::util_to_vk_image_layout(uint32_t usage)
+    VkImageLayout VulkanMappings::util_to_vk_image_layout(BitField<BackendResourceState> usage)
     {
-        if (usage & RESOURCE_STATE_COPY_SOURCE)
+        if (usage.has_flag(RESOURCE_STATE_COPY_SOURCE))
             return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 
-        if (usage & RESOURCE_STATE_COPY_DEST)
+        if (usage.has_flag(RESOURCE_STATE_COPY_DEST))
             return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 
-        if (usage & RESOURCE_STATE_RENDER_TARGET)
+        if (usage.has_flag(RESOURCE_STATE_RENDER_TARGET))
             return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-        if (usage & RESOURCE_STATE_DEPTH_WRITE)
+        if (usage.has_flag(RESOURCE_STATE_DEPTH_WRITE))
             return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-        else if (usage & RESOURCE_STATE_DEPTH_READ)
+        else if (usage.has_flag(RESOURCE_STATE_DEPTH_READ))
             return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 
-        if (usage & RESOURCE_STATE_UNORDERED_ACCESS)
+        if (usage.has_flag(RESOURCE_STATE_UNORDERED_ACCESS))
             return VK_IMAGE_LAYOUT_GENERAL;
 
-        if (usage & RESOURCE_STATE_SHADER_RESOURCE)
+        if (usage.has_flag(RESOURCE_STATE_SHADER_RESOURCE))
             return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-        if (usage & RESOURCE_STATE_PRESENT)
+        if (usage.has_flag(RESOURCE_STATE_PRESENT))
             return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
         if (usage == RESOURCE_STATE_COMMON)
@@ -542,17 +544,88 @@ namespace Ogre {
     VkBlendFactor VulkanMappings::getBlendFactor(BlendFunction mode)
     {
         switch (mode) {
-        case BlendFunction::ZERO:                  return VK_BLEND_FACTOR_ZERO;
-        case BlendFunction::ONE:                   return VK_BLEND_FACTOR_ONE;
-        case BlendFunction::SRC_COLOR:             return VK_BLEND_FACTOR_SRC_COLOR;
-        case BlendFunction::ONE_MINUS_SRC_COLOR:   return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
-        case BlendFunction::DST_COLOR:             return VK_BLEND_FACTOR_DST_COLOR;
-        case BlendFunction::ONE_MINUS_DST_COLOR:   return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
-        case BlendFunction::SRC_ALPHA:             return VK_BLEND_FACTOR_SRC_ALPHA;
-        case BlendFunction::ONE_MINUS_SRC_ALPHA:   return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        case BlendFunction::DST_ALPHA:             return VK_BLEND_FACTOR_DST_ALPHA;
-        case BlendFunction::ONE_MINUS_DST_ALPHA:   return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
-        case BlendFunction::SRC_ALPHA_SATURATE:    return VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
+        case BlendFunction::BLEND_FACTOR_ZERO:                  return VK_BLEND_FACTOR_ZERO;
+        case BlendFunction::BLEND_FACTOR_ONE:                   return VK_BLEND_FACTOR_ONE;
+        case BlendFunction::BLEND_FACTOR_SRC_COLOR:             return VK_BLEND_FACTOR_SRC_COLOR;
+        case BlendFunction::BLEND_FACTOR_ONE_MINUS_SRC_COLOR:   return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+        case BlendFunction::BLEND_FACTOR_DST_COLOR:             return VK_BLEND_FACTOR_DST_COLOR;
+        case BlendFunction::BLEND_FACTOR_ONE_MINUS_DST_COLOR:   return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+        case BlendFunction::BLEND_FACTOR_SRC_ALPHA:             return VK_BLEND_FACTOR_SRC_ALPHA;
+        case BlendFunction::BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:   return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        case BlendFunction::BLEND_FACTOR_DST_ALPHA:             return VK_BLEND_FACTOR_DST_ALPHA;
+        case BlendFunction::BLEND_FACTOR_ONE_MINUS_DST_ALPHA:   return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+        case BlendFunction::BLEND_FACTOR_SRC_ALPHA_SATURATE:    return VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
+        default:
+            assert_invariant(false);
+            return VK_BLEND_FACTOR_ZERO;
         }
+    }
+
+    VkCompareOp VulkanMappings::getCompareOp(CompareFunction func) {
+        using Compare = SamplerCompareFunc;
+        switch (func) {
+        case CompareFunction::CMPF_LESS_EQUAL: return VK_COMPARE_OP_LESS_OR_EQUAL;
+        case CompareFunction::CMPF_GREATER_EQUAL: return VK_COMPARE_OP_GREATER_OR_EQUAL;
+        case CompareFunction::CMPF_LESS:  return VK_COMPARE_OP_LESS;
+        case CompareFunction::CMPF_GREATER:  return VK_COMPARE_OP_GREATER;
+        case CompareFunction::CMPF_EQUAL:  return VK_COMPARE_OP_EQUAL;
+        case CompareFunction::CMPF_NOT_EQUAL: return VK_COMPARE_OP_NOT_EQUAL;
+        case CompareFunction::CMPF_ALWAYS_PASS:  return VK_COMPARE_OP_ALWAYS;
+        case CompareFunction::CMPF_ALWAYS_FAIL:  return VK_COMPARE_OP_NEVER;
+        default:
+            return VK_COMPARE_OP_NEVER;
+        }
+    }
+
+    VkImageLayout VulkanMappings::getImageLayout(TextureLayout layout)
+    {
+        switch (layout)
+        {
+        case TEXTURE_LAYOUT_UNDEFINED:
+            return VK_IMAGE_LAYOUT_UNDEFINED;
+        case TEXTURE_LAYOUT_STORAGE_OPTIMAL:
+            return VK_IMAGE_LAYOUT_GENERAL;
+        case TEXTURE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+            return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        case TEXTURE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+            return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        case TEXTURE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+            return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+        case TEXTURE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+            return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        case TEXTURE_LAYOUT_COPY_SRC_OPTIMAL:
+            return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+        case TEXTURE_LAYOUT_COPY_DST_OPTIMAL:
+            return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        case TEXTURE_LAYOUT_RESOLVE_SRC_OPTIMAL:
+            return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+        case TEXTURE_LAYOUT_RESOLVE_DST_OPTIMAL:
+            return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        case TEXTURE_LAYOUT_VRS_ATTACHMENT_OPTIMAL:
+            return VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR;
+        default:
+            assert_invariant(false);
+            return VK_IMAGE_LAYOUT_UNDEFINED;
+        }
+    }
+
+    VkImageAspectFlags VulkanMappings::getAspect(BitField<TextureAspectBits> aspect)
+    {
+        VkImageAspectFlags flags = 0;
+        if (aspect.has_flag(TEXTURE_ASPECT_COLOR_BIT))
+        {
+            flags |= VK_IMAGE_ASPECT_COLOR_BIT;
+        }
+
+        if (aspect.has_flag(TEXTURE_ASPECT_DEPTH_BIT))
+        {
+            flags |= VK_IMAGE_ASPECT_DEPTH_BIT;
+        }
+
+        if (aspect.has_flag(TEXTURE_ASPECT_STENCIL_BIT))
+        {
+            flags |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
+        return flags;
     }
 }

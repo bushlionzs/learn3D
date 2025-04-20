@@ -111,7 +111,7 @@ namespace Ogre
         RenderPassInfo renderPassInfo;
         renderPassInfo.renderTargetCount = 1;
         renderPassInfo.renderTargets[0].target.renderTarget = outPutTarget;
-        renderPassInfo.depthTarget.depthStencil = nullptr;
+        renderPassInfo.depthTarget.target.depthStencil = nullptr;
         renderPassInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
         renderPassInfo.viewport = false;
         
@@ -270,7 +270,7 @@ namespace Ogre
         RenderPassInfo renderPassInfo;
         renderPassInfo.renderTargetCount = 1;
         renderPassInfo.renderTargets[0].target.renderTarget = rt;
-        renderPassInfo.depthTarget.depthStencil = nullptr;
+        renderPassInfo.depthTarget.target.depthStencil = nullptr;
         renderPassInfo.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 1.000000000f };
         rs->beginCmd();
 

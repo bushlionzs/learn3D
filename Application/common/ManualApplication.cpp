@@ -43,7 +43,7 @@ bool ManualApplication::frameStarted(const Ogre::FrameEvent& evt)
 }
 
 
-bool ManualApplication::appInit()
+bool ManualApplication::appInit(AppInfo* info)
 {
 	mApplicationWindow = new ApplicationWindow();
 
@@ -53,11 +53,11 @@ bool ManualApplication::appInit()
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	ogreConfig.width = 1600;
 	ogreConfig.height = 900;
-	ogreConfig.enableRaytracing = mAppInfo->enableRayTracing;
+	ogreConfig.enableRaytracing = info->enableRayTracing;
 	HWND wnd;
-	if (mAppInfo->appWnd)
+	if (info->appWnd)
 	{
-		wnd = (HWND)mAppInfo->appWnd;
+		wnd = (HWND)info->appWnd;
 	}
 	else
 	{	
@@ -129,27 +129,31 @@ bool ManualApplication::appInit()
 
 
 
-void ManualApplication::run(AppInfo& info)
+void ManualApplication::run(AppInfo* info)
 {
-	mAppInfo = &info;
+	mAppInfo = info;
 	mUseCEGUI = mAppInfo->useCEGUI;
-	if (info.preInit)
+	if (info->userRunCallback)
 	{
-		info.preInit(mAppInfo);
-	}
-	
-	appInit();
-	info.setup(mRenderSystem, mRenderWindow, mSceneManager, mGameCamera);
-	MSG msg;
-	mRenderSystem->ready();
-	printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-
-	if (info.loopback)
-	{
-		info.loopback();
+		info->userRunCallback(mAppInfo);
 	}
 	else
 	{
+		appInit(info);
+	}
+	
+	info->setup(mRenderSystem, mRenderWindow, mSceneManager, mGameCamera);
+	mRenderSystem->ready();
+	printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+	
+
+	if (info->loopback)
+	{
+		info->loopback();
+	}
+	else
+	{
+		MSG msg;
 		while (true)
 		{
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))

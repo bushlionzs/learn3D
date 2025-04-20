@@ -100,9 +100,14 @@ typedef struct BindRenderTargetDesc
 
 typedef struct BindDepthTargetDesc
 {
-    Ogre::RenderTarget* depthStencil;
+    union
+    {
+        Ogre::RenderTarget* depthStencil;
+        Ogre::OgreTexture* texture;
+    }target;
+    bool isTexture = false;
     ClearValue      clearValue;
-    uint32_t depthIndex;
+    uint32_t depthIndex= 0;
 } BindDepthTargetDesc;
 
 enum

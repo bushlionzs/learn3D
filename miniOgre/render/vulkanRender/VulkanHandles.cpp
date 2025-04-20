@@ -80,8 +80,9 @@ inline VkShaderStageFlags getVkStage(backend::ShaderStage stage) {
             return VK_SHADER_STAGE_VERTEX_BIT;
         case backend::ShaderStage::FRAGMENT:
             return VK_SHADER_STAGE_FRAGMENT_BIT;
-        case backend::ShaderStage::COMPUTE:
-            PANIC_POSTCONDITION("Unsupported stage");
+        default:
+            assert_invariant(false);
+            return VK_SHADER_STAGE_VERTEX_BIT;
     }
 }
 
@@ -110,8 +111,6 @@ void VulkanDescriptorSet::acquire(VulkanBufferObject* bufferObject) {
 void VulkanDescriptorSet::updateVulkanProgram(VulkanProgram* vulkanProgram)
 {
     mVulkanProgram = vulkanProgram;
-
-    mVulkanProgram->getDescriptor("aabb");
 }
 
 PushConstantDescription::PushConstantDescription(backend::Program const& program) noexcept {
@@ -639,10 +638,20 @@ VulkanBufferObject::VulkanBufferObject(VmaAllocator allocator, VulkanStagePool& 
           desc.bufferCreationFlags), desc.mSize, desc.mMemoryUsage == RESOURCE_MEMORY_USAGE_CPU_TO_GPU),
       bindingType(desc.mBindingType) {}
 
+VulkanFence::VulkanFence(VkDevice device)
+    :VulkanResource(VulkanResourceType::FENCE)
+{
+    vkFence = VK_NULL_HANDLE;
+    VkFenceCreateInfo create_info = {};
+    create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    VkResult err = vkCreateFence(device, &create_info, nullptr, &vkFence);
+
+}
 
 VulkanSemaphore::VulkanSemaphore(VkDevice device)
     :VulkanResource(VulkanResourceType::SEMAPHORE) 
 {
+    semaphore = VK_NULL_HANDLE;
     VkSemaphoreCreateInfo sci{ .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
     vkCreateSemaphore(device, &sci, nullptr, &semaphore);
 }
@@ -653,9 +662,26 @@ VulkanCommandQueue::VulkanCommandQueue(
     :VulkanResource(VulkanResourceType::COMMAND_QUEUE)
 {
     vkQueue = queue;
+
+    auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+
+    vkSemaphores.resize(ogreConfig.swapBufferCount);
+
+    VkSemaphoreCreateInfo create_info = {};
+    create_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+    auto device = VulkanHelper::getSingleton().getDevcie();
+    for (uint32_t i = 0; i < ogreConfig.swapBufferCount; i++)
+    {
+        VkSemaphore semaphore = VK_NULL_HANDLE;
+        vkCreateSemaphore(device, &create_info, nullptr, &semaphore);
+        vkSemaphores[i] = semaphore;
+    }
 }
 
-VulkanCommandBuffer2::VulkanCommandBuffer2(VulkanResourceAllocator* allocator, VkDevice device, uint32_t queueFamilyIndex)
+VulkanCommandBuffer2::VulkanCommandBuffer2(
+    VulkanResourceAllocator* allocator, 
+    VkDevice device, uint32_t queueFamilyIndex)
     :VulkanResource(VulkanResourceType::COMMAND_BUFFER)
 {
     VkCommandPoolCreateInfo createInfo = {

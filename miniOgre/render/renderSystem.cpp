@@ -196,7 +196,7 @@ filament::backend::Handle<filament::backend::HwSemaphore> RenderSystem::createSe
     return Handle<HwSemaphore>();
 }
 
-filament::backend::Handle<filament::backend::HwCommandBuffer> RenderSystem::createCommandBuffer(uint32_t queueFamilyIndex)
+filament::backend::Handle<filament::backend::HwCommandBuffer> RenderSystem::createCommandBuffer(Ogre::QueueType)
 {
     assert_invariant(false);
     return Handle<HwCommandBuffer>();
@@ -217,7 +217,7 @@ void RenderSystem::clearCommandBuffer(filament::backend::Handle<filament::backen
     assert_invariant(false);
 }
 
-filament::backend::Handle<filament::backend::HwCommandQueue> RenderSystem::createCommandQueue(uint32_t familyIndex, uint32_t queueIndex)
+filament::backend::Handle<filament::backend::HwCommandQueue> RenderSystem::createCommandQueue(Ogre::QueueType type, uint32_t queueIndex)
 {
     assert_invariant(false);
     return Handle<HwCommandQueue>();
@@ -250,5 +250,45 @@ Handle<HwPipeline> RenderSystem::createPipeline(
     return Handle<HwPipeline>();
 }
 
+Handle<HwDescriptorSet> RenderSystem::createDescriptorSet(
+    Handle<HwShader> programHandle,
+    uint32_t set)
+{
+    assert_invariant(false);
+    return Handle<HwDescriptorSet>();
+}
 
+void RenderSystem::copyBufferToTexture(
+    Handle<HwCommandBuffer> cbh,
+    Handle<HwBufferObject> boh,
+    Ogre::OgreTexture* tex,
+    Ogre::ImageCopyBufferDesc& desc
+)
+{
+    assert_invariant(false);
+}
+
+void RenderSystem::executeAndPresent(
+    filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+    filament::backend::Handle<filament::backend::HwSemaphore>* wait_sph,
+    uint32_t wait_sp_size,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh,
+    uint32_t cb_size,
+    filament::backend::Handle<filament::backend::HwSemaphore>* cmd_sph,
+    uint32_t cmd_sp_size,
+    filament::backend::Handle<filament::backend::HwFence> fh,
+    filament::backend::Handle<filament::backend::HwSwapChain>* sch,
+    uint32_t sc_size
+)
+{
+    assert_invariant(false);
+}
+
+void RenderSystem::clearRenderTexture(
+    Ogre::OgreTexture*, 
+    const Ogre::Vector4& color,
+    const Ogre::TextureSubresourceRange& subresources)
+{
+    assert_invariant(false);
+}
 

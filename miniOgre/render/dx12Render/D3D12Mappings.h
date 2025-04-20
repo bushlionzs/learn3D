@@ -62,7 +62,7 @@ namespace Ogre
 		static D3D12_CULL_MODE getCullMode(backend::CullingMode mode);
 		static D3D12_BLEND getBlendFactor(BlendFunction mode);
 
-		static D3D12_BLEND_OP getBlendOp(BlendEquation equation);
+		static D3D12_BLEND_OP getBlendOp(BlendOperation equation);
 
 		static D3D12_COMPARISON_FUNC getComparisonFunc(RasterState::DepthFunc depthFunc);
 

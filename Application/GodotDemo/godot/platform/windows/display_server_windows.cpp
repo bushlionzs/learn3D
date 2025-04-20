@@ -39,7 +39,7 @@
 #include "drivers/png/png_driver_common.h"
 #include "main/main.h"
 #include "scene/resources/texture.h"
-
+#include "rendering_context_driver_null.h"
 #if defined(VULKAN_ENABLED)
 #include "rendering_context_driver_vulkan_windows.h"
 #endif
@@ -5668,6 +5668,10 @@ DisplayServer::WindowID DisplayServerWindows::_create_window(WindowMode p_mode, 
 				wpd.vulkan.window = wd.hWnd;
 				wpd.vulkan.instance = hInstance;
 			}
+			if (rendering_driver == "userDefine") {
+				wpd.vulkan.window = wd.hWnd;
+				wpd.vulkan.instance = hInstance;
+			}
 #endif
 #ifdef D3D12_ENABLED
 			if (rendering_driver == "d3d12") {
@@ -6152,9 +6156,9 @@ DisplayServerWindows::DisplayServerWindows(const String &p_rendering_driver, Win
 
 #if defined(RD_ENABLED)
 #if defined(VULKAN_ENABLED)
-	if (rendering_driver.is_empty())
+	if (rendering_driver == "userDefine")
 	{
-		rendering_driver = "vulkan";
+		rendering_context = new RenderingContextDriverNULL;
 	}
 	if (rendering_driver == "vulkan") {
 		rendering_context = memnew(RenderingContextDriverVulkanWindows);

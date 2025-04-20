@@ -1,5 +1,6 @@
 #include "rendering_context_driver_null.h"
 #include "rendering_device_driver_null.h"
+#include <windows.h>
 
 RenderingContextDriverNULL::RenderingContextDriverNULL()
 {
@@ -9,6 +10,12 @@ RenderingContextDriverNULL::RenderingContextDriverNULL()
 RenderingContextDriverNULL::~RenderingContextDriverNULL()
 {
 
+}
+
+static RenderingContextCallback renderingContextCallback = nullptr;
+void RenderingContextDriverNULL::setRenderingContextCallback(RenderingContextCallback cb)
+{
+    renderingContextCallback = cb;
 }
 
 Error RenderingContextDriverNULL::initialize()
@@ -42,7 +49,14 @@ void RenderingContextDriverNULL::driver_free(RenderingDeviceDriver* p_driver)
 
 RenderingContextDriver::SurfaceID RenderingContextDriverNULL::surface_create(const void* p_platform_data)
 {
-    return RenderingContextDriver::SurfaceID();
+    struct WindowPlatformData {
+        HWND window;
+        HINSTANCE instance;
+    };
+    WindowPlatformData* platformData = (WindowPlatformData*)p_platform_data;
+    renderingContextCallback((int64_t)platformData->window);
+
+    return RenderingContextDriver::SurfaceID(1);
 }
 
 void RenderingContextDriverNULL::surface_set_size(

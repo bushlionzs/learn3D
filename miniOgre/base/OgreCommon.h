@@ -67,6 +67,27 @@ namespace Ogre {
         return FastHash((const char*)&data, sizeof(T), hashSoFar);
     }
 
+    template <typename T>
+    class BitField {
+        int64_t value = 0;
+
+    public:
+        __forceinline BitField<T>& set_flag(T p_flag) {
+            value |= (int64_t)p_flag;
+            return *this;
+        }
+        __forceinline bool has_flag(T p_flag) const { return value & (int64_t)p_flag; }
+        __forceinline bool is_empty() const { return value == 0; }
+        __forceinline void clear_flag(T p_flag) { value &= ~(int64_t)p_flag; }
+        __forceinline void clear() { value = 0; }
+        __forceinline constexpr BitField() = default;
+        __forceinline constexpr BitField(int64_t p_value) { value = p_value; }
+        __forceinline constexpr BitField(T p_value) { value = (int64_t)p_value; }
+        __forceinline operator int64_t() const { return value; }
+       // __forceinline operator Variant() const { return value; }
+        __forceinline BitField<T> operator^(const BitField<T>& p_b) const { return BitField<T>(value ^ p_b.value); }
+    };
+
     enum ImageType : uint8_t {
         ImageType_UnSupported,
         ImageType_PNG,
@@ -1006,6 +1027,21 @@ namespace Ogre {
         CLIPPED_ALL = 2
     };
 
+    enum TextureLayout {
+        TEXTURE_LAYOUT_UNDEFINED,
+        TEXTURE_LAYOUT_STORAGE_OPTIMAL,
+        TEXTURE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+        TEXTURE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+        TEXTURE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+        TEXTURE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+        TEXTURE_LAYOUT_COPY_SRC_OPTIMAL,
+        TEXTURE_LAYOUT_COPY_DST_OPTIMAL,
+        TEXTURE_LAYOUT_RESOLVE_SRC_OPTIMAL,
+        TEXTURE_LAYOUT_RESOLVE_DST_OPTIMAL,
+        TEXTURE_LAYOUT_VRS_ATTACHMENT_OPTIMAL,
+        TEXTURE_LAYOUT_MAX
+    };
+
     /// Render window creation parameters.
     struct RenderWindowDescription
     {
@@ -1037,7 +1073,15 @@ namespace Ogre {
         ImageSubresourceLayer dstSubresource;
         Ogre::Vector3i dstOffset;
         Extent3D extent;
-        
+    };
+
+    struct ImageCopyBufferDesc
+    {
+        uint64_t bufferOffset;
+        ImageSubresourceLayer textureSubresources;
+        Ogre::Vector3i textureOffset;
+        Ogre::Vector3i textureRegionSize;
+        TextureLayout textureLayout;
     };
 
     struct FamilyInfo
@@ -1066,7 +1110,7 @@ namespace Ogre {
         VertexDeclaration* decl;
     };
 
-    enum PRIMITIVE_TOPOLOGY_TYPE
+    enum PRIMITIVE_TOPOLOGY_TYPE : uint8_t
     {
         PRIMITIVE_TOPOLOGY_UNDEFINED = 0,
         PRIMITIVE_TOPOLOGY_POINTLIST = 1,
@@ -1076,26 +1120,56 @@ namespace Ogre {
         PRIMITIVE_TOPOLOGY_TRIANGLESTRIP = 5
     };
 
-    enum  BlendEquation{
-        ADD,                    //!< the fragment is added to the color buffer
-        SUBTRACT,               //!< the fragment is subtracted from the color buffer
-        REVERSE_SUBTRACT,       //!< the color buffer is subtracted from the fragment
-        MIN,                    //!< the min between the fragment and color buffer
-        MAX                     //!< the max between the fragment and color buffer
+    enum LogicOperation : uint8_t {
+        LOGIC_OP_CLEAR,
+        LOGIC_OP_AND,
+        LOGIC_OP_AND_REVERSE,
+        LOGIC_OP_COPY,
+        LOGIC_OP_AND_INVERTED,
+        LOGIC_OP_NO_OP,
+        LOGIC_OP_XOR,
+        LOGIC_OP_OR,
+        LOGIC_OP_NOR,
+        LOGIC_OP_EQUIVALENT,
+        LOGIC_OP_INVERT,
+        LOGIC_OP_OR_REVERSE,
+        LOGIC_OP_COPY_INVERTED,
+        LOGIC_OP_OR_INVERTED,
+        LOGIC_OP_NAND,
+        LOGIC_OP_SET,
+        LOGIC_OP_MAX
     };
 
-    enum  BlendFunction  {
-        ZERO,                   //!< f(src, dst) = 0
-        ONE,                    //!< f(src, dst) = 1
-        SRC_COLOR,              //!< f(src, dst) = src
-        ONE_MINUS_SRC_COLOR,    //!< f(src, dst) = 1-src
-        DST_COLOR,              //!< f(src, dst) = dst
-        ONE_MINUS_DST_COLOR,    //!< f(src, dst) = 1-dst
-        SRC_ALPHA,              //!< f(src, dst) = src.a
-        ONE_MINUS_SRC_ALPHA,    //!< f(src, dst) = 1-src.a
-        DST_ALPHA,              //!< f(src, dst) = dst.a
-        ONE_MINUS_DST_ALPHA,    //!< f(src, dst) = 1-dst.a
-        SRC_ALPHA_SATURATE      //!< f(src, dst) = (1,1,1) * min(src.a, 1 - dst.a), 1
+    enum  BlendOperation: uint8_t {
+        BLEND_OP_ADD,
+        BLEND_OP_SUBTRACT,
+        BLEND_OP_REVERSE_SUBTRACT,
+        BLEND_OP_MINIMUM,
+        BLEND_OP_MAXIMUM, // Yes, this one is an actual operator.
+        BLEND_OP_MAX
+    };
+
+    enum  BlendFunction : uint8_t {
+        BLEND_FACTOR_ZERO,
+        BLEND_FACTOR_ONE,
+        BLEND_FACTOR_SRC_COLOR,
+        BLEND_FACTOR_ONE_MINUS_SRC_COLOR,
+        BLEND_FACTOR_DST_COLOR,
+        BLEND_FACTOR_ONE_MINUS_DST_COLOR,
+        BLEND_FACTOR_SRC_ALPHA,
+        BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+        BLEND_FACTOR_DST_ALPHA,
+        BLEND_FACTOR_ONE_MINUS_DST_ALPHA,
+        BLEND_FACTOR_CONSTANT_COLOR,
+        BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR,
+        BLEND_FACTOR_CONSTANT_ALPHA,
+        BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA,
+        BLEND_FACTOR_SRC_ALPHA_SATURATE,
+        BLEND_FACTOR_SRC1_COLOR,
+        BLEND_FACTOR_ONE_MINUS_SRC1_COLOR,
+        BLEND_FACTOR_SRC1_ALPHA,
+        BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA,
+        BLEND_FACTOR_MAX
     };
 
     struct RasterizationStateInfo {
@@ -1131,21 +1205,23 @@ namespace Ogre {
         bool enable_stencil = false;
     };
 
+    struct Attachment {
+        bool enable_blend = false;
+        BlendFunction blendFunctionSrcRGB = BLEND_FACTOR_ZERO;
+        BlendFunction blendFunctionDstRGB = BLEND_FACTOR_ZERO;
+        BlendOperation blendEquationRGB = BLEND_OP_ADD;
+        BlendFunction blendFunctionSrcAlpha = BLEND_FACTOR_ZERO;
+        BlendFunction blendFunctionDstAlpha = BLEND_FACTOR_ZERO;
+        BlendOperation blendEquationAlpha = BLEND_OP_ADD;
+        bool write_r = true;
+        bool write_g = true;
+        bool write_b = true;
+        bool write_a = true;
+    };
     struct ColorBlendStateInfo{
-        bool blendEnable = false;
-        //! blend equation for the red, green and blue components
-        BlendEquation blendEquationRGB : 3;        //  5
-        //! blend equation for the alpha component
-        BlendEquation blendEquationAlpha : 3;        //  8
-
-        //! blending function for the source color
-        BlendFunction blendFunctionSrcRGB : 4;        // 12
-        //! blending function for the source alpha
-        BlendFunction blendFunctionSrcAlpha : 4;        // 16
-        //! blending function for the destination color
-        BlendFunction blendFunctionDstRGB : 4;        // 20
-        //! blending function for the destination alpha
-        BlendFunction blendFunctionDstAlpha : 4;        // 24
+        bool enable_logic_op = false;
+        LogicOperation logic_op = LOGIC_OP_CLEAR;
+        std::vector<Attachment> attachments;
     };
 
     struct RenderTargetInfo
@@ -1376,8 +1452,8 @@ namespace Ogre {
     typedef struct BufferBarrier
     {
         filament::backend::Handle<filament::backend::HwBufferObject> buffer;
-        uint32_t mCurrentState; //BackendResourceState
-        uint32_t mNewState; //BackendResourceState
+        BitField<BackendResourceState> mCurrentState;
+        BitField<BackendResourceState> mNewState;
         uint8_t       mBeginOnly : 1;
         uint8_t       mEndOnly : 1;
     } BufferBarrier;
@@ -1385,8 +1461,8 @@ namespace Ogre {
     typedef struct TextureBarrier
     {
         OgreTexture* pTexture;
-        uint32_t mCurrentState;//BackendResourceState
-        uint32_t mNewState;//BackendResourceState
+        BitField<BackendResourceState> mCurrentState;
+        BitField<BackendResourceState> mNewState;
         uint8_t       mBeginOnly : 1;
         uint8_t       mEndOnly : 1;
         uint8_t       mAcquire : 1;
@@ -1430,6 +1506,7 @@ namespace Ogre {
         uint32_t    mCount:16;
         uint32_t    mLevel : 8;
         uint32_t    mArrayElement : 8;
+        uint32_t     mDstBinding;
         Ogre::DescriptorType descriptorType;
         union
         {
@@ -1464,6 +1541,28 @@ namespace Ogre {
     {
         uint32_t size;
     };
+
+    enum TextureAspect {
+        TEXTURE_ASPECT_COLOR = 0,
+        TEXTURE_ASPECT_DEPTH = 1,
+        TEXTURE_ASPECT_STENCIL = 2,
+        TEXTURE_ASPECT_MAX
+    };
+
+    enum TextureAspectBits {
+        TEXTURE_ASPECT_COLOR_BIT = (1 << TEXTURE_ASPECT_COLOR),
+        TEXTURE_ASPECT_DEPTH_BIT = (1 << TEXTURE_ASPECT_DEPTH),
+        TEXTURE_ASPECT_STENCIL_BIT = (1 << TEXTURE_ASPECT_STENCIL),
+    };
+
+    struct TextureSubresourceRange {
+        BitField<TextureAspectBits> aspect;
+        uint32_t base_mipmap = 0;
+        uint32_t mipmap_count = 0;
+        uint32_t base_layer = 0;
+        uint32_t layer_count = 0;
+    };
+
     /// Render window creation parameters container.
     typedef std::vector<RenderWindowDescription> RenderWindowDescriptionList;
 

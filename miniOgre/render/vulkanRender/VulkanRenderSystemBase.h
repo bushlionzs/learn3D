@@ -42,8 +42,15 @@ public:
     virtual Ogre::RenderTarget* createRenderTarget(
         const String& name, 
         TextureProperty& texProperty) override;
-    virtual void clearRenderTarget(Ogre::RenderTarget*, const Ogre::Vector4& color) override;
-    virtual void clearRenderTexture(OgreTexture*, const Ogre::Vector4& color)override;
+    virtual void clearRenderTarget(
+        Ogre::RenderTarget*, 
+        const Ogre::Vector4& color,
+        const Ogre::TextureSubresourceRange& subresources) override;
+    virtual void clearRenderTexture(
+        OgreTexture*, 
+        const Ogre::Vector4& color,
+        const Ogre::TextureSubresourceRange& subresources
+    )override;
     virtual void frameStart() override;
     virtual void frameEnd() override;
     virtual void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
@@ -102,12 +109,18 @@ public:
         uint32_t size,
         filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh
     ) override;
+    virtual void copyBufferToTexture(
+        Handle<HwCommandBuffer> cbh,
+        Handle<HwBufferObject> boh,
+        Ogre::OgreTexture* tex,
+        Ogre::ImageCopyBufferDesc& desc
+    )override;
 protected:
     virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color)override;
     virtual void popGroupMarker();
     virtual void getFamilyInfo(FamilyInfo& desc)override;
-    virtual void* bufferMap(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes);
-    virtual void bufferUnmap(Handle<HwBufferObject> bufHandle);
+    virtual uint8_t* bufferMap(Handle<HwBufferObject> bufHandle)override;
+    virtual void bufferUnmap(Handle<HwBufferObject> bufHandle)override;
     virtual void bindVertexBuffer(
         Handle<HwBufferObject> bufHandle, 
         uint32_t binding,
@@ -183,11 +196,11 @@ protected:
     virtual void waitFence(Handle<HwFence> fh) override;
 
     virtual Handle<HwSemaphore> createSemaphore()override;
-    virtual Handle<HwCommandBuffer> createCommandBuffer(uint32_t queueFamilyIndex) override;
+    virtual Handle<HwCommandBuffer> createCommandBuffer(Ogre::QueueType type) override;
     virtual void beginCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh) override;
     virtual void endCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh) override;
     virtual void clearCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh) override;
-    virtual Handle<HwCommandQueue> createCommandQueue(uint32_t familyIndex, uint32_t queueIndex)override;
+    virtual Handle<HwCommandQueue> createCommandQueue(Ogre::QueueType type, uint32_t queueIndex)override;
 
     virtual Handle<HwSwapChain> createSwapChain() override;
     virtual void swapChainAcquire(
@@ -199,6 +212,18 @@ protected:
     virtual Handle<HwPipeline> createPipeline(
         Ogre::PipelineCreateInfo& pipelineCreateInfo,
         Handle<HwShader>& shader
+    )override;
+    virtual void executeAndPresent(
+        filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+        filament::backend::Handle<filament::backend::HwSemaphore>* wait_sph,
+        uint32_t wait_sp_size,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh,
+        uint32_t cb_size,
+        filament::backend::Handle<filament::backend::HwSemaphore>* cmd_sph,
+        uint32_t cmd_sp_size,
+        filament::backend::Handle<filament::backend::HwFence> fh,
+        filament::backend::Handle<filament::backend::HwSwapChain>* sch,
+        uint32_t sc_size
     )override;
 protected:
     void bingingUpdate(

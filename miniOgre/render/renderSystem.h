@@ -39,8 +39,11 @@ public:
     virtual Ogre::RenderTarget* createRenderTarget(
         const std::string& name,
         Ogre::TextureProperty& texProperty);
-    virtual void clearRenderTarget(Ogre::RenderTarget*, const Ogre::Vector4& color) {}
-    virtual void clearRenderTexture(Ogre::OgreTexture*, const Ogre::Vector4& color) {}
+    virtual void clearRenderTarget(
+        Ogre::RenderTarget*, 
+        const Ogre::Vector4& color,
+        const Ogre::TextureSubresourceRange& subresources) {}
+    
     virtual void ready() {}
 
     virtual const std::string& getRenderSystemName()
@@ -325,12 +328,12 @@ public:
     virtual void waitFence(filament::backend::Handle<filament::backend::HwFence> fh);
 
     virtual filament::backend::Handle<filament::backend::HwSemaphore> createSemaphore();
-    virtual filament::backend::Handle<filament::backend::HwCommandBuffer> createCommandBuffer(uint32_t queueFamilyIndex);
+    virtual filament::backend::Handle<filament::backend::HwCommandBuffer> createCommandBuffer(Ogre::QueueType);
     virtual void beginCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh);
     virtual void endCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh);
     virtual void clearCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh);
     virtual filament::backend::Handle<filament::backend::HwCommandQueue> createCommandQueue(
-        uint32_t familyIndex, uint32_t queueIndex);
+        Ogre::QueueType, uint32_t queueIndex);
     virtual filament::backend::Handle<filament::backend::HwSwapChain> createSwapChain();
     virtual void swapChainAcquire(
         filament::backend::Handle<filament::backend::HwSwapChain> sch,
@@ -340,6 +343,35 @@ public:
         Ogre::PipelineCreateInfo& pipelineCreateInfo,
         filament::backend::Handle<filament::backend::HwShader>& shader
     );
+
+    virtual filament::backend::Handle<filament::backend::HwDescriptorSet> createDescriptorSet(
+        filament::backend::Handle<filament::backend::HwShader> programHandle,
+        uint32_t set);
+
+    virtual void copyBufferToTexture(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwBufferObject> boh, 
+        Ogre::OgreTexture* tex,
+        Ogre::ImageCopyBufferDesc& desc
+    );
+
+    virtual void executeAndPresent(
+        filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+        filament::backend::Handle<filament::backend::HwSemaphore> *wait_sph,
+        uint32_t wait_sp_size,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>*cbh,
+        uint32_t cb_size,
+        filament::backend::Handle<filament::backend::HwSemaphore>* cmd_sph,
+        uint32_t cmd_sp_size,
+        filament::backend::Handle<filament::backend::HwFence> fh,
+        filament::backend::Handle<filament::backend::HwSwapChain>* sch,
+        uint32_t sc_size
+    );
+
+    virtual void clearRenderTexture(
+        Ogre::OgreTexture*, 
+        const Ogre::Vector4& color,
+        const Ogre::TextureSubresourceRange& subresources);
 protected:
 	
     uint32_t mBatchCount = 0;

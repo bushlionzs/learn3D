@@ -270,13 +270,26 @@ struct VulkanProgram :public VulkanResource
 
     }
 
-    const VKDescriptorInfo* getDescriptor(const char* descriptorName)
+    const VKDescriptorInfo* getDescriptor(const DescriptorData* pParam)
     {
-        auto itor = mDescriptorInfoMap.find(descriptorName);
-        if (itor != mDescriptorInfoMap.end())
+        if (pParam->pName != nullptr)
         {
-            return &itor->second;
+            auto itor = mDescriptorInfoMap.find(pParam->pName);
+            if (itor != mDescriptorInfoMap.end())
+            {
+                return &itor->second;
+            }
+            return nullptr;
         }
+
+        for (auto& itor : mDescriptorInfoMap)
+        {
+            if (itor.second.layoutBinding.binding == pParam->mDstBinding)
+            {
+                return &itor.second;
+            }
+        }
+        
 
         return nullptr;
     }
@@ -693,14 +706,8 @@ private:
 };
 
 struct VulkanFence : public HwFence, VulkanResource {
-    VulkanFence()
-        : VulkanResource(VulkanResourceType::FENCE) {}
-
-    explicit VulkanFence(std::shared_ptr<VulkanCmdFence> fence)
-        : VulkanResource(VulkanResourceType::FENCE),
-          fence(fence) {}
-
-    std::shared_ptr<VulkanCmdFence> fence;
+    VulkanFence(VkDevice device);
+    VkFence vkFence;
 };
 
 struct VulkanSemaphore : public HwSemaphore, VulkanResource {
@@ -712,11 +719,20 @@ struct VulkanSemaphore : public HwSemaphore, VulkanResource {
 struct VulkanCommandQueue : public HwCommandQueue, VulkanResource {
     VulkanCommandQueue(VkQueue queue);
 
+    VkSemaphore getSemaphore(uint32 frameIndex)
+    {
+        return vkSemaphores[frameIndex];
+    }
     VkQueue vkQueue;
+
+    std::vector<VkSemaphore> vkSemaphores;
 };
 
 struct VulkanCommandBuffer2 : public HwCommandBuffer, VulkanResource {
-    VulkanCommandBuffer2(VulkanResourceAllocator* allocator, VkDevice device, uint32_t queueFamilyIndex);
+    VulkanCommandBuffer2(
+        VulkanResourceAllocator* allocator, 
+        VkDevice device, 
+        uint32_t queueFamilyIndex);
 
     VkCommandBuffer commandBuffer;
     VkCommandPool pool;

@@ -5,7 +5,7 @@
 #include "game_camera.h"
 #include "DriverBase.h"
 #include "ApplicationBase.h"
-
+#include "ManualApplication.h"
 class BasicApplication
 {
 public:
@@ -14,7 +14,7 @@ public:
 		filament::backend::Handle<filament::backend::HwDescriptorSet> zeroSet;
 		filament::backend::Handle<filament::backend::HwBufferObject> passUniformBuffer;
 	};
-	BasicApplication();
+	BasicApplication(ManualApplication* app);
 	~BasicApplication();
 
 	void setup(
@@ -28,7 +28,8 @@ public:
 	void addCustomDirectory();
 	void updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer);
 
-	void preInit(AppInfo* appInfo);
+	void userInit(AppInfo* appInfo);
+	void godotWndCallback(AppInfo* appInfo, int64_t wnd);
 private:
 	void base1();
 	void base2();
@@ -44,4 +45,5 @@ private:
 	Ogre::RenderTarget* brdfTarget;
 	Ogre::RenderTarget* prefilteredTarget;
 	Ogre::RenderTarget* irradianceTarget;
+	ManualApplication* mApplication;
 };

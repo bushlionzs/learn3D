@@ -246,9 +246,9 @@ void Dx12RenderSystemBase::beginRenderPass(RenderPassInfo& renderPassInfo)
     }
     bool hasDepth = false;
     D3D12_CPU_DESCRIPTOR_HANDLE depthHandle;
-    if (renderPassInfo.depthTarget.depthStencil)
+    if (renderPassInfo.depthTarget.target.depthStencil)
     {
-        Dx12RenderTarget* depthTarget = (Dx12RenderTarget*)renderPassInfo.depthTarget.depthStencil;
+        Dx12RenderTarget* depthTarget = (Dx12RenderTarget*)renderPassInfo.depthTarget.target.depthStencil;
         auto* tex = depthTarget->getTarget();
         DxDescriptorID srcid = tex->getTargetDescriptorId();
         srcid += renderPassInfo.depthTarget.depthIndex;
@@ -267,7 +267,7 @@ void Dx12RenderSystemBase::beginRenderPass(RenderPassInfo& renderPassInfo)
     }
     else if (hasDepth)
     {
-        Dx12RenderTarget* depthTarget = (Dx12RenderTarget*)renderPassInfo.depthTarget.depthStencil;
+        Dx12RenderTarget* depthTarget = (Dx12RenderTarget*)renderPassInfo.depthTarget.target.depthStencil;
         width = depthTarget->getWidth();
         height = depthTarget->getHeight();
     }
@@ -604,8 +604,8 @@ Handle<HwPipeline> Dx12RenderSystemBase::createPipeline(
     dx12RasterState.dstColorBlendFactor = D3D12Mappings::getBlendFactor((Ogre::BlendFunction)rasterState.blendFunctionDstRGB);
     dx12RasterState.srcAlphaBlendFactor = D3D12Mappings::getBlendFactor((Ogre::BlendFunction)rasterState.blendFunctionSrcAlpha);
     dx12RasterState.dstAlphaBlendFactor = D3D12Mappings::getBlendFactor((Ogre::BlendFunction)rasterState.blendFunctionDstAlpha);
-    dx12RasterState.colorBlendOp = D3D12Mappings::getBlendOp((Ogre::BlendEquation)rasterState.blendEquationRGB);
-    dx12RasterState.alphaBlendOp = D3D12Mappings::getBlendOp((Ogre::BlendEquation)rasterState.blendEquationAlpha);
+    dx12RasterState.colorBlendOp = D3D12Mappings::getBlendOp((Ogre::BlendOperation)rasterState.blendEquationRGB);
+    dx12RasterState.alphaBlendOp = D3D12Mappings::getBlendOp((Ogre::BlendOperation)rasterState.blendEquationAlpha);
 
     dx12RasterState.colorWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
     dx12RasterState.rasterizationSamples = DX12Helper::getSingleton().hasMsaa() ? 4 : 1;

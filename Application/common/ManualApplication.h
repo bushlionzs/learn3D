@@ -22,8 +22,8 @@ public:
 	ManualApplication();
 	~ManualApplication();
 
-	void run(AppInfo& info);
-	
+	void run(AppInfo* info);
+	bool appInit(AppInfo* info);
 	virtual bool isUseCEGUI()
 	{
 		return mUseCEGUI;
@@ -34,7 +34,6 @@ public:
 	void addRenderPass(PassBase* pass);
 	void addUIPass();
 private:
-	bool appInit();
 	void render();
 	virtual bool frameStarted(const Ogre::FrameEvent& evt);
 	void ShowFrameFrequency();
@@ -50,6 +49,6 @@ protected:
 	Ogre::RenderWindow* mRenderWindow = nullptr;
 	std::vector<PassBase*> mPassList;
 	RenderPassInfo mPassInfo;
-	bool mUseCEGUI;
 	AppInfo* mAppInfo;
+	bool mUseCEGUI;
 };

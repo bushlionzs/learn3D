@@ -36,8 +36,8 @@ namespace Ogre
 		static float getMaxLod(const filament::backend::SamplerParams& params);
 		static VkBool32 getCompareEnable(const filament::backend::SamplerParams& params);
 		static VkCompareOp getCompareOp(filament::backend::SamplerCompareFunc func);
-		static VkAccessFlags util_to_vk_access_flags(uint32_t state);
-		static VkImageLayout util_to_vk_image_layout(uint32_t state);
+		static VkAccessFlags util_to_vk_access_flags(BitField<BackendResourceState> state);
+		static VkImageLayout util_to_vk_image_layout(BitField<BackendResourceState> state);
 		static VkGeometryFlagsKHR util_to_vk_geometry_flags(
 			AccelerationStructureGeometryFlags flags);
 		static VkGeometryInstanceFlagsKHR util_to_vk_instance_flags(
@@ -49,6 +49,11 @@ namespace Ogre
 
 		static VkCullModeFlags getCullMode(CullingMode mode);
 		static VkBlendFactor getBlendFactor(BlendFunction mode);
+		static VkCompareOp getCompareOp(CompareFunction func);
+
+		static VkImageLayout getImageLayout(TextureLayout layout);
+
+		static VkImageAspectFlags getAspect(BitField<TextureAspectBits> aspect);
 	};
 }
 

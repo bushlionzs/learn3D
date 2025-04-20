@@ -3,6 +3,7 @@
 #include "core/io/marshalls.h"
 #include "OgreHeader.h"
 #include "OgreCommon.h"
+#include "OgreVertexDeclaration.h"
 #include "renderSystem.h"
 
 Error RenderingDeviceDriverNULL::initialize(uint32_t p_device_index, uint32_t p_frame_count)
@@ -64,8 +65,16 @@ Ogre::PixelFormat mapPixelFormat(RenderingDeviceCommons::DataFormat format)
 {
 	switch (format)
 	{
-	case RenderingDeviceCommons::DATA_FORMAT_R8G8B8_UNORM:
+	case RenderingDeviceCommons::DATA_FORMAT_R8G8B8A8_UNORM:
 		return Ogre::PixelFormat::PF_A8R8G8B8;
+	case RenderingDeviceCommons::DATA_FORMAT_R8G8B8A8_UINT:
+		return Ogre::PixelFormat::PF_R8G8B8A8_UINT;
+	case RenderingDeviceCommons::DATA_FORMAT_D16_UNORM:
+		return Ogre::PixelFormat::PF_DEPTH16;
+	case RenderingDeviceCommons::DATA_FORMAT_R8_UINT:
+		return Ogre::PixelFormat::PF_R8_UINT;
+	case RenderingDeviceCommons::DATA_FORMAT_R32_SFLOAT:
+		return Ogre::PixelFormat::PF_FLOAT32_R;
 	default:
 		assert_invariant(false);
 	}
@@ -79,6 +88,14 @@ Ogre::TextureType mapTextureType(RenderingDeviceCommons::TextureType texType)
 	{
 	case RenderingDeviceCommons::TEXTURE_TYPE_2D:
 		return Ogre::TEX_TYPE_2D;
+	case RenderingDeviceCommons::TEXTURE_TYPE_2D_ARRAY:
+		return Ogre::TEX_TYPE_2D_ARRAY;
+	case RenderingDeviceCommons::TEXTURE_TYPE_CUBE:
+		return Ogre::TEX_TYPE_CUBE_MAP;
+	case RenderingDeviceCommons::TEXTURE_TYPE_CUBE_ARRAY:
+		return Ogre::TEX_TYPE_CUBE_MAP;
+	case RenderingDeviceCommons::TEXTURE_TYPE_3D:
+		return Ogre::TEX_TYPE_3D;
 	default:
 		assert_invariant(false);
 	}
@@ -95,6 +112,7 @@ RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create(
 	texProperty._texType = mapTextureType(p_format.texture_type);
 	texProperty._need_mipmap = p_format.mipmaps > 1;
 	texProperty._tex_format = mapPixelFormat(p_format.format);
+	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
 	auto texHandle = mRenderSystem->createManualTexture("", &texProperty);
 
 	return RenderingDeviceDriver::TextureID(texHandle);
@@ -110,8 +128,8 @@ RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create_from_
 
 RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create_shared(TextureID p_original_texture, const TextureView& p_view)
 {
-	assert_invariant(false);
-	return RenderingDeviceDriver::TextureID(1);
+	Ogre::OgreTexture* texture = (Ogre::OgreTexture*)p_original_texture.id;
+	return RenderingDeviceDriver::TextureID(texture);
 }
 
 RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create_shared_from_slice
@@ -119,8 +137,8 @@ RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create_share
 	TextureSliceType p_slice_type, uint32_t p_layer,
 	uint32_t p_layers, uint32_t p_mipmap, uint32_t p_mipmaps)
 {
-	assert_invariant(false);
-	return RenderingDeviceDriver::TextureID(1);
+	Ogre::OgreTexture* tex = (Ogre::OgreTexture*)p_original_texture.id;
+	return RenderingDeviceDriver::TextureID(tex);
 }
 
 void RenderingDeviceDriverNULL::texture_free(TextureID p_texture)
@@ -200,10 +218,11 @@ RenderingDeviceDriver::VertexFormatID RenderingDeviceDriverNULL::vertex_format_c
 	VectorView<VertexAttribute> p_vertex_attribs)
 {
 	uint32_t size = p_vertex_attribs.size();
-	VertexAttribute* attr = new VertexAttribute[size];
+	std::vector<VertexAttribute>* attr = new std::vector<VertexAttribute>;
+	attr->resize(size);
 	for (uint32_t i = 0; i < size; i++)
 	{
-		attr[i] = p_vertex_attribs[i];
+		attr->at(i) = p_vertex_attribs[i];
 	}
 
 	return RenderingDeviceDriver::VertexFormatID(attr);
@@ -215,6 +234,73 @@ void RenderingDeviceDriverNULL::vertex_format_free(VertexFormatID p_vertex_forma
 	delete[] attr;
 }
 
+ Ogre::BitField<Ogre::BackendResourceState> mapResourceState(const BitField<RenderingDeviceDriver::BarrierAccessBits>& bits)
+{
+	 Ogre::BitField<Ogre::BackendResourceState> value;
+	if (bits.has_flag(RenderingDeviceDriver::BARRIER_ACCESS_INDEX_READ_BIT))
+	{
+		value.set_flag(Ogre::RESOURCE_STATE_INDEX_BUFFER);
+	}
+
+	if (bits.has_flag(RenderingDeviceDriver::BARRIER_ACCESS_VERTEX_ATTRIBUTE_READ_BIT))
+	{
+		value.set_flag(Ogre::RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+	}
+
+	if (bits.has_flag(RenderingDeviceDriver::BARRIER_ACCESS_MEMORY_READ_BIT))
+	{
+		value.set_flag(Ogre::RESOURCE_STATE_GENERIC_READ);
+	}
+
+	if (bits.has_flag(RenderingDeviceDriver::BARRIER_ACCESS_COPY_READ_BIT))
+	{
+		value.set_flag(Ogre::RESOURCE_STATE_COPY_SOURCE);
+	}
+
+	if (bits.has_flag(RenderingDeviceDriver::BARRIER_ACCESS_COPY_WRITE_BIT))
+	{
+		value.set_flag(Ogre::RESOURCE_STATE_COPY_DEST);
+	}
+	if (bits.has_flag(RenderingDeviceDriver::BARRIER_ACCESS_COLOR_ATTACHMENT_READ_BIT))
+	{
+		value.set_flag(Ogre::RESOURCE_STATE_SHADER_RESOURCE);
+	}
+
+	if (bits.has_flag(RenderingDeviceDriver::BARRIER_ACCESS_RESOLVE_READ_BIT))
+	{
+		value.set_flag(Ogre::RESOURCE_STATE_PRESENT);
+	}
+
+	return value;
+}
+
+ Ogre::BitField<Ogre::BackendResourceState> mapResourceState(RenderingDeviceDriver::TextureLayout layout)
+ {
+	 switch (layout)
+	 {
+	 case RenderingDeviceDriver::TEXTURE_LAYOUT_UNDEFINED:
+		 return Ogre::RESOURCE_STATE_UNDEFINED;
+	 case RenderingDeviceDriver::TEXTURE_LAYOUT_STORAGE_OPTIMAL:
+		 return Ogre::RESOURCE_STATE_UNORDERED_ACCESS;
+	 case RenderingDeviceDriver::TEXTURE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+		 return Ogre::RESOURCE_STATE_RENDER_TARGET;
+	 case RenderingDeviceDriver::TEXTURE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+		 return Ogre::RESOURCE_STATE_DEPTH_WRITE;
+	 case RenderingDeviceDriver::TEXTURE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+		 return Ogre::RESOURCE_STATE_DEPTH_READ;
+	 case RenderingDeviceDriver::TEXTURE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+		 return Ogre::RESOURCE_STATE_SHADER_RESOURCE;
+	 case RenderingDeviceDriver::TEXTURE_LAYOUT_COPY_SRC_OPTIMAL:
+		 return Ogre::RESOURCE_STATE_COPY_SOURCE;
+	 case RenderingDeviceDriver::TEXTURE_LAYOUT_COPY_DST_OPTIMAL:
+		 return Ogre::RESOURCE_STATE_COPY_DEST;
+	 default:
+		 assert_invariant(false);
+		
+	 }
+	 return Ogre::RESOURCE_STATE_UNDEFINED;
+ }
+
 void RenderingDeviceDriverNULL::command_pipeline_barrier(
 	CommandBufferID p_cmd_buffer,
 	BitField<PipelineStageBits> p_src_stages,
@@ -223,7 +309,28 @@ void RenderingDeviceDriverNULL::command_pipeline_barrier(
 	VectorView<BufferBarrier> p_buffer_barriers,
 	VectorView<TextureBarrier> p_texture_barriers)
 {
-	assert_invariant(false);
+
+	std::vector<Ogre::BufferBarrier> bufferBarriers;
+	bufferBarriers.resize(p_buffer_barriers.size());
+	for (uint32_t i = 0; i < p_buffer_barriers.size(); i++)
+	{
+		bufferBarriers[i].buffer = filament::backend::Handle<filament::backend::HwBufferObject>(p_buffer_barriers[i].buffer.id);
+		bufferBarriers[i].mCurrentState = mapResourceState(p_buffer_barriers[i].src_access);
+		bufferBarriers[i].mNewState = mapResourceState(p_buffer_barriers[i].dst_access);
+		bufferBarriers[i].mBeginOnly = 0;
+		bufferBarriers[i].mEndOnly = 0;
+	}
+	std::vector<Ogre::TextureBarrier> texBarriers;
+	texBarriers.resize(p_texture_barriers.size());
+	for (uint32_t i = 0; i < p_texture_barriers.size(); i++)
+	{
+		texBarriers[i] = {};
+		texBarriers[i].pTexture = (Ogre::OgreTexture*)(p_texture_barriers[i].texture.id);
+		texBarriers[i].mCurrentState = mapResourceState(p_texture_barriers[i].prev_layout);
+		texBarriers[i].mNewState = mapResourceState(p_texture_barriers[i].next_layout);
+	}
+	
+	mRenderSystem->resourceBarrier(bufferBarriers.size(), bufferBarriers.data(), texBarriers.size(), texBarriers.data(), 0, nullptr);
 }
 
 RenderingDeviceDriver::FenceID RenderingDeviceDriverNULL::fence_create()
@@ -256,14 +363,13 @@ void RenderingDeviceDriverNULL::semaphore_free(SemaphoreID p_semaphore)
 
 }
 
+
 RenderingDeviceDriver::CommandQueueFamilyID RenderingDeviceDriverNULL::command_queue_family_get(
 	BitField<CommandQueueFamilyBits> p_cmd_queue_family_bits, RenderingContextDriver::SurfaceID p_surface)
 {
-	Ogre::FamilyInfo familyInfo;
-	mRenderSystem->getFamilyInfo(familyInfo);
 	if (p_cmd_queue_family_bits.has_flag(COMMAND_QUEUE_FAMILY_GRAPHICS_BIT))
 	{
-		return RenderingDeviceDriver::CommandQueueFamilyID(familyInfo.graphicsQueueFamilyIndex + 1);
+		return RenderingDeviceDriver::CommandQueueFamilyID(Ogre::QueueType::QUEUE_TYPE_GRAPHICS + 1);
 	}
 
 	if (p_cmd_queue_family_bits.has_flag(COMMAND_QUEUE_FAMILY_COMPUTE_BIT))
@@ -273,8 +379,7 @@ RenderingDeviceDriver::CommandQueueFamilyID RenderingDeviceDriverNULL::command_q
 
 	if (p_cmd_queue_family_bits.has_flag(COMMAND_QUEUE_FAMILY_TRANSFER_BIT))
 	{
-		assert_invariant(false);
-		return RenderingDeviceDriver::CommandQueueFamilyID(familyInfo.transferQueueFamilyIndex + 1);
+		return RenderingDeviceDriver::CommandQueueFamilyID(Ogre::QueueType::QUEUE_TYPE_TRANSFER + 1);
 	}
 
 	return RenderingDeviceDriver::CommandQueueFamilyID();
@@ -283,8 +388,8 @@ RenderingDeviceDriver::CommandQueueFamilyID RenderingDeviceDriverNULL::command_q
 RenderingDeviceDriver::CommandQueueID RenderingDeviceDriverNULL::command_queue_create(
 	CommandQueueFamilyID p_cmd_queue_family, bool p_identify_as_main_queue)
 {
-	uint32_t familyIndex = p_cmd_queue_family.id - 1;
-	auto cqh = mRenderSystem->createCommandQueue(familyIndex, 0);
+	Ogre::QueueType type = (Ogre::QueueType)(p_cmd_queue_family.id - 1);
+	auto cqh = mRenderSystem->createCommandQueue(type, 0);
 
 	return RenderingDeviceDriver::CommandQueueID(cqh.getId());
 }
@@ -294,7 +399,30 @@ Error RenderingDeviceDriverNULL::command_queue_execute_and_present(
 	VectorView<CommandBufferID> p_cmd_buffers, VectorView<SemaphoreID> p_cmd_semaphores,
 	FenceID p_cmd_fence, VectorView<SwapChainID> p_swap_chains)
 {
-	assert_invariant(false);
+	filament::backend::Handle<filament::backend::HwCommandQueue> cqh(p_cmd_queue.id);
+
+	std::vector<filament::backend::Handle<filament::backend::HwSemaphore>> wait_sphs;
+	wait_sphs.resize(p_wait_semaphores.size());
+	for (uint32_t i = 0; i < p_wait_semaphores.size(); i++)
+	{
+		wait_sphs[i] = filament::backend::Handle<filament::backend::HwSemaphore>(p_wait_semaphores[i].id);
+	}
+	std::vector< filament::backend::Handle<filament::backend::HwCommandBuffer>> cbhs;
+	cbhs.resize(p_cmd_buffers.size());
+	for (uint32_t i = 0; i < p_cmd_buffers.size(); i++)
+	{
+		cbhs[i] = filament::backend::Handle<filament::backend::HwCommandBuffer>(p_cmd_buffers[i].id);
+	}
+
+	std::vector<filament::backend::Handle<filament::backend::HwSemaphore>> cmd_sphs;
+	cmd_sphs.resize(p_cmd_semaphores.size());
+	for (uint32_t i = 0; i < p_cmd_semaphores.size(); i++)
+	{
+		cmd_sphs[i] = filament::backend::Handle<filament::backend::HwSemaphore>(p_cmd_semaphores[i].id);
+	}
+	filament::backend::Handle<filament::backend::HwFence> fh(p_cmd_fence.id);
+	mRenderSystem->executeAndPresent(cqh, wait_sphs.data(), wait_sphs.size(),
+		cbhs.data(), cbhs.size(), cmd_sphs.data(), cmd_sphs.size(), fh, nullptr, 0);
 	return OK;
 }
 
@@ -317,8 +445,8 @@ void RenderingDeviceDriverNULL::command_pool_free(CommandPoolID p_cmd_pool)
 
 RenderingDeviceDriver::CommandBufferID RenderingDeviceDriverNULL::command_buffer_create(CommandPoolID p_cmd_pool)
 {
-	uint32_t familyIndex = p_cmd_pool.id - 1;
-	auto cbh = mRenderSystem->createCommandBuffer(familyIndex);
+	Ogre::QueueType type = (Ogre::QueueType)(p_cmd_pool.id - 1);
+	auto cbh = mRenderSystem->createCommandBuffer(type);
 	return RenderingDeviceDriver::CommandBufferID(cbh.getId());
 }
 
@@ -379,19 +507,18 @@ RenderingDeviceDriver::FramebufferID RenderingDeviceDriverNULL::swap_chain_acqui
 	FrameBufferInfo* frameInfo = info->swapChainFrame[swapChainInfo.imageIndex];
 	frameInfo->textureList.clear();
 	frameInfo->textureList.push_back(swapChainInfo.color);
-	frameInfo->textureList.push_back(swapChainInfo.depth);
+	frameInfo->depth = swapChainInfo.depth;
 	return RenderingDeviceDriver::FramebufferID(frameInfo);
 }
 
 RenderingDeviceDriver::RenderPassID RenderingDeviceDriverNULL::swap_chain_get_render_pass(SwapChainID p_swap_chain)
 {
-	assert_invariant(false);
 	return RenderingDeviceDriver::RenderPassID(1);
 }
 
 RenderingDeviceDriver::DataFormat RenderingDeviceDriverNULL::swap_chain_get_format(SwapChainID p_swap_chain)
 {
-	return DATA_FORMAT_R8G8B8_UNORM;
+	return DATA_FORMAT_R8G8B8A8_UNORM;
 }
 
 void RenderingDeviceDriverNULL::swap_chain_free(SwapChainID p_swap_chain)
@@ -545,11 +672,98 @@ void RenderingDeviceDriverNULL::shader_destroy_modules(ShaderID p_shader)
 
 }
 
+Ogre::DescriptorType mapDescriptorType(RenderingDeviceCommons::UniformType type)
+{
+	switch (type)
+	{
+	case RenderingDeviceCommons::UNIFORM_TYPE_SAMPLER:
+		return Ogre::DESCRIPTOR_TYPE_SAMPLER;
+	case RenderingDeviceCommons::UNIFORM_TYPE_SAMPLER_WITH_TEXTURE:
+		assert_invariant(false);
+		return Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
+	case RenderingDeviceCommons::UNIFORM_TYPE_TEXTURE:
+		return Ogre::DESCRIPTOR_TYPE_TEXTURE;
+	case RenderingDeviceCommons::UNIFORM_TYPE_IMAGE:
+		return Ogre::DESCRIPTOR_TYPE_RW_TEXTURE;
+	case RenderingDeviceCommons::UNIFORM_TYPE_UNIFORM_BUFFER:
+		return Ogre::DESCRIPTOR_TYPE_BUFFER;
+	case RenderingDeviceCommons::UNIFORM_TYPE_STORAGE_BUFFER:
+		return Ogre::DESCRIPTOR_TYPE_RW_BUFFER;
+	default:
+		assert_invariant(false);
+		return Ogre::DESCRIPTOR_TYPE_BUFFER;
+	}
+}
+
 RenderingDeviceDriver::UniformSetID RenderingDeviceDriverNULL::uniform_set_create(
 	VectorView<BoundUniform> p_uniforms, ShaderID p_shader, uint32_t p_set_index)
 {
-	assert_invariant(false);
-	return RenderingDeviceDriver::UniformSetID();
+	filament::backend::Handle<filament::backend::HwShader> sh(p_shader.id);
+	auto dsh = mRenderSystem->createDescriptorSet(sh, p_set_index);
+
+	Ogre::DescriptorData descriptorData[128];
+
+	uint32_t size = p_uniforms.size();
+
+	assert_invariant(size <= 128);
+	std::vector< filament::backend::Handle<filament::backend::HwBufferObject>> buffers;
+	std::vector<Ogre::OgreTexture*> textures;
+	std::vector< filament::backend::Handle<filament::backend::HwSampler>> samplers;
+	for (uint32_t i = 0; i < size; i++)
+	{
+		const BoundUniform& uniform = p_uniforms[i];
+		descriptorData[i].pName = nullptr;
+		descriptorData[i].mDstBinding = uniform.binding;
+		descriptorData[i].mCount = uniform.ids.size();
+		descriptorData[i].mLevel = 0;
+		descriptorData[i].descriptorType = mapDescriptorType(uniform.type);
+		
+		switch (descriptorData[i].descriptorType)
+		{
+		case Ogre::DESCRIPTOR_TYPE_BUFFER:
+		case Ogre::DESCRIPTOR_TYPE_RW_BUFFER:
+		{
+			uint32_t offset = buffers.size();
+			for (uint32_t j = 0; j < descriptorData[i].mCount; j++)
+			{
+				buffers.push_back(filament::backend::Handle<filament::backend::HwBufferObject>(uniform.ids[j].id));
+			}
+			descriptorData[i].ppBuffers = buffers.data() + offset;
+		}
+			
+			break;
+		case Ogre::DESCRIPTOR_TYPE_TEXTURE:
+		case Ogre::DESCRIPTOR_TYPE_RW_TEXTURE:
+		{
+			
+			uint32_t offset = textures.size();
+			for (uint32_t j = 0; j < descriptorData[i].mCount; j++)
+			{
+				textures.push_back((Ogre::OgreTexture *)uniform.ids[j].id);
+			}
+			descriptorData[i].ppTextures = (const Ogre::OgreTexture**)(textures.data() + offset);
+		}
+			
+			break;
+		case Ogre::DESCRIPTOR_TYPE_SAMPLER:
+		{
+			uint32_t offset = samplers.size();
+			for (uint32_t j = 0; j < descriptorData[i].mCount; j++)
+			{
+				samplers.push_back(filament::backend::Handle<filament::backend::HwSampler>(uniform.ids[j].id));
+			}
+			descriptorData[i].ppSamplers = samplers.data() + offset;
+		}
+			break;
+		default:
+			assert_invariant(false);
+		}
+	
+		mRenderSystem->updateDescriptorSet(dsh, size, descriptorData);
+	}
+	
+
+	return RenderingDeviceDriver::UniformSetID(dsh.getId());
 }
 
 void RenderingDeviceDriverNULL::uniform_set_free(UniformSetID p_uniform_set)
@@ -560,7 +774,7 @@ void RenderingDeviceDriverNULL::uniform_set_free(UniformSetID p_uniform_set)
 void RenderingDeviceDriverNULL::command_uniform_set_prepare_for_use(
 	CommandBufferID p_cmd_buffer, UniformSetID p_uniform_set, ShaderID p_shader, uint32_t p_set_index)
 {
-
+	assert_invariant(false);
 }
 
 void RenderingDeviceDriverNULL::command_clear_buffer(CommandBufferID p_cmd_buffer,
@@ -640,14 +854,46 @@ void RenderingDeviceDriverNULL::command_clear_color_texture(
 	TextureLayout p_texture_layout, const Color& p_color,
 	const TextureSubresourceRange& p_subresources)
 {
-	assert_invariant(false);
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	Ogre::OgreTexture* tex = (Ogre::OgreTexture*)p_texture.id;
+	Ogre::Vector4 color(p_color.r, p_color.g, p_color.b, p_color.a);
+	Ogre::TextureSubresourceRange subresources;
+	subresources.aspect = (int64_t)p_subresources.aspect;
+	subresources.base_mipmap = p_subresources.base_mipmap;
+	subresources.mipmap_count = p_subresources.mipmap_count;
+	subresources.base_layer = p_subresources.base_layer;
+	subresources.layer_count = p_subresources.layer_count;
+	mRenderSystem->clearRenderTexture(tex, color, subresources);
 }
 
 void RenderingDeviceDriverNULL::command_copy_buffer_to_texture(
 	CommandBufferID p_cmd_buffer, BufferID p_src_buffer, TextureID p_dst_texture,
 	TextureLayout p_dst_texture_layout, VectorView<BufferTextureCopyRegion> p_regions)
 {
-	assert_invariant(false);
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	filament::backend::Handle<filament::backend::HwBufferObject> boh(p_src_buffer.id);
+	Ogre::OgreTexture* tex = (Ogre::OgreTexture*)p_dst_texture.id;
+
+	uint32_t size = p_regions.size();
+	assert_invariant(size == 1);
+
+	Ogre::ImageCopyBufferDesc desc;
+
+	desc.bufferOffset = p_regions[0].buffer_offset;
+	desc.textureOffset.x = p_regions[0].texture_offset.x;
+	desc.textureOffset.y = p_regions[0].texture_offset.y;
+	desc.textureOffset.z = p_regions[0].texture_offset.z;
+
+	desc.textureRegionSize.x = p_regions[0].texture_region_size.x;
+	desc.textureRegionSize.y = p_regions[0].texture_region_size.y;
+	desc.textureRegionSize.z = p_regions[0].texture_region_size.z;
+
+	desc.textureSubresources.aspectMask = p_regions[0].texture_subresources.aspect;
+	desc.textureSubresources.mipLevel = p_regions[0].texture_subresources.mipmap;
+	desc.textureSubresources.baseArrayLayer = p_regions[0].texture_subresources.base_layer;
+	desc.textureSubresources.layerCount = p_regions[0].texture_subresources.layer_count;
+	desc.textureLayout = (Ogre::TextureLayout)p_dst_texture_layout;
+	mRenderSystem->copyBufferToTexture(cbh, boh, tex, desc);
 }
 
 void RenderingDeviceDriverNULL::command_copy_texture_to_buffer(
@@ -720,7 +966,8 @@ void RenderingDeviceDriverNULL::command_begin_render_pass(
 		renderPassInfo.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 0.0f };
 	}
 	
-	renderPassInfo.depthTarget.depthStencil = nullptr;
+	renderPassInfo.depthTarget.target.texture = frameBufferInfo->depth;
+	renderPassInfo.depthTarget.isTexture = true;
 	renderPassInfo.depthTarget.clearValue = { 0.0f, 0.0f };
 	mRenderSystem->beginRenderPass(renderPassInfo);
 }
@@ -781,9 +1028,13 @@ void RenderingDeviceDriverNULL::command_bind_render_pipeline(CommandBufferID p_c
 }
 
 void RenderingDeviceDriverNULL::command_bind_render_uniform_set(
-	CommandBufferID p_cmd_buffer, UniformSetID p_uniform_set, ShaderID p_shader, uint32_t p_set_index)
+	CommandBufferID p_cmd_buffer, 
+	UniformSetID p_uniform_set, 
+	ShaderID p_shader, 
+	uint32_t p_set_index)
 {
-
+	filament::backend::Handle<filament::backend::HwDescriptorSet>dsh(p_uniform_set.id);
+	filament::backend::Handle<filament::backend::HwShader> sh(p_shader.id);
 }
 
 void RenderingDeviceDriverNULL::command_render_draw(
@@ -877,6 +1128,46 @@ void RenderingDeviceDriverNULL::command_render_set_line_width(CommandBufferID p_
 
 }
 
+Ogre::CullingMode mapCullingMode(RenderingDeviceCommons::PolygonCullMode cullingMode)
+{
+	switch (cullingMode)
+	{
+	case RenderingDeviceCommons::POLYGON_CULL_DISABLED:
+		return Ogre::CULL_MODE_NONE;
+	case RenderingDeviceCommons::POLYGON_CULL_FRONT:
+		return Ogre::CULL_MODE_FRONT;
+	case RenderingDeviceCommons::POLYGON_CULL_BACK:
+		return Ogre::CULL_MODE_BACK;
+	default:
+		assert_invariant(false);
+		return Ogre::CULL_MODE_NONE;
+	}
+}
+Ogre::CompareFunction mapDepthCompareOp(RenderingDeviceCommons::CompareOperator compare_operator)
+{
+	switch (compare_operator)
+	{
+	case RenderingDeviceCommons::COMPARE_OP_NEVER:
+		return Ogre::CMPF_ALWAYS_FAIL;
+	case RenderingDeviceCommons::COMPARE_OP_LESS:
+		return Ogre::CMPF_LESS;
+	case RenderingDeviceCommons::COMPARE_OP_EQUAL:
+		return Ogre::CMPF_EQUAL;
+	case RenderingDeviceCommons::COMPARE_OP_LESS_OR_EQUAL:
+		return Ogre::CMPF_LESS_EQUAL;
+	case RenderingDeviceCommons::COMPARE_OP_GREATER:
+		return Ogre::CMPF_GREATER;
+	case RenderingDeviceCommons::COMPARE_OP_NOT_EQUAL:
+		return Ogre::CMPF_NOT_EQUAL;
+	case RenderingDeviceCommons::COMPARE_OP_GREATER_OR_EQUAL:
+		return Ogre::CMPF_GREATER_EQUAL;
+	case RenderingDeviceCommons::COMPARE_OP_ALWAYS:
+		return Ogre::CMPF_ALWAYS_PASS;
+	default:
+		assert_invariant(false);
+		return Ogre::CMPF_ALWAYS_PASS;
+	}
+}
 RenderingDeviceDriver::PipelineID RenderingDeviceDriverNULL::render_pipeline_create(
 	ShaderID p_shader,
 	VertexFormatID p_vertex_format,
@@ -894,6 +1185,56 @@ RenderingDeviceDriver::PipelineID RenderingDeviceDriverNULL::render_pipeline_cre
 	filament::backend::Handle<filament::backend::HwShader> sh(p_shader.id);
 	filament::backend::RasterState aa;
 	Ogre::PipelineCreateInfo pipelineCreateInfo;
+	VertexDeclaration decl;
+	assert_invariant(false);
+	std::vector<VertexAttribute>* attrs = (std::vector<VertexAttribute>*)p_vertex_format.id;
+	for (uint32_t i = 0; i < attrs->size(); i++)
+	{
+		VertexAttribute& attr = attrs->at(i);
+		decl.addElement(0, 0, attr.offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+	}
+	pipelineCreateInfo.decl = &decl;
+	auto & rasterizationState = pipelineCreateInfo.rasterizationState;
+	rasterizationState.cullMode = mapCullingMode(p_rasterization_state.cull_mode);
+	rasterizationState.depthBiasClamp = p_rasterization_state.depth_bias_clamp;
+	rasterizationState.depthBiasConstantFactor = p_rasterization_state.depth_bias_constant_factor;
+	rasterizationState.depthBiasEnable = p_rasterization_state.depth_bias_enabled;
+	rasterizationState.depthBiasSlopeFactor = p_rasterization_state.depth_bias_slope_factor;
+	rasterizationState.depthClampEnable = p_rasterization_state.enable_depth_clamp;
+	rasterizationState.discardPrimitives = p_rasterization_state.discard_primitives;
+	rasterizationState.lineWidth = p_rasterization_state.line_width;
+	rasterizationState.patchControlPoints = p_rasterization_state.patch_control_points;
+	rasterizationState.wireframe = p_rasterization_state.wireframe;
+	auto & depthStencilState = pipelineCreateInfo.depthStencilState;
+	depthStencilState.depthCompareOp = mapDepthCompareOp(p_depth_stencil_state.depth_compare_operator);
+	depthStencilState.depthTestEnable = p_depth_stencil_state.enable_depth_test;
+	depthStencilState.depthWriteEnable = p_depth_stencil_state.enable_depth_write;
+	depthStencilState.depth_range_max = p_depth_stencil_state.depth_range_max;
+	depthStencilState.depth_range_min = p_depth_stencil_state.depth_range_min;
+	depthStencilState.enable_depth_range = p_depth_stencil_state.enable_depth_range;
+	depthStencilState.enable_stencil = p_depth_stencil_state.enable_stencil;
+
+	auto & colorBlendState = pipelineCreateInfo.colorBlendState;
+	colorBlendState.enable_logic_op = p_blend_state.enable_logic_op;
+	colorBlendState.logic_op = (Ogre::LogicOperation)p_blend_state.logic_op;
+	colorBlendState.attachments.resize(p_blend_state.attachments.size());
+	for (uint32_t i = 0; i < p_blend_state.attachments.size(); i++)
+	{
+		colorBlendState.attachments[i].enable_blend = p_blend_state.attachments[i].enable_blend;
+		colorBlendState.attachments[i].blendFunctionSrcRGB =
+			(Ogre::BlendFunction)p_blend_state.attachments[i].src_color_blend_factor;
+		colorBlendState.attachments[i].blendFunctionDstRGB =
+			(Ogre::BlendFunction)p_blend_state.attachments[i].dst_color_blend_factor;
+		colorBlendState.attachments[i].blendEquationRGB =
+			(Ogre::BlendOperation) p_blend_state.attachments[i].color_blend_op;
+		colorBlendState.attachments[i].blendFunctionSrcAlpha =
+			(Ogre::BlendFunction)p_blend_state.attachments[i].src_alpha_blend_factor;
+		colorBlendState.attachments[i].blendFunctionDstAlpha =
+			(Ogre::BlendFunction)p_blend_state.attachments[i].dst_alpha_blend_factor;
+		colorBlendState.attachments[i].blendEquationAlpha =
+			(Ogre::BlendOperation)p_blend_state.attachments[i].alpha_blend_op;
+	}
+	auto & renderTarget = pipelineCreateInfo.renderTarget;
 	auto ph = mRenderSystem->createPipeline(pipelineCreateInfo, sh);
 	return RenderingDeviceDriver::PipelineID(ph.getId());
 }

@@ -77,6 +77,10 @@ struct VulkanSwapChain : public HwSwapChain, VulkanResource {
         return mExtent;
     }
 
+    uint32_t getCurrentSwapIndex()
+    {
+        return mCurrentSwapIndex;
+    }
 private:
 	static constexpr int IMAGE_READY_SEMAPHORE_COUNT = FVK_MAX_COMMAND_BUFFERS;
 

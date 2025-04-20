@@ -22,9 +22,9 @@
 #include "godotUtil.h"
 #include "pbrUtil.h"
 
-BasicApplication::BasicApplication()
+BasicApplication::BasicApplication(ManualApplication* app)
 {
-
+	mApplication = app;
 }
 
 BasicApplication::~BasicApplication()
@@ -155,12 +155,21 @@ void BasicApplication::base1()
 	mRenderPipeline->addRenderPass(mainPass);
 }
 
-void BasicApplication::preInit(AppInfo* appInfo)
+void BasicApplication::godotWndCallback(AppInfo* appInfo, int64_t wnd)
 {
-	GodotContext context; 
-	godotInit(context);
-	appInfo->appWnd = context.godotWnd;
+	appInfo->appWnd = wnd;
 	appInfo->loopback = godotLoop;
+	mApplication->appInit(appInfo);
+}
+
+void BasicApplication::userInit(AppInfo* appInfo)
+{
+	auto cb = std::bind(&BasicApplication::godotWndCallback, this, appInfo, std::placeholders::_1);
+	GodotContext context; 
+	context.wndCallback = cb;
+	godotInit(context);
+	
+	
 }
 
 void BasicApplication::base2()

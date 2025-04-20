@@ -567,7 +567,7 @@ namespace vks
 			{
 				BufferBarrier* pTrans = &pBufferBarriers[i];
 
-				if (RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mCurrentState && RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mNewState)
+				if (pTrans->mCurrentState.has_flag(RESOURCE_STATE_UNORDERED_ACCESS)  && pTrans->mNewState.has_flag(RESOURCE_STATE_UNORDERED_ACCESS))
 				{
 					memoryBarrier.srcAccessMask |= VK_ACCESS_SHADER_WRITE_BIT;
 					memoryBarrier.dstAccessMask |= VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT;
@@ -590,7 +590,8 @@ namespace vks
 				VulkanTexture* pTexture = (VulkanTexture*)pTrans->pTexture;
 				VkImageMemoryBarrier* pImageBarrier = NULL;
 
-				if (RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mCurrentState && RESOURCE_STATE_UNORDERED_ACCESS == pTrans->mNewState)
+				if (pTrans->mCurrentState.has_flag(RESOURCE_STATE_UNORDERED_ACCESS) && 
+					pTrans->mNewState.has_flag(RESOURCE_STATE_UNORDERED_ACCESS))
 				{
 					pImageBarrier = &imageBarriers[imageBarrierCount++];           //-V522
 					pImageBarrier->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER; //-V522

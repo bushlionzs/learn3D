@@ -95,7 +95,7 @@ void PresentPass::execute(RenderSystem* rs)
 	info.renderTargetCount = 1;
 	info.renderTargets[0].target.renderTarget = mRenderWindow->getColorTarget();
 	info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-	info.depthTarget.depthStencil = nullptr;
+	info.depthTarget.target.depthStencil = nullptr;
 	info.depthTarget.clearValue = { 0.0f, 0.0f };
 	auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 	rs->pushGroupMarker("presentPass");

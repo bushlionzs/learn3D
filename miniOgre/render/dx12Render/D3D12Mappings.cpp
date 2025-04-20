@@ -244,42 +244,45 @@ namespace Ogre {
         case backend::CullingMode::FRONT:          return D3D12_CULL_MODE_FRONT;
         case backend::CullingMode::BACK:           return D3D12_CULL_MODE_BACK;
         case backend::CullingMode::FRONT_AND_BACK: return D3D12_CULL_MODE_NONE;
+        default:
+        assert_invariant(false);
+        return D3D12_CULL_MODE_NONE;
         }
     }
 
     D3D12_BLEND D3D12Mappings::getBlendFactor(BlendFunction mode) {
         switch (mode) {
-        case BlendFunction::ZERO:                  return D3D12_BLEND_ZERO;
-        case BlendFunction::ONE:                   return D3D12_BLEND_ONE;
-        case BlendFunction::SRC_COLOR:             return D3D12_BLEND_SRC_COLOR;
-        case BlendFunction::ONE_MINUS_SRC_COLOR:   return D3D12_BLEND_INV_SRC_COLOR;
-        case BlendFunction::DST_COLOR:             return D3D12_BLEND_DEST_COLOR;
-        case BlendFunction::ONE_MINUS_DST_COLOR:   return D3D12_BLEND_INV_DEST_COLOR;
-        case BlendFunction::SRC_ALPHA:             return D3D12_BLEND_SRC_ALPHA;
-        case BlendFunction::ONE_MINUS_SRC_ALPHA:   return D3D12_BLEND_INV_SRC_ALPHA;
-        case BlendFunction::DST_ALPHA:             return D3D12_BLEND_DEST_ALPHA;
-        case BlendFunction::ONE_MINUS_DST_ALPHA:   return D3D12_BLEND_INV_DEST_ALPHA;
-        case BlendFunction::SRC_ALPHA_SATURATE:    return D3D12_BLEND_SRC_ALPHA_SAT;
+        case BlendFunction::BLEND_FACTOR_ZERO:                  return D3D12_BLEND_ZERO;
+        case BlendFunction::BLEND_FACTOR_ONE:                   return D3D12_BLEND_ONE;
+        case BlendFunction::BLEND_FACTOR_SRC_COLOR:             return D3D12_BLEND_SRC_COLOR;
+        case BlendFunction::BLEND_FACTOR_ONE_MINUS_SRC_COLOR:   return D3D12_BLEND_INV_SRC_COLOR;
+        case BlendFunction::BLEND_FACTOR_DST_COLOR:             return D3D12_BLEND_DEST_COLOR;
+        case BlendFunction::BLEND_FACTOR_ONE_MINUS_DST_COLOR:   return D3D12_BLEND_INV_DEST_COLOR;
+        case BlendFunction::BLEND_FACTOR_SRC_ALPHA:             return D3D12_BLEND_SRC_ALPHA;
+        case BlendFunction::BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:   return D3D12_BLEND_INV_SRC_ALPHA;
+        case BlendFunction::BLEND_FACTOR_DST_ALPHA:             return D3D12_BLEND_DEST_ALPHA;
+        case BlendFunction::BLEND_FACTOR_ONE_MINUS_DST_ALPHA:   return D3D12_BLEND_INV_DEST_ALPHA;
+        case BlendFunction::BLEND_FACTOR_SRC_ALPHA_SATURATE:    return D3D12_BLEND_SRC_ALPHA_SAT;
         default:
             assert_invariant(false);
-            break;
+            return D3D12_BLEND_ZERO;
         }
     }
 
-    D3D12_BLEND_OP D3D12Mappings::getBlendOp(BlendEquation equation)
+    D3D12_BLEND_OP D3D12Mappings::getBlendOp(BlendOperation equation)
     {
         
         switch (equation)
         {
-        case BlendEquation::ADD:
+        case BlendOperation::BLEND_OP_ADD:
             return D3D12_BLEND_OP_ADD;
-        case BlendEquation::SUBTRACT:
+        case BlendOperation::BLEND_OP_SUBTRACT:
             return D3D12_BLEND_OP_SUBTRACT;
-        case BlendEquation::REVERSE_SUBTRACT:
+        case BlendOperation::BLEND_OP_REVERSE_SUBTRACT:
             return D3D12_BLEND_OP_REV_SUBTRACT;
         default:
             assert_invariant(false);
-            break;
+            return D3D12_BLEND_OP_ADD;
         }
     }
 
@@ -327,7 +330,7 @@ namespace Ogre {
             return D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
         default:
             assert_invariant(false);
-            break;
+            return D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
         }
     }
 
@@ -420,6 +423,8 @@ namespace Ogre {
             return D3D12_TEXTURE_ADDRESS_MODE_WRAP;
         case SamplerWrapMode::MIRRORED_REPEAT:
             return D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
+        default:
+            return D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
         }
     }
 

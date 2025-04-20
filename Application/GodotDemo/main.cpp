@@ -6,16 +6,17 @@
 int main2()
 {
 	platform_log_init();
-	BasicApplication instance;
+	ManualApplication app;
+	BasicApplication instance(&app);
 
 	AppInfo info;
 	info.useSRGB = false;
 	info.engineType = EngineType_Vulkan;
 	//info.engineType = EngineType_Dx12;
-	ManualApplication app;
-	info.preInit = [&instance](AppInfo* info)
+	
+	info.userRunCallback = [&instance](AppInfo* info)
 		{
-			instance.preInit(info);
+			instance.userInit(info);
 		};
 
 	info.setup = [&instance, &app](
@@ -32,7 +33,7 @@ int main2()
 	info.cleanup = [&instance]() {
 		};
 
-	app.run(info);
+	app.run(&info);
 
 	return 0;
 }

@@ -23,6 +23,7 @@
 #include "VulkanConstants.h"
 #include "VulkanHandles.h"
 #include "VulkanTexture.h"
+#include "VulkanMappings.h"
 
 
  // Vulkan functions often immediately dereference pointers, so it's fine to pass in a pointer
@@ -202,7 +203,7 @@ using namespace bluevk;
 
         vkDs.depthTestEnable = raster.depthTestEnable;
         vkDs.depthWriteEnable = raster.depthWriteEnable;
-        vkDs.depthCompareOp = getCompareOp(raster.depthCompareOp);
+        vkDs.depthCompareOp = VulkanMappings::getCompareOp(raster.depthCompareOp);
         vkDs.depthBoundsTestEnable = VK_FALSE;
         vkDs.stencilTestEnable = VK_FALSE;
         vkDs.minDepthBounds = 0.0f;
@@ -214,14 +215,15 @@ using namespace bluevk;
 
         // Filament assumes consistent blend state across all color attachments.
         colorBlendState.attachmentCount = mPipelineRequirements.rasterState.colorTargetCount;
-        for (auto& target : colorBlendAttachments) {
-            target.blendEnable = mPipelineRequirements.rasterState.blendEnable;
-            target.srcColorBlendFactor = mPipelineRequirements.rasterState.srcColorBlendFactor;
-            target.dstColorBlendFactor = mPipelineRequirements.rasterState.dstColorBlendFactor;
-            target.colorBlendOp = (VkBlendOp)mPipelineRequirements.rasterState.colorBlendOp;
-            target.srcAlphaBlendFactor = mPipelineRequirements.rasterState.srcAlphaBlendFactor;
-            target.dstAlphaBlendFactor = mPipelineRequirements.rasterState.dstAlphaBlendFactor;
-            target.alphaBlendOp = (VkBlendOp)mPipelineRequirements.rasterState.alphaBlendOp;
+        for (uint32_t i = 0; i < colorBlendState.attachmentCount; i++) {
+            auto& target = colorBlendAttachments[i];
+            target.blendEnable = mPipelineRequirements.targetInfo[i].blendEnable;
+            target.srcColorBlendFactor = mPipelineRequirements.targetInfo[i].srcColorBlendFactor;
+            target.dstColorBlendFactor = mPipelineRequirements.targetInfo[i].dstColorBlendFactor;
+            target.colorBlendOp = (VkBlendOp)mPipelineRequirements.targetInfo[i].colorBlendOp;
+            target.srcAlphaBlendFactor = mPipelineRequirements.targetInfo[i].srcAlphaBlendFactor;
+            target.dstAlphaBlendFactor = mPipelineRequirements.targetInfo[i].dstAlphaBlendFactor;
+            target.alphaBlendOp = (VkBlendOp)mPipelineRequirements.targetInfo[i].alphaBlendOp;
             target.colorWriteMask = mPipelineRequirements.rasterState.colorWriteMask;
         }
 
@@ -240,7 +242,7 @@ using namespace bluevk;
         VkFormat colorFormat[MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT];
         for (auto i = 0; i < colorBlendState.attachmentCount; i++)
         {
-            colorFormat[i] = mPipelineRequirements.colorFormat[i];
+            colorFormat[i] = mPipelineRequirements.targetInfo[i].colorFormat;
         }
         pipelineRenderingCreateInfo.pColorAttachmentFormats = colorFormat;
         pipelineRenderingCreateInfo.depthAttachmentFormat = mPipelineRequirements.depthFormat;
@@ -290,11 +292,14 @@ using namespace bluevk;
         mPipelineRequirements.rasterState = rasterState;
     }
 
-    void VulkanPipelineCache::bindFormat(VkFormat colorFormat[8], VkFormat depthFormat)
+    void VulkanPipelineCache::bindTargetInfo(
+        VulkanPipelineCache::VulkanTargetInfo* targetInfo, 
+        uint32_t targetCount, 
+        VkFormat depthFormat)
     {
-        for (uint32_t i = 0; i < 8; i++)
+        for (uint32_t i = 0; i < targetCount; i++)
         {
-            mPipelineRequirements.colorFormat[i] = colorFormat[i];
+            mPipelineRequirements.targetInfo[i] = targetInfo[i];
         }
         mPipelineRequirements.depthFormat = depthFormat;
     }

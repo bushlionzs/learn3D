@@ -113,8 +113,14 @@ private:
     String audio_driver = "";
     Vector2i* window_position = nullptr;
 public:
-        Main()
+    Main()
     {
+
+    }
+
+    void init(GodotContext& context)
+    {
+        RenderingContextDriverNULL::setRenderingContextCallback(context.wndCallback);
             OS::get_singleton()->initialize();
             auto ip = IP::create();
             auto tsman = memnew(TextServerManager);
@@ -175,14 +181,19 @@ public:
             
             GDREGISTER_CLASS(Performance);
             //engine->add_singleton(Engine::Singleton("Performance", performance));
-
+            static RenderingContextDriverNULL renderingContext;
             initializeDisplayServer();
+
+            /*Vector<DisplayServer::WindowID> winIds = display_server->get_window_list();
+            auto wnd = display_server->window_get_native_handle(DisplayServer::WINDOW_HANDLE, winIds[0]);
+            context.wndCallback(wnd);*/
+
             initializeAudioDriver();
             initialize_navigation_server();
             initialize_physics();
-            auto rendering_device = memnew(RenderingDevice);
-            static RenderingContextDriverNULL renderingContext;
-            rendering_device->initialize(&renderingContext);
+            //auto rendering_device = memnew(RenderingDevice);
+            //
+            //rendering_device->initialize(&renderingContext);
             memnew(MessageQueue);
             auto rendering_server = memnew(RenderingServerDefault);
             
@@ -590,11 +601,9 @@ void godotInit(GodotContext& context)
         initialize_physics();
         initialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
         initialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
-        Main();
-
-        Vector<DisplayServer::WindowID> winIds = display_server->get_window_list();
-        context.godotWnd = display_server->window_get_native_handle(DisplayServer::WINDOW_HANDLE, winIds[0]);
-
+        
+        Main m;
+        m.init(context);
     }
 }
 

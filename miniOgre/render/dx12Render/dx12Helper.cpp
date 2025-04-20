@@ -494,7 +494,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 	RenderPassInfo renderPassInfo;
 	renderPassInfo.renderTargetCount = 1;
 	renderPassInfo.renderTargets[0].target.renderTarget = mMipmapTarget;
-	renderPassInfo.depthTarget.depthStencil = nullptr;
+	renderPassInfo.depthTarget.target.depthStencil = nullptr;
 	renderPassInfo.renderTargets[0].clearColour = { 1.0f, 0.0f, 0.0f, 1.0f };
 	renderPassInfo.viewport = false;
 	auto texWidth = tex->getWidth();

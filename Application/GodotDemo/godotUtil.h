@@ -1,10 +1,13 @@
 #pragma once 
 #include <core/string/ustring.h>
 #include <string>
+#include <functional>
 namespace Ogre
 {
     class SceneManager;
 };
+
+using WindowCallback = std::function<void(int64_t wnd)>;
 
 struct GodotContext
 {
@@ -12,7 +15,7 @@ struct GodotContext
     std::string brdfTexName;
     std::string prefilteredTexName;
     std::string irradianceTexName;
-    int64_t godotWnd;
+    WindowCallback wndCallback;
 };
 
 void godotInit(GodotContext& context);

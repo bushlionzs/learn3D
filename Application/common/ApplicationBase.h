@@ -17,14 +17,14 @@ namespace Ogre
 
 class PassBase;
 struct AppInfo;
-using PreInitCallback = std::function<void(AppInfo* appInfo)>;
+using UserdefineRunCallback = std::function<void(AppInfo* appInfo)>;
 using SetupCallback = std::function<void(RenderSystem*, Ogre::RenderWindow*, Ogre::SceneManager*, GameCamera*)>;
 using CleanupCallback = std::function<void()>;
 using UpdateCallback = std::function<void(float)>;
 using LoopCallback = std::function<void()>;
 struct AppInfo
 {
-    PreInitCallback preInit = nullptr;
+    UserdefineRunCallback userRunCallback = nullptr;
     SetupCallback setup = nullptr;
     CleanupCallback cleanup = nullptr;
     UpdateCallback update = nullptr;

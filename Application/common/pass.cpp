@@ -277,7 +277,7 @@ public:
 		auto cam = mPassInput.cam;
 		auto sceneManager = mPassInput.sceneMgr;
 		info.renderTargetCount = 0;
-		info.depthTarget.depthStencil = mPassInput.shadowMapTarget;
+		info.depthTarget.target.depthStencil = mPassInput.shadowMapTarget;
 		
 		info.shadowPass = true;
 		float depthValue = 1.0f;
@@ -331,7 +331,7 @@ public:
 		auto sceneManager = mPassInput.sceneMgr;
 		info.renderTargetCount = 1;
 		info.renderTargets[0].target.renderTarget = mPassInput.color;
-		info.depthTarget.depthStencil = mPassInput.depth;
+		info.depthTarget.target.depthStencil = mPassInput.depth;
 		info.depthTarget.depthIndex = 0;
 		info.renderTargets[0].clearColour = { 0.0, 0.0, 0.0, 1.000000000f };
 		float depthValue = 1.0f;

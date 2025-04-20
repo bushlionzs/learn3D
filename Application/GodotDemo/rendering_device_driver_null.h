@@ -29,6 +29,7 @@ class RenderingDeviceDriverNULL : public RenderingDeviceDriver {
 	{
 		bool isSwapChain = false;
 		std::vector< Ogre::OgreTexture*> textureList;
+		Ogre::OgreTexture* depth = nullptr;
 		uint32_t width;
 		uint32_t height;
 	};
@@ -51,7 +52,7 @@ public:
 	Error virtual initialize(uint32_t p_device_index, uint32_t p_frame_count) override final;
 	virtual bool isUserDefine()
 	{
-		return true;
+		return false;
 	}
 	virtual BufferID buffer_create(uint64_t p_size, BitField<BufferUsageBits> p_usage, MemoryAllocationType p_allocation_type) override final;
 	virtual bool buffer_set_texel_format(BufferID p_buffer, DataFormat p_format) override final;

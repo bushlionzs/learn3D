@@ -41,6 +41,17 @@
     //
     class VulkanPipelineCache {
     public:
+        struct VulkanTargetInfo
+        {
+            VkFormat colorFormat;
+            VkBlendFactor         srcColorBlendFactor : 5; // offset = 1 byte
+            VkBlendFactor         dstColorBlendFactor : 5;
+            VkBlendFactor         srcAlphaBlendFactor : 5;
+            VkBlendFactor         dstAlphaBlendFactor : 5;
+            bool blendEnable : 4;
+            Ogre::BlendOperation         colorBlendOp : 4;        // offset = 6 bytes
+            Ogre::BlendOperation         alphaBlendOp : 4;
+        };
         VulkanPipelineCache(VulkanPipelineCache const&) = delete;
         VulkanPipelineCache& operator=(VulkanPipelineCache const&) = delete;
 
@@ -62,22 +73,18 @@
         struct RasterState {
             VkCullModeFlags       cullMode : 2;
             VkFrontFace           frontFace : 2;
+            uint8_t                  padding : 4;
             VkBool32              depthBiasEnable : 1;
             VkBool32              blendEnable : 1;
             VkBool32              depthWriteEnable : 1;
             VkBool32              depthTestEnable : 1;
-            VkBlendFactor         srcColorBlendFactor : 5; // offset = 1 byte
-            VkBlendFactor         dstColorBlendFactor : 5;
-            VkBlendFactor         srcAlphaBlendFactor : 5;
-            VkBlendFactor         dstAlphaBlendFactor : 5;
             VkColorComponentFlags colorWriteMask : 4;
-            uint8_t               rasterizationSamples;    // offset = 4 bytes
-            uint8_t               colorTargetCount;        // offset = 5 bytes
-            Ogre::BlendEquation         colorBlendOp : 4;        // offset = 6 bytes
-            Ogre::BlendEquation         alphaBlendOp : 4;
-            CompareFunction    depthCompareOp;          // offset = 7 bytes
-            float                 depthBiasConstantFactor; // offset = 8 bytes
-            float                 depthBiasSlopeFactor;    // offset = 12 bytes
+            uint8_t               rasterizationSamples : 4;    
+            uint8_t               colorTargetCount : 4;        
+            
+            CompareFunction    depthCompareOp;          
+            float                 depthBiasConstantFactor; 
+            float                 depthBiasSlopeFactor; 
         };
 
         static_assert(std::is_trivially_copyable<RasterState>::value,
@@ -118,7 +125,7 @@
             const char* fragShaderFuncName
         )noexcept;
         void bindRasterState(const RasterState& rasterState) noexcept;
-        void bindFormat(VkFormat colorFormat[8], VkFormat depthFormat);
+        void bindTargetInfo(VulkanTargetInfo* targetInfo, uint32_t targetCount, VkFormat depthFormat);
         void bindPrimitiveTopology(VkPrimitiveTopology topology) noexcept;
 
         void bindVertexArray(
@@ -191,10 +198,11 @@
 
         // The pipeline key is a POD that represents all currently bound states that form the immutable
         // VkPipeline object. The size:offset comments below are expressed in bytes.
+        
         struct PipelineKey {                                                          // size : offset
             VkShaderModule shaders[SHADER_MODULE_COUNT];                              //  24  : 0
             VkFormat depthFormat;                                                     //  4   : 16
-            VkFormat colorFormat[8];                                                     //  4   : 20
+            VulkanTargetInfo targetInfo[8];                                                     //  4   : 20
             uint16_t topology;                                                        //  2   : 24
             uint16_t subpassIndex;                                                    //  2   : 26
             VertexInputAttributeDescription vertexAttributes[VERTEX_ATTRIBUTE_COUNT]; //  128 : 28

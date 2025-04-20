@@ -469,14 +469,14 @@ uint32_t identifyTransferQueueFamilyIndex(VkPhysicalDevice physicalDevice, uint3
         = getPhysicalDeviceQueueFamilyPropertiesHelper(physicalDevice);
     uint32_t transferQueueFamilyIndex = INVALID_VK_INDEX;
     uint32_t size = queueFamiliesProperties.size();
+    queueCount = 0;
     for (uint32_t j = 0; j < size; ++j) {
         VkQueueFamilyProperties props = queueFamiliesProperties[j];
-        if (props.queueCount > 0 &&
+        if (props.queueCount > queueCount &&
             props.queueFlags & VK_QUEUE_TRANSFER_BIT)
         {
             transferQueueFamilyIndex = j;
             queueCount = props.queueCount;
-            break;
         }
     }
     return transferQueueFamilyIndex;
@@ -768,6 +768,7 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
         = mImpl->mTransferQueueFamilyIndex == INVALID_VK_INDEX
         ? identifyTransferQueueFamilyIndex(mImpl->mPhysicalDevice, mImpl->mTransferQueueCount)
         : mImpl->mTransferQueueFamilyIndex;
+
     // At this point, we should have a family index that points to a family that has > 0 queues for
     // graphics. In which case, we will allocate one queue for all of Filament (and assumes at least
     // one has been allocated by the client if context was shared). If the index of the target queue
@@ -775,7 +776,7 @@ Driver* VulkanPlatform::createDriver(void* sharedContext,
     mImpl->mGraphicsQueueIndex
             = mImpl->mGraphicsQueueIndex == INVALID_VK_INDEX ? 0 : mImpl->mGraphicsQueueIndex;
 
-    if (mImpl->mTransferQueueFamilyIndex == mImpl->mTransferQueueFamilyIndex)
+    if (mImpl->mTransferQueueFamilyIndex == mImpl->mGraphicsQueueFamilyIndex)
     {
         mImpl->mTransferQueueStartIndex = 1;
     }
