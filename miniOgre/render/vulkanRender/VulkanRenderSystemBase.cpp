@@ -285,7 +285,16 @@ void VulkanRenderSystemBase::setScissor(
 void VulkanRenderSystemBase::beginRenderPass(
     RenderPassInfo& renderPassInfo)
 {
-    VkCommandBuffer cmdBuffer = mCommands->get().buffer();
+    VkCommandBuffer cmdBuffer;
+    if (renderPassInfo.cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(renderPassInfo.cbh);
+        cmdBuffer = cb->commandBuffer;
+    }
+    else
+    {
+        cmdBuffer = mCommands->get().buffer();
+    }
 
     VkRenderingAttachmentInfo colorAttachments[MAX_RENDER_TARGET_ATTACHMENTS] = {};
     VkRenderingAttachmentInfo depthAttachment = {};
@@ -452,7 +461,17 @@ void VulkanRenderSystemBase::beginRenderPass(
 
 void VulkanRenderSystemBase::endRenderPass(RenderPassInfo& renderPassInfo)
 {
-    vkCmdEndRenderingKHR(mCommandBuffer);
+    VkCommandBuffer cmdBuffer;
+    if (renderPassInfo.cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(renderPassInfo.cbh);
+        cmdBuffer = cb->commandBuffer;
+    }
+    else
+    {
+        cmdBuffer = mCommands->get().buffer();
+    }
+    vkCmdEndRenderingKHR(cmdBuffer);
 }
 
 
@@ -836,19 +855,8 @@ Handle<HwDescriptorSet> VulkanRenderSystemBase::createDescriptorSet(
     Handle<HwProgram> programHandle,
     uint32_t set)
 {
-    
     VulkanShaderProgram* vulkanProgram = mResourceAllocator.handle_cast<VulkanShaderProgram*>(programHandle);
     const char* name = vulkanProgram->name.c_str();
-    
-    if (strcmp(name, "vctShadowPass") == 0)
-    {
-        aa.insert(vulkanProgram);
-        if (aa.size() > 1)
-        {
-            int kk = 0;
-        }
-    }
-
     
     Handle<HwDescriptorSetLayout> layoutHandle = vulkanProgram->getLayout(set);
 
@@ -1139,7 +1147,7 @@ void VulkanRenderSystemBase::updateDescriptorSet(
     for (uint32_t i = 0; i < count; i++)
     {
         const DescriptorData* pParam = pParams + i;
-        const VKDescriptorInfo* descriptroInfo = vulkanProgram->getDescriptor(pParam);
+        const VKDescriptorInfo* descriptroInfo = vulkanProgram->getDescriptor(pParam, set->mSet);
         if (descriptroInfo == nullptr)
         {
             assert_invariant(descriptroInfo);
@@ -1266,8 +1274,9 @@ void VulkanRenderSystemBase::updateDescriptorSet(
 
                 if (pParam->descriptorType == DESCRIPTOR_TYPE_SAMPLER)
                 {
+                    auto sh = pParam->ppSamplers[arr];
                     VulkanTextureSampler* vulkanSampler =
-                        mResourceAllocator.handle_cast<VulkanTextureSampler*>(pParam->ppSamplers[arr]);
+                        mResourceAllocator.handle_cast<VulkanTextureSampler*>(sh);
                     sampler = vulkanSampler->getSampler();
                 }
                 else
@@ -1622,6 +1631,45 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     return ph;
 }
 
+Handle<HwDescriptorSet> VulkanRenderSystemBase::createDescriptorSet(
+    Handle<HwShader> programHandle,
+    uint32_t set)
+{
+    VulkanShader* shader = mResourceAllocator.handle_cast<VulkanShader*>(programHandle);
+
+    if (shader->shaderProgram)
+    {
+        VulkanShaderProgram* vulkanProgram = shader->shaderProgram;
+        const char* name = vulkanProgram->name.c_str();
+
+        Handle<HwDescriptorSetLayout> layoutHandle = vulkanProgram->getLayout(set);
+
+        if (!layoutHandle)
+        {
+            return Handle <HwDescriptorSet>();
+        }
+
+        Handle<HwDescriptorSet> dsh = mResourceAllocator.allocHandle<VulkanDescriptorSet>();
+        VulkanDescriptorSetLayout* layout = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(layoutHandle);
+        VkDescriptorSet vkSet = mDescriptorInfinitePool->obtainSet(layout);
+        VulkanDescriptorSet* vulkanDescSet = mResourceAllocator.construct<VulkanDescriptorSet>(dsh, &mResourceAllocator, vkSet, set);
+        vulkanDescSet->updateVulkanProgram(vulkanProgram);
+        vulkanDescSet->updateName(name);
+        return dsh;
+    }
+    else
+    {
+        VulkanComputeProgram* program = shader->computeProgram;
+        auto layoutHandle = program->getSetLayoutHandle(set);
+
+        Handle<HwDescriptorSet> dsh = mResourceAllocator.allocHandle<VulkanDescriptorSet>();
+        VulkanDescriptorSetLayout* layout = mResourceAllocator.handle_cast<VulkanDescriptorSetLayout*>(layoutHandle);
+        VkDescriptorSet vkSet = mDescriptorInfinitePool->obtainSet(layout);
+        VulkanDescriptorSet* vulkanDescSet = mResourceAllocator.construct<VulkanDescriptorSet>(dsh, &mResourceAllocator, vkSet, set);
+        vulkanDescSet->updateVulkanProgram(program);
+        return dsh;
+    }
+}
 
 void VulkanRenderSystemBase::executeAndPresent(
     filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
@@ -1688,9 +1736,16 @@ void VulkanRenderSystemBase::executeAndPresent(
     VkResult result = vkQueueSubmit(queue->vkQueue, 1, &submitInfo, vkFence);
     assert_invariant(result == VK_SUCCESS);
 
-    uint32_t index = mSwapChain->getCurrentSwapIndex();
-    mVulkanPlatform->present(mSwapChain->swapChain, index, finished);
-    int kk = 0;
+    if (sc_size)
+    {
+        uint32_t index = mSwapChain->getCurrentSwapIndex();
+        mVulkanPlatform->present(mSwapChain->swapChain, index, finished);
+        int kk = 0;
+    }
+    else
+    {
+        int kk = 0;
+    }
 }
 
 void VulkanRenderSystemBase::bingingUpdate(

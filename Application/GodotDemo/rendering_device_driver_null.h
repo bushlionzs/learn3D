@@ -34,6 +34,14 @@ class RenderingDeviceDriverNULL : public RenderingDeviceDriver {
 		uint32_t height;
 	};
 
+	struct RenderPrivatePassInfo
+	{
+		std::vector<uint32_t> attachments;
+		uint32_t subpassCount;
+		uint32_t subpassDependenciesCount;
+		uint32_t viewCount;
+	};
+
 	struct SwapChainPrivateInfo
 	{
 		std::vector<FrameBufferInfo*> swapChainFrame;
@@ -45,6 +53,35 @@ class RenderingDeviceDriverNULL : public RenderingDeviceDriver {
 		char header[4];
 		uint32_t version;
 		uint32_t total;  //include header
+	};
+
+	struct ShaderData {
+		uint64_t vertex_input_mask = 0;
+		uint32_t fragment_output_mask = 0;
+		uint32_t specialization_constants_count = 0;
+		uint32_t is_compute = 0;
+		uint32_t compute_local_size[3] = {};
+		uint32_t set_count = 0;
+		uint32_t push_constant_size = 0;
+		uint32_t vk_push_constant_stages_mask = 0;
+		uint32_t stage_count = 0;
+		uint32_t shader_name_len = 0;
+	};
+
+	struct DataBinding {
+		uint32_t type = 0;
+		uint32_t binding = 0;
+		uint32_t stages = 0;
+		uint32_t length = 0; // Size of arrays (in total elements), or UBOs (in bytes * total elements).
+		uint32_t writable = 0;
+		char name[64];
+	};
+
+	struct SpecializationConstant {
+		uint32_t type = 0;
+		uint32_t constant_id = 0;
+		uint32_t int_value = 0;
+		uint32_t stage_flags = 0;
 	};
 public:
 	

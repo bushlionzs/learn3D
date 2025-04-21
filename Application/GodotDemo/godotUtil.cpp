@@ -599,6 +599,7 @@ void godotInit(GodotContext& context)
         memnew(PackedData);
         register_scene_types();
         initialize_physics();
+        initialize_modules(MODULE_INITIALIZATION_LEVEL_CORE);
         initialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
         initialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
         

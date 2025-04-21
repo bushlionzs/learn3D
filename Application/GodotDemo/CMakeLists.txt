@@ -228,6 +228,7 @@ thorvg
 harfbuzz
 icu4c
 freetype
+spirv-reflect
 dxgi
 dxguid
 d3d12

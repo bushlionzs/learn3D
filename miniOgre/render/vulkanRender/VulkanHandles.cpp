@@ -214,12 +214,30 @@ void VulkanShaderProgram::updateShaderInfo(const VulkanShaderInfo& vulkanShaderI
 
     if (!vulkanShaderInfo.fragSpv.empty())
     {
-        constantsList.clear();
+        std::vector<vks::tools::PushConstants> fragConstantsList;
         auto results = vks::tools::getProgramBindings(
             vulkanShaderInfo.fragSpv,
             VK_SHADER_STAGE_FRAGMENT_BIT,
-            &constantsList);
+            &fragConstantsList);
         vks::tools::bingingUpdate(bindingMap, results, VK_SHADER_STAGE_FRAGMENT_BIT);
+
+        for (auto& fragItem : fragConstantsList)
+        {
+            bool find = false;
+            for (auto& item : constantsList)
+            {
+                if (item.name == fragItem.name)
+                {
+                    item.stage |= VK_SHADER_STAGE_FRAGMENT_BIT;
+                    find = true;
+                    break;
+                }
+            }
+            if (!find)
+            {
+                constantsList.push_back(fragItem);
+            }
+        }
     }
 
     updateDescriptorInfo(bindingMap);
@@ -295,8 +313,16 @@ void VulkanShaderProgram::updateShaderInfo(const VulkanShaderInfo& vulkanShaderI
         }
     }
 
+
     keys.pushConstant->size = 0;
     keys.pushConstant->stage = 0;
+
+    if (!constantsList.empty())
+    {
+        assert_invariant(constantsList.size() == 1);
+        keys.pushConstant->size = constantsList[0].size;
+        keys.pushConstant->stage = constantsList[0].stage;
+    }
 
     VkPipelineLayout vulkanPipelineLayout = vulkanShaderInfo.pipelineLayoutCache->getLayout(keys);
     updateVulkanPipelineLayout(vulkanPipelineLayout);

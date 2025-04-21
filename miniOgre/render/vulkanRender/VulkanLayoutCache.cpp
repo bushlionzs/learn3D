@@ -3,7 +3,9 @@
 
 
 
-VkDescriptorSetLayout VulkanLayoutCache::getLayout(VkDescriptorSetLayoutBinding* binding, uint32 count) {
+VkDescriptorSetLayout VulkanLayoutCache::getLayout(
+    VkDescriptorSetLayoutBinding* binding, 
+    uint32 count) {
     std::sort(binding, binding + count, [](
         const VkDescriptorSetLayoutBinding& a, const VkDescriptorSetLayoutBinding& b)->bool {
             return a.binding < b.binding;
@@ -31,7 +33,7 @@ VkDescriptorSetLayout VulkanLayoutCache::getLayout(VkDescriptorSetLayoutBinding*
         vks::initializers::descriptorSetLayoutCreateInfo(
             binding,
             count);
-
+    
     VkDescriptorSetLayout vklayout;
 
     

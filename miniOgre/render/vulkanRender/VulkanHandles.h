@@ -270,7 +270,7 @@ struct VulkanProgram :public VulkanResource
 
     }
 
-    const VKDescriptorInfo* getDescriptor(const DescriptorData* pParam)
+    const VKDescriptorInfo* getDescriptor(const DescriptorData* pParam, uint32_t set)
     {
         if (pParam->pName != nullptr)
         {
@@ -282,13 +282,19 @@ struct VulkanProgram :public VulkanResource
             return nullptr;
         }
 
-        for (auto& itor : mDescriptorInfoMap)
+        auto itor = mBindingInfo.find(set);
+
+        if (itor != mBindingInfo.end())
         {
-            if (itor.second.layoutBinding.binding == pParam->mDstBinding)
+            for (auto& item : itor->second)
             {
-                return &itor.second;
+                if (item.layoutBinding.binding == pParam->mDstBinding)
+                {
+                    return &item;
+                }
             }
         }
+        
         
 
         return nullptr;
@@ -304,10 +310,12 @@ struct VulkanProgram :public VulkanResource
                 current = descriptorInfo;
             }
         }
+        mBindingInfo = bindingMap;
     }
 
 private:
     std::map<std::string, VKDescriptorInfo> mDescriptorInfoMap;
+    vks::tools::BingdingInfo mBindingInfo;
 };
 
 struct VulkanShaderProgram : public VulkanProgram, HwProgram {

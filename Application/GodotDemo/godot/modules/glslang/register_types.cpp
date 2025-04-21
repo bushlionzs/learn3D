@@ -50,7 +50,10 @@ static Vector<uint8_t> _compile_shader_glsl(RenderingDevice::ShaderStage p_stage
 		EShLangTessEvaluation,
 		EShLangCompute
 	};
-
+	if (p_stage != RenderingDevice::SHADER_STAGE_COMPUTE)
+	{
+		int kk = 0;
+	}
 	int ClientInputSemanticsVersion = 100; // maps to, say, #define VULKAN 100
 
 	glslang::EShTargetClientVersion ClientVersion = glslang::EShTargetVulkan_1_2;

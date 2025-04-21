@@ -261,6 +261,37 @@ void ShaderRD::_compile_variant(uint32_t p_variant, CompileData p_data) {
 			stage.shader_stage = RD::SHADER_STAGE_VERTEX;
 			stages.push_back(stage);
 		}
+
+		{
+			//myadd save shader file
+			if (0)
+			{
+				String path = U"D:/godotProject/shader/";
+				const char* suffix = "";
+				if (current_stage == RD::SHADER_STAGE_COMPUTE)
+				{
+					suffix = ".comp";
+				}
+				else if (current_stage == RD::SHADER_STAGE_VERTEX)
+				{
+					suffix = ".vertex";
+				}
+				else if (current_stage == RD::SHADER_STAGE_FRAGMENT)
+				{
+					suffix = ".frag";
+				}
+				else
+				{
+					int kk = 0;
+				}
+				path += name + "_" + itos(variant) + suffix;
+				Ref<FileAccess> f = FileAccess::open(path, FileAccess::WRITE);
+
+				CharString tmp = current_source.ascii();
+				uint32_t size = tmp.size();
+				f->store_buffer((const uint8_t*)tmp.get_data(), size);
+			}
+		}
 	}
 
 	if (!is_compute && build_ok) {
@@ -311,6 +342,36 @@ void ShaderRD::_compile_variant(uint32_t p_variant, CompileData p_data) {
 		return;
 	}
 
+	{
+		//myadd save shader file
+		if (0)
+		{
+			String path = U"D:/godotProject/shader/";
+			const char* suffix = "";
+			if (current_stage == RD::SHADER_STAGE_COMPUTE)
+			{
+				suffix = ".comp";
+			}
+			else if (current_stage == RD::SHADER_STAGE_VERTEX)
+			{
+				suffix = ".vertex";
+			}
+			else if (current_stage == RD::SHADER_STAGE_FRAGMENT)
+			{
+				suffix = ".frag";
+			}
+			else
+			{
+				int kk = 0;
+			}
+			path += name + "_" + itos(variant) + suffix;
+			Ref<FileAccess> f = FileAccess::open(path, FileAccess::WRITE);
+			
+			CharString tmp = current_source.ascii();
+			uint32_t size = tmp.size();
+			f->store_buffer((const uint8_t*)tmp.get_data(), size);
+		}
+	}
 	Vector<uint8_t> shader_data = RD::get_singleton()->shader_compile_binary_from_spirv(stages, name + ":" + itos(variant));
 
 	ERR_FAIL_COND(shader_data.is_empty());
@@ -415,6 +476,7 @@ String ShaderRD::_get_cache_file_path(Version *p_version, int p_group) {
 }
 
 bool ShaderRD::_load_from_cache(Version *p_version, int p_group) {
+	return false;
 	const String &path = _get_cache_file_path(p_version, p_group);
 	Ref<FileAccess> f = FileAccess::open(path, FileAccess::READ);
 	if (f.is_null()) {

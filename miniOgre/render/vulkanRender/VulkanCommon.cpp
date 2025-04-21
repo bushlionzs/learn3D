@@ -47,6 +47,20 @@ VkFormat getVKFormatFromType(spirv_cross::SPIRType type)
             return VK_FORMAT_R32G32B32A32_SFLOAT;
         }
         break;
+    case spirv_cross::SPIRType::UInt:
+        if (type.vecsize == 2)
+        {
+            return VK_FORMAT_R32G32_UINT;
+        }
+        else if (type.vecsize == 3)
+        {
+            return VK_FORMAT_R32G32B32_UINT;
+        }
+        else if (type.vecsize == 4)
+        {
+            return VK_FORMAT_R32G32B32A32_UINT;
+        }
+        break;
     }
     assert_invariant(false);
     return VK_FORMAT_R32G32_SFLOAT;
@@ -58,6 +72,9 @@ int32_t getTypeSize(spirv_cross::SPIRType type)
     {
     case spirv_cross::SPIRType::Float:
         return sizeof(float) * type.vecsize;
+        break;
+    case spirv_cross::SPIRType::UInt:
+        return sizeof(uint32_t) * type.vecsize;
         break;
     }
     assert_invariant(false);

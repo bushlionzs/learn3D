@@ -213,6 +213,9 @@ protected:
         Ogre::PipelineCreateInfo& pipelineCreateInfo,
         Handle<HwShader>& shader
     )override;
+    virtual Handle<HwDescriptorSet> createDescriptorSet(
+        Handle<HwShader> programHandle,
+        uint32_t set)override;
     virtual void executeAndPresent(
         filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
         filament::backend::Handle<filament::backend::HwSemaphore>* wait_sph,

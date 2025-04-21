@@ -5,10 +5,15 @@
 #include "OgreCommon.h"
 #include "OgreVertexDeclaration.h"
 #include "renderSystem.h"
+#include <algorithm>
 
 Error RenderingDeviceDriverNULL::initialize(uint32_t p_device_index, uint32_t p_frame_count)
 {
 	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
+
+	mCapabilities.device_family = DEVICE_VULKAN;
+	mCapabilities.version_major = 1;
+	mCapabilities.version_minor = 4;
 	return OK;
 }
 
@@ -71,10 +76,14 @@ Ogre::PixelFormat mapPixelFormat(RenderingDeviceCommons::DataFormat format)
 		return Ogre::PixelFormat::PF_R8G8B8A8_UINT;
 	case RenderingDeviceCommons::DATA_FORMAT_D16_UNORM:
 		return Ogre::PixelFormat::PF_DEPTH16;
+	case RenderingDeviceCommons::DATA_FORMAT_R8_UNORM:
+		return Ogre::PixelFormat::PF_R8;
 	case RenderingDeviceCommons::DATA_FORMAT_R8_UINT:
 		return Ogre::PixelFormat::PF_R8_UINT;
 	case RenderingDeviceCommons::DATA_FORMAT_R32_SFLOAT:
 		return Ogre::PixelFormat::PF_FLOAT32_R;
+	case RenderingDeviceCommons::DATA_FORMAT_D32_SFLOAT:
+		return Ogre::PixelFormat::PF_DEPTH32;
 	default:
 		assert_invariant(false);
 	}
@@ -422,7 +431,7 @@ Error RenderingDeviceDriverNULL::command_queue_execute_and_present(
 	}
 	filament::backend::Handle<filament::backend::HwFence> fh(p_cmd_fence.id);
 	mRenderSystem->executeAndPresent(cqh, wait_sphs.data(), wait_sphs.size(),
-		cbhs.data(), cbhs.size(), cmd_sphs.data(), cmd_sphs.size(), fh, nullptr, 0);
+		cbhs.data(), cbhs.size(), cmd_sphs.data(), cmd_sphs.size(), fh, nullptr, p_swap_chains.size());
 	return OK;
 }
 
@@ -558,16 +567,81 @@ String RenderingDeviceDriverNULL::shader_get_binary_cache_key()
 Vector<uint8_t> RenderingDeviceDriverNULL::shader_compile_binary_from_spirv(
 	VectorView<RenderingDeviceDriver::ShaderStageSPIRVData> p_spirv, const String& p_shader_name)
 {
+	uint32_t size = p_spirv.size();
+	if (size > 1)
+	{
+		int kk = 0;
+	}
+	ShaderReflection shader_refl;
+	if (_reflect_spirv(p_spirv, shader_refl) != OK) {
+		return Vector<uint8_t>();
+	}
+
 	Vector<uint8_t> ret;
+	ShaderData binary_data;
+	Vector<Vector<DataBinding>> uniforms; // Set bindings.
+	Vector<SpecializationConstant> specialization_constants;
+	binary_data.vertex_input_mask = shader_refl.vertex_input_mask;
+	binary_data.fragment_output_mask = shader_refl.fragment_output_mask;
+	binary_data.specialization_constants_count = shader_refl.specialization_constants.size();
+	binary_data.is_compute = shader_refl.is_compute;
+	binary_data.compute_local_size[0] = shader_refl.compute_local_size[0];
+	binary_data.compute_local_size[1] = shader_refl.compute_local_size[1];
+	binary_data.compute_local_size[2] = shader_refl.compute_local_size[2];
+	binary_data.set_count = shader_refl.uniform_sets.size();
+	binary_data.push_constant_size = shader_refl.push_constant_size;
+	binary_data.stage_count = p_spirv.size();
+	for (const Vector<ShaderUniform>& set_refl : shader_refl.uniform_sets) {
+		Vector<DataBinding> set_bindings;
+		for (const ShaderUniform& uniform_refl : set_refl) {
+			DataBinding binding;
+			binding.type = (uint32_t)uniform_refl.type;
+			binding.binding = uniform_refl.binding;
+			binding.stages = (uint32_t)uniform_refl.stages;
+			binding.length = uniform_refl.length;
+			binding.writable = (uint32_t)uniform_refl.writable;
+			auto ascii = uniform_refl.name.ascii();
+			assert_invariant(ascii.size() < sizeof(binding.name));
+			strncpy(binding.name, ascii.ptr(), sizeof(binding.name));
+			set_bindings.push_back(binding);
+		}
+		uniforms.push_back(set_bindings);
+	}
+
+	for (const ShaderSpecializationConstant& refl_sc : shader_refl.specialization_constants)
+	{
+		SpecializationConstant spec_constant;
+		spec_constant.type = (uint32_t)refl_sc.type;
+		spec_constant.constant_id = refl_sc.constant_id;
+		spec_constant.int_value = refl_sc.int_value;
+		spec_constant.stage_flags = (uint32_t)refl_sc.stages;
+		specialization_constants.push_back(spec_constant);
+	}
+
 	uint32_t total_size = 0;
 	total_size += sizeof(ShaderPrivateInfo);
 	CharString shader_name_utf = p_shader_name.utf8();
 	uint32_t shader_name_len = shader_name_utf.length();
 	total_size += sizeof(uint32_t); //shader_name_len
 	total_size += shader_name_len;
-	total_size += sizeof(uint32_t); // p_spirv.size();
-	uint32_t size = p_spirv.size();
-	for (uint32_t i = 0; i < size; i++)
+
+	total_size += sizeof(ShaderData);
+	total_size += sizeof(uint32_t);
+	total_size += sizeof(SpecializationConstant) * specialization_constants.size();
+
+
+	total_size += sizeof(uint32_t);
+	for (uint32_t i = 0; i < uniforms.size(); i++)
+	{
+		total_size += sizeof(uint32_t);
+		total_size += sizeof(DataBinding) * uniforms[i].size();
+	}
+	
+	if (binary_data.stage_count > 1)
+	{
+		int kk = 0;
+	}
+	for (uint32_t i = 0; i < binary_data.stage_count; i++)
 	{
 		total_size += sizeof(uint32_t); //stage
 		total_size += sizeof(uint32_t); //spirv size
@@ -592,15 +666,28 @@ Vector<uint8_t> RenderingDeviceDriverNULL::shader_compile_binary_from_spirv(
 		memcpy(binptr + offset, shader_name_utf.ptr(), shader_name_len);
 	}
 	offset += shader_name_len;
-	encode_uint32(size, binptr + offset);
-	offset += sizeof(uint32_t);
-	for (uint32_t i = 0; i < size; i++)
+	memcpy(binptr + offset, &binary_data, sizeof(binary_data));
+	offset += sizeof(binary_data);
+
+	for (uint32_t i = 0; i < binary_data.set_count; i++)
+	{
+		encode_uint32(uniforms[i].size(), binptr + offset);
+		offset += sizeof(uint32_t);
+		memcpy(binptr + offset, uniforms[i].ptr(), uniforms[i].size() * sizeof(DataBinding));
+		offset += uniforms[i].size() * sizeof(DataBinding);
+	}
+	uint32_t specialization_size = sizeof(SpecializationConstant) * specialization_constants.size();
+	memcpy(binptr + offset, specialization_constants.ptr(), specialization_size);
+	offset += specialization_size;
+
+	for (uint32_t i = 0; i < binary_data.stage_count; i++)
 	{
 		encode_uint32(p_spirv[i].shader_stage, binptr + offset);
 		offset += sizeof(uint32_t);
 		encode_uint32(p_spirv[i].spirv.size(), binptr + offset);
 		offset += sizeof(uint32_t);
 		memcpy(binptr + offset, p_spirv[i].spirv.ptr(), p_spirv[i].spirv.size());
+		offset += p_spirv[i].spirv.size();
 	}
 	return ret;
 }
@@ -623,17 +710,73 @@ RenderingDeviceDriver::ShaderID RenderingDeviceDriverNULL::shader_create_from_by
 
 	uint32_t shader_name_len = decode_uint32(binptr + offset);
 	offset += sizeof(uint32_t);
+
 	if (shader_name_len)
 	{
-		String rname;
 		r_name.parse_utf8((const char*)(binptr + offset), shader_name_len);
+		offset += shader_name_len;
 	}
 	
-	uint32_t size = decode_uint32(binptr + offset);
-	offset += sizeof(uint32_t);
-	
-	
-	for (uint32_t i = 0; i < size; i++)
+	ShaderData binary_data;
+	std::vector<std::vector<DataBinding>> uniforms; // Set bindings.
+	std::vector<SpecializationConstant> specialization_constants;
+	memcpy(&binary_data, binptr + offset, sizeof(binary_data));
+	offset += sizeof(binary_data);
+
+	uniforms.resize(binary_data.set_count);
+	for (uint32_t i = 0; i < binary_data.set_count; i++)
+	{
+		uint32_t binding_size = decode_uint32(binptr + offset);
+		offset += sizeof(uint32_t);
+		uniforms[i].resize(binding_size);
+		memcpy(uniforms[i].data(), binptr + offset, binding_size * sizeof(DataBinding));
+		offset += binding_size * sizeof(DataBinding);
+	}
+	specialization_constants.resize(binary_data.specialization_constants_count);
+	uint32_t specialization_size = binary_data.specialization_constants_count * sizeof(SpecializationConstant);
+	memcpy(specialization_constants.data(), binptr + offset, specialization_size);
+	offset += specialization_size;
+	r_shader_desc.push_constant_size = binary_data.push_constant_size;
+	r_shader_desc.vertex_input_mask = binary_data.vertex_input_mask;
+	r_shader_desc.fragment_output_mask = binary_data.fragment_output_mask;
+
+	r_shader_desc.is_compute = binary_data.is_compute;
+	r_shader_desc.compute_local_size[0] = binary_data.compute_local_size[0];
+	r_shader_desc.compute_local_size[1] = binary_data.compute_local_size[1];
+	r_shader_desc.compute_local_size[2] = binary_data.compute_local_size[2];
+	r_shader_desc.uniform_sets.resize(binary_data.set_count);
+
+
+	r_shader_desc.specialization_constants.resize(binary_data.specialization_constants_count);
+	for (uint32_t i = 0; i < binary_data.specialization_constants_count; i++)
+	{
+		const SpecializationConstant& src_sc = specialization_constants[i];
+		ShaderSpecializationConstant sc;
+		sc.type = PipelineSpecializationConstantType(src_sc.type);
+		sc.constant_id = src_sc.constant_id;
+		sc.int_value = src_sc.int_value;
+		sc.stages = src_sc.stage_flags;
+		r_shader_desc.specialization_constants.write[i] = sc;
+	}
+
+	for (uint32_t i = 0; i < binary_data.set_count; i++)
+	{
+		DataBinding* binging_ptr = uniforms[i].data();
+		uint32_t binding_count = uniforms[i].size();
+		for (uint32 j = 0; j < binding_count; j++)
+		{
+			ShaderUniform info;
+			info.type = UniformType(binging_ptr[j].type);
+			info.writable = binging_ptr[j].writable;
+			info.length = binging_ptr[j].length;
+			info.binding = binging_ptr[j].binding;
+			info.stages = binging_ptr[j].stages;
+			r_shader_desc.uniform_sets.write[i].push_back(info);
+		}
+	}
+
+	r_shader_desc.stages.resize(binary_data.stage_count);
+	for (uint32_t i = 0; i < binary_data.stage_count; i++)
 	{
 		ShaderStage stage = (ShaderStage)decode_uint32(binptr + offset);
 		offset += sizeof(uint32_t);
@@ -655,9 +798,10 @@ RenderingDeviceDriver::ShaderID RenderingDeviceDriverNULL::shader_create_from_by
 			break;
 		}
 		offset += spirv_size;
+		r_shader_desc.stages.set(i, ShaderStage(stage));
 	}
 	
-	 
+	desc.name = r_name.ascii().get_data();
 	auto sh = mRenderSystem->createShader(desc);
 	return RenderingDeviceDriver::ShaderID(sh.getId());
 }
@@ -679,7 +823,6 @@ Ogre::DescriptorType mapDescriptorType(RenderingDeviceCommons::UniformType type)
 	case RenderingDeviceCommons::UNIFORM_TYPE_SAMPLER:
 		return Ogre::DESCRIPTOR_TYPE_SAMPLER;
 	case RenderingDeviceCommons::UNIFORM_TYPE_SAMPLER_WITH_TEXTURE:
-		assert_invariant(false);
 		return Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER;
 	case RenderingDeviceCommons::UNIFORM_TYPE_TEXTURE:
 		return Ogre::DESCRIPTOR_TYPE_TEXTURE;
@@ -709,6 +852,11 @@ RenderingDeviceDriver::UniformSetID RenderingDeviceDriverNULL::uniform_set_creat
 	std::vector< filament::backend::Handle<filament::backend::HwBufferObject>> buffers;
 	std::vector<Ogre::OgreTexture*> textures;
 	std::vector< filament::backend::Handle<filament::backend::HwSampler>> samplers;
+
+	uint32_t capacity = std::max(size, (uint32_t)16);
+	buffers.reserve(capacity);
+	textures.reserve(capacity);
+	samplers.reserve(capacity);
 	for (uint32_t i = 0; i < size; i++)
 	{
 		const BoundUniform& uniform = p_uniforms[i];
@@ -735,11 +883,23 @@ RenderingDeviceDriver::UniformSetID RenderingDeviceDriverNULL::uniform_set_creat
 		case Ogre::DESCRIPTOR_TYPE_TEXTURE:
 		case Ogre::DESCRIPTOR_TYPE_RW_TEXTURE:
 		{
-			
 			uint32_t offset = textures.size();
+			
 			for (uint32_t j = 0; j < descriptorData[i].mCount; j++)
 			{
 				textures.push_back((Ogre::OgreTexture *)uniform.ids[j].id);
+			}
+			descriptorData[i].ppTextures = (const Ogre::OgreTexture**)(textures.data() + offset);
+		}
+		break;
+		case Ogre::DESCRIPTOR_TYPE_TEXTURE_SAMPLER:
+		{
+			uint32_t offset = textures.size();
+			uint32_t num_descriptors = uniform.ids.size() / 2;
+			descriptorData[i].mCount = num_descriptors;
+			for (uint32_t j = 0; j < num_descriptors; j++)
+			{
+				textures.push_back((Ogre::OgreTexture*)(uniform.ids[j*2+1].id));
 			}
 			descriptorData[i].ppTextures = (const Ogre::OgreTexture**)(textures.data() + offset);
 		}
@@ -750,7 +910,8 @@ RenderingDeviceDriver::UniformSetID RenderingDeviceDriverNULL::uniform_set_creat
 			uint32_t offset = samplers.size();
 			for (uint32_t j = 0; j < descriptorData[i].mCount; j++)
 			{
-				samplers.push_back(filament::backend::Handle<filament::backend::HwSampler>(uniform.ids[j].id));
+				filament::backend::Handle<filament::backend::HwSampler> sph(uniform.ids[j].id);
+				samplers.push_back(sph);
 			}
 			descriptorData[i].ppSamplers = samplers.data() + offset;
 		}
@@ -759,10 +920,10 @@ RenderingDeviceDriver::UniformSetID RenderingDeviceDriverNULL::uniform_set_creat
 			assert_invariant(false);
 		}
 	
-		mRenderSystem->updateDescriptorSet(dsh, size, descriptorData);
+		
 	}
 	
-
+	mRenderSystem->updateDescriptorSet(dsh, size, descriptorData);
 	return RenderingDeviceDriver::UniformSetID(dsh.getId());
 }
 
@@ -938,8 +1099,16 @@ RenderingDeviceDriver::RenderPassID RenderingDeviceDriverNULL::render_pass_creat
 	VectorView<Attachment> p_attachments, VectorView<Subpass> p_subpasses,
 	VectorView<SubpassDependency> p_subpass_dependencies, uint32_t p_view_count)
 {
-	
-	return RenderingDeviceDriver::RenderPassID(1);
+	RenderPrivatePassInfo* info = new RenderPrivatePassInfo;
+	for (uint32_t i = 0; i < p_attachments.size(); i++)
+	{
+		Ogre::PixelFormat format = mapPixelFormat(p_attachments[i].format);
+		info->attachments.push_back(format);
+	}
+	info->subpassCount = p_subpasses.size();
+	info->subpassDependenciesCount = p_subpass_dependencies.size();
+	info->viewCount = p_view_count;
+	return RenderingDeviceDriver::RenderPassID(info);
 }
 
 void RenderingDeviceDriverNULL::render_pass_free(RenderPassID p_render_pass)
@@ -1044,7 +1213,6 @@ void RenderingDeviceDriverNULL::command_render_draw(
 	uint32_t p_base_vertex,
 	uint32_t p_first_instance)
 {
-	assert_invariant(p_instance_count == 1);
 	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
 	mRenderSystem->draw(p_vertex_count, p_instance_count, p_base_vertex, p_first_instance, &cbh);
 }
@@ -1186,14 +1354,24 @@ RenderingDeviceDriver::PipelineID RenderingDeviceDriverNULL::render_pipeline_cre
 	filament::backend::RasterState aa;
 	Ogre::PipelineCreateInfo pipelineCreateInfo;
 	VertexDeclaration decl;
-	assert_invariant(false);
+
 	std::vector<VertexAttribute>* attrs = (std::vector<VertexAttribute>*)p_vertex_format.id;
-	for (uint32_t i = 0; i < attrs->size(); i++)
+	if (attrs)
 	{
-		VertexAttribute& attr = attrs->at(i);
-		decl.addElement(0, 0, attr.offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+		uint32_t attr_size = attrs->size();
+		if (attr_size > 1)
+		{
+			int kk = 0;
+		}
+		/*assert_invariant(attr_size == 1);
+		for (uint32_t i = 0; i < attrs->size(); i++)
+		{
+			VertexAttribute& attr = attrs->at(i);
+			decl.addElement(0, 0, attr.offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+		}*/
 	}
-	pipelineCreateInfo.decl = &decl;
+	
+	pipelineCreateInfo.decl = nullptr;
 	auto & rasterizationState = pipelineCreateInfo.rasterizationState;
 	rasterizationState.cullMode = mapCullingMode(p_rasterization_state.cull_mode);
 	rasterizationState.depthBiasClamp = p_rasterization_state.depth_bias_clamp;
@@ -1235,6 +1413,8 @@ RenderingDeviceDriver::PipelineID RenderingDeviceDriverNULL::render_pipeline_cre
 			(Ogre::BlendOperation)p_blend_state.attachments[i].alpha_blend_op;
 	}
 	auto & renderTarget = pipelineCreateInfo.renderTarget;
+	renderTarget.renderTargetCount = p_color_attachments.size();
+
 	auto ph = mRenderSystem->createPipeline(pipelineCreateInfo, sh);
 	return RenderingDeviceDriver::PipelineID(ph.getId());
 }
@@ -1318,7 +1498,7 @@ void RenderingDeviceDriverNULL::command_end_label(CommandBufferID p_cmd_buffer)
 
 void RenderingDeviceDriverNULL::command_insert_breadcrumb(CommandBufferID p_cmd_buffer, uint32_t p_data)
 {
-
+	
 }
 
 void RenderingDeviceDriverNULL::begin_segment(uint32_t p_frame_index, uint32_t p_frames_drawn)
@@ -1338,6 +1518,7 @@ void RenderingDeviceDriverNULL::set_object_name(ObjectType p_type, ID p_driver_i
 
 uint64_t RenderingDeviceDriverNULL::get_resource_native_handle(DriverResource p_type, ID p_driver_id)
 {
+	assert_invariant(false);
 	return 0;
 }
 

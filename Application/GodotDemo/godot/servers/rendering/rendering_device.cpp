@@ -3075,7 +3075,7 @@ RID RenderingDevice::uniform_set_create(const Vector<Uniform> &p_uniforms, RID p
 		RDD::BoundUniform &driver_uniform = driver_uniforms[i];
 		driver_uniform.type = uniform.uniform_type;
 		driver_uniform.binding = uniform.binding;
-
+		
 		switch (uniform.uniform_type) {
 			case UNIFORM_TYPE_SAMPLER: {
 				if (uniform.get_id_count() != (uint32_t)set_uniform.length) {

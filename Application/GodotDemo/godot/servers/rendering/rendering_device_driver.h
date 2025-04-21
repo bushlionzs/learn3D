@@ -145,22 +145,7 @@ public:
 	static_assert(sizeof(m_name##ID) == sizeof(void *));
 
 	// Id types declared before anything else to prevent cyclic dependencies between the different concerns.
-	struct BufferID : public ID {
-    __forceinline explicit operator bool() const {
-        return id != 0;
-    } __forceinline BufferID& operator=(BufferID p_other) {
-        id = p_other.id; return *this;
-    } __forceinline bool operator<(const BufferID& p_other) const {
-        return id < p_other.id;
-    } __forceinline bool operator==(const BufferID& p_other) const {
-        return id == p_other.id;
-    } __forceinline bool operator!=(const BufferID& p_other) const {
-        return id != p_other.id;
-    } __forceinline BufferID(const BufferID& p_other) : ID(p_other.id) {
-    } __forceinline explicit BufferID(uint64_t p_int) : ID(p_int) {
-    } __forceinline explicit BufferID(void* p_ptr) : ID((size_t)p_ptr) {
-    } __forceinline BufferID() = default;
-}; static_assert(sizeof(BufferID) == sizeof(void*));;
+	DEFINE_ID(Buffer);
 	DEFINE_ID(Texture);
 	DEFINE_ID(Sampler);
 	DEFINE_ID(VertexFormat);
@@ -182,7 +167,10 @@ public:
 	/*****************/
 	/**** GENERIC ****/
 	/*****************/
-
+	virtual bool isUserDefine()
+	{
+		return false;
+	}
 	virtual Error initialize(uint32_t p_device_index, uint32_t p_frame_count) = 0;
 
 	/****************/
@@ -289,7 +277,7 @@ public:
 		uint64_t depth_pitch = 0;
 		uint64_t layer_pitch = 0;
 	};
-	virtual bool isUserDefine() { return false; }
+
 	virtual TextureID texture_create(const TextureFormat &p_format, const TextureView &p_view) = 0;
 	virtual TextureID texture_create_from_extension(uint64_t p_native_texture, TextureType p_type, DataFormat p_format, uint32_t p_array_layers, bool p_depth_stencil) = 0;
 	// texture_create_shared_*() can only use original, non-view textures as original. RenderingDevice is responsible for ensuring that.
@@ -506,6 +494,7 @@ public:
 		UniformType type = UNIFORM_TYPE_MAX;
 		uint32_t binding = 0xffffffff; // Binding index as specified in shader.
 		LocalVector<ID> ids;
+		const char* name;
 	};
 
 	virtual UniformSetID uniform_set_create(VectorView<BoundUniform> p_uniforms, ShaderID p_shader, uint32_t p_set_index) = 0;

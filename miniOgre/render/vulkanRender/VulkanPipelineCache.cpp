@@ -102,6 +102,8 @@ using namespace bluevk;
 
         VkPipelineColorBlendAttachmentState colorBlendAttachments[MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT];
         VkPipelineColorBlendStateCreateInfo colorBlendState;
+
+        assert_invariant(mPipelineRequirements.rasterState.colorTargetCount <= MRT::MAX_SUPPORTED_RENDER_TARGET_COUNT);
         colorBlendState = VkPipelineColorBlendStateCreateInfo{};
         colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
         colorBlendState.attachmentCount = mPipelineRequirements.rasterState.colorTargetCount;
