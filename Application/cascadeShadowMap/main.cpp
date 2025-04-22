@@ -25,7 +25,7 @@ int main()
 	info.cleanup = [&instance]() {
 		};
 
-	app.run(info);
+	app.run(&info);
 
 	return 0;
 }

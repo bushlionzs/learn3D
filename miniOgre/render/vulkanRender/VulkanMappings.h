@@ -54,6 +54,8 @@ namespace Ogre
 		static VkImageLayout getImageLayout(TextureLayout layout);
 
 		static VkImageAspectFlags getAspect(BitField<TextureAspectBits> aspect);
+
+		static CompareFunction getCompareFunction(filament::backend::RasterState::DepthFunc func);
 	};
 }
 

@@ -124,7 +124,7 @@ protected:
     virtual void bindVertexBuffer(
         Handle<HwBufferObject> bufHandle, 
         uint32_t binding,
-        uint32_t offset);
+        uint32_t vertexSize);
     virtual void bindIndexBuffer(
         Handle<HwBufferObject>, 
         uint32_t indexSize,

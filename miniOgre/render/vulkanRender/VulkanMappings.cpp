@@ -628,4 +628,30 @@ namespace Ogre {
         }
         return flags;
     }
+
+    CompareFunction VulkanMappings::getCompareFunction(filament::backend::RasterState::DepthFunc func)
+    {
+        switch (func)
+        {
+        case SamplerCompareFunc::LE:
+            return CompareFunction::CMPF_LESS_EQUAL;
+        case SamplerCompareFunc::GE:
+            return CompareFunction::CMPF_GREATER_EQUAL;
+        case SamplerCompareFunc::L:
+            return CompareFunction::CMPF_LESS;
+        case SamplerCompareFunc::G:
+            return CompareFunction::CMPF_GREATER;
+        case SamplerCompareFunc::E:
+            return CompareFunction::CMPF_EQUAL;
+        case SamplerCompareFunc::NE:
+            return CompareFunction::CMPF_NOT_EQUAL;
+        case SamplerCompareFunc::A:
+            return CompareFunction::CMPF_ALWAYS_PASS;
+        case SamplerCompareFunc::N:
+            return CompareFunction::CMPF_ALWAYS_FAIL;
+        default:
+            assert_invariant(false);
+        }
+        return CompareFunction::CMPF_ALWAYS_PASS;
+    } 
 }

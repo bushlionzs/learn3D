@@ -7,7 +7,7 @@ struct CameraInfo
     float nearClip;
     float farClip;
     float fovRadians;
-    bool reverseDepth;
+    bool reverseDepth = false;
     uint32_t width = 0;
     uint32_t height = 0;
 };

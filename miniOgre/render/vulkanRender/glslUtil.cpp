@@ -108,7 +108,6 @@ bool glslCompileShader(
         if (itor != gShaderCacheMap.end())
         {
             shaderModuleInfo.shaderModule = itor->second.shaderModule;
-            shaderModuleInfo.inputDesc = itor->second.inputDesc;
             shaderModuleInfo.spv = itor->second.spv;
             return true;
         }
@@ -231,8 +230,6 @@ bool glslCompileShader(
         if (itor == gShaderCacheMap.end())
         {
             gShaderCacheMap[key].shaderModule = shader;
-            parserGlslInputDesc(result.data(), shaderModuleInfo.inputDesc);
-            gShaderCacheMap[key].inputDesc = shaderModuleInfo.inputDesc;
             gShaderCacheMap[key].spv = result;
             shaderModuleInfo.shaderModule = shader;
             shaderModuleInfo.spv = result;

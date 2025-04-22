@@ -764,11 +764,11 @@ void VulkanRenderSystemBase::bufferUnmap(Handle<HwBufferObject> bufHandle)
 void VulkanRenderSystemBase::bindVertexBuffer(
     Handle<HwBufferObject> bufferHandle, 
     uint32_t binding,
-    uint32_t offset)
+    uint32_t vertexSize)
 {
     VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufferHandle);
 
-    VkDeviceSize offsets[1] = { offset };
+    VkDeviceSize offsets[1] = { 0 };
     auto cmdBuffer = mCommands->get().buffer();
 
     VkBuffer vkBuffer = vulkanBufferObject->buffer.getGpuBuffer();
@@ -977,9 +977,10 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
     vulkanShaderInfo.resourceAllocator = &mResourceAllocator;
     vulkanShaderInfo.pipelineLayoutCache = mPipelineLayoutCache;
     vulkanShaderInfo.vulkanLayoutCache = mVulkanLayoutCache;
-    vulkanShaderInfo.decl = decl;
+
     vulkanProgram->updateShaderInfo(vulkanShaderInfo);
-    
+    vulkanProgram->parseVertexInfo(decl);
+
     return program;
 }
 
@@ -1067,7 +1068,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     vulkanRasterState.colorWriteMask = 0xf;
     vulkanRasterState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
     vulkanRasterState.colorTargetCount = rasterState.renderTargetCount;
-    vulkanRasterState.depthCompareOp = CMPF_LESS;
+    vulkanRasterState.depthCompareOp = VulkanMappings::getCompareFunction(rasterState.depthFunc);
     vulkanRasterState.depthBiasConstantFactor = rasterState.depthBiasConstantFactor;
     vulkanRasterState.depthBiasSlopeFactor = rasterState.depthBiasSlopeFactor;
     vulkanRasterState.depthBiasEnable = rasterState.depthBiasConstantFactor > 0.1f;
@@ -1089,12 +1090,15 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
         VkFormat vkFormat = VulkanMappings::_getPF(format);
         targetInfo[i].colorFormat = vkFormat;
 
-        targetInfo[i].srcColorBlendFactor = getBlendFactor(rasterState.blendFunctionSrcRGB);
-        targetInfo[i].dstColorBlendFactor = getBlendFactor(rasterState.blendFunctionDstRGB);
-        targetInfo[i].srcAlphaBlendFactor = getBlendFactor(rasterState.blendFunctionSrcAlpha);
-        targetInfo[i].dstAlphaBlendFactor = getBlendFactor(rasterState.blendFunctionDstAlpha);
-        targetInfo[i].colorBlendOp = (Ogre::BlendOperation)rasterState.blendEquationRGB;
-        targetInfo[i].alphaBlendOp = (Ogre::BlendOperation)rasterState.blendEquationAlpha;
+        if (vulkanRasterState.blendEnable)
+        {
+            targetInfo[i].srcColorBlendFactor = getBlendFactor(rasterState.blendFunctionSrcRGB);
+            targetInfo[i].dstColorBlendFactor = getBlendFactor(rasterState.blendFunctionDstRGB);
+            targetInfo[i].srcAlphaBlendFactor = getBlendFactor(rasterState.blendFunctionSrcAlpha);
+            targetInfo[i].dstAlphaBlendFactor = getBlendFactor(rasterState.blendFunctionDstAlpha);
+            targetInfo[i].colorBlendOp = (Ogre::BlendOperation)rasterState.blendEquationRGB;
+            targetInfo[i].alphaBlendOp = (Ogre::BlendOperation)rasterState.blendEquationAlpha;
+        }
     }
     
     

@@ -538,7 +538,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		indexData->bind();
 		IndexDataView* indexView = subMesh->getIndexView();
 		rs->drawIndexed(indexView->mIndexCount, 1,
-			indexView->mIndexLocation, indexView->mBaseVertexLocation, 0);
+			indexView->mIndexLocation, indexView->mBaseVertexLocation, 0, nullptr);
 		rs->endRenderPass(renderPassInfo);
 
 		RenderTargetBarrier rtBarriers[] =

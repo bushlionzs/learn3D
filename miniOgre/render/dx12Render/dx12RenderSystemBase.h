@@ -59,9 +59,14 @@ public:
         uint32_t instanceCount,
         uint32_t firstIndex,
         uint32_t vertexOffset,
-        uint32_t firstInstance);
+        uint32_t firstInstance,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh);
 
-    virtual void draw(uint32_t vertexCount, uint32_t firstVertex);
+    virtual void draw(uint32_t vertexCount,
+        uint32_t instanceCount,
+        uint32_t firstVertex,
+        uint32_t firstInstance,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh);
     virtual void drawIndexedIndirect(
         Handle<HwBufferObject> drawBuffer,
         uint32_t offset,
@@ -82,7 +87,10 @@ public:
         Handle<HwBufferObject> bufHandle, 
         uint32_t binding,
         uint32_t vertexSize);
-    virtual void bindIndexBuffer(Handle<HwBufferObject> bufHandle, uint32_t indexSize);
+    virtual void bindIndexBuffer(
+        Handle<HwBufferObject> bufHandle, 
+        uint32_t indexSize,
+        uint32_t offset)override;
     virtual void* lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes);
     virtual void unlockBuffer(Handle<HwBufferObject> bufHandle);
     virtual Handle<HwBufferObject> createBufferObject(

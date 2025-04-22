@@ -228,26 +228,16 @@ void BasicApplication::base2()
 
 	Ogre::Matrix4 m;
 
-	CameraInfo cameraInfo;;
-	cameraInfo.aspect = ogreConfig.width / (float)ogreConfig.height;
-	cameraInfo.aspectInverse = ogreConfig.height / (float)ogreConfig.width;
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
 	cameraInfo.fovRadians = Ogre::Math::PI / 4.0f;
 	cameraInfo.nearClip = 0.5f;
 	cameraInfo.farClip = 48.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
 
 	mGameCamera->updateCameraInfo(cameraInfo);
-	if (ogreConfig.reverseDepth)
-	{
-		m = Ogre::Math::makePerspectiveMatrixReverseZ(
-			cameraInfo.fovRadians, cameraInfo.aspectInverse, cameraInfo.nearClip, cameraInfo.farClip);
-	}
-	else
-	{
-		m = Ogre::Math::makePerspectiveMatrix(
-			cameraInfo.fovRadians, cameraInfo.aspect, cameraInfo.nearClip, cameraInfo.farClip);
-	}
-	mGameCamera->getCamera()->updateProjectMatrix(m);
-
+	
 	RenderPassInput input;
 	input.color = mRenderWindow->getColorTarget();
 	input.depth = mRenderWindow->getDepthTarget();

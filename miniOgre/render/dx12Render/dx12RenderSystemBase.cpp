@@ -355,7 +355,8 @@ void Dx12RenderSystemBase::drawIndexed(
     uint32_t instanceCount,
     uint32_t firstIndex,
     uint32_t vertexOffset,
-    uint32_t firstInstance)
+    uint32_t firstInstance,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
     ID3D12GraphicsCommandList* cl = mCommands->get();
     cl->DrawIndexedInstanced(
@@ -363,10 +364,15 @@ void Dx12RenderSystemBase::drawIndexed(
         1, firstIndex, vertexOffset, firstInstance);
 }
 
-void Dx12RenderSystemBase::draw(uint32_t vertexCount, uint32_t firstVertex)
+void Dx12RenderSystemBase::draw(
+    uint32_t vertexCount,
+    uint32_t instanceCount,
+    uint32_t firstVertex,
+    uint32_t firstInstance,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
     ID3D12GraphicsCommandList* cl = mCommands->get();
-    cl->DrawInstanced(vertexCount, 1, firstVertex, 0);
+    cl->DrawInstanced(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 void Dx12RenderSystemBase::drawIndexedIndirect(
@@ -458,7 +464,10 @@ void Dx12RenderSystemBase::bindVertexBuffer(
     cl->IASetVertexBuffers(binding, 1, &vbv);
 }
 
-void Dx12RenderSystemBase::bindIndexBuffer(Handle<HwBufferObject> bufHandle, uint32_t indexSize) 
+void Dx12RenderSystemBase::bindIndexBuffer(
+    Handle<HwBufferObject> bufHandle, 
+    uint32_t indexSize,
+    uint32_t offset) 
 {
     DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(bufHandle);
     auto* cl = mCommands->get();

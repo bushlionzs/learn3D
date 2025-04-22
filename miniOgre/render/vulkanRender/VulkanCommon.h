@@ -113,7 +113,7 @@ struct VkShaderModuleInfo
     Ogre::ShaderType shaderType;
     VkShaderModule shaderModule;
     std::string spv;
-    std::vector<GlslInputDesc> inputDesc;
+    //std::vector<GlslInputDesc> inputDesc;
 };
 
 struct VKDescriptorInfo
