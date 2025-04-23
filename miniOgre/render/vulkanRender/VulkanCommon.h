@@ -141,6 +141,13 @@ struct TransferCommandInfo
 class VulkanPipelineLayoutCache;
 class VulkanLayoutCache;
 
+struct PushConstants
+{
+    std::string name;
+    uint32_t size;
+    VkShaderStageFlags stage;
+};
+
 struct VulkanShaderInfo
 {
     filament::backend::VulkanResourceAllocator* resourceAllocator;

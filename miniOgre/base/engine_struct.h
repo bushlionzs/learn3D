@@ -18,6 +18,15 @@ enum ObjectType
     ObjectType_Dynamic
 };
 
+enum DriverObjectType {
+    OBJECT_TYPE_TEXTURE,
+    OBJECT_TYPE_SAMPLER,
+    OBJECT_TYPE_BUFFER,
+    OBJECT_TYPE_SHADER,
+    OBJECT_TYPE_UNIFORM_SET,
+    OBJECT_TYPE_PIPELINE,
+};
+
 class EngineRenderList
 {
 public:

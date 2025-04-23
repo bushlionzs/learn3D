@@ -35,6 +35,7 @@ void initFrameResource(
         desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
         desc.bufferCreationFlags = 0;
         desc.mSize = sizeof(ObjectConstantBuffer);
+        desc.pName = "cbPerObject";
         filament::backend::Handle<filament::backend::HwBufferObject> objectBufferHandle =
             rs->createBufferObject(desc);
         resourceInfo->modelObjectHandle = objectBufferHandle;
@@ -47,6 +48,7 @@ void initFrameResource(
             desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
             desc.bufferCreationFlags = 0;
             desc.mSize = sizeof(PbrMaterialConstanceBuffer);
+            desc.pName = "pbrMaterial";
             matBufferHandle = rs->createBufferObject(desc);
         }
         else
@@ -55,6 +57,7 @@ void initFrameResource(
             desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
             desc.bufferCreationFlags = 0;
             desc.mSize = sizeof(GeneralMaterialConstantBuffer);
+            desc.pName = "cbMaterial";
             matBufferHandle = rs->createBufferObject(desc);
         }
 

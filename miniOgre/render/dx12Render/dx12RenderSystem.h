@@ -17,7 +17,7 @@ public:
     ~Dx12RenderSystem();
     virtual bool engineInit(bool raytracing);
 
-    virtual Ogre::OgreTexture* createTextureFromFile(const std::string& name, Ogre::TextureProperty* texProperty) override;
+    virtual Ogre::OgreTexture* createTextureFromFile(const std::string& name, Ogre::TextureProperty* texProperty);
     virtual Ogre::OgreTexture* createManualTexture(
         const std::string& name,
         Ogre::TextureProperty* texProperty)override;

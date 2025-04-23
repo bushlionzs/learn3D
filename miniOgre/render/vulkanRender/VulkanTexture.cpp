@@ -36,7 +36,11 @@ VulkanTexture::VulkanTexture(
     mCommands = commands;
     mPlatform = platform;
     mTextureImage = image;
-    createInternalResourcesImpl();
+
+    if (texProperty)
+    {
+        createInternalResourcesImpl();
+    }
 }
 
 VulkanTexture::~VulkanTexture()
@@ -48,11 +52,11 @@ bool VulkanTexture::need_midmap()
 {
     if (!mTextureProperty._need_mipmap)
         return false;
-    if (mTextureProperty._tex_usage & Ogre::TextureUsage::COLOR_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
     {
         return false;
     }
-    if (mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         return false;
     }
@@ -61,11 +65,11 @@ bool VulkanTexture::need_midmap()
 
 void VulkanTexture::_createSurfaceList(void)
 {
-    if (mTextureProperty._tex_usage & Ogre::TextureUsage::COLOR_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
     {
         return;
     }
-    if (mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         return;
     }
@@ -89,7 +93,10 @@ void VulkanTexture::_createSurfaceList(void)
             if (height > 1) height /= 2;
         }
     }
-
+    if (bufferSizeAll == 32)
+    {
+        int kk = 0;
+    }
     VulkanHelper::getSingleton()._createBuffer(
         bufferSizeAll,
         VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -122,7 +129,6 @@ void VulkanTexture::createInternalResourcesImpl(void)
             mTextureProperty._height,
             mVulkanFormat,
             VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             mTextureImage,
             mTextureImageMemory);
@@ -263,7 +269,6 @@ void VulkanTexture::createImage(
     uint32_t height,
     VkFormat format,
     VkImageTiling tiling,
-    VkImageUsageFlags usage,
     VkMemoryPropertyFlags properties,
     VkImage& image,
     VkDeviceMemory& imageMemory)
@@ -295,6 +300,9 @@ void VulkanTexture::createImage(
     case TEX_TYPE_2D_ARRAY:
         imageInfo.imageType = VK_IMAGE_TYPE_2D;
         break;
+    case TEX_TYPE_CUBE_MAP_ARRAY:
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        break;
     case TEX_TYPE_3D:
         imageInfo.imageType = VK_IMAGE_TYPE_3D;
         break;
@@ -309,26 +317,47 @@ void VulkanTexture::createImage(
     imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    imageInfo.usage = usage;
+    imageInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT;
     
     
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
+    BitField<TextureUsageBits> usage = mTextureProperty._tex_usage;
 
-    if (mUsage & Ogre::TextureUsage::COLOR_ATTACHMENT)
+    if (usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
     {
         imageInfo.usage |=  VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT ;
     }
 
-    if (mUsage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    if (usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
     }
     
-    if (mUsage & Ogre::TextureUsage::WRITEABLE)
+    if (usage.has_flag(TEXTURE_USAGE_STORAGE_BIT))
     {
         imageInfo.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
+    }
+
+    if (usage.has_flag(TEXTURE_USAGE_CAN_COPY_FROM_BIT))
+    {
+        imageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+    }
+
+    if (usage.has_flag(TEXTURE_USAGE_CAN_UPDATE_BIT))
+    {
+        imageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+    }
+
+    if (usage.has_flag(TEXTURE_USAGE_CAN_COPY_TO_BIT))
+    {
+        imageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+    }
+
+    if (usage.has_flag(TEXTURE_USAGE_INPUT_ATTACHMENT_BIT))
+    {
+        imageInfo.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
     }
 
 
@@ -339,13 +368,9 @@ void VulkanTexture::createImage(
 
     auto device = mPlatform->getDevice();
     VK_CHECK_RESULT(vkCreateImage(device, &imageInfo, nullptr, &image));
-
-    VkDebugUtilsObjectNameInfoEXT nameInfo = {};
-    nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-    nameInfo.objectType = VK_OBJECT_TYPE_IMAGE;
-    nameInfo.objectHandle = (uint64_t)image;
-    nameInfo.pObjectName = mName.c_str();
-    vkSetDebugUtilsObjectNameEXT(device, &nameInfo);
+    vks::tools::set_object_name(device,
+        OBJECT_TYPE_TEXTURE,
+        (uint64_t)image, mName.c_str());
 
     VkMemoryRequirements memRequirements;
     bluevk::vkGetImageMemoryRequirements(device, image, &memRequirements);
@@ -367,31 +392,34 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     VkImageViewCreateInfo viewInfo = {};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = image;
-    if (isCubeTexture())
+
+    switch (mTextureProperty._texType)
     {
+    case TEX_TYPE_2D:
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        break;
+    case TEX_TYPE_2D_ARRAY:
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+        break;
+    case TEX_TYPE_3D:
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_3D;
+        break;
+    case TEX_TYPE_CUBE_MAP:
         viewInfo.viewType = VK_IMAGE_VIEW_TYPE_CUBE;
+        break;
+    case TEX_TYPE_CUBE_MAP_ARRAY:
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+        break;
+    default:
+        assert_invariant(false);
+        break;
     }
-    else
-    {
-        switch (mTextureProperty._texType)
-        {
-        case TEX_TYPE_2D:
-            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            break;
-        case TEX_TYPE_2D_ARRAY:
-            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
-            break;
-        case TEX_TYPE_3D:
-            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_3D;
-            break;
-        }
        
-    }
     
     viewInfo.format = format;
 
     mAspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
-    if (this->mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         mAspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
     }
@@ -420,7 +448,7 @@ std::vector<VkImageView> VulkanTexture::createImageViewArray(VkImage image, VkFo
     viewInfo.format = format;
 
     mAspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
-    if (this->mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         mAspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
     }

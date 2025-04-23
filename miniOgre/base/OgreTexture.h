@@ -33,22 +33,11 @@ namespace Ogre {
         /// cube map (six two dimensional textures, one for each cube face), used in combination with 3D
         /// texture coordinates
         TEX_TYPE_CUBE_MAP = 4,
+        TEX_TYPE_CUBE_MAP_ARRAY = 5,
         /// 2D texture array
-        TEX_TYPE_2D_ARRAY = 5,
+        TEX_TYPE_2D_ARRAY = 6,
         /// GLES2 only OES texture type
-        TEX_TYPE_EXTERNAL_OES = 6
-    };
-
-    enum TextureUsage
-    {
-        NONE = 0x0000,
-        COLOR_ATTACHMENT = 0x0001,            //!< Texture can be used as a color attachment
-        DEPTH_ATTACHMENT = 0x0002,            //!< Texture can be used as a depth attachment
-        STENCIL_ATTACHMENT = 0x0004,          //!< Texture can be used as a stencil attachment
-        UPLOADABLE = 0x0008,                  //!< Data can be uploaded into this texture (default)
-        SAMPLEABLE = 0x0010,                  //!< Texture can be sampled (default)
-        WRITEABLE  = 0x0020,
-        TU_DEFAULT = UPLOADABLE | SAMPLEABLE,
+        TEX_TYPE_EXTERNAL_OES = 7
     };
 
     class TextureProperty
@@ -67,7 +56,7 @@ namespace Ogre {
         uint32_t _maxMipLevel;
         float _gamma;
         uint32_t _fsaa;
-        uint32_t _tex_usage; //TextureUsage
+        BitField<TextureUsageBits> _tex_usage;
         ColourValue _backgroudColor;
         TextureAddressingMode  _tex_addr_mod;
         filament::backend::SamplerParams _samplerParams;
@@ -136,7 +125,8 @@ namespace Ogre {
 
         bool isCubeTexture()
         {
-            return mTextureProperty._texType == TEX_TYPE_CUBE_MAP;
+            return mTextureProperty._texType == TEX_TYPE_CUBE_MAP ||
+                mTextureProperty._texType == TEX_TYPE_CUBE_MAP_ARRAY;
         }
         bool isLoaded()
         {
@@ -181,11 +171,6 @@ namespace Ogre {
         TextureProperty mTextureProperty;
         uint32_t mFace = 1;
         PixelFormat mFormat;
-        int mUsage;
-
-        PixelFormat mSrcFormat;
-        uint32 mSrcWidth, mSrcHeight, mSrcDepth;
-
         std::vector<String> mLayerNames;
 
         bool mLoad = false;

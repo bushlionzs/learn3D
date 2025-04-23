@@ -61,7 +61,7 @@ void VulkanSwapChain::update() {
     mColors.reserve(bundle.colors.size());
     VkDevice const device = mPlatform->getDevice();
     Ogre::TextureProperty texProperty;
-    texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
+    texProperty._tex_usage = TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
     texProperty._width = bundle.extent.width;
     texProperty._height = bundle.extent.height;
     texProperty._tex_format = VulkanMappings::getPixelFormat(bundle.colorFormat);
@@ -87,7 +87,7 @@ void VulkanSwapChain::update() {
         color->transitionLayout(commands.buffer(), subresources, VulkanLayout::PRESENT);
     }
     
-    texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
+    texProperty._tex_usage = TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
     texProperty._tex_format = VulkanMappings::getPixelFormat(bundle.depthFormat);
     mDepth = std::make_unique<VulkanTexture>("", mPlatform, mCommands, bundle.depth, &texProperty);
 

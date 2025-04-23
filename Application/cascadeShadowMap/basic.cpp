@@ -152,7 +152,7 @@ void BasicApplication::base1()
 	texProperty._width = 2048;
 	texProperty._height = 2048;
 	texProperty._tex_format = Ogre::PixelFormat::PF_DEPTH32F;
-	texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
+	texProperty._tex_usage = TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	auto mainPass = createStandardRenderPass(input);
 	mRenderPipeline->addRenderPass(mainPass);
 }
@@ -253,7 +253,7 @@ void BasicApplication::base2()
 	texProperty._height = 4096;
 	texProperty._face = 4;
 	texProperty._tex_format = Ogre::PixelFormat::PF_DEPTH32F;
-	texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
+	texProperty._tex_usage = TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	
 	input.shadowMapTarget = mRenderSystem->createRenderTarget("shadowTarget", texProperty);
 	

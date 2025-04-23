@@ -1065,7 +1065,7 @@ void GltfLoader::addMaterialTexture(
         tp._height = image.height;
         tp._tex_format = Ogre::PF_A8B8G8R8;
         tp._need_mipmap = true;
-        tp._tex_usage = Ogre::TextureUsage::WRITEABLE;
+        tp._tex_usage = TEXTURE_USAGE_CAN_UPDATE_BIT | TEXTURE_USAGE_STORAGE_BIT;
 
         Ogre::OgreTexture*  tex = rs->createManualTexture(image.name, &tp);
         tex->uploadTextureData(data, size, tp);

@@ -710,12 +710,11 @@ namespace vks
 				}
 			}
 
-			auto& setting = VulkanHelper::getSingleton().getVulkanSettings();
-
+			auto* settings = VulkanHelper::getSingleton().getVulkanSettings();
 			VkPipelineStageFlags srcStageMask = vks::tools::util_determine_pipeline_stage_flags(
-				&setting, srcAccessFlags, queueType);
+				settings, srcAccessFlags, queueType);
 			VkPipelineStageFlags dstStageMask = vks::tools::util_determine_pipeline_stage_flags(
-				&setting, dstAccessFlags, queueType);
+				settings, dstAccessFlags, queueType);
 
 			if (srcAccessFlags || dstAccessFlags)
 			{
@@ -1348,6 +1347,59 @@ namespace vks
 				flags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 
 			return flags;
+		}
+
+		void set_object_name(VkDevice device, DriverObjectType p_type, uint64_t vo, const char* name)
+		{
+			auto* settings = VulkanHelper::getSingleton().getVulkanSettings();
+			if (!settings->mDebugUtilsExtension || name == nullptr)
+			{
+				return;
+			}
+			switch (p_type) {
+			case OBJECT_TYPE_TEXTURE: {
+				
+				VkDebugUtilsObjectNameInfoEXT nameInfo = {};
+				nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+				nameInfo.objectType = VK_OBJECT_TYPE_IMAGE;
+				nameInfo.objectHandle = (uint64_t)vo;
+				nameInfo.pObjectName = name;
+				vkSetDebugUtilsObjectNameEXT(device, &nameInfo);
+			} break;
+			case OBJECT_TYPE_SAMPLER: {
+				//_set_object_name(VK_OBJECT_TYPE_SAMPLER, p_driver_id.id, p_name);
+			} break;
+			case OBJECT_TYPE_BUFFER: {
+				VkDebugUtilsObjectNameInfoEXT nameInfo = {};
+				nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+				nameInfo.objectType = VK_OBJECT_TYPE_BUFFER;
+				nameInfo.objectHandle = (uint64_t)vo;
+				nameInfo.pObjectName = name;
+				vkSetDebugUtilsObjectNameEXT(device, &nameInfo);
+			} break;
+			case OBJECT_TYPE_SHADER: {
+				VkDebugUtilsObjectNameInfoEXT nameInfo = {};
+				nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+				nameInfo.objectType = VK_OBJECT_TYPE_SHADER_MODULE;
+				nameInfo.objectHandle = (uint64_t)vo;
+				nameInfo.pObjectName = name;
+				vkSetDebugUtilsObjectNameEXT(device, &nameInfo);
+			} break;
+			case OBJECT_TYPE_UNIFORM_SET: {
+				
+			} break;
+			case OBJECT_TYPE_PIPELINE: {
+				VkDebugUtilsObjectNameInfoEXT nameInfo = {};
+				nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+				nameInfo.objectType = VK_OBJECT_TYPE_PIPELINE;
+				nameInfo.objectHandle = (uint64_t)vo;
+				nameInfo.pObjectName = name;
+				vkSetDebugUtilsObjectNameEXT(device, &nameInfo);
+			} break;
+			default: {
+				assert_invariant(false);
+			}
+			}
 		}
 	}
 

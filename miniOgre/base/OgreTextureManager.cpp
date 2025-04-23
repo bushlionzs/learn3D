@@ -30,7 +30,18 @@ namespace Ogre {
             return it->second;
         }
 
-        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, texProperty);
+        auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
+        TextureProperty* tp = texProperty;
+        if (tp)
+        {
+            if (tp->_width == 0 || tp->_tex_format == PF_UNKNOWN)
+            {
+                tp = nullptr;
+            }
+        }
+        
+        OgreTexture* tmp = rs->createManualTexture(name, tp);
 
         if (tmp == nullptr)
         {
@@ -58,7 +69,8 @@ namespace Ogre {
         PixelFormat desiredFormat,
         bool hwGammaCorrection)
     {
-        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, nullptr);
+        assert_invariant(false);
+        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createManualTexture(name, nullptr);
 
 
         tmp->loadImage(img);
@@ -131,7 +143,10 @@ namespace Ogre {
         return tex;
     }
 
-    TexturePtr TextureManager::loadRawData(const String& name, DataStreamPtr& stream, TextureProperty& texProperty)
+    TexturePtr TextureManager::loadRawData(
+        const String& name, 
+        DataStreamPtr& stream, 
+        TextureProperty& texProperty)
     {
         auto it = mTexMap.find(name);
         if (it != mTexMap.end())
@@ -139,7 +154,8 @@ namespace Ogre {
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "duplicated texture name");
         }
 
-        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createTextureFromFile(name, &texProperty);
+        OgreTexture* tmp = Ogre::Root::getSingleton().getRenderSystem()->createManualTexture(
+            name, &texProperty);
 
         if (tmp == nullptr)
         {

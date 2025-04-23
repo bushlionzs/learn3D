@@ -19,7 +19,7 @@ namespace Ogre {
 		_maxMipLevel = INT_MAX;
 		_gamma = 1.0f;
 		_fsaa = 0;
-		_tex_usage = TU_DEFAULT;
+		_tex_usage = TEXTURE_USAGE_CAN_COPY_FROM_BIT | TEXTURE_USAGE_CAN_COPY_TO_BIT;
 		_backgroudColor = ColourValue::Black;
 		_tex_addr_mod = Ogre::TAM_WRAP;
 		_samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
@@ -38,11 +38,11 @@ namespace Ogre {
 
 	bool TextureProperty::isRenderTarget()
 	{
-		if (_tex_usage & Ogre::TextureUsage::COLOR_ATTACHMENT)
+		if (_tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
 		{
 			return true;
 		}
-		if (_tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+		if (_tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
 		{
 			return true;
 		}
@@ -52,16 +52,16 @@ namespace Ogre {
 
 	bool TextureProperty::haveImageFile()
 	{
-		if (_tex_usage & Ogre::TextureUsage::COLOR_ATTACHMENT)
+		if (_tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
 		{
 			return false;
 		}
-		if (_tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+		if (_tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
 		{
 			return false;
 		}
 
-		if (_tex_usage & Ogre::TextureUsage::WRITEABLE)
+		if (_tex_usage.has_flag(TEXTURE_USAGE_CAN_UPDATE_BIT))
 		{
 			return false;
 		}
@@ -95,7 +95,6 @@ namespace Ogre {
 			
 		}
 
-		mUsage = mTextureProperty._tex_usage;
 		mFormat = mTextureProperty._tex_format;
 		mFace = mTextureProperty._face;
 	}
@@ -193,23 +192,15 @@ namespace Ogre {
 
 	void OgreTexture::_loadImages(const std::vector<const CImage*>& images)
 	{
-		mSrcWidth = images[0]->getWidth();
-		mSrcHeight = images[0]->getHeight();
-		mSrcDepth = images[0]->getDepth();
-		mSrcFormat = images[0]->getFormat();
-
-		mTextureProperty._width = mSrcWidth;
-		mTextureProperty._height = mSrcHeight;
-		mTextureProperty._depth = mSrcDepth;
-		mTextureProperty._tex_format = mSrcFormat;
+		mTextureProperty._width = images[0]->getWidth();
+		mTextureProperty._height = images[0]->getHeight();
+		mTextureProperty._depth = images[0]->getDepth();
+		mTextureProperty._tex_format = images[0]->getFormat();
 		mTextureProperty._numMipmaps = images[0]->getNumMipmaps();
 
-		mFormat = PixelUtil::getFormatForBitDepths(mSrcFormat, 0, 0);
-		mFace = 1;
-		if (isCubeTexture())
-		{
-			mFace = 6;
-		}
+		mFormat = PixelUtil::getFormatForBitDepths(images[0]->getFormat(), 0, 0);
+		mFace = mTextureProperty._face;
+	
 		createInternalResources();
 
 		updateTexture(images);

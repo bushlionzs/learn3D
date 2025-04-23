@@ -427,7 +427,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		Ogre::TextureProperty texProperty;
 		texProperty._width = tex->getWidth();
 		texProperty._height = tex->getHeight();
-		texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
+		texProperty._tex_usage = TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
 		texProperty._tex_format = PF_A8B8G8R8;
 		texProperty._need_mipmap = false;
 		mMipmapTarget = rs->createRenderTarget("mipmapTarget", texProperty);

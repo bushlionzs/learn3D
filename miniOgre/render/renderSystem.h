@@ -27,9 +27,6 @@ public:
     virtual bool engineInit(bool raytracing = false);
     virtual void frameStart() = 0;
     virtual void frameEnd() = 0;
-    virtual Ogre::OgreTexture* createTextureFromFile(
-        const std::string& name,
-        Ogre::TextureProperty* texProperty);
     virtual Ogre::OgreTexture* createManualTexture(
         const std::string&name,
         Ogre::TextureProperty* texProperty);
@@ -256,11 +253,6 @@ public:
     virtual filament::backend::Handle<filament::backend::HwPipelineLayout> createPipelineLayout(std::array<filament::backend::Handle<filament::backend::HwDescriptorSetLayout>, 4>& layouts);
     virtual filament::backend::Handle<filament::backend::HwProgram> createShaderProgram(const ShaderInfo& mShaderInfo, VertexDeclaration* decl);
     virtual filament::backend::Handle<filament::backend::HwRaytracingProgram> createRaytracingProgram(const RaytracingShaderInfo& mShaderInfo);
-    virtual void updatePushConstants(
-        filament::backend::Handle<filament::backend::HwProgram> program,
-        uint32_t offset, 
-        const char* data,
-        uint32_t size) {}
     virtual filament::backend::Handle<filament::backend::HwSampler> createTextureSampler(filament::backend::SamplerParams& samplerParams);
     virtual filament::backend::Handle<filament::backend::HwComputeProgram> createComputeProgram(const ShaderInfo& shaderInfo);
     virtual filament::backend::Handle<filament::backend::HwPipeline> createPipeline(
@@ -343,7 +335,9 @@ public:
         Ogre::PipelineCreateInfo& pipelineCreateInfo,
         filament::backend::Handle<filament::backend::HwShader>& shader
     );
-
+    virtual filament::backend::Handle<filament::backend::HwPipeline> createComputePipeline(
+        filament::backend::Handle<filament::backend::HwShader>& shader
+    );
     virtual filament::backend::Handle<filament::backend::HwDescriptorSet> createDescriptorSet(
         filament::backend::Handle<filament::backend::HwShader> programHandle,
         uint32_t set);
@@ -372,6 +366,13 @@ public:
         Ogre::OgreTexture*, 
         const Ogre::Vector4& color,
         const Ogre::TextureSubresourceRange& subresources);
+
+    virtual void updatePushConstants(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwShader> sh,
+        uint32_t offset,
+        const char* data,
+        uint32_t size);
 protected:
 	
     uint32_t mBatchCount = 0;

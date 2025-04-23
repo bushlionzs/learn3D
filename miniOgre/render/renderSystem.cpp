@@ -55,17 +55,11 @@ public:
 
 };
 
-OgreTexture* RenderSystem::createTextureFromFile(
-    const std::string& name,
-    Ogre::TextureProperty* texProperty)
-{
-    return nullptr;
-}
-
 Ogre::OgreTexture* RenderSystem::createManualTexture(
     const std::string& name,
     Ogre::TextureProperty* texProperty)
 {
+    assert_invariant(false);
     return nullptr;
 }
 
@@ -250,6 +244,14 @@ Handle<HwPipeline> RenderSystem::createPipeline(
     return Handle<HwPipeline>();
 }
 
+filament::backend::Handle<filament::backend::HwPipeline> RenderSystem::createComputePipeline(
+    filament::backend::Handle<filament::backend::HwShader>& shader
+)
+{
+    assert_invariant(false);
+    return Handle<HwPipeline>();
+}
+
 Handle<HwDescriptorSet> RenderSystem::createDescriptorSet(
     Handle<HwShader> programHandle,
     uint32_t set)
@@ -288,6 +290,16 @@ void RenderSystem::clearRenderTexture(
     Ogre::OgreTexture*, 
     const Ogre::Vector4& color,
     const Ogre::TextureSubresourceRange& subresources)
+{
+    assert_invariant(false);
+}
+
+void RenderSystem::updatePushConstants(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwShader> sh,
+    uint32_t offset,
+    const char* data,
+    uint32_t size)
 {
     assert_invariant(false);
 }

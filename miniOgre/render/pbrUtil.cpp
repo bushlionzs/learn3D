@@ -18,7 +18,7 @@ namespace Ogre
         CubeType type)
     {
         Ogre::TextureProperty texProperty;
-        texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+        texProperty._tex_usage = TEXTURE_USAGE_CAN_UPDATE_BIT | TEXTURE_USAGE_STORAGE_BIT;
         texProperty._texType = TEX_TYPE_CUBE_MAP;
 
         RenderSystem* rs = Root::getSingleton().getRenderSystem();
@@ -102,7 +102,7 @@ namespace Ogre
        
         texProperty._width = dim;
         texProperty._height = dim;
-        texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
+        texProperty._tex_usage = TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
         texProperty._tex_format = format;
         texProperty._texType = TEX_TYPE_2D;
         texProperty._need_mipmap = false;
@@ -244,7 +244,7 @@ namespace Ogre
 
         texProperty._width = dim;
         texProperty._height = dim;
-        texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
+        texProperty._tex_usage = TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
         texProperty._tex_format = PF_FLOAT16_GR;
         texProperty._samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
         texProperty._samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;

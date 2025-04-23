@@ -29,9 +29,6 @@ public:
 public:
     virtual bool engineInit(bool raytracing) override;
 
-    virtual OgreTexture* createTextureFromFile(
-        const std::string& name,
-        Ogre::TextureProperty* texProperty);
     virtual Ogre::OgreTexture* createManualTexture(
         const std::string& name,
         Ogre::TextureProperty* texProperty)override;
@@ -159,11 +156,6 @@ protected:
     virtual Handle<HwProgram> createShaderProgram(
         const ShaderInfo& mShaderInfo, 
         VertexDeclaration* decl) override;
-    virtual void updatePushConstants(
-        Handle<HwProgram> program,
-        uint32_t offset,
-        const char* data,
-        uint32_t size);
     virtual Handle<HwSampler> createTextureSampler(filament::backend::SamplerParams& samplerParams);
     virtual Handle<HwComputeProgram> createComputeProgram(const ShaderInfo& mShaderInfo) override;
     virtual Handle<HwPipeline> createPipeline(
@@ -213,6 +205,9 @@ protected:
         Ogre::PipelineCreateInfo& pipelineCreateInfo,
         Handle<HwShader>& shader
     )override;
+    virtual filament::backend::Handle<filament::backend::HwPipeline> createComputePipeline(
+        filament::backend::Handle<filament::backend::HwShader>& shader
+    )override;
     virtual Handle<HwDescriptorSet> createDescriptorSet(
         Handle<HwShader> programHandle,
         uint32_t set)override;
@@ -228,6 +223,13 @@ protected:
         filament::backend::Handle<filament::backend::HwSwapChain>* sch,
         uint32_t sc_size
     )override;
+
+    virtual void updatePushConstants(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwShader> sh,
+        uint32_t offset,
+        const char* data,
+        uint32_t size);
 protected:
     void bingingUpdate(
         vks::tools::BingdingInfo& bindingMap,

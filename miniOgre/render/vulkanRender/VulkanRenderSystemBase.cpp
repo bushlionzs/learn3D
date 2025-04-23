@@ -58,8 +58,8 @@ static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physic
         .pVulkanFunctions = &funcs,
         .instance = instance,
     };
-    VulkanSettings& settings = VulkanHelper::getSingleton().getVulkanSettings();
-    if (settings.mRayPipelineSupported)
+    VulkanSettings* settings = VulkanHelper::getSingleton().getVulkanSettings();
+    if (settings->mRayPipelineSupported)
     {
         allocatorInfo.flags |= 
             VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR |
@@ -89,8 +89,9 @@ bool VulkanRenderSystemBase::engineInit(bool raytracing)
 
 
     VulkanHelper& helper = VulkanHelper::getSingleton();
+    VulkanSettings* settings = helper.getVulkanSettings();
+    settings->mRayPipelineSupported = raytracing;
 
-    helper.getVulkanSettings().mRayPipelineSupported = raytracing;
 
     helper._initialise(mVulkanPlatform);
 
@@ -107,7 +108,7 @@ bool VulkanRenderSystemBase::engineInit(bool raytracing)
     mPipelineCache = helper.getPipelineCache();
     mPipelineLayoutCache = helper.getPipelineLayoutCache();
 
-    mVulkanSettings = &helper.getVulkanSettings();
+    mVulkanSettings = helper.getVulkanSettings();
     mVulkanLayoutCache = new VulkanLayoutCache(device, &mResourceAllocator);
     mDescriptorInfinitePool = new DescriptorInfinitePool(device);
 
@@ -136,13 +137,6 @@ bool VulkanRenderSystemBase::engineInit(bool raytracing)
     return true;
 }
 
-OgreTexture* VulkanRenderSystemBase::createTextureFromFile(
-    const std::string& name,
-    TextureProperty* texProperty)
-{
-    auto tex = new VulkanTexture(name, mVulkanPlatform, mCommands, texProperty);
-    return tex;
-}
 
 Ogre::OgreTexture* VulkanRenderSystemBase::createManualTexture(
     const std::string& name,
@@ -192,7 +186,7 @@ Ogre::RenderTarget* VulkanRenderSystemBase::createRenderTarget(
     const String& name, 
     TextureProperty& texProperty)
 {
-    if (texProperty._tex_usage & (uint32_t)Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    if (texProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
         texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
@@ -695,7 +689,12 @@ void VulkanRenderSystemBase::copyBufferToTexture(
     Ogre::ImageCopyBufferDesc& desc
 )
 {
-    VkBuffer srcBuffer = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh)->buffer.getGpuBuffer();
+    VulkanBufferObject* vbo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
+    if (vbo->byteCount == 32)
+    {
+        int kk = 0;
+    }
+    VkBuffer srcBuffer = vbo->buffer.getGpuBuffer();
     VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
     
     VulkanTexture* vulkanTexture = (VulkanTexture*)tex;
@@ -713,8 +712,8 @@ void VulkanRenderSystemBase::copyBufferToTexture(
     vkImageCopy.imageSubresource.mipLevel = desc.textureSubresources.mipLevel;
     vkImageCopy.imageSubresource.baseArrayLayer = desc.textureSubresources.baseArrayLayer;
     vkImageCopy.imageSubresource.layerCount = desc.textureSubresources.layerCount;
-    vkCmdCopyBufferToImage(cb->commandBuffer, srcBuffer,
-        vulkanTexture->getVkImage(), vkImageLayout, 1, &vkImageCopy);
+    /*vkCmdCopyBufferToImage(cb->commandBuffer, srcBuffer,
+        vulkanTexture->getVkImage(), vkImageLayout, 1, &vkImageCopy);*/
 
 }
 
@@ -797,13 +796,10 @@ Handle<HwBufferObject> VulkanRenderSystemBase::createBufferObject(
     VulkanBufferObject* bufferObject = mResourceAllocator.construct<VulkanBufferObject>(boh, mAllocator,
         *mStagePool, desc);
 
-    if (mVulkanSettings->mDebugUtilsExtension)
-    {
-        if (desc.pName)
-        {
-            bufferObject->buffer.setBufferName(mVulkanPlatform->getDevice(), desc.pName);
-        }
-    }
+    /*vks::tools::set_object_name(mVulkanPlatform->getDevice(),
+        OBJECT_TYPE_BUFFER,
+        (uint64_t)bufferObject->buffer.getGpuBuffer(), desc.pName);*/
+    bufferObject->buffer.setBufferName(mVulkanPlatform->getDevice(), desc.pName);
     
     
     return boh;
@@ -984,21 +980,6 @@ Handle<HwProgram> VulkanRenderSystemBase::createShaderProgram(const ShaderInfo& 
     return program;
 }
 
-void VulkanRenderSystemBase::updatePushConstants(
-    Handle<HwProgram> programHandle,
-    uint32_t offset,
-    const char* data,
-    uint32_t size)
-{
-    VulkanShaderProgram* program =
-        mResourceAllocator.handle_cast<VulkanShaderProgram*>(programHandle);
-    auto pipelineLayout = program->getVulkanPipelineLayout();
-    vkCmdPushConstants(
-        mCommandBuffer,
-        pipelineLayout,
-        VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT,
-        offset, size, data);
-}
 
 Handle<HwSampler> VulkanRenderSystemBase::createTextureSampler(filament::backend::SamplerParams& samplerParams)
 {
@@ -1635,6 +1616,18 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
     return ph;
 }
 
+filament::backend::Handle<filament::backend::HwPipeline> VulkanRenderSystemBase::createComputePipeline(
+    filament::backend::Handle<filament::backend::HwShader>& shader
+)
+{
+    Handle<HwPipeline> ph = mResourceAllocator.allocHandle<HwPipeline>();
+    VulkanShader* vulkanShader = mResourceAllocator.handle_cast<VulkanShader*>(shader);
+    VulkanComputeProgram* computeProgram = vulkanShader->computeProgram;
+    VkPipeline pipeline = computeProgram->getPipeline();
+    VulkanPipeline* vulkanPipeline = mResourceAllocator.construct<VulkanPipeline>(
+        ph, pipeline, computeProgram);
+    return ph;
+}
 Handle<HwDescriptorSet> VulkanRenderSystemBase::createDescriptorSet(
     Handle<HwShader> programHandle,
     uint32_t set)
@@ -1750,6 +1743,44 @@ void VulkanRenderSystemBase::executeAndPresent(
     {
         int kk = 0;
     }
+}
+
+void VulkanRenderSystemBase::updatePushConstants(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwShader> sh,
+    uint32_t offset,
+    const char* data,
+    uint32_t size)
+{
+    VkCommandBuffer cmdBuf = mCommandBuffer;
+    if (cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+        cmdBuf = cb->commandBuffer;
+    }
+    
+    VulkanShader* shader = mResourceAllocator.handle_cast<VulkanShader*>(sh);
+    VkPipelineLayout layout;
+    if (shader->shaderProgram)
+    {
+        layout = shader->shaderProgram->getVulkanPipelineLayout();
+        vkCmdPushConstants(
+            mCommandBuffer,
+            layout,
+            VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT,
+            offset, size, data);
+    }
+    else
+    {
+        layout = shader->computeProgram->getPipelineLayout();
+        vkCmdPushConstants(
+            cmdBuf,
+            layout,
+            VK_SHADER_STAGE_COMPUTE_BIT,
+            offset, size, data);
+    }
+
+    
 }
 
 void VulkanRenderSystemBase::bingingUpdate(

@@ -102,7 +102,7 @@ void DX12SwapChain::createSwapChain2(bool srgb)
 	mColors.resize(ogreConfig.swapBufferCount);
 	DescriptorHeapContext* context = DX12Helper::getSingleton().getHeapContext();
 	TextureProperty texProperty;
-	texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
+	texProperty._tex_usage = TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
 	texProperty._width = ogreConfig.width;
 	texProperty._height = ogreConfig.height;
 	texProperty._tex_format = D3D12Mappings::getPixelFormat(mColorFormat);
@@ -162,7 +162,7 @@ void DX12SwapChain::createSwapChain2(bool srgb)
 	//device->CreateDepthStencilView(depth, nullptr, depthHandle);
 
 
-	texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
+	texProperty._tex_usage = TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	texProperty._tex_format = D3D12Mappings::getPixelFormat(mDepthFormat);
 
 	mDepth = new Dx12Texture(std::string("depthTarget"), &texProperty, mCommands, depth);

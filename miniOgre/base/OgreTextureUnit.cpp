@@ -155,7 +155,7 @@ void TextureUnit::_load(utils::JobSystem::Job* job)
     mTextures.reserve(mNameList.size());
     for (auto& name : mNameList)
     {
-        auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty, false);
+        auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty, true);
         mTextures.push_back(tex);
     }
 

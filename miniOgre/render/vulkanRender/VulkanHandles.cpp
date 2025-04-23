@@ -190,7 +190,7 @@ void VulkanShaderProgram::updateShaderInfo(const VulkanShaderInfo& vulkanShaderI
 
     vks::tools::BingdingInfo bindingMap;
 
-    std::vector<vks::tools::PushConstants> constantsList;
+    std::vector<PushConstants> constantsList;
     vks::tools::BingdingInfo results = vks::tools::getProgramBindings(
         vulkanShaderInfo.vertexSpv,
         VK_SHADER_STAGE_VERTEX_BIT,
@@ -214,7 +214,7 @@ void VulkanShaderProgram::updateShaderInfo(const VulkanShaderInfo& vulkanShaderI
 
     if (!vulkanShaderInfo.fragSpv.empty())
     {
-        std::vector<vks::tools::PushConstants> fragConstantsList;
+        std::vector<PushConstants> fragConstantsList;
         auto results = vks::tools::getProgramBindings(
             vulkanShaderInfo.fragSpv,
             VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -362,7 +362,7 @@ VulkanRaytracingProgram::~VulkanRaytracingProgram()
 }
 
 VulkanComputeProgram::VulkanComputeProgram(const std::string& name) noexcept
-    : HwComputeProgram(utils::CString(name.c_str())),
+    : HwComputeProgram(name.c_str()),
     VulkanProgram(VulkanResourceType::PROGRAM)
 {
 
@@ -375,10 +375,15 @@ VulkanComputeProgram::~VulkanComputeProgram() {
 
 void VulkanComputeProgram::upateShaderInfo(const VulkanComputeShaderInfo& shaderInfo)
 {
+    if (name == "SortShaderRD:0")
+    {
+        int kk = 0;
+    }
     updateComputeShader(shaderInfo.computeShaderModule);
+    std::vector<PushConstants> pushConstantsList;
     auto results = vks::tools::getProgramBindings(
         shaderInfo.computeSpv,
-        VK_SHADER_STAGE_COMPUTE_BIT);
+        VK_SHADER_STAGE_COMPUTE_BIT, &pushConstantsList);
     updateDescriptorInfo(results);
 
     auto pEmptyDescriptorSetLayout = VulkanHelper::getSingleton().getEmptyDescriptorSetLayout();
@@ -444,7 +449,19 @@ void VulkanComputeProgram::upateShaderInfo(const VulkanComputeShaderInfo& shader
     VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo =
         vks::initializers::pipelineLayoutCreateInfo(
             layoutlist.data(),
-            results.size());
+            layoutlist.size());
+
+    
+    VkPushConstantRange pushRange{};
+    if (!pushConstantsList.empty())
+    {
+        assert_invariant(pushConstantsList.size() == 1);
+        pushRange.size = pushConstantsList[0].size;
+        pushRange.stageFlags = pushConstantsList[0].stage;
+        pPipelineLayoutCreateInfo.pushConstantRangeCount = 1;
+        pPipelineLayoutCreateInfo.pPushConstantRanges = &pushRange;
+    }
+    
 
 
     if (vkCreatePipelineLayout(shaderInfo.device, &pPipelineLayoutCreateInfo,
@@ -472,9 +489,22 @@ void VulkanComputeProgram::upateShaderInfo(const VulkanComputeShaderInfo& shader
     create_info.layout = pipelineLayout;
     create_info.basePipelineHandle = 0;
     create_info.basePipelineIndex = 0;
-    VkPipeline pipeline;
+    VkPipeline pipeline = VK_NULL_HANDLE;
     vkCreateComputePipelines(shaderInfo.device, NULL, 1, &create_info,
         nullptr, &pipeline);
+    assert_invariant(pipeline != VK_NULL_HANDLE);
+    vks::tools::set_object_name(shaderInfo.device,
+        OBJECT_TYPE_PIPELINE,
+        (uint64_t)pipeline, name.c_str());
+
+    vks::tools::set_object_name(shaderInfo.device,
+        OBJECT_TYPE_SHADER,
+        (uint64_t)shaderInfo.computeShaderModule, name.c_str());
+
+    if (0xbc9ca30000000116 == (uint64_t)shaderInfo.computeShaderModule)
+    {
+        int kk = 0;
+    }
 
     updatePipeline(pipeline);
 }

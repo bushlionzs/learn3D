@@ -70,9 +70,9 @@ public:
         return mSettings.mRayPipelineSupported;
     }
 
-     VulkanSettings& getVulkanSettings()
+     VulkanSettings* getVulkanSettings()
     {
-        return mSettings;
+        return &mSettings;
     }
 
      VulkanPipelineCache* getPipelineCache()

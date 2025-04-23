@@ -29,6 +29,10 @@ RenderingDeviceDriver::BufferID RenderingDeviceDriverNULL::buffer_create(
 	}
 	desc.bufferCreationFlags = 0;
 	desc.mSize = p_size;
+	std::string tmp = std::to_string(p_size);
+
+	desc.pName = tmp.c_str();
+	
 	auto bufferHandle = mRenderSystem->createBufferObject(desc);
 
 	return RenderingDeviceDriver::BufferID(bufferHandle.getId());
@@ -102,7 +106,7 @@ Ogre::TextureType mapTextureType(RenderingDeviceCommons::TextureType texType)
 	case RenderingDeviceCommons::TEXTURE_TYPE_CUBE:
 		return Ogre::TEX_TYPE_CUBE_MAP;
 	case RenderingDeviceCommons::TEXTURE_TYPE_CUBE_ARRAY:
-		return Ogre::TEX_TYPE_CUBE_MAP;
+		return Ogre::TEX_TYPE_CUBE_MAP_ARRAY;
 	case RenderingDeviceCommons::TEXTURE_TYPE_3D:
 		return Ogre::TEX_TYPE_3D;
 	default:
@@ -121,7 +125,8 @@ RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create(
 	texProperty._texType = mapTextureType(p_format.texture_type);
 	texProperty._need_mipmap = p_format.mipmaps > 1;
 	texProperty._tex_format = mapPixelFormat(p_format.format);
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = p_format.usage_bits;
+
 	auto texHandle = mRenderSystem->createManualTexture("", &texProperty);
 
 	return RenderingDeviceDriver::TextureID(texHandle);
@@ -1070,9 +1075,13 @@ void RenderingDeviceDriverNULL::pipeline_free(PipelineID p_pipeline)
 }
 
 void RenderingDeviceDriverNULL::command_bind_push_constants(
-	CommandBufferID p_cmd_buffer, ShaderID p_shader, uint32_t p_first_index, VectorView<uint32_t> p_data)
+	CommandBufferID p_cmd_buffer, ShaderID p_shader, uint32_t p_dst_first_index, VectorView<uint32_t> p_data)
 {
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	filament::backend::Handle<filament::backend::HwShader> sh(p_shader.id);
 
+	uint32_t offset = p_dst_first_index * sizeof(uint32_t);
+	mRenderSystem->updatePushConstants(cbh, sh, offset, (const char*)p_data.ptr(), p_data.size() * sizeof(uint32_t));
 }
 
 bool RenderingDeviceDriverNULL::pipeline_cache_create(const Vector<uint8_t>& p_data)
@@ -1445,7 +1454,9 @@ void RenderingDeviceDriverNULL::command_compute_dispatch_indirect(
 RenderingDeviceDriver::PipelineID RenderingDeviceDriverNULL::compute_pipeline_create(
 	ShaderID p_shader, VectorView<PipelineSpecializationConstant> p_specialization_constants)
 {
-	return RenderingDeviceDriver::PipelineID();
+	filament::backend::Handle<filament::backend::HwShader> sh(p_shader.id);
+	auto ph = mRenderSystem->createComputePipeline(sh);
+	return RenderingDeviceDriver::PipelineID(ph.getId());
 }
 
 RenderingDeviceDriver::QueryPoolID RenderingDeviceDriverNULL::timestamp_query_pool_create(uint32_t p_query_count)
@@ -1513,7 +1524,7 @@ void RenderingDeviceDriverNULL::end_segment()
 
 void RenderingDeviceDriverNULL::set_object_name(ObjectType p_type, ID p_driver_id, const String& p_name)
 {
-
+	assert_invariant(false);
 }
 
 uint64_t RenderingDeviceDriverNULL::get_resource_native_handle(DriverResource p_type, ID p_driver_id)

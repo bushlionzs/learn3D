@@ -125,7 +125,6 @@ private:
         uint32_t height,
         VkFormat format,
         VkImageTiling tiling,
-        VkImageUsageFlags usage,
         VkMemoryPropertyFlags properties,
         VkImage& image,
         VkDeviceMemory& imageMemory);

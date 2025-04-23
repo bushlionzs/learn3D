@@ -95,16 +95,16 @@ Ogre::RenderTarget* Dx12RenderSystemBase::createRenderTarget(
     D3D12_DESCRIPTOR_HEAP_TYPE type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
     DxDescriptorID targetId = -1;
-    if (texProperty._tex_usage & (uint32_t)Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    if (texProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
         texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
         texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
     }
-    else if (texProperty._tex_usage & (uint32_t)Ogre::TextureUsage::COLOR_ATTACHMENT)
+    else if (texProperty._tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
     {
     }
-    else if(texProperty._tex_usage & (uint32_t)Ogre::TextureUsage::WRITEABLE)
+    else if (texProperty._tex_usage.has_flag(TEXTURE_USAGE_CAN_UPDATE_BIT))
     {
     }
     else

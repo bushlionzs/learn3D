@@ -119,7 +119,7 @@ OgreTexture::OgreTexture(const String& name, const Sizef& sz) :
     TextureProperty texProperty;
     texProperty._width = sz.d_width;
     texProperty._height = sz.d_height;
-    texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+    texProperty._tex_usage = TEXTURE_USAGE_CAN_UPDATE_BIT | TEXTURE_USAGE_STORAGE_BIT;
     texProperty._need_mipmap = false;
     TexturePtr tex = TextureManager::getSingleton().createManual(strName, texProperty);
 

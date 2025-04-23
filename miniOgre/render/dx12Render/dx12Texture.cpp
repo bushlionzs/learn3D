@@ -44,11 +44,11 @@ Dx12Texture::~Dx12Texture()
 
 void Dx12Texture::_createSurfaceList(void)
 {
-    if (mTextureProperty._tex_usage & Ogre::TextureUsage::COLOR_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
     {
         return;
     }
-    if (mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         return;
     }
@@ -158,13 +158,13 @@ void Dx12Texture::_createTex()
         
         ClearValue.Format = D3D12Mappings::_getPF(mTextureProperty._tex_format);
         
-        if (mTextureProperty._tex_usage & Ogre::TextureUsage::COLOR_ATTACHMENT)
+        if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
         {
             memcpy(ClearValue.Color, &backColor, sizeof(float) * 4);
             texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
             pvalue = &ClearValue;
         }
-        else if (mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+        if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
         {
             ClearValue.DepthStencil.Depth = 1.0f;
             ClearValue.DepthStencil.Stencil = 0.0f;
@@ -180,7 +180,7 @@ void Dx12Texture::_createTex()
     else
     {
         texDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-        if (mTextureProperty._tex_usage & Ogre::TextureUsage::WRITEABLE)
+        if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_CAN_UPDATE_BIT))
         {
             texDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
         }
@@ -479,7 +479,7 @@ void Dx12Texture::buildDescriptorHeaps()
         }
 
 
-        if (mTextureProperty._tex_usage & (uint32_t)Ogre::TextureUsage::COLOR_ATTACHMENT)
+        if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
         {
             mTargetDescriptorID = consume_descriptor_handles(
                 context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_RTV], 1);
@@ -491,7 +491,7 @@ void Dx12Texture::buildDescriptorHeaps()
             rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
             device->CreateRenderTargetView(mTex.Get(), &rtvDesc, cpuHandle);
         }
-        else if (mTextureProperty._tex_usage & (uint32_t)Ogre::TextureUsage::DEPTH_ATTACHMENT)
+        else if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
         {
             mTargetDescriptorID = consume_descriptor_handles(
                 context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], mFace);
@@ -510,7 +510,7 @@ void Dx12Texture::buildDescriptorHeaps()
             }
             
         }
-        else if (mTextureProperty._tex_usage & (uint32_t)Ogre::TextureUsage::WRITEABLE)
+        else  if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_CAN_UPDATE_BIT))
         {
             mTargetDescriptorID = consume_descriptor_handles(
                 context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV], mMipLevels);
@@ -649,11 +649,11 @@ bool Dx12Texture::need_midmap()
 {
     if (!mTextureProperty._need_mipmap)
         return false;
-    if (mTextureProperty._tex_usage & Ogre::TextureUsage::COLOR_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
     {
         return false;
     }
-    if (mTextureProperty._tex_usage & Ogre::TextureUsage::DEPTH_ATTACHMENT)
+    if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         return false;
     }

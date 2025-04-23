@@ -102,8 +102,8 @@ struct HwProgram : public HwBase {
 };
 
 struct HwComputeProgram : public HwBase {
-    utils::CString name;
-    explicit HwComputeProgram(utils::CString _name) noexcept : name(std::move(_name)) { }
+    std::string name;
+    explicit HwComputeProgram(std::string _name) noexcept : name(std::move(_name)) { }
     HwComputeProgram() noexcept = default;
 };
 

@@ -69,7 +69,6 @@ namespace vks
 	{
 		/** @brief Disable message boxes on fatal errors */
 		extern bool errorModeSilent;
-
 		/** @brief Returns an error code as a string */
 		std::string errorString(VkResult errorCode);
 
@@ -160,12 +159,7 @@ namespace vks
 		void generateMipmaps(VkCommandBuffer commandBuffer, VulkanTexture* tex);
 
 		using BingdingInfo = std::map<uint8_t, std::vector<VKDescriptorInfo>>;
-		struct PushConstants
-		{
-			std::string name;
-			uint32_t size;
-			VkShaderStageFlags stage;
-		};
+		
 
 		void bingingUpdate(
 			vks::tools::BingdingInfo& bindingMap,
@@ -191,5 +185,8 @@ namespace vks
 			VulkanSettings* settings,
 			VkAccessFlags accessFlags,
 			QueueType queueType);
+		void set_object_name(VkDevice device, DriverObjectType type, uint64_t vo, const char* name);
 	}
+
+	
 }
