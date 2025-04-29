@@ -708,7 +708,6 @@ VulkanFence::VulkanFence(VkDevice device)
     vkFence = VK_NULL_HANDLE;
     VkFenceCreateInfo create_info = {};
     create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
     VkResult err = vkCreateFence(device, &create_info, nullptr, &vkFence);
 
 }

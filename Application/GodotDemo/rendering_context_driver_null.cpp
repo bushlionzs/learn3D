@@ -4,7 +4,8 @@
 
 RenderingContextDriverNULL::RenderingContextDriverNULL()
 {
-
+    mWidth = 0;
+    mHeight = 0;
 }
 
 RenderingContextDriverNULL::~RenderingContextDriverNULL()
@@ -62,7 +63,8 @@ RenderingContextDriver::SurfaceID RenderingContextDriverNULL::surface_create(con
 void RenderingContextDriverNULL::surface_set_size(
     RenderingContextDriver::SurfaceID p_surface, uint32_t p_width, uint32_t p_height)
 {
-
+    mWidth = p_width;
+    mHeight = p_height;
 }
 
 void RenderingContextDriverNULL::surface_set_vsync_mode(RenderingContextDriver::SurfaceID p_surface, DisplayServer::VSyncMode p_vsync_mode)
@@ -77,12 +79,12 @@ DisplayServer::VSyncMode RenderingContextDriverNULL::surface_get_vsync_mode(Rend
 
 uint32_t RenderingContextDriverNULL::surface_get_width(RenderingContextDriver::SurfaceID p_surface) const
 {
-    return 100;
+    return mWidth;
 }
 
 uint32_t RenderingContextDriverNULL::surface_get_height(RenderingContextDriver::SurfaceID p_surface) const
 {
-    return 100;
+    return mHeight;
 }
 void RenderingContextDriverNULL::surface_set_needs_resize(RenderingContextDriver::SurfaceID p_surface, bool p_needs_resize)
 {

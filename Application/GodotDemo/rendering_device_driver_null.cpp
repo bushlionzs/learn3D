@@ -101,7 +101,7 @@ Ogre::PixelFormat mapPixelFormat(RenderingDeviceCommons::DataFormat format)
 	switch (format)
 	{
 	case RenderingDeviceCommons::DATA_FORMAT_R8G8B8A8_UNORM:
-		return Ogre::PixelFormat::PF_A8R8G8B8;
+		return Ogre::PixelFormat::PF_R8G8B8A8;
 	case RenderingDeviceCommons::DATA_FORMAT_R8G8B8A8_UINT:
 		return Ogre::PixelFormat::PF_R8G8B8A8_UINT;
 	case RenderingDeviceCommons::DATA_FORMAT_D16_UNORM:
@@ -114,6 +114,8 @@ Ogre::PixelFormat mapPixelFormat(RenderingDeviceCommons::DataFormat format)
 		return Ogre::PixelFormat::PF_FLOAT32_R;
 	case RenderingDeviceCommons::DATA_FORMAT_D32_SFLOAT:
 		return Ogre::PixelFormat::PF_DEPTH32;
+	case RenderingDeviceCommons::DATA_FORMAT_R8G8_UNORM:
+		return Ogre::PixelFormat::PF_R8G8;
 	default:
 		assert_invariant(false);
 	}
@@ -1071,7 +1073,7 @@ void RenderingDeviceDriverNULL::command_clear_color_texture(
 	subresources.mipmap_count = p_subresources.mipmap_count;
 	subresources.base_layer = p_subresources.base_layer;
 	subresources.layer_count = p_subresources.layer_count;
-	mRenderSystem->clearRenderTexture(tex, color, subresources);
+	mRenderSystem->clearRenderTexture(tex, color, subresources, &cbh);
 }
 
 void RenderingDeviceDriverNULL::command_copy_buffer_to_texture(
@@ -1123,7 +1125,27 @@ void RenderingDeviceDriverNULL::command_bind_push_constants(
 	filament::backend::Handle<filament::backend::HwShader> sh(p_shader.id);
 
 	uint32_t offset = p_dst_first_index * sizeof(uint32_t);
-	mRenderSystem->updatePushConstants(cbh, sh, offset, (const char*)p_data.ptr(), p_data.size() * sizeof(uint32_t));
+	uint32_t size = p_data.size() * sizeof(uint32_t);
+	auto data = (const char*)p_data.ptr();
+	if (size == 64)
+	{
+		struct BlitPushConstant {
+			float src_rect[4];
+			float dst_rect[4];
+
+			float eye_center[2];
+			float k1;
+			float k2;
+
+			float upscale;
+			float aspect_ratio;
+			uint32_t layer;
+			uint32_t convert_to_srgb;
+		};
+		BlitPushConstant* push = (BlitPushConstant*)data;
+		int kk = 0;
+	}
+	mRenderSystem->updatePushConstants(cbh, sh, offset, (const char*)p_data.ptr(), size);
 }
 
 bool RenderingDeviceDriverNULL::pipeline_cache_create(const Vector<uint8_t>& p_data)

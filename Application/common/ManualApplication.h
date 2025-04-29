@@ -53,6 +53,6 @@ protected:
 	AppInfo* mAppInfo;
 	bool mUseCEGUI;
 
-	Timer mTimer;
+	Ogre::Timer mTimer;
 	uint64_t mFrameCurrent, mFrameLast;
 };

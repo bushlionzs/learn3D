@@ -33,6 +33,8 @@ public:
 	virtual bool is_debug_utils_enabled() const override;
 private:
 	RenderingContextDriver::Device mDevice;
+	uint32_t mWidth;
+	uint32_t mHeight;
 };
 
 

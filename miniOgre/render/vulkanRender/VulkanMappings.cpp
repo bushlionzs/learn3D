@@ -103,6 +103,7 @@ namespace Ogre {
         case PF_R8_UINT:
         case PF_L16:
         case PF_A8:
+        case PF_R8G8:
         case PF_BYTE_LA:
         case PF_R3G3B2:
         case PF_A1R5G5B5:
@@ -111,6 +112,7 @@ namespace Ogre {
         case PF_R8G8B8:
         case PF_A8R8G8B8:
         case PF_A8B8G8R8:
+        case PF_R8G8B8A8:
         case PF_X8R8G8B8:
         case PF_A8R8G8B8_SRGB:
         case PF_A8B8G8R8_SRGB:
@@ -182,6 +184,7 @@ namespace Ogre {
         case PF_R8_UINT:    return VK_FORMAT_R8_UINT;
         case PF_L16:            return VK_FORMAT_R16_UNORM;
         case PF_A8:             return VK_FORMAT_R8_UNORM;
+        case PF_R8G8:         return VK_FORMAT_R8G8_UNORM;
         case PF_BYTE_LA:        return VK_FORMAT_UNDEFINED;
         case PF_R3G3B2:         return VK_FORMAT_UNDEFINED;
         case PF_A1R5G5B5:       return VK_FORMAT_UNDEFINED;
@@ -190,6 +193,7 @@ namespace Ogre {
         case PF_R8G8B8:         return VK_FORMAT_UNDEFINED;
         case PF_A8R8G8B8:       return VK_FORMAT_B8G8R8A8_UNORM;
         case PF_A8B8G8R8:       return VK_FORMAT_R8G8B8A8_UNORM;
+        case PF_R8G8B8A8:       return VK_FORMAT_R8G8B8A8_UNORM;
         case PF_X8R8G8B8:       return VK_FORMAT_B8G8R8A8_UNORM;
         case PF_A8R8G8B8_SRGB:  return VK_FORMAT_B8G8R8A8_SRGB;
         case PF_A8B8G8R8_SRGB:  return VK_FORMAT_R8G8B8A8_SRGB;

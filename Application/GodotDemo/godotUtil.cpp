@@ -13,6 +13,39 @@
 #include <core/io/image_loader.h>
 #include <core/io/resource_uid.h>
 #include <core/input/input_map.h>
+#include <scene/gui/check_box.h>
+#include <scene/gui/check_button.h>
+#include <scene/gui/link_button.h>
+#include <scene/gui/texture_rect.h>
+#include <scene/gui/color_rect.h>
+#include <scene/gui/nine_patch_rect.h>
+#include <scene/gui/reference_rect.h>
+#include <scene/gui/aspect_ratio_container.h>
+#include <scene/gui/tab_container.h>
+#include <scene/gui/separator.h>
+#include <scene/gui/grid_container.h>
+#include <scene/gui/center_container.h>
+#include <scene/gui/panel_container.h>
+#include <scene/gui/flow_container.h>
+#include <scene/gui/margin_container.h>
+#include <scene/gui/texture_progress_bar.h>
+#include <scene/gui/item_list.h>
+#include <scene/gui/line_edit.h>
+#include <scene/gui/file_dialog.h>
+#include <scene/gui/text_edit.h>
+#include <scene/gui/code_edit.h>
+#include <scene/gui/menu_bar.h>
+#include <scene/gui/menu_button.h>
+#include <scene/gui/spin_box.h>
+#include <scene/gui/color_picker.h>
+#include <scene/gui/rich_text_label.h>
+#include <scene/gui/rich_text_effect.h>
+#include <scene/gui/subviewport_container.h>
+#include <scene/gui/split_container.h>
+#include <scene/gui/graph_element.h>
+#include <scene/gui/graph_node.h>
+#include <scene/gui/graph_frame.h>
+#include <scene/gui/graph_edit.h>
 
 #include <scene/3d/node_3d.h>
 #include <scene/3d/camera_3d.h>
@@ -47,6 +80,7 @@
 #include <scene/resources/style_box_line.h>
 #include <scene/gui/video_stream_player.h>
 #include <scene/gui/text_edit.h>
+#include <scene/gui/slider.h>
 #include <scene/main/viewport.h>
 #include <servers/rendering/rendering_server_default.h>
 #include <servers/rendering/renderer_rd/renderer_compositor_rd.h>
@@ -131,6 +165,10 @@ public:
                 tsman->add_interface(ts);
             }
 
+            initialize_modules(MODULE_INITIALIZATION_LEVEL_CORE);
+            initialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
+            initialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
+
             input = memnew(Input);
             OS::get_singleton()->initialize_joypads();
 
@@ -172,10 +210,6 @@ public:
                 assert_invariant(false);
             }
 
-            auto navigation_server_3d = memnew(NavigationServer3DDummy);
-
-            navigation_server_3d->init();
-
             memnew(ShaderTypes);
 
             auto translation_server = memnew(TranslationServer);
@@ -195,7 +229,7 @@ public:
             //auto rendering_device = memnew(RenderingDevice);
             //
             //rendering_device->initialize(&renderingContext);
-            memnew(MessageQueue);
+            message_queue = memnew(MessageQueue);
             auto rendering_server = memnew(RenderingServerDefault);
             
             RendererCompositorRD::make_current();
@@ -215,8 +249,6 @@ public:
             main_loop = Object::cast_to<MainLoop>(ml);
 
             OS::get_singleton()->set_main_loop(main_loop);
-
-            message_queue = memnew(MessageQueue);
     }
 
         void initializeDisplayServer()
@@ -522,7 +554,6 @@ static void register_scene_types()
     GDREGISTER_CLASS(Curve);
 
     GDREGISTER_CLASS(LabelSettings);
-
     GDREGISTER_CLASS(TextLine);
     GDREGISTER_CLASS(TextParagraph);
 
@@ -533,7 +564,112 @@ static void register_scene_types()
     GDREGISTER_CLASS(StyleBoxLine);
     GDREGISTER_CLASS(Theme);
 
+    /* REGISTER GUI */
+
+    GDREGISTER_CLASS(ButtonGroup);
+    GDREGISTER_VIRTUAL_CLASS(BaseButton);
+
+    OS::get_singleton()->yield(); // may take time to init
+
+    GDREGISTER_CLASS(Control);
+    GDREGISTER_CLASS(Button);
+    GDREGISTER_CLASS(Label);
+    GDREGISTER_ABSTRACT_CLASS(ScrollBar);
+    GDREGISTER_CLASS(HScrollBar);
+    GDREGISTER_CLASS(VScrollBar);
+    GDREGISTER_CLASS(ProgressBar);
+    GDREGISTER_ABSTRACT_CLASS(Slider);
+    GDREGISTER_CLASS(HSlider);
+    GDREGISTER_CLASS(VSlider);
+    GDREGISTER_CLASS(Popup);
+    GDREGISTER_CLASS(PopupPanel);
+
+    GDREGISTER_CLASS(CheckBox);
+    GDREGISTER_CLASS(CheckButton);
+    GDREGISTER_CLASS(LinkButton);
+    GDREGISTER_CLASS(Panel);
+    GDREGISTER_VIRTUAL_CLASS(Range);
+
+    OS::get_singleton()->yield(); // may take time to init
+
+    GDREGISTER_CLASS(TextureRect);
+    GDREGISTER_CLASS(ColorRect);
+    GDREGISTER_CLASS(NinePatchRect);
+    GDREGISTER_CLASS(ReferenceRect);
+    GDREGISTER_CLASS(AspectRatioContainer);
+    GDREGISTER_CLASS(TabContainer);
+    GDREGISTER_CLASS(TabBar);
+
+    GDREGISTER_ABSTRACT_CLASS(Separator);
+    GDREGISTER_CLASS(HSeparator);
+    GDREGISTER_CLASS(VSeparator);
+    GDREGISTER_CLASS(TextureButton);
+    GDREGISTER_CLASS(Container);
+    GDREGISTER_CLASS(BoxContainer);
+    GDREGISTER_CLASS(HBoxContainer);
+    GDREGISTER_CLASS(VBoxContainer);
+    GDREGISTER_CLASS(GridContainer);
+    GDREGISTER_CLASS(CenterContainer);
+    GDREGISTER_CLASS(ScrollContainer);
+    GDREGISTER_CLASS(PanelContainer);
+    GDREGISTER_CLASS(FlowContainer);
+    GDREGISTER_CLASS(HFlowContainer);
+    GDREGISTER_CLASS(VFlowContainer);
+    GDREGISTER_CLASS(MarginContainer);
+
+    OS::get_singleton()->yield(); // may take time to init
+
+    GDREGISTER_CLASS(TextureProgressBar);
+    GDREGISTER_CLASS(ItemList);
+
+    GDREGISTER_CLASS(LineEdit);
+    GDREGISTER_CLASS(VideoStreamPlayer);
+    GDREGISTER_VIRTUAL_CLASS(VideoStreamPlayback);
+    GDREGISTER_VIRTUAL_CLASS(VideoStream);
+
+#ifndef ADVANCED_GUI_DISABLED
+    GDREGISTER_CLASS(FileDialog);
+
+    GDREGISTER_CLASS(PopupMenu);
+    GDREGISTER_CLASS(Tree);
+
     GDREGISTER_CLASS(TextEdit);
+
+    GDREGISTER_CLASS(CodeEdit);
+    GDREGISTER_CLASS(SyntaxHighlighter);
+    GDREGISTER_CLASS(CodeHighlighter);
+
+    GDREGISTER_ABSTRACT_CLASS(TreeItem);
+    GDREGISTER_CLASS(MenuBar);
+    GDREGISTER_CLASS(MenuButton);
+    GDREGISTER_CLASS(OptionButton);
+    GDREGISTER_CLASS(SpinBox);
+    GDREGISTER_CLASS(ColorPicker);
+    GDREGISTER_CLASS(ColorPickerButton);
+    GDREGISTER_CLASS(RichTextLabel);
+    GDREGISTER_CLASS(RichTextEffect);
+    GDREGISTER_CLASS(CharFXTransform);
+
+    GDREGISTER_CLASS(AcceptDialog);
+    GDREGISTER_CLASS(ConfirmationDialog);
+
+    GDREGISTER_CLASS(SubViewportContainer);
+    GDREGISTER_CLASS(SplitContainer);
+    GDREGISTER_CLASS(HSplitContainer);
+    GDREGISTER_CLASS(VSplitContainer);
+
+    GDREGISTER_CLASS(GraphElement);
+    GDREGISTER_CLASS(GraphNode);
+    GDREGISTER_CLASS(GraphFrame);
+    GDREGISTER_CLASS(GraphEdit);
+
+    OS::get_singleton()->yield(); // may take time to init
+    bool swap_cancel_ok = false;
+    if (DisplayServer::get_singleton()) {
+        swap_cancel_ok = GLOBAL_DEF_NOVAL("gui/common/swap_cancel_ok", bool(DisplayServer::get_singleton()->get_swap_cancel_ok()));
+    }
+    AcceptDialog::set_swap_cancel_ok(swap_cancel_ok);
+#endif
 }
 static void initialize_physics() 
 {
@@ -602,9 +738,7 @@ void godotInit(GodotContext& context)
         memnew(PackedData);
         register_scene_types();
         initialize_physics();
-        initialize_modules(MODULE_INITIALIZATION_LEVEL_CORE);
-        initialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
-        initialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
+        input_map->load_default(); //keys for editor
         
         Main m;
         m.init(context);

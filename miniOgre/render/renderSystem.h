@@ -379,7 +379,8 @@ public:
     virtual void clearRenderTexture(
         Ogre::OgreTexture*, 
         const Ogre::Vector4& color,
-        const Ogre::TextureSubresourceRange& subresources);
+        const Ogre::TextureSubresourceRange& subresources,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh);
 
     virtual void updatePushConstants(
         filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,

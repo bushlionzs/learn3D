@@ -329,6 +329,7 @@ void VulkanTexture::createImage(
 
     BitField<TextureUsageBits> usage = mTextureProperty._tex_usage;
 
+
     if (usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
     {
         imageInfo.usage |=  VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT ;
@@ -422,11 +423,19 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     
     viewInfo.format = format;
 
+    
+
     mAspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
     if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
         mAspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
     }
+
+    if (format == VK_FORMAT_R32_SFLOAT)
+    {
+        //mAspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
+    }
+
     viewInfo.subresourceRange = { mAspectFlags, 0, mMipLevels, 0, mTextureProperty._face };
 
     viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;

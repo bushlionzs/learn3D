@@ -255,13 +255,14 @@ void VulkanRenderSystemBase::clearRenderTarget(
     const Ogre::Vector4& color,
     const Ogre::TextureSubresourceRange& subresources)
 {
-    clearRenderTexture(target->getTarget(), color, subresources);
+    clearRenderTexture(target->getTarget(), color, subresources, nullptr);
 }
 
 void VulkanRenderSystemBase::clearRenderTexture(
     OgreTexture* tex, 
     const Ogre::Vector4& color,
-    const Ogre::TextureSubresourceRange& subresources
+    const Ogre::TextureSubresourceRange& subresources,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh
     )
 {
     VkClearColorValue clearColor = { color.x, color.y, color.z, color.w };
@@ -271,11 +272,20 @@ void VulkanRenderSystemBase::clearRenderTexture(
     subresourceRange.levelCount = subresources.mipmap_count;
     subresourceRange.baseArrayLayer = subresources.base_layer;
     subresourceRange.layerCount = subresources.layer_count;
-    VkCommandBuffer cb = mCommands->get().buffer();
+    VkCommandBuffer cmdBuffer;
+    if (cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*cbh);
+        cmdBuffer = cb->commandBuffer;
+    }
+    else
+    {
+        cmdBuffer = mCommands->get().buffer();
+    }
 
     VulkanTexture* vulkanTexture = (VulkanTexture*)tex;
     vkCmdClearColorImage(
-        cb,
+        cmdBuffer,
         vulkanTexture->getVkImage(),
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
         &clearColor,
@@ -539,7 +549,7 @@ void VulkanRenderSystemBase::endRenderPass(RenderPassInfo& renderPassInfo)
     {
         cmdBuffer = mCommands->get().buffer();
     }
-    vkCmdEndRenderingKHR(cmdBuffer);
+    bluevk::vkCmdEndRenderingKHR(cmdBuffer);
 }
 
 
@@ -796,8 +806,8 @@ void VulkanRenderSystemBase::copyBufferToTexture(
     vkImageCopy.imageSubresource.mipLevel = desc.textureSubresources.mipLevel;
     vkImageCopy.imageSubresource.baseArrayLayer = desc.textureSubresources.baseArrayLayer;
     vkImageCopy.imageSubresource.layerCount = desc.textureSubresources.layerCount;
-    /*vkCmdCopyBufferToImage(cb->commandBuffer, srcBuffer,
-        vulkanTexture->getVkImage(), vkImageLayout, 1, &vkImageCopy);*/
+    vkCmdCopyBufferToImage(cb->commandBuffer, srcBuffer,
+        vulkanTexture->getVkImage(), vkImageLayout, 1, &vkImageCopy);
 
 }
 
@@ -1820,6 +1830,11 @@ void VulkanRenderSystemBase::executeAndPresent(
 
     std::vector<VkCommandBuffer> command_buffers;
     command_buffers.resize(cb_size);
+
+    if (cb_size == 0)
+    {
+        int kk = 0;
+    }
     for (uint32_t i = 0; i < cb_size; i++)
     {
         VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh[i]);
@@ -1847,7 +1862,7 @@ void VulkanRenderSystemBase::executeAndPresent(
                 .waitSemaphoreCount = (uint32_t)wait_semaphores.size(),
                 .pWaitSemaphores = wait_semaphores.data(),
                 .pWaitDstStageMask = waitDestStageMasks,
-                .commandBufferCount = cmd_sp_size,
+                .commandBufferCount = cb_size,
                 .pCommandBuffers = command_buffers.data(),
                 .signalSemaphoreCount = (uint32_t)signal_semaphores.size(),
                 .pSignalSemaphores = signal_semaphores.data(),

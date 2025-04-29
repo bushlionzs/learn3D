@@ -55,7 +55,8 @@ public:
     virtual void clearRenderTexture(
         OgreTexture*, 
         const Ogre::Vector4& color,
-        const Ogre::TextureSubresourceRange& subresources
+        const Ogre::TextureSubresourceRange& subresources,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh
     )override;
     virtual void frameStart() override;
     virtual void frameEnd() override;

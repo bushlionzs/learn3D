@@ -292,7 +292,8 @@ void RenderSystem::executeAndPresent(
 void RenderSystem::clearRenderTexture(
     Ogre::OgreTexture*, 
     const Ogre::Vector4& color,
-    const Ogre::TextureSubresourceRange& subresources)
+    const Ogre::TextureSubresourceRange& subresources,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
     assert_invariant(false);
 }
