@@ -100,6 +100,7 @@ namespace Ogre {
         switch (ogrePF)
         {
         case PF_R8:
+        case PF_R8_UINT:
         case PF_L16:
         case PF_A8:
         case PF_BYTE_LA:
@@ -140,10 +141,12 @@ namespace Ogre {
         case PF_BC7_UNORM:
         case PF_R16G16_SINT:
         case PF_FLOAT32_GR:
+        case PF_DEPTH16:
         case PF_DEPTH32:
         case PF_DEPTH32F:
         case PF_DEPTH24_STENCIL8:
         case PF_DEPTH32_STENCIL8:
+        case PF_R8G8B8A8_UINT:
             return ogrePF;
         case PF_FLOAT16_RGB:
             return PF_FLOAT16_RGBA;
@@ -153,6 +156,7 @@ namespace Ogre {
             return PF_RGBA16_SNORM;
         case PF_UNKNOWN:
         default:
+            assert_invariant(false);
             return PF_A8B8G8R8;
         }
     }
@@ -175,6 +179,7 @@ namespace Ogre {
         switch (ogrePF)
         {
         case PF_R8:             return VK_FORMAT_R8_UNORM;
+        case PF_R8_UINT:    return VK_FORMAT_R8_UINT;
         case PF_L16:            return VK_FORMAT_R16_UNORM;
         case PF_A8:             return VK_FORMAT_R8_UNORM;
         case PF_BYTE_LA:        return VK_FORMAT_UNDEFINED;
@@ -216,12 +221,12 @@ namespace Ogre {
         case PF_R16G16_SINT:    return VK_FORMAT_R16G16_SINT;
         case PF_FLOAT32_GR:     return VK_FORMAT_R32G32_SFLOAT;
         case PF_RGBA16_SNORM: return VK_FORMAT_R16G16B16A16_SNORM;
-        case PF_DEPTH16:        return VK_FORMAT_R32_UINT;
+        case PF_DEPTH16:        return VK_FORMAT_D16_UNORM;
         case PF_DEPTH32:        return VK_FORMAT_R32_UINT;
         case PF_DEPTH32F:       return VK_FORMAT_D32_SFLOAT;
         case PF_DEPTH24_STENCIL8:     return VK_FORMAT_D24_UNORM_S8_UINT;
         case PF_DEPTH32_STENCIL8:     return VK_FORMAT_D32_SFLOAT_S8_UINT;
-        
+        case PF_R8G8B8A8_UINT: return VK_FORMAT_R8G8B8A8_UINT;
         default:
             assert_invariant(false);
             return VK_FORMAT_UNDEFINED;
@@ -282,13 +287,13 @@ namespace Ogre {
     VkSamplerAddressMode VulkanMappings::getWrapMode(filament::backend::SamplerWrapMode mode)
     {
         switch (mode) {
-        case filament::backend::SamplerWrapMode::REPEAT:
+        case filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT:
             return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        case filament::backend::SamplerWrapMode::CLAMP_TO_EDGE:
+        case filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE:
             return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-        case filament::backend::SamplerWrapMode::CLAMP_TO_BODY:
+        case filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_BORDER:
             return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-        case filament::backend::SamplerWrapMode::MIRRORED_REPEAT:
+        case filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_MIRRORED_REPEAT:
             return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
         default:
             assert_invariant(false);
@@ -370,14 +375,14 @@ namespace Ogre {
     {
         using Compare = filament::backend::SamplerCompareFunc;
         switch (func) {
-        case Compare::LE: return VK_COMPARE_OP_LESS_OR_EQUAL;
-        case Compare::GE: return VK_COMPARE_OP_GREATER_OR_EQUAL;
-        case Compare::L:  return VK_COMPARE_OP_LESS;
-        case Compare::G:  return VK_COMPARE_OP_GREATER;
-        case Compare::E:  return VK_COMPARE_OP_EQUAL;
-        case Compare::NE: return VK_COMPARE_OP_NOT_EQUAL;
-        case Compare::A:  return VK_COMPARE_OP_ALWAYS;
-        case Compare::N:  return VK_COMPARE_OP_NEVER;
+        case Compare::COMPARE_OP_LESS_OR_EQUAL: return VK_COMPARE_OP_LESS_OR_EQUAL;
+        case Compare::COMPARE_OP_GREATER_OR_EQUAL: return VK_COMPARE_OP_GREATER_OR_EQUAL;
+        case Compare::COMPARE_OP_LESS:  return VK_COMPARE_OP_LESS;
+        case Compare::COMPARE_OP_GREATER:  return VK_COMPARE_OP_GREATER;
+        case Compare::COMPARE_OP_EQUAL:  return VK_COMPARE_OP_EQUAL;
+        case Compare::COMPARE_OP_NOT_EQUAL: return VK_COMPARE_OP_NOT_EQUAL;
+        case Compare::COMPARE_OP_ALWAYS:  return VK_COMPARE_OP_ALWAYS;
+        case Compare::COMPARE_OP_NEVER:  return VK_COMPARE_OP_NEVER;
         default:
             assert_invariant(false);
             return VK_COMPARE_OP_LESS_OR_EQUAL;
@@ -633,21 +638,21 @@ namespace Ogre {
     {
         switch (func)
         {
-        case SamplerCompareFunc::LE:
+        case SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL:
             return CompareFunction::CMPF_LESS_EQUAL;
-        case SamplerCompareFunc::GE:
+        case SamplerCompareFunc::COMPARE_OP_GREATER_OR_EQUAL:
             return CompareFunction::CMPF_GREATER_EQUAL;
-        case SamplerCompareFunc::L:
+        case SamplerCompareFunc::COMPARE_OP_LESS:
             return CompareFunction::CMPF_LESS;
-        case SamplerCompareFunc::G:
+        case SamplerCompareFunc::COMPARE_OP_GREATER:
             return CompareFunction::CMPF_GREATER;
-        case SamplerCompareFunc::E:
+        case SamplerCompareFunc::COMPARE_OP_EQUAL:
             return CompareFunction::CMPF_EQUAL;
-        case SamplerCompareFunc::NE:
+        case SamplerCompareFunc::COMPARE_OP_NOT_EQUAL:
             return CompareFunction::CMPF_NOT_EQUAL;
-        case SamplerCompareFunc::A:
+        case SamplerCompareFunc::COMPARE_OP_ALWAYS:
             return CompareFunction::CMPF_ALWAYS_PASS;
-        case SamplerCompareFunc::N:
+        case SamplerCompareFunc::COMPARE_OP_NEVER:
             return CompareFunction::CMPF_ALWAYS_FAIL;
         default:
             assert_invariant(false);

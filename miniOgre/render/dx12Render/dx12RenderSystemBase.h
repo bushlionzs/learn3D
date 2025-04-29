@@ -130,6 +130,7 @@ public:
         TextureBarrier* pTextureBarriers,
         uint32_t numRtBarriers,
         RenderTargetBarrier* pRtBarriers,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* dsh,
         Ogre::QueueType queueType = QUEUE_TYPE_GRAPHICS
     )override;
 

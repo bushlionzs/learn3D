@@ -60,7 +60,7 @@ struct VulkanBufferObject;
 struct VulkanDescriptorSetLayout : public VulkanResource,HwDescriptorSetLayout {
     static constexpr uint8_t UNIQUE_DESCRIPTOR_SET_COUNT = 4;
     static constexpr uint8_t MAX_BINDING_SET = 4;
-    static constexpr uint8_t MAX_BINDINGS = 25;
+    static constexpr uint8_t MAX_BINDINGS = 64;
 
     using VulkanLayoutKey = std::array<uint64_t, MAX_BINDINGS>;
     struct VulkanDescriptorSetLayoutInfo
@@ -264,10 +264,10 @@ struct VulkanShader : public VulkanResource, HwShader
 
 struct VulkanProgram :public VulkanResource
 {
-    VulkanProgram(VulkanResourceType type):
+    VulkanProgram(const std::string&name, VulkanResourceType type):
         VulkanResource(VulkanResourceType::PROGRAM)
     {
-
+        shaderName = name;
     }
 
     const VKDescriptorInfo* getDescriptor(const DescriptorData* pParam, uint32_t set)
@@ -313,9 +313,15 @@ struct VulkanProgram :public VulkanResource
         mBindingInfo = bindingMap;
     }
 
-private:
+    VkPipelineBindPoint getPipelineBindPoint()
+    {
+        return mPipelineBindPoint;
+    }
+protected:
+    std::string shaderName;
     std::map<std::string, VKDescriptorInfo> mDescriptorInfoMap;
     vks::tools::BingdingInfo mBindingInfo;
+    VkPipelineBindPoint mPipelineBindPoint;
 };
 
 struct VulkanShaderProgram : public VulkanProgram, HwProgram {
@@ -530,7 +536,7 @@ private:
     VkDescriptorSetLayout mLayout;
     Handle<HwDescriptorSetLayout> mLayoutHandle;
 
-    std::array<Handle<HwDescriptorSetLayout>, 4> mLayoutHandleArray;
+    std::array<Handle<HwDescriptorSetLayout>, 5> mLayoutHandleArray;
 };
 
 struct VulkanPipeline : private HwPipeline, VulkanResource
@@ -727,13 +733,22 @@ struct VulkanSemaphore : public HwSemaphore, VulkanResource {
 struct VulkanCommandQueue : public HwCommandQueue, VulkanResource {
     VulkanCommandQueue(VkQueue queue);
 
-    VkSemaphore getSemaphore(uint32 frameIndex)
+    VkSemaphore getSemaphore()
     {
-        return vkSemaphores[frameIndex];
+        return vkSemaphores[present_semaphore_index];
+    }
+
+    void updateIndex()
+    {
+        present_semaphore_index = (present_semaphore_index + 1) % vkSemaphores.size();
     }
     VkQueue vkQueue;
 
     std::vector<VkSemaphore> vkSemaphores;
+
+    VkSemaphore imageReadySemaphore = VK_NULL_HANDLE;
+    uint32_t imageIndex = 0;
+    uint32_t present_semaphore_index = 0;
 };
 
 struct VulkanCommandBuffer2 : public HwCommandBuffer, VulkanResource {

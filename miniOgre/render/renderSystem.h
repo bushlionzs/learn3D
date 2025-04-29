@@ -22,6 +22,10 @@ namespace Ogre
 class RenderSystem
 {
 public:
+    struct TransferContext
+    {
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh;
+    };
     RenderSystem();
     ~RenderSystem();
     virtual bool engineInit(bool raytracing = false);
@@ -66,8 +70,12 @@ public:
     {
         return mBatchCount;
     }
-    virtual void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth) {}
-    virtual void setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {}
+    virtual void setViewport(
+        float x, float y, float width, float height, float minDepth, float maxDepth,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh) {}
+    virtual void setScissor(
+        uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh) {}
     virtual void beginRenderPass(
         RenderPassInfo& renderPassInfo);
     virtual void endRenderPass(RenderPassInfo& renderPassInfo);
@@ -168,7 +176,8 @@ public:
         assert_invariant(false);
     }
 
-    virtual void dispatchComputeShader(int32_t x, int32_t y, int32_t z) 
+    virtual void dispatchComputeShader(int32_t x, int32_t y, int32_t z, 
+        filament::backend::Handle<filament::backend::HwCommandBuffer>*)
     {
         assert_invariant(false);
     }
@@ -196,6 +205,8 @@ public:
     {
         assert_invariant(false);
     }
+    
+
     virtual void bindIndexBuffer(
         filament::backend::Handle<filament::backend::HwBufferObject> bufHandle, 
         uint32_t indexSize,
@@ -210,7 +221,8 @@ public:
         filament::backend::Handle<filament::backend::HwBufferObject> boh,
         const char* data, 
         uint32_t size,
-        uint32_t offset = 0);
+        uint32_t offset = 0,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh = nullptr);
     virtual bool getBufferInfo(
         filament::backend::Handle<filament::backend::HwBufferObject> boh,
         Ogre::BufferDesc& desc)
@@ -275,6 +287,7 @@ public:
         Ogre::TextureBarrier* pTextureBarriers,
         uint32_t numRtBarriers, 
         Ogre::RenderTargetBarrier* pRtBarriers,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* dsh,
         Ogre::QueueType queueType = Ogre::QUEUE_TYPE_GRAPHICS
     ) 
     {
@@ -328,6 +341,7 @@ public:
         Ogre::QueueType, uint32_t queueIndex);
     virtual filament::backend::Handle<filament::backend::HwSwapChain> createSwapChain();
     virtual void swapChainAcquire(
+        filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
         filament::backend::Handle<filament::backend::HwSwapChain> sch,
         Ogre::SwapChainInfo& scInfo);
     virtual filament::backend::Handle<filament::backend::HwShader> createShader(Ogre::ShaderDesc& desc);
@@ -373,6 +387,36 @@ public:
         uint32_t offset,
         const char* data,
         uint32_t size);
+
+    virtual void bindVertexBuffer(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        uint32_t binding_count,
+        filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+        const uint64_t* p_offsets);
+
+    virtual void bindIndexBuffer(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
+        uint32_t indexSize,
+        uint32_t offset);
+
+    virtual void bindPipeline(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle);
+
+    virtual void bindDescriptorSet(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwShader> sh,
+        filament::backend::Handle<filament::backend::HwDescriptorSet>dsh);
+
+    virtual void bindDescriptorSet(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwProgram> ph,
+        filament::backend::Handle<filament::backend::HwDescriptorSet>dsh);
+
+    virtual uint64_t limit_get(Ogre::Limit limit);
+
+    virtual TransferContext* getTransferContext();
 protected:
 	
     uint32_t mBatchCount = 0;

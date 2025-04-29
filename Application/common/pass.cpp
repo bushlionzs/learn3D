@@ -15,7 +15,7 @@
 #include "OgreVertexDeclaration.h"
 #include "renderUtil.h"
 #include "presentPass.h"
-
+#include "scenePass.h"
 class StandardRenderPass : public PassBase
 {
 public:
@@ -74,11 +74,11 @@ public:
 		params.filterMag = filament::backend::SamplerFilterType::LINEAR;
 		params.filterMin = filament::backend::SamplerFilterType::LINEAR;
 		params.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-		params.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-		params.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-		params.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+		params.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+		params.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+		params.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
 		params.compareMode = filament::backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
-		params.compareFunc = filament::backend::SamplerCompareFunc::LE;
+		params.compareFunc = filament::backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 		params.anisotropyLog2 = 0;
 		params.useComparison = 0;
 		params.maxLod = 1;
@@ -187,7 +187,7 @@ public:
 		filament::backend::RasterState rasterState;
 		rasterState.depthWrite = true;
 		rasterState.depthTest = true;
-		rasterState.depthFunc = filament::backend::SamplerCompareFunc::LE;
+		rasterState.depthFunc = filament::backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 		rasterState.colorWrite = true;
 		rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_UNKNOWN;
 		rasterState.renderTargetCount = 0;
@@ -270,7 +270,7 @@ public:
 					Ogre::RESOURCE_STATE_DEPTH_WRITE
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		}
 		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 		auto& info = mRenderPassInfo;
@@ -306,7 +306,7 @@ public:
 					Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		}
 		
 	}
@@ -322,7 +322,7 @@ public:
 					Ogre::RESOURCE_STATE_RENDER_TARGET
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		}
 
 		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
@@ -351,7 +351,7 @@ public:
 					Ogre::RESOURCE_STATE_PRESENT
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		}
 	}
 	virtual void update(float delta)
@@ -443,6 +443,11 @@ private:
 PassBase* createStandardRenderPass(RenderPassInput& input)
 {
 	return new StandardRenderPass(input);
+}
+
+PassBase* createSceneRenderPass(RenderPassInput& input)
+{
+	return new SceneRenderPass(input);
 }
 
 class UserDefineRenderPass : public PassBase

@@ -946,10 +946,11 @@ enum class TextureCubemapFace : uint8_t {
 
 //! Sampler Wrap mode
 enum class SamplerWrapMode : uint8_t {
-    CLAMP_TO_EDGE,      //!< clamp-to-edge. The edge of the texture extends to infinity.
-    CLAMP_TO_BODY,
-    REPEAT,             //!< repeat. The texture infinitely repeats in the wrap direction.
-    MIRRORED_REPEAT,    //!< mirrored-repeat. The texture infinitely repeats and mirrors in the wrap direction.
+    SAMPLER_REPEAT_MODE_REPEAT,
+    SAMPLER_REPEAT_MODE_MIRRORED_REPEAT,
+    SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE,
+    SAMPLER_REPEAT_MODE_CLAMP_TO_BORDER,
+    SAMPLER_REPEAT_MODE_MIRROR_CLAMP_TO_EDGE
 };
 
 //! Sampler minification filter
@@ -994,15 +995,14 @@ enum class SamplerCompareMode : uint8_t {
 
 //! comparison function for the depth / stencil sampler
 enum class SamplerCompareFunc : uint8_t {
-    // don't change the enums values
-    LE = 0,     //!< Less or equal
-    GE,         //!< Greater or equal
-    L,          //!< Strictly less than
-    G,          //!< Strictly greater than
-    E,          //!< Equal
-    NE,         //!< Not equal
-    A,          //!< Always. Depth / stencil testing is deactivated.
-    N           //!< Never. The depth / stencil test always fails.
+    COMPARE_OP_NEVER = 0,
+    COMPARE_OP_LESS,
+    COMPARE_OP_EQUAL,
+    COMPARE_OP_LESS_OR_EQUAL,
+    COMPARE_OP_GREATER,
+    COMPARE_OP_NOT_EQUAL,
+    COMPARE_OP_GREATER_OR_EQUAL,
+    COMPARE_OP_ALWAYS
 };
 
 //! Sampler parameters

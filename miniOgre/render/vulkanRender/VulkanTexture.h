@@ -146,6 +146,7 @@ private:
     std::vector<VkImageView> mTextureImageArrayView;
     VkSampler mTextureSampler;
 
+    Ogre::PixelFormat mFormat = PixelFormat::PF_UNKNOWN;
     VkFormat mVulkanFormat = VK_FORMAT_UNDEFINED;
     bool mNeedMipmaps = false;
     uint32_t mMipLevels = 1;

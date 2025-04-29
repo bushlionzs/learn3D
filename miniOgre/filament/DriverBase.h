@@ -96,8 +96,8 @@ struct HwRenderPrimitive : public HwBase {
 };
 
 struct HwProgram : public HwBase {
-    utils::CString name;
-    explicit HwProgram(utils::CString name) noexcept : name(std::move(name)) { }
+    std::string name;
+    explicit HwProgram(std::string _name) noexcept : name(std::move(_name)) { }
     HwProgram() noexcept = default;
 };
 

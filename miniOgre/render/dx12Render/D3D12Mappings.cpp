@@ -291,21 +291,21 @@ namespace Ogre {
     {
         switch (depthFunc)
         {
-        case RasterState::DepthFunc::LE:
+        case RasterState::DepthFunc::COMPARE_OP_LESS_OR_EQUAL:
             return D3D12_COMPARISON_FUNC_LESS_EQUAL;
-        case RasterState::DepthFunc::GE:
+        case RasterState::DepthFunc::COMPARE_OP_GREATER_OR_EQUAL:
             return D3D12_COMPARISON_FUNC_GREATER_EQUAL;
-        case RasterState::DepthFunc::L:
+        case RasterState::DepthFunc::COMPARE_OP_LESS:
             return D3D12_COMPARISON_FUNC_LESS;
-        case RasterState::DepthFunc::G:
+        case RasterState::DepthFunc::COMPARE_OP_GREATER:
             return D3D12_COMPARISON_FUNC_GREATER;
-        case RasterState::DepthFunc::E:
+        case RasterState::DepthFunc::COMPARE_OP_EQUAL:
             return D3D12_COMPARISON_FUNC_EQUAL;
-        case RasterState::DepthFunc::NE:
+        case RasterState::DepthFunc::COMPARE_OP_NOT_EQUAL:
             return D3D12_COMPARISON_FUNC_NOT_EQUAL;
-        case RasterState::DepthFunc::A:
+        case RasterState::DepthFunc::COMPARE_OP_ALWAYS:
             return D3D12_COMPARISON_FUNC_ALWAYS;
-        case RasterState::DepthFunc::N:
+        case RasterState::DepthFunc::COMPARE_OP_NEVER:
             return D3D12_COMPARISON_FUNC_NEVER;
         };
         return D3D12_COMPARISON_FUNC_ALWAYS;
@@ -415,15 +415,16 @@ namespace Ogre {
     {
         switch (mode)
         {
-        case SamplerWrapMode::CLAMP_TO_EDGE:
+        case SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE:
             return D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-        case SamplerWrapMode::CLAMP_TO_BODY:
+        case SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_BORDER:
             return D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-        case SamplerWrapMode::REPEAT:
+        case SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT:
             return D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-        case SamplerWrapMode::MIRRORED_REPEAT:
+        case SamplerWrapMode::SAMPLER_REPEAT_MODE_MIRRORED_REPEAT:
             return D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
         default:
+            assert_invariant(false);
             return D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
         }
     }
@@ -499,14 +500,14 @@ namespace Ogre {
     {
         using Compare = filament::backend::SamplerCompareFunc;
         switch (func) {
-        case Compare::LE: return D3D12_COMPARISON_FUNC_LESS_EQUAL;
-        case Compare::GE: return D3D12_COMPARISON_FUNC_GREATER_EQUAL;
-        case Compare::L:  return D3D12_COMPARISON_FUNC_LESS;
-        case Compare::G:  return D3D12_COMPARISON_FUNC_GREATER;
-        case Compare::E:  return D3D12_COMPARISON_FUNC_EQUAL;
-        case Compare::NE: return D3D12_COMPARISON_FUNC_NOT_EQUAL;
-        case Compare::A:  return D3D12_COMPARISON_FUNC_ALWAYS;
-        case Compare::N:  return D3D12_COMPARISON_FUNC_NEVER;
+        case Compare::COMPARE_OP_LESS_OR_EQUAL: return D3D12_COMPARISON_FUNC_LESS_EQUAL;
+        case Compare::COMPARE_OP_GREATER_OR_EQUAL: return D3D12_COMPARISON_FUNC_GREATER_EQUAL;
+        case Compare::COMPARE_OP_LESS:  return D3D12_COMPARISON_FUNC_LESS;
+        case Compare::COMPARE_OP_GREATER:  return D3D12_COMPARISON_FUNC_GREATER;
+        case Compare::COMPARE_OP_EQUAL:  return D3D12_COMPARISON_FUNC_EQUAL;
+        case Compare::COMPARE_OP_NOT_EQUAL: return D3D12_COMPARISON_FUNC_NOT_EQUAL;
+        case Compare::COMPARE_OP_ALWAYS:  return D3D12_COMPARISON_FUNC_ALWAYS;
+        case Compare::COMPARE_OP_NEVER:  return D3D12_COMPARISON_FUNC_NEVER;
         default:
             assert_invariant(false);
             return D3D12_COMPARISON_FUNC_LESS_EQUAL;

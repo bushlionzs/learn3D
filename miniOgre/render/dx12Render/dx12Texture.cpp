@@ -62,9 +62,9 @@ void Dx12Texture::_createSurfaceList(void)
 
 void Dx12Texture::createInternalResourcesImpl(void)
 {
-    mFormat = D3D12Mappings::_getClosestSupportedPF(mFormat);
+    mFormat = D3D12Mappings::_getClosestSupportedPF(mTextureProperty._tex_format);
 
-    mD3DFormat = D3D12Mappings::_getGammaFormat(D3D12Mappings::_getPF(mFormat), false);
+    mD3DFormat = D3D12Mappings::_getGammaFormat(D3D12Mappings::_getPF(mTextureProperty._tex_format), false);
 
 
     switch (mTextureProperty._texType)
@@ -128,11 +128,11 @@ void Dx12Texture::_createTex()
     }
     else if (mTextureProperty._texType == TEX_TYPE_CUBE_MAP)
     {
-        texDesc.DepthOrArraySize = mFace;
+        texDesc.DepthOrArraySize = mTextureProperty._face;
     }
     else if (mTextureProperty._texType == TEX_TYPE_2D_ARRAY)
     {
-        texDesc.DepthOrArraySize = mFace;
+        texDesc.DepthOrArraySize = mTextureProperty._face;
     }
     else
     {
@@ -235,7 +235,7 @@ void Dx12Texture::_createTex()
 
 void Dx12Texture::updateTexture(const std::vector<const CImage*>& images)
 {
-    uint32 faces = mFace;
+    uint32 faces = mTextureProperty._face;
     int32_t depth = 1;
     uint32_t offset = 0;
 
@@ -248,12 +248,12 @@ void Dx12Texture::updateTexture(const std::vector<const CImage*>& images)
     updateLayoutInfos();
 
     uint32_t mips = this->getNumMipmaps();
-    uint32_t num2DSubresources = mFace * mips;
+    uint32_t num2DSubresources = faces * mips;
     
     PixelFormat imageFormat = images[0]->getFormat();
     if (mFormat == imageFormat)
     {
-        for (uint32 face = 0; face < mFace; ++face)
+        for (uint32 face = 0; face < faces; ++face)
         {
             for (uint32 mip = 0; mip < mips; ++mip)
             {
@@ -280,7 +280,7 @@ void Dx12Texture::updateTexture(const std::vector<const CImage*>& images)
     else
     {
         uint32_t memSize = 0;
-        for (uint32 face = 0; face < mFace; ++face)
+        for (uint32 face = 0; face < faces; ++face)
         {
             uint32_t width = mTextureProperty._width;
             uint32_t height = mTextureProperty._height;
@@ -298,7 +298,7 @@ void Dx12Texture::updateTexture(const std::vector<const CImage*>& images)
         std::string mem;
         mem.resize(memSize);
 
-        for (uint32 face = 0; face < mFace; ++face)
+        for (uint32 face = 0; face < faces; ++face)
         {
             uint32_t width = mTextureProperty._width;
             uint32_t height = mTextureProperty._height;
@@ -318,7 +318,7 @@ void Dx12Texture::updateTexture(const std::vector<const CImage*>& images)
             }
         }
         
-        for (uint32 face = 0; face < mFace; ++face)
+        for (uint32 face = 0; face < faces; ++face)
         {
             uint32_t width = mTextureProperty._width;
             uint32_t height = mTextureProperty._height;
@@ -441,7 +441,7 @@ void Dx12Texture::buildDescriptorHeaps()
             srvDesc.Format = D3D12Mappings::util_to_dx12_srv_format(mTex->GetDesc().Format);
             srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
             srvDesc.Texture2DArray.FirstArraySlice = 0;
-            srvDesc.Texture2DArray.ArraySize = mFace;
+            srvDesc.Texture2DArray.ArraySize = mTextureProperty._face;
             srvDesc.Texture2DArray.MipLevels = mTex->GetDesc().MipLevels;
         }
         else
@@ -458,10 +458,6 @@ void Dx12Texture::buildDescriptorHeaps()
             srvDesc.Texture2D.MipLevels = mTex->GetDesc().MipLevels;
         }
 
-        if (mFace == 4)
-        {
-            int kk = 0;
-        }
         DescriptorHeapContext* context = DX12Helper::getSingleton().getHeapContext();
 
         if (mNeedSrv)
@@ -494,12 +490,12 @@ void Dx12Texture::buildDescriptorHeaps()
         else if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
         {
             mTargetDescriptorID = consume_descriptor_handles(
-                context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], mFace);
+                context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], mTextureProperty._face);
            
             D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
             dsvDesc.Format = mTex->GetDesc().Format;
             dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2DARRAY;
-            for (uint32_t i = 0; i < mFace; i++)
+            for (uint32_t i = 0; i < mTextureProperty._face; i++)
             {
                 auto cpuHandle = descriptor_id_to_cpu_handle(
                     context->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_DSV], 
@@ -591,13 +587,13 @@ void Dx12Texture::uploadData()
 {
     ID3D12GraphicsCommandList* cl = mCommands->get();
     uint32_t mips = this->getNumMipmaps();
-    uint32_t numSubresources = mFace * mips;
+    uint32_t numSubresources = mTextureProperty._face * mips;
 
     uint32_t bytePerPixel = PixelUtil::getNumElemBytes(mFormat);
 
     updateLayoutInfos();
 
-    for (uint32_t face = 0; face < mFace; face++)
+    for (uint32_t face = 0; face < mTextureProperty._face; face++)
     {
 
         for (uint32_t mip = 0; mip < mips; mip++)
@@ -621,7 +617,7 @@ void Dx12Texture::uploadData()
             dstLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 
             UINT dstSubresource = D3D12CalcSubresource(
-                mip, face, 0, mips, mFace);
+                mip, face, 0, mips, mTextureProperty._face);
             dstLocation.SubresourceIndex = dstSubresource;
             cl->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, nullptr);
 
@@ -666,7 +662,7 @@ void Dx12Texture::updateLayoutInfos()
     {
         return;
     }
-    uint32_t num2DSubresources = mFace * getNumMipmaps();
+    uint32_t num2DSubresources = mTextureProperty._face * getNumMipmaps();
 
     {
         UINT64 RequiredSize = 0;

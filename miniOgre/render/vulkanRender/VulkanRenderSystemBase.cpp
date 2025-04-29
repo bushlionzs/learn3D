@@ -21,6 +21,7 @@
 #include "VulkanLayoutCache.h"
 #include "shaderManager.h"
 #include "glslUtil.h"
+#include "VulkanPlatformSwapChainImpl.h"
 #include <vk_mem_alloc.h>
 #define MAX_HANDLE_COUNT 256
 static VmaAllocator createAllocator(VkInstance instance, VkPhysicalDevice physicalDevice,
@@ -96,6 +97,52 @@ bool VulkanRenderSystemBase::engineInit(bool raytracing)
     helper._initialise(mVulkanPlatform);
 
     auto device = mVulkanPlatform->getDevice();
+
+    vkGetPhysicalDeviceProperties(mVulkanPlatform->getPhysicalDevice(), &physical_device_properties);
+
+    {
+        void* next_properties = nullptr;
+        VkPhysicalDeviceFragmentShadingRatePropertiesKHR vrs_properties = {};
+        VkPhysicalDeviceMultiviewProperties multiview_properties = {};
+        VkPhysicalDeviceSubgroupProperties subgroup_properties = {};
+        VkPhysicalDeviceSubgroupSizeControlProperties subgroup_size_control_properties = {};
+        VkPhysicalDeviceProperties2 physical_device_properties_2 = {};
+
+        const bool use_1_1_properties = physical_device_properties.apiVersion >= VK_API_VERSION_1_1;
+        if (use_1_1_properties) {
+            subgroup_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
+            subgroup_properties.pNext = next_properties;
+            next_properties = &subgroup_properties;
+
+            subgroup_capabilities.size_control_is_supported = true;
+            if (subgroup_capabilities.size_control_is_supported) {
+                subgroup_size_control_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES;
+                subgroup_size_control_properties.pNext = next_properties;
+                next_properties = &subgroup_size_control_properties;
+            }
+        }
+
+        if (true) {
+            multiview_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
+            multiview_properties.pNext = next_properties;
+            next_properties = &multiview_properties;
+        }
+
+        
+
+        physical_device_properties_2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+        physical_device_properties_2.pNext = next_properties;
+        vkGetPhysicalDeviceProperties2(mVulkanPlatform->getPhysicalDevice(), &physical_device_properties_2);
+
+        subgroup_capabilities.size = subgroup_properties.subgroupSize;
+        subgroup_capabilities.min_size = subgroup_properties.subgroupSize;
+        subgroup_capabilities.max_size = subgroup_properties.subgroupSize;
+        subgroup_capabilities.supported_stages = subgroup_properties.supportedStages;
+        subgroup_capabilities.supported_operations = subgroup_properties.supportedOperations;
+    }
+
+
+
     mAllocator = createAllocator(
         mVulkanPlatform->getInstance(), mVulkanPlatform->getPhysicalDevice(), device);
     
@@ -134,6 +181,12 @@ bool VulkanRenderSystemBase::engineInit(bool raytracing)
     alloc_info.descriptorSetCount = 1;
     alloc_info.pSetLayouts = &pEmptyDescriptorSetLayout;
     vkAllocateDescriptorSets(device, &alloc_info, &pEmptyDescriptorSet);
+
+    for (uint32_t i = 0; i < 2; i++)
+    {
+        mTransferContext[i].cbh = createCommandBuffer(QUEUE_TYPE_TRANSFER);
+    }
+    
     return true;
 }
 
@@ -143,7 +196,6 @@ Ogre::OgreTexture* VulkanRenderSystemBase::createManualTexture(
     Ogre::TextureProperty* texProperty)
 {
     auto tex = new VulkanTexture(name, mVulkanPlatform, mCommands, nullptr, texProperty);
-    tex->load(nullptr);
     return tex;
 }
 
@@ -188,9 +240,9 @@ Ogre::RenderTarget* VulkanRenderSystemBase::createRenderTarget(
 {
     if (texProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
-        texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
     }
 
     Ogre::VulkanRenderTarget* renderTarget = new Ogre::VulkanRenderTarget(
@@ -255,7 +307,8 @@ void VulkanRenderSystemBase::frameEnd()
 }
 
 void VulkanRenderSystemBase::setViewport(
-    float x, float y, float width, float height, float minDepth, float maxDepth)
+    float x, float y, float width, float height, float minDepth, float maxDepth,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
     VkViewport viewport{};
     viewport.x = 0.0;
@@ -265,15 +318,36 @@ void VulkanRenderSystemBase::setViewport(
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
 
-    bluevk::vkCmdSetViewport(mCommandBuffer, 0, 1, &viewport);
+    VkCommandBuffer cmdBuffer;
+    if (cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*cbh);
+        cmdBuffer = cb->commandBuffer;
+    }
+    else
+    {
+        cmdBuffer = mCommandBuffer;
+    }
+    bluevk::vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
 }
 
 void VulkanRenderSystemBase::setScissor(
-    uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+    uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
     VkRect2D scissor = vks::initializers::rect2D(width, height, 0, 0);
 
-    bluevk::vkCmdSetScissor(mCommandBuffer, 0, 1, &scissor);
+    VkCommandBuffer cmdBuffer;
+    if (cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*cbh);
+        cmdBuffer = cb->commandBuffer;
+    }
+    else
+    {
+        cmdBuffer = mCommandBuffer;
+    }
+    bluevk::vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
 }
 
 void VulkanRenderSystemBase::beginRenderPass(
@@ -588,9 +662,19 @@ void VulkanRenderSystemBase::bindComputePipeline(
         pipelineLayout, 0, index, &descriptorSet[0], 0, nullptr);
 }
 
-void VulkanRenderSystemBase::dispatchComputeShader(int32_t x, int32_t y, int32_t z)
+void VulkanRenderSystemBase::dispatchComputeShader(int32_t x, int32_t y, int32_t z, 
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
-    vkCmdDispatch(mCommandBuffer, x, y, z);
+    if (cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*cbh);
+        vkCmdDispatch(cb->commandBuffer, x, y, z);
+    }
+    else
+    {
+        vkCmdDispatch(mCommandBuffer, x, y, z);
+    }
+    
 }
 
 
@@ -757,7 +841,7 @@ uint8_t* VulkanRenderSystemBase::bufferMap(Handle<HwBufferObject> bufHandle)
 void VulkanRenderSystemBase::bufferUnmap(Handle<HwBufferObject> bufHandle)
 {
     VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
-    vulkanBufferObject->buffer.unlock(mCommands->get().buffer());
+    vulkanBufferObject->buffer.unlock(nullptr);
 }
 
 void VulkanRenderSystemBase::bindVertexBuffer(
@@ -809,11 +893,22 @@ void VulkanRenderSystemBase::updateBufferObject(
     Handle<HwBufferObject> boh,
     const char* data,
     uint32_t size,
-    uint32_t offset)
+    uint32_t offset,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
-    VulkanCommandBuffer& commands = mCommands->get();
+    VkCommandBuffer cmdBuffer;
+    if (cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*cbh);
+        cmdBuffer = cb->commandBuffer;
+    }
+    else
+    {
+        cmdBuffer = mCommands->get().buffer();
+
+    }
     VulkanBufferObject* bo = mResourceAllocator.handle_cast<VulkanBufferObject*>(boh);
-    bo->buffer.loadFromCpu(commands.buffer(), data, offset, size);
+    bo->buffer.loadFromCpu(cmdBuffer, data, offset, size);
 }
 
 bool VulkanRenderSystemBase::getBufferInfo(
@@ -1070,7 +1165,7 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
 
         VkFormat vkFormat = VulkanMappings::_getPF(format);
         targetInfo[i].colorFormat = vkFormat;
-
+        targetInfo[i].blendEnable = vulkanRasterState.blendEnable;
         if (vulkanRasterState.blendEnable)
         {
             targetInfo[i].srcColorBlendFactor = getBlendFactor(rasterState.blendFunctionSrcRGB);
@@ -1308,20 +1403,29 @@ void VulkanRenderSystemBase::resourceBarrier(
     TextureBarrier* pTextureBarriers,
     uint32_t numRtBarriers,
     RenderTargetBarrier* pRtBarriers,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* dsh,
     QueueType queueType
 )
 {
-    if (mCommandBuffer == nullptr)
+    VkCommandBuffer cmdBuffer;
+    if (dsh)
     {
-        mCommandBuffer = mCommands->get().buffer();
+
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(*dsh);
+        cmdBuffer = cb->commandBuffer;
     }
+    else
+    {
+        cmdBuffer = mCommands->get().buffer();
+    }
+    
     vks::tools::resourceBarrier(
         numBufferBarriers, pBufferBarriers,
         numTextureBarriers, pTextureBarriers,
         numRtBarriers, pRtBarriers,
         queueType,
         mVulkanPlatform->getGraphicsQueueFamilyIndex(),
-        mCommandBuffer
+        cmdBuffer
     );
 }
 
@@ -1377,13 +1481,12 @@ void VulkanRenderSystemBase::waitFence(Handle<HwFence> fh)
     VulkanFence* fence = mResourceAllocator.handle_cast<VulkanFence*>(fh);
     auto device = mVulkanPlatform->getDevice();
     auto vkFence = fence->vkFence;
-    VkResult fence_status = vkGetFenceStatus(device, vkFence);
-    if (fence_status == VK_NOT_READY) {
-        VkResult err = vkWaitForFences(device, 1, &vkFence, VK_TRUE, UINT64_MAX);
-        assert_invariant(err == VK_SUCCESS);
-    }
+    
+    VkResult err = vkWaitForFences(device, 1, &vkFence, VK_TRUE, UINT64_MAX);
+    assert_invariant(err == VK_SUCCESS);
+    
 
-    VkResult err = vkResetFences(device, 1, &vkFence);
+    err = vkResetFences(device, 1, &vkFence);
     assert_invariant(err == VK_SUCCESS);
 }
 
@@ -1476,19 +1579,28 @@ Handle<HwSwapChain> VulkanRenderSystemBase::createSwapChain()
 }
 
 void VulkanRenderSystemBase::swapChainAcquire(
+    filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
     filament::backend::Handle<filament::backend::HwSwapChain> sch,
     SwapChainInfo& scInfo)
 {
-    bool resized = false;
-    mSwapChain->acquire(resized);
-    scInfo.imageIndex = mSwapChain->getCurrentSwapIndex();
+    VulkanCommandQueue* queue = mResourceAllocator.handle_cast<VulkanCommandQueue*>(cqh);
+
+    VulkanPlatform::ImageSyncData imageSyncData;
+    mSwapChain->acquire(imageSyncData);
+    scInfo.imageIndex = imageSyncData.imageIndex;
     scInfo.color = mSwapChain->getCurrentColor();
     scInfo.depth = mSwapChain->getDepth();
+    queue->imageIndex = imageSyncData.imageIndex;
+    queue->imageReadySemaphore = imageSyncData.imageReadySemaphore;
 }
 
 
 Handle<HwShader> VulkanRenderSystemBase::createShader(Ogre::ShaderDesc& desc)
 {
+    if (desc.name == "SceneForwardClusteredShaderRD:0")
+    {
+        int kk = 0;
+    }
     Handle<HwShader> sh = mResourceAllocator.allocHandle<HwShader>();
 
     VulkanShader* cq = mResourceAllocator.construct<VulkanShader>(sh);
@@ -1556,19 +1668,24 @@ Handle<HwPipeline> VulkanRenderSystemBase::createPipeline(
    
     VulkanPipelineCache::VulkanTargetInfo targetInfo[8];
     memset(targetInfo, 0, sizeof(VulkanPipelineCache::VulkanTargetInfo) * 8);
-    if (vulkanRasterState.blendEnable)
+
+    for (uint32_t i = 0; i < renderTarget.renderTargetCount; i++)
     {
-        for (uint32_t i = 0; i < renderTarget.renderTargetCount; i++)
+        PixelFormat format = (PixelFormat)renderTarget.pixelFormat[i];
+        if (format == PF_UNKNOWN)
         {
-            PixelFormat format = (PixelFormat)renderTarget.pixelFormat[i];
-            if (format == PF_UNKNOWN)
-            {
-                format = mRenderWindow->getColorFormat();
-            }
+            format = mRenderWindow->getColorFormat();
+        }
 
-            VkFormat vkFormat = VulkanMappings::_getPF(format);
-            targetInfo[i].colorFormat = vkFormat;
-
+        VkFormat vkFormat = VulkanMappings::_getPF(format);
+        if (vkFormat == VK_FORMAT_UNDEFINED)
+        {
+            int kk = 0;
+        }
+        targetInfo[i].colorFormat = vkFormat;
+        targetInfo[i].blendEnable = colorBlendState.attachments[i].enable_blend;
+        if (targetInfo[i].blendEnable)
+        {
             targetInfo[i].srcColorBlendFactor = VulkanMappings::getBlendFactor(colorBlendState.attachments[i].blendFunctionSrcRGB);
             targetInfo[i].dstColorBlendFactor = VulkanMappings::getBlendFactor(colorBlendState.attachments[i].blendFunctionDstRGB);
             targetInfo[i].srcAlphaBlendFactor = VulkanMappings::getBlendFactor(colorBlendState.attachments[i].blendFunctionSrcAlpha);
@@ -1688,12 +1805,17 @@ void VulkanRenderSystemBase::executeAndPresent(
                 VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
     };
     std::vector<VkSemaphore> wait_semaphores;
-    wait_semaphores.resize(wait_sp_size);
+    wait_semaphores.reserve(wait_sp_size+1);
 
     for (uint32_t i = 0; i < wait_sp_size; i++)
     {
         VulkanSemaphore* semaphore = mResourceAllocator.handle_cast<VulkanSemaphore*>(wait_sph[i]);
-        wait_semaphores[i] = semaphore->semaphore;
+        wait_semaphores.push_back(semaphore->semaphore);
+    }
+
+    if (queue->imageReadySemaphore)
+    {
+        wait_semaphores.push_back(queue->imageReadySemaphore);
     }
 
     std::vector<VkCommandBuffer> command_buffers;
@@ -1712,15 +1834,18 @@ void VulkanRenderSystemBase::executeAndPresent(
         signal_semaphores.push_back(semaphore->semaphore);
     }
 
-    auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-
-    VkSemaphore finished = queue->getSemaphore(frameIndex);
-    signal_semaphores.push_back(finished);
+    VkSemaphore finished = VK_NULL_HANDLE;
+    if (sc_size)
+    {
+        finished = queue->getSemaphore();
+        signal_semaphores.push_back(finished);
+        queue->updateIndex();
+    }
     
     VkSubmitInfo submitInfo{
                 .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-                .waitSemaphoreCount = wait_sp_size,
-                .pWaitSemaphores = wait_sp_size > 0 ? wait_semaphores.data() : nullptr,
+                .waitSemaphoreCount = (uint32_t)wait_semaphores.size(),
+                .pWaitSemaphores = wait_semaphores.data(),
                 .pWaitDstStageMask = waitDestStageMasks,
                 .commandBufferCount = cmd_sp_size,
                 .pCommandBuffers = command_buffers.data(),
@@ -1735,14 +1860,24 @@ void VulkanRenderSystemBase::executeAndPresent(
 
     if (sc_size)
     {
-        uint32_t index = mSwapChain->getCurrentSwapIndex();
-        mVulkanPlatform->present(mSwapChain->swapChain, index, finished);
-        int kk = 0;
+        //mSwapChain->present(finished);
+        VulkanPlatformSurfaceSwapChain* impl = (VulkanPlatformSurfaceSwapChain*)mSwapChain->swapChain;
+        VkSwapchainKHR vulkanSwapChain = impl->getSwapChain();
+        uint32_t currentIndex = queue->imageIndex;
+        VkSemaphore finishedDrawing = finished;
+        VkPresentInfoKHR presentInfo{
+                .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+                .waitSemaphoreCount = (uint32_t)signal_semaphores.size(),
+                .pWaitSemaphores = signal_semaphores.data(),
+                .swapchainCount = 1,
+                .pSwapchains = &vulkanSwapChain,
+                .pImageIndices = &currentIndex,
+        };
+        VkResult result = vkQueuePresentKHR(queue->vkQueue, &presentInfo);
+        assert_invariant(result == VK_SUCCESS);
+        mSwapChain->update(false);
     }
-    else
-    {
-        int kk = 0;
-    }
+    
 }
 
 void VulkanRenderSystemBase::updatePushConstants(
@@ -1752,20 +1887,16 @@ void VulkanRenderSystemBase::updatePushConstants(
     const char* data,
     uint32_t size)
 {
-    VkCommandBuffer cmdBuf = mCommandBuffer;
-    if (cbh)
-    {
-        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
-        cmdBuf = cb->commandBuffer;
-    }
-    
+   
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+
     VulkanShader* shader = mResourceAllocator.handle_cast<VulkanShader*>(sh);
     VkPipelineLayout layout;
     if (shader->shaderProgram)
     {
         layout = shader->shaderProgram->getVulkanPipelineLayout();
         vkCmdPushConstants(
-            mCommandBuffer,
+            cb->commandBuffer,
             layout,
             VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT,
             offset, size, data);
@@ -1774,13 +1905,189 @@ void VulkanRenderSystemBase::updatePushConstants(
     {
         layout = shader->computeProgram->getPipelineLayout();
         vkCmdPushConstants(
-            cmdBuf,
+            cb->commandBuffer,
             layout,
             VK_SHADER_STAGE_COMPUTE_BIT,
             offset, size, data);
     }
 
     
+}
+
+
+void VulkanRenderSystemBase::bindVertexBuffer(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    uint32_t binding_count,
+    filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+    const uint64_t* p_offsets)
+{
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+
+    VkBuffer buffers[16];
+    assert_invariant(binding_count <= 16);
+
+    for (uint32_t i = 0; i < binding_count; i++)
+    {
+        VulkanBufferObject* vb = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle[i]);
+        buffers[i] = vb->buffer.getGpuBuffer();
+    }
+
+    vkCmdBindVertexBuffers(cb->commandBuffer, 0, binding_count, buffers, p_offsets);
+}
+
+void VulkanRenderSystemBase::bindIndexBuffer(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
+    uint32_t indexSize,
+    uint32_t offset)
+{
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    VulkanBufferObject* vb = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
+
+    vkCmdBindIndexBuffer(cb->commandBuffer, vb->buffer.getGpuBuffer(), offset, indexSize == 2 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
+}
+
+void VulkanRenderSystemBase::bindPipeline(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwPipeline> ph)
+{
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    VulkanPipeline* pipeline = mResourceAllocator.handle_cast<VulkanPipeline*>(ph);
+    auto bindPoint = pipeline->getProgram()->getPipelineBindPoint();
+    vkCmdBindPipeline(cb->commandBuffer, bindPoint, pipeline->getPipeline());
+}
+
+void VulkanRenderSystemBase::bindDescriptorSet(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwShader> sh,
+    filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
+{
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    VulkanShader* shader = mResourceAllocator.handle_cast<VulkanShader*>(sh);
+
+    VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
+    if (shader->shaderProgram)
+    {
+        auto pipelineLayout = shader->shaderProgram->getVulkanPipelineLayout();
+        vkCmdBindDescriptorSets(cb->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+            pipelineLayout, set->mSet, 1, &set->vkSet, 0, nullptr);
+    }
+    else
+    {
+        auto pipelineLayout = shader->computeProgram->getPipelineLayout();
+        vkCmdBindDescriptorSets(cb->commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+            pipelineLayout, set->mSet, 1, &set->vkSet, 0, nullptr);
+    }
+}
+
+
+void VulkanRenderSystemBase::bindDescriptorSet(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwProgram> ph,
+    filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
+{
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    VulkanShaderProgram* vulkanProgram = mResourceAllocator.handle_cast<VulkanShaderProgram*>(ph);
+
+    VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
+
+    auto pipelineLayout = vulkanProgram->getVulkanPipelineLayout();
+    vkCmdBindDescriptorSets(cb->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+        pipelineLayout, set->mSet, 1, &set->vkSet, 0, nullptr);
+}
+
+uint64_t VulkanRenderSystemBase::limit_get(Ogre::Limit limit)
+{
+    const VkPhysicalDeviceLimits& limits = physical_device_properties.limits;
+    switch (limit) {
+    case LIMIT_MAX_BOUND_UNIFORM_SETS:
+        return limits.maxBoundDescriptorSets;
+    case LIMIT_MAX_FRAMEBUFFER_COLOR_ATTACHMENTS:
+        return limits.maxColorAttachments;
+    case LIMIT_MAX_TEXTURES_PER_UNIFORM_SET:
+        return limits.maxDescriptorSetSampledImages;
+    case LIMIT_MAX_SAMPLERS_PER_UNIFORM_SET:
+        return limits.maxDescriptorSetSamplers;
+    case LIMIT_MAX_STORAGE_BUFFERS_PER_UNIFORM_SET:
+        return limits.maxDescriptorSetStorageBuffers;
+    case LIMIT_MAX_STORAGE_IMAGES_PER_UNIFORM_SET:
+        return limits.maxDescriptorSetStorageImages;
+    case LIMIT_MAX_UNIFORM_BUFFERS_PER_UNIFORM_SET:
+        return limits.maxDescriptorSetUniformBuffers;
+    case LIMIT_MAX_DRAW_INDEXED_INDEX:
+        return limits.maxDrawIndexedIndexValue;
+    case LIMIT_MAX_FRAMEBUFFER_HEIGHT:
+        return limits.maxFramebufferHeight;
+    case LIMIT_MAX_FRAMEBUFFER_WIDTH:
+        return limits.maxFramebufferWidth;
+    case LIMIT_MAX_TEXTURE_ARRAY_LAYERS:
+        return limits.maxImageArrayLayers;
+    case LIMIT_MAX_TEXTURE_SIZE_1D:
+        return limits.maxImageDimension1D;
+    case LIMIT_MAX_TEXTURE_SIZE_2D:
+        return limits.maxImageDimension2D;
+    case LIMIT_MAX_TEXTURE_SIZE_3D:
+        return limits.maxImageDimension3D;
+    case LIMIT_MAX_TEXTURE_SIZE_CUBE:
+        return limits.maxImageDimensionCube;
+    case LIMIT_MAX_TEXTURES_PER_SHADER_STAGE:
+        return limits.maxPerStageDescriptorSampledImages;
+    case LIMIT_MAX_SAMPLERS_PER_SHADER_STAGE:
+        return limits.maxPerStageDescriptorSamplers;
+    case LIMIT_MAX_STORAGE_BUFFERS_PER_SHADER_STAGE:
+        return limits.maxPerStageDescriptorStorageBuffers;
+    case LIMIT_MAX_STORAGE_IMAGES_PER_SHADER_STAGE:
+        return limits.maxPerStageDescriptorStorageImages;
+    case LIMIT_MAX_UNIFORM_BUFFERS_PER_SHADER_STAGE:
+        return limits.maxPerStageDescriptorUniformBuffers;
+    case LIMIT_MAX_PUSH_CONSTANT_SIZE:
+        return limits.maxPushConstantsSize;
+    case LIMIT_MAX_UNIFORM_BUFFER_SIZE:
+        return limits.maxUniformBufferRange;
+    case LIMIT_MAX_VERTEX_INPUT_ATTRIBUTE_OFFSET:
+        return limits.maxVertexInputAttributeOffset;
+    case LIMIT_MAX_VERTEX_INPUT_ATTRIBUTES:
+        return limits.maxVertexInputAttributes;
+    case LIMIT_MAX_VERTEX_INPUT_BINDINGS:
+        return limits.maxVertexInputBindings;
+    case LIMIT_MAX_VERTEX_INPUT_BINDING_STRIDE:
+        return limits.maxVertexInputBindingStride;
+    case LIMIT_MIN_UNIFORM_BUFFER_OFFSET_ALIGNMENT:
+        return limits.minUniformBufferOffsetAlignment;
+    case LIMIT_MAX_COMPUTE_WORKGROUP_COUNT_X:
+        return limits.maxComputeWorkGroupCount[0];
+    case LIMIT_MAX_COMPUTE_WORKGROUP_COUNT_Y:
+        return limits.maxComputeWorkGroupCount[1];
+    case LIMIT_MAX_COMPUTE_WORKGROUP_COUNT_Z:
+        return limits.maxComputeWorkGroupCount[2];
+    case LIMIT_MAX_COMPUTE_WORKGROUP_INVOCATIONS:
+        return limits.maxComputeWorkGroupInvocations;
+    case LIMIT_MAX_COMPUTE_WORKGROUP_SIZE_X:
+        return limits.maxComputeWorkGroupSize[0];
+    case LIMIT_MAX_COMPUTE_WORKGROUP_SIZE_Y:
+        return limits.maxComputeWorkGroupSize[1];
+    case LIMIT_MAX_COMPUTE_WORKGROUP_SIZE_Z:
+        return limits.maxComputeWorkGroupSize[2];
+    case LIMIT_MAX_VIEWPORT_DIMENSIONS_X:
+        return limits.maxViewportDimensions[0];
+    case LIMIT_MAX_VIEWPORT_DIMENSIONS_Y:
+        return limits.maxViewportDimensions[1];
+    case LIMIT_SUBGROUP_SIZE:
+        return subgroup_capabilities.size;
+    case LIMIT_SUBGROUP_MIN_SIZE:
+        return subgroup_capabilities.min_size;
+    case LIMIT_SUBGROUP_MAX_SIZE:
+        return subgroup_capabilities.max_size;
+    default:
+        assert_invariant(false);
+        return 0;
+    }
+}
+
+RenderSystem::TransferContext* VulkanRenderSystemBase::getTransferContext()
+{
+    uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+    return &mTransferContext[frameIndex];
 }
 
 void VulkanRenderSystemBase::bingingUpdate(

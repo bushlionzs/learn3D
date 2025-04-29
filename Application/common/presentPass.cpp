@@ -28,11 +28,11 @@ bool PresentPass::initialize()
 	samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
 	samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
 	samplerParams.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+	samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
-	samplerParams.compareFunc = filament::backend::SamplerCompareFunc::N;
+	samplerParams.compareFunc = filament::backend::SamplerCompareFunc::COMPARE_OP_NEVER;
 	samplerParams.anisotropyLog2 = 0;
 	samplerParams.useComparison = 0;
 	samplerParams.maxLod = 0;
@@ -45,7 +45,7 @@ bool PresentPass::initialize()
 	filament::backend::RasterState rasterState{};
 	rasterState.depthWrite = false;
 	rasterState.depthTest = false;
-	rasterState.depthFunc = filament::backend::SamplerCompareFunc::A;
+	rasterState.depthFunc = filament::backend::SamplerCompareFunc::COMPARE_OP_ALWAYS;
 	rasterState.colorWrite = true;
 	rasterState.renderTargetCount = 1;
 	Ogre::EngineConfig& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
@@ -89,7 +89,7 @@ void PresentPass::execute(RenderSystem* rs)
 				Ogre::RESOURCE_STATE_RENDER_TARGET
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr);
+		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr, nullptr);
 	}
 	RenderPassInfo info;
 	info.renderTargetCount = 1;
@@ -114,7 +114,7 @@ void PresentPass::execute(RenderSystem* rs)
 				Ogre::RESOURCE_STATE_PRESENT
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr);
+		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr, nullptr);
 	}
 }
 

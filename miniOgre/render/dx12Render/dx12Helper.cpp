@@ -529,7 +529,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 				       RESOURCE_STATE_RENDER_TARGET
 			      },
 		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers);
+		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
 		rs->setViewport(0, 0, width, height, 0.0f, 1.0f);
 		rs->setScissor(0, 0, width, height);
 		rs->beginRenderPass(renderPassInfo);
@@ -549,7 +549,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 				RESOURCE_STATE_GENERIC_READ
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 
 		ImageCopyDesc copyRegion;
 
@@ -576,7 +576,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 			RESOURCE_STATE_GENERIC_READ,
 			RESOURCE_STATE_RENDER_TARGET
 		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		rs->flushCmd(true);
 	}
 	

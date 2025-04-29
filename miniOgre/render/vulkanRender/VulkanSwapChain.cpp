@@ -92,6 +92,8 @@ void VulkanSwapChain::update() {
     mDepth = std::make_unique<VulkanTexture>("", mPlatform, mCommands, bundle.depth, &texProperty);
 
     mExtent = bundle.extent;
+
+    mCommands->flush(true);
 }
 
 void VulkanSwapChain::present() {
@@ -123,6 +125,41 @@ void VulkanSwapChain::present() {
     // We presented the last acquired buffer.
     mAcquired = false;
     mIsFirstRenderPass = true;
+}
+
+void VulkanSwapChain::present(VkSemaphore finished)
+{
+    if (mExplicitImageReadyWait != nullptr) {
+        mExplicitImageReadyWait(swapChain);
+    }
+    VkResult result = mPlatform->present(swapChain, mCurrentSwapIndex, finished);
+    assert_invariant(result == VK_SUCCESS);
+    mAcquired = false;
+}
+
+void VulkanSwapChain::update(bool acquire)
+{
+    mAcquired = acquire;
+}
+
+void VulkanSwapChain::acquire(VulkanPlatform::ImageSyncData& imageSyncData)
+{
+    if (mAcquired) {
+        return;
+    }
+
+    if (mPlatform->hasResized(swapChain)) {
+        VkDevice device = mPlatform->getDevice();
+        vkDeviceWaitIdle(device);
+        mPlatform->recreate(swapChain);
+        update();
+    }
+
+    VkResult const result = mPlatform->acquire(swapChain, &imageSyncData);
+    mCurrentSwapIndex = imageSyncData.imageIndex;
+    mExplicitImageReadyWait = imageSyncData.explicitImageReadyWait;
+    
+    mAcquired = true;
 }
 
 void VulkanSwapChain::acquire(bool& resized) {

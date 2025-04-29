@@ -25,11 +25,11 @@ namespace Ogre {
 		_samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
 		_samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
 		_samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-		_samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-		_samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-		_samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+		_samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+		_samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+		_samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 		_samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
-		_samplerParams.compareFunc = filament::backend::SamplerCompareFunc::N;
+		_samplerParams.compareFunc = filament::backend::SamplerCompareFunc::COMPARE_OP_NEVER;
 		_samplerParams.anisotropyLog2 = 0;
 		_samplerParams.useComparison = 0;
 		_samplerParams.maxLod = 0;
@@ -75,11 +75,11 @@ namespace Ogre {
 		_samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
 		_samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
 		_samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-		_samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-		_samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-		_samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+		_samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+		_samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+		_samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 		_samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
-		_samplerParams.compareFunc = filament::backend::SamplerCompareFunc::N;
+		_samplerParams.compareFunc = filament::backend::SamplerCompareFunc::COMPARE_OP_NEVER;
 		_samplerParams.anisotropyLog2 = 3;
 		_samplerParams.useComparison = 0;
 		_samplerParams.maxLod = 0;
@@ -94,9 +94,6 @@ namespace Ogre {
 			mTextureProperty = *texProperty;
 			
 		}
-
-		mFormat = mTextureProperty._tex_format;
-		mFace = mTextureProperty._face;
 	}
 
 	OgreTexture::~OgreTexture()
@@ -128,11 +125,8 @@ namespace Ogre {
 
 	void OgreTexture::loadImpl()
 	{
-		mFace = mTextureProperty._face;
-
 		if (!mTextureProperty.haveImageFile())
 		{
-			mFormat = mTextureProperty._tex_format;
 			createInternalResources();
 			return;
 		}
@@ -197,9 +191,6 @@ namespace Ogre {
 		mTextureProperty._depth = images[0]->getDepth();
 		mTextureProperty._tex_format = images[0]->getFormat();
 		mTextureProperty._numMipmaps = images[0]->getNumMipmaps();
-
-		mFormat = PixelUtil::getFormatForBitDepths(images[0]->getFormat(), 0, 0);
-		mFace = mTextureProperty._face;
 	
 		createInternalResources();
 

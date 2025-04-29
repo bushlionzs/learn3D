@@ -97,6 +97,10 @@ struct VulkanPlatformSurfaceSwapChain : public VulkanPlatformSwapChainImpl {
     // Non-virtual override-able method
     bool hasResized();
 
+    VkSwapchainKHR getSwapChain()
+    {
+        return mSwapchain;
+    }
 protected:
     // Non-virtual override-able method
     void destroy();
@@ -113,7 +117,7 @@ private:
     VkSwapchainKHR mSwapchain = VK_NULL_HANDLE;
     VkExtent2D const mFallbackExtent;
     VkSemaphore mImageReady[IMAGE_READY_SEMAPHORE_COUNT];
-    uint32_t mCurrentImageReadyIndex;
+    uint32_t mCurrentImageReadyIndex = IMAGE_READY_SEMAPHORE_COUNT-1;
 
     bool mUsesRGB = false;
     bool mHasStencil = false;

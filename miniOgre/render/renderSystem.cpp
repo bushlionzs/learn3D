@@ -97,7 +97,8 @@ void RenderSystem::updateBufferObject(
     Handle<HwBufferObject> boh, 
     const char* data, 
     uint32_t size,
-    uint32_t offset)
+    uint32_t offset,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
     assert_invariant(false);
 }
@@ -224,7 +225,9 @@ filament::backend::Handle<filament::backend::HwSwapChain> RenderSystem::createSw
     return Handle<HwSwapChain>();
 }
 
-void RenderSystem::swapChainAcquire(Handle<HwSwapChain> sch, SwapChainInfo& scInfo)
+void RenderSystem::swapChainAcquire(
+    filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+    Handle<HwSwapChain> sch, SwapChainInfo& scInfo)
 {
     assert_invariant(false);
 }
@@ -304,3 +307,55 @@ void RenderSystem::updatePushConstants(
     assert_invariant(false);
 }
 
+void RenderSystem::bindVertexBuffer(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    uint32_t binding_count,
+    filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+    const uint64_t* p_offsets)
+{
+    assert_invariant(false);
+}
+
+void RenderSystem::bindIndexBuffer(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
+    uint32_t indexSize,
+    uint32_t offset)
+{
+    assert_invariant(false);
+}
+
+void RenderSystem::bindPipeline(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle)
+{
+    assert_invariant(false);
+}
+
+void RenderSystem::bindDescriptorSet(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwShader> sh,
+    filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
+{
+    assert_invariant(false);
+}
+
+void RenderSystem::bindDescriptorSet(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwProgram> ph,
+    filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
+{
+
+}
+
+uint64_t RenderSystem::limit_get(Ogre::Limit limit)
+{
+    assert_invariant(false);
+    return 0;
+}
+
+RenderSystem::TransferContext* RenderSystem::getTransferContext()
+{
+    assert_invariant(false);
+    return nullptr;
+}

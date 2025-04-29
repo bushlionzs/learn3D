@@ -120,7 +120,7 @@ namespace Ogre {
 
         uint32_t getFace()
         {
-            return mFace;
+            return mTextureProperty._face;
         }
 
         bool isCubeTexture()
@@ -169,8 +169,6 @@ namespace Ogre {
     protected:
         String mName;
         TextureProperty mTextureProperty;
-        uint32_t mFace = 1;
-        PixelFormat mFormat;
         std::vector<String> mLayerNames;
 
         bool mLoad = false;

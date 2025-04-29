@@ -33,6 +33,7 @@ public:
     VertexData();
     ~VertexData();
     void bind(void* cb);
+    void bind(filament::backend::Handle<filament::backend::HwCommandBuffer>);
     bool empty()
     {
         return mVertexCount == 0;

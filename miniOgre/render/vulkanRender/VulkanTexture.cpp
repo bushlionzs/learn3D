@@ -54,7 +54,7 @@ bool VulkanTexture::need_midmap()
         return false;
     if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
     {
-        return false;
+        //return false;
     }
     if (mTextureProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
@@ -81,7 +81,7 @@ void VulkanTexture::_createSurfaceList(void)
     
     uint64_t bufferSizeAll = 0;
     mOffsetList.clear();
-    for (size_t face = 0; face < mFace; ++face)
+    for (size_t face = 0; face < mTextureProperty._face; ++face)
     {
         size_t width = mTextureProperty._width;
         size_t height = mTextureProperty._height;
@@ -114,11 +114,15 @@ void VulkanTexture::_createSurfaceList(void)
 
 void VulkanTexture::createInternalResourcesImpl(void)
 {
+    if (mTextureProperty._tex_format == Ogre::PF_DEPTH16)
+    {
+        int kk = 0;
+    }
     if (VK_FORMAT_UNDEFINED == mVulkanFormat)
     {
-        mFormat = VulkanMappings::_getClosestSupportedPF(mFormat);
+        mFormat = VulkanMappings::_getClosestSupportedPF(mTextureProperty._tex_format);
 
-        mVulkanFormat = VulkanMappings::_getGammaFormat(VulkanMappings::_getPF(mFormat), false);
+        mVulkanFormat = VulkanMappings::_getGammaFormat(VulkanMappings::_getPF(mTextureProperty._tex_format), false);
     }
     
 
@@ -176,11 +180,11 @@ void VulkanTexture::freeInternalResourcesImpl(void)
 
 void VulkanTexture::updateTexture(const std::vector<const CImage*>& images)
 {
-        uint32 faces = mFace;
+        uint32 faces = mTextureProperty._face;
         int32_t depth = 1;
         uint32_t offset = 0;
 
-        for (uint32 i = 0; i < mFace; ++i)
+        for (uint32 i = 0; i < faces; ++i)
         {
             uint32_t width = mTextureProperty._width;
             uint32_t height = mTextureProperty._height;
@@ -313,7 +317,7 @@ void VulkanTexture::createImage(
     imageInfo.extent = { width, height, mTextureProperty._depth };
 
     imageInfo.mipLevels = mMipLevels;
-    imageInfo.arrayLayers = mFace;
+    imageInfo.arrayLayers = mTextureProperty._face;
     imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -423,7 +427,7 @@ VkImageView VulkanTexture::createImageView(VkImage image, VkFormat format)
     {
         mAspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
     }
-    viewInfo.subresourceRange = { mAspectFlags, 0, mMipLevels, 0, mFace };
+    viewInfo.subresourceRange = { mAspectFlags, 0, mMipLevels, 0, mTextureProperty._face };
 
     viewInfo.components.r = VK_COMPONENT_SWIZZLE_R;
     viewInfo.components.g = VK_COMPONENT_SWIZZLE_G;
@@ -460,8 +464,8 @@ std::vector<VkImageView> VulkanTexture::createImageViewArray(VkImage image, VkFo
     viewInfo.components.a = VK_COMPONENT_SWIZZLE_A;
     
     std::vector<VkImageView> views;
-    views.reserve(mFace);
-    for (uint32_t i = 0; i < mFace; i++)
+    views.reserve(mTextureProperty._face);
+    for (uint32_t i = 0; i < mTextureProperty._face; i++)
     {
         VkImageView imageView;
         viewInfo.subresourceRange.baseArrayLayer = i;

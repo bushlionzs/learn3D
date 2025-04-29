@@ -80,6 +80,7 @@ private:
     UINT64* pRowSizesInBytes = nullptr;
     UINT* pNumRows = nullptr;
     bool mCreate = false;
+    Ogre::PixelFormat mFormat;
     DXGI_FORMAT mD3DFormat;
     DXGI_SAMPLE_DESC mFSAAType;
 

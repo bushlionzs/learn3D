@@ -213,7 +213,7 @@ void VulkanRenderSystem::addAccelerationStructure(
             BUFFER_CREATION_FLAG_ACCELERATION_STRUCTURE_BUILD_INPUT;
         desc.mSize = instanceSize;
         pAS->instanceDescBuffer =  createBufferObject(desc);
-        this->updateBufferObject(pAS->instanceDescBuffer, (const char*)instanceDescs, instanceSize, 0);
+        this->updateBufferObject(pAS->instanceDescBuffer, (const char*)instanceDescs, instanceSize, 0, nullptr);
         VkDeviceOrHostAddressConstKHR instanceDataDeviceAddress = {};
         instanceDataDeviceAddress.deviceAddress = getBufferDeviceAddress(getVkBuffer(pAS->instanceDescBuffer));
 
@@ -311,7 +311,7 @@ void VulkanRenderSystem::buildAccelerationStructure(RaytracingBuildASDesc* pDesc
     if (pDesc->mIssueRWBarrier)
     {
         BufferBarrier barrier = { as->asBufferHandle, RESOURCE_STATE_ACCELERATION_STRUCTURE_WRITE, RESOURCE_STATE_ACCELERATION_STRUCTURE_READ };
-        resourceBarrier(1, &barrier, 0, nullptr, 0, nullptr);
+        resourceBarrier(1, &barrier, 0, nullptr, 0, nullptr, nullptr);
     }
 }
 

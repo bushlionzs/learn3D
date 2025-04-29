@@ -23,6 +23,15 @@ class Ogre::ICamera;
 
 class VulkanRenderSystemBase: public RenderSystem
 {
+    struct SubgroupCapabilities {
+        uint32_t size = 0;
+        uint32_t min_size = 0;
+        uint32_t max_size = 0;
+        VkShaderStageFlags supported_stages = 0;
+        VkSubgroupFeatureFlags supported_operations = 0;
+        VkBool32 quad_operations_in_all_stages = false;
+        bool size_control_is_supported = false;
+    };
 public:
 	VulkanRenderSystemBase();
 	~VulkanRenderSystemBase();
@@ -50,8 +59,12 @@ public:
     )override;
     virtual void frameStart() override;
     virtual void frameEnd() override;
-    virtual void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
-    virtual void setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+    virtual void setViewport(
+        float x, float y, float width, float height, float minDepth, float maxDepth,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh);
+    virtual void setScissor(
+        uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh);
     virtual void beginRenderPass(RenderPassInfo& renderPassInfo) override;
     virtual void endRenderPass(RenderPassInfo& renderPassInfo) override;
     virtual void bindPipeline(
@@ -84,7 +97,8 @@ public:
         const Handle<HwDescriptorSet>* descSets,
         uint32_t setCount);
 
-    void dispatchComputeShader(int32_t x, int32_t y, int32_t z);
+    void dispatchComputeShader(int32_t x, int32_t y, int32_t z,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>*)override;
 
     virtual void present() override;
 
@@ -133,7 +147,8 @@ protected:
         Handle<HwBufferObject> boh,
         const char* data, 
         uint32_t size,
-        uint32_t offset) override;
+        uint32_t offset,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh) override;
     virtual bool getBufferInfo(
         filament::backend::Handle<filament::backend::HwBufferObject> boh,
         Ogre::BufferDesc& desc)override;
@@ -174,6 +189,7 @@ protected:
         TextureBarrier* pTextureBarriers,
         uint32_t numRtBarriers,
         RenderTargetBarrier* pRtBarriers,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* dsh,
         QueueType queueType = QUEUE_TYPE_GRAPHICS
     )  override;
     virtual void beginCmd();
@@ -196,6 +212,7 @@ protected:
 
     virtual Handle<HwSwapChain> createSwapChain() override;
     virtual void swapChainAcquire(
+        filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
         filament::backend::Handle<filament::backend::HwSwapChain> sch,
         SwapChainInfo& scInfo) override;
 
@@ -229,7 +246,31 @@ protected:
         filament::backend::Handle<filament::backend::HwShader> sh,
         uint32_t offset,
         const char* data,
-        uint32_t size);
+        uint32_t size)override;
+    virtual void bindVertexBuffer(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        uint32_t binding_count,
+        filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+        const uint64_t* p_offsets)override;
+    virtual void bindIndexBuffer(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
+        uint32_t indexSize,
+        uint32_t offset)override;
+    virtual void bindPipeline(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle)override;
+
+    virtual void bindDescriptorSet(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwShader> sh,
+        filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)override;
+    void bindDescriptorSet(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwProgram> ph,
+        filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)override;
+    virtual uint64_t limit_get(Ogre::Limit limit)override;
+    RenderSystem::TransferContext* getTransferContext()override;
 protected:
     void bingingUpdate(
         vks::tools::BingdingInfo& bindingMap,
@@ -260,4 +301,8 @@ protected:
     VulkanSettings* mVulkanSettings;
 
     VkPipeline mLastPipeline;
+    VkPhysicalDeviceProperties physical_device_properties;
+    SubgroupCapabilities subgroup_capabilities;
+
+    RenderSystem::TransferContext mTransferContext[2];
 };

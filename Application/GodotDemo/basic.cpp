@@ -73,9 +73,9 @@ void BasicApplication::ibl_init()
 	tp._samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
 	tp._samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
 	tp._samplerParams.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	tp._samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+	tp._samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	tp._samplerParams.anisotropyLog2 = 0;
 
 	TextureLoadDesc textureLoadDesc;

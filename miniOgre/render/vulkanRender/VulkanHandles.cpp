@@ -159,14 +159,14 @@ void PushConstantDescription::write(VulkanCommands* commands, VkPipelineLayout l
 }
 
 VulkanShaderProgram::VulkanShaderProgram(const std::string& name) noexcept
-    : VulkanProgram(VulkanResourceType::PROGRAM),
-    HwProgram(utils::CString(name.c_str())),
+    : VulkanProgram(name, VulkanResourceType::PROGRAM),
+    HwProgram(name),
     mShaders{},
     mLayouts{},
     mPushConstantsSize(0)
 {
 
-   
+    mPipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 }
 
 VulkanShaderProgram::~VulkanShaderProgram() {
@@ -348,7 +348,7 @@ VulkanShader::VulkanShader() :
 
 VulkanRaytracingProgram::VulkanRaytracingProgram(const std::string& name)noexcept
     : HwRaytracingProgram(utils::CString(name.c_str())),
-    VulkanProgram(VulkanResourceType::PROGRAM),
+    VulkanProgram(name, VulkanResourceType::PROGRAM),
     mVkPipelineLayout(VK_NULL_HANDLE),
     mVkPipeline(VK_NULL_HANDLE),
     mLayouts{}
@@ -363,10 +363,10 @@ VulkanRaytracingProgram::~VulkanRaytracingProgram()
 
 VulkanComputeProgram::VulkanComputeProgram(const std::string& name) noexcept
     : HwComputeProgram(name.c_str()),
-    VulkanProgram(VulkanResourceType::PROGRAM)
+    VulkanProgram(name, VulkanResourceType::PROGRAM)
 {
 
-
+    mPipelineBindPoint = VK_PIPELINE_BIND_POINT_COMPUTE;
 }
 
 VulkanComputeProgram::~VulkanComputeProgram() {
@@ -386,10 +386,18 @@ void VulkanComputeProgram::upateShaderInfo(const VulkanComputeShaderInfo& shader
         VK_SHADER_STAGE_COMPUTE_BIT, &pushConstantsList);
     updateDescriptorInfo(results);
 
-    auto pEmptyDescriptorSetLayout = VulkanHelper::getSingleton().getEmptyDescriptorSetLayout();
-    std::array<VkDescriptorSetLayout, 4> layoutlist;
+    {
+        auto itor = results.find(4);
+        if (itor != results.end())
+        {
+            int kk = 0;
+        }
+    }
 
-    for (auto set = 0; set < 4; set++)
+    auto pEmptyDescriptorSetLayout = VulkanHelper::getSingleton().getEmptyDescriptorSetLayout();
+    std::array<VkDescriptorSetLayout, 5> layoutlist;
+
+    for (auto set = 0; set < 5; set++)
     {
         auto itor = results.find(set);
         if (itor == results.end())
@@ -700,6 +708,7 @@ VulkanFence::VulkanFence(VkDevice device)
     vkFence = VK_NULL_HANDLE;
     VkFenceCreateInfo create_info = {};
     create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
     VkResult err = vkCreateFence(device, &create_info, nullptr, &vkFence);
 
 }

@@ -34,9 +34,10 @@ public:
 	void addRenderPass(PassBase* pass);
 	void addUIPass();
 private:
-	void render();
 	virtual bool frameStarted(const Ogre::FrameEvent& evt);
 	void ShowFrameFrequency();
+	void loop();
+	void loop2();
 protected:
 	ApplicationWindow* mApplicationWindow = nullptr;
 	RenderSystem* mRenderSystem;
@@ -51,4 +52,7 @@ protected:
 	RenderPassInfo mPassInfo;
 	AppInfo* mAppInfo;
 	bool mUseCEGUI;
+
+	Timer mTimer;
+	uint64_t mFrameCurrent, mFrameLast;
 };

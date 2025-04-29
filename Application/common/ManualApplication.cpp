@@ -153,53 +153,121 @@ void ManualApplication::run(AppInfo* info)
 	}
 	else
 	{
-		MSG msg;
-		while (true)
-		{
-			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-			{
-				if (msg.message == WM_QUIT)
-					break;
-
-				if (msg.message == WM_SIZE)
-				{
-					int kk = 0;
-				}
-
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-
-				if (msg.message == WM_QUIT)
-				{
-					break;
-				}
-			}
-			else
-			{
-				render();
-				ShowFrameFrequency();
-			}
-		}
+		loop2();
 	}
 	
 }
 
-void ManualApplication::render()
+void ManualApplication::loop()
 {
-	mRenderSystem->frameStart();
-	Ogre::Root::getSingleton()._fireFrameStarted();
-
-
-	for (auto pass : mPassList)
+	MSG msg;
+	while (true)
 	{
-		pass->execute(mRenderSystem);
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT)
+				break;
+
+			if (msg.message == WM_SIZE)
+			{
+				int kk = 0;
+			}
+
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+
+			if (msg.message == WM_QUIT)
+			{
+				break;
+			}
+		}
+		else
+		{
+			mRenderSystem->frameStart();
+			Ogre::Root::getSingleton()._fireFrameStarted();
+			for (auto pass : mPassList)
+			{
+				pass->execute(mRenderSystem);
+			}
+			mRenderSystem->present();
+			mRenderSystem->frameEnd();
+			ShowFrameFrequency();
+		}
+	}
+}
+
+void ManualApplication::loop2()
+{
+	mFrameLast = 0;
+	mFrameCurrent = 0;
+	MSG msg;
+	PassBase::RenderContext context;
+	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
+	context.sch = mRenderSystem->createSwapChain();
+
+	std::vector<PassBase::FrameContext> frameContextList;
+	frameContextList.resize(3);
+	for (uint32_t i = 0; i < 3; i++)
+	{
+		PassBase::FrameContext* frameContext = &frameContextList[i];
+		frameContext->cbh = mRenderSystem->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
+		frameContext->fh = mRenderSystem->createFence();
+		frameContext->sph = mRenderSystem->createSemaphore();
 	}
 
-	
-	
+	while (true)
+	{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT)
+				break;
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 
-	mRenderSystem->present();
-	mRenderSystem->frameEnd();
+			if (msg.message == WM_QUIT)
+			{
+				break;
+			}
+		}
+		else
+		{
+			Ogre::Root::getSingleton()._fireFrameStarted();
+			mRenderSystem->swapChainAcquire(context.cqh, context.sch, context.scInfo);
+			PassBase::FrameContext* frameContext = &frameContextList[context.scInfo.imageIndex];
+			mRenderSystem->waitFence(frameContext->fh);
+			context.frameContext = frameContext;
+			{
+				mFrameCurrent = mTimer.getMicrosecondsCPU();
+				float delta = (mFrameCurrent - mFrameLast) / 1000000.0f;
+				InputManager::getSingletonPtr()->captureInput();
+				mGameCamera->update(delta);
+				mAppInfo->update(delta);
+				context.delta = delta;
+				
+				for (auto pass : mPassList)
+				{
+					pass->update(context);
+				}
+				
+				mRenderSystem->flushCmd(true);
+				
+			}
+			
+			mRenderSystem->beginCommandBuffer(frameContext->cbh);
+
+			for (auto pass : mPassList)
+			{
+				pass->execute(context);
+			}
+
+			mRenderSystem->endCommandBuffer(frameContext->cbh);
+			mRenderSystem->executeAndPresent(context.cqh, nullptr, 0, 
+				&frameContext->cbh, 1, &frameContext->sph, 1,
+				frameContext->fh, nullptr, 1);
+
+			ShowFrameFrequency();
+		}
+	}
 }
 
 void ManualApplication::ShowFrameFrequency()

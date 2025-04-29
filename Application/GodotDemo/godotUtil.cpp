@@ -46,6 +46,7 @@
 #include <scene/resources/style_box_texture.h>
 #include <scene/resources/style_box_line.h>
 #include <scene/gui/video_stream_player.h>
+#include <scene/gui/text_edit.h>
 #include <scene/main/viewport.h>
 #include <servers/rendering/rendering_server_default.h>
 #include <servers/rendering/renderer_rd/renderer_compositor_rd.h>
@@ -531,6 +532,8 @@ static void register_scene_types()
     GDREGISTER_CLASS(StyleBoxFlat);
     GDREGISTER_CLASS(StyleBoxLine);
     GDREGISTER_CLASS(Theme);
+
+    GDREGISTER_CLASS(TextEdit);
 }
 static void initialize_physics() 
 {

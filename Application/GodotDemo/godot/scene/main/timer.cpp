@@ -80,7 +80,12 @@ void Timer::_notification(int p_what) {
 }
 
 void Timer::set_wait_time(double p_time) {
+	if (p_time <= 0)
+	{
+		int kk = 0;
+	}
 	ERR_FAIL_COND_MSG(p_time <= 0, "Time should be greater than zero.");
+	
 	wait_time = p_time;
 	update_configuration_warnings();
 }

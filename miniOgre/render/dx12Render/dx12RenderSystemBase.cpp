@@ -97,9 +97,9 @@ Ogre::RenderTarget* Dx12RenderSystemBase::createRenderTarget(
     DxDescriptorID targetId = -1;
     if (texProperty._tex_usage.has_flag(TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT))
     {
-        texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
     }
     else if (texProperty._tex_usage.has_flag(TEXTURE_USAGE_COLOR_ATTACHMENT_BIT))
     {
@@ -811,6 +811,7 @@ void Dx12RenderSystemBase::resourceBarrier(
     uint32_t numBufferBarriers, BufferBarrier* pBufferBarriers, 
     uint32_t numTextureBarriers, TextureBarrier* pTextureBarriers, 
     uint32_t numRtBarriers, RenderTargetBarrier* pRtBarriers,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* dsh,
     Ogre::QueueType queueType
 )
 {

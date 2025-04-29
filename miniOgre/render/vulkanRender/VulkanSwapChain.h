@@ -48,7 +48,9 @@ struct VulkanSwapChain : public HwSwapChain, VulkanResource {
     ~VulkanSwapChain();
 
     void present();
-
+    void present(VkSemaphore finished);
+    void update(bool acquire);
+    void acquire(VulkanPlatform::ImageSyncData& imageSyncData);
     void acquire(bool& reized);
 
     inline VulkanTexture* getCurrentColor() const noexcept {

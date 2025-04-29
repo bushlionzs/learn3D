@@ -107,7 +107,7 @@ void BasicApplication::base1()
 	input.depth = mRenderWindow->getDepthTarget();
 	input.cam = mGameCamera->getCamera();
 	input.sceneMgr = mSceneManager;
-	auto mainPass = createStandardRenderPass(input);
+	auto mainPass = createSceneRenderPass(input);
 	mRenderPipeline->addRenderPass(mainPass);
 }
 

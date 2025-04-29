@@ -333,19 +333,22 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
 
     // We could simply enable all supported features, but since that may have performance
     // consequences let's just enable the features we need.
-    VkPhysicalDeviceFeatures enabledFeatures{
-            .geometryShader = VK_TRUE,
-            .tessellationShader = VK_TRUE,
-            .sampleRateShading = VK_TRUE,
-            .depthClamp = features.depthClamp,
-            .samplerAnisotropy = features.samplerAnisotropy,
-            .textureCompressionETC2 = features.textureCompressionETC2,
-            .textureCompressionBC = features.textureCompressionBC,
-            .fragmentStoresAndAtomics = VK_TRUE,
-            .shaderClipDistance = features.shaderClipDistance,
-            .shaderInt64 = VK_TRUE
-    };
+    VkPhysicalDeviceFeatures enabledFeatures{};
 
+    enabledFeatures.geometryShader = VK_TRUE,
+    enabledFeatures.tessellationShader = VK_TRUE,
+    enabledFeatures.sampleRateShading = VK_TRUE,
+    enabledFeatures.depthClamp = features.depthClamp,
+    enabledFeatures.samplerAnisotropy = features.samplerAnisotropy,
+    enabledFeatures.textureCompressionETC2 = features.textureCompressionETC2,
+    enabledFeatures.textureCompressionBC = features.textureCompressionBC,
+    enabledFeatures.fragmentStoresAndAtomics = VK_TRUE,
+    enabledFeatures.shaderClipDistance = features.shaderClipDistance,
+    enabledFeatures.shaderInt64 = VK_TRUE;
+    enabledFeatures.shaderFloat64 = VK_TRUE;
+    enabledFeatures.shaderInt16 = VK_TRUE;
+    enabledFeatures.imageCubeArray = VK_TRUE;
+    
     deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
     deviceCreateInfo.enabledExtensionCount = (uint32_t) requestExtensions.size();
     deviceCreateInfo.ppEnabledExtensionNames = requestExtensions.data();
@@ -362,9 +365,19 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
         base = (VkBaseOutStructure*)base->pNext;
     }
 
+    
+    VkPhysicalDeviceFeatures imageCubeArrayFeatures = {};
+    imageCubeArrayFeatures.imageCubeArray = VK_TRUE;
+
+    VkPhysicalDeviceShaderFloat16Int8FeaturesKHR shader_features = {};
+    shader_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
+    shader_features.pNext = &imageCubeArrayFeatures;
+    shader_features.shaderFloat16 = VK_TRUE;
+    shader_features.shaderInt8 = VK_TRUE;
+    
     VkPhysicalDeviceRobustness2FeaturesEXT robusness2Features = {};
     robusness2Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
-    robusness2Features.pNext = nullptr;
+    robusness2Features.pNext = &shader_features;
     robusness2Features.nullDescriptor = VK_TRUE;
 
     VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAdressFeatures = {};

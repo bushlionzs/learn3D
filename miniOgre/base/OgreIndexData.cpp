@@ -23,6 +23,12 @@ void IndexData::bind()
     rs->bindIndexBuffer(mIndexBufferHandle, mIndexSize, 0);
 }
 
+void IndexData::bind(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+    rs->bindIndexBuffer(cbh, mIndexBufferHandle, mIndexSize, 0);
+}
+
 void IndexData::createBuffer(uint32_t indexSize, uint32_t indexCount)
 {
     mIndexSize = indexSize;

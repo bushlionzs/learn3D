@@ -14,6 +14,7 @@ public:
         return mIndexBufferHandle;
     }
     void bind();
+    void bind(filament::backend::Handle<filament::backend::HwCommandBuffer>);
     void createBuffer(uint32_t indexSize, uint32_t indexCount);
     void writeData(const char* data, uint32_t size);
 

@@ -22,6 +22,32 @@ RenderingDeviceDriver::BufferID RenderingDeviceDriverNULL::buffer_create(
 {
 	Ogre::BufferDesc desc{};
 	desc.mBindingType = Ogre::BufferObjectBinding_Buffer;
+
+	if (p_usage.has_flag(BUFFER_USAGE_UNIFORM_BIT))
+	{
+		desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+	}
+
+	if (p_usage.has_flag(BUFFER_USAGE_STORAGE_BIT))
+	{
+		desc.mBindingType = Ogre::BufferObjectBinding_Storge;
+	}
+
+	if (p_usage.has_flag(BUFFER_USAGE_INDEX_BIT))
+	{
+		desc.mBindingType = Ogre::BufferObjectBinding_Index;
+	}
+
+	if (p_usage.has_flag(BUFFER_USAGE_VERTEX_BIT))
+	{
+		desc.mBindingType = Ogre::BufferObjectBinding_Vertex;
+	}
+
+	if (p_usage.has_flag(BUFFER_USAGE_INDIRECT_BIT))
+	{
+		desc.mBindingType = Ogre::BufferObjectBinding_InDirectBuffer;
+	}
+
 	desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_GPU_ONLY;
 	if (p_allocation_type == MEMORY_ALLOCATION_TYPE_CPU)
 	{
@@ -117,6 +143,10 @@ Ogre::TextureType mapTextureType(RenderingDeviceCommons::TextureType texType)
 RenderingDeviceDriver::TextureID RenderingDeviceDriverNULL::texture_create(
 	const TextureFormat& p_format, const TextureView& p_view)
 {
+	if (p_format.mipmaps > 1)
+	{
+		int kk = 0;
+	}
 	Ogre::TextureProperty texProperty;
 	texProperty._width = p_format.width;
 	texProperty._height = p_format.height;
@@ -198,19 +228,24 @@ bool RenderingDeviceDriverNULL::texture_can_make_shared_with_format(TextureID p_
 	return true;
 }
 
-RenderingDeviceDriver::SamplerID RenderingDeviceDriverNULL::sampler_create(const RenderingDeviceDriver::SamplerState& p_state)
+RenderingDeviceDriver::SamplerID RenderingDeviceDriverNULL::sampler_create(
+	const RenderingDeviceDriver::SamplerState& p_state)
 {
 	filament::backend::SamplerParams params;
-	params.filterMag = filament::backend::SamplerFilterType::LINEAR;
-	params.filterMin = filament::backend::SamplerFilterType::LINEAR;
-	params.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	params.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-	params.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-	params.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+	params.filterMag = p_state.min_filter == SAMPLER_FILTER_LINEAR ?
+		filament::backend::SamplerFilterType::LINEAR : filament::backend::SamplerFilterType::NEAREST;
+	params.filterMin = p_state.min_filter == SAMPLER_FILTER_LINEAR ?
+		filament::backend::SamplerFilterType::LINEAR : filament::backend::SamplerFilterType::NEAREST;
+	params.mipMapMode = p_state.mip_filter == SAMPLER_FILTER_LINEAR ?
+		filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR :
+		filament::backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
+	params.wrapS = (filament::backend::SamplerWrapMode)p_state.repeat_u;
+	params.wrapT = (filament::backend::SamplerWrapMode)p_state.repeat_v;
+	params.wrapR = (filament::backend::SamplerWrapMode)p_state.repeat_w;
 	params.compareMode = filament::backend::SamplerCompareMode::NONE;
-	params.compareFunc = filament::backend::SamplerCompareFunc::N;
+	params.compareFunc = (filament::backend::SamplerCompareFunc)p_state.compare_op;
 	params.anisotropyLog2 = 3;
-	params.useComparison = 0;
+	params.useComparison = p_state.enable_compare;
 	params.maxLod = 0;
 	params.padding2 = 0;
 	auto samplerHandle = mRenderSystem->createTextureSampler(params);
@@ -344,7 +379,11 @@ void RenderingDeviceDriverNULL::command_pipeline_barrier(
 		texBarriers[i].mNewState = mapResourceState(p_texture_barriers[i].next_layout);
 	}
 	
-	mRenderSystem->resourceBarrier(bufferBarriers.size(), bufferBarriers.data(), texBarriers.size(), texBarriers.data(), 0, nullptr);
+	filament::backend::Handle<filament::backend::HwCommandBuffer> dsh(p_cmd_buffer.id);
+	mRenderSystem->resourceBarrier(
+		bufferBarriers.size(), bufferBarriers.data(), 
+		texBarriers.size(), texBarriers.data(), 
+		0, nullptr, &dsh);
 }
 
 RenderingDeviceDriver::FenceID RenderingDeviceDriverNULL::fence_create()
@@ -495,8 +534,10 @@ RenderingDeviceDriver::SwapChainID RenderingDeviceDriverNULL::swap_chain_create(
 	auto sch = mRenderSystem->createSwapChain();
 	SwapChainPrivateInfo* info = new SwapChainPrivateInfo;
 	info->sch = sch;
+
+	
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-	for (uint32_t i = 0; i < ogreConfig.swapBufferCount; i++)
+	for (uint32_t i = 0; i < 3; i++)
 	{
 		FrameBufferInfo* frameInfo = new FrameBufferInfo;
 		frameInfo->isSwapChain = true;
@@ -517,7 +558,8 @@ RenderingDeviceDriver::FramebufferID RenderingDeviceDriverNULL::swap_chain_acqui
 	SwapChainPrivateInfo* info = (SwapChainPrivateInfo*)p_swap_chain.id;
 
 	Ogre::SwapChainInfo swapChainInfo;
-	mRenderSystem->swapChainAcquire(info->sch, swapChainInfo);
+	filament::backend::Handle<filament::backend::HwCommandQueue> cqh(p_cmd_queue.id);
+	mRenderSystem->swapChainAcquire(cqh, info->sch, swapChainInfo);
 	FrameBufferInfo* frameInfo = info->swapChainFrame[swapChainInfo.imageIndex];
 	frameInfo->textureList.clear();
 	frameInfo->textureList.push_back(swapChainInfo.color);
@@ -703,7 +745,7 @@ RenderingDeviceDriver::ShaderID RenderingDeviceDriverNULL::shader_create_from_by
 	String& r_name)
 {
 
-	Ogre::ShaderDesc desc;
+	Ogre::ShaderDesc desc{};
 	const uint8_t* binptr = p_shader_binary.ptr();
 	uint32_t binsize = p_shader_binary.size();
 
@@ -1167,6 +1209,7 @@ void RenderingDeviceDriverNULL::command_next_render_subpass(
 void RenderingDeviceDriverNULL::command_render_set_viewport(
 	CommandBufferID p_cmd_buffer, VectorView<Rect2i> p_viewports)
 {
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
 	for (uint32_t i = 0; i < p_viewports.size(); i++)
 	{
 		float x = p_viewports[i].position.x;
@@ -1175,7 +1218,7 @@ void RenderingDeviceDriverNULL::command_render_set_viewport(
 		float height = p_viewports[i].size.y;
 		float minDepth = 0.0f;
 		float maxDepth = 1.0f;
-		mRenderSystem->setViewport(x, y, width, height, minDepth, maxDepth);
+		mRenderSystem->setViewport(x, y, width, height, minDepth, maxDepth, &cbh);
 	}
 	
 }
@@ -1183,26 +1226,32 @@ void RenderingDeviceDriverNULL::command_render_set_viewport(
 void RenderingDeviceDriverNULL::command_render_set_scissor(
 	CommandBufferID p_cmd_buffer, VectorView<Rect2i> p_scissors)
 {
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
 	for (uint32_t i = 0; i < p_scissors.size(); i++)
 	{
 		float x = p_scissors[i].position.x;
 		float y = p_scissors[i].position.y;
 		float width = p_scissors[i].size.x;
 		float height = p_scissors[i].size.y;
-		mRenderSystem->setScissor(x, y, width, height);
+		mRenderSystem->setScissor(x, y, width, height, &cbh);
 	}
 	
 }
 
 void RenderingDeviceDriverNULL::command_render_clear_attachments(
-	CommandBufferID p_cmd_buffer, VectorView<AttachmentClear> p_attachment_clears, VectorView<Rect2i> p_rects)
+	CommandBufferID p_cmd_buffer, 
+	VectorView<AttachmentClear> p_attachment_clears, 
+	VectorView<Rect2i> p_rects)
 {
-
+	assert_invariant(false);
 }
 
-void RenderingDeviceDriverNULL::command_bind_render_pipeline(CommandBufferID p_cmd_buffer, PipelineID p_pipeline)
+void RenderingDeviceDriverNULL::command_bind_render_pipeline(
+	CommandBufferID p_cmd_buffer, PipelineID p_pipeline)
 {
-
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	filament::backend::Handle<filament::backend::HwPipeline> ph(p_pipeline.id);
+	mRenderSystem->bindPipeline(cbh, ph);
 }
 
 void RenderingDeviceDriverNULL::command_bind_render_uniform_set(
@@ -1211,8 +1260,11 @@ void RenderingDeviceDriverNULL::command_bind_render_uniform_set(
 	ShaderID p_shader, 
 	uint32_t p_set_index)
 {
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
 	filament::backend::Handle<filament::backend::HwDescriptorSet>dsh(p_uniform_set.id);
 	filament::backend::Handle<filament::backend::HwShader> sh(p_shader.id);
+	
+	mRenderSystem->bindDescriptorSet(cbh, sh, dsh);
 }
 
 void RenderingDeviceDriverNULL::command_render_draw(
@@ -1251,14 +1303,14 @@ void RenderingDeviceDriverNULL::command_render_draw_indexed_indirect_count(
 	uint64_t p_offset, BufferID p_count_buffer, uint64_t p_count_buffer_offset,
 	uint32_t p_max_draw_count, uint32_t p_stride)
 {
-
+	assert_invariant(false);
 }
 
 void RenderingDeviceDriverNULL::command_render_draw_indirect(
 	CommandBufferID p_cmd_buffer, BufferID p_indirect_buffer,
 	uint64_t p_offset, uint32_t p_draw_count, uint32_t p_stride)
 {
-
+	assert_invariant(false);
 }
 
 void RenderingDeviceDriverNULL::command_render_draw_indirect_count(
@@ -1266,43 +1318,48 @@ void RenderingDeviceDriverNULL::command_render_draw_indirect_count(
 	uint64_t p_offset, BufferID p_count_buffer, uint64_t p_count_buffer_offset,
 	uint32_t p_max_draw_count, uint32_t p_stride)
 {
-
+	assert_invariant(false);
 }
 
 void RenderingDeviceDriverNULL::command_render_bind_vertex_buffers(
 	CommandBufferID p_cmd_buffer, uint32_t p_binding_count,
 	const BufferID* p_buffers, const uint64_t* p_offsets)
 {
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	std::vector < filament::backend::Handle<filament::backend::HwBufferObject>> bhs;
+	bhs.resize(p_binding_count);
 	for (uint32_t i = 0; i < p_binding_count; i++)
 	{
 		filament::backend::Handle<filament::backend::HwBufferObject> bufHandle(p_buffers[i].id);
-
-		mRenderSystem->bindVertexBuffer(bufHandle, 0, p_offsets[i]);
+		bhs[i] = bufHandle;
 	}
+
+	mRenderSystem->bindVertexBuffer(cbh, p_binding_count, bhs.data(), p_offsets);
 }
 
 void RenderingDeviceDriverNULL::command_render_bind_index_buffer(
 	CommandBufferID p_cmd_buffer, BufferID p_buffer,
 	IndexBufferFormat p_format, uint64_t p_offset)
 {
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
 	filament::backend::Handle<filament::backend::HwBufferObject> bufHandle(p_buffer.id);
 	uint32_t indexSize = 4;
 	if (p_format == INDEX_BUFFER_FORMAT_UINT16)
 	{
 		indexSize = 2;
 	}
-	mRenderSystem->bindIndexBuffer(bufHandle, indexSize, p_offset);
+	mRenderSystem->bindIndexBuffer(cbh, bufHandle, indexSize, p_offset);
 }
 
 void RenderingDeviceDriverNULL::command_render_set_blend_constants(
 	CommandBufferID p_cmd_buffer, const Color& p_constants)
 {
-
+	assert_invariant(false);
 }
 
 void RenderingDeviceDriverNULL::command_render_set_line_width(CommandBufferID p_cmd_buffer, float p_width)
 {
-
+	assert_invariant(false);
 }
 
 Ogre::CullingMode mapCullingMode(RenderingDeviceCommons::PolygonCullMode cullingMode)
@@ -1421,34 +1478,50 @@ RenderingDeviceDriver::PipelineID RenderingDeviceDriverNULL::render_pipeline_cre
 		colorBlendState.attachments[i].blendEquationAlpha =
 			(Ogre::BlendOperation)p_blend_state.attachments[i].alpha_blend_op;
 	}
+
+	RenderPrivatePassInfo* info = (RenderPrivatePassInfo*)p_render_pass.id;
+
 	auto & renderTarget = pipelineCreateInfo.renderTarget;
 	renderTarget.renderTargetCount = p_color_attachments.size();
+
+	assert_invariant(p_color_attachments.size() <= info->attachments.size());
+	for (uint32_t i = 0; i < p_color_attachments.size(); i++)
+	{
+		renderTarget.pixelFormat[i] = info->attachments[i];
+	}
 
 	auto ph = mRenderSystem->createPipeline(pipelineCreateInfo, sh);
 	return RenderingDeviceDriver::PipelineID(ph.getId());
 }
 
-void RenderingDeviceDriverNULL::command_bind_compute_pipeline(CommandBufferID p_cmd_buffer, PipelineID p_pipeline)
+void RenderingDeviceDriverNULL::command_bind_compute_pipeline(
+	CommandBufferID p_cmd_buffer, PipelineID p_pipeline)
 {
-
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	filament::backend::Handle<filament::backend::HwPipeline> ph(p_pipeline.id);
+	mRenderSystem->bindPipeline(cbh, ph);
 }
 
 void RenderingDeviceDriverNULL::command_bind_compute_uniform_set(
 	CommandBufferID p_cmd_buffer, UniformSetID p_uniform_set, ShaderID p_shader, uint32_t p_set_index)
 {
-
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	filament::backend::Handle<filament::backend::HwShader> sh(p_shader.id);
+	filament::backend::Handle<filament::backend::HwDescriptorSet>dsh(p_uniform_set.id);
+	mRenderSystem->bindDescriptorSet(cbh, sh, dsh);
 }
 
 void RenderingDeviceDriverNULL::command_compute_dispatch(
 	CommandBufferID p_cmd_buffer, uint32_t p_x_groups, uint32_t p_y_groups, uint32_t p_z_groups)
 {
-
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	mRenderSystem->dispatchComputeShader(p_x_groups, p_y_groups, p_z_groups, &cbh);
 }
 
 void RenderingDeviceDriverNULL::command_compute_dispatch_indirect(
 	CommandBufferID p_cmd_buffer, BufferID p_indirect_buffer, uint64_t p_offset)
 {
-
+	assert_invariant(false);
 }
 
 RenderingDeviceDriver::PipelineID RenderingDeviceDriverNULL::compute_pipeline_create(
@@ -1461,7 +1534,7 @@ RenderingDeviceDriver::PipelineID RenderingDeviceDriverNULL::compute_pipeline_cr
 
 RenderingDeviceDriver::QueryPoolID RenderingDeviceDriverNULL::timestamp_query_pool_create(uint32_t p_query_count)
 {
-	return RenderingDeviceDriver::QueryPoolID();
+	return RenderingDeviceDriver::QueryPoolID(1);
 }
 
 void RenderingDeviceDriverNULL::timestamp_query_pool_free(QueryPoolID p_pool_id)
@@ -1524,7 +1597,7 @@ void RenderingDeviceDriverNULL::end_segment()
 
 void RenderingDeviceDriverNULL::set_object_name(ObjectType p_type, ID p_driver_id, const String& p_name)
 {
-	assert_invariant(false);
+	//assert_invariant(false);
 }
 
 uint64_t RenderingDeviceDriverNULL::get_resource_native_handle(DriverResource p_type, ID p_driver_id)
@@ -1540,7 +1613,38 @@ uint64_t RenderingDeviceDriverNULL::get_total_memory_used()
 
 uint64_t RenderingDeviceDriverNULL::limit_get(Limit p_limit)
 {
-	return 0;
+	Ogre::Limit limit = (Ogre::Limit)p_limit;
+
+	switch (limit)
+	{
+	case Ogre::Limit::LIMIT_SUBGROUP_IN_SHADERS:
+	{
+		uint32_t flags = SHADER_STAGE_VERTEX_BIT;
+		flags |= SHADER_STAGE_TESSELATION_CONTROL_BIT;
+		flags |= SHADER_STAGE_TESSELATION_EVALUATION_BIT;
+		flags |= SHADER_STAGE_FRAGMENT_BIT;
+		flags |= SHADER_STAGE_COMPUTE_BIT;
+		return flags;
+	}
+	break;
+	case Ogre::Limit::LIMIT_SUBGROUP_OPERATIONS:
+	{
+		uint32_t flags = 0;
+		flags |= SUBGROUP_BASIC_BIT;
+		flags |= SUBGROUP_VOTE_BIT;
+		flags |= SUBGROUP_ARITHMETIC_BIT;
+		flags |= SUBGROUP_BALLOT_BIT;
+		flags |= SUBGROUP_SHUFFLE_BIT;
+		flags |= SUBGROUP_SHUFFLE_RELATIVE_BIT;
+		flags |= SUBGROUP_CLUSTERED_BIT;
+		flags |= SUBGROUP_QUAD_BIT;
+		return flags;
+	}
+
+	default:
+		return mRenderSystem->limit_get(limit);
+	}
+	
 }
 
 uint64_t RenderingDeviceDriverNULL::api_trait_get(ApiTrait p_trait)

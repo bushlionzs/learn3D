@@ -125,7 +125,7 @@ namespace Ogre
         };
 
         rs->beginCmd();
-        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers);
+        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
         rs->flushCmd(true);
 
         for (uint32_t m = 0; m < numMips; m++) 
@@ -159,8 +159,8 @@ namespace Ogre
                         (const char*)&pushBlockPrefilterEnv,
                         sizeof(pushBlockPrefilterEnv));
                 }
-                rs->setViewport(0, 0, width, height, 0.0f, 1.0f);
-                rs->setScissor(0, 0, width, height);
+                rs->setViewport(0, 0, width, height, 0.0f, 1.0f, nullptr);
+                rs->setScissor(0, 0, width, height, nullptr);
                 rs->beginRenderPass(renderPassInfo);
 
                 // Pass parameters for current pass using a push constant block
@@ -187,7 +187,7 @@ namespace Ogre
                         RESOURCE_STATE_PRESENT
                     }
                 };
-                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 
                 ImageCopyDesc copyRegion;
                 
@@ -214,7 +214,7 @@ namespace Ogre
                     RESOURCE_STATE_PRESENT,
                     RESOURCE_STATE_RENDER_TARGET
                 };
-                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
                 rs->flushCmd(true);                
             }
         }
@@ -227,7 +227,7 @@ namespace Ogre
         };
 
         rs->beginCmd();
-        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers);
+        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
         rs->flushCmd(true);
 
         return rt;
@@ -249,9 +249,9 @@ namespace Ogre
         texProperty._samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
         texProperty._samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
         texProperty._samplerParams.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-        texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
         texProperty._samplerParams.anisotropyLog2 = 0;
         texProperty._need_mipmap = false;
         Ogre::RenderTarget* rt = rs->createRenderTarget(name, texProperty);
@@ -280,7 +280,7 @@ namespace Ogre
                RESOURCE_STATE_UNDEFINED,
                RESOURCE_STATE_RENDER_TARGET},
         };
-        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers);
+        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
 
         rs->beginRenderPass(renderPassInfo);
         rs->bindPipeline(pipelineHandle, nullptr, 0);
@@ -292,7 +292,7 @@ namespace Ogre
                RESOURCE_STATE_RENDER_TARGET,
                RESOURCE_STATE_SHADER_RESOURCE
         };
-        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers);
+        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
         rs->flushCmd(true);
 
         return rt;
