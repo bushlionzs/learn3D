@@ -4,7 +4,7 @@
 #include "OgreSubMesh.h"
 #include "OgreHardwareBufferManager.h"
 #include "OgreSceneNode.h"
-#include "myutils.h"
+#include <path_utils.h>
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
 #include "OgreVertexDeclaration.h"
@@ -46,7 +46,7 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name)
 		return it->second;
 	}
 	
-	std::string suffix = getSuffix(name);
+	std::string suffix = CommonUtils::getSuffix(name);
 
 	auto itor = mMeshLoaderMap.find(suffix);
 

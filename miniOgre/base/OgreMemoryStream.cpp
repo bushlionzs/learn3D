@@ -29,7 +29,7 @@ namespace Ogre {
         }
         else
         {
-            get_file_content(res->_fullname.c_str(), mMem);
+            CommonUtils::get_file_content(res->_fullname.c_str(), mMem);
             mSize = mMem.size();
             mFirst = mMem.data();
             mEnd = mFirst + mSize;

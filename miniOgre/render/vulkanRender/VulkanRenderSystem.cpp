@@ -22,7 +22,7 @@
 #include "hlslUtil.h"
 
 
-VulkanRenderSystem::VulkanRenderSystem(void* wnd)
+VulkanRenderSystem::VulkanRenderSystem()
 {
     bluevk::initialize();
 
@@ -397,7 +397,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         shaderModuleInfo.shaderType = Ogre::ShaderType::RayGenShader;
         ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(rayGenShaderName);
         assert_invariant(resInfo != nullptr);
-        get_file_content(resInfo->_fullname.c_str(), content);
+        CommonUtils::get_file_content(resInfo->_fullname.c_str(), content);
         glslCompileShader(resInfo->_fullname, content, shaderInfo.rayGenEntryName, 
             shaderInfo.shaderMacros, &shaderInfo.args, shaderModuleInfo);
         VkPipelineShaderStageCreateInfo shaderStage = {};
@@ -431,7 +431,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         shaderModuleInfo.shaderType = Ogre::ShaderType::MissShader;
         ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(rayMissShaderName);
         assert_invariant(resInfo != nullptr);
-        get_file_content(resInfo->_fullname.c_str(), content);
+        CommonUtils::get_file_content(resInfo->_fullname.c_str(), content);
         glslCompileShader(resInfo->_fullname, content, shaderInfo.rayMissEntryName, 
             shaderInfo.shaderMacros, &shaderInfo.args, shaderModuleInfo);
         VkPipelineShaderStageCreateInfo shaderStage = {};
@@ -460,7 +460,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         resInfo = ResourceManager::getSingleton().getResourceInfo(rayShadowShaderName);
         if (resInfo && !shaderInfo.rayShadowEntryName.empty())
         {
-            get_file_content(resInfo->_fullname.c_str(), content);
+            CommonUtils::get_file_content(resInfo->_fullname.c_str(), content);
             glslCompileShader(resInfo->_fullname, content, shaderInfo.rayShadowEntryName, 
                 shaderInfo.shaderMacros, &shaderInfo.args, shaderModuleInfo);
             shaderStage = {};
@@ -479,7 +479,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         shaderModuleInfo.shaderType = Ogre::ShaderType::ClosestHitShader;
         ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(rayClosethitShaderName);
         assert_invariant(resInfo != nullptr);
-        get_file_content(resInfo->_fullname.c_str(), content);
+        CommonUtils::get_file_content(resInfo->_fullname.c_str(), content);
         glslCompileShader(resInfo->_fullname, content, shaderInfo.rayClosethitEntryName, 
             shaderInfo.shaderMacros, &shaderInfo.args, shaderModuleInfo);
         VkPipelineShaderStageCreateInfo shaderStage = {};
@@ -507,7 +507,7 @@ Handle<HwRaytracingProgram> VulkanRenderSystem::createRaytracingProgram(
         if (resInfo && !shaderInfo.rayAnyHitEntryName.empty())
         {
             shaderModuleInfo.shaderType = Ogre::ShaderType::AnyHitShader;
-            get_file_content(resInfo->_fullname.c_str(), content);
+            CommonUtils::get_file_content(resInfo->_fullname.c_str(), content);
             glslCompileShader(resInfo->_fullname, content, shaderInfo.rayAnyHitEntryName, 
                 shaderInfo.shaderMacros, &shaderInfo.args, shaderModuleInfo);
             results = vks::tools::getProgramBindings(

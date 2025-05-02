@@ -8,7 +8,7 @@
 #include "OgreVertexDeclaration.h"
 #include "OgreMaterialManager.h"
 #include "OgreString.h"
-#include "myutils.h"
+#include <path_utils.h>
 #include "OgreSkeleton.h"
 #include "OgreBone.h"
 #include "OgreAnimation.h"
@@ -262,7 +262,7 @@ void M2Loader::initAnimated(Ogre::DataStream* stream)
 			
 		mAnimNamefiles.resize(mHeader.nAnimations);
 
-		auto prefix = removeSuffix(mName);
+		auto prefix = CommonUtils::removeSuffix(mName);
 		memcpy(mAnimations.data(), stream->getStreamData() + mHeader.ofsAnimations, 
 			sizeof(ModelAnimation) * mHeader.nAnimations);
 		for (size_t i = 0; i < mHeader.nAnimations; i++)

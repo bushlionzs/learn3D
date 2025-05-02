@@ -29,7 +29,7 @@ THE SOFTWARE.
 // Common stuff
 
 #include <map>
-
+#include <stdint.h>
 
 #if OGRE_CPU == OGRE_CPU_X86
     #include <xmmintrin.h>
@@ -440,12 +440,6 @@ namespace Ogre {
     {
         CubeType_Irradiance  = 0,
         CubeType_Prefiltered = 1,
-    };
-
-    enum ResourceState {
-        ResourceState_None,
-        LOADING, // resource is loading.
-        READY,    // resource is loaded completely.
     };
 
     enum CameraMoveType

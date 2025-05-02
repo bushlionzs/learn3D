@@ -566,7 +566,6 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
             }
             subMesh->setMaterial(mat);
             Ogre::Material* tmp = mat.get();
-            tmp->preLoad();
 		}
         meshIndex++;
 	}

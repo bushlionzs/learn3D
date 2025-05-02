@@ -5,6 +5,7 @@
 #include "OgreMaterial.h"
 #include "OgreRoot.h"
 
+
 void TextureAnimationControllerValue::setValue(Ogre::Real value)
 {
     mTexUnit->addTime(value);
@@ -146,23 +147,31 @@ void TextureUnit::setTextureRotate(const Ogre::Radian& angle)
     mRecalcTexMatrix = true;
 }
 
-void TextureUnit::preLoad()
+bool TextureUnit::isLoaded()
 {
-    
+    for (auto& tex : mTextures)
+    {
+        if (!tex->isLoaded())
+            return false;
+    }
+    return true;
 }
-void TextureUnit::_load(utils::JobSystem::Job* job)
+
+void TextureUnit::_load()
 {
     mTextures.reserve(mNameList.size());
     for (auto& name : mNameList)
     {
-        auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty, true);
+        auto tex = TextureManager::getSingletonPtr()->load(name, &mTextureProperty, false);
         mTextures.push_back(tex);
     }
 
 
     for (auto& tex : mTextures)
     {
-        tex->load(job);
+        if (tex->isLoaded())
+            continue;
+        tex->loadAsync();
     }
 
     if (mUseAnimation || mUseScroll || mRotate != Ogre::Radian(0))
@@ -172,10 +181,7 @@ void TextureUnit::_load(utils::JobSystem::Job* job)
         Ogre::ControllerManager& controllerManager = Ogre::ControllerManager::getSingleton();
         mAnimController = controllerManager.createFrameTimePassthroughController(
             mControllerOwner);
-    }
-
-    mLoad = true;
-    
+    }    
 }
 
 void TextureUnit::_unload()
@@ -202,9 +208,7 @@ void TextureUnit::_unload()
 
 void TextureUnit::updateResourceState()
 {
-    
-    
-    
+
 }
 
 std::shared_ptr<OgreTexture> TextureUnit::getTexture()
@@ -450,14 +454,10 @@ void TextureUnit::setAnimatedTextureName(
     // Load immediately if Material loaded
     if (isLoaded())
     {
-        _load(nullptr);
+        _load();
     }
 }
 
-bool TextureUnit::isLoaded()
-{
-    return mResourceState == ResourceState::READY;
-}
 
 const Matrix4& TextureUnit::getTextureTransform() const
 {

@@ -8,7 +8,7 @@
 #include "OgreDataStream.h"
 #include "Misc.h"
 #include "WMOInstance.h"
-#include "myutils.h"
+#include <string_util.h>
 #include <forward_list>
 
 MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
@@ -27,7 +27,7 @@ MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
   filename << "World\\Maps\\" << basename << "\\" << basename << ".wdt";
 
   std::string wdtname = filename.str();
-  stringToUpper(wdtname);
+  CommonUtils::stringToUpper(wdtname);
   auto stream = ResourceManager::getSingleton().openResource(wdtname);
   uint32_t fourcc;
   uint32_t size;
@@ -82,7 +82,7 @@ MapIndex::MapIndex (const std::string &pBasename, int map_id, World* world)
           std::stringstream adt_filename;
           adt_filename << "World\\Maps\\" << basename << "\\" << basename << "_" << i << "_" << j << ".adt";
           std::string adtname = adt_filename.str();
-          stringToUpper(adtname);
+          CommonUtils::stringToUpper(adtname);
           mTiles[j][i].tile = nullptr;
           mTiles[j][i].onDisc = ResourceManager::getSingleton().hasResource(adtname);
 
@@ -237,7 +237,7 @@ MapTile* MapIndex::loadTile(const tile_index& tile, bool reloading)
   filename << "World\\Maps\\" << basename << "\\" << basename << "_" << tile.x << "_" << tile.z << ".adt";
  
   std::string mapname = filename.str();
-  stringToUpper(mapname);
+  CommonUtils::stringToUpper(mapname);
   if (!ResourceManager::getSingleton().hasResource(mapname))
   {
     return nullptr;

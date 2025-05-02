@@ -149,6 +149,7 @@ namespace Ogre
 #define OGRE_COMPILER OGRE_COMPILER_MSVC
 #define OGRE_SIMD_ALIGNMENT  16
 #define RESTRICT_ALIAS __restrict
+#define OGRE_THREAD_SUPPORT 1
 typedef std::map<std::string, std::string> NameValuePairList;
 const std::string BLANKSTRING;
 
@@ -176,11 +177,6 @@ const std::string BLANKSTRING;
 
 #define _OrphigineExport
 #define DECLARE_SCRIPT_RESOURCE
-#define OGRE_AUTO_MUTEX
-#define OGRE_LOCK_AUTO_MUTEX
-#define OGRE_MUTEX(...)
-#define OGRE_LOCK_MUTEX(...)
-
 #define OGRE_CHECK(expr, data) if(!expr)OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, data)
 
 #ifdef USE_OGRE_MACRO

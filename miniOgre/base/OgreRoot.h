@@ -14,6 +14,7 @@
 
 namespace Ogre {
 	class MovableObjectFactory;
+	class WorkQueue;
 	struct EngineConfig
 	{
 		uint32_t width = 1600;
@@ -32,9 +33,7 @@ namespace Ogre {
 		~Root();
 
 		void _initialise();
-		RenderSystem* createRenderEngine(
-			void* wnd,
-			enum EngineType et);
+		RenderSystem* createRenderEngine(enum EngineType et);
 		RenderSystem* getRenderSystem();
 		void addMovableObjectFactory(MovableObjectFactory* fact,
 			bool overrideExisting = false);
@@ -72,6 +71,11 @@ namespace Ogre {
 		{
 			return mEngineConfig;
 		}
+
+		WorkQueue* getWorkQueue() const 
+		{ 
+			return mWorkQueue.get(); 
+		}
 	private:
 		uint32_t _allocateNextMovableObjectTypeFlag(void);
 	private:
@@ -100,5 +104,7 @@ namespace Ogre {
 		Ogre::FrameEvent mEvt;
 		
 		EngineConfig mEngineConfig;
+
+		std::unique_ptr<WorkQueue> mWorkQueue;
 	};
 }

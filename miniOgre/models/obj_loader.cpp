@@ -10,6 +10,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <string_util.h>
+#include <path_utils.h>
 
 ObjLoader::ObjLoader()
 {
@@ -133,7 +134,7 @@ bool ObjLoader::loadMeshFromFile(
                     }
                     aiReturn ret = sourceMat->GetTexture(texResource.textureType, (unsigned int)0, &name);
                     assert(ret == aiReturn_SUCCESS);
-                    std::string shortname = dy::get_short_name(name.C_Str());
+                    std::string shortname = CommonUtils::getShortFilename(name.C_Str());
 
                     tp.textureTypeName = texResource.textureTypeName;
                     mat->addTexture(shortname, &tp);

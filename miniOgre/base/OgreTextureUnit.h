@@ -76,13 +76,9 @@ public:
     void setTextureVScroll(float v);
     void setTextureScroll(float u, float v);
     void setTextureRotate(const Ogre::Radian& angle);
-    void preLoad();
-    void _load(utils::JobSystem::Job* job);
+    bool isLoaded();
+    void _load();
     void _unload();
-    Ogre::ResourceState getResourceState()
-    {
-        return mResourceState;
-    }
     void updateResourceState();
 
     std::shared_ptr<Ogre::OgreTexture> getTexture();
@@ -121,8 +117,6 @@ public:
         unsigned int numFrames,
         Real duration = 0);
 
-    bool isLoaded();
-
     const Ogre::Matrix4& getTextureTransform() const;
     void recalcTextureMatrix() const;
 
@@ -157,7 +151,4 @@ private:
     EffectMap mEffects;
 
     Ogre::Material* mOwner;
-
-
-    Ogre::ResourceState mResourceState = Ogre::ResourceState::ResourceState_None;
 };

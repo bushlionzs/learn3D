@@ -3,7 +3,9 @@
 #include <StormLib.h>
 #include <mutex>
 #include <filesystem>
-#include "myutils.h"
+#include <path_utils.h>
+#include <platform_file.h>
+#include <string_util.h>
 #include "OgreResourceManager.h"
 
 
@@ -25,7 +27,7 @@ void MPQArchive::load()
     }
 
     bool forceUpdate = false;
-    std::string shortname = getShortFilename(_mpqName);
+    std::string shortname = CommonUtils::getShortFilename(_mpqName);
     if (patches.count(shortname))
     {
         forceUpdate = true;
@@ -50,8 +52,8 @@ void MPQArchive::load()
             }
             if (c == '\n')
             {
-                stringToUpper(current);
-                std::string aa = getShortFilename(current);
+                CommonUtils::stringToUpper(current);
+                std::string aa = CommonUtils::getShortFilename(current);
                 if (aa == "ARROWFLIGHT_01.M2")
                 {
                     int kk = 0;
@@ -74,12 +76,7 @@ void MPQArchive::load()
 
         if (!current.empty())
         {
-            std::string aa = getShortFilename(current);
-            if (aa == "arrowflight_01.m2")
-            {
-                int kk = 0;
-            }
-            stringToUpper(current);
+            CommonUtils::stringToUpper(current);
             ResourceInfo* res = new ResourceInfo();
             res->_fullname = current;
             res->_base = this;

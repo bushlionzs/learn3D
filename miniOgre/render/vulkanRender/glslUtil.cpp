@@ -2,7 +2,7 @@
 #include <platform_file.h>
 #include "glslUtil.h"
 #include "hlslUtil.h"
-#include "myutils.h"
+#include <path_utils.h>
 #include <libshaderc_util/file_finder.h>
 #include <VulkanTools.h>
 #include <VulkanHelper.h>
@@ -40,7 +40,7 @@ public:
         result->source_name = name.c_str();
         result->source_name_length = name.size();
 
-        get_file_content(name.c_str(), context->content);
+        CommonUtils::get_file_content(name.c_str(), context->content);
         result->content = context->content.c_str();
         result->content_length = context->content.length();
         return result;
@@ -114,7 +114,7 @@ bool glslCompileShader(
     }
     
     std::string result;
-    const char* suffix = getSuffix(shaderName);
+    const char* suffix = CommonUtils::getSuffix(shaderName);
     bool glsl = true;
     if (strcmp(suffix, ".glsl") != 0)
     {
@@ -337,7 +337,7 @@ void spvToGlsl(
     spirv_cross::CompilerGLSL::Options options;
 
 
-    std::string shortname = getShortFilename(name);
+    std::string shortname = CommonUtils::getShortFilename(name);
     
 
     // Брвы HLSL ДњТы

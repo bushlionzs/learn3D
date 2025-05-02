@@ -28,7 +28,7 @@ THE SOFTWARE.
 #ifndef _Resource_H__
 #define _Resource_H__
 
-#include "OgreStringInterface.h"
+#include <OgreThreadDefines.h>
 
 namespace Ogre {
 
@@ -61,7 +61,7 @@ namespace Ogre {
             through a generic interface.</li>
         </ol>
     */
-    class  Resource : public StringInterface
+    class  Resource
     {
     public:
         OGRE_AUTO_MUTEX; // public to allow external locking
@@ -112,6 +112,13 @@ namespace Ogre {
             LOADSTATE_PREPARING
         };
 
+        enum ResourceType
+        {
+            ResourceType_None =0,
+            ResourceType_Texture,
+            ResourceType_Mesh,
+            ResourceType_Material
+        };
         /// Enum that allow to choose subset of unloaded/reloaded resources and to adjust reloading behavior
         enum LoadingFlags
         {
@@ -148,6 +155,8 @@ namespace Ogre {
         String mOrigin;
         /// Optional manual loader; if provided, data is loaded from here instead of a file
         ManualResourceLoader* mLoader;
+
+        ResourceType mResourceType;
     private:
         /// State count, the number of times this resource has changed state
         size_t mStateCount;

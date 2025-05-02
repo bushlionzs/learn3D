@@ -2,6 +2,7 @@
 #include "OgreTexture.h"
 #include "myutils.h"
 #include "OgreResourceManager.h"
+#include "OgreResourceBackgroundQueue.h"
 #include "OgreBitwise.h"
 
 namespace Ogre {
@@ -94,6 +95,7 @@ namespace Ogre {
 			mTextureProperty = *texProperty;
 			
 		}
+		mResourceType = ResourceType_Texture;
 	}
 
 	OgreTexture::~OgreTexture()
@@ -134,42 +136,34 @@ namespace Ogre {
 		CImage image;
 		image.loadImage(mName);
 		_loadImages({&image});
+
+		mLoadingState = LOADSTATE_LOADED;
 	}
 
-	void OgreTexture::preLoad()
+	void OgreTexture::unloadImpl(void)
 	{
 
 	}
 
-	void OgreTexture::postLoad()
+	bool OgreTexture::isLoaded()
 	{
-
+		auto old = mLoadingState.load();
+		return old == LOADSTATE_LOADED;
 	}
 
-	bool OgreTexture::load(utils::JobSystem::Job* job)
+	void OgreTexture::loadAsync()
 	{
-		if (mLoad)
-			return true;
-		mLoad = true;
-		auto loadfunc = [](OgreTexture* tex) {
-			tex->preLoad();
-			tex->loadImpl();
-			tex->postLoad();
-			};
-
-		if (job)
+		auto old = mLoadingState.load();
+		if (old == LOADSTATE_LOADING ||
+			old == LOADSTATE_LOADED)
 		{
-			auto& js = ResourceManager::getSingleton().getJobSystem();
-			utils::JobSystem::Job* loadJob = utils::jobs::createJob(js, job, loadfunc, this);
-			js.run(loadJob);
+			return;
 		}
-		else
-		{
-			loadfunc(this);
-		}
-		
-		return true;
+
+		mLoadingState.store(LOADSTATE_LOADING);
+		ResourceBackgroundQueue::getSingleton().load(ResourcePtr(this));
 	}
+
 
 	uint32 OgreTexture::getMaxMipmaps() const
 	{
@@ -195,11 +189,6 @@ namespace Ogre {
 		createInternalResources();
 
 		updateTexture(images);
-	}
-
-	void OgreTexture::unload()
-	{
-		assert_invariant(false);
 	}
 
 	void OgreTexture::uploadTextureData(const char* data, uint32_t size, TextureProperty& tp)

@@ -702,12 +702,17 @@ VulkanBufferObject::VulkanBufferObject(VmaAllocator allocator, VulkanStagePool& 
           desc.bufferCreationFlags), desc.mSize, desc.mMemoryUsage == RESOURCE_MEMORY_USAGE_CPU_TO_GPU),
       bindingType(desc.mBindingType) {}
 
-VulkanFence::VulkanFence(VkDevice device)
+VulkanFence::VulkanFence(VkDevice device, bool signaled)
     :VulkanResource(VulkanResourceType::FENCE)
 {
     vkFence = VK_NULL_HANDLE;
     VkFenceCreateInfo create_info = {};
     create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    if (signaled)
+    {
+        create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    }
+    
     VkResult err = vkCreateFence(device, &create_info, nullptr, &vkFence);
 
 }

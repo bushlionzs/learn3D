@@ -19,6 +19,8 @@ namespace Ogre {
         mVertexData = new VertexData;
         mIndexData = new IndexData;
         mAABB.setInfinite();
+
+        mResourceType = ResourceType_Mesh;
     }
 
     Mesh::~Mesh()

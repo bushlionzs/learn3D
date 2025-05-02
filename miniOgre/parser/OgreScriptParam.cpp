@@ -2,8 +2,8 @@
 #include "OgreScriptParam.h"
 #include "OgreMaterial.h"
 #include "OgreString.h"
-#include "myutils.h"
-#include "MaterialScriptParser.h"
+#include <string_util.h>
+#include <path_utils.h>
 #include "MaterialScriptParser.h"
 #include "shaderManager.h"
 #include "OgreTextureUnit.h"
@@ -573,7 +573,7 @@ void OgreMaterialParam::setTexture(const std::string& val)
 
     bool video = false;
 
-    aa[0] = UTF8ToGBK(aa[0].c_str());
+    aa[0] = CommonUtils::utf8_to_acsi(aa[0].c_str());
 
     if (aa.size() > 1)
     {
@@ -654,8 +654,8 @@ void OgreMaterialParam::setAnimTexture(const String& val)
             std::vector<std::string> tmp;
             tmp.reserve(num);
 
-            std::string suffix = getSuffix(aa[0]);
-            std::string head = removeSuffix(aa[0]);
+            std::string suffix = CommonUtils::getSuffix(aa[0]);
+            std::string head = CommonUtils::removeSuffix(aa[0]);
             for (uint32_t i = 0; i < num; i++)
             {
                 tmp.push_back(head +  std::to_string(i + 1) + suffix);
@@ -735,7 +735,7 @@ void OgreMaterialParam::addVariable(const std::string& variable)
 {
     StringVector aa = Ogre::StringUtil::split(variable);
     assert_invariant(aa.size() == 2);
-    aa[1] = string_trim(aa[1]);
+    aa[1] = CommonUtils::string_trim(aa[1]);
     mVariablesMap[aa[0]] = aa[1];
 }
 
@@ -777,8 +777,6 @@ void OgreMaterialParam::compile()
     {
         ShaderManager::getSingleton().addMacro(pair.first);
     }
-
-    mMaterial->preLoad();
 }
 
 void OgreMaterialParam::addParam(const std::string& key, const std::string& value)

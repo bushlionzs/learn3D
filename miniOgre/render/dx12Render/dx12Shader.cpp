@@ -3,7 +3,7 @@
 #include "dx12RenderSystem.h"
 #include "OgreVertexDeclaration.h"
 #include "OgreResourceManager.h"
-#include "myutils.h"
+#include <path_utils.h>
 #include "d3dutil.h"
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
@@ -39,7 +39,7 @@ bool DX12ProgramImpl::load(const ShaderInfo& shaderInfo)
     {
         shaderName = &privateInfo->computeShaderName;
     }
-    const char* suffix = getSuffix(*shaderName);
+    const char* suffix = CommonUtils::getSuffix(*shaderName);
 
     bool glsl = false;
     if (strcmp(suffix, ".glsl") == 0)

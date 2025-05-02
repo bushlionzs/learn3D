@@ -1,6 +1,7 @@
 #include <OgreHeader.h>
 #include "hlslUtil.h"
 #include "string_util.h"
+#include <path_utils.h>
 #include <platform_file.h>
 #include <WinSock2.h>
 #include <windows.h>
@@ -66,11 +67,11 @@ public:
 		_COM_Outptr_result_maybenull_ IDxcBlob** ppIncludeSource
 	)
 	{
-		std::string name = dy::unicode_to_acsi(pFilename);
-		name = dy::get_short_name(name);
+		std::string name = CommonUtils::unicode_to_acsi(pFilename);
+		name = CommonUtils::getShortFilename(name);
 		ResourceInfo* res = ResourceManager::getSingleton().getResourceInfo(name);
 
-		get_file_content(res->_fullname.c_str(), content);
+		CommonUtils::get_file_content(res->_fullname.c_str(), content);
 		const char* kk = content.c_str();
 		ComPtr<IDxcBlobEncoding> pBlob;
 
@@ -118,7 +119,7 @@ bool hlslToBin(
 	};
 	
 	std::wstring targetProfile;
-	std::wstring wEntryPoint = dy::acsi_to_widebyte(entryPoint);
+	std::wstring wEntryPoint = CommonUtils::acsi_to_widebyte(entryPoint);
 	if (shaderType == VertexShader)
 	{
 		targetProfile = L"vs_6_5";
@@ -147,14 +148,14 @@ bool hlslToBin(
 		assert_invariant(false);
 	}
 	
-	std::wstring wShaderName = dy::acsi_to_widebyte(shaderName);
+	std::wstring wShaderName = CommonUtils::acsi_to_widebyte(shaderName);
 	wchar_t buffer[256];
 	std::vector<std::wstring> pool;
 	pool.reserve(shaderMacros.size());
 	for (auto& obj : shaderMacros)
 	{
-		std::wstring aa = dy::acsi_to_widebyte(obj.first);
-		std::wstring bb = dy::acsi_to_widebyte(obj.second);
+		std::wstring aa = CommonUtils::acsi_to_widebyte(obj.first);
+		std::wstring bb = CommonUtils::acsi_to_widebyte(obj.second);
 		swprintf_s(buffer, L"%s=%s", aa.c_str(), bb.c_str());
 		pool.push_back(buffer);
 		arguments.push_back(L"-D");

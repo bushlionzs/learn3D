@@ -16,7 +16,7 @@
 
 
 
-Dx12RenderSystem::Dx12RenderSystem(void* wnd)
+Dx12RenderSystem::Dx12RenderSystem()
 {
 	mRenderSystemName = "Directx12";
 }
@@ -40,11 +40,6 @@ OgreTexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, Te
 	Dx12Texture* tex = new Dx12Texture(
 		name, texProperty, mCommands, true);
 
-	if (!tex->load(nullptr))
-	{
-		delete tex;
-		return nullptr;
-	}
 
 	return tex;
 }
@@ -55,13 +50,6 @@ Ogre::OgreTexture* Dx12RenderSystem::createManualTexture(
 {
     Dx12Texture* tex = new Dx12Texture(
         name, texProperty, mCommands, true);
-
-    if (!tex->load(nullptr))
-    {
-        delete tex;
-        return nullptr;
-    }
-
     return tex;
 }
 

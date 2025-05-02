@@ -48,13 +48,15 @@ namespace Ogre {
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "fail to create texture");
         }
 
-        if (read)
-        {
-            tmp->load(nullptr);
-        }
         std::shared_ptr<OgreTexture> tex(tmp);
 
         mTexMap[name] = tex;
+
+        if (read)
+        {
+            tex->loadAsync();
+        }
+       
 
         return tex;
     }

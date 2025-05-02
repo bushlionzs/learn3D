@@ -9,6 +9,7 @@
 #include <filament/Handle.h>
 #include <filament/DriverEnums.h>
 #include <filament/DriverBase.h>
+#include "OgreResource.h"
 
 class TextureUnit;
 class VertexDeclaration;
@@ -24,7 +25,7 @@ public:
 };
 
 namespace Ogre {
-    class Material
+    class Material: public Resource
     {
     public:
         Material(const std::string& name, bool pbr = false);
@@ -34,8 +35,9 @@ namespace Ogre {
         uint32_t addTexture(const Ogre::TexturePtr& tex);
         uint32_t addAnimTexture(const std::vector<String>& namelist, float duration);
         
-        void preLoad();
-        void load(utils::JobSystem::Job* job);
+        void loadAsync();
+        virtual void loadImpl();
+        virtual void unloadImpl(void);
         bool isLoaded();
 
         std::shared_ptr<Material> clone(const String& name);
@@ -121,17 +123,6 @@ namespace Ogre {
 
         bool isTransparent();
 
-        ResourceState getResourceState()
-        {
-            return mState;
-        }
-        void updateResourceState();
-
-        void setResourceState(ResourceState rs)
-        {
-            mState = rs;
-        }
-
         filament::backend::RasterState& getRasterState()
         {
             return mRasterState;
@@ -173,14 +164,9 @@ namespace Ogre {
         float mOpacity = 1.0f;
         float mShininess = 0.0f;
         bool mPbr;
-        bool mLoad = false;
 
         Ogre::ColourBlendState mBlendState;
 
-        ResourceState mState = ResourceState::ResourceState_None;
-
-        
-        
         filament::backend::RasterState mRasterState;
         filament::backend::Handle<filament::backend::HwPipeline> mPipelineHandle;
         filament::backend::Handle<filament::backend::HwProgram> mProgramHandle;

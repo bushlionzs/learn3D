@@ -7,12 +7,11 @@
 #include "VulkanRenderTarget.h"
 
 
-VulkanWindow::VulkanWindow()
-    :mSwapChain(nullptr),
+VulkanWindow::VulkanWindow(uint64_t wndHandle, uint64_t flags)
+    :mWndHandle(wndHandle), mFlags(flags), mSwapChain(nullptr),
     mDepthTarget(nullptr),
     mColorTarget(nullptr)
 {
-	
 }
 
 VulkanWindow::~VulkanWindow()

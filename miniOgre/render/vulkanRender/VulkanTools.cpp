@@ -367,7 +367,7 @@ namespace vks
 		VkShaderModule loadShaderAssic(const char* fileName, VkDevice device, Ogre::ShaderType type)
 		{
 			std::string content;
-			get_file_content(fileName, content);
+			CommonUtils::get_file_content(fileName, content);
 
 			std::string result;
 			std::string strName(fileName);
@@ -425,7 +425,7 @@ namespace vks
 			VkShaderStageFlagBits stage)
 		{
 			std::string content;
-			get_file_content(fileName.c_str(), content);
+			CommonUtils::get_file_content(fileName.c_str(), content);
 
 			std::string result;
 			std::string strName(fileName);

@@ -3,6 +3,7 @@
 #include "OgrePixelFormat.h"
 #include "OgreHardwarePixelBuffer.h"
 #include "OgreImage.h"
+#include "OgreResource.h"
 #include <utils/JobSystem.h>
 #include <filament/DriverEnums.h>
 
@@ -67,7 +68,7 @@ namespace Ogre {
     };
 
 
-    class OgreTexture
+    class OgreTexture: public Resource
     {
     public:
         OgreTexture(const String& name, TextureProperty* texProperty);
@@ -128,10 +129,7 @@ namespace Ogre {
             return mTextureProperty._texType == TEX_TYPE_CUBE_MAP ||
                 mTextureProperty._texType == TEX_TYPE_CUBE_MAP_ARRAY;
         }
-        bool isLoaded()
-        {
-            return mLoad;
-        }
+        
 
         TextureProperty* getTextureProperty()
         {
@@ -145,13 +143,12 @@ namespace Ogre {
         virtual void createInternalResourcesImpl(void) = 0;
         virtual void freeInternalResourcesImpl(void) = 0;
         virtual void updateTexture(const std::vector<const CImage*>& images) = 0;
-        virtual void preLoad();
-        bool load(utils::JobSystem::Job* job);
-        void loadImpl();
-        virtual void postLoad();
+        bool isLoaded();
+        void loadAsync();
+        virtual void loadImpl()override;
+        virtual void unloadImpl(void)override;
         uint32 getMaxMipmaps() const;
         
-        virtual void unload();
         virtual void uploadData() {}
         virtual void blitFromMemory(
             const PixelBox& src, const Box& dstBox, uint32_t face = 0, uint32_t mipmap = 0) {}
@@ -170,8 +167,6 @@ namespace Ogre {
         String mName;
         TextureProperty mTextureProperty;
         std::vector<String> mLayerNames;
-
-        bool mLoad = false;
 
         bool mInternalResourcesCreated = false;
 

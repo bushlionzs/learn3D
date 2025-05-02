@@ -9,6 +9,7 @@
 #include "OgreVertexData.h"
 #include "OgreIndexData.h"
 #include "OgreVertexDeclaration.h"
+#include "OgreStringConverter.h"
 #include "VulkanRenderSystemBase.h"
 #include "VulkanWindow.h"
 #include "VulkanTexture.h"
@@ -207,16 +208,7 @@ void VulkanRenderSystemBase::ready()
 Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
     const CreateWindowDesc& desc)
 {
-    mRenderWindow = new VulkanWindow();
-
-    HWND wnd = (HWND)StringConverter::parseSizeT(desc.windowHandle);
-
-    bool srgb = false;
-
-   
-    VkExtent2D extent;
-    extent.width = 0;
-    extent.height = 0;
+    uint64_t wnd = (uint64_t)StringConverter::parseSizeT(desc.windowHandle);
 
     uint32_t flags = 0;
 
@@ -224,13 +216,8 @@ Ogre::RenderWindow* VulkanRenderSystemBase::createRenderWindow(
     {
         flags = backend::SWAP_CHAIN_CONFIG_SRGB_COLORSPACE;
     }
-    mSwapChain = new VulkanSwapChain(
-        mVulkanPlatform, 
-        mVulkanContext, 
-        mAllocator, mCommands, &mResourceAllocator, *mStagePool, (void*)wnd, flags, extent);
 
-    mRenderWindow->create(mSwapChain);
-
+    mRenderWindow = new VulkanWindow(wnd, flags);
     return mRenderWindow;
 }
 
@@ -305,7 +292,9 @@ void VulkanRenderSystemBase::frameStart()
     }
     
     bool resized = false;
-    mSwapChain->acquire(resized);
+
+    VulkanSwapChain*  swapChain = mRenderWindow->getSwapChain();
+    swapChain->acquire(resized);
 }
 
 
@@ -690,7 +679,8 @@ void VulkanRenderSystemBase::dispatchComputeShader(int32_t x, int32_t y, int32_t
 
 void VulkanRenderSystemBase::present()
 {
-    mSwapChain->present();
+    VulkanSwapChain* swapChain = mRenderWindow->getSwapChain();
+    swapChain->present();
 }
 
 void VulkanRenderSystemBase::copyImage(
@@ -1477,11 +1467,11 @@ uint32_t VulkanRenderSystemBase::getAlignmentSize(BufferObjectBinding bufferType
     return 16;
 }
 
-Handle<HwFence> VulkanRenderSystemBase::createFence()
+Handle<HwFence> VulkanRenderSystemBase::createFence(bool signaled)
 {
     Handle<HwFence> fh = mResourceAllocator.allocHandle<VulkanFence>();
 
-    VulkanFence* fence = mResourceAllocator.construct<VulkanFence>(fh, mVulkanPlatform->getDevice());
+    VulkanFence* fence = mResourceAllocator.construct<VulkanFence>(fh, mVulkanPlatform->getDevice(), signaled);
 
     return fh;
 }
@@ -1579,11 +1569,23 @@ Handle<HwCommandQueue> VulkanRenderSystemBase::createCommandQueue(Ogre::QueueTyp
     return cqh;
 }
 
-Handle<HwSwapChain> VulkanRenderSystemBase::createSwapChain()
+Handle<HwSwapChain> VulkanRenderSystemBase::createSwapChain(Ogre::RenderWindow* renderWindow)
 {
+    VulkanWindow* vulkanWindow = (VulkanWindow*)renderWindow;
     Handle<HwSwapChain> sch = mResourceAllocator.allocHandle<VulkanSwapChain>();
+    void* wnd = (void*)vulkanWindow->getWndHandle();
+    VkExtent2D extent;
+    extent.width = 0;
+    extent.height = 0;
 
-    //VulkanSwapChain* swapChain = mResourceAllocator.construct<VulkanSwapChain>(sch);
+    uint32_t flags = vulkanWindow->getFlags();
+
+
+    VulkanSwapChain* swapChain = mResourceAllocator.construct<VulkanSwapChain>(
+        sch, mVulkanPlatform, mVulkanContext, mAllocator, mCommands,
+        &mResourceAllocator, *mStagePool, wnd, flags, extent);
+
+    vulkanWindow->create(swapChain);
 
     return sch;
 }
@@ -1594,12 +1596,13 @@ void VulkanRenderSystemBase::swapChainAcquire(
     SwapChainInfo& scInfo)
 {
     VulkanCommandQueue* queue = mResourceAllocator.handle_cast<VulkanCommandQueue*>(cqh);
-
+    VulkanSwapChain* swapChain = mResourceAllocator.handle_cast<VulkanSwapChain*>(sch);
     VulkanPlatform::ImageSyncData imageSyncData;
-    mSwapChain->acquire(imageSyncData);
+    swapChain->acquire(imageSyncData);
     scInfo.imageIndex = imageSyncData.imageIndex;
-    scInfo.color = mSwapChain->getCurrentColor();
-    scInfo.depth = mSwapChain->getDepth();
+    assert_invariant(scInfo.imageIndex < 3);
+    scInfo.color = swapChain->getCurrentColor();
+    scInfo.depth = swapChain->getDepth();
     queue->imageIndex = imageSyncData.imageIndex;
     queue->imageReadySemaphore = imageSyncData.imageReadySemaphore;
 }
@@ -1875,8 +1878,8 @@ void VulkanRenderSystemBase::executeAndPresent(
 
     if (sc_size)
     {
-        //mSwapChain->present(finished);
-        VulkanPlatformSurfaceSwapChain* impl = (VulkanPlatformSurfaceSwapChain*)mSwapChain->swapChain;
+        VulkanSwapChain* swapChain = mResourceAllocator.handle_cast<VulkanSwapChain*>(*sch);
+        VulkanPlatformSurfaceSwapChain* impl = (VulkanPlatformSurfaceSwapChain*)swapChain->swapChain;
         VkSwapchainKHR vulkanSwapChain = impl->getSwapChain();
         uint32_t currentIndex = queue->imageIndex;
         VkSemaphore finishedDrawing = finished;
@@ -1890,7 +1893,7 @@ void VulkanRenderSystemBase::executeAndPresent(
         };
         VkResult result = vkQueuePresentKHR(queue->vkQueue, &presentInfo);
         assert_invariant(result == VK_SUCCESS);
-        mSwapChain->update(false);
+        swapChain->update(false);
     }
     
 }

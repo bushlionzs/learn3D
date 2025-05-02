@@ -88,7 +88,7 @@ namespace Ogre {
         // index data set up later
         // set basic white material
         mMaterial = MaterialManager::getSingleton().getDefaultMaterial();
-        mMaterial->load(nullptr);
+        mMaterial->loadAsync();
     }
 
     BillboardChain::~BillboardChain() = default; // ensure unique_ptr destructors are in cpp
@@ -647,7 +647,7 @@ namespace Ogre {
             mMaterial = MaterialManager::getSingleton().getDefaultMaterial();
         }
         // Ensure new material loaded (will not load again if already loaded)
-        mMaterial->load(nullptr);
+        mMaterial->loadAsync();
     }
     //-----------------------------------------------------------------------
     const String& BillboardChain::getMovableType(void) const

@@ -4,7 +4,7 @@
 #include "MapTile.h"
 #include "OgreResourceManager.h"
 #include "OgreDataStream.h"
-#include "myutils.h"
+#include <string_util.h>
 #include "Misc.h"
 #include "M2Loader.h"
 #include "OgreSceneManager.h"
@@ -117,7 +117,7 @@ void MapTile::finishLoading()
     while (lCurPos < lEnd)
     {
         name = lCurPos;
-        stringToUpper(name);
+        CommonUtils::stringToUpper(name);
         mTextureFilenames.push_back(name);
         lCurPos += strlen(lCurPos) + 1;
     }
@@ -145,7 +145,7 @@ void MapTile::finishLoading()
           {
               name.replace(found, 4, ".m2");
           }
-          stringToUpper(name);
+          CommonUtils::stringToUpper(name);
           
         mModelFilenames.push_back(name);
         lCurPos += strlen(lCurPos) + 1;
@@ -167,7 +167,7 @@ void MapTile::finishLoading()
       while (lCurPos < lEnd)
       {
           name = lCurPos;
-          stringToUpper(name);
+          CommonUtils::stringToUpper(name);
         mWMOFilenames.push_back(name);
         lCurPos += strlen(lCurPos) + 1;
       }

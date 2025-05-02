@@ -17,8 +17,6 @@ VulkanTexture::VulkanTexture(
     Ogre::TextureProperty* texProperty):
     OgreTexture(name, texProperty)
 {
-    mLoad = false;
-
     mName = name;
     mCommands = commands;
     mPlatform = platform;
@@ -216,6 +214,8 @@ void VulkanTexture::updateTexture(const std::vector<const CImage*>& images)
                 height = height > 1 ? height / 2 : 1;
             }
         }
+
+        postLoad();
 }
 
 void VulkanTexture::postLoad()
@@ -249,7 +249,6 @@ void VulkanTexture::uploadTextureData(const char* data, uint32_t size, TexturePr
     PixelBox dstBox = PixelBox(src.getWidth(), src.getHeight(),
         src.getDepth(), mFormat, mMappedMemory);
     PixelUtil::bulkPixelConversion(src, dstBox);
-    mLoad = true;
 
     mMipLevels = mTextureProperty._numMipmaps + 1;
     

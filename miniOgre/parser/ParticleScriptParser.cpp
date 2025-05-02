@@ -5,7 +5,8 @@
 #include "OgreParticleSystem.h"
 #include "OgreParticleEmitter.h"
 #include "OgreParticleAffector.h"
-#include "myutils.h"
+#include <platform_file.h>
+#include <string_util.h>
 #include "OgreString.h"
 #include "shaderManager.h"
 #include "OgreMemoryStream.h"
@@ -50,8 +51,8 @@ void ParticleScriptParser::parseParticleImpl(const std::string& content)
 
         ss >> particlename;
 
-        particlename = string_trim(particlename);
-        particlename = UTF8ToGBK(particlename.c_str());
+        particlename = CommonUtils::string_trim(particlename);
+        particlename = CommonUtils::utf8_to_acsi(particlename.c_str());
         SkipLine(ss);
 
         ParticleSystem* particle =

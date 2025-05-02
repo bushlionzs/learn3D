@@ -18,6 +18,8 @@
 #include "VulkanRenderSystem.h"
 #include "shaderManager.h"
 #include "OgreEntity.h"
+#include "OgreDefaultWorkQueue.h"
+#include "OgreResourceBackgroundQueue.h"
 
 namespace Ogre {
 
@@ -34,6 +36,7 @@ namespace Ogre {
         new Ogre::ParticleSystemManager;
         new Ogre::ControllerManager;
         new ShaderManager;
+        new ResourceBackgroundQueue;
         mRenderSystem = nullptr;
         mCurrentFrame = 0;
 
@@ -48,6 +51,15 @@ namespace Ogre {
 
         mEvt.timeSinceLastEvent = 0;
         mEvt.timeSinceLastFrame = 0;
+
+        DefaultWorkQueue* defaultQ = new DefaultWorkQueue("Root");
+
+        int threadCount = 6;
+        defaultQ->setWorkerThreadCount(threadCount);
+        defaultQ->setWorkersCanAccessRenderSystem(OGRE_THREAD_SUPPORT == 1);
+        mWorkQueue.reset(defaultQ);
+
+        mWorkQueue->startup();
 	}
 
 	Root::~Root()
@@ -66,23 +78,28 @@ namespace Ogre {
     }
 
     RenderSystem* Root::createRenderEngine(
-        void* wnd,
         EngineType et)
     {
         if (et == EngineType_Dx12)
         {
-            Dx12RenderSystem* engine = new Dx12RenderSystem(wnd);
-            std::shared_ptr<RenderSystem> ans(engine);
+            if (!mRenderSystem)
+            {
+                Dx12RenderSystem* engine = new Dx12RenderSystem();
+                std::shared_ptr<RenderSystem> ans(engine);
 
-            mRenderSystem = ans;
+                mRenderSystem = ans;
+            }
+            
         }
         else if (et == EngineType_Vulkan)
         {
-            VulkanRenderSystem* engine = new VulkanRenderSystem(wnd);
-            std::shared_ptr<RenderSystem> ans(engine);
+            if (!mRenderSystem)
+            {
+                VulkanRenderSystem* engine = new VulkanRenderSystem();
+                std::shared_ptr<RenderSystem> ans(engine);
 
-            mRenderSystem = ans;
-
+                mRenderSystem = ans;
+            }
         }
         else
         {

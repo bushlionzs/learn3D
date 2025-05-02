@@ -10,7 +10,7 @@ Dx12RenderTarget::Dx12RenderTarget(
 {
 	mName = name;
 	mTarget = new Dx12Texture(mName, texProperty, commands, true);
-	mTarget->load(nullptr);
+	mTarget->load();
 	mWidth = mTarget->getWidth();
 	mHeight = mTarget->getHeight();
 	mSwapChain = nullptr;

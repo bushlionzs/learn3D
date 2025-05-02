@@ -720,7 +720,7 @@ private:
 };
 
 struct VulkanFence : public HwFence, VulkanResource {
-    VulkanFence(VkDevice device);
+    VulkanFence(VkDevice device, bool signaled);
     VkFence vkFence;
 };
 

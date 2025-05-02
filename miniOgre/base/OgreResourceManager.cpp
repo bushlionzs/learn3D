@@ -7,7 +7,7 @@
 #include "OgreScriptLoader.h"
 #include "renderSystem.h"
 #include "OgreRoot.h"
-#include "platform_file_system.h"
+#include <platform_file_system.h>
 #include "OgreMeshManager.h"
 #include "OgreTextureManager.h"
 
@@ -30,7 +30,7 @@ namespace Ogre {
         const String& group,
         bool recursive)
     {
-        String full = CPlatformFileSystem::GetInstance()->getFullPath(dir);
+        String full = CommonUtils::PlatformFileSystem::GetInstance()->getFullPath(dir);
         if (recursive)
         {
             readDir(full, true);

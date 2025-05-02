@@ -12,6 +12,7 @@
 #include "OgreBlp.h"
 #include <gli/gli.hpp>
 #include <platform_file.h>
+#include <path_utils.h>
 #ifdef COMPRESS_IMAGE
 #include <compressonator.h>
 #endif
@@ -39,7 +40,7 @@ namespace Ogre {
 
     Ogre::ImageType CImage::getImageType(const std::string& name)
     {
-        std::string suffix = getSuffix(name);
+        std::string suffix = CommonUtils::getSuffix(name);
         if (suffix == ".dds")
         {
             return Ogre::ImageType_DDS;

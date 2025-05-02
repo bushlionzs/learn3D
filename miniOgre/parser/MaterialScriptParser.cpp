@@ -4,7 +4,8 @@
 #include "OgreMaterialManager.h"
 #include "OgreScriptParam.h"
 #include "OgreString.h"
-#include "myutils.h"
+#include <path_utils.h>
+#include <string_util.h>
 #include "OgreMemoryStream.h"
 
 std::vector<String> MaterialScriptParser::getSuffix()
@@ -58,8 +59,8 @@ void MaterialScriptParser::parseMaterialImpl(const std::string& content)
             int kk = 0;
         }
 
-        materialname = string_trim(materialname);
-        materialname = UTF8ToGBK(materialname.c_str());
+        materialname = CommonUtils::string_trim(materialname);
+        materialname = CommonUtils::utf8_to_acsi(materialname.c_str());
 
         auto mat = MaterialManager::getSingletonPtr()->create(materialname, pbr);
 

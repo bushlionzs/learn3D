@@ -6,6 +6,7 @@
 #include "shaderManager.h"
 #include "OgreResourceManager.h"
 #include "glslUtil.h"
+#include "OgreResourceBackgroundQueue.h"
 #include <OgreRoot.h>
 #include <renderSystem.h>
 #include <filament/DriverEnums.h>
@@ -26,6 +27,8 @@ namespace Ogre {
         mRasterState.renderTargetCount = 1;
         mRasterState.depthBiasConstantFactor = 0.0f;
         mRasterState.depthBiasSlopeFactor = 0.0f;
+
+        mResourceType = ResourceType_Material;
     }
 
 
@@ -64,25 +67,41 @@ namespace Ogre {
         return mTextureUnits.size() - 1;
     }
 
-    void Material::preLoad()
+    void Material::loadAsync()
     {
-        if (mLoad)
+        auto old = mLoadingState.load();
+
+        if (old == LOADSTATE_LOADED)
         {
             return;
         }
-        for (auto& it : mTextureUnits)
+        if (old == LOADSTATE_LOADING)
         {
-            it->preLoad();
+            bool finished = true;
+            for (auto& it : mTextureUnits)
+            {
+                if (!it->isLoaded())
+                {
+                    finished = false;
+                    break;
+                }
+            }
+
+            if (finished)
+            {
+                mLoadingState.store(LOADSTATE_LOADED);
+            }
+            return;
         }
+
+        mLoadingState.store(LOADSTATE_LOADING);
+
+        
+        loadImpl();
     }
 
-    void Material::load(utils::JobSystem::Job* job)
+    void Material::loadImpl()
     {
-        if (mLoad)
-        {
-            return;
-        }
-
         auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
         if (ogreConfig.reverseDepth)
         {
@@ -93,35 +112,15 @@ namespace Ogre {
         }
         for (auto& it : mTextureUnits)
         {
-            if (!it->isLoaded())
-            {
-                it->_load(job);
-            }
+                it->_load();
         }
 
         createFrameResourceInfo();
-        mLoad = true;
     }
 
-    void Material::updateResourceState()
+    void Material::unloadImpl(void)
     {
-        if (mState == ResourceState::LOADING)
-        {
-            bool ready = true;
-            for (auto& it : mTextureUnits)
-            {
-                it->updateResourceState();
-                if (it->getResourceState() != ResourceState::READY)
-                {
-                    ready = false;
-                }
-            }
 
-            if (ready)
-            {
-                mState = ResourceState::READY;
-            }
-        }
     }
 
     void Material::createFrameResourceInfo()
@@ -161,7 +160,8 @@ namespace Ogre {
 
     bool Material::isLoaded()
     {
-        return mLoad;
+        auto state = mLoadingState.load();
+        return state == LOADSTATE_LOADED;
     }
 
     std::shared_ptr<Material> Material::clone(const String& name)
@@ -398,7 +398,6 @@ namespace Ogre {
         mSpecularColor = rhs.mSpecularColor;
         mEmissiveColor = rhs.mEmissiveColor;
         mPbr = rhs.mPbr;
-        mLoad = false;
         for (auto tu : rhs.mTextureUnits)
         {
             mTextureUnits.push_back(tu->clone(this));

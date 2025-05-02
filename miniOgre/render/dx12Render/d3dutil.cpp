@@ -26,7 +26,7 @@ public:
         ResourceInfo* resInfo = ResourceManager::getSingleton().getResourceInfo(pFileName);
 
         std::string content;
-        get_file_content(resInfo->_fullname.c_str(), content);
+        CommonUtils::get_file_content(resInfo->_fullname.c_str(), content);
 
         // 将内容复制到堆上，并返回指针和大小
         char* data = new char[content.size() + 1];

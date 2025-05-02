@@ -99,14 +99,14 @@ target_include_directories(${MINIOGRE_LIB_NAME}
 	${ROOT_INC}/3rdSource/D3D12MemoryAllocator
 	${ROOT_INC}/3rdSource/bluevk/include
 	${ROOT_INC}/3rdSource
-	${DYNETWORK_INCLUDE_HEADERS}
 )
 
 set( MyFavLib_LIBRARIES 
     debug shaderc_sharedd.lib optimized shaderc_shared.lib
 )
 	
-target_link_libraries(${MINIOGRE_LIB_NAME} ${MyFavLib_LIBRARIES}  
+target_link_libraries(${MINIOGRE_LIB_NAME} ${MyFavLib_LIBRARIES} 
+CommonUtils
 SpirvTools 
 utils
 tiff

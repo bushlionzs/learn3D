@@ -329,7 +329,7 @@ public:
 
     //
 
-    virtual filament::backend::Handle<filament::backend::HwFence> createFence();
+    virtual filament::backend::Handle<filament::backend::HwFence> createFence(bool signaled);
     virtual void waitFence(filament::backend::Handle<filament::backend::HwFence> fh);
 
     virtual filament::backend::Handle<filament::backend::HwSemaphore> createSemaphore();
@@ -339,7 +339,7 @@ public:
     virtual void clearCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh);
     virtual filament::backend::Handle<filament::backend::HwCommandQueue> createCommandQueue(
         Ogre::QueueType, uint32_t queueIndex);
-    virtual filament::backend::Handle<filament::backend::HwSwapChain> createSwapChain();
+    virtual filament::backend::Handle<filament::backend::HwSwapChain> createSwapChain(Ogre::RenderWindow* renderWindow);
     virtual void swapChainAcquire(
         filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
         filament::backend::Handle<filament::backend::HwSwapChain> sch,

@@ -1071,7 +1071,7 @@ namespace Ogre {
         }
         if (mIsRendererConfigured)
         {
-            mMaterial->load(nullptr);
+            mMaterial->loadAsync();
             mRenderer->_setMaterial(mMaterial);
         }
     }

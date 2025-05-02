@@ -244,7 +244,7 @@ namespace Ogre {
 			return nullptr;
 		}
 
-		get_file_content(res->_fullname.c_str(), mShaderContentMap[name]);
+		CommonUtils::get_file_content(res->_fullname.c_str(), mShaderContentMap[name]);
 
 		itor = mShaderContentMap.find(name);
 

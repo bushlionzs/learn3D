@@ -16,7 +16,7 @@ namespace Ogre
 	{
 		mName = name;
 		mTarget = new VulkanTexture(name, platform, commands, &texProperty);
-		mTarget->load(nullptr);
+		mTarget->load();
 		mWidth = mTarget->getWidth();
 		mHeight = mTarget->getHeight();
 	}

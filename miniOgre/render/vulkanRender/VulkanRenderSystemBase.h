@@ -201,7 +201,7 @@ protected:
 
     virtual uint32_t getAlignmentSize(BufferObjectBinding bufferType);
 
-    virtual Handle<HwFence> createFence() override;
+    virtual Handle<HwFence> createFence(bool signaled) override;
     virtual void waitFence(Handle<HwFence> fh) override;
 
     virtual Handle<HwSemaphore> createSemaphore()override;
@@ -211,7 +211,7 @@ protected:
     virtual void clearCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh) override;
     virtual Handle<HwCommandQueue> createCommandQueue(Ogre::QueueType type, uint32_t queueIndex)override;
 
-    virtual Handle<HwSwapChain> createSwapChain() override;
+    virtual Handle<HwSwapChain> createSwapChain(Ogre::RenderWindow* renderWindow) override;
     virtual void swapChainAcquire(
         filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
         filament::backend::Handle<filament::backend::HwSwapChain> sch,
@@ -294,7 +294,6 @@ protected:
     VulkanResourceAllocator mResourceAllocator;
     VulkanStagePool* mStagePool;
     VulkanCommands* mCommands;
-    VulkanSwapChain* mSwapChain = nullptr;
     VulkanPlatform* mVulkanPlatform;
     DescriptorInfinitePool* mDescriptorInfinitePool = nullptr;
     VulkanContext mVulkanContext;

@@ -254,6 +254,7 @@ VkResult VulkanPlatformSurfaceSwapChain::acquire(VulkanPlatform::ImageSyncData* 
     VkResult result = vkAcquireNextImageKHR(mDevice, mSwapchain, UINT64_MAX,
             outImageSyncData->imageReadySemaphore, VK_NULL_HANDLE, &outImageSyncData->imageIndex);
 
+    assert_invariant(outImageSyncData->imageIndex < 3);
     // Users should be notified of a suboptimal surface, but it should not cause a cascade of
     // log messages or a loop of re-creations.
     if (result == VK_SUBOPTIMAL_KHR && !mSuboptimal) {

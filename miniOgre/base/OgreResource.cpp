@@ -27,6 +27,7 @@ THE SOFTWARE.
 */
 // Ogre includes
 #include "OgreHeader.h"
+#include <OgreThreadDefinesSTD.h>
 #include "OgreResource.h"
 #include "OgreResourceManager.h"
 
@@ -141,130 +142,24 @@ namespace Ogre
     //---------------------------------------------------------------------
     void Resource::load(bool background)
     {
-        // Early-out without lock (mitigate perf cost of ensuring loaded)
-        // Don't load if:
-        // 1. We're already loaded
-        // 2. Another thread is loading right now
-        // 3. We're marked for background loading and this is not the background
-        //    loading thread we're being called by
-
-        if (mIsBackgroundLoaded && !background) return;
-
-        // This next section is to deal with cases where 2 threads are fighting over
-        // who gets to prepare / load - this will only usually happen if loading is escalated
-        bool keepChecking = true;
-        LoadingState old = LOADSTATE_UNLOADED;
-        while (keepChecking)
+        auto old = mLoadingState.load();
+        assert_invariant(old == LOADSTATE_LOADING);
         {
-            // quick check that avoids any synchronisation
-            old = mLoadingState.load();
-
-            if (old == LOADSTATE_LOADING)
-            {
-                int kk = 0;
-            }
-
-            if ( old == LOADSTATE_PREPARING )
-            {
-                while( mLoadingState.load() == LOADSTATE_PREPARING )
-                {
-                                    OGRE_LOCK_AUTO_MUTEX;
-                }
-                old = mLoadingState.load();
-            }
-
-            if (old!=LOADSTATE_UNLOADED && old!=LOADSTATE_PREPARED && old!=LOADSTATE_LOADING) return;
-
-            // atomically do slower check to make absolutely sure,
-            // and set the load state to LOADING
-            if (old==LOADSTATE_LOADING || !mLoadingState.compare_exchange_strong(old,LOADSTATE_LOADING))
-            {
-                while( mLoadingState.load() == LOADSTATE_LOADING )
-                {
-                                    OGRE_LOCK_AUTO_MUTEX;
-                }
-
-                LoadingState state = mLoadingState.load();
-                if( state == LOADSTATE_PREPARED || state == LOADSTATE_PREPARING )
-                {
-                    // another thread is preparing, loop around
-                    continue;
-                }
-                else if( state != LOADSTATE_LOADED )
-                {
-                    OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Another thread failed in resource operation",
-                        "Resource::load");
-                }
-                return;
-            }
-            keepChecking = false;
-        }
-
-        // Scope lock for actual loading
-     //   try
-        {
-
-                    OGRE_LOCK_AUTO_MUTEX;
-
-
-
-            if (mIsManual)
-            {
-                preLoadImpl();
-                // Load from manual loader
-                if (mLoader)
-                {
-                    mLoader->loadResource(this);
-                }
-                else
-                {
-                }
-                postLoadImpl();
-            }
-            else
-            {
-
-                if (old==LOADSTATE_UNLOADED)
-                    prepareImpl();
-
-                preLoadImpl();
-
-                loadImpl();
-
-                postLoadImpl();
-            }
+           OGRE_LOCK_AUTO_MUTEX;
+            preLoadImpl();
+            loadImpl();
+            postLoadImpl();
 
             // Calculate resource size
             mSize = calculateSize();
 
         }
-        //catch (...)
-        //{
-        //    // Reset loading in-progress flag, in case failed for some reason.
-        //    // We reset it to UNLOADED because the only other case is when
-        //    // old == PREPARED in which case the loadImpl should wipe out
-        //    // any prepared data since it might be invalid.
-        //    mLoadingState.store(LOADSTATE_UNLOADED);
-
-        //    OGRE_LOCK_AUTO_MUTEX;
-        //    unloadImpl();
-
-        //    // Re-throw
-        //    throw;
-        //}
-
         mLoadingState.store(LOADSTATE_LOADED);
         _dirtyState();
 
         // Notify manager
         if(mCreator)
             mCreator->_notifyResourceLoaded(this);
-
-        // Fire events, if not background
-        if (!background)
-            _fireLoadingComplete();
-
-
     }
     //---------------------------------------------------------------------
     size_t Resource::calculateSize(void) const

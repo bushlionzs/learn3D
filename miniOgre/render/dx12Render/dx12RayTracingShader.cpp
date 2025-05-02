@@ -220,9 +220,9 @@ void DX12RayTracingProgramImpl::createRaytracingPipelineStateObject(
 
     lib->SetDXILLibrary(&libdxil);
 
-    std::wstring wRayGenEntryName = dy::acsi_to_widebyte(shaderInfo.rayGenEntryName);
-    std::wstring wRayClosethitEntryName = dy::acsi_to_widebyte(shaderInfo.rayClosethitEntryName);
-    std::wstring wRayMissEntryName = dy::acsi_to_widebyte(shaderInfo.rayMissEntryName);
+    std::wstring wRayGenEntryName = CommonUtils::acsi_to_widebyte(shaderInfo.rayGenEntryName);
+    std::wstring wRayClosethitEntryName = CommonUtils::acsi_to_widebyte(shaderInfo.rayClosethitEntryName);
+    std::wstring wRayMissEntryName = CommonUtils::acsi_to_widebyte(shaderInfo.rayMissEntryName);
 
     std::vector<LPCWCHAR> exportNames;
     exportNames.push_back(wRayGenEntryName.c_str());
@@ -279,9 +279,9 @@ void DX12RayTracingProgramImpl::buildShaderTables(const RaytracingShaderInfo& sh
     void* missShaderIdentifier;
     void* hitGroupShaderIdentifier;
 
-    std::wstring wRayGenEntryName = dy::acsi_to_widebyte(shaderInfo.rayGenEntryName);
-    std::wstring wRayClosethitEntryName = dy::acsi_to_widebyte(shaderInfo.rayClosethitEntryName);
-    std::wstring wRayMissEntryName = dy::acsi_to_widebyte(shaderInfo.rayMissEntryName);
+    std::wstring wRayGenEntryName = CommonUtils::acsi_to_widebyte(shaderInfo.rayGenEntryName);
+    std::wstring wRayClosethitEntryName = CommonUtils::acsi_to_widebyte(shaderInfo.rayClosethitEntryName);
+    std::wstring wRayMissEntryName = CommonUtils::acsi_to_widebyte(shaderInfo.rayMissEntryName);
 
     auto GetShaderIdentifiers = [&](ID3D12StateObjectProperties* stateObjectProperties)
         {

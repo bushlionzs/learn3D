@@ -267,7 +267,6 @@ VkPhysicalDeviceProperties& VulkanHelper::_getVkPhysicalDeviceProperties()
 void VulkanHelper::loadDefaultResources()
 {
     mDefaultTexture = TextureManager::getSingleton().load("white1x1.dds", nullptr);
-    mDefaultTexture->load(nullptr);
 }
 
 std::shared_ptr<OgreTexture>& VulkanHelper::getDefaultTexture()

@@ -145,6 +145,7 @@ void VulkanSwapChain::update(bool acquire)
 void VulkanSwapChain::acquire(VulkanPlatform::ImageSyncData& imageSyncData)
 {
     if (mAcquired) {
+        imageSyncData.imageIndex = mCurrentSwapIndex;
         return;
     }
 

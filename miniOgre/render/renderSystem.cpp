@@ -174,7 +174,7 @@ Handle<HwPipeline> RenderSystem::createPipeline(
     return Handle<HwPipeline>();
 }
 
-filament::backend::Handle<filament::backend::HwFence> RenderSystem::createFence()
+filament::backend::Handle<filament::backend::HwFence> RenderSystem::createFence(bool signaled)
 {
     assert_invariant(false);
     return Handle<HwFence>();
@@ -219,7 +219,7 @@ filament::backend::Handle<filament::backend::HwCommandQueue> RenderSystem::creat
 }
 
 
-filament::backend::Handle<filament::backend::HwSwapChain> RenderSystem::createSwapChain()
+filament::backend::Handle<filament::backend::HwSwapChain> RenderSystem::createSwapChain(Ogre::RenderWindow* renderWindow)
 {
     assert_invariant(false);
     return Handle<HwSwapChain>();
