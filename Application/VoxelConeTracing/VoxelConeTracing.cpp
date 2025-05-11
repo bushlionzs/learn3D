@@ -178,8 +178,8 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
 
-		mRenderSystem->bindPipeline(mSceneGeometryPipelineHandle, &resourceInfo->zeroSet, 1);
-
+		mRenderSystem->bindPipeline(mSceneGeometryPipelineHandle);
+		mRenderSystem->bindDescriptorSets(mSceneGeometryPipelineHandle, &resourceInfo->zeroSet, 1);
 
 		VertexData* vertexData = r->getVertexData();
 		IndexData* indexData = r->getIndexData();
@@ -210,13 +210,13 @@ void VoxelConeTracingApp::sceneGeometryPass()
 	UserDefineShader* pUserDefineShader = &userDefineShader;
 	RenderPassCallback sceneGeometryPassCallback = [=, this](RenderPassInfo& info) {
 		info.renderTargetCount = 3;
-		info.renderTargets[0].renderTarget = mVoxelizationContext.albedoTarget;
+		info.renderTargets[0].target.renderTarget = mVoxelizationContext.albedoTarget;
 		info.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
-		info.renderTargets[1].renderTarget = mVoxelizationContext.normalTarget;
+		info.renderTargets[1].target.renderTarget = mVoxelizationContext.normalTarget;
 		info.renderTargets[1].clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
-		info.renderTargets[2].renderTarget = mVoxelizationContext.worldPosTarget;
+		info.renderTargets[2].target.renderTarget = mVoxelizationContext.worldPosTarget;
 		info.renderTargets[2].clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
-		info.depthTarget.depthStencil = mVoxelizationContext.depthTarget;
+		info.depthTarget.target.depthStencil = mVoxelizationContext.depthTarget;
 		info.depthTarget.depthIndex = 0;
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
 		info.passName = "sceneGeometryPass";
@@ -306,8 +306,8 @@ void VoxelConeTracingApp::shadowPass()
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
 
-		mRenderSystem->bindPipeline(mShadowPipelineHandle, &resourceInfo->zeroShadowSet, 1);
-
+		mRenderSystem->bindPipeline(mShadowPipelineHandle);
+		mRenderSystem->bindDescriptorSets(mShadowPipelineHandle, &resourceInfo->zeroShadowSet, 1);
 
 		VertexData* vertexData = r->getVertexData();
 		IndexData* indexData = r->getIndexData();
@@ -325,7 +325,7 @@ void VoxelConeTracingApp::shadowPass()
 	UserDefineShader* pUserDefineShader = &userDefineShader;
 	RenderPassCallback shadowPassCallback = [=, this](RenderPassInfo& info) {
 		info.renderTargetCount = 0;
-		info.depthTarget.depthStencil = mVoxelizationContext.depthTarget;
+		info.depthTarget.target.depthStencil = mVoxelizationContext.depthTarget;
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
 		info.depthTarget.depthIndex = 0;
 		info.passName = "vctShadowPass";
@@ -339,7 +339,7 @@ void VoxelConeTracingApp::shadowPass()
 					 RESOURCE_STATE_DEPTH_WRITE
 				}
 			};
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		}
 		
 
@@ -355,7 +355,7 @@ void VoxelConeTracingApp::shadowPass()
 					 RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 				}
 			};
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		}
 		mRenderSystem->popGroupMarker();
 		};
@@ -417,9 +417,9 @@ void VoxelConeTracingApp::voxelizationPass()
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
 
-		mRenderSystem->bindPipeline(mVoxellizationPipelineHandle,
+		mRenderSystem->bindPipeline(mVoxellizationPipelineHandle);
+		mRenderSystem->bindDescriptorSets(mVoxellizationPipelineHandle,
 			&resourceInfo->zeroSetOfVoxelization, 1);
-
 
 		VertexData* vertexData = r->getVertexData();
 		IndexData* indexData = r->getIndexData();
@@ -438,7 +438,7 @@ void VoxelConeTracingApp::voxelizationPass()
 	RenderPassCallback voxelizationPassCallback = [=, this](RenderPassInfo& info) {
 		VoxelizationContext* context = &this->mVoxelizationContext;
 		info.renderTargetCount = 0;
-		info.depthTarget.depthStencil = nullptr;
+		info.depthTarget.target.depthStencil = nullptr;
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
 		info.passName = "VoxelizationPass";
 		info.extent[0] = VCT_SCENE_VOLUME_SIZE;
@@ -453,9 +453,16 @@ void VoxelConeTracingApp::voxelizationPass()
 				  RESOURCE_STATE_COPY_DEST
 			}
 			};
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		}
-		mRenderSystem->clearRenderTarget(context->voxelizationTarget, Ogre::Vector4::ZERO);
+
+		Ogre::TextureSubresourceRange subresources;
+		subresources.aspect = TEXTURE_ASPECT_COLOR_BIT;
+		subresources.base_mipmap = 0;
+		subresources.mipmap_count = 1;
+		subresources.base_layer = 0;
+		subresources.layer_count = 1;
+		mRenderSystem->clearRenderTarget(context->voxelizationTarget, Ogre::Vector4::ZERO, subresources);
 		{
 			RenderTargetBarrier rtBarriers[] = {
 			{
@@ -464,7 +471,7 @@ void VoxelConeTracingApp::voxelizationPass()
 				  RESOURCE_STATE_UNORDERED_ACCESS
 			}
 			};
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		}
 		
 		renderScene(mGameCamera->getCamera(), mSceneManager,
@@ -478,7 +485,7 @@ void VoxelConeTracingApp::voxelizationPass()
 				  RESOURCE_STATE_SHADER_RESOURCE
 			}
 			};
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 		}
 		mRenderSystem->popGroupMarker();
 		
@@ -510,7 +517,7 @@ void VoxelConeTracingApp::voxelizationPass()
 
 void VoxelConeTracingApp::computePass()
 {
-	ComputePassCallback computeCallback = [=, this](ComputePassInfo& info) {
+	ComputePassCallback computeCallback = [=, this]() {
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		VctFrameData* frameData = &this->mComputeFrameData[0];
 
@@ -538,38 +545,29 @@ void VoxelConeTracingApp::computePass()
 			},
 			};
 
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, barriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, barriers, nullptr);
 		}
 
 
 		if (1)
 		{
-			info.programHandle = mMipmapPrepareHandle;
-			info.computeGroup = Ogre::Vector3i(16, 16, 16);
-			info.descSets.clear();
-			info.descSets.push_back(frameData->mipmapPrepareZeroSet);
 			mRenderSystem->pushGroupMarker("MipmapPrepare");
-			mRenderSystem->beginComputePass(info);
-			mRenderSystem->endComputePass();
+			mRenderSystem->bindComputePipeline(mMipmapPrepareHandle,
+				&frameData->mipmapPrepareZeroSet, 1);
+			mRenderSystem->dispatchComputeShader(16, 16, 16, nullptr);
 			mRenderSystem->popGroupMarker();
-
-
 		}
 
 		if (1)
 		{
 			mRenderSystem->pushGroupMarker("VCT Mipmapping main CS");
 			int mipDimension = VCT_SCENE_VOLUME_SIZE >> 1;
-			info.programHandle = mMipmapMainHandle;
 			for (uint32_t i = 0; i < VCT_MIPS; i++)
 			{
-				info.descSets.clear();
-				info.descSets.push_back(frameData->mipmapResultZeroSet[i]);
 				uint32_t count = std::max(1, mipDimension / 8);
-				info.computeGroup = Ogre::Vector3i(count, count, count);
-
-				mRenderSystem->beginComputePass(info);
-				mRenderSystem->endComputePass();
+				mRenderSystem->bindComputePipeline(mMipmapPrepareHandle,
+					&frameData->mipmapResultZeroSet[i], 1);
+				mRenderSystem->dispatchComputeShader(count, count, count, nullptr);
 				mipDimension >>= 1;
 			}
 			mRenderSystem->popGroupMarker();
@@ -608,7 +606,7 @@ void VoxelConeTracingApp::computePass()
 				}
 				};
 
-				mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 6, barriers);
+				mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 6, barriers, nullptr);
 			}
 		}
 
@@ -648,18 +646,14 @@ void VoxelConeTracingApp::computePass()
 				}
 				};
 
-				mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 6, barriers);
+				mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 6, barriers, nullptr);
 			}
 			mRenderSystem->pushGroupMarker("VCT TracingCone CS");
-			info.descSets.clear();
-			info.descSets.push_back(frameData->tracingConeZeroSet);
-			info.programHandle = mTracingConeHandle;
 			float x = mVoxelizationContext.tracingResultTarget->getWidth() / 8.0f;
 			float y = mVoxelizationContext.tracingResultTarget->getHeight() / 8.0f;
-			info.computeGroup = Ogre::Vector3i(x,
-				Ogre::Math::ICeil(y), 1);
-			mRenderSystem->beginComputePass(info);
-			mRenderSystem->endComputePass();
+			mRenderSystem->bindComputePipeline(mTracingConeHandle, &frameData->tracingConeZeroSet, 1);
+			mRenderSystem->dispatchComputeShader(x, Ogre::Math::ICeil(y), 1, nullptr);
+			
 			mRenderSystem->popGroupMarker();
 
 			{
@@ -696,7 +690,7 @@ void VoxelConeTracingApp::computePass()
 				}
 				};
 
-				mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 6, barriers);
+				mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 6, barriers, nullptr);
 			}
 		}
 
@@ -724,7 +718,7 @@ void VoxelConeTracingApp::computePass()
 			}
 			};
 
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, barriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, barriers, nullptr);
 		}
 		};
 	auto* cam = mGameCamera->getCamera();
@@ -769,7 +763,7 @@ void VoxelConeTracingApp::lightingPass()
 	rasterState.depthBiasConstantFactor = 0.0f;
 	rasterState.depthBiasSlopeFactor = 0.0f;
 	auto targetCount = 1;
-	rasterState.depthFunc = SamplerCompareFunc::LE;
+	rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 	rasterState.renderTargetCount = targetCount;
 	rasterState.depthWrite = true;
 	rasterState.depthTest = true;
@@ -784,11 +778,11 @@ void VoxelConeTracingApp::lightingPass()
 	params.filterMag = backend::SamplerFilterType::LINEAR;
 	params.filterMin = backend::SamplerFilterType::LINEAR;
 	params.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	params.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-	params.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-	params.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+	params.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+	params.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+	params.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
 	params.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
-	params.compareFunc = backend::SamplerCompareFunc::LE;
+	params.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 	params.anisotropyLog2 = 4;
 	params.useComparison = 0;
 	params.maxLod = 0;
@@ -798,11 +792,11 @@ void VoxelConeTracingApp::lightingPass()
 	params.filterMag = backend::SamplerFilterType::LINEAR;
 	params.filterMin = backend::SamplerFilterType::LINEAR;
 	params.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
-	params.wrapS = backend::SamplerWrapMode::CLAMP_TO_BODY;
-	params.wrapT = backend::SamplerWrapMode::CLAMP_TO_BODY;
-	params.wrapR = backend::SamplerWrapMode::REPEAT;
+	params.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_BORDER;
+	params.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_BORDER;
+	params.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	params.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
-	params.compareFunc = backend::SamplerCompareFunc::LE;
+	params.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 	params.anisotropyLog2 = 0;
 	params.useComparison = 1;
 	params.maxLod = 0;
@@ -987,9 +981,9 @@ void VoxelConeTracingApp::lightingPass()
 	RenderPassCallback lightingPassCallback = [=, this](RenderPassInfo& info) {
 		VoxelizationContext* context = &this->mVoxelizationContext;
 		info.renderTargetCount = 1;
-		info.renderTargets[0].renderTarget = context->lightingTarget;
+		info.renderTargets[0].target.renderTarget = context->lightingTarget;
 		info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-		info.depthTarget.depthStencil = nullptr;
+		info.depthTarget.target.depthStencil = nullptr;
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
 		info.passName = "lightingPass";
 		info.extent[0] = VCT_SCENE_VOLUME_SIZE;
@@ -1016,16 +1010,17 @@ void VoxelConeTracingApp::lightingPass()
 				},
 			};
 
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers, nullptr);
 		}
 		
 		mRenderSystem->beginRenderPass(info);
 		uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		VctFrameData* frameData = &mComputeFrameData[frameIndex];
-		mRenderSystem->bindPipeline(mVCTLightingPipelineHandle,
+		mRenderSystem->bindPipeline(mVCTLightingPipelineHandle);
+		mRenderSystem->bindDescriptorSets(mVCTLightingPipelineHandle,
 			&frameData->zeroSetOfLightingPass, 1);
 		mRenderSystem->bindVertexBuffer(vertexHandle, 0, sizeof(FullscreenVertex));
-		mRenderSystem->bindIndexBuffer(indexHandle, 2);
+		mRenderSystem->bindIndexBuffer(indexHandle, 2, 0);
 		mRenderSystem->drawIndexed(6, 1, 0, 0, 0);
 		mRenderSystem->endRenderPass(info);
 
@@ -1049,7 +1044,7 @@ void VoxelConeTracingApp::lightingPass()
 				},
 			};
 
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers, nullptr);
 		}
 		mRenderSystem->popGroupMarker();
 		};
@@ -1129,7 +1124,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._width = ogreConfig.width;
 	texProperty._height = ogreConfig.height;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
-	texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
 	texProperty._need_mipmap = false;
 	mVoxelizationContext.albedoTarget = mRenderSystem->createRenderTarget("albedoTarget", texProperty);
 
@@ -1141,7 +1136,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._width = 2048;
 	texProperty._height = 2048;
 	texProperty._tex_format = Ogre::PixelFormat::PF_DEPTH32F;
-	texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	mVoxelizationContext.depthTarget = mRenderSystem->createRenderTarget(
 		"depthTarget", texProperty);
 
@@ -1159,7 +1154,7 @@ void VoxelConeTracingApp::initScene()
 	rasterState.depthBiasConstantFactor = 0.0f;
 	rasterState.depthBiasSlopeFactor = 0.0f;
 	auto targetCount = 3;
-	rasterState.depthFunc = SamplerCompareFunc::LE;
+	rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 	rasterState.renderTargetCount = targetCount;
 	rasterState.depthWrite = true;
 	rasterState.depthTest = true;
@@ -1173,7 +1168,7 @@ void VoxelConeTracingApp::initScene()
 
 	mShadowProgramHandle = mRenderSystem->createShaderProgram(shaderInfo, &decl);
 
-	rasterState.depthFunc = SamplerCompareFunc::LE;
+	rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 	rasterState.renderTargetCount = 0;
 	rasterState.depthWrite = true;
 	rasterState.depthTest = true;
@@ -1187,13 +1182,13 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = 256;
 	texProperty._depth = 256;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	texProperty._need_mipmap = false;
 	mVoxelizationContext.voxelizationTarget = mRenderSystem->createRenderTarget("voxelizationTarget", texProperty);
 
 	shaderInfo.shaderName = "voxelizationPass";
 	mVoxellizationProgramHandle = mRenderSystem->createShaderProgram(shaderInfo, &decl);
-	rasterState.depthFunc = SamplerCompareFunc::A;
+	rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_ALWAYS;
 	rasterState.renderTargetCount = 0;
 	rasterState.depthWrite = false;
 	rasterState.depthTest = false;
@@ -1204,11 +1199,11 @@ void VoxelConeTracingApp::initScene()
 	params.filterMag = backend::SamplerFilterType::LINEAR;
 	params.filterMin = backend::SamplerFilterType::LINEAR;
 	params.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
-	params.wrapS = backend::SamplerWrapMode::CLAMP_TO_BODY;
-	params.wrapT = backend::SamplerWrapMode::CLAMP_TO_BODY;
-	params.wrapR = backend::SamplerWrapMode::REPEAT;
+	params.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_BORDER;
+	params.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_BORDER;
+	params.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	params.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
-	params.compareFunc = backend::SamplerCompareFunc::LE;
+	params.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 	params.anisotropyLog2 = 0;
 	params.useComparison = 1;
 	params.maxLod = 0;
@@ -1224,7 +1219,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = 128;
 	texProperty._depth = 128;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	texProperty._need_mipmap = false;
 
 	mVoxelizationContext.posxTarget = mRenderSystem->createRenderTarget("posxTarget", texProperty);
@@ -1318,7 +1313,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = 128;
 	texProperty._depth = 128;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	texProperty._need_mipmap = true;
 	texProperty._maxMipLevel = 6;
 	mVoxelizationContext.posxResultTarget = mRenderSystem->createRenderTarget("voxelTextureResultPosX", texProperty);
@@ -1528,18 +1523,18 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = ogreConfig.height * ratio;
 	texProperty._depth = 1;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	texProperty._need_mipmap = false;
 	mVoxelizationContext.tracingResultTarget = mRenderSystem->createRenderTarget("tracingResult", texProperty);
 
 	params.filterMag = backend::SamplerFilterType::LINEAR;
 	params.filterMin = backend::SamplerFilterType::LINEAR;
 	params.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	params.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-	params.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-	params.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+	params.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+	params.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+	params.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
 	params.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
-	params.compareFunc = backend::SamplerCompareFunc::LE;
+	params.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 	params.anisotropyLog2 = 4;
 	params.useComparison = 0;
 	params.maxLod = 0;
@@ -1551,7 +1546,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = 128;
 	texProperty._depth = 128;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8R8G8B8;
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	texProperty._need_mipmap = true;
 
 	VctFrameData* frameData = &mComputeFrameData[0];
