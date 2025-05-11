@@ -1,4 +1,5 @@
 #include "rendering_device_driver_null.h"
+#include "rendering_context_driver_null.h"
 #include <servers/rendering/rendering_device_commons.h>
 #include "core/io/marshalls.h"
 #include "OgreHeader.h"
@@ -390,7 +391,7 @@ void RenderingDeviceDriverNULL::command_pipeline_barrier(
 
 RenderingDeviceDriver::FenceID RenderingDeviceDriverNULL::fence_create()
 {
-	auto fh = mRenderSystem->createFence();
+	auto fh = mRenderSystem->createFence(false);
 	return RenderingDeviceDriver::FenceID(fh.getId());
 }
 
@@ -476,8 +477,20 @@ Error RenderingDeviceDriverNULL::command_queue_execute_and_present(
 		cmd_sphs[i] = filament::backend::Handle<filament::backend::HwSemaphore>(p_cmd_semaphores[i].id);
 	}
 	filament::backend::Handle<filament::backend::HwFence> fh(p_cmd_fence.id);
+
+	filament::backend::Handle<filament::backend::HwSwapChain> swapChainHandles[16];
+	assert_invariant(p_swap_chains.size() < 16);
+	if (p_swap_chains.size())
+	{
+		for (uint32_t i = 0; i < p_swap_chains.size(); i++)
+		{
+			SwapChainPrivateInfo* info = (SwapChainPrivateInfo*)p_swap_chains[i].id;
+			swapChainHandles[i] = info->sch;
+		}
+	}
+	
 	mRenderSystem->executeAndPresent(cqh, wait_sphs.data(), wait_sphs.size(),
-		cbhs.data(), cbhs.size(), cmd_sphs.data(), cmd_sphs.size(), fh, nullptr, p_swap_chains.size());
+		cbhs.data(), cbhs.size(), cmd_sphs.data(), cmd_sphs.size(), fh, swapChainHandles, p_swap_chains.size());
 	return OK;
 }
 
@@ -533,7 +546,8 @@ void RenderingDeviceDriverNULL::command_buffer_execute_secondary(
 
 RenderingDeviceDriver::SwapChainID RenderingDeviceDriverNULL::swap_chain_create(RenderingContextDriver::SurfaceID p_surface)
 {
-	auto sch = mRenderSystem->createSwapChain();
+	Surface* surface = (Surface*)p_surface;
+	auto sch = mRenderSystem->createSwapChain((Ogre::RenderWindow*)surface->renderWnd);
 	SwapChainPrivateInfo* info = new SwapChainPrivateInfo;
 	info->sch = sch;
 

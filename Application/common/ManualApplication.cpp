@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include "renderSystem.h"
 #include "OgreResourceManager.h"
+#include "OgreStringConverter.h"
 #include "OgreMaterialManager.h"
 #include "OgreCamera.h"
 #include "OgreSceneManager.h"
@@ -29,64 +30,18 @@ ManualApplication::~ManualApplication()
 {
 
 }
-
-bool ManualApplication::frameStarted(const Ogre::FrameEvent& evt)
+void ManualApplication::appInit()
 {
-	InputManager::getSingletonPtr()->captureInput();
-	mGameCamera->update(evt.timeSinceLastFrame);
-	mAppInfo->update(evt.timeSinceLastFrame);
-	for (auto pass : mPassList)
-	{
-		pass->update(evt.timeSinceLastFrame);
-	}
-	return true;
-}
-
-
-bool ManualApplication::appInit(AppInfo* info)
-{
-	mApplicationWindow = new ApplicationWindow();
-
 	new Ogre::Root();
 	Ogre::Root::getSingleton()._initialise();
 
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	ogreConfig.width = 1600;
 	ogreConfig.height = 900;
-	ogreConfig.enableRaytracing = info->enableRayTracing;
-	HWND wnd;
-	if (info->appWnd)
-	{
-		wnd = (HWND)info->appWnd;
-	}
-	else
-	{	
-		mApplicationWindow->createWindow(ogreConfig.width, ogreConfig.height);
+	ogreConfig.enableRaytracing = mAppInfo->enableRayTracing;
 
-		wnd = mApplicationWindow->getWnd();
-	}
-	
-
-	if (!InputManager::getSingletonPtr())
-	{
-		new InputManager();
-	}
-	InputManager::getSingletonPtr()->createInput((size_t)wnd);
-
-	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(wnd, mAppInfo->engineType);
-	if (!mRenderSystem)
-	{
-		return false;
-	}
-	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
-	
-	Ogre::CreateWindowDesc desc;
-	desc.width = ogreConfig.width;
-	desc.height = ogreConfig.height;
-	desc.srgb = mAppInfo->useSRGB;
-	std::string wndString = Ogre::StringConverter::toString((uint64_t)wnd);
-	strncpy(desc.windowHandle, wndString.c_str(), sizeof(desc.windowHandle));
-	mRenderWindow = mRenderSystem->createRenderWindow(desc);
+	mRenderSystem = Ogre::Root::getSingleton().createRenderEngine(mAppInfo->engineType);
+	assert_invariant(mRenderSystem);
 
 	Ogre::ResourceParserManager::getSingleton()._initialise();
 	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\cegui"), "", true);
@@ -98,8 +53,9 @@ bool ManualApplication::appInit(AppInfo* info)
 	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\scene"), "", true);
 	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\fbx"), "", true);
 	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\obj"), "", true);
+	Ogre::ResourceManager::getSingletonPtr()->addDirectory(std::string("..\\..\\resources\\editor"), "", true);
 	Ogre::ResourceManager::getSingletonPtr()->loadAllResource();
-	
+
 	mSceneManager = Ogre::Root::getSingleton().createSceneManger(MAIN_SCENE_MANAGER);
 
 	mCamera = mSceneManager->createCamera(MAIN_CAMERA);
@@ -107,7 +63,7 @@ bool ManualApplication::appInit(AppInfo* info)
 	mCamera->setNearClipDistance(1.0f);
 	mGameCamera = new GameCamera(mCamera, mSceneManager);
 
-	InputManager::getSingletonPtr()->addListener(mGameCamera);
+	
 
 	Ogre::Root::getSingleton().addFrameListener(this);
 
@@ -124,8 +80,54 @@ bool ManualApplication::appInit(AppInfo* info)
 	utils::JobSystem& js = Ogre::ResourceManager::getSingleton().getJobSystem();
 
 	js.adopt();
+}
+
+Ogre::RenderWindow* ManualApplication::wndInit(int64_t appWnd)
+{
+	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+	HWND wnd;
+	wnd = (HWND)appWnd;
+
+	if (!InputManager::getSingletonPtr())
+	{
+		new InputManager();
+		InputManager::getSingletonPtr()->createInput((size_t)wnd);
+		InputManager::getSingletonPtr()->addListener(mGameCamera);
+	}
+	
+
+	Ogre::ColourValue color(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
+
+	RECT rt;
+	::GetWindowRect(wnd, &rt);
+	Ogre::CreateWindowDesc desc;
+	desc.width = rt.right - rt.left;
+	desc.height = rt.bottom - rt.top;
+	desc.srgb = mAppInfo->useSRGB;
+	std::string wndString = Ogre::StringConverter::toString((uint64_t)wnd);
+	strncpy(desc.windowHandle, wndString.c_str(), sizeof(desc.windowHandle));
+	Ogre::RenderWindow* renderWindow =  mRenderSystem->createRenderWindow(desc);
+	if (!mRenderWindow)
+	{
+		mRenderWindow = renderWindow;
+	}
+	return renderWindow;
+}
+
+bool ManualApplication::frameStarted(const Ogre::FrameEvent& evt)
+{
+	InputManager::getSingletonPtr()->captureInput();
+	mGameCamera->update(evt.timeSinceLastFrame);
+	mAppInfo->update(evt.timeSinceLastFrame);
+	for (auto pass : mPassList)
+	{
+		pass->update(evt.timeSinceLastFrame);
+	}
 	return true;
 }
+
+
+
 
 
 
@@ -133,13 +135,30 @@ void ManualApplication::run(AppInfo* info)
 {
 	mAppInfo = info;
 	mUseCEGUI = mAppInfo->useCEGUI;
+
+	appInit();
+
 	if (info->userRunCallback)
 	{
 		info->userRunCallback(mAppInfo);
 	}
-	else
+	
 	{
-		appInit(info);
+		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+		uint64_t wndHandle;
+		if (info->appWnd)
+		{
+			wndHandle = info->appWnd;
+		}
+		else
+		{
+			mApplicationWindow = new ApplicationWindow();
+			mApplicationWindow->createWindow(ogreConfig.width, ogreConfig.height);
+			wndHandle = (uint64_t)mApplicationWindow->getWnd();
+		}
+		
+		wndInit(wndHandle);
+		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);
 	}
 	
 	info->setup(mRenderSystem, mRenderWindow, mSceneManager, mGameCamera);
@@ -153,7 +172,7 @@ void ManualApplication::run(AppInfo* info)
 	}
 	else
 	{
-		loop2();
+		loop();
 	}
 	
 }
@@ -203,7 +222,7 @@ void ManualApplication::loop2()
 	MSG msg;
 	PassBase::RenderContext context;
 	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
-	context.sch = mRenderSystem->createSwapChain();
+	context.sch = mSwapChainHandle; 
 
 	std::vector<PassBase::FrameContext> frameContextList;
 	frameContextList.resize(3);
@@ -211,7 +230,7 @@ void ManualApplication::loop2()
 	{
 		PassBase::FrameContext* frameContext = &frameContextList[i];
 		frameContext->cbh = mRenderSystem->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
-		frameContext->fh = mRenderSystem->createFence();
+		frameContext->fh = mRenderSystem->createFence(true);
 		frameContext->sph = mRenderSystem->createSemaphore();
 	}
 
@@ -263,7 +282,7 @@ void ManualApplication::loop2()
 			mRenderSystem->endCommandBuffer(frameContext->cbh);
 			mRenderSystem->executeAndPresent(context.cqh, nullptr, 0, 
 				&frameContext->cbh, 1, &frameContext->sph, 1,
-				frameContext->fh, nullptr, 1);
+				frameContext->fh, &context.sch, 1);
 
 			ShowFrameFrequency();
 		}
@@ -286,7 +305,7 @@ void ManualApplication::ShowFrameFrequency()
 			str.c_str());
 
 		
-		::SetWindowText(mApplicationWindow->getWnd(), buffer);
+		//::SetWindowText(mApplicationWindow->getWnd(), buffer);
 	}
 }
 

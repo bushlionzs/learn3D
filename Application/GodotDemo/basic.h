@@ -6,6 +6,7 @@
 #include "DriverBase.h"
 #include "ApplicationBase.h"
 #include "ManualApplication.h"
+#include "godotUtil.h"
 class BasicApplication
 {
 public:
@@ -29,7 +30,7 @@ public:
 	void updateFrameData(Ogre::ICamera* camera, FrameConstantBuffer& frameBuffer);
 
 	void userInit(AppInfo* appInfo);
-	void godotWndCallback(AppInfo* appInfo, int64_t wnd);
+	Surface godotWndCallback(AppInfo* appInfo, int64_t wnd);
 private:
 	void base1();
 	void base2();

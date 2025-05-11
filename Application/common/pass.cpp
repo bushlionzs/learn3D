@@ -140,11 +140,13 @@ public:
 			{
 				descriptorSet[0] = resourceInfo->zeroSet;
 				descriptorSet[1] = resourceInfo->firstSet;
-				rs->bindPipeline(piplineHandle, descriptorSet, 2);
+				rs->bindPipeline(piplineHandle);
+				rs->bindDescriptorSets(piplineHandle, descriptorSet, 2);
 			}
 			else
 			{
-				rs->bindPipeline(piplineHandle, &resourceInfo->zeroSet, 1);
+				rs->bindPipeline(piplineHandle);
+				rs->bindDescriptorSets(piplineHandle, &resourceInfo->zeroSet, 1);
 			}
 			
 
@@ -227,8 +229,8 @@ public:
 			void* frameData = r->getFrameResourceInfo(frameIndex);
 			FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
 			uint64_t index = (uint64_t)param;
-			rs->bindPipeline(shadowPipelineHandle, &resourceInfo->zeroShadowSet[index], 1);
-			
+			rs->bindPipeline(shadowPipelineHandle);
+			rs->bindDescriptorSets(shadowPipelineHandle, &resourceInfo->zeroShadowSet[index], 1);
 			VertexData* vertexData = r->getVertexData();
 			IndexData* indexData = r->getIndexData();
 			vertexData->bind(nullptr);

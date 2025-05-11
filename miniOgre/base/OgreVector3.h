@@ -837,6 +837,7 @@ namespace Ogre
 
         // special points
         static const Vector3 ZERO;
+        static const Vector3 ONE;
         static const Vector3 UNIT_X;
         static const Vector3 UNIT_Y;
         static const Vector3 UNIT_Z;

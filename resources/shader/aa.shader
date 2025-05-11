@@ -67,8 +67,25 @@ shader cegui
 	 shader_unit
 	 {
 		shader_type vulkan
-		vertex_shader cegui.glsl main
-		frag_shader cegui.glsl main
+		vertex_shader cegui.hlsl VS
+		frag_shader cegui.hlsl PS
+	 }
+}
+
+shader imgui
+{
+    shader_unit
+	 {
+		shader_type directx
+		vertex_shader imgui.hlsl VS
+		frag_shader imgui.hlsl PS
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader imgui.hlsl VS
+		frag_shader imgui.hlsl PS
 	 }
 }
 

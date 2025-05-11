@@ -1,0 +1,39 @@
+#pragma once
+
+#include <engine_struct.h>
+#include "pass.h"
+#include "game_camera.h"
+#include "DriverBase.h"
+#include "imgui.h"
+
+class BasicApplication
+{
+public:
+	struct FrameData
+	{
+		Handle<HwDescriptorSet> zeroSet;
+		Handle<HwBufferObject> passUniformBuffer;
+	};
+	BasicApplication();
+	~BasicApplication();
+
+	void setup(
+		RenderPipeline* renderPipeline,
+		RenderSystem* renderSystem,
+		Ogre::RenderWindow* renderWindow,
+		Ogre::SceneManager* sceneManager,
+		GameCamera* gameCamera);
+	void update(float delta);
+private:
+	void base1();
+	
+private:
+	Ogre::AnimationState* mAnimationState = nullptr;
+	std::vector<FrameData> mFrameData;
+	Ogre::SceneManager* mSceneManager;
+	GameCamera* mGameCamera;
+	RenderSystem* mRenderSystem;
+	Ogre::RenderWindow* mRenderWindow;
+	RenderPipeline* mRenderPipeline;
+	
+};

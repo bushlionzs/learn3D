@@ -5,15 +5,15 @@
 
 #include "servers/rendering/rendering_context_driver.h"
 #include <functional>
-
-using RenderingContextCallback = std::function<void(int64_t wnd)>;
+#include "godotUtil.h"
 
 class RenderingContextDriverNULL : public RenderingContextDriver {
 public:
+	
 	RenderingContextDriverNULL();
 	virtual ~RenderingContextDriverNULL() override;
 	
-	static void setRenderingContextCallback(RenderingContextCallback cb);
+	static void setRenderingContextCallback(WindowCallback cb);
 public:
 	virtual Error initialize() override;
 	virtual const Device& device_get(uint32_t p_device_index) const override;
@@ -33,8 +33,6 @@ public:
 	virtual bool is_debug_utils_enabled() const override;
 private:
 	RenderingContextDriver::Device mDevice;
-	uint32_t mWidth;
-	uint32_t mHeight;
 };
 
 

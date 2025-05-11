@@ -30,7 +30,6 @@ THE SOFTWARE.
 #include "OgreStringConverter.h"
 #include "OgreViewport.h"
 #include "OgreRenderTargetListener.h"
-#include "OgreDepthBuffer.h"
 #include "OgreTimer.h"
 #include "OgreRoot.h"
 #include <iomanip>

@@ -354,7 +354,7 @@ void updateMaterialInfo(Ogre::Renderable* r, bool updateTexture)
     Ogre::DescriptorData descriptorData[256];
     uint32_t descriptorCount = 0;
     uint32_t index = 0;
-    mat->load(nullptr);
+    mat->loadAsync();
     auto& texs = mat->getAllTexureUnit();
     for (auto i = 0; i < ogreConfig.swapBufferCount; i++)
     {

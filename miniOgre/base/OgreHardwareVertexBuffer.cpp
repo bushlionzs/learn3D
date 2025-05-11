@@ -21,7 +21,7 @@
             return 9;
         case VES_TEXTURE_COORDINATES:
             return 3;
-        case VES_DIFFUSE:
+        case VES_COLOUR:
             return 2;
         case VES_NORMAL:
             return 1;

@@ -165,8 +165,8 @@ namespace Ogre
 
                 // Pass parameters for current pass using a push constant block
                 
-                rs->bindPipeline(pipelineHandle, &zeroDescSet, 1);
-
+                rs->bindPipeline(pipelineHandle);
+                rs->bindDescriptorSets(pipelineHandle, &zeroDescSet, 1);
                 vertexData->bind(nullptr);
 
                 if (indexData)
@@ -283,7 +283,7 @@ namespace Ogre
         rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
 
         rs->beginRenderPass(renderPassInfo);
-        rs->bindPipeline(pipelineHandle, nullptr, 0);
+        rs->bindPipeline(pipelineHandle);
         rs->draw(3, 1, 0, 0);
         rs->endRenderPass(renderPassInfo);
 

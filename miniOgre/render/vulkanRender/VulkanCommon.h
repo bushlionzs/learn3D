@@ -136,6 +136,7 @@ struct TransferCommandInfo
     uint32_t index;
     VkCommandPool commandPool;
     VkCommandBuffer commandBuffer;
+    VkFence fence;
 };
 
 class VulkanPipelineLayoutCache;

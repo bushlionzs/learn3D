@@ -29,7 +29,6 @@ THE SOFTWARE.
 
 #include "OgreRenderTexture.h"
 #include "OgreHardwarePixelBuffer.h"
-#include "OgreDepthBuffer.h"
 
 namespace Ogre
 {

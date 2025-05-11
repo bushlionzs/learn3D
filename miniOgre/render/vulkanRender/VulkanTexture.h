@@ -95,7 +95,10 @@ public:
         VkCommandBuffer cmdbuf,
         const VkImageSubresourceRange& range, 
         VulkanLayout newLayout);
-
+    void updateLayout(VulkanLayout layout)
+    {
+        mLayout = layout;
+    }
     
     virtual void blitFromMemory(
         const PixelBox& src, const Box& dstBox, uint32_t face, uint32_t mipmap)override;
@@ -148,6 +151,8 @@ private:
 
     Ogre::PixelFormat mFormat = PixelFormat::PF_UNKNOWN;
     VkFormat mVulkanFormat = VK_FORMAT_UNDEFINED;
+
+    filament::backend::VulkanLayout  mLayout = filament::backend::VulkanLayout::UNDEFINED;
     bool mNeedMipmaps = false;
     uint32_t mMipLevels = 1;
 

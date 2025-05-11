@@ -8,14 +8,6 @@
 #include <codecvt>
 #include <windows.h>
 
-
-std::string getPath(const char* name)
-{
-    std::string dir = "E:/myproject/opengl_demo/resources/";
-    return dir + name;
-}
-
-
 uint64_t getMicroseconds()
 {
     static auto start = std::chrono::steady_clock::now();
@@ -30,63 +22,7 @@ uint64_t getMicroseconds()
 //}
 
 
-const char* getSuffix(const std::string& name)
-{
-	size_t pos = name.find_last_of('.');
-	if (pos == std::string::npos)
-	{
-		return name.c_str() + name.size();
-	}
 
-	return name.c_str() + pos;
-}
-
-const char* getSuffix(const char* name)
-{
-    const char* p = name;
-    const char* ret = nullptr;
-    while (*p != 0)
-    {
-        if (*p == '.')
-        {
-            ret == p;
-        }
-        p++;
-    }
-
-    return ret;
-}
-
-std::string removeSuffix(const std::string& name)
-{
-    std::string tmp;
-    size_t pos = name.find_last_of('.');
-    if (pos == std::string::npos)
-    {
-        return name;
-    }
-
-    tmp = name.substr(0, pos);
-    return tmp;
-}
-
-std::string getShortFilename(const std::string& name)
-{
-    std::string tmp;
-    size_t pos = name.find_last_of('\\');
-    if (pos == std::string::npos)
-    {
-        pos = name.find_last_of('/');
-        if (pos == std::string::npos)
-        {
-            return name;
-        }
-        
-    }
-
-    tmp = name.substr(pos + 1);
-    return tmp;
-}
 
 bool loadStringFromMemory(std::string& str, char*& pCurrentPos)
 {
@@ -117,37 +53,4 @@ std::string UTF8ToGBK(const char* strUTF8)
     return strTemp;
 }
 
-static void ai_trim_left(std::string& s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }));
-}
 
-static void ai_trim_right(std::string& s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
-}
-
-std::string string_trim(std::string & s)
-{
-    std::string out(s);
-    ai_trim_left(out);
-    ai_trim_right(out);
-
-    return out;
-}
-
-void stringToUpper(std::string& str)
-{
-    std::transform(str.begin(), str.end(), str.begin(), [](char& c) {
-        return std::toupper(c);
-    });
-}
-
-void stringToLower(std::string& str)
-{
-    std::transform(str.begin(), str.end(), str.begin(), [](char& c) {
-        return std::tolower(c);
-    });
-}

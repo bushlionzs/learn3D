@@ -79,7 +79,6 @@
 #include <scene/resources/style_box_texture.h>
 #include <scene/resources/style_box_line.h>
 #include <scene/gui/video_stream_player.h>
-#include <scene/gui/text_edit.h>
 #include <scene/gui/slider.h>
 #include <scene/main/viewport.h>
 #include <servers/rendering/rendering_server_default.h>
@@ -110,7 +109,7 @@
 #include <OgreEntity.h>
 #include <OgreSubEntity.h>
 #include <OgreMaterialManager.h>
-#include <myutils.h>
+#include <path_utils.h>
 static ProjectSettings* globals = nullptr;
 static Input* input = nullptr;
 static int audio_driver_idx = -1;
@@ -989,7 +988,7 @@ void updateMaterial(Ref<StandardMaterial3D> standard_mat, Ogre::Material* ogreMa
     if (albedo_texture.is_valid())
     {
         texName = albedo_texture->get_path();
-        ogreTexName = getShortFilename(convert_stringname_to_ascii(texName));
+        ogreTexName = CommonUtils::getShortFilename(convert_stringname_to_ascii(texName));
         texProperty._pbrType = Ogre::TextureTypePbr_Albedo;
         ogreMat->addTexture(ogreTexName, &texProperty);
         matInfo.hasAlbedoMap = 1;
@@ -1001,7 +1000,7 @@ void updateMaterial(Ref<StandardMaterial3D> standard_mat, Ogre::Material* ogreMa
     if (normal_texture.is_valid())
     {
         texName = normal_texture->get_path();
-        ogreTexName = getShortFilename(convert_stringname_to_ascii(texName));
+        ogreTexName = CommonUtils::getShortFilename(convert_stringname_to_ascii(texName));
         texProperty._pbrType = Ogre::TextureTypePbr_NormalMap;
         ogreMat->addTexture(ogreTexName, &texProperty);
         matInfo.hasNormalMap = 1;
@@ -1013,7 +1012,7 @@ void updateMaterial(Ref<StandardMaterial3D> standard_mat, Ogre::Material* ogreMa
     if (normal_texture.is_valid())
     {
         texName = roughness_texture->get_path();
-        ogreTexName = getShortFilename(convert_stringname_to_ascii(texName));
+        ogreTexName = CommonUtils::getShortFilename(convert_stringname_to_ascii(texName));
         texProperty._pbrType = Ogre::TextureTypePbr_Roughness;
         ogreMat->addTexture(ogreTexName, &texProperty);
         matInfo.hasRoughNessMap = 1;
@@ -1031,7 +1030,7 @@ void updateMaterial(Ref<ShaderMaterial> shader_mat, Ogre::Material* ogreMat)
     {
         Ref<Texture2D> albedo_texture = albedo_texture_variant;
         texName = albedo_texture->get_path();
-        ogreTexName = getShortFilename(convert_stringname_to_ascii(texName));
+        ogreTexName = CommonUtils::getShortFilename(convert_stringname_to_ascii(texName));
         texProperty._pbrType = Ogre::TextureTypePbr_Albedo;
         ogreMat->addTexture(ogreTexName, &texProperty);
         matInfo.hasAlbedoMap = 1;
@@ -1042,7 +1041,7 @@ void updateMaterial(Ref<ShaderMaterial> shader_mat, Ogre::Material* ogreMat)
     {
         Ref<Texture2D> normal_texture = normal_texture_variant;
         texName = normal_texture->get_path();
-        ogreTexName = getShortFilename(convert_stringname_to_ascii(texName));
+        ogreTexName = CommonUtils::getShortFilename(convert_stringname_to_ascii(texName));
         texProperty._pbrType = Ogre::TextureTypePbr_NormalMap;
         ogreMat->addTexture(ogreTexName, &texProperty);
         matInfo.hasNormalMap = 1;

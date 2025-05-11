@@ -1,11 +1,11 @@
 #include "rendering_context_driver_null.h"
 #include "rendering_device_driver_null.h"
 #include <windows.h>
+#include <OgreHeader.h>
 
 RenderingContextDriverNULL::RenderingContextDriverNULL()
 {
-    mWidth = 0;
-    mHeight = 0;
+
 }
 
 RenderingContextDriverNULL::~RenderingContextDriverNULL()
@@ -13,8 +13,8 @@ RenderingContextDriverNULL::~RenderingContextDriverNULL()
 
 }
 
-static RenderingContextCallback renderingContextCallback = nullptr;
-void RenderingContextDriverNULL::setRenderingContextCallback(RenderingContextCallback cb)
+static WindowCallback renderingContextCallback = nullptr;
+void RenderingContextDriverNULL::setRenderingContextCallback(WindowCallback cb)
 {
     renderingContextCallback = cb;
 }
@@ -55,16 +55,20 @@ RenderingContextDriver::SurfaceID RenderingContextDriverNULL::surface_create(con
         HINSTANCE instance;
     };
     WindowPlatformData* platformData = (WindowPlatformData*)p_platform_data;
-    renderingContextCallback((int64_t)platformData->window);
+    Surface tmp = renderingContextCallback((int64_t)platformData->window);
 
-    return RenderingContextDriver::SurfaceID(1);
+    Surface* surface = new Surface;
+    surface->renderWnd = tmp.renderWnd;
+
+    return RenderingContextDriver::SurfaceID(surface);
 }
 
 void RenderingContextDriverNULL::surface_set_size(
     RenderingContextDriver::SurfaceID p_surface, uint32_t p_width, uint32_t p_height)
 {
-    mWidth = p_width;
-    mHeight = p_height;
+    Surface* surface = (Surface*)p_surface;
+    surface->width = p_width;
+    surface->height = p_height;
 }
 
 void RenderingContextDriverNULL::surface_set_vsync_mode(RenderingContextDriver::SurfaceID p_surface, DisplayServer::VSyncMode p_vsync_mode)
@@ -79,12 +83,14 @@ DisplayServer::VSyncMode RenderingContextDriverNULL::surface_get_vsync_mode(Rend
 
 uint32_t RenderingContextDriverNULL::surface_get_width(RenderingContextDriver::SurfaceID p_surface) const
 {
-    return mWidth;
+    Surface* surface = (Surface*)p_surface;
+    return surface->width;
 }
 
 uint32_t RenderingContextDriverNULL::surface_get_height(RenderingContextDriver::SurfaceID p_surface) const
 {
-    return mHeight;
+    Surface* surface = (Surface*)p_surface;
+    return surface->height;
 }
 void RenderingContextDriverNULL::surface_set_needs_resize(RenderingContextDriver::SurfaceID p_surface, bool p_needs_resize)
 {

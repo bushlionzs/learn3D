@@ -311,9 +311,9 @@ void VulkanRenderSystemBase::setViewport(
 {
     VkViewport viewport{};
     viewport.x = 0.0;
-    viewport.y = height;
+    viewport.y = y;
     viewport.width = width;
-    viewport.height = -(float)height;
+    viewport.height = (float)height;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
 
@@ -334,7 +334,7 @@ void VulkanRenderSystemBase::setScissor(
     uint32_t x, uint32_t y, uint32_t width, uint32_t height,
     filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
-    VkRect2D scissor = vks::initializers::rect2D(width, height, 0, 0);
+    VkRect2D scissor = vks::initializers::rect2D(width, height, x, y);
 
     VkCommandBuffer cmdBuffer;
     if (cbh)
@@ -514,15 +514,6 @@ void VulkanRenderSystemBase::beginRenderPass(
 
         bluevk::vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
         bluevk::vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
-
-        if (renderPassInfo.shadowPass)
-        {
-            /*vkCmdSetDepthBias(
-                cmdBuffer,
-                1.25,
-                0.0f,
-                1.75);*/
-        }
     }
 }
 
@@ -543,19 +534,25 @@ void VulkanRenderSystemBase::endRenderPass(RenderPassInfo& renderPassInfo)
 
 
 void VulkanRenderSystemBase::bindPipeline(
-    Handle<HwPipeline> pipelineHandle,
-    const Handle<HwDescriptorSet>* descSets,
-    uint32_t setCount)
+    Handle<HwPipeline> pipelineHandle)
 {
     
     VkCommandBuffer commandBuffer = mCommands->get().buffer();
     VulkanPipeline* vulkanPipeline = mResourceAllocator.handle_cast<VulkanPipeline*>(pipelineHandle);
     VulkanShaderProgram* vulkanProgram = (VulkanShaderProgram*)vulkanPipeline->getProgram();
     auto pipeline = vulkanPipeline->getPipeline();
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);    
+}
 
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+void VulkanRenderSystemBase::bindDescriptorSets(
+    filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle,
+    const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
+    uint32_t setCount)
+{
+    VkCommandBuffer commandBuffer = mCommands->get().buffer();
+    VulkanPipeline* vulkanPipeline = mResourceAllocator.handle_cast<VulkanPipeline*>(pipelineHandle);
+    VulkanShaderProgram* vulkanProgram = (VulkanShaderProgram*)vulkanPipeline->getProgram();
     auto pipelineLayout = vulkanProgram->getVulkanPipelineLayout();
-
     for (uint32_t i = 0; i < setCount; i++)
     {
         if (!descSets[i])

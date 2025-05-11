@@ -54,7 +54,7 @@ namespace Ogre {
 
         DefaultWorkQueue* defaultQ = new DefaultWorkQueue("Root");
 
-        int threadCount = 6;
+        int threadCount = 1;
         defaultQ->setWorkerThreadCount(threadCount);
         defaultQ->setWorkersCanAccessRenderSystem(OGRE_THREAD_SUPPORT == 1);
         mWorkQueue.reset(defaultQ);

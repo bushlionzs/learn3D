@@ -244,6 +244,8 @@ void VulkanTexture::postLoad()
 
 void VulkanTexture::uploadTextureData(const char* data, uint32_t size, TextureProperty& tp)
 {
+    
+
     PixelBox src(tp._width, tp._height, tp._depth, tp._tex_format, (void*)data);
 
     PixelBox dstBox = PixelBox(src.getWidth(), src.getHeight(),
@@ -252,18 +254,20 @@ void VulkanTexture::uploadTextureData(const char* data, uint32_t size, TexturePr
 
     mMipLevels = mTextureProperty._numMipmaps + 1;
     
-    if (mTextureProperty._numMipmaps == 0)
+    if (need_midmap())
     {
-        auto current = static_cast<uint32_t>(floor(log2(std::max(tp._width, tp._height))) + 1.0);
-
-        if (current > mMipLevels)
+        if (mTextureProperty._numMipmaps == 0)
         {
-            mNeedMipmaps = true;
-            mMipLevels = current;
+            auto current = static_cast<uint32_t>(floor(log2(std::max(tp._width, tp._height))) + 1.0);
+
+            if (current > mMipLevels)
+            {
+                mNeedMipmaps = true;
+                mMipLevels = current;
+            }
         }
     }
-    
-
+ 
     postLoad();
 }
 

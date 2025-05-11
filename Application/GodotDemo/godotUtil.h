@@ -7,7 +7,12 @@ namespace Ogre
     class SceneManager;
 };
 
-using WindowCallback = std::function<void(int64_t wnd)>;
+struct Surface {
+    uint32_t width = 0;
+    uint32_t height = 0;
+    void* renderWnd;
+};
+using WindowCallback = std::function<Surface(int64_t wnd)>;
 
 struct GodotContext
 {

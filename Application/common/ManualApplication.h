@@ -23,7 +23,7 @@ public:
 	~ManualApplication();
 
 	void run(AppInfo* info);
-	bool appInit(AppInfo* info);
+	
 	virtual bool isUseCEGUI()
 	{
 		return mUseCEGUI;
@@ -33,7 +33,10 @@ public:
 
 	void addRenderPass(PassBase* pass);
 	void addUIPass();
+	Ogre::RenderWindow* wndInit(int64_t appWnd);
 private:
+	void appInit();
+	
 	virtual bool frameStarted(const Ogre::FrameEvent& evt);
 	void ShowFrameFrequency();
 	void loop();
@@ -48,6 +51,7 @@ protected:
 	Ogre::Camera* mCamera = nullptr;
 	GameCamera* mGameCamera = nullptr;
 	Ogre::RenderWindow* mRenderWindow = nullptr;
+	filament::backend::Handle<filament::backend::HwSwapChain> mSwapChainHandle;
 	std::vector<PassBase*> mPassList;
 	RenderPassInfo mPassInfo;
 	AppInfo* mAppInfo;

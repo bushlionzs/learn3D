@@ -100,7 +100,8 @@ void PresentPass::execute(RenderSystem* rs)
 	auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 	rs->pushGroupMarker("presentPass");
 	rs->beginRenderPass(info);
-	rs->bindPipeline(mPipelineHandle, &mZeroSet, 1);
+	rs->bindPipeline(mPipelineHandle);
+	rs->bindDescriptorSets(mPipelineHandle, &mZeroSet, 1);
 	rs->draw(3, 1, 0, 0);
 	rs->endRenderPass(info);
 	rs->popGroupMarker();

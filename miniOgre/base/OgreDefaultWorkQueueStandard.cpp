@@ -27,7 +27,7 @@ THE SOFTWARE.
 */
 #include <OgreHeader.h>
 #include "OgreDefaultWorkQueue.h"
-
+#include <platform_thread.h>
 namespace Ogre
 {
     //---------------------------------------------------------------------
@@ -137,6 +137,7 @@ namespace Ogre
     //---------------------------------------------------------------------
     void DefaultWorkQueue::_threadMain()
     {
+        SetThreadName(-1, "WorkQueue");
         // default worker thread
 #if OGRE_THREAD_SUPPORT
         // Initialise the thread for RS if necessary

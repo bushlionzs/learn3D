@@ -127,14 +127,14 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
     createCommandPool();
     createVulkanResourceCache();
 
-    uint32_t queueCount = mPlatform->getTransferQueueCount();
+    uint32_t queueCount = mPlatform->getTransferQueueCount() - 1;
     mTransferCommandList.resize(queueCount);
 
     for (uint32_t i = 0; i < queueCount; i++)
     {
         TransferCommandInfo*  commandInfo = new TransferCommandInfo;
         mTransferCommandList[i] = commandInfo;
-        commandInfo->index = i;
+        commandInfo->index = i +1;
         VkCommandPoolCreateInfo cmdPoolInfo = {};
 
 
@@ -157,6 +157,10 @@ void VulkanHelper::_initialise(VulkanPlatform* platform)
         allocInfo.commandBufferCount = 1;
 
         vkAllocateCommandBuffers(mVKDevice, &allocInfo, &commandInfo->commandBuffer);
+
+        VkFenceCreateInfo create_info = {};
+        create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        vkCreateFence(mVKDevice, &create_info, nullptr, &commandInfo->fence);
     }
 
     VkDescriptorSetLayoutCreateInfo layoutCreateInfo = {};
@@ -274,44 +278,74 @@ std::shared_ptr<OgreTexture>& VulkanHelper::getDefaultTexture()
     return mDefaultTexture;
 }
 
+std::set<uint32_t> ids;
+uint32_t get_thread_id_as_uint32() {
+    std::hash<std::thread::id> hasher;
+    return static_cast<uint32_t>(hasher(std::this_thread::get_id()));
+}
+
 TransferCommandInfo* VulkanHelper::beginTransferCommand()
 {
-    std::lock_guard<utils::Mutex> const lock(mLock);
-    if (!mTransferCommandList.empty())
+    TransferCommandInfo* commandInfo = nullptr;
     {
-        TransferCommandInfo* commandInfo = mTransferCommandList.back();
-        mTransferCommandList.pop_back();
+        std::lock_guard<utils::Mutex> const lock(mLock);
+        if (!mTransferCommandList.empty())
+        {
+            commandInfo = mTransferCommandList.back();
+            mTransferCommandList.pop_back();
 
+           
+
+            uint32_t id = (uint32_t)get_thread_id_as_uint32();
+
+            if (ids.find(id) != ids.end())
+            {
+                int kk = 0;
+            }
+            ids.insert(id);
+        }
+    }
+    
+    if (commandInfo)
+    {
         VkCommandBufferBeginInfo beginInfo = {};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         bluevk::vkBeginCommandBuffer(commandInfo->commandBuffer, &beginInfo);
-
-        return commandInfo;
     }
-
-    return nullptr;
+    else
+    {
+        int kk = 0;
+    }
+    
+    return commandInfo;
 }
 
 void VulkanHelper::endTransferCommand(TransferCommandInfo* commandInfo)
 {
-    vkEndCommandBuffer(commandInfo->commandBuffer);
+    bluevk::vkEndCommandBuffer(commandInfo->commandBuffer);
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandInfo->commandBuffer;
-
     auto queue = mPlatform->getTransferQueue(commandInfo->index);
 
-    auto result = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+    auto result = vkQueueSubmit(queue, 1, &submitInfo, commandInfo->fence);
 
-    if (result != VK_SUCCESS)
+    assert_invariant(result == VK_SUCCESS);
+    
+    result = vkWaitForFences(mVKDevice, 1, &commandInfo->fence, VK_TRUE, UINT64_MAX);
+    assert_invariant(result == VK_SUCCESS);
+
+    vkResetFences(mVKDevice, 1, &commandInfo->fence);
+
     {
-        OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, "failed to vkQueueSubmit!");
-    }
-    vkQueueWaitIdle(queue);
+        std::lock_guard<utils::Mutex> const lock(mLock);
+        mTransferCommandList.push_back(commandInfo);
 
-    std::lock_guard<utils::Mutex> const lock(mLock);
-    mTransferCommandList.push_back(commandInfo);
+        uint32_t id = (uint32_t)get_thread_id_as_uint32();
+        ids.erase(id);
+    }
+    
 }
 
 uint32_t VulkanHelper::getTransferFamilyIndex()

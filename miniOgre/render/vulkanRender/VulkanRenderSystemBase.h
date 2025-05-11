@@ -69,9 +69,11 @@ public:
     virtual void beginRenderPass(RenderPassInfo& renderPassInfo) override;
     virtual void endRenderPass(RenderPassInfo& renderPassInfo) override;
     virtual void bindPipeline(
-        Handle<HwPipeline> pipelineHandle,
-        const Handle<HwDescriptorSet>* descSets,
-        uint32_t setCount) override;
+        Handle<HwPipeline> pipelineHandle) override;
+    virtual void bindDescriptorSets(
+        filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle,
+        const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
+        uint32_t setCount)override;
     virtual void draw(uint32_t vertexCount,
         uint32_t instanceCount,
         uint32_t firstVertex,

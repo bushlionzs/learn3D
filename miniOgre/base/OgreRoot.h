@@ -7,6 +7,7 @@
 #include "OgreFrameListener.h"
 #include <utils/JobSystem.h>
 #include <renderSystem.h>
+#include <OgreWorkQueue.h>
 
 #define MAIN_SCENE_MANAGER "__main__"
 #define MAIN_CAMERA "__main_camera__"

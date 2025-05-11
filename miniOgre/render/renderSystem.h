@@ -81,6 +81,12 @@ public:
     virtual void endRenderPass(RenderPassInfo& renderPassInfo);
 
     virtual void bindPipeline(
+        filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle)
+    {
+        assert_invariant(false);
+    }
+
+    virtual void bindDescriptorSets(
         filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle,
         const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
         uint32_t setCount)

@@ -155,11 +155,15 @@ void BasicApplication::base1()
 	mRenderPipeline->addRenderPass(mainPass);
 }
 
-void BasicApplication::godotWndCallback(AppInfo* appInfo, int64_t wnd)
+Surface BasicApplication::godotWndCallback(AppInfo* appInfo, int64_t wnd)
 {
 	appInfo->appWnd = wnd;
 	appInfo->loopback = godotLoop;
-	mApplication->appInit(appInfo);
+	
+
+	Surface surface;
+	surface.renderWnd = mApplication->wndInit(wnd);
+	return surface;
 }
 
 void BasicApplication::userInit(AppInfo* appInfo)

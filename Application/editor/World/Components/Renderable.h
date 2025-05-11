@@ -1,0 +1,137 @@
+/*
+Copyright(c) 2016-2025 Panos Karabelas
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+copies of the Software, and to permit persons to whom the Software is furnished
+to do so, subject to the following conditions :
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+#pragma once
+
+//= INCLUDES =================================
+#include "Component.h"
+#include <vector>
+//============================================
+
+namespace spartan
+{
+    class Material;
+    class RHI_Buffer;
+    class Mesh;
+    enum RenderableFlags : uint32_t
+    {
+        CastsShadows = 1U << 0
+    };
+
+    constexpr uint32_t renderer_max_entities = 10000;
+
+    class Renderable : public Component
+    {
+    public:
+        Renderable(Entity* entity);
+        ~Renderable();
+
+        // icomponent
+        void Serialize(FileStream* stream) override;
+        void Deserialize(FileStream* stream) override;
+        void OnTick() override;
+
+        // mesh
+        void SetMesh(Mesh* mesh, const uint32_t sub_mesh_index = 0);
+
+        uint32_t GetLodCount() const;
+        uint32_t GetLodIndex(const uint32_t instance_group_index = 0) const { return m_lod_indices[instance_group_index]; }
+        uint32_t GetIndexOffset(const uint32_t lod = 0) const;
+        uint32_t GetIndexCount(const uint32_t lod = 0) const;
+        uint32_t GetVertexOffset(const uint32_t lod = 0) const;
+        uint32_t GetVertexCount(const uint32_t lod = 0) const;
+        RHI_Buffer* GetIndexBuffer() const;
+        RHI_Buffer* GetVertexBuffer() const;
+        const std::string& GetMeshName() const;
+        bool HasMesh() const { return m_mesh != nullptr; }
+        bool IsSolid() const;
+
+        // bounding box
+        const std::vector<uint32_t>& GetBoundingBoxGroupEndIndices() const               { return m_instance_group_end_indices; }
+        uint32_t GetInstanceGroupCount() const                                           { return static_cast<uint32_t>(m_instance_group_end_indices.size()); }
+        const Ogre::OrientedBoundingBox& GetBoundingBox() const                                  { return m_bounding_box;}
+        const Ogre::OrientedBoundingBox& GetBoundingBoxInstance(const uint32_t index) const      { return m_bounding_box_instances[index]; }
+        const Ogre::OrientedBoundingBox& GetBoundingBoxInstanceGroup(const uint32_t index) const { return m_bounding_box_instance_group[index]; }
+
+        // material
+        void SetMaterial(const std::shared_ptr<Material>& material);
+        void SetMaterial(const std::string& file_path);
+        void SetDefaultMaterial();
+        std::string GetMaterialName() const;
+        Material* GetMaterial() const { return m_material; }
+
+        // instancing
+        bool HasInstancing() const                              { return !m_instances.empty(); }
+        RHI_Buffer* GetInstanceBuffer() const                   { return m_instance_buffer.get(); }
+        Ogre::Matrix4 GetInstanceTransform(const uint32_t index) { return m_instances[index]; }
+        uint32_t GetInstanceCount()  const                      { return static_cast<uint32_t>(m_instances.size()); }
+        uint32_t GetInstanceGroupStartIndex(uint32_t group_index) const;
+        uint32_t GetInstanceGroupCount(uint32_t group_index) const;
+        void SetInstances(const std::vector<Ogre::Matrix4>& instances);
+
+        // distance & visibility
+        float GetDistanceSquared(const uint32_t instance_group_index = 0) const { return m_distance_squared[instance_group_index]; }
+        float GetMaxRenderDistance() const                                      { return m_max_render_distance; }
+        void SetMaxRenderDistance(const float max_render_distance)              { m_max_render_distance = max_render_distance; }
+        bool IsVisible(const uint32_t instance_group_index = 0) const           { return m_is_visible[instance_group_index]; }
+
+        // flags
+        bool HasFlag(const RenderableFlags flag) const { return m_flags & flag; }
+        void SetFlag(const RenderableFlags flag, const bool enable = true);
+
+        // previous lights tracking
+        uint64_t GetPreviousLights() const      { return m_previous_lights; }
+        void SetPreviousLights(uint64_t lights) { m_previous_lights = lights; }
+
+    private:
+        void UpdateFrustumAndDistanceCulling();
+        void UpdateLodIndices();
+
+        // geometry/mesh
+        Mesh* m_mesh                          = nullptr;
+        uint32_t m_sub_mesh_index             = 0;
+        bool m_bounding_box_dirty             = true;
+        Ogre::OrientedBoundingBox m_bounding_box_mesh;
+        Ogre::OrientedBoundingBox m_bounding_box;
+        std::vector<Ogre::OrientedBoundingBox> m_bounding_box_instances;
+        std::vector<Ogre::OrientedBoundingBox> m_bounding_box_instance_group;
+
+        // material
+        bool m_material_default = false;
+        Material* m_material    = nullptr;
+
+        // instancing
+        std::vector<Ogre::Matrix4> m_instances;
+        std::vector<uint32_t> m_instance_group_end_indices;
+        std::shared_ptr<RHI_Buffer> m_instance_buffer;
+
+        // misc
+        Ogre::Matrix4 m_transform_previous = Ogre::Matrix4::IDENTITY;
+        uint32_t m_flags                  = RenderableFlags::CastsShadows;
+
+        // visibility & lods
+        float m_max_render_distance                                 = FLT_MAX;
+        std::array<float, renderer_max_entities> m_distance_squared = { 0.0f };
+        std::array<bool, renderer_max_entities> m_is_visible        = { false };
+        std::array<uint32_t, renderer_max_entities> m_lod_indices   = { 0 };
+        uint64_t m_previous_lights                                  = 0; // lights whose frustums this renderable was in last frame
+    };
+}

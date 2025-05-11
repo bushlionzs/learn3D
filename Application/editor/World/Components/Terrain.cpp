@@ -1,0 +1,743 @@
+/*
+Copyright(c) 2016-2025 Panos Karabelas
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+copies of the Software, and to permit persons to whom the Software is furnished
+to do so, subject to the following conditions :
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+//= INCLUDES =================================
+#include <OgreHeader.h>
+#include "Terrain.h"
+#include "Renderable.h"
+#include "ProgressTracker.h"
+#include "Entity.h"
+#include "World.h"
+#include "Material.h"
+#include <platform_log.h>
+#include <random>
+//============================================
+
+//= NAMESPACES ===============
+using namespace std;
+using namespace spartan::math;
+//============================
+
+namespace spartan
+{
+    namespace perlin_noise
+    {
+        // permutation table (256 values, typically used in Perlin noise for randomness)
+        static unsigned char p[512] = {
+            151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,
+            8,99,37,240,21,10,23,190,6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,
+            35,11,32,57,177,33,88,237,149,56,87,174,20,125,136,171,168,68,175,74,165,71,
+            134,139,48,27,166,77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,
+            55,46,245,40,244,102,143,54,65,25,63,161,1,216,80,73,209,76,132,187,208,89,
+            18,169,200,196,135,130,116,188,159,86,164,100,109,198,173,186,3,64,52,217,
+            226,250,124,123,5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,
+            17,182,189,28,42,223,183,170,213,119,248,152,2,44,154,163,70,221,153,101,
+            155,167,43,172,9,129,22,39,253,19,98,108,110,79,113,224,232,178,185,112,104,
+            218,246,97,228,251,34,242,193,238,210,144,12,191,179,162,241,81,51,145,235,
+            249,14,239,107,49,192,214,31,181,199,106,157,184,84,204,176,115,121,50,45,
+            127,4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,
+            61,156,180,
+            // duplicate the array for wrapping (common practice in Perlin noise)
+            151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,
+            8,99,37,240,21,10,23,190,6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,
+            35,11,32,57,177,33,88,237,149,56,87,174,20,125,136,171,168,68,175,74,165,71,
+            134,139,48,27,166,77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,
+            55,46,245,40,244,102,143,54,65,25,63,161,1,216,80,73,209,76,132,187,208,89,
+            18,169,200,196,135,130,116,188,159,86,164,100,109,198,173,186,3,64,52,217,
+            226,250,124,123,5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,
+            17,182,189,28,42,223,183,170,213,119,248,152,2,44,154,163,70,221,153,101,
+            155,167,43,172,9,129,22,39,253,19,98,108,110,79,113,224,232,178,185,112,104,
+            218,246,97,228,251,34,242,193,238,210,144,12,191,179,162,241,81,51,145,235,
+            249,14,239,107,49,192,214,31,181,199,106,157,184,84,204,176,115,121,50,45,
+            127,4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,
+            61,156,180
+        };
+    
+        // fade function for smooth interpolation (6t^5 - 15t^4 + 10t^3)
+        inline float fade(float t)
+        {
+            return t * t * t * (t * (t * 6 - 15) + 10);
+        }
+    
+        // linear interpolation
+        inline float lerp(float a, float b, float t)
+        {
+            return a + t * (b - a);
+        }
+    
+        // gradient function: computes dot product between gradient vector and distance vector
+        inline float grad(int hash, float x, float y)
+        {
+            int h = hash & 15;           // Take lower 4 bits of hash
+            float u = h < 8 ? x : y;     // If h < 8, use x, else use y
+            float v = h < 4 ? y : (h == 12 || h == 14 ? x : 0); // Select v based on hash
+            return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v); // Dot product
+        }
+    
+        // 2d perlin noise function
+        float noise(float x, float y)
+        {
+            // gind unit grid cell containing point
+            int X = static_cast<int>(floor(x)) & 255;
+            int Y = static_cast<int>(floor(y)) & 255;
+    
+            // get relative coordinates within the cell
+            x -= floor(x);
+            y -= floor(y);
+    
+            // compute fade curves for smooth interpolation
+            float u = fade(x);
+            float v = fade(y);
+    
+            // hash coordinates of the 4 corners of the grid cell
+            int aa = p[p[X] + Y];         // bottom-left
+            int ab = p[p[X] + Y + 1];     // top-left
+            int ba = p[p[X + 1] + Y];     // bottom-right
+            int bb = p[p[X + 1] + Y + 1]; // top-right
+    
+            // compute gradients and interpolate
+            float g1 = grad(aa, x, y);           // bottom-left gradient
+            float g2 = grad(ba, x - 1, y);       // bottom-right gradient
+            float x1 = lerp(g1, g2, u);          // interpolate along x (bottom edge)
+            
+            float g3 = grad(ab, x, y - 1);       // top-left gradient
+            float g4 = grad(bb, x - 1, y - 1);   // top-right gradient
+            float x2 = lerp(g3, g4, u);          // interpolate along x (top edge)
+    
+            // interpolate along y and return noise value in range [-1, 1]
+            return lerp(x1, x2, v);
+        }
+
+        void add(vector<float>& height_data, uint32_t width, uint32_t height, float frequency, float amplitude)
+        {
+            auto add_noise = [&height_data, width, height, frequency, amplitude](uint32_t start_index, uint32_t end_index)
+            {
+                for (uint32_t index = start_index; index < end_index; ++index)
+                {
+                    uint32_t i                  = index % width;
+                    uint32_t j                  = index / width;
+                    float x                     = static_cast<float>(i) - width * 0.5f;
+                    float z                     = static_cast<float>(j) - height * 0.5f;
+                    float noise_value           = noise(x * frequency, z * frequency);
+                    height_data[j * width + i] += noise_value * amplitude;
+                }
+            };
+
+
+        }
+    }
+
+    namespace placement
+    {
+        struct TriangleData
+        {
+            Ogre::Vector3 normal;
+            Ogre::Vector3 v0;
+            Ogre::Vector3 v1_minus_v0;
+            Ogre::Vector3 v2_minus_v0;
+            float slope_radians;
+            float min_height;
+            Ogre::Quaternion rotation_to_normal;
+        };
+        static vector<TriangleData> triangle_data;
+
+        void compute_triangle_data(const vector<RHI_Vertex_PosTexNorTan>& terrain_vertices, const vector<uint32_t>& terrain_indices)
+        {
+            uint32_t triangle_count = static_cast<uint32_t>(terrain_indices.size() / 3);
+            triangle_data.resize(triangle_count);
+        
+            auto compute_triangle = [&terrain_vertices, &terrain_indices](uint32_t start_index, uint32_t end_index)
+            {
+                for (uint32_t i = start_index; i < end_index; i++)
+                {
+                    uint32_t idx0 = terrain_indices[i * 3];
+                    uint32_t idx1 = terrain_indices[i * 3 + 1];
+                    uint32_t idx2 = terrain_indices[i * 3 + 2];
+        
+                    Ogre::Vector3 v0(terrain_vertices[idx0].pos[0], terrain_vertices[idx0].pos[1], terrain_vertices[idx0].pos[2]);
+                    Ogre::Vector3 v1(terrain_vertices[idx1].pos[0], terrain_vertices[idx1].pos[1], terrain_vertices[idx1].pos[2]);
+                    Ogre::Vector3 v2(terrain_vertices[idx2].pos[0], terrain_vertices[idx2].pos[1], terrain_vertices[idx2].pos[2]);
+        
+                    Ogre::Vector3 normal;
+                    float slope_radians           = acos(normal.dotProduct(Ogre::Vector3::UNIT_Y));
+                    float min_height              = min({v0.y, v1.y, v2.y});
+                    Ogre::Vector3 v1_minus_v0           = v1 - v0;
+                    Ogre::Vector3 v2_minus_v0           = v2 - v0;
+
+                }
+            };
+        
+
+        }
+
+        vector<Ogre::Matrix4> find_transforms(uint32_t transform_count, float max_slope_radians, bool rotate_to_match_surface_normal, float terrain_offset, float min_height)
+        {
+            assert_invariant(!triangle_data.empty());
+        
+            // step 1: filter acceptable triangles using precomputed data
+            vector<uint32_t> acceptable_triangles;
+            {
+                acceptable_triangles.reserve(triangle_data.size());
+        
+                for (uint32_t i = 0; i < triangle_data.size(); i++)
+                {
+                    if (triangle_data[i].slope_radians <= max_slope_radians && triangle_data[i].min_height >= min_height)
+                    {
+                        acceptable_triangles.push_back(i); // store triangle index
+                    }
+                }
+        
+                if (acceptable_triangles.empty())
+                {
+                    WARNING_LOG("No acceptable triangles found for the given criteria.");
+                    return {};
+                }
+            }
+        
+            // step 2: prepare output vector and mutex
+            vector<Ogre::Matrix4> transforms;
+            transforms.reserve(transform_count);
+            mutex mtx;
+        
+            // step 3: parallel placement with local storage
+            auto place_mesh = [&acceptable_triangles, &transforms, &mtx, rotate_to_match_surface_normal, terrain_offset](uint32_t start_index, uint32_t end_index)
+            {
+                thread_local mt19937 generator(random_device{}());
+                uniform_int_distribution<> triangle_dist(0, static_cast<uint32_t>(acceptable_triangles.size() - 1));
+                uniform_real_distribution<float> barycentric_dist(0.0f, 1.0f);
+                uniform_real_distribution<float> angle_dist(0.0f, 360.0f);
+        
+                vector<Ogre::Matrix4> local_transforms;
+                local_transforms.reserve(end_index - start_index);
+        
+                for (uint32_t i = start_index; i < end_index; i++)
+                {
+                    uint32_t tri_idx        = acceptable_triangles[triangle_dist(generator)];
+                    const TriangleData& tri = triangle_data[tri_idx];
+                
+                    float u = barycentric_dist(generator);
+                    float v = barycentric_dist(generator);
+                    if (u + v > 1.0f)
+                    {
+                        u = 1.0f - u;
+                        v = 1.0f - v;
+                    }
+                
+                
+                }
+        
+                // merge local transforms into the shared vector
+                lock_guard<mutex> lock(mtx);
+                transforms.insert(transforms.end(), local_transforms.begin(), local_transforms.end());
+            };
+        
+
+        
+            return transforms;
+        }
+    }
+
+    namespace
+    {
+        const float sea_level               = 0.0f;      // the height at which the sea level is 0.0f; // this is an axiom of the engine
+        const uint32_t scale                = 3;         // the scale factor to upscale the height map by
+        const uint32_t smoothing_iterations = 0;         // the number of height map neighboring pixel averaging - useful if you are reading the height map with a scale of 1 (no bilinear interpolation)
+        const uint32_t tile_count           = 8 * scale; // the number of tiles in each dimension to split the terrain into
+
+        float compute_terrain_area_km2(const vector<RHI_Vertex_PosTexNorTan>& vertices)
+        {
+            if (vertices.empty())
+                return 0.0f;
+        
+            // Initialize min and max values for x and z coordinates
+            float min_x = numeric_limits<float>::max();
+            float max_x = numeric_limits<float>::lowest();
+            float min_z = numeric_limits<float>::max();
+            float max_z = numeric_limits<float>::lowest();
+        
+            // iterate through all vertices to find the bounding box
+            for (const auto& vertex : vertices)
+            {
+                float x = vertex.pos[0]; // x-coordinate
+                float z = vertex.pos[2]; // z-coordinate
+        
+                // Update min and max values
+                if (x < min_x) min_x = x;
+                if (x > max_x) max_x = x;
+                if (z < min_z) min_z = z;
+                if (z > max_z) max_z = z;
+            }
+        
+            // calculate width (x extent) and depth (z extent) in meters
+            float width = max_x - min_x;
+            float depth = max_z - min_z;
+        
+            // compute area in square meters
+            float area_m2 = width * depth;
+        
+            // convert to square kilometers (1 km?= 1,000,000 m?
+            float area_km2 = area_m2 / 1000000.0f;
+        
+            return area_km2;
+        }
+
+        void get_values_from_height_map(
+            vector<float>& height_data_out, 
+            Ogre::OgreTexture* height_texture, 
+            const float min_y, const float max_y, const uint32_t scale)
+        {
+            
+           
+        }
+
+        void generate_positions(vector<Ogre::Vector3>& positions, const vector<float>& height_map, const uint32_t width, const uint32_t height)
+        {
+            assert_invariant(!height_map.empty());
+        
+            // pre-allocate positions vector
+            positions.resize(width * height);
+        
+            // parallel generation of positions
+            auto generate_position_range = [&positions, &height_map, width, height](uint32_t start_index, uint32_t end_index)
+            {
+                for (uint32_t index = start_index; index < end_index; index++)
+                {
+                    // convert flat index to x,y coordinates
+                    uint32_t x = index % width;
+                    uint32_t y = index / width;
+        
+                    // center on the x and z axis
+                    float centered_x = static_cast<float>(x) - width * 0.5f;
+                    float centered_z = static_cast<float>(y) - height * 0.5f;
+        
+                    // get height from height_map
+                    float height_value = height_map[index];
+        
+
+                }
+            };
+        
+            // calculate total number of positions and run parallel loop
+            uint32_t total_positions = width * height;
+
+        }
+
+        void generate_vertices_and_indices(vector<RHI_Vertex_PosTexNorTan>& terrain_vertices, vector<uint32_t>& terrain_indices, const vector<Ogre::Vector3>& positions, const uint32_t width, const uint32_t height)
+        {
+            assert_invariant(!positions.empty());
+
+      
+        }
+
+        void generate_normals(const vector<uint32_t>& , 
+            vector<RHI_Vertex_PosTexNorTan>& terrain_vertices, uint32_t width, uint32_t height)
+        {
+            assert_invariant(!terrain_vertices.empty(), "Vertices are empty");
+        
+            auto compute_vertex_data = [&](uint32_t start, uint32_t end)
+            {
+                for (uint32_t index = start; index < end; index++)
+                {
+                    uint32_t i = index % width;
+                    uint32_t j = index / width;
+        
+                    // compute normal using gradients
+                    float h_left, h_right, h_bottom, h_top;
+        
+                    // x-direction gradient
+                    if (i == 0)
+                    {
+                        h_left  = terrain_vertices[j * width + i].pos[1];
+                        h_right = terrain_vertices[j * width + i + 1].pos[1];
+                    }
+                    else if (i == width - 1)
+                    {
+                        h_left  = terrain_vertices[j * width + i - 1].pos[1];
+                        h_right = terrain_vertices[j * width + i].pos[1];
+                    } else
+                    {
+                        h_left  = terrain_vertices[j * width + i - 1].pos[1];
+                        h_right = terrain_vertices[j * width + i + 1].pos[1];
+                    }
+                    float dh_dx = (h_right - h_left) / (i == 0 || i == width - 1 ? 1.0f : 2.0f);
+        
+                    // z-direction gradient
+                    if (j == 0)
+                    {
+                        h_bottom = terrain_vertices[j * width + i].pos[1];
+                        h_top    = terrain_vertices[(j + 1) * width + i].pos[1];
+                    }
+                    else if (j == height - 1)
+                    {
+                        h_bottom = terrain_vertices[(j - 1) * width + i].pos[1];
+                        h_top    = terrain_vertices[j * width + i].pos[1];
+                    }
+                    else
+                    {
+                        h_bottom = terrain_vertices[(j - 1) * width + i].pos[1];
+                        h_top    = terrain_vertices[(j + 1) * width + i].pos[1];
+                    }
+                    float dh_dz = (h_top - h_bottom) / (j == 0 || j == height - 1 ? 1.0f : 2.0f);
+
+                    // normal
+                    Ogre::Vector3 normal(-dh_dx, 1.0f, -dh_dz);
+                    normal.normalise();
+                    terrain_vertices[index].nor[0] = normal.x;
+                    terrain_vertices[index].nor[1] = normal.y;
+                    terrain_vertices[index].nor[2] = normal.z;
+        
+                    // tangent
+                    Ogre::Vector3 tangent(1.0f, 0.0f, 0.0f);
+                    float proj  = normal.dotProduct(tangent);
+                    tangent     -= normal * proj; // Orthogonalize to normal
+                    tangent.normalise();
+                    terrain_vertices[index].tan[0] = tangent.x;
+                    terrain_vertices[index].tan[1] = tangent.y;
+                    terrain_vertices[index].tan[2] = tangent.z;
+                }
+            };
+        
+
+        }
+    }
+
+    Terrain::Terrain(Entity* entity) : Component(entity)
+    {
+        m_material = make_shared<Material>();
+
+    }
+
+    Terrain::~Terrain()
+    {
+        m_height_texture = nullptr;
+    }
+
+    uint32_t Terrain::GetWidth() const
+    {
+        return m_height_texture->getWidth() * scale;
+    }
+
+    uint32_t Terrain::GetHeight() const
+    {
+        return m_height_texture->getHeight() * scale;
+    }
+
+    void Terrain::GenerateTransforms(vector<Ogre::Matrix4>* transforms, const uint32_t count, const TerrainProp terrain_prop)
+    {
+        bool rotate_match_surface_normal = false; // don't rotate to match the surface normal
+        float max_slope                  = 0.0f;  // don't allow slope
+        float terrain_offset             = 0.0f;  // place exactly on the terrain
+        float min_height                 = 0.0f;  // spawn at sea level= 0.0f; // spawn at sea level
+    
+        if (terrain_prop == TerrainProp::Tree)
+        {
+            max_slope                   = 30.0f * Ogre::Math::fDeg2Rad;
+            terrain_offset              = -2.0f; // push the tree slightly into the ground
+            min_height                  = 6.0f;
+        }
+    
+        if (terrain_prop == TerrainProp::Grass)
+        {
+            max_slope                   = 40.0f * Ogre::Math::fDeg2Rad;
+            rotate_match_surface_normal = true; // small plants tend to grow towards the sun but they can have some wonky angles
+            min_height                  = 0.5f;
+        }
+    
+        *transforms = placement::find_transforms(count, max_slope, rotate_match_surface_normal, terrain_offset, min_height);
+    }
+
+    void Terrain::Generate()
+    {
+        if (m_is_generating)
+        {
+            WARNING_LOG("Terrain is already being generated, please wait...");
+            return;
+        }
+    
+        if (!m_height_texture)
+        {
+            WARNING_LOG("You need to assign a height map before trying to generate a terrain");
+            return;
+        }
+    
+        m_is_generating = true;
+    
+        // start progress tracking
+        uint32_t job_count = 9;
+        ProgressTracker::GetProgress(ProgressType::Terrain).Start(job_count, "Generating terrain...");
+    
+        uint32_t width  = 0;
+        uint32_t height = 0;
+        vector<Ogre::Vector3> positions;
+    
+        // define cache file path
+        const string cache_file = "terrain_cache.bin";
+        bool loaded_from_cache = false;
+    
+        // check if cache exists and load it
+        {
+            ifstream file(cache_file, ios::binary);
+            if (file.is_open())
+            {
+                // read all sizes first
+                uint32_t height_data_size = 0;
+                uint32_t vertex_count     = 0;
+                uint32_t index_count      = 0;
+                uint32_t tile_count       = 0;
+                uint32_t placement_count  = 0;
+    
+                file.read(reinterpret_cast<char*>(&width), sizeof(uint32_t));
+                file.read(reinterpret_cast<char*>(&height), sizeof(uint32_t));
+                file.read(reinterpret_cast<char*>(&height_data_size), sizeof(uint32_t));
+                file.read(reinterpret_cast<char*>(&vertex_count), sizeof(uint32_t));
+                file.read(reinterpret_cast<char*>(&index_count), sizeof(uint32_t));
+                file.read(reinterpret_cast<char*>(&tile_count), sizeof(uint32_t));
+                file.read(reinterpret_cast<char*>(&placement_count), sizeof(uint32_t));
+    
+                // Sanity check
+                if (tile_count > 10000) // Adjust as needed
+                {
+                    FATAL_LOG("Invalid tile_count (%u) read from cache, aborting load", tile_count);
+                    file.close();
+                }
+                else
+                {
+                    // resize vectors based on saved sizes
+                    m_height_data.resize(height_data_size);
+                    m_vertices.resize(vertex_count);
+                    m_indices.resize(index_count);
+                    m_tile_vertices.resize(tile_count);
+                    m_tile_indices.resize(tile_count);
+                    placement::triangle_data.resize(placement_count);
+    
+                    // read vector data
+                    file.read(reinterpret_cast<char*>(m_height_data.data()), height_data_size * sizeof(float));
+                    file.read(reinterpret_cast<char*>(m_vertices.data()), vertex_count * sizeof(RHI_Vertex_PosTexNorTan));
+                    file.read(reinterpret_cast<char*>(m_indices.data()), index_count * sizeof(uint32_t));
+                    file.read(reinterpret_cast<char*>(placement::triangle_data.data()), placement_count * sizeof(placement::TriangleData));
+    
+                    // read tile data
+                    for (uint32_t i = 0; i < tile_count; i++)
+                    {
+                        uint32_t vertex_size, index_size;
+                        file.read(reinterpret_cast<char*>(&vertex_size), sizeof(uint32_t));
+                        file.read(reinterpret_cast<char*>(&index_size), sizeof(uint32_t));
+    
+                        m_tile_vertices[i].resize(vertex_size);
+                        m_tile_indices[i].resize(index_size);
+    
+                        file.read(reinterpret_cast<char*>(m_tile_vertices[i].data()), vertex_size * sizeof(RHI_Vertex_PosTexNorTan));
+                        file.read(reinterpret_cast<char*>(m_tile_indices[i].data()), index_size * sizeof(uint32_t));
+                    }
+    
+                    file.close();
+                    loaded_from_cache = true;
+    
+                    NOTICE_LOG("Loaded cache: width=%u, height=%u, height_data_size=%u, vertex_count=%u, index_count=%u, tile_count=%u", width, height, height_data_size, vertex_count, index_count, tile_count);
+    
+                    // skip to step 8
+                    ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Loaded from cache, skipping to mesh creation...");
+                    for (uint32_t i = 0; i < 8; i++)
+                    { 
+                        ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+                    }
+                }
+            }
+        }
+    
+        if (!loaded_from_cache)
+        {
+            // 1. process height map
+            {
+                ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Process height map...");
+                get_values_from_height_map(m_height_data, m_height_texture, m_min_y, m_max_y, scale);
+                width  = GetWidth();
+                height = GetHeight();
+                ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+            }
+    
+            // 2. add perlin noise
+            {
+                ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Adding Perlin noise...");
+                const float frequency = 0.1f;
+                const float amplitude = 1.0f;
+                perlin_noise::add(m_height_data, width, height, frequency, amplitude);
+                ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+            }
+    
+            // 3. compute positions 
+            {
+                ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Generating positions...");
+                positions.resize(width * height);
+                generate_positions(positions, m_height_data, width, height);
+                ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+            }
+    
+            // 4. compute vertices and indices
+            {
+                ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Generating vertices and indices...");
+                m_vertices.resize(width * height);
+                m_indices.resize(width * height * 6);
+                generate_vertices_and_indices(m_vertices, m_indices, positions, width, height);
+                ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+            }
+    
+            // 5. compute normals and tangents
+            {
+                ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Generating normals...");
+                generate_normals(m_indices, m_vertices, width, height);
+                ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+            }
+    
+            // 6. optimize geometry
+            {
+                ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Optimizing geometry...");
+
+                ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+            }
+
+            // 7. Compute triangle data for placement
+            {
+                ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Computing triangle data for placement...");
+                placement::compute_triangle_data(m_vertices, m_indices);
+                ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+            }
+    
+            // 8. split into tiles
+            {
+                ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Splitting into tiles...");
+               
+                ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+    
+                // write to cache file
+                ofstream file(cache_file, ios::binary);
+                if (file.is_open())
+                {
+                    // write all sizes first
+                    uint32_t height_data_size = static_cast<uint32_t>(m_height_data.size());
+                    uint32_t vertex_count     = static_cast<uint32_t>(m_vertices.size());
+                    uint32_t index_count      = static_cast<uint32_t>(m_indices.size());
+                    uint32_t tile_count       = static_cast<uint32_t>(m_tile_vertices.size());
+                    uint32_t placement_count  = static_cast<uint32_t>(placement::triangle_data.size());
+    
+                    file.write(reinterpret_cast<const char*>(&width), sizeof(uint32_t));
+                    file.write(reinterpret_cast<const char*>(&height), sizeof(uint32_t));
+                    file.write(reinterpret_cast<const char*>(&height_data_size), sizeof(uint32_t));
+                    file.write(reinterpret_cast<const char*>(&vertex_count), sizeof(uint32_t));
+                    file.write(reinterpret_cast<const char*>(&index_count), sizeof(uint32_t));
+                    file.write(reinterpret_cast<const char*>(&tile_count), sizeof(uint32_t));
+                    file.write(reinterpret_cast<const char*>(&placement_count), sizeof(uint32_t));
+    
+                    // write vector data
+                    file.write(reinterpret_cast<const char*>(m_height_data.data()), height_data_size * sizeof(float));
+                    file.write(reinterpret_cast<const char*>(m_vertices.data()), vertex_count * sizeof(RHI_Vertex_PosTexNorTan));
+                    file.write(reinterpret_cast<const char*>(m_indices.data()), index_count * sizeof(uint32_t));
+                    file.write(reinterpret_cast<const char*>(placement::triangle_data.data()), placement_count * sizeof(placement::TriangleData));
+    
+                    // write tile data
+                    for (uint32_t i = 0; i < tile_count; i++)
+                    {
+                        uint32_t vertex_size = static_cast<uint32_t>(m_tile_vertices[i].size());
+                        uint32_t index_size = static_cast<uint32_t>(m_tile_indices[i].size());
+                        file.write(reinterpret_cast<const char*>(&vertex_size), sizeof(uint32_t));
+                        file.write(reinterpret_cast<const char*>(&index_size), sizeof(uint32_t));
+                        file.write(reinterpret_cast<const char*>(m_tile_vertices[i].data()), vertex_size * sizeof(RHI_Vertex_PosTexNorTan));
+                        file.write(reinterpret_cast<const char*>(m_tile_indices[i].data()), index_size * sizeof(uint32_t));
+                    }
+    
+                    file.close();
+    
+                    NOTICE_LOG("Wrote cache: width=%u, height=%u, height_data_size=%u, vertex_count=%u, index_count=%u, tile_count=%u",
+                                width, height, height_data_size, vertex_count, index_count, tile_count);
+                }
+                else
+                {
+                    FATAL_LOG("Failed to write terrain cache file");
+                }
+            }
+        }
+    
+        // initialize members
+        m_height_samples = width * height;
+        m_vertex_count   = static_cast<uint32_t>(m_vertices.size());
+        m_index_count    = static_cast<uint32_t>(m_indices.size());
+        m_triangle_count = m_index_count / 3;
+
+        // 9. create a mesh for each tile
+        {
+            ProgressTracker::GetProgress(ProgressType::Terrain).SetText("Creating GPU mesh...");
+
+            
+         
+            // accumulte geometry from all tiles
+            for (uint32_t tile_index = 0; tile_index < static_cast<uint32_t>(m_tile_vertices.size()); tile_index++)
+            {
+                // update with geometry
+                uint32_t sub_mesh_index = 0;
+
+
+                // create a child entity, add a renderable, and this mesh tile to it
+                {
+                    shared_ptr<Entity> entity = World::CreateEntity();
+                    entity->SetObjectName("tile_" + to_string(tile_index));
+                    entity->SetParent(World::GetEntityById(m_entity_ptr->GetObjectId()));
+
+                    if (Renderable* renderable = entity->AddComponent<Renderable>())
+                    {
+                        renderable->SetMesh(m_mesh.get(), sub_mesh_index);
+                        renderable->SetMaterial(m_material);
+                    }
+                }
+            }
+
+
+
+            ProgressTracker::GetProgress(ProgressType::Terrain).JobDone();
+        }
+
+        // clear everything but the height and placement data (they are used for physics and for placing foliage)
+        m_vertices.clear();
+        m_indices.clear();
+        m_tile_vertices.clear();
+        m_tile_indices.clear();
+
+        m_area_km2      = compute_terrain_area_km2(m_vertices);
+        m_is_generating = false;
+    }
+
+    void Terrain::Clear()
+    {
+        m_vertices.clear();
+        m_indices.clear();
+        m_tile_vertices.clear();
+        m_tile_indices.clear();
+
+        m_mesh = nullptr;
+
+        for (Entity* child : m_entity_ptr->GetChildren())
+        {
+            if (Renderable* renderable = child->AddComponent<Renderable>())
+            {
+                renderable->SetMesh(nullptr);
+            }
+        }
+    }
+}

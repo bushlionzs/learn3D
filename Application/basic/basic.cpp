@@ -45,8 +45,6 @@ void BasicApplication::setup(
 	mRenderSystem = renderSystem;
 	mRenderPipeline = renderPipeline;
 
-	/*std::string dir = "D:\\godotProject\\Abandoned-Spaceship-Godot-Demo\\Models";
-	Ogre::ResourceManager::getSingletonPtr()->addDirectory(dir, "", false);*/
 	base1();
 }
 
