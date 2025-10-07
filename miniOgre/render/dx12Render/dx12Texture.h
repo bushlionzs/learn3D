@@ -7,19 +7,27 @@ class DX12Commands;
 class Dx12TextureHandleManager;
 class Dx12HardwarePixelBuffer;
 struct DX12Sampler;
+struct DX12CommandBuffer;
+
+class Dx12TextureListen : public Resource::Listener
+{
+public:
+    virtual void loadingComplete(Resource*);
+};
+
 class Dx12Texture :public OgreTexture
 {
 public:
     Dx12Texture(
         const std::string& name, 
         Ogre::TextureProperty* texProperty, 
-        DX12Commands* commands,
+        DX12CommandBuffer* cb,
         bool needSrv);
 
     Dx12Texture(
         const std::string& name,
         Ogre::TextureProperty* texProperty,
-        DX12Commands* commands,
+        DX12CommandBuffer* cb,
         ID3D12Resource* resource);
 
     ~Dx12Texture();
@@ -62,13 +70,15 @@ public:
     virtual void uploadTextureData(const char* data, uint32_t size, TextureProperty& tp)override;
     void generateMipmaps();
     
+    void changeState(LoadingState state);
+    virtual void postLoad();
 private:
     virtual void createInternalResourcesImpl(void);
     virtual void freeInternalResourcesImpl(void);
     void _createTex();
     void _createSurfaceList(void);
     virtual void updateTexture(const std::vector<const CImage*>& images);
-    virtual void postLoad();
+    
     void buildDescriptorHeaps();
     bool need_midmap();
     void updateLayoutInfos();
@@ -86,7 +96,7 @@ private:
 
     int32_t mTexStartIndex = -1;
 
-    DX12Commands* mCommands;
+    DX12CommandBuffer* mCommands;
 
 
     bool mNeedSrv;

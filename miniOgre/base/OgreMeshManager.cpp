@@ -825,7 +825,7 @@ std::shared_ptr<Mesh> MeshManager::createSimpleRoom(const std::string& name)
 	uint32_t size = vertices.size() * sizeof(SVertexElement);
 
 	vd->setVertexCount(vertices.size());
-	vd->addBindBuffer(0, sizeof(SVertexElement), vertices.size());
+	vd->createBindBuffer(0, sizeof(SVertexElement), vertices.size());
 	vd->writeBindBufferData(0, (const char*)vertices.data(), size);
 	id->createBuffer(4, indices.size());
 	id->writeData((const char*)indices.data(), indices.size() * 4);
@@ -959,7 +959,7 @@ Mesh* MeshManager::BuildHardBuffer(
 	auto vertexCount = vertices.size();
 	vd->setVertexCount(vertexCount);
 
-	vd->addBindBuffer(0, sizeof(SVertexElement), vertexCount);
+	vd->createBindBuffer(0, sizeof(SVertexElement), vertexCount);
 	vd->writeBindBufferData(0, (const char*)vertices.data(), size);
 
 	uint32_t indexSize = sizeof(indices[0]);

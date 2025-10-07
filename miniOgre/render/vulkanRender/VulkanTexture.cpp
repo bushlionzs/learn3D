@@ -20,6 +20,11 @@ VulkanTexture::VulkanTexture(
     mName = name;
     mCommands = commands;
     mPlatform = platform;
+    mTextureImageView = VK_NULL_HANDLE;
+    if (texProperty)
+    {
+        createInternalResourcesImpl();
+    }
 }
 
 VulkanTexture::VulkanTexture(
@@ -34,8 +39,8 @@ VulkanTexture::VulkanTexture(
     mCommands = commands;
     mPlatform = platform;
     mTextureImage = image;
-
-    if (texProperty)
+    mTextureImageView = VK_NULL_HANDLE;
+    if (texProperty && texProperty->_width > 0)
     {
         createInternalResourcesImpl();
     }
@@ -120,7 +125,7 @@ void VulkanTexture::createInternalResourcesImpl(void)
     {
         mFormat = VulkanMappings::_getClosestSupportedPF(mTextureProperty._tex_format);
 
-        mVulkanFormat = VulkanMappings::_getGammaFormat(VulkanMappings::_getPF(mTextureProperty._tex_format), false);
+        mVulkanFormat = VulkanMappings::_getGammaFormat(VulkanMappings::_getPF(mFormat), false);
     }
     
 

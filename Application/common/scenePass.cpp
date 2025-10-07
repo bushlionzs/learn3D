@@ -279,7 +279,7 @@ void SceneRenderPass::draw(RenderContext& context)
 	info.renderTargets[0].target.renderTarget = mPassInput.color;
 	info.depthTarget.target.depthStencil = mPassInput.depth;
 	info.depthTarget.depthIndex = 0;
-	info.renderTargets[0].clearColour = { 0.0, 0.0, 0.0, 1.000000000f };
+	info.renderTargets[0].clearColour = { 0.0, 0.3, 0.0, 1.000000000f };
 	float depthValue = 1.0f;
 	if (ogreConfig.reverseDepth)
 	{
@@ -325,9 +325,10 @@ void SceneRenderPass::draw(RenderContext& context)
 		if (!r->hasFlag(frameIndex))
 		{
 			initObject(frameIndex, r, context);
+			bindObject(frameIndex, r, context);
 			r->setFlag(frameIndex, true);
 		}
-		bindObject(frameIndex, r, context);
+		
 		updateObject(frameIndex, r, context);
 
 		drawObject(frameIndex, r, context);
@@ -753,26 +754,26 @@ void SceneRenderPass::updateObject(uint32_t frameIndex, Ogre::Renderable* r, Ren
 	objectBuffer.useShadow = r->haveShadow();
 	objectBuffer.haveTexture = mat->hasTexture();
 	rs->updateBufferObject(resourceInfo->modelObjectHandle,
-		(const char*)&objectBuffer, sizeof(objectBuffer));
+		(const char*)&objectBuffer, sizeof(objectBuffer), 0, &context.frameContext->cbh);
 
 	RawData* rawData = r->getSkinnedData();
 	if (rawData)
 	{
 		rs->updateBufferObject(resourceInfo->skinObjectHandle, 
-			rawData->mData, rawData->mDataSize);
+			rawData->mData, rawData->mDataSize, 0, &context.frameContext->cbh);
 	}
 
 	if (mat->isPbr())
 	{
 		auto& matBuffer = mat->getPbrMatInfo();
 		rs->updateBufferObject(resourceInfo->matObjectHandle,
-			(const char*)&matBuffer, sizeof(matBuffer));
+			(const char*)&matBuffer, sizeof(matBuffer), 0, &context.frameContext->cbh);
 	}
 	else
 	{
 		auto& matBuffer = mat->getMatInfo();
 		rs->updateBufferObject(resourceInfo->matObjectHandle,
-			(const char*)&matBuffer, sizeof(matBuffer));
+			(const char*)&matBuffer, sizeof(matBuffer), 0, &context.frameContext->cbh);
 	}
 }
 
@@ -784,7 +785,6 @@ void SceneRenderPass::drawObject(uint32_t frameIndex, Ogre::Renderable* r, Rende
 
 	auto programHandle = mat->getProgram();
 	auto piplineHandle = mat->getPipeline();
-	filament::backend::Handle<filament::backend::HwDescriptorSet> descriptorSet[2];
 
 	rs->bindPipeline(context.frameContext->cbh, piplineHandle);
 	rs->bindDescriptorSet(context.frameContext->cbh, programHandle, resourceInfo->zeroSet);

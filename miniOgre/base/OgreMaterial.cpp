@@ -2,7 +2,7 @@
 #include "OgreMaterial.h"
 #include "OgreTextureUnit.h"
 #include "OgreMaterialManager.h"
-#include "VideoManager.h"
+//#include "VideoManager.h"
 #include "shaderManager.h"
 #include "OgreResourceManager.h"
 #include "glslUtil.h"

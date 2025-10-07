@@ -189,7 +189,7 @@ OgreGeometryBuffer::OgreGeometryBuffer(OgreRenderer& owner,
     auto vertexSize = vd->getVertexSize(0);
     auto vertexCount = 4096;
     d_renderOp.vertexData->setVertexCount(vertexCount);
-    d_renderOp.vertexData->addBindBuffer(0, vertexSize, vertexCount);
+    d_renderOp.vertexData->createBindBuffer(0, vertexSize, vertexCount);
 }
 
 //----------------------------------------------------------------------------//

@@ -5,35 +5,45 @@
 #include "dx12RenderTarget.h"
 #include "dx12RenderSystemBase.h"
 #include "D3D12Mappings.h"
+#include "dx12Handles.h"
 #include "memoryAllocator.h"
 
-DX12SwapChain::DX12SwapChain(DX12Commands* commands, HWND hWnd, bool srgb)
+DX12SwapChain::DX12SwapChain( HWND hWnd,  uint64_t flags)
 {
-    mCommands = commands;
 	mHwnd = hWnd;
 
 	mColorFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
 	mDepthFormat = DXGI_FORMAT_D32_FLOAT;
 
-	if (srgb)
+	mUseSRGB = false;
+	if (flags & backend::SWAP_CHAIN_CONFIG_SRGB_COLORSPACE)
 	{
 		mColorFormat = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+		mUseSRGB = true;
 	}
 
-	mCurrentFrameIndex = 0;
-
-	createSwapChain2(srgb);
+	mBackBufferIndex = 0;
 }
 
-void DX12SwapChain::present()
+void DX12SwapChain::resize(DX12CommandQueue* cq)
 {
-	mCommands->flush(true);
+	createSwapChain2(cq, mUseSRGB);
+}
+
+void DX12SwapChain::present(
+	DX12CommandQueue* cq,
+	DX12Fence* fence,
+	ID3D12GraphicsCommandList** cb,
+	uint32_t cb_size)
+{
+	//cq->executeCommandLists(cb, cb_size);
+	cq->signal(fence);
 	ThrowIfFailed(mSwapChain3->Present(0, 0));
 }
 
 void DX12SwapChain::acquire(bool& reized)
 {
-	mCurrentFrameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+	mBackBufferIndex = getImageIndex();
 }
 
 Dx12Texture* DX12SwapChain::getDepthTexture()
@@ -43,11 +53,17 @@ Dx12Texture* DX12SwapChain::getDepthTexture()
 
 Dx12Texture* DX12SwapChain::getCurrentColor()
 {
-	return mColors[mCurrentFrameIndex];
+	return mColors[mBackBufferIndex];
 }
 
-void DX12SwapChain::createSwapChain2(bool srgb)
+void DX12SwapChain::releaseSwapChain()
 {
+
+}
+
+void DX12SwapChain::createSwapChain2(DX12CommandQueue* cq, bool srgb)
+{
+	releaseSwapChain();
 	auto device = DX12Helper::getSingleton().getDevice();
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	mWidth = ogreConfig.width;
@@ -86,7 +102,7 @@ void DX12SwapChain::createSwapChain2(bool srgb)
 	// Note: Swap chain uses queue to perform flush.
 	IDXGIFactory4* pDXGIFactory = DX12Helper::getSingleton().getDXGIFactory();
 	ThrowIfFailed(pDXGIFactory->CreateSwapChainForHwnd(
-		mCommands->getCommandQueue(),
+	    cq->get(),
 		mHwnd,
 		&desc, NULL, NULL,
 		&swapchain));
@@ -119,7 +135,7 @@ void DX12SwapChain::createSwapChain2(bool srgb)
 			descriptor_id_to_cpu_handle(rtvHeap, descriptors + i);
 		device->CreateRenderTargetView(res, &rtvDesc, cpuHandle);*/
 
-		mColors[i] = new Dx12Texture("colorTarget", &texProperty, mCommands, res);
+		mColors[i] = new Dx12Texture("colorTarget", &texProperty, nullptr, res);
 	}
 
 
@@ -165,5 +181,5 @@ void DX12SwapChain::createSwapChain2(bool srgb)
 	texProperty._tex_usage = TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	texProperty._tex_format = D3D12Mappings::getPixelFormat(mDepthFormat);
 
-	mDepth = new Dx12Texture(std::string("depthTarget"), &texProperty, mCommands, depth);
+	mDepth = new Dx12Texture(std::string("depthTarget"), &texProperty, nullptr, depth);
 }

@@ -108,7 +108,7 @@ bool FbxLoader::loadMeshFromFile(
             vertexData->addElement(0, 0, 36, VET_FLOAT3, VES_BINORMAL);
             vertexData->addElement(0, 0, 48, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
-            vertexData->addBindBuffer(0, sizeof(FbxVertex), numVertices);
+            vertexData->createBindBuffer(0, sizeof(FbxVertex), numVertices);
 
             vertexData->writeBindBufferData(0, (const  char*)vertexList.data(), sizeof(FbxVertex) * numVertices);
             //update index

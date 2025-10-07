@@ -156,6 +156,9 @@ namespace Ogre {
             return PF_FLOAT32_RGBA;
         case PF_RGBA16_SNORM:
             return PF_RGBA16_SNORM;
+        case PF_B8G8R8:
+        case PF_L8:
+            return PF_A8B8G8R8;
         case PF_UNKNOWN:
         default:
             assert_invariant(false);
@@ -191,6 +194,7 @@ namespace Ogre {
         case PF_R5G6B5:         return VK_FORMAT_UNDEFINED;
         case PF_A4R4G4B4:       return VK_FORMAT_UNDEFINED;
         case PF_R8G8B8:         return VK_FORMAT_UNDEFINED;
+        case PF_B8G8R8:         return VK_FORMAT_R8G8B8A8_UNORM;
         case PF_A8R8G8B8:       return VK_FORMAT_B8G8R8A8_UNORM;
         case PF_A8B8G8R8:       return VK_FORMAT_R8G8B8A8_UNORM;
         case PF_R8G8B8A8:       return VK_FORMAT_R8G8B8A8_UNORM;
@@ -394,6 +398,12 @@ namespace Ogre {
     VkAccessFlags VulkanMappings::util_to_vk_access_flags(BitField<BackendResourceState> state)
     {
         VkAccessFlags ret = 0;
+
+        if (state.has_flag(RESOURCE_STATE_COMMON))
+        {
+            ret |= VK_ACCESS_TRANSFER_READ_BIT;
+        }
+
         if (state.has_flag(RESOURCE_STATE_COPY_SOURCE))
         {
             ret |= VK_ACCESS_TRANSFER_READ_BIT;

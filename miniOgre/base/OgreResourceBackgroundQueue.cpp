@@ -97,7 +97,10 @@ namespace Ogre {
             [res]()
             {
                 res->load(true);
-                Root::getSingleton().getWorkQueue()->addMainThreadTask([res]() { res->_fireLoadingComplete(); });
+                Root::getSingleton().getWorkQueue()->addMainThreadTask([res]() 
+                    { 
+                        res->_fireLoadingComplete(); 
+                    });
             });
         Root::getSingleton().getWorkQueue()->addTask([task]() { (*task)(); });
         return task->get_future();

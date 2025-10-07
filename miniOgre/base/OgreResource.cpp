@@ -145,7 +145,7 @@ namespace Ogre
         auto old = mLoadingState.load();
         assert_invariant(old == LOADSTATE_LOADING);
         {
-           OGRE_LOCK_AUTO_MUTEX;
+            std::unique_lock<std::recursive_mutex> ogreAutoMutexLock(mutex);
             preLoadImpl();
             loadImpl();
             postLoadImpl();

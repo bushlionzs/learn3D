@@ -517,8 +517,6 @@ void renderScene(
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
     uint32_t index = 0;
 
-    auto& js = Ogre::ResourceManager::getSingleton().getJobSystem();
-    utils::JobSystem::Job* rootJob = js.createJob();
 
     uint32_t aa = get_tick_count();
     
@@ -527,34 +525,17 @@ void renderScene(
         Ogre::Material* mat = r->getMaterial().get();
         if (!mat->isLoaded())
         {
-            mat->load(rootJob);
+            mat->loadAsync();
         }
     }
 
-    if (rootJob)
-    {
-        js.runAndWait(rootJob);
-    }
 
     uint32_t delta = get_tick_count() - aa;
 
     for (auto r : renderList)
     {
-        if (!r->hasFlag(frameIndex))
-        {
-            userDefineShader->initCallback(frameIndex, r, userDefineShader->shadowHandle);
-            r->setFlag(frameIndex, true);
-        }
-        userDefineShader->bindCallback(frameIndex, r, userDefineShader->param);
+        
 
-        if (userDefineShader->updateCallback)
-        {
-            userDefineShader->updateCallback(frameIndex, r);
-        }
-        else
-        {
-            int kk = 0;
-        }
        
     }
 
@@ -567,12 +548,25 @@ void renderScene(
         {
             continue;
         }
+        if (!mat->isLoaded())
+        {
+            continue;
+        }
+
+        if (!r->hasFlag(frameIndex))
+        {
+            userDefineShader->initCallback(frameIndex, r, userDefineShader->shadowHandle);
+            r->setFlag(frameIndex, true);
+            userDefineShader->bindCallback(frameIndex, r, userDefineShader->param);
+
+            if (userDefineShader->updateCallback)
+            {
+                userDefineShader->updateCallback(frameIndex, r);
+            }
+        }
+        
         userDefineShader->drawCallback(frameIndex, r, userDefineShader->param);
     }
-
-    auto& kk = renderList.back();
-
-    const auto& modelMatrix = kk->getModelMatrix();
 
     for (auto r : renderList)
     {
@@ -580,6 +574,21 @@ void renderScene(
         auto flags = mat->getMaterialFlags();
         if (flags & Ogre::MATERIAL_FLAG_ALPHA_TESTED)
         {
+            if (!mat->isLoaded())
+            {
+                continue;
+            }
+            if (!r->hasFlag(frameIndex))
+            {
+                userDefineShader->initCallback(frameIndex, r, userDefineShader->shadowHandle);
+                r->setFlag(frameIndex, true);
+                userDefineShader->bindCallback(frameIndex, r, userDefineShader->param);
+
+                if (userDefineShader->updateCallback)
+                {
+                    userDefineShader->updateCallback(frameIndex, r);
+                }
+            }
             userDefineShader->drawCallback(frameIndex, r, userDefineShader->param);
         }
     }
@@ -682,7 +691,7 @@ bool createManualMesh(
     auto vertexCount = vertices.size();
     vd->setVertexCount(vertexCount);
 
-    vd->addBindBuffer(0, sizeof(BaseVertex), vertexCount);
+    vd->createBindBuffer(0, sizeof(BaseVertex), vertexCount);
     vd->writeBindBufferData(0, (const char*)vertices.data(), size);
 
     uint32_t indexSize = sizeof(indices[0]);

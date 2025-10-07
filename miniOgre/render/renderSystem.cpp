@@ -225,6 +225,13 @@ filament::backend::Handle<filament::backend::HwSwapChain> RenderSystem::createSw
     return Handle<HwSwapChain>();
 }
 
+void RenderSystem::swapChainResize(
+    filament::backend::Handle<filament::backend::HwCommandQueue>,
+    filament::backend::Handle<filament::backend::HwSwapChain> sc)
+{
+    assert_invariant(false);
+}
+
 void RenderSystem::swapChainAcquire(
     filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
     Handle<HwSwapChain> sch, SwapChainInfo& scInfo)

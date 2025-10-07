@@ -46,6 +46,11 @@ struct DX12BufferObject : public HwBufferObject {
     {
         return mByteCount;
     }
+
+    uint32_t getStride()
+    {
+        return mStrideInBytes;
+    }
 private:
     DxMemoryAllocator* mAllocator;
     BufferObjectBinding mBufferObjectBinding;
@@ -62,7 +67,7 @@ private:
     DescriptorHeapContext* mDescriptorHeapContext;
 
     uint32_t mByteCount;
-
+    uint32_t mStrideInBytes;
     bool mCpuToGpu;
 };
 class DX12ProgramImpl;
@@ -148,6 +153,7 @@ private:
     ID3D12PipelineState* mPSO;
 };
 
+
 struct DX12Sampler : public HwSampler
 {
 public:
@@ -229,4 +235,107 @@ struct DX12AccelerationStructure : public Ogre::AccelerationStructure
     uint32_t                                            mDescCount;
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS mFlags;
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE        mType;
+};
+
+
+struct DX12CommandBuffer : public HwCommandBuffer
+{
+public:
+    DX12CommandBuffer(ID3D12Device* device);
+    ~DX12CommandBuffer();
+    void beginComandBuffer();
+    void endCommandBuffer();
+    void clearCommandBuffer();
+    ID3D12GraphicsCommandList* get()
+    {
+        return commandList;
+    }
+private:
+    ID3D12GraphicsCommandList* commandList;
+    ID3D12CommandAllocator* commandAllocator;
+    uint32_t fence = 0;
+};
+
+
+struct Dx12Shader : public HwShader
+{
+public:
+    Dx12Shader();
+    ~Dx12Shader();
+    DX12ProgramImpl* getProgramImpl()
+    {
+        return mDX12ProgramImpl;
+    }
+private:
+    DX12ProgramImpl* mDX12ProgramImpl;
+};
+
+struct DX12Fence;
+struct DX12Semaphore;
+struct DX12CommandQueue : public HwCommandQueue
+{
+public:
+    DX12CommandQueue(ID3D12Device* device);
+    ~DX12CommandQueue();
+
+    void executeCommandLists(ID3D12GraphicsCommandList** cl, uint32_t cb_size);
+
+    void signal(DX12Fence* fence);
+    void signal(DX12Semaphore* sp);
+    void wait(DX12Semaphore* sp);
+
+    ID3D12CommandQueue* get()
+    {
+        return mCommandQueue;
+    }
+private:
+    ID3D12CommandQueue* mCommandQueue;
+};
+
+
+
+struct DX12Fence : public HwFence
+{
+public:
+    DX12Fence(ID3D12Device* device);
+    ~DX12Fence();
+    void wait();
+    void addFenceValue();
+
+    ID3D12Fence* get()
+    {
+        return d3d_fence.Get();
+    }
+
+    uint64_t getFenceValue()
+    {
+        return fence_value;
+    }
+private:
+    ComPtr<ID3D12Fence> d3d_fence;
+    HANDLE event_handle;
+    uint64_t fence_value;
+};
+
+struct DX12Semaphore : public HwSemaphore
+{
+public:
+    DX12Semaphore(ID3D12Device* device);
+    ~DX12Semaphore();
+    void addFenceValue()
+    {
+        fence_value++;
+    }
+    ID3D12Fence* get()
+    {
+        return d3d_fence.Get();
+    }
+
+    uint64_t getFenceValue()
+    {
+        return fence_value;
+    }
+private:
+    ComPtr<ID3D12Fence> d3d_fence;
+    uint64_t fence_value;
 };

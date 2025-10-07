@@ -340,7 +340,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
             if (!useShared)
             {
                 uint32_t binding = 0;
-                vd->addBindBuffer(binding, sizeof(GltfVertex), mVertexBuffer.size());
+                vd->createBindBuffer(binding, sizeof(GltfVertex), mVertexBuffer.size());
                 vd->writeBindBufferData(binding, (const char*)mVertexBuffer.data(), mVertexBuffer.size() * sizeof(GltfVertex));
                 vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
                 vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
@@ -578,7 +578,7 @@ bool GltfLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogr
         vertexData->addElement(0, 0, 24, VET_FLOAT4, VES_TANGENT);
         vertexData->addElement(0, 0, 40, VET_FLOAT2, VES_TEXTURE_COORDINATES);
         vertexData->setVertexCount(sharedVertexs.size());
-        vertexData->addBindBuffer(sizeof(GltfVertex), sharedVertexs.size());
+        vertexData->createBindBuffer(sizeof(GltfVertex), sharedVertexs.size());
         vertexData->writeBindBufferData(0, (const char*)sharedVertexs.data(), sizeof(GltfVertex)* sharedVertexs.size());
         IndexData* indexData = pMesh->getIndexData();
         indexData->createBuffer(4, sharedIndices.size());

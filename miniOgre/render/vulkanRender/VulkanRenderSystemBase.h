@@ -196,7 +196,7 @@ protected:
         QueueType queueType = QUEUE_TYPE_GRAPHICS
     )  override;
     virtual void beginCmd();
-    virtual void flushCmd(bool waitCmd);
+    virtual void flushCmd(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, bool waitCmd);
 
 
     virtual void destroyBufferObject(Handle<HwBufferObject> bufHandle);
@@ -214,6 +214,9 @@ protected:
     virtual Handle<HwCommandQueue> createCommandQueue(Ogre::QueueType type, uint32_t queueIndex)override;
 
     virtual Handle<HwSwapChain> createSwapChain(Ogre::RenderWindow* renderWindow) override;
+    virtual void swapChainResize(
+        Handle<HwCommandQueue> cqh,
+        Handle<HwSwapChain> sch);
     virtual void swapChainAcquire(
         filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
         filament::backend::Handle<filament::backend::HwSwapChain> sch,

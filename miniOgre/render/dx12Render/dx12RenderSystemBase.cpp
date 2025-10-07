@@ -58,7 +58,7 @@ bool Dx12RenderSystemBase::engineInit()
 	helper->createBaseInfo();
     mDevice = helper->getDevice();
     mCommands = new DX12Commands(mDevice);
-
+    mCommands = nullptr;
     mMemoryAllocator = new DxMemoryAllocator(mDevice);
 
 
@@ -72,6 +72,15 @@ bool Dx12RenderSystemBase::engineInit()
     desc.ByteStride = sizeof(IndirectDrawIndexArguments);
     auto hr = mDevice->CreateCommandSignature(
         &desc, NULL, IID_PPV_ARGS(&mDrawIndexCommandSignature));
+
+    mCommandBuffer = createCommandBuffer(QUEUE_TYPE_GRAPHICS);
+
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    cb->beginComandBuffer();
+
+    mCommandFence = createFence(true);
+
+    mTextureListen = new Dx12TextureListen;
 	return true;
 }
 
@@ -82,12 +91,11 @@ void Dx12RenderSystemBase::ready()
 Ogre::RenderWindow* Dx12RenderSystemBase::createRenderWindow(
     const CreateWindowDesc& desc)
 {
-    auto wnd = (HWND)StringConverter::parseSizeT(desc.windowHandle);
-    mSwapChain = new DX12SwapChain(mCommands, wnd, desc.srgb);
-    mRenderWindow = new Dx12RenderWindow(mSwapChain);
-    mRenderWindow->create();
+    uint64_t wnd = (uint64_t)StringConverter::parseSizeT(desc.windowHandle);
+    mRenderWindow = new Dx12RenderWindow(wnd, 0);
     return mRenderWindow;
 }
+
 Ogre::RenderTarget* Dx12RenderSystemBase::createRenderTarget(
     const String& name,
     TextureProperty& texProperty)
@@ -112,7 +120,8 @@ Ogre::RenderTarget* Dx12RenderSystemBase::createRenderTarget(
         assert_invariant(false);
     }
 
-    Dx12RenderTarget* renderTarget = new Dx12RenderTarget(name, mCommands, &texProperty);
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    Dx12RenderTarget* renderTarget = new Dx12RenderTarget(name, cb, &texProperty);
     return renderTarget;
 }
 
@@ -132,7 +141,7 @@ void Dx12RenderSystemBase::clearRenderTarget(
 
 void Dx12RenderSystemBase::frameStart()
 {
-    bool reized = false;
+    /*bool reized = false;
     mSwapChain->acquire(reized);
 
     auto* cl = mCommands->get();
@@ -143,7 +152,10 @@ void Dx12RenderSystemBase::frameStart()
     };
     cl->SetDescriptorHeaps(2, heaps);
 
-    mLastPipelineState = nullptr;
+    mLastPipelineState = nullptr;*/
+
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    cb->beginComandBuffer();
 }
 
 void Dx12RenderSystemBase::frameEnd()
@@ -152,7 +164,7 @@ void Dx12RenderSystemBase::frameEnd()
 
 void Dx12RenderSystemBase::present()
 {
-    mSwapChain->present();
+    //mSwapChain->present();
 }
 
 void Dx12RenderSystemBase::copyImage(
@@ -174,7 +186,8 @@ void Dx12RenderSystemBase::copyImage(
     auto width = desc.extent.width;
     auto height = desc.extent.height;
     auto depth = desc.extent.depth;
-    auto* cl = mCommands->get();
+    auto* cl = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer)->get();
+
 
     D3D12_TEXTURE_COPY_LOCATION srcLocation = {};
     srcLocation.pResource = srcTexture->getResource();
@@ -210,8 +223,8 @@ void Dx12RenderSystemBase::setViewport(
     viewport.Height = static_cast<float>(height);
     viewport.MinDepth = minDepth;
     viewport.MaxDepth = maxDepth;
-
-    auto* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    auto* cl = cb->get();
     cl->RSSetViewports(1, &viewport);
 }
 
@@ -219,14 +232,22 @@ void Dx12RenderSystemBase::setScissor(uint32_t x, uint32_t y, uint32_t width, ui
 {
     D3D12_RECT scissorRect;
     scissorRect = { (LONG)x, (LONG)y, (LONG)width, (LONG)height };
-
-    auto* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    auto* cl = cb->get();
     cl->RSSetScissorRects(1, &scissorRect);
 }
 void Dx12RenderSystemBase::beginRenderPass(RenderPassInfo& renderPassInfo)
 {
-    auto* cl = mCommands->get();
-
+    DX12CommandBuffer* cb = nullptr;
+    if (renderPassInfo.cbh)
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(renderPassInfo.cbh);
+    }
+    else
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    }
+    auto* cl = cb->get();
     uint32_t width = 0;
     uint32_t height = 0;
 
@@ -310,8 +331,7 @@ void Dx12RenderSystemBase::bindPipeline(
     DX12Pipeline* dx12Pipeline = mResourceAllocator.handle_cast<DX12Pipeline*>(pipelineHandle);
     ID3D12PipelineState* pso = dx12Pipeline->getPipeline();
     DX12ProgramImpl* dx12ProgramImpl = dx12Pipeline->getProgram();
-    ID3D12GraphicsCommandList* cl = mCommands->get();
-
+    ID3D12GraphicsCommandList* cl = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer)->get();
     auto rootSignature = dx12ProgramImpl->getRootSignature();
     cl->SetGraphicsRootSignature(rootSignature);
     //if (mLastPipelineState != pso)
@@ -358,7 +378,16 @@ void Dx12RenderSystemBase::drawIndexed(
     uint32_t firstInstance,
     filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
-    ID3D12GraphicsCommandList* cl = mCommands->get();
+    DX12CommandBuffer* cb = nullptr;
+    if (cbh)
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh[0]);
+    }
+    else
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    }
+    ID3D12GraphicsCommandList* cl = cb->get();
     cl->DrawIndexedInstanced(
         indexCount,
         1, firstIndex, vertexOffset, firstInstance);
@@ -371,7 +400,8 @@ void Dx12RenderSystemBase::draw(
     uint32_t firstInstance,
     filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
-    ID3D12GraphicsCommandList* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh[0]);
+    ID3D12GraphicsCommandList* cl = cb->get();
     cl->DrawInstanced(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
@@ -455,7 +485,8 @@ void Dx12RenderSystemBase::bindVertexBuffer(
     uint32_t vertexSize)
 {
     DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(bufHandle);
-    auto* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    auto* cl = cb->get();
 
     D3D12_VERTEX_BUFFER_VIEW vbv;
     vbv.BufferLocation = bo->getGPUVirtualAddress();
@@ -470,7 +501,8 @@ void Dx12RenderSystemBase::bindIndexBuffer(
     uint32_t offset) 
 {
     DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(bufHandle);
-    auto* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    auto* cl = cb->get();
     D3D12_INDEX_BUFFER_VIEW ibv;
     ibv.BufferLocation = bo->getGPUVirtualAddress();
     ibv.Format = indexSize==2? DXGI_FORMAT_R16_UINT: DXGI_FORMAT_R32_UINT;
@@ -498,6 +530,7 @@ Handle<HwBufferObject> Dx12RenderSystemBase::createBufferObject(
     BufferDesc& desc)
 {
     Handle<HwBufferObject> boh = mResourceAllocator.allocHandle<DX12BufferObject>();
+
     DescriptorHeap* pHeap = mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV];
     bool cpu_to_gpu = desc.mMemoryUsage == RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
     DX12BufferObject* bufferObject = mResourceAllocator.construct<DX12BufferObject>(
@@ -512,10 +545,26 @@ void Dx12RenderSystemBase::updateBufferObject(
     Handle<HwBufferObject> boh,
     const char* data,
     uint32_t size,
-    uint32_t offset)
+    uint32_t offset,
+    Handle<HwCommandBuffer>* cbh)
 {
     DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(boh);
-    auto* cmdList = mCommands->get();
+    
+
+    ID3D12GraphicsCommandList* cmdList = nullptr;
+   
+    if (cbh)
+    {
+        DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(*cbh);
+        cmdList = cb->get();
+    }
+    else
+    {
+        DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+        cmdList = cb->get();
+    }
+    
+
     bo->copyData(cmdList, data, size, offset);
 }
 
@@ -547,7 +596,7 @@ Handle<HwProgram> Dx12RenderSystemBase::createShaderProgram(
 Handle<HwSampler> Dx12RenderSystemBase::createTextureSampler(
     filament::backend::SamplerParams& samplerParams)
 {
-    Handle<HwSampler> samplerHandle = mResourceAllocator.allocHandle<HwSampler>();
+    Handle<HwSampler> samplerHandle = mResourceAllocator.allocHandle<DX12Sampler>();
     DxDescriptorID id = DX12Helper::getSingleton().getSampler(samplerParams);
     DX12Sampler* sampler = mResourceAllocator.construct<DX12Sampler>(samplerHandle, id);
     return samplerHandle;
@@ -673,7 +722,7 @@ Handle<HwDescriptorSet> Dx12RenderSystemBase::createDescriptorSet(
 
     uint32_t cbvSrvUavDescCount = dx12ProgramImpl->getCbvSrvUavDescCount(set);
 
-    DxDescriptorID cbvSrvUavHandle = consume_descriptor_handles(mDescriptorHeapContext->mCbvSrvUavHeaps[0], cbvSrvUavDescCount);
+    DxDescriptorID cbvSrvUavHandle = consume_descriptor_handles(mDescriptorHeapContext->mCbvSrvUavHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV], cbvSrvUavDescCount);
     dx12DescSet->updateCbvSrvUavHandle(cbvSrvUavHandle, cbvSrvUavDescCount);
     return dsh;
 }
@@ -738,9 +787,9 @@ void Dx12RenderSystemBase::updateDescriptorSet(
                 }
 
                 d3dUtil::copy_descriptor_handle(
-                    mDescriptorHeapContext->mCPUDescriptorHeaps[0],
+                    mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV],
                     id,
-                    mDescriptorHeapContext->mCbvSrvUavHeaps[0],
+                    mDescriptorHeapContext->mCbvSrvUavHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV],
                     cbvSrvUavHandle + descriptroInfo->mSetIndex + arr
                 );
 
@@ -963,7 +1012,16 @@ void Dx12RenderSystemBase::resourceBarrier(
 
     if (transitionCount)
     {
-        auto* cl = mCommands->get();
+        DX12CommandBuffer* cb = nullptr;
+        if (dsh)
+        {
+            cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(*dsh);
+        }
+        else
+        {
+            cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+        }
+        auto* cl = cb->get();
         cl->ResourceBarrier(transitionCount, barriers);
     }
 }
@@ -971,20 +1029,334 @@ void Dx12RenderSystemBase::resourceBarrier(
 
 void Dx12RenderSystemBase::beginCmd() 
 {
-    auto* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    auto* cl = cb->get();
     ID3D12DescriptorHeap* heaps[] =
     {
         mDescriptorHeapContext->mCbvSrvUavHeaps[0]->pHeap,
         mDescriptorHeapContext->pSamplerHeaps[0]->pHeap
     };
     cl->SetDescriptorHeaps(2, heaps);
-
 }
 
-void Dx12RenderSystemBase::flushCmd(bool waitCmd)
+void Dx12RenderSystemBase::flushCmd(Handle<HwCommandQueue> cqh, bool waitCmd)
 {
-    mCommands->flush(true);
+    DX12CommandQueue* cq = mResourceAllocator.handle_cast<DX12CommandQueue*>(cqh);
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    ID3D12GraphicsCommandList*  cl = cb->get();
+    cb->endCommandBuffer();
+    cq->executeCommandLists(&cl, 1);
+    if (waitCmd)
+    {
+        DX12Fence* fence = mResourceAllocator.handle_cast<DX12Fence*>(mCommandFence);
+        fence->addFenceValue();
+        cq->signal(fence);
+        fence->wait();
+    }
 }
 
+Handle<HwFence> Dx12RenderSystemBase::createFence(bool signaled)
+{
+    Handle<HwFence> fh = mResourceAllocator.allocHandle<DX12Fence>();
+
+    DX12Fence* fence = mResourceAllocator.construct<DX12Fence>(fh, mDevice);
+    return fh;
+}
+
+void Dx12RenderSystemBase::waitFence(Handle<HwFence> fh)
+{
+    DX12Fence* fence = mResourceAllocator.handle_cast<DX12Fence*>(fh);
+    fence->wait();
+}
+
+
+Handle<HwSemaphore> Dx12RenderSystemBase::createSemaphore()
+{
+    Handle<HwSemaphore> sh = mResourceAllocator.allocHandle<DX12Semaphore>();
+
+    DX12Semaphore*  sem = mResourceAllocator.construct<DX12Semaphore>(sh, mDevice);
+    return sh;
+}
+
+Handle<HwCommandBuffer> Dx12RenderSystemBase::createCommandBuffer(Ogre::QueueType type)
+{
+    Handle<HwCommandBuffer> cbh = mResourceAllocator.allocHandle<DX12CommandBuffer>();
+
+    DX12CommandBuffer* cb = mResourceAllocator.construct<DX12CommandBuffer>(cbh, mDevice);
+    return cbh;
+}
+
+void Dx12RenderSystemBase::beginCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+
+    cb->beginComandBuffer();
+
+    ID3D12DescriptorHeap* heaps[] =
+    {
+        mDescriptorHeapContext->mCbvSrvUavHeaps[0]->pHeap,
+        mDescriptorHeapContext->pSamplerHeaps[0]->pHeap
+    };
+
+    auto cl = cb->get();
+    cl->SetDescriptorHeaps(2, heaps);
+}
+
+void Dx12RenderSystemBase::endCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    cb->endCommandBuffer();
+}
+
+void Dx12RenderSystemBase::clearCommandBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
+{
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    cb->clearCommandBuffer();
+}
+
+Handle<HwCommandQueue> Dx12RenderSystemBase::createCommandQueue(Ogre::QueueType type, uint32_t queueIndex)
+{
+    Handle<HwCommandQueue> cqh = mResourceAllocator.allocHandle<DX12CommandQueue>();
+
+    DX12CommandQueue* cq = mResourceAllocator.construct<DX12CommandQueue>(cqh, mDevice);
+
+    return cqh;
+}
+
+Handle<HwSwapChain> Dx12RenderSystemBase::createSwapChain(Ogre::RenderWindow* renderWindow)
+{
+    Dx12RenderWindow* dx12Window = (Dx12RenderWindow*)renderWindow;
+    HWND handle = (HWND)dx12Window->getWndHandle();
+    uint64_t flags = dx12Window->getFlags();
+    Handle<HwSwapChain> sch = mResourceAllocator.allocHandle<DX12SwapChain>();
+
+
+    DX12SwapChain* sc = mResourceAllocator.construct<DX12SwapChain>(sch, handle, flags);
+    dx12Window->setSwapChain(sc);
+    return sch;
+}
+
+void Dx12RenderSystemBase::swapChainResize(Handle<HwCommandQueue> cqh, Handle<HwSwapChain> sch)
+{
+    DX12CommandQueue* cq = mResourceAllocator.handle_cast<DX12CommandQueue*>(cqh);
+    DX12SwapChain* sc = mResourceAllocator.handle_cast<DX12SwapChain*>(sch);
+    sc->resize(cq);
+}
+
+void Dx12RenderSystemBase::swapChainAcquire(
+    Handle<HwCommandQueue> cqh,
+    Handle<HwSwapChain> sch,
+    SwapChainInfo& scInfo)
+{
+    DX12CommandQueue* cq = mResourceAllocator.handle_cast<DX12CommandQueue*>(cqh);
+    DX12SwapChain* sc = mResourceAllocator.handle_cast<DX12SwapChain*>(sch);
+
+    bool resized = false;
+    sc->acquire(resized);
+    scInfo.color = sc->getCurrentColor();
+    scInfo.depth = sc->getDepthTexture();
+    scInfo.imageIndex = sc->getImageIndex();
+}
+
+Handle<HwShader> Dx12RenderSystemBase::createShader(Ogre::ShaderDesc& desc)
+{
+    Handle<HwShader> sh = mResourceAllocator.allocHandle<Dx12Shader>();
+
+    Dx12Shader* shader = mResourceAllocator.construct<Dx12Shader>(sh);
+
+    assert_invariant(false);
+    return sh;
+}
+
+
+Handle<HwPipeline> Dx12RenderSystemBase::createPipeline(
+    Ogre::PipelineCreateInfo& pipelineCreateInfo,
+    Handle<HwShader>& shader
+)
+{
+    Handle<HwPipeline> ph = mResourceAllocator.allocHandle<HwPipeline>();
+    assert_invariant(false);
+    return ph;
+}
+
+Handle<HwPipeline> Dx12RenderSystemBase::createComputePipeline(
+    Handle<HwShader>& shader
+)
+{
+    Handle<HwPipeline> ph = mResourceAllocator.allocHandle<HwPipeline>();
+    assert_invariant(false);
+    return ph;
+}
+
+Handle<HwDescriptorSet> Dx12RenderSystemBase::createDescriptorSet(
+    Handle<HwShader> programHandle,
+    uint32_t set)
+{
+
+    Handle<HwDescriptorSet> dsh = mResourceAllocator.allocHandle<DX12DescriptorSet>();
+
+    Dx12Shader* dx12Shader = mResourceAllocator.handle_cast<Dx12Shader*>(programHandle);
+    DX12ProgramImpl* dx12ProgramImpl = dx12Shader->getProgramImpl();
+
+    DX12DescriptorSet* dx12DescSet = mResourceAllocator.construct<DX12DescriptorSet>(dsh, dx12ProgramImpl, set);
+
+    uint32_t cbvSrvUavDescCount = dx12ProgramImpl->getCbvSrvUavDescCount(set);
+
+    DxDescriptorID cbvSrvUavHandle = consume_descriptor_handles(mDescriptorHeapContext->mCbvSrvUavHeaps[0], cbvSrvUavDescCount);
+    dx12DescSet->updateCbvSrvUavHandle(cbvSrvUavHandle, cbvSrvUavDescCount);
+    return dsh;
+}
+
+void Dx12RenderSystemBase::executeAndPresent(
+    filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+    filament::backend::Handle<filament::backend::HwSemaphore>* wait_sph,
+    uint32_t wait_sp_size,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh,
+    uint32_t cb_size,
+    filament::backend::Handle<filament::backend::HwSemaphore>* cmd_sph,
+    uint32_t cmd_sp_size,
+    filament::backend::Handle<filament::backend::HwFence> fh,
+    filament::backend::Handle<filament::backend::HwSwapChain>* sch,
+    uint32_t sc_size
+)
+{
+    DX12CommandQueue* cq = mResourceAllocator.handle_cast<DX12CommandQueue*>(cqh);
+
+    for (uint32_t i = 0; i < wait_sp_size; i++)
+    {
+        DX12Semaphore* sp = mResourceAllocator.handle_cast<DX12Semaphore*>(wait_sph[0]);
+        cq->wait(sp);
+    }
+    
+
+    DX12Fence* fence = mResourceAllocator.handle_cast<DX12Fence*>(fh);
+    DX12SwapChain* sc = mResourceAllocator.handle_cast<DX12SwapChain*>(sch[0]);
+
+
+    std::vector< ID3D12GraphicsCommandList*> command_lists;
+    for (uint32_t i = 0; i < cb_size; i++)
+    {
+        DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh[0]);
+        command_lists.push_back(cb->get());
+    }
+
+    cq->executeCommandLists(command_lists.data(), cb_size);
+    
+    for (uint32_t i = 0; i < cmd_sp_size; i++)
+    {
+        DX12Semaphore* sp = mResourceAllocator.handle_cast<DX12Semaphore*>(cmd_sph[0]);
+        sp->addFenceValue();
+        cq->signal(sp);
+    }
+
+    sc->present(cq, fence, command_lists.data(), cb_size);
+    
+}
+
+void Dx12RenderSystemBase::bindVertexBuffer(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    uint32_t binding_count,
+    filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+    const uint64_t* p_offsets)
+{
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+
+    auto* cl = cb->get();
+
+    for (int i = 0; i < binding_count; i++)
+    {
+        DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(bufHandle[i]);
+
+        D3D12_VERTEX_BUFFER_VIEW vbv;
+        vbv.BufferLocation = bo->getGPUVirtualAddress();
+        vbv.StrideInBytes = bo->getStride();
+        vbv.SizeInBytes = bo->getByteCount();
+        cl->IASetVertexBuffers(0, 1, &vbv);
+    }
+   
+}
+
+void Dx12RenderSystemBase::bindIndexBuffer(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
+    uint32_t indexSize,
+    uint32_t offset)
+{
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+
+    DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(bufHandle);
+
+    auto* cl = cb->get();
+    D3D12_INDEX_BUFFER_VIEW ibv;
+    ibv.BufferLocation = bo->getGPUVirtualAddress();
+    ibv.Format = indexSize == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+    ibv.SizeInBytes = bo->getByteCount();
+    cl->IASetIndexBuffer(&ibv);
+
+}
+
+void Dx12RenderSystemBase::bindPipeline(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle)
+{
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+
+    DX12Pipeline* pipeline = mResourceAllocator.handle_cast<DX12Pipeline*>(pipelineHandle);
+
+    DX12ProgramImpl* dx12ProgramImpl = pipeline->getProgram();
+
+    ID3D12PipelineState* pso = pipeline->getPipeline();
+
+
+    auto rootSignature = dx12ProgramImpl->getRootSignature();
+    auto* cl = cb->get();
+    cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    cl->SetGraphicsRootSignature(rootSignature);
+    cl->SetPipelineState(pso);
+    mLastPipelineState = pso;
+}
+
+void Dx12RenderSystemBase::bindDescriptorSet(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwShader> sh,
+    filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
+{
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    assert_invariant(false);
+}
+
+void Dx12RenderSystemBase::bindDescriptorSet(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwProgram> ph,
+    filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
+{
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    auto cl = cb->get();
+    DX12Program* program = mResourceAllocator.handle_cast<DX12Program*>(ph);
+    DX12DescriptorSet* dset = mResourceAllocator.handle_cast<DX12DescriptorSet*>(dsh);
+
+    const std::vector<const DescriptorInfo*>& descriptorInfos = dset->getDescriptorInfos();
+    if (descriptorInfos.empty())
+        return;
+    auto cbvSrvUavHandle = dset->getCbvSrvUavHandle();
+
+    for (auto descriptorInfo : descriptorInfos)
+    {
+        if (descriptorInfo->mType == D3D_SIT_SAMPLER)
+        {
+            auto samplerHandle = dset->getSamplerHandle(descriptorInfo->mSetIndex);
+            auto gpuHandle = descriptor_id_to_gpu_handle(
+                mDescriptorHeapContext->pSamplerHeaps[0], samplerHandle);
+            cl->SetGraphicsRootDescriptorTable(descriptorInfo->mRootIndex, gpuHandle);
+        }
+        else
+        {
+            auto gpuHandle = descriptor_id_to_gpu_handle(
+                mDescriptorHeapContext->mCbvSrvUavHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV], cbvSrvUavHandle + descriptorInfo->mSetIndex);
+            cl->SetGraphicsRootDescriptorTable(descriptorInfo->mRootIndex, gpuHandle);
+        }
+
+    }
+}
 
 

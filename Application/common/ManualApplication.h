@@ -28,6 +28,8 @@ public:
 	{
 		return mUseCEGUI;
 	}
+
+	filament::backend::Handle<filament::backend::HwCommandBuffer> getCurrentCommandBuffer();
 	void addCustomDirectory() {}
 	virtual void OnSize(uint32_t width, uint32_t height);
 
@@ -59,4 +61,12 @@ protected:
 
 	Ogre::Timer mTimer;
 	uint64_t mFrameCurrent, mFrameLast;
+
+	uint32_t mWidth;
+	uint32_t mHeight;
+
+	bool mNeedResize = true;
+
+	std::vector<PassBase::FrameContext> frameContextList;
+	uint32_t mImageIndex = 0;
 };

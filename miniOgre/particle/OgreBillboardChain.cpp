@@ -147,7 +147,7 @@ namespace Ogre {
         if (mBuffersNeedRecreating)
         {
             uint32_t vertexSize = mVertexData->getVertexDeclaration()->getVertexSize(0);
-            mVertexData->addBindBuffer(0, vertexSize, mVertexData->getVertexCount());
+            mVertexData->createBindBuffer(0, vertexSize, mVertexData->getVertexCount());
             mIndexData->createBuffer(4, mChainCount * mMaxElementsPerChain * 6);
             
             // NB we don't set the indexCount on IndexData here since we will

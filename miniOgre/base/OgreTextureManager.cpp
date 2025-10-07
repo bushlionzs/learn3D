@@ -3,6 +3,7 @@
 #include "renderSystem.h"
 #include "OgreRoot.h"
 #include "OgreResourceManager.h"
+#include "OgreResourceBackgroundQueue.h"
 #include <utils/JobSystem.h>
 
 
@@ -20,7 +21,7 @@ namespace Ogre {
 
     
     std::shared_ptr<OgreTexture> TextureManager::load(
-        const std::string& name, 
+        const String& name,
         TextureProperty* texProperty,
         bool read)
     {
@@ -37,7 +38,7 @@ namespace Ogre {
         {
             if (tp->_width == 0 || tp->_tex_format == PF_UNKNOWN)
             {
-                tp = nullptr;
+                //tp = nullptr;
             }
         }
         
@@ -55,6 +56,7 @@ namespace Ogre {
         if (read)
         {
             tex->loadAsync();
+            ResourceBackgroundQueue::getSingleton().load(tex);
         }
        
 

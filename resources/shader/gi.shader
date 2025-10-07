@@ -32,6 +32,23 @@ shader vctShadowPass
 	 }
 }
 
+shader forwardScenePass
+{
+    shader_unit
+	 {
+		shader_type directx
+		vertex_shader forwardScenePass.hlsl VS
+		frag_shader forwardScenePass.hlsl PS
+	 }
+	 
+	 shader_unit
+	 {
+		shader_type vulkan
+		vertex_shader forwardScenePass.hlsl VS
+		frag_shader  forwardScenePass.hlsl PS 
+	 }
+}
+
 shader voxelizationPass
 {
    shader_unit
@@ -52,6 +69,7 @@ shader voxelizationPass
 }
 
 shader mipmapPreparePass
+
 {
     shader_unit
 	 {

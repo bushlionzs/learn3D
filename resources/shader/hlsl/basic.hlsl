@@ -149,14 +149,16 @@ float filterPCF(float4 sc, uint cascadeIndex)
 
 float4 PS(VertexOut input) : SV_Target
 {
+return float4(1.0f, 0.0f, 0.0f, 1.0f);
 	if(cbPerObject.haveTexture == 0)
 	{
 	    return cbPerObject.diffuseColor;
 	}
     float4 color = first.Sample(firstSampler, input.UV) * cbMaterial.gDiffuseAlbedo;
 	if (color.a < 0.5) {
-		clip(-1);
+		//clip(-1);
 	}
+	
 	if(cbPerObject.useShadow == 0)
 	{
 	    //return float4(1.0f, 0.0f, 0.0f, 1.0f);

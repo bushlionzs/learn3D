@@ -24,6 +24,7 @@ DX12BufferObject::DX12BufferObject(
     mMemoryUsage = desc.mMemoryUsage;
     mDescriptorID = consume_descriptor_handles(pHeap, 1);
     mByteCount = desc.mSize;
+    mStrideInBytes = desc.mStructStride;
 
     if (BufferObjectBinding_Uniform == mBufferObjectBinding)
     {
@@ -236,3 +237,135 @@ DX12DescriptorSet::~DX12DescriptorSet()
 {
 
 }
+
+
+
+DX12CommandBuffer::DX12CommandBuffer(ID3D12Device* device)
+{
+    ThrowIfFailed(device->CreateCommandAllocator(
+        D3D12_COMMAND_LIST_TYPE_DIRECT,
+        IID_PPV_ARGS(&commandAllocator)));
+
+    ThrowIfFailed(device->CreateCommandList(
+        0,
+        D3D12_COMMAND_LIST_TYPE_DIRECT,
+        commandAllocator,
+        nullptr,
+        IID_PPV_ARGS(&commandList)));
+
+    commandList->Close();
+}
+
+DX12CommandBuffer::~DX12CommandBuffer()
+{
+
+}
+
+void DX12CommandBuffer::beginComandBuffer()
+{
+    ThrowIfFailed(commandAllocator->Reset());
+    ThrowIfFailed(commandList->Reset(commandAllocator, nullptr));
+}
+
+void DX12CommandBuffer::endCommandBuffer()
+{
+    ThrowIfFailed(commandList->Close());
+}
+
+void DX12CommandBuffer::clearCommandBuffer()
+{
+
+}
+
+Dx12Shader::Dx12Shader()
+{
+
+}
+
+Dx12Shader::~Dx12Shader()
+{
+
+}
+
+DX12CommandQueue::DX12CommandQueue(ID3D12Device* device)
+{
+    D3D12_COMMAND_QUEUE_DESC queueDesc = {};
+    queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+    queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    ThrowIfFailed(device->CreateCommandQueue(&queueDesc,
+        IID_PPV_ARGS(&mCommandQueue)));
+}
+
+DX12CommandQueue::~DX12CommandQueue()
+{
+
+}
+
+void DX12CommandQueue::executeCommandLists(ID3D12GraphicsCommandList** cl, uint32_t cb_size)
+{
+    mCommandQueue->ExecuteCommandLists(cb_size, (ID3D12CommandList**)cl);
+}
+
+void DX12CommandQueue::signal(DX12Fence* fence)
+{
+    mCommandQueue->Signal(fence->get(), fence->getFenceValue());
+}
+
+void DX12CommandQueue::signal(DX12Semaphore* sp)
+{
+    mCommandQueue->Signal(sp->get(), sp->getFenceValue());
+}
+
+void DX12CommandQueue::wait(DX12Semaphore* sp)
+{
+    mCommandQueue->Wait(sp->get(), sp->getFenceValue());
+}
+
+DX12Fence::DX12Fence(ID3D12Device* device)
+{
+    HRESULT res = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(d3d_fence.GetAddressOf()));
+
+    ThrowIfFailed(res);
+
+
+    event_handle = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+
+    ThrowIfFailed(event_handle == NULL);
+
+    fence_value = 0;
+}
+
+DX12Fence::~DX12Fence()
+{
+    CloseHandle(event_handle);
+}
+
+void DX12Fence::wait()
+{
+    if (d3d_fence->GetCompletedValue() < fence_value)
+    {
+        d3d_fence->SetEventOnCompletion(fence_value, event_handle);
+        WaitForSingleObject(event_handle, INFINITE);
+    }
+    
+}
+
+void DX12Fence::addFenceValue()
+{
+    fence_value++;
+}
+
+DX12Semaphore::DX12Semaphore(ID3D12Device* device)
+{
+    HRESULT res = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(d3d_fence.GetAddressOf()));
+
+    ThrowIfFailed(res);
+
+    fence_value = 0;
+}
+
+DX12Semaphore::~DX12Semaphore()
+{
+
+}
+

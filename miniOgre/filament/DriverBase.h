@@ -184,7 +184,7 @@ struct HwTimerQuery : public HwBase {
 };
 
 struct HwSampler : public HwBase {
-
+    uint64_t flag;
 };
 
 struct HwSemaphore : public HwBase

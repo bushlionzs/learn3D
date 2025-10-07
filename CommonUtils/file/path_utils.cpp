@@ -54,17 +54,28 @@ namespace CommonUtils
 
     std::string getShortFilename(const std::string& name)
     {
-        std::string tmp;
+ 
         size_t pos = name.find_last_of('\\');
         size_t pos2 = name.find_last_of('/');
-        size_t current = std::max(pos, pos2);
-        if (current == std::string::npos)
+        
+        if (pos == std::string::npos && pos2 == std::string::npos)
         {
             return name;
         }
 
-        tmp = name.substr(current + 1);
-        return tmp;
+        if (pos == std::string::npos)
+        {
+            return name.substr(pos2 + 1, name.length());
+        }
+
+        if (pos2 == std::string::npos)
+        {
+            return name.substr(pos + 1, name.length());
+        }
+
+        uint32_t big = std::max(pos, pos2);
+
+        return name.substr(big + 1, name.length());
     }
 
     std::string getDirectory(const char* filename)

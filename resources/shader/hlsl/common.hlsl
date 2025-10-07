@@ -81,7 +81,7 @@ struct PbrMaterialBlock
 
 struct ObjMaterialBlock
 {
-	uint u_hasDiffuseTexture;
+	uint u_hasDiffuseMap;
 	uint u_hasNormalMap;
 	uint u_hasSpecularMap;
 	uint u_hasOpacityMap;
@@ -89,8 +89,8 @@ struct ObjMaterialBlock
 	uint u_shininess;
 	float2 u_clipmapResolution;
 	float4 u_emissionColor;
+	float4 u_diffuseColor;
 	float4 u_specularColor;
-	float4 u_color;
 };
 
 struct MaterialBlock

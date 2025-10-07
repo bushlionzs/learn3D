@@ -39,4 +39,5 @@ private:
 	RenderSystem* mRenderSystem;
 	Ogre::RenderWindow* mRenderWindow;
 	RenderPipeline* mRenderPipeline;
+	filament::backend::Handle<filament::backend::HwCommandBuffer> mCommandBuffer;
 };

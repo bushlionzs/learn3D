@@ -6,14 +6,21 @@
 #include "myutils.h"
 #include "dx12Helper.h"
 #include "D3D12Mappings.h"
-#include "dx12Commands.h"
+#include "dx12Handles.h"
 #include "memoryAllocator.h"
 
+
+void Dx12TextureListen::loadingComplete(Resource* resource)
+{
+    Dx12Texture* tex = (Dx12Texture*)resource;
+    tex->postLoad();
+}
+/// ///////////////
 
 Dx12Texture::Dx12Texture(
     const std::string& name, 
     Ogre::TextureProperty* texProperty, 
-    DX12Commands* commands,
+    DX12CommandBuffer* commands,
     bool needSrv)
     :
     mCommands(commands),
@@ -26,7 +33,7 @@ Dx12Texture::Dx12Texture(
 Dx12Texture::Dx12Texture(
     const std::string& name,
     Ogre::TextureProperty* texProperty,
-    DX12Commands* commands,
+    DX12CommandBuffer* commands,
     ID3D12Resource* resource):
     mNeedSrv(false),
     OgreTexture(name, texProperty)
@@ -40,6 +47,7 @@ Dx12Texture::Dx12Texture(
 
 Dx12Texture::~Dx12Texture()
 {
+    int kk = 0;
 }
 
 void Dx12Texture::_createSurfaceList(void)
@@ -556,6 +564,11 @@ void Dx12Texture::generateMipmaps()
     DX12Helper::getSingleton().generateMipmaps(this);
 }
 
+void Dx12Texture::changeState(LoadingState state)
+{
+    mLoadingState.store(state);
+}
+
 void Dx12Texture::blitFromMemory(
     const PixelBox& src, const Box& dst, uint32_t face, uint32_t mipmap)
 {
@@ -591,7 +604,7 @@ void Dx12Texture::uploadData()
 
     uint32_t bytePerPixel = PixelUtil::getNumElemBytes(mFormat);
 
-    updateLayoutInfos();
+    //updateLayoutInfos();
 
     for (uint32_t face = 0; face < mTextureProperty._face; face++)
     {
@@ -620,16 +633,6 @@ void Dx12Texture::uploadData()
                 mip, face, 0, mips, mTextureProperty._face);
             dstLocation.SubresourceIndex = dstSubresource;
             cl->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, nullptr);
-
-            if (width > 4)
-            {
-                width /= 2;
-            }
-
-            if (height > 4)
-            {
-                height /= 2;
-            }
         }
     }
 

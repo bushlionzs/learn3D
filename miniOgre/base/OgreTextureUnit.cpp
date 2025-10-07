@@ -4,6 +4,7 @@
 #include "OgreControllerManager.h"
 #include "OgreMaterial.h"
 #include "OgreRoot.h"
+#include "OgreResourceBackgroundQueue.h"
 
 
 void TextureAnimationControllerValue::setValue(Ogre::Real value)
@@ -172,6 +173,7 @@ void TextureUnit::_load()
         if (tex->isLoaded())
             continue;
         tex->loadAsync();
+        ResourceBackgroundQueue::getSingleton().load(tex);
     }
 
     if (mUseAnimation || mUseScroll || mRotate != Ogre::Radian(0))

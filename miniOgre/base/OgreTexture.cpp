@@ -161,7 +161,8 @@ namespace Ogre {
 		}
 
 		mLoadingState.store(LOADSTATE_LOADING);
-		ResourceBackgroundQueue::getSingleton().load(ResourcePtr(this));
+
+		
 	}
 
 

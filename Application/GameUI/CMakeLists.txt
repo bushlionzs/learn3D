@@ -71,7 +71,7 @@ target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
 CEGUI expat Middle stormlib OIS GameShare freetype zlibstatic dy_network LinearMath BulletCollision BulletDynamics BulletSoftBody
-
+imgui
 tinyxmld
 pcre
 utils

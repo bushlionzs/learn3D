@@ -417,7 +417,7 @@ bool BinLoader::loadMeshFromFile(std::shared_ptr<Ogre::DataStream>& stream, Ogre
    
 
     uint32_t binding = 0;
-    vertexData->addBindBuffer(binding, sizeof(BinVertex), geom->mVertexCount);
+    vertexData->createBindBuffer(binding, sizeof(BinVertex), geom->mVertexCount);
 
     std::vector<BinVertex> vertexList(geom->mVertexCount);
     BinVertex* vdata = (BinVertex*)vertexList.data();

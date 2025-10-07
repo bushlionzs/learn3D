@@ -147,7 +147,7 @@ private:
 
     VkImageView mTextureImageView;
     std::vector<VkImageView> mTextureImageArrayView;
-    VkSampler mTextureSampler;
+    VkSampler mTextureSampler = VK_NULL_HANDLE;
 
     Ogre::PixelFormat mFormat = PixelFormat::PF_UNKNOWN;
     VkFormat mVulkanFormat = VK_FORMAT_UNDEFINED;

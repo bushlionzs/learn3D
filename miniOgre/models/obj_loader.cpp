@@ -31,11 +31,31 @@ struct ObjVertex
     Ogre::Vector2 TexC;
 };
 
+Ogre::Vector3 calPosition(std::vector<ObjVertex>& vertexList)
+{
+    Ogre::Vector3 center = Ogre::Vector3::ZERO;
+
+    for (auto& vertex : vertexList)
+    {
+        center += vertex.Pos;
+    }
+
+    center /= vertexList.size();
+
+    Ogre::Vector3 translate = -center;
+    for (auto& vertex : vertexList)
+    {
+        vertex.Pos += translate;
+    }
+
+    return center;
+}
+
 bool ObjLoader::loadMeshFromFile(
     std::shared_ptr<Ogre::DataStream>& stream, Ogre::Mesh* mesh)
 {
     Assimp::Importer importer;
-    uint32_t flags = aiProcessPreset_TargetRealtime_Fast | aiProcess_FlipWindingOrder;
+    uint32_t flags = aiProcessPreset_TargetRealtime_Fast | aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder;
   
 
     const std::string& name = stream->getName();
@@ -59,7 +79,7 @@ bool ObjLoader::loadMeshFromFile(
             sourceMat->Get(AI_MATKEY_NAME, name);
 
             std::string matName = name.C_Str();
-            std::shared_ptr<Ogre::Material> mat = std::make_shared<Ogre::Material>(matName, false);
+            std::shared_ptr<Ogre::Material> mat = std::make_shared<Ogre::Material>(matName, true);
             mats.push_back(mat);
 
             aiColor3D color;
@@ -96,29 +116,35 @@ bool ObjLoader::loadMeshFromFile(
             {
                 aiTextureType textureType;
                 const char* textureTypeName;
+                TextureTypePbr pbrType;
             };
 
             std::vector<TexResource> texResources =
             {
                 {
                     aiTextureType_DIFFUSE,
-                    DIFFUSE_TEXTURE
+                    DIFFUSE_TEXTURE,
+                    TextureTypePbr_Diffuse
                 },
                 {
                     aiTextureType_HEIGHT,
-                    NORMAL_TEXTURE
+                    NORMAL_TEXTURE,
+                    TextureTypePbr_NormalMap
                 },
                 {
                     aiTextureType_SPECULAR,
-                    SPECULAR_TEXTURE
+                    SPECULAR_TEXTURE,
+                    TextureTypePbr_Specular
                 },
                 {
                     aiTextureType_EMISSIVE,
-                    EMISSIVE_TEXTURE
+                    EMISSIVE_TEXTURE,
+                    TextureTypePbr_Emissive
                 },
                 {
                     aiTextureType_OPACITY,
-                    OPACITY_TEXTURE
+                    OPACITY_TEXTURE,
+                    TextureTypePbr_Opacity
                 },
             };
 
@@ -135,8 +161,23 @@ bool ObjLoader::loadMeshFromFile(
                     aiReturn ret = sourceMat->GetTexture(texResource.textureType, (unsigned int)0, &name);
                     assert(ret == aiReturn_SUCCESS);
                     std::string shortname = CommonUtils::getShortFilename(name.C_Str());
-
                     tp.textureTypeName = texResource.textureTypeName;
+                    tp._pbrType = texResource.pbrType;
+                    if (tp._pbrType == TextureTypePbr_Diffuse)
+                    {
+                        tp._samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
+                        tp._samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
+                        tp._samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
+                        tp._samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+                        tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+                        tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+                        tp._samplerParams.compareMode = filament::backend::SamplerCompareMode::NONE;
+                        tp._samplerParams.compareFunc = filament::backend::SamplerCompareFunc::COMPARE_OP_NEVER;
+                        tp._samplerParams.anisotropyLog2 = 4;
+                        tp._samplerParams.useComparison = 0;
+                        tp._samplerParams.maxLod = 1000;
+                        tp._samplerParams.padding2 = 0;
+                    }
                     mat->addTexture(shortname, &tp);
                 }
             }
@@ -147,12 +188,24 @@ bool ObjLoader::loadMeshFromFile(
     
     if (scene->HasMeshes())
     {
+        scene->mRootNode;
+        const aiMatrix4x4& transform = scene->mRootNode->mTransformation;
+        aiVector3t<float> scale;
+        aiVector3t<float> pos;
+        aiQuaterniont<float> rotation;
+        transform.Decompose(scale, rotation, pos);
+
+        Ogre::Vector3 mPosition(pos.x, pos.y, pos.z);
+        Ogre::Vector3 mScale(scale.x, scale.y, scale.z);
+        Ogre::Quaternion mQuat(rotation.w, rotation.x, rotation.y, rotation.z);
         for (uint32_t i = 0; i < scene->mNumMeshes; i++)
         {
             
             aiMesh* sourceMesh = scene->mMeshes[i];
             SubMesh* subMesh = mesh->addSubMesh(false, false);
-
+            
+            subMesh->setScale(mScale);
+            subMesh->setRotate(mQuat);
             uint32_t numVertices = sourceMesh->mNumVertices;
 
             std::vector<ObjVertex> vertexList;
@@ -172,12 +225,14 @@ bool ObjLoader::loadMeshFromFile(
                 vertex.Pos.y = sourceVertices[index].y; 
                 vertex.Pos.z = sourceVertices[index].z;
 
+      
+
                 vertex.Normal.x = sourceNormals[index].x;
                 vertex.Normal.y = sourceNormals[index].y; 
                 vertex.Normal.z = sourceNormals[index].z;
 
                 vertex.TexC.x = sourceTexcoords[index].x;
-                vertex.TexC.y = sourceTexcoords[index].y;
+                vertex.TexC.y = 1 - sourceTexcoords[index].y;
 
                 vertex.tangent = { tangents[index].x, tangents[index].y, tangents[index].z };
 
@@ -193,8 +248,14 @@ bool ObjLoader::loadMeshFromFile(
             vertexData->addElement(0, 0, 36, VET_FLOAT3, VES_BINORMAL);
             vertexData->addElement(0, 0, 48, VET_FLOAT2, VES_TEXTURE_COORDINATES);
 
-            vertexData->addBindBuffer(0, sizeof(ObjVertex), numVertices);
-
+            vertexData->createBindBuffer(0, sizeof(ObjVertex), numVertices);
+            if (false)
+            {
+                Ogre::Vector3 center = calPosition(vertexList);
+                center += mPosition;
+                subMesh->setPosition(center);
+            }
+            
             vertexData->writeBindBufferData(0, (const  char*)vertexList.data(), sizeof(ObjVertex) * numVertices);
             //update index
             std::vector<uint32_t> indexs;
@@ -219,6 +280,8 @@ bool ObjLoader::loadMeshFromFile(
             IndexData* indexData = subMesh->getIndexData();
             indexData->createBuffer(4, indexs.size());
             indexData->writeData((const char*)indexs.data(), 4 * indexs.size());
+
+          
 
             subMesh->addIndexs(indexs.size(), 0, 0);
             //update material

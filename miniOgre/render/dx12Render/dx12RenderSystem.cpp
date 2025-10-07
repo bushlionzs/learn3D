@@ -37,8 +37,9 @@ bool Dx12RenderSystem::engineInit(bool raytracing)
 
 OgreTexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
 {
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
 	Dx12Texture* tex = new Dx12Texture(
-		name, texProperty, mCommands, true);
+		name, texProperty, cb, true);
 
 
 	return tex;
@@ -48,8 +49,11 @@ Ogre::OgreTexture* Dx12RenderSystem::createManualTexture(
     const std::string& name,
     Ogre::TextureProperty* texProperty)
 {
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
     Dx12Texture* tex = new Dx12Texture(
-        name, texProperty, mCommands, true);
+        name, texProperty, cb, true);
+
+    tex->addListener(mTextureListen);
     return tex;
 }
 
@@ -280,7 +284,7 @@ void Dx12RenderSystem::addAccelerationStructure(
         instanceDesc.mSize = instanceSize;
         instanceDesc.raw = true;
         pAS->instanceDescBuffer = createBufferObject(instanceDesc);
-        updateBufferObject(pAS->instanceDescBuffer, (const char*)instanceDescs.data(), instanceSize);
+        updateBufferObject(pAS->instanceDescBuffer, (const char*)instanceDescs.data(), instanceSize, 0, nullptr);
         
         /************************************************************************/
         // Allocate Acceleration Structure Buffer

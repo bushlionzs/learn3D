@@ -5,8 +5,11 @@
 
 class Dx12RenderTarget;
 class Dx12Texture;
+struct DX12Fence;
+struct DX12CommandQueue;
+struct DX12CommandBuffer;
 
-class DX12SwapChain
+class DX12SwapChain: public HwSwapChain
 {
     struct DX12RenderTargetInfo
     {
@@ -16,10 +19,15 @@ class DX12SwapChain
 
 public:
     DX12SwapChain(
-        DX12Commands* commands, 
         HWND hWnd,
-        bool srgb);
-    void present();
+        uint64_t flags);
+    void resize(DX12CommandQueue*);
+    void present(
+        DX12CommandQueue* cq,
+        DX12Fence* fence,
+        ID3D12GraphicsCommandList** cb,
+        uint32_t cb_size
+        );
     void acquire(bool& reized);
 
     uint32 getWidth()
@@ -43,8 +51,16 @@ public:
     {
         return mDepthFormat;
     }
+
+    uint32 getImageIndex()
+    {
+        return mSwapChain3->GetCurrentBackBufferIndex();
+    }
+
 private:
-    void createSwapChain2(bool srgb);
+    void releaseSwapChain();
+    void createSwapChain2(DX12CommandQueue* cq, bool srgb);
+    
 private:
     IDXGISwapChain3* mSwapChain3;
     Dx12Texture* mDepth;
@@ -52,9 +68,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
 
-    uint32_t mCurrentFrameIndex;
+    uint32_t mBackBufferIndex;
 
-    DX12Commands* mCommands;
     HWND mHwnd;
 
     uint32_t mWidth;
@@ -62,4 +77,6 @@ private:
 
     DXGI_FORMAT mColorFormat;
     DXGI_FORMAT mDepthFormat;
+
+    bool mUseSRGB;
 };

@@ -195,7 +195,7 @@ void WowParticleSystem::init(
 	//texcoord
 	uint32_t vertexSize = 4*3 + 4*2 + 4;
 
-	mVertexData->addBindBuffer(0, vertexSize, maxParticles * 4);
+	mVertexData->createBindBuffer(0, vertexSize, maxParticles * 4);
 
 	mIndexDataView.reset(new IndexDataView);
 	mIndexDataView->mIndexCount = 0;

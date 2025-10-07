@@ -305,7 +305,7 @@ public:
     {
         assert_invariant(false);
     }
-    virtual void flushCmd(bool waitCmd)
+    virtual void flushCmd(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, bool waitCmd)
     {
         assert_invariant(false);
     }
@@ -346,6 +346,9 @@ public:
     virtual filament::backend::Handle<filament::backend::HwCommandQueue> createCommandQueue(
         Ogre::QueueType, uint32_t queueIndex);
     virtual filament::backend::Handle<filament::backend::HwSwapChain> createSwapChain(Ogre::RenderWindow* renderWindow);
+    virtual void swapChainResize(
+        filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+        filament::backend::Handle<filament::backend::HwSwapChain> sch);
     virtual void swapChainAcquire(
         filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
         filament::backend::Handle<filament::backend::HwSwapChain> sch,

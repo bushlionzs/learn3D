@@ -13,6 +13,7 @@ class Dx12Texture;
 class Dx12RenderWindow;
 class DX12Commands;
 class DX12SwapChain;
+class Dx12TextureListen;
 class DxMemoryAllocator;
 
 class Dx12RenderSystemBase : public RenderSystem
@@ -94,12 +95,13 @@ public:
     virtual void* lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes);
     virtual void unlockBuffer(Handle<HwBufferObject> bufHandle);
     virtual Handle<HwBufferObject> createBufferObject(
-        BufferDesc& desc);
+        BufferDesc& desc) override;
     virtual void updateBufferObject(
         Handle<HwBufferObject> boh,
         const char* data,
         uint32_t size,
-        uint32_t offset = 0);
+        uint32_t offset,
+        Handle<HwCommandBuffer>* cbh) override;
     virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t set);
     virtual Handle<HwDescriptorSet> createDescriptorSet(
         Handle<HwProgram> programHandle,
@@ -136,7 +138,73 @@ public:
 
 
     virtual void beginCmd();
-    virtual void flushCmd(bool waitCmd);
+    virtual void flushCmd(Handle<HwCommandQueue>  cqh, bool waitCmd);
+
+    virtual Handle<HwFence> createFence(bool signaled) override;
+    virtual void waitFence(Handle<HwFence> fh) override;
+
+    virtual Handle<HwSemaphore> createSemaphore()override;
+    virtual Handle<HwCommandBuffer> createCommandBuffer(Ogre::QueueType type) override;
+    virtual void beginCommandBuffer(Handle<HwCommandBuffer> cbh) override;
+    virtual void endCommandBuffer(Handle<HwCommandBuffer> cbh) override;
+    virtual void clearCommandBuffer(Handle<HwCommandBuffer> cbh) override;
+    virtual Handle<HwCommandQueue> createCommandQueue(Ogre::QueueType type, uint32_t queueIndex)override;
+
+    virtual Handle<HwSwapChain> createSwapChain(Ogre::RenderWindow* renderWindow) override;
+    virtual void swapChainResize(Handle<HwCommandQueue>, Handle<HwSwapChain> sc)override;
+    virtual void swapChainAcquire(
+        Handle<HwCommandQueue> cqh,
+        Handle<HwSwapChain> sch,
+        SwapChainInfo& scInfo) override;
+
+    virtual Handle<HwShader> createShader(Ogre::ShaderDesc& desc) override;
+
+    virtual Handle<HwPipeline> createPipeline(
+        Ogre::PipelineCreateInfo& pipelineCreateInfo,
+        Handle<HwShader>& shader
+    )override;
+    virtual filament::backend::Handle<filament::backend::HwPipeline> createComputePipeline(
+        filament::backend::Handle<filament::backend::HwShader>& shader
+    )override;
+    virtual Handle<HwDescriptorSet> createDescriptorSet(
+        Handle<HwShader> programHandle,
+        uint32_t set)override;
+    virtual void executeAndPresent(
+        filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+        filament::backend::Handle<filament::backend::HwSemaphore>* wait_sph,
+        uint32_t wait_sp_size,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh,
+        uint32_t cb_size,
+        filament::backend::Handle<filament::backend::HwSemaphore>* cmd_sph,
+        uint32_t cmd_sp_size,
+        filament::backend::Handle<filament::backend::HwFence> fh,
+        filament::backend::Handle<filament::backend::HwSwapChain>* sch,
+        uint32_t sc_size
+    )override;
+
+
+    virtual void bindVertexBuffer(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        uint32_t binding_count,
+        filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+        const uint64_t* p_offsets)override;
+    virtual void bindIndexBuffer(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
+        uint32_t indexSize,
+        uint32_t offset)override;
+    virtual void bindPipeline(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle)override;
+
+    virtual void bindDescriptorSet(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwShader> sh,
+        filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)override;
+    void bindDescriptorSet(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwProgram> ph,
+        filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)override;
 protected:
     Dx12ResourceAllocator mResourceAllocator;
     DX12Commands* mCommands;
@@ -155,4 +223,9 @@ protected:
     ID3D12CommandSignature* mDrawIndexCommandSignature = nullptr;
 
     ID3D12PipelineState* mLastPipelineState = nullptr;
+
+    Handle<HwCommandBuffer> mCommandBuffer;
+    filament::backend::Handle<filament::backend::HwFence> mCommandFence;
+
+    Dx12TextureListen* mTextureListen;
 };

@@ -11,7 +11,6 @@ add_definitions(-DCEGUI_STATIC)
 add_definitions(-DUSE_OGRE_MACRO)
 endif()
 
-
 macro(add_subdir)
     set(SUBDIR_SRC_LIST)
     foreach(DIR ${ARGV})

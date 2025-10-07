@@ -253,7 +253,7 @@ MapChunk::MapChunk(
   initStrip();
   VertexData* vd = new VertexData;
   vd->setVertexCount(mapbufsize);
-  vd->addBindBuffer(0, sizeof(WowTerrainVertex), mapbufsize);
+  vd->createBindBuffer(0, sizeof(WowTerrainVertex), mapbufsize);
   vd->addElement(0, 0, 0, VET_FLOAT3, VES_POSITION);
   vd->addElement(0, 0, 12, VET_FLOAT3, VES_NORMAL);
   vd->addElement(0, 0, 24, VET_FLOAT2, VES_TEXTURE_COORDINATES);

@@ -5,16 +5,12 @@
 #include <time_util.h>
 int main()
 {
-	static const char _compute_code[] = {
-R"<!>(abc)<!>"
-	};
-	printf("%s\n", _compute_code);
 	platform_log_init();
 	BasicApplication instance;
 	AppInfo info;
 	info.useSRGB = false;
 	info.engineType = EngineType_Vulkan;
-	//info.engineType = EngineType_Dx12;
+	info.engineType = EngineType_Dx12;
 	ManualApplication app;
 	
 	

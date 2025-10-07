@@ -51,4 +51,5 @@ private:
 private:
     ID3D12Device5* prDevice = nullptr;
     ID3D12GraphicsCommandList5* m_dxrCommandList = nullptr;
+    
 };

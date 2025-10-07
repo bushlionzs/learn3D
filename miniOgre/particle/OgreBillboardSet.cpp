@@ -615,7 +615,7 @@ namespace Ogre {
   
         auto vertexSize = decl->getVertexSize(0);
         
-        mVertexData->addBindBuffer(0, vertexSize, mVertexData->getVertexCount());
+        mVertexData->createBindBuffer(0, vertexSize, mVertexData->getVertexCount());
 
         if (!mPointRendering)
         {

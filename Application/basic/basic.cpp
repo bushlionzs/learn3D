@@ -58,6 +58,28 @@ void BasicApplication::update(float delta)
 
 void BasicApplication::base1()
 {
+	Ogre::BufferDesc desc{};
+	desc.mBindingType = Ogre::BufferObjectBinding_Uniform;
+	desc.mMemoryUsage = Ogre::RESOURCE_MEMORY_USAGE_GPU_ONLY;
+	desc.bufferCreationFlags = 0;
+	desc.mSize = 128;
+	mRenderSystem->createBufferObject(desc);
+
+	filament::backend::SamplerParams params{};
+	params.filterMag = filament::backend::SamplerFilterType::LINEAR;
+	params.filterMin = filament::backend::SamplerFilterType::LINEAR;
+	params.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
+	params.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+	params.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+	params.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+	params.compareMode = filament::backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
+	params.compareFunc = filament::backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
+	params.anisotropyLog2 = 0;
+	params.useComparison = 0;
+	params.maxLod = 1;
+	params.padding2 = 0;
+	filament::backend::Handle<filament::backend::HwSampler> shadowMapSampler = mRenderSystem->createTextureSampler(params);
+
 	bool b = PixelUtil::isCompressed(PFG_BC1_UNORM_SRGB);
 	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
 	float aa = 1;
@@ -82,8 +104,6 @@ void BasicApplication::base1()
 	auto& mat = subEntry->getMaterial();
 
 	ShaderInfo& info = mat->getShaderInfo();
-	//info.shaderName = "testShader";
-	//mSceneManager->setSkyBox(true, "SkyLan", 1000.0f);
 	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, -3.f), Ogre::Vector3::ZERO);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
 	mGameCamera->setMoveSpeed(50);

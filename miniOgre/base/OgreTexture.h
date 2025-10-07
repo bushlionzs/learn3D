@@ -17,9 +17,12 @@ namespace Ogre {
         TextureTypePbr_Emissive = 4,
         TextureTypePbr_MetalRoughness = 5,
         TextureTypePbr_Roughness = 6,
-        TextureTypePbr_BRDF_LUT = 7,
-        TextureTypePbr_IBL_Diffuse = 8,
-        TextureTypePbr_IBL_Specular = 9
+        TextureTypePbr_Diffuse = 7,
+        TextureTypePbr_Specular = 8,
+        TextureTypePbr_Opacity = 9,
+        TextureTypePbr_BRDF_LUT = 10,
+        TextureTypePbr_IBL_Diffuse = 11,
+        TextureTypePbr_IBL_Specular = 12
     };
     
 

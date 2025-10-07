@@ -131,7 +131,7 @@ bool M3dLoader::loadMeshFromFile(
 		vertexSize = sizeof(M3dSkinnedVertex);
 	}
 
-	vd->addBindBuffer(0, vertexSize, vertices_.size());
+	vd->createBindBuffer(0, vertexSize, vertices_.size());
 	vd->writeBindBufferData(0, (const char*)vertices_.data(), vertices_.size() * vertexSize);
 	
 	

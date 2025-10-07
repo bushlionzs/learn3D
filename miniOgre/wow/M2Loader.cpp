@@ -597,7 +597,7 @@ void M2Loader::setLOD(Ogre::DataStream* stream, int index)
 
 	auto vertexSize = sizeof(M2ModelVertex);
 
-	vd->addBindBuffer(0, vertexSize, mHeader.nVertices);
+	vd->createBindBuffer(0, vertexSize, mHeader.nVertices);
 	vd->writeBindBufferData(0, (const char*)mOrigVertices, vertexSize * mHeader.nVertices);
 	
 

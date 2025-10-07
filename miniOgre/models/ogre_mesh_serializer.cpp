@@ -381,7 +381,7 @@ void OgreMeshSerializerImpl::readGeometryVertexBuffer(
             const char* data = stream->getCurrentStreamData();
             auto datasize = vd->getVertexCount() * vertexSize;
        
-            vd->addBindBuffer(bindIndex, vertexSize, vd->getVertexCount());
+            vd->createBindBuffer(bindIndex, vertexSize, vd->getVertexCount());
             vd->writeBindBufferData(bindIndex, data, datasize);
             stream->skip(datasize);
 

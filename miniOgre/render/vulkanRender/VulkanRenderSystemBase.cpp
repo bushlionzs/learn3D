@@ -1361,6 +1361,11 @@ void VulkanRenderSystemBase::updateDescriptorSet(
                     VulkanTexture* vulkanTexture = (VulkanTexture*)pParam->ppTextures[arr];
 
                     sampler = vulkanTexture->getSampler();
+
+                    if (sampler == nullptr)
+                    {
+                        int kk = 0;
+                    }
                 }
                 
 
@@ -1433,7 +1438,9 @@ void VulkanRenderSystemBase::beginCmd()
     mCommandBuffer = mCommands->get().buffer();
 }
 
-void VulkanRenderSystemBase::flushCmd(bool waitCmd)
+void VulkanRenderSystemBase::flushCmd(
+    filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+    bool waitCmd)
 {
     mCommands->flush(waitCmd);
     mCommandBuffer = nullptr;
@@ -1604,6 +1611,13 @@ void VulkanRenderSystemBase::swapChainAcquire(
     queue->imageReadySemaphore = imageSyncData.imageReadySemaphore;
 }
 
+void VulkanRenderSystemBase::swapChainResize(
+    Handle<HwCommandQueue> cqh,
+    Handle<HwSwapChain> sch)
+{
+    VulkanCommandQueue* queue = mResourceAllocator.handle_cast<VulkanCommandQueue*>(cqh);
+    VulkanSwapChain* swapChain = mResourceAllocator.handle_cast<VulkanSwapChain*>(sch);
+}
 
 Handle<HwShader> VulkanRenderSystemBase::createShader(Ogre::ShaderDesc& desc)
 {

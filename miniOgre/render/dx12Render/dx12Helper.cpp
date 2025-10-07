@@ -514,7 +514,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 
 	Ogre::Matrix4 viewProj = (project * view).transpose();
 
-	rs->updateBufferObject(mMipMapBlockHandle, (const char*)&viewProj, sizeof(viewProj));
+	rs->updateBufferObject(mMipMapBlockHandle, (const char*)&viewProj, sizeof(viewProj), 0, nullptr);
 
 	for (uint32_t m = 1; m < numMips; m++)
 	{
@@ -577,8 +577,5 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 			RESOURCE_STATE_RENDER_TARGET
 		};
 		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
-		rs->flushCmd(true);
 	}
-	
-	rs->beginCmd();
 }

@@ -72,8 +72,13 @@ public:
         return vertexDeclaration;
     }
 
-    int32_t addBindBuffer(uint32_t vertexSize, uint32_t vertexCount);
-    void addBindBuffer(uint32_t binding, uint32_t vertexSize, uint32_t vertexCount);
+    int32_t createBindBuffer(
+        uint32_t vertexSize, 
+        uint32_t vertexCount);
+    void createBindBuffer(
+        uint32_t binding, 
+        uint32_t vertexSize, 
+        uint32_t vertexCount);
     void updateBindBuffer(uint32_t binding, uint32_t vertexCount);
     void addBoneInfo(std::vector<VertexBoneAssignment>& assignInfoList);
     void writeBindBufferData(uint32_t binding, const char* data, uint32_t size, bool writeGPU = false);

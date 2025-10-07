@@ -133,6 +133,8 @@ bool ManualApplication::frameStarted(const Ogre::FrameEvent& evt)
 
 void ManualApplication::run(AppInfo* info)
 {
+	mWidth = 0;
+	mHeight = 0;
 	mAppInfo = info;
 	mUseCEGUI = mAppInfo->useCEGUI;
 
@@ -158,13 +160,14 @@ void ManualApplication::run(AppInfo* info)
 		}
 		
 		wndInit(wndHandle);
-		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);
+		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);		
 	}
 	
 	info->setup(mRenderSystem, mRenderWindow, mSceneManager, mGameCamera);
 	mRenderSystem->ready();
 	printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 	
+
 
 	if (info->loopback)
 	{
@@ -173,13 +176,44 @@ void ManualApplication::run(AppInfo* info)
 	else
 	{
 		loop();
-	}
-	
+	}	
+}
+
+filament::backend::Handle<filament::backend::HwCommandBuffer> ManualApplication::getCurrentCommandBuffer()
+{
+	return frameContextList[mImageIndex].cbh;
 }
 
 void ManualApplication::loop()
 {
+	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
+
+	
+	mFrameLast = 0;
+	mFrameCurrent = 0;
 	MSG msg;
+	PassBase::RenderContext context;
+	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
+	context.sch = mSwapChainHandle;
+
+	if (mWidth != ogreConfig.width || mHeight != ogreConfig.height)
+	{
+		mRenderSystem->swapChainResize(context.cqh, mSwapChainHandle);
+		mWidth = ogreConfig.width;
+		mHeight = ogreConfig.height;
+	}
+
+	
+	frameContextList.resize(3);
+	for (uint32_t i = 0; i < 3; i++)
+	{
+		PassBase::FrameContext* frameContext = &frameContextList[i];
+		frameContext->cbh = mRenderSystem->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
+		frameContext->fh = mRenderSystem->createFence(true);
+		frameContext->sph = mRenderSystem->createSemaphore();
+	}
+
+	mRenderSystem->flushCmd(context.cqh, true);
 	while (true)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -202,14 +236,44 @@ void ManualApplication::loop()
 		}
 		else
 		{
+			
 			mRenderSystem->frameStart();
 			Ogre::Root::getSingleton()._fireFrameStarted();
+			Root::getSingleton().getWorkQueue()->processMainThreadTasks();
+			mRenderSystem->swapChainAcquire(context.cqh, context.sch, context.scInfo);
+			mImageIndex = context.scInfo.imageIndex;
+			PassBase::FrameContext* frameContext = &frameContextList[context.scInfo.imageIndex];
+			
+			mRenderSystem->waitFence(frameContext->fh);
+			context.frameContext = frameContext;
+
+			mFrameCurrent = mTimer.getMicrosecondsCPU();
+			float delta = (mFrameCurrent - mFrameLast) / 1000000.0f;
+
+			mGameCamera->update(delta);
+			mAppInfo->update(delta);
+			context.delta = delta;
+
 			for (auto pass : mPassList)
 			{
-				pass->execute(mRenderSystem);
+				pass->update(context);
 			}
-			mRenderSystem->present();
-			mRenderSystem->frameEnd();
+
+
+			mRenderSystem->flushCmd(context.cqh, true);
+
+			mRenderSystem->beginCommandBuffer(frameContext->cbh);
+
+			for (auto pass : mPassList)
+			{
+				pass->execute(context);
+			}
+			
+			mRenderSystem->endCommandBuffer(frameContext->cbh);
+			mRenderSystem->executeAndPresent(context.cqh, nullptr, 0,
+				&frameContext->cbh, 1, &frameContext->sph, 1,
+				frameContext->fh, &context.sch, 1);
+
 			ShowFrameFrequency();
 		}
 	}
@@ -268,7 +332,7 @@ void ManualApplication::loop2()
 					pass->update(context);
 				}
 				
-				mRenderSystem->flushCmd(true);
+				mRenderSystem->flushCmd(context.cqh, true);
 				
 			}
 			
@@ -305,7 +369,7 @@ void ManualApplication::ShowFrameFrequency()
 			str.c_str());
 
 		
-		//::SetWindowText(mApplicationWindow->getWnd(), buffer);
+		::SetWindowText(mApplicationWindow->getWnd(), buffer);
 	}
 }
 

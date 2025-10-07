@@ -11,6 +11,7 @@
 namespace Ogre
 {
     Ogre::RenderTarget* generateCubeMap(
+        filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
         const std::string& name,
         Ogre::OgreTexture* environmentCube,
         Ogre::PixelFormat format,
@@ -126,7 +127,7 @@ namespace Ogre
 
         rs->beginCmd();
         rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
-        rs->flushCmd(true);
+        rs->flushCmd(cqh, true);
 
         for (uint32_t m = 0; m < numMips; m++) 
         {
@@ -215,7 +216,7 @@ namespace Ogre
                     RESOURCE_STATE_RENDER_TARGET
                 };
                 rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
-                rs->flushCmd(true);                
+                rs->flushCmd(cqh, true);
             }
         }
 
@@ -228,12 +229,12 @@ namespace Ogre
 
         rs->beginCmd();
         rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
-        rs->flushCmd(true);
+        rs->flushCmd(cqh, true);
 
         return rt;
     }
 
-    Ogre::RenderTarget* generateBRDFLUT(const std::string& name)
+    Ogre::RenderTarget* generateBRDFLUT(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, const std::string& name)
     {
         auto dim = 512;
         const uint32_t numMips = static_cast<uint32_t>(floor(log2(dim))) + 1;
@@ -293,7 +294,7 @@ namespace Ogre
                RESOURCE_STATE_SHADER_RESOURCE
         };
         rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
-        rs->flushCmd(true);
+        rs->flushCmd(cqh, true);
 
         return rt;
     }

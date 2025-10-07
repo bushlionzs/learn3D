@@ -38,7 +38,7 @@ void VertexSlotInfo::writeData(const char* data, uint32_t size)
 {
     RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
 
-    rs->updateBufferObject(mVertexBufferHandle, data, size);
+    rs->updateBufferObject(mVertexBufferHandle, data, size, 0, nullptr);
 }
 
 BufferHandleLockGuard::BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle)
@@ -154,15 +154,20 @@ const VertexElement& VertexData::addElement(
     return vertexDeclaration->addElement(source, index, offset, theType, semantic);
 }
 
-int32_t VertexData::addBindBuffer(uint32_t vertexSize, uint32_t vertexCount)
+int32_t VertexData::createBindBuffer(
+    uint32_t vertexSize, 
+    uint32_t vertexCount)
 {
     auto binding = getUnusedBinding();
     assert_invariant(binding >= 0);
-    addBindBuffer(binding, vertexSize, vertexCount);
+    createBindBuffer(binding, vertexSize, vertexCount);
     return binding;
 }
 
-void VertexData::addBindBuffer(uint32_t binding, uint32_t vertexSize, uint32_t vertexCount)
+void VertexData::createBindBuffer(
+    uint32_t binding, 
+    uint32_t vertexSize, 
+    uint32_t vertexCount)
 {
     vertexSlotInfo[binding].createBuffer(vertexSize, vertexCount);
 }

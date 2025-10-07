@@ -61,6 +61,10 @@ class RenderPipeline
 {
 public:
 	virtual void addRenderPass(PassBase* pass) = 0;
+	virtual filament::backend::Handle<filament::backend::HwCommandBuffer> getCurrentCommandBuffer()
+	{
+		return filament::backend::Handle<filament::backend::HwCommandBuffer>();
+	}
 };
 
 PassBase* createStandardRenderPass(RenderPassInput& input);
