@@ -1,6 +1,6 @@
 #include "OgreHeader.h"
 #include "dx12RenderSystemBase.h"
-#define USE_PIX
+//#define USE_PIX
 #if defined(USE_PIX)
 #include "ForgeConfig.h"
 #include <winpixeventruntime/pix3.h>
@@ -213,7 +213,8 @@ void Dx12RenderSystemBase::copyImage(
 }
 
 void Dx12RenderSystemBase::setViewport(
-    float x, float y, float width, float height, float minDepth, float maxDepth)
+    float x, float y, float width, float height, float minDepth, float maxDepth,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
     D3D12_VIEWPORT viewport;
     
@@ -223,16 +224,34 @@ void Dx12RenderSystemBase::setViewport(
     viewport.Height = static_cast<float>(height);
     viewport.MinDepth = minDepth;
     viewport.MaxDepth = maxDepth;
-    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    DX12CommandBuffer* cb = nullptr;
+    if (cbh)
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh[0]);
+    }
+    else
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    }
+        
     auto* cl = cb->get();
     cl->RSSetViewports(1, &viewport);
 }
 
-void Dx12RenderSystemBase::setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+void Dx12RenderSystemBase::setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+    filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh)
 {
     D3D12_RECT scissorRect;
     scissorRect = { (LONG)x, (LONG)y, (LONG)width, (LONG)height };
-    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    DX12CommandBuffer* cb = nullptr;
+    if (cbh)
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh[0]);
+    }
+    else
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    }
     auto* cl = cb->get();
     cl->RSSetScissorRects(1, &scissorRect);
 }
@@ -301,7 +320,7 @@ void Dx12RenderSystemBase::beginRenderPass(RenderPassInfo& renderPassInfo)
     cl->OMSetRenderTargets(renderPassInfo.renderTargetCount, renderTargetHandle, 
         FALSE, hasDepth?&depthHandle:NULL);
 
-    if (renderPassInfo.viewport)
+    /*if (renderPassInfo.viewport)
     {
         D3D12_VIEWPORT viewport;
         D3D12_RECT scissorRect;
@@ -315,7 +334,7 @@ void Dx12RenderSystemBase::beginRenderPass(RenderPassInfo& renderPassInfo)
         scissorRect = { 0, 0, (LONG)width, (LONG)height };
         cl->RSSetViewports(1, &viewport);
         cl->RSSetScissorRects(1, &scissorRect);
-    }
+    }*/
     
 }
 

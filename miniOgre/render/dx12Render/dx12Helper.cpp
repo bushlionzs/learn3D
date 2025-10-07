@@ -530,8 +530,8 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 			      },
 		};
 		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
-		rs->setViewport(0, 0, width, height, 0.0f, 1.0f);
-		rs->setScissor(0, 0, width, height);
+		rs->setViewport(0, 0, width, height, 0.0f, 1.0f, nullptr);
+		rs->setScissor(0, 0, width, height, nullptr);
 		rs->beginRenderPass(renderPassInfo);
 		rs->bindPipeline(mMipmapPipelineHandle, &mMipMapDescSet, 1);
 		vertexData->bind(nullptr);

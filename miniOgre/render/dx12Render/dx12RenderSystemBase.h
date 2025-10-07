@@ -44,8 +44,12 @@ public:
         ImageCopyDesc& desc
     );
 
-    virtual void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
-    virtual void setScissor(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+    virtual void setViewport(
+        float x, float y, float width, float height, float minDepth, float maxDepth,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh) override;
+    virtual void setScissor(
+        uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh) override;
     virtual void beginRenderPass(
         RenderPassInfo& renderPassInfo);
     virtual void endRenderPass(RenderPassInfo& renderPassInfo);

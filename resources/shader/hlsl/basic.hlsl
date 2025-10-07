@@ -149,7 +149,7 @@ float filterPCF(float4 sc, uint cascadeIndex)
 
 float4 PS(VertexOut input) : SV_Target
 {
-return float4(1.0f, 0.0f, 0.0f, 1.0f);
+    //return float4(1.0f, 0.0f, 0.0f, 1.0f);
 	if(cbPerObject.haveTexture == 0)
 	{
 	    return cbPerObject.diffuseColor;

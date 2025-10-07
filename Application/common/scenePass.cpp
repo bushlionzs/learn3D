@@ -307,6 +307,12 @@ void SceneRenderPass::draw(RenderContext& context)
 	}
 
 	mRenderPassInfo.cbh = context.frameContext->cbh;
+
+	uint32_t width = ogreConfig.width;
+	uint32_t height = ogreConfig.height;
+	rs->setViewport(0, 0, width, height, 0.0f, 1.0f, &mRenderPassInfo.cbh);
+	rs->setScissor(0, 0, width, height, &mRenderPassInfo.cbh);
+
 	rs->beginRenderPass(mRenderPassInfo);
 	for (auto r : renderList.mOpaqueList)
 	{
