@@ -67,6 +67,8 @@ protected:
 
 	bool mNeedResize = true;
 
-	std::vector<PassBase::FrameContext> frameContextList;
+	std::vector<FrameContext> frameContextList;
 	uint32_t mImageIndex = 0;
+
+	RenderContext context;
 };

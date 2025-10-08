@@ -13,12 +13,12 @@ namespace Ogre
     class SceneManager;
 }
 
-
+struct RenderContext;
 
 class PassBase;
 struct AppInfo;
 using UserdefineRunCallback = std::function<void(AppInfo* appInfo)>;
-using SetupCallback = std::function<void(RenderSystem*, Ogre::RenderWindow*, Ogre::SceneManager*, GameCamera*)>;
+using SetupCallback = std::function<void(RenderContext&, Ogre::RenderWindow*, Ogre::SceneManager*, GameCamera*)>;
 using CleanupCallback = std::function<void()>;
 using UpdateCallback = std::function<void(float)>;
 using LoopCallback = std::function<void()>;

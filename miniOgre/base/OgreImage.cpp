@@ -156,7 +156,7 @@ namespace Ogre {
         }
         return Ogre::PF_FLOAT16_RGBA;
     }
-    /*bool CImage::loadImageInfo(
+    bool CImage::loadImageInfo(
         const std::string& name,
         ImageInfo& imageInfo,
         bool cube)
@@ -172,8 +172,8 @@ namespace Ogre {
             }
             else
             {
-                std::string suffix = getSuffix(name);
-                std::string basename = removeSuffix(name);
+                std::string suffix = CommonUtils::getSuffix(name);
+                std::string basename = CommonUtils::removeSuffix(name);
                 std::string current = basename + "_rt" + suffix;
                 res = ResourceManager::getSingleton().getResourceInfo(current);
             }
@@ -186,13 +186,13 @@ namespace Ogre {
         
 
         std::string content;
-        get_file_content(res->_fullname.c_str(), content, 2048);
+        CommonUtils::get_file_content(res->_fullname.c_str(), content, 2048);
 
         const char* data = content.c_str();
         uint32_t byteCount = content.size();
         
         return CImage::loadImageInfo((const uint8_t*)data, byteCount, imageInfo, type);
-    }*/
+    }
 
     void CImage::freeImageData(void* data)
     {

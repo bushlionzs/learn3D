@@ -27,7 +27,7 @@ struct ModuleInformation
         data._param = this;
         data._module = this->module_id;
         strncpy(data._name, module_name, sizeof(data._name) - 1);
-        this->thread = PlatformRunThread(data);
+        this->thread = dy::PlatformRunThread(data);
     }
 
     void stop()

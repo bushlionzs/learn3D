@@ -12,8 +12,7 @@
 #include "OgreMaterialManager.h"
 #include "OgreRenderTexture.h"
 #include "OgreCamera.h"
-#include "role.h"
-#include "application_util.h"
+//#include "role.h"
 #include <CEGUI/InputEvent.h>
 #include <CEGUI/widgets/DragContainer.h>
 #include <CEGUI/CEGUI.h>
@@ -40,7 +39,7 @@ GameUI::~GameUI()
 
 bool GameUI::appInit()
 {
-	ApplicationBase::appInit();
+
     InputManager::getSingletonPtr()->addListener(this);
     
     mGUIContext = CEGUIManager::getSingleton().getGUIContext();
@@ -56,8 +55,7 @@ bool GameUI::appInit()
 
 void GameUI::appUpdate(float delta)
 {
-	ApplicationBase::appUpdate(delta);
-
+	
 	if (mAnimationState)
 	{
 		mAnimationState->addTime(delta);
@@ -65,12 +63,6 @@ void GameUI::appUpdate(float delta)
     auto& defautContext = CEGUI::System::getSingleton().getDefaultGUIContext();
     //defautContext.injectTimePulse(delta);
     mGUIContext->injectTimePulse(delta);
-}
-
-EngineType GameUI::getEngineType()
-{
-	return EngineType_Vulkan;
-	return EngineType_Dx11;
 }
 
 void GameUI::helloDemo()
@@ -315,7 +307,7 @@ void GameUI::SelfEquipDemo()
     Ogre::ColourValue color(0.678431392f, 0.847058892f, 0.901960850f, 1.000000000f);
     vp->setBackgroundColour(color);
 
-    SceneManager* sceneMgr = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("SelfEquip"));
+    Ogre::SceneManager* sceneMgr = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("SelfEquip"));
     Camera* cam = sceneMgr->createCamera("SelfEquip");
     mRole = new Role(sceneMgr);
     mRole->createRoleData();
@@ -328,7 +320,7 @@ void GameUI::SelfEquipDemo()
     float width = 206;
     float height = 300;
 
-    TextureProperty texProperty;
+    Ogre::TextureProperty texProperty;
     texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
     texProperty._width = width;
     texProperty._height = height;

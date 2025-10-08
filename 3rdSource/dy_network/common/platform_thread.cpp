@@ -64,11 +64,14 @@ static void* WindowsThreadFunc(void* obj)
 	return 0;
 }
 
-
-std::shared_ptr<Thread> PlatformRunThread(const ThreadData& data)
+namespace dy
 {
-    ThreadPriData* newdata = new ThreadPriData();
-    newdata->m_PriData = data;
-    std::shared_ptr<Thread> dummy = std::make_shared<Thread>(WindowsThreadFunc, newdata);
-    return dummy;
+	std::shared_ptr<Thread> PlatformRunThread(const ThreadData& data)
+	{
+		ThreadPriData* newdata = new ThreadPriData();
+		newdata->m_PriData = data;
+		std::shared_ptr<Thread> dummy = std::make_shared<Thread>(WindowsThreadFunc, newdata);
+		return dummy;
+	}
 }
+

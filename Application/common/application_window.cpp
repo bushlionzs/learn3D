@@ -155,7 +155,7 @@ LRESULT WINAPI ApplicationWindow::MessageHandler(HWND hWnd, UINT message, WPARAM
 	{
 		int32_t width = LOWORD(lParam);
 		int32_t height = HIWORD(lParam);
-		EngineConfig& config = Ogre::Root::getSingleton().getEngineConfig();
+		Ogre::EngineConfig& config = Ogre::Root::getSingleton().getEngineConfig();
 		config.width = width;
 		config.height = height;
 	}

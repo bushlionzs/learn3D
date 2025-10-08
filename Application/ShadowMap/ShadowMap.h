@@ -65,7 +65,7 @@ public:
 	~ShadowMap();
 	void setup(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
@@ -75,8 +75,8 @@ public:
 		return &mFrameData[frameIndex];
 	}
 private:
-	void base1();
-	void base2();
+	void base1(RenderContext& context);
+	void base2(RenderContext& context);
 	void updateFrameData(uint32_t i);
 private:
 	AnimationState* mAnimationState = nullptr;

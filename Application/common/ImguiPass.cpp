@@ -19,8 +19,9 @@ ImGuiPass::~ImGuiPass()
 
 
 
-void ImGuiPass::execute(RenderSystem* rs)
+void ImGuiPass::execute(RenderContext& context)
 {
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
     newFrame();
     updateBuffers();
     RenderPassInfo renderPassInfo;

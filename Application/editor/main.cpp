@@ -53,8 +53,8 @@ int main(int , char** argv)
     Editor editor = Editor(args);
 
 
-    info.setup = [&editor, &app](RenderSystem* rs, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
-        editor.setup(&app, rs, win, sceneManager, gameCamera);
+    info.setup = [&editor, &app](RenderContext&context, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
+        editor.setup(&app, context, win, sceneManager, gameCamera);
         };
 
     info.update = [&editor](float delta) {

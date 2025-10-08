@@ -63,7 +63,7 @@ std::vector<std::string> matNameList =
 
 void PbrMaterial::setup(
 	RenderPipeline* renderPipeline,
-	RenderSystem* rs,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
@@ -73,17 +73,17 @@ void PbrMaterial::setup(
 	uiInit();
 	if (0)
 	{
-		example1(renderPipeline, rs, renderWindow, sceneManager, gameCamera);
+		example1(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 	}
 	else
 	{
-		example2(renderPipeline, rs, renderWindow, sceneManager, gameCamera);
+		example2(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 	}
 	
 }
 
 void PbrMaterial::example1(RenderPipeline* renderPipeline,
-	RenderSystem* rs,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
@@ -169,15 +169,15 @@ void PbrMaterial::example1(RenderPipeline* renderPipeline,
 	tp._samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
 	tp._samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
 	tp._samplerParams.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	tp._samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+	tp._samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	tp._samplerParams.anisotropyLog2 = 0;
 	auto environmentCube = TextureManager::getSingletonPtr()->load("LA_Helipad3D.dds", &tp, true).get();
 
 	{
 		std::string prefilteredenvName = "prefilteredMap";
-		prefilteredTarget = generateCubeMap(prefilteredenvName, environmentCube, PF_FLOAT32_RGBA, 128, CubeType_Prefiltered);
+		prefilteredTarget = generateCubeMap(context.cqh, prefilteredenvName, environmentCube, PF_FLOAT32_RGBA, 128, CubeType_Prefiltered);
 		TextureManager::getSingleton().addTexture(prefilteredenvName, prefilteredTarget->getTarget());
 		tp._pbrType = TextureTypePbr_IBL_Specular;
 
@@ -190,7 +190,7 @@ void PbrMaterial::example1(RenderPipeline* renderPipeline,
 
 	{
 		std::string irradianceName = "IrradianceMap";
-		irradianceTarget = generateCubeMap(irradianceName, environmentCube, PF_FLOAT32_RGBA, 32, CubeType_Irradiance);
+		irradianceTarget = generateCubeMap(context.cqh, irradianceName, environmentCube, PF_FLOAT32_RGBA, 32, CubeType_Irradiance);
 		TextureManager::getSingleton().addTexture(irradianceName, irradianceTarget->getTarget());
 		tp._pbrType = TextureTypePbr_IBL_Diffuse;
 		std::for_each(matList.begin(), matList.end(),
@@ -202,7 +202,7 @@ void PbrMaterial::example1(RenderPipeline* renderPipeline,
 
 	{
 		std::string brdfLutName = "brdflut";
-		brdfTarget = generateBRDFLUT(brdfLutName);
+		brdfTarget = generateBRDFLUT(context.cqh, brdfLutName);
 		TextureManager::getSingleton().addTexture(brdfLutName, brdfTarget->getTarget());
 		tp._pbrType = TextureTypePbr_BRDF_LUT;
 
@@ -248,7 +248,7 @@ void PbrMaterial::example1(RenderPipeline* renderPipeline,
 }
 
 void PbrMaterial::example2(RenderPipeline* renderPipeline,
-	RenderSystem* rs,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
@@ -282,9 +282,9 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 	tp._samplerParams.filterMag = filament::backend::SamplerFilterType::LINEAR;
 	tp._samplerParams.filterMin = filament::backend::SamplerFilterType::LINEAR;
 	tp._samplerParams.mipMapMode = filament::backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	tp._samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+	tp._samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	tp._samplerParams.anisotropyLog2 = 0;
 
 	TextureLoadDesc textureLoadDesc;
@@ -307,7 +307,7 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 
 	{
 		std::string brdfLutName = "brdflut";
-		brdfTarget = generateBRDFLUT(brdfLutName);
+		brdfTarget = generateBRDFLUT(context.cqh, brdfLutName);
 		TextureManager::getSingleton().addTexture(brdfLutName, brdfTarget->getTarget());
 		tp._pbrType = TextureTypePbr_BRDF_LUT;
 
@@ -320,7 +320,7 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 
 	{
 		std::string prefilteredenvName = "prefilteredMap";
-		prefilteredTarget = generateCubeMap(prefilteredenvName, environmentCube, PF_FLOAT32_RGBA, 512, CubeType_Prefiltered);
+		prefilteredTarget = generateCubeMap(context.cqh, prefilteredenvName, environmentCube, PF_FLOAT32_RGBA, 512, CubeType_Prefiltered);
 		TextureManager::getSingleton().addTexture(prefilteredenvName, prefilteredTarget->getTarget());
 		tp._pbrType = TextureTypePbr_IBL_Specular;
 		std::for_each(matList.begin(), matList.end(),
@@ -332,7 +332,7 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 
 	{
 		std::string irradianceName = "IrradianceMap";
-		irradianceTarget = generateCubeMap(irradianceName, environmentCube, PF_FLOAT32_RGBA, 64, CubeType_Irradiance);
+		irradianceTarget = generateCubeMap(context.cqh, irradianceName, environmentCube, PF_FLOAT32_RGBA, 64, CubeType_Irradiance);
 		TextureManager::getSingleton().addTexture(irradianceName, irradianceTarget->getTarget());
 		tp._pbrType = TextureTypePbr_IBL_Diffuse;
 		std::for_each(matList.begin(), matList.end(),

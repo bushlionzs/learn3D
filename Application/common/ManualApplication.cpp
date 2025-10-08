@@ -162,8 +162,8 @@ void ManualApplication::run(AppInfo* info)
 		wndInit(wndHandle);
 		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);		
 	}
-	
-	info->setup(mRenderSystem, mRenderWindow, mSceneManager, mGameCamera);
+	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
+	info->setup(context, mRenderWindow, mSceneManager, mGameCamera);
 	mRenderSystem->ready();
 	printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 	
@@ -192,8 +192,8 @@ void ManualApplication::loop()
 	mFrameLast = 0;
 	mFrameCurrent = 0;
 	MSG msg;
-	PassBase::RenderContext context;
-	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
+	
+	context.rs = Ogre::Root::getSingleton().getRenderSystem();
 	context.sch = mSwapChainHandle;
 
 	if (mWidth != ogreConfig.width || mHeight != ogreConfig.height)
@@ -207,7 +207,7 @@ void ManualApplication::loop()
 	frameContextList.resize(3);
 	for (uint32_t i = 0; i < 3; i++)
 	{
-		PassBase::FrameContext* frameContext = &frameContextList[i];
+		FrameContext* frameContext = &frameContextList[i];
 		frameContext->cbh = mRenderSystem->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
 		frameContext->fh = mRenderSystem->createFence(true);
 		frameContext->sph = mRenderSystem->createSemaphore();
@@ -239,10 +239,10 @@ void ManualApplication::loop()
 			
 			mRenderSystem->frameStart();
 			Ogre::Root::getSingleton()._fireFrameStarted();
-			Root::getSingleton().getWorkQueue()->processMainThreadTasks();
+			Ogre::Root::getSingleton().getWorkQueue()->processMainThreadTasks();
 			mRenderSystem->swapChainAcquire(context.cqh, context.sch, context.scInfo);
 			mImageIndex = context.scInfo.imageIndex;
-			PassBase::FrameContext* frameContext = &frameContextList[context.scInfo.imageIndex];
+			FrameContext* frameContext = &frameContextList[context.scInfo.imageIndex];
 			
 			mRenderSystem->waitFence(frameContext->fh);
 			context.frameContext = frameContext;
@@ -284,15 +284,15 @@ void ManualApplication::loop2()
 	mFrameLast = 0;
 	mFrameCurrent = 0;
 	MSG msg;
-	PassBase::RenderContext context;
+	RenderContext context;
 	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
 	context.sch = mSwapChainHandle; 
 
-	std::vector<PassBase::FrameContext> frameContextList;
+	std::vector<FrameContext> frameContextList;
 	frameContextList.resize(3);
 	for (uint32_t i = 0; i < 3; i++)
 	{
-		PassBase::FrameContext* frameContext = &frameContextList[i];
+		FrameContext* frameContext = &frameContextList[i];
 		frameContext->cbh = mRenderSystem->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
 		frameContext->fh = mRenderSystem->createFence(true);
 		frameContext->sph = mRenderSystem->createSemaphore();
@@ -316,7 +316,7 @@ void ManualApplication::loop2()
 		{
 			Ogre::Root::getSingleton()._fireFrameStarted();
 			mRenderSystem->swapChainAcquire(context.cqh, context.sch, context.scInfo);
-			PassBase::FrameContext* frameContext = &frameContextList[context.scInfo.imageIndex];
+			FrameContext* frameContext = &frameContextList[context.scInfo.imageIndex];
 			mRenderSystem->waitFence(frameContext->fh);
 			context.frameContext = frameContext;
 			{

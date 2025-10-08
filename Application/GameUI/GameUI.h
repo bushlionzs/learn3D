@@ -1,5 +1,4 @@
 #pragma once
-#include "application_base.h"
 #include "OgreAnimationState.h"
 #include <CEGUI/WindowManager.h>
 #include <CEGUI/FontManager.h>
@@ -13,14 +12,13 @@
 #include <FrameWindow.h>
 #include <CEGUIManager.h>
 class Role;
-class GameUI : public ApplicationBase, public InputListener
+class GameUI : public InputListener
 {
 public:
 	GameUI();
 	~GameUI();
 	virtual bool appInit();
 	virtual void appUpdate(float delta);
-	EngineType getEngineType();
 	virtual bool isUseMyGUI()
 	{
 		return false;
@@ -52,7 +50,7 @@ private:
 	void QuestDemo();
 	void PbrDemo();
 private:
-	AnimationState* mAnimationState = nullptr;
+	Ogre::AnimationState* mAnimationState = nullptr;
 	Role* mRole;
 	CEGUI::GUIContext* mGUIContext = nullptr;
 

@@ -78,8 +78,9 @@ bool PresentPass::initialize()
     return true;
 }
 
-void PresentPass::execute(RenderSystem* rs)
+void PresentPass::execute(RenderContext& context)
 {
+	auto rs = context.rs;
 	{
 		Ogre::TextureBarrier texBarriers[] =
 		{
@@ -102,7 +103,7 @@ void PresentPass::execute(RenderSystem* rs)
 	rs->beginRenderPass(info);
 	rs->bindPipeline(mPipelineHandle);
 	rs->bindDescriptorSets(mPipelineHandle, &mZeroSet, 1);
-	rs->draw(3, 1, 0, 0);
+	rs->draw(3, 1, 0, 0, &context.frameContext->cbh);
 	rs->endRenderPass(info);
 	rs->popGroupMarker();
 

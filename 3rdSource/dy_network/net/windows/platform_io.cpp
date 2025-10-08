@@ -203,7 +203,7 @@ void PlatformIOThread::StopIO()
 
 void PlatformIOThread::run_thread(const ThreadData& data)
 {
-    _tid = PlatformRunThread(data);
+    _tid = dy::PlatformRunThread(data);
 }
 
 void PlatformIOThread::join()

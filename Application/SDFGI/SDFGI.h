@@ -16,15 +16,15 @@ public:
 
 	void setup(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void update(float delta);
 private:
-	void initScene();
-	void initResource();
-	void addPass();
+	void initScene(RenderContext& context);
+	void initResource(RenderContext& context);
+	void addPass(RenderContext& context);
 private:
 	SceneManager* mSceneManager = nullptr;
 	GameCamera* mGameCamera = nullptr;

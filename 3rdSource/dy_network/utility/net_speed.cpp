@@ -262,7 +262,7 @@ bool net_speed_start(
 	ns._upload_time = upload_time;
 	data.threadfunc = net_speed_func;
 	data._param = new NetSpeedSession(ns, net_speed_callback, param);
-	auto td =  PlatformRunThread(data);
+	auto td = dy::PlatformRunThread(data);
 	td->detach();
 	return true;
 }

@@ -14,8 +14,8 @@ int main()
 	//info.engineType = EngineType_Dx12;
 	ManualApplication app; 
 
-	info.setup = [&instance, &app, &info](RenderSystem* rs, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
-		instance.setup(&app, rs, win, sceneManager, gameCamera);
+	info.setup = [&instance, &app, &info](RenderContext& context, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
+		instance.setup(&app, context, win, sceneManager, gameCamera);
 		if (info.useCEGUI)
 		{
 			app.addUIPass();
@@ -28,7 +28,7 @@ int main()
 	info.cleanup = [&instance]() {
 		};
 
-	app.run(info);
+	app.run(&info);
 
 	return 0;
 }

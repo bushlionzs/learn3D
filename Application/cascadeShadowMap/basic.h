@@ -20,7 +20,7 @@ public:
 
 	void setup(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);

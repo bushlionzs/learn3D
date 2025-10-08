@@ -102,38 +102,38 @@ public:
 	~RayTracingApp();
 	void setup(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void RayQuery(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void RayTracingGltf(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void RayTracingShadow(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 	void RayTracingBox(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
 
 	void RayTracingBasic(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
@@ -145,7 +145,7 @@ public:
 	}
 
 private:
-	void initRayTracingContext(RayTracingContext& context, Ogre::Entity* entity);
+	void initRayTracingContext(RenderContext& renderContext, RayTracingContext& context, Ogre::Entity* entity);
 private:
 	std::vector<FrameInfo> mFrameInfoList;
 
@@ -161,7 +161,7 @@ private:
 
 	Ogre::RenderWindow* mRenderWindow;
 	RenderSystem* mRenderSystem;
-	RayTracingContext context;
+	RayTracingContext rayTracingContext;
 
 	UBO mUBO;
 };

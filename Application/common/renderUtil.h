@@ -5,14 +5,15 @@
 #include <engine_struct.h>
 
 class GameCamera;
+struct RenderContext;
 struct UserDefineShader;
 using RenderableInitCallback = std::function< void(
     uint32_t frameIndex, 
     Ogre::Renderable* r,
     filament::backend::Handle<filament::backend::HwProgram> shadowHandle)>;
-using RenderableUpdateCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r)>;
-using RenderableBindCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable*r, void* )>;
-using RenderableDrawCallback = std::function< void(uint32_t frameIndex, Ogre::Renderable* r, void*)>;
+using RenderableUpdateCallback = std::function< void(RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r)>;
+using RenderableBindCallback = std::function< void(RenderContext& context, uint32_t frameIndex, Ogre::Renderable*r, void* )>;
+using RenderableDrawCallback = std::function< void(RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r, void*)>;
 
 struct UserDefineShader
 {
@@ -40,7 +41,7 @@ void initFrameResource(
     Ogre::Renderable* r, 
     filament::backend::Handle<filament::backend::HwProgram> shadowHandle);
 
-void updateFrameResource(uint32_t frameIndex, Ogre::Renderable* r);
+void updateFrameResource(RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r);
 
 void updateMaterialInfo(Ogre::Renderable* r, bool updateTexture);
 
@@ -48,12 +49,14 @@ void updateMaterialInfo(Ogre::Renderable* r, bool updateTexture);
 void renderScene(
     Ogre::ICamera* cam,
     Ogre::SceneManager* sceneManager,
+    RenderContext& context,
     RenderPassInfo& renderPassInfo,
     UserDefineShader* userDefineShader);
 
 void renderScene(
     Ogre::ICamera* cam,
     const std::vector<Ogre::Renderable*>& renderList,
+    RenderContext& context,
     RenderPassInfo& renderPassInfo,
     UserDefineShader* userDefineShader);
 

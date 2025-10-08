@@ -428,11 +428,12 @@ void Dx12RenderSystemBase::drawIndexedIndirect(
     Handle<HwBufferObject> drawBuffer,
     uint32_t offset,
     uint32_t drawCount,
-    uint32_t stride
+    uint32_t stride,
+    Handle<HwCommandBuffer>* cbh
 )
 {
-    
-    ID3D12GraphicsCommandList* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh[0]);
+    ID3D12GraphicsCommandList* cl = cb->get();
 
     DX12BufferObject* bufferObject =
         mResourceAllocator.handle_cast<DX12BufferObject*>(drawBuffer);
@@ -440,11 +441,13 @@ void Dx12RenderSystemBase::drawIndexedIndirect(
 }
 
 void Dx12RenderSystemBase::bindComputePipeline(
-    filament::backend::Handle<filament::backend::HwComputeProgram> pipelineHandle,
-    const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
+    Handle<HwComputeProgram> pipelineHandle,
+    Handle<HwCommandBuffer> cbh,
+    const Handle<HwDescriptorSet>* descSets,
     uint32_t setCount)
 {
-    ID3D12GraphicsCommandList* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    ID3D12GraphicsCommandList* cl = cb->get();
 
     DX12ComputeProgram* program =
         mResourceAllocator.handle_cast<DX12ComputeProgram*>(pipelineHandle);
@@ -477,9 +480,10 @@ void Dx12RenderSystemBase::bindComputePipeline(
     }
 }
 
-void Dx12RenderSystemBase::dispatchComputeShader(int32_t x, int32_t y, int32_t z)
+void Dx12RenderSystemBase::dispatchComputeShader(int32_t x, int32_t y, int32_t z, Handle<HwCommandBuffer>* cbh)
 {
-    ID3D12GraphicsCommandList* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh[0]);
+    ID3D12GraphicsCommandList* cl = cb->get();
     cl->Dispatch(x, y, z);
 }
 
@@ -585,6 +589,41 @@ void Dx12RenderSystemBase::updateBufferObject(
     
 
     bo->copyData(cmdList, data, size, offset);
+}
+
+
+bool Dx12RenderSystemBase::getBufferInfo(
+    filament::backend::Handle<filament::backend::HwBufferObject> boh,
+    Ogre::BufferDesc& desc)
+{
+    DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(boh);
+    desc.mSize = bo->getByteCount();
+}
+
+void Dx12RenderSystemBase::clearBufferObject(
+    filament::backend::Handle<filament::backend::HwBufferObject> boh,
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh
+)
+{
+
+}
+
+uint8_t* Dx12RenderSystemBase::bufferMap(filament::backend::Handle<filament::backend::HwBufferObject> boh)
+{
+
+}
+
+void Dx12RenderSystemBase::bufferUnmap(filament::backend::Handle<filament::backend::HwBufferObject> boh)
+{
+
+}
+
+bool Dx12RenderSystemBase::getBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> boh,
+    const char* data,
+    uint32_t size,
+    uint32_t offset)
+{
+    return true;
 }
 
 Handle<HwDescriptorSetLayout> Dx12RenderSystemBase::getDescriptorSetLayout(
@@ -1275,7 +1314,7 @@ void Dx12RenderSystemBase::executeAndPresent(
 void Dx12RenderSystemBase::bindVertexBuffer(
     filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
     uint32_t binding_count,
-    filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+    const filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
     const uint64_t* p_offsets)
 {
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);

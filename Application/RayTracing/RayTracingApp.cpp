@@ -39,30 +39,30 @@ RayTracingApp::~RayTracingApp()
 
 void RayTracingApp::setup(
 	RenderPipeline* renderPipeline,
-	RenderSystem* renderSystem,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
 {
 	mRenderWindow = renderWindow;
-	mRenderSystem = renderSystem;
+	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
 	int type = 3;
 	switch (type)
 	{
 	case 0:
-		RayTracingBasic(renderPipeline, renderSystem, renderWindow, sceneManager, gameCamera);
+		RayTracingBasic(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 		break;
 	case 1:
-		RayTracingBox(renderPipeline, renderSystem, renderWindow, sceneManager, gameCamera);
+		RayTracingBox(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 		break;
 	case 2:
-		RayTracingShadow(renderPipeline, renderSystem, renderWindow, sceneManager, gameCamera);
+		RayTracingShadow(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 		break;
 	case 3:
-		RayTracingGltf(renderPipeline, renderSystem, renderWindow, sceneManager, gameCamera);
+		RayTracingGltf(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 		break;
 	case 4:
-		RayQuery(renderPipeline, renderSystem, renderWindow, sceneManager, gameCamera);
+		RayQuery(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 		break;
 	}
 }
@@ -181,7 +181,7 @@ void RayTracingApp::update(float delta)
 }
 
 void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
-	RenderSystem* renderSystem,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
@@ -301,7 +301,7 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 	buildASDesc.pAccelerationStructure = pSanMiguelAS;
 
 	rs->buildAccelerationStructure(&buildASDesc);
-	rs->flushCmd(true);
+	rs->flushCmd(context.cqh, true);
 	rs->removeAccelerationStructureScratch(pSanMiguelBottomAS);
 	rs->removeAccelerationStructureScratch(pSanMiguelAS);
 
@@ -311,13 +311,11 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 	samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
 	samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
 	samplerParams.compareMode = backend::SamplerCompareMode::NONE;
-	samplerParams.compareFunc = backend::SamplerCompareFunc::N;
-	samplerParams.wrapS = backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapT = backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapR = backend::SamplerWrapMode::REPEAT;
+	samplerParams.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_NEVER;
+	samplerParams.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	samplerParams.anisotropyLog2 = 0;
-	samplerParams.padding0 = 0;
-	samplerParams.padding1 = 0;
 	samplerParams.padding2 = 0;
 	auto linearSamplerHandle = rs->createTextureSampler(samplerParams);
 
@@ -327,7 +325,7 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 	texProperty._width = ogreConfig.width;
 	texProperty._height = ogreConfig.height;
 	texProperty._tex_format = format;
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	auto outPutTarget = rs->createRenderTarget("outputTarget", texProperty);
 	OgreTexture* outputTexture = outPutTarget->getTarget();
 
@@ -411,7 +409,7 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 		IndexDataView* indexDataView = subEntity->getIndexView();
 		offsetsData[i] = indexDataView->mIndexLocation;
 		auto& mat = subEntity->getMaterial();
-		mat->load(nullptr);
+		mat->load();
 		auto& unitList = mat->getAllTexureUnit();
 		auto* diffuseTex = unitList[0]->getRaw();
 		diffuseList.push_back(diffuseTex);
@@ -433,25 +431,24 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 		rs->updateDescriptorSet(frameInfo.zeroDescriptorSet, 1, descriptorData);
 	}
 
-	ComputePassCallback callback = [=](ComputePassInfo& info) {
+	ComputePassCallback callback = [=](RenderContext& context) {
 		TextureBarrier uavBarriers[] = {
 				{
 				outPutTarget->getTarget(),
 				RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 				RESOURCE_STATE_UNORDERED_ACCESS},
 		};
-		rs->resourceBarrier(0, nullptr, 1, uavBarriers, 0, nullptr);
-		info.programHandle = programHandle;
-		info.computeGroup = Ogre::Vector3i(180, 180, 1);
+		rs->resourceBarrier(0, nullptr, 1, uavBarriers, 0, nullptr, &context.frameContext->cbh);
+
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		FrameInfo* frameInfo = this->getFrameInfo(frameIndex);
+		filament::backend::Handle<filament::backend::HwDescriptorSet> descSets[2];
 
-		info.descSets.clear();
-		info.descSets.push_back(frameInfo->zeroDescriptorSet);
-		info.descSets.push_back(frameInfo->firstDescriptorSet);
+		descSets[0] = frameInfo->zeroDescriptorSet;
+		descSets[1] = frameInfo->firstDescriptorSet;
 		rs->pushGroupMarker("RayQuery");
-		rs->beginComputePass(info);
-		rs->endComputePass();
+		rs->bindComputePipeline(programHandle, descSets, 2);
+		rs->dispatchComputeShader(180, 180, 1, &context.frameContext->cbh);
 		rs->popGroupMarker();
 		};
 
@@ -475,11 +472,12 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 
 void RayTracingApp::RayTracingGltf(
 	RenderPipeline* renderPipeline,
-	RenderSystem* rs,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
 {
+	auto rs = Ogre::Root::getSingleton().getRenderSystem();
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	auto rootNode = sceneManager->getRoot();
 	auto root = sceneManager->getRoot();
@@ -509,7 +507,7 @@ void RayTracingApp::RayTracingGltf(
 	raytracingHandle = rs->createRaytracingProgram(shaderInfo);
 	
 	
-	initRayTracingContext(context, gltfEntity);
+	initRayTracingContext(context, rayTracingContext, gltfEntity);
 	
 	auto numFrame = ogreConfig.swapBufferCount;
 	mFrameInfoList.resize(numFrame);
@@ -539,19 +537,17 @@ void RayTracingApp::RayTracingGltf(
 	samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
 	samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
 	samplerParams.compareMode = backend::SamplerCompareMode::NONE;
-	samplerParams.compareFunc = backend::SamplerCompareFunc::N;
-	samplerParams.wrapS = backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapT = backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapR = backend::SamplerWrapMode::REPEAT;
+	samplerParams.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_NEVER;
+	samplerParams.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	samplerParams.anisotropyLog2 = 0;
-	samplerParams.padding0 = 0;
-	samplerParams.padding1 = 0;
 	samplerParams.padding2 = 0;
 	auto samplerHandle = rs->createTextureSampler(samplerParams);
 	
 	DescriptorData descriptorData[10];
 
-	OgreTexture* storeImage = context.outputTarget->getTarget();
+	OgreTexture* storeImage = rayTracingContext.outputTarget->getTarget();
 
 	for (auto i = 0; i < numFrame; i++)
 	{
@@ -561,7 +557,7 @@ void RayTracingApp::RayTracingGltf(
 		descriptorData[0].mCount = 1;
 		descriptorData[0].pName = "topLevelAS";
 		descriptorData[0].descriptorType = DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE;
-		descriptorData[0].pAS = context.pTopAS;
+		descriptorData[0].pAS = rayTracingContext.pTopAS;
 
 		descriptorData[1].mCount = 1;
 		descriptorData[1].pName = "image";
@@ -571,12 +567,12 @@ void RayTracingApp::RayTracingGltf(
 		descriptorData[2].mCount = 1;
 		descriptorData[2].pName = "ubo";
 		descriptorData[2].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-		descriptorData[2].ppBuffers = &context.uniformBuffer;
+		descriptorData[2].ppBuffers = &rayTracingContext.uniformBuffer;
 
 		descriptorData[3].mCount = 1;
 		descriptorData[3].pName = "geometryNodes";
 		descriptorData[3].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-		descriptorData[3].ppBuffers = &context.geometryNodesBuffer;
+		descriptorData[3].ppBuffers = &rayTracingContext.geometryNodesBuffer;
 
 		descriptorData[4].mCount = vertexBufferList.size();
 		descriptorData[4].pName = "vertexDataBuffer";
@@ -589,12 +585,12 @@ void RayTracingApp::RayTracingGltf(
 		descriptorData[5].ppSamplers = &samplerHandle;
 		
 
-		if (!context.textureList.empty())
+		if (!rayTracingContext.textureList.empty())
 		{
-			descriptorData[6].mCount = context.textureList.size();
+			descriptorData[6].mCount = rayTracingContext.textureList.size();
 			descriptorData[6].pName = "textures";
 			descriptorData[6].descriptorType = DESCRIPTOR_TYPE_TEXTURE;
-			descriptorData[6].ppTextures = (const OgreTexture**)context.textureList.data();
+			descriptorData[6].ppTextures = (const OgreTexture**)rayTracingContext.textureList.data();
 			rs->updateDescriptorSet(zeroSet, 7, descriptorData);
 		}
 		else
@@ -614,7 +610,7 @@ void RayTracingApp::RayTracingGltf(
 	}
 	
 
-	RenderPassCallback rayTracingCallback = [=, this](RenderPassInfo& info) {
+	RenderPassCallback rayTracingCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		auto* frameInfo = getFrameInfo(frameIndex);
 
@@ -632,12 +628,12 @@ void RayTracingApp::RayTracingGltf(
 					RESOURCE_STATE_COPY_DEST
 				},
 				{
-					context.outputTarget,
+					rayTracingContext.outputTarget,
 					RESOURCE_STATE_UNORDERED_ACCESS,
 					RESOURCE_STATE_COPY_SOURCE
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
 		}
 		ImageCopyDesc copyDesc{};
 		copyDesc.srcSubresource.aspectMask = 0;
@@ -650,12 +646,12 @@ void RayTracingApp::RayTracingGltf(
 		copyDesc.dstSubresource.mipLevel = 0;
 		copyDesc.dstSubresource.layerCount = 1;
 
-		copyDesc.extent.width = context.outputTarget->getWidth();
-		copyDesc.extent.height = context.outputTarget->getHeight();
+		copyDesc.extent.width = rayTracingContext.outputTarget->getWidth();
+		copyDesc.extent.height = rayTracingContext.outputTarget->getHeight();
 		copyDesc.extent.depth = 1;
 		copyDesc.srcOffset = Ogre::Vector3i(0);
 		copyDesc.dstOffset = Ogre::Vector3i(0);
-		rs->copyImage(renderWindow->getColorTarget(), context.outputTarget, copyDesc);
+		rs->copyImage(renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
 
 		{
 			RenderTargetBarrier rtBarriers[] =
@@ -666,12 +662,12 @@ void RayTracingApp::RayTracingGltf(
 					RESOURCE_STATE_PRESENT
 				},
 				{
-					context.outputTarget,
+					rayTracingContext.outputTarget,
 					RESOURCE_STATE_COPY_SOURCE,
 					RESOURCE_STATE_UNORDERED_ACCESS
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
 		}
 		};
 
@@ -691,7 +687,7 @@ void RayTracingApp::RayTracingGltf(
 		}
 
 		mUBO.frame = 0;
-		rs->updateBufferObject(context.uniformBuffer,
+		rs->updateBufferObject(rayTracingContext.uniformBuffer,
 			(const char*)&mUBO, sizeof(UBO));
 		};
 
@@ -712,7 +708,7 @@ void RayTracingApp::RayTracingGltf(
 
 void RayTracingApp::RayTracingShadow(
 	RenderPipeline* renderPipeline,
-	RenderSystem* renderSystem,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
@@ -745,7 +741,7 @@ void RayTracingApp::RayTracingShadow(
 	raytracingHandle = mRenderSystem->createRaytracingProgram(shaderInfo);
 
 
-	initRayTracingContext(context, gltfEntity);
+	initRayTracingContext(context, rayTracingContext, gltfEntity);
 
 	auto numFrame = ogreConfig.swapBufferCount;
 	mFrameInfoList.resize(numFrame);
@@ -770,12 +766,12 @@ void RayTracingApp::RayTracingShadow(
 		indexHandleList[i] = indexData->getHandle();
 		mat->updateVertexDeclaration(vertexData->getVertexDeclaration());
 
-		mat->load(nullptr);
+		mat->load();
 	}
 
 	DescriptorData descriptorData[10];
 
-	OgreTexture* storeImage = context.outputTarget->getTarget();
+	OgreTexture* storeImage = rayTracingContext.outputTarget->getTarget();
 
 	for (auto i = 0; i < numFrame; i++)
 	{
@@ -785,7 +781,7 @@ void RayTracingApp::RayTracingShadow(
 		descriptorData[0].mCount = 1;
 		descriptorData[0].pName = "topLevelAS";
 		descriptorData[0].descriptorType = DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE;
-		descriptorData[0].pAS = context.pTopAS;
+		descriptorData[0].pAS = rayTracingContext.pTopAS;
 
 		descriptorData[1].mCount = 1;
 		descriptorData[1].mLevel = 0;
@@ -796,12 +792,12 @@ void RayTracingApp::RayTracingShadow(
 		descriptorData[2].mCount = 1;
 		descriptorData[2].pName = "ubo";
 		descriptorData[2].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-		descriptorData[2].ppBuffers = &context.uniformBuffer;
+		descriptorData[2].ppBuffers = &rayTracingContext.uniformBuffer;
 
 		descriptorData[3].mCount = 1;
 		descriptorData[3].pName = "geometryNodes";
 		descriptorData[3].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-		descriptorData[3].ppBuffers = &context.geometryNodesBuffer;
+		descriptorData[3].ppBuffers = &rayTracingContext.geometryNodesBuffer;
 
 		descriptorData[4].mCount = indexHandleList.size();
 		descriptorData[4].pName = "indexDataBuffer";
@@ -817,7 +813,7 @@ void RayTracingApp::RayTracingShadow(
 	}
 
 
-	RenderPassCallback rayTracingCallback = [=, this](RenderPassInfo& info) {
+	RenderPassCallback rayTracingCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		auto* frameInfo = getFrameInfo(frameIndex);
 		auto descSet = frameInfo->zeroSetOfRaytracing;
@@ -832,12 +828,12 @@ void RayTracingApp::RayTracingShadow(
 					RESOURCE_STATE_COPY_DEST
 				},
 				{
-					context.outputTarget,
+					rayTracingContext.outputTarget,
 					RESOURCE_STATE_UNORDERED_ACCESS,
 					RESOURCE_STATE_COPY_SOURCE
 				}
 			};
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
 		}
 		ImageCopyDesc copyDesc{};
 		copyDesc.srcSubresource.aspectMask = 0;
@@ -850,13 +846,13 @@ void RayTracingApp::RayTracingShadow(
 		copyDesc.dstSubresource.mipLevel = 0;
 		copyDesc.dstSubresource.layerCount = 1;
 
-		copyDesc.extent.width = context.outputTarget->getWidth();
-		copyDesc.extent.height = context.outputTarget->getHeight();
+		copyDesc.extent.width = rayTracingContext.outputTarget->getWidth();
+		copyDesc.extent.height = rayTracingContext.outputTarget->getHeight();
 		copyDesc.extent.depth = 1;
 
 		copyDesc.srcOffset = Ogre::Vector3i(0);
 		copyDesc.dstOffset = Ogre::Vector3i(0);
-		mRenderSystem->copyImage(renderWindow->getColorTarget(), context.outputTarget, copyDesc);
+		mRenderSystem->copyImage(renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
 
 		{
 			RenderTargetBarrier rtBarriers[] =
@@ -867,12 +863,12 @@ void RayTracingApp::RayTracingShadow(
 					RESOURCE_STATE_PRESENT
 				},
 				{
-					context.outputTarget,
+					rayTracingContext.outputTarget,
 					RESOURCE_STATE_COPY_SOURCE,
 					RESOURCE_STATE_UNORDERED_ACCESS
 				}
 			};
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
 		}
 		};
 
@@ -887,7 +883,7 @@ void RayTracingApp::RayTracingShadow(
 		ubo.lightPos = Ogre::Vector3(40.0f, 50.0f, 25.0f);
 		ubo.vertexSize = vertexSize;
 		ubo.frame = 0;
-		mRenderSystem->updateBufferObject(context.uniformBuffer,
+		mRenderSystem->updateBufferObject(rayTracingContext.uniformBuffer,
 			(const char*)&ubo, sizeof(UBO));
 		};
 
@@ -908,11 +904,12 @@ void RayTracingApp::RayTracingShadow(
 
 void RayTracingApp::RayTracingBox(
 	RenderPipeline* renderPipeline,
-	RenderSystem* rs,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
 {
+	auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	auto rootNode = sceneManager->getRoot();
 	auto root = sceneManager->getRoot();
@@ -998,7 +995,7 @@ void RayTracingApp::RayTracingBox(
 
 	raytracingHandle = mRenderSystem->createRaytracingProgram(shaderInfo);
 
-	this->initRayTracingContext(context, entity);
+	this->initRayTracingContext(context, rayTracingContext, entity);
 
 	struct SceneConstantBuffer
 	{
@@ -1035,8 +1032,8 @@ void RayTracingApp::RayTracingBox(
 	auto numFrame = ogreConfig.swapBufferCount;
 	mFrameInfoList.resize(numFrame);
 
-	OgreTexture* storeImage = context.outputTarget->getTarget();
-	const MeshPtr& mesh = entity->getMesh();
+	OgreTexture* storeImage = rayTracingContext.outputTarget->getTarget();
+	Ogre::Mesh* mesh = entity->getMesh();
 	VertexData* vertexData = mesh->getVertexData();
 	IndexData* indexData = mesh->getIndexData();
 	auto vertexBufferHandle = vertexData->getBuffer(0);
@@ -1050,7 +1047,7 @@ void RayTracingApp::RayTracingBox(
 		descriptorData[0].mCount = 1;
 		descriptorData[0].pName = "Scene";
 		descriptorData[0].descriptorType = DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE;
-		descriptorData[0].pAS = context.pTopAS;
+		descriptorData[0].pAS = rayTracingContext.pTopAS;
 
 		descriptorData[1].mCount = 1;
 		descriptorData[1].mLevel = 0;
@@ -1082,7 +1079,7 @@ void RayTracingApp::RayTracingBox(
 	}
 
 
-		RenderPassCallback rayTracingCallback = [=, this](RenderPassInfo& info) {
+		RenderPassCallback rayTracingCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
 			auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 			auto* frameInfo = getFrameInfo(frameIndex);
 			auto descSet = frameInfo->zeroSetOfRaytracing;
@@ -1099,12 +1096,12 @@ void RayTracingApp::RayTracingBox(
 						RESOURCE_STATE_COPY_DEST
 					},
 					{
-						context.outputTarget,
+						rayTracingContext.outputTarget,
 						RESOURCE_STATE_UNORDERED_ACCESS,
 						RESOURCE_STATE_COPY_SOURCE
 					}
 				};
-				rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+				rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
 			}
 			ImageCopyDesc copyDesc{};
 			copyDesc.srcSubresource.aspectMask = 0;
@@ -1117,13 +1114,13 @@ void RayTracingApp::RayTracingBox(
 			copyDesc.dstSubresource.mipLevel = 0;
 			copyDesc.dstSubresource.layerCount = 1;
 
-			copyDesc.extent.width = context.outputTarget->getWidth();
-			copyDesc.extent.height = context.outputTarget->getHeight();
+			copyDesc.extent.width = rayTracingContext.outputTarget->getWidth();
+			copyDesc.extent.height = rayTracingContext.outputTarget->getHeight();
 			copyDesc.extent.depth = 1;
 
 			copyDesc.srcOffset = Ogre::Vector3i(0);
 			copyDesc.dstOffset = Ogre::Vector3i(0);
-			rs->copyImage(renderWindow->getColorTarget(), context.outputTarget, copyDesc);
+			rs->copyImage(renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
 
 			{
 				RenderTargetBarrier rtBarriers[] =
@@ -1134,12 +1131,12 @@ void RayTracingApp::RayTracingBox(
 						RESOURCE_STATE_PRESENT
 					},
 					{
-						context.outputTarget,
+						rayTracingContext.outputTarget,
 						RESOURCE_STATE_COPY_SOURCE,
 						RESOURCE_STATE_UNORDERED_ACCESS
 					}
 				};
-				rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+				rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
 			}
 			};
 		
@@ -1176,11 +1173,12 @@ void RayTracingApp::RayTracingBox(
 
 void RayTracingApp::RayTracingBasic(
 	RenderPipeline* renderPipeline,
-	RenderSystem* rs,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
 {
+	auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	auto rootNode = sceneManager->getRoot();
 	auto root = sceneManager->getRoot();
@@ -1219,10 +1217,10 @@ void RayTracingApp::RayTracingBasic(
 
 
 	raytracingHandle = rs->createRaytracingProgram(shaderInfo);
-	initRayTracingContext(context, entity);
+	initRayTracingContext(context, rayTracingContext, entity);
 
 
-	OgreTexture* storeImage = context.outputTarget->getTarget();
+	OgreTexture* storeImage = rayTracingContext.outputTarget->getTarget();
 
 
 	struct CubeConstantBuffer
@@ -1256,7 +1254,7 @@ void RayTracingApp::RayTracingBasic(
 		descriptorData[0].mCount = 1;
 		descriptorData[0].pName = "topLevelAS";
 		descriptorData[0].descriptorType = DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE;
-		descriptorData[0].pAS = context.pTopAS;
+		descriptorData[0].pAS = rayTracingContext.pTopAS;
 
 		descriptorData[1].mCount = 1;
 		descriptorData[1].mLevel = 0;
@@ -1267,13 +1265,13 @@ void RayTracingApp::RayTracingBasic(
 		descriptorData[2].mCount = 1;
 		descriptorData[2].pName = "ubo";
 		descriptorData[2].descriptorType = DESCRIPTOR_TYPE_BUFFER;
-		descriptorData[2].ppBuffers = &context.uniformBuffer;
+		descriptorData[2].ppBuffers = &rayTracingContext.uniformBuffer;
 
 		rs->updateDescriptorSet(zeroDescSet, 3, descriptorData);
 	}
 
 	int kk = 0;
-	RenderPassCallback rayTracingCallback = [=, this](RenderPassInfo& info) {
+	RenderPassCallback rayTracingCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		auto* frameInfo = getFrameInfo(frameIndex);
 		auto descSet = frameInfo->zeroSetOfRaytracing;
@@ -1290,12 +1288,12 @@ void RayTracingApp::RayTracingBasic(
 					RESOURCE_STATE_COPY_DEST
 				},
 				{
-					context.outputTarget,
+					rayTracingContext.outputTarget,
 					RESOURCE_STATE_UNORDERED_ACCESS,
 					RESOURCE_STATE_COPY_SOURCE
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
 		}
 		ImageCopyDesc copyDesc{};
 		copyDesc.srcSubresource.aspectMask = 0;
@@ -1308,13 +1306,13 @@ void RayTracingApp::RayTracingBasic(
 		copyDesc.dstSubresource.mipLevel = 0;
 		copyDesc.dstSubresource.layerCount = 1;
 
-		copyDesc.extent.width = context.outputTarget->getWidth();
-		copyDesc.extent.height = context.outputTarget->getHeight();
+		copyDesc.extent.width = rayTracingContext.outputTarget->getWidth();
+		copyDesc.extent.height = rayTracingContext.outputTarget->getHeight();
 		copyDesc.extent.depth = 1;
 
 		copyDesc.srcOffset = Ogre::Vector3i(0);
 		copyDesc.dstOffset = Ogre::Vector3i(0);
-		rs->copyImage(renderWindow->getColorTarget(), context.outputTarget, copyDesc);
+		rs->copyImage(renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
 
 		{
 			RenderTargetBarrier rtBarriers[] =
@@ -1325,12 +1323,12 @@ void RayTracingApp::RayTracingBasic(
 					RESOURCE_STATE_PRESENT
 				},
 				{
-					context.outputTarget,
+					rayTracingContext.outputTarget,
 					RESOURCE_STATE_COPY_SOURCE,
 					RESOURCE_STATE_UNORDERED_ACCESS
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
 		}
 		};
 	float aspect = ogreConfig.width / (float)ogreConfig.height;
@@ -1349,7 +1347,7 @@ void RayTracingApp::RayTracingBasic(
 		UBO ubo;
 		ubo.projInverse = project.transpose().inverse();
 		ubo.viewInverse = view.transpose().inverse();
-		rs->updateBufferObject(context.uniformBuffer,
+		rs->updateBufferObject(rayTracingContext.uniformBuffer,
 			(const char*)&ubo, sizeof(UBO));
 		
 		};
@@ -1370,7 +1368,10 @@ void RayTracingApp::RayTracingBasic(
 	gameCamera->setCameraType(CameraMoveType_LookAt);
 }
 
-void RayTracingApp::initRayTracingContext(RayTracingContext& context, Ogre::Entity* entity)
+void RayTracingApp::initRayTracingContext(
+	RenderContext& renderContext,
+	RayTracingContext& context, 
+	Ogre::Entity* entity)
 {
 	AccelerationStructureDesc         asDesc = {};
 	AccelerationStructureGeometryDesc geomDescs[128] = {};
@@ -1525,7 +1526,7 @@ void RayTracingApp::initRayTracingContext(RayTracingContext& context, Ogre::Enti
 	buildASDesc.pAccelerationStructure = pTopAS;
 
 	mRenderSystem->buildAccelerationStructure(&buildASDesc);
-	mRenderSystem->flushCmd(true);
+	mRenderSystem->flushCmd(renderContext.cqh, true);
 	mRenderSystem->removeAccelerationStructureScratch(pBottomAS);
 	mRenderSystem->removeAccelerationStructureScratch(pTopAS);
 
@@ -1538,7 +1539,7 @@ void RayTracingApp::initRayTracingContext(RayTracingContext& context, Ogre::Enti
 	texProperty._width = ogreConfig.width;
 	texProperty._height = ogreConfig.height;
 	texProperty._tex_format = mRenderWindow->getColorFormat();
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	auto outputTarget = mRenderSystem->createRenderTarget("outputTarget", texProperty);
 
 

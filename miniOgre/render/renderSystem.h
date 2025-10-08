@@ -176,6 +176,7 @@ public:
 
     virtual void bindComputePipeline(
         filament::backend::Handle<filament::backend::HwComputeProgram> pipelineHandle,
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
         const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
         uint32_t setCount)
     {
@@ -401,7 +402,7 @@ public:
     virtual void bindVertexBuffer(
         filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
         uint32_t binding_count,
-        filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+        const filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
         const uint64_t* p_offsets);
 
     virtual void bindIndexBuffer(

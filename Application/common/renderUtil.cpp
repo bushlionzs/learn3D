@@ -287,7 +287,7 @@ void initFrameResource(
     }
 }
 
-void updateFrameResource(uint32_t frameIndex, Ogre::Renderable* r)
+void updateFrameResource(RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r)
 {
     void* frameData= r->getFrameResourceInfo(frameIndex);
     FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
@@ -494,6 +494,7 @@ void updateMaterialInfo(Ogre::Renderable* r, bool updateTexture)
 void renderScene(
     Ogre::ICamera* cam,
     Ogre::SceneManager* sceneManager,
+    RenderContext& context,
     RenderPassInfo& renderPassInfo,
     UserDefineShader* userDefineShader)
 {
@@ -501,7 +502,7 @@ void renderScene(
     sceneManager->getSceneRenderList(cam, renderList, false);
     if (!renderList.mOpaqueList.empty())
     {
-        renderScene(cam, renderList.mOpaqueList, renderPassInfo, userDefineShader);
+        renderScene(cam, renderList.mOpaqueList, context, renderPassInfo, userDefineShader);
     }
     
 }
@@ -509,6 +510,7 @@ void renderScene(
 void renderScene(
     Ogre::ICamera* cam,
     const std::vector<Ogre::Renderable*>& renderList,
+    RenderContext& context,
     RenderPassInfo& renderPassInfo,
     UserDefineShader* userDefineShader)
 {
@@ -557,15 +559,15 @@ void renderScene(
         {
             userDefineShader->initCallback(frameIndex, r, userDefineShader->shadowHandle);
             r->setFlag(frameIndex, true);
-            userDefineShader->bindCallback(frameIndex, r, userDefineShader->param);
+            userDefineShader->bindCallback(context, frameIndex, r, userDefineShader->param);
 
             if (userDefineShader->updateCallback)
             {
-                userDefineShader->updateCallback(frameIndex, r);
+                userDefineShader->updateCallback(context, frameIndex, r);
             }
         }
         
-        userDefineShader->drawCallback(frameIndex, r, userDefineShader->param);
+        userDefineShader->drawCallback(context, frameIndex, r, userDefineShader->param);
     }
 
     for (auto r : renderList)
@@ -582,14 +584,14 @@ void renderScene(
             {
                 userDefineShader->initCallback(frameIndex, r, userDefineShader->shadowHandle);
                 r->setFlag(frameIndex, true);
-                userDefineShader->bindCallback(frameIndex, r, userDefineShader->param);
+                userDefineShader->bindCallback(context, frameIndex, r, userDefineShader->param);
 
                 if (userDefineShader->updateCallback)
                 {
-                    userDefineShader->updateCallback(frameIndex, r);
+                    userDefineShader->updateCallback(context, frameIndex, r);
                 }
             }
-            userDefineShader->drawCallback(frameIndex, r, userDefineShader->param);
+            userDefineShader->drawCallback(context, frameIndex, r, userDefineShader->param);
         }
     }
 

@@ -9,7 +9,7 @@ public:
     GBuffer(SDFGIContext& context);
     virtual bool initialize();
     virtual void update(float delta);
-    virtual void execute(RenderSystem* rs);
+    virtual void execute(RenderContext& context);
 private:
     bool loadAndCompileShaders();
 

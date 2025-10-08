@@ -11,12 +11,12 @@ public:
     ~CompositePass();
 
     virtual bool initialize()override;
-    virtual void execute(RenderSystem* rs)override;
+    virtual void execute(RenderContext& context)override;
     virtual void update(float delta)override;
 private:
     RenderWindow* mRenderWindow;
     Handle<HwPipeline> mPipelineHandle;
-
+    Handle<HwProgram> mPresentHandle;
     std::vector<Handle<HwDescriptorSet>> mCompositeZeroSets;
 
 

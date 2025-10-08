@@ -43,18 +43,18 @@ ShadowMap::~ShadowMap()
 
 void ShadowMap::setup(
     RenderPipeline* renderPipeline,
-    RenderSystem* renderSystem,
+    RenderContext& context,
     RenderWindow* renderWindow,
     Ogre::SceneManager* sceneManager,
     GameCamera* gameCamera
 )
 {
     mRenderPipeline = renderPipeline;
-    mRenderSystem = renderSystem;
     mRenderWindow = renderWindow;
     mSceneManager = sceneManager;
     mGameCamera = gameCamera;
-    base2();
+    mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
+    base2(context);
 }
 
 void ShadowMap::update(float delta)
@@ -76,7 +76,7 @@ void ShadowMap::update(float delta)
     
 }
 
-void ShadowMap::base1()
+void ShadowMap::base1(RenderContext& context)
 {
 	auto root = mSceneManager->getRoot();
 
@@ -171,7 +171,7 @@ void ShadowMap::base1()
     texProperty._width = shadowSize;
     texProperty._height = shadowSize;
     texProperty._tex_format = Ogre::PF_DEPTH32F;
-    texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
+    texProperty._tex_usage = Ogre::TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	auto shadowMap = mRenderSystem->createRenderTarget(
 		"shadow", texProperty);
 
@@ -323,7 +323,7 @@ void ShadowMap::updateFrameData(uint32_t i)
     }
 }
 
-void ShadowMap::base2()
+void ShadowMap::base2(RenderContext& context)
 {
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
     ogreConfig.reverseDepth = true;
@@ -638,15 +638,15 @@ void ShadowMap::base2()
         }
         
 
-        ComputePassCallback callback = [clearBufferProgramHandle, rs, this]() {
+        ComputePassCallback callback = [clearBufferProgramHandle, rs, this](RenderContext& context) {
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             FrameData* frameData = this->getFrameData(frameIndex);
             if (frameData->update)
                 return;
             rs->pushGroupMarker("clearBuffer");
-            rs->bindComputePipeline(clearBufferProgramHandle,
+            rs->bindComputePipeline(clearBufferProgramHandle, context.frameContext->cbh,
                 &frameData->clearBufferDescrSet, 1);
-            rs->dispatchComputeShader(1, 1, 1);
+            rs->dispatchComputeShader(1, 1, 1, &context.frameContext->cbh);
             
             rs->popGroupMarker();
             // Clear Buffers Synchronization 
@@ -665,7 +665,7 @@ void ShadowMap::base2()
                     RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
                 };
 
-                rs->resourceBarrier(2, &barriers[0], 0, nullptr, 0, nullptr);
+                rs->resourceBarrier(2, &barriers[0], 0, nullptr, 0, nullptr, &context.frameContext->cbh);
             }
             };
         auto clearBufferPass = createComputePass(callback, nullptr);
@@ -674,7 +674,7 @@ void ShadowMap::base2()
     }
     
     //filter triangles pass
-    if(1)
+    if(0)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "filterTriangles";
@@ -739,7 +739,7 @@ void ShadowMap::base2()
 
             rs->updateDescriptorSet(firstDescSet, 4, descriptorData);
         }
-        ComputePassCallback callback = [=, this]() {
+        ComputePassCallback callback = [=, this](RenderContext& context) {
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             auto* frameData = this->getFrameData(frameIndex);
             if (frameData->update)
@@ -751,8 +751,8 @@ void ShadowMap::base2()
             Handle <HwDescriptorSet> ds[2];
             ds[0] = frameData->zeroDescSetOfFilter;
             ds[1] = frameData->firstDescSetOfFilter;
-            rs->bindComputePipeline(filterTrianglesProgramHandle, ds, 2);
-            rs->dispatchComputeShader(dispatchGroupCount, 1, 1);
+            rs->bindComputePipeline(filterTrianglesProgramHandle, context.frameContext->cbh, ds, 2);
+            rs->dispatchComputeShader(dispatchGroupCount, 1, 1, &context.frameContext->cbh);
             rs->popGroupMarker();
             {
                 const uint32_t numBarriers = NUM_CULLING_VIEWPORTS + 2;
@@ -784,7 +784,7 @@ void ShadowMap::base2()
                 }
                 
 
-                rs->resourceBarrier(barrierCount, barriers, 0, nullptr, 0, nullptr);
+                rs->resourceBarrier(barrierCount, barriers, 0, nullptr, 0, nullptr, &context.frameContext->cbh);
             }
             };
 
@@ -799,10 +799,10 @@ void ShadowMap::base2()
     samplerParams.filterMin = backend::SamplerFilterType::NEAREST;
     samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
     samplerParams.compareMode = backend::SamplerCompareMode::NONE;
-    samplerParams.compareFunc = backend::SamplerCompareFunc::N;
-    samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-    samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-    samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+    samplerParams.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_NEVER;
+    samplerParams.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+    samplerParams.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+    samplerParams.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
     samplerParams.anisotropyLog2 = 0;
     samplerParams.useComparison = 0;
     samplerParams.maxLod = 0;
@@ -814,11 +814,11 @@ void ShadowMap::base2()
     texProperty._width = shadowSize;
     texProperty._height = shadowSize;
     texProperty._tex_format = Ogre::PF_DEPTH32F;
-    texProperty._tex_usage = Ogre::TextureUsage::DEPTH_ATTACHMENT;
+    texProperty._tex_usage = Ogre::TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
     esmShadowMap = mRenderSystem->createRenderTarget("shadow", texProperty);
 
     //draw esm shadow map
-    if(1)
+    if(0)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "meshDepth";
@@ -831,7 +831,7 @@ void ShadowMap::base2()
         rasterState.depthWrite = true;
         rasterState.depthTest = true;
         rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8_SRGB;
-        rasterState.depthFunc = SamplerCompareFunc::LE;
+        rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
         auto meshDepthPipelineHandle = rs->createPipeline(rasterState, meshDepthHandle);
 
         auto meshDepthAlphaPipelineHandle = rs->createPipeline(rasterState, meshDepthAlphaHandle);
@@ -846,7 +846,7 @@ void ShadowMap::base2()
                 auto* subMesh = mesh->getSubMesh(i);
                 auto& mat = subMesh->getMaterial();
                 mat->updateVertexDeclaration(vertexDecl);
-                mat->load(nullptr);
+                mat->loadAsync();
                 auto& unitList = mat->getAllTexureUnit();
                 auto* diffuseTex = unitList[0]->getRaw();
                 diffuseList.push_back(diffuseTex);
@@ -932,7 +932,7 @@ void ShadowMap::base2()
             
         }
 
-        RenderPassCallback shadowCallback = [=, this](RenderPassInfo& info) {
+        RenderPassCallback shadowCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
             auto* rs = Ogre::Root::getSingleton().getRenderSystem();
             RenderTargetBarrier rtBarriers[] =
             {
@@ -942,10 +942,10 @@ void ShadowMap::base2()
                     RESOURCE_STATE_DEPTH_WRITE
                 }
             };
-            rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+            rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             info.renderTargetCount = 0;
-            info.depthTarget.depthStencil = esmShadowMap;
+            info.depthTarget.target.depthStencil = esmShadowMap;
             info.depthTarget.clearValue = { 1.0f, 0.0f };
             info.depthTarget.depthIndex = 0;
             rs->pushGroupMarker("DrawEsmShadowMap");
@@ -953,22 +953,20 @@ void ShadowMap::base2()
             auto target = VIEW_SHADOW;
             
             FrameData* frameData = this->getFrameData(frameIndex);
-            Handle<HwDescriptorSet> tmp[4];
-            tmp[0] = frameData->zeroDescrSetOfShadowPass;
-            tmp[1] = frameData->thirdDescrSetOfShadowPass;
-            rs->bindPipeline(meshDepthPipelineHandle, &tmp[0], 2);
-            rs->bindIndexBuffer(filteredIndexBuffer[target], 4);
+            rs->bindPipeline(meshDepthPipelineHandle);
+            rs->bindDescriptorSet(context.frameContext->cbh, meshDepthHandle, frameData->zeroDescrSetOfShadowPass);
+            rs->bindDescriptorSet(context.frameContext->cbh, meshDepthHandle, frameData->thirdDescrSetOfShadowPass);
+            rs->bindIndexBuffer(context.frameContext->cbh, filteredIndexBuffer[target], 4, 0);
             uint64_t indirectBufferByteOffset =
                 GET_INDIRECT_DRAW_ELEM_INDEX(target, 0, 0) * sizeof(uint32_t);
 
-            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32, &context.frameContext->cbh);
             if (alpha)
             {
-                tmp[0] = frameData->zeroDescrSetOfShadowPassAlpha;
-                tmp[1] = frameData->firstDescrSetOfShadowPassAlpha;
-                tmp[2] = frameData->thirdDescrSetOfShadowPassAlpha;
-                rs->bindPipeline(meshDepthAlphaPipelineHandle, &tmp[0], 3);
-
+                rs->bindPipeline(meshDepthAlphaPipelineHandle);
+                rs->bindDescriptorSet(context.frameContext->cbh, meshDepthAlphaHandle, frameData->zeroDescrSetOfShadowPassAlpha);
+                rs->bindDescriptorSet(context.frameContext->cbh, meshDepthAlphaHandle, frameData->firstDescrSetOfShadowPassAlpha);
+                rs->bindDescriptorSet(context.frameContext->cbh, meshDepthAlphaHandle, frameData->thirdDescrSetOfShadowPassAlpha);
 
                 indirectBufferByteOffset =
                     GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_SHADOW, 1, 0) * sizeof(uint32_t);
@@ -988,7 +986,7 @@ void ShadowMap::base2()
                         RESOURCE_STATE_SHADER_RESOURCE
                     }
                 };
-                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
             }
             
             rs->popGroupMarker();
@@ -1000,7 +998,7 @@ void ShadowMap::base2()
         mRenderPipeline->addRenderPass(shadowPass);
     }
     //visibility buffer pass
-    if(1)
+    if(0)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "visibilityBuffer";
@@ -1010,20 +1008,20 @@ void ShadowMap::base2()
         backend::RasterState rasterState{};
         rasterState.depthWrite = true;
         rasterState.depthTest = true;
-        rasterState.depthFunc = backend::SamplerCompareFunc::GE;
+        rasterState.depthFunc = backend::SamplerCompareFunc::COMPARE_OP_GREATER_OR_EQUAL;
         rasterState.colorWrite = true;
         rasterState.renderTargetCount = 1;
         rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
-        auto vbBufferPasssPipelineHandle = rs->createPipeline(rasterState, vbBufferPassHandle);
+        auto vbBufferPassPipelineHandle = rs->createPipeline(rasterState, vbBufferPassHandle);
 
-        auto vbBufferPasssAlphaPipelineHandle = rs->createPipeline(rasterState, vbBufferPassAlphaHandle);
+        auto vbBufferPassAlphaPipelineHandle = rs->createPipeline(rasterState, vbBufferPassAlphaHandle);
         auto width = mRenderWindow->getWidth();
         auto height = mRenderWindow->getHeight();
         TextureProperty texProperty;
         texProperty._width = width;
         texProperty._height = height;
         texProperty._tex_format = Ogre::PixelFormat::PF_A8R8G8B8;
-        texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
+        texProperty._tex_usage = Ogre::TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
         visibilityBufferTarget = rs->createRenderTarget("visibilityBufferTarget",
             texProperty);
 
@@ -1104,24 +1102,25 @@ void ShadowMap::base2()
         }
 
         auto winDepth = mRenderWindow->getDepthTarget();
-        RenderPassCallback visibilityBufferCallback = [=, this](RenderPassInfo& info) {
+        RenderPassCallback visibilityBufferCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
             auto* rs = Ogre::Root::getSingleton().getRenderSystem();
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             info.renderTargetCount = 1;
-            info.renderTargets[0].renderTarget = visibilityBufferTarget;
+            info.renderTargets[0].target.renderTarget = visibilityBufferTarget;
             info.renderTargets[0].clearColour = { 1.0f, 1.0f, 1.0f, 1.000000000f };
-            info.depthTarget.depthStencil = winDepth;
+            info.depthTarget.target.depthStencil = winDepth;
             info.depthTarget.clearValue = { 0.0f, 0.0f };
             info.depthTarget.depthIndex = 0;
             rs->pushGroupMarker("visibilityBuffer");
             rs->beginRenderPass(info);
-            rs->bindIndexBuffer(filteredIndexBuffer[VIEW_CAMERA], 4);
+            rs->bindIndexBuffer(context.frameContext->cbh, filteredIndexBuffer[VIEW_CAMERA], 4, 0);
             FrameData* frameData = this->getFrameData(frameIndex);
 
             Handle<HwDescriptorSet> tmp[4];
             tmp[0] = frameData->zeroDescrSetOfVbPass;
             tmp[1] = frameData->thirdDescrSetOfVbPass;
-            rs->bindPipeline(vbBufferPasssPipelineHandle, &tmp[0], 2);
+            rs->bindPipeline(vbBufferPassPipelineHandle);
+            rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassHandle, frameData->zeroDescrSetOfVbPass);
             uint64_t indirectBufferByteOffset =
                 GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 0, 0) * sizeof(uint32_t);
 
@@ -1131,7 +1130,8 @@ void ShadowMap::base2()
             tmp[0] = frameData->zeroDescrSetOfVbPassAlpha;
             tmp[1] = frameData->firstDescrSetOfVbPassAlpha;
             tmp[2] = frameData->thirdDescrSetOfVbPassAlpha;
-            rs->bindPipeline(vbBufferPasssAlphaPipelineHandle, &tmp[0], 3);
+            rs->bindPipeline(vbBufferPassAlphaPipelineHandle);
+            rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassAlphaHandle, frameData->zeroDescrSetOfVbPassAlpha);
             indirectBufferByteOffset =
                 GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 1, 0) * sizeof(uint32_t);
             rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
@@ -1154,11 +1154,11 @@ void ShadowMap::base2()
         texProperty._width = ogreConfig.width;
         texProperty._height = ogreConfig.height;
         texProperty._tex_format = Ogre::PixelFormat::PF_A8R8G8B8_SRGB;
-        texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
+        texProperty._tex_usage = Ogre::TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
         shadePassTarget = rs->createRenderTarget("shadePassTarget", texProperty);
     }
     
-    if(1)
+    if(0)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "visibilityBufferShade";
@@ -1166,7 +1166,7 @@ void ShadowMap::base2()
         backend::RasterState rasterState{};
         rasterState.depthWrite = false;
         rasterState.depthTest = false;
-        rasterState.depthFunc = SamplerCompareFunc::A;
+        rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_ALWAYS;
         rasterState.colorWrite = true;
         rasterState.renderTargetCount = 1;
         rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8_SRGB;
@@ -1177,11 +1177,11 @@ void ShadowMap::base2()
         samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
         samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
         samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-        samplerParams.wrapS = backend::SamplerWrapMode::REPEAT;
-        samplerParams.wrapT = backend::SamplerWrapMode::REPEAT;
-        samplerParams.wrapR = backend::SamplerWrapMode::REPEAT;
+        samplerParams.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+        samplerParams.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+        samplerParams.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
         samplerParams.compareMode = backend::SamplerCompareMode::NONE;
-        samplerParams.compareFunc = backend::SamplerCompareFunc::N;
+        samplerParams.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_NEVER;
         samplerParams.anisotropyLog2 = 3;
         samplerParams.useComparison = 0;
         samplerParams.maxLod = 0;
@@ -1192,10 +1192,10 @@ void ShadowMap::base2()
         samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
         samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
         samplerParams.compareMode = backend::SamplerCompareMode::NONE;
-        samplerParams.compareFunc = backend::SamplerCompareFunc::LE;
-        samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
+        samplerParams.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        samplerParams.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        samplerParams.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
         samplerParams.anisotropyLog2 = 0;
 
         auto clampMiplessLinearSamplerHandle = rs->createTextureSampler(samplerParams);
@@ -1203,29 +1203,29 @@ void ShadowMap::base2()
         samplerParams.filterMin = backend::SamplerFilterType::NEAREST;
         samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
         samplerParams.compareMode = backend::SamplerCompareMode::NONE;
-        samplerParams.compareFunc = backend::SamplerCompareFunc::LE;
-        samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
+        samplerParams.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        samplerParams.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        samplerParams.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
 
         auto clampMiplessNearSamplerHandle = rs->createTextureSampler(samplerParams);
         samplerParams.filterMag = backend::SamplerFilterType::NEAREST;
         samplerParams.filterMin = backend::SamplerFilterType::NEAREST;
         samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
-        samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        samplerParams.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        samplerParams.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
         samplerParams.compareMode = backend::SamplerCompareMode::NONE;
         auto clampBorderNearSamplerHandle = rs->createTextureSampler(samplerParams);
 
         samplerParams.filterMag = backend::SamplerFilterType::NEAREST;
         samplerParams.filterMin = backend::SamplerFilterType::NEAREST;
         samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_NEAREST;
-        samplerParams.wrapS = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        samplerParams.wrapT = backend::SamplerWrapMode::CLAMP_TO_EDGE;
-        samplerParams.wrapR = backend::SamplerWrapMode::CLAMP_TO_EDGE;
+        samplerParams.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        samplerParams.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+        samplerParams.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
         samplerParams.compareMode = backend::SamplerCompareMode::COMPARE_TO_TEXTURE;
-        samplerParams.compareFunc = backend::SamplerCompareFunc::LE;
+        samplerParams.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
         auto shadowCmpSamplerHandle = rs->createTextureSampler(samplerParams);
 
         
@@ -1386,7 +1386,7 @@ void ShadowMap::base2()
         }
         
         auto winDepth = mRenderWindow->getDepthTarget();
-        RenderPassCallback shadeCallback = [=, this](RenderPassInfo& info) {
+        RenderPassCallback shadeCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
             RenderTargetBarrier rtBarriers[] = 
             { 
                 { 
@@ -1400,11 +1400,11 @@ void ShadowMap::base2()
                         RESOURCE_STATE_RENDER_TARGET
                 }
             };
-            rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers);
+            rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
             info.renderTargetCount = 1;
-            info.renderTargets[0].renderTarget = shadePassTarget;
+            info.renderTargets[0].target.renderTarget = shadePassTarget;
             info.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 0.0f };
-            info.depthTarget.depthStencil = nullptr;
+            info.depthTarget.target.depthStencil = nullptr;
             info.depthTarget.clearValue = { 0.0f, 0.0f };
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             rs->pushGroupMarker("shadePass");
@@ -1413,8 +1413,10 @@ void ShadowMap::base2()
             Handle<HwDescriptorSet> tmp[2];
             tmp[0] = frameData->zeroDescrSetOfVbShadePass;
             tmp[1] = frameData->firstDescrSetOfVbShadePass;
-            rs->bindPipeline(pipelineHandle, tmp, 2);
-            rs->draw(3, 0);
+            rs->bindPipeline(pipelineHandle);
+            rs->bindDescriptorSet(context.frameContext->cbh, programHandle, frameData->zeroDescrSetOfVbShadePass);
+            rs->bindDescriptorSet(context.frameContext->cbh, programHandle, frameData->firstDescrSetOfVbShadePass);
+            rs->draw(3, 0, 0, 0, &context.frameContext->cbh);
             rs->endRenderPass(info);
 
             {
@@ -1426,7 +1428,7 @@ void ShadowMap::base2()
                         RESOURCE_STATE_SHADER_RESOURCE
                     }
                 };
-                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
             }
             rs->popGroupMarker();
             };

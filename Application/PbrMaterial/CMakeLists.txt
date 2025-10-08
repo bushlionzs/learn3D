@@ -75,6 +75,7 @@ CEGUI expat  stormlib OIS freetype dy_network
 tinyxmld
 pcre
 dxgi
+imgui
 dxguid
 d3d12
 d3d11

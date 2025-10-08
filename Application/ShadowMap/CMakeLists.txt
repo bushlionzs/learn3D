@@ -72,6 +72,7 @@ miniOgre
 CEGUI 
 expat  
 stormlib 
+imgui
 OIS 
 freetype 
 dy_network 

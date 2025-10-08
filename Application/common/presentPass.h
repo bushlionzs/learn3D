@@ -11,7 +11,7 @@ public:
     ~PresentPass();
 
     virtual bool initialize()override;
-    virtual void execute(RenderSystem* rs)override;
+    virtual void execute(RenderContext& context)override;
     virtual void update(float delta)override;
 private:
     Ogre::OgreTexture* mSourceTexture;

@@ -84,7 +84,7 @@ public:
 		params.maxLod = 1;
 		params.padding2 = 0;
 		filament::backend::Handle<filament::backend::HwSampler> shadowMapSampler = rs->createTextureSampler(params);
-		RenderableBindCallback bindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void*) {
+		RenderableBindCallback bindCallback = [=](RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r, void*) {
 			Ogre::DescriptorData descriptorData[2];
 				
 			descriptorData[0].mCount = 1;
@@ -127,7 +127,7 @@ public:
 			mUserDefineShader.updateCallback = updateFrameResource;
 		}
 		
-		RenderableDrawCallback drawCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void* param) {
+		RenderableDrawCallback drawCallback = [=](RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r, void* param) {
 			void* frameData = r->getFrameResourceInfo(frameIndex);
 			FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
 			Ogre::Material* mat = r->getMaterial().get();
@@ -198,7 +198,7 @@ public:
 
 		filament::backend::Handle<filament::backend::HwPipeline> shadowPipelineHandle = rs->createPipeline(rasterState, shadowProgramHandle);
 
-		RenderableBindCallback shadowBindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void* param) {
+		RenderableBindCallback shadowBindCallback = [=](RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r, void* param) {
 			    uint64_t index = (uint64_t)param;
 			    Ogre::DescriptorData descriptorData[3];
 				descriptorData[0].mCount = 1;
@@ -225,7 +225,7 @@ public:
 				rs->updateDescriptorSet(resourceInfo->zeroShadowSet[index], 3, descriptorData);
 			};
 		mUserDefineShaderOfShadow.bindCallback = shadowBindCallback;
-		RenderableDrawCallback shadowDrawCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void* param) {
+		RenderableDrawCallback shadowDrawCallback = [=](RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r, void* param) {
 			void* frameData = r->getFrameResourceInfo(frameIndex);
 			FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
 			uint64_t index = (uint64_t)param;
@@ -252,17 +252,18 @@ public:
 		mUserDefineShader.shadowHandle = shadowProgramHandle;
 	}
 
-	virtual void execute(RenderSystem* rs)
+	virtual void execute(RenderContext& context)
 	{
 		if (mPassInput.shadowMapTarget)
 		{
-			drawShadow(rs);
+			drawShadow(context);
 		}
-		draw(rs);
+		draw(context);
 	}
 
-	void drawShadow(RenderSystem* rs)
+	void drawShadow(RenderContext& context)
 	{
+		auto rs = Ogre::Root::getSingleton().getRenderSystem();
 		{
 			Ogre::RenderTargetBarrier rtBarriers[] =
 			{
@@ -294,7 +295,7 @@ public:
 			
 			info.depthTarget.depthIndex = i;
 			mUserDefineShaderOfShadow.param = (void*)(uint64_t)i;
-			renderScene(cam, sceneManager, mRenderPassInfo, &mUserDefineShaderOfShadow);
+			renderScene(cam, sceneManager, context, mRenderPassInfo, &mUserDefineShaderOfShadow);
 
 			
 		}
@@ -313,8 +314,9 @@ public:
 		
 	}
 
-	void draw(RenderSystem* rs)
+	void draw(RenderContext& context)
 	{
+		auto rs = Ogre::Root::getSingleton().getRenderSystem();
 		{
 			Ogre::RenderTargetBarrier rtBarriers[] =
 			{
@@ -342,7 +344,8 @@ public:
 			depthValue = 0.0f;
 		}
 		info.depthTarget.clearValue = { depthValue, 0.0f };
-		renderScene(cam, sceneManager, mRenderPassInfo, &mUserDefineShader);
+		mRenderPassInfo.cbh = context.frameContext->cbh;
+		renderScene(cam, sceneManager, context, mRenderPassInfo, &mUserDefineShader);
 
 		{
 			Ogre::RenderTargetBarrier rtBarriers[] =
@@ -463,9 +466,9 @@ public:
 		mUpdateCallback = updateCallback;
 	}
 
-	void execute(RenderSystem* rs)
+	void execute(RenderContext& context)
 	{
-		mRenderCallback(mRenderPassInfo);
+		mRenderCallback(context, mRenderPassInfo);
 	}
 
 	void update(float delta)
@@ -494,9 +497,9 @@ public:
 		mUpdateCallback = updateCallback;
 	}
 
-	void execute(RenderSystem* rs)
+	void execute(RenderContext& context)
 	{
-		mCallback();
+		mCallback(context);
 	}
 
 	void update(float delta)

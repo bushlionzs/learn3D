@@ -635,15 +635,16 @@ void VulkanRenderSystemBase::drawIndexedIndirect(
 
 void VulkanRenderSystemBase::bindComputePipeline(
     Handle<HwComputeProgram> pipelineHandle,
+    Handle<HwCommandBuffer> cbh,
     const Handle<HwDescriptorSet>* descSets,
     uint32_t setCount)
 {
     VulkanComputeProgram* program = mResourceAllocator.handle_cast<VulkanComputeProgram*>(pipelineHandle);
-
+    VulkanCommandBuffer2* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
     auto pipeline = program->getPipeline();
     auto pipelineLayout = program->getPipelineLayout();
 
-    vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+    vkCmdBindPipeline(vulkanBufferObject->commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 
     VkDescriptorSet descriptorSet[4];
     uint32_t index = 0;
@@ -654,7 +655,7 @@ void VulkanRenderSystemBase::bindComputePipeline(
         index++;
     }
 
-    vkCmdBindDescriptorSets(mCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+    vkCmdBindDescriptorSets(vulkanBufferObject->commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
         pipelineLayout, 0, index, &descriptorSet[0], 0, nullptr);
 }
 
@@ -1947,7 +1948,7 @@ void VulkanRenderSystemBase::updatePushConstants(
 void VulkanRenderSystemBase::bindVertexBuffer(
     filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
     uint32_t binding_count,
-    filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+    const filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
     const uint64_t* p_offsets)
 {
     VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);

@@ -27,31 +27,32 @@ struct RenderPassInput
 };
 
 
+struct FrameContext
+{
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh;
+	filament::backend::Handle<filament::backend::HwFence> fh;
+	filament::backend::Handle<filament::backend::HwSemaphore> sph;
+};
+struct RenderContext
+{
+	filament::backend::Handle<filament::backend::HwCommandQueue> cqh;
+	filament::backend::Handle<filament::backend::HwSwapChain> sch;
+	FrameContext* frameContext;
+	RenderSystem* rs;
+	Ogre::SwapChainInfo scInfo;
+	float delta;
+};
 
 
-using RenderPassCallback = std::function< void(RenderPassInfo& info)>;
-using ComputePassCallback = std::function< void()>;
+using RenderPassCallback = std::function< void(RenderContext& context, RenderPassInfo& info)>;
+using ComputePassCallback = std::function< void(RenderContext& context)>;
 using UpdatePassCallback = std::function<void(float delta)>;
 
 class PassBase
 {
 public:
-	struct FrameContext
-	{
-		filament::backend::Handle<filament::backend::HwCommandBuffer> cbh;
-		filament::backend::Handle<filament::backend::HwFence> fh;
-		filament::backend::Handle<filament::backend::HwSemaphore> sph;
-	};
-	struct RenderContext
-	{
-		filament::backend::Handle<filament::backend::HwCommandQueue> cqh;
-		filament::backend::Handle<filament::backend::HwSwapChain> sch;
-		FrameContext* frameContext;
-		Ogre::SwapChainInfo scInfo;
-		float delta;
-	};
+	
 	virtual bool initialize() { return true; }
-	virtual void execute(RenderSystem* rs) {}
 	virtual void execute(RenderContext& context) {}
 	virtual void update(float delta) {}
 	virtual void update(RenderContext& context) {}

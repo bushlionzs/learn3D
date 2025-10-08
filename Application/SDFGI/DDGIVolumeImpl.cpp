@@ -115,7 +115,7 @@
         return ERTXGIStatus::OK;
     }
 
-    ERTXGIStatus UpdateDDGIVolumeProbes(uint32_t numVolumes, DDGIVolume** volumes)
+    ERTXGIStatus UpdateDDGIVolumeProbes(RenderContext& context, uint32_t numVolumes, DDGIVolume** volumes)
     {
         auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 
@@ -140,7 +140,7 @@
                 Handle<HwComputeProgram> programHandle = volume->GetProbeBlendingIrradianceModule();
                 Handle<HwDescriptorSet> descSet = volume->GetProbeBlendingIrradianceDescriptorSet();
                 rs->bindComputePipeline(programHandle, &descSet, 1);
-                rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ);
+                rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ, &context.frameContext->cbh);
                 
             }
 
@@ -167,7 +167,7 @@
                 Handle<HwComputeProgram> programHandle = volume->GetProbeBlendingDistanceModule();
                 Handle<HwDescriptorSet> descSet = volume->GetProbeBlendingDistanceDescriptorSet();
                 rs->bindComputePipeline(programHandle, &descSet, 1);
-                rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ);
+                rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ, &context.frameContext->cbh);
             }
 
             // Add a barrier
@@ -179,7 +179,7 @@
         // Also ensures that irradiance and distance complete before border update after reduction
         if (!barriers.empty())
         {
-            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, QUEUE_TYPE_COMPUTE);
+            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, &context.frameContext->cbh, QUEUE_TYPE_COMPUTE);
         }
         // Remove previous barriers
         barriers.clear();
@@ -187,7 +187,7 @@
         return ERTXGIStatus::OK;
     }
 
-    ERTXGIStatus RelocateDDGIVolumeProbes(uint32_t numVolumes, DDGIVolume** volumes)
+    ERTXGIStatus RelocateDDGIVolumeProbes(RenderContext& context, uint32_t numVolumes, DDGIVolume** volumes)
     {
         auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 
@@ -210,7 +210,7 @@
             Handle<HwComputeProgram> programHandle = volume->GetProbeRelocationResetModule();
             Handle<HwDescriptorSet> descSet = volume->GetProbeRelocationResetDescriptorSet();
             rs->bindComputePipeline(programHandle, &descSet, 1);
-            rs->dispatchComputeShader(numGroupsX, 1, 1);
+            rs->dispatchComputeShader(numGroupsX, 1, 1, &context.frameContext->cbh);
 
             // Update the reset flag
             volumes[volumeIndex]->SetProbeRelocationNeedsReset(false);
@@ -224,7 +224,7 @@
         if(!barriers.empty())
         {
             // Wait for the compute pass to complete
-            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, QUEUE_TYPE_COMPUTE);
+            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, &context.frameContext->cbh, QUEUE_TYPE_COMPUTE);
         }
 
         barriers.clear();
@@ -243,7 +243,7 @@
             Handle<HwComputeProgram> programHandle = volume->GetProbeRelocationModule();
             Handle<HwDescriptorSet> descSet = volume->GetProbeRelocationDescriptorSet();
             rs->bindComputePipeline(programHandle, &descSet, 1);
-            rs->dispatchComputeShader(numGroupsX, 1, 1);
+            rs->dispatchComputeShader(numGroupsX, 1, 1, &context.frameContext->cbh);
 
             // Add a barrier
             barriers.emplace_back();
@@ -254,13 +254,13 @@
         if (!barriers.empty())
         {
             // Wait for the compute pass to complete
-            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, QUEUE_TYPE_COMPUTE);
+            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, &context.frameContext->cbh, QUEUE_TYPE_COMPUTE);
         }
 
         return ERTXGIStatus::OK;
     }
 
-    ERTXGIStatus ClassifyDDGIVolumeProbes(uint32_t numVolumes, DDGIVolume** volumes)
+    ERTXGIStatus ClassifyDDGIVolumeProbes(RenderContext& context, uint32_t numVolumes, DDGIVolume** volumes)
     {
         auto* rs = Ogre::Root::getSingleton().getRenderSystem();
         uint32_t volumeIndex;
@@ -280,7 +280,7 @@
             Handle<HwComputeProgram> programHandle = volume->GetProbeClassificationResetModule();
             Handle<HwDescriptorSet> descSet = volume->GetProbeClassificationResetDescriptorSet();
             rs->bindComputePipeline(programHandle, &descSet, 1);
-            rs->dispatchComputeShader(numGroupsX, 1, 1);
+            rs->dispatchComputeShader(numGroupsX, 1, 1, &context.frameContext->cbh);
 
             // Update the reset flag
             volumes[volumeIndex]->SetProbeClassificationNeedsReset(false);
@@ -294,7 +294,7 @@
         if (!barriers.empty())
         {
             // Wait for the compute pass to complete
-            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, QUEUE_TYPE_COMPUTE);
+            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, &context.frameContext->cbh, QUEUE_TYPE_COMPUTE);
         }
 
         barriers.clear();
@@ -313,7 +313,7 @@
             Handle<HwComputeProgram> programHandle = volume->GetProbeClassificationModule();
             Handle<HwDescriptorSet> descSet = volume->GetProbeClassificationDescriptorSet();
             rs->bindComputePipeline(programHandle, &descSet, 1);
-            rs->dispatchComputeShader(numGroupsX, 1, 1);
+            rs->dispatchComputeShader(numGroupsX, 1, 1, &context.frameContext->cbh);
 
             // Add a barrier
             barriers.emplace_back();
@@ -324,12 +324,12 @@
         if (!barriers.empty())
         {
             // Wait for the compute pass to complete
-            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, QUEUE_TYPE_COMPUTE);
+            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, &context.frameContext->cbh, QUEUE_TYPE_COMPUTE);
         }
         return ERTXGIStatus::OK;
     }
 
-    ERTXGIStatus CalculateDDGIVolumeVariability(uint32_t numVolumes, DDGIVolume** volumes)
+    ERTXGIStatus CalculateDDGIVolumeVariability(RenderContext&context, uint32_t numVolumes, DDGIVolume** volumes)
     {
         auto* rs = Ogre::Root::getSingleton().getRenderSystem();
         uint32_t volumeIndex;
@@ -370,7 +370,7 @@
                 Handle<HwComputeProgram> programHandle = volume->GetProbeVariabilityReductionModule();
                 Handle<HwDescriptorSet> descSet = volume->GetProbeVariabilityReductionDescriptorSet();
                 rs->bindComputePipeline(programHandle, &descSet, 1);
-                rs->dispatchComputeShader(outputTexelsX, outputTexelsY, outputTexelsZ);
+                rs->dispatchComputeShader(outputTexelsX, outputTexelsY, outputTexelsZ, &context.frameContext->cbh);
 
                 // Each thread group will write out a value to the averaging texture
                 // If there is more than one thread group, we will need to do extra averaging passes
@@ -382,7 +382,7 @@
             // UAV barrier needed after each reduction pass
             barriers.emplace_back();
             barriers.back().pTexture = volume->GetProbeVariabilityAverage();
-            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, QUEUE_TYPE_COMPUTE);
+            rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, &context.frameContext->cbh, QUEUE_TYPE_COMPUTE);
 
             // Extra reduction passes average values in variability texture down to single value
             while (inputTexelsX > 1 || inputTexelsY > 1 || inputTexelsZ > 1)
@@ -399,14 +399,14 @@
                 Handle<HwComputeProgram> programHandle = volume->GetProbeVariabilityExtraReductionModule();
                 Handle<HwDescriptorSet> descSet = volume->GetProbeVariabilityExtraReductionDescriptorSet();
                 rs->bindComputePipeline(programHandle, &descSet, 1);
-                rs->dispatchComputeShader(outputTexelsX, outputTexelsY, outputTexelsZ);
+                rs->dispatchComputeShader(outputTexelsX, outputTexelsY, outputTexelsZ, &context.frameContext->cbh);
 
                 inputTexelsX = outputTexelsX;
                 inputTexelsY = outputTexelsY;
                 inputTexelsZ = outputTexelsZ;
 
                 // Need a barrier in between each reduction pass
-                rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, QUEUE_TYPE_COMPUTE);
+                rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, &context.frameContext->cbh, QUEUE_TYPE_COMPUTE);
             }
         }
 
@@ -423,7 +423,7 @@
 
             if (!barriers.empty())
             {
-                rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, QUEUE_TYPE_COMPUTE);
+                rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, &context.frameContext->cbh, QUEUE_TYPE_COMPUTE);
 
                 barriers.clear();
             }
@@ -445,7 +445,7 @@
 
             if (!barriers.empty())
             {
-                rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, QUEUE_TYPE_COMPUTE);
+                rs->resourceBarrier(0, nullptr, barriers.size(), barriers.data(), 0, nullptr, &context.frameContext->cbh, QUEUE_TYPE_COMPUTE);
                 barriers.clear();
             }
         }
@@ -558,7 +558,7 @@
         return ERTXGIStatus::OK;
     }
 
-    ERTXGIStatus DDGIVolume::ClearProbes()
+    ERTXGIStatus DDGIVolume::ClearProbes(RenderContext& context)
     {
         auto* rs = Ogre::Root::getSingleton().getRenderSystem();
  
@@ -566,8 +566,10 @@
         GetDDGIVolumeProbeCounts(m_desc, width, height, arraySize);
 
         Ogre::Vector4 color(0.f, 0.f, 0.f, 1.f);
-        rs->clearRenderTexture(m_probeIrradiance, color);
-        rs->clearRenderTexture(m_probeDistance, color);
+        Ogre::TextureSubresourceRange subresources;
+        subresources.aspect = Ogre::TEXTURE_ASPECT_COLOR_BIT;
+        rs->clearRenderTexture(m_probeIrradiance, color, subresources, &context.frameContext->cbh);
+        rs->clearRenderTexture(m_probeDistance, color, subresources, &context.frameContext->cbh);
 
 
         return ERTXGIStatus::OK;

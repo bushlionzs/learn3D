@@ -137,7 +137,10 @@ public:
     using std::thread::hardware_concurrency;
 };
 #endif
+namespace dy
+{
+    std::shared_ptr<Thread> PlatformRunThread(const ThreadData& data);
+}
 
-std::shared_ptr<Thread> PlatformRunThread(const ThreadData& data);
 
 #endif //__PLATFORM_THREAD_H__

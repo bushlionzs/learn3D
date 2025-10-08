@@ -75,7 +75,7 @@ SceneRenderPass::SceneRenderPass(RenderPassInput& input)
 	params.maxLod = 1;
 	params.padding2 = 0;
 	filament::backend::Handle<filament::backend::HwSampler> shadowMapSampler = rs->createTextureSampler(params);
-	RenderableBindCallback bindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void*) {
+	RenderableBindCallback bindCallback = [=](RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r, void*) {
 		Ogre::DescriptorData descriptorData[2];
 
 		descriptorData[0].mCount = 1;
@@ -107,7 +107,7 @@ SceneRenderPass::SceneRenderPass(RenderPassInput& input)
 
 		};
 
-	RenderableDrawCallback drawCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void* param) {
+	RenderableDrawCallback drawCallback = [=](RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r, void* param) {
 		void* frameData = r->getFrameResourceInfo(frameIndex);
 		FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
@@ -171,7 +171,7 @@ SceneRenderPass::SceneRenderPass(RenderPassInput& input)
 
 	filament::backend::Handle<filament::backend::HwPipeline> shadowPipelineHandle = rs->createPipeline(rasterState, shadowProgramHandle);
 
-	RenderableBindCallback shadowBindCallback = [=](uint32_t frameIndex, Ogre::Renderable* r, void* param) {
+	RenderableBindCallback shadowBindCallback = [=](RenderContext& context, uint32_t frameIndex, Ogre::Renderable* r, void* param) {
 		uint64_t index = (uint64_t)param;
 		Ogre::DescriptorData descriptorData[3];
 		descriptorData[0].mCount = 1;

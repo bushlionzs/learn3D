@@ -6,7 +6,7 @@
 #include "ddgiTypes.h"
 #include "DDGIRootConstants.h"
 
-
+struct RenderContext;
 enum class EResourceViewType
 {
     UAV = 0,
@@ -167,7 +167,7 @@ public:
     /**
         * Clears the volume's probe texture arrays
         */
-    ERTXGIStatus ClearProbes();
+    ERTXGIStatus ClearProbes(RenderContext& context);
 
     /**
         * Releases resources owned by the volume
@@ -231,14 +231,20 @@ public:
     { 
         return m_probeBlendingIrradianceModule; 
     }
+
     Handle<HwComputeProgram> GetProbeBlendingDistanceModule() const
     { 
         return m_probeBlendingDistanceModule; 
     }
+
+
     Handle<HwComputeProgram> GetProbeRelocationModule() const
     { 
         return m_probeRelocationModule; 
     }
+
+
+
     Handle<HwComputeProgram> GetProbeRelocationResetModule() const
     { 
         return m_probeRelocationResetModule; 
@@ -442,25 +448,25 @@ private:
     Handle<HwDescriptorSet> m_probeBlendingIrradianceDescSet;
 
     // Probe blending (distance) compute shader pipeline
-    //Handle<HwPipeline> m_probeBlendingDistancePipeline;
+    Handle<HwPipeline> m_probeBlendingDistancePipeline;
     Handle<HwDescriptorSet> m_probeBlendingDistanceDescSet;
     // Probe relocation compute shader pipeline
-    //Handle<HwPipeline> m_probeRelocationPipeline;
+    Handle<HwPipeline> m_probeRelocationPipeline;
     Handle<HwDescriptorSet> m_probeRelocationDescSet;
     // Probe relocation reset compute shader pipeline
-    //Handle<HwPipeline> m_probeRelocationResetPipeline;
+    Handle<HwPipeline> m_probeRelocationResetPipeline;
     Handle<HwDescriptorSet> m_probeRelocationResetDescSet;
     // Probe classification compute shader pipeline
-   // Handle<HwPipeline> m_probeClassificationPipeline; 
+    Handle<HwPipeline> m_probeClassificationPipeline; 
     Handle<HwDescriptorSet> m_probeClassificationDescSet;
-    // Probe classification reset compute shader pipeline
-    //Handle<HwPipeline> m_probeClassificationResetPipeline;
+    // Probe classification reset compute shader pipeline  
+    Handle<HwPipeline> m_probeClassificationResetPipeline;
     Handle<HwDescriptorSet> m_probeClassificationResetDescSet;
     // Probe variability reduction compute shader pipeline
-    //Handle<HwPipeline> m_probeVariabilityReductionPipeline;
+    Handle<HwPipeline> m_probeVariabilityReductionPipeline;
     Handle<HwDescriptorSet> m_probeVariabilityReductionDescSet;
     // Probe variability reduction extra passes compute shader pipeline
-    //Handle<HwPipeline> m_probeVariabilityExtraReductionPipeline;  
+    Handle<HwPipeline> m_probeVariabilityExtraReductionPipeline;  
     Handle<HwDescriptorSet> m_probeVariabilityExtraReductionDescSet;
     void StoreUnmanagedResourcesDesc(const DDGIVolumeUnmanagedResourcesDesc& unmanaged);
 }; // class DDGIVolume
@@ -493,7 +499,7 @@ ERTXGIStatus UploadDDGIVolumeConstants(
     * Updates one or more volume's probes using data in the volume's radiance texture.
     * Probe blending and border update workloads are batched together for better performance.
     */
-ERTXGIStatus UpdateDDGIVolumeProbes(uint32_t numVolumes, DDGIVolume** volumes);
+ERTXGIStatus UpdateDDGIVolumeProbes(RenderContext& context, uint32_t numVolumes, DDGIVolume** volumes);
 
 /**
     * Adjusts one or more volume's world-space probe positions to avoid them being too close to or inside of geometry.

@@ -108,7 +108,7 @@ namespace Ogre {
         return std::shared_ptr<OgreTexture>();
     }
 
-    /*bool TextureManager::getImageInfo(const String& name, ImageInfo& info, bool cube)
+    bool TextureManager::getImageInfo(const String& name, ImageInfo& info, bool cube)
     {
         auto it = mTexMap.find(name);
         if (it != mTexMap.end())
@@ -118,7 +118,7 @@ namespace Ogre {
             return true;
         }
         return CImage::loadImageInfo(name, info, cube);
-    }*/
+    }
 
     void TextureManager::remove(const std::string& name)
     {

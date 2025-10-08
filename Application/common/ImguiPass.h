@@ -19,7 +19,7 @@ public:
     ImGuiPass(RenderPassInput& input, ImGuiPassCallback cb);
     ~ImGuiPass();
 
-    virtual void execute(RenderSystem* rs);
+    virtual void execute(RenderContext& context);
     virtual void update(float delta);
     virtual void injectMouseMove(int _absx, int _absy, int _absz);
     virtual void injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id);

@@ -26,11 +26,11 @@ bool CompositePass::initialize()
 	samplerParams.filterMag = backend::SamplerFilterType::LINEAR;
 	samplerParams.filterMin = backend::SamplerFilterType::LINEAR;
 	samplerParams.mipMapMode = backend::SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	samplerParams.wrapS = backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapT = backend::SamplerWrapMode::REPEAT;
-	samplerParams.wrapR = backend::SamplerWrapMode::REPEAT;
+	samplerParams.wrapS = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapT = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapR = backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	samplerParams.compareMode = backend::SamplerCompareMode::NONE;
-	samplerParams.compareFunc = backend::SamplerCompareFunc::N;
+	samplerParams.compareFunc = backend::SamplerCompareFunc::COMPARE_OP_NEVER;
 	samplerParams.anisotropyLog2 = 0;
 	samplerParams.useComparison = 0;
 	samplerParams.maxLod = 0;
@@ -41,21 +41,21 @@ bool CompositePass::initialize()
 	shaderInfo.shaderName = "CompositePass";
 	addMacro(shaderInfo, "HLSL", "1");
 	addMacro(shaderInfo, "RTXGI_BINDLESS_TYPE", std::to_string(RTXGI_BINDLESS_TYPE_RESOURCE_ARRAYS));
-	auto presentHandle = rs->createShaderProgram(shaderInfo, nullptr);
+	mPresentHandle = rs->createShaderProgram(shaderInfo, nullptr);
 	backend::RasterState rasterState{};
 	rasterState.depthWrite = false;
 	rasterState.depthTest = false;
-	rasterState.depthFunc = SamplerCompareFunc::A;
+	rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_ALWAYS;
 	rasterState.colorWrite = true;
 	rasterState.renderTargetCount = 1;
 	rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
-	mPipelineHandle = rs->createPipeline(rasterState, presentHandle);
+	mPipelineHandle = rs->createPipeline(rasterState, mPresentHandle);
 
 	mCompositeZeroSets.resize(mContext.frameCount);
 
 	for (uint32_t i = 0; i < mContext.frameCount; i++)
 	{
-		mCompositeZeroSets[i] = rs->createDescriptorSet(presentHandle, 0);
+		mCompositeZeroSets[i] = rs->createDescriptorSet(mPresentHandle, 0);
 	}
 	
 
@@ -93,8 +93,9 @@ bool CompositePass::initialize()
 	return true;
 }
 
-void CompositePass::execute(RenderSystem* rs)
+void CompositePass::execute(RenderContext& context)
 {
+	auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 	{
 		RenderTargetBarrier rtBarriers[] =
 		{
@@ -104,19 +105,20 @@ void CompositePass::execute(RenderSystem* rs)
 				RESOURCE_STATE_RENDER_TARGET
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 	}
 	RenderPassInfo info;
 	info.renderTargetCount = 1;
-	info.renderTargets[0].renderTarget = mRenderWindow->getColorTarget();
+	info.renderTargets[0].target.renderTarget = mRenderWindow->getColorTarget();
 	info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
-	info.depthTarget.depthStencil = nullptr;
+	info.depthTarget.target.depthStencil = nullptr;
 	info.depthTarget.clearValue = { 0.0f, 0.0f };
 	auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 	rs->pushGroupMarker("compositePass");
 	rs->beginRenderPass(info);
-	rs->bindPipeline(mPipelineHandle, &mCompositeZeroSets[frameIndex], 1);
-	rs->draw(3, 0);
+	rs->bindPipeline(mPipelineHandle);
+	rs->bindDescriptorSet(context.frameContext->cbh, mPresentHandle, mCompositeZeroSets[frameIndex]);
+	rs->draw(3, 0, 0, 0, &context.frameContext->cbh);
 	rs->endRenderPass(info);
 	rs->popGroupMarker();
 
@@ -129,7 +131,7 @@ void CompositePass::execute(RenderSystem* rs)
 				RESOURCE_STATE_PRESENT
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers);
+		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 	}
 }
 

@@ -69,6 +69,7 @@ target_link_libraries(${PROJECT_NAME}
 GameUtil
 miniOgre 
 CEGUI 
+imgui
 expat  
 stormlib 
 OIS 

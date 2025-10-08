@@ -97,8 +97,9 @@ public:
 
     void bindComputePipeline(
         Handle<HwComputeProgram> pipelineHandle,
+        Handle<HwCommandBuffer> cbh,
         const Handle<HwDescriptorSet>* descSets,
-        uint32_t setCount);
+        uint32_t setCount)override;
 
     void dispatchComputeShader(int32_t x, int32_t y, int32_t z,
         filament::backend::Handle<filament::backend::HwCommandBuffer>*)override;
@@ -256,7 +257,7 @@ protected:
     virtual void bindVertexBuffer(
         filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
         uint32_t binding_count,
-        filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+        const filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
         const uint64_t* p_offsets)override;
     virtual void bindIndexBuffer(
         filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,

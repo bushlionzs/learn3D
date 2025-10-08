@@ -86,15 +86,15 @@ void RenderSystem::present()
 
 }
 
-Handle<HwBufferObject> RenderSystem::createBufferObject(
+filament::backend::Handle<filament::backend::HwBufferObject> RenderSystem::createBufferObject(
     BufferDesc& desc)
 {
     assert_invariant(false);
-    return Handle<HwBufferObject>();
+    return filament::backend::Handle<filament::backend::HwBufferObject>();
 }
 
 void RenderSystem::updateBufferObject(
-    Handle<HwBufferObject> boh, 
+    filament::backend::Handle<filament::backend::HwBufferObject> boh,
     const char* data, 
     uint32_t size,
     uint32_t offset,
@@ -318,7 +318,7 @@ void RenderSystem::updatePushConstants(
 void RenderSystem::bindVertexBuffer(
     filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
     uint32_t binding_count,
-    filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+    const filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
     const uint64_t* p_offsets)
 {
     assert_invariant(false);

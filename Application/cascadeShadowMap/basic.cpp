@@ -32,7 +32,7 @@ BasicApplication::~BasicApplication()
 
 void BasicApplication::setup(
 	RenderPipeline* renderPipeline,
-	RenderSystem* renderSystem,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
@@ -42,7 +42,7 @@ void BasicApplication::setup(
 	mSceneManager = sceneManager;
 	mGameCamera = gameCamera;
 	mRenderWindow = renderWindow;
-	mRenderSystem = renderSystem;
+	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
 	mRenderPipeline = renderPipeline;
 	base2();
 }

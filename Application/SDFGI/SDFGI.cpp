@@ -48,7 +48,7 @@ SDFGIApp::~SDFGIApp()
 
 void SDFGIApp::setup(
 	RenderPipeline* renderPipeline,
-	RenderSystem* rs,
+	RenderContext& context,
 	Ogre::RenderWindow* renderWindow,
 	Ogre::SceneManager* sceneManager,
 	GameCamera* gameCamera)
@@ -58,7 +58,7 @@ void SDFGIApp::setup(
 	mGameCamera   = gameCamera;
 	mSceneManager = sceneManager;
 	mRenderWindow = renderWindow;
-	mRenderSystem = rs;
+	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
 
 	ResourceInfo* res = ResourceManager::getSingleton().getResourceInfo("sponza.ini");
 	mContext.mConfig.app.filepath = res->_fullname.c_str();
@@ -81,9 +81,9 @@ void SDFGIApp::setup(
 	gameCamera->getCamera()->updateProjectMatrix(m);
 	gameCamera->setMoveSpeed(10.0f);
 	gameCamera->setCameraType(CameraMoveType_FirstPerson);
-	initScene();
-	initResource();
-	addPass();
+	initScene(context);
+	initResource(context);
+	addPass(context);
 	
 }
 
@@ -122,7 +122,7 @@ void SDFGIApp::update(float delta)
 		frameIndex * globalConstants.GetAlignedSizeInBytes());
 }
 
-void SDFGIApp::initScene()
+void SDFGIApp::initScene(RenderContext& context)
 {
 	std::string name = "Sponza.gltf";
 	std::shared_ptr<Mesh> mesh = MeshManager::getSingletonPtr()->load(name);
@@ -325,7 +325,7 @@ void SDFGIApp::initScene()
 	buildASDesc.pAccelerationStructure = pTopAS;
 
 	mRenderSystem->buildAccelerationStructure(&buildASDesc);
-	mRenderSystem->flushCmd(true);
+	mRenderSystem->flushCmd(context.cqh, true);
 	mRenderSystem->removeAccelerationStructureScratch(pBottomAS);
 	mRenderSystem->removeAccelerationStructureScratch(pTopAS);
 
@@ -335,32 +335,32 @@ void SDFGIApp::initScene()
 	mContext.frameCount = ogreConfig.swapBufferCount;
 }
 
-void SDFGIApp::initResource()
+void SDFGIApp::initResource(RenderContext& context)
 {
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	backend::SamplerParams samplerParams{};
-	samplerParams.wrapS = SamplerWrapMode::REPEAT;
-	samplerParams.wrapT = SamplerWrapMode::REPEAT;
-	samplerParams.wrapR = SamplerWrapMode::REPEAT;
+	samplerParams.wrapS = SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapT = SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapR = SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	samplerParams.filterMag = SamplerFilterType::LINEAR;
 	samplerParams.filterMin = SamplerFilterType::LINEAR;
 	samplerParams.mipMapMode = SamplerMipMapMode::MIPMAP_MODE_NEAREST;
 	samplerParams.compareMode = SamplerCompareMode::NONE;
-	samplerParams.compareFunc = SamplerCompareFunc::A;
+	samplerParams.compareFunc = SamplerCompareFunc::COMPARE_OP_ALWAYS;
 	samplerParams.anisotropyLog2 = 0;
 	mContext.mSamplerHandle[0] = mRenderSystem->createTextureSampler(samplerParams);
 
-	samplerParams.wrapS = SamplerWrapMode::CLAMP_TO_EDGE;
-	samplerParams.wrapT = SamplerWrapMode::CLAMP_TO_EDGE;
-	samplerParams.wrapR = SamplerWrapMode::CLAMP_TO_EDGE;
+	samplerParams.wrapS = SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+	samplerParams.wrapT = SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+	samplerParams.wrapR = SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
 	samplerParams.filterMag = SamplerFilterType::NEAREST;
 	samplerParams.filterMin = SamplerFilterType::NEAREST;
 	mContext.mSamplerHandle[1] = mRenderSystem->createTextureSampler(samplerParams);
 
 	samplerParams.mipMapMode = SamplerMipMapMode::MIPMAP_MODE_LINEAR;
-	samplerParams.wrapS = SamplerWrapMode::REPEAT;
-	samplerParams.wrapT = SamplerWrapMode::REPEAT;
-	samplerParams.wrapR = SamplerWrapMode::REPEAT;
+	samplerParams.wrapS = SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapT = SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+	samplerParams.wrapR = SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	samplerParams.filterMag = SamplerFilterType::LINEAR;
 	samplerParams.filterMin = SamplerFilterType::LINEAR;
 	samplerParams.anisotropyLog2 = 4;
@@ -417,7 +417,7 @@ void SDFGIApp::initResource()
 	texProperty._height = ogreConfig.height;
 	texProperty._depth = 1;
 	texProperty._tex_format = PF_A8R8G8B8;
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	texProperty._need_mipmap = false;
 	mContext.mGBufferTargetA = mRenderSystem->createRenderTarget("targetA", texProperty);
 
@@ -454,7 +454,7 @@ void SDFGIApp::initResource()
 		}
 	};
 
-	mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, rtBarriers);
+	mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, rtBarriers, &context.frameContext->cbh);
 
 	GlobalConstants& globalConstants = mContext.mGlobalConstants;
 	memset(&globalConstants, 0, sizeof(GlobalConstants));
@@ -487,7 +487,7 @@ void SDFGIApp::initResource()
 		(const char*)mContext.mlights.data(), desc.mSize);
 }
 
-void SDFGIApp::addPass()
+void SDFGIApp::addPass(RenderContext& context)
 {
 	
 	{
@@ -498,7 +498,7 @@ void SDFGIApp::addPass()
 
 	{
 		DDGIPass* pass = new DDGIPass(mContext);
-		pass->initialize();
+		pass->initialize(context);
 		mRenderPipeline->addRenderPass(pass);
 	}
 

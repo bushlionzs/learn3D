@@ -65,25 +65,27 @@ public:
         uint32_t firstIndex,
         uint32_t vertexOffset,
         uint32_t firstInstance,
-        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh);
+        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh) override;
 
     virtual void draw(uint32_t vertexCount,
         uint32_t instanceCount,
         uint32_t firstVertex,
         uint32_t firstInstance,
-        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh);
+        Handle<HwCommandBuffer>* cbh)override;
     virtual void drawIndexedIndirect(
         Handle<HwBufferObject> drawBuffer,
         uint32_t offset,
         uint32_t drawCount,
-        uint32_t stride
-    );
+        uint32_t stride,
+        Handle<HwCommandBuffer>* cbh
+    )override;
     virtual void bindComputePipeline(
-        filament::backend::Handle<filament::backend::HwComputeProgram> pipelineHandle,
-        const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
+        Handle<HwComputeProgram> pipelineHandle,
+        Handle<HwCommandBuffer> cbh,
+        const Handle<HwDescriptorSet>* descSets,
         uint32_t setCount)override;
 
-    virtual void dispatchComputeShader(int32_t x, int32_t y, int32_t z);
+    virtual void dispatchComputeShader(int32_t x, int32_t y, int32_t z, Handle<HwCommandBuffer>* cbh) override;
 
     virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color = Ogre::Vector3i(0, 0, 0));
     virtual void popGroupMarker();
@@ -106,6 +108,22 @@ public:
         uint32_t size,
         uint32_t offset,
         Handle<HwCommandBuffer>* cbh) override;
+    virtual bool getBufferInfo(
+        filament::backend::Handle<filament::backend::HwBufferObject> boh,
+        Ogre::BufferDesc& desc) override;
+    virtual void clearBufferObject(
+        filament::backend::Handle<filament::backend::HwBufferObject> boh,
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh
+    )override;
+
+    virtual uint8_t* bufferMap(filament::backend::Handle<filament::backend::HwBufferObject> boh) override;
+
+    virtual void bufferUnmap(filament::backend::Handle<filament::backend::HwBufferObject> boh) override;
+
+    virtual bool getBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> boh,
+        const char* data,
+        uint32_t size,
+        uint32_t offset);
     virtual Handle<HwDescriptorSetLayout> getDescriptorSetLayout(Handle<HwProgram> programHandle, uint32_t set);
     virtual Handle<HwDescriptorSet> createDescriptorSet(
         Handle<HwProgram> programHandle,
@@ -190,7 +208,7 @@ public:
     virtual void bindVertexBuffer(
         filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
         uint32_t binding_count,
-        filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
+        const filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
         const uint64_t* p_offsets)override;
     virtual void bindIndexBuffer(
         filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,

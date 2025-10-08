@@ -23,8 +23,9 @@ void GBuffer::update(float delta)
 
 }
 
-void GBuffer::execute(RenderSystem* rs)
+void GBuffer::execute(RenderContext& context)
 {
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 
     {
@@ -52,7 +53,7 @@ void GBuffer::execute(RenderSystem* rs)
              }
         };
 
-        rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+        rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr, &context.frameContext->cbh);
     }
     uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
     rs->pushGroupMarker("GBuffer", Ogre::Vector3i(0.0, 0.0, 1.0f));
@@ -85,7 +86,7 @@ void GBuffer::execute(RenderSystem* rs)
              }
         };
 
-        rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr);
+        rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr, &context.frameContext->cbh);
     }
     
 }
