@@ -144,9 +144,8 @@ void ManualApplication::run(AppInfo* info)
 	{
 		info->userRunCallback(mAppInfo);
 	}
-	
+	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	{
-		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 		uint64_t wndHandle;
 		if (info->appWnd)
 		{
@@ -163,6 +162,14 @@ void ManualApplication::run(AppInfo* info)
 		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);		
 	}
 	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
+	if (mWidth != ogreConfig.width || mHeight != ogreConfig.height)
+	{
+		mRenderSystem->swapChainResize(context.cqh, mSwapChainHandle);
+		mWidth = ogreConfig.width;
+		mHeight = ogreConfig.height;
+	}
+
+	
 	info->setup(context, mRenderWindow, mSceneManager, mGameCamera);
 	mRenderSystem->ready();
 	printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
@@ -195,13 +202,6 @@ void ManualApplication::loop()
 	
 	context.rs = Ogre::Root::getSingleton().getRenderSystem();
 	context.sch = mSwapChainHandle;
-
-	if (mWidth != ogreConfig.width || mHeight != ogreConfig.height)
-	{
-		mRenderSystem->swapChainResize(context.cqh, mSwapChainHandle);
-		mWidth = ogreConfig.width;
-		mHeight = ogreConfig.height;
-	}
 
 	
 	frameContextList.resize(3);

@@ -19,6 +19,6 @@ private:
     std::string mShaderName;
     bool mUseSRGB;
     filament::backend::Handle<filament::backend::HwPipeline> mPipelineHandle;
-
+    filament::backend::Handle<filament::backend::HwProgram> mPresentHandle;
     filament::backend::Handle<filament::backend::HwDescriptorSet> mZeroSet;
 };

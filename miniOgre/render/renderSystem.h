@@ -192,11 +192,11 @@ public:
 
     virtual void present();
 
-    virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color = Ogre::Vector3i(0,0,0))
+    virtual void pushGroupMarker(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh, const char* maker, const Ogre::Vector3i& color = Ogre::Vector3i(0,0,0))
     {
         assert_invariant(false);
     }
-    virtual void popGroupMarker() 
+    virtual void popGroupMarker(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
     {
         assert_invariant(false);
     }
@@ -249,13 +249,14 @@ public:
         return nullptr;
     }
 
-    virtual void bufferUnmap(filament::backend::Handle<filament::backend::HwBufferObject> boh)
+    virtual void bufferUnmap(filament::backend::Handle<filament::backend::HwBufferObject> boh,
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)
     {
         assert_invariant(false);
     }
 
     virtual bool getBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> boh,
-        const char* data,
+        char* data,
         uint32_t size,
         uint32_t offset = 0) {
         return false;

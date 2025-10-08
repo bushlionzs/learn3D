@@ -151,11 +151,14 @@ namespace Ogre {
     {
     public:
         BufferHandleLockGuard(filament::backend::Handle<filament::backend::HwBufferObject> bufferHandle);
+        BufferHandleLockGuard(filament::backend::Handle<filament::backend::HwBufferObject> bufferHandle,
+            filament::backend::Handle<filament::backend::HwCommandBuffer> cbh);
         ~BufferHandleLockGuard();
 
         void* data();
     private:
         filament::backend::Handle<filament::backend::HwBufferObject> mBufferHandle;
+        filament::backend::Handle<filament::backend::HwCommandBuffer> mCommandBuffer;
         void* mBufferData;
     };
 }

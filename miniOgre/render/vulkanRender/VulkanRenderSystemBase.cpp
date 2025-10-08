@@ -799,7 +799,7 @@ void VulkanRenderSystemBase::copyBufferToTexture(
 
 }
 
-void VulkanRenderSystemBase::pushGroupMarker(const char* maker, const Ogre::Vector3i& color)
+void VulkanRenderSystemBase::pushGroupMarker(Handle<HwCommandBuffer> cbh, const char* maker, const Ogre::Vector3i& color)
 {
     if (mVulkanSettings->mDebugUtilsExtension)
     {
@@ -810,16 +810,18 @@ void VulkanRenderSystemBase::pushGroupMarker(const char* maker, const Ogre::Vect
         markerInfo.color[2] = 0.0f;
         markerInfo.color[3] = 1.0f;
         markerInfo.pLabelName = maker;
-        vkCmdBeginDebugUtilsLabelEXT(mCommands->get().buffer(), &markerInfo);
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+        vkCmdBeginDebugUtilsLabelEXT(cb->commandBuffer, &markerInfo);
     }
     
 }
 
-void VulkanRenderSystemBase::popGroupMarker()
+void VulkanRenderSystemBase::popGroupMarker(Handle<HwCommandBuffer> cbh)
 {
     if (mVulkanSettings->mDebugUtilsExtension)
     {
-        vkCmdEndDebugUtilsLabelEXT(mCommands->get().buffer());
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+        vkCmdEndDebugUtilsLabelEXT(cb->commandBuffer);
     }
 }
 
@@ -836,10 +838,11 @@ uint8_t* VulkanRenderSystemBase::bufferMap(Handle<HwBufferObject> bufHandle)
     return (uint8_t*)vulkanBufferObject->buffer.lock(0, INT_MAX);
 }
 
-void VulkanRenderSystemBase::bufferUnmap(Handle<HwBufferObject> bufHandle)
+void VulkanRenderSystemBase::bufferUnmap(Handle<HwBufferObject> bufHandle, Handle<HwCommandBuffer> cbh)
 {
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
     VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
-    vulkanBufferObject->buffer.unlock(nullptr);
+    vulkanBufferObject->buffer.unlock(cb->commandBuffer);
 }
 
 void VulkanRenderSystemBase::bindVertexBuffer(
@@ -932,7 +935,7 @@ void VulkanRenderSystemBase::clearBufferObject(
 }
 
 bool VulkanRenderSystemBase::getBufferObject(Handle<HwBufferObject> boh,
-    const char* data,
+    char* data,
     uint32_t size,
     uint32_t offset)
 {

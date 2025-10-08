@@ -55,8 +55,10 @@ namespace Ogre {
 
         if (read)
         {
-            tex->loadAsync();
-            ResourceBackgroundQueue::getSingleton().load(tex);
+            if (tex->loadAsync())
+            {
+                ResourceBackgroundQueue::getSingleton().load(tex);
+            }
         }
        
 

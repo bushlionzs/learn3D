@@ -147,7 +147,7 @@ namespace Ogre {
         virtual void freeInternalResourcesImpl(void) = 0;
         virtual void updateTexture(const std::vector<const CImage*>& images) = 0;
         bool isLoaded();
-        void loadAsync();
+        bool loadAsync();
         virtual void loadImpl()override;
         virtual void unloadImpl(void)override;
         uint32 getMaxMipmaps() const;

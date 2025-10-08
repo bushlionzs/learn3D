@@ -23,7 +23,7 @@ void ImGuiPass::execute(RenderContext& context)
 {
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
     newFrame();
-    updateBuffers();
+    updateBuffers(context);
     RenderPassInfo renderPassInfo;
     renderPassInfo.renderTargetCount = 1;
     renderPassInfo.renderTargets[0].target.renderTarget = mRenderPassInput.color;
@@ -279,7 +279,7 @@ void ImGuiPass::newFrame()
     ImGui::Render();
 }
 
-void ImGuiPass::updateBuffers()
+void ImGuiPass::updateBuffers(RenderContext& context)
 {
     ImDrawData* imDrawData = ImGui::GetDrawData();
 
@@ -336,8 +336,8 @@ void ImGuiPass::updateBuffers()
         idxDst += cmd_list->IdxBuffer.Size;
     }
 
-    rs->bufferUnmap(mVertexBufferHandle);
-    rs->bufferUnmap(mIndexBufferHandle);
+    rs->bufferUnmap(mVertexBufferHandle, context.frameContext->cbh);
+    rs->bufferUnmap(mIndexBufferHandle, context.frameContext->cbh);
 
 
     ImGuiUniform uniform;

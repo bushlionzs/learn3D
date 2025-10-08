@@ -172,8 +172,10 @@ void TextureUnit::_load()
     {
         if (tex->isLoaded())
             continue;
-        tex->loadAsync();
-        ResourceBackgroundQueue::getSingleton().load(tex);
+        if (tex->loadAsync())
+        {
+            ResourceBackgroundQueue::getSingleton().load(tex);
+        }
     }
 
     if (mUseAnimation || mUseScroll || mRotate != Ogre::Radian(0))

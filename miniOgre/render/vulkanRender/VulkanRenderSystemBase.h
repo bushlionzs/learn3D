@@ -131,15 +131,15 @@ public:
         Ogre::ImageCopyBufferDesc& desc
     )override;
 protected:
-    virtual void pushGroupMarker(const char* maker, const Ogre::Vector3i& color)override;
-    virtual void popGroupMarker();
+    virtual void pushGroupMarker(Handle<HwCommandBuffer> cbh, const char* maker, const Ogre::Vector3i& color)override;
+    virtual void popGroupMarker(Handle<HwCommandBuffer> cbh);
     virtual void getFamilyInfo(FamilyInfo& desc)override;
     virtual uint8_t* bufferMap(Handle<HwBufferObject> bufHandle)override;
-    virtual void bufferUnmap(Handle<HwBufferObject> bufHandle)override;
+    virtual void bufferUnmap(Handle<HwBufferObject> bufHandle, Handle<HwCommandBuffer> cbh)override;
     virtual void bindVertexBuffer(
         Handle<HwBufferObject> bufHandle, 
         uint32_t binding,
-        uint32_t vertexSize);
+        uint32_t vertexSize)override;
     virtual void bindIndexBuffer(
         Handle<HwBufferObject>, 
         uint32_t indexSize,
@@ -162,7 +162,7 @@ protected:
         filament::backend::Handle<filament::backend::HwCommandBuffer> cbh
     )override;
     bool getBufferObject(Handle<HwBufferObject> boh,
-        const char* data,
+        char* data,
         uint32_t size,
         uint32_t offset) override;
     virtual Handle<HwDescriptorSet> createDescriptorSet(

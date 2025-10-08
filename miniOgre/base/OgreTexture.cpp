@@ -151,18 +151,18 @@ namespace Ogre {
 		return old == LOADSTATE_LOADED;
 	}
 
-	void OgreTexture::loadAsync()
+	bool OgreTexture::loadAsync()
 	{
 		auto old = mLoadingState.load();
 		if (old == LOADSTATE_LOADING ||
 			old == LOADSTATE_LOADED)
 		{
-			return;
+			return false;
 		}
 
 		mLoadingState.store(LOADSTATE_LOADING);
 
-		
+		return true;
 	}
 
 

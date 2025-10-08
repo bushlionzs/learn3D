@@ -1,6 +1,6 @@
 #include "OgreHeader.h"
 #include "dx12RenderSystemBase.h"
-//#define USE_PIX
+#define USE_PIX
 #if defined(USE_PIX)
 #include "ForgeConfig.h"
 #include <winpixeventruntime/pix3.h>
@@ -487,17 +487,20 @@ void Dx12RenderSystemBase::dispatchComputeShader(int32_t x, int32_t y, int32_t z
     cl->Dispatch(x, y, z);
 }
 
-void Dx12RenderSystemBase::pushGroupMarker(const char* maker, const Ogre::Vector3i& color)
+void Dx12RenderSystemBase::pushGroupMarker(Handle<HwCommandBuffer> cbh, const char* maker, const Ogre::Vector3i& color)
 {
 #if defined(USE_PIX)
-    ID3D12GraphicsCommandList* cl = mCommands->get();
+    
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    ID3D12GraphicsCommandList* cl = cb->get();
     PIXBeginEvent(cl, PIX_COLOR((BYTE)(color.x), (BYTE)(color.y), (BYTE)color.z), maker);
 #endif
 }
-void Dx12RenderSystemBase::popGroupMarker() 
+void Dx12RenderSystemBase::popGroupMarker(Handle<HwCommandBuffer> cbh)
 {
 #if defined(USE_PIX)
-    ID3D12GraphicsCommandList* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    ID3D12GraphicsCommandList* cl = cb->get();
     PIXEndEvent(cl);
 #endif
 }
@@ -598,6 +601,7 @@ bool Dx12RenderSystemBase::getBufferInfo(
 {
     DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(boh);
     desc.mSize = bo->getByteCount();
+    return true;
 }
 
 void Dx12RenderSystemBase::clearBufferObject(
@@ -605,24 +609,50 @@ void Dx12RenderSystemBase::clearBufferObject(
     filament::backend::Handle<filament::backend::HwCommandBuffer> cbh
 )
 {
-
+    DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(boh);
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    uint32_t size = bo->getByteCount();
+    void* data = bo->lock(0, size);
+    memset(data, 0, size);
+    bo->unlock(cb->get());
 }
 
-uint8_t* Dx12RenderSystemBase::bufferMap(filament::backend::Handle<filament::backend::HwBufferObject> boh)
+uint8_t* Dx12RenderSystemBase::bufferMap(Handle<HwBufferObject> boh)
 {
-
+    DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(boh);
+    uint32_t size = bo->getByteCount();
+    void* data = bo->lock(0, size);
+    return (uint8_t*)data;
 }
 
-void Dx12RenderSystemBase::bufferUnmap(filament::backend::Handle<filament::backend::HwBufferObject> boh)
+void Dx12RenderSystemBase::bufferUnmap(Handle<HwBufferObject> boh, Handle<HwCommandBuffer> cbh)
 {
-
+    DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(boh);
+    ID3D12GraphicsCommandList* cl;
+    if (cbh)
+    {
+        DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+        cl = cb->get();
+    }
+    else
+    {
+        DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+        cl = cb->get();
+    }
+    bo->unlock(cl);
 }
 
 bool Dx12RenderSystemBase::getBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> boh,
-    const char* data,
+    char* data,
     uint32_t size,
     uint32_t offset)
 {
+    assert_invariant(false);
+    DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(boh);
+    uint32_t byteCount = bo->getByteCount();
+    assert_invariant(offset + size <= byteCount);
+    const char* src = (const char*)bo->lock(0, size);
+    memcpy(data, src + offset, size);
     return true;
 }
 

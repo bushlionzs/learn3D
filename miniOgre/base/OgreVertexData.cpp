@@ -49,6 +49,15 @@ BufferHandleLockGuard::BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle
     mBufferData = rs->bufferMap(mBufferHandle);
 }
 
+BufferHandleLockGuard::BufferHandleLockGuard(Handle<HwBufferObject> bufferHandle, Handle<HwCommandBuffer> cbh)
+{
+    mBufferHandle = bufferHandle;
+    mCommandBuffer = cbh;
+    auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
+    mBufferData = rs->bufferMap(mBufferHandle);
+}
+
 void* BufferHandleLockGuard::data()
 {
     return mBufferData;
@@ -57,7 +66,7 @@ void* BufferHandleLockGuard::data()
 BufferHandleLockGuard::~BufferHandleLockGuard()
 {
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-    rs->bufferUnmap(mBufferHandle);
+    rs->bufferUnmap(mBufferHandle, mCommandBuffer);
 }
 
 VertexData::VertexData()

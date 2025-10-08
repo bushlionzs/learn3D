@@ -604,7 +604,7 @@ void Dx12Texture::uploadData()
 
     uint32_t bytePerPixel = PixelUtil::getNumElemBytes(mFormat);
 
-    //updateLayoutInfos();
+    updateLayoutInfos();
 
     for (uint32_t face = 0; face < mTextureProperty._face; face++)
     {
@@ -669,13 +669,13 @@ void Dx12Texture::updateLayoutInfos()
 
     {
         UINT64 RequiredSize = 0;
-
-        static void* mem = nullptr;
-        if (mem == nullptr)
+        UINT64 MemToAlloc = static_cast<UINT64>(sizeof(D3D12_PLACED_SUBRESOURCE_FOOTPRINT) + sizeof(UINT) + sizeof(UINT64)) * 512;
+        if (mLayoutInfo.size() < MemToAlloc)
         {
-            UINT64 MemToAlloc = static_cast<UINT64>(sizeof(D3D12_PLACED_SUBRESOURCE_FOOTPRINT) + sizeof(UINT) + sizeof(UINT64)) * 512;
-            mem = malloc(MemToAlloc);
+            mLayoutInfo.resize(MemToAlloc);
         }
+        
+        void* mem = mLayoutInfo.data();
 
         pLayouts = reinterpret_cast<D3D12_PLACED_SUBRESOURCE_FOOTPRINT*>(mem);
         pRowSizesInBytes = reinterpret_cast<UINT64*>(pLayouts + num2DSubresources);

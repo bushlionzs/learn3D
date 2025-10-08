@@ -31,7 +31,7 @@ private:
     void init();
     void imguiInit();
     void newFrame();
-    void updateBuffers();
+    void updateBuffers(RenderContext& context);
     void bindReresource();
     filament::backend::Handle<filament::backend::HwDescriptorSet> getDescriptorSet(Ogre::OgreTexture* source);
 private:

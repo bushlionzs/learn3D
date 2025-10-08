@@ -643,12 +643,12 @@ void ShadowMap::base2(RenderContext& context)
             FrameData* frameData = this->getFrameData(frameIndex);
             if (frameData->update)
                 return;
-            rs->pushGroupMarker("clearBuffer");
+            rs->pushGroupMarker(context.frameContext->cbh, "clearBuffer");
             rs->bindComputePipeline(clearBufferProgramHandle, context.frameContext->cbh,
                 &frameData->clearBufferDescrSet, 1);
             rs->dispatchComputeShader(1, 1, 1, &context.frameContext->cbh);
             
-            rs->popGroupMarker();
+            rs->popGroupMarker(context.frameContext->cbh);
             // Clear Buffers Synchronization 
             {
                 BufferBarrier barriers[2];
@@ -674,7 +674,7 @@ void ShadowMap::base2(RenderContext& context)
     }
     
     //filter triangles pass
-    if(0)
+    if(1)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "filterTriangles";
@@ -747,13 +747,13 @@ void ShadowMap::base2(RenderContext& context)
            // frameData->update = true;
             
             auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-            rs->pushGroupMarker("filterTriangles");
+            rs->pushGroupMarker(context.frameContext->cbh, "filterTriangles");
             Handle <HwDescriptorSet> ds[2];
             ds[0] = frameData->zeroDescSetOfFilter;
             ds[1] = frameData->firstDescSetOfFilter;
             rs->bindComputePipeline(filterTrianglesProgramHandle, context.frameContext->cbh, ds, 2);
             rs->dispatchComputeShader(dispatchGroupCount, 1, 1, &context.frameContext->cbh);
-            rs->popGroupMarker();
+            rs->popGroupMarker(context.frameContext->cbh);
             {
                 const uint32_t numBarriers = NUM_CULLING_VIEWPORTS + 2;
                 BufferBarrier  barriers[numBarriers] = {};
@@ -818,7 +818,7 @@ void ShadowMap::base2(RenderContext& context)
     esmShadowMap = mRenderSystem->createRenderTarget("shadow", texProperty);
 
     //draw esm shadow map
-    if(0)
+    if(1)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "meshDepth";
@@ -948,12 +948,13 @@ void ShadowMap::base2(RenderContext& context)
             info.depthTarget.target.depthStencil = esmShadowMap;
             info.depthTarget.clearValue = { 1.0f, 0.0f };
             info.depthTarget.depthIndex = 0;
-            rs->pushGroupMarker("DrawEsmShadowMap");
+            info.cbh = context.frameContext->cbh;
+            rs->pushGroupMarker(context.frameContext->cbh, "DrawEsmShadowMap");
             rs->beginRenderPass(info);
             auto target = VIEW_SHADOW;
             
             FrameData* frameData = this->getFrameData(frameIndex);
-            rs->bindPipeline(meshDepthPipelineHandle);
+            rs->bindPipeline(context.frameContext->cbh, meshDepthPipelineHandle);
             rs->bindDescriptorSet(context.frameContext->cbh, meshDepthHandle, frameData->zeroDescrSetOfShadowPass);
             rs->bindDescriptorSet(context.frameContext->cbh, meshDepthHandle, frameData->thirdDescrSetOfShadowPass);
             rs->bindIndexBuffer(context.frameContext->cbh, filteredIndexBuffer[target], 4, 0);
@@ -963,7 +964,7 @@ void ShadowMap::base2(RenderContext& context)
             rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32, &context.frameContext->cbh);
             if (alpha)
             {
-                rs->bindPipeline(meshDepthAlphaPipelineHandle);
+                rs->bindPipeline(context.frameContext->cbh, meshDepthAlphaPipelineHandle);
                 rs->bindDescriptorSet(context.frameContext->cbh, meshDepthAlphaHandle, frameData->zeroDescrSetOfShadowPassAlpha);
                 rs->bindDescriptorSet(context.frameContext->cbh, meshDepthAlphaHandle, frameData->firstDescrSetOfShadowPassAlpha);
                 rs->bindDescriptorSet(context.frameContext->cbh, meshDepthAlphaHandle, frameData->thirdDescrSetOfShadowPassAlpha);
@@ -971,7 +972,7 @@ void ShadowMap::base2(RenderContext& context)
                 indirectBufferByteOffset =
                     GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_SHADOW, 1, 0) * sizeof(uint32_t);
 
-                rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+                rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32, &context.frameContext->cbh);
             }
             
 
@@ -989,7 +990,7 @@ void ShadowMap::base2(RenderContext& context)
                 rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
             }
             
-            rs->popGroupMarker();
+            rs->popGroupMarker(context.frameContext->cbh);
             };
 
         UpdatePassCallback shadowUpdateCallback = [=, this](float delta) {
@@ -1015,8 +1016,8 @@ void ShadowMap::base2(RenderContext& context)
         auto vbBufferPassPipelineHandle = rs->createPipeline(rasterState, vbBufferPassHandle);
 
         auto vbBufferPassAlphaPipelineHandle = rs->createPipeline(rasterState, vbBufferPassAlphaHandle);
-        auto width = mRenderWindow->getWidth();
-        auto height = mRenderWindow->getHeight();
+        auto width = ogreConfig.width;
+        auto height = ogreConfig.height;
         TextureProperty texProperty;
         texProperty._width = width;
         texProperty._height = height;
@@ -1111,7 +1112,7 @@ void ShadowMap::base2(RenderContext& context)
             info.depthTarget.target.depthStencil = winDepth;
             info.depthTarget.clearValue = { 0.0f, 0.0f };
             info.depthTarget.depthIndex = 0;
-            rs->pushGroupMarker("visibilityBuffer");
+            rs->pushGroupMarker(context.frameContext->cbh, "visibilityBuffer");
             rs->beginRenderPass(info);
             rs->bindIndexBuffer(context.frameContext->cbh, filteredIndexBuffer[VIEW_CAMERA], 4, 0);
             FrameData* frameData = this->getFrameData(frameIndex);
@@ -1119,25 +1120,27 @@ void ShadowMap::base2(RenderContext& context)
             Handle<HwDescriptorSet> tmp[4];
             tmp[0] = frameData->zeroDescrSetOfVbPass;
             tmp[1] = frameData->thirdDescrSetOfVbPass;
-            rs->bindPipeline(vbBufferPassPipelineHandle);
+            rs->bindPipeline(context.frameContext->cbh, vbBufferPassPipelineHandle);
             rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassHandle, frameData->zeroDescrSetOfVbPass);
+            rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassHandle, frameData->thirdDescrSetOfVbPass);
             uint64_t indirectBufferByteOffset =
                 GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 0, 0) * sizeof(uint32_t);
 
 
-            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32, &context.frameContext->cbh);
 
             tmp[0] = frameData->zeroDescrSetOfVbPassAlpha;
             tmp[1] = frameData->firstDescrSetOfVbPassAlpha;
             tmp[2] = frameData->thirdDescrSetOfVbPassAlpha;
-            rs->bindPipeline(vbBufferPassAlphaPipelineHandle);
+            rs->bindPipeline(context.frameContext->cbh, vbBufferPassAlphaPipelineHandle);
             rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassAlphaHandle, frameData->zeroDescrSetOfVbPassAlpha);
+            rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassAlphaHandle, frameData->firstDescrSetOfVbPassAlpha);
+            rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassAlphaHandle, frameData->thirdDescrSetOfVbPassAlpha);
             indirectBufferByteOffset =
                 GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 1, 0) * sizeof(uint32_t);
-            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32);
-            //rs->drawIndexed(1470735, 1, 5587923, 0, 0);
+            rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32, &context.frameContext->cbh);
             rs->endRenderPass(info);
-            rs->popGroupMarker();
+            rs->popGroupMarker(context.frameContext->cbh);
             };
 
         UpdateCallback vbUpdateCallback = [=, this](float delta)
@@ -1407,7 +1410,7 @@ void ShadowMap::base2(RenderContext& context)
             info.depthTarget.target.depthStencil = nullptr;
             info.depthTarget.clearValue = { 0.0f, 0.0f };
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-            rs->pushGroupMarker("shadePass");
+            rs->pushGroupMarker(context.frameContext->cbh, "shadePass");
             rs->beginRenderPass(info);
             auto* frameData = getFrameData(frameIndex);
             Handle<HwDescriptorSet> tmp[2];
@@ -1430,7 +1433,7 @@ void ShadowMap::base2(RenderContext& context)
                 };
                 rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
             }
-            rs->popGroupMarker();
+            rs->popGroupMarker(context.frameContext->cbh);
             };
         UpdatePassCallback updateCallback = [](float delta) {
             };

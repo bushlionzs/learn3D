@@ -41,7 +41,7 @@ bool PresentPass::initialize()
 
 	ShaderInfo shaderInfo;
 	shaderInfo.shaderName = mShaderName.c_str();
-	auto presentHandle = rs->createShaderProgram(shaderInfo, nullptr);
+	mPresentHandle = rs->createShaderProgram(shaderInfo, nullptr);
 	filament::backend::RasterState rasterState{};
 	rasterState.depthWrite = false;
 	rasterState.depthTest = false;
@@ -59,9 +59,9 @@ bool PresentPass::initialize()
 		rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
 	}
 	
-	mPipelineHandle = rs->createPipeline(rasterState, presentHandle);
+	mPipelineHandle = rs->createPipeline(rasterState, mPresentHandle);
 
-	mZeroSet = rs->createDescriptorSet(presentHandle, 0);
+	mZeroSet = rs->createDescriptorSet(mPresentHandle, 0);
 	Ogre::DescriptorData descriptorData[2];
 
 
@@ -90,7 +90,7 @@ void PresentPass::execute(RenderContext& context)
 				Ogre::RESOURCE_STATE_RENDER_TARGET
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr, nullptr);
+		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr, &context.frameContext->cbh);
 	}
 	RenderPassInfo info;
 	info.renderTargetCount = 1;
@@ -98,14 +98,15 @@ void PresentPass::execute(RenderContext& context)
 	info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
 	info.depthTarget.target.depthStencil = nullptr;
 	info.depthTarget.clearValue = { 0.0f, 0.0f };
+	info.cbh = context.frameContext->cbh;
 	auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-	rs->pushGroupMarker("presentPass");
+	rs->pushGroupMarker(context.frameContext->cbh, "presentPass");
 	rs->beginRenderPass(info);
-	rs->bindPipeline(mPipelineHandle);
-	rs->bindDescriptorSets(mPipelineHandle, &mZeroSet, 1);
+	rs->bindPipeline(context.frameContext->cbh, mPipelineHandle);
+	rs->bindDescriptorSet(context.frameContext->cbh, mPresentHandle, mZeroSet);
 	rs->draw(3, 1, 0, 0, &context.frameContext->cbh);
 	rs->endRenderPass(info);
-	rs->popGroupMarker();
+	rs->popGroupMarker(context.frameContext->cbh);
 
 	{
 		Ogre::TextureBarrier texBarriers[] =
@@ -116,7 +117,7 @@ void PresentPass::execute(RenderContext& context)
 				Ogre::RESOURCE_STATE_PRESENT
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr, nullptr);
+		rs->resourceBarrier(0, nullptr, 1, texBarriers, 0, nullptr, &context.frameContext->cbh);
 	}
 }
 

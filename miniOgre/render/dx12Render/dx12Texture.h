@@ -107,4 +107,6 @@ private:
     DxDescriptorID mSamplerDescriptorID;
     uint32_t mMipLevels = 1;
     bool mNeedMipmaps = false;
+
+    std::string mLayoutInfo;
 };
