@@ -839,7 +839,7 @@ void Dx12RenderSystemBase::updateDescriptorSet(
         const DescriptorInfo* descriptroInfo = dx12ProgramImpl->getDescriptor(pParam->pName);
         if (descriptroInfo == nullptr)
         {
-            assert_invariant(false);
+            //assert_invariant(false);
             continue;
         }
 

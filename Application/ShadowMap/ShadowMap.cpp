@@ -1150,9 +1150,6 @@ void ShadowMap::base2(RenderContext& context)
             rs->bindIndexBuffer(context.frameContext->cbh, filteredIndexBuffer[VIEW_CAMERA], 4, 0);
             FrameData* frameData = this->getFrameData(frameIndex);
 
-            Handle<HwDescriptorSet> tmp[4];
-            tmp[0] = frameData->zeroDescrSetOfVbPass;
-            tmp[1] = frameData->thirdDescrSetOfVbPass;
             rs->bindPipeline(context.frameContext->cbh, vbBufferPassPipelineHandle);
             rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassHandle, frameData->zeroDescrSetOfVbPass);
             rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassHandle, frameData->thirdDescrSetOfVbPass);
@@ -1162,9 +1159,6 @@ void ShadowMap::base2(RenderContext& context)
 
             rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32, &context.frameContext->cbh);
 
-            tmp[0] = frameData->zeroDescrSetOfVbPassAlpha;
-            tmp[1] = frameData->firstDescrSetOfVbPassAlpha;
-            tmp[2] = frameData->thirdDescrSetOfVbPassAlpha;
             rs->bindPipeline(context.frameContext->cbh, vbBufferPassAlphaPipelineHandle);
             rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassAlphaHandle, frameData->zeroDescrSetOfVbPassAlpha);
             rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassAlphaHandle, frameData->firstDescrSetOfVbPassAlpha);
@@ -1206,7 +1200,7 @@ void ShadowMap::base2(RenderContext& context)
         shadePassTarget = rs->createRenderTarget("shadePassTarget", texProperty);
     }
     
-    if(0)
+    if(1)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "visibilityBufferShade";
@@ -1454,17 +1448,19 @@ void ShadowMap::base2(RenderContext& context)
             info.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 0.0f };
             info.depthTarget.target.depthStencil = nullptr;
             info.depthTarget.clearValue = { 0.0f, 0.0f };
+            info.cbh = context.frameContext->cbh;
             auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
             rs->pushGroupMarker(context.frameContext->cbh, "shadePass");
+            uint32_t width = shadePassTarget->getWidth();
+            uint32_t height = shadePassTarget->getHeight();
+            rs->setViewport(0, 0, width, height, 0.0f, 1.0f, &context.frameContext->cbh);
+            rs->setScissor(0, 0, width, height, &context.frameContext->cbh);
             rs->beginRenderPass(info);
             auto* frameData = getFrameData(frameIndex);
-            Handle<HwDescriptorSet> tmp[2];
-            tmp[0] = frameData->zeroDescrSetOfVbShadePass;
-            tmp[1] = frameData->firstDescrSetOfVbShadePass;
-            rs->bindPipeline(pipelineHandle);
+            rs->bindPipeline(context.frameContext->cbh, pipelineHandle);
             rs->bindDescriptorSet(context.frameContext->cbh, programHandle, frameData->zeroDescrSetOfVbShadePass);
             rs->bindDescriptorSet(context.frameContext->cbh, programHandle, frameData->firstDescrSetOfVbShadePass);
-            rs->draw(3, 0, 0, 0, &context.frameContext->cbh);
+            rs->draw(3, 1, 0, 0, &context.frameContext->cbh);
             rs->endRenderPass(info);
 
             {
@@ -1492,9 +1488,9 @@ void ShadowMap::base2(RenderContext& context)
     mRenderPipeline->addRenderPass(presentPass);
     Ogre::Vector3 camPos2(120.f + SAN_MIGUEL_OFFSETX, 98.f, 14.f);
 
-    mGameCamera->setMoveSpeed(50.0f);
+    mGameCamera->setMoveSpeed(0.02f);
     mGameCamera->setRotateSpeed(0.001f);
-    Ogre::Vector3 lookAt = camPos2 + Ogre::Vector3(1.0f, 0.1f, 0.0f);
+    /*Ogre::Vector3 lookAt = camPos2 + Ogre::Vector3(1.0f, 0.1f, 0.0f);
     mGameCamera->lookAt(camPos2, lookAt);
     float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
     float aspect = ogreConfig.width / (float)ogreConfig.height;
@@ -1503,6 +1499,18 @@ void ShadowMap::base2(RenderContext& context)
     float zfar = 1000.0f;
     Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrixReverseZ(
         fovxRadians, aspectInverse, znear, zfar);
-    mGameCamera->getCamera()->updateProjectMatrix(m);
+    mGameCamera->getCamera()->updateProjectMatrix(m);*/
+
+    Ogre::Vector3 lookAt = camPos2 + Ogre::Vector3(1.0f, 0.1f, 0.0f);
+    mGameCamera->lookAt(camPos2, lookAt);
+
+    CameraInfo cameraInfo;
+    cameraInfo.width = ogreConfig.width;
+    cameraInfo.height = ogreConfig.height;
+    cameraInfo.nearClip = 0.1f;
+    cameraInfo.farClip = 1000.0f;
+    cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+    cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+    mGameCamera->updateCameraInfo(cameraInfo);
 }
 

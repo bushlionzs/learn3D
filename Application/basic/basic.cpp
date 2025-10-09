@@ -105,7 +105,7 @@ void BasicApplication::base1()
 	ShaderInfo& info = mat->getShaderInfo();
 	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, -3.f), Ogre::Vector3::ZERO);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
-	mGameCamera->setMoveSpeed(50);
+	mGameCamera->setMoveSpeed(0.5);
 
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 
