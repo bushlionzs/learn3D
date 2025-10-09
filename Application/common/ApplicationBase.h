@@ -33,6 +33,7 @@ struct AppInfo
     bool enableRayTracing = false;
     bool useCEGUI = false;
     bool useSRGB = false;
+    bool reverseDepth = false;
     int64_t appWnd = 0;
 };
 

@@ -219,7 +219,7 @@ void SceneRenderPass::drawShadow(RenderContext& context)
 				Ogre::RESOURCE_STATE_DEPTH_WRITE
 			}
 		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
+		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 	}
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	auto& info = mRenderPassInfo;

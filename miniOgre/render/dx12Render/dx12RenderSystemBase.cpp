@@ -29,7 +29,7 @@
 #include "dx12SwapChain.h"
 #include "memoryAllocator.h"
 
-
+extern "C" void SetObjectName(ID3D12Object* pObject, const char* pName);
 
 #define CALC_SUBRESOURCE_INDEX(MipSlice, ArraySlice, PlaneSlice, MipLevels, ArraySize) \
     ((MipSlice) + ((ArraySlice) * (MipLevels)) + ((PlaneSlice) * (MipLevels) * (ArraySize)))
@@ -92,7 +92,12 @@ Ogre::RenderWindow* Dx12RenderSystemBase::createRenderWindow(
     const CreateWindowDesc& desc)
 {
     uint64_t wnd = (uint64_t)StringConverter::parseSizeT(desc.windowHandle);
-    mRenderWindow = new Dx12RenderWindow(wnd, 0);
+    uint64_t flags = 0;
+    if (desc.srgb)
+    {
+        flags = SWAP_CHAIN_CONFIG_SRGB_COLORSPACE;
+    }
+    mRenderWindow = new Dx12RenderWindow(wnd, flags);
     return mRenderWindow;
 }
 
@@ -122,6 +127,8 @@ Ogre::RenderTarget* Dx12RenderSystemBase::createRenderTarget(
 
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
     Dx12RenderTarget* renderTarget = new Dx12RenderTarget(name, cb, &texProperty);
+
+
     return renderTarget;
 }
 
@@ -550,7 +557,7 @@ void Dx12RenderSystemBase::unlockBuffer(Handle<HwBufferObject> boh)
     auto* cmdList = mCommands->get();
     bo->unlock(cmdList);
 }
-extern "C" void SetObjectName(ID3D12Object* pObject, const char* pName);
+
 
 Handle<HwBufferObject> Dx12RenderSystemBase::createBufferObject(
     BufferDesc& desc)
@@ -832,7 +839,7 @@ void Dx12RenderSystemBase::updateDescriptorSet(
         const DescriptorInfo* descriptroInfo = dx12ProgramImpl->getDescriptor(pParam->pName);
         if (descriptroInfo == nullptr)
         {
-            //assert_invariant(false);
+            assert_invariant(false);
             continue;
         }
 

@@ -99,7 +99,7 @@ void Dx12Texture::freeInternalResourcesImpl()
     mTexUpload.Reset();
 
 }
-
+extern "C" void SetObjectName(ID3D12Object* pObject, const char* pName);
 void Dx12Texture::_createTex()
 {
     if (mTex)
@@ -211,7 +211,7 @@ void Dx12Texture::_createTex()
         OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "CreateCommittedResource failed!");
     }
 
-    
+    SetObjectName(mTex.Get(), mName.c_str());
 
     if (mTextureProperty.isRenderTarget())
     {

@@ -159,6 +159,9 @@ void ManualApplication::run(AppInfo* info)
 		}
 		
 		wndInit(wndHandle);
+
+		ogreConfig.reverseDepth = info->reverseDepth;
+		
 		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);		
 	}
 	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);

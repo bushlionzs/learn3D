@@ -815,7 +815,17 @@ void ShadowMap::base2(RenderContext& context)
     texProperty._height = shadowSize;
     texProperty._tex_format = Ogre::PF_DEPTH32F;
     texProperty._tex_usage = Ogre::TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-    esmShadowMap = mRenderSystem->createRenderTarget("shadow", texProperty);
+    esmShadowMap = mRenderSystem->createRenderTarget("esmShadowMap", texProperty);
+
+    RenderTargetBarrier rtBarriers[] =
+    {
+        {
+            esmShadowMap,
+            RESOURCE_STATE_GENERIC_READ,
+            RESOURCE_STATE_SHADER_RESOURCE
+        }
+    };
+    rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 
     //draw esm shadow map
     if(1)
@@ -830,7 +840,8 @@ void ShadowMap::base2(RenderContext& context)
         rasterState.colorWrite = false;
         rasterState.depthWrite = true;
         rasterState.depthTest = true;
-        rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8_SRGB;
+        rasterState.renderTargetCount = 1;
+        rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
         rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
         auto meshDepthPipelineHandle = rs->createPipeline(rasterState, meshDepthHandle);
 
@@ -950,6 +961,10 @@ void ShadowMap::base2(RenderContext& context)
             info.depthTarget.depthIndex = 0;
             info.cbh = context.frameContext->cbh;
             rs->pushGroupMarker(context.frameContext->cbh, "DrawEsmShadowMap");
+            uint32_t width = esmShadowMap->getWidth();
+            uint32_t height = esmShadowMap->getHeight();
+            rs->setViewport(0, 0, width, height, 0.0f, 1.0f, &context.frameContext->cbh);
+            rs->setScissor(0, 0, width, height, &context.frameContext->cbh);
             rs->beginRenderPass(info);
             auto target = VIEW_SHADOW;
             
@@ -999,7 +1014,7 @@ void ShadowMap::base2(RenderContext& context)
         mRenderPipeline->addRenderPass(shadowPass);
     }
     //visibility buffer pass
-    if(0)
+    if(1)
     {
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "visibilityBuffer";
@@ -1023,6 +1038,7 @@ void ShadowMap::base2(RenderContext& context)
         texProperty._height = height;
         texProperty._tex_format = Ogre::PixelFormat::PF_A8R8G8B8;
         texProperty._tex_usage = Ogre::TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
+        texProperty._backgroudColor = ColourValue(1.0, 1.0, 1.0, 1.0f);
         visibilityBufferTarget = rs->createRenderTarget("visibilityBufferTarget",
             texProperty);
 
@@ -1112,7 +1128,24 @@ void ShadowMap::base2(RenderContext& context)
             info.depthTarget.target.depthStencil = winDepth;
             info.depthTarget.clearValue = { 0.0f, 0.0f };
             info.depthTarget.depthIndex = 0;
+            info.cbh = context.frameContext->cbh;
             rs->pushGroupMarker(context.frameContext->cbh, "visibilityBuffer");
+
+            {
+                Ogre::RenderTargetBarrier rtBarriers[] =
+                {
+                    {
+                        visibilityBufferTarget,
+                        Ogre::RESOURCE_STATE_GENERIC_READ,
+                        Ogre::RESOURCE_STATE_RENDER_TARGET
+                    }
+                };
+                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
+            }
+            uint32_t width = visibilityBufferTarget->getWidth();
+            uint32_t height = visibilityBufferTarget->getHeight();
+            rs->setViewport(0, 0, width, height, 0.0f, 1.0f, &context.frameContext->cbh);
+            rs->setScissor(0, 0, width, height, &context.frameContext->cbh);
             rs->beginRenderPass(info);
             rs->bindIndexBuffer(context.frameContext->cbh, filteredIndexBuffer[VIEW_CAMERA], 4, 0);
             FrameData* frameData = this->getFrameData(frameIndex);
@@ -1140,6 +1173,18 @@ void ShadowMap::base2(RenderContext& context)
                 GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 1, 0) * sizeof(uint32_t);
             rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32, &context.frameContext->cbh);
             rs->endRenderPass(info);
+
+            {
+                Ogre::RenderTargetBarrier rtBarriers[] =
+                {
+                    {
+                        visibilityBufferTarget,
+                        Ogre::RESOURCE_STATE_RENDER_TARGET,
+                        Ogre::RESOURCE_STATE_GENERIC_READ
+                    }
+                };
+                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
+            }
             rs->popGroupMarker(context.frameContext->cbh);
             };
 

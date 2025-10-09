@@ -13,6 +13,7 @@ int main()
 	
     AppInfo info;
 	info.useSRGB = true;
+	info.reverseDepth = true;
 	info.engineType = EngineType_Vulkan;
 	info.engineType = EngineType_Dx12;
 	ManualApplication app;
