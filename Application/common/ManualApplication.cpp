@@ -19,7 +19,7 @@
 #include <ResourceParserManager.h>
 #include "renderUtil.h"
 #include "pass.h"
-//#include "CEGUIManager.h"
+#include "CEGUIManager.h"
 
 
 ManualApplication::ManualApplication()
@@ -66,14 +66,6 @@ void ManualApplication::appInit()
 	
 
 	Ogre::Root::getSingleton().addFrameListener(this);
-
-	if (isUseCEGUI())
-	{
-		/*ShowCursor(FALSE);
-		SetCursor(NULL);*/
-		//new CEGUIManager;
-		//CEGUIManager::getSingleton()._initialise(mRenderWindow);
-	}
 
 	Ogre::TextureManager::getSingleton().load("white1x1.dds", nullptr);
 
@@ -164,6 +156,15 @@ void ManualApplication::run(AppInfo* info)
 		
 		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);		
 	}
+
+	if (isUseCEGUI())
+	{
+		/*ShowCursor(FALSE);
+		SetCursor(NULL);*/
+		new CEGUIManager;
+		CEGUIManager::getSingleton()._initialise(mRenderWindow);
+	}
+
 	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
 	if (mWidth != ogreConfig.width || mHeight != ogreConfig.height)
 	{
@@ -172,7 +173,7 @@ void ManualApplication::run(AppInfo* info)
 		mHeight = ogreConfig.height;
 	}
 
-	
+	context.rs = Ogre::Root::getSingleton().getRenderSystem();
 	info->setup(context, mRenderWindow, mSceneManager, mGameCamera);
 	mRenderSystem->ready();
 	printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");

@@ -6,6 +6,7 @@ namespace Ogre
 {
     Ogre::RenderTarget* generateCubeMap(
         filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
         const std::string& name,
         Ogre::OgreTexture* environmentCube,
         Ogre::PixelFormat format,
@@ -13,5 +14,6 @@ namespace Ogre
         CubeType type);
    Ogre::RenderTarget* generateBRDFLUT(
        filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+       filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
        const std::string& name);
 }

@@ -35,10 +35,12 @@ public:
     virtual void frameEnd();
     virtual void present();
     virtual void copyImage(
+        Handle<HwCommandBuffer> cbh,
         Ogre::RenderTarget* dst,
         Ogre::RenderTarget* src,
-        ImageCopyDesc& desc);
+        ImageCopyDesc& desc)override;
     void copyImage(
+        Handle<HwCommandBuffer>cbh,
         Dx12Texture* dst,
         Dx12Texture* src,
         ImageCopyDesc& desc
@@ -46,7 +48,7 @@ public:
 
     virtual void setViewport(
         float x, float y, float width, float height, float minDepth, float maxDepth,
-        filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh) override;
+        Handle<HwCommandBuffer>* cbh) override;
     virtual void setScissor(
         uint32_t x, uint32_t y, uint32_t width, uint32_t height,
         filament::backend::Handle<filament::backend::HwCommandBuffer>* cbh) override;
@@ -162,7 +164,10 @@ public:
 
     virtual void beginCmd();
     virtual void flushCmd(Handle<HwCommandQueue>  cqh, bool waitCmd);
-
+    virtual void flushCmd(
+        Handle<HwCommandQueue> cqh,
+        Handle<HwCommandBuffer> cbh,
+        bool waitCmd);
     virtual Handle<HwFence> createFence(bool signaled) override;
     virtual void waitFence(Handle<HwFence> fh) override;
 

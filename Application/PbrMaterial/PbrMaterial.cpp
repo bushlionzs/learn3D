@@ -153,7 +153,7 @@ void PbrMaterial::example1(RenderPipeline* renderPipeline,
 		entityNode->attachObject(entity);
 	}
 
-
+	auto cbh = context.rs->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
 
 	std::vector<Ogre::MaterialPtr> matList;
 	for (auto& name : matNameList)
@@ -177,7 +177,7 @@ void PbrMaterial::example1(RenderPipeline* renderPipeline,
 
 	{
 		std::string prefilteredenvName = "prefilteredMap";
-		prefilteredTarget = generateCubeMap(context.cqh, prefilteredenvName, environmentCube, PF_FLOAT32_RGBA, 128, CubeType_Prefiltered);
+		prefilteredTarget = generateCubeMap(context.cqh, cbh, prefilteredenvName, environmentCube, PF_FLOAT32_RGBA, 128, CubeType_Prefiltered);
 		TextureManager::getSingleton().addTexture(prefilteredenvName, prefilteredTarget->getTarget());
 		tp._pbrType = TextureTypePbr_IBL_Specular;
 
@@ -190,7 +190,7 @@ void PbrMaterial::example1(RenderPipeline* renderPipeline,
 
 	{
 		std::string irradianceName = "IrradianceMap";
-		irradianceTarget = generateCubeMap(context.cqh, irradianceName, environmentCube, PF_FLOAT32_RGBA, 32, CubeType_Irradiance);
+		irradianceTarget = generateCubeMap(context.cqh, cbh, irradianceName, environmentCube, PF_FLOAT32_RGBA, 32, CubeType_Irradiance);
 		TextureManager::getSingleton().addTexture(irradianceName, irradianceTarget->getTarget());
 		tp._pbrType = TextureTypePbr_IBL_Diffuse;
 		std::for_each(matList.begin(), matList.end(),
@@ -202,7 +202,7 @@ void PbrMaterial::example1(RenderPipeline* renderPipeline,
 
 	{
 		std::string brdfLutName = "brdflut";
-		brdfTarget = generateBRDFLUT(context.cqh, brdfLutName);
+		brdfTarget = generateBRDFLUT(context.cqh, cbh, brdfLutName);
 		TextureManager::getSingleton().addTexture(brdfLutName, brdfTarget->getTarget());
 		tp._pbrType = TextureTypePbr_BRDF_LUT;
 
@@ -255,7 +255,7 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 {
 	example_type = 2;
 	MeshLoadDesc meshLoadDesc;
-
+	auto* rs = context.rs;
 	std::string name = "FlightHelmet.gltf";
 	meshLoadDesc.pFileName = name.c_str();
 	auto& js = ResourceManager::getSingleton().getJobSystem();
@@ -305,9 +305,10 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 		shaderInfo.shaderMacros.push_back(std::pair<std::string, std::string>("USE_IBL", "1"));
 	}
 
+	auto cbh = context.rs->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
 	{
 		std::string brdfLutName = "brdflut";
-		brdfTarget = generateBRDFLUT(context.cqh, brdfLutName);
+		brdfTarget = generateBRDFLUT(context.cqh, cbh, brdfLutName);
 		TextureManager::getSingleton().addTexture(brdfLutName, brdfTarget->getTarget());
 		tp._pbrType = TextureTypePbr_BRDF_LUT;
 
@@ -320,7 +321,7 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 
 	{
 		std::string prefilteredenvName = "prefilteredMap";
-		prefilteredTarget = generateCubeMap(context.cqh, prefilteredenvName, environmentCube, PF_FLOAT32_RGBA, 512, CubeType_Prefiltered);
+		prefilteredTarget = generateCubeMap(context.cqh, cbh, prefilteredenvName, environmentCube, PF_FLOAT32_RGBA, 512, CubeType_Prefiltered);
 		TextureManager::getSingleton().addTexture(prefilteredenvName, prefilteredTarget->getTarget());
 		tp._pbrType = TextureTypePbr_IBL_Specular;
 		std::for_each(matList.begin(), matList.end(),
@@ -332,7 +333,7 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 
 	{
 		std::string irradianceName = "IrradianceMap";
-		irradianceTarget = generateCubeMap(context.cqh, irradianceName, environmentCube, PF_FLOAT32_RGBA, 64, CubeType_Irradiance);
+		irradianceTarget = generateCubeMap(context.cqh, cbh, irradianceName, environmentCube, PF_FLOAT32_RGBA, 64, CubeType_Irradiance);
 		TextureManager::getSingleton().addTexture(irradianceName, irradianceTarget->getTarget());
 		tp._pbrType = TextureTypePbr_IBL_Diffuse;
 		std::for_each(matList.begin(), matList.end(),
@@ -350,7 +351,7 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 	gameCamera->setRotateSpeed(0.5);
 	gameCamera->setCameraType(CameraMoveType_LookAt);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-	Ogre::Matrix4 projectMatrix;
+	/*Ogre::Matrix4 projectMatrix;
 	if (ogreConfig.reverseDepth)
 	{
 		float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
@@ -364,7 +365,16 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 			Ogre::Math::PI / 3.0f, aspect, 0.1, 256);
 	}
 
-	gameCamera->getCamera()->updateProjectMatrix(projectMatrix);
+	gameCamera->getCamera()->updateProjectMatrix(projectMatrix);*/
+
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.1f;
+	cameraInfo.farClip = 256;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+	gameCamera->updateCameraInfo(cameraInfo);
 	
 	RenderPassInput input;
 	input.color = renderWindow->getColorTarget();

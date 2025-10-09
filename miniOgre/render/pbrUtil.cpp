@@ -12,6 +12,7 @@ namespace Ogre
 {
     Ogre::RenderTarget* generateCubeMap(
         filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+        Handle<HwCommandBuffer> cbh,
         const std::string& name,
         Ogre::OgreTexture* environmentCube,
         Ogre::PixelFormat format,
@@ -106,6 +107,7 @@ namespace Ogre
         texProperty._tex_usage = TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
         texProperty._tex_format = format;
         texProperty._texType = TEX_TYPE_2D;
+        texProperty._backgroudColor = ColourValue(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
         texProperty._need_mipmap = false;
         auto outPutTarget = rs->createRenderTarget("outputTarget", texProperty);
 
@@ -115,25 +117,39 @@ namespace Ogre
         renderPassInfo.depthTarget.target.depthStencil = nullptr;
         renderPassInfo.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
         renderPassInfo.viewport = false;
-        
+        renderPassInfo.cbh = cbh;
         const uint32_t numMips = static_cast<uint32_t>(floor(log2(dim))) + 1;
 
-        RenderTargetBarrier uavBarriers[] = {
+        
+
+        rs->beginCommandBuffer(cbh);
+        {
+            RenderTargetBarrier uavBarriers[] = {
                {
                rt,
                RESOURCE_STATE_COMMON,
                RESOURCE_STATE_COPY_DEST},
-        };
+            };
+            rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, &cbh);
+        }
 
-        rs->beginCmd();
-        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
-        rs->flushCmd(cqh, true);
+        {
+            RenderTargetBarrier uavBarriers[] = {
+               {
+               outPutTarget,
+               RESOURCE_STATE_GENERIC_READ,
+               RESOURCE_STATE_RENDER_TARGET},
+            };
+            rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, &cbh);
+        }
+        
+        rs->flushCmd(cqh, cbh, true);
 
         for (uint32_t m = 0; m < numMips; m++) 
         {
             for (uint32_t f = 0; f < 6; f++)
             {
-                rs->beginCmd();
+                rs->beginCommandBuffer(cbh);
                 uint32_t width = static_cast<float>(dim * std::pow(0.5f, m));
                 uint32_t height = static_cast<float>(dim * std::pow(0.5f, m));
 
@@ -146,7 +162,7 @@ namespace Ogre
                     rs->updateBufferObject(
                         pushBlockHandle,
                         (const char*)&pushBlockIrradiance,
-                        sizeof(pushBlockIrradiance));
+                        sizeof(pushBlockIrradiance), 0, &cbh);
 
                 }
                 else
@@ -158,24 +174,27 @@ namespace Ogre
                     rs->updateBufferObject(
                         pushBlockHandle,
                         (const char*)&pushBlockPrefilterEnv,
-                        sizeof(pushBlockPrefilterEnv));
+                        sizeof(pushBlockPrefilterEnv), 0, &cbh);
                 }
-                rs->setViewport(0, 0, width, height, 0.0f, 1.0f, nullptr);
-                rs->setScissor(0, 0, width, height, nullptr);
+                rs->setViewport(0, 0, width, height, 0.0f, 1.0f, &cbh);
+                rs->setScissor(0, 0, width, height, &cbh);
                 rs->beginRenderPass(renderPassInfo);
 
                 // Pass parameters for current pass using a push constant block
-                
-                rs->bindPipeline(pipelineHandle);
-                rs->bindDescriptorSets(pipelineHandle, &zeroDescSet, 1);
-                vertexData->bind(nullptr);
+                rs->bindPipeline(cbh, pipelineHandle);
+                rs->bindDescriptorSet(cbh, programHandle, zeroDescSet);
+
+                auto bufHandle = vertexData->getBuffer(0);
+                rs->bindVertexBuffer(cbh, 0, &bufHandle, nullptr);
 
                 if (indexData)
                 {
-                    indexData->bind();
+                    auto indexHandle = indexData->getHandle();
+                    rs->bindIndexBuffer(cbh, indexHandle, indexData->getIndexSize(), 0);
+                    
                     IndexDataView* view = subMesh->getIndexView();
                     rs->drawIndexed(view->mIndexCount, 1,
-                        view->mIndexLocation, view->mBaseVertexLocation, 0);
+                        view->mIndexLocation, view->mBaseVertexLocation, 0, &cbh);
                 }
 
                 rs->endRenderPass(renderPassInfo);
@@ -188,7 +207,7 @@ namespace Ogre
                         RESOURCE_STATE_PRESENT
                     }
                 };
-                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
+                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &cbh);
 
                 ImageCopyDesc copyRegion;
                 
@@ -207,34 +226,41 @@ namespace Ogre
                 copyRegion.extent.depth = 1;
                 copyRegion.srcOffset = Ogre::Vector3i(0);
                 copyRegion.dstOffset = Ogre::Vector3i(0);
-                rs->copyImage(rt, outPutTarget, copyRegion);
+                rs->copyImage(cbh, rt, outPutTarget, copyRegion);
 
                 rtBarriers[0] =
                 {
                     outPutTarget,
-                    RESOURCE_STATE_PRESENT,
+                    RESOURCE_STATE_COPY_SOURCE,
                     RESOURCE_STATE_RENDER_TARGET
                 };
-                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
-                rs->flushCmd(cqh, true);
+                rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &cbh);
+                rs->flushCmd(cqh, cbh, true);
             }
         }
 
-        uavBarriers[0] = 
-        {
-               rt,
-               RESOURCE_STATE_COPY_DEST,
-               RESOURCE_STATE_SHADER_RESOURCE
-        };
+        
 
-        rs->beginCmd();
-        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
-        rs->flushCmd(cqh, true);
+        rs->beginCommandBuffer(cbh);
+        {
+            RenderTargetBarrier uavBarriers[] =
+            {
+                   rt,
+                   RESOURCE_STATE_COPY_DEST,
+                   RESOURCE_STATE_SHADER_RESOURCE
+            };
+            rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, &cbh);
+        }
+        
+        rs->flushCmd(cqh, cbh, true);
 
         return rt;
     }
 
-    Ogre::RenderTarget* generateBRDFLUT(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, const std::string& name)
+    Ogre::RenderTarget* generateBRDFLUT(
+        Handle<HwCommandQueue> cqh, 
+        Handle<HwCommandBuffer> cbh,
+        const std::string& name)
     {
         auto dim = 512;
         const uint32_t numMips = static_cast<uint32_t>(floor(log2(dim))) + 1;
@@ -273,19 +299,20 @@ namespace Ogre
         renderPassInfo.renderTargets[0].target.renderTarget = rt;
         renderPassInfo.depthTarget.target.depthStencil = nullptr;
         renderPassInfo.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 1.000000000f };
-        rs->beginCmd();
+        renderPassInfo.cbh = cbh;
 
+        rs->beginCommandBuffer(cbh);
         RenderTargetBarrier uavBarriers[] = {
                {
                rt,
-               RESOURCE_STATE_UNDEFINED,
+               RESOURCE_STATE_GENERIC_READ,
                RESOURCE_STATE_RENDER_TARGET},
         };
-        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
+        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, &cbh);
 
         rs->beginRenderPass(renderPassInfo);
-        rs->bindPipeline(pipelineHandle);
-        rs->draw(3, 1, 0, 0);
+        rs->bindPipeline(cbh, pipelineHandle);
+        rs->draw(3, 1, 0, 0, &cbh);
         rs->endRenderPass(renderPassInfo);
 
         uavBarriers[0] = {
@@ -293,8 +320,9 @@ namespace Ogre
                RESOURCE_STATE_RENDER_TARGET,
                RESOURCE_STATE_SHADER_RESOURCE
         };
-        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
-        rs->flushCmd(cqh, true);
+        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, &cbh);
+        
+        rs->flushCmd(cqh, cbh, true);
 
         return rt;
     }

@@ -138,28 +138,29 @@ public:
 			
 			if (resourceInfo->firstSet)
 			{
-				descriptorSet[0] = resourceInfo->zeroSet;
-				descriptorSet[1] = resourceInfo->firstSet;
-				rs->bindPipeline(piplineHandle);
-				rs->bindDescriptorSets(piplineHandle, descriptorSet, 2);
+				rs->bindPipeline(context.frameContext->cbh, piplineHandle);
+				rs->bindDescriptorSet(context.frameContext->cbh, programHandle, resourceInfo->zeroSet);
+				rs->bindDescriptorSet(context.frameContext->cbh, programHandle, resourceInfo->firstSet);
 			}
 			else
 			{
-				rs->bindPipeline(piplineHandle);
-				rs->bindDescriptorSets(piplineHandle, &resourceInfo->zeroSet, 1);
+				rs->bindPipeline(context.frameContext->cbh, piplineHandle);
+				rs->bindDescriptorSet(context.frameContext->cbh, programHandle, resourceInfo->zeroSet);
 			}
 			
 
 
 			VertexData* vertexData = r->getVertexData();
 			IndexData* indexData = r->getIndexData();
-			vertexData->bind(nullptr);
+			auto vertexHandle = vertexData->getBuffer(0);
+			rs->bindVertexBuffer(context.frameContext->cbh, 1, &vertexHandle, nullptr);
 			if (indexData)
 			{
 				indexData->bind();
+				rs->bindIndexBuffer(context.frameContext->cbh, indexData->getHandle(), indexData->getIndexSize(), 0);
 				IndexDataView* view = r->getIndexView();
 				rs->drawIndexed(view->mIndexCount, 1,
-					view->mIndexLocation, view->mBaseVertexLocation, 0);
+					view->mIndexLocation, view->mBaseVertexLocation, 0, &context.frameContext->cbh);
 			}
 			else
 			{
@@ -326,7 +327,7 @@ public:
 					Ogre::RESOURCE_STATE_RENDER_TARGET
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
 
 		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
@@ -338,13 +339,13 @@ public:
 		info.depthTarget.target.depthStencil = mPassInput.depth;
 		info.depthTarget.depthIndex = 0;
 		info.renderTargets[0].clearColour = { 0.0, 0.0, 0.0, 1.000000000f };
+		info.cbh = context.frameContext->cbh;
 		float depthValue = 1.0f;
 		if (ogreConfig.reverseDepth)
 		{
 			depthValue = 0.0f;
 		}
 		info.depthTarget.clearValue = { depthValue, 0.0f };
-		mRenderPassInfo.cbh = context.frameContext->cbh;
 		renderScene(cam, sceneManager, context, mRenderPassInfo, &mUserDefineShader);
 
 		{
@@ -356,7 +357,7 @@ public:
 					Ogre::RESOURCE_STATE_PRESENT
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
 	}
 	virtual void update(float delta)

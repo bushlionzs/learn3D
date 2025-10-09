@@ -682,6 +682,7 @@ void VulkanRenderSystemBase::present()
 }
 
 void VulkanRenderSystemBase::copyImage(
+    Handle<HwCommandBuffer> cbh,
     Ogre::RenderTarget* dst,
     Ogre::RenderTarget* src,
     ImageCopyDesc& desc)
@@ -840,9 +841,18 @@ uint8_t* VulkanRenderSystemBase::bufferMap(Handle<HwBufferObject> bufHandle)
 
 void VulkanRenderSystemBase::bufferUnmap(Handle<HwBufferObject> bufHandle, Handle<HwCommandBuffer> cbh)
 {
-    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
-    VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
-    vulkanBufferObject->buffer.unlock(cb->commandBuffer);
+    if (cbh)
+    {
+        VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+        VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
+        vulkanBufferObject->buffer.unlock(cb->commandBuffer);
+    }
+    else
+    {
+        VulkanCommandBuffer& cb =  mCommands->get();
+        VulkanBufferObject* vulkanBufferObject = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle);
+        vulkanBufferObject->buffer.unlock(cb.buffer());
+    }
 }
 
 void VulkanRenderSystemBase::bindVertexBuffer(

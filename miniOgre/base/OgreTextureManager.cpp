@@ -146,6 +146,8 @@ namespace Ogre {
 
         mTexMap[name] = tex;
 
+        tex->createInternalResources();
+
         return tex;
     }
 

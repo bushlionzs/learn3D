@@ -109,6 +109,7 @@ public:
     ) {}
 
     virtual void copyImage(
+        filament::backend::Handle<filament::backend::HwCommandBuffer>cbh,
         Ogre::RenderTarget* dst,
         Ogre::RenderTarget* src,
         Ogre::ImageCopyDesc& desc)
@@ -308,6 +309,14 @@ public:
         assert_invariant(false);
     }
     virtual void flushCmd(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, bool waitCmd)
+    {
+        assert_invariant(false);
+    }
+
+    virtual void flushCmd(
+        filament::backend::Handle<filament::backend::HwCommandQueue> cqh, 
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        bool waitCmd)
     {
         assert_invariant(false);
     }

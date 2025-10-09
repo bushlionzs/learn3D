@@ -107,6 +107,7 @@ public:
     virtual void present() override;
 
     virtual void copyImage(
+        Handle<HwCommandBuffer> cbh,
         Ogre::RenderTarget* dst,
         Ogre::RenderTarget* src,
         ImageCopyDesc& desc) override;

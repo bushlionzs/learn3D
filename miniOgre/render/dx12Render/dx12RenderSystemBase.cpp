@@ -175,6 +175,7 @@ void Dx12RenderSystemBase::present()
 }
 
 void Dx12RenderSystemBase::copyImage(
+    Handle<HwCommandBuffer>cbh,
     Ogre::RenderTarget* dst,
     Ogre::RenderTarget* src,
     ImageCopyDesc& desc)
@@ -182,10 +183,11 @@ void Dx12RenderSystemBase::copyImage(
     Dx12Texture* dstTexture = (Dx12Texture*)dst->getTarget();
     Dx12Texture* srcTexture  = (Dx12Texture*)src->getTarget();
 
-    copyImage(dstTexture, srcTexture, desc);
+    copyImage(cbh, dstTexture, srcTexture, desc);
 }
 
 void Dx12RenderSystemBase::copyImage(
+    Handle<HwCommandBuffer>cbh,
     Dx12Texture* dstTexture,
     Dx12Texture* srcTexture,
     ImageCopyDesc& desc)
@@ -193,7 +195,17 @@ void Dx12RenderSystemBase::copyImage(
     auto width = desc.extent.width;
     auto height = desc.extent.height;
     auto depth = desc.extent.depth;
-    auto* cl = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer)->get();
+    ID3D12GraphicsCommandList* cl = nullptr;
+    if (cbh)
+    {
+        DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+        cl = cb->get();
+    }
+    else
+    {
+        DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+        cl = cb->get();
+    }
 
 
     D3D12_TEXTURE_COPY_LOCATION srcLocation = {};
@@ -1139,6 +1151,25 @@ void Dx12RenderSystemBase::flushCmd(Handle<HwCommandQueue> cqh, bool waitCmd)
     DX12CommandQueue* cq = mResourceAllocator.handle_cast<DX12CommandQueue*>(cqh);
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
     ID3D12GraphicsCommandList*  cl = cb->get();
+    cb->endCommandBuffer();
+    cq->executeCommandLists(&cl, 1);
+    if (waitCmd)
+    {
+        DX12Fence* fence = mResourceAllocator.handle_cast<DX12Fence*>(mCommandFence);
+        fence->addFenceValue();
+        cq->signal(fence);
+        fence->wait();
+    }
+}
+
+void Dx12RenderSystemBase::flushCmd(
+    Handle<HwCommandQueue> cqh,
+    Handle<HwCommandBuffer> cbh,
+    bool waitCmd)
+{
+    DX12CommandQueue* cq = mResourceAllocator.handle_cast<DX12CommandQueue*>(cqh);
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    ID3D12GraphicsCommandList* cl = cb->get();
     cb->endCommandBuffer();
     cq->executeCommandLists(&cl, 1);
     if (waitCmd)

@@ -568,7 +568,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		copyRegion.extent.depth = 1;
 		copyRegion.srcOffset = Ogre::Vector3i(0);
 		copyRegion.dstOffset = Ogre::Vector3i(0);
-		rs->copyImage(tex, srcTexture, copyRegion);
+		rs->copyImage(Handle<HwCommandBuffer>(), tex, srcTexture, copyRegion);
 
 		rtBarriers[0] =
 		{
