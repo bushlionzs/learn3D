@@ -88,7 +88,7 @@ void VertexData::bind(void* cb)
         auto& slot = vertexSlotInfo[i];
         if (slot.mVertexSize > 0)
         {
-            rs->bindVertexBuffer(slot.mVertexBufferHandle, i, slot.mVertexSize);
+            rs->bindVertexBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer>(), i, &slot.mVertexBufferHandle, nullptr);
         }
     }
 }

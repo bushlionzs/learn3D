@@ -20,7 +20,7 @@ IndexData::~IndexData()
 void IndexData::bind()
 {
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
-    rs->bindIndexBuffer(mIndexBufferHandle, mIndexSize, 0);
+    rs->bindIndexBuffer(filament::backend::Handle<filament::backend::HwCommandBuffer>(), mIndexBufferHandle, mIndexSize, 0);
 }
 
 void IndexData::bind(filament::backend::Handle<filament::backend::HwCommandBuffer> cbh)

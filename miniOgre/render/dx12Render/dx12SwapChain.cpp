@@ -7,6 +7,9 @@
 #include "D3D12Mappings.h"
 #include "dx12Handles.h"
 #include "memoryAllocator.h"
+#include "setObjectName.h"
+
+extern "C" void SetObjectName(ID3D12Object* pObject, const char* pName);
 
 DX12SwapChain::DX12SwapChain( HWND hWnd,  uint64_t flags)
 {
@@ -180,6 +183,8 @@ void DX12SwapChain::createSwapChain2(DX12CommandQueue* cq, bool srgb)
 
 	texProperty._tex_usage = TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	texProperty._tex_format = D3D12Mappings::getPixelFormat(mDepthFormat);
+	mDepth = new Dx12Texture(std::string("swapChainDepthTarget"), &texProperty, nullptr, depth);
 
-	mDepth = new Dx12Texture(std::string("depthTarget"), &texProperty, nullptr, depth);
+	
+	SetObjectName(depth, "swapChainDepthTarget");
 }

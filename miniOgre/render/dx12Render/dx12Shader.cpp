@@ -265,6 +265,10 @@ void DX12ProgramImpl::parseShaderInfo()
         index++;
         auto& DescriptorInfo = mDescriptorInfoMap[shaderResource.name];
         DescriptorInfo.pName = shaderResource.name.c_str();
+        if (shaderResource.name == "outputTexture")
+        {
+            int kk = 0;
+        }
         DescriptorInfo.mRootIndex = rootParamCount;
         DescriptorInfo.mType = shaderResource.type;
         DescriptorInfo.mSet = shaderResource.set;

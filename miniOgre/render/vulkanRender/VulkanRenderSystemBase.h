@@ -140,11 +140,11 @@ protected:
     virtual void bindVertexBuffer(
         Handle<HwBufferObject> bufHandle, 
         uint32_t binding,
-        uint32_t vertexSize)override;
+        uint32_t vertexSize);
     virtual void bindIndexBuffer(
         Handle<HwBufferObject>, 
         uint32_t indexSize,
-        uint32_t offset) override;
+        uint32_t offset) ;
     virtual Handle<HwBufferObject> createBufferObject(
         BufferDesc& desc) override;
 

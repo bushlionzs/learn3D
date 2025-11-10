@@ -117,6 +117,9 @@ void DX12Helper::createBaseInfo()
 		desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
 		d3dUtil::add_descriptor_heap(mDevice.Get(), &desc, &mDescriptorHeapContext.pSamplerHeaps[i]);
 	}
+
+
+	
 }
 
 ID3D12Device* DX12Helper::getDevice()
@@ -409,6 +412,12 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 	ShaderInfo shaderInfo;
 	shaderInfo.shaderName = "mipmap";
 
+	if (!mMipMapCommandBuffer)
+	{
+		//mMipMapCommandBuffer = mDx12RenderSystem->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
+		mMipMapCommandQueue = mDx12RenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
+	}
+	
 	if (!mMipmapHandle)
 	{
 		VertexDeclaration decl;
@@ -430,6 +439,8 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		texProperty._tex_usage = TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
 		texProperty._tex_format = PF_A8B8G8R8;
 		texProperty._need_mipmap = false;
+		texProperty._initState = RESOURCE_STATE_GENERIC_READ;
+		texProperty._backgroudColor = ColourValue(0.0, 0.0, 0.0, 1.0);
 		mMipmapTarget = rs->createRenderTarget("mipmapTarget", texProperty);
 
 
@@ -495,8 +506,9 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 	renderPassInfo.renderTargetCount = 1;
 	renderPassInfo.renderTargets[0].target.renderTarget = mMipmapTarget;
 	renderPassInfo.depthTarget.target.depthStencil = nullptr;
-	renderPassInfo.renderTargets[0].clearColour = { 1.0f, 0.0f, 0.0f, 1.0f };
+	renderPassInfo.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
 	renderPassInfo.viewport = false;
+	renderPassInfo.cbh = mMipMapCommandBuffer;
 	auto texWidth = tex->getWidth();
 	auto texHeight = tex->getHeight();
 
@@ -514,42 +526,63 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 
 	Ogre::Matrix4 viewProj = (project * view).transpose();
 
+	//rs->beginCommandBuffer(mMipMapCommandBuffer);
+
 	rs->updateBufferObject(mMipMapBlockHandle, (const char*)&viewProj, sizeof(viewProj), 0, nullptr);
 
+	
 	for (uint32_t m = 1; m < numMips; m++)
 	{
 		uint32_t width = static_cast<float>(texWidth * std::pow(0.5f, m));
 		uint32_t height = static_cast<float>(texHeight * std::pow(0.5f, m));
-		rs->beginCmd();
+		
 		
 		RenderTargetBarrier uavBarriers[] = {
 				   {
 				       mMipmapTarget,
-				       RESOURCE_STATE_UNDEFINED,
+					   RESOURCE_STATE_GENERIC_READ,
 				       RESOURCE_STATE_RENDER_TARGET
 			      },
 		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, nullptr);
+
+		TextureBarrier barriers[] =
+		{
+				  tex,
+				  RESOURCE_STATE_GENERIC_READ,
+				  RESOURCE_STATE_SHADER_RESOURCE
+		};
+		rs->resourceBarrier(0, nullptr, 1, barriers, 1, uavBarriers, nullptr);
 		rs->setViewport(0, 0, width, height, 0.0f, 1.0f, nullptr);
 		rs->setScissor(0, 0, width, height, nullptr);
 		rs->beginRenderPass(renderPassInfo);
-		rs->bindPipeline(mMipmapPipelineHandle, &mMipMapDescSet, 1);
-		vertexData->bind(nullptr);
-		indexData->bind();
+		rs->bindPipeline(mMipMapCommandBuffer, mMipmapPipelineHandle);
+		rs->bindDescriptorSet(mMipMapCommandBuffer, mMipmapHandle, mMipMapDescSet);
+		auto bufHandle = vertexData->getBuffer(0);
+		rs->bindVertexBuffer(mMipMapCommandBuffer, 1, &bufHandle, nullptr);
+		rs->bindIndexBuffer(mMipMapCommandBuffer, indexData->getHandle(), indexData->getIndexSize(), 0);
 		IndexDataView* indexView = subMesh->getIndexView();
 		rs->drawIndexed(indexView->mIndexCount, 1,
 			indexView->mIndexLocation, indexView->mBaseVertexLocation, 0, nullptr);
 		rs->endRenderPass(renderPassInfo);
 
-		RenderTargetBarrier rtBarriers[] =
 		{
+			RenderTargetBarrier rtBarriers[] =
 			{
-				mMipmapTarget,
-				RESOURCE_STATE_RENDER_TARGET,
-				RESOURCE_STATE_GENERIC_READ
-			}
-		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
+				{
+					mMipmapTarget,
+					RESOURCE_STATE_RENDER_TARGET,
+					D3D12_RESOURCE_STATE_COPY_SOURCE
+				}
+			};
+			TextureBarrier texBarriers[] =
+			{
+					  tex,
+					  RESOURCE_STATE_SHADER_RESOURCE,
+					  RESOURCE_STATE_COPY_DEST
+			};
+			rs->resourceBarrier(0, nullptr, 1, texBarriers, 1, rtBarriers, nullptr);
+		}
+		
 
 		ImageCopyDesc copyRegion;
 
@@ -568,14 +601,30 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		copyRegion.extent.depth = 1;
 		copyRegion.srcOffset = Ogre::Vector3i(0);
 		copyRegion.dstOffset = Ogre::Vector3i(0);
-		rs->copyImage(Handle<HwCommandBuffer>(), tex, srcTexture, copyRegion);
+		rs->copyImage(mMipMapCommandBuffer, tex, srcTexture, copyRegion);
 
-		rtBarriers[0] =
 		{
-			mMipmapTarget,
-			RESOURCE_STATE_GENERIC_READ,
-			RESOURCE_STATE_RENDER_TARGET
-		};
-		rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
+			RenderTargetBarrier rtBarriers[] =
+			{
+				{
+					mMipmapTarget,
+					D3D12_RESOURCE_STATE_COPY_SOURCE,
+					RESOURCE_STATE_GENERIC_READ
+				}
+			};
+
+			TextureBarrier texBarriers[] =
+			{
+					  tex,
+					  RESOURCE_STATE_COPY_DEST,
+					  RESOURCE_STATE_GENERIC_READ
+			};
+			rs->resourceBarrier(0, nullptr, 1, texBarriers, 1, rtBarriers, nullptr);
+		}	
+
+		//rs->flushCmd(mMipMapCommandQueue, mMipMapCommandBuffer, true);
+		//rs->beginCommandBuffer(mMipMapCommandBuffer);
 	}
+
+	//rs->endCommandBuffer(mMipMapCommandBuffer);
 }

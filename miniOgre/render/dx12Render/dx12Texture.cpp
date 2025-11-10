@@ -181,6 +181,7 @@ void Dx12Texture::_createTex()
         }
 
         states = D3D12_RESOURCE_STATE_GENERIC_READ;
+        states = D3D12Mappings::util_to_dx12_resource_state(mTextureProperty._initState);
         texDesc.SampleDesc.Count = 1;
 
         mNeedMipmaps = false;
@@ -629,8 +630,7 @@ void Dx12Texture::uploadData()
             dstLocation.pResource = mTex.Get();
             dstLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 
-            UINT dstSubresource = D3D12CalcSubresource(
-                mip, face, 0, mips, mTextureProperty._face);
+            UINT dstSubresource = D3D12CalcSubresource(mip, face, 0, mips, mTextureProperty._face);
             dstLocation.SubresourceIndex = dstSubresource;
             cl->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, nullptr);
         }

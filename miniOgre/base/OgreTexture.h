@@ -55,6 +55,7 @@ namespace Ogre {
         uint32_t _depth;
         uint32_t _face;
         uint32_t _numMipmaps;
+        uint32_t _initState;
         Ogre::PixelFormat _tex_format;
         bool _need_mipmap;
         uint32_t _maxMipLevel;

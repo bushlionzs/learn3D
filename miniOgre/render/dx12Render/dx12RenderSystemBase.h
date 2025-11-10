@@ -99,7 +99,7 @@ public:
     virtual void bindIndexBuffer(
         Handle<HwBufferObject> bufHandle, 
         uint32_t indexSize,
-        uint32_t offset)override;
+        uint32_t offset);
     virtual void* lockBuffer(Handle<HwBufferObject> bufHandle, uint32_t offset, uint32_t numBytes);
     virtual void unlockBuffer(Handle<HwBufferObject> bufHandle);
     virtual Handle<HwBufferObject> createBufferObject(

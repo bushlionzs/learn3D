@@ -95,6 +95,8 @@ private:
 	Handle<HwBufferObject> mMipMapBlockHandle;
 	Handle<HwSampler> mMipMapSamplerHandle;
 	Ogre::RenderTarget* mMipmapTarget;
+	Handle<HwCommandBuffer> mMipMapCommandBuffer;
+	Handle<HwCommandQueue> mMipMapCommandQueue;
 	tsl::robin_map<SamplerParams, DxDescriptorID, SamplerParams::Hasher, SamplerParams::EqualTo> mSamplersCache;
 
 

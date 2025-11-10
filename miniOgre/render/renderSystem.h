@@ -206,7 +206,7 @@ public:
     {
         assert_invariant(false);
     }
-    virtual void bindVertexBuffer(
+    /*virtual void bindVertexBuffer(
         filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
         uint32_t binding,
         uint32_t vertexSize) 
@@ -221,7 +221,7 @@ public:
         uint32_t offset) 
     {
         assert_invariant(false);
-    }
+    }*/
 
     virtual filament::backend::Handle<filament::backend::HwBufferObject> createBufferObject(
         Ogre::BufferDesc& desc);

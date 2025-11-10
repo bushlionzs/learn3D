@@ -20,6 +20,7 @@ namespace Ogre {
 		_maxMipLevel = INT_MAX;
 		_gamma = 1.0f;
 		_fsaa = 0;
+		_initState = RESOURCE_STATE_UNDEFINED;
 		_tex_usage = TEXTURE_USAGE_CAN_COPY_FROM_BIT | TEXTURE_USAGE_CAN_COPY_TO_BIT;
 		_backgroudColor = ColourValue::Black;
 		_tex_addr_mod = Ogre::TAM_WRAP;

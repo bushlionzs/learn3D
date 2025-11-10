@@ -162,7 +162,9 @@ void Dx12RenderSystemBase::frameStart()
     mLastPipelineState = nullptr;*/
 
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+   
     cb->beginComandBuffer();
+    beginCmd();
 }
 
 void Dx12RenderSystemBase::frameEnd()
@@ -294,7 +296,7 @@ void Dx12RenderSystemBase::beginRenderPass(RenderPassInfo& renderPassInfo)
     D3D12_CPU_DESCRIPTOR_HANDLE renderTargetHandle[8];
     for (auto i = 0; i < renderPassInfo.renderTargetCount; i++)
     {
-        Dx12RenderTarget* colorTarget = (Dx12RenderTarget*)renderPassInfo.renderTargets->target.renderTarget;
+        Dx12RenderTarget* colorTarget = (Dx12RenderTarget*)renderPassInfo.renderTargets[i].target.renderTarget;
         auto* tex = colorTarget->getTarget();
         DxDescriptorID srcid = tex->getTargetDescriptorId();
         DescriptorHeap* heap = mDescriptorHeapContext->mCPUDescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_RTV];
@@ -1385,7 +1387,16 @@ void Dx12RenderSystemBase::bindVertexBuffer(
     const filament::backend::Handle<filament::backend::HwBufferObject>* bufHandle,
     const uint64_t* p_offsets)
 {
-    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    DX12CommandBuffer* cb = nullptr;
+    if (cbh)
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    }
+    else
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    }
+    
 
     auto* cl = cb->get();
 
@@ -1408,7 +1419,15 @@ void Dx12RenderSystemBase::bindIndexBuffer(
     uint32_t indexSize,
     uint32_t offset)
 {
-    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    DX12CommandBuffer* cb = nullptr;
+    if (cbh)
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    }
+    else
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    }
 
     DX12BufferObject* bo = mResourceAllocator.handle_cast<DX12BufferObject*>(bufHandle);
 
@@ -1425,7 +1444,16 @@ void Dx12RenderSystemBase::bindPipeline(
     filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
     filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle)
 {
-    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    DX12CommandBuffer* cb = nullptr;
+    if (cbh)
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    }
+    else
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    }
+    
 
     DX12Pipeline* pipeline = mResourceAllocator.handle_cast<DX12Pipeline*>(pipelineHandle);
 
@@ -1456,7 +1484,16 @@ void Dx12RenderSystemBase::bindDescriptorSet(
     filament::backend::Handle<filament::backend::HwProgram> ph,
     filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
 {
-    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    DX12CommandBuffer* cb = nullptr;
+    if (cbh)
+    {
+        cb= mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    }
+    else
+    {
+        cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    }
+    
     auto cl = cb->get();
     DX12Program* program = mResourceAllocator.handle_cast<DX12Program*>(ph);
     DX12DescriptorSet* dset = mResourceAllocator.handle_cast<DX12DescriptorSet*>(dsh);
