@@ -56,17 +56,27 @@ void VoxelConeTracingApp::setup(
 	sponzaNode->attachObject(sponza);*/
 
 	auto h = 7.0f;
-	auto camPos = Ogre::Vector3(0.0f, -h, -33.0f);
-	auto targetPos = Ogre::Vector3(0.0f, -h, -34.0f);
+	auto camPos = Ogre::Vector3(0.0f, h, 33.0f);
+	auto targetPos = Ogre::Vector3(0.0f, h, 32.0f);
 	gameCamera->lookAt(camPos, targetPos);
-	gameCamera->setMoveSpeed(20);
+	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
+	gameCamera->setMoveSpeed(1);
 
 
-	float aspect = ogreConfig.width / (float)ogreConfig.height;
+	/*float aspect = ogreConfig.width / (float)ogreConfig.height;
 	Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrix(
 		Ogre::Math::PI / 3.0f, aspect, 0.01, 500.0f);
 
-	gameCamera->getCamera()->updateProjectMatrix(m);
+	gameCamera->getCamera()->updateProjectMatrix(m);*/
+
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.01f;
+	cameraInfo.farClip = 500.0f;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = false;
+	gameCamera->updateCameraInfo(cameraInfo);
 
 	initScene();
 
@@ -113,27 +123,31 @@ void VoxelConeTracingApp::update(float delta)
 {
 	mLightDirection = Ogre::Vector3(0.191, 1.0f, 0.574f);
 	mTotalTime += delta;
-    float v = sin(mTotalTime);
+    float v = sin(mTotalTime*0.005);
 
 	//v = 0.5;
 	mLightDirection.x = v;
-	mLightDirection.normalise();
+	//mLightDirection.normalise();
 	Ogre::Vector3 eyePositon = Ogre::Vector3::ZERO;
 	Ogre::Vector3 targetPos = eyePositon - mLightDirection;
 	mLightView = Ogre::Math::makeLookAtRH(
 		eyePositon, targetPos, Ogre::Vector3::UNIT_Y);
 
-	mShadowCamera->updateViewMatrix(mLightView);
+	if (mShadowCamera)
+	{
+		mShadowCamera->updateViewMatrix(mLightView);
 
 
-	uint32_t size = 256;
-	Real left = -256 / 2.0f;
-	Real right = 256 / 2.0f;
-	Real top = 256 / 2.0f;
-	Real bottom = -256 / 2.0f;
+		uint32_t size = 256;
+		Real left = -256 / 2.0f;
+		Real right = 256 / 2.0f;
+		Real top = 256 / 2.0f;
+		Real bottom = -256 / 2.0f;
 
-	mLightProject = Ogre::Math::makeOrthoRH(left, right, bottom, top, -256, 256);
-	mShadowCamera->updateProjectMatrix(mLightProject);
+		mLightProject = Ogre::Math::makeOrthoRH(left, right, bottom, top, -256, 256);
+		mShadowCamera->updateProjectMatrix(mLightProject);
+	}
+	
 }
 
 void VoxelConeTracingApp::sceneGeometryPass()
@@ -178,23 +192,24 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
 
-		mRenderSystem->bindPipeline(mSceneGeometryPipelineHandle);
+		mRenderSystem->bindPipeline(context.frameContext->cbh, mSceneGeometryPipelineHandle);
 		mRenderSystem->bindDescriptorSet(context.frameContext->cbh,
 			mSceneGeometryProgramHandle, resourceInfo->zeroSet);
 
 		VertexData* vertexData = r->getVertexData();
 		IndexData* indexData = r->getIndexData();
-		vertexData->bind(nullptr);
-		indexData->bind();
+		auto vertexHandle = vertexData->getBuffer(0);
+		mRenderSystem->bindVertexBuffer(context.frameContext->cbh, 1, &vertexHandle, nullptr);
+		mRenderSystem->bindIndexBuffer(context.frameContext->cbh, indexData->getHandle(), indexData->getIndexSize(), 0);
 		IndexDataView* view = r->getIndexView();
 		mRenderSystem->drawIndexed(view->mIndexCount, 1,
-			view->mIndexLocation, view->mBaseVertexLocation, 0);
+			view->mIndexLocation, view->mBaseVertexLocation, 0, &context.frameContext->cbh);
 		};
 	userDefineShader.drawCallback = drawCallback;
 
 	RenderableUpdateCallback renderUpdateCallback = [=, this](RenderContext& context, uint32_t frameIndex, Renderable* r)
 		{
-			void* frameData = r->getFrameResourceInfo(frameIndex);
+			/*void* frameData = r->getFrameResourceInfo(frameIndex);
 			VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 			Ogre::Material* mat = r->getMaterial().get();
 			ObjectConstantBuffer objectBuffer;
@@ -205,7 +220,7 @@ void VoxelConeTracingApp::sceneGeometryPass()
 			objectBuffer.haveTexture = false;
 			objectBuffer.useShadow = false;
 			mRenderSystem->updateBufferObject(resourceInfo->modelObjectHandle,
-				(const char*)&objectBuffer, sizeof(objectBuffer));
+				(const char*)&objectBuffer, sizeof(objectBuffer), 0, &context.frameContext->cbh);*/
 		};
 	userDefineShader.updateCallback = renderUpdateCallback;
 	UserDefineShader* pUserDefineShader = &userDefineShader;
@@ -221,20 +236,75 @@ void VoxelConeTracingApp::sceneGeometryPass()
 		info.depthTarget.depthIndex = 0;
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
 		info.passName = "sceneGeometryPass";
+		info.cbh = context.frameContext->cbh;
+		mRenderSystem->pushGroupMarker(context.frameContext->cbh, "sceneGeometryPass");
 
-		mRenderSystem->pushGroupMarker("sceneGeometryPass");
+		{
+			RenderTargetBarrier rtBarriers[] =
+			{
+				{
+					 mVoxelizationContext.depthTarget,
+					 RESOURCE_STATE_SHADER_RESOURCE,
+					 RESOURCE_STATE_DEPTH_WRITE,
+				},
+				{
+					 mVoxelizationContext.albedoTarget,
+					 RESOURCE_STATE_SHADER_RESOURCE,
+					RESOURCE_STATE_RENDER_TARGET,
+				},
+				{
+					 mVoxelizationContext.normalTarget,
+					 RESOURCE_STATE_SHADER_RESOURCE,
+					RESOURCE_STATE_RENDER_TARGET,
+				},
+				{
+					 mVoxelizationContext.worldPosTarget,
+					 RESOURCE_STATE_SHADER_RESOURCE,
+					RESOURCE_STATE_RENDER_TARGET,
+				},
+			};
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, rtBarriers, &context.frameContext->cbh);
+		}
+
+		uint32_t width = mVoxelizationContext.albedoTarget->getWidth();
+		uint32_t height = mVoxelizationContext.albedoTarget->getHeight();
+		mRenderSystem->setViewport(0, 0, width, height, 0.0f, 1.0f, &context.frameContext->cbh);
+		mRenderSystem->setScissor(0, 0, width, height, &context.frameContext->cbh);
+
 		renderScene(mGameCamera->getCamera(), mSceneManager, context,
 			info, pUserDefineShader);
-		mRenderSystem->popGroupMarker();
+
+		{
+			RenderTargetBarrier rtBarriers[] =
+			{
+				{
+					 mVoxelizationContext.albedoTarget,
+					RESOURCE_STATE_RENDER_TARGET,
+					 RESOURCE_STATE_SHADER_RESOURCE,
+				},
+				{
+					 mVoxelizationContext.normalTarget,
+					RESOURCE_STATE_RENDER_TARGET,
+					 RESOURCE_STATE_SHADER_RESOURCE,
+				},
+				{
+					 mVoxelizationContext.worldPosTarget,
+					RESOURCE_STATE_RENDER_TARGET,
+					 RESOURCE_STATE_SHADER_RESOURCE,
+				}
+			};
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers, &context.frameContext->cbh);
+		}
+		mRenderSystem->popGroupMarker(context.frameContext->cbh);
 		};
 
 	FrameConstantBuffer* pFrameBuffer = &mFrameConstantBuffer;
-	UpdatePassCallback updateCallback = [=, this](float delta) {
+	UpdatePassCallback updateCallback = [=, this](RenderContext& context) {
 		uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		updateFrameData(mGameCamera->getCamera(), nullptr, *pFrameBuffer);
 		mRenderSystem->updateBufferObject(
 			frameIndex ? firstFrameBufferHandle : zeroFrameBufferHandle,
-			(const char*)pFrameBuffer, sizeof(mFrameConstantBuffer));
+			(const char*)pFrameBuffer, sizeof(mFrameConstantBuffer), 0, &context.frameContext->cbh);
 		EngineRenderList renderList;
 		mSceneManager->getSceneRenderList(mGameCamera->getCamera(), renderList, false);
 		for (auto r : renderList.mOpaqueList)
@@ -249,7 +319,7 @@ void VoxelConeTracingApp::sceneGeometryPass()
 				objectBuffer.world = modelMatrix.transpose();
 				objectBuffer.diffuseColor = r->getColor();
 				mRenderSystem->updateBufferObject(resourceInfo->modelObjectHandle,
-					(const char*)&objectBuffer, sizeof(objectBuffer));
+					(const char*)&objectBuffer, sizeof(objectBuffer), 0, &context.frameContext->cbh);
 			}
 			
 		}
@@ -269,7 +339,6 @@ void VoxelConeTracingApp::shadowPass()
 	mShadowCamera = new Ogre::Camera("", nullptr);
 
 	
-
 	Ogre::Camera* lightCam = mShadowCamera;
 
 	BufferDesc desc{};
@@ -307,16 +376,17 @@ void VoxelConeTracingApp::shadowPass()
 		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)frameData;
 		Ogre::Material* mat = r->getMaterial().get();
 
-		mRenderSystem->bindPipeline(mShadowPipelineHandle);
+		mRenderSystem->bindPipeline(context.frameContext->cbh, mShadowPipelineHandle);
 
 		mRenderSystem->bindDescriptorSet(context.frameContext->cbh, mShadowProgramHandle, resourceInfo->zeroShadowSet);
 		VertexData* vertexData = r->getVertexData();
 		IndexData* indexData = r->getIndexData();
-		vertexData->bind(nullptr);
-		indexData->bind();
+		auto vertexHandle = vertexData->getBuffer(0);
+		mRenderSystem->bindVertexBuffer(context.frameContext->cbh, 1, &vertexHandle, nullptr);
+		mRenderSystem->bindIndexBuffer(context.frameContext->cbh, indexData->getHandle(), indexData->getIndexSize(), 0);
 		IndexDataView* view = r->getIndexView();
 		mRenderSystem->drawIndexed(view->mIndexCount, 1,
-			view->mIndexLocation, view->mBaseVertexLocation, 0);
+			view->mIndexLocation, view->mBaseVertexLocation, 0, &context.frameContext->cbh);
 		};
 	userDefineShader.drawCallback = drawCallback;
 
@@ -330,22 +400,14 @@ void VoxelConeTracingApp::shadowPass()
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
 		info.depthTarget.depthIndex = 0;
 		info.passName = "vctShadowPass";
-		mRenderSystem->pushGroupMarker("vctShadowPass");
-		{
-			RenderTargetBarrier rtBarriers[] =
-			{
-				{
-					 voxelizationContext->depthTarget,
-					 RESOURCE_STATE_UNDEFINED,
-					 RESOURCE_STATE_DEPTH_WRITE
-				}
-			};
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
-		}
+		info.cbh = context.frameContext->cbh;
+		mRenderSystem->pushGroupMarker(context.frameContext->cbh, "vctShadowPass");
 		
-
-		renderScene(lightCam, mSceneManager, context,
-			info, pUserDefineShader);
+		uint32_t width = mVoxelizationContext.depthTarget->getWidth();
+		uint32_t height = mVoxelizationContext.depthTarget->getHeight();
+		mRenderSystem->setViewport(0, 0, width, height, 0.0f, 1.0f, &context.frameContext->cbh);
+		mRenderSystem->setScissor(0, 0, width, height, &context.frameContext->cbh);
+		renderScene(lightCam, mSceneManager, context, info, pUserDefineShader);
 
 		{
 			RenderTargetBarrier rtBarriers[] =
@@ -353,21 +415,21 @@ void VoxelConeTracingApp::shadowPass()
 				{
 					 voxelizationContext->depthTarget,
 					 RESOURCE_STATE_DEPTH_WRITE,
-					 RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+					 RESOURCE_STATE_SHADER_RESOURCE
 				}
 			};
 			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
-		mRenderSystem->popGroupMarker();
-		};
+		mRenderSystem->popGroupMarker(context.frameContext->cbh);
+	};
 
 	FrameConstantBuffer* pFrameBuffer = &mFrameConstantBuffer;
-	UpdatePassCallback updateCallback = [=, this](float delta) {
+	UpdatePassCallback updateCallback = [=, this](RenderContext& context) {
 		uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		updateFrameData(lightCam, nullptr, *pFrameBuffer);
 		mRenderSystem->updateBufferObject(
 			frameIndex ? firstFrameBufferHandle : zeroFrameBufferHandle,
-			(const char*)pFrameBuffer, sizeof(mFrameConstantBuffer));
+			(const char*)pFrameBuffer, sizeof(mFrameConstantBuffer), 0, &context.frameContext->cbh);
 		};
 
 	auto shadowPass = createUserDefineRenderPass(
@@ -423,11 +485,12 @@ void VoxelConeTracingApp::voxelizationPass()
 
 		VertexData* vertexData = r->getVertexData();
 		IndexData* indexData = r->getIndexData();
-		vertexData->bind(nullptr);
-		indexData->bind();
+		auto vertexHandle = vertexData->getBuffer(0);
+		mRenderSystem->bindVertexBuffer(context.frameContext->cbh, 1, &vertexHandle, nullptr);
+		mRenderSystem->bindIndexBuffer(context.frameContext->cbh, indexData->getHandle(), indexData->getIndexSize(), 0);
 		IndexDataView* view = r->getIndexView();
 		mRenderSystem->drawIndexed(view->mIndexCount, 1,
-			view->mIndexLocation, view->mBaseVertexLocation, 0);
+			view->mIndexLocation, view->mBaseVertexLocation, 0, &context.frameContext->cbh);
 		};
 	userDefineShader.drawCallback = drawCallback;
 
@@ -443,13 +506,13 @@ void VoxelConeTracingApp::voxelizationPass()
 		info.passName = "VoxelizationPass";
 		info.extent[0] = VCT_SCENE_VOLUME_SIZE;
 		info.extent[1] = VCT_SCENE_VOLUME_SIZE;
-		
-		mRenderSystem->pushGroupMarker("VoxelizationPass");
+		info.cbh = context.frameContext->cbh;
+		mRenderSystem->pushGroupMarker(context.frameContext->cbh, "VoxelizationPass");
 		{
 			RenderTargetBarrier rtBarriers[] = {
 			{
 				 voxelizationContext->voxelizationTarget,
-				 RESOURCE_STATE_SHADER_RESOURCE,
+				 RESOURCE_STATE_UNORDERED_ACCESS,
 				  RESOURCE_STATE_COPY_DEST
 			}
 			};
@@ -470,6 +533,12 @@ void VoxelConeTracingApp::voxelizationPass()
 			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
 		
+		uint32_t width = mVoxelizationContext.voxelizationTarget->getWidth();
+		uint32_t height = mVoxelizationContext.voxelizationTarget->getHeight();
+		mRenderSystem->setViewport(0, 0, width, height, 0.0f, 1.0f, &context.frameContext->cbh);
+		mRenderSystem->setScissor(0, 0, width, height, &context.frameContext->cbh);
+
+		mRenderSystem->bindPipeline(context.frameContext->cbh, mVoxellizationPipelineHandle);
 		renderScene(mGameCamera->getCamera(), mSceneManager, context,
 			info, pUserDefineShader);
 
@@ -483,11 +552,11 @@ void VoxelConeTracingApp::voxelizationPass()
 			};
 			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
-		mRenderSystem->popGroupMarker();
+		mRenderSystem->popGroupMarker(context.frameContext->cbh);
 		
 		};
 	
-	UpdatePassCallback updateCallback = [=, this](float delta) {
+	UpdatePassCallback updateCallback = [=, this](RenderContext& context) {
 		uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 
 		mVoxelizationBlock.worldVoxelScale = 128.0f;
@@ -503,7 +572,7 @@ void VoxelConeTracingApp::voxelizationPass()
 		mVoxelizationBlock.worldVoxelCube = (scale * translate).transpose();
 		mVoxelizationBlock.shadowViewProjection = (mLightProject * mLightView).transpose();
 		mRenderSystem->updateBufferObject(
-			pVctFrameData[frameIndex].voxelizationBlockHandle, (const char*)&mVoxelizationBlock, sizeof(VoxelizationBlock));
+			pVctFrameData[frameIndex].voxelizationBlockHandle, (const char*)&mVoxelizationBlock, sizeof(VoxelizationBlock), 0, &context.frameContext->cbh);
 		};
 
 	auto voxelizationPass = createUserDefineRenderPass(
@@ -517,54 +586,27 @@ void VoxelConeTracingApp::computePass()
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		VctFrameData* frameData = &this->mComputeFrameData[0];
 
-		{
-			RenderTargetBarrier barriers[] = {
-			{
-				mVoxelizationContext.voxelizationTarget,
-				RESOURCE_STATE_UNORDERED_ACCESS,
-				RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE
-			},
-			{
-				mVoxelizationContext.albedoTarget,
-				RESOURCE_STATE_RENDER_TARGET,
-				RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE
-			},
-			{
-				mVoxelizationContext.normalTarget,
-				RESOURCE_STATE_RENDER_TARGET,
-				RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE
-			},
-			{
-				mVoxelizationContext.worldPosTarget,
-				RESOURCE_STATE_RENDER_TARGET,
-				RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE
-			},
-			};
-
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, barriers, &context.frameContext->cbh);
-		}
-
 
 		if (1)
 		{
-			mRenderSystem->pushGroupMarker("MipmapPrepare");
-			mRenderSystem->bindComputePipeline(mMipmapPrepareHandle, &frameData->mipmapPrepareZeroSet, 1);
+			mRenderSystem->pushGroupMarker(context.frameContext->cbh, "MipmapPrepare");
+			mRenderSystem->bindComputePipeline(mMipmapPrepareHandle, context.frameContext->cbh, &frameData->mipmapPrepareZeroSet, 1);
 			mRenderSystem->dispatchComputeShader(16, 16, 16, &context.frameContext->cbh);
-			mRenderSystem->popGroupMarker();
+			mRenderSystem->popGroupMarker(context.frameContext->cbh);
 		}
 
 		if (1)
 		{
-			mRenderSystem->pushGroupMarker("VCT Mipmapping main CS");
+			mRenderSystem->pushGroupMarker(context.frameContext->cbh, "VCT Mipmapping main CS");
 			int mipDimension = VCT_SCENE_VOLUME_SIZE >> 1;
 			for (uint32_t i = 0; i < VCT_MIPS; i++)
 			{
 				uint32_t count = std::max(1, mipDimension / 8);
-				mRenderSystem->bindComputePipeline(mMipmapMainHandle, &frameData->mipmapResultZeroSet[i], 1);
+				mRenderSystem->bindComputePipeline(mMipmapMainHandle, context.frameContext->cbh, &frameData->mipmapResultZeroSet[i], 1);
 				mRenderSystem->dispatchComputeShader(count, count, count, &context.frameContext->cbh);
 				mipDimension >>= 1;
 			}
-			mRenderSystem->popGroupMarker();
+			mRenderSystem->popGroupMarker(context.frameContext->cbh);
 
 			{
 				RenderTargetBarrier barriers[] = {
@@ -642,13 +684,13 @@ void VoxelConeTracingApp::computePass()
 
 				mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 6, barriers, &context.frameContext->cbh);
 			}
-			mRenderSystem->pushGroupMarker("VCT TracingCone CS");
+			mRenderSystem->pushGroupMarker(context.frameContext->cbh, "VCT TracingCone CS");
 			float x = mVoxelizationContext.tracingResultTarget->getWidth() / 8.0f;
 			float y = mVoxelizationContext.tracingResultTarget->getHeight() / 8.0f;
 
-			mRenderSystem->bindComputePipeline(mTracingConeHandle, &frameData->tracingConeZeroSet, 1);
+			mRenderSystem->bindComputePipeline(mTracingConeHandle, context.frameContext->cbh, &frameData->tracingConeZeroSet, 1);
 			mRenderSystem->dispatchComputeShader(x, Ogre::Math::ICeil(y), 1, &context.frameContext->cbh);
-			mRenderSystem->popGroupMarker();
+			mRenderSystem->popGroupMarker(context.frameContext->cbh);
 
 			{
 				RenderTargetBarrier barriers[] = {
@@ -692,41 +734,26 @@ void VoxelConeTracingApp::computePass()
 			RenderTargetBarrier barriers[] = {
 			{
 				mVoxelizationContext.voxelizationTarget,
-				RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
+				RESOURCE_STATE_SHADER_RESOURCE,
 				RESOURCE_STATE_UNORDERED_ACCESS
-			},
-			{
-				mVoxelizationContext.albedoTarget,
-				RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
-				RESOURCE_STATE_RENDER_TARGET
-			},
-			{
-				mVoxelizationContext.normalTarget,
-				RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
-				RESOURCE_STATE_RENDER_TARGET
-			},
-			{
-				mVoxelizationContext.worldPosTarget,
-				RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
-				RESOURCE_STATE_RENDER_TARGET
 			}
 			};
 
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, barriers, &context.frameContext->cbh);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, barriers, &context.frameContext->cbh);
 		}
 		};
 	auto* cam = mGameCamera->getCamera();
-	UpdatePassCallback updateCallback = [=, this](float delta) {
+	UpdatePassCallback updateCallback = [=, this](RenderContext& context) {
 		uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		const Ogre::Matrix4& view = cam->getViewMatrix();
 		const Ogre::Matrix4& proj = cam->getProjectMatrix();
 		mVoxelizationBlock.viewProjection = (proj * view).transpose();
 		mVoxelizationBlock.shadowViewProjection = (mLightProject * mLightView).transpose();
 		mRenderSystem->updateBufferObject(tracingVoxelizationBlockHandle,
-			(const char*)&this->mVoxelizationBlock, sizeof(mVoxelizationBlock));
+			(const char*)&this->mVoxelizationBlock, sizeof(mVoxelizationBlock), 0, &context.frameContext->cbh);
 		mVctMainBlock.CameraPos = cam->getDerivedPosition();
 		mRenderSystem->updateBufferObject(tracingMainBlockHandle,
-			(const char*)&this->mVctMainBlock, sizeof(VCTMainBlock));
+			(const char*)&this->mVctMainBlock, sizeof(VCTMainBlock), 0, &context.frameContext->cbh);
 		};
 
 	mVctMainBlock.CameraPos = cam->getDerivedPosition();
@@ -759,8 +786,8 @@ void VoxelConeTracingApp::lightingPass()
 	auto targetCount = 1;
 	rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
 	rasterState.renderTargetCount = targetCount;
-	rasterState.depthWrite = true;
-	rasterState.depthTest = true;
+	rasterState.depthWrite = false;
+	rasterState.depthTest = false;
 	rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8B8G8R8;
 
 	mVCTLightingPipelineHandle = mRenderSystem->createPipeline(rasterState, mVCTLightingProgramHandle);
@@ -976,77 +1003,60 @@ void VoxelConeTracingApp::lightingPass()
 		VoxelizationContext* voxelizationContext = &this->mVoxelizationContext;
 		info.renderTargetCount = 1;
 		info.renderTargets[0].target.renderTarget = voxelizationContext->lightingTarget;
-		info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
+		info.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 1.0f };
 		info.depthTarget.target.depthStencil = nullptr;
 		info.depthTarget.clearValue = { 1.0f, 0.0f };
 		info.passName = "lightingPass";
 		info.extent[0] = VCT_SCENE_VOLUME_SIZE;
 		info.extent[1] = VCT_SCENE_VOLUME_SIZE;
-
-		mRenderSystem->pushGroupMarker("lightingPass");
+		info.cbh = context.frameContext->cbh;
+		mRenderSystem->pushGroupMarker(context.frameContext->cbh, "lightingPass");
+		uint32_t width = mVoxelizationContext.lightingTarget->getWidth();
+		uint32_t height = mVoxelizationContext.lightingTarget->getHeight();
+		mRenderSystem->setViewport(0, 0, width, height, 0.0f, 1.0f, &context.frameContext->cbh);
+		mRenderSystem->setScissor(0, 0, width, height, &context.frameContext->cbh);
 		{
 			RenderTargetBarrier rtBarriers[] =
 			{
 				{
-					 voxelizationContext->albedoTarget,
-					RESOURCE_STATE_RENDER_TARGET,
-					RESOURCE_STATE_PIXEL_SHADER_RESOURCE
-				},
-				{
-					 voxelizationContext->normalTarget,
-					RESOURCE_STATE_RENDER_TARGET,
-					RESOURCE_STATE_PIXEL_SHADER_RESOURCE
-				},
-				{
-					 voxelizationContext->worldPosTarget,
-					RESOURCE_STATE_RENDER_TARGET,
-					RESOURCE_STATE_PIXEL_SHADER_RESOURCE
-				},
+					 voxelizationContext->lightingTarget,
+					 RESOURCE_STATE_SHADER_RESOURCE,
+					 RESOURCE_STATE_RENDER_TARGET
+				}
 			};
 
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers, &context.frameContext->cbh);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
-		
 		mRenderSystem->beginRenderPass(info);
 		uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		VctFrameData* frameData = &mComputeFrameData[frameIndex];
-		mRenderSystem->bindPipeline(mVCTLightingPipelineHandle);
+		mRenderSystem->bindPipeline(context.frameContext->cbh, mVCTLightingPipelineHandle);
 		mRenderSystem->bindDescriptorSet(context.frameContext->cbh,
 			mVCTLightingProgramHandle, frameData->zeroSetOfLightingPass);
 		mRenderSystem->bindVertexBuffer(context.frameContext->cbh, 1, &vertexHandle, nullptr);
 		mRenderSystem->bindIndexBuffer(context.frameContext->cbh, indexHandle, 2, 0);
-		mRenderSystem->drawIndexed(6, 1, 0, 0, 0);
+		mRenderSystem->drawIndexed(6, 1, 0, 0, 0, &context.frameContext->cbh);
 		mRenderSystem->endRenderPass(info);
 
 		{
 			RenderTargetBarrier rtBarriers[] =
 			{
 				{
-					 voxelizationContext->albedoTarget,
-					 RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-					RESOURCE_STATE_RENDER_TARGET
-				},
-				{
-					 voxelizationContext->normalTarget,
-					 RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-					RESOURCE_STATE_RENDER_TARGET
-				},
-				{
-					 voxelizationContext->worldPosTarget,
-					 RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-					RESOURCE_STATE_RENDER_TARGET
-				},
+					 voxelizationContext->lightingTarget,
+					 RESOURCE_STATE_RENDER_TARGET,
+					RESOURCE_STATE_SHADER_RESOURCE
+				}
 			};
 
-			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 3, rtBarriers, &context.frameContext->cbh);
+			mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
-		mRenderSystem->popGroupMarker();
+		mRenderSystem->popGroupMarker(context.frameContext->cbh);
 		};
 
 	
 
 	VctFrameData* frameDatas = mComputeFrameData.data();
-	UpdatePassCallback updateCallback = [=, this](float delta) {
+	UpdatePassCallback updateCallback = [=, this](RenderContext& context) {
 		
 		uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		VctFrameData* frameData = &frameDatas[frameIndex];
@@ -1070,7 +1080,7 @@ void VoxelConeTracingApp::lightingPass()
 		dummy.ShadowTexelSize = Ogre::Vector2(1/ shadowWidth, 1/shadowHeight);
 		dummy.ShadowIntensity = 0.5f;
 		mRenderSystem->updateBufferObject(frameData->zeroLightingContantBlockHandle,
-			(const char*)&dummy, sizeof(dummy));
+			(const char*)&dummy, sizeof(dummy), 0, &context.frameContext->cbh);
 		
 		DirectionalLight dirLight;
 		dirLight.LightDirection = mLightDirection;
@@ -1079,7 +1089,7 @@ void VoxelConeTracingApp::lightingPass()
 		dirLight.pad1 = Ogre::Vector3::ZERO;
 
 		mRenderSystem->updateBufferObject(
-			frameData->directionalLightBlockHandle, (const char*)&dirLight, sizeof(dirLight));
+			frameData->directionalLightBlockHandle, (const char*)&dirLight, sizeof(dirLight), 0, &context.frameContext->cbh);
 		};
 
 	auto lightingPass = createUserDefineRenderPass(
@@ -1120,9 +1130,10 @@ void VoxelConeTracingApp::initScene()
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
 	texProperty._tex_usage = Ogre::TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
 	texProperty._need_mipmap = false;
+	texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
 	mVoxelizationContext.albedoTarget = mRenderSystem->createRenderTarget("albedoTarget", texProperty);
-
 	mVoxelizationContext.lightingTarget = mRenderSystem->createRenderTarget("lightingTarget", texProperty);
+	texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
 	texProperty._tex_format = Ogre::PixelFormat::PF_RGBA16_SNORM;
 	mVoxelizationContext.normalTarget = mRenderSystem->createRenderTarget("normalTarget", texProperty);
 	texProperty._tex_format = Ogre::PixelFormat::PF_FLOAT32_RGBA;
@@ -1131,8 +1142,9 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = 2048;
 	texProperty._tex_format = Ogre::PixelFormat::PF_DEPTH32F;
 	texProperty._tex_usage = Ogre::TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-	mVoxelizationContext.depthTarget = mRenderSystem->createRenderTarget(
-		"depthTarget", texProperty);
+	texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
+	mVoxelizationContext.depthTarget = mRenderSystem->createRenderTarget("depthTarget2", texProperty);
+
 
 	ShaderInfo shaderInfo;
 	shaderInfo.shaderName = "sceneGeometryPass";
@@ -1178,6 +1190,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
 	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	texProperty._need_mipmap = false;
+	texProperty._initState = RESOURCE_STATE_UNORDERED_ACCESS;
 	mVoxelizationContext.voxelizationTarget = mRenderSystem->createRenderTarget("voxelizationTarget", texProperty);
 
 	shaderInfo.shaderName = "voxelizationPass";
@@ -1215,7 +1228,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
 	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	texProperty._need_mipmap = false;
-
+	texProperty._initState = RESOURCE_STATE_UNORDERED_ACCESS;
 	mVoxelizationContext.posxTarget = mRenderSystem->createRenderTarget("posxTarget", texProperty);
 	mVoxelizationContext.negxTarget = mRenderSystem->createRenderTarget("negxTarget", texProperty);
 	mVoxelizationContext.posyTarget = mRenderSystem->createRenderTarget("posyTarget", texProperty);
@@ -1519,6 +1532,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
 	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	texProperty._need_mipmap = false;
+	texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
 	mVoxelizationContext.tracingResultTarget = mRenderSystem->createRenderTarget("tracingResult", texProperty);
 
 	params.filterMag = backend::SamplerFilterType::LINEAR;
@@ -1675,7 +1689,12 @@ void VoxelConeTracingApp::initFrameResource(uint32_t frameIndex, Renderable* r)
 	auto* rs = Ogre::Root::getSingleton().getRenderSystem();
 	if (1)
 	{
-		VctFrameResourceInfo* resourceInfo = new VctFrameResourceInfo;
+		VctFrameResourceInfo* resourceInfo = (VctFrameResourceInfo*)r->getFrameResourceInfo(frameIndex);
+		if (resourceInfo != nullptr)
+		{
+			return;
+		}
+		resourceInfo = new VctFrameResourceInfo;
 		resourceInfo->update = false;
 
 		r->updateFrameResource(frameIndex, (void*)resourceInfo);
@@ -1685,8 +1704,7 @@ void VoxelConeTracingApp::initFrameResource(uint32_t frameIndex, Renderable* r)
 		desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_CPU_TO_GPU;
 		desc.bufferCreationFlags = 0;
 		desc.mSize = sizeof(ObjectConstantBuffer);
-		Handle<HwBufferObject> objectBufferHandle =
-			rs->createBufferObject(desc);
+		Handle<HwBufferObject> objectBufferHandle = rs->createBufferObject(desc);
 		resourceInfo->modelObjectHandle = objectBufferHandle;
 
 		Ogre::Material* mat = r->getMaterial().get();

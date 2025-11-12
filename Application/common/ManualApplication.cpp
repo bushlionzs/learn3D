@@ -258,6 +258,8 @@ void ManualApplication::loop()
 			mAppInfo->update(delta);
 			context.delta = delta;
 
+			mRenderSystem->beginCommandBuffer(frameContext->cbh);
+
 			for (auto pass : mPassList)
 			{
 				pass->update(context);
@@ -266,7 +268,7 @@ void ManualApplication::loop()
 
 			mRenderSystem->flushCmd(context.cqh, true);
 
-			mRenderSystem->beginCommandBuffer(frameContext->cbh);
+			
 
 			for (auto pass : mPassList)
 			{
@@ -283,79 +285,6 @@ void ManualApplication::loop()
 	}
 }
 
-void ManualApplication::loop2()
-{
-	mFrameLast = 0;
-	mFrameCurrent = 0;
-	MSG msg;
-	RenderContext context;
-	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
-	context.sch = mSwapChainHandle; 
-
-	std::vector<FrameContext> frameContextList;
-	frameContextList.resize(3);
-	for (uint32_t i = 0; i < 3; i++)
-	{
-		FrameContext* frameContext = &frameContextList[i];
-		frameContext->cbh = mRenderSystem->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
-		frameContext->fh = mRenderSystem->createFence(true);
-		frameContext->sph = mRenderSystem->createSemaphore();
-	}
-
-	while (true)
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-				break;
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-
-			if (msg.message == WM_QUIT)
-			{
-				break;
-			}
-		}
-		else
-		{
-			Ogre::Root::getSingleton()._fireFrameStarted();
-			mRenderSystem->swapChainAcquire(context.cqh, context.sch, context.scInfo);
-			FrameContext* frameContext = &frameContextList[context.scInfo.imageIndex];
-			mRenderSystem->waitFence(frameContext->fh);
-			context.frameContext = frameContext;
-			{
-				mFrameCurrent = mTimer.getMicrosecondsCPU();
-				float delta = (mFrameCurrent - mFrameLast) / 1000000.0f;
-				InputManager::getSingletonPtr()->captureInput();
-				mGameCamera->update(delta);
-				mAppInfo->update(delta);
-				context.delta = delta;
-				
-				for (auto pass : mPassList)
-				{
-					pass->update(context);
-				}
-				
-				mRenderSystem->flushCmd(context.cqh, true);
-				
-			}
-			
-			mRenderSystem->beginCommandBuffer(frameContext->cbh);
-
-			for (auto pass : mPassList)
-			{
-				pass->execute(context);
-			}
-
-			mRenderSystem->endCommandBuffer(frameContext->cbh);
-			mRenderSystem->executeAndPresent(context.cqh, nullptr, 0, 
-				&frameContext->cbh, 1, &frameContext->sph, 1,
-				frameContext->fh, &context.sch, 1);
-
-			ShowFrameFrequency();
-		}
-	}
-}
 
 void ManualApplication::ShowFrameFrequency()
 {

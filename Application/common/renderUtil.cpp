@@ -515,7 +515,7 @@ void renderScene(
     UserDefineShader* userDefineShader)
 {
     auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-    auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
+    uint64_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
     uint32_t index = 0;
 
@@ -534,13 +534,6 @@ void renderScene(
 
     uint32_t delta = get_tick_count() - aa;
 
-    for (auto r : renderList)
-    {
-        
-
-       
-    }
-
     rs->beginRenderPass(renderPassInfo);
     for (auto r : renderList)
     {
@@ -555,16 +548,13 @@ void renderScene(
             continue;
         }
 
-        if (!r->hasFlag(frameIndex))
-        {
-            userDefineShader->initCallback(frameIndex, r, userDefineShader->shadowHandle);
-            r->setFlag(frameIndex, true);
-            userDefineShader->bindCallback(context, frameIndex, r, userDefineShader->param);
+        
+        userDefineShader->initCallback(frameIndex, r, userDefineShader->shadowHandle);
+        userDefineShader->bindCallback(context, frameIndex, r, userDefineShader->param);
 
-            if (userDefineShader->updateCallback)
-            {
-                userDefineShader->updateCallback(context, frameIndex, r);
-            }
+        if (userDefineShader->updateCallback)
+        {
+            userDefineShader->updateCallback(context, frameIndex, r);
         }
         
         userDefineShader->drawCallback(context, frameIndex, r, userDefineShader->param);

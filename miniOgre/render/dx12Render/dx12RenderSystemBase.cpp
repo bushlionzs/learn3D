@@ -857,10 +857,6 @@ void Dx12RenderSystemBase::updateDescriptorSet(
             continue;
         }
 
-        if (strcmp(pParam->pName, "indirectDataBuffer") == 0)
-        {
-            int kk = 0;
-        }
         dx12DescSet->addDescriptroInfo(descriptroInfo);
         assert_invariant(descriptroInfo);
         const uint32_t       arrayCount = std::max(1U, pParam->mCount);

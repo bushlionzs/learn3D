@@ -9,6 +9,7 @@ int main()
 	AppInfo info;
 
 	ManualApplication app;
+	info.useSRGB = false;
 	info.engineType = EngineType_Vulkan;
 	info.engineType = EngineType_Dx12;
 	info.setup = [&instance, &app](RenderContext& context, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {

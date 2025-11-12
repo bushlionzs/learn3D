@@ -179,6 +179,6 @@ private:
 	VCTMainBlock mVctMainBlock;
 
 	Ogre::Vector3 mLightDirection;
-	Ogre::Camera* mShadowCamera;
+	Ogre::Camera* mShadowCamera = nullptr;
 	float mTotalTime = 0.0f;
 };

@@ -42,7 +42,6 @@ private:
 	virtual bool frameStarted(const Ogre::FrameEvent& evt);
 	void ShowFrameFrequency();
 	void loop();
-	void loop2();
 protected:
 	ApplicationWindow* mApplicationWindow = nullptr;
 	RenderSystem* mRenderSystem;

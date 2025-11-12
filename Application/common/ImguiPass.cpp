@@ -49,10 +49,10 @@ void ImGuiPass::execute(RenderContext& context)
     if (imDrawData->CmdListsCount > 0) {
         uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
         ImGuiFrameData& frameData = mFrameDataList[frameIndex];
-        rs->bindPipeline(mPipelineHandle);
+        rs->bindPipeline(context.frameContext->cbh, mPipelineHandle);
 
-        rs->bindVertexBuffer(mVertexBufferHandle, 0, 0);
-        rs->bindIndexBuffer(mIndexBufferHandle, 2, 0);
+        rs->bindVertexBuffer(context.frameContext->cbh, 0, &mVertexBufferHandle, nullptr);
+        rs->bindIndexBuffer(context.frameContext->cbh, mIndexBufferHandle, 2, 0);
         
         rs->setViewport(0, 0, mWidth, mHeight, 0.0, 1.0, nullptr);
         

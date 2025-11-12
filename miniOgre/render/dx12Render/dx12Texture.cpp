@@ -155,7 +155,7 @@ void Dx12Texture::_createTex()
     texDesc.SampleDesc.Quality = 0;
     texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
    
-    D3D12_RESOURCE_STATES states = D3D12_RESOURCE_STATE_COMMON;
+    D3D12_RESOURCE_STATES states = D3D12Mappings::util_to_dx12_resource_state(mTextureProperty._initState);
 
     D3D12_CLEAR_VALUE* pvalue = nullptr;
     D3D12_CLEAR_VALUE ClearValue{};
@@ -179,9 +179,6 @@ void Dx12Texture::_createTex()
             texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
             pvalue = &ClearValue;
         }
-
-        states = D3D12_RESOURCE_STATE_GENERIC_READ;
-        states = D3D12Mappings::util_to_dx12_resource_state(mTextureProperty._initState);
         texDesc.SampleDesc.Count = 1;
 
         mNeedMipmaps = false;

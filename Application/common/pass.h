@@ -46,7 +46,7 @@ struct RenderContext
 
 using RenderPassCallback = std::function< void(RenderContext& context, RenderPassInfo& info)>;
 using ComputePassCallback = std::function< void(RenderContext& context)>;
-using UpdatePassCallback = std::function<void(float delta)>;
+using UpdatePassCallback = std::function<void(RenderContext& context)>;
 
 class PassBase
 {

@@ -12,7 +12,7 @@ public:
 
     virtual bool initialize()override;
     virtual void execute(RenderContext& context)override;
-    virtual void update(float delta)override;
+    virtual void update(RenderContext& context)override;
 private:
     Ogre::OgreTexture* mSourceTexture;
     Ogre::RenderWindow* mRenderWindow;

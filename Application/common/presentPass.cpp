@@ -121,7 +121,7 @@ void PresentPass::execute(RenderContext& context)
 	}
 }
 
-void PresentPass::update(float delta)
+void PresentPass::update(RenderContext& context)
 {
 
 }

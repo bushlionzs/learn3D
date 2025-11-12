@@ -47,10 +47,10 @@ namespace Ogre
     0, 0, 0, 1 );
 
     const Matrix4 Matrix4::IDENTITY(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1 );
+        1.0, 0, 0, 0,
+        0, 1.0, 0, 0,
+        0, 0, 1.0, 0,
+        0, 0, 0, 1.0 );
 
     const Matrix4 Matrix4::CLIPSPACE2DTOIMAGESPACE(
         0.5,    0,  0, 0.5, 

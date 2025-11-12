@@ -59,6 +59,7 @@ void GameCamera::lookAt(
     targetPosition = targetPos;
    
     Ogre::Matrix4 viewMatrix = Ogre::Math::makeLookAt(camPos, targetPos, up);
+    Ogre::Matrix4 m = viewMatrix.transpose();
     mCamera->updateViewMatrix(viewMatrix);
     mCamera->updatePosition(camPos);
     Ogre::Vector3 lookDir = targetPos - camPos;
@@ -299,7 +300,7 @@ bool GameCamera::update(float delta)
         {
             transM = Ogre::Math::makeTranslateMatrix(eyePosition);
         }*/
-        transM = Ogre::Math::makeTranslateMatrix(eyePosition);
+        transM = Ogre::Math::makeTranslateMatrix(-eyePosition);
         viewMatrix = transM * rotM;
     }
     Ogre::Vector3 pos = viewMatrix.getTrans();

@@ -44,7 +44,7 @@ void BasicApplication::setup(
 	mRenderWindow = renderWindow;
 	mRenderPipeline = renderPipeline;
 	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
-	base1();
+	base2();
 }
 
 void BasicApplication::update(float delta)
@@ -105,7 +105,7 @@ void BasicApplication::base1()
 	ShaderInfo& info = mat->getShaderInfo();
 	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, 3.f), Ogre::Vector3::ZERO);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
-	mGameCamera->setMoveSpeed(0.5);
+	mGameCamera->setMoveSpeed(0.01);
 
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 
@@ -131,7 +131,7 @@ void BasicApplication::base1()
 void BasicApplication::base2()
 {
 	std::string name = "Â¥À¼ÕÊÅñ04.mesh";
-	name = "SpaceCraftHangar.glb";
+	name = "dragon.fbx";
 	auto mesh = Ogre::MeshManager::getSingletonPtr()->load(name);
 
 	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
@@ -144,35 +144,29 @@ void BasicApplication::base2()
 	spherenode->attachObject(sphere);
 
 	mGameCamera->lookAt(
-		Ogre::Vector3(0.0f, 3.0f, 15.0f),
-		Ogre::Vector3(0.0f, 0.0f, 0.0f));
+		Ogre::Vector3(0.0f, 7.0f, 33.0f),
+		Ogre::Vector3(0.0f, 7.0f, 32.0f));
 	mGameCamera->setMoveSpeed(20);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
 
-	Ogre::Matrix4 m;
 
-	if (ogreConfig.reverseDepth)
-	{
-		float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
-		m = Ogre::Math::makePerspectiveMatrixReverseZ(
-			Ogre::Math::PI / 2.0f, aspectInverse, 0.1, 2000);
-	}
-	else
-	{
-		float aspect = ogreConfig.width / (float)ogreConfig.height;
-		m = Ogre::Math::makePerspectiveMatrix(
-			Ogre::Math::PI / 2.0f, aspect, 0.1, 2000);
-	}
-	mGameCamera->getCamera()->updateProjectMatrix(m);
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.1f;
+	cameraInfo.farClip = 6000.f;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+	mGameCamera->updateCameraInfo(cameraInfo);
 
 	RenderPassInput input;
 	input.color = mRenderWindow->getColorTarget();
 	input.depth = mRenderWindow->getDepthTarget();
 	input.cam = mGameCamera->getCamera();
 	input.sceneMgr = mSceneManager;
-	auto mainPass = createStandardRenderPass(input);
+	auto mainPass = createSceneRenderPass(input);
 	mRenderPipeline->addRenderPass(mainPass);
 }
 

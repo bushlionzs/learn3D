@@ -207,6 +207,11 @@ public:
 
     void addDescriptroInfo(const DescriptorInfo* descriptroInfo)
     {
+        for (auto descinfo : mDescriptorInfos)
+        {
+            if (descinfo == descriptroInfo)
+                return;
+        }
         mDescriptorInfos.push_back(descriptroInfo);
     }
 

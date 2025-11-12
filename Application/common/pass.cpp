@@ -472,9 +472,9 @@ public:
 		mRenderCallback(context, mRenderPassInfo);
 	}
 
-	void update(float delta)
+	void update(RenderContext& context)
 	{
-		mUpdateCallback(delta);
+		mUpdateCallback(context);
 	}
 private:
 	RenderPassInfo mRenderPassInfo;
@@ -503,10 +503,10 @@ public:
 		mCallback(context);
 	}
 
-	void update(float delta)
+	void update(RenderContext& context)
 	{
 		if(mUpdateCallback)
-			mUpdateCallback(delta);
+			mUpdateCallback(context);
 	}
 private:
 	ComputePassCallback mCallback;
