@@ -15,6 +15,7 @@
 #include "renderUtil.h"
 #include "game_camera.h"
 #include "time_util.h"
+#include "pass.h"
 
 void initFrameResource(
     uint32_t frameIndex, 
@@ -25,7 +26,13 @@ void initFrameResource(
     auto* rs = Ogre::Root::getSingleton().getRenderSystem();
     if(1)
     {
-        FrameResourceInfo* resourceInfo = new FrameResourceInfo;
+        FrameResourceInfo* resourceInfo = (FrameResourceInfo*)r->getFrameResourceInfo(frameIndex);
+        if (resourceInfo != nullptr)
+        {
+            return;
+        }
+        
+        resourceInfo = new FrameResourceInfo;
         resourceInfo->update = false;
 
         r->updateFrameResource(frameIndex, (void*)resourceInfo);
@@ -314,25 +321,25 @@ void updateFrameResource(RenderContext& context, uint32_t frameIndex, Ogre::Rend
     objectBuffer.useShadow = r->haveShadow();
     objectBuffer.haveTexture = mat->hasTexture();
     rs->updateBufferObject(resourceInfo->modelObjectHandle,
-        (const char*)&objectBuffer, sizeof(objectBuffer));
+        (const char*)&objectBuffer, sizeof(objectBuffer), 0, &context.frameContext->cbh);
 
     RawData* rawData = r->getSkinnedData();
     if (rawData)
     {
-        rs->updateBufferObject(resourceInfo->skinObjectHandle, rawData->mData, rawData->mDataSize);
+        rs->updateBufferObject(resourceInfo->skinObjectHandle, rawData->mData, rawData->mDataSize, 0, &context.frameContext->cbh);
     }
 
     if (mat->isPbr())
     {
         auto& matBuffer = mat->getPbrMatInfo();
         rs->updateBufferObject(resourceInfo->matObjectHandle,
-            (const char*)&matBuffer, sizeof(matBuffer));
+            (const char*)&matBuffer, sizeof(matBuffer), 0, &context.frameContext->cbh);
     }
     else
     {
         auto& matBuffer = mat->getMatInfo();
         rs->updateBufferObject(resourceInfo->matObjectHandle,
-            (const char*)&matBuffer, sizeof(matBuffer));
+            (const char*)&matBuffer, sizeof(matBuffer), 0, &context.frameContext->cbh);
     }
 }
 

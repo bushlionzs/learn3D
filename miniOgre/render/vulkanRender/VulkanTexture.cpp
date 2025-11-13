@@ -329,6 +329,8 @@ void VulkanTexture::createImage(
     imageInfo.format = format;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    BitField<BackendResourceState> state = mTextureProperty._initState;
+    //imageInfo.initialLayout = VulkanMappings::util_to_vk_image_layout(state);
     imageInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT;
     
     

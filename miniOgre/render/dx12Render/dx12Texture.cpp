@@ -72,9 +72,12 @@ void Dx12Texture::createInternalResourcesImpl(void)
 {
     mFormat = D3D12Mappings::_getClosestSupportedPF(mTextureProperty._tex_format);
 
-    mD3DFormat = D3D12Mappings::_getGammaFormat(D3D12Mappings::_getPF(mTextureProperty._tex_format), false);
+    mD3DFormat = D3D12Mappings::_getGammaFormat(D3D12Mappings::_getPF(mFormat), false);
 
-
+    if (DXGI_FORMAT_UNKNOWN == mD3DFormat)
+    {
+        int kk = 0;
+    }
     switch (mTextureProperty._texType)
     {
     case TEX_TYPE_2D:

@@ -304,11 +304,11 @@ public:
     }
 
 
-    virtual void beginCmd()
+    virtual void beginDefaultCommandList()
     {
         assert_invariant(false);
     }
-    virtual void flushCmd(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, bool waitCmd)
+    virtual void flushDefaultCommandList(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, bool waitCmd)
     {
         assert_invariant(false);
     }

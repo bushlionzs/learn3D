@@ -286,7 +286,7 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 	tp._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	tp._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	tp._samplerParams.anisotropyLog2 = 0;
-
+	tp._face = 6;
 	TextureLoadDesc textureLoadDesc;
 	textureLoadDesc.tp = &tp;
 	textureLoadDesc.pFileName = "papermill.ktx";
@@ -348,24 +348,9 @@ void PbrMaterial::example2(RenderPipeline* renderPipeline,
 
 	gameCamera->lookAt(camPos, lookAt);
 	gameCamera->setMoveSpeed(1);
-	gameCamera->setRotateSpeed(0.5);
+	gameCamera->setRotateSpeed(0.1);
 	gameCamera->setCameraType(CameraMoveType_LookAt);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-	/*Ogre::Matrix4 projectMatrix;
-	if (ogreConfig.reverseDepth)
-	{
-		float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
-		projectMatrix = Ogre::Math::makePerspectiveMatrixReverseZ(
-			Ogre::Math::PI / 3.0f, aspectInverse, 0.1, 256);
-	}
-	else
-	{
-		float aspect = ogreConfig.width / (float)ogreConfig.height;
-		projectMatrix = Ogre::Math::makePerspectiveMatrix(
-			Ogre::Math::PI / 3.0f, aspect, 0.1, 256);
-	}
-
-	gameCamera->getCamera()->updateProjectMatrix(projectMatrix);*/
 
 	CameraInfo cameraInfo;
 	cameraInfo.width = ogreConfig.width;

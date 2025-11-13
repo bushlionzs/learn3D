@@ -122,12 +122,12 @@ void VoxelConeTracingApp::setup(
 void VoxelConeTracingApp::update(float delta)
 {
 	mLightDirection = Ogre::Vector3(0.191, 1.0f, 0.574f);
-	mTotalTime += delta;
-    float v = sin(mTotalTime*0.005);
+	//mTotalTime = Root::getSingleton().getAccumulation();
+    float v = sin(mTotalTime);
 
 	//v = 0.5;
 	mLightDirection.x = v;
-	//mLightDirection.normalise();
+	mLightDirection.normalise();
 	Ogre::Vector3 eyePositon = Ogre::Vector3::ZERO;
 	Ogre::Vector3 targetPos = eyePositon - mLightDirection;
 	mLightView = Ogre::Math::makeLookAtRH(
@@ -521,6 +521,8 @@ void VoxelConeTracingApp::voxelizationPass()
 
 		Ogre::TextureSubresourceRange subresources;
 		subresources.aspect = Ogre::TEXTURE_ASPECT_COLOR_BIT;
+		subresources.mipmap_count = 1;
+		subresources.layer_count = 1;
 		mRenderSystem->clearRenderTarget(voxelizationContext->voxelizationTarget, Ogre::Vector4::ZERO, subresources);
 		{
 			RenderTargetBarrier rtBarriers[] = {
@@ -1188,7 +1190,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = 256;
 	texProperty._depth = 256;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
-	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | TEXTURE_USAGE_STORAGE_BIT;
 	texProperty._need_mipmap = false;
 	texProperty._initState = RESOURCE_STATE_UNORDERED_ACCESS;
 	mVoxelizationContext.voxelizationTarget = mRenderSystem->createRenderTarget("voxelizationTarget", texProperty);
@@ -1226,7 +1228,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = 128;
 	texProperty._depth = 128;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
-	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | Ogre::TEXTURE_USAGE_STORAGE_BIT;
 	texProperty._need_mipmap = false;
 	texProperty._initState = RESOURCE_STATE_UNORDERED_ACCESS;
 	mVoxelizationContext.posxTarget = mRenderSystem->createRenderTarget("posxTarget", texProperty);
@@ -1320,7 +1322,7 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = 128;
 	texProperty._depth = 128;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
-	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | Ogre::TEXTURE_USAGE_STORAGE_BIT;
 	texProperty._need_mipmap = true;
 	texProperty._maxMipLevel = 6;
 	mVoxelizationContext.posxResultTarget = mRenderSystem->createRenderTarget("voxelTextureResultPosX", texProperty);
@@ -1530,10 +1532,10 @@ void VoxelConeTracingApp::initScene()
 	texProperty._height = ogreConfig.height * ratio;
 	texProperty._depth = 1;
 	texProperty._tex_format = Ogre::PixelFormat::PF_A8B8G8R8;
-	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | TEXTURE_USAGE_STORAGE_BIT;
 	texProperty._need_mipmap = false;
 	texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
-	mVoxelizationContext.tracingResultTarget = mRenderSystem->createRenderTarget("tracingResult", texProperty);
+	mVoxelizationContext.tracingResultTarget = mRenderSystem->createRenderTarget("tracingResultTarget", texProperty);
 
 	params.filterMag = backend::SamplerFilterType::LINEAR;
 	params.filterMin = backend::SamplerFilterType::LINEAR;

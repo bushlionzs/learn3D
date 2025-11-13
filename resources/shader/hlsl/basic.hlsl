@@ -156,7 +156,7 @@ float4 PS(VertexOut input) : SV_Target
 	}
     float4 color = first.Sample(firstSampler, input.UV) * cbMaterial.gDiffuseAlbedo;
 	if (color.a < 0.5) {
-		//clip(-1);
+		clip(-1);
 	}
 	
 	if(cbPerObject.useShadow == 0)

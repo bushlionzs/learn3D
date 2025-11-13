@@ -48,7 +48,7 @@ namespace Ogre {
 		uint64_t getCurrentFrame();
 		uint64_t getCurrentFrameIndex();
 		uint64_t getCurrentFPS();
-		
+		double getAccumulation();
 		bool _fireFrameStarted();
 		void update(float delta);
 		bool _fireFrameEnded();

@@ -417,7 +417,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		//mMipMapCommandBuffer = mDx12RenderSystem->createCommandBuffer(Ogre::QUEUE_TYPE_GRAPHICS);
 		mMipMapCommandQueue = mDx12RenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
 	}
-	
+	int maxwidth = 2048;
 	if (!mMipmapHandle)
 	{
 		VertexDeclaration decl;
@@ -432,10 +432,10 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 		rasterState.depthTest = false;
 		rasterState.pixelFormat[0] = PF_A8B8G8R8;
 		mMipmapPipelineHandle = rs->createPipeline(rasterState, mMipmapHandle);
-
+		
 		Ogre::TextureProperty texProperty;
-		texProperty._width = tex->getWidth();
-		texProperty._height = tex->getHeight();
+		texProperty._width = maxwidth;
+		texProperty._height = maxwidth;
 		texProperty._tex_usage = TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
 		texProperty._tex_format = PF_A8B8G8R8;
 		texProperty._need_mipmap = false;
@@ -486,7 +486,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 
 	
 
-	float aa = 1024.0f;
+	float aa = maxwidth;
 	Ogre::Vector3 leftop = Ogre::Vector3(0.0f, 0.0f, 0.0f);
 	Ogre::Vector3 leftbottom = Ogre::Vector3(0.0f, aa, 0.0f);
 	Ogre::Vector3 righttop = Ogre::Vector3(aa, 0.0f, 0.0f);
@@ -622,9 +622,7 @@ void DX12Helper::generateMipmaps(Dx12Texture* tex)
 			rs->resourceBarrier(0, nullptr, 1, texBarriers, 1, rtBarriers, nullptr);
 		}	
 
-		//rs->flushCmd(mMipMapCommandQueue, mMipMapCommandBuffer, true);
-		//rs->beginCommandBuffer(mMipMapCommandBuffer);
+		rs->flushDefaultCommandList(mMipMapCommandQueue, true);
+		rs->beginDefaultCommandList();
 	}
-
-	//rs->endCommandBuffer(mMipMapCommandBuffer);
 }

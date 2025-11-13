@@ -11,7 +11,7 @@ int main()
 	info.useCEGUI = true;
 	info.useSRGB = true;
 	info.engineType = EngineType_Vulkan;
-	info.engineType = EngineType_Dx12;
+	//info.engineType = EngineType_Dx12;
 	ManualApplication app; 
 
 	info.setup = [&instance, &app, &info](RenderContext& context, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {

@@ -62,6 +62,7 @@ material myrect
 			texture_unit
 			{
 				//texture studio_garden_px.jpg
+				//texture FlightHelmet_Materials_LeatherPartsMat_OcclusionRoughMetal.png
 				texture 5061699253647017043.png
 			}
 

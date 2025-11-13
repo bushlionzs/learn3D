@@ -198,9 +198,12 @@ protected:
         QueueType queueType = QUEUE_TYPE_GRAPHICS
     )  override;
     virtual void beginCmd();
-    virtual void flushCmd(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, bool waitCmd);
+    virtual void flushDefaultCommandList(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, bool waitCmd) override;
 
-
+    virtual void flushCmd(
+        filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        bool waitCmd) override;
     virtual void destroyBufferObject(Handle<HwBufferObject> bufHandle);
 
     virtual uint32_t getAlignmentSize(BufferObjectBinding bufferType);
@@ -312,4 +315,6 @@ protected:
     SubgroupCapabilities subgroup_capabilities;
 
     RenderSystem::TransferContext mTransferContext[2];
+
+    Handle<HwFence> mFlushFence;
 };

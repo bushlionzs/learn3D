@@ -162,8 +162,8 @@ public:
     )override;
 
 
-    virtual void beginCmd();
-    virtual void flushCmd(Handle<HwCommandQueue>  cqh, bool waitCmd);
+    virtual void beginDefaultCommandList();
+    virtual void flushDefaultCommandList(Handle<HwCommandQueue>  cqh, bool waitCmd);
     virtual void flushCmd(
         Handle<HwCommandQueue> cqh,
         Handle<HwCommandBuffer> cbh,

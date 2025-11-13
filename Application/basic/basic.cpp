@@ -44,7 +44,7 @@ void BasicApplication::setup(
 	mRenderWindow = renderWindow;
 	mRenderPipeline = renderPipeline;
 	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
-	base2();
+	base1();
 }
 
 void BasicApplication::update(float delta)

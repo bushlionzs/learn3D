@@ -217,7 +217,7 @@ void ManualApplication::loop()
 		frameContext->sph = mRenderSystem->createSemaphore();
 	}
 
-	mRenderSystem->flushCmd(context.cqh, true);
+	mRenderSystem->flushDefaultCommandList(context.cqh, true);
 	while (true)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -266,7 +266,7 @@ void ManualApplication::loop()
 			}
 
 
-			mRenderSystem->flushCmd(context.cqh, true);
+			mRenderSystem->flushDefaultCommandList(context.cqh, true);
 
 			
 
@@ -292,12 +292,13 @@ void ManualApplication::ShowFrameFrequency()
 	{
 		mLastFPS = Ogre::Root::getSingletonPtr()->getCurrentFPS();
 
-
+	
 		char buffer[1024];
 		std::string str = mGameCamera->getCameraString();
-		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, triangle:%d,batch:%d, %s", 
+		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, time:%.2f, triangle:%d,batch:%d, %s", 
 			mRenderSystem->getRenderSystemName().c_str(),
-			mLastFPS, mRenderSystem->getTriangleCount(), 
+			mLastFPS, Root::getSingleton().getAccumulation(),
+			mRenderSystem->getTriangleCount(), 
 			mRenderSystem->getBatchCount(),
 			str.c_str());
 

@@ -156,7 +156,6 @@ public:
 			rs->bindVertexBuffer(context.frameContext->cbh, 1, &vertexHandle, nullptr);
 			if (indexData)
 			{
-				indexData->bind();
 				rs->bindIndexBuffer(context.frameContext->cbh, indexData->getHandle(), indexData->getIndexSize(), 0);
 				IndexDataView* view = r->getIndexView();
 				rs->drawIndexed(view->mIndexCount, 1,
@@ -230,17 +229,17 @@ public:
 			void* frameData = r->getFrameResourceInfo(frameIndex);
 			FrameResourceInfo* resourceInfo = (FrameResourceInfo*)frameData;
 			uint64_t index = (uint64_t)param;
-			rs->bindPipeline(shadowPipelineHandle);
-			rs->bindDescriptorSets(shadowPipelineHandle, &resourceInfo->zeroShadowSet[index], 1);
+			rs->bindPipeline(context.frameContext->cbh, shadowPipelineHandle);
+			rs->bindDescriptorSet(context.frameContext->cbh, shadowProgramHandle, resourceInfo->zeroShadowSet[index]);
 			VertexData* vertexData = r->getVertexData();
 			IndexData* indexData = r->getIndexData();
-			vertexData->bind(nullptr);
+			vertexData->bind(context.frameContext->cbh);
 			if (indexData)
 			{
-				indexData->bind();
+				indexData->bind(context.frameContext->cbh);
 				IndexDataView* view = r->getIndexView();
 				rs->drawIndexed(view->mIndexCount, 1,
-					view->mIndexLocation, view->mBaseVertexLocation, 0);
+					view->mIndexLocation, view->mBaseVertexLocation, 0, &context.frameContext->cbh);
 			}
 			else
 			{
@@ -270,11 +269,11 @@ public:
 			{
 				{
 					mPassInput.shadowMapTarget,
-					Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+					Ogre::RESOURCE_STATE_SHADER_RESOURCE,
 					Ogre::RESOURCE_STATE_DEPTH_WRITE
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
 		auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 		auto& info = mRenderPassInfo;
@@ -282,7 +281,7 @@ public:
 		auto sceneManager = mPassInput.sceneMgr;
 		info.renderTargetCount = 0;
 		info.depthTarget.target.depthStencil = mPassInput.shadowMapTarget;
-		
+		info.cbh = context.frameContext->cbh;
 		info.shadowPass = true;
 		float depthValue = 1.0f;
 		if (ogreConfig.reverseDepth)
@@ -291,6 +290,12 @@ public:
 		}
 		info.depthTarget.clearValue = { depthValue, 0.0f };
 
+		uint32_t width = mPassInput.shadowMapTarget->getWidth();
+		uint32_t height = mPassInput.shadowMapTarget->getHeight();
+		rs->setViewport(0, 0, width, height, 0.0f, 1.0f, &context.frameContext->cbh);
+		rs->setScissor(0, 0, width, height, &context.frameContext->cbh);
+
+		rs->pushGroupMarker(context.frameContext->cbh, "shadowPass");
 		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 		{
 			
@@ -307,17 +312,20 @@ public:
 				{
 					mPassInput.shadowMapTarget,
 					Ogre::RESOURCE_STATE_DEPTH_WRITE,
-					Ogre::RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+					Ogre::RESOURCE_STATE_SHADER_RESOURCE
 				}
 			};
-			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
+			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
 		
+		rs->popGroupMarker(context.frameContext->cbh);
 	}
 
 	void draw(RenderContext& context)
 	{
 		auto rs = Ogre::Root::getSingleton().getRenderSystem();
+
+		rs->pushGroupMarker(context.frameContext->cbh, "renderPass");
 		{
 			Ogre::RenderTargetBarrier rtBarriers[] =
 			{
@@ -340,12 +348,19 @@ public:
 		info.depthTarget.depthIndex = 0;
 		info.renderTargets[0].clearColour = { 0.0, 0.0, 0.0, 1.000000000f };
 		info.cbh = context.frameContext->cbh;
+		info.viewport = false;
 		float depthValue = 1.0f;
 		if (ogreConfig.reverseDepth)
 		{
 			depthValue = 0.0f;
 		}
 		info.depthTarget.clearValue = { depthValue, 0.0f };
+
+		uint32_t width = ogreConfig.width;
+		uint32_t height = ogreConfig.height;
+		rs->setViewport(0, 0, width, height, 0.0f, 1.0f, &mRenderPassInfo.cbh);
+		rs->setScissor(0, 0, width, height, &mRenderPassInfo.cbh);
+
 		renderScene(cam, sceneManager, context, mRenderPassInfo, &mUserDefineShader);
 
 		{
@@ -359,6 +374,8 @@ public:
 			};
 			rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
 		}
+
+		rs->popGroupMarker(context.frameContext->cbh);
 	}
 	virtual void update(float delta)
 	{

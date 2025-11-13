@@ -75,9 +75,8 @@ bool Dx12RenderSystemBase::engineInit()
 
     mCommandBuffer = createCommandBuffer(QUEUE_TYPE_GRAPHICS);
 
-    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
-    cb->beginComandBuffer();
-
+    beginCommandBuffer(mCommandBuffer);
+    
     mCommandFence = createFence(true);
 
     mTextureListen = new Dx12TextureListen;
@@ -161,10 +160,7 @@ void Dx12RenderSystemBase::frameStart()
 
     mLastPipelineState = nullptr;*/
 
-    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
-   
-    cb->beginComandBuffer();
-    beginCmd();
+    this->beginDefaultCommandList();
 }
 
 void Dx12RenderSystemBase::frameEnd()
@@ -1132,19 +1128,21 @@ void Dx12RenderSystemBase::resourceBarrier(
 }
 
 
-void Dx12RenderSystemBase::beginCmd() 
+void Dx12RenderSystemBase::beginDefaultCommandList()
 {
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
     auto* cl = cb->get();
+    cb->beginComandBuffer();
     ID3D12DescriptorHeap* heaps[] =
     {
         mDescriptorHeapContext->mCbvSrvUavHeaps[0]->pHeap,
         mDescriptorHeapContext->pSamplerHeaps[0]->pHeap
     };
     cl->SetDescriptorHeaps(2, heaps);
+    
 }
 
-void Dx12RenderSystemBase::flushCmd(Handle<HwCommandQueue> cqh, bool waitCmd)
+void Dx12RenderSystemBase::flushDefaultCommandList(Handle<HwCommandQueue> cqh, bool waitCmd)
 {
     DX12CommandQueue* cq = mResourceAllocator.handle_cast<DX12CommandQueue*>(cqh);
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
@@ -1168,7 +1166,6 @@ void Dx12RenderSystemBase::flushCmd(
     DX12CommandQueue* cq = mResourceAllocator.handle_cast<DX12CommandQueue*>(cqh);
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
     ID3D12GraphicsCommandList* cl = cb->get();
-    cb->endCommandBuffer();
     cq->executeCommandLists(&cl, 1);
     if (waitCmd)
     {

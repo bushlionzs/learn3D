@@ -1008,7 +1008,7 @@ void ShadowMap::base2(RenderContext& context)
             rs->popGroupMarker(context.frameContext->cbh);
             };
 
-        UpdatePassCallback shadowUpdateCallback = [=, this](float delta) {
+        UpdatePassCallback shadowUpdateCallback = [=, this](RenderContext& context) {
             };
         auto shadowPass = createUserDefineRenderPass(shadowCallback, shadowUpdateCallback);
         mRenderPipeline->addRenderPass(shadowPass);
@@ -1182,7 +1182,7 @@ void ShadowMap::base2(RenderContext& context)
             rs->popGroupMarker(context.frameContext->cbh);
             };
 
-        UpdateCallback vbUpdateCallback = [=, this](float delta)
+        UpdatePassCallback vbUpdateCallback = [=, this](RenderContext& context)
             {
             };
         auto vbPass = createUserDefineRenderPass(visibilityBufferCallback, vbUpdateCallback);
@@ -1476,7 +1476,7 @@ void ShadowMap::base2(RenderContext& context)
             }
             rs->popGroupMarker(context.frameContext->cbh);
             };
-        UpdatePassCallback updateCallback = [](float delta) {
+        UpdatePassCallback updateCallback = [](RenderContext& context) {
             };
         auto shadePass = createUserDefineRenderPass(shadeCallback, updateCallback);
         mRenderPipeline->addRenderPass(shadePass);

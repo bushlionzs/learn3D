@@ -215,6 +215,11 @@ namespace Ogre {
         return mCurrentFPS;
     }
 
+    double Root::getAccumulation()
+    {
+        return mAccumulation;
+    }
+
     bool Root::_fireFrameStarted()
     {
         mFrameCurrent = mTimer.getMicrosecondsCPU();

@@ -109,6 +109,7 @@ namespace Ogre
         texProperty._texType = TEX_TYPE_2D;
         texProperty._backgroudColor = ColourValue(0.678431f, 0.847058f, 0.901960f, 1.000000000f);
         texProperty._need_mipmap = false;
+        texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
         auto outPutTarget = rs->createRenderTarget("outputTarget", texProperty);
 
         RenderPassInfo renderPassInfo;
@@ -137,12 +138,12 @@ namespace Ogre
             RenderTargetBarrier uavBarriers[] = {
                {
                outPutTarget,
-               RESOURCE_STATE_GENERIC_READ,
+               RESOURCE_STATE_SHADER_RESOURCE,
                RESOURCE_STATE_RENDER_TARGET},
             };
             rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, &cbh);
         }
-        
+        rs->endCommandBuffer(cbh);
         rs->flushCmd(cqh, cbh, true);
 
         for (uint32_t m = 0; m < numMips; m++) 
@@ -235,6 +236,7 @@ namespace Ogre
                     RESOURCE_STATE_RENDER_TARGET
                 };
                 rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &cbh);
+                rs->endCommandBuffer(cbh);
                 rs->flushCmd(cqh, cbh, true);
             }
         }
@@ -251,7 +253,7 @@ namespace Ogre
             };
             rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, &cbh);
         }
-        
+        rs->endCommandBuffer(cbh);
         rs->flushCmd(cqh, cbh, true);
 
         return rt;
@@ -281,6 +283,7 @@ namespace Ogre
         texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
         texProperty._samplerParams.anisotropyLog2 = 0;
         texProperty._need_mipmap = false;
+        texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
         Ogre::RenderTarget* rt = rs->createRenderTarget(name, texProperty);
         ShaderInfo shaderInfo;
         shaderInfo.shaderName = "generateBRDFLUT";
@@ -305,7 +308,7 @@ namespace Ogre
         RenderTargetBarrier uavBarriers[] = {
                {
                rt,
-               RESOURCE_STATE_GENERIC_READ,
+               RESOURCE_STATE_SHADER_RESOURCE,
                RESOURCE_STATE_RENDER_TARGET},
         };
         rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, &cbh);
@@ -321,7 +324,7 @@ namespace Ogre
                RESOURCE_STATE_SHADER_RESOURCE
         };
         rs->resourceBarrier(0, nullptr, 0, nullptr, 1, uavBarriers, &cbh);
-        
+        rs->endCommandBuffer(cbh);
         rs->flushCmd(cqh, cbh, true);
 
         return rt;

@@ -188,6 +188,8 @@ bool VulkanRenderSystemBase::engineInit(bool raytracing)
         mTransferContext[i].cbh = createCommandBuffer(QUEUE_TYPE_TRANSFER);
     }
     
+
+    mFlushFence = createFence(true);
     return true;
 }
 
@@ -311,11 +313,23 @@ void VulkanRenderSystemBase::setViewport(
 {
     VkViewport viewport{};
     viewport.x = 0.0;
-    viewport.y = y;
+
     viewport.width = width;
-    viewport.height = (float)height;
+
+
+    if (true)
+    {
+        viewport.height = -(float)height;
+        viewport.y = height;
+    }
+    else
+    {
+        viewport.height = (float)height;
+        viewport.y = 0;
+    }
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
+
 
     VkCommandBuffer cmdBuffer;
     if (cbh)
@@ -687,6 +701,8 @@ void VulkanRenderSystemBase::copyImage(
     Ogre::RenderTarget* src,
     ImageCopyDesc& desc)
 {
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    auto cl = cb->commandBuffer;
     VkImageCopy copyRegion{};
     copyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     copyRegion.srcSubresource.baseArrayLayer = desc.srcSubresource.baseArrayLayer;
@@ -704,7 +720,7 @@ void VulkanRenderSystemBase::copyImage(
     copyRegion.extent.depth = desc.extent.depth;
     VulkanTexture* srcImage = (VulkanTexture*)src->getTarget();
     VulkanTexture* dstImage = (VulkanTexture*)dst->getTarget();
-    vkCmdCopyImage(mCommandBuffer, srcImage->getVkImage(),
+    vkCmdCopyImage(cl, srcImage->getVkImage(),
         VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
         dstImage->getVkImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
         1, &copyRegion);
@@ -1452,7 +1468,7 @@ void VulkanRenderSystemBase::beginCmd()
     mCommandBuffer = mCommands->get().buffer();
 }
 
-void VulkanRenderSystemBase::flushCmd(
+void VulkanRenderSystemBase::flushDefaultCommandList(
     filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
     bool waitCmd)
 {
@@ -1460,6 +1476,41 @@ void VulkanRenderSystemBase::flushCmd(
     mCommandBuffer = nullptr;
 }
 
+void VulkanRenderSystemBase::flushCmd(
+    filament::backend::Handle<filament::backend::HwCommandQueue> cqh,
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    bool waitCmd)
+{
+    VulkanCommandQueue* queue = mResourceAllocator.handle_cast<VulkanCommandQueue*>(cqh);
+
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    VkCommandBuffer cl = cb->commandBuffer;
+    VulkanFence* fence = mResourceAllocator.handle_cast<VulkanFence*>(mFlushFence);
+    vkResetFences(mVulkanPlatform->getDevice(), 1, &fence->vkFence);
+    VkPipelineStageFlags waitDestStageMasks[2] = {
+                VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+    };
+    VkSubmitInfo submitInfo{
+                .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                .waitSemaphoreCount = 0,
+                .pWaitSemaphores = nullptr,
+                .pWaitDstStageMask = waitDestStageMasks,
+                .commandBufferCount = 1,
+                .pCommandBuffers = &cl,
+                .signalSemaphoreCount = 0,
+                .pSignalSemaphores = nullptr,
+    };
+
+    VkResult result = vkQueueSubmit(queue->vkQueue, 1, &submitInfo, fence->vkFence);
+
+    if (waitCmd)
+    {
+        VkFence currentFence = fence->vkFence;
+        VkResult result = vkWaitForFences(mVulkanPlatform->getDevice(), 1, &currentFence, VK_TRUE, UINT64_MAX);
+        assert_invariant(result == VK_SUCCESS);
+    }
+}
 
 void VulkanRenderSystemBase::destroyBufferObject(Handle<HwBufferObject> bufHandle)
 {
@@ -1974,8 +2025,15 @@ void VulkanRenderSystemBase::bindVertexBuffer(
         VulkanBufferObject* vb = mResourceAllocator.handle_cast<VulkanBufferObject*>(bufHandle[i]);
         buffers[i] = vb->buffer.getGpuBuffer();
     }
-
-    vkCmdBindVertexBuffers(cb->commandBuffer, 0, binding_count, buffers, p_offsets);
+    if (p_offsets)
+    {
+        vkCmdBindVertexBuffers(cb->commandBuffer, 0, binding_count, buffers, p_offsets);
+    }
+    else
+    {
+        VkDeviceSize offsets[10] = { 0 };
+        vkCmdBindVertexBuffers(cb->commandBuffer, 0, binding_count, buffers, offsets);
+    }
 }
 
 void VulkanRenderSystemBase::bindIndexBuffer(

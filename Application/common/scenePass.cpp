@@ -14,7 +14,7 @@
 SceneRenderPass::SceneRenderPass(RenderPassInput& input)
 {
 	rs = Ogre::Root::getSingleton().getRenderSystem();
-
+	mRenderPassInfo.viewport = false;
 	mPassInput = input;
 	mRenderPassInfo.flipY = input.flipY;
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
@@ -273,6 +273,7 @@ void SceneRenderPass::draw(RenderContext& context)
 
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	auto& info = mRenderPassInfo;
+
 	auto cam = mPassInput.cam;
 	auto sceneManager = mPassInput.sceneMgr;
 	info.renderTargetCount = 1;

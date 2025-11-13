@@ -15,7 +15,7 @@ int main()
 	info.useSRGB = true;
 	info.reverseDepth = true;
 	info.engineType = EngineType_Vulkan;
-	//info.engineType = EngineType_Dx12;
+	info.engineType = EngineType_Dx12;
 	ManualApplication app;
 	info.setup = [&instance, &app](RenderContext& context, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {
 		instance.setup(&app, context, win, sceneManager, gameCamera);

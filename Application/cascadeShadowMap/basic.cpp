@@ -50,7 +50,7 @@ void BasicApplication::setup(
 void BasicApplication::update(float delta)
 {
 	Ogre::Matrix4 lightViewMatrix;
-	mTotalTime += delta;
+	mTotalTime = Ogre::Root::getSingleton().getAccumulation();
 	//mTotalTime = 0.5f;
 	float angle = glm::radians(mTotalTime * 36.0f);
 	float radius = 20.0f;
@@ -103,24 +103,20 @@ void BasicApplication::base1()
 
 	Ogre::Vector3 camTarget = Ogre::Vector3(0.0f, h, -13.5f);
 	mGameCamera->lookAt(camPosition, camTarget);
-	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
-	mGameCamera->setMoveSpeed(50);
+	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
+	mGameCamera->setMoveSpeed(0.01);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-	Ogre::Matrix4 m;
-	if (ogreConfig.reverseDepth)
-	{
-		float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
-		m = Ogre::Math::makePerspectiveMatrixReverseZ(
-			Ogre::Math::PI / 3.0f, aspectInverse, 0.1, 6000);
-	}
-	else
-	{
-		float aspect = ogreConfig.width / (float)ogreConfig.height;
-		m = Ogre::Math::makePerspectiveMatrix(
-			Ogre::Math::PI / 3.0f, aspect, 1.0, 256);
+	
 
-	}
-	mGameCamera->getCamera()->updateProjectMatrix(m);
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.1f;
+	cameraInfo.farClip = 6000.f;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+	mGameCamera->updateCameraInfo(cameraInfo);
+
 	mLight = mSceneManager->createLight("light");
 
 	
@@ -217,7 +213,7 @@ void BasicApplication::base2()
 	mGameCamera->lookAt(
 		Ogre::Vector3(-0.12f, h, -5.25f),
 		Ogre::Vector3(-0.12f, h, -4.25f));
-	mGameCamera->setMoveSpeed(3);
+	mGameCamera->setMoveSpeed(0.01);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
@@ -254,7 +250,7 @@ void BasicApplication::base2()
 	texProperty._face = 4;
 	texProperty._tex_format = Ogre::PixelFormat::PF_DEPTH32F;
 	texProperty._tex_usage = TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-	
+	texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
 	input.shadowMapTarget = mRenderSystem->createRenderTarget("shadowTarget", texProperty);
 	
 	

@@ -52,7 +52,6 @@ Ogre::OgreTexture* Dx12RenderSystem::createManualTexture(
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
     Dx12Texture* tex = new Dx12Texture(
         name, texProperty, cb, true);
-
     tex->addListener(mTextureListen);
     return tex;
 }
