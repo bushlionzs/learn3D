@@ -297,7 +297,7 @@ void ManualApplication::ShowFrameFrequency()
 		std::string str = mGameCamera->getCameraString();
 		snprintf(buffer, sizeof(buffer), "render:%s, fps:%lld, time:%.2f, triangle:%d,batch:%d, %s", 
 			mRenderSystem->getRenderSystemName().c_str(),
-			mLastFPS, Root::getSingleton().getAccumulation(),
+			mLastFPS, Ogre::Root::getSingleton().getAccumulation(),
 			mRenderSystem->getTriangleCount(), 
 			mRenderSystem->getBatchCount(),
 			str.c_str());

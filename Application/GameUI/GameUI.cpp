@@ -1,13 +1,12 @@
-#include "stdafx.h"
-#include <string_util.h>
+#include <OgreHeader.h>
 #include "GameUI.h"
+#include <platform_file.h>
+#include <string_util.h>
 #include "engine_manager.h"
 #include "OgreParticleSystem.h"
 #include "myutils.h"
 #include "OgreResourceManager.h"
-
-#include "OgreViewport.h"
-
+#include "pbrWindow.h"
 #include "OgreTextureManager.h"
 #include "OgreMaterialManager.h"
 #include "OgreRenderTexture.h"
@@ -17,11 +16,11 @@
 #include <CEGUI/widgets/DragContainer.h>
 #include <CEGUI/CEGUI.h>
 
-#include <platform_file.h>
-#include <OgreRoot.h>
 
-#include "GameTableManager.h"
-#include "ToolTip.h"
+#include <OgreRoot.h>
+#include <OgreSceneManager.h>
+//#include "GameTableManager.h"
+//#include "ToolTip.h"
 
 
 using namespace CEGUI;
@@ -43,8 +42,8 @@ bool GameUI::appInit()
     InputManager::getSingletonPtr()->addListener(this);
     
     mGUIContext = CEGUIManager::getSingleton().getGUIContext();
-    new CGameTableManager;
-    CGameTableManager::GetSingleton().Initialize();
+  /*  new CGameTableManager;
+    CGameTableManager::GetSingleton().Initialize();*/
     //HelloDemo1();
     //ToolTipDemo();
     //SelfEquipDemo();
@@ -63,6 +62,21 @@ void GameUI::appUpdate(float delta)
     auto& defautContext = CEGUI::System::getSingleton().getDefaultGUIContext();
     //defautContext.injectTimePulse(delta);
     mGUIContext->injectTimePulse(delta);
+}
+
+void GameUI::setup(
+    RenderPipeline* renderPipeline,
+    RenderContext& context,
+    Ogre::RenderWindow* renderWindow,
+    Ogre::SceneManager* sceneManager,
+    GameCamera* gameCamera)
+{
+
+}
+
+void GameUI::update(float delta)
+{
+
 }
 
 void GameUI::helloDemo()
@@ -303,17 +317,17 @@ void GameUI::SelfEquipDemo()
 
     auto vp = CEGUIManager::getSingleton().getViewport();
 
-    vp->setClearEveryFrame(true);
+    /*vp->setClearEveryFrame(true);
     Ogre::ColourValue color(0.678431392f, 0.847058892f, 0.901960850f, 1.000000000f);
-    vp->setBackgroundColour(color);
+    vp->setBackgroundColour(color);*/
 
     Ogre::SceneManager* sceneMgr = Ogre::Root::getSingletonPtr()->createSceneManger(std::string("SelfEquip"));
-    Camera* cam = sceneMgr->createCamera("SelfEquip");
-    mRole = new Role(sceneMgr);
+    Ogre::Camera* cam = sceneMgr->createCamera("SelfEquip");
+    /*mRole = new Role(sceneMgr);
     mRole->createRoleData();
     auto rolepos = Ogre::Vector3(0.0, -100.0f, 0.0f);
     mRole->setPosition(rolepos);
-    mRole->walk();
+    mRole->walk();*/
 
     CEGUI::Window* backgroud = mSelfEquip->getChildRecursive("background");
     auto w = backgroud->getWidth();
@@ -321,19 +335,15 @@ void GameUI::SelfEquipDemo()
     float height = 300;
 
     Ogre::TextureProperty texProperty;
-    texProperty._tex_usage = Ogre::TextureUsage::COLOR_ATTACHMENT;
+    texProperty._tex_usage = Ogre::TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
     texProperty._width = width;
     texProperty._height = height;
 
     //texProperty._backgroudColor = color;
     texProperty._backgroudColor.a = 0.0f;
-    TexturePtr renderTexture =
-        TextureManager::getSingleton().createManual("RenderToTexture", texProperty);
+    Ogre::TexturePtr renderTexture =
+        Ogre::TextureManager::getSingleton().createManual("RenderToTexture", texProperty);
 
-    Ogre::RenderTarget* textureTarget = renderTexture->getBuffer()->getRenderTarget(0);
-    
-    auto kk = backgroud->getSize();
-    Viewport* rv = textureTarget->addViewport(cam);
     
     cam->setAspectRatio(width / height);
 
@@ -341,8 +351,7 @@ void GameUI::SelfEquipDemo()
     mUICamera->setDistance(270);
 
     mUICamera->update(0.0f);
-    //DirectX::XMVECTORF32 mClearColor = DirectX::Colors::Gold;
-    rv->setBackgroundColour(texProperty._backgroudColor);
+
 
     
     
@@ -352,7 +361,7 @@ void GameUI::SelfEquipDemo()
 
 bool GameUI::handle_ButtonClick(const CEGUI::EventArgs& args)
 {
-    CEGUI::Window* wnd = mSelfEquip->getChildRecursive("SelfEquip_0");
+    /*CEGUI::Window* wnd = mSelfEquip->getChildRecursive("SelfEquip_0");
 
     ItemData itemInfo;
     static uint32_t itemId = 10010020;
@@ -373,7 +382,7 @@ bool GameUI::handle_ButtonClick(const CEGUI::EventArgs& args)
     else
     {
         wnd->setProperty("Image", "");
-    }
+    }*/
     return true;
 }
 
@@ -486,7 +495,7 @@ void GameUI::MainMenuDemo()
 {
    
 }
-#include "pbrWindow.h"
+
 void GameUI::PbrDemo()
 {
     auto* window = new PBRWindow();
@@ -509,11 +518,11 @@ void GameUI::QuestDemo()
 
     
     std::string aa = "aaaaaaa[window = 'Quest_Option|type=Vanilla/Button|Text=我是中国人aa']bbbbb";
-    std::string cc = dy::acsi_to_utf8(aa);
+    std::string cc = CommonUtils::acsi_to_utf8(aa);
     CEGUI::String kk = (CEGUI::utf8*)cc.c_str();
     const char* str = (const char*)kk.c_str();
     auto str_size = strlen(str);
-    auto mm = dy::utf8_to_acsi(str);
+    auto mm = CommonUtils::utf8_to_acsi(str);
     desc->setProperty("Text", kk);
     auto* win = desc->getChildRecursive("Quest_Option");
     CEGUI::Window* npcname = main->getChild("Quest_NPCname");
@@ -521,7 +530,7 @@ void GameUI::QuestDemo()
     if (npcname)
     {
         std::wstring aa = L"天天向上";
-        std::string bb = dy::unicode_to_utf8(aa);
+        std::string bb = CommonUtils::unicode_to_utf8(aa);
         npcname->setProperty("Text", (CEGUI::utf8*)bb.c_str());
     }
 

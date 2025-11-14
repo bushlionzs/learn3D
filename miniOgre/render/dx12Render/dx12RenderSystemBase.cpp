@@ -756,7 +756,7 @@ Handle<HwPipeline> Dx12RenderSystemBase::createPipeline(
     DX12PipelineCache::RasterState dx12RasterState;
 
     dx12RasterState.cullMode = D3D12Mappings::getCullMode(rasterState.culling);
-    dx12RasterState.frontFace = FALSE;
+    dx12RasterState.frontFace = rasterState.inverseFrontFaces;
     dx12RasterState.depthBiasEnable = FALSE;
     
     dx12RasterState.blendEnable = rasterState.hasBlending();

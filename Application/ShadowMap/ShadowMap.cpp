@@ -656,13 +656,15 @@ void ShadowMap::base2(RenderContext& context)
                 barriers[0] =
                 {
                     filterDispatchGroupDataBuffer,
-                    RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
+                    RESOURCE_STATE_UNORDERED_ACCESS, 
+                    RESOURCE_STATE_UNORDERED_ACCESS
                 };
 
                 barriers[1] =
                 {
                     frameData->indirectDrawArgBuffer,
-                    RESOURCE_STATE_UNORDERED_ACCESS, RESOURCE_STATE_UNORDERED_ACCESS
+                    RESOURCE_STATE_UNORDERED_ACCESS, 
+                    RESOURCE_STATE_UNORDERED_ACCESS
                 };
 
                 rs->resourceBarrier(2, &barriers[0], 0, nullptr, 0, nullptr, &context.frameContext->cbh);
@@ -815,17 +817,8 @@ void ShadowMap::base2(RenderContext& context)
     texProperty._height = shadowSize;
     texProperty._tex_format = Ogre::PF_DEPTH32F;
     texProperty._tex_usage = Ogre::TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
     esmShadowMap = mRenderSystem->createRenderTarget("esmShadowMap", texProperty);
-
-    RenderTargetBarrier rtBarriers[] =
-    {
-        {
-            esmShadowMap,
-            RESOURCE_STATE_GENERIC_READ,
-            RESOURCE_STATE_SHADER_RESOURCE
-        }
-    };
-    rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
 
     //draw esm shadow map
     if(1)
@@ -840,6 +833,7 @@ void ShadowMap::base2(RenderContext& context)
         rasterState.colorWrite = false;
         rasterState.depthWrite = true;
         rasterState.depthTest = true;
+        rasterState.inverseFrontFaces = true;
         rasterState.renderTargetCount = 1;
         rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
         rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_LESS_OR_EQUAL;
@@ -1026,6 +1020,7 @@ void ShadowMap::base2(RenderContext& context)
         rasterState.depthTest = true;
         rasterState.depthFunc = backend::SamplerCompareFunc::COMPARE_OP_GREATER_OR_EQUAL;
         rasterState.colorWrite = true;
+        rasterState.inverseFrontFaces = true;
         rasterState.renderTargetCount = 1;
         rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8;
         auto vbBufferPassPipelineHandle = rs->createPipeline(rasterState, vbBufferPassHandle);
@@ -1039,8 +1034,8 @@ void ShadowMap::base2(RenderContext& context)
         texProperty._tex_format = Ogre::PixelFormat::PF_A8R8G8B8;
         texProperty._tex_usage = Ogre::TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
         texProperty._backgroudColor = ColourValue(1.0, 1.0, 1.0, 1.0f);
-        visibilityBufferTarget = rs->createRenderTarget("visibilityBufferTarget",
-            texProperty);
+        texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
+        visibilityBufferTarget = rs->createRenderTarget("visibilityBufferTarget", texProperty);
 
         auto subMeshCount = mesh->getSubMeshCount();
 
@@ -1136,7 +1131,7 @@ void ShadowMap::base2(RenderContext& context)
                 {
                     {
                         visibilityBufferTarget,
-                        Ogre::RESOURCE_STATE_GENERIC_READ,
+                        Ogre::RESOURCE_STATE_SHADER_RESOURCE,
                         Ogre::RESOURCE_STATE_RENDER_TARGET
                     }
                 };
@@ -1163,8 +1158,7 @@ void ShadowMap::base2(RenderContext& context)
             rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassAlphaHandle, frameData->zeroDescrSetOfVbPassAlpha);
             rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassAlphaHandle, frameData->firstDescrSetOfVbPassAlpha);
             rs->bindDescriptorSet(context.frameContext->cbh, vbBufferPassAlphaHandle, frameData->thirdDescrSetOfVbPassAlpha);
-            indirectBufferByteOffset =
-                GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 1, 0) * sizeof(uint32_t);
+            indirectBufferByteOffset = GET_INDIRECT_DRAW_ELEM_INDEX(VIEW_CAMERA, 1, 0) * sizeof(uint32_t);
             rs->drawIndexedIndirect(frameData->indirectDrawArgBuffer, indirectBufferByteOffset, 1, 32, &context.frameContext->cbh);
             rs->endRenderPass(info);
 
@@ -1174,7 +1168,7 @@ void ShadowMap::base2(RenderContext& context)
                     {
                         visibilityBufferTarget,
                         Ogre::RESOURCE_STATE_RENDER_TARGET,
-                        Ogre::RESOURCE_STATE_GENERIC_READ
+                        Ogre::RESOURCE_STATE_SHADER_RESOURCE
                     }
                 };
                 rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
@@ -1197,6 +1191,8 @@ void ShadowMap::base2(RenderContext& context)
         texProperty._height = ogreConfig.height;
         texProperty._tex_format = Ogre::PixelFormat::PF_A8R8G8B8_SRGB;
         texProperty._tex_usage = Ogre::TEXTURE_USAGE_COLOR_ATTACHMENT_BIT;
+        texProperty._backgroudColor = ColourValue(0.0f, 0.0f, 0.0f, 0.0f);
+        texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
         shadePassTarget = rs->createRenderTarget("shadePassTarget", texProperty);
     }
     
@@ -1210,6 +1206,7 @@ void ShadowMap::base2(RenderContext& context)
         rasterState.depthTest = false;
         rasterState.depthFunc = SamplerCompareFunc::COMPARE_OP_ALWAYS;
         rasterState.colorWrite = true;
+        rasterState.inverseFrontFaces = true;
         rasterState.renderTargetCount = 1;
         rasterState.pixelFormat[0] = Ogre::PixelFormat::PF_A8R8G8B8_SRGB;
         auto pipelineHandle = rs->createPipeline(rasterState, programHandle);
@@ -1431,18 +1428,13 @@ void ShadowMap::base2(RenderContext& context)
         RenderPassCallback shadeCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
             RenderTargetBarrier rtBarriers[] = 
             { 
-                { 
-                    visibilityBufferTarget,
-                    RESOURCE_STATE_RENDER_TARGET, 
-                    RESOURCE_STATE_SHADER_RESOURCE 
-                },
                 {
                         shadePassTarget,
                         RESOURCE_STATE_SHADER_RESOURCE,
                         RESOURCE_STATE_RENDER_TARGET
                 }
             };
-            rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
+            rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
             info.renderTargetCount = 1;
             info.renderTargets[0].target.renderTarget = shadePassTarget;
             info.renderTargets[0].clearColour = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -1488,18 +1480,8 @@ void ShadowMap::base2(RenderContext& context)
     mRenderPipeline->addRenderPass(presentPass);
     Ogre::Vector3 camPos2(120.f + SAN_MIGUEL_OFFSETX, 98.f, 14.f);
 
-    mGameCamera->setMoveSpeed(0.02f);
+    mGameCamera->setMoveSpeed(0.01f);
     mGameCamera->setRotateSpeed(0.001f);
-    /*Ogre::Vector3 lookAt = camPos2 + Ogre::Vector3(1.0f, 0.1f, 0.0f);
-    mGameCamera->lookAt(camPos2, lookAt);
-    float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
-    float aspect = ogreConfig.width / (float)ogreConfig.height;
-    float fovxRadians = Ogre::Math::PI / 3.0f;
-    float znear = 0.1f;
-    float zfar = 1000.0f;
-    Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrixReverseZ(
-        fovxRadians, aspectInverse, znear, zfar);
-    mGameCamera->getCamera()->updateProjectMatrix(m);*/
 
     Ogre::Vector3 lookAt = camPos2 + Ogre::Vector3(1.0f, 0.1f, 0.0f);
     mGameCamera->lookAt(camPos2, lookAt);
@@ -1509,7 +1491,7 @@ void ShadowMap::base2(RenderContext& context)
     cameraInfo.height = ogreConfig.height;
     cameraInfo.nearClip = 0.1f;
     cameraInfo.farClip = 1000.0f;
-    cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+    cameraInfo.fovRadians = Ogre::Math::PI / 2.0f;
     cameraInfo.reverseDepth = ogreConfig.reverseDepth;
     mGameCamera->updateCameraInfo(cameraInfo);
 }

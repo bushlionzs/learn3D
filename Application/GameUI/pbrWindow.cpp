@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <OgreHeader.h>
 #include <pbrWindow.h>
 
 PBRWindow::PBRWindow()

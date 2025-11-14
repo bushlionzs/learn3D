@@ -9,12 +9,13 @@ namespace CommonUtils
 	template<typename ... Args>
 	static std::string str_format(const char* format, Args ... args)
 	{
+#undef snprintf
 		auto size_buf = std::snprintf(nullptr, 0, format, args ...) + 1;
 		std::unique_ptr<char[]> buf(new(std::nothrow) char[size_buf]);
 
 		if (!buf)
 			return std::string("");
-
+        
 		std::snprintf(buf.get(), size_buf, format, args ...);
 		return std::string(buf.get(), buf.get() + size_buf - 1);
 	}

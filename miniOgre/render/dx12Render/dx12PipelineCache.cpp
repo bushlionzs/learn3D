@@ -131,7 +131,7 @@ DX12PipelineCache::DX12PipelineCacheEntry* DX12PipelineCache::createPipeline()
     
     psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     psoDesc.RasterizerState.CullMode = mPipelineRequirements.rasterState.cullMode;
-    psoDesc.RasterizerState.FrontCounterClockwise = FALSE;
+    psoDesc.RasterizerState.FrontCounterClockwise = mPipelineRequirements.rasterState.frontFace;
     psoDesc.RasterizerState.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
     psoDesc.RasterizerState.MultisampleEnable = FALSE;
     psoDesc.RasterizerState.SlopeScaledDepthBias = mPipelineRequirements.rasterState.depthBiasSlopeFactor;

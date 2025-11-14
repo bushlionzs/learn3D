@@ -282,7 +282,7 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 	instanceDesc.pBottomAS = pSanMiguelBottomAS;
 
 
-	rs->beginCmd();
+	rs->beginDefaultCommandList();
 	asDesc = {};
 	asDesc.mType = ACCELERATION_STRUCTURE_TYPE_TOP;
 	asDesc.mFlags = ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;
@@ -301,7 +301,7 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 	buildASDesc.pAccelerationStructure = pSanMiguelAS;
 
 	rs->buildAccelerationStructure(&buildASDesc);
-	rs->flushCmd(context.cqh, true);
+	rs->flushDefaultCommandList(context.cqh, true);
 	rs->removeAccelerationStructureScratch(pSanMiguelBottomAS);
 	rs->removeAccelerationStructureScratch(pSanMiguelAS);
 
@@ -446,10 +446,10 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 
 		descSets[0] = frameInfo->zeroDescriptorSet;
 		descSets[1] = frameInfo->firstDescriptorSet;
-		rs->pushGroupMarker("RayQuery");
-		rs->bindComputePipeline(programHandle, descSets, 2);
+		rs->pushGroupMarker(context.frameContext->cbh, "RayQuery");
+		rs->bindComputePipeline(programHandle, context.frameContext->cbh, descSets, 2);
 		rs->dispatchComputeShader(180, 180, 1, &context.frameContext->cbh);
-		rs->popGroupMarker();
+		rs->popGroupMarker(context.frameContext->cbh);
 		};
 
 	auto clearBufferPass = createComputePass(callback, nullptr);
@@ -651,7 +651,7 @@ void RayTracingApp::RayTracingGltf(
 		copyDesc.extent.depth = 1;
 		copyDesc.srcOffset = Ogre::Vector3i(0);
 		copyDesc.dstOffset = Ogre::Vector3i(0);
-		rs->copyImage(renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
+		rs->copyImage(context.frameContext->cbh, renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
 
 		{
 			RenderTargetBarrier rtBarriers[] =
@@ -672,7 +672,7 @@ void RayTracingApp::RayTracingGltf(
 		};
 
 	auto* cam = gameCamera->getCamera();
-	UpdatePassCallback rayTracingUpdateCallback = [=, this](float delta) {
+	UpdatePassCallback rayTracingUpdateCallback = [=, this](RenderContext& context) {
 		const auto& view = cam->getViewMatrix();
 		const auto& project = cam->getProjectMatrix();
 
@@ -852,7 +852,7 @@ void RayTracingApp::RayTracingShadow(
 
 		copyDesc.srcOffset = Ogre::Vector3i(0);
 		copyDesc.dstOffset = Ogre::Vector3i(0);
-		mRenderSystem->copyImage(renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
+		mRenderSystem->copyImage(context.frameContext->cbh, renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
 
 		{
 			RenderTargetBarrier rtBarriers[] =
@@ -874,7 +874,7 @@ void RayTracingApp::RayTracingShadow(
 
 	
 	auto* cam = gameCamera->getCamera();
-	UpdatePassCallback rayTracingUpdateCallback = [=, this](float delta) {
+	UpdatePassCallback rayTracingUpdateCallback = [=, this](RenderContext& context) {
 		const auto& view = cam->getViewMatrix();
 		const auto& project = cam->getProjectMatrix();
 		UBO ubo;
@@ -1120,7 +1120,7 @@ void RayTracingApp::RayTracingBox(
 
 			copyDesc.srcOffset = Ogre::Vector3i(0);
 			copyDesc.dstOffset = Ogre::Vector3i(0);
-			rs->copyImage(renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
+			rs->copyImage(context.frameContext->cbh, renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
 
 			{
 				RenderTargetBarrier rtBarriers[] =
@@ -1141,7 +1141,7 @@ void RayTracingApp::RayTracingBox(
 			};
 		
 		auto* cam = gameCamera->getCamera();
-		UpdatePassCallback rayTracingUpdateCallback = [=, this](float delta) {
+		UpdatePassCallback rayTracingUpdateCallback = [=, this](RenderContext& context) {
 			const Ogre::Matrix4& project = cam->getProjectMatrix();
 			const Ogre::Matrix4& view = cam->getViewMatrix();
 			Ogre::Matrix4 viewProj = project * view;
@@ -1312,7 +1312,7 @@ void RayTracingApp::RayTracingBasic(
 
 		copyDesc.srcOffset = Ogre::Vector3i(0);
 		copyDesc.dstOffset = Ogre::Vector3i(0);
-		rs->copyImage(renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
+		rs->copyImage(context.frameContext->cbh, renderWindow->getColorTarget(), rayTracingContext.outputTarget, copyDesc);
 
 		{
 			RenderTargetBarrier rtBarriers[] =
@@ -1341,7 +1341,7 @@ void RayTracingApp::RayTracingBasic(
 	
 
 	auto* cam = gameCamera->getCamera();
-	UpdatePassCallback rayTracingUpdateCallback = [=, this](float delta) {
+	UpdatePassCallback rayTracingUpdateCallback = [=, this](RenderContext& context) {
 		const Ogre::Matrix4& project = cam->getProjectMatrix();
 		const Ogre::Matrix4& view = cam->getViewMatrix();
 		UBO ubo;
@@ -1506,7 +1506,7 @@ void RayTracingApp::initRayTracingContext(
 	instanceDesc.pBottomAS = pBottomAS;
 
 
-	mRenderSystem->beginCmd();
+	mRenderSystem->beginDefaultCommandList();
 	asDesc = {};
 	asDesc.mType = ACCELERATION_STRUCTURE_TYPE_TOP;
 	asDesc.mFlags = ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;
@@ -1526,7 +1526,7 @@ void RayTracingApp::initRayTracingContext(
 	buildASDesc.pAccelerationStructure = pTopAS;
 
 	mRenderSystem->buildAccelerationStructure(&buildASDesc);
-	mRenderSystem->flushCmd(renderContext.cqh, true);
+	mRenderSystem->flushDefaultCommandList(renderContext.cqh, true);
 	mRenderSystem->removeAccelerationStructureScratch(pBottomAS);
 	mRenderSystem->removeAccelerationStructureScratch(pTopAS);
 

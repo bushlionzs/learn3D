@@ -69,8 +69,11 @@ target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 
 
 
-target_link_libraries(${PROJECT_NAME} GameUtil GlslUtil miniOgre 
-CEGUI expat stormlib OIS GameShare freetype zlibstatic dy_network
+target_link_libraries(${PROJECT_NAME} 
+CommonUtils
+GameUtil 
+miniOgre 
+CEGUI expat stormlib OIS freetype zlib
 imgui
 tinyxmld
 pcre

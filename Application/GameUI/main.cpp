@@ -8,7 +8,7 @@
 int main()
 {
 	platform_log_init();
-	BasicApplication instance;
+	GameUI instance;
 	AppInfo info;
 	info.useSRGB = false;
 	info.engineType = EngineType_Vulkan;

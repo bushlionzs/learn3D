@@ -122,7 +122,7 @@ void VoxelConeTracingApp::setup(
 void VoxelConeTracingApp::update(float delta)
 {
 	mLightDirection = Ogre::Vector3(0.191, 1.0f, 0.574f);
-	//mTotalTime = Root::getSingleton().getAccumulation();
+	mTotalTime = Root::getSingleton().getAccumulation();
     float v = sin(mTotalTime);
 
 	//v = 0.5;

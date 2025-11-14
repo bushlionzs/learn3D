@@ -11,6 +11,11 @@
 #include <DefaultWindow.h>
 #include <FrameWindow.h>
 #include <CEGUIManager.h>
+
+#include <engine_struct.h>
+#include "pass.h"
+#include "game_camera.h"
+#include "DriverBase.h"
 class Role;
 class GameUI : public InputListener
 {
@@ -19,15 +24,19 @@ public:
 	~GameUI();
 	virtual bool appInit();
 	virtual void appUpdate(float delta);
-	virtual bool isUseMyGUI()
-	{
-		return false;
-	}
-
+	
 	virtual bool isUseCEGUI()
 	{
 		return true;
 	}
+
+	void setup(
+		RenderPipeline* renderPipeline,
+		RenderContext& context,
+		Ogre::RenderWindow* renderWindow,
+		Ogre::SceneManager* sceneManager,
+		GameCamera* gameCamera);
+	void update(float delta);
 private:
 	void helloDemo();
 	virtual void injectMousePress(int _absx, int _absy, OIS::MouseButtonID _id);
