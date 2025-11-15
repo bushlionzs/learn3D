@@ -56,10 +56,11 @@ void GBuffer::execute(RenderContext& context)
         rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr, &context.frameContext->cbh);
     }
     uint32_t frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-    rs->pushGroupMarker("GBuffer", Ogre::Vector3i(0.0, 0.0, 1.0f));
-    rs->bindPipeline(mProgramHandle, &mGBufferZeroSets[frameIndex], 1);
-    rs->traceRay(mProgramHandle, ogreConfig.width, ogreConfig.height, 1);
-    rs->popGroupMarker();
+    rs->pushGroupMarker(context.frameContext->cbh, "GBuffer", Ogre::Vector3i(0.0, 0.0, 1.0f));
+    rs->bindPipeline(context.frameContext->cbh, mProgramHandle);
+    rs->bindDescriptorSet(context.frameContext->cbh, mProgramHandle, mGBufferZeroSets[frameIndex]);
+    rs->traceRay(context.frameContext->cbh, mProgramHandle, ogreConfig.width, ogreConfig.height, 1);
+    rs->popGroupMarker(context.frameContext->cbh);
 
     {
         std::vector<Ogre::TextureBarrier> textureBarriers =

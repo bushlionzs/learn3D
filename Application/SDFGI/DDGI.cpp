@@ -84,7 +84,7 @@ bool DDGIPass::initialize(RenderContext& context)
     }
 
     RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
-    rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr, &context.frameContext->cbh);
+    rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr, nullptr);
 
     for (uint32_t volumeIndex = 0; volumeIndex < numVolumes; volumeIndex++)
     {
@@ -113,7 +113,7 @@ bool DDGIPass::initialize(RenderContext& context)
             });
     }
 
-    rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr, &context.frameContext->cbh);
+    rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr, nullptr);
 
     
 
@@ -166,10 +166,11 @@ void DDGIPass::execute(RenderContext& context)
             uint32_t width, height, depth;
             volume->GetRayDispatchDimensions(width, height, depth);
 
-            rs->pushGroupMarker("probeTracePass", Ogre::Vector3i(0.0, 0.0, 1.0f));
-            rs->bindPipeline(mProbeTracingHandle, &mDDGIFrameDatas[frameIndex].probeTracingZeroSet, 1);
-            rs->traceRay(mProbeTracingHandle, width, height, depth);
-            rs->popGroupMarker();
+            rs->pushGroupMarker(context.frameContext->cbh, "probeTracePass", Ogre::Vector3i(0.0, 0.0, 1.0f));
+            rs->bindPipeline(context.frameContext->cbh, mProbeTracingHandle);
+            rs->bindDescriptorSet(context.frameContext->cbh, mProbeTracingHandle, mDDGIFrameDatas[frameIndex].probeTracingZeroSet);
+            rs->traceRay(context.frameContext->cbh, mProbeTracingHandle, width, height, depth);
+            rs->popGroupMarker(context.frameContext->cbh);
 
             textureBarriers.clear();
             textureBarriers.push_back(
@@ -203,10 +204,12 @@ void DDGIPass::execute(RenderContext& context)
             uint32_t probeCountX, probeCountY, probeCountZ;
             GetDDGIVolumeProbeCounts(volume->GetDesc(), probeCountX, probeCountY, probeCountZ);
 
-            rs->pushGroupMarker("Probe Irradiance", Ogre::Vector3i(0.0, 0.0, 1.0f));
-            rs->bindComputePipeline(mProbeBlendingIrradianceHandle, &mDDGIFrameDatas[frameIndex].blendingIrradianceDescriptorSet, 1);
+            rs->pushGroupMarker(context.frameContext->cbh, "Probe Irradiance", Ogre::Vector3i(0.0, 0.0, 1.0f));
+            rs->bindComputePipeline(mProbeBlendingIrradianceHandle, context.frameContext->cbh, 
+                &mDDGIFrameDatas[frameIndex].blendingIrradianceDescriptorSet, 1);
+            
             rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ, &context.frameContext->cbh);
-            rs->popGroupMarker();
+            rs->popGroupMarker(context.frameContext->cbh);
 
             textureBarriers.clear();
             textureBarriers.push_back(
@@ -234,10 +237,10 @@ void DDGIPass::execute(RenderContext& context)
             uint32_t probeCountX, probeCountY, probeCountZ;
             GetDDGIVolumeProbeCounts(volume->GetDesc(), probeCountX, probeCountY, probeCountZ);
 
-            rs->pushGroupMarker("Probe Distance", Ogre::Vector3i(0.0, 0.0, 1.0f));
-            rs->bindComputePipeline(mProbeBlendingDistanceHandle, &mDDGIFrameDatas[frameIndex].blendingDistanceDescriptorSet, 1);
+            rs->pushGroupMarker(context.frameContext->cbh, "Probe Distance", Ogre::Vector3i(0.0, 0.0, 1.0f));
+            rs->bindComputePipeline(mProbeBlendingDistanceHandle, context.frameContext->cbh , &mDDGIFrameDatas[frameIndex].blendingDistanceDescriptorSet, 1);
             rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ, &context.frameContext->cbh);
-            rs->popGroupMarker();
+            rs->popGroupMarker(context.frameContext->cbh);
 
             textureBarriers.clear();
             textureBarriers.push_back(
@@ -254,7 +257,7 @@ void DDGIPass::execute(RenderContext& context)
 
     if (1)
     {
-        rs->pushGroupMarker("Indirect Lighting", Ogre::Vector3i(0.0, 0.0, 1.0f));
+        rs->pushGroupMarker(context.frameContext->cbh, "Indirect Lighting", Ogre::Vector3i(0.0, 0.0, 1.0f));
 
         textureBarriers.clear();
         textureBarriers.push_back(
@@ -267,7 +270,7 @@ void DDGIPass::execute(RenderContext& context)
 
         rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr, &context.frameContext->cbh);
 
-        rs->bindComputePipeline(mIndirectHandle, &mDDGIFrameDatas[frameIndex].mIndirectZeroSet, 1);
+        rs->bindComputePipeline(mIndirectHandle, context.frameContext->cbh, &mDDGIFrameDatas[frameIndex].mIndirectZeroSet, 1);
 
         uint32_t groupsX = DivRoundUp(ogreConfig.width, 8);
         uint32_t groupsY = DivRoundUp(ogreConfig.height, 4);
@@ -286,7 +289,7 @@ void DDGIPass::execute(RenderContext& context)
        
         rs->resourceBarrier(0, nullptr, textureBarriers.size(), textureBarriers.data(), 0, nullptr, &context.frameContext->cbh);
 
-        rs->popGroupMarker();
+        rs->popGroupMarker(context.frameContext->cbh);
     }
     
     

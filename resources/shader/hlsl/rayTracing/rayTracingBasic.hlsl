@@ -7,6 +7,9 @@ struct CameraProperties
 {
 	float4x4 viewInverse;
 	float4x4 projInverse;
+	float4 lightPos;
+	int vertexSize;
+	int frame;
 };
 cbuffer cam : register(b2) { CameraProperties cam; };
 

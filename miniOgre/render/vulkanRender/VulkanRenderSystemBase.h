@@ -69,11 +69,11 @@ public:
     virtual void beginRenderPass(RenderPassInfo& renderPassInfo) override;
     virtual void endRenderPass(RenderPassInfo& renderPassInfo) override;
     virtual void bindPipeline(
-        Handle<HwPipeline> pipelineHandle) override;
+        Handle<HwPipeline> pipelineHandle);
     virtual void bindDescriptorSets(
         filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle,
         const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
-        uint32_t setCount)override;
+        uint32_t setCount);
     virtual void draw(uint32_t vertexCount,
         uint32_t instanceCount,
         uint32_t firstVertex,
@@ -112,10 +112,6 @@ public:
         Ogre::RenderTarget* src,
         ImageCopyDesc& desc) override;
 
-    virtual void copyImage(
-        Ogre::OgreTexture* dst,
-        Ogre::OgreTexture* src,
-        Ogre::ImageCopyDesc& desc) override;
 
     virtual void copyBuffer(
         Handle<HwBufferObject> src,
@@ -197,7 +193,7 @@ protected:
         filament::backend::Handle<filament::backend::HwCommandBuffer>* dsh,
         QueueType queueType = QUEUE_TYPE_GRAPHICS
     )  override;
-    virtual void beginCmd();
+    virtual void beginDefaultCommandList();
     virtual void flushDefaultCommandList(filament::backend::Handle<filament::backend::HwCommandQueue> cqh, bool waitCmd) override;
 
     virtual void flushCmd(

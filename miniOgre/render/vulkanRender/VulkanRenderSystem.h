@@ -36,14 +36,19 @@ public:
         uint32_t set) override;
 
     virtual void bindPipeline(
-        Handle<HwRaytracingProgram> programHandle,
-        const Handle<HwDescriptorSet>* descSets,
-        uint32_t setCount
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        Handle<HwRaytracingProgram> programHandle
     ) override;
 
-    virtual void traceRay(Handle<HwRaytracingProgram> programHandle,
+    virtual void bindDescriptorSet(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwRaytracingProgram> ph,
+        filament::backend::Handle<filament::backend::HwDescriptorSet>dsh) override;
+
+    virtual void traceRay(
+        Handle<HwCommandBuffer> cbh,
+        Handle<HwRaytracingProgram> programHandle,
         uint32_t width, uint32_t height, uint32_t depth);
-    virtual void copyImage(Ogre::RenderTarget* dst, Ogre::RenderTarget* src);
     virtual uint64_t getBufferDeviceAddress(Handle<HwBufferObject> bufHandle);
 private:
     uint64_t getBufferDeviceAddress(VkBuffer vkBuffer);

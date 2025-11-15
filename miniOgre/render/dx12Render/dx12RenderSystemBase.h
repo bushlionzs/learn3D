@@ -253,6 +253,7 @@ protected:
     ID3D12PipelineState* mLastPipelineState = nullptr;
 
     Handle<HwCommandBuffer> mCommandBuffer;
+    bool mCommandBufferOpen = false;
     filament::backend::Handle<filament::backend::HwFence> mCommandFence;
 
     Dx12TextureListen* mTextureListen;

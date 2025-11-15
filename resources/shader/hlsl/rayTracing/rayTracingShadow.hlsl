@@ -15,7 +15,7 @@ struct UBO
 
 
 struct GeometryNode {
-	float4 color;                    // 16 bytes
+	float4 color;                    // 16 bytes	
     float alphaMaskCutoff;           // 4 bytes
     uint vertexOffset;               // 4 bytes
     uint indexOffset;                // 4 bytes
@@ -28,15 +28,15 @@ struct GeometryNode {
 
 
 
-RaytracingAccelerationStructure topLevelAS VKBINDING(0, 0): register(t0);
-RWTexture2D<float4> image VKBINDING(1, 0): register(u1);
+VKBINDING(0, 0) RaytracingAccelerationStructure topLevelAS : register(t0);
+VKBINDING(1, 0) RWTexture2D<float4> image: register(u1);
 RES(CBUFFER(UBO), ubo, UPDATE_FREQ_NONE, b2, VKBINDING(2, 0));
 
 VKBINDING(5, 0) StructuredBuffer<GeometryNode> geometryNodes: register(t5, space0);
 
-VKBINDING(6, 0) ByteAddressBuffer     vertexDataBuffer[]    : register(t6, space0);
+VKBINDING(6, 0) ByteAddressBuffer     vertexDataBuffer[256]    : register(t6, space0);
 
-VKBINDING(7, 0) ByteAddressBuffer     indexDataBuffer[]    : register(t7, space0);
+VKBINDING(7, 0) ByteAddressBuffer     indexDataBuffer[256]    : register(t507, space0);
 
 
 struct Payload

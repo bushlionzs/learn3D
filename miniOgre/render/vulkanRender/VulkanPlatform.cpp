@@ -313,7 +313,7 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
         requestExtensions.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
         requestExtensions.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
         requestExtensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
-        
+        requestExtensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
     }
 
     std::array<float, 32> queuePriority;
@@ -369,7 +369,7 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
     
     VkPhysicalDeviceFeatures imageCubeArrayFeatures = {};
     imageCubeArrayFeatures.imageCubeArray = VK_TRUE;
-
+    
     VkPhysicalDeviceShaderFloat16Int8FeaturesKHR shader_features = {};
     shader_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
     shader_features.pNext = &imageCubeArrayFeatures;
@@ -417,10 +417,10 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
     descriptorIndexingFeatures.runtimeDescriptorArray = VK_TRUE;
     descriptorIndexingFeatures.descriptorBindingPartiallyBound = VK_TRUE;
 
-    if (driverConfig.enableRayTracing)
+    /*if (driverConfig.enableRayTracing)
     {
         base->pNext = (VkBaseOutStructure*)&descriptorIndexingFeatures;
-    }
+    }*/
     
     VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, VKALLOC, &device);
     return device;

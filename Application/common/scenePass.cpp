@@ -120,13 +120,14 @@ SceneRenderPass::SceneRenderPass(RenderPassInput& input)
 		{
 			descriptorSet[0] = resourceInfo->zeroSet;
 			descriptorSet[1] = resourceInfo->firstSet;
-			rs->bindPipeline(piplineHandle);
-			rs->bindDescriptorSets(piplineHandle, descriptorSet, 2);
+			rs->bindPipeline(context.frameContext->cbh, piplineHandle);
+			rs->bindDescriptorSet(context.frameContext->cbh, programHandle, resourceInfo->zeroSet);
+			rs->bindDescriptorSet(context.frameContext->cbh, programHandle, resourceInfo->firstSet);
 		}
 		else
 		{
-			rs->bindPipeline(piplineHandle);
-			rs->bindDescriptorSets(piplineHandle, &resourceInfo->zeroSet, 1);
+			rs->bindPipeline(context.frameContext->cbh, piplineHandle);
+			rs->bindDescriptorSet(context.frameContext->cbh, programHandle, resourceInfo->zeroSet);
 		}
 
 
@@ -139,7 +140,7 @@ SceneRenderPass::SceneRenderPass(RenderPassInput& input)
 			indexData->bind();
 			IndexDataView* view = r->getIndexView();
 			rs->drawIndexed(view->mIndexCount, 1,
-				view->mIndexLocation, view->mBaseVertexLocation, 0);
+				view->mIndexLocation, view->mBaseVertexLocation, 0, &context.frameContext->cbh);
 		}
 		else
 		{

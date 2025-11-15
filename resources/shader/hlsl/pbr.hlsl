@@ -150,7 +150,7 @@ float4 tonemap(float4 color)
     return float4(pow(outcol, (1.0f / gamma).xxx), color.w);
 }
 
-#ifdef USE_IBL
+//#ifdef USE_IBL
 // Calculation of the lighting contribution from an optional Image Based Light source.
 // Precomputed Environment Maps are required uniform inputs and are computed as outlined in [1].
 // See our README.md on Environment Maps [3] for additional discussion.
@@ -172,7 +172,7 @@ float3 getIBLContribution(PBRInfo pbrInputs, float3 n, float3 reflection)
     specular *= pbrMaterial.u_ScaleIBLAmbient.y;
     return (diffuse_1 + specular) * 0.35f;
 }
-#endif
+//#endif
 
 // Basic Lambertian diffuse
 // Implementation from Lambert's Photometria https://archive.org/details/lambertsphotome00lambgoog

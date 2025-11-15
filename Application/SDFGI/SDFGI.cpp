@@ -151,16 +151,14 @@ void SDFGIApp::initScene(RenderContext& context)
 	Handle< HwBufferObject> transformBufferHandle = mRenderSystem->createBufferObject(desc);
 
 	auto& js = ResourceManager::getSingleton().getJobSystem();
-	utils::JobSystem::Job* rootJob = js.createJob();
 
 	for (uint32_t i = 0; i < subEntityCount; i++)
 	{
 		SubEntity* subEntity = entity->getSubEntity(i);
 		auto& mat = subEntity->getMaterial();
-		mat->load(rootJob);
+		mat->loadAsync();
 	}
 
-	js.runAndWait(rootJob);
 	
 	mContext.geometryNodes.resize(subEntityCount);
 	mContext.materialList.resize(subEntityCount);
@@ -305,7 +303,7 @@ void SDFGIApp::initScene(RenderContext& context)
 	instanceDesc.pBottomAS = pBottomAS;
 
 
-	mRenderSystem->beginCmd();
+	mRenderSystem->beginDefaultCommandList();
 	asDesc = {};
 	asDesc.mType = ACCELERATION_STRUCTURE_TYPE_TOP;
 	asDesc.mFlags = ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;
@@ -325,7 +323,7 @@ void SDFGIApp::initScene(RenderContext& context)
 	buildASDesc.pAccelerationStructure = pTopAS;
 
 	mRenderSystem->buildAccelerationStructure(&buildASDesc);
-	mRenderSystem->flushCmd(context.cqh, true);
+	mRenderSystem->flushDefaultCommandList(context.cqh, true);
 	mRenderSystem->removeAccelerationStructureScratch(pBottomAS);
 	mRenderSystem->removeAccelerationStructureScratch(pTopAS);
 
@@ -454,7 +452,7 @@ void SDFGIApp::initResource(RenderContext& context)
 		}
 	};
 
-	mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, rtBarriers, &context.frameContext->cbh);
+	mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, rtBarriers, nullptr);
 
 	GlobalConstants& globalConstants = mContext.mGlobalConstants;
 	memset(&globalConstants, 0, sizeof(GlobalConstants));

@@ -40,7 +40,7 @@ void ImGuiPass::execute(RenderContext& context)
                 Ogre::RESOURCE_STATE_RENDER_TARGET
             }
         };
-        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, nullptr);
+        rs->resourceBarrier(0, nullptr, 0, nullptr, 1, rtBarriers, &context.frameContext->cbh);
     }
     rs->beginRenderPass(renderPassInfo);
     ImDrawData* imDrawData = ImGui::GetDrawData();
@@ -54,7 +54,7 @@ void ImGuiPass::execute(RenderContext& context)
         rs->bindVertexBuffer(context.frameContext->cbh, 0, &mVertexBufferHandle, nullptr);
         rs->bindIndexBuffer(context.frameContext->cbh, mIndexBufferHandle, 2, 0);
         
-        rs->setViewport(0, 0, mWidth, mHeight, 0.0, 1.0, nullptr);
+        rs->setViewport(0, 0, mWidth, mHeight, 0.0, 1.0, &context.frameContext->cbh);
         
         for (int32_t i = 0; i < imDrawData->CmdListsCount; i++)
         {
@@ -66,15 +66,15 @@ void ImGuiPass::execute(RenderContext& context)
 
                 filament::backend::Handle<filament::backend::HwDescriptorSet> descSet = getDescriptorSet(texture);
                
-                 rs->bindDescriptorSets(mPipelineHandle, &descSet, 1);
+                 rs->bindDescriptorSet(context.frameContext->cbh, mProgramHandle, descSet);
                 
                 uint32_t x = std::max((int32_t)(pcmd->ClipRect.x), 0);
                 uint32_t y = std::max((int32_t)(pcmd->ClipRect.y), 0);
                 uint32_t width = (uint32_t)(pcmd->ClipRect.z - pcmd->ClipRect.x);
                 uint32_t height = (uint32_t)(pcmd->ClipRect.w - pcmd->ClipRect.y);
 
-                rs->setScissor(x, y, width, height, nullptr);
-                rs->drawIndexed(pcmd->ElemCount, 1, indexOffset, vertexOffset, 0, nullptr);
+                rs->setScissor(x, y, width, height, &context.frameContext->cbh);
+                rs->drawIndexed(pcmd->ElemCount, 1, indexOffset, vertexOffset, 0, &context.frameContext->cbh);
                 indexOffset += pcmd->ElemCount;
             }
             vertexOffset += cmd_list->VtxBuffer.Size;

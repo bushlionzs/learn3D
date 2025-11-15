@@ -353,7 +353,15 @@ void RenderSystem::bindDescriptorSet(
     filament::backend::Handle<filament::backend::HwProgram> ph,
     filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
 {
+    assert_invariant(false);
+}
 
+void RenderSystem::bindDescriptorSet(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwRaytracingProgram> ph,
+    filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
+{
+    assert_invariant(false);
 }
 
 uint64_t RenderSystem::limit_get(Ogre::Limit limit)

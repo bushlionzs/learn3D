@@ -114,13 +114,13 @@ void CompositePass::execute(RenderContext& context)
 	info.depthTarget.target.depthStencil = nullptr;
 	info.depthTarget.clearValue = { 0.0f, 0.0f };
 	auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
-	rs->pushGroupMarker("compositePass");
+	rs->pushGroupMarker(context.frameContext->cbh, "compositePass");
 	rs->beginRenderPass(info);
-	rs->bindPipeline(mPipelineHandle);
+	rs->bindPipeline(context.frameContext->cbh, mPipelineHandle);
 	rs->bindDescriptorSet(context.frameContext->cbh, mPresentHandle, mCompositeZeroSets[frameIndex]);
 	rs->draw(3, 0, 0, 0, &context.frameContext->cbh);
 	rs->endRenderPass(info);
-	rs->popGroupMarker();
+	rs->popGroupMarker(context.frameContext->cbh);
 
 	{
 		RenderTargetBarrier rtBarriers[] =

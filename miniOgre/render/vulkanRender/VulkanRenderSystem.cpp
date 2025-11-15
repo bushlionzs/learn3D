@@ -669,60 +669,53 @@ Handle<HwDescriptorSet> VulkanRenderSystem::createDescriptorSet(
 }
 
 void VulkanRenderSystem::bindPipeline(
-    Handle<HwRaytracingProgram> programHandle,
-    const Handle<HwDescriptorSet>* descSets,
-    uint32_t setCount
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    Handle<HwRaytracingProgram> programHandle
 )
 {
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
     VulkanRaytracingProgram* program = mResourceAllocator.handle_cast<VulkanRaytracingProgram*>(programHandle);
     auto pipeline = program->getPipeline();
     auto pipelineLayout = program->getPipelineLayout();
-    vkCmdBindPipeline(mCommandBuffer,
+    vkCmdBindPipeline(cb->commandBuffer,
         VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline);
 
     
-    for (auto i = 0; i < setCount; i++)
-    {
-        VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(descSets[i]);
-        vkCmdBindDescriptorSets(mCommandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR,
-            pipelineLayout, set->mSet, 1, &set->vkSet, 0, nullptr);
-    }
+  
     
 }
 
-void VulkanRenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle,
+void VulkanRenderSystem::bindDescriptorSet(
+    Handle<HwCommandBuffer> cbh,
+    Handle<HwRaytracingProgram> ph,
+    Handle<HwDescriptorSet>dsh)
+{
+    VulkanRaytracingProgram* program = mResourceAllocator.handle_cast<VulkanRaytracingProgram*>(ph);
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    auto pipeline = program->getPipeline();
+    auto pipelineLayout = program->getPipelineLayout();
+        VulkanDescriptorSet* set = mResourceAllocator.handle_cast<VulkanDescriptorSet*>(dsh);
+        vkCmdBindDescriptorSets(cb->commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR,
+            pipelineLayout, set->mSet, 1, &set->vkSet, 0, nullptr);
+}
+
+void VulkanRenderSystem::traceRay(
+    Handle<HwCommandBuffer> cbh,
+    Handle<HwRaytracingProgram> programHandle,
     uint32_t width, uint32_t height, uint32_t depth)
 {
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
     VulkanRaytracingProgram* program = 
         mResourceAllocator.handle_cast<VulkanRaytracingProgram*>(programHandle);
     ShaderBindingTables* shaderBindingTables = program->getShaderBindingTables();
     VkStridedDeviceAddressRegionKHR emptySbtEntry = {};
     vkCmdTraceRaysKHR(
-        mCommandBuffer,
+        cb->commandBuffer,
         &shaderBindingTables->raygen.stridedDeviceAddressRegion,
         &shaderBindingTables->miss.stridedDeviceAddressRegion,
         &shaderBindingTables->hit.stridedDeviceAddressRegion,
         &emptySbtEntry,
         width, height, depth);
-}
-
-void VulkanRenderSystem::copyImage(Ogre::RenderTarget* dst, Ogre::RenderTarget* src)
-{
-    auto width = src->getWidth();
-    auto height = src->getHeight();
-    VkImageCopy copyRegion{};
-    copyRegion.srcSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
-    copyRegion.srcOffset = { 0, 0, 0 };
-    copyRegion.dstSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
-    copyRegion.dstOffset = { 0, 0, 0 };
-    copyRegion.extent = { width, height, 1 };
-
-    VulkanTexture* srcImage = (VulkanTexture*)src->getTarget();
-    VulkanTexture* dstImage = (VulkanTexture*)dst->getTarget();
-    vkCmdCopyImage(mCommandBuffer, srcImage->getVkImage(),
-        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 
-        dstImage->getVkImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
-        1, &copyRegion);
 }
 
 uint64_t VulkanRenderSystem::getBufferDeviceAddress(Handle<HwBufferObject> bufHandle)

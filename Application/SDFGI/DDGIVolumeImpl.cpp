@@ -139,7 +139,7 @@
                 // Bind the pipeline and dispatch threads
                 Handle<HwComputeProgram> programHandle = volume->GetProbeBlendingIrradianceModule();
                 Handle<HwDescriptorSet> descSet = volume->GetProbeBlendingIrradianceDescriptorSet();
-                rs->bindComputePipeline(programHandle, &descSet, 1);
+                rs->bindComputePipeline(programHandle, context.frameContext->cbh, &descSet, 1);
                 rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ, &context.frameContext->cbh);
                 
             }
@@ -166,7 +166,7 @@
             {
                 Handle<HwComputeProgram> programHandle = volume->GetProbeBlendingDistanceModule();
                 Handle<HwDescriptorSet> descSet = volume->GetProbeBlendingDistanceDescriptorSet();
-                rs->bindComputePipeline(programHandle, &descSet, 1);
+                rs->bindComputePipeline(programHandle, context.frameContext->cbh, &descSet, 1);
                 rs->dispatchComputeShader(probeCountX, probeCountY, probeCountZ, &context.frameContext->cbh);
             }
 
@@ -209,7 +209,7 @@
 
             Handle<HwComputeProgram> programHandle = volume->GetProbeRelocationResetModule();
             Handle<HwDescriptorSet> descSet = volume->GetProbeRelocationResetDescriptorSet();
-            rs->bindComputePipeline(programHandle, &descSet, 1);
+            rs->bindComputePipeline(programHandle, context.frameContext->cbh, &descSet, 1);
             rs->dispatchComputeShader(numGroupsX, 1, 1, &context.frameContext->cbh);
 
             // Update the reset flag
@@ -242,7 +242,7 @@
 
             Handle<HwComputeProgram> programHandle = volume->GetProbeRelocationModule();
             Handle<HwDescriptorSet> descSet = volume->GetProbeRelocationDescriptorSet();
-            rs->bindComputePipeline(programHandle, &descSet, 1);
+            rs->bindComputePipeline(programHandle, context.frameContext->cbh, &descSet, 1);
             rs->dispatchComputeShader(numGroupsX, 1, 1, &context.frameContext->cbh);
 
             // Add a barrier
@@ -279,7 +279,7 @@
             uint32_t numGroupsX = (uint32_t)ceil((float)volume->GetNumProbes() / groupSizeX);
             Handle<HwComputeProgram> programHandle = volume->GetProbeClassificationResetModule();
             Handle<HwDescriptorSet> descSet = volume->GetProbeClassificationResetDescriptorSet();
-            rs->bindComputePipeline(programHandle, &descSet, 1);
+            rs->bindComputePipeline(programHandle, context.frameContext->cbh, &descSet, 1);
             rs->dispatchComputeShader(numGroupsX, 1, 1, &context.frameContext->cbh);
 
             // Update the reset flag
@@ -312,7 +312,7 @@
 
             Handle<HwComputeProgram> programHandle = volume->GetProbeClassificationModule();
             Handle<HwDescriptorSet> descSet = volume->GetProbeClassificationDescriptorSet();
-            rs->bindComputePipeline(programHandle, &descSet, 1);
+            rs->bindComputePipeline(programHandle, context.frameContext->cbh, &descSet, 1);
             rs->dispatchComputeShader(numGroupsX, 1, 1, &context.frameContext->cbh);
 
             // Add a barrier
@@ -369,7 +369,7 @@
 
                 Handle<HwComputeProgram> programHandle = volume->GetProbeVariabilityReductionModule();
                 Handle<HwDescriptorSet> descSet = volume->GetProbeVariabilityReductionDescriptorSet();
-                rs->bindComputePipeline(programHandle, &descSet, 1);
+                rs->bindComputePipeline(programHandle, context.frameContext->cbh, &descSet, 1);
                 rs->dispatchComputeShader(outputTexelsX, outputTexelsY, outputTexelsZ, &context.frameContext->cbh);
 
                 // Each thread group will write out a value to the averaging texture
@@ -398,7 +398,7 @@
 
                 Handle<HwComputeProgram> programHandle = volume->GetProbeVariabilityExtraReductionModule();
                 Handle<HwDescriptorSet> descSet = volume->GetProbeVariabilityExtraReductionDescriptorSet();
-                rs->bindComputePipeline(programHandle, &descSet, 1);
+                rs->bindComputePipeline(programHandle, context.frameContext->cbh, &descSet, 1);
                 rs->dispatchComputeShader(outputTexelsX, outputTexelsY, outputTexelsZ, &context.frameContext->cbh);
 
                 inputTexelsX = outputTexelsX;
@@ -466,7 +466,7 @@
             Handle<HwBufferObject> readbackHandle = volume->GetProbeVariabilityReadback();
 
             float value;
-            rs->getBufferObject(readbackHandle, (const char*)& value, sizeof(value));
+            rs->getBufferObject(readbackHandle, (char*)&value, sizeof(value), 0);
             volume->SetVolumeAverageVariability(value);
         }
         return ERTXGIStatus::OK;
@@ -568,8 +568,8 @@
         Ogre::Vector4 color(0.f, 0.f, 0.f, 1.f);
         Ogre::TextureSubresourceRange subresources;
         subresources.aspect = Ogre::TEXTURE_ASPECT_COLOR_BIT;
-        rs->clearRenderTexture(m_probeIrradiance, color, subresources, &context.frameContext->cbh);
-        rs->clearRenderTexture(m_probeDistance, color, subresources, &context.frameContext->cbh);
+        rs->clearRenderTexture(m_probeIrradiance, color, subresources, nullptr);
+        rs->clearRenderTexture(m_probeDistance, color, subresources, nullptr);
 
 
         return ERTXGIStatus::OK;

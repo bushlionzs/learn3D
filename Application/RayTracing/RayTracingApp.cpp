@@ -46,7 +46,7 @@ void RayTracingApp::setup(
 {
 	mRenderWindow = renderWindow;
 	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
-	int type = 3;
+	int type = 2;
 	switch (type)
 	{
 	case 0:
@@ -326,6 +326,7 @@ void RayTracingApp::RayQuery(RenderPipeline* renderPipeline,
 	texProperty._height = ogreConfig.height;
 	texProperty._tex_format = format;
 	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+	texProperty._initState = RESOURCE_STATE_UNORDERED_ACCESS;
 	auto outPutTarget = rs->createRenderTarget("outputTarget", texProperty);
 	OgreTexture* outputTexture = outPutTarget->getTarget();
 
@@ -614,11 +615,10 @@ void RayTracingApp::RayTracingGltf(
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		auto* frameInfo = getFrameInfo(frameIndex);
 
-		Handle<HwDescriptorSet> descSet[2];
-		descSet [0] = frameInfo->zeroSetOfRaytracing;
-		descSet[1] = frameInfo->firstSetOfRaytracing;
-		rs->bindPipeline(raytracingHandle, descSet, 2);
-		rs->traceRay(raytracingHandle, ogreConfig.width, ogreConfig.height, 1);
+		rs->bindPipeline(context.frameContext->cbh, raytracingHandle);
+		rs->bindDescriptorSet(context.frameContext->cbh, raytracingHandle, frameInfo->zeroSetOfRaytracing);
+		rs->bindDescriptorSet(context.frameContext->cbh, raytracingHandle, frameInfo->firstSetOfRaytracing);
+		rs->traceRay(context.frameContext->cbh, raytracingHandle, ogreConfig.width, ogreConfig.height, 1);
 		{
 			RenderTargetBarrier rtBarriers[] =
 			{
@@ -766,7 +766,7 @@ void RayTracingApp::RayTracingShadow(
 		indexHandleList[i] = indexData->getHandle();
 		mat->updateVertexDeclaration(vertexData->getVertexDeclaration());
 
-		mat->load();
+		mat->loadAsync();
 	}
 
 	DescriptorData descriptorData[10];
@@ -816,9 +816,9 @@ void RayTracingApp::RayTracingShadow(
 	RenderPassCallback rayTracingCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		auto* frameInfo = getFrameInfo(frameIndex);
-		auto descSet = frameInfo->zeroSetOfRaytracing;
-		mRenderSystem->bindPipeline(raytracingHandle, &descSet, 1);
-		mRenderSystem->traceRay(raytracingHandle, ogreConfig.width, ogreConfig.height, 1);
+		mRenderSystem->bindPipeline(context.frameContext->cbh, raytracingHandle);
+		mRenderSystem->bindDescriptorSet(context.frameContext->cbh, raytracingHandle, frameInfo->zeroSetOfRaytracing);
+		mRenderSystem->traceRay(context.frameContext->cbh, raytracingHandle, ogreConfig.width, ogreConfig.height, 1);
 		{
 			RenderTargetBarrier rtBarriers[] =
 			{
@@ -884,7 +884,7 @@ void RayTracingApp::RayTracingShadow(
 		ubo.vertexSize = vertexSize;
 		ubo.frame = 0;
 		mRenderSystem->updateBufferObject(rayTracingContext.uniformBuffer,
-			(const char*)&ubo, sizeof(UBO));
+			(const char*)&ubo, sizeof(UBO), 0, &context.frameContext->cbh);
 		};
 
 	auto rayTracingPass = createUserDefineRenderPass(
@@ -892,13 +892,20 @@ void RayTracingApp::RayTracingShadow(
 	renderPipeline->addRenderPass(rayTracingPass);
 
 	gameCamera->setMoveSpeed(1.0f);
-	Ogre::Vector3 camPos(0.0f, 1.0f, 15.0f);
+	Ogre::Vector3 camPos(0.0f, 1.0f, -15.0f);
 	Ogre::Vector3 lookAt = Ogre::Vector3::ZERO;
 	gameCamera->lookAt(camPos, lookAt);
-	float aspect = ogreConfig.width / (float)ogreConfig.height;
-	Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrix(
-		Ogre::Math::PI / 3.0f, aspect, 0.1, 512.f);
-	gameCamera->getCamera()->updateProjectMatrix(m);
+
+
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.1f;
+	cameraInfo.farClip = 6000.f;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+	gameCamera->updateCameraInfo(cameraInfo);
+
 	gameCamera->setCameraType(CameraMoveType_LookAt);
 }
 
@@ -1082,10 +1089,10 @@ void RayTracingApp::RayTracingBox(
 		RenderPassCallback rayTracingCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
 			auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 			auto* frameInfo = getFrameInfo(frameIndex);
-			auto descSet = frameInfo->zeroSetOfRaytracing;
-
-			rs->bindPipeline(raytracingHandle, &descSet, 1);
-			rs->traceRay(raytracingHandle, ogreConfig.width, ogreConfig.height, 1);
+			
+			rs->bindPipeline(context.frameContext->cbh, raytracingHandle);
+			rs->bindDescriptorSet(context.frameContext->cbh, raytracingHandle, frameInfo->zeroSetOfRaytracing);
+			rs->traceRay(context.frameContext->cbh, raytracingHandle, ogreConfig.width, ogreConfig.height, 1);
 
 			{
 				RenderTargetBarrier rtBarriers[] =
@@ -1263,7 +1270,7 @@ void RayTracingApp::RayTracingBasic(
 		descriptorData[1].ppTextures = (const OgreTexture**)&storeImage;
 
 		descriptorData[2].mCount = 1;
-		descriptorData[2].pName = "ubo";
+		descriptorData[2].pName = "cam";
 		descriptorData[2].descriptorType = DESCRIPTOR_TYPE_BUFFER;
 		descriptorData[2].ppBuffers = &rayTracingContext.uniformBuffer;
 
@@ -1274,10 +1281,10 @@ void RayTracingApp::RayTracingBasic(
 	RenderPassCallback rayTracingCallback = [=, this](RenderContext& context, RenderPassInfo& info) {
 		auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 		auto* frameInfo = getFrameInfo(frameIndex);
-		auto descSet = frameInfo->zeroSetOfRaytracing;
-
-		rs->bindPipeline(raytracingHandle, &descSet, 1);
-		rs->traceRay(raytracingHandle, ogreConfig.width, ogreConfig.height, 1);
+		
+		rs->bindPipeline(context.frameContext->cbh, raytracingHandle);
+		rs->bindDescriptorSet(context.frameContext->cbh, raytracingHandle, frameInfo->zeroSetOfRaytracing);
+		rs->traceRay(context.frameContext->cbh, raytracingHandle, ogreConfig.width, ogreConfig.height, 1);
 
 		{
 			RenderTargetBarrier rtBarriers[] =
@@ -1331,13 +1338,7 @@ void RayTracingApp::RayTracingBasic(
 			rs->resourceBarrier(0, nullptr, 0, nullptr, 2, rtBarriers, &context.frameContext->cbh);
 		}
 		};
-	float aspect = ogreConfig.width / (float)ogreConfig.height;
-	float fov = Ogre::Math::PI / 3.0f;
-	Ogre::Matrix4 project = Ogre::Math::makePerspectiveMatrixRH(fov, aspect, 0.1f, 512.0f);
-	Ogre::Vector3 m_eye(0.0f, 0.0f, -2.5f);
-	Ogre::Vector3 m_at = Ogre::Vector3::ZERO;
-	Ogre::Vector3 m_up(0.0f, 1.0f, 0.0f);
-	Ogre::Matrix4 view = Ogre::Math::makeLookAtRH(m_eye, m_at, m_up);
+	
 	
 
 	auto* cam = gameCamera->getCamera();
@@ -1348,7 +1349,7 @@ void RayTracingApp::RayTracingBasic(
 		ubo.projInverse = project.transpose().inverse();
 		ubo.viewInverse = view.transpose().inverse();
 		rs->updateBufferObject(rayTracingContext.uniformBuffer,
-			(const char*)&ubo, sizeof(UBO));
+			(const char*)&ubo, sizeof(UBO), 0, &context.frameContext->cbh);
 		
 		};
 
@@ -1357,14 +1358,19 @@ void RayTracingApp::RayTracingBasic(
 	renderPipeline->addRenderPass(rayTracingPass);
 
 	gameCamera->setMoveSpeed(1.0f);
-	Ogre::Vector3 camPos(0.0f, 0.0f, 2.5f);
+	Ogre::Vector3 camPos(0.0f, 0.0f, -2.5f);
 	Ogre::Vector3 lookAt = Ogre::Vector3::ZERO;
 	gameCamera->lookAt(camPos, lookAt);
-	aspect = ogreConfig.width / (float)ogreConfig.height;
-	fov = Ogre::Math::PI / 3.0f;
-	Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrixLH(fov, aspect, 1.0f, 125.0f);
 
-	gameCamera->getCamera()->updateProjectMatrix(m);
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.1f;
+	cameraInfo.farClip = 512;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+	gameCamera->updateCameraInfo(cameraInfo);
+
 	gameCamera->setCameraType(CameraMoveType_LookAt);
 }
 
@@ -1396,16 +1402,13 @@ void RayTracingApp::initRayTracingContext(
 	geometryNodes.resize(subEntityCount);
 
 	auto& js = ResourceManager::getSingleton().getJobSystem();
-	utils::JobSystem::Job* rootJob = js.createJob();
 
 	for (uint32_t i = 0; i < subEntityCount; i++)
 	{
 		SubEntity* subEntity = entity->getSubEntity(i);
 		auto& mat = subEntity->getMaterial();
-		mat->load(rootJob);
+		mat->loadAsync();
 	}
-
-	js.runAndWait(rootJob);
 
 	for (uint32_t i = 0; i < subEntityCount; i++)
 	{
@@ -1468,7 +1471,7 @@ void RayTracingApp::initRayTracingContext(
 
 	uint32_t geometryNodesSize = sizeof(GeometryNode) * subEntityCount;
 
-	desc.mBindingType = BufferObjectBinding_Uniform;
+	desc.mBindingType = BufferObjectBinding_Buffer;
 	desc.mMemoryUsage = RESOURCE_MEMORY_USAGE_GPU_ONLY;
 	desc.bufferCreationFlags = BUFFER_CREATION_FLAG_SHADER_DEVICE_ADDRESS;
 	desc.mSize = geometryNodesSize;
@@ -1527,6 +1530,7 @@ void RayTracingApp::initRayTracingContext(
 
 	mRenderSystem->buildAccelerationStructure(&buildASDesc);
 	mRenderSystem->flushDefaultCommandList(renderContext.cqh, true);
+	mRenderSystem->beginDefaultCommandList();
 	mRenderSystem->removeAccelerationStructureScratch(pBottomAS);
 	mRenderSystem->removeAccelerationStructureScratch(pTopAS);
 
@@ -1540,6 +1544,7 @@ void RayTracingApp::initRayTracingContext(
 	texProperty._height = ogreConfig.height;
 	texProperty._tex_format = mRenderWindow->getColorFormat();
 	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+	texProperty._initState = RESOURCE_STATE_UNORDERED_ACCESS;
 	auto outputTarget = mRenderSystem->createRenderTarget("outputTarget", texProperty);
 
 
@@ -1550,4 +1555,5 @@ void RayTracingApp::initRayTracingContext(
 	context.uniformBuffer = mRenderSystem->createBufferObject(desc);
 
 	context.outputTarget = outputTarget;
+
 }

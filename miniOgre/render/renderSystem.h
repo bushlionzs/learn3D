@@ -80,33 +80,23 @@ public:
         RenderPassInfo& renderPassInfo);
     virtual void endRenderPass(RenderPassInfo& renderPassInfo);
 
-    virtual void bindPipeline(
-        filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle)
-    {
-        assert_invariant(false);
-    }
-
-    virtual void bindDescriptorSets(
-        filament::backend::Handle<filament::backend::HwPipeline> pipelineHandle,
-        const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
-        uint32_t setCount)
-    {
-        assert_invariant(false);
-    }
 
     virtual void bindPipeline(
-        filament::backend::Handle<filament::backend::HwRaytracingProgram> programHandle,
-        const filament::backend::Handle<filament::backend::HwDescriptorSet>* descSets,
-        uint32_t setCount
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwRaytracingProgram> programHandle
     ) 
     {
         assert_invariant(false);
     }
 
     virtual void traceRay(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
         filament::backend::Handle<filament::backend::HwRaytracingProgram> programHandle,
         uint32_t width, uint32_t height, uint32_t depth
-    ) {}
+    )
+    {
+        assert_invariant(false);
+    }
 
     virtual void copyImage(
         filament::backend::Handle<filament::backend::HwCommandBuffer>cbh,
@@ -117,13 +107,6 @@ public:
         assert_invariant(false);
     }
 
-    virtual void copyImage(
-        Ogre::OgreTexture* dst,
-        Ogre::OgreTexture* src,
-        Ogre::ImageCopyDesc& desc) 
-    {
-        assert_invariant(false);
-    }
 
     virtual void copyImageToBuffer(
         Ogre::OgreTexture* image,
@@ -433,6 +416,11 @@ public:
     virtual void bindDescriptorSet(
         filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
         filament::backend::Handle<filament::backend::HwProgram> ph,
+        filament::backend::Handle<filament::backend::HwDescriptorSet>dsh);
+
+    virtual void bindDescriptorSet(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwRaytracingProgram> ph,
         filament::backend::Handle<filament::backend::HwDescriptorSet>dsh);
 
     virtual uint64_t limit_get(Ogre::Limit limit);

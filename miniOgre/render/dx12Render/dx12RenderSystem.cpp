@@ -38,8 +38,7 @@ bool Dx12RenderSystem::engineInit(bool raytracing)
 OgreTexture* Dx12RenderSystem::createTextureFromFile(const std::string& name, TextureProperty* texProperty)
 {
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
-	Dx12Texture* tex = new Dx12Texture(
-		name, texProperty, cb, true);
+	Dx12Texture* tex = new Dx12Texture(name, texProperty, cb, true);
 
 
 	return tex;
@@ -56,14 +55,17 @@ Ogre::OgreTexture* Dx12RenderSystem::createManualTexture(
     return tex;
 }
 
-void Dx12RenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle,
+void Dx12RenderSystem::traceRay(
+    Handle<HwCommandBuffer> cbh,
+    Handle<HwRaytracingProgram> programHandle,
     uint32_t width, uint32_t height, uint32_t depth)
 {
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
     DX12RayTracingProgram* program = mResourceAllocator.handle_cast<DX12RayTracingProgram*>(programHandle);
     DX12RayTracingProgramImpl* impl = program->getProgramImpl();
 
     D3D12_DISPATCH_RAYS_DESC dispatchDesc = {};
-    ID3D12GraphicsCommandList* cl = mCommands->get();
+    ID3D12GraphicsCommandList* cl = cb->get();
     
     cl->QueryInterface(IID_PPV_ARGS(&m_dxrCommandList));
     
@@ -89,25 +91,32 @@ void Dx12RenderSystem::traceRay(Handle<HwRaytracingProgram> programHandle,
 }
 
 void Dx12RenderSystem::bindPipeline(
-    Handle<HwRaytracingProgram> programHandle,
-    const Handle<HwDescriptorSet>* descSets,
-    uint32_t setCount
+    Handle<HwCommandBuffer> cbh,
+    Handle<HwRaytracingProgram> programHandle
 )
 {
-    ID3D12GraphicsCommandList* cl = mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    ID3D12GraphicsCommandList* cl = cb->get();
     DX12RayTracingProgram* program = mResourceAllocator.handle_cast<DX12RayTracingProgram*>(programHandle);
     DX12RayTracingProgramImpl* impl = program->getProgramImpl();
     ID3D12RootSignature* rootSignature = impl->getRootSignature();
     cl->SetComputeRootSignature(rootSignature);
+}
 
-    for (uint32_t i = 0; i < setCount; i++)
-    {
-        if (!descSets[i])
-            continue;
-        DX12DescriptorSet* dset = mResourceAllocator.handle_cast<DX12DescriptorSet*>(descSets[i]);
+void Dx12RenderSystem::bindDescriptorSet(
+    filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+    filament::backend::Handle<filament::backend::HwRaytracingProgram> ph,
+    filament::backend::Handle<filament::backend::HwDescriptorSet>dsh)
+{
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(cbh);
+    DX12RayTracingProgram* program = mResourceAllocator.handle_cast<DX12RayTracingProgram*>(ph);
+    DX12RayTracingProgramImpl* impl = program->getProgramImpl();
+    ID3D12GraphicsCommandList* cl = cb->get();
+
+        DX12DescriptorSet* dset = mResourceAllocator.handle_cast<DX12DescriptorSet*>(dsh);
         std::vector<const DescriptorInfo*> descriptorInfos = dset->getDescriptorInfos();
         auto cbvSrvUavHandle = dset->getCbvSrvUavHandle();
-        
+
         for (auto descriptorInfo : descriptorInfos)
         {
             if (descriptorInfo->mType == D3D_SIT_SAMPLER)
@@ -119,14 +128,13 @@ void Dx12RenderSystem::bindPipeline(
             }
             else
             {
-              
+
                 auto gpuHandle = descriptor_id_to_gpu_handle(
                     mDescriptorHeapContext->mCbvSrvUavHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV], cbvSrvUavHandle + descriptorInfo->mSetIndex);
                 cl->SetComputeRootDescriptorTable(descriptorInfo->mRootIndex, gpuHandle);
                 int kk = 0;
             }
         }
-    }
 }
 
 Handle<HwRaytracingProgram> Dx12RenderSystem::createRaytracingProgram(
@@ -339,8 +347,8 @@ void Dx12RenderSystem::buildAccelerationStructure(RaytracingBuildASDesc* pDesc)
 
     buildDesc.Inputs.NumDescs = as->mDescCount;
     buildDesc.ScratchAccelerationStructureData = getBufferDeviceAddress(as->scratchBufferHandle);
-
-    ID3D12GraphicsCommandList* cl = (ID3D12GraphicsCommandList*)mCommands->get();
+    DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
+    ID3D12GraphicsCommandList* cl = cb->get();
 
     ID3D12GraphicsCommandList4* dxrCmd = NULL;
     cl->QueryInterface(IID_PPV_ARGS(&dxrCmd));

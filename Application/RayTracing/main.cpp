@@ -10,7 +10,7 @@ int main()
 	AppInfo info;
 	info.enableRayTracing = true;
 	info.engineType = EngineType_Vulkan;
-	//info.engineType = EngineType_Dx12;
+	info.engineType = EngineType_Dx12;
 	ManualApplication app;
 
 	info.setup = [&instance, &app](RenderContext& context, Ogre::RenderWindow* win, Ogre::SceneManager* sceneManager, GameCamera* gameCamera) {

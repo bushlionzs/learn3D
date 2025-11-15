@@ -75,7 +75,7 @@ bool Dx12RenderSystemBase::engineInit()
 
     mCommandBuffer = createCommandBuffer(QUEUE_TYPE_GRAPHICS);
 
-    beginCommandBuffer(mCommandBuffer);
+    beginDefaultCommandList();
     
     mCommandFence = createFence(true);
 
@@ -1130,6 +1130,12 @@ void Dx12RenderSystemBase::resourceBarrier(
 
 void Dx12RenderSystemBase::beginDefaultCommandList()
 {
+    if (mCommandBufferOpen)
+    {
+        return;
+    }
+
+    mCommandBufferOpen = true;
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
     auto* cl = cb->get();
     cb->beginComandBuffer();
@@ -1144,6 +1150,8 @@ void Dx12RenderSystemBase::beginDefaultCommandList()
 
 void Dx12RenderSystemBase::flushDefaultCommandList(Handle<HwCommandQueue> cqh, bool waitCmd)
 {
+    if (!mCommandBufferOpen)
+        return;
     DX12CommandQueue* cq = mResourceAllocator.handle_cast<DX12CommandQueue*>(cqh);
     DX12CommandBuffer* cb = mResourceAllocator.handle_cast<DX12CommandBuffer*>(mCommandBuffer);
     ID3D12GraphicsCommandList*  cl = cb->get();
@@ -1156,6 +1164,8 @@ void Dx12RenderSystemBase::flushDefaultCommandList(Handle<HwCommandQueue> cqh, b
         cq->signal(fence);
         fence->wait();
     }
+
+    mCommandBufferOpen = false;
 }
 
 void Dx12RenderSystemBase::flushCmd(

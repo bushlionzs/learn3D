@@ -21,14 +21,20 @@ public:
     virtual Ogre::OgreTexture* createManualTexture(
         const std::string& name,
         Ogre::TextureProperty* texProperty)override;
-    virtual void traceRay(Handle<HwRaytracingProgram> programHandle,
-        uint32_t width, uint32_t height, uint32_t depth);
+    virtual void traceRay(
+        Handle<HwCommandBuffer> cbh,
+        Handle<HwRaytracingProgram> programHandle,
+        uint32_t width, uint32_t height, uint32_t depth)override;
 
     virtual void bindPipeline(
-        Handle<HwRaytracingProgram> programHandle,
-        const Handle<HwDescriptorSet>* descSets,
-        uint32_t setCount
-    );
+        Handle<HwCommandBuffer> cbh,
+        Handle<HwRaytracingProgram> programHandle
+    )override;
+        
+    virtual void bindDescriptorSet(
+        filament::backend::Handle<filament::backend::HwCommandBuffer> cbh,
+        filament::backend::Handle<filament::backend::HwRaytracingProgram> ph,
+        filament::backend::Handle<filament::backend::HwDescriptorSet>dsh) override;
     virtual Handle<HwRaytracingProgram> createRaytracingProgram(
         const RaytracingShaderInfo& mShaderInfo) override;
 
