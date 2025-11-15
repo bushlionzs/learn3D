@@ -314,6 +314,7 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
         requestExtensions.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
         requestExtensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
         requestExtensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+        requestExtensions.push_back(VK_EXT_ROBUSTNESS_2_EXTENSION_NAME);
     }
 
     std::array<float, 32> queuePriority;
@@ -355,16 +356,14 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
     deviceCreateInfo.ppEnabledExtensionNames = requestExtensions.data();
 
     VkBaseOutStructure* base = (VkBaseOutStructure*)&deviceCreateInfo;
-    bool dynamicRendering = true;
+
     VkPhysicalDeviceDynamicRenderingFeaturesKHR enabledDynamicRenderingFeaturesKHR{};
-    if (dynamicRendering)
-    {
-        
-        enabledDynamicRenderingFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
-        enabledDynamicRenderingFeaturesKHR.dynamicRendering = VK_TRUE;
-        base->pNext = (VkBaseOutStructure*)&enabledDynamicRenderingFeaturesKHR;
-        base = (VkBaseOutStructure*)base->pNext;
-    }
+
+    enabledDynamicRenderingFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR;
+    enabledDynamicRenderingFeaturesKHR.dynamicRendering = VK_TRUE;
+    base->pNext = (VkBaseOutStructure*)&enabledDynamicRenderingFeaturesKHR;
+    base = (VkBaseOutStructure*)base->pNext;
+    
 
     
     VkPhysicalDeviceFeatures imageCubeArrayFeatures = {};
@@ -372,7 +371,7 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
     
     VkPhysicalDeviceShaderFloat16Int8FeaturesKHR shader_features = {};
     shader_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
-    shader_features.pNext = &imageCubeArrayFeatures;
+    shader_features.pNext = nullptr;
     shader_features.shaderFloat16 = VK_TRUE;
     shader_features.shaderInt8 = VK_TRUE;
     
@@ -417,10 +416,10 @@ VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice,
     descriptorIndexingFeatures.runtimeDescriptorArray = VK_TRUE;
     descriptorIndexingFeatures.descriptorBindingPartiallyBound = VK_TRUE;
 
-    /*if (driverConfig.enableRayTracing)
+    if (driverConfig.enableRayTracing)
     {
         base->pNext = (VkBaseOutStructure*)&descriptorIndexingFeatures;
-    }*/
+    }
     
     VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, VKALLOC, &device);
     return device;

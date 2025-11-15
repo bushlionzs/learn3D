@@ -1543,7 +1543,7 @@ void RayTracingApp::initRayTracingContext(
 	texProperty._width = ogreConfig.width;
 	texProperty._height = ogreConfig.height;
 	texProperty._tex_format = mRenderWindow->getColorFormat();
-	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | TEXTURE_USAGE_STORAGE_BIT | TEXTURE_USAGE_CAN_COPY_FROM_BIT;
 	texProperty._initState = RESOURCE_STATE_UNORDERED_ACCESS;
 	auto outputTarget = mRenderSystem->createRenderTarget("outputTarget", texProperty);
 
