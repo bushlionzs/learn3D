@@ -20,7 +20,7 @@ public:
 
 	void setup(
 		RenderPipeline* renderPipeline,
-		RenderSystem* renderSystem,
+		RenderContext& context,
 		Ogre::RenderWindow* renderWindow,
 		Ogre::SceneManager* sceneManager,
 		GameCamera* gameCamera);
@@ -32,9 +32,9 @@ public:
 	void userInit(AppInfo* appInfo);
 	Surface godotWndCallback(AppInfo* appInfo, int64_t wnd);
 private:
-	void base1();
-	void base2();
-	void ibl_init();
+	void base1(RenderContext& context);
+	void base2(RenderContext& context);
+	void ibl_init(RenderContext& context);
 private:
 	Ogre::AnimationState* mAnimationState = nullptr;
 	std::vector<FrameData> mFrameData;

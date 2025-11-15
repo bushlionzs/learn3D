@@ -112,6 +112,11 @@ public:
         Ogre::RenderTarget* src,
         ImageCopyDesc& desc) override;
 
+    virtual void copyImage(
+        filament::backend::Handle<filament::backend::HwCommandBuffer>cbh,
+        Ogre::OgreTexture* dst,
+        Ogre::OgreTexture* src,
+        Ogre::ImageCopyDesc& desc) override;
 
     virtual void copyBuffer(
         Handle<HwBufferObject> src,

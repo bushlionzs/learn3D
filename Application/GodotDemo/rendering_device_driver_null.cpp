@@ -94,7 +94,9 @@ uint8_t* RenderingDeviceDriverNULL::buffer_map(BufferID p_buffer)
 void RenderingDeviceDriverNULL::buffer_unmap(BufferID p_buffer)
 {
 	filament::backend::Handle<filament::backend::HwBufferObject> bufferHandle(p_buffer.id);
-	mRenderSystem->bufferUnmap(bufferHandle);
+
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh;
+	mRenderSystem->bufferUnmap(bufferHandle, cbh);
 }
 
 Ogre::PixelFormat mapPixelFormat(RenderingDeviceCommons::DataFormat format)
@@ -1060,7 +1062,7 @@ void RenderingDeviceDriverNULL::command_copy_texture(CommandBufferID p_cmd_buffe
 		desc.dstOffset.x = region.dst_offset.x;
 		desc.dstOffset.y = region.dst_offset.y;
 		desc.dstOffset.z = region.dst_offset.z;
-		mRenderSystem->copyImage(dst, src, desc);
+		mRenderSystem->copyImage(cbh, dst, src, desc);
 	}
 	
 }
@@ -1608,12 +1610,15 @@ void RenderingDeviceDriverNULL::command_begin_label(
 	color.x = p_color.r;
 	color.y = p_color.g;
 	color.z = p_color.b;
-	mRenderSystem->pushGroupMarker(p_label_name, color);
+
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	mRenderSystem->pushGroupMarker(cbh, p_label_name, color);
 }
 
 void RenderingDeviceDriverNULL::command_end_label(CommandBufferID p_cmd_buffer)
 {
-	mRenderSystem->popGroupMarker();
+	filament::backend::Handle<filament::backend::HwCommandBuffer> cbh(p_cmd_buffer.id);
+	mRenderSystem->popGroupMarker(cbh);
 }
 
 void RenderingDeviceDriverNULL::command_insert_breadcrumb(CommandBufferID p_cmd_buffer, uint32_t p_data)

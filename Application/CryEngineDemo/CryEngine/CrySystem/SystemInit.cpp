@@ -1171,6 +1171,7 @@ bool CSystem::Init3DEngine(const SSystemInitParams& startupParams)
 	}
 	m_pProcess = m_env.p3DEngine;
 	m_pProcess->SetFlags(PROC_3DENGINE);
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

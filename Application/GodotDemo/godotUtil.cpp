@@ -1174,7 +1174,7 @@ void visitNode(Node* godotNode, Ogre::SceneNode* sceneNode, GodotContext& contex
                         }
                         
                     }
-                    vertexData->addBindBuffer(sizeof(GodotVertex), vertexCount);
+                    vertexData->createBindBuffer(sizeof(GodotVertex), vertexCount);
                     vertexData->writeBindBufferData(0, (const char*)vertexList.data(), sizeof(GodotVertex) * vertexCount);
                     vertexData->addElement(0, 0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
                     vertexData->addElement(0, 0, 12, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);

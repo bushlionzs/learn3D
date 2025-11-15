@@ -254,7 +254,7 @@ Ogre::Mesh* loadCGF(const std::string& cgfName)
 		decl->addElement(0, 0, 24, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
 		decl->addElement(0, 0, 32, Ogre::VET_FLOAT4, Ogre::VES_BLEND_WEIGHTS);
 		decl->addElement(0, 0, 48, Ogre::VET_UINT4, Ogre::VES_BLEND_INDICES);
-		vertexData->addBindBuffer(sizeof(CryEngineVertex), vertexCount);
+		vertexData->createBindBuffer(sizeof(CryEngineVertex), vertexCount);
 
 		std::vector<CryEngineVertex> vertexList;
 		vertexList.resize(vertexCount);

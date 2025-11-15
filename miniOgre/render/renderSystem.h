@@ -107,7 +107,14 @@ public:
         assert_invariant(false);
     }
 
-
+    virtual void copyImage(
+        filament::backend::Handle<filament::backend::HwCommandBuffer>cbh,
+        Ogre::OgreTexture* dst,
+        Ogre::OgreTexture* src,
+        Ogre::ImageCopyDesc& desc)
+    {
+        assert_invariant(false);
+    }
     virtual void copyImageToBuffer(
         Ogre::OgreTexture* image,
         filament::backend::Handle<filament::backend::HwBufferObject> bufferHandle,

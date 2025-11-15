@@ -53,15 +53,12 @@ void RayTracingApp::setup(
 		RayTracingBasic(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 		break;
 	case 1:
-		RayTracingBox(renderPipeline, context, renderWindow, sceneManager, gameCamera);
-		break;
-	case 2:
 		RayTracingShadow(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 		break;
-	case 3:
+	case 2:
 		RayTracingGltf(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 		break;
-	case 4:
+	case 3:
 		RayQuery(renderPipeline, context, renderWindow, sceneManager, gameCamera);
 		break;
 	}
@@ -688,21 +685,27 @@ void RayTracingApp::RayTracingGltf(
 
 		mUBO.frame = 0;
 		rs->updateBufferObject(rayTracingContext.uniformBuffer,
-			(const char*)&mUBO, sizeof(UBO));
+			(const char*)&mUBO, sizeof(UBO), 0, &context.frameContext->cbh);
 		};
 
 	auto rayTracingPass = createUserDefineRenderPass(
 		rayTracingCallback, rayTracingUpdateCallback);
 	renderPipeline->addRenderPass(rayTracingPass);
 
-	gameCamera->setMoveSpeed(1.0f);
+	gameCamera->setMoveSpeed(0.01f);
 	Ogre::Vector3 camPos(0.0f, -1.f, 1.0f);
 	Ogre::Vector3 lookAt = Ogre::Vector3::ZERO;
 	gameCamera->lookAt(camPos, lookAt);
-	float aspect = ogreConfig.width / (float)ogreConfig.height;
-	Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrix(
-		Ogre::Math::PI / 3.0f, aspect, 0.1, 512.f);
-	gameCamera->getCamera()->updateProjectMatrix(m);
+
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.1f;
+	cameraInfo.farClip = 512.f;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+	gameCamera->updateCameraInfo(cameraInfo);
+
 	gameCamera->setCameraType(CameraMoveType_FirstPerson);
 }
 

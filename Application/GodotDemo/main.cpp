@@ -20,11 +20,11 @@ int main2()
 		};
 
 	info.setup = [&instance, &app](
-		RenderSystem* rs, 
+		RenderContext& context,
 		Ogre::RenderWindow* win, 
 		Ogre::SceneManager* sceneManager, 
 		GameCamera* gameCamera) {
-		instance.setup(&app, rs, win, sceneManager, gameCamera);
+		instance.setup(&app, context, win, sceneManager, gameCamera);
 		};
 
 	info.update = [&instance](float delta) {

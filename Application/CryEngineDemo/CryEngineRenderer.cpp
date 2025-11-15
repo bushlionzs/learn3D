@@ -518,18 +518,18 @@ unsigned int CRenderer::UploadToVideoMemory(
 	texProperty._width = w;
 	texProperty._height = h;
 	texProperty._tex_format = ogreFormat;
-	texProperty._tex_usage = Ogre::TextureUsage::WRITEABLE;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
 	if (repeat)
 	{
-		texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::REPEAT;
-		texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::REPEAT;
-		texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::REPEAT;
+		texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+		texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
+		texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_REPEAT;
 	}
 	else
 	{
-		texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-		texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
-		texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::CLAMP_TO_EDGE;
+		texProperty._samplerParams.wrapS = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+		texProperty._samplerParams.wrapT = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
+		texProperty._samplerParams.wrapR = filament::backend::SamplerWrapMode::SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE;
 	}
 	if (id == 0)
 	{

@@ -39,12 +39,12 @@ public:
         Ogre::RenderTarget* dst,
         Ogre::RenderTarget* src,
         ImageCopyDesc& desc)override;
-    void copyImage(
+    virtual void copyImage(
         Handle<HwCommandBuffer>cbh,
-        Dx12Texture* dst,
-        Dx12Texture* src,
+        OgreTexture* dst,
+        OgreTexture* src,
         ImageCopyDesc& desc
-    );
+    ) override;
 
     virtual void setViewport(
         float x, float y, float width, float height, float minDepth, float maxDepth,

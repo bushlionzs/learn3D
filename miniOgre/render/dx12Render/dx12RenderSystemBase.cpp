@@ -186,8 +186,8 @@ void Dx12RenderSystemBase::copyImage(
 
 void Dx12RenderSystemBase::copyImage(
     Handle<HwCommandBuffer>cbh,
-    Dx12Texture* dstTexture,
-    Dx12Texture* srcTexture,
+    OgreTexture* dst,
+    OgreTexture* src,
     ImageCopyDesc& desc)
 {
     auto width = desc.extent.width;
@@ -205,6 +205,8 @@ void Dx12RenderSystemBase::copyImage(
         cl = cb->get();
     }
 
+    Dx12Texture* srcTexture = (Dx12Texture*)src;
+    Dx12Texture* dstTexture = (Dx12Texture*)dst;
 
     D3D12_TEXTURE_COPY_LOCATION srcLocation = {};
     srcLocation.pResource = srcTexture->getResource();

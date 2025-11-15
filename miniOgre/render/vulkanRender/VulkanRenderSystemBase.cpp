@@ -726,6 +726,37 @@ void VulkanRenderSystemBase::copyImage(
         1, &copyRegion);
 }
 
+void VulkanRenderSystemBase::copyImage(
+    filament::backend::Handle<filament::backend::HwCommandBuffer>cbh,
+    Ogre::OgreTexture* dst,
+    Ogre::OgreTexture* src,
+    Ogre::ImageCopyDesc& desc)
+{
+    VulkanCommandBuffer2* cb = mResourceAllocator.handle_cast<VulkanCommandBuffer2*>(cbh);
+    auto cl = cb->commandBuffer;
+    VkImageCopy copyRegion{};
+    copyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    copyRegion.srcSubresource.baseArrayLayer = desc.srcSubresource.baseArrayLayer;
+    copyRegion.srcSubresource.layerCount = desc.srcSubresource.layerCount;
+    copyRegion.srcSubresource.mipLevel = desc.srcSubresource.mipLevel;
+
+    copyRegion.srcOffset = { 0, 0, 0 };
+    copyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    copyRegion.dstSubresource.baseArrayLayer = desc.dstSubresource.baseArrayLayer;
+    copyRegion.dstSubresource.layerCount = desc.dstSubresource.layerCount;
+    copyRegion.dstSubresource.mipLevel = desc.dstSubresource.mipLevel;
+    copyRegion.dstOffset = { 0, 0, 0 };
+    copyRegion.extent.width = desc.extent.width;
+    copyRegion.extent.height = desc.extent.height;
+    copyRegion.extent.depth = desc.extent.depth;
+    VulkanTexture* srcImage = (VulkanTexture*)src;
+    VulkanTexture* dstImage = (VulkanTexture*)dst;
+    vkCmdCopyImage(cl, srcImage->getVkImage(),
+        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+        dstImage->getVkImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        1, &copyRegion);
+}
+
 void VulkanRenderSystemBase::copyBuffer(
     Handle<HwBufferObject> src,
     uint32_t srcOffset,

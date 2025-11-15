@@ -20,7 +20,7 @@
 	#endif
 
 // Do not define min/max in windows.h
-	#define NOMINMAX
+	//#define NOMINMAX
 
 // Prevents <Windows.h> from #including <Winsock.h>
 // Manually define your <Winsock2.h> inclusion point elsewhere instead.

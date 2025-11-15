@@ -5,6 +5,7 @@ project(CryEngineDemo)
 
 if (WIN32)
 #add_definitions(-D__WINDOWS__)
+add_definitions(-DNOMINMAX)
 add_definitions(-DNOT_USE_CRY_MEMORY_MANAGER)
 add_definitions(-DCEGUI_STATIC)
 endif()
@@ -142,6 +143,7 @@ target_link_directories(${PROJECT_NAME}  PRIVATE ${ROOT_INC}/3rd/lib)
 target_link_libraries(${PROJECT_NAME}  GameUtil  miniOgre 
 CEGUI expat  stormlib OIS freetype dy_network 
 tinyxmld
+imgui
 pcre
 dxgi
 dxguid
