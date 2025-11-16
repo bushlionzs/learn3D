@@ -47,7 +47,7 @@ void BasicApplication::setup(
 	mRenderWindow = renderWindow;
 	mRenderPipeline = renderPipeline;
 	
-	base2(context);
+	base1(context);
 }
 
 void BasicApplication::update(float delta)

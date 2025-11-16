@@ -103,7 +103,7 @@ void BasicApplication::base1()
 	auto& mat = subEntry->getMaterial();
 
 	ShaderInfo& info = mat->getShaderInfo();
-	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, 3.f), Ogre::Vector3::ZERO);
+	mGameCamera->lookAt(Ogre::Vector3(0, 0.0f, -3.f), Ogre::Vector3::ZERO);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_LookAt);
 	mGameCamera->setMoveSpeed(0.01);
 

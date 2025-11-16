@@ -153,8 +153,6 @@ void ManualApplication::run(AppInfo* info)
 		wndInit(wndHandle);
 
 		ogreConfig.reverseDepth = info->reverseDepth;
-		
-		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);		
 	}
 
 	if (isUseCEGUI())
@@ -164,21 +162,11 @@ void ManualApplication::run(AppInfo* info)
 		new CEGUIManager;
 		CEGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
-
 	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
-	if (mWidth != ogreConfig.width || mHeight != ogreConfig.height)
-	{
-		mRenderSystem->swapChainResize(context.cqh, mSwapChainHandle);
-		mWidth = ogreConfig.width;
-		mHeight = ogreConfig.height;
-	}
-
 	context.rs = Ogre::Root::getSingleton().getRenderSystem();
 	info->setup(context, mRenderWindow, mSceneManager, mGameCamera);
 	mRenderSystem->ready();
 	printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-	
-
 
 	if (info->loopback)
 	{
@@ -186,6 +174,14 @@ void ManualApplication::run(AppInfo* info)
 	}
 	else
 	{
+		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);
+		
+		if (mWidth != ogreConfig.width || mHeight != ogreConfig.height)
+		{
+			mRenderSystem->swapChainResize(context.cqh, mSwapChainHandle);
+			mWidth = ogreConfig.width;
+			mHeight = ogreConfig.height;
+		}
 		loop();
 	}	
 }

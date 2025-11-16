@@ -117,8 +117,26 @@ Ogre::PixelFormat mapPixelFormat(RenderingDeviceCommons::DataFormat format)
 		return Ogre::PixelFormat::PF_FLOAT32_R;
 	case RenderingDeviceCommons::DATA_FORMAT_D32_SFLOAT:
 		return Ogre::PixelFormat::PF_DEPTH32;
+	case RenderingDeviceCommons::DATA_FORMAT_D32_SFLOAT_S8_UINT:
+		return Ogre::PixelFormat::PF_DEPTH32_STENCIL8;
 	case RenderingDeviceCommons::DATA_FORMAT_R8G8_UNORM:
 		return Ogre::PixelFormat::PF_R8G8;
+	case RenderingDeviceCommons::DATA_FORMAT_R32G32B32_SFLOAT:
+		return Ogre::PixelFormat::PF_FLOAT32_RGB;
+	case RenderingDeviceCommons::DATA_FORMAT_R32G32B32A32_SFLOAT:
+		return Ogre::PixelFormat::PF_FLOAT32_RGBA;
+	case RenderingDeviceCommons::DATA_FORMAT_R16G16B16_SFLOAT:
+		return Ogre::PixelFormat::PF_FLOAT16_RGB;
+	case RenderingDeviceCommons::DATA_FORMAT_R16G16B16A16_SFLOAT:
+		return Ogre::PixelFormat::PF_FLOAT16_RGBA;
+	case RenderingDeviceCommons::DATA_FORMAT_BC7_UNORM_BLOCK:
+		return Ogre::PixelFormat::PF_BC7_UNORM;
+	case RenderingDeviceCommons::DATA_FORMAT_BC5_UNORM_BLOCK:
+		return Ogre::PixelFormat::PF_BC5_UNORM;
+	case RenderingDeviceCommons::DATA_FORMAT_BC3_UNORM_BLOCK:
+		return Ogre::PixelFormat::PFG_BC3_UNORM;
+	case RenderingDeviceCommons::DATA_FORMAT_BC1_RGB_UNORM_BLOCK:
+		return Ogre::PixelFormat::PFG_BC1_UNORM_SRGB;
 	default:
 		assert_invariant(false);
 	}
@@ -1522,10 +1540,17 @@ RenderingDeviceDriver::PipelineID RenderingDeviceDriverNULL::render_pipeline_cre
 	auto & renderTarget = pipelineCreateInfo.renderTarget;
 	renderTarget.renderTargetCount = p_color_attachments.size();
 
-	assert_invariant(p_color_attachments.size() <= info->attachments.size());
+	//assert_invariant(p_color_attachments.size() <= info->attachments.size());
 	for (uint32_t i = 0; i < p_color_attachments.size(); i++)
 	{
-		renderTarget.pixelFormat[i] = info->attachments[i];
+		if (p_color_attachments[i] != ATTACHMENT_UNUSED)
+		{
+			renderTarget.pixelFormat[i] = info->attachments[i];
+		}
+		else
+		{
+			renderTarget.pixelFormat[i] = Ogre::PF_A8R8G8B8;
+		}
 	}
 
 	auto ph = mRenderSystem->createPipeline(pipelineCreateInfo, sh);
