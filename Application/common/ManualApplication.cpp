@@ -138,19 +138,18 @@ void ManualApplication::run(AppInfo* info)
 	}
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	{
-		uint64_t wndHandle;
 		if (info->appWnd)
 		{
-			wndHandle = info->appWnd;
+			mWndHandle = info->appWnd;
 		}
 		else
 		{
 			mApplicationWindow = new ApplicationWindow();
 			mApplicationWindow->createWindow(ogreConfig.width, ogreConfig.height);
-			wndHandle = (uint64_t)mApplicationWindow->getWnd();
+			mWndHandle = (uint64_t)mApplicationWindow->getWnd();
 		}
 		
-		wndInit(wndHandle);
+		wndInit(mWndHandle);
 
 		ogreConfig.reverseDepth = info->reverseDepth;
 	}
@@ -162,19 +161,20 @@ void ManualApplication::run(AppInfo* info)
 		new CEGUIManager;
 		CEGUIManager::getSingleton()._initialise(mRenderWindow);
 	}
+	mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);
 	context.cqh = mRenderSystem->createCommandQueue(Ogre::QUEUE_TYPE_GRAPHICS, 0);
 	context.rs = Ogre::Root::getSingleton().getRenderSystem();
 	info->setup(context, mRenderWindow, mSceneManager, mGameCamera);
 	mRenderSystem->ready();
 	printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	if (info->loopback)
+	/*if (info->loopback)
 	{
 		info->loopback();
 	}
-	else
+	else*/
 	{
-		mSwapChainHandle = mRenderSystem->createSwapChain(mRenderWindow);
+		
 		
 		if (mWidth != ogreConfig.width || mHeight != ogreConfig.height)
 		{
@@ -299,7 +299,7 @@ void ManualApplication::ShowFrameFrequency()
 			str.c_str());
 
 		
-		::SetWindowText(mApplicationWindow->getWnd(), buffer);
+		::SetWindowText((HWND)mWndHandle, buffer);
 	}
 }
 

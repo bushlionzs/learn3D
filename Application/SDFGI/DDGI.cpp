@@ -983,10 +983,9 @@ bool DDGIPass::CreateDDGIVolumeResources(
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
-            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT| Ogre::TEXTURE_USAGE_STORAGE_BIT;
             texProperty._need_mipmap = false;
-            volumeResources.unmanaged.probeRayData = 
-                rs->createManualTexture("ProbeRayData", &texProperty);
+            volumeResources.unmanaged.probeRayData = rs->createManualTexture("ProbeRayData", &texProperty);
         }
 
         // Probe irradiance texture
@@ -999,10 +998,9 @@ bool DDGIPass::CreateDDGIVolumeResources(
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
-            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | Ogre::TEXTURE_USAGE_STORAGE_BIT;
             texProperty._need_mipmap = false;
-            volumeResources.unmanaged.probeIrradiance =
-                rs->createManualTexture("ProbeIrradianceTexture", &texProperty);
+            volumeResources.unmanaged.probeIrradiance = rs->createManualTexture("ProbeIrradianceTexture", &texProperty);
         }
 
         // Probe distance texture
@@ -1015,7 +1013,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
-            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | Ogre::TEXTURE_USAGE_STORAGE_BIT;
             texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeDistance =
                 rs->createManualTexture("ProbeDistanceTexture", &texProperty);
@@ -1032,7 +1030,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
-            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT|Ogre::TEXTURE_USAGE_STORAGE_BIT;
             texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeData =
                 rs->createManualTexture("ProbeDataTexture", &texProperty);
@@ -1049,7 +1047,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
-            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | Ogre::TEXTURE_USAGE_STORAGE_BIT;
             texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeVariability =
                 rs->createManualTexture("ProbeVariabilityTexture", &texProperty);
@@ -1066,7 +1064,7 @@ bool DDGIPass::CreateDDGIVolumeResources(
             texProperty._width = width;
             texProperty._height = height;
             texProperty._face = arraySize;
-            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+            texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | Ogre::TEXTURE_USAGE_STORAGE_BIT;
             texProperty._need_mipmap = false;
             volumeResources.unmanaged.probeVariabilityAverage =
                 rs->createManualTexture("ProbeVariabilityAverageTexture", &texProperty);

@@ -74,12 +74,17 @@ void SDFGIApp::setup(
 	Ogre::Vector3 targetPos = forward + camPos;
 	mGameCamera->lookAt(camPos, targetPos);
 
-	float aspect = ogreConfig.width / (float)ogreConfig.height;
-	Ogre::Matrix4 m = Ogre::Math::makePerspectiveMatrix(
-		Ogre::Math::PI / 3.0f, aspect, 0.1, 5000);
 
-	gameCamera->getCamera()->updateProjectMatrix(m);
-	gameCamera->setMoveSpeed(10.0f);
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.1f;
+	cameraInfo.farClip = 5000;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+	mGameCamera->updateCameraInfo(cameraInfo);
+
+	gameCamera->setMoveSpeed(0.01f);
 	gameCamera->setCameraType(CameraMoveType_FirstPerson);
 	initScene(context);
 	initResource(context);
@@ -331,6 +336,8 @@ void SDFGIApp::initScene(RenderContext& context)
 	mContext.pBottomAS = pBottomAS;
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
 	mContext.frameCount = ogreConfig.swapBufferCount;
+
+	mRenderSystem->beginDefaultCommandList();
 }
 
 void SDFGIApp::initResource(RenderContext& context)
@@ -415,8 +422,9 @@ void SDFGIApp::initResource(RenderContext& context)
 	texProperty._height = ogreConfig.height;
 	texProperty._depth = 1;
 	texProperty._tex_format = PF_A8R8G8B8;
-	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT;
+	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | Ogre::TEXTURE_USAGE_STORAGE_BIT;
 	texProperty._need_mipmap = false;
+	texProperty._initState = RESOURCE_STATE_SHADER_RESOURCE;
 	mContext.mGBufferTargetA = mRenderSystem->createRenderTarget("targetA", texProperty);
 
 	texProperty._tex_format = PF_FLOAT32_RGBA;
@@ -427,32 +435,6 @@ void SDFGIApp::initResource(RenderContext& context)
 	mContext.mGBufferTargetD = mRenderSystem->createRenderTarget("targetD", texProperty);
 	texProperty._tex_format = PF_FLOAT16_RGBA;
 	mContext.mIndirectTarget = mRenderSystem->createRenderTarget("outputView", texProperty);
-
-	RenderTargetBarrier rtBarriers[] =
-	{
-		{
-			mContext.mGBufferTargetA,
-			RESOURCE_STATE_UNDEFINED,
-			RESOURCE_STATE_COMMON
-		},
-		{
-			mContext.mGBufferTargetB,
-			RESOURCE_STATE_UNDEFINED,
-			RESOURCE_STATE_COMMON
-		},
-		{
-			mContext.mGBufferTargetC,
-			RESOURCE_STATE_UNDEFINED,
-			RESOURCE_STATE_COMMON
-		},
-		{
-			mContext.mGBufferTargetD,
-			RESOURCE_STATE_UNDEFINED,
-			RESOURCE_STATE_COMMON
-		}
-	};
-
-	mRenderSystem->resourceBarrier(0, nullptr, 0, nullptr, 4, rtBarriers, nullptr);
 
 	GlobalConstants& globalConstants = mContext.mGlobalConstants;
 	memset(&globalConstants, 0, sizeof(GlobalConstants));
@@ -502,11 +484,11 @@ void SDFGIApp::addPass(RenderContext& context)
 
 	
 
-	/*Ogre::OgreTexture* source = mContext.mGBufferTargetD->getTarget();
-	source = mContext.volumes[0]->GetProbeRayData();
-	PassBase* presentPass = new PresentPass(source, mRenderWindow);
-	presentPass->initialize();
-	mRenderPipeline->addRenderPass(presentPass);*/
+	//Ogre::OgreTexture* source = mContext.mGBufferTargetA->getTarget();
+	////source = mContext.volumes[0]->GetProbeRayData();
+	//PassBase* presentPass = new PresentPass(source, mRenderWindow);
+	//presentPass->initialize();
+	//mRenderPipeline->addRenderPass(presentPass);
 	
 	PassBase* compositePass = new CompositePass(mRenderWindow, mContext);
 	compositePass->initialize();

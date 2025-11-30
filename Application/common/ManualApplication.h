@@ -70,4 +70,6 @@ protected:
 	uint32_t mImageIndex = 0;
 
 	RenderContext context;
+
+	uint64_t mWndHandle;
 };

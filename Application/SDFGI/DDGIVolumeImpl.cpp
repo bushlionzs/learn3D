@@ -566,7 +566,7 @@
         GetDDGIVolumeProbeCounts(m_desc, width, height, arraySize);
 
         Ogre::Vector4 color(0.f, 0.f, 0.f, 1.f);
-        Ogre::TextureSubresourceRange subresources;
+        Ogre::TextureSubresourceRange subresources = { TEXTURE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };;
         subresources.aspect = Ogre::TEXTURE_ASPECT_COLOR_BIT;
         rs->clearRenderTexture(m_probeIrradiance, color, subresources, nullptr);
         rs->clearRenderTexture(m_probeDistance, color, subresources, nullptr);

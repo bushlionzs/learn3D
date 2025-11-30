@@ -96,11 +96,13 @@ bool CompositePass::initialize()
 void CompositePass::execute(RenderContext& context)
 {
 	auto* rs = Ogre::Root::getSingleton().getRenderSystem();
+
+	Ogre::RenderTarget* color = mRenderWindow->getColorTarget();
 	{
 		RenderTargetBarrier rtBarriers[] =
 		{
 			{
-				mRenderWindow->getColorTarget(),
+				color,
 				RESOURCE_STATE_PRESENT,
 				RESOURCE_STATE_RENDER_TARGET
 			}
@@ -109,16 +111,21 @@ void CompositePass::execute(RenderContext& context)
 	}
 	RenderPassInfo info;
 	info.renderTargetCount = 1;
-	info.renderTargets[0].target.renderTarget = mRenderWindow->getColorTarget();
+	info.renderTargets[0].target.renderTarget = color;
 	info.renderTargets[0].clearColour = { 0.678431f, 0.847058f, 0.901960f, 1.000000000f };
 	info.depthTarget.target.depthStencil = nullptr;
 	info.depthTarget.clearValue = { 0.0f, 0.0f };
+	info.cbh = context.frameContext->cbh;
 	auto frameIndex = Ogre::Root::getSingleton().getCurrentFrameIndex();
 	rs->pushGroupMarker(context.frameContext->cbh, "compositePass");
 	rs->beginRenderPass(info);
+	uint32_t width = color->getWidth();
+	uint32_t height = color->getHeight();
+	rs->setViewport(0, 0, width, height, 0.0f, 1.0f, &context.frameContext->cbh);
+	rs->setScissor(0, 0, width, height, &context.frameContext->cbh);
 	rs->bindPipeline(context.frameContext->cbh, mPipelineHandle);
 	rs->bindDescriptorSet(context.frameContext->cbh, mPresentHandle, mCompositeZeroSets[frameIndex]);
-	rs->draw(3, 0, 0, 0, &context.frameContext->cbh);
+	rs->draw(3, 1, 0, 0, &context.frameContext->cbh);
 	rs->endRenderPass(info);
 	rs->popGroupMarker(context.frameContext->cbh);
 
@@ -126,7 +133,7 @@ void CompositePass::execute(RenderContext& context)
 		RenderTargetBarrier rtBarriers[] =
 		{
 			{
-				mRenderWindow->getColorTarget(),
+				color,
 				RESOURCE_STATE_RENDER_TARGET,
 				RESOURCE_STATE_PRESENT
 			}
