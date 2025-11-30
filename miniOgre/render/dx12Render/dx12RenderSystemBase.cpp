@@ -1188,6 +1188,23 @@ void Dx12RenderSystemBase::flushCmd(
     }
 }
 
+uint32_t Dx12RenderSystemBase::getAlignmentSize(Ogre::BufferObjectBinding bufferType)
+{
+    //todo
+    switch (bufferType)
+    {
+    case BufferObjectBinding_Uniform:
+        return 256;
+        break;
+    case BufferObjectBinding_Storge:
+        return 16;
+    default:
+        assert_invariant(false);
+        break;
+    }
+    return 16;
+}
+
 Handle<HwFence> Dx12RenderSystemBase::createFence(bool signaled)
 {
     Handle<HwFence> fh = mResourceAllocator.allocHandle<DX12Fence>();

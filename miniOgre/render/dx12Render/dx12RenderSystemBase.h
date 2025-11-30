@@ -168,6 +168,7 @@ public:
         Handle<HwCommandQueue> cqh,
         Handle<HwCommandBuffer> cbh,
         bool waitCmd);
+    virtual uint32_t getAlignmentSize(Ogre::BufferObjectBinding bufferType);
     virtual Handle<HwFence> createFence(bool signaled) override;
     virtual void waitFence(Handle<HwFence> fh) override;
 

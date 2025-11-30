@@ -207,7 +207,7 @@ LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 	}
 
-
+	return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
 	return CallWindowProc((WNDPROC)msOldWindowProc, hWnd, uMsg, wParam, lParam);
 }
 
