@@ -15,7 +15,8 @@ VulkanTexture::VulkanTexture(
     VulkanPlatform* platform,
     VulkanCommands* commands,
     Ogre::TextureProperty* texProperty):
-    OgreTexture(name, texProperty)
+    OgreTexture(name, texProperty),
+    VulkanResource(VulkanResourceType::TEXTURE)
 {
     mName = name;
     mCommands = commands;
@@ -33,7 +34,8 @@ VulkanTexture::VulkanTexture(
     VulkanCommands* commands,
     VkImage image,
     Ogre::TextureProperty* texProperty
-):OgreTexture(name, texProperty)
+):OgreTexture(name, texProperty),
+VulkanResource(VulkanResourceType::TEXTURE)
 {
     mName = name;
     mCommands = commands;

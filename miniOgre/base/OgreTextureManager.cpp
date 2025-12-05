@@ -2,6 +2,7 @@
 #include "OgreTextureManager.h"
 #include "renderSystem.h"
 #include "OgreRoot.h"
+#include "OgreImage.h"
 #include "OgreResourceManager.h"
 #include "OgreResourceBackgroundQueue.h"
 #include <utils/JobSystem.h>
@@ -36,9 +37,14 @@ namespace Ogre {
         TextureProperty* tp = texProperty;
         if (tp)
         {
-            if (tp->_width == 0 || tp->_tex_format == PF_UNKNOWN)
+            if (tp->_width == 0)
             {
-                //tp = nullptr;
+                ImageInfo info;
+                CImage::loadImageInfo(name, info, false);
+                tp->_width = info.width;
+                tp->_height = info.height;
+                tp->_depth = info.depth;
+                tp->_tex_format = info.format;
             }
         }
         

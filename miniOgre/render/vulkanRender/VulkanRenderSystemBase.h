@@ -41,6 +41,9 @@ public:
     virtual Ogre::OgreTexture* createManualTexture(
         const std::string& name,
         Ogre::TextureProperty* texProperty)override;
+    virtual Handle<HwTexture> createTexture(
+        const std::string& name,
+        Ogre::TextureProperty* texProperty)override;
     virtual void ready();
     virtual Ogre::RenderWindow* createRenderWindow(
         const CreateWindowDesc& desc) override;

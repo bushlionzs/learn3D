@@ -17,7 +17,7 @@ namespace filament::backend {
 class VulkanRenderSystemBase;
 
 
-class VulkanTexture :public Ogre::OgreTexture, public HwTexture
+class VulkanTexture :public Ogre::OgreTexture, public VulkanResource, HwTexture
 {
 public:
     VulkanTexture(

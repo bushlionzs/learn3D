@@ -196,22 +196,7 @@ public:
     {
         assert_invariant(false);
     }
-    /*virtual void bindVertexBuffer(
-        filament::backend::Handle<filament::backend::HwBufferObject> bufHandle,
-        uint32_t binding,
-        uint32_t vertexSize) 
-    {
-        assert_invariant(false);
-    }
     
-
-    virtual void bindIndexBuffer(
-        filament::backend::Handle<filament::backend::HwBufferObject> bufHandle, 
-        uint32_t indexSize,
-        uint32_t offset) 
-    {
-        assert_invariant(false);
-    }*/
 
     virtual filament::backend::Handle<filament::backend::HwBufferObject> createBufferObject(
         Ogre::BufferDesc& desc);
@@ -249,9 +234,15 @@ public:
     virtual bool getBufferObject(filament::backend::Handle<filament::backend::HwBufferObject> boh,
         char* data,
         uint32_t size,
-        uint32_t offset = 0) {
+        uint32_t offset = 0) 
+    {
+        assert_invariant(false);
         return false;
     }
+    virtual filament::backend::Handle<filament::backend::HwTexture> createTexture(
+        const std::string& name,
+        Ogre::TextureProperty* texProperty);
+
     virtual filament::backend::Handle<filament::backend::HwDescriptorSet> createDescriptorSet(
         filament::backend::Handle<filament::backend::HwProgram> programHandle,
         uint32_t set);

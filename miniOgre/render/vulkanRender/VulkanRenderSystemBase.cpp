@@ -202,6 +202,16 @@ Ogre::OgreTexture* VulkanRenderSystemBase::createManualTexture(
     return tex;
 }
 
+Handle<HwTexture> VulkanRenderSystemBase::createTexture(
+    const std::string& name,
+    Ogre::TextureProperty* texProperty)
+{
+    Handle<HwTexture> th = mResourceAllocator.allocHandle<VulkanTexture>();
+
+    VulkanTexture* texture = mResourceAllocator.construct<VulkanTexture>(th, name, mVulkanPlatform, mCommands, nullptr, texProperty);
+    return th;
+}
+
 void VulkanRenderSystemBase::ready()
 {
     VulkanHelper::getSingleton().loadDefaultResources();

@@ -111,6 +111,14 @@ void RenderSystem::clearBufferObject(
     assert_invariant(false);
 }
 
+Handle<HwTexture> RenderSystem::createTexture(
+    const std::string& name,
+    Ogre::TextureProperty* texProperty)
+{
+    assert_invariant(false);
+    return Handle<HwTexture>();
+}
+
 Handle<HwDescriptorSet> RenderSystem::createDescriptorSet(
     Handle<HwProgram> programHandle,
     uint32_t set)
