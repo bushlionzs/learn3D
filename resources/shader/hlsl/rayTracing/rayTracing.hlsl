@@ -188,6 +188,15 @@ void closesthitMain(inout RayPayload payload, in Attributes attr)
 	if(geometryNode.textureIndexBaseColor > -1)
 	{
 	    color = textures[geometryNode.textureIndexBaseColor].SampleLevel(texSampler, tri.uv, 0);
+		if(color.r == 0.0)
+		{
+		    if(color.g == 0.0f)
+			{
+			    //float a = geometryNode.textureIndexBaseColor/ 255.0f;
+			    //color = float4(a, 0.0, 0.0, 1.0);
+			}
+		    
+		}
 	}
 	
 	if (geometryNode.textureIndexOcclusion > -1) {
@@ -213,7 +222,7 @@ void anyhitMain(inout RayPayload payload, in Attributes attr)
 		{
 		    if (color.a < geometryNode.alphaMaskCutoff)
 			{
-				IgnoreHit();
+				//IgnoreHit();
 			}
 		}
 	}

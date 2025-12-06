@@ -1,5 +1,4 @@
 #include "OgreHeader.h"
-#include "SDFGI.h"
 #include "OgreParticleSystem.h"
 #include "myutils.h"
 #include "OgreResourceManager.h"
@@ -22,6 +21,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "GBuffer.h"
 #include "DDGI.h"
+#include "GI.h"
 #include "Composite.h"
 #include "presentPass.h"
 
@@ -485,15 +485,15 @@ void SDFGIApp::addPass(RenderContext& context)
 
 	
 
-	Ogre::OgreTexture* source = mContext.mGBufferTargetA->getTarget();
-	//source = mContext.volumes[0]->GetProbeRayData();
-	PassBase* presentPass = new PresentPass(source, mRenderWindow);
-	presentPass->initialize();
-	mRenderPipeline->addRenderPass(presentPass);
+	//Ogre::OgreTexture* source = mContext.mGBufferTargetA->getTarget();
+	////source = mContext.volumes[0]->GetProbeRayData();
+	//PassBase* presentPass = new PresentPass(source, mRenderWindow);
+	//presentPass->initialize();
+	//mRenderPipeline->addRenderPass(presentPass);
 	
-	/*PassBase* compositePass = new CompositePass(mRenderWindow, mContext);
+	PassBase* compositePass = new CompositePass(mRenderWindow, mContext);
 	compositePass->initialize();
-	mRenderPipeline->addRenderPass(compositePass);*/
+	mRenderPipeline->addRenderPass(compositePass);
 }
 
 

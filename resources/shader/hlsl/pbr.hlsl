@@ -410,6 +410,6 @@ float4 PS(VertexOut pin) : SV_Target
 		    outColor = SRGBtoLINEAR(outColor);
 		}
 	}
-	
+	outColor = baseColor;
 	return outColor;
 }

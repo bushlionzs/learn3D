@@ -693,9 +693,10 @@ void RayTracingApp::RayTracingGltf(
 	renderPipeline->addRenderPass(rayTracingPass);
 
 	gameCamera->setMoveSpeed(0.01f);
-	Ogre::Vector3 camPos(0.0f, -1.f, 1.0f);
-	Ogre::Vector3 lookAt = Ogre::Vector3::ZERO;
+	Ogre::Vector3 camPos(-1.0f, -1.f, 0.0f);
+	Ogre::Vector3 lookAt(-2.0f, -1.f, 0.0f);
 	gameCamera->lookAt(camPos, lookAt);
+	gameCamera->setCameraType(CameraMoveType_FirstPerson);
 
 	CameraInfo cameraInfo;
 	cameraInfo.width = ogreConfig.width;
@@ -706,7 +707,7 @@ void RayTracingApp::RayTracingGltf(
 	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
 	gameCamera->updateCameraInfo(cameraInfo);
 
-	gameCamera->setCameraType(CameraMoveType_FirstPerson);
+	
 }
 
 void RayTracingApp::RayTracingShadow(
@@ -1548,6 +1549,7 @@ void RayTracingApp::initRayTracingContext(
 	texProperty._tex_format = mRenderWindow->getColorFormat();
 	texProperty._tex_usage = Ogre::TEXTURE_USAGE_CAN_UPDATE_BIT | TEXTURE_USAGE_STORAGE_BIT | TEXTURE_USAGE_CAN_COPY_FROM_BIT;
 	texProperty._initState = RESOURCE_STATE_UNORDERED_ACCESS;
+	texProperty._need_mipmap = false;
 	auto outputTarget = mRenderSystem->createRenderTarget("outputTarget", texProperty);
 
 
@@ -1558,5 +1560,4 @@ void RayTracingApp::initRayTracingContext(
 	context.uniformBuffer = mRenderSystem->createBufferObject(desc);
 
 	context.outputTarget = outputTarget;
-
 }

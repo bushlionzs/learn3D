@@ -44,7 +44,7 @@ void BasicApplication::setup(
 	mRenderWindow = renderWindow;
 	mRenderPipeline = renderPipeline;
 	mRenderSystem = Ogre::Root::getSingleton().getRenderSystem();
-	base1();
+	base6();
 }
 
 void BasicApplication::update(float delta)
@@ -319,7 +319,7 @@ void BasicApplication::base5()
 
 void BasicApplication::base6()
 {
-	std::string name = "sponza.obj";
+	std::string name = "Sponza.gltf";
 	auto mesh = Ogre::MeshManager::getSingletonPtr()->load(name);
 
 	Ogre::SceneNode* root = mSceneManager->getRoot()->createChildSceneNode("root");
@@ -330,31 +330,22 @@ void BasicApplication::base6()
 	//sphere->setMaterialName("myrect");
 
 	spherenode->attachObject(sphere);
-
-	mGameCamera->lookAt(
-		Ogre::Vector3(0.0f, 3.0f, 15.0f),
-		Ogre::Vector3(0.0f, 0.0f, 0.0f));
-	mGameCamera->setMoveSpeed(100);
+	Ogre::Vector3 camPos(-1.0f, 1.f, 0.0f);
+	Ogre::Vector3 lookAt(-2.0f, 1.f, 0.0f);
+	mGameCamera->lookAt(camPos,lookAt);
+	mGameCamera->setMoveSpeed(0.01);
 	mGameCamera->setRotateSpeed(0.02);
 	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-	float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
 
-	Ogre::Matrix4 m;
-
-	if (ogreConfig.reverseDepth)
-	{
-		float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
-		m = Ogre::Math::makePerspectiveMatrixReverseZ(
-			Ogre::Math::PI / 3.0f, aspectInverse, 0.1, 2000);
-	}
-	else
-	{
-		float aspect = ogreConfig.width / (float)ogreConfig.height;
-		m = Ogre::Math::makePerspectiveMatrix(
-			Ogre::Math::PI / 3.0f, aspect, 0.1, 2000);
-	}
-	mGameCamera->getCamera()->updateProjectMatrix(m);
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.1f;
+	cameraInfo.farClip = 2000;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+	mGameCamera->updateCameraInfo(cameraInfo);
 
 	RenderPassInput input;
 	input.color = mRenderWindow->getColorTarget();

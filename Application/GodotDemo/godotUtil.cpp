@@ -225,16 +225,16 @@ public:
             initializeAudioDriver();
             initialize_navigation_server();
             initialize_physics();
-            //auto rendering_device = memnew(RenderingDevice);
+            auto rendering_device = memnew(RenderingDevice);
             //
-            //rendering_device->initialize(&renderingContext);
+            rendering_device->initialize(&renderingContext);
             message_queue = memnew(MessageQueue);
             auto rendering_server = memnew(RenderingServerDefault);
             
             RendererCompositorRD::make_current();
             rendering_server->init();
-            rendering_server->set_render_loop_enabled(true);
-            theme_db->initialize_theme();
+            //rendering_server->set_render_loop_enabled(true);
+            //theme_db->initialize_theme();
             OS::get_singleton()->set_has_server_feature_callback(has_server_feature_callback);
             BaseMaterial3D::init_shaders();
             ParticleProcessMaterial::init_shaders();
@@ -243,11 +243,11 @@ public:
 
             String main_loop_type = "SceneTree";
 
-            Object* ml = ClassDB::instantiate(main_loop_type);
+            //Object* ml = ClassDB::instantiate(main_loop_type);
 
-            main_loop = Object::cast_to<MainLoop>(ml);
+            //main_loop = Object::cast_to<MainLoop>(ml);
 
-            OS::get_singleton()->set_main_loop(main_loop);
+           // OS::get_singleton()->set_main_loop(main_loop);
     }
 
         void initializeDisplayServer()
@@ -510,7 +510,7 @@ static void register_scene_types()
     GDREGISTER_CLASS(MeshInstance3D);
     GDREGISTER_CLASS(OmniLight3D);
     GDREGISTER_CLASS(SpotLight3D);
-    GDREGISTER_CLASS(CanvasLayer);
+    //GDREGISTER_CLASS(CanvasLayer);
 
     GDREGISTER_VIRTUAL_CLASS(Mesh);
     GDREGISTER_CLASS(ArrayMesh);
@@ -545,7 +545,7 @@ static void register_scene_types()
 
     GDREGISTER_CLASS(SceneTree);
 
-    GDREGISTER_ABSTRACT_CLASS(Font);
+    /*GDREGISTER_ABSTRACT_CLASS(Font);
     GDREGISTER_CLASS(FontFile);
     GDREGISTER_CLASS(FontVariation);
     GDREGISTER_CLASS(SystemFont);
@@ -559,69 +559,71 @@ static void register_scene_types()
     GDREGISTER_VIRTUAL_CLASS(StyleBox);
     GDREGISTER_CLASS(StyleBoxEmpty);
     GDREGISTER_CLASS(StyleBoxTexture);
+    
+    */
     GDREGISTER_CLASS(StyleBoxFlat);
     GDREGISTER_CLASS(StyleBoxLine);
     GDREGISTER_CLASS(Theme);
 
     /* REGISTER GUI */
 
-    GDREGISTER_CLASS(ButtonGroup);
-    GDREGISTER_VIRTUAL_CLASS(BaseButton);
+    //GDREGISTER_CLASS(ButtonGroup);
+    //GDREGISTER_VIRTUAL_CLASS(BaseButton);
 
-    OS::get_singleton()->yield(); // may take time to init
+    //OS::get_singleton()->yield(); // may take time to init
 
-    GDREGISTER_CLASS(Control);
-    GDREGISTER_CLASS(Button);
-    GDREGISTER_CLASS(Label);
-    GDREGISTER_ABSTRACT_CLASS(ScrollBar);
-    GDREGISTER_CLASS(HScrollBar);
-    GDREGISTER_CLASS(VScrollBar);
-    GDREGISTER_CLASS(ProgressBar);
-    GDREGISTER_ABSTRACT_CLASS(Slider);
-    GDREGISTER_CLASS(HSlider);
-    GDREGISTER_CLASS(VSlider);
-    GDREGISTER_CLASS(Popup);
-    GDREGISTER_CLASS(PopupPanel);
+    //GDREGISTER_CLASS(Control);
+    //GDREGISTER_CLASS(Button);
+    //GDREGISTER_CLASS(Label);
+    //GDREGISTER_ABSTRACT_CLASS(ScrollBar);
+    //GDREGISTER_CLASS(HScrollBar);
+    //GDREGISTER_CLASS(VScrollBar);
+    //GDREGISTER_CLASS(ProgressBar);
+    //GDREGISTER_ABSTRACT_CLASS(Slider);
+    //GDREGISTER_CLASS(HSlider);
+    //GDREGISTER_CLASS(VSlider);
+    //GDREGISTER_CLASS(Popup);
+    //GDREGISTER_CLASS(PopupPanel);
 
-    GDREGISTER_CLASS(CheckBox);
-    GDREGISTER_CLASS(CheckButton);
-    GDREGISTER_CLASS(LinkButton);
-    GDREGISTER_CLASS(Panel);
-    GDREGISTER_VIRTUAL_CLASS(Range);
+    //GDREGISTER_CLASS(CheckBox);
+    //GDREGISTER_CLASS(CheckButton);
+    //GDREGISTER_CLASS(LinkButton);
+    //GDREGISTER_CLASS(Panel);
+    //GDREGISTER_VIRTUAL_CLASS(Range);
 
-    OS::get_singleton()->yield(); // may take time to init
+    //OS::get_singleton()->yield(); // may take time to init
 
-    GDREGISTER_CLASS(TextureRect);
-    GDREGISTER_CLASS(ColorRect);
-    GDREGISTER_CLASS(NinePatchRect);
-    GDREGISTER_CLASS(ReferenceRect);
-    GDREGISTER_CLASS(AspectRatioContainer);
-    GDREGISTER_CLASS(TabContainer);
-    GDREGISTER_CLASS(TabBar);
+    //GDREGISTER_CLASS(TextureRect);
+    //GDREGISTER_CLASS(ColorRect);
+    //GDREGISTER_CLASS(NinePatchRect);
+    //GDREGISTER_CLASS(ReferenceRect);
+    //GDREGISTER_CLASS(AspectRatioContainer);
+    //GDREGISTER_CLASS(TabContainer);
+    //GDREGISTER_CLASS(TabBar);
 
-    GDREGISTER_ABSTRACT_CLASS(Separator);
-    GDREGISTER_CLASS(HSeparator);
-    GDREGISTER_CLASS(VSeparator);
-    GDREGISTER_CLASS(TextureButton);
-    GDREGISTER_CLASS(Container);
-    GDREGISTER_CLASS(BoxContainer);
-    GDREGISTER_CLASS(HBoxContainer);
-    GDREGISTER_CLASS(VBoxContainer);
-    GDREGISTER_CLASS(GridContainer);
-    GDREGISTER_CLASS(CenterContainer);
-    GDREGISTER_CLASS(ScrollContainer);
-    GDREGISTER_CLASS(PanelContainer);
-    GDREGISTER_CLASS(FlowContainer);
-    GDREGISTER_CLASS(HFlowContainer);
-    GDREGISTER_CLASS(VFlowContainer);
-    GDREGISTER_CLASS(MarginContainer);
+    //GDREGISTER_ABSTRACT_CLASS(Separator);
+    //GDREGISTER_CLASS(HSeparator);
+    //GDREGISTER_CLASS(VSeparator);
+    //GDREGISTER_CLASS(TextureButton);
+    //GDREGISTER_CLASS(Container);
+    //GDREGISTER_CLASS(BoxContainer);
+    //GDREGISTER_CLASS(HBoxContainer);
+    //GDREGISTER_CLASS(VBoxContainer);
+    //GDREGISTER_CLASS(GridContainer);
+    //GDREGISTER_CLASS(CenterContainer);
+    //GDREGISTER_CLASS(ScrollContainer);
+    //GDREGISTER_CLASS(PanelContainer);
+    //GDREGISTER_CLASS(FlowContainer);
+    //GDREGISTER_CLASS(HFlowContainer);
+    //GDREGISTER_CLASS(VFlowContainer);
+    //GDREGISTER_CLASS(MarginContainer);
 
-    OS::get_singleton()->yield(); // may take time to init
+    //OS::get_singleton()->yield(); // may take time to init
 
-    GDREGISTER_CLASS(TextureProgressBar);
-    GDREGISTER_CLASS(ItemList);
+    //GDREGISTER_CLASS(TextureProgressBar);
+    //GDREGISTER_CLASS(ItemList);
 
-    GDREGISTER_CLASS(LineEdit);
+    //GDREGISTER_CLASS(LineEdit);
     GDREGISTER_CLASS(VideoStreamPlayer);
     GDREGISTER_VIRTUAL_CLASS(VideoStreamPlayback);
     GDREGISTER_VIRTUAL_CLASS(VideoStream);
@@ -727,17 +729,18 @@ void godotInit(GodotContext& context)
         memnew(Engine);
 
         register_core_types();
-        auto input_map = memnew(InputMap);
+        
         globals = memnew(ProjectSettings);
         theme_db = memnew(ThemeDB);
         
-        register_editor_types();
+        //register_editor_types();
        
 
         memnew(PackedData);
         register_scene_types();
         initialize_physics();
-        input_map->load_default(); //keys for editor
+        //auto input_map = memnew(InputMap);
+        //input_map->load_default(); //keys for editor
         
         Main m;
         m.init(context);
@@ -951,7 +954,7 @@ void loadGodotProject(const String& projectDir, GodotContext& context)
     if ( ret == OK)
     {
         String game_path = GLOBAL_GET("application/run/main_scene");
-        //game_path = "res://Scenes/Environment/space_craft_hangar.tscn";
+        game_path = "res://Scenes/Environment/space_craft_hangar.tscn";
         //game_path = "res://Models/Outside/Tree.tscn";
         Ref<PackedScene> scenedata = ResourceLoader::load(game_path);
 

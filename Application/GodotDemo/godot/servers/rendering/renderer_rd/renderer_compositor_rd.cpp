@@ -309,7 +309,7 @@ RendererCompositorRD::RendererCompositorRD() {
 	light_storage = memnew(RendererRD::LightStorage);
 	particles_storage = memnew(RendererRD::ParticlesStorage);
 	fog = memnew(RendererRD::Fog);
-	canvas = memnew(RendererCanvasRenderRD());
+	//canvas = memnew(RendererCanvasRenderRD());
 
 	String rendering_method = OS::get_singleton()->get_current_rendering_method();
 	uint64_t textures_per_stage = RD::get_singleton()->limit_get(RD::LIMIT_MAX_TEXTURES_PER_SHADER_STAGE);

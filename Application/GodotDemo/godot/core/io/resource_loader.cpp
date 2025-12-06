@@ -289,7 +289,7 @@ Ref<Resource> ResourceLoader::_load(const String &p_path, const String &p_origin
 			continue;
 		}
 		found = true;
-		if (p_path.find("SpaceCraftHangar.glb") > 0)
+		if (p_path.find("utrim_concrete_1_Albedo.png") > 0)
 		{
 			int kk = 0;
 		}
@@ -299,7 +299,7 @@ Ref<Resource> ResourceLoader::_load(const String &p_path, const String &p_origin
 		}
 		else
 		{
-			assert(false);
+			//assert(false);
 		}
 	}
 

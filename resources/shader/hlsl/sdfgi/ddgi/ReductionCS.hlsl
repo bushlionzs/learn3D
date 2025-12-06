@@ -22,7 +22,7 @@
 
 // -------- REGISTER DECLARATIONS -----------------------------------------------------------------
 
-#if RTXGI_DDGI_SHADER_REFLECTION || defined(__spirv__)
+#if RTXGI_DDGI_SHADER_REFLECTION || defined(VULKAN)
 
     // Don't declare registers when using reflection or cross-compiling to SPIRV
     #define VOLUME_CONSTS_REG_DECL 

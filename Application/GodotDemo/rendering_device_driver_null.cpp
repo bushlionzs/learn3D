@@ -566,6 +566,7 @@ void RenderingDeviceDriverNULL::command_buffer_execute_secondary(
 
 RenderingDeviceDriver::SwapChainID RenderingDeviceDriverNULL::swap_chain_create(RenderingContextDriver::SurfaceID p_surface)
 {
+	return RenderingDeviceDriver::SwapChainID(nullptr);
 	Surface* surface = (Surface*)p_surface;
 	auto sch = mRenderSystem->createSwapChain((Ogre::RenderWindow*)surface->renderWnd);
 	SwapChainPrivateInfo* info = new SwapChainPrivateInfo;

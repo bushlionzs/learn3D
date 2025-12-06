@@ -28,7 +28,7 @@
 
         // MANAGED RESOURCES DEFINES
         #if RTXGI_DDGI_RESOURCE_MANAGEMENT
-            #ifdef __spirv__
+            #ifdef VULKAN
                 #define RTXGI_PUSH_CONSTS_TYPE 1
                 #define VOLUME_CONSTS_REGISTER 0
                 #define VOLUME_CONSTS_SPACE 0

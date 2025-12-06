@@ -125,23 +125,17 @@ void BasicApplication::base1(RenderContext& context)
 	
 	mGameCamera->lookAt(Ogre::Vector3(-0.2, 5.28, 8.14), Ogre::Vector3(-0.2, 5.28, 0.0));
 	mGameCamera->setCameraType(Ogre::CameraMoveType_FirstPerson);
-	mGameCamera->setMoveSpeed(5);
+	mGameCamera->setMoveSpeed(0.001);
 	auto& ogreConfig = Ogre::Root::getSingleton().getEngineConfig();
-	Ogre::Matrix4 m;
-	if (ogreConfig.reverseDepth)
-	{
-		float aspectInverse = ogreConfig.height / (float)ogreConfig.width;
-		m = Ogre::Math::makePerspectiveMatrixReverseZ(
-			Ogre::Math::PI / 3.0f, aspectInverse, 0.1, 6000);
-	}
-	else
-	{
-		float aspect = ogreConfig.width / (float)ogreConfig.height;
-		m = Ogre::Math::makePerspectiveMatrix(
-			Ogre::Math::PI / 3.0f, aspect, 0.1, 6000);
 
-	}
-	mGameCamera->getCamera()->updateProjectMatrix(m);
+	CameraInfo cameraInfo;
+	cameraInfo.width = ogreConfig.width;
+	cameraInfo.height = ogreConfig.height;
+	cameraInfo.nearClip = 0.1f;
+	cameraInfo.farClip = 6000.f;
+	cameraInfo.fovRadians = Ogre::Math::PI / 3.0f;
+	cameraInfo.reverseDepth = ogreConfig.reverseDepth;
+	mGameCamera->updateCameraInfo(cameraInfo);
 
 	RenderPassInput input;
 	input.color = mRenderWindow->getColorTarget();
@@ -159,7 +153,7 @@ Surface BasicApplication::godotWndCallback(AppInfo* appInfo, int64_t wnd)
 	
 
 	Surface surface;
-	surface.renderWnd = mApplication->wndInit(wnd);
+	surface.renderWnd = (void*)wnd;// mApplication->wndInit(wnd);
 	return surface;
 }
 

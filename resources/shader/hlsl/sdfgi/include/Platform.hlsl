@@ -12,7 +12,7 @@
 #define PLATFORM_HLSL
 
 
-#ifdef __spirv__
+#ifdef VULKAN
 #define VK_BINDING(x, y)    [[vk::binding(x, y)]]
 #define VK_PUSH_CONST       [[vk::push_constant]]
 #define RTXGI_VK_BINDING(x, y)    [[vk::binding(x, y)]]

@@ -58,8 +58,13 @@ void CHS_PRIMARY(inout PackedPayload packedPayload, BuiltInTriangleIntersectionA
     if (material.albedoTexIdx > -1)
     {
         float4 bco = GetTex2D(material.albedoTexIdx).SampleGrad(GetAnisoWrapSampler(), v.uv0, dUVdx, dUVdy);
+		bco = GetTex2D(material.albedoTexIdx).SampleLevel(GetAnisoWrapSampler(), v.uv0, 0);
         payload.albedo *= bco.rgb;
         payload.opacity *= bco.a;
+		if(bco.r == 0)
+		{
+		    //payload.albedo = float3(v.uv0.x, v.uv0.y, 0.0);
+		}
     }
 
     // Shading normal
